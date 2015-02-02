@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.notification;
 
+import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationTarget;
@@ -30,7 +31,11 @@ public class SlackNotificationSender extends BaseNotificationSender {
      */
     @Override
     public void sendNotification(RegisteredNotification notification, Collection<NotificationSubscription> addresses) {
-        slackChatService.sendMessage(prepareMessage(notification),
+        // Truncate Exception notification messages
+        String message = NotificationType.EXCEPTION.covers(notification.getType())
+                ? truncateMessage(notification)
+                : notification.getMessage();
+        slackChatService.sendMessage(message,
                 addresses.stream()
                         .map(NotificationSubscription::getTargetAddress)
                         .collect(Collectors.toList()));
@@ -38,11 +43,11 @@ public class SlackNotificationSender extends BaseNotificationSender {
     }
 
     /**
-     * Tailors the notification message for slack consumption
+     * Truncates the notification message for slack consumption
      * @param notification RegisteredNotification
      * @return String
      */
-    private String prepareMessage(RegisteredNotification notification) {
+    private String truncateMessage(RegisteredNotification notification) {
         return trimLines(notification.getMessage(), environment.getSlackLineLimit()) +
             "\nSee full notification at: " + getDisplayUrl(notification);
     }

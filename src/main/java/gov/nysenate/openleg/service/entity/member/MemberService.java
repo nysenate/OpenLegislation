@@ -1,9 +1,13 @@
 package gov.nysenate.openleg.service.entity.member;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+
+import java.util.List;
 
 public interface MemberService
 {
@@ -52,4 +56,11 @@ public interface MemberService
      * @return Member
      */
     public Member getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber);
+
+    /**
+     * Retrieves all members from all years and both chambers.
+     * Useful for rebuilding the search index.
+     * @return
+     */
+    public List<Member> getAllMembers(SortOrder sortOrder, LimitOffset limOff);
 }

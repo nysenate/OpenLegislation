@@ -417,7 +417,7 @@ $left-nav-width: 305px;
 
 /** --- Styles for Report page --- */
 
-#daybreakSummaryTable {
+#daybreak-summary-table {
   table-layout: auto;
   border: 1px solid #ccc;
   th {
@@ -517,39 +517,43 @@ button.check-button {
   padding: 10px !important;
 }
 
+table.report-detail-table tbody tr:nth-child(odd) {
+  background-color: #ccc;
+}
+
 // -- Table Column headers --
 
 // Bill Id
-#report-detail-table thead th:first-child {
+table.report-detail-table thead tr th:first-child {
   width: 6em;
 }
 
 // Mismatch Type
-#report-detail-table thead th:nth-child(2) {
-  width: 10em;
+table.report-detail-table thead tr th:nth-child(2) {
+  width: 10rem;
 }
 
 // Status
-#report-detail-table thead th:nth-child(3) {
-  width: 6em;
+table.report-detail-table thead tr th:nth-child(3) {
+  width: 6rem;
 }
 
 // Opened At
-#report-detail-table thead th:nth-child(4) {
-  width: 12em;
+table.report-detail-table thead tr th:nth-child(4) {
+  width: 12rem;
 }
 
 // Snippet
-#report-detail-table thead th:nth-child(5) {
-  width: 35em;
+table.report-detail-table thead tr th:nth-child(5) {
+  width: 35rem;
 }
 
 // Details
-#report-detail-table thead th:nth-child(6) {
-  width: 5em;
+table.report-detail-table thead tr th:nth-child(6) {
+  width: 5rem;
 }
 
-#report-detail-table tbody tr td {
+table.report-detail-table tbody tr td {
   border: 1px solid #eee;
 }
 
@@ -681,7 +685,7 @@ button.check-button {
 /** --- Calendar Picker Styling --- */
 
 #calendar-date-picker .fc-button-today .fc-button-prev .fc-button-next {
-  @extend .button;
+//  @extend .button;
 }
 
 #calendar-date-picker div.fc-day-content>div {

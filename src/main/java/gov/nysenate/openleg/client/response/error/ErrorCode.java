@@ -58,6 +58,10 @@ public enum ErrorCode
 
     TRANSCRIPT_NOT_FOUND(141, "The transcript was not found"),
 
+    /** --- Member --- */
+
+    MEMBER_NOT_FOUND(151, "The member was not found"),
+
     /** --- Admin --- */
 
     USER_ALREADY_EXISTS(191, "The entered username already exists"),

@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.client.view.entity;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Member;
 
 public class SimpleMemberView implements ViewObject
@@ -30,6 +29,10 @@ public class SimpleMemberView implements ViewObject
 
     public int getSessionYear() {
         return sessionYear;
+    }
+
+    public String getChamber() {
+        return chamber;
     }
 
     @Override

@@ -40,7 +40,6 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         .when(ctxPath + '/laws/:lawId', {
             templateUrl: ctxPath + '/partial/content/law-view'
         })
-
         /** --- Transcripts --- */
         .when(ctxPath + '/transcripts', {
             templateUrl: ctxPath + '/partial/content/..'
@@ -48,8 +47,9 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         /** --- Reports --- */
 
-        .when(ctxPath + '/reports', {
-            templateUrl: ctxPath + '/partial/report/daybreak-report-summary'
+        .when(ctxPath + '/admin/report/daybreak', {
+            templateUrl: ctxPath + '/partial/report/daybreak',
+            reloadOnSearch: false
         })
 
         /** --- Manage --- */

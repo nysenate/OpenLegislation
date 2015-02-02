@@ -334,7 +334,7 @@ function getNoTypesFilter(totals) {
 }
 
 function getFilterCategory(totals, category, initialSetting){
-    var filterCategory = {}
+    var filterCategory = {};
     for(item in totals[category]) {
         filterCategory[item] = initialSetting;
     }

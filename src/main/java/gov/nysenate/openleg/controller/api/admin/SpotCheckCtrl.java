@@ -30,9 +30,11 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 import static gov.nysenate.openleg.util.DateUtils.atEndOfDay;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.format.annotation.DateTimeFormat.ISO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -68,9 +70,9 @@ public class SpotCheckCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/daybreaks", method = RequestMethod.GET)
     public BaseResponse getDaybreakReport() {
-        LocalDate today = LocalDate.now();
-        LocalDate sixMonthsAgo = today.minusMonths(6);
-        return getDaybreakReportLimOff(sixMonthsAgo, today);
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime sixMonthsAgo = today.minusMonths(6);
+        return getDaybreakReportLimOff(sixMonthsAgo.toString(), today.toString());
     }
 
     /**
@@ -85,19 +87,21 @@ public class SpotCheckCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/daybreaks/{from}/{to}",method = RequestMethod.GET)
     public BaseResponse getDaybreakReportLimOff(
-            @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate from,
-            @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
-        logger.info("Retrieving daybreak reports from {} to {}", from , to);
+            @PathVariable String from,
+            @PathVariable String to) {
+        logger.debug("Retrieving daybreak reports from {} to {}", from, to);
+        LocalDateTime fromDateTime = parseISODateTime(from, "from");
+        LocalDateTime toDateTime = parseISODateTime(to, "to");
         // Have to retrieve the reports in full, no 'summary' view available
         List<SpotCheckReport<BaseBillId>> reports =
-                daybreakService.getReportIds(from.atStartOfDay(), atEndOfDay(to), SortOrder.DESC, LimitOffset.ALL)
+                daybreakService.getReportIds(fromDateTime, toDateTime, SortOrder.DESC, LimitOffset.ALL)
                         .parallelStream()
                         .map(daybreakService::getReport).collect(toList());
         // Construct the client response
         return new ReportSummaryResponse<>(
                 ListView.of(reports.stream()
-                        .map(r -> new ReportInfoView<>(r))
-                        .collect(toList())), from, to);
+                        .map(ReportInfoView<BaseBillId>::new)
+                        .collect(Collectors.toList())), fromDateTime, toDateTime);
     }
 
     /**
@@ -111,11 +115,11 @@ public class SpotCheckCtrl extends BaseCtrl
      * Expected Output: ReportDetailResponse
      */
     @RequestMapping(value = "/daybreaks/{reportDateTime}", method = RequestMethod.GET)
-    public BaseResponse getDaybreakReport(
-            @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime reportDateTime) {
-        logger.info("Retrieving daybreak report {}", reportDateTime);
+    public BaseResponse getDaybreakReport(@PathVariable String reportDateTime) {
+        logger.debug("Retrieving daybreak report {}", reportDateTime);
         return new ReportDetailResponse<>(
-                daybreakService.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, reportDateTime)));
+                daybreakService.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK,
+                                                                parseISODateTime(reportDateTime, "reportDateTime"))));
     }
 
     /** --- Exception Handlers --- */

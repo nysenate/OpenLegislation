@@ -32,10 +32,13 @@ public class SpotCheckReport<ContentKey>
 
     /** --- Methods --- */
 
-    public int getTotalMismatchCount() {
+    public long getOpenMismatchCount() {
         return observations.values().stream()
-                .map(obs -> obs.getMismatches().size())
-                .reduce(0, (a, b) -> a + b);
+                .map(obs -> obs.getMismatches().values().stream()
+                        .filter(mismatch -> !SpotCheckMismatchStatus.RESOLVED.equals(mismatch.getStatus()))
+                        .count()
+                )
+                .reduce(0L, (a, b) -> a + b);
     }
 
     /**

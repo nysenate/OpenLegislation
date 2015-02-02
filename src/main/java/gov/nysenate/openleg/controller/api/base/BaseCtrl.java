@@ -237,7 +237,7 @@ public abstract class BaseCtrl
     private void pushExceptionNotification(Exception ex) {
         LocalDateTime occurred = LocalDateTime.now();
         String summary = ex.getMessage();
-        String message = "The following exception was thrown while handling a request at " + occurred + "\n\n"
+        String message = "The following exception was thrown while handling a request at " + occurred + ":\n\n"
                 + ExceptionUtils.getStackTrace(ex);
         Notification notification = new Notification(REQUEST_EXCEPTION, occurred, summary, message);
 
