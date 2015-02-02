@@ -58,7 +58,6 @@ md-card {
       margin-left: 16px;
     }
   }
-
 }
 
 /** --- Hacks --- */
@@ -104,13 +103,6 @@ md-card {
 
 .bold {
   font-weight: 600 !important;
-}
-
-.vertical-align {
-  display: table; height: 70px; overflow: hidden;
-  span, div {
-    display: table-cell; vertical-align: middle;
-  }
 }
 
 .margin-top-20 {
@@ -413,6 +405,47 @@ $left-nav-width: 305px;
   margin: 20px 0;
   color: rgba(0,0,0,0.54);
   white-space: pre-line;
+}
+
+.bill-votes-table {
+  font-size: 0.9rem;
+  width: 100%;
+  padding: 20px;
+  tr {
+    &.positive {
+      background: #F1F8E9;
+    }
+    &.negative {
+      background: #FFEBEE;
+    }
+    th {
+      text-align: left;
+    }
+    td {
+      padding: 5px 10px 5px 5px;
+    }
+  }
+}
+
+.bill-updates-table {
+  font-size: 0.8rem;
+  width: 100%;
+  padding: 20px;
+  tr {
+    th {
+      text-align: left;
+    }
+    td {
+      &:nth-child(1) {
+        border-right: 1px solid #ddd;
+      }
+      &:nth-child(2) {
+        padding-left: 10px;
+      }
+      border-bottom: 1px solid #ddd;
+    }
+  }
+
 }
 
 /** --- Styles for Report page --- */

@@ -287,7 +287,7 @@
         <!-- Bill Full Text -->
         <div ng-if="!bill.billType.resolution && bill.amendments.items[selectedVersion].fullText">
             <toggle-panel label="Full Text of Bill" open="false" extra-classes="columns large-12 white">
-                <div class="padding-20 text-medium" style="white-space: pre;font-family: monospace, monospace"
+                <div class="padding-20 text-medium"
                      ng-bind-html="bill.amendments.items[selectedVersion].fullText | prettyFullText">
                 </div>
             </toggle-panel>

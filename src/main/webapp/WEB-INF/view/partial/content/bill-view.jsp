@@ -335,7 +335,7 @@
         </md-tab>
         <%-- Bill Text --%>
         <md-tab label="Full Text">
-          <md-card class="content-card" ng-if="bill.amendments.size > 1">
+          <md-card class="content-card margin-bottom-10" ng-if="bill.amendments.size > 1">
             <md-content layout="row">
               Compare with revision:
               <select ng-model="curr.compareVersion" ng-change="diffBills()" class="margin-left-20 white-bg">
@@ -357,20 +357,38 @@
         </md-tab>
         <%-- Updates --%>
         <md-tab label="Update History" md-on-select="getUpdates()">
-          <md-card ng-repeat="update in updateHistory.items">
-            <md-content class="content-card">
-              <md-list>
-                <md-item>
-                  <md-item-content>
-                    <div class="text-medium md-tile-left">
-                      <p>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY'}}</p>
-                      <p>Processed Date- {{update.processedDateTime | moment:'MMM DD, YYYY hh:mm:ss'}}</p>
-                    </div>
-                  </md-item-content>
-                </md-item>
-              </md-list>
-            </md-content>
-          </md-card>
+          <md-list ng-repeat="update in updateHistory.items">
+            <md-item>
+              <md-item-content>
+                <div class="md-tile-content">
+                  <md-card>
+                    <md-content class="content-card">
+                      <md-subheader>
+                        <h3 class="bold margin-bottom-10">{{update.action}} - {{update.scope}}</h3>
+                        <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY'}}</h4>
+                        <h4>Processed Date- {{update.processedDateTime | moment:'MMM DD, YYYY hh:mm:ss'}}</h4>
+                        <h4>Source - <a>{{update.sourceId}}</a></h4>
+                      </md-subheader>
+                      <table class="bill-updates-table">
+                        <thead>
+                        <tr>
+                          <th style="width:150px;">Field Name</th>
+                          <th>Data</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="(field, value) in update.fields">
+                          <td>{{field}}</td>
+                          <td><pre>{{value}}</pre></td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </md-content>
+                  </md-card>
+                </div>
+              </md-item-content>
+            </md-item>
+          </md-list>
         </md-tab>
     </section>
     <section ng-if="response.success === false">
