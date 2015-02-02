@@ -51,8 +51,8 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
 
     @Override
     public SearchResults<Member> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(),
-                FilterBuilders.termFilter("sessionYear", sessionYear.getYear())), null, sort, limOff);
+        String query = "(chamber:" + chamber.toString() + ") AND (sessionYear:" + sessionYear.getYear() + ")";
+        return search(QueryBuilders.queryString(query), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
