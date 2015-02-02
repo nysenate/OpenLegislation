@@ -51,11 +51,21 @@
           </md-radio-button>
         </md-radio-group>
       </md-toolbar>
-      <md-tabs md-selected="selectedView" class="md-hue-2">
+      <md-tabs md-selected="curr.selectedView" class="md-hue-2">
         <md-tab md-on-select="backToSearch()">
-          <md-tab-label><span><i class="icon-search prefix-icon2"></i>Back to Search</span></md-tab-label>
+          <md-tab-label>
+            <span><i class="icon-search prefix-icon2"></i>Back to Search</span>
+          </md-tab-label>
         </md-tab>
         <md-tab label="Details">
+          <%-- Substituted By --%>
+          <md-card class="white-bg padding-10" ng-if="bill.substitutedBy">
+            <md-button style="text-align: left;text-transform: none;" class="margin-left-10 md-warn"
+                       ng-href="${ctxPath}/bills/{{bill.substitutedBy.session}}/{{bill.substitutedBy.basePrintNo}}">
+              <i class="icon-switch prefix-icon2"></i>
+              This bill has been substituted by {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}.
+            </md-button>
+          </md-card>
           <%-- Enacting Clause --%>
           <md-card class="content-card" ng-if="!bill.billType.resolution">
             <md-subheader>Enacting Clause</md-subheader>
@@ -122,28 +132,6 @@
                 </md-list>
               </md-content>
             </section>
-          </md-card>
-          <%-- Agenda/Cal Refs --%>
-          <md-card class="content-card" ng-if="bill.calendars.size > 0 || bill.committeeAgendas.size > 0">
-            <md-subheader>Agenda/Calendar References</md-subheader>
-            <md-content style="margin-left:16px;">
-              <md-list>
-                <md-item>
-                  <md-item-content ng-repeat="agenda in bill.committeeAgendas.items">
-                    <md-button ng-if="bill.committeeAgendas.size > 0" class="text-medium md-primary margin-right-20"
-                               ng-href="${ctxPath}/agendas/{{agenda.agendaId.year}}/{{agenda.agendaId.number}}/{{agenda.committeeId.name}}">
-                      Committee Agenda #{{agenda.agendaId.number}} ({{agenda.agendaId.year}}) - {{agenda.committeeId.name}}
-                    </md-button>
-                  </md-item-content>
-                  <md-item-content ng-repeat="calendar in bill.calendars.items">
-                    <md-button class="text-medium md-primary"
-                               ng-href="${ctxPath}/calendars/{{lastCalendar.year}}/{{lastCalendar.calendarNumber}}">
-                      Senate Floor Calendar {{calendar.calendarNumber}} ({{calendar.year}})
-                    </md-button>
-                  </md-item-content>
-                </md-item>
-              </md-list>
-            </md-content>
           </md-card>
           <%-- Identical Legislation --%>
           <md-card class="content-card" ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0 ||
@@ -212,6 +200,28 @@
               </span>
               <md-divider></md-divider>
               <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
+            </md-content>
+          </md-card>
+          <%-- Agenda/Cal Refs --%>
+          <md-card class="content-card" ng-if="bill.calendars.size > 0 || bill.committeeAgendas.size > 0">
+            <md-subheader>Agenda/Calendar References</md-subheader>
+            <md-content style="margin-left:16px;">
+              <md-list>
+                <md-item>
+                  <md-item-content ng-repeat="agenda in bill.committeeAgendas.items">
+                    <md-button ng-if="bill.committeeAgendas.size > 0" class="text-medium md-primary margin-right-20"
+                               ng-href="${ctxPath}/agendas/{{agenda.agendaId.year}}/{{agenda.agendaId.number}}/{{agenda.committeeId.name}}">
+                      Committee Agenda #{{agenda.agendaId.number}} ({{agenda.agendaId.year}}) - {{agenda.committeeId.name}}
+                    </md-button>
+                  </md-item-content>
+                  <md-item-content ng-repeat="calendar in bill.calendars.items">
+                    <md-button class="text-medium md-primary"
+                               ng-href="${ctxPath}/calendars/{{lastCalendar.year}}/{{lastCalendar.calendarNumber}}">
+                      Senate Floor Calendar {{calendar.calendarNumber}} ({{calendar.year}})
+                    </md-button>
+                  </md-item-content>
+                </md-item>
+              </md-list>
             </md-content>
           </md-card>
         </md-tab>
@@ -290,8 +300,21 @@
           </md-content>
         </md-tab>
         <%-- Updates --%>
-        <md-tab label="Update History">
-          <md-button>What</md-button>
+        <md-tab label="Update History" md-on-select="getUpdates()">
+          <md-card ng-repeat="update in updateHistory.items">
+            <md-content class="content-card">
+              <md-list>
+                <md-item>
+                  <md-item-content>
+                    <div class="text-medium md-tile-left">
+                      <p>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY'}}</p>
+                      <p>Processed Date- {{update.processedDateTime | moment:'MMM DD, YYYY hh:mm:ss'}}</p>
+                    </div>
+                  </md-item-content>
+                </md-item>
+              </md-list>
+            </md-content>
+          </md-card>
         </md-tab>
     </section>
     <section ng-if="response.success === false">

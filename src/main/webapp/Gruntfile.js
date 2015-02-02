@@ -29,9 +29,7 @@ module.exports = function(grunt) {
             css: {
                 files: {
                     '<%= cssDest %>/main.css':
-                        ['<%= cssSource %>/*.css',
-                         '<%= bowerRoot %>/pace/themes/blue/pace-theme-minimal.css',
-                         '<%= bowerRoot %>/ng-table/ng-table.min.css']
+                        ['<%= cssSource %>/*.css']
                 }
             }
         },
@@ -64,13 +62,13 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/angular-resource/angular-resource.min.js',
                         '<%= bowerRoot %>/angular-animate/angular-animate.min.js',
                         '<%= bowerRoot %>/angular-aria/angular-aria.min.js',
-                        '<%= bowerRoot %>/hammerjs/hammer.min.js',
+                        //'<%= bowerRoot %>/hammerjs/hammer.min.js',
                         '<%= bowerRoot %>/angular-material/angular-material.min.js',
                         '<%= bowerRoot %>/angular-smart-table/dist/smart-table.min.js',
                         '<%= bowerRoot %>/moment/min/moment.min.js',
-                        '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js'
-                        //'<%= bowerRoot %>/amcharts/dist/amcharts/amcharts.js',
-                        //'<%= bowerRoot %>/amcharts/dist/amcharts/serial.js'
+                        '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
+                        '<%= bowerRoot %>/amcharts/dist/amcharts/amcharts.js',
+                        '<%= bowerRoot %>/amcharts/dist/amcharts/serial.js'
                     ]//'<%= jsDest %>/main.min.js': ['<%= jsSource %>/**/*.js']
                 }
             }

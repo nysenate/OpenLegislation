@@ -1,5 +1,17 @@
 var billModule = angular.module('open.bill', ['open.core']);
 
+billModule.filter('resolutionOrBill', function() {
+    return function(input) {
+        return (input) ? "Resolution" : "Bill";
+    }
+});
+
+billModule.filter('prettyAmendVersion', function() {
+    return function(input) {
+        return (input) ? input : "Original";
+    }
+});
+
 billModule.factory('BillListingApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/:sessionYear', {
         sessionYear: '@sessionYear'
@@ -22,12 +34,29 @@ billModule.factory('BillGetApi', ['$resource', function($resource) {
     });
 }]);
 
+billModule.factory('BillUpdatesApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/bills/:session/:printNo/updates?order=:order&limit=:limit&offset=:offset', {
+        session: '@session',
+        printNo: '@printNo',
+        order: '@order',
+        limit: '@limit',
+        offset: '@offset'
+    });
+}]);
+
+billModule.factory('BillDiffApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/bills/:session/:printNo/diff/:version1/:version2/', {
+        session: '@session',
+        printNo: '@printNo',
+        version1: '@version1',
+        version2: '@version2'
+    });
+}]);
+
 /** --- Parent Bill Controller --- */
 
 billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route',
                        function($scope, $rootScope, $location, $route) {
-
-    $scope.selectedView = parseInt($route.current.params.view, 10) || 0;
 
     /**
      * Returns a formatted, all lower case string representing the latest milestone status.
@@ -56,9 +85,9 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
         if (status) {
             switch (status.statusType) {
                 case "IN_SENATE_COMM":
-                    desc = "In Senate " + status.committeeName.toLowerCase() + " Committee"; break;
+                    desc = "In Senate " + status.committeeName + " Committee"; break;
                 case "IN_ASSEMBLY_COMM":
-                    desc = "In Assembly " + status.committeeName.toLowerCase() + " Committee"; break;
+                    desc = "In Assembly " + status.committeeName + " Committee"; break;
                 case "SENATE_FLOOR":
                     desc = "On Senate Floor as Calendar No: " + status.billCalNo; break;
                 case "ASSEMBLY_FLOOR":
@@ -76,7 +105,7 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
 billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location','BillListingApi', 'BillSearchApi',
                       function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
     $scope.setHeaderText('NYS Bills and Resolutions');
-    $scope.selectedView = 0;
+    $scope.selectedView = parseInt($routeParams.view, 10) || 0;
 
     $scope.billSearch = {
         searched: false,
@@ -147,18 +176,6 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
 /** --- Bill View Controller --- */
 
-billModule.filter('resolutionOrBill', function() {
-    return function(input) {
-        return (input) ? "Resolution" : "Bill";
-    }
-});
-
-billModule.filter('prettyAmendVersion', function() {
-    return function(input) {
-        return (input) ? input : "Original";
-    }
-});
-
 billModule.filter('prettySponsorMemo', function($sce){
     var headingPattern = /(([A-Z][A-Za-z ]+)+:)/g;
     return function(memo) {
@@ -200,17 +217,21 @@ billModule.filter('voteTypeFilter', function() {
     }
 });
 
-billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$routeParams', 'BillGetApi',
-    function($scope, $filter, $location, $routeParams, BillGetApi) {
+billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$routeParams', '$sce',
+                                       'BillGetApi', 'BillDiffApi', 'BillUpdatesApi',
+    function($scope, $filter, $location, $routeParams, $sce, BillGetApi, BillDiffApi, BillUpdatesApi) {
 
     $scope.response = null;
     $scope.bill = null;
-    $scope.milestonePercentage = 0;
-    $scope.curr = { amdVersion: ''};
-    $scope.selectedView = 1;
+    $scope.curr = {
+        amdVersion: '',
+        compareVersion: 'None',
+        selectedView: (parseInt($routeParams.view, 10) || 1)};
+    $scope.diffHtml = null;
+    $scope.updateHistory = null;
 
-    $scope.$watch('selectedView', function() {
-        $location.search('view', $scope.selectedView);
+    $scope.$watch('curr.selectedView', function() {
+        $location.search('view', $scope.curr.selectedView);
     });
 
     $scope.init = function() {
@@ -223,14 +244,37 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
                     $filter('resolutionOrBill')($scope.bill.billType.resolution) + ' ' +
                     $scope.bill.basePrintNo + '-' + $scope.bill.session);
                 $scope.curr.amdVersion = $scope.bill.activeVersion;
-                $scope.milestonePercentage = Math.ceil($scope.bill.milestones.size * 12.5);
-                if ($scope.milestonePercentage > 100) $scope.milestonePercentage = 100;
             }
         }, function(response) {
             $scope.setHeaderText(response.data.message);
             $scope.response = response.data;
         });
     }();
+
+    $scope.diffBills = function() {
+        if ($scope.curr.compareVersion !== 'None') {
+            $scope.diffResponse = BillDiffApi.get({
+                printNo: $scope.bill.printNo, session: $scope.bill.session,
+                version1: $scope.curr.compareVersion.trim(), version2: $scope.curr.amdVersion},
+            function() {
+                $scope.diffHtml = $sce.trustAsHtml($scope.diffResponse.result.diffHtml);
+            });
+        }
+        else {
+            $scope.diffHtml = null;
+        }
+    };
+
+    $scope.getUpdates = function() {
+        if ($scope.updateHistory === null) {
+            $scope.updateHistoryResponse = BillUpdatesApi.get(
+                {printNo: $scope.printNo, session: $scope.session, order: 'DESC', offset: 1, limit: 200}, function() {
+                if ($scope.updateHistoryResponse.success === true) {
+                    $scope.updateHistory = $scope.updateHistoryResponse.result;
+                }
+            });
+        }
+    };
 
     $scope.backToSearch = function() {
         $location.search('view', 0);
