@@ -6,6 +6,7 @@
 
 <open-layout:head title="Open 2.0">
   <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
+  <script src="${ctxPath}/static/js/src/component/report/daybreak.js"></script>
 </open-layout:head>
 
 <body ng-app="open">
@@ -47,8 +48,8 @@
                 <menu-item url="${ctxPath}/manage/tools">ElasticSearch/Cache Tools</menu-item>
                 <menu-item url="${ctxPath}/manage/notifications">Notification Settings</menu-item>
               </menu-section>
-              <menu-section title="Reports" url="${ctxPath}/admin/reports">
-                <menu-item url="${ctxPath}/admin/reports/daybreak">Daybreak Report</menu-item>
+              <menu-section title="Reports" url="${ctxPath}/admin/report">
+                <menu-item url="${ctxPath}/admin/report/daybreak">Daybreak Report</menu-item>
                 <%-- --%>
               </menu-section>
               <menu-section title="API Documentation" url="${ctxPath}/docs">
@@ -57,7 +58,7 @@
           </div>
         </md-sidenav>
       </section>
-
+        
       <%-- Main Content Area --%>
       <section id="content-wrapper" flex="1">
 

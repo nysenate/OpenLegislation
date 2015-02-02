@@ -118,7 +118,7 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService {
                 .append(daybreakReport.getReportDateTime())
                 .append("\n\n");
 
-        messageBuilder.append("Total Errors: ").append(daybreakReport.getTotalMismatchCount()).append("\n");
+        messageBuilder.append("Total open errors: ").append(daybreakReport.getOpenMismatchCount()).append("\n");
 
         daybreakReport.getMismatchStatusTypeCounts().forEach((status, typeCounts) -> {
             long totalTypeCounts = typeCounts.values().stream().reduce(0L, (a, b) -> a + b);

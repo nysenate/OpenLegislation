@@ -5,14 +5,15 @@ import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ReportSummaryResponse<ContentKey> extends BaseResponse
 {
     protected ListView<ReportInfoView<ContentKey>> reports;
-    protected LocalDate fromDate;
-    protected LocalDate toDate;
+    protected LocalDateTime fromDate;
+    protected LocalDateTime toDate;
 
-    public ReportSummaryResponse(ListView<ReportInfoView<ContentKey>> reports, LocalDate fromDate, LocalDate toDate) {
+    public ReportSummaryResponse(ListView<ReportInfoView<ContentKey>> reports, LocalDateTime fromDate, LocalDateTime toDate) {
         this.reports = reports;
         this.fromDate = fromDate;
         this.toDate = toDate;
@@ -24,11 +25,11 @@ public class ReportSummaryResponse<ContentKey> extends BaseResponse
         return reports;
     }
 
-    public LocalDate getFromDate() {
+    public LocalDateTime getFromDate() {
         return fromDate;
     }
 
-    public LocalDate getToDate() {
+    public LocalDateTime getToDate() {
         return toDate;
     }
 }

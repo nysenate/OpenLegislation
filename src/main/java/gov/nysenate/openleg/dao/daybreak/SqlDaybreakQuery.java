@@ -57,7 +57,7 @@ public enum SqlDaybreakQuery implements BasicSqlQuery
     UPDATE_DAYBREAK_FRAGMENT(
         "UPDATE ${schema}." + SqlTable.DAYBREAK_FRAGMENT + "\n" +
         "SET bill_active_version = :billActiveVersion, filename = :fileName, fragment_text = :fragmentText, " +
-                "modified_date_time = now()" + "\n" +
+        "   pending_processing = true, modified_date_time = now()" + "\n" +
         "WHERE bill_print_no = :billPrintNo AND bill_session_year = :billSessionYear " +
         "   AND report_date = :reportDate"
     ),

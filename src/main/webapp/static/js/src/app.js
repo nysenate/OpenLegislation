@@ -4,7 +4,7 @@ var openApp = angular.module('open',
     // External modules
     ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table',
     // Internal modules
-     'open.bill']);
+     'open.bill', 'open.daybreak']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {

@@ -1,4 +1,4 @@
-var commonModule = angular.module('common', ['ngTable', 'mm.foundation']);
+var commonModule = angular.module('open.common', ['ngTable']);
 
 commonModule.filter('default', ['$filter', function($filter) {
     return function(input, defaultVal) {
