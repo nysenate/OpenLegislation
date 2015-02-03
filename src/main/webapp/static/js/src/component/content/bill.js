@@ -59,7 +59,7 @@ billModule.factory('BillDiffApi', ['$resource', function($resource) {
 billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route',
                        function($scope, $rootScope, $location, $route) {
 
-    /**
+   /**
      * Returns a formatted, all lower case string representing the latest milestone status.
      *
      * @param milestones
@@ -106,41 +106,106 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
 billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location','BillListingApi', 'BillSearchApi',
                       function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
     $scope.setHeaderText('NYS Bills and Resolutions');
-    $scope.selectedView = parseInt($routeParams.view, 10) || 0;
+
+    var paginationModel = {
+        firstPage: 1,
+        currPage: 1,
+        lastPage: 1,
+        itemsPerPage: 6,
+        totalItems: 0,
+
+        setTotalItems: function(totalResults) {
+            this.totalItems = totalResults;
+            this.lastPage = Math.ceil(this.totalItems / this.itemsPerPage);
+            if (this.currPage > this.lastPage) {
+                this.currPage = this.lastPage;
+            }
+        },
+
+        needsPagination: function() {
+            return this.totalItems > this.itemsPerPage;
+        },
+
+        getOffset: function() {
+            return this.itemsPerPage * (this.currPage - 1);
+        },
+
+        getLimit: function() {
+            return this.itemsPerPage;
+        },
+
+        nextPage: function() {
+            this.currPage += 1;
+        },
+
+        hasNextPage: function() {
+            return this.currPage < this.lastPage;
+        },
+
+        prevPage: function() {
+            this.currPage = Math.max(this.currPage - 1, 0);
+        },
+
+        hasPrevPage: function() {
+            return this.currPage > this.firstPage;
+        },
+
+        toLastPage: function() {
+            this.currPage = this.lastPage;
+        },
+
+        toFirstPage: function() {
+            this.currPage = this.firstPage;
+        }
+    };
+
+    $scope.curr = {
+        selectedView: (parseInt($routeParams.view, 10) || 0),
+        pagination: angular.extend({}, paginationModel)
+    };
+
+    /**
+     * Watch for changes to the current view.
+     */
+    $scope.$watch('curr.selectedView', function() {
+        $location.search('view', $scope.curr.selectedView);
+    });
 
     $scope.billSearch = {
         searched: false,
         term: $routeParams.search || '',
         response: {},
-        results: [],
-        totalResultCount: 0,
-        limit: 6,
-        offset: 1,
-        page: 1
+        results: []
     };
 
+    /**
+    * Initialize the bill search page.
+    */
     $scope.init = function() {
-        if ($scope.billSearch.term != '') {
-            $scope.simpleSearch();
-        }
+        $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
+        $scope.simpleSearch(false);
     };
 
-    $scope.simpleSearch = function() {
+    $scope.simpleSearch = function(resetPagination) {
         var term = $scope.billSearch.term;
         if (term) {
             $location.search("search", $scope.billSearch.term);
             $scope.billSearch.searched = false;
             $scope.billSearch.response = BillSearch.get({
-                term: term, sort: $scope.billSearch.sort, limit: $scope.billSearch.limit, offset: $scope.billSearch.offset},
+                term: term, sort: $scope.billSearch.sort, limit: $scope.curr.pagination.getLimit(),
+                offset: $scope.curr.pagination.getOffset()},
                 function() {
                     $scope.billSearch.results = $scope.billSearch.response.result.items || [];
-                    $scope.billSearch.totalResultCount = $scope.billSearch.response.total;
                     $scope.billSearch.searched = true;
+                    if (resetPagination) {
+                        $scope.curr.pagination.currPage = 1;
+                    }
+                    $scope.curr.pagination.setTotalItems($scope.billSearch.response.total);
                 });
         }
         else {
             $scope.billSearch.results = [];
-            $scope.billSearch.totalResultCount = 0;
+            $scope.curr.pagination.setTotalItems(0);
         }
     };
 
@@ -159,19 +224,21 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         }
     };
 
-    $scope.nextPage = function() {
-        if ($scope.billSearch.totalResultCount > ($scope.billSearch.offset + $scope.billSearch.limit - 1)) {
-            $scope.billSearch.page += 1;
-            $scope.billSearch.offset += $scope.billSearch.limit;
-            $location.search('page', $scope.billSearch.page);
+    $scope.paginate = function(action) {
+        var oldPage = $scope.curr.pagination.currPage;
+        switch (action) {
+            case 'first': $scope.curr.pagination.toFirstPage(); break;
+            case 'prev': $scope.curr.pagination.prevPage(); break;
+            case 'next': $scope.curr.pagination.nextPage(); break;
+            case 'last': $scope.curr.pagination.toLastPage(); break;
+        }
+        if (oldPage !== $scope.curr.pagination.currPage) {
+            $location.search('searchPage', $scope.curr.pagination.currPage);
             $scope.simpleSearch();
         }
     };
 
-    $scope.computeOffset = function(page) {
-        return ((page - 1) * $scope.limit) + 1;
-    };
-
+    /** Initialize */
     $scope.init();
 }]);
 
