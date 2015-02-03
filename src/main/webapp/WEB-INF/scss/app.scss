@@ -4,7 +4,6 @@
 @import url(http://fonts.googleapis.com/css?family=Inconsolata);
 
 @import "colors";
-@import "bill";
 
 /** --- Reset --- */
 
@@ -27,6 +26,12 @@ table {
 
 pre {
   font-family: 'Inconsolata', monospace;
+}
+
+select {
+  background: white;
+  border-color: #ddd;
+  padding: 2px;
 }
 
 /** --- Angular Material --- */

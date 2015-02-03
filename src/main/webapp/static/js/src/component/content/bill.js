@@ -1,17 +1,5 @@
 var billModule = angular.module('open.bill', ['open.core']);
 
-billModule.filter('resolutionOrBill', function() {
-    return function(input) {
-        return (input) ? "Resolution" : "Bill";
-    }
-});
-
-billModule.filter('prettyAmendVersion', function() {
-    return function(input) {
-        return (input) ? input : "Original";
-    }
-});
-
 billModule.factory('BillListingApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/:sessionYear', {
         sessionYear: '@sessionYear'
@@ -365,6 +353,18 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
 }]);
 
 /** --- Filters --- */
+
+billModule.filter('resolutionOrBill', function() {
+    return function(input) {
+        return (input) ? "Resolution" : "Bill";
+    }
+});
+
+billModule.filter('prettyAmendVersion', function() {
+    return function(input) {
+        return (input) ? input : "Original";
+    }
+});
 
 billModule.filter('prettySponsorMemo', function($sce){
     var headingPattern = /(([A-Z][A-Za-z ]+)+:)/g;
