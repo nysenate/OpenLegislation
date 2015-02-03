@@ -29,7 +29,8 @@ module.exports = function(grunt) {
             css: {
                 files: {
                     '<%= cssDest %>/main.css':
-                        ['<%= cssSource %>/*.css']
+                        ['<%= cssSource %>/*.css',
+                         '<%= bowerRoot %>/angular-material/angular-material.min.css']
                 }
             }
         },

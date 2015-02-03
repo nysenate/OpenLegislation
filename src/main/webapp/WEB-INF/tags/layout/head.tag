@@ -14,7 +14,6 @@
     <base href="<%= (request.getContextPath().isEmpty()) ? "/" : request.getContextPath() %>">
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/static/bower_components/angular-material/angular-material.min.css"/>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/dest/main.min.css"/>
 
     <!-- Third Party JS -->
