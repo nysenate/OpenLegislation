@@ -214,7 +214,7 @@
                   </h4>
                   <p class="no-top-margin text-medium">Voted on Amendment Revision: {{veto.version | prettyAmendVersion}}</p>
                   <md-divider></md-divider>
-                  <div layout="row" layout-align="center center">
+                  <div layout="row" layout-align="center center" layout-sm="column" layout-align-sm="start start">
                     <div flex>
                       <table class="bill-votes-table">
                         <thead>
@@ -238,14 +238,14 @@
                         <md-list>
                           <md-item ng-repeat="(voteType, votes) in vote.memberVotes.items">
                             <md-item-content ng-repeat="voteItem in votes.items">
-                              <div class="md-tile-left margin-right-10">
-                                <h5>{{voteType}}</h5>
+                              <div style="width:80px;" class="md-tile-left margin-right-10">
+                                <h5 style="margin:10px;">{{voteType}}</h5>
                               </div>
                               <div class="md-tile-left">
                                 <img class="margin-right-10" ng-src="http://lorempixel.com/50/50/food/{{$index}}"
-                                     style="height: 50px;width:50px;"/>
+                                     style="height: 25px;width:25px;"/>
                               </div>
-                              <div class="md-tile-content">
+                              <div style="padding:0" class="md-tile-content">
                                 <span class="text-medium">{{voteItem.shortName}}</span>
                               </div>
                             </md-item-content>
