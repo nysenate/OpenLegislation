@@ -30,12 +30,12 @@
           <%-- Left Nav Menu Items --%>
           <div class="left-nav-menu">
             <material-menu>
-              <menu-section title="Welcome" url="${ctxPath}">
+              <menu-section title="Welcome">
                 <menu-item url="${ctxPath}/#about">About</menu-item>
                 <menu-item url="${ctxPath}/#api-keys">Obtain API Key</menu-item>
                 <menu-item url="${ctxPath}/#contact">Questions/Feedback</menu-item>
               </menu-section>
-              <menu-section title="NYS Legislative Data" url="${ctxPath}/data">
+              <menu-section title="NYS Legislative Data">
                 <menu-item url="${ctxPath}/calendars">Senate Calendar</menu-item>
                 <menu-item url="${ctxPath}/agendas">Senate Agenda</menu-item>
                 <menu-item url="${ctxPath}/bills">Bills and Resolutions</menu-item>
@@ -43,16 +43,16 @@
                 <menu-item url="${ctxPath}/members">Senate Membership</menu-item>
                 <menu-item url="${ctxPath}/transcripts">Floor/Hearing Transcripts</menu-item>
               </menu-section>
-              <menu-section title="Manage" url="${ctxPath}/admin/manage">
+              <menu-section title="Manage">
                 <menu-item url="${ctxPath}/manage/processes">Data Processes</menu-item>
                 <menu-item url="${ctxPath}/manage/tools">ElasticSearch/Cache Tools</menu-item>
                 <menu-item url="${ctxPath}/manage/notifications">Notification Settings</menu-item>
               </menu-section>
-              <menu-section title="Reports" url="${ctxPath}/admin/report">
+              <menu-section title="Reports">
                 <menu-item url="${ctxPath}/admin/report/daybreak">Daybreak Report</menu-item>
                 <%-- --%>
               </menu-section>
-              <menu-section title="API Documentation" url="${ctxPath}/docs">
+              <menu-section title="API Documentation">
               </menu-section>
             </material-menu>
           </div>
