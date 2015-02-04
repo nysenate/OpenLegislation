@@ -32,7 +32,7 @@
           <div class="left-nav-menu">
             <material-menu>
               <menu-section title="Welcome">
-                <menu-item url="${ctxPath}">About</menu-item>
+                <menu-item url="${ctxPath}/">About</menu-item>
               </menu-section>
               <menu-section title="NYS Legislative Data">
                 <menu-item url="${ctxPath}/calendars">Senate Calendar</menu-item>

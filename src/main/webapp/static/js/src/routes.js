@@ -2,14 +2,6 @@
 
 angular.module('open').config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
-        /** --- Home --- */
-
-        .when(ctxPath, {
-            templateUrl: ctxPath + '/partial/home/landing'
-        })
-        .when(ctxPath + '/data', {
-            template: 'Data Home Page'
-        })
 
         /** --- Bills --- */
 
@@ -33,6 +25,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         })
 
         /** --- Laws --- */
+
         .when(ctxPath + '/laws', {
             templateUrl: ctxPath + '/partial/content/law-search'
         })
@@ -40,7 +33,9 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         .when(ctxPath + '/laws/:lawId', {
             templateUrl: ctxPath + '/partial/content/law-view'
         })
+
         /** --- Transcripts --- */
+
         .when(ctxPath + '/transcripts', {
             templateUrl: ctxPath + '/partial/content/..'
         })
@@ -53,8 +48,15 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         })
 
         /** --- Manage --- */
+
         .when(ctxPath + '/manage', {
             template: 'Manage Page'
+        })
+
+        /** --- Home Page --- */
+
+        .otherwise({
+            templateUrl: ctxPath + '/partial/home/landing'
         });
 
     $locationProvider.html5Mode(true);
