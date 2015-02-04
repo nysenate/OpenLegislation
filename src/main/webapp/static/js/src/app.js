@@ -25,7 +25,7 @@ openApp.config(function($mdThemingProvider) {
 /**
  * App Controller
  */
-openApp.controller('AppCtrl', ['$scope', '$mdSidenav', function($scope, $mdSidenav) {
+openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($scope, $location, $mdSidenav) {
     $scope.header = {text: '', visible: true};
 
     $scope.toggleLeftNav = function() {
@@ -35,18 +35,33 @@ openApp.controller('AppCtrl', ['$scope', '$mdSidenav', function($scope, $mdSiden
     $scope.setHeaderText = function(text) {
         $scope.header.text = text;
     };
+
+    $scope.go = function(url) {
+        $location.url(url);
+    }
 }]);
 
 openApp.controller('LandingCtrl', ['$scope', function($scope) {
     $scope.setHeaderText('About');
     $scope.gal = 'sdf';
     $scope.dataWeProvide = [
-        {type: 'New York State Bills and Resolutions', blurb: 'From 2009 To Present. Updated in real-time.', icon: 'icon-newspaper'},
-        {type: 'New York State Laws', blurb: 'From 2014. Updated weekly.', icon: 'icon-text'},
-        {type: 'Senate Session/Hearing Transcripts', blurb: 'From 1993 to Present.', icon: 'icon-text'},
-        {type: 'Senate Committee Agendas', blurb: 'From 2009 To Present. Updated in real-time.', icon: 'icon-clipboard'},
-        {type: 'Senate Floor Calendars', blurb: 'From 2009 To Present. Updated in real-time.', icon: 'icon-calendar'},
-        {type: 'Senate/Assembly Membership', blurb: 'Member data', icon: 'icon-users'}
+        { type: 'New York State Bills and Resolutions', blurb: 'From 2009 To Present. Updated in real-time.',
+          icon: 'icon-newspaper', url: ctxPath + '/bills'},
+
+        { type: 'New York State Laws', blurb: 'From 2014. Updated weekly.',
+          icon: 'icon-bookmarks', url: ctxPath + '/laws'},
+
+        { type: 'Senate Session/Hearing Transcripts', blurb: 'From 1993 to Present.',
+          icon: 'icon-text', url: ctxPath + '/transcripts'},
+
+        { type: 'Senate Committee Agendas', blurb: 'From 2009 To Present. Updated in real-time.',
+          icon: 'icon-clipboard', url: ctxPath + '/agendas'},
+
+        { type: 'Senate Floor Calendars', blurb: 'From 2009 To Present. Updated in real-time.',
+          icon: 'icon-calendar', url: ctxPath + '/calendars'},
+
+        { type: 'Senate/Assembly Membership', blurb: 'Member data',
+          icon: 'icon-users', url: ctxPath + '/members'}
     ];
 }]);
 

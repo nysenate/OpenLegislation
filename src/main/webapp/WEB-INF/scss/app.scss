@@ -363,6 +363,14 @@ a.slogan-link {
   border-bottom:2px solid white;
 }
 
+.provide-data-container {
+  padding: 5px;
+  cursor: pointer;
+  &:hover {
+    background: lighten(rgb(62, 105, 126), 10);
+  }
+}
+
 .provide-data-icon {
   text-align:center;
   height:60px;

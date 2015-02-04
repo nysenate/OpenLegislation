@@ -7,15 +7,15 @@
         <img src="${ctxPath}/static/img/capitol_square.jpg" style="width:100%"/>
       </div>
     <h1 flex class="slogan no-margin">Search, explore, and
-        <a href="${ctxPath}#api" class="slogan-link">integrate</a> legislative information from the
+        <a target="_blank" href="${ctxPath}/docs" class="slogan-link">integrate</a> legislative information from the
         <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York&nbsp;State Senate</a>.
     </h1>
   </section>
   <section class="padding-20 white" style="background:rgb(62, 105, 126);">
     <h2>Data we currently provide</h2>
     <md-list layout-gt-sm="row" layout-wrap>
-      <md-item flex="50" ng-repeat="provideData in dataWeProvide">
-        <md-item-content >
+      <md-item flex="50" class="provide-data-container" ng-repeat="provideData in dataWeProvide">
+        <md-item-content ng-click="go(provideData.url)">
           <div class="md-tile-left">
             <div class="provide-data-icon">
               <i ng-class="provideData.icon"></i>
