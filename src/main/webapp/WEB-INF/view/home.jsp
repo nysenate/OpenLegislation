@@ -6,6 +6,7 @@
 
 <open-layout:head title="Open 2.0">
   <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
+  <script src="${ctxPath}/static/js/src/component/content/law.js"></script>
   <script src="${ctxPath}/static/js/src/component/report/daybreak.js"></script>
 </open-layout:head>
 
@@ -31,9 +32,7 @@
           <div class="left-nav-menu">
             <material-menu>
               <menu-section title="Welcome">
-                <menu-item url="${ctxPath}/#about">About</menu-item>
-                <menu-item url="${ctxPath}/#api-keys">Obtain API Key</menu-item>
-                <menu-item url="${ctxPath}/#contact">Questions/Feedback</menu-item>
+                <menu-item url="${ctxPath}">About</menu-item>
               </menu-section>
               <menu-section title="NYS Legislative Data">
                 <menu-item url="${ctxPath}/calendars">Senate Calendar</menu-item>
@@ -62,13 +61,12 @@
       <%-- Main Content Area --%>
       <section id="content-wrapper" flex="1">
 
-        <%-- Content Title --%>
+        <%-- Content Header --%>
         <md-toolbar id="content-header">
           <h1 class="top-bar-heading md-toolbar-tools">
             <i hide-gt-md ng-click="toggleLeftNav()" class="menu-icon icon-list2"></i>
             {{header.text}}
           </h1>
-
         </md-toolbar>
         <section id="content" ng-view>
         </section>

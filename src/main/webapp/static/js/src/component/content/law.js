@@ -1,4 +1,4 @@
-var contentModule = angular.module('open.law', ['open.core']);
+var lawModule = angular.module('open.law', ['open.core']);
 
 lawModule.factory('LawListingApi', ['$resource', function($resource) {
     return $resource(apiPath + '/laws');
@@ -23,6 +23,14 @@ lawModule.controller('LawCtrl', ['$scope', '$location', '$route', function($scop
 
 lawModule.controller('LawListingCtrl', ['$scope', '$location', '$route', 'LawListingApi',
                         function($scope, $location, $route, LawListingApi) {
+    $scope.setHeaderText('NYS Laws');
+    $scope.curr = {
+        selectedView: 0
+    };
+    $scope.lawListingResponse = LawListingApi.get({}, function(){
+        console.log($scope.lawListingResponse);
+      $scope.lawListing = $scope.lawListingResponse.result.items;
+    });
 
 }]);
 

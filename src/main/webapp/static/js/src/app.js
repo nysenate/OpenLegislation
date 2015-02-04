@@ -4,7 +4,7 @@ var openApp = angular.module('open',
     // External modules
     ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table',
     // Internal modules
-     'open.bill', 'open.daybreak']);
+     'open.bill', 'open.law', 'open.daybreak']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
@@ -26,7 +26,7 @@ openApp.config(function($mdThemingProvider) {
  * App Controller
  */
 openApp.controller('AppCtrl', ['$scope', '$mdSidenav', function($scope, $mdSidenav) {
-    $scope.header = {text: ''};
+    $scope.header = {text: '', visible: true};
 
     $scope.toggleLeftNav = function() {
         $mdSidenav('left').toggle();
@@ -38,7 +38,16 @@ openApp.controller('AppCtrl', ['$scope', '$mdSidenav', function($scope, $mdSiden
 }]);
 
 openApp.controller('LandingCtrl', ['$scope', function($scope) {
-    $scope.setHeaderText('Explore legislative information from the NYS Senate');
+    $scope.setHeaderText('About');
+    $scope.gal = 'sdf';
+    $scope.dataWeProvide = [
+        {type: 'New York State Bills and Resolutions', blurb: 'From 2009 To Present. Updated in real-time.', icon: 'icon-newspaper'},
+        {type: 'New York State Laws', blurb: 'From 2014. Updated weekly.', icon: 'icon-text'},
+        {type: 'Senate Session/Hearing Transcripts', blurb: 'From 1993 to Present.', icon: 'icon-text'},
+        {type: 'Senate Committee Agendas', blurb: 'From 2009 To Present. Updated in real-time.', icon: 'icon-clipboard'},
+        {type: 'Senate Floor Calendars', blurb: 'From 2009 To Present. Updated in real-time.', icon: 'icon-calendar'},
+        {type: 'Senate/Assembly Membership', blurb: 'Member data', icon: 'icon-users'}
+    ];
 }]);
 
 /**
@@ -104,8 +113,9 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
             }
 
             $rootScope.$on('$routeChangeSuccess', function() {
+                console.log($location.url());
                 $scope.urlMap.some(function(secItem) {
-                    if (secItem.re.test($location.path())) {
+                    if (secItem.re.test($location.url())) {
                         $scope.selectSection(secItem.secRef);
                         $scope.selectItem(secItem.ref);
                         return true;

@@ -282,7 +282,8 @@
           </md-card>
         </md-tab>
         <%-- Sponsor Memo --%>
-        <md-tab label="Memo" ng-disabled="bill.billType.resolution">
+        <md-tab ng-if="!bill.billType.resolution && bill.billType.chamber === 'SENATE'"
+                label="Memo" ng-disabled="bill.billType.resolution">
           <md-card class="content-card">
             <md-content ng-if="bill.amendments.items[curr.amdVersion].memo">
             <pre class="bill-full-text margin-20" style=""
