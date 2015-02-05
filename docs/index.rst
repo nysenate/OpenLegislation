@@ -31,6 +31,7 @@ We currently offer the following types of data:
    - NYS Laws
    - Senate Floor and Public Hearing Transcripts
    - Committees
+   - Members
 
 Terminology
 -----------

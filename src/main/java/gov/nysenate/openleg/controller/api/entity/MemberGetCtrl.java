@@ -48,7 +48,7 @@ public class MemberGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{id:\\d*}")
     public BaseResponse getMembersByYear(@PathVariable int id,
                                          @PathVariable int sessionYear,
-                                         @RequestParam(defaultValue = "false") boolean full,
+                                         @RequestParam(defaultValue = "true") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         return new ViewObjectResponse<>(
                 (full) ? new MemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))

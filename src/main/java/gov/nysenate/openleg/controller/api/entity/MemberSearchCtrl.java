@@ -57,21 +57,21 @@ public class MemberSearchCtrl extends BaseCtrl
      * Member Search API
      * ---------------------
      *
-     * Search all members by year:  (GET) /api/3/members/{year}/search
+     * Search all members by year:  (GET) /api/3/members/{sessionYear}/search
      * Request Parameters:  term - The lucene query string.
      *                      sort - The lucene sort string (blank by default)
      *                      full - If true, returns the full member view
      *                      limit - Limit the number of results (default 50)
      *                      offset - Start results from offset
      */
-    @RequestMapping(value = "/{year}/search")
-    public BaseResponse globalSearch(@PathVariable int year,
+    @RequestMapping(value = "/{sessionYear}/search")
+    public BaseResponse globalSearch(@PathVariable int sessionYear,
                                      @RequestParam(required = true) String term,
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);
-        SearchResults<Member> results = memberSearch.searchMembers(term, SessionYear.of(year), sort, limOff);
+        SearchResults<Member> results = memberSearch.searchMembers(term, SessionYear.of(sessionYear), sort, limOff);
         return getSearchResponse(results, full, limOff);
     }
 

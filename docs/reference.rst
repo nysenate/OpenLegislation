@@ -10,3 +10,4 @@
     search_api
     transcripts_floor
     transcripts_ph
+    members
