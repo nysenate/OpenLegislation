@@ -458,9 +458,8 @@ a.slogan-link {
     text-align: center;
   }
   .th-section {
-    border-width: 1px;
-    border-color: #ccc;
-    border-style: none none none solid;
+    border: 1px none #ccc;
+    border-left-style: solid;
     text-align: center;
     background: #ededed;
   }
@@ -509,37 +508,11 @@ a.slogan-link {
 
 /** --- Styles for Report Error Page --- */
 
-button.check-button {
-  padding-top: 10px !important;
-  padding-right: 10px !important;
-  padding-bottom: 10px !important;
-  padding-left: 10px !important;
-  margin-bottom: 0;
-  font-weight: bold;
-
-  &.disabled {
-    border-bottom: 3px solid #ccc;
-    background-color: #fafafa;
-    color: #777;
-
-    &:hover, &:focus {
-      background-color: #fafafa;
-      color: #111;
-    }
-  }
-  outline: none;
-
-  &.success {
-    background-color: #fafafa;
-    color: #111;
-    border-bottom: 3px solid #008cba;
-
-    &:hover, &:focus {
-      background-color: #fafafa;
-      border-bottom: 3px solid #008cba;
-      color: #111;
-    }
-  }
+.st-sort-ascent:before {
+  content: '\25B2';
+}
+.st-sort-descent:before {
+  content: '\25BC';
 }
 
 .report-table-snippet {
@@ -555,6 +528,15 @@ table.report-detail-table tbody tr:nth-child(odd) {
   background-color: #ccc;
 }
 
+.report-detail-table .rpp-selector {
+  float: right;
+}
+
+#daybreak-page button.ng-scope,
+#daybreak-page .check-butt {
+  margin-right: 4px;
+}
+
 // -- Table Column headers --
 
 // Bill Id
@@ -564,27 +546,27 @@ table.report-detail-table thead tr th:first-child {
 
 // Mismatch Type
 table.report-detail-table thead tr th:nth-child(2) {
-  width: 10rem;
+  width: 10em;
 }
 
 // Status
 table.report-detail-table thead tr th:nth-child(3) {
-  width: 6rem;
+  width: 6em;
 }
 
 // Opened At
 table.report-detail-table thead tr th:nth-child(4) {
-  width: 12rem;
+  width: 14em;
 }
 
 // Snippet
 table.report-detail-table thead tr th:nth-child(5) {
-  width: 35rem;
+  width: 35em;
 }
 
 // Details
 table.report-detail-table thead tr th:nth-child(6) {
-  width: 5rem;
+  width: 5em;
 }
 
 table.report-detail-table tbody tr td {
@@ -609,6 +591,15 @@ table.report-detail-table tbody tr td {
 
 #pagination-button-group {
   float: right;
+}
+
+.mismatch-dialog {
+  width: 46em;
+  height: 25em;
+}
+
+.mismatch-dialog-tabs md-content {
+  max-height: 13em;
 }
 
 .margin-top-5 {

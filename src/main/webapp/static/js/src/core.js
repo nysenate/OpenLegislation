@@ -24,18 +24,36 @@ coreModule.filter('sessionYear', ['$filter', function ($filter) {
     };
 }]);
 
+/**
+ * Appends an appropriate ordinal suffix to the input number
+ */
+coreModule.filter('ordinalSuffix', ['$filter', function ($filter) {
+    var suffixes = ["th", "st", "nd", "rd"];
+    return function(input) {
+        if (typeof input==='number' && (input%1)===0) {
+            var relevantDigits = (input < 20) ? input % 20 : input % 10;
+            return input.toString().concat((relevantDigits <= 3) ? suffixes[relevantDigits] : suffixes[0]);
+        } else {
+            return "D:"
+        }
+    };
+}]);
+
 /** --- CheckButton --- */
 
 coreModule.directive('checkButton', function(){
     return {
         restrict: 'E',
         scope: {
-            btnClass: '@btnClass',
-            btnModel: '=ngModel'
+            btnClass: '@',
+            btnModel: '=ngModel',
+            ariaLabel: '@'
         },
         transclude: true,
         template:
-        "<md-button class='check-butt md-raised md-default-theme {{btnClass}}' ng-class='{\"md-primary\": btnModel, \"md-background\": !btnModel }' " +
+        "<md-button class='check-butt md-default-theme {{btnClass}}' aria-label='{{ariaLabel}}'" +
+        "   ng-mouseenter='hover = true' ng-mouseleave='hover = false'" +
+        "   ng-class='{\"md-primary\": btnModel, \"md-raised\": btnModel || hover, \"md-background\": !btnModel }' " +
         "   ng-click='toggle()'> <ng-transclude></ng-transclude>" +
         "</md-button>",
         controller: function($scope) {
