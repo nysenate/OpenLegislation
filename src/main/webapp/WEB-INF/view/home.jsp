@@ -42,6 +42,7 @@
                 <menu-item url="${ctxPath}/members">Senate Membership</menu-item>
                 <menu-item url="${ctxPath}/transcripts">Floor/Hearing Transcripts</menu-item>
               </menu-section>
+              <shiro:authenticated>
               <menu-section title="Manage">
                 <menu-item url="${ctxPath}/manage/processes">Data Processes</menu-item>
                 <menu-item url="${ctxPath}/manage/tools">ElasticSearch/Cache Tools</menu-item>
@@ -51,6 +52,7 @@
                 <menu-item url="${ctxPath}/admin/report/daybreak">Daybreak Report</menu-item>
                 <%-- --%>
               </menu-section>
+              </shiro:authenticated>
               <menu-section title="API Documentation">
               </menu-section>
             </material-menu>
