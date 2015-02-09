@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -108,7 +109,7 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
      */
     protected class LawTreeRowCallbackHandler implements RowCallbackHandler
     {
-        private Map<String, LawTreeNode> treeNodeMap = new HashMap<>();
+        private LinkedHashMap<String, LawTreeNode> treeNodeMap = new LinkedHashMap<>();
         private LawInfo info;
         private LawTreeNode root = null;
         private String lawId;
