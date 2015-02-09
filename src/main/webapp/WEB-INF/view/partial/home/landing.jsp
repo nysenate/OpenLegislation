@@ -2,7 +2,7 @@
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 
 <section ng-controller="LandingCtrl">
-  <section layout="row" layout-align="center center" style="background:rgb(78, 137, 165);">
+  <section layout="row" layout-align="center center" style="rgb(243, 243, 243);">
       <div hide show-gt-lg style="width:300px;" class="padding-10">
         <img src="${ctxPath}/static/img/capitol_square.jpg" style="width:100%"/>
       </div>
@@ -11,8 +11,9 @@
         <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York&nbsp;State Senate</a>.
     </h1>
   </section>
-  <section class="padding-20 white" style="background:rgb(62, 105, 126);">
+  <section class="padding-20" style="background:rgb(238, 238, 238);">
     <h2>Data we currently provide</h2>
+      <md-divider/>
     <md-list layout-gt-sm="row" layout-wrap>
       <md-item flex="50" class="provide-data-container" ng-repeat="provideData in dataWeProvide">
         <md-item-content ng-click="go(provideData.url)">
@@ -50,10 +51,10 @@
     </div>
     <hr/>
     <h3>
-      <a class="slogan-link" target="_blank" href="${ctxPath}/docs">View the JSON API Documentation</a>
+      <a class="white" target="_blank" href="${ctxPath}/docs">View the JSON API Documentation</a>
     </h3>
   </section>
-  <section class="padding-20 white" style="background:rgb(62, 105, 126);">
+  <section class="padding-20" style="background:rgb(238, 238, 238);">
     <h2>Built on Open Source</h2>
     <h3>OpenLegislation is developed using several open-source packages and frameworks.
      Source code is <a class="slogan-link" href="http://www.github.com/nysenate/OpenLegislation">published on GitHub</a>.

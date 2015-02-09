@@ -21,10 +21,10 @@
 .blue3-bg { background: #008cba; }
 
 /* line 6, ../../../WEB-INF/scss/colors.scss */
-.blue4 { color: #2B6A90; }
+.blue4 { color: #2b6a90; }
 
 /* line 6, ../../../WEB-INF/scss/colors.scss */
-.blue4-bg { background: #2B6A90; }
+.blue4-bg { background: #2b6a90; }
 
 /* line 7, ../../../WEB-INF/scss/colors.scss */
 .blue5 { color: #165b81; }
@@ -51,10 +51,10 @@
 .red1-bg { background: #b5002a; }
 
 /* line 14, ../../../WEB-INF/scss/colors.scss */
-.white { color: #ffffff; }
+.white { color: white; }
 
 /* line 14, ../../../WEB-INF/scss/colors.scss */
-.white-bg, md-card.content-card { background: #ffffff; }
+.white-bg, md-card.content-card { background: white; }
 
 /* line 15, ../../../WEB-INF/scss/colors.scss */
 .gray1 { color: #fafafa; }
@@ -63,10 +63,10 @@
 .gray1-bg { background: #fafafa; }
 
 /* line 16, ../../../WEB-INF/scss/colors.scss */
-.gray2 { color: #f5f5f5; }
+.gray2 { color: whitesmoke; }
 
 /* line 16, ../../../WEB-INF/scss/colors.scss */
-.gray2-bg { background: #f5f5f5; }
+.gray2-bg { background: whitesmoke; }
 
 /* line 17, ../../../WEB-INF/scss/colors.scss */
 .gray3 { color: #f1f1f1; }
@@ -75,34 +75,34 @@
 .gray3-bg { background: #f1f1f1; }
 
 /* line 18, ../../../WEB-INF/scss/colors.scss */
-.gray4 { color: #eee; }
+.gray4 { color: #eeeeee; }
 
 /* line 18, ../../../WEB-INF/scss/colors.scss */
-.gray4-bg { background: #eee; }
+.gray4-bg { background: #eeeeee; }
 
 /* line 19, ../../../WEB-INF/scss/colors.scss */
-.gray5 { color: #ddd; }
+.gray5 { color: #dddddd; }
 
 /* line 19, ../../../WEB-INF/scss/colors.scss */
-.gray5-bg { background: #ddd; }
+.gray5-bg { background: #dddddd; }
 
 /* line 20, ../../../WEB-INF/scss/colors.scss */
-.gray6 { color: #ccc; }
+.gray6 { color: #cccccc; }
 
 /* line 20, ../../../WEB-INF/scss/colors.scss */
-.gray6-bg { background: #ccc; }
+.gray6-bg { background: #cccccc; }
 
 /* line 21, ../../../WEB-INF/scss/colors.scss */
-.gray7 { color: #aaa; }
+.gray7 { color: #aaaaaa; }
 
 /* line 21, ../../../WEB-INF/scss/colors.scss */
-.gray7-bg { background: #aaa; }
+.gray7-bg { background: #aaaaaa; }
 
 /* line 22, ../../../WEB-INF/scss/colors.scss */
-.gray10 { color: #666; }
+.gray10 { color: #666666; }
 
 /* line 22, ../../../WEB-INF/scss/colors.scss */
-.gray10-bg { background: #666; }
+.gray10-bg { background: #666666; }
 
 /** --- Reset --- */
 /* line 10, ../../../WEB-INF/scss/app.scss */
@@ -128,7 +128,7 @@ md-toolbar.auto-height { min-height: 0; height: auto; max-height: none; }
 md-toolbar.md-info-tools { min-height: 0; width: auto; padding: 10px; }
 
 /* line 53, ../../../WEB-INF/scss/app.scss */
-.md-whiteframe-z0, md-card.content-card, a.result-link:hover md-item-content { -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); }
+.md-whiteframe-z0, md-card.content-card, a.result-link:hover md-item-content { -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); }
 
 /* line 62, ../../../WEB-INF/scss/app.scss */
 md-card.content-card md-content { margin-left: 16px; }
@@ -215,12 +215,12 @@ md-card.content-card md-content { margin-left: 16px; }
 .capitalize { text-transform: capitalize; }
 
 /* line 189, ../../../WEB-INF/scss/app.scss */
-a.gray-2-blue { color: #666; -moz-transition: all 0.2s linear; -o-transition: all 0.2s linear; -webkit-transition: all 0.2s linear; transition: all 0.2s linear; }
+a.gray-2-blue { color: #666666; -webkit-transition: all 0.2s linear; -moz-transition: all 0.2s linear; -o-transition: all 0.2s linear; transition: all 0.2s linear; }
 /* line 192, ../../../WEB-INF/scss/app.scss */
 a.gray-2-blue:hover { color: #006b80; }
 
 /* line 197, ../../../WEB-INF/scss/app.scss */
-a.white-2-blue { color: white; -moz-transition: all 0.2s linear; -o-transition: all 0.2s linear; -webkit-transition: all 0.2s linear; transition: all 0.2s linear; }
+a.white-2-blue { color: white; -webkit-transition: all 0.2s linear; -moz-transition: all 0.2s linear; -o-transition: all 0.2s linear; transition: all 0.2s linear; }
 /* line 200, ../../../WEB-INF/scss/app.scss */
 a.white-2-blue:hover { background: rgba(255, 255, 255, 0.1); }
 
@@ -237,7 +237,7 @@ a.result-link:hover { color: #165b81; background: #f1f1f1; }
 
 /** --- Left Nav --- */
 /* line 229, ../../../WEB-INF/scss/app.scss */
-#left-nav { min-height: 100vh; width: 305px; min-width: 305px; position: fixed; background: #384047; -moz-box-shadow: -4px 0 16px #333; -webkit-box-shadow: -4px 0 16px #333; box-shadow: -4px 0 16px #333; }
+#left-nav { min-height: 100vh; width: 305px; min-width: 305px; position: fixed; background: #384047; -webkit-box-shadow: -4px 0 16px #333333; -moz-box-shadow: -4px 0 16px #333333; box-shadow: -4px 0 16px #333333; }
 @media print { /* line 229, ../../../WEB-INF/scss/app.scss */
   #left-nav { display: none; } }
 
@@ -258,7 +258,7 @@ a.result-link:hover { color: #165b81; background: #f1f1f1; }
 .left-nav-menu { width: 100%; padding-top: 20px; }
 
 /* line 274, ../../../WEB-INF/scss/app.scss */
-.menu-item { background: none; border-width: 0; cursor: pointer; display: block; color: #eee; font-size: 0.8rem; line-height: 40px; max-height: 40px; opacity: 1; margin: 0; outline: none; padding: 0px 35px; position: relative; text-align: left; text-decoration: none; width: 100%; z-index: 1; -moz-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.45s; -o-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.45s; -webkit-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.45s; transition: cubic-bezier(0.35, 0, 0.25, 1) 0.45s; -moz-transition-property: max-height, background-color, opacity; -o-transition-property: max-height, background-color, opacity; -webkit-transition-property: max-height, background-color, opacity; transition-property: max-height, background-color, opacity; }
+.menu-item { background: none; border-width: 0; cursor: pointer; display: block; color: #eee; font-size: 0.8rem; line-height: 40px; max-height: 40px; opacity: 1; margin: 0; outline: none; padding: 0px 35px; position: relative; text-align: left; text-decoration: none; width: 100%; z-index: 1; -webkit-transition: 0.45s cubic-bezier(0.35, 0, 0.25, 1); -moz-transition: 0.45s cubic-bezier(0.35, 0, 0.25, 1); -o-transition: 0.45s cubic-bezier(0.35, 0, 0.25, 1); transition: 0.45s cubic-bezier(0.35, 0, 0.25, 1); -webkit-transition-property: max-height, background-color, opacity; -moz-transition-property: max-height, background-color, opacity; -o-transition-property: max-height, background-color, opacity; transition-property: max-height, background-color, opacity; }
 
 /* line 295, ../../../WEB-INF/scss/app.scss */
 .menu-item.ng-hide { max-height: 0; opacity: 0; }
@@ -267,9 +267,9 @@ a.result-link:hover { color: #165b81; background: #f1f1f1; }
 .menu-item:focus { font-weight: bold; }
 
 /* line 302, ../../../WEB-INF/scss/app.scss */
-.menu-item.menu-title { color: white; font-weight: bold; font-size: 14px; padding-left: 20px; text-align: left; text-transform: uppercase; -moz-transition: color 0.35s cubic-bezier(0.35, 0, 0.25, 1); -o-transition: color 0.35s cubic-bezier(0.35, 0, 0.25, 1); -webkit-transition: color 0.35s cubic-bezier(0.35, 0, 0.25, 1); transition: color 0.35s cubic-bezier(0.35, 0, 0.25, 1); }
+.menu-item.menu-title { color: white; font-weight: bold; font-size: 14px; padding-left: 20px; text-align: left; text-transform: uppercase; -webkit-transition: color 0.35s cubic-bezier(0.35, 0, 0.25, 1); -moz-transition: color 0.35s cubic-bezier(0.35, 0, 0.25, 1); -o-transition: color 0.35s cubic-bezier(0.35, 0, 0.25, 1); transition: color 0.35s cubic-bezier(0.35, 0, 0.25, 1); }
 
-/* line 311, ../../../WEB-INF/scss/app.scss */
+/* line 313, ../../../WEB-INF/scss/app.scss */
 .menu-item.menu-title:hover, .menu-item.menu-title:focus, .menu-item.active { color: white; background: #596671; font-weight: bold; }
 
 /* line 319, ../../../WEB-INF/scss/app.scss */
@@ -290,18 +290,18 @@ a.result-link:hover { color: #165b81; background: #f1f1f1; }
 
 /** --- Landing Page Styles --- */
 /* line 352, ../../../WEB-INF/scss/app.scss */
-h1.slogan { font-size: 2.8rem; padding: 20px; color: white; font-family: 'Roboto Slab', serif; font-weight: 400; }
+h1.slogan { font-size: 2.8rem; padding: 20px; color: #555; font-family: 'Roboto Slab', serif; font-weight: 400; }
 
 /* line 360, ../../../WEB-INF/scss/app.scss */
-a.slogan-link { color: white; text-decoration: none; border-bottom: 2px solid white; }
+a.slogan-link { color: #165b81; text-decoration: none; border-bottom: 2px solid #165b81; }
 
 /* line 366, ../../../WEB-INF/scss/app.scss */
 .provide-data-container { padding: 5px; cursor: pointer; }
 /* line 369, ../../../WEB-INF/scss/app.scss */
-.provide-data-container:hover { background: #4f85a0; }
+.provide-data-container:hover { background: whitesmoke; }
 
 /* line 374, ../../../WEB-INF/scss/app.scss */
-.provide-data-icon { text-align: center; height: 60px; width: 60px; border: 2px solid white; }
+.provide-data-icon { text-align: center; height: 60px; width: 60px; border: 2px solid #999; }
 /* line 379, ../../../WEB-INF/scss/app.scss */
 .provide-data-icon i { font-size: 2rem; line-height: 56px; }
 
@@ -395,7 +395,7 @@ table.report-detail-table tbody tr:nth-child(odd) { background-color: #ccc; }
 /* line 531, ../../../WEB-INF/scss/app.scss */
 .report-detail-table .rpp-selector { float: right; }
 
-/* line 535, ../../../WEB-INF/scss/app.scss */
+/* line 536, ../../../WEB-INF/scss/app.scss */
 #daybreak-page button.ng-scope, #daybreak-page .check-butt { margin-right: 4px; }
 
 /* line 543, ../../../WEB-INF/scss/app.scss */
@@ -516,10 +516,10 @@ table.report-detail-table tbody tr td { border: 1px solid #eee; }
 .blue3-bg { background: #008cba; }
 
 /* line 6, ../../../WEB-INF/scss/colors.scss */
-.blue4 { color: #2B6A90; }
+.blue4 { color: #2b6a90; }
 
 /* line 6, ../../../WEB-INF/scss/colors.scss */
-.blue4-bg { background: #2B6A90; }
+.blue4-bg { background: #2b6a90; }
 
 /* line 7, ../../../WEB-INF/scss/colors.scss */
 .blue5 { color: #165b81; }
@@ -546,10 +546,10 @@ table.report-detail-table tbody tr td { border: 1px solid #eee; }
 .red1-bg { background: #b5002a; }
 
 /* line 14, ../../../WEB-INF/scss/colors.scss */
-.white { color: #ffffff; }
+.white { color: white; }
 
 /* line 14, ../../../WEB-INF/scss/colors.scss */
-.white-bg { background: #ffffff; }
+.white-bg { background: white; }
 
 /* line 15, ../../../WEB-INF/scss/colors.scss */
 .gray1 { color: #fafafa; }
@@ -558,10 +558,10 @@ table.report-detail-table tbody tr td { border: 1px solid #eee; }
 .gray1-bg { background: #fafafa; }
 
 /* line 16, ../../../WEB-INF/scss/colors.scss */
-.gray2 { color: #f5f5f5; }
+.gray2 { color: whitesmoke; }
 
 /* line 16, ../../../WEB-INF/scss/colors.scss */
-.gray2-bg { background: #f5f5f5; }
+.gray2-bg { background: whitesmoke; }
 
 /* line 17, ../../../WEB-INF/scss/colors.scss */
 .gray3 { color: #f1f1f1; }
@@ -570,34 +570,34 @@ table.report-detail-table tbody tr td { border: 1px solid #eee; }
 .gray3-bg { background: #f1f1f1; }
 
 /* line 18, ../../../WEB-INF/scss/colors.scss */
-.gray4 { color: #eee; }
+.gray4 { color: #eeeeee; }
 
 /* line 18, ../../../WEB-INF/scss/colors.scss */
-.gray4-bg { background: #eee; }
+.gray4-bg { background: #eeeeee; }
 
 /* line 19, ../../../WEB-INF/scss/colors.scss */
-.gray5 { color: #ddd; }
+.gray5 { color: #dddddd; }
 
 /* line 19, ../../../WEB-INF/scss/colors.scss */
-.gray5-bg { background: #ddd; }
+.gray5-bg { background: #dddddd; }
 
 /* line 20, ../../../WEB-INF/scss/colors.scss */
-.gray6 { color: #ccc; }
+.gray6 { color: #cccccc; }
 
 /* line 20, ../../../WEB-INF/scss/colors.scss */
-.gray6-bg { background: #ccc; }
+.gray6-bg { background: #cccccc; }
 
 /* line 21, ../../../WEB-INF/scss/colors.scss */
-.gray7 { color: #aaa; }
+.gray7 { color: #aaaaaa; }
 
 /* line 21, ../../../WEB-INF/scss/colors.scss */
-.gray7-bg { background: #aaa; }
+.gray7-bg { background: #aaaaaa; }
 
 /* line 22, ../../../WEB-INF/scss/colors.scss */
-.gray10 { color: #666; }
+.gray10 { color: #666666; }
 
 /* line 22, ../../../WEB-INF/scss/colors.scss */
-.gray10-bg { background: #666; }
+.gray10-bg { background: #666666; }
 
 /* line 4, ../../../WEB-INF/scss/bill.scss */
 .milestone-text { text-transform: capitalize; color: #444; }
@@ -607,13 +607,13 @@ ul.bill-milestone-large { overflow: hidden; margin: 0; }
 /* line 13, ../../../WEB-INF/scss/bill.scss */
 ul.bill-milestone-large li { padding: 0; font-size: 0.8rem; text-align: center; color: white; font-weight: 600; }
 /* line 19, ../../../WEB-INF/scss/bill.scss */
-ul.bill-milestone-large li .milestone-desc { height: 90px; padding: 5px 5px; background: #eee; color: #aaa; }
+ul.bill-milestone-large li .milestone-desc { height: 90px; padding: 5px 5px; background: #eeeeee; color: #aaaaaa; }
 /* line 24, ../../../WEB-INF/scss/bill.scss */
-ul.bill-milestone-large li .milestone-desc .milestone-icon { background: rgba(255, 255, 255, 0.1); width: 25px; height: 25px; line-height: 25px; -moz-border-radius: 25px; -webkit-border-radius: 25px; border-radius: 25px; margin: 5px auto 5px auto; font-size: 0.9rem; }
+ul.bill-milestone-large li .milestone-desc .milestone-icon { background: rgba(255, 255, 255, 0.1); width: 25px; height: 25px; line-height: 25px; -webkit-border-radius: 25px; -moz-border-radius: 25px; -ms-border-radius: 25px; -o-border-radius: 25px; border-radius: 25px; margin: 5px auto 5px auto; font-size: 0.9rem; }
 /* line 34, ../../../WEB-INF/scss/bill.scss */
-ul.bill-milestone-large li .milestone-date { padding: 5px; color: #666; background: #ccc; }
+ul.bill-milestone-large li .milestone-date { padding: 5px; color: #666666; background: #cccccc; }
 /* line 40, ../../../WEB-INF/scss/bill.scss */
-ul.bill-milestone-large li.met .milestone-desc { background: none; color: #2B6A90; }
+ul.bill-milestone-large li.met .milestone-desc { background: none; color: #2b6a90; }
 /* line 44, ../../../WEB-INF/scss/bill.scss */
 ul.bill-milestone-large li.met .milestone-date { background: #165b81; color: white; }
 /* line 50, ../../../WEB-INF/scss/bill.scss */
@@ -621,11 +621,11 @@ ul.bill-milestone-large li.active .milestone-desc { background: #43ac6a; color: 
 /* line 54, ../../../WEB-INF/scss/bill.scss */
 ul.bill-milestone-large li.active .milestone-date { background: #348853; color: white; }
 
-/* line 64, ../../../WEB-INF/scss/bill.scss */
+/* line 62, ../../../WEB-INF/scss/bill.scss */
 .resolution-heading { background: white; font-size: 0.9rem; font-weight: 600; padding: 10px; margin: 10px 0; }
-/* line 70, ../../../WEB-INF/scss/bill.scss */
-.resolution-heading.whereas { color: #666; border: 1px none #ccc; border-bottom-style: solid; }
-/* line 75, ../../../WEB-INF/scss/bill.scss */
+/* line 68, ../../../WEB-INF/scss/bill.scss */
+.resolution-heading.whereas { color: #666666; border: 1px none #cccccc; border-bottom-style: solid; }
+/* line 73, ../../../WEB-INF/scss/bill.scss */
 .resolution-heading.resolved { border: 1px solid #43AC6A; }
 
 /** --- Color Palette --- */
@@ -648,10 +648,10 @@ ul.bill-milestone-large li.active .milestone-date { background: #348853; color: 
 .blue3-bg { background: #008cba; }
 
 /* line 6, ../../../WEB-INF/scss/colors.scss */
-.blue4 { color: #2B6A90; }
+.blue4 { color: #2b6a90; }
 
 /* line 6, ../../../WEB-INF/scss/colors.scss */
-.blue4-bg { background: #2B6A90; }
+.blue4-bg { background: #2b6a90; }
 
 /* line 7, ../../../WEB-INF/scss/colors.scss */
 .blue5 { color: #165b81; }
@@ -678,10 +678,10 @@ ul.bill-milestone-large li.active .milestone-date { background: #348853; color: 
 .red1-bg { background: #b5002a; }
 
 /* line 14, ../../../WEB-INF/scss/colors.scss */
-.white { color: #ffffff; }
+.white { color: white; }
 
 /* line 14, ../../../WEB-INF/scss/colors.scss */
-.white-bg { background: #ffffff; }
+.white-bg { background: white; }
 
 /* line 15, ../../../WEB-INF/scss/colors.scss */
 .gray1 { color: #fafafa; }
@@ -690,10 +690,10 @@ ul.bill-milestone-large li.active .milestone-date { background: #348853; color: 
 .gray1-bg { background: #fafafa; }
 
 /* line 16, ../../../WEB-INF/scss/colors.scss */
-.gray2 { color: #f5f5f5; }
+.gray2 { color: whitesmoke; }
 
 /* line 16, ../../../WEB-INF/scss/colors.scss */
-.gray2-bg { background: #f5f5f5; }
+.gray2-bg { background: whitesmoke; }
 
 /* line 17, ../../../WEB-INF/scss/colors.scss */
 .gray3 { color: #f1f1f1; }
@@ -702,36 +702,37 @@ ul.bill-milestone-large li.active .milestone-date { background: #348853; color: 
 .gray3-bg { background: #f1f1f1; }
 
 /* line 18, ../../../WEB-INF/scss/colors.scss */
-.gray4 { color: #eee; }
+.gray4 { color: #eeeeee; }
 
 /* line 18, ../../../WEB-INF/scss/colors.scss */
-.gray4-bg { background: #eee; }
+.gray4-bg { background: #eeeeee; }
 
 /* line 19, ../../../WEB-INF/scss/colors.scss */
-.gray5 { color: #ddd; }
+.gray5 { color: #dddddd; }
 
 /* line 19, ../../../WEB-INF/scss/colors.scss */
-.gray5-bg { background: #ddd; }
+.gray5-bg { background: #dddddd; }
 
 /* line 20, ../../../WEB-INF/scss/colors.scss */
-.gray6 { color: #ccc; }
+.gray6 { color: #cccccc; }
 
 /* line 20, ../../../WEB-INF/scss/colors.scss */
-.gray6-bg { background: #ccc; }
+.gray6-bg { background: #cccccc; }
 
 /* line 21, ../../../WEB-INF/scss/colors.scss */
-.gray7 { color: #aaa; }
+.gray7 { color: #aaaaaa; }
 
 /* line 21, ../../../WEB-INF/scss/colors.scss */
-.gray7-bg { background: #aaa; }
+.gray7-bg { background: #aaaaaa; }
 
 /* line 22, ../../../WEB-INF/scss/colors.scss */
-.gray10 { color: #666; }
+.gray10 { color: #666666; }
 
 /* line 22, ../../../WEB-INF/scss/colors.scss */
-.gray10-bg { background: #666; }
+.gray10-bg { background: #666666; }
 
-@font-face { font-family: "icomoon"; src: url('../../fonts/icomoon.eot?iuno13&1421771849') format('embedded-opentype'), url('../../fonts/icomoon.eot?&1421771849#iefixiuno13') format('embedded-opentype'), url('../../fonts/icomoon.woff?iuno13&1421771849') format('woff'), url('../../fonts/icomoon.ttf?iuno13&1421771849') format('truetype'), url('../../fonts/icomoon.svg?iuno13&1421771849#icomoon') format('svg'); }
+@font-face { font-family: "icomoon"; src: url('../../fonts/icomoon.eot?iuno13') format('embedded-opentype'), url('../../fonts/icomoon.eot?#iefixiuno13') format('embedded-opentype'), url('../../fonts/icomoon.woff?iuno13') format('woff'), url('../../fonts/icomoon.ttf?iuno13') format('truetype'), url('../../fonts/icomoon.svg?iuno13#icomoon') format('svg'); }
+
 /* line 6, ../../../WEB-INF/scss/icons.scss */
 [class^="icon-"], [class*=" icon-"] { font-family: 'icomoon'; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; /* Better Font Rendering =========== */ -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
