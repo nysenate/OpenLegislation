@@ -11,35 +11,30 @@
     "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
   } ],
   "members" : [ {
-    "nid" : 75006,
-    "name" : "Patrick M. Gallivan",
-    "shortName" : "Gallivan",
-    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
-  }, {
     "nid" : 229,
     "name" : "John J. Flanagan",
     "shortName" : "Flanagan",
     "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "nid" : 75006,
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "Gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
     "nid" : 217,
     "name" : "Joseph A. Griffo",
     "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
-    "nid" : 75011,
-    "name" : "Mark Grisanti",
-    "shortName" : "Grisanti",
-    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+    "nid" : 252741,
+    "name" : "Rich Funke",
+    "shortName" : "Funke",
+    "url" : "http://www.nysenate.gov/senator/rich-funke"
   }, {
-    "nid" : 231,
-    "name" : "Kenneth P. LaValle",
-    "shortName" : "LaValle",
-    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
-  }, {
-    "nid" : 227,
-    "name" : "George D. Maziarz",
-    "shortName" : "Maziarz",
-    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+    "nid" : 252721,
+    "name" : "Thomas D. Croci",
+    "shortName" : "Croci",
+    "url" : "http://www.nysenate.gov/senator/thomas-croci"
   }, {
     "nid" : 74996,
     "name" : "Patty Ritchie",
@@ -51,35 +46,40 @@
     "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   }, {
+    "nid" : 252746,
+    "name" : "Robert G. Ortt",
+    "shortName" : "Ortt",
+    "url" : "http://www.nysenate.gov/senator/robert-ortt"
+  }, {
     "nid" : 215,
     "name" : "James L. Seward",
     "shortName" : "Seward",
     "url" : "http://www.nysenate.gov/senator/james-l-seward"
   }, {
-    "nid" : 74981,
-    "name" : "Lee M. Zeldin",
-    "shortName" : "Zeldin",
-    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+    "nid" : 252736,
+    "name" : "Sue Serino",
+    "shortName" : "Serino",
+    "url" : "http://www.nysenate.gov/senator/susan-serino"
   }, {
     "nid" : 211,
     "name" : "David J. Valesky",
     "shortName" : "Valesky",
     "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   }, {
-    "nid" : 111,
-    "name" : "Diane J. Savino",
-    "shortName" : "Savino",
-    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
-  }, {
     "nid" : 99,
     "name" : "Toby Ann Stavisky",
     "shortName" : "Stavisky",
     "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
   }, {
-    "nid" : 75581,
-    "name" : "Timothy M. Kennedy",
-    "shortName" : "Kennedy",
-    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
+    "nid" : 207,
+    "name" : "Neil D. Breslin",
+    "shortName" : "Breslin",
+    "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
+  }, {
+    "nid" : 75556,
+    "name" : "Adriano Espaillat",
+    "shortName" : "Espaillat",
+    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
   }, {
     "nid" : 115,
     "name" : "Liz Krueger",
@@ -91,19 +91,14 @@
     "shortName" : "Parker",
     "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
   }, {
+    "nid" : 42181,
+    "name" : "Jose Peralta",
+    "shortName" : "Peralta",
+    "url" : "http://www.nysenate.gov/senator/jose-peralta"
+  }, {
     "nid" : 75571,
     "name" : "Gustavo Rivera",
     "shortName" : "Rivera",
     "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
-  }, {
-    "nid" : 119,
-    "name" : "José M. Serrano",
-    "shortName" : "Serrano",
-    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
-  }, {
-    "nid" : 75556,
-    "name" : "Adriano Espaillat",
-    "shortName" : "Espaillat",
-    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
   } ]
 }

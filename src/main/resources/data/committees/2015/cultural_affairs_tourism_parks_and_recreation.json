@@ -21,10 +21,10 @@
     "shortName" : "Griffo",
     "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   }, {
-    "nid" : 75011,
-    "name" : "Mark Grisanti",
-    "shortName" : "Grisanti",
-    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+    "nid" : 252736,
+    "name" : "Sue Serino",
+    "shortName" : "Serino",
+    "url" : "http://www.nysenate.gov/senator/susan-serino"
   }, {
     "nid" : 222,
     "name" : "Carl L Marcellino",
@@ -41,34 +41,34 @@
     "shortName" : "Ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   }, {
-    "nid" : 218,
-    "name" : "Betty Little",
-    "shortName" : "Little",
-    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
     "nid" : 119,
     "name" : "José M. Serrano",
     "shortName" : "Serrano",
     "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
   }, {
-    "nid" : 75581,
-    "name" : "Timothy M. Kennedy",
-    "shortName" : "Kennedy",
-    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
-  }, {
     "nid" : 170141,
     "name" : "Brad Hoylman",
     "shortName" : "Hoylman",
     "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
-    "nid" : 170151,
-    "name" : "Terry Gipson",
-    "shortName" : "Gipson",
-    "url" : "http://www.nysenate.gov/senator/terry-gipson"
+    "nid" : 75581,
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "Kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   }, {
-    "nid" : 170161,
-    "name" : "Ted O'Brien",
-    "shortName" : "O'Brien",
-    "url" : "http://www.nysenate.gov/senator/ted-obrien"
+    "nid" : 109,
+    "name" : "Kevin S. Parker",
+    "shortName" : "Parker",
+    "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
+  }, {
+    "nid" : 170131,
+    "name" : "James Sanders Jr.",
+    "shortName" : "Sanders",
+    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   } ]
 }

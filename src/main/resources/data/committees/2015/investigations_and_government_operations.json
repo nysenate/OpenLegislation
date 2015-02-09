@@ -11,11 +11,6 @@
     "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   } ],
   "members" : [ {
-    "nid" : 222,
-    "name" : "Carl L Marcellino",
-    "shortName" : "Marcellino",
-    "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
-  }, {
     "nid" : 75566,
     "name" : "David Carlucci",
     "shortName" : "Carlucci",
@@ -36,10 +31,10 @@
     "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
-    "nid" : 74981,
-    "name" : "Lee M. Zeldin",
-    "shortName" : "Zeldin",
-    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+    "nid" : 252731,
+    "name" : "Terrence P. Murphy",
+    "shortName" : "Murphy",
+    "url" : "http://www.nysenate.gov/senator/terrence-p-murphy"
   }, {
     "nid" : 170141,
     "name" : "Brad Hoylman",

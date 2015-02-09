@@ -11,25 +11,25 @@
     "url" : "http://www.nysenate.gov/senator/catharine-young"
   } ],
   "members" : [ {
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
+  }, {
     "nid" : 220,
     "name" : "John J. Bonacic",
     "shortName" : "Bonacic",
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   }, {
-    "nid" : 75006,
-    "name" : "Patrick M. Gallivan",
-    "shortName" : "Gallivan",
-    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
-  }, {
-    "nid" : 203,
-    "name" : "Catharine Young",
-    "shortName" : "Young",
-    "url" : "http://www.nysenate.gov/senator/catharine-young"
-  }, {
     "nid" : 170126,
     "name" : "Phil Boyle",
     "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
+  }, {
+    "nid" : 75006,
+    "name" : "Patrick M. Gallivan",
+    "shortName" : "Gallivan",
+    "url" : "http://www.nysenate.gov/senator/pat-gallivan"
   }, {
     "nid" : 208,
     "name" : "Michael F. Nozzolio",
@@ -41,19 +41,14 @@
     "shortName" : "Espaillat",
     "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
   }, {
-    "nid" : 198,
-    "name" : "Ruben Diaz",
-    "shortName" : "Diaz",
-    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
-  }, {
     "nid" : 115,
     "name" : "Liz Krueger",
     "shortName" : "Krueger",
     "url" : "http://www.nysenate.gov/senator/liz-krueger"
   }, {
-    "nid" : 75586,
-    "name" : "Tony Avella",
-    "shortName" : "Avella",
-    "url" : "http://www.nysenate.gov/senator/tony-avella"
+    "nid" : 252776,
+    "name" : "Marc Panepinto",
+    "shortName" : "Panepinto",
+    "url" : "http://www.nysenate.gov/senator/marc-panepinto"
   } ]
 }

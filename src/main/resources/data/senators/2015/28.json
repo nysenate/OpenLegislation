@@ -9,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/liz-krueger",
   "partyAffiliations" : [ "D", "WF" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "172 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-2297",
-    "fax" : "(518) 426-6874",
-    "otherPhone" : "",
-    "additional" : "Room 905 Legislative Office Building",
-    "latitude" : 42.652134,
-    "longitude" : -73.757823
-  }, {
     "name" : "District Office",
     "street" : "1850 Second Avenue",
     "city" : "New York",
@@ -38,6 +23,21 @@
     "additional" : "",
     "latitude" : 0.0,
     "longitude" : 0.0
+  }, {
+    "name" : "Albany Office",
+    "street" : "172 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-2297",
+    "fax" : "(518) 426-6874",
+    "otherPhone" : "",
+    "additional" : "Room 808, Legislative Office Building",
+    "latitude" : 42.65,
+    "longitude" : -73.76
   } ],
   "district" : {
     "number" : 28,

@@ -26,30 +26,30 @@
     "shortName" : "Ranzenhofer",
     "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
   }, {
-    "nid" : 74996,
-    "name" : "Patty Ritchie",
-    "shortName" : "Ritchie",
-    "url" : "http://www.nysenate.gov/senator/patty-ritchie"
-  }, {
     "nid" : 215,
     "name" : "James L. Seward",
     "shortName" : "Seward",
     "url" : "http://www.nysenate.gov/senator/james-l-seward"
-  }, {
-    "nid" : 203,
-    "name" : "Catharine Young",
-    "shortName" : "Young",
-    "url" : "http://www.nysenate.gov/senator/catharine-young"
   }, {
     "nid" : 211,
     "name" : "David J. Valesky",
     "shortName" : "Valesky",
     "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   }, {
-    "nid" : 170151,
-    "name" : "Terry Gipson",
-    "shortName" : "Gipson",
-    "url" : "http://www.nysenate.gov/senator/terry-gipson"
+    "nid" : 203,
+    "name" : "Catharine Young",
+    "shortName" : "Young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "nid" : 252776,
+    "name" : "Marc Panepinto",
+    "shortName" : "Panepinto",
+    "url" : "http://www.nysenate.gov/senator/marc-panepinto"
+  }, {
+    "nid" : 252771,
+    "name" : "Jesse Hamilton",
+    "shortName" : "Hamilton",
+    "url" : "http://www.nysenate.gov/senator/jesse-hamilton"
   }, {
     "nid" : 103,
     "name" : "Velmanette Montgomery",
@@ -60,10 +60,5 @@
     "name" : "José M. Serrano",
     "shortName" : "Serrano",
     "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
-  }, {
-    "nid" : 172641,
-    "name" : "Cecilia Tkaczyk",
-    "shortName" : "Tkaczyk",
-    "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
   } ]
 }

@@ -11,10 +11,10 @@
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   } ],
   "members" : [ {
-    "nid" : 220,
-    "name" : "John J. Bonacic",
-    "shortName" : "Bonacic",
-    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
     "nid" : 216,
     "name" : "John A. DeFrancisco",
@@ -25,6 +25,11 @@
     "name" : "John J. Flanagan",
     "shortName" : "Flanagan",
     "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "nid" : 111,
+    "name" : "Diane J. Savino",
+    "shortName" : "Savino",
+    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
   }, {
     "nid" : 230,
     "name" : "Kemp Hannon",
@@ -41,10 +46,10 @@
     "shortName" : "LaValle",
     "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
   }, {
-    "nid" : 218,
-    "name" : "Betty Little",
-    "shortName" : "Little",
-    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
+    "nid" : 250971,
+    "name" : "George A. Amedore, Jr.",
+    "shortName" : "Amedore,",
+    "url" : "http://www.nysenate.gov/senator/george-amedore"
   }, {
     "nid" : 208,
     "name" : "Michael F. Nozzolio",
@@ -56,20 +61,20 @@
     "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
-    "nid" : 111,
-    "name" : "Diane J. Savino",
-    "shortName" : "Savino",
-    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
+    "nid" : 252736,
+    "name" : "Sue Serino",
+    "shortName" : "Serino",
+    "url" : "http://www.nysenate.gov/senator/susan-serino"
   }, {
     "nid" : 233,
     "name" : "Michael H. Ranzenhofer",
     "shortName" : "Ranzenhofer",
     "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer"
   }, {
-    "nid" : 74981,
-    "name" : "Lee M. Zeldin",
-    "shortName" : "Zeldin",
-    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+    "nid" : 252726,
+    "name" : "Michael Venditto",
+    "shortName" : "Venditto",
+    "url" : "http://www.nysenate.gov/senator/michael-venditto"
   }, {
     "nid" : 201,
     "name" : "Ruth Hassell-Thompson",
@@ -81,10 +86,30 @@
     "shortName" : "Breslin",
     "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
   }, {
+    "nid" : 252766,
+    "name" : "Leroy Comrie",
+    "shortName" : "Comrie",
+    "url" : "http://www.nysenate.gov/senator/leroy-comrie"
+  }, {
+    "nid" : 198,
+    "name" : "Ruben Diaz",
+    "shortName" : "Diaz",
+    "url" : "http://www.nysenate.gov/senator/ruben-diaz"
+  }, {
+    "nid" : 101,
+    "name" : "Martin Malavé Dilan",
+    "shortName" : "Dilan",
+    "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
+  }, {
     "nid" : 75556,
     "name" : "Adriano Espaillat",
     "shortName" : "Espaillat",
     "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
+  }, {
+    "nid" : 170141,
+    "name" : "Brad Hoylman",
+    "shortName" : "Hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
     "nid" : 123,
     "name" : "Bill Perkins",
@@ -95,40 +120,5 @@
     "name" : "Toby Ann Stavisky",
     "shortName" : "Stavisky",
     "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
-  }, {
-    "nid" : 170141,
-    "name" : "Brad Hoylman",
-    "shortName" : "Hoylman",
-    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
-  }, {
-    "nid" : 101,
-    "name" : "Martin Malavé Dilan",
-    "shortName" : "Dilan",
-    "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
-  }, {
-    "nid" : 201,
-    "name" : "Ruth Hassell-Thompson",
-    "shortName" : "Hassell-Thompson",
-    "url" : "http://www.nysenate.gov/senator/ruth-hassell-thompson"
-  }, {
-    "nid" : 97,
-    "name" : "Joseph P. Addabbo Jr",
-    "shortName" : "Addabbo",
-    "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
-  }, {
-    "nid" : 113,
-    "name" : "Daniel L. Squadron",
-    "shortName" : "Squadron",
-    "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
-  }, {
-    "nid" : 75011,
-    "name" : "Mark Grisanti",
-    "shortName" : "Grisanti",
-    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
-  }, {
-    "nid" : 75586,
-    "name" : "Tony Avella",
-    "shortName" : "Avella",
-    "url" : "http://www.nysenate.gov/senator/tony-avella"
   } ]
 }

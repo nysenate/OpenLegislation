@@ -11,20 +11,20 @@
     "url" : "http://www.nysenate.gov/senator/simcha-felder"
   } ],
   "members" : [ {
-    "nid" : 221,
-    "name" : "Andrew J Lanza",
-    "shortName" : "Lanza",
-    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
     "nid" : 232,
     "name" : "Martin J. Golden",
     "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
-    "nid" : 170136,
-    "name" : "Simcha Felder",
-    "shortName" : "Felder",
-    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+    "nid" : 221,
+    "name" : "Andrew J Lanza",
+    "shortName" : "Lanza",
+    "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
   }, {
     "nid" : 123,
     "name" : "Bill Perkins",
@@ -35,10 +35,5 @@
     "name" : "Toby Ann Stavisky",
     "shortName" : "Stavisky",
     "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
-  }, {
-    "nid" : 75586,
-    "name" : "Tony Avella",
-    "shortName" : "Avella",
-    "url" : "http://www.nysenate.gov/senator/tony-avella"
   } ]
 }

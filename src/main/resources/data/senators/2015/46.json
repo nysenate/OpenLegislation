@@ -17,12 +17,42 @@
     "province" : "NY",
     "countryName" : "United States",
     "country" : "us",
-    "phone" : "(518) 455-",
-    "fax" : "(518) 426-",
+    "phone" : "(518) 455-2350",
+    "fax" : "(518) 426-6751",
     "otherPhone" : "",
-    "additional" : "Room 311",
+    "additional" : "Room 802",
     "latitude" : 42.65,
     "longitude" : -73.76
+  }, {
+    "name" : "Ulster County District Office",
+    "street" : "42 Crown Street",
+    "city" : "Kingston",
+    "postalCode" : "12401",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "845-331-3810",
+    "fax" : "845-331-3893",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 41.933911,
+    "longitude" : -74.020752
+  }, {
+    "name" : "Montgomery County Office Building /Satellite Office",
+    "street" : "20 Park Street,",
+    "city" : "Fonda",
+    "postalCode" : "12068",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-853-3401",
+    "fax" : "518-853-3403",
+    "otherPhone" : "",
+    "additional" : "Room 121",
+    "latitude" : 42.952466,
+    "longitude" : -74.373213
   } ],
   "district" : {
     "number" : 46,
@@ -31,11 +61,11 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=46"
   },
   "social" : {
-    "twitter" : "",
+    "twitter" : "https://twitter.com/GeorgeAmedore",
     "youtube" : "",
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : ""
+    "facebook" : "https://www.facebook.com/SenatorGeorgeAmedore"
   }
 }

@@ -5,26 +5,26 @@
   "url" : "http://www.nysenate.gov/committee/ethics",
   "videoUrl" : "http://www.livestream.com/NYSenate_Ethics",
   "chairs" : [ {
-    "nid" : 170126,
-    "name" : "Phil Boyle",
-    "shortName" : "Boyle",
-    "url" : "http://www.nysenate.gov/senator/philip-boyle"
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   } ],
   "members" : [ {
-    "nid" : 228,
-    "name" : "Hugh T. Farley",
-    "shortName" : "Farley",
-    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
-  }, {
     "nid" : 221,
     "name" : "Andrew J Lanza",
     "shortName" : "Lanza",
     "url" : "http://www.nysenate.gov/senator/andrew-j-lanza"
   }, {
-    "nid" : 170126,
-    "name" : "Phil Boyle",
-    "shortName" : "Boyle",
-    "url" : "http://www.nysenate.gov/senator/philip-boyle"
+    "nid" : 228,
+    "name" : "Hugh T. Farley",
+    "shortName" : "Farley",
+    "url" : "http://www.nysenate.gov/senator/hugh-t-farley"
+  }, {
+    "nid" : 252731,
+    "name" : "Terrence P. Murphy",
+    "shortName" : "Murphy",
+    "url" : "http://www.nysenate.gov/senator/terrence-p-murphy"
   }, {
     "nid" : 75576,
     "name" : "Michael Gianaris",
@@ -35,10 +35,5 @@
     "name" : "Gustavo Rivera",
     "shortName" : "Rivera",
     "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
-  }, {
-    "nid" : 207,
-    "name" : "Neil D. Breslin",
-    "shortName" : "Breslin",
-    "url" : "http://www.nysenate.gov/senator/neil-d-breslin"
   } ]
 }

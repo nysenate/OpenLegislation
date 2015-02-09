@@ -16,11 +16,6 @@
     "shortName" : "Bonacic",
     "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
   }, {
-    "nid" : 75566,
-    "name" : "David Carlucci",
-    "shortName" : "Carlucci",
-    "url" : "http://www.nysenate.gov/senator/david-carlucci"
-  }, {
     "nid" : 228,
     "name" : "Hugh T. Farley",
     "shortName" : "Farley",
@@ -46,35 +41,35 @@
     "shortName" : "LaValle",
     "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
   }, {
-    "nid" : 214,
-    "name" : "Tom Libous",
-    "shortName" : "Libous",
-    "url" : "http://www.nysenate.gov/senator/tom-libous"
+    "nid" : 218,
+    "name" : "Betty Little",
+    "shortName" : "Little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
   }, {
     "nid" : 222,
     "name" : "Carl L Marcellino",
     "shortName" : "Marcellino",
     "url" : "http://www.nysenate.gov/senator/carl-l-marcellino"
   }, {
-    "nid" : 227,
-    "name" : "George D. Maziarz",
-    "shortName" : "Maziarz",
-    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
-  }, {
     "nid" : 208,
     "name" : "Michael F. Nozzolio",
     "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
-    "nid" : 225,
-    "name" : "Dean G. Skelos",
-    "shortName" : "Skelos",
-    "url" : "http://www.nysenate.gov/senator/dean-g-skelos"
-  }, {
     "nid" : 215,
     "name" : "James L. Seward",
     "shortName" : "Seward",
     "url" : "http://www.nysenate.gov/senator/james-l-seward"
+  }, {
+    "nid" : 203,
+    "name" : "Catharine Young",
+    "shortName" : "Young",
+    "url" : "http://www.nysenate.gov/senator/catharine-young"
+  }, {
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
     "nid" : 211,
     "name" : "David J. Valesky",
@@ -95,6 +90,16 @@
     "name" : "Martin Malavé Dilan",
     "shortName" : "Dilan",
     "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
+  }, {
+    "nid" : 75556,
+    "name" : "Adriano Espaillat",
+    "shortName" : "Espaillat",
+    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
+  }, {
+    "nid" : 75576,
+    "name" : "Michael Gianaris",
+    "shortName" : "Gianaris",
+    "url" : "http://www.nysenate.gov/senator/michael-gianaris"
   }, {
     "nid" : 201,
     "name" : "Ruth Hassell-Thompson",
@@ -120,20 +125,5 @@
     "name" : "Bill Perkins",
     "shortName" : "Perkins",
     "url" : "http://www.nysenate.gov/senator/bill-perkins"
-  }, {
-    "nid" : 75556,
-    "name" : "Adriano Espaillat",
-    "shortName" : "Espaillat",
-    "url" : "http://www.nysenate.gov/senator/adriano-espaillat"
-  }, {
-    "nid" : 75576,
-    "name" : "Michael Gianaris",
-    "shortName" : "Gianaris",
-    "url" : "http://www.nysenate.gov/senator/michael-gianaris"
-  }, {
-    "nid" : 218,
-    "name" : "Betty Little",
-    "shortName" : "Little",
-    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
   } ]
 }

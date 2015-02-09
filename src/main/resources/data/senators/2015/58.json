@@ -9,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/thomas-f-omara",
   "partyAffiliations" : [ "R", "C" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "Legislative Office Building",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "518-455-2091",
-    "fax" : "518-426-6976",
-    "otherPhone" : "",
-    "additional" : "Room 812",
-    "latitude" : 42.652442,
-    "longitude" : -73.759332
-  }, {
     "name" : "District Office",
     "street" : "333 East Water Street",
     "city" : "Elmira",
@@ -53,6 +38,21 @@
     "additional" : "",
     "latitude" : 42.333904,
     "longitude" : -77.3151
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-2091",
+    "fax" : "518-426-6976",
+    "otherPhone" : "",
+    "additional" : "Room 848",
+    "latitude" : 42.65,
+    "longitude" : -73.76
   } ],
   "district" : {
     "number" : 58,

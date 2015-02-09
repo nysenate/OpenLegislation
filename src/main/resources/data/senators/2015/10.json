@@ -4,7 +4,7 @@
   "lastName" : "Sanders",
   "shortName" : "Sanders",
   "email" : "sanders@nysenate.gov",
-  "additionalContact" : "<p><strong>For legislative matters please contact our legislative office.<span style=\"font-size: 16.3636360168457px; line-height: 1;\">&nbsp;</span></strong></p><p><strong>For event invitations please contact Jkendall@nysenate.gov</strong></p>",
+  "additionalContact" : "<p><strong>For legislative matters please contact our legislative office.<span style=\"line-height: 1; font-size: 16.36px;\">&nbsp;</span></strong></p><p><strong>For event invitations please contact Jkendall@nysenate.gov</strong></p>",
   "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(12-10-12) Sanders-HS-010.jpg",
   "url" : "http://www.nysenate.gov/senator/james-sanders-jr",
   "partyAffiliations" : [ "D" ],

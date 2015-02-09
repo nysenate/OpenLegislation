@@ -5,55 +5,50 @@
   "url" : "http://www.nysenate.gov/committee/local-government",
   "videoUrl" : "http://www.livestream.com/NYSenate_LocalGov",
   "chairs" : [ {
-    "nid" : 74986,
-    "name" : "Jack M. Martins",
-    "shortName" : "Martins",
-    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+    "nid" : 170156,
+    "name" : "Kathleen A. Marchione",
+    "shortName" : "Marchione",
+    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
   } ],
   "members" : [ {
-    "nid" : 74986,
-    "name" : "Jack M. Martins",
-    "shortName" : "Martins",
-    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
-  }, {
-    "nid" : 74991,
-    "name" : "Greg Ball",
-    "shortName" : "Ball",
-    "url" : "http://www.nysenate.gov/senator/greg-ball"
+    "nid" : 252746,
+    "name" : "Robert G. Ortt",
+    "shortName" : "Ortt",
+    "url" : "http://www.nysenate.gov/senator/robert-ortt"
   }, {
     "nid" : 170126,
     "name" : "Phil Boyle",
     "shortName" : "Boyle",
     "url" : "http://www.nysenate.gov/senator/philip-boyle"
   }, {
-    "nid" : 170156,
-    "name" : "Kathleen A. Marchione",
-    "shortName" : "Marchione",
-    "url" : "http://www.nysenate.gov/senator/kathleen-a-marchione"
+    "nid" : 252731,
+    "name" : "Terrence P. Murphy",
+    "shortName" : "Murphy",
+    "url" : "http://www.nysenate.gov/senator/terrence-p-murphy"
   }, {
     "nid" : 74996,
     "name" : "Patty Ritchie",
     "shortName" : "Ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   }, {
-    "nid" : 170151,
-    "name" : "Terry Gipson",
-    "shortName" : "Gipson",
-    "url" : "http://www.nysenate.gov/senator/terry-gipson"
+    "nid" : 211,
+    "name" : "David J. Valesky",
+    "shortName" : "Valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+  }, {
+    "nid" : 252776,
+    "name" : "Marc Panepinto",
+    "shortName" : "Panepinto",
+    "url" : "http://www.nysenate.gov/senator/marc-panepinto"
+  }, {
+    "nid" : 170141,
+    "name" : "Brad Hoylman",
+    "shortName" : "Hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
     "nid" : 170116,
     "name" : "George Latimer",
     "shortName" : "Latimer",
     "url" : "http://www.nysenate.gov/senator/george-s-latimer"
-  }, {
-    "nid" : 170161,
-    "name" : "Ted O'Brien",
-    "shortName" : "O'Brien",
-    "url" : "http://www.nysenate.gov/senator/ted-obrien"
-  }, {
-    "nid" : 211,
-    "name" : "David J. Valesky",
-    "shortName" : "Valesky",
-    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   } ]
 }

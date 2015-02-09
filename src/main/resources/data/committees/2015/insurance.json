@@ -11,10 +11,10 @@
     "url" : "http://www.nysenate.gov/senator/james-l-seward"
   } ],
   "members" : [ {
-    "nid" : 215,
-    "name" : "James L. Seward",
-    "shortName" : "Seward",
-    "url" : "http://www.nysenate.gov/senator/james-l-seward"
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
     "nid" : 75566,
     "name" : "David Carlucci",
@@ -31,10 +31,10 @@
     "shortName" : "Golden",
     "url" : "http://www.nysenate.gov/senator/martin-j-golden"
   }, {
-    "nid" : 75011,
-    "name" : "Mark Grisanti",
-    "shortName" : "Grisanti",
-    "url" : "http://www.nysenate.gov/senator/mark-grisanti"
+    "nid" : 252726,
+    "name" : "Michael Venditto",
+    "shortName" : "Venditto",
+    "url" : "http://www.nysenate.gov/senator/michael-venditto"
   }, {
     "nid" : 221,
     "name" : "Andrew J Lanza",
@@ -81,29 +81,24 @@
     "shortName" : "Kennedy",
     "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   }, {
+    "nid" : 170116,
+    "name" : "George Latimer",
+    "shortName" : "Latimer",
+    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
+  }, {
+    "nid" : 252776,
+    "name" : "Marc Panepinto",
+    "shortName" : "Panepinto",
+    "url" : "http://www.nysenate.gov/senator/marc-panepinto"
+  }, {
     "nid" : 109,
     "name" : "Kevin S. Parker",
     "shortName" : "Parker",
     "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
   }, {
-    "nid" : 99,
-    "name" : "Toby Ann Stavisky",
-    "shortName" : "Stavisky",
-    "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
-  }, {
-    "nid" : 170161,
-    "name" : "Ted O'Brien",
-    "shortName" : "O'Brien",
-    "url" : "http://www.nysenate.gov/senator/ted-obrien"
-  }, {
-    "nid" : 42181,
-    "name" : "Jose Peralta",
-    "shortName" : "Peralta",
-    "url" : "http://www.nysenate.gov/senator/jose-peralta"
-  }, {
-    "nid" : 75586,
-    "name" : "Tony Avella",
-    "shortName" : "Avella",
-    "url" : "http://www.nysenate.gov/senator/tony-avella"
+    "nid" : 170131,
+    "name" : "James Sanders Jr.",
+    "shortName" : "Sanders",
+    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
   } ]
 }

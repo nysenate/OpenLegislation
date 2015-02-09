@@ -5,16 +5,16 @@
   "url" : "http://www.nysenate.gov/committee/social-services",
   "videoUrl" : "http://www.livestream.com/NYSenate_SocialServices",
   "chairs" : [ {
-    "nid" : 75586,
-    "name" : "Tony Avella",
-    "shortName" : "Avella",
-    "url" : "http://www.nysenate.gov/senator/tony-avella"
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
   } ],
   "members" : [ {
-    "nid" : 74991,
-    "name" : "Greg Ball",
-    "shortName" : "Ball",
-    "url" : "http://www.nysenate.gov/senator/greg-ball"
+    "nid" : 250971,
+    "name" : "George A. Amedore, Jr.",
+    "shortName" : "Amedore,",
+    "url" : "http://www.nysenate.gov/senator/george-amedore"
   }, {
     "nid" : 228,
     "name" : "Hugh T. Farley",
@@ -26,19 +26,19 @@
     "shortName" : "Martins",
     "url" : "http://www.nysenate.gov/senator/jack-m-martins"
   }, {
-    "nid" : 170131,
-    "name" : "James Sanders Jr.",
-    "shortName" : "Sanders",
-    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
+    "nid" : 231,
+    "name" : "Kenneth P. LaValle",
+    "shortName" : "LaValle",
+    "url" : "http://www.nysenate.gov/senator/kenneth-p-lavalle"
+  }, {
+    "nid" : 103,
+    "name" : "Velmanette Montgomery",
+    "shortName" : "Montgomery",
+    "url" : "http://www.nysenate.gov/senator/velmanette-montgomery"
   }, {
     "nid" : 113,
     "name" : "Daniel L. Squadron",
     "shortName" : "Squadron",
     "url" : "http://www.nysenate.gov/senator/daniel-l-squadron"
-  }, {
-    "nid" : 75586,
-    "name" : "Tony Avella",
-    "shortName" : "Avella",
-    "url" : "http://www.nysenate.gov/senator/tony-avella"
   } ]
 }

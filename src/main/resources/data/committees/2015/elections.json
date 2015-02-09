@@ -5,16 +5,16 @@
   "url" : "http://www.nysenate.gov/committee/elections",
   "videoUrl" : "http://www.livestream.com/NYSenate_elections",
   "chairs" : [ {
-    "nid" : 75001,
-    "name" : "Thomas F. O'Mara",
-    "shortName" : "O'Mara",
-    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+    "nid" : 252741,
+    "name" : "Rich Funke",
+    "shortName" : "Funke",
+    "url" : "http://www.nysenate.gov/senator/rich-funke"
   } ],
   "members" : [ {
-    "nid" : 74991,
-    "name" : "Greg Ball",
-    "shortName" : "Ball",
-    "url" : "http://www.nysenate.gov/senator/greg-ball"
+    "nid" : 250971,
+    "name" : "George A. Amedore, Jr.",
+    "shortName" : "Amedore,",
+    "url" : "http://www.nysenate.gov/senator/george-amedore"
   }, {
     "nid" : 75006,
     "name" : "Patrick M. Gallivan",
@@ -31,15 +31,15 @@
     "shortName" : "Nozzolio",
     "url" : "http://www.nysenate.gov/senator/michael-f-nozzolio"
   }, {
-    "nid" : 75001,
-    "name" : "Thomas F. O'Mara",
-    "shortName" : "O'Mara",
-    "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
+    "nid" : 75586,
+    "name" : "Tony Avella",
+    "shortName" : "Avella",
+    "url" : "http://www.nysenate.gov/senator/tony-avella"
   }, {
-    "nid" : 172641,
-    "name" : "Cecilia Tkaczyk",
-    "shortName" : "Tkaczyk",
-    "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
+    "nid" : 252766,
+    "name" : "Leroy Comrie",
+    "shortName" : "Comrie",
+    "url" : "http://www.nysenate.gov/senator/leroy-comrie"
   }, {
     "nid" : 101,
     "name" : "Martin Malavé Dilan",
@@ -50,10 +50,5 @@
     "name" : "Liz Krueger",
     "shortName" : "Krueger",
     "url" : "http://www.nysenate.gov/senator/liz-krueger"
-  }, {
-    "nid" : 111,
-    "name" : "Diane J. Savino",
-    "shortName" : "Savino",
-    "url" : "http://www.nysenate.gov/senator/diane-j-savino"
   } ]
 }

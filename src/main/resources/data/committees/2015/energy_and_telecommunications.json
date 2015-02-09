@@ -5,10 +5,10 @@
   "url" : "http://www.nysenate.gov/committee/energy-and-telecommunications",
   "videoUrl" : "http://www.livestream.com/NYSenate_EnergyTelcom",
   "chairs" : [ {
-    "nid" : 227,
-    "name" : "George D. Maziarz",
-    "shortName" : "Maziarz",
-    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+    "nid" : 217,
+    "name" : "Joseph A. Griffo",
+    "shortName" : "Griffo",
+    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
   } ],
   "members" : [ {
     "nid" : 75566,
@@ -16,54 +16,49 @@
     "shortName" : "Carlucci",
     "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
-    "nid" : 227,
-    "name" : "George D. Maziarz",
-    "shortName" : "Maziarz",
-    "url" : "http://www.nysenate.gov/senator/george-d-maziarz"
+    "nid" : 229,
+    "name" : "John J. Flanagan",
+    "shortName" : "Flanagan",
+    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+  }, {
+    "nid" : 252721,
+    "name" : "Thomas D. Croci",
+    "shortName" : "Croci",
+    "url" : "http://www.nysenate.gov/senator/thomas-croci"
   }, {
     "nid" : 75001,
     "name" : "Thomas F. O'Mara",
     "shortName" : "O'Mara",
     "url" : "http://www.nysenate.gov/senator/thomas-f-omara"
   }, {
-    "nid" : 217,
-    "name" : "Joseph A. Griffo",
-    "shortName" : "Griffo",
-    "url" : "http://www.nysenate.gov/senator/joseph-griffo"
-  }, {
     "nid" : 74996,
     "name" : "Patty Ritchie",
     "shortName" : "Ritchie",
     "url" : "http://www.nysenate.gov/senator/patty-ritchie"
   }, {
-    "nid" : 204,
-    "name" : "Joseph E. Robach",
-    "shortName" : "Robach",
-    "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
+    "nid" : 218,
+    "name" : "Betty Little",
+    "shortName" : "Little",
+    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
   }, {
     "nid" : 109,
     "name" : "Kevin S. Parker",
     "shortName" : "Parker",
     "url" : "http://www.nysenate.gov/senator/kevin-s-parker"
   }, {
-    "nid" : 75581,
-    "name" : "Timothy M. Kennedy",
-    "shortName" : "Kennedy",
-    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
-  }, {
     "nid" : 101,
     "name" : "Martin Malavé Dilan",
     "shortName" : "Dilan",
     "url" : "http://www.nysenate.gov/senator/martin-malave-dilan"
   }, {
-    "nid" : 42181,
-    "name" : "Jose Peralta",
-    "shortName" : "Peralta",
-    "url" : "http://www.nysenate.gov/senator/jose-peralta"
+    "nid" : 252771,
+    "name" : "Jesse Hamilton",
+    "shortName" : "Hamilton",
+    "url" : "http://www.nysenate.gov/senator/jesse-hamilton"
   }, {
-    "nid" : 229,
-    "name" : "John J. Flanagan",
-    "shortName" : "Flanagan",
-    "url" : "http://www.nysenate.gov/senator/john-j-flanagan"
+    "nid" : 75581,
+    "name" : "Timothy M. Kennedy",
+    "shortName" : "Kennedy",
+    "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   } ]
 }

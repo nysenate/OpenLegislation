@@ -9,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/adriano-espaillat",
   "partyAffiliations" : [ "D", "WF" ],
   "offices" : [ {
-    "name" : "District Office",
-    "street" : "5030 Broadway",
-    "city" : "New York",
-    "postalCode" : "10034",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(212) 544-0173",
-    "fax" : "(212) 544-0256",
-    "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 40.869129,
-    "longitude" : -73.917094
-  }, {
     "name" : "Albany Office",
     "street" : "Legislative Office Building, Room 513",
     "city" : "Albany",
@@ -38,6 +23,21 @@
     "additional" : "",
     "latitude" : 0.0,
     "longitude" : 0.0
+  }, {
+    "name" : "District Office",
+    "street" : "5030 Broadway",
+    "city" : "New York",
+    "postalCode" : "10034",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(212) 544-0173",
+    "fax" : "(212) 544-0256",
+    "otherPhone" : "",
+    "additional" : "Suites 701 and 702",
+    "latitude" : 40.868961,
+    "longitude" : -73.916703
   } ],
   "district" : {
     "number" : 31,

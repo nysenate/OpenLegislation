@@ -5,21 +5,21 @@
   "url" : "http://www.nysenate.gov/committee/mental-health-and-developmental-disabilities",
   "videoUrl" : "http://www.livestream.com/NYSenate_MentalHealth",
   "chairs" : [ {
-    "nid" : 75566,
-    "name" : "David Carlucci",
-    "shortName" : "Carlucci",
-    "url" : "http://www.nysenate.gov/senator/david-carlucci"
+    "nid" : 252746,
+    "name" : "Robert G. Ortt",
+    "shortName" : "Ortt",
+    "url" : "http://www.nysenate.gov/senator/robert-ortt"
   } ],
   "members" : [ {
-    "nid" : 74991,
-    "name" : "Greg Ball",
-    "shortName" : "Ball",
-    "url" : "http://www.nysenate.gov/senator/greg-ball"
+    "nid" : 252731,
+    "name" : "Terrence P. Murphy",
+    "shortName" : "Murphy",
+    "url" : "http://www.nysenate.gov/senator/terrence-p-murphy"
   }, {
-    "nid" : 220,
-    "name" : "John J. Bonacic",
-    "shortName" : "Bonacic",
-    "url" : "http://www.nysenate.gov/senator/john-j-bonacic"
+    "nid" : 252736,
+    "name" : "Sue Serino",
+    "shortName" : "Serino",
+    "url" : "http://www.nysenate.gov/senator/susan-serino"
   }, {
     "nid" : 170136,
     "name" : "Simcha Felder",
@@ -36,29 +36,29 @@
     "shortName" : "Seward",
     "url" : "http://www.nysenate.gov/senator/james-l-seward"
   }, {
-    "nid" : 74981,
-    "name" : "Lee M. Zeldin",
-    "shortName" : "Zeldin",
-    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+    "nid" : 75566,
+    "name" : "David Carlucci",
+    "shortName" : "Carlucci",
+    "url" : "http://www.nysenate.gov/senator/david-carlucci"
   }, {
-    "nid" : 172641,
-    "name" : "Cecilia Tkaczyk",
-    "shortName" : "Tkaczyk",
-    "url" : "http://www.nysenate.gov/senator/cecilia-tkaczyk"
+    "nid" : 252771,
+    "name" : "Jesse Hamilton",
+    "shortName" : "Hamilton",
+    "url" : "http://www.nysenate.gov/senator/jesse-hamilton"
   }, {
     "nid" : 115,
     "name" : "Liz Krueger",
     "shortName" : "Krueger",
     "url" : "http://www.nysenate.gov/senator/liz-krueger"
   }, {
-    "nid" : 170116,
-    "name" : "George Latimer",
-    "shortName" : "Latimer",
-    "url" : "http://www.nysenate.gov/senator/george-s-latimer"
-  }, {
     "nid" : 75571,
     "name" : "Gustavo Rivera",
     "shortName" : "Rivera",
     "url" : "http://www.nysenate.gov/senator/gustavo-rivera"
+  }, {
+    "nid" : 119,
+    "name" : "José M. Serrano",
+    "shortName" : "Serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
   } ]
 }

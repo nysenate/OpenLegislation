@@ -9,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/michael-h-ranzenhofer",
   "partyAffiliations" : [ "R", "C", "IP" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "188 State Street",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "(518) 455-3161",
-    "fax" : "(518) 426-6963",
-    "otherPhone" : "",
-    "additional" : "Room 848, Legislative Office Building",
-    "latitude" : 42.652855,
-    "longitude" : -73.759091
-  }, {
     "name" : "District Office",
     "street" : "8203 Main Street",
     "city" : "Williamsville",
@@ -38,6 +23,21 @@
     "additional" : "Suite 4",
     "latitude" : 42.962848,
     "longitude" : -78.68881
+  }, {
+    "name" : "Albany Office",
+    "street" : "188 State Street",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "(518) 455-3161",
+    "fax" : "(518) 426-6963",
+    "otherPhone" : "",
+    "additional" : "Room 609, Legislative Office Building",
+    "latitude" : 42.65,
+    "longitude" : -73.76
   } ],
   "district" : {
     "number" : 61,

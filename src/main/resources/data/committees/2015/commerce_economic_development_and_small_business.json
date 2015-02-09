@@ -5,16 +5,26 @@
   "url" : "http://www.nysenate.gov/committee/commerce-economic-development-and-small-business",
   "videoUrl" : "http://www.livestream.com/NYSenate_Commerce",
   "chairs" : [ {
-    "nid" : 74986,
-    "name" : "Jack M. Martins",
-    "shortName" : "Martins",
-    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+    "nid" : 170126,
+    "name" : "Phil Boyle",
+    "shortName" : "Boyle",
+    "url" : "http://www.nysenate.gov/senator/philip-boyle"
   } ],
   "members" : [ {
     "nid" : 75006,
     "name" : "Patrick M. Gallivan",
     "shortName" : "Gallivan",
     "url" : "http://www.nysenate.gov/senator/pat-gallivan"
+  }, {
+    "nid" : 170136,
+    "name" : "Simcha Felder",
+    "shortName" : "Felder",
+    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+  }, {
+    "nid" : 252741,
+    "name" : "Rich Funke",
+    "shortName" : "Funke",
+    "url" : "http://www.nysenate.gov/senator/rich-funke"
   }, {
     "nid" : 217,
     "name" : "Joseph A. Griffo",
@@ -26,25 +36,20 @@
     "shortName" : "Robach",
     "url" : "http://www.nysenate.gov/senator/joseph-e-robach"
   }, {
-    "nid" : 170126,
-    "name" : "Phil Boyle",
-    "shortName" : "Boyle",
-    "url" : "http://www.nysenate.gov/senator/philip-boyle"
-  }, {
-    "nid" : 170136,
-    "name" : "Simcha Felder",
-    "shortName" : "Felder",
-    "url" : "http://www.nysenate.gov/senator/simcha-felder"
+    "nid" : 211,
+    "name" : "David J. Valesky",
+    "shortName" : "Valesky",
+    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   }, {
     "nid" : 75581,
     "name" : "Timothy M. Kennedy",
     "shortName" : "Kennedy",
     "url" : "http://www.nysenate.gov/senator/timothy-kennedy"
   }, {
-    "nid" : 74986,
-    "name" : "Jack M. Martins",
-    "shortName" : "Martins",
-    "url" : "http://www.nysenate.gov/senator/jack-m-martins"
+    "nid" : 252771,
+    "name" : "Jesse Hamilton",
+    "shortName" : "Hamilton",
+    "url" : "http://www.nysenate.gov/senator/jesse-hamilton"
   }, {
     "nid" : 201,
     "name" : "Ruth Hassell-Thompson",
@@ -55,20 +60,5 @@
     "name" : "James Sanders Jr.",
     "shortName" : "Sanders",
     "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
-  }, {
-    "nid" : 170161,
-    "name" : "Ted O'Brien",
-    "shortName" : "O'Brien",
-    "url" : "http://www.nysenate.gov/senator/ted-obrien"
-  }, {
-    "nid" : 211,
-    "name" : "David J. Valesky",
-    "shortName" : "Valesky",
-    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
-  }, {
-    "nid" : 218,
-    "name" : "Betty Little",
-    "shortName" : "Little",
-    "url" : "http://www.nysenate.gov/senator/elizabeth-little"
   } ]
 }

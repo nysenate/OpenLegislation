@@ -5,10 +5,10 @@
   "url" : "http://www.nysenate.gov/committee/aging",
   "videoUrl" : "http://www.livestream.com/nysenate_aging",
   "chairs" : [ {
-    "nid" : 211,
-    "name" : "David J. Valesky",
-    "shortName" : "Valesky",
-    "url" : "http://www.nysenate.gov/senator/david-j-valesky"
+    "nid" : 252736,
+    "name" : "Sue Serino",
+    "shortName" : "Serino",
+    "url" : "http://www.nysenate.gov/senator/susan-serino"
   } ],
   "members" : [ {
     "nid" : 170136,
@@ -36,10 +36,10 @@
     "shortName" : "Valesky",
     "url" : "http://www.nysenate.gov/senator/david-j-valesky"
   }, {
-    "nid" : 74981,
-    "name" : "Lee M. Zeldin",
-    "shortName" : "Zeldin",
-    "url" : "http://www.nysenate.gov/senator/lee-m-zeldin"
+    "nid" : 252741,
+    "name" : "Rich Funke",
+    "shortName" : "Funke",
+    "url" : "http://www.nysenate.gov/senator/rich-funke"
   }, {
     "nid" : 198,
     "name" : "Ruben Diaz",
@@ -51,14 +51,14 @@
     "shortName" : "Addabbo",
     "url" : "http://www.nysenate.gov/senator/joseph-p-addabbo-jr"
   }, {
-    "nid" : 99,
-    "name" : "Toby Ann Stavisky",
-    "shortName" : "Stavisky",
-    "url" : "http://www.nysenate.gov/senator/toby-ann-stavisky"
+    "nid" : 170141,
+    "name" : "Brad Hoylman",
+    "shortName" : "Hoylman",
+    "url" : "http://www.nysenate.gov/senator/brad-hoylman"
   }, {
-    "nid" : 170131,
-    "name" : "James Sanders Jr.",
-    "shortName" : "Sanders",
-    "url" : "http://www.nysenate.gov/senator/james-sanders-jr"
+    "nid" : 119,
+    "name" : "José M. Serrano",
+    "shortName" : "Serrano",
+    "url" : "http://www.nysenate.gov/senator/jose-m-serrano"
   } ]
 }

@@ -5,7 +5,7 @@
   "shortName" : "Croci",
   "email" : "Croci@nysenate.gov",
   "additionalContact" : "",
-  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/Tom-Croci-.jpg",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/croc-2.jpg",
   "url" : "http://www.nysenate.gov/senator/thomas-croci",
   "partyAffiliations" : [ "R" ],
   "offices" : [ {
@@ -17,15 +17,15 @@
     "province" : "NY",
     "countryName" : "United States",
     "country" : "us",
-    "phone" : "(518) 455-2500",
+    "phone" : "518-455-3570",
     "fax" : "",
     "otherPhone" : "",
-    "additional" : "Room 802",
+    "additional" : "Room 306",
     "latitude" : 42.65,
     "longitude" : -73.76
   }, {
     "name" : "District Office",
-    "street" : "Veterans Memorial Highway",
+    "street" : "250 Veterans Memorial Highway",
     "city" : "Hauppauge",
     "postalCode" : "11788",
     "provinceName" : "New York",
@@ -35,9 +35,9 @@
     "phone" : "(631) 360-3356",
     "fax" : "",
     "otherPhone" : "",
-    "additional" : "NYS Office Building",
-    "latitude" : 40.823808,
-    "longitude" : -73.208634
+    "additional" : "NYS Office Building, Room 2a-1",
+    "latitude" : 40.820744,
+    "longitude" : -73.219194
   } ],
   "district" : {
     "number" : 3,

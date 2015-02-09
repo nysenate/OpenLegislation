@@ -5,7 +5,7 @@
   "shortName" : "Ortt",
   "email" : "Ortt@nysenate.gov",
   "additionalContact" : "",
-  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/ortt_r.jpg",
+  "imageUrl" : "http://www.nysenate.gov/files/profile-pictures/(11-13-14) Ortt-HS-007.jpg",
   "url" : "http://www.nysenate.gov/senator/robert-ortt",
   "partyAffiliations" : [ "R" ],
   "offices" : [ {
@@ -17,12 +17,27 @@
     "province" : "NY",
     "countryName" : "United States",
     "country" : "us",
-    "phone" : "(518) 455-",
-    "fax" : "(518) 426-",
+    "phone" : "(518) 455-2024",
+    "fax" : "(518) 426-6987",
     "otherPhone" : "",
-    "additional" : "Room 708",
+    "additional" : "Room 815",
     "latitude" : 42.65,
     "longitude" : -73.76
+  }, {
+    "name" : "District Office",
+    "street" : "175 Walnut Street,",
+    "city" : "Lockport",
+    "postalCode" : "14094",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "716-434-0680",
+    "fax" : "716-434-3297",
+    "otherPhone" : "",
+    "additional" : "Suite 6",
+    "latitude" : 43.169201,
+    "longitude" : -78.691006
   } ],
   "district" : {
     "number" : 62,
@@ -31,11 +46,11 @@
     "mapUrl" : "http://geo.nysenate.gov/maps/regular.jsp?x=850&y=595&sd=62"
   },
   "social" : {
-    "twitter" : "",
+    "twitter" : "https://twitter.com/SenatorOrtt",
     "youtube" : "",
     "myspace" : "",
     "picasa" : "",
     "flickr" : "",
-    "facebook" : ""
+    "facebook" : "https://www.facebook.com/roborttnysenate"
   }
 }

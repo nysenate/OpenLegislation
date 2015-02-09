@@ -9,21 +9,6 @@
   "url" : "http://www.nysenate.gov/senator/jack-m-martins",
   "partyAffiliations" : [ "R" ],
   "offices" : [ {
-    "name" : "Albany Office",
-    "street" : "Legislative Office Building, Room 946",
-    "city" : "Albany",
-    "postalCode" : "12247",
-    "provinceName" : "New York",
-    "province" : "NY",
-    "countryName" : "United States",
-    "country" : "us",
-    "phone" : "518-455-3265",
-    "fax" : "518-426-6739",
-    "otherPhone" : "",
-    "additional" : "",
-    "latitude" : 42.652442,
-    "longitude" : -73.759332
-  }, {
     "name" : "District Office",
     "street" : "252 Mineola Boulevard",
     "city" : "Mineola",
@@ -38,6 +23,21 @@
     "additional" : "",
     "latitude" : 40.747477,
     "longitude" : -73.643422
+  }, {
+    "name" : "Albany Office",
+    "street" : "Legislative Office Building, Room 915",
+    "city" : "Albany",
+    "postalCode" : "12247",
+    "provinceName" : "New York",
+    "province" : "NY",
+    "countryName" : "United States",
+    "country" : "us",
+    "phone" : "518-455-3265",
+    "fax" : "518-426-6739",
+    "otherPhone" : "",
+    "additional" : "",
+    "latitude" : 42.65,
+    "longitude" : -73.76
   } ],
   "district" : {
     "number" : 7,
