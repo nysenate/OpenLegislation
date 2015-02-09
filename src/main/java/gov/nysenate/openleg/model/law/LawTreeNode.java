@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.model.law;
 
+import com.google.common.collect.Range;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -21,10 +21,13 @@ public class LawTreeNode implements Comparable<LawTreeNode>
 
     /** Contains references to all the immediate children of this node. The key is the document id
      *  of the child node. */
-    protected Map<String, LawTreeNode> children = new HashMap<>();
+    protected LinkedHashMap<String, LawTreeNode> children = new LinkedHashMap<>();
 
     /** Date when this law node was repealed, null if not repealed. */
     protected LocalDate repealedDate;
+
+    /** Instance variable used to cache the section range once computed. */
+    private Optional<Range<LawTreeNode>> sectionRange;
 
     /** --- Constructors --- */
 
@@ -46,6 +49,53 @@ public class LawTreeNode implements Comparable<LawTreeNode>
         if (node == null) throw new IllegalArgumentException("Cannot add a null child node ");
         node.setParent(this);
         children.put(node.lawDocInfo.documentId, node);
+    }
+
+    /**
+     * Returns a range of the sections that span the range of this node. For example if this is an article node,
+     * this method will return the start and end sections contained under this article.
+     *
+     * Note: This method will recompute the range regardless of whether the 'sectionRange' instance variable is already set.
+     * @return Optional<Range<LawTreeNode>>
+     */
+    public Optional<Range<LawTreeNode>> getSectionRange() {
+        LawTreeNode start = findFirstSection(this);
+        LawTreeNode end = findLastSection(this);
+        if (start != null && end != null) {
+            sectionRange = Optional.of(Range.closed(start, end));
+        }
+        else {
+            sectionRange = Optional.empty();
+        }
+        return sectionRange;
+    }
+
+    /**
+     * Gets the first immediate section, using the cached range if available.
+     * @return Optional<LawTreeNode>
+     */
+    public Optional<LawTreeNode> getFromSection() {
+        if (sectionRange == null) {
+            sectionRange = getSectionRange();
+        }
+        if (sectionRange.isPresent()) {
+            return Optional.of(sectionRange.get().lowerEndpoint());
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Gets the last immediate section, using the cached range if available.
+     * @return Optional<LawTreeNode>
+     */
+    public Optional<LawTreeNode> getToSection() {
+        if (sectionRange == null) {
+            sectionRange = getSectionRange();
+        }
+        if (sectionRange.isPresent()) {
+            return Optional.of(sectionRange.get().upperEndpoint());
+        }
+        return Optional.empty();
     }
 
     /**
@@ -149,6 +199,46 @@ public class LawTreeNode implements Comparable<LawTreeNode>
         return sb.toString();
     }
 
+    /**
+     * Finds the first valid section under this law node.
+     * @param node LawTreeNode
+     * @return LawTreeNode of the first immediate section (reference to self if this is a section node), or null if none.
+     */
+    private LawTreeNode findFirstSection(LawTreeNode node) {
+        if (node.getDocType().equals(LawDocumentType.SECTION)) {
+            return node;
+        }
+        LinkedList<LawTreeNode> children = new LinkedList<>(node.getChildren().values());
+        LawTreeNode firstNode = null;
+        while (!children.isEmpty() && firstNode == null) {
+            firstNode = findFirstSection(children.getFirst());
+            if (firstNode == null) {
+                children.removeFirst();
+            }
+        }
+        return firstNode;
+    }
+
+    /**
+     * Finds the last valid section under this node.
+     * @param node LawTreeNode
+     * @return LawTreeNode of the last immediate section (reference to self if this is a section node), or null if none.
+     */
+    private LawTreeNode findLastSection(LawTreeNode node) {
+        if (node.getDocType().equals(LawDocumentType.SECTION)) {
+            return node;
+        }
+        LinkedList<LawTreeNode> children = new LinkedList<>(node.getChildren().values());
+        LawTreeNode lastNode = null;
+        while (!children.isEmpty() && lastNode == null) {
+            lastNode = findLastSection(children.getLast());
+            if (lastNode == null) {
+                children.removeLast();
+            }
+        }
+        return lastNode;
+    }
+
     /** --- Overrides --- */
 
     @Override
@@ -210,11 +300,11 @@ public class LawTreeNode implements Comparable<LawTreeNode>
         this.parent = parent;
     }
 
-    public Map<String, LawTreeNode> getChildren() {
+    public LinkedHashMap<String, LawTreeNode> getChildren() {
         return children;
     }
 
-    public void setChildren(TreeMap<String, LawTreeNode> children) {
+    public void setChildren(LinkedHashMap<String, LawTreeNode> children) {
         this.children = children;
     }
 
