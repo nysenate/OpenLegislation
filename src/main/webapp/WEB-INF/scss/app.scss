@@ -352,22 +352,22 @@ $left-nav-width: 305px;
 h1.slogan {
   font-size:2.8rem;
   padding:20px;
-  color:white;
+  color:#555;
   font-family: 'Roboto Slab', serif;
   font-weight: 400;
 }
 
 a.slogan-link {
-  color:white;
+  color:$blue5;
   text-decoration: none;
-  border-bottom:2px solid white;
+  border-bottom:2px solid $blue5;
 }
 
 .provide-data-container {
   padding: 5px;
   cursor: pointer;
   &:hover {
-    background: lighten(rgb(62, 105, 126), 10);
+    background: $gray2;
   }
 }
 
@@ -375,7 +375,7 @@ a.slogan-link {
   text-align:center;
   height:60px;
   width:60px;
-  border:2px solid white;
+  border:2px solid #999;
   i {
     font-size: 2rem;
     line-height:56px;
