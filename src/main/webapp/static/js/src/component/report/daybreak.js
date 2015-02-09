@@ -38,10 +38,14 @@ function ($scope, $routeParams, $location, $timeout) {
 
     // Loads a new report in the detail tab
     $scope.openReportDetail = function(reportDateTime) {
-        $scope.openReport = reportDateTime;
-        console.log("new report: ", $scope.openReport);
-        $timeout(function() {$scope.$broadcast('newReportDetail')}, 1);
-        $location.search('report', $scope.openReport);
+        if ($scope.openReport != reportDateTime) {
+            $scope.openReport = reportDateTime;
+            console.log("new report: ", $scope.openReport);
+            $timeout(function () {
+                $scope.$broadcast('newReportDetail')
+            }, 1);
+            $location.search('report', $scope.openReport);
+        }
         $scope.selectedIndex = 1;
     };
 
@@ -241,21 +245,20 @@ function($scope, $mdDialog, initialMismatchId, getDetails, findFirstOpenedDates,
 
 daybreakModule.controller('DaybreakDetailCtrl', ['$scope', '$element', '$filter', '$location', '$timeout', '$mdDialog', 'DaybreakDetailAPI',
 function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDetailAPI) {
-    $scope.report = null;
-    $scope.totals = null;
-    $scope.errorFilter = null;
-    $scope.filteredTypeTotals = null;
-    $scope.dataDetails = {};
-    $scope.openDetailMismatchId = null;
-    $scope.filterWatchersInitialized = false;
-    $scope.tableData = [];
-    $scope.filteredTableData = [];
-    $scope.displayData = [];
     $scope.resultsPerPage = 10;
     $scope.rppOptions = [10, 20, 30, 50, 100];
+    $scope.errorFilter = null;
+    $scope.displayData = [];
+    $scope.filterWatchersInitialized = false;
 
     // Initialization function
     $scope.init = function (reportDateTime) {
+        $scope.report = null;
+        $scope.totals = null;
+        $scope.filteredTypeTotals = null;
+        $scope.dataDetails = {};
+        $scope.tableData = [];
+        $scope.filteredTableData = [];
         console.log("new report detail detected: ", reportDateTime);
         $scope.reportDateTime = reportDateTime;
         $scope.getReportDetails();
