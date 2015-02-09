@@ -19,195 +19,83 @@ daybreakModule.factory('DaybreakDetailAPI', ['$resource', function($resource) {
 
 /** --- Parent Daybreak Controller --- */
 
-daybreakModule.controller('DaybreakCtrl', ['$scope', '$routeParams', '$location', '$timeout', '$filter',
-function ($scope, $routeParams, $location, $timeout, $filter) {
+daybreakModule.controller('DaybreakCtrl', ['$scope', '$routeParams', '$location', '$timeout',
+function ($scope, $routeParams, $location, $timeout) {
+
+    // The date of the currently open report, null if no open reports
+    $scope.openReport = null;
+
+    // The index of the currently selected tab
+    $scope.selectedIndex = 0;
 
     function init() {
         $scope.setHeaderText("View Daybreak Reports");
 
-        $scope.tabs = [{type: "summary", title: "Summaries"}];
-
-        // The index of the currently selected tab
-        $scope.selectedIndex = 0;
-
-        if ($routeParams.hasOwnProperty('reports')) {
-            var initialReports;
-            if (typeof $routeParams['reports'] === 'string'){
-                initialReports = [$routeParams['reports']];
-            } else {
-                initialReports = $routeParams['reports'];
-            }
-            initialReports.forEach($scope.openReportDetail);
+        if ($routeParams.hasOwnProperty('report')) {
+            $scope.openReportDetail($routeParams['report']);
         }
-
     }
 
-    // Creates a new report detail tab for a given report date
-    function newReportDetailTab(reportDateTime) {
-        return {
-            type: "detail",
-            title: $filter('moment')(reportDateTime, 'lll'),
-            reportDateTime: reportDateTime
-        };
-    }
-
-    // Adds a new report detail tab for the given report date or opens it if it already exists
+    // Loads a new report in the detail tab
     $scope.openReportDetail = function(reportDateTime) {
-        var i = $scope.getReportIndex(reportDateTime);
-        if (i < 0) {
-            i = $scope.tabs.push(newReportDetailTab(reportDateTime)) - 1;
-            // TODO replace this klooge when angular md .8 comes out
-            $timeout(function() {$scope.selectedIndex = i;}, 100);
-        } else {
-            $scope.selectedIndex = i;
-        }
+        $scope.openReport = reportDateTime;
+        console.log("new report: ", $scope.openReport);
+        $timeout(function() {$scope.$broadcast('newReportDetail')}, 1);
+        $location.search('report', $scope.openReport);
+        $scope.selectedIndex = 1;
     };
-
-    // Removes an open tab corresponding to the given report date time
-    $scope.closeReportDetail = function(reportDateTime) {
-        var i = $scope.getReportIndex(reportDateTime);
-        if (i > 0) {
-            $scope.selectedIndex = i;
-            $scope.tabs.splice(i, 1);
-        }
-    };
-
-    // Gets the tab index for the given report date time, returns -1 if no such tab exists
-    $scope.getReportIndex = function(reportDateTime) {
-        for (var i=0; i<$scope.tabs.length; i++) {
-            var tab = $scope.tabs[i];
-            if (tab.type === "detail" && tab.reportDateTime === reportDateTime) {
-                return i;
-            }
-        }
-        return -1;
-    };
-
-    $scope.$watch('tabs', function () {
-        var reportDates = [];
-        angular.forEach($scope.tabs, function (tab) {
-            if (tab.type === 'detail') {
-                reportDates.push(tab.reportDateTime);
-            }
-        });
-        $location.search('reports', reportDates);
-    }, true);
-
-    $scope.$watch('selectedIndex', function () {
-        if ($scope.selectedIndex === -1) {
-            $scope.selectedIndex = 0;
-        }
-    });
 
     init();
 }]);
 
 /** --- Report Summary Controller --- */
 
-daybreakModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', 'DaybreakSummaryAPI',
-    function ($scope, $filter, DaybreakSummaryAPI) {
+daybreakModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routeParams', '$location', 'DaybreakSummaryAPI',
+    function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
 
-        $scope.rsEndDate = moment();
-        $scope.rsStartDate = moment($scope.rsEndDate).subtract(1, 'months');
         $scope.reportSummaries = [];
         $scope.dataProvider = [];
         $scope.response = null;
 
-        var testData = [
-            {
-                EXISTING: 271,
-                IGNORE: 0,
-                NEW: 0,
-                REGRESSION: 0,
-                RESOLVED: 0,
-                reportDateTime: "2015-01-23T13:57:54"
-            }, {
-                EXISTING: 200,
-                IGNORE: 0,
-                NEW: 0,
-                REGRESSION: 0,
-                RESOLVED: 71,
-                reportDateTime: "2015-01-23T14:57:54"
-            }, {
-                EXISTING: 200,
-                IGNORE: 0,
-                NEW: 0,
-                REGRESSION: 35,
-                RESOLVED: 0,
-                reportDateTime: "2015-01-23T15:57:54"
-            }
-        ];
-
-        $scope.chartConfig = {
-            "type": "serial",
-            "theme": "none",
-            "marginLeft": 20,
-            "pathToImages": "http://www.amcharts.com/lib/3/images/",
-            "dataProvider": testData,
-            "valueAxes": [{
-                "stackType": "regular",
-                "gridAlpha": 0.07,
-                "position": "left",
-                "title": "Mismatches"
-            }],
-            "graphs": [{
-                "fillAlphas": 0.6,
-                "lineAlpha": 0.4,
-                "title": "New",
-                "valueField": "NEW"
-            }, {
-                "fillAlphas": 0.6,
-                "lineAlpha": 0.4,
-                "title": "Existing",
-                "valueField": "EXISTING"
-            }, {
-                "fillAlphas": 0.6,
-                "lineAlpha": 0.4,
-                "title": "Regression",
-                "valueField": "REGRESSION"
-            }, {
-                "fillAlphas": 0.6,
-                "lineAlpha": 0.4,
-                "title": "Resolved",
-                "valueField": "RESOLVED"
-            }, {
-                "fillAlphas": 0.6,
-                "lineAlpha": 0.4,
-                "title": "Ignored",
-                "valueField": "IGNORE"
-            }],
-            "chartScrollbar": {},
-            "chartCursor": {
-                "categoryBalloonDateFormat": "YYYY-MM-DD hh-mm",
-                "cursorAlpha": 0,
-                "cursorPosition": "mouse"
-            },
-    //        "dataDateFormat": "mm",
-            "categoryField": "reportDateTime",
-            "categoryAxis": {
-                "minPeriod": "mm",
-                "parseDates": true,
-                "minorGridAlpha": 0.1,
-                "minorGridEnabled": true,
-                "title": "Report Date"
-            }
-        };
-
-
         $scope.init = function() {
+            $scope.dateInit();
             $scope.getSummaries();
         };
 
+        $scope.dateInit = function() {
+            if ($routeParams.hasOwnProperty('endDate') && moment($routeParams['endDate']).isValid()) {
+                $scope.endDate = moment($routeParams['endDate']);
+            } else {
+                $scope.endDate = moment();
+            }
+            if ($routeParams.hasOwnProperty('startDate') && moment($routeParams['startDate']).isValid()) {
+                $scope.startDate = moment($routeParams['startDate']);
+            } else {
+                $scope.startDate = moment($scope.endDate).subtract(3, 'months');
+            }
+            $scope.inputStartDate = moment($scope.startDate).toDate();
+            $scope.inputEndDate = moment($scope.endDate).toDate();
+        };
+
         $scope.getSummaries = function() {
-            $scope.response = DaybreakSummaryAPI.get({startDate: $scope.rsStartDate.format(), endDate: $scope.rsEndDate.format()},
+            $scope.response = DaybreakSummaryAPI.get({startDate: $scope.startDate.format(), endDate: $scope.endDate.format()},
                 function() {
                     if ($scope.response.success) {
                         $scope.reportSummaries = $scope.response.reports.items;
-                        var newChartConfig = angular.copy($scope.chartConfig);
-
-                        $scope.dataProvider = $scope.reportSummaries.map($scope.getChartPoint);
                     }
                 });
+        };
+
+        $scope.newDateRange = function() {
+            $scope.endDate = moment($scope.inputEndDate);
+            $scope.startDate = moment($scope.inputStartDate);
+            $scope.getSummaries();
+            $scope.setDateParams();
+        };
+
+        $scope.setDateParams = function () {
+            $location.search('startDate', $scope.startDate.format('YYYY-MM-DD'));
+            $location.search('endDate', $scope.endDate.format('YYYY-MM-DD'));
         };
 
         $scope.getChartPoint = function(reportSummary) {
@@ -314,27 +202,75 @@ daybreakModule.directive('mismatchDiff', function(){
     };
 });
 
-daybreakModule.controller('DaybreakDetailCtrl', ['$scope', '$filter', '$location', 'DaybreakDetailAPI',
-function ($scope, $filter, $location, DaybreakDetailAPI) {
+daybreakModule.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'initialMismatchId', 'getDetails', 'findFirstOpenedDates', 'getMismatchId',
+function($scope, $mdDialog, initialMismatchId, getDetails, findFirstOpenedDates, getMismatchId) {
+
+    $scope.selectedIndex = 0;
+
+    $scope.getMismatchId = getMismatchId;
+
+    $scope.getDetails = getDetails;
+
+    $scope.findFirstOpenedDates = findFirstOpenedDates;
+
+    $scope.newDetails = function (details) {
+        $scope.details = details;
+
+        $scope.printNo = $scope.details.observation.key.printNo;
+        $scope.observation = $scope.details.observation;
+        $scope.currentMismatch = $scope.details.mismatch;
+        $scope.allMismatches = $scope.details.observation.mismatches.items;
+
+        $scope.firstOpened = $scope.findFirstOpenedDates($scope.currentMismatch);
+    };
+
+    $scope.openNewDetail = function(mismatchId) {
+        $scope.newDetails($scope.getDetails(mismatchId));
+    };
+
+    $scope.cancel = function () {
+        $mdDialog.hide();
+    };
+
+    function init() {
+        $scope.openNewDetail(initialMismatchId);
+    }
+
+    init();
+}]);
+
+daybreakModule.controller('DaybreakDetailCtrl', ['$scope', '$element', '$filter', '$location', '$timeout', '$mdDialog', 'DaybreakDetailAPI',
+function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDetailAPI) {
     $scope.report = null;
     $scope.totals = null;
     $scope.errorFilter = null;
     $scope.filteredTypeTotals = null;
     $scope.dataDetails = {};
+    $scope.openDetailMismatchId = null;
     $scope.filterWatchersInitialized = false;
+    $scope.tableData = [];
     $scope.filteredTableData = [];
+    $scope.displayData = [];
+    $scope.resultsPerPage = 10;
+    $scope.rppOptions = [10, 20, 30, 50, 100];
 
     // Initialization function
     $scope.init = function (reportDateTime) {
+        console.log("new report detail detected: ", reportDateTime);
         $scope.reportDateTime = reportDateTime;
         $scope.getReportDetails();
     };
+
+    $scope.$on('newReportDetail', function () {
+        console.log("new report detail detected");
+        $scope.init($scope.$parent.openReport);
+    });
 
     // Fetch the report by parsing the url for the report date/time
     $scope.getReportDetails = function() {
         $scope.report = DaybreakDetailAPI.get({reportDateTime: $scope.reportDateTime}, function() {
             $scope.referenceDateTime = $scope.report.details.referenceDateTime;
-            $scope.tableData = $scope.extractTableData();
+            $scope.extractTableData();
             $scope.filterInit();
             $scope.activateFilterWatchers();
         });
@@ -342,8 +278,8 @@ function ($scope, $filter, $location, DaybreakDetailAPI) {
 
     // Extracts an array of table rows from the report data
     $scope.extractTableData = function() {
-        var tableData = [];
         if ($scope.report && $scope.report.success) {
+            console.log("success!");
             angular.forEach($scope.report.details.observations, function(obs) {
                 angular.forEach(obs.mismatches.items, function(m) {
                     var mismatchId = $scope.getMismatchId(obs, m);
@@ -360,11 +296,10 @@ function ($scope, $filter, $location, DaybreakDetailAPI) {
                         observation: obs,
                         mismatch: m
                     };
-                    tableData.push(rowData);
+                    $scope.tableData.push(rowData);
                 });
             });
         }
-        return tableData;
     };
 
     // Searches through the prior mismatches of a mismatch to find the date that it was first opened
@@ -392,59 +327,35 @@ function ($scope, $filter, $location, DaybreakDetailAPI) {
         return ctxPath + "/bills/" + $filter('sessionYear')(moment($scope.referenceDateTime).year()) + "/" + printNo;
     };
 
-    // Triggers a detail modal popup for the mismatch designated by mismatchId
-    $scope.showDetailModal = function(mismatchId, activeTab) {
-        $modal.open({
-            templateUrl: 'detailsModal.html',
-            controller: $scope.detailModalCtrl,
+    $scope.getMismatchDetails = function(mismatchId) {
+        return $scope.dataDetails[mismatchId];
+    };
+
+    // Triggers a detail sheet popup for the mismatch designated by mismatchId
+    $scope.openDetailWindow = function(mismatchId) {
+        $mdDialog.show({
+            templateUrl: 'mismatchDetailWindow',
+            controller: 'detailDialogCtrl',
+            //parent: $element,
+            locals: {
+                initialMismatchId: mismatchId
+            },
             resolve: {
-                activeTab: function() { return activeTab; },
-                details: function() { return $scope.dataDetails[mismatchId]; },
-                parentFunctions: function() { return {
-                    getLabel: $scope.getLabel,
-                    showDetailModal: $scope.showDetailModal,
-                    findFirstOpenedDates: $scope.findFirstOpenedDates,
-                    getMismatchId: $scope.getMismatchId
-                };}
+                getDetails: function() { return $scope.getMismatchDetails; },
+                findFirstOpenedDates: function() {return $scope.findFirstOpenedDates;},
+                getMismatchId: function() { return $scope.getMismatchId; }
             }
         });
     };
 
-    // The controller for detail modals
-    $scope.detailModalCtrl = function($scope, $modalInstance, details, activeTab, parentFunctions) {
-        $scope.getLabel = parentFunctions.getLabel;
-        $scope.getMismatchId = parentFunctions.getMismatchId;
-        $scope.findFirstOpenedDates = parentFunctions.findFirstOpenedDates;
-
-        $scope.formatReportDate = formatReportDate;
-        $scope.formatReferenceDate = formatReferenceDate;
-        $scope.printNo = details.observation.key.printNo;
-        $scope.observation = details.observation;
-        $scope.currentMismatch = details.mismatch;
-        $scope.allMismatches = details.observation.mismatches.items;
-
-        $scope.firstOpened = $scope.findFirstOpenedDates($scope.currentMismatch);
-
-        $scope.tabs = { diff: false, lbdc: false, openleg: false, prior: false, other: false };
-        $scope.tabs[activeTab] = true;
-
-
-        $scope.openNewModal = function(mismatchId, activeTab) {
-            $scope.cancel();
-            parentFunctions.showDetailModal(mismatchId, activeTab);
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss('close');
-        };
-    };
+    $scope.setRpp = function(number) {$scope.resultsPerPage = number;};
 
     /** --- Filter functions --- */
 
     // given an array of rows, returns an array of rows that pass the filter
     $scope.filterData = function(data){
         var filteredData = [];
-        for(index in data){
+        for(var index in data){
             if($scope.filterSelector(data[index])){
                 filteredData.push(data[index]);
             }
@@ -459,9 +370,9 @@ function ($scope, $filter, $location, DaybreakDetailAPI) {
 
     // Binds each filter entry such that if it is unset, the 'all' filter entry is unset
     $scope.bindUpdateFilterAll = function(){
-        for (filterClass in $scope.errorFilter) {
+        for (var filterClass in $scope.errorFilter) {
             if(filterClass != 'all'){
-                for(filterAttribute in $scope.errorFilter[filterClass]){
+                for(var filterAttribute in $scope.errorFilter[filterClass]){
                     $scope.$watch('errorFilter.' + filterClass + '.' + filterAttribute,
                         $scope.getFilterUpdateProcedure(filterClass, filterAttribute));
                 }

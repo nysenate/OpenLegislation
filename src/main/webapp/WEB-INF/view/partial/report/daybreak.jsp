@@ -1,34 +1,43 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
-<section ng-controller="DaybreakCtrl">
-    <div style="text-align: center" ng-bind="selectedIndex"></div>
+<section ng-controller="DaybreakCtrl" id="daybreak-page">
     <md-tabs md-selected="selectedIndex">
-        <md-tab ng-repeat="tab in tabs">
-        <md-tab-label ng-if="tab.type=='summary'">Summaries</md-tab-label>
-        <section ng-if="tab.type=='summary'" ng-controller="DaybreakSummaryCtrl" style="padding-left: 10px">
-            <h4>
-                <span class="icon-statistics blue-title-icon"></span>
-                Daybreak Reports: {{rsStartDate | moment:'lll'}} - {{rsEndDate | moment:'lll'}}
-            </h4>
-            <table id='report-summary-table' st-table="reportSummaries" class="table table-striped">
+
+        <!-- Summary Tab -->
+        <md-tab>
+        <md-tab-label>Summaries</md-tab-label>
+        <md-content ng-controller="DaybreakSummaryCtrl" style="padding-left: 10px">
+            <div>
+                <form style="display: inline-block">
+                    <h4 style="display: inline-block">
+                        <span class="icon-statistics blue-title-icon"></span>
+                        Daybreak Reports from&nbsp;
+                    </h4>
+                    <input type="date" ng-model="inputStartDate">
+                    <h4 style="display: inline-block">&nbsp;to&nbsp;</h4>
+                    <input type="date" ng-model="inputEndDate">
+                    <md-button ng-click="newDateRange()" class="md-primary md-raised" aria-label="change date range">Go</md-button>
+                </form>
+            </div>
+            <table id='daybreak-summary-table' st-table="reportSummaries" class="table table-striped">
                 <thead>
                 <tr>
                     <th rowspan="2">Report Date/Time</th>
                     <th class="th-section"  colspan="5">Mismatch Statuses</th>
-                    <th class="th-section" colspan="12">Mismatch Types</th>
+                    <th class="th-section" colspan="20">Mismatch Types</th>
                 </tr>
                 <tr>
                     <th style="border-left:1px solid #ccc;">Total Open</th>
                     <th>New</th>
-                    <th>Re-opened</th>
+                    <th>Regress</th>
                     <th>Existing</th>
                     <th>Resolved</th>
                     <th style="border-left:1px solid #ccc;" colspan="2">Sponsor</th>
                     <th colspan="2">Co-sp</th>
                     <th colspan="2">Multi-sp</th>
                     <th colspan="2">Title</th>
-                    <th colspan="2">Law/ Summary</th>
+                    <th colspan="2">Law/Sum</th>
                     <th colspan="2">Action</th>
                     <th colspan="2">Page</th>
                     <th colspan="2">Publish</th>
@@ -109,53 +118,58 @@
                 </tr>
                 </tbody>
             </table>
-        </section>
-        <md-tab-label ng-if="tab.type=='detail'">
-            {{tab.reportDateTime | moment:'lll'}}&nbsp;&nbsp;
-            <button ng-click="closeReportDetail(tab.reportDateTime)">x</button>
+        </md-content>
+        </md-tab>
+
+        <!-- Detail Tab -->
+
+        <md-tab ng-show="openReport!=null">
+        <md-tab-label>
+            {{openReport | moment:'lll'}}
         </md-tab-label>
-        <section ng-if="tab.type=='detail'" ng-controller="DaybreakDetailCtrl" ng-init="init(tab.reportDateTime)">
+        <md-content ng-controller="DaybreakDetailCtrl">
             <!--Title-->
-            <div class="row">
-                <div class="small-12 columns">
-                    <h4>
-                        <span class="icon-graph blue-title-icon"></span>
-                        LBDC {{referenceDateTime | moment:'ll'}} | Report Date: {{reportDateTime | moment:'lll'}}</h4>
-                </div>
-            </div>
+            <h4>
+                <span class="icon-graph blue-title-icon"></span>
+                LBDC {{referenceDateTime | moment:'ll'}} | Report Date: {{reportDateTime | moment:'lll'}}
+            </h4>
 
             <hr style="margin-top:.5em;"/>
 
             <!--Error summary/filter-->
-            <form>
-                <a ng-init="showMismatchFilter=false" ng-click="showMismatchFilter=!showMismatchFilter" ng-switch on="showMismatchFilter">
+            <form style="margin-bottom: 5px">
+                <md-button ng-init="showMismatchFilter=false" ng-click="showMismatchFilter=!showMismatchFilter"
+                           aria-label="show mismatch filter"
+                           ng-switch on="showMismatchFilter" class="md-raised">
                     <span ng-switch-when="false"><span class="icon-arrow-right prefix-icon"/>Filter mismatches</span>
                     <span ng-switch-when="true"><span class="icon-arrow-up prefix-icon"/>Hide filter</span>
-                </a>
+                </md-button>
                 <br/>
                 <div ng-show="showMismatchFilter">
                     <div class="row button-group panel minimal" style="margin-bottom:10px;">
-                        <check-button btn-class="" ng-model="errorFilter.all">
+                        <check-button btn-class="" ng-model="errorFilter.all" aria-label="Show all mismatches">
                             Total<br/>{{ totals.total }}
                         </check-button>
-                        <check-button btn-class="" ng-model="errorFilter.none">
+                        <check-button btn-class="" ng-model="errorFilter.none" aria-label="Show no mismatches">
                             None<br/>&nbsp;
                         </check-button>
                         <check-button btn-class="" ng-model="errorFilter.statuses[status]"
-                                      ng-repeat="(status, total) in totals.statuses">
+                                      ng-repeat="(status, total) in totals.statuses"
+                                      aria-label="Show {{status | mismatchStatusLabel}} mismatches">
                             {{status | mismatchStatusLabel}}<br/>{{totals.statuses[status]}}
                         </check-button>
                     </div>
 
                     <div class="row button-group panel minimal">
-                        <check-button btn-class="" ng-model="errorFilter.allTypes">
+                        <check-button btn-class="" ng-model="errorFilter.allTypes" aria-label="Show all mismatch types">
                             All<br/>Types
                         </check-button>
-                        <check-button btn-class="" ng-model="errorFilter.noTypes">
+                        <check-button btn-class="" ng-model="errorFilter.noTypes" aria-label="Show no mismatch types">
                             No<br/>Types
                         </check-button>
                         <check-button btn-class="" ng-model="errorFilter.types[type]"
-                                      ng-repeat="(type, total) in filteredTypeTotals">
+                                      ng-repeat="(type, total) in filteredTypeTotals"
+                                      aria-label="Show {{type | mismatchTypeLabel}} mismatches">
                             {{type | mismatchTypeLabel}}<br/>{{total}}
                         </check-button>
                     </div>
@@ -165,70 +179,121 @@
             </form>
 
             <!--Observation Table-->
-            <div class="row" id="report-detail-container">
-                <!-- Table -->
-                <table st-table="tableParams" class="table table-striped report-detail-table">
-                    <thead>
-                    <tr>
-                        <th>Bill Id</th>
-                        <th>Mismatch Type</th>
-                        <th>Status</th>
-                        <th>Opened At</th>
-                        <th>Snippet</th>
-                        <th>Details</th>
+            <table st-table="displayData" st-safe-src="filteredTableData" class="table table-striped report-detail-table">
+                <thead>
+                <tr>
+                    <td colspan="5">
+                        <span st-pagination="" st-template="paginationTemplate" st-items-by-page="resultsPerPage"
+                              st-displayed-pages="5"></span>
+                        <span class="rpp-selector">
+                            Displayed:&nbsp;&nbsp;
+                            <md-button ng-repeat="number in rppOptions" ng-bind="number" ng-click="setRpp(number)"
+                                       aria-label="Display {{number}} mismatches per page"
+                                       class="md-raised" ng-class='{"md-primary": resultsPerPage === number}'></md-button>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th st-sort="printNo">Bill Id</th>
+                    <th st-sort="type">Mismatch Type</th>
+                    <th st-sort="status">Status</th>
+                    <th st-sort="firstOpened">Opened At</th>
+                    <th>Snippet</th>
+                    <th>Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="row in displayData">
+                        <td style="width: 100px;">
+                            <a ng-href="{{getBillLink(row.printNo)}}" target="_blank">{{row.printNo}}</a>
+                        </td>
+                        <td>{{row.type | mismatchTypeLabel}}</td>
+                        <td>{{row.status | mismatchStatusLabel}}</td>
+                        <td>
+                            <a href="#" ng-click="openReportDetail(row.firstOpened)"
+                               ng-show="row.firstOpened!=reportDateTime && row.firstOpened!='Unknown'">
+                                {{row.firstOpened | moment:'lll'}}
+                            </a>
+                            <span ng-show="row.firstOpened==reportDateTime || row.firstOpened=='Unknown'">
+                                {{row.firstOpened | moment:'lll'}}
+                            </span>
+                        </td>
+                        <td><div class="report-table-snippet"><mismatch-diff diff="row.diff"/></div></td>
+                        <td><a href='#' ng-click='openDetailWindow(row.mismatchId)'>Details</a></td>
                     </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="row in filteredTableData">
-                            <td sortable="'printNo'" style="width: 100px;">
-                                <a ng-href="{{getBillLink(row.printNo)}}" target="_blank">{{row.printNo}}</a>
-                            </td>
-                            <td sortable="'type'">{{row.type | mismatchTypeLabel}}</td>
-                            <td sortable="'status'">{{row.status | mismatchStatusLabel}}</td>
-                            <td sortable="'firstOpened'">
-                                <a href="#" ng-click="openReportDetail(row.firstOpened)"
-                                   ng-show="row.firstOpened!=reportDateTime && row.firstOpened!='Unknown'">
-                                    {{row.firstOpened | moment:'lll'}}
-                                </a>
-                                <span ng-show="row.firstOpened==reportDateTime || row.firstOpened=='Unknown'">
-                                    {{row.firstOpened | moment:'lll'}}
-                                </span>
-                            </td>
-                            <td><div class="report-table-snippet"><mismatch-diff diff="row.diff"/></div></td>
-                            <td><a href='#' ng-click='showDetailModal(row.mismatchId, "diff")'>Details</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <!-- Paginator -->
-                <script type="text/ng-template" id="custom/pager">
-                    <ul class="pagination ng-cloak">
-                        <li ng-repeat="page in pages"
-                            ng-class="{'disabled': !page.active}"
-                            ng-show="params.count() > 0"
-                            ng-switch="page.type">
-                            <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous</a>
-                            <a ng-switch-when="first" ng-click="params.page(1)" href="">
-                                <span ng-bind="page.number" ng-class="{'current-page': page.number==params.page()}"></span>
-                            </a>
-                            <a ng-switch-when="page" ng-click="params.page(page.number)" ng-show="page.number==params.page()" href="">
-                                <span ng-bind="page.number" class="current-page"></span>
-                            </a>
-                            <a ng-switch-when="last" ng-click="params.page(page.number)" href="">
-                                <span ng-bind="page.number" ng-class="{'current-page': page.number==params.page()}"></span>
-                            </a>
-                            <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo;</a>
-                        </li>
-                        <div class="button-group round" id="pagination-button-group">
-                            <button type="button" ng-class="{'success':params.count() == 10}" ng-click="params.count(10)" class="button tiny">10</button>
-                            <button type="button" ng-class="{'success':params.count() == 25}" ng-click="params.count(25)" class="button tiny">25</button>
-                            <button type="button" ng-class="{'success':params.count() == 50}" ng-click="params.count(50)" class="button tiny">50</button>
-                            <button type="button" ng-class="{'success':params.count() == 100}" ng-click="params.count(100)" class="button tiny">100</button>
-                            <button type="button" ng-class="{'success':params.count() == 0}" ng-click="params.count(0)" class="button tiny">All: {{params.total()}}</button>
-                        </div>
-                    </ul>
-                </script>
-            </div>
-        </section>
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+        </md-content>
         </md-tab>
     </md-tabs>
 </section>
+
+<!-- Pagination Template -->
+<script type="text/ng-template" id="paginationTemplate">
+    <span class="pagination" ng-if="pages.length > 1">
+        <md-button ng-click="selectPage(currentPage - 1)" aria-label="previous page" class="md-raised">&laquo;</md-button>
+        <md-button ng-click="selectPage(currentPage + 1)" aria-label="next page" class="md-raised">&raquo;</md-button>
+        <md-button ng-click="selectPage(1)" aria-label="1st page"
+                   class="md-raised" ng-class='{"md-primary": currentPage === 1}'>1</md-button>
+        <md-button ng-repeat="page in pages" ng-bind="page" ng-if="page > 1 && page < numPages"
+                   aria-label="{{page | ordinalSuffix}} page"
+                   ng-click="selectPage(page)" class="md-raised" ng-class='{"md-primary": currentPage === page}'></md-button>
+        <md-button ng-click="selectPage(numPages)" ng-bind="numPages"
+                   aria-label="{{numPages | ordinalSuffix}} page"
+                   class="md-raised" ng-class='{"md-primary": currentPage === numPages}'></md-button>
+    </span>
+</script>
+
+<!-- Detail Template -->
+<script type="text/ng-template" id="mismatchDetailWindow">
+    <md-dialog aria-label="">
+    <md-content class="md-padding mismatch-dialog">
+        <div>
+            <h5 style="display: inline-block">
+                Bill: {{printNo}}<br/>
+                Mismatch: {{currentMismatch.mismatchType | mismatchTypeLabel}}<br/>
+                Status: {{currentMismatch.status | mismatchStatusLabel}}
+            </h5>
+            <h5 style="display: inline-block; text-align: right">
+                Opened on: {{firstOpened.reportDateTime | moment:'lll'}}<br/>
+                First Reference: {{firstOpened.referenceDateTime | moment:'lll'}}<br/>
+                Current Reference: {{observation.refDateTime | moment:'lll'}}
+            </h5>
+        </div>
+        <md-tabs class="mismatch-dialog-tabs">
+            <md-tab label="DIFF">
+                <md-content>
+                    <mismatch-diff diff="currentMismatch.diff"></mismatch-diff>
+                </md-content>
+            </md-tab>
+            <md-tab label="LBDC"><md-content ng-bind="currentMismatch.referenceData"></md-content></md-tab>
+            <md-tab label="Openleg"><md-content ng-bind="currentMismatch.observedData"></md-content></md-tab>
+            <md-tab label="Prior Occurrences">
+                <%--<accordion>--%>
+                <%--<accordion-group ng-repeat="priorMismatch in currentMismatch.prior.items"--%>
+                <%--label="REPORT: {{formatReportDate(priorMismatch.reportId.reportDateTime)}} DAYBREAK: {{formatReferenceDate(priorMismatch.reportId.referenceDateTime)}} STATUS: {{getLabel('statuses', priorMismatch.status)}}">--%>
+                <%--<mismatch-diff diff="priorMismatch.diff"></mismatch-diff>--%>
+                <%--</accordion-group>--%>
+                <%--</accordion>--%>
+            </md-tab>
+            <md-tab label="Other Mismatches">
+                <md-content>
+                <ul ng-show="allMismatches.length > 1">
+                    <li ng-repeat="mismatch in allMismatches">
+                                <span ng-show="mismatch.mismatchType==currentMismatch.mismatchType">
+                                    {{mismatch.mismatchType | mismatchTypeLabel}} - {{mismatch.status | mismatchStatusLabel}}
+                                </span>
+                        <a href="#" ng-show="mismatch.mismatchType!=currentMismatch.mismatchType"
+                           ng-click="openNewDetail(getMismatchId(observation, mismatch))">
+                            {{mismatch.mismatchType | mismatchTypeLabel}} - {{mismatch.status | mismatchStatusLabel}}
+                        </a>
+                    </li>
+                </ul>
+                <md-content>
+            </md-tab>
+        </md-tabs>
+    </md-content>
+    </md-dialog>
+</script>
