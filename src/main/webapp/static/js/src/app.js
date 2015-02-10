@@ -20,6 +20,9 @@ openApp.config(function($mdThemingProvider) {
             'hue-3': '600'
         });
     $mdThemingProvider.theme('dark').primaryColor('grey');
+})
+.config(function($resourceProvider) {
+    $resourceProvider.defaults.stripTrailingSlashes = false;
 });
 
 /**

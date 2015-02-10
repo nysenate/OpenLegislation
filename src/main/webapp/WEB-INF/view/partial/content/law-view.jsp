@@ -3,27 +3,83 @@
 
 <section ng-controller="LawCtrl">
   <section ng-controller="LawViewCtrl">
-    <h3 style="color:white;" class="green1-bg no-bottom-margin padding-20">
-      <span class="bold">{{lawTree.info.name}}</span>
-    </h3>
+    <md-tabs md-selected="curr.selectedView">
+      <md-tab label="Back to Listings" md-on-select="backToListings()">
+      </md-tab>
+      <md-tab label="{{curr.lawId}}">
+        <pre ng-show="curr.nodes[depth].docType === 'SECTION'"
+             class="margin-left-20 bill-full-text" style="white-space: pre-line;">
+          {{curr.lawText}}
+        </pre>
+        <!-- Recursive ng-repeat template to render the law tree -->
+        <script type="text/ng-template" id="law-tree-snippet.html">
+          <div>
+            <md-item ng-click="toggleLawNode(doc)">
+              <md-item-content class="law-node" ng-class="{active: curr.showNested[doc.locationId]}">
+                <div class="md-tile-left law-node-toggle-icon" style="min-width:30px;margin-right:0;">
+                  <i ng-show="!curr.showNested[doc.locationId]" class="hide icon-arrow-down5"></i>
+                  <i ng-show="curr.showNested[doc.locationId]" class="hide icon-arrow-up4"></i>
+                </div>
+                <div class="md-tile-left" style="width:130px;">
+                  <h4><span ng-switch="doc.docType">
+                          <span ng-switch-when="SECTION">&sect;</span>
+                          <span ng-switch-default>{{doc.docType}}</span>
+                       </span> {{doc.docLevelId}}
+                  </h4>
+                </div>
+                <div class="md-tile-content">
+                  <h4><span ng-if="doc.title">{{doc.title}}</span>
+                      <span class="red1" ng-if="!doc.title">Title not available</span>
+                  </h4>
+                  <p ng-hide="doc.docType === 'SECTION'">Sections (&sect;{{doc.fromSection}} - &sect;{{doc.toSection}})</p>
+                  <p class="green2" ng-show="doc.docType === 'SECTION' && doc.activeDate !== '2014-09-22'">
+                    Updated on {{doc.activeDate | moment:'MM/DD/YYYY'}}
+                  </p>
+                </div>
+              </md-item-content>
+              <md-divider></md-divider>
+            </md-item>
+            <md-item ng-if="doc.docType !== 'SECTION' && curr.showNested[doc.locationId]">
+              <div class="padding-10">
+                <md-button ng-click="toggleNodeText(doc)" class="md-primary md-hue-2" style="font-size:0.8rem;">
+                  <i class="icon-text prefix-icon2"></i>
+                  <span ng-show="!curr.showDoc[doc.locationId]">Show</span>
+                  <span ng-show="curr.showDoc[doc.locationId]">Hide</span> text for {{doc.docType}} {{doc.docLevelId}}
+                </md-button>
+                <div ng-if="doc.docType == 'ARTICLE'">
+                  <md-button ng-if="!curr.expanded[doc.locationId]"
+                             ng-click="expandNodesBelow(doc)" class="md-primary md-hue-2" style="font-size:0.8rem;">
+                    <i class="icon-book2 prefix-icon2"></i>Expand Sections
+                  </md-button>
+                  <md-button ng-if="curr.expanded[doc.locationId]"
+                             ng-click="collapseNodesBelow(doc)" class="md-primary md-hue-2" style="font-size:0.8rem;">
+                    <i class="icon-book prefix-icon2"></i>Collapse Sections
+                  </md-button>
+                </div>
+              </div>
+              <md-divider></md-divider>
+              <div class="law-text" ng-if="curr.showDoc[doc.locationId]" ng-bind-html="curr.lawText[doc.locationId]"></div>
+            </md-item>
+            <md-item ng-if="curr.showNested[doc.locationId]">
+              <md-item-content>
+                <md-list style="width:100%;" class="no-padding" ng-if="doc.docType !== 'SECTION'">
+                  <div ng-repeat="doc in doc.documents.items" class="margin-left-20" ng-include="'law-tree-snippet.html'"></div>
+                </md-list>
+                <div class="law-text" ng-if="doc.docType === 'SECTION'" ng-bind-html="curr.lawText[doc.locationId]"></div>
+              </md-item-content>
+            </md-item>
+          </div>
+        </script>
 
-    <!-- Recursive ng-repeat templates (pretty cool huh) -->
-    <script type="text/ng-template" id="law-tree-snippet.html">
-      <div class="margin-bottom-20 text-medium">
-        <a class="bold-span-1">{{doc.docType}} {{doc.docLevelId}}</a>
-        <span ng-if="doc.docType == 'SECTION'">
-           {{doc.title}}
-        </span>
-        <hr ng-if="doc.documents.size > 0" class="margin-top-5"/>
-        <ul class="no-bullet" ng-if="doc.documents.size > 0">
-          <li ng-repeat="doc in doc.documents.items" ng-include="'law-tree-snippet.html'"></li>
-        </ul>
-      </div>
-    </script>
-
-    <a ng-repeat="doc in lawTree.documents.documents.items" class="bold-span-1">{{doc.docType}} {{doc.docLevelId}}</a>
-    <hr/>
-
-
+        <!-- Invoke the law tree template using the first law tree level -->
+        <md-card>
+          <md-content>
+            <md-list>
+              <div ng-repeat="doc in curr.lawTree" ng-include="'law-tree-snippet.html'"></div>
+            </md-list>
+          </md-content>
+        </md-card>
+      </md-tab>
+    </md-tabs>
   </section>
 </section>

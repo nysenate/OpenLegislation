@@ -12,7 +12,7 @@
     </h1>
   </section>
   <section class="padding-20" style="background:rgb(238, 238, 238);">
-    <h2>Data we currently provide</h2>
+    <h2 class="thin-300">Data we currently provide</h2>
       <md-divider/>
     <md-list layout-gt-sm="row" layout-wrap>
       <md-item flex="50" class="provide-data-container" ng-repeat="provideData in dataWeProvide">
@@ -30,7 +30,7 @@
       </md-item>
     </md-list>
     <md-divider></md-divider>
-    <h4>The canonical data provider is the Legislative Bill Drafting Commission. Raw data feeds are processed by
+    <h4 class="thin-300">The canonical data provider is the Legislative Bill Drafting Commission. Raw data feeds are processed by
     OpenLegislation continuously to collate and re-distribute the data using a REST API to various end-points including
     the <a href="http://www.nysenate.gov" class="slogan-link">nysenate.gov site.</a> </h4>
   </section>
@@ -54,9 +54,9 @@
       <a class="white" target="_blank" href="${ctxPath}/docs">View the JSON API Documentation</a>
     </h3>
   </section>
-  <section class="padding-20" style="background:rgb(238, 238, 238);">
-    <h2>Built on Open Source</h2>
-    <h3>OpenLegislation is developed using several open-source packages and frameworks.
+  <section class="padding-20 " style="background:rgb(238, 238, 238);">
+    <h2 class="thin-300">Built on Open Source</h2>
+    <h3 class="thin-300">OpenLegislation is developed using several open-source packages and frameworks.
      Source code is <a class="slogan-link" href="http://www.github.com/nysenate/OpenLegislation">published on GitHub</a>.
      Feel free to open any tickets with issues you are having or contact the development team at senatedev@nysenate.gov.
     </h3>

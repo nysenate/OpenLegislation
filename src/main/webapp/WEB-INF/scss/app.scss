@@ -1,6 +1,6 @@
 @import "compass";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
-@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:400,700);
+@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:300,400);
 @import url(http://fonts.googleapis.com/css?family=Inconsolata);
 
 @import "colors";
@@ -108,6 +108,10 @@ md-card {
 
 .bold {
   font-weight: 600 !important;
+}
+
+.thin-300 {
+  font-weight: 300;
 }
 
 .margin-top-20 {
@@ -354,7 +358,7 @@ h1.slogan {
   padding:20px;
   color:#555;
   font-family: 'Roboto Slab', serif;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 a.slogan-link {
@@ -447,6 +451,36 @@ a.slogan-link {
       border-bottom: 1px solid #ddd;
     }
   }
+}
+
+/** --- Law Page Styles --- */
+
+.law-node {
+  padding-left: 20px;
+  cursor: pointer;
+  .law-node-toggle-icon {
+    visibility: hidden;
+  }
+  &:hover {
+    background: #efefef;
+    .law-node-toggle-icon {
+      visibility: visible;
+    }
+  }
+  &.active {
+    background: #ededed;
+    color: $blue1;
+    .law-node-toggle-icon {
+      visibility: visible;
+    }
+  }
+}
+
+.law-text {
+  padding:20px;
+  white-space: pre-line;
+  font-size: 0.9rem;
+  background: #fafafa;
 }
 
 /** --- Styles for Report page --- */

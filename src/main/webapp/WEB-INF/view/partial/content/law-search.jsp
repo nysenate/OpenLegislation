@@ -12,10 +12,10 @@
           </md-input-container>
         </md-card>
         <md-card>
-          <md-content style="padding-left:20px;" class="text-medium">
+          <md-content class="text-medium">
             <md-list>
-              <md-item ng-repeat="law in lawListing | filter:lawFilter">
-                <md-item-content>
+              <md-item ng-repeat="law in lawListing | filter:lawFilter | limitTo:curr.listingLimit">
+                <md-item-content class="margin-left-20" ng-click="go('${ctxPath}/laws/' + law.lawId)">
                   <div class="md-tile-left">
                     <strong>{{law.lawId}}</strong>
                   </div>
@@ -27,6 +27,7 @@
                 <md-divider></md-divider>
               </md-item>
             </md-list>
+            <div infinite-scroll="keepScrolling()" infinite-scroll-distance="1"></div>
           </md-content>
         </md-card>
       </md-tab>

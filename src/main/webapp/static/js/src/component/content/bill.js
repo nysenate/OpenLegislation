@@ -242,7 +242,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         amdVersion: '',
         compareVersion: 'None',
         selectedView: (parseInt($routeParams.view, 10) || 1),
-        updateTypeFilter: '',
+        updateTypeFilter: 'status',
         updateOrder: 'desc'
     };
     $scope.diffHtml = null;
