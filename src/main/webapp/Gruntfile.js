@@ -66,6 +66,7 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/hammerjs/hammer.min.js',
                         '<%= bowerRoot %>/angular-material/angular-material.min.js',
                         '<%= bowerRoot %>/angular-smart-table/dist/smart-table.min.js',
+                        '<%= bowerRoot %>/ngInfiniteScroll/build/ng-infinite-scroll.js',
                         '<%= bowerRoot %>/moment/min/moment.min.js',
                         '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
                         '<%= bowerRoot %>/amcharts/dist/amcharts/amcharts.js',
