@@ -3,6 +3,7 @@ package gov.nysenate.openleg.client.view.bill;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -20,17 +21,17 @@ import java.util.List;
  */
 public class BillPdfView
 {
-    private static Float fontSize = 12f;
-    private static Float top = 740f;
-    private static Float billMargin = 10f;
-    private static Float resolutionMargin = 46f;
+    private static final Float fontSize = 12f;
+    private static final Float top = 740f;
+    private static final Float billMargin = 10f;
+    private static final Float resolutionMargin = 46f;
 
     public BillPdfView(Bill bill, Version version, OutputStream outputStream) throws IOException, COSVisitorException {
         if (bill == null) {
             throw new IllegalArgumentException("Supplied bill cannot be null when converting to pdf!");
         }
         if (!bill.hasAmendment(version)) {
-            throw new IllegalArgumentException("Supplied bill version " + version.name() + " is not set in the bill");
+            throw new BillAmendNotFoundEx(bill.getBaseBillId().withVersion(version));
         }
 
         BillAmendment ba = bill.getAmendment(version);

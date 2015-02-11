@@ -14,6 +14,7 @@ public class BillNotFoundEx extends RuntimeException
                              : "Bill could not be retrieved since the given BillId was null",
             ex
         );
+        this.billId = billId;
     }
 
     public BillId getBillId() {

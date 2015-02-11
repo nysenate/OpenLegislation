@@ -17,6 +17,7 @@ import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.search.BillSearchService;
@@ -117,7 +118,8 @@ public class BillGetCtrl extends BaseCtrl
      * Expected Output: PDF response
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}.pdf")
-    public void getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo, HttpServletResponse response) throws Exception {
+    public void getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo, HttpServletResponse response)
+                           throws Exception {
         BillId billId = new BillId(printNo, sessionYear);
         Bill bill = billData.getBill(BaseBillId.of(billId));
         new BillPdfView(bill, billId.getVersion(), response.getOutputStream());
@@ -128,7 +130,9 @@ public class BillGetCtrl extends BaseCtrl
      * Bill Diff API
      * -------------
      *
+     * Returns an html diff between 'version1' and 'version2' of a given bill.
      *
+     * TODO: Handle case with default amendment. Or rather make it so that it's possible to diff any two bills.
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/diff/{version1}/{version2}")
     public BaseResponse getBillDiff(@PathVariable int sessionYear, @PathVariable String printNo, @PathVariable String version1,
@@ -158,5 +162,11 @@ public class BillGetCtrl extends BaseCtrl
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ViewObjectErrorResponse billNotFoundHandler(BillNotFoundEx ex) {
         return new ViewObjectErrorResponse(ErrorCode.BILL_NOT_FOUND, new BillIdView(ex.getBillId()));
+    }
+
+    @ExceptionHandler(BillAmendNotFoundEx.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ViewObjectErrorResponse billAmendNotFoundHandler(BillAmendNotFoundEx ex) {
+        return new ViewObjectErrorResponse(ErrorCode.BILL_AMENDMENT_NOT_FOUND, new BillIdView(ex.getBillId()));
     }
 }

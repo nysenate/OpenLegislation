@@ -13,6 +13,7 @@ public class BillAmendNotFoundEx extends RuntimeException
             (billId != null) ? "Bill Amendment " + billId.toString() + " was not found."
                              : "Bill Amendment could not be retrieved since the given BillId was null"
         );
+        this.billId = billId;
     }
 
     public BillId getBillId() {
