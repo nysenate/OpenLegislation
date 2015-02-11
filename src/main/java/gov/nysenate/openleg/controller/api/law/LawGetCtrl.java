@@ -57,7 +57,6 @@ public class LawGetCtrl extends BaseCtrl
                                    @RequestParam(defaultValue = "false") boolean full) {
         LocalDate publishedDate = (date == null) ? LocalDate.now() : parseISODate(date, "date");
         LawTree lawTree = lawDataService.getLawTree(lawId, publishedDate);
-        logger.info("From location {}", fromLocation.isEmpty());
         ViewObjectResponse<LawTreeView> response =
             (full) ? new ViewObjectResponse<>(new LawTreeView(lawTree, fromLocation, depth,
                                                               lawDataService.getLawDocuments(lawId, publishedDate)))
