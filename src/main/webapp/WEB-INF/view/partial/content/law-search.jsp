@@ -15,7 +15,7 @@
           <md-content class="text-medium">
             <md-list>
               <md-item ng-repeat="law in lawListing | filter:lawFilter | limitTo:curr.listingLimit">
-                <md-item-content class="margin-left-20" ng-click="go('${ctxPath}/laws/' + law.lawId)">
+                <md-item-content class="law-node" ng-click="go('${ctxPath}/laws/' + law.lawId)">
                   <div class="md-tile-left">
                     <strong>{{law.lawId}}</strong>
                   </div>
