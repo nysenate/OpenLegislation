@@ -19,6 +19,7 @@ public enum ErrorCode
     /** --- Bill --- */
 
     BILL_NOT_FOUND(11, "The requested bill was not found"),
+    BILL_AMENDMENT_NOT_FOUND(12, "The requested bill amendment was not found"),
 
     /** --- Law --- */
 
