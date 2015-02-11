@@ -5,8 +5,10 @@ lawModule.factory('LawListingApi', ['$resource', function($resource) {
 }]);
 
 lawModule.factory('LawTreeApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/laws/:lawId', {
-        lawId: '@lawId'
+    return $resource(apiPath + '/laws/:lawId?fromLocation=:fromLocation&depth=:depth', {
+        lawId: '@lawId',
+        fromLocation: '@fromLocation',
+        depth: '@depth'
     });
 }]);
 
@@ -58,7 +60,7 @@ lawModule.controller('LawViewCtrl', ['$scope', '$routeParams', '$location', '$ro
     };
 
     $scope.init = function() {
-        $scope.lawTreeResponse = LawTreeApi.get({lawId: $scope.curr.lawId}, function(){
+        $scope.lawTreeResponse = LawTreeApi.get({lawId: $scope.curr.lawId, depth: 1}, function(){
             $scope.curr.lawRoot = $scope.lawTreeResponse.result;
             $scope.curr.lawTree = $scope.curr.lawRoot.documents.documents.items;
             $scope.setHeaderText($scope.curr.lawRoot.info.name + " Law");
@@ -76,12 +78,20 @@ lawModule.controller('LawViewCtrl', ['$scope', '$routeParams', '$location', '$ro
     };
 
     $scope.toggleLawNode = function(node) {
-        $scope.curr.showNested[node.locationId] = !$scope.curr.showNested[node.locationId];
-        $location.search('location', node.locationId);
-        if (node.docType === 'SECTION' && !$scope.curr.lawText[node.locationId]) {
-            $scope.fetchLawDoc(node);
+        var show = !$scope.curr.showNested[node.locationId];
+        $scope.curr.showNested[node.locationId] = show;
+        if (node.docType === 'SECTION') {
+            if (show && !$scope.curr.lawText[node.locationId]) {
+                $scope.fetchLawDoc(node);
+            }
         }
-        return true;
+        else if (show) {
+            var lawTreeResponse = LawTreeApi.get({lawId: $scope.curr.lawId, fromLocation: node.locationId, depth: 1},
+            function() {
+                node.documents = lawTreeResponse.result.documents.documents;
+            });
+        }
+        $location.search('location', node.locationId);
     };
 
     $scope.toggleNodeText = function(node) {

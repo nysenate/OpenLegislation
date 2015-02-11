@@ -1,15 +1,11 @@
 package gov.nysenate.openleg.client.view.law;
 
-import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.client.view.temporal.DateTimeRangeView;
 import gov.nysenate.openleg.model.law.LawDocument;
-import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.model.law.LawTreeNode;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,23 +21,22 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
 
     protected ListView<LawNodeView> documents;
 
-    public LawNodeView(LawTreeNode treeNode) {
-        super((treeNode != null) ? treeNode.getLawDocInfo() : null);
-        if (treeNode != null) {
-            initFromLawTreeNode(treeNode);
-            this.documents = ListView.of(
-                treeNode.getChildNodeList().stream().map(LawNodeView::new).collect(Collectors.toList()));
-        }
+    public LawNodeView(LawTreeNode treeNode, Integer depth) {
+        this(treeNode, depth, null);
     }
 
-    public LawNodeView(LawTreeNode treeNode, Map<String, LawDocument> docMap) {
+    public LawNodeView(LawTreeNode treeNode, Integer depth, Map<String, LawDocument> docMap) {
         super((treeNode != null) ? treeNode.getLawDocInfo() : null);
         if (treeNode != null) {
             initFromLawTreeNode(treeNode);
-            this.text = docMap.get(treeNode.getDocumentId()).getText();
-            this.documents = ListView.of(
-                treeNode.getChildNodeList().stream().map(n -> new LawNodeView(n, docMap))
-                        .collect(Collectors.toList()));
+            this.text = (docMap != null) ? docMap.get(treeNode.getDocumentId()).getText() : null;
+            if (depth == null || depth > 0) {
+                final Integer childDepth = (depth != null) ? depth - 1 : null;
+                this.documents = ListView.of(
+                        treeNode.getChildNodeList().stream()
+                                .map(n -> new LawNodeView(n, childDepth, docMap))
+                                .collect(Collectors.toList()));
+            }
         }
     }
 

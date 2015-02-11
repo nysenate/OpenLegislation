@@ -52,12 +52,16 @@ public class LawGetCtrl extends BaseCtrl
 
     @RequestMapping("/{lawId}")
     public BaseResponse getLawTree(@PathVariable String lawId, @RequestParam(required = false) String date,
+                                   @RequestParam(required = false) String fromLocation,
+                                   @RequestParam(required = false) Integer depth,
                                    @RequestParam(defaultValue = "false") boolean full) {
         LocalDate publishedDate = (date == null) ? LocalDate.now() : parseISODate(date, "date");
         LawTree lawTree = lawDataService.getLawTree(lawId, publishedDate);
+        logger.info("From location {}", fromLocation.isEmpty());
         ViewObjectResponse<LawTreeView> response =
-            (full) ? new ViewObjectResponse<>(new LawTreeView(lawTree, lawDataService.getLawDocuments(lawId, publishedDate)))
-                   : new ViewObjectResponse<>(new LawTreeView(lawTree));
+            (full) ? new ViewObjectResponse<>(new LawTreeView(lawTree, fromLocation, depth,
+                                                              lawDataService.getLawDocuments(lawId, publishedDate)))
+                   : new ViewObjectResponse<>(new LawTreeView(lawTree, fromLocation, depth));
         response.setMessage("The document structure for " + lawId + " law");
         return response;
     }

@@ -347,173 +347,173 @@ a.slogan-link { color: #165b81; text-decoration: none; border-bottom: 2px solid 
 
 /** --- Law Page Styles --- */
 /* line 458, ../../../WEB-INF/scss/app.scss */
-.law-node { padding-left: 20px; cursor: pointer; }
-/* line 461, ../../../WEB-INF/scss/app.scss */
+.law-node { padding-left: 20px; cursor: pointer; border-left: 1px solid #ddd; }
+/* line 462, ../../../WEB-INF/scss/app.scss */
 .law-node .law-node-toggle-icon { visibility: hidden; }
-/* line 464, ../../../WEB-INF/scss/app.scss */
+/* line 465, ../../../WEB-INF/scss/app.scss */
 .law-node:hover { background: #efefef; }
-/* line 466, ../../../WEB-INF/scss/app.scss */
+/* line 467, ../../../WEB-INF/scss/app.scss */
 .law-node:hover .law-node-toggle-icon { visibility: visible; }
-/* line 470, ../../../WEB-INF/scss/app.scss */
+/* line 471, ../../../WEB-INF/scss/app.scss */
 .law-node.active { background: #ededed; color: #204056; }
-/* line 473, ../../../WEB-INF/scss/app.scss */
+/* line 474, ../../../WEB-INF/scss/app.scss */
 .law-node.active .law-node-toggle-icon { visibility: visible; }
 
-/* line 479, ../../../WEB-INF/scss/app.scss */
-.law-text { padding: 20px; white-space: pre-line; font-size: 0.9rem; background: #fafafa; }
+/* line 480, ../../../WEB-INF/scss/app.scss */
+.law-text { padding: 20px; white-space: pre-line; font-size: 0.9rem; background: #fafafa; border-left: 2px solid #ccc; }
 
 /** --- Styles for Report page --- */
-/* line 488, ../../../WEB-INF/scss/app.scss */
+/* line 490, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table { table-layout: auto; border: 1px solid #ccc; }
-/* line 491, ../../../WEB-INF/scss/app.scss */
+/* line 493, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table th { text-align: center; }
-/* line 494, ../../../WEB-INF/scss/app.scss */
+/* line 496, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table .th-section { border: 1px none #ccc; border-left-style: solid; text-align: center; background: #ededed; }
-/* line 500, ../../../WEB-INF/scss/app.scss */
+/* line 502, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table .delta-column { padding: 0 5px 0 0; border-right: 1px solid #ccc; font-size: .7em; }
 
-/* line 507, ../../../WEB-INF/scss/app.scss */
+/* line 509, ../../../WEB-INF/scss/app.scss */
 .blue-title-icon { color: #006b80; margin-right: 20px; }
 
-/* line 513, ../../../WEB-INF/scss/app.scss */
+/* line 515, ../../../WEB-INF/scss/app.scss */
 #noDataAvailable h3 { text-align: center; color: #aaa; }
 
-/* line 519, ../../../WEB-INF/scss/app.scss */
+/* line 521, ../../../WEB-INF/scss/app.scss */
 .prefix-icon { margin-right: 5px; }
 
-/* line 523, ../../../WEB-INF/scss/app.scss */
+/* line 525, ../../../WEB-INF/scss/app.scss */
 .prefix-icon2 { margin-right: 10px; }
 
-/* line 527, ../../../WEB-INF/scss/app.scss */
+/* line 529, ../../../WEB-INF/scss/app.scss */
 .postfix-icon { margin-left: 5px; }
 
-/* line 531, ../../../WEB-INF/scss/app.scss */
+/* line 533, ../../../WEB-INF/scss/app.scss */
 .new-error { color: red; }
 
-/* line 535, ../../../WEB-INF/scss/app.scss */
+/* line 537, ../../../WEB-INF/scss/app.scss */
 .closed-error { color: green; }
 
-/* line 539, ../../../WEB-INF/scss/app.scss */
+/* line 541, ../../../WEB-INF/scss/app.scss */
 .existing-error { color: #aaa; }
 
 /** --- Styles for Report Error Page --- */
-/* line 545, ../../../WEB-INF/scss/app.scss */
+/* line 547, ../../../WEB-INF/scss/app.scss */
 .st-sort-ascent:before { content: '\25B2'; }
 
-/* line 548, ../../../WEB-INF/scss/app.scss */
+/* line 550, ../../../WEB-INF/scss/app.scss */
 .st-sort-descent:before { content: '\25BC'; }
 
-/* line 552, ../../../WEB-INF/scss/app.scss */
+/* line 554, ../../../WEB-INF/scss/app.scss */
 .report-table-snippet { height: 20px; overflow: hidden; }
 
-/* line 557, ../../../WEB-INF/scss/app.scss */
+/* line 559, ../../../WEB-INF/scss/app.scss */
 #report-detail-container { padding: 10px !important; }
 
-/* line 561, ../../../WEB-INF/scss/app.scss */
+/* line 563, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table tbody tr:nth-child(odd) { background-color: #ccc; }
 
-/* line 565, ../../../WEB-INF/scss/app.scss */
+/* line 567, ../../../WEB-INF/scss/app.scss */
 .report-detail-table .rpp-selector { float: right; }
 
-/* line 570, ../../../WEB-INF/scss/app.scss */
+/* line 572, ../../../WEB-INF/scss/app.scss */
 #daybreak-page button.ng-scope, #daybreak-page .check-butt { margin-right: 4px; }
 
-/* line 577, ../../../WEB-INF/scss/app.scss */
+/* line 579, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:first-child { width: 6em; }
 
-/* line 582, ../../../WEB-INF/scss/app.scss */
+/* line 584, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(2) { width: 10em; }
 
-/* line 587, ../../../WEB-INF/scss/app.scss */
+/* line 589, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(3) { width: 6em; }
 
-/* line 592, ../../../WEB-INF/scss/app.scss */
+/* line 594, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(4) { width: 14em; }
 
-/* line 597, ../../../WEB-INF/scss/app.scss */
+/* line 599, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(5) { width: 35em; }
 
-/* line 602, ../../../WEB-INF/scss/app.scss */
+/* line 604, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(6) { width: 5em; }
 
-/* line 606, ../../../WEB-INF/scss/app.scss */
+/* line 608, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table tbody tr td { border: 1px solid #eee; }
 
-/* line 610, ../../../WEB-INF/scss/app.scss */
+/* line 612, ../../../WEB-INF/scss/app.scss */
 .current-page { color: #006b80; }
 
-/* line 618, ../../../WEB-INF/scss/app.scss */
+/* line 620, ../../../WEB-INF/scss/app.scss */
 .mismatch-diff-insert { color: green; }
 
-/* line 622, ../../../WEB-INF/scss/app.scss */
+/* line 624, ../../../WEB-INF/scss/app.scss */
 .mismatch-diff-delete { color: red; }
 
-/* line 626, ../../../WEB-INF/scss/app.scss */
+/* line 628, ../../../WEB-INF/scss/app.scss */
 #pagination-button-group { float: right; }
 
-/* line 630, ../../../WEB-INF/scss/app.scss */
+/* line 632, ../../../WEB-INF/scss/app.scss */
 .mismatch-dialog { width: 46em; height: 25em; }
 
-/* line 635, ../../../WEB-INF/scss/app.scss */
+/* line 637, ../../../WEB-INF/scss/app.scss */
 .mismatch-dialog-tabs md-content { max-height: 13em; }
 
-/* line 639, ../../../WEB-INF/scss/app.scss */
+/* line 641, ../../../WEB-INF/scss/app.scss */
 .margin-top-5 { margin-top: 5px; }
 
-/* line 643, ../../../WEB-INF/scss/app.scss */
+/* line 645, ../../../WEB-INF/scss/app.scss */
 .stats-block-container { margin-bottom: 10px; }
 
-/* line 647, ../../../WEB-INF/scss/app.scss */
+/* line 649, ../../../WEB-INF/scss/app.scss */
 .stats-block-title { font-weight: 600; text-align: center; padding: 5px; background: #f1f1f1; margin-bottom: 0; border-bottom: 1px solid #ddd; }
 
-/* line 656, ../../../WEB-INF/scss/app.scss */
+/* line 658, ../../../WEB-INF/scss/app.scss */
 .stats-block-number { font-weight: 600; font-size: 1.5rem; background: #fafafa; display: block; padding: 5px; }
 
 /** --- Calendar View --- */
-/* line 666, ../../../WEB-INF/scss/app.scss */
+/* line 668, ../../../WEB-INF/scss/app.scss */
 #calendar-view-body { max-width: 50rem; margin: auto; }
 
-/* line 671, ../../../WEB-INF/scss/app.scss */
+/* line 673, ../../../WEB-INF/scss/app.scss */
 #calendar-date-picker { max-width: 30rem; margin: auto; }
 
-/* line 676, ../../../WEB-INF/scss/app.scss */
+/* line 678, ../../../WEB-INF/scss/app.scss */
 .calendar-date-picker-accordion a { text-align: center; margin: auto; }
 
-/* line 682, ../../../WEB-INF/scss/app.scss */
+/* line 684, ../../../WEB-INF/scss/app.scss */
 .accordion dd.calendar-accordion > a { font-weight: 600; border: 1px solid #d8d8d8; }
 
-/* line 689, ../../../WEB-INF/scss/app.scss */
+/* line 691, ../../../WEB-INF/scss/app.scss */
 .accordion dd.calendar-accordion.calendar-accordion-open > a { background: #165B81; color: #FFF; }
 
-/* line 695, ../../../WEB-INF/scss/app.scss */
+/* line 697, ../../../WEB-INF/scss/app.scss */
 .accordion dd.calendar-accordion.calendar-accordion-open > a:hover { background: #004D71; }
 
-/* line 700, ../../../WEB-INF/scss/app.scss */
+/* line 702, ../../../WEB-INF/scss/app.scss */
 .accordion dd.calendar-accordion.calendar-accordion-nested > a { background: #D8D8D8; border-color: #C2C2C2; }
 
-/* line 706, ../../../WEB-INF/scss/app.scss */
+/* line 708, ../../../WEB-INF/scss/app.scss */
 .accordion dd.calendar-accordion.calendar-accordion-nested > a:hover { background: #C2C2C2; }
 
-/* line 711, ../../../WEB-INF/scss/app.scss */
+/* line 713, ../../../WEB-INF/scss/app.scss */
 .accordion dd.calendar-accordion.calendar-accordion-nested.calendar-accordion-open > a { background: #2B6A90; }
 
-/* line 716, ../../../WEB-INF/scss/app.scss */
+/* line 718, ../../../WEB-INF/scss/app.scss */
 .accordion dd.calendar-accordion.calendar-accordion-nested.calendar-accordion-open > a:hover { background: #004D71; }
 
-/* line 721, ../../../WEB-INF/scss/app.scss */
+/* line 723, ../../../WEB-INF/scss/app.scss */
 .accordion .calendar-accordion > .content { padding: 0%; }
 
-/* line 725, ../../../WEB-INF/scss/app.scss */
+/* line 727, ../../../WEB-INF/scss/app.scss */
 .calendar-release-date { text-align: right; }
 
-/* line 733, ../../../WEB-INF/scss/app.scss */
+/* line 735, ../../../WEB-INF/scss/app.scss */
 .cal-entry-sponsor-img { background: 50% 50% no-repeat; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; }
 
-/* line 740, ../../../WEB-INF/scss/app.scss */
+/* line 742, ../../../WEB-INF/scss/app.scss */
 .cal-entry-cal-no { min-width: 5.5rem; }
 
 /** --- Calendar Picker Styling --- */
-/* line 750, ../../../WEB-INF/scss/app.scss */
+/* line 752, ../../../WEB-INF/scss/app.scss */
 #calendar-date-picker div.fc-day-content > div { height: 25px !important; }
 
 /** --- Color Palette --- */

@@ -31,7 +31,7 @@
                   <h4><span ng-if="doc.title">{{doc.title}}</span>
                       <span class="red1" ng-if="!doc.title">Title not available</span>
                   </h4>
-                  <p ng-hide="doc.docType === 'SECTION'">Sections (&sect;{{doc.fromSection}} - &sect;{{doc.toSection}})</p>
+                  <h4 ng-hide="doc.docType === 'SECTION'">Sections (&sect;{{doc.fromSection}} - &sect;{{doc.toSection}})</h4>
                   <p class="green2" ng-show="doc.docType === 'SECTION' && doc.activeDate !== '2014-09-22'">
                     Updated on {{doc.activeDate | moment:'MM/DD/YYYY'}}
                   </p>
@@ -40,7 +40,7 @@
               <md-divider></md-divider>
             </md-item>
             <md-item ng-if="doc.docType !== 'SECTION' && curr.showNested[doc.locationId]">
-              <div class="padding-10">
+              <div class="padding-10 gray2-bg">
                 <md-button ng-click="toggleNodeText(doc)" class="md-primary md-hue-2" style="font-size:0.8rem;">
                   <i class="icon-text prefix-icon2"></i>
                   <span ng-show="!curr.showDoc[doc.locationId]">Show</span>
