@@ -27,7 +27,7 @@ public interface AgendaUpdatesDao
 
     /**
      * Retrieves update digests during a given date range with an optional filter.
-     * Same params as #getUpdates
+     * @see #getUpdates for param details.
      */
     public PaginatedList<UpdateDigest<AgendaId>> getDetailedUpdates(
             Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limOff);
@@ -36,11 +36,8 @@ public interface AgendaUpdatesDao
      * Returns a list of digests which contain all the information pertaining to an agenda that have changed during the
      * specified date range.
      *
-     * @param agendaId AgendaId
-     * @param dateTimeRange Range<LocalDateTime>
-     * @param type UpdateType - The type of updates (based on sobi published date or when data was processed)
-     * @param dateOrder SortOrder
-     * @param limOff LimitOffset - Restrict the result set
+     * @param agendaId AgendaId - The agenda id to get updates for.
+     * @see #getUpdates for other param details.
      * @return PaginatedList<UpdateDigest<AgendaId>>
      */
     public PaginatedList<UpdateDigest<AgendaId>> getDetailedUpdatesForAgenda(

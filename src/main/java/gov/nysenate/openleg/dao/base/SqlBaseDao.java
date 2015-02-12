@@ -164,7 +164,7 @@ public abstract class SqlBaseDao
             dateColumn = "published_date_time";
         }
         else {
-            throw new IllegalArgumentException("Cannot provide bill updates of type: " + updateType);
+            throw new IllegalArgumentException("Cannot provide updates of type: " + updateType);
         }
         return dateColumn;
     }
@@ -178,7 +178,7 @@ public abstract class SqlBaseDao
             orderBy = new OrderBy("last_published_date_time", sortOrder, "last_processed_date_time", sortOrder);
         }
         else {
-            throw new IllegalArgumentException("Cannot provide bill updates of type: " + updateType);
+            throw new IllegalArgumentException("Cannot provide updates of type: " + updateType);
         }
         return orderBy;
     }

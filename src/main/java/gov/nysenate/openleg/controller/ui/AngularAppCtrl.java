@@ -5,6 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Simple entry point to the front-end. Returns the main angular-js driven web page which will handle
+ * all the heavy lifting.
+ */
 @Controller
 public class AngularAppCtrl
 {
@@ -20,9 +24,13 @@ public class AngularAppCtrl
                      "/laws/**",
                      "/sources/**",
                      "/reports/**",
-                     "/manage/**",
-                     "/admin/**"})
+                     "/manage/**"})
     public String home() {
         return "home";
+    }
+
+    @RequestMapping("/admin")
+    public String adminLogin() {
+        return "redirect:/";
     }
 }

@@ -21,9 +21,9 @@ public class LawDocId
 
     public LawDocId() {}
 
-    public LawDocId(String documentId, String locationId, LocalDate publishedDate, String lawId) {
+    public LawDocId(String documentId, LocalDate publishedDate, String lawId) {
         this.documentId = documentId;
-        this.locationId = locationId;
+        this.locationId = (documentId != null) ? documentId.substring(3) : null;
         this.publishedDate = publishedDate;
         this.lawId = lawId;
     }

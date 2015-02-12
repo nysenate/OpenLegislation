@@ -78,6 +78,8 @@ public enum SqlTable
     LAW_DOCUMENT                 ("law_document"),
     LAW_TREE                     ("law_tree"),
 
+    LAW_CHANGE_LOG               ("law_change_log"),
+
     NOTIFICATION                 ("notification"),
     NOTIFICATION_SUBSCRIPTION    ("notification_subscription"),
 

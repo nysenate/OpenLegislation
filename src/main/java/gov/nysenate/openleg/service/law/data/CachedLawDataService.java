@@ -114,8 +114,7 @@ public class CachedLawDataService implements LawDataService, CachingService
     /** {@inheritDoc} */
     @Override
     public List<LawInfo> getLawInfos() {
-        List<LawInfo> infos = lawDataDao.getLawInfos();
-        return infos.stream().sorted().collect(toList());
+        return lawDataDao.getLawInfos().stream().sorted().collect(toList());
     }
 
     /** {@inheritDoc} */
@@ -131,8 +130,8 @@ public class CachedLawDataService implements LawDataService, CachingService
             }
             else {
                 lawTree = lawDataDao.getLawTree(lawId, endPublishedDate);
+                lawTreeCache.put(lawTree.getLawVersionId(), lawTree);
             }
-            lawTreeCache.put(lawTree.getLawVersionId(), lawTree);
             return lawTree;
         }
         catch (DataAccessException ex) {

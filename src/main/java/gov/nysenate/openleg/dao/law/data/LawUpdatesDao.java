@@ -35,16 +35,6 @@ public interface LawUpdatesDao
         Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
 
     /**
-     * Returns a list of law document id tokens that have been updated for a given law.
-     *
-     * @param lawId String - Three letter law id to get updates for
-     * @see #getUpdates for the other params.
-     * @return PaginatedList<UpdateToken<LawDocId>>
-     */
-    public PaginatedList<UpdateToken<LawDocId>> getUpdatesForLaw(
-        String lawId, Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
-
-    /**
      * Returns a list of update digests for law documents that have been updated for a given law.
      *
      * @param lawId String - Three letter law id to get updates for

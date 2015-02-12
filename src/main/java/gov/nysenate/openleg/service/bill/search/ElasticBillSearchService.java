@@ -20,6 +20,7 @@ import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchParseException;
+import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,30 +56,32 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     public SearchResults<BaseBillId> searchBills(SessionYear session, String sort, LimitOffset limOff) throws SearchException {
         return searchBills(
             QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.termFilter("session", session.getYear())),
-            null, sort, limOff);
+            null, null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException {
-        return searchBills(QueryBuilders.queryString(query), null, sort, limOff);
+        return searchBills(QueryBuilders.queryString(query), null, null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff) throws SearchException {
         TermFilterBuilder sessionFilter = FilterBuilders.termFilter("session", session.getYear());
-        return searchBills(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), sessionFilter), null, sort, limOff);
+        return searchBills(
+            QueryBuilders.filteredQuery(QueryBuilders.queryString(query), sessionFilter), null, null, sort, limOff);
     }
 
     /**
      * Delegates to the underlying bill search dao.
      */
-    private SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
+    private SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, RescoreBuilder.Rescorer rescorer,
+                                                  String sort, LimitOffset limOff)
         throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;
         try {
-            return billSearchDao.searchBills(query, postFilter, sort, limOff);
+            return billSearchDao.searchBills(query, postFilter, rescorer, sort, limOff);
         }
         catch (SearchParseException ex) {
             throw new SearchException("Invalid query string", ex);

@@ -15,6 +15,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
@@ -69,23 +70,44 @@ public abstract class ElasticBaseDao
 
     /**
      * Generates a typical search request that involves a query, filter, sort string, and a limit + offset
+     * @see #getSearchRequest(String, org.elasticsearch.index.query.QueryBuilder,
+     *                        org.elasticsearch.index.query.FilterBuilder, String, LimitOffset)
      *
-     * @param indexName the name of the index to perform a search on
-     * @param query an elastic search Query DSL
-     * @param postFilter
-     * @param sort
-     * @param limitOffset
-     * @return SearchRequestBuilder
+     * Highlighting and rescoring are not supported via this method.
      */
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
                                                     String sort, LimitOffset limitOffset) {
+        return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset);
+    }
+
+    /**
+     * Generates a SearchRequest with support for various functions.
+     *
+     * @param indexName - The name of the index to search.
+     * @param query - The QueryBuilder instance to perform the search with.
+     * @param postFilter - Optional FilterBuilder to filter out the results.
+     * @param highlightedFields - Optional list of field names to return as highlighted fields.
+     * @param rescorer - Optional rescorer that can be used to fine tune the query ranking.
+     * @param sort - String to specify how results should be sorted, (e.g. field1:ASC, field2:DESC)
+     * @param limitOffset - Restrict the number of results returned as well as paginate.
+     * @return SearchRequestBuilder
+     */
+    protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
+                                                    List<String> highlightedFields, RescoreBuilder.Rescorer rescorer,
+                                                    String sort, LimitOffset limitOffset) {
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
-            .setSearchType(SearchType.QUERY_THEN_FETCH)
-            .setQuery(query)
-            .setFrom(limitOffset.getOffsetStart() - 1)
-            .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : -1)
-            .setMinScore(0.05f)
-            .setFetchSource(false);
+                .setSearchType(SearchType.QUERY_THEN_FETCH)
+                .setQuery(query)
+                .setFrom(limitOffset.getOffsetStart() - 1)
+                .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : -1)
+                .setMinScore(0.05f)
+                .setFetchSource(false);
+        if (highlightedFields != null && !highlightedFields.isEmpty()) {
+            highlightedFields.stream().forEach(field -> searchBuilder.addHighlightedField(field));
+        }
+        if (rescorer != null) {
+            searchBuilder.addRescorer(rescorer);
+        }
         // Post filters take effect after the search is completed
         if (postFilter != null) {
             searchBuilder.setPostFilter(postFilter);
@@ -110,8 +132,9 @@ public abstract class ElasticBaseDao
         List<SearchResult<R>> resultList = new ArrayList<>();
         for (SearchHit hit : response.getHits().hits()) {
             SearchResult<R> result = new SearchResult<>(
-                    hitMapper.apply(hit),
-                    (!Float.isNaN(hit.getScore())) ? BigDecimal.valueOf(hit.getScore()) : BigDecimal.ONE);
+                    hitMapper.apply(hit), // Result
+                    (!Float.isNaN(hit.getScore())) ? BigDecimal.valueOf(hit.getScore()) : BigDecimal.ONE, // Rank
+                    hit.getHighlightFields()); // Highlights
             resultList.add(result);
         }
         return new SearchResults<>(Ints.checkedCast(response.getHits().getTotalHits()), resultList, limitOffset);
