@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.auth.ApiUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
@@ -41,7 +42,8 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
                 .addValue("apiRequests", user.getNumRequests())
                 .addValue("email", user.getEmail())
                 .addValue("name", user.getName())
-                .addValue("organizationName", user.getOrganizationName());
+                .addValue("organizationName", user.getOrganizationName())
+                .addValue("registrationToken", user.getRegistrationToken());
     }
 
     /**
@@ -102,15 +104,70 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
     }
 
     /**
+     * Get the Registration Token associated with the provided email address
+     * @param email_addr The email address of the user you are looking for
+     * @return The Registration Token of the user, if their email is in the database
+     * @throws org.springframework.dao.DataAccessException
+     */
+    public String getRegTokenFromEmail (String email_addr) throws DataAccessException {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
+                (rs,row) -> rs.getString("reg_token"));
+    }
+
+    /**
+     * Get the email address associated with a registration token
+     * @param regToken The registration token of the user you are looking for
+     * @return The email address if the reg. token is valid
+     * @throws DataAccessException
+     */
+    public String getEmailFromToken(String regToken) throws DataAccessException {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("registrationToken", regToken));
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_TOKEN.getSql(schema()), params,
+                (rs,row) -> rs.getString("email_addr"));
+    }
+
+    /**
+     * Get the name of the user with the specified email address
+     * @param email_addr Their email address
+     * @return The name of the user if the email address is valid
+     * @throws DataAccessException
+     */
+    public String getNameFromEmail(String email_addr) throws DataAccessException {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
+                (rs,row) -> rs.getString("users_name"));
+    }
+
+    /**
+     * Get the name of the user's organization from the given email address
+     * @param email_addr Their email address
+     * @return The name of the user's organization if the email address is valid
+     * @throws DataAccessException
+     */
+    public String getOrganizationFromEmail(String email_addr) throws DataAccessException {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
+                (rs,row) -> rs.getString("org_Name"));
+    }
+
+    /**
      * Finds the user with the specified email address
      * @param email_addr The email address of the user you are looking for
      * @return The ApiUser
      * @throws org.springframework.dao.DataAccessException
      */
-    public ApiUser getApiUserFromEmail(String email_addr) throws DataAccessException {
+    public ApiUser getApiUserFromEmail(String email_addr) throws DataAccessException, EmptyResultDataAccessException {
         final long requestCount = getNumRequestFromEmail(email_addr);
+        final String name = getNameFromEmail(email_addr);
+        final String orgName = getOrganizationFromEmail(email_addr);
+        final String regToken = getRegTokenFromEmail(email_addr);
+
         ApiUser user = new ApiUser(email_addr);
         user.setNumRequests(requestCount);
+        user.setName(name);
+        user.setOrganizationName(orgName);
+        user.setRegistrationToken(regToken);
 
         if (requestCount > 0)
             user.setAuthStatus(true);
@@ -120,25 +177,47 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
     }
 
     /**
-     * Finds the user with the specfied key
+     * Finds the user with the specified key
      * @param key The User's API key
      * @return The ApiUser
      */
     public ApiUser getApiUserFromKey(String key) {
         final long requestCount = getNumRequests(key);
         final String email = getEmailFromKey(key);
+        final String name = getNameFromEmail(email);
+        final String orgName = getOrganizationFromEmail(email);
+        final String regToken = getRegTokenFromEmail(email);
 
         if (email.length() == 0)
             return null;
 
         ApiUser user = new ApiUser(email);
         user.setNumRequests(requestCount);
+        user.setName(name);
+        user.setOrganizationName(orgName);
+        user.setRegistrationToken(regToken);
 
         if (requestCount > 0)
             user.setAuthStatus(true);
 
         user.setApiKey(key);
         return user;
+    }
+
+    /**
+     * Finds the user with the specified registration token
+     * @param token The registration token for the user
+     * @return A user if the token is valid
+     */
+    public ApiUser getApiUserFromToken(String token) {
+        String email = getEmailFromToken(token);
+        if (email.length() == 0)
+            return null;
+
+        ApiUser user = getApiUserFromEmail(email);
+        user.setRegistrationToken(token);
+        return user;
+
     }
 
     /**

@@ -7,13 +7,13 @@ public enum ApiUserQuery implements BasicSqlQuery
 {
     // Query Declarations
     INSERT_API_USER(
-            "INSERT INTO public." + SqlTable.API_USER + "(apikey, authenticated, num_requests, email_addr, org_name, users_name)" + "\n" +
-            "VALUES (:apikey, :authenticated, :apiRequests, :email, :name, :organizationName)"
+            "INSERT INTO public." + SqlTable.API_USER + "(apikey, authenticated, num_requests, email_addr, org_name, users_name, reg_token)" + "\n" +
+            "VALUES (:apikey, :authenticated, :apiRequests, :email, :organizationName, :name, :registrationToken)"
     ),
     UPDATE_API_USER(
             "UPDATE public." + SqlTable.API_USER + "\n" +
             "SET apikey = :apikey, authenticated = :authenticated, num_requests = :apiRequests," +
-                "users_name = :name, org_name = :organizationName" + "\n" +
+                "users_name = :name, org_name = :organizationName, reg_token = :registrationToken" + "\n" +
             "WHERE email_addr = :email"
     ),
     SELECT_BY_EMAIL(
@@ -27,6 +27,9 @@ public enum ApiUserQuery implements BasicSqlQuery
     ),
     SELECT_BY_ORGANIZATION(
             "SELECT * FROM public." +SqlTable.API_USER+ " WHERE org_name = :organizationName"
+    ),
+    SELECT_BY_TOKEN(
+            "SELECT * FROM public." +SqlTable.API_USER+ " WHERE reg_token = :registrationToken"
     ),
     DELETE_USER(
         "DELETE FROM public." +SqlTable.API_USER+ " WHERE email_addr = :email"

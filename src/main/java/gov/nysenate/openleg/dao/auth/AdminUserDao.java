@@ -9,7 +9,6 @@ public interface AdminUserDao
 {
     public void addAdmin(AdminUser admin) throws DataAccessException;
     public void deleteAdmin(String user) throws DataAccessException;
-    public void deleteAdminByLevel (int level) throws DataAccessException;
     public AdminUser getAdminUser(String username) throws DataAccessException;
     public void updateAdmin(AdminUser admin) throws DataAccessException;
 }

@@ -47,17 +47,6 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
         jdbcNamed.update(AdminUserQuery.UPDATE_ADMIN.getSql(schema()), userParams(admin));
     }
 
-    /**
-     * Deletes every admin with a certain permissions level.
-     * @param level The permission level to delete
-     * @throws DataAccessException
-     */
-    @Override
-    public void deleteAdminByLevel(int level ) throws DataAccessException {
-        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("privilegeLevel", level));
-        jdbcNamed.update(AdminUserQuery.DELETE_BY_LEVEL.getSql(schema()), params);
-    }
-
     protected MapSqlParameterSource userParams(AdminUser admin) {
         return new MapSqlParameterSource()
                 .addValue("username", admin.getUsername())

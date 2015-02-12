@@ -28,6 +28,12 @@ public class ApiUser implements Serializable, Comparable <ApiUser>
     /** Number of Api Requests made by the user */
     private long apiRequests;
 
+    /** The user's unique registration token */
+    private String registrationToken;
+
+    /** Whether or not this user is active */
+    private boolean active;
+
     /** Constructor */
 
     public ApiUser(String email) {
@@ -85,6 +91,12 @@ public class ApiUser implements Serializable, Comparable <ApiUser>
 
     public String getOrganizationName() { return this.organizationName; }
     public void setOrganizationName(String orgName) { this.organizationName = orgName; }
+
+    public boolean isActive() { return this.active; }
+    public void setActive(boolean active) { this.active = active; }
+
+    public void setRegistrationToken(String token) { this.registrationToken = token; }
+    public String getRegistrationToken() { return this.registrationToken; }
 
 
 }
