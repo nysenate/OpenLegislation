@@ -443,17 +443,16 @@ public class BillProcessor
                     String billText = bill.getFulltext();
                     String uniBillText = uniBill.getFulltext();
 
-                    if (billText.isEmpty()) {
-                        if (!uniBillText.isEmpty()) {
-                            // if we are empty then we must need their text
-                            bill.setFulltext(uniBillText);
-                        }
-                    }
-                    else if (!billText.equals(uniBillText)) {
-                        // If we differ, then we must have just changed, share the text
+                    // If senate bill/reso, copy to assembly
+                    if (bill.getBillId().matches("^[SJBR]")) {
                         uniBill.setFulltext(bill.getFulltext());
+                        storage.set(uniBill);
+                        ChangeLogger.record(storage.key(uniBill), storage);
                     }
-                    storage.set(uniBill);
+                    // Copy from senate bill
+                    else if (!billText.equals(uniBillText)) {
+                        bill.setFulltext(uniBillText);
+                    }
                 }
             }
 
