@@ -3617,7 +3617,10 @@ CREATE TABLE apiuser (
     apikey character varying(32) NOT NULL,
     authenticated boolean DEFAULT false,
     num_requests numeric,
-    email_addr text NOT NULL
+    email_addr text NOT NULL,
+    org_name text,
+    users_name text NOT NULL,
+    reg_token text NOT NULL
 );
 
 
@@ -3656,6 +3659,43 @@ COMMENT ON COLUMN apiuser.num_requests IS 'The total number of requests made by 
 --
 
 COMMENT ON COLUMN apiuser.email_addr IS 'The email address that the user registered with';
+
+
+--
+-- Name: COLUMN apiuser.org_name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN apiuser.org_name IS 'The name of the user''s organization, if they supply this information.';
+
+
+--
+-- Name: COLUMN apiuser.users_name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN apiuser.users_name IS 'The name of the user';
+
+
+--
+-- Name: COLUMN apiuser.reg_token; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN apiuser.reg_token IS 'The registration token for this user';
+
+
+--
+-- Name: apiuser_email_addr_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY apiuser
+    ADD CONSTRAINT apiuser_email_addr_key UNIQUE (email_addr);
+
+
+--
+-- Name: apiuser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY apiuser
+    ADD CONSTRAINT apiuser_pkey PRIMARY KEY (apikey);
 
 
 --
