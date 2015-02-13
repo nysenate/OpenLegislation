@@ -2,7 +2,7 @@
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
 <section ng-controller="DaybreakCtrl" id="daybreak-page">
-    <md-tabs md-selected="selectedIndex">
+    <md-tabs class='md-primary' md-selected="selectedIndex">
 
         <!-- Summary Tab -->
         <md-tab>

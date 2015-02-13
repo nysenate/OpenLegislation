@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -54,10 +55,14 @@ public class SqlNotificationDao extends SqlBaseDao implements NotificationDao {
      */
     @Override
     public RegisteredNotification registerNotification(Notification notification) {
-        MapSqlParameterSource params = getNotificationBodyParams(notification);
-        KeyHolder idHolder = new GeneratedKeyHolder();
-        jdbcNamed.update(INSERT_NOTIFICATION.getSql(schema()), params, idHolder, new String[] {"id"});
-        return new RegisteredNotification(notification, idHolder.getKey().intValue());
+        try {
+            MapSqlParameterSource params = getNotificationBodyParams(notification);
+            KeyHolder idHolder = new GeneratedKeyHolder();
+            jdbcNamed.update(INSERT_NOTIFICATION.getSql(schema()), params, idHolder, new String[]{"id"});
+            return new RegisteredNotification(notification, idHolder.getKey().intValue());
+        } catch (DataAccessException ex) {
+            return new RegisteredNotification(notification, -1);
+        }
     }
 
     private static RowMapper<RegisteredNotification> notificationRowMapper =
@@ -67,7 +72,7 @@ public class SqlNotificationDao extends SqlBaseDao implements NotificationDao {
                     getLocalDateTimeFromRs(rs, "occurred"),
                     rs.getString("summary"),
                     rs.getString("message")
-                    );
+                );
 
     MapSqlParameterSource getNotificationQueryParams(Collection<NotificationType> types,
                                                      Range<LocalDateTime> dateTimeRange) {

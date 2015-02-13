@@ -18,6 +18,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,10 +229,10 @@ public abstract class BaseCtrl
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
     }
 
-    @ExceptionHandler(UnauthenticatedException.class)
+    @ExceptionHandler(AuthorizationException.class)
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleUnauthenticatedException(UnauthenticatedException ex) {
-        logger.debug("Unauthenticated Exception! {}", ex.getMessage());
+    public ErrorResponse handleUnauthenticatedException(AuthorizationException ex) {
+        logger.debug("Authorization Exception! {}", ex.getMessage());
         return new ErrorResponse(ErrorCode.UNAUTHORIZED);
     }
 

@@ -10,13 +10,13 @@ public class NotificationSubscriptionView implements ViewObject
     protected String userName;
     protected NotificationType type;
     protected NotificationTarget target;
-    protected String targetAddress;
+    protected String address;
 
     public NotificationSubscriptionView(NotificationSubscription subscription) {
         this.userName = subscription.getUserName();
         this.type = subscription.getType();
         this.target = subscription.getTarget();
-        this.targetAddress = subscription.getTargetAddress();
+        this.address = subscription.getTargetAddress();
     }
 
     public String getUserName() {
@@ -43,12 +43,12 @@ public class NotificationSubscriptionView implements ViewObject
         this.target = target;
     }
 
-    public String getTargetAddress() {
-        return targetAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setTargetAddress(String targetAddress) {
-        this.targetAddress = targetAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override

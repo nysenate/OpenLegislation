@@ -9,6 +9,8 @@
   <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/law.js"></script>
   <script src="${ctxPath}/static/js/src/component/report/daybreak.js"></script>
+  <script src="${ctxPath}/static/js/src/component/admin/account.js"></script>
+  <script src="${ctxPath}/static/js/src/component/admin/notification_sub.js"></script>
 </open-layout:head>
 
 <body ng-app="open">
@@ -44,10 +46,8 @@
                 <menu-item url="${ctxPath}/transcripts">Floor/Hearing Transcripts</menu-item>
               </menu-section>
               <shiro:user>
-              <menu-section title="Manage">
-                <menu-item url="${ctxPath}/manage/processes">Data Processes</menu-item>
-                <menu-item url="${ctxPath}/manage/tools">ElasticSearch/Cache Tools</menu-item>
-                <menu-item url="${ctxPath}/manage/notifications">Notification Settings</menu-item>
+              <menu-section title="Admin">
+                <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
               </menu-section>
               <menu-section title="Reports">
                 <menu-item url="${ctxPath}/admin/report/daybreak">Daybreak Report</menu-item>

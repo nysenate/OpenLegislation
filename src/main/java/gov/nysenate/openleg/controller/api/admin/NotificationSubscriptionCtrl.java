@@ -7,10 +7,10 @@ import gov.nysenate.openleg.client.view.notification.NotificationSubscriptionVie
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.notification.NotificationSubscriptionDao;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationTarget;
 import gov.nysenate.openleg.model.notification.NotificationType;
+import gov.nysenate.openleg.service.notification.NotificationSubscriptionDataService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +28,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class NotificationSubscriptionCtrl extends BaseCtrl
 {
     @Autowired
-    private NotificationSubscriptionDao subscriptionDao;
+    private NotificationSubscriptionDataService subscriptionDataService;
 
     /**
      * Notification Subscription API
@@ -45,7 +45,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
                                                 @RequestParam String target,
                                                 @RequestParam String address) {
         NotificationSubscription subscription = buildSubscriptionFromParams(type, target, address);
-        subscriptionDao.insertSubscription(subscription);
+        subscriptionDataService.insertSubscription(subscription);
         return new ViewObjectResponse<>(new NotificationSubscriptionView(subscription));
     }
 
@@ -62,7 +62,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
                                                     @RequestParam String target,
                                                     @RequestParam String address) {
         NotificationSubscription subscription = buildSubscriptionFromParams(type, target, address);
-        subscriptionDao.removeSubscription(subscription);
+        subscriptionDataService.removeSubscription(subscription);
         return new ViewObjectResponse<>(new NotificationSubscriptionView(subscription));
     }
 
@@ -79,10 +79,9 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
     @RequestMapping(value = "/subscriptions")
     public BaseResponse viewSubscriptions(WebRequest request) {
         String user = (String) SecurityUtils.getSubject().getPrincipal();
-        LimitOffset limOff = getLimitOffset(request, 25);
-        return ListViewResponse.of(subscriptionDao.getSubscriptions().stream()
-                        .filter(sub -> sub.getUserName().equals(user))
-                        .map(NotificationSubscriptionView::new).collect(Collectors.toList()),
+        LimitOffset limOff = getLimitOffset(request, 0);
+        return ListViewResponse.of(subscriptionDataService.getSubscriptions(user).stream()
+                               .map(NotificationSubscriptionView::new).collect(Collectors.toList()),
                 0, limOff);
     }
 
