@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.rescore.RescoreBuilder;
 
 import java.util.Collection;
 
@@ -16,7 +17,7 @@ public interface BillSearchDao
 {
     /**
      * Performs a search on all bills without filtering on session year.
-     * @see #searchBills(QueryBuilder, FilterBuilder, String, LimitOffset)
+     * @see #searchBills(QueryBuilder, FilterBuilder, RescoreBuilder.Rescorer, String, LimitOffset)
      */
     public SearchResults<BaseBillId> searchBills(QueryBuilder query, String sort, LimitOffset limOff);
 
@@ -25,11 +26,13 @@ public interface BillSearchDao
      *
      * @param query String - Query Builder
      * @param filter FilterBuilder - Filter result set
+     * @param rescorer RescoreBuilder.Rescorer - Fine tune the ranking
      * @param sort String - Sort String
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff);
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder filter, RescoreBuilder.Rescorer rescorer,
+                                                 String sort, LimitOffset limOff);
 
     /**
      * Update the bill index with the content of the supplied bill.

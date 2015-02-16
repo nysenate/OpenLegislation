@@ -68,7 +68,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected BaseBillId substitutedBy;
 
     /** A list of ids for versions of this legislation in previous sessions. */
-    protected Set<BillId> previousVersions = new HashSet<>();
+    protected Set<BillId> previousVersions = new TreeSet<>();
 
     /** Designates the type of program bill, if applicable. */
     protected ProgramInfo programInfo;

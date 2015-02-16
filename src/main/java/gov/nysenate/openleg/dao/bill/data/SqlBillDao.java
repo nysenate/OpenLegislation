@@ -229,7 +229,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Get previous session year bill ids for the base bill id in the params.
      */
     public Set<BillId> getPrevVersions(ImmutableParams baseParams) {
-        return new HashSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS.getSql(schema()), baseParams,
+        return new TreeSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS.getSql(schema()), baseParams,
                              new BillPreviousVersionRowMapper()));
     }
 
@@ -237,8 +237,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Get all previous session year bill ids recursively for the base bill id in the params.
      */
     public Set<BillId> getAllPreviousVersions(ImmutableParams baseParams) {
-        return new HashSet<>(jdbcNamed.query(SqlBillQuery.SELECT_ALL_BILL_PREVIOUS_VERSIONS.getSql(schema()), baseParams,
-                             new BillPreviousVersionRowMapper()));
+        OrderBy orderBy = new OrderBy("prev_bill_session_year", SortOrder.DESC);
+        return new TreeSet<>(jdbcNamed.query(
+            SqlBillQuery.SELECT_ALL_BILL_PREVIOUS_VERSIONS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
+             new BillPreviousVersionRowMapper()));
     }
 
     /**

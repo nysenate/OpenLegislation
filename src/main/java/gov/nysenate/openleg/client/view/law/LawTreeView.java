@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.model.law.LawTreeNode;
 import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
-import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.Optional;
 
 public class LawTreeView implements ViewObject
 {
-    protected LawVersionView lawVersion;
+    protected LawVersionIdView lawVersion;
     protected LawInfoView info;
     protected LawNodeView documents;
 
@@ -23,7 +22,7 @@ public class LawTreeView implements ViewObject
 
     public LawTreeView(LawTree lawTree, String fromLocation, Integer depth, Map<String, LawDocument> docMap) {
         if (lawTree != null) {
-            lawVersion = new LawVersionView(lawTree.getLawVersionId());
+            lawVersion = new LawVersionIdView(lawTree.getLawVersionId());
             info = new LawInfoView(lawTree.getLawInfo());
             if (fromLocation != null && !fromLocation.isEmpty()) {
                 Optional<LawTreeNode> fromNode = lawTree.getRootNode().findNode(info.lawId + fromLocation, false);
@@ -46,7 +45,7 @@ public class LawTreeView implements ViewObject
         return "law-tree";
     }
 
-    public LawVersionView getLawVersion() {
+    public LawVersionIdView getLawVersion() {
         return lawVersion;
     }
 
