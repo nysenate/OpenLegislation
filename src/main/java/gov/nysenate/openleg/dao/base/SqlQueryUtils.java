@@ -81,7 +81,7 @@ public abstract class SqlQueryUtils
                 clause = String.format(" LIMIT %d", limitOffset.getLimit());
             }
             if (limitOffset.hasOffset()) {
-                clause += String.format(" OFFSET %d", limitOffset.getOffsetStart());
+                clause += String.format(" OFFSET %d", limitOffset.getOffsetStart() - 1);
             }
         }
         return clause;
