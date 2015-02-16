@@ -226,6 +226,10 @@ a.result-link {
   }
 }
 
+.inline-block {
+  display: inline-block;
+}
+
 /** --- Left Nav --- */
 
 $left-nav-width: 305px;
@@ -661,6 +665,20 @@ table.report-detail-table tbody tr td {
   background: $gray1;
   display: block;
   padding: 5px;
+}
+
+/** --- Admin Account Settings --- */
+
+md-list.notification-sub-list md-item md-item-content > div:first-child {
+  width: 4em;
+}
+
+md-list.notification-sub-list md-item md-item-content > div:nth-child(2) {
+  width: 13em;
+}
+
+md-list.notification-sub-list md-item md-item-content > div:nth-child(3) {
+  width: 11em;
 }
 
 /** --- Calendar View --- */

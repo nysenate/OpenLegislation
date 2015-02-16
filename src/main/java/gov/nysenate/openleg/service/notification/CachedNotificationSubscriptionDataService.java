@@ -80,7 +80,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     public void insertSubscription(NotificationSubscription subscription) {
         try {
             subscriptionDao.insertSubscription(subscription);
-            getSubscriptions().add(subscription);
+            evictCaches();
         } catch (DuplicateKeyException ignored){}
     }
 
@@ -90,7 +90,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     @Override
     public void removeSubscription(NotificationSubscription subscription) {
         subscriptionDao.removeSubscription(subscription);
-        getSubscriptions().remove(subscription);
+        evictCaches();
     }
 
     /** --- CachingService Implementations --- */

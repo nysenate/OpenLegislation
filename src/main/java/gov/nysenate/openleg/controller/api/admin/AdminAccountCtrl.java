@@ -19,6 +19,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,11 +64,10 @@ public class AdminAccountCtrl extends BaseCtrl {
      *
      *  Expected Output: successful admin-registered response if the user was created, ErrorResponse otherwise
      */
-    @RequiresAuthentication
-    @RequestMapping("/new")
+    @RequiresRoles("masterAdmin")
+    @RequestMapping("/create")
     public BaseResponse createNewUser(@RequestParam(required = true) String username,
                                       @RequestParam(defaultValue = "false") boolean master) {
-        requireMasterAdmin();
 
         if (adminUserService.adminInDb(username)) {
             return new ViewObjectErrorResponse(ErrorCode.USER_ALREADY_EXISTS, username);
@@ -87,7 +88,7 @@ public class AdminAccountCtrl extends BaseCtrl {
     /**
      *  Remove Admin User API
      *
-     *  Deletes the account of an admin user.  Must be called by a master admin, or the user whose account is being deleted.
+     *  Deletes the account of an admin user.  Must be called by a master admin.
      *
      *  (GET) /api/3/admin/accounts/remove
      *
@@ -95,10 +96,9 @@ public class AdminAccountCtrl extends BaseCtrl {
      *
      *  Expected Output: successful admin-deleted if a user was removed, ErrorResponse otherwise
      */
-    @RequiresAuthentication
+    @RequiresRoles("masterAdmin")
     @RequestMapping("/remove")
     public BaseResponse removeUser(@RequestParam(required = true) String username) {
-        requireMasterAdminOrSameUser(username);
 
         if (!adminUserService.adminInDb(username)) {
             return new ViewObjectErrorResponse(ErrorCode.USER_DOES_NOT_EXIST, username);
@@ -150,43 +150,6 @@ public class AdminAccountCtrl extends BaseCtrl {
      */
     private String getSubjectUsername() {
         return SecurityUtils.getSubject().getPrincipal().toString();
-    }
-
-    /**
-     * Checks that the current subject is a master admin
-     * @throws UnauthenticatedException if the subject is not a master admin
-     */
-    private void requireMasterAdmin() throws UnauthenticatedException {
-        String username = getSubjectUsername();
-        if (!adminUserService.isMasterAdmin(username)) {
-            throw new UnauthenticatedException(username + " is not authorized to perform master admin tasks");
-        }
-    }
-
-    /**
-     * Checks that the current subject has the given username
-     * @param username String
-     * @throws org.apache.shiro.authz.UnauthenticatedException if the subject does not have the given username
-     */
-    private void requireSameUser(String username) throws UnauthenticatedException {
-        String subjectUsername = getSubjectUsername();
-        if (!StringUtils.equals(username, subjectUsername)) {
-            throw new UnauthenticatedException(subjectUsername + " is not authorized to perform this task for user " + username);
-        }
-    }
-
-    /**
-     * Ensures that the current user is a master admin, or a certain user,
-     *  typically the user whose account is being modified
-     * @param username The user whose account is being modified
-     * @throws UnauthenticatedException if the current subject is neither master admin or the specified user
-     */
-    private void requireMasterAdminOrSameUser(String username) throws UnauthenticatedException {
-        try {
-            requireMasterAdmin();
-        } catch (UnauthenticatedException ex) {
-            requireSameUser(username);
-        }
     }
 
     /**

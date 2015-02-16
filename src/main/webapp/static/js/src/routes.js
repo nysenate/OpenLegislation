@@ -42,10 +42,15 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
             reloadOnSearch: false
         })
 
-        /** --- Manage --- */
+        /** --- Admin --- */
 
-        .when(ctxPath + '/manage', {
+        .when(ctxPath + '/admin', {
             template: 'Manage Page'
+        })
+
+        .when(ctxPath + '/admin/account', {
+            templateUrl: ctxPath + '/partial/admin/account',
+            reloadOnSearch: false
         })
 
         /** --- Home Page --- */

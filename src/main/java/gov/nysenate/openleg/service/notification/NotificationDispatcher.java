@@ -8,6 +8,7 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.notification.NotificationDao;
 import gov.nysenate.openleg.model.notification.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -54,8 +55,8 @@ public class NotificationDispatcher {
     public void dispatchNotification(RegisteredNotification notification) {
         if (environment.isNotificationsEnabled()) {
             Multimap<NotificationTarget, NotificationSubscription> subscriptionMap = ArrayListMultimap.create();
-            subscriptionDataService.getSubscriptions(notification.getType()).forEach(subscription ->
-                    subscriptionMap.put(subscription.getTarget(), subscription));
+            subscriptionDataService.getSubscriptions(notification.getType())
+                    .forEach(subscription -> addSubscription(subscriptionMap, subscription));
 
             subscriptionMap.keySet().forEach(target ->
                     senderMap.get(target).sendNotification(notification, subscriptionMap.get(target)));
@@ -66,5 +67,22 @@ public class NotificationDispatcher {
     public void handleNotificationEvent(Notification notification) {
         RegisteredNotification registeredNotification = notificationDao.registerNotification(notification);
         dispatchNotification(registeredNotification);
+    }
+
+    /** --- Internal Methods --- */
+
+    /**
+     * Adds a subscription to the specified multimap
+     * if the map does not already contain a subscription with the same address and same target
+     * ensuring that a person won't get the same notification multiple times
+     */
+    private void addSubscription(Multimap<NotificationTarget, NotificationSubscription> subMap,
+                                                        NotificationSubscription subscription) {
+        for (NotificationSubscription existingSub : subMap.get(subscription.getTarget())) {
+            if(StringUtils.equals(existingSub.getTargetAddress(), subscription.getTargetAddress())) {
+                return;
+            }
+        }
+        subMap.put(subscription.getTarget(), subscription);
     }
 }

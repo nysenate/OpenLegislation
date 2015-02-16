@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.auth;
 
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.auth.AdminUser;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -96,7 +97,13 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return new SimpleAuthorizationInfo();
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        logger.info("{}", principals.getPrimaryPrincipal());
+        if (adminUserService.isMasterAdmin(principals.getPrimaryPrincipal().toString())) {
+            logger.info("itwerked");
+            info.setRoles(Sets.newHashSet("masteradmin"));
+        }
+        return info;
     }
 
     /**
@@ -107,4 +114,6 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
     public CredentialsMatcher getCredentialsMatcher() {
         return credentialsMatcher;
     }
+
+
 }
