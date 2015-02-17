@@ -25,48 +25,6 @@ ALTER SCHEMA master OWNER TO postgres;
 COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
--- Name: citext; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
-
-
---
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
-
-
---
--- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
-
-
---
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
-
-
 SET search_path = master, pg_catalog;
 
 --
@@ -387,6 +345,70 @@ END;$$;
 
 
 ALTER FUNCTION master.log_calendar_updates() OWNER TO postgres;
+
+--
+-- Name: log_law_updates(); Type: FUNCTION; Schema: master; Owner: postgres
+--
+
+CREATE FUNCTION log_law_updates() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+  law_id text;                 -- Law id
+  document_id text;            -- Law document id
+  published_date date;         -- Law document published date
+  law_file_name text := NULL;  -- The law file that caused the insert/update
+  last_law_tree_row RECORD;    -- The latest law tree row that exists currently
+BEGIN
+  
+  IF TG_TABLE_NAME = 'law_document' THEN
+    
+    -- For law document inserts/updates, just log it
+    
+    IF TG_OP IN ('INSERT', 'UPDATE') THEN
+      law_id := NEW.law_id;
+      document_id := NEW.document_id;
+      published_date := NEW.published_date;
+      law_file_name := NEW.law_file_name;
+    ELSE
+      law_id := OLD.law_id;
+      document_id := OLD.document_id;
+      published_date := OLD.published_date;
+    END IF;
+
+    INSERT INTO master.law_change_log (document_id, published_date, law_id, table_name, action,   law_file_name)
+    VALUES (document_id, published_date, law_id, TG_TABLE_NAME, TG_OP, law_file_name);
+
+  ELSIF TG_TABLE_NAME = 'law_tree' AND TG_OP IN ('INSERT', 'UPDATE') THEN
+
+    -- Law trees are regenerated every time in full whenever there is a modification to it.
+    -- The goal here is to log just the rows of the new law tree that are different from the old.
+ 
+    SELECT doc_published_date, parent_doc_id, parent_doc_published_date, is_root, sequence_no, repealed_date 
+    INTO last_law_tree_row 
+    FROM master.law_tree 
+    WHERE law_tree.doc_id = NEW.doc_id AND law_tree.published_date = (
+      SELECT max(law_tree.published_date) 
+      FROM master.law_tree 
+      WHERE doc_id = NEW.doc_id);
+
+    IF row(NEW.doc_published_date, NEW.parent_doc_id, NEW.parent_doc_published_date, 
+           NEW.is_root, NEW.sequence_no, NEW.repealed_date) <> last_law_tree_row THEN
+      INSERT INTO master.law_change_log (document_id, published_date, law_id, table_name, action, law_file_name)
+      VALUES (NEW.doc_id, NEW.published_date, NEW.law_id, TG_TABLE_NAME, TG_OP, NEW.law_file);        
+    END IF;
+  
+  END IF;
+  
+  IF TG_OP IN ('INSERT', 'UPDATE') THEN
+    RETURN NEW;
+  ELSE
+    RETURN OLD;
+  END IF;
+
+END;$$;
+
+
+ALTER FUNCTION master.log_law_updates() OWNER TO postgres;
 
 SET search_path = public, pg_catalog;
 
@@ -2380,11 +2402,39 @@ COMMENT ON TABLE daybreak_report IS 'Indicates which set of daybreaks reports ha
 --
 
 CREATE TABLE law_change_log (
-    action text
+    table_name text NOT NULL,
+    action text NOT NULL,
+    action_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    law_file_name text,
+    id integer NOT NULL,
+    document_id text NOT NULL,
+    published_date_time timestamp without time zone,
+    law_id text
 );
 
 
 ALTER TABLE master.law_change_log OWNER TO postgres;
+
+--
+-- Name: law_change_log_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE law_change_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.law_change_log_id_seq OWNER TO postgres;
+
+--
+-- Name: law_change_log_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+--
+
+ALTER SEQUENCE law_change_log_id_seq OWNED BY law_change_log.id;
+
 
 --
 -- Name: law_document; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -3135,71 +3185,6 @@ COMMENT ON COLUMN public_hearing_file.archived IS 'Indicates if this public hear
 
 
 --
--- Name: rules; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE rules (
-    id integer NOT NULL,
-    session_year smallint NOT NULL,
-    text integer NOT NULL,
-    published_date_time timestamp without time zone,
-    modified_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
-ALTER TABLE master.rules OWNER TO postgres;
-
---
--- Name: TABLE rules; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON TABLE rules IS 'Senate and Assembly Rules';
-
-
---
--- Name: rules_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
---
-
-CREATE SEQUENCE rules_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE master.rules_id_seq OWNER TO postgres;
-
---
--- Name: rules_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
---
-
-ALTER SEQUENCE rules_id_seq OWNED BY rules.id;
-
-
---
--- Name: rules_text_seq; Type: SEQUENCE; Schema: master; Owner: postgres
---
-
-CREATE SEQUENCE rules_text_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE master.rules_text_seq OWNER TO postgres;
-
---
--- Name: rules_text_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
---
-
-ALTER SEQUENCE rules_text_seq OWNED BY rules.text;
-
-
---
 -- Name: sobi_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -3571,7 +3556,7 @@ COMMENT ON TABLE adminuser IS 'Registered admin users';
 -- Name: COLUMN adminuser.username; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN adminuser.username IS 'Username.  Should be an email address';
+COMMENT ON COLUMN adminuser.username IS 'Username, should be an email address';
 
 
 --
@@ -3680,22 +3665,6 @@ COMMENT ON COLUMN apiuser.users_name IS 'The name of the user';
 --
 
 COMMENT ON COLUMN apiuser.reg_token IS 'The registration token for this user';
-
-
---
--- Name: apiuser_email_addr_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
---
-
-ALTER TABLE ONLY apiuser
-    ADD CONSTRAINT apiuser_email_addr_key UNIQUE (email_addr);
-
-
---
--- Name: apiuser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
---
-
-ALTER TABLE ONLY apiuser
-    ADD CONSTRAINT apiuser_pkey PRIMARY KEY (apikey);
 
 
 --
@@ -4048,6 +4017,13 @@ ALTER TABLE ONLY data_process_run_unit ALTER COLUMN id SET DEFAULT nextval('data
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
+ALTER TABLE ONLY law_change_log ALTER COLUMN id SET DEFAULT nextval('law_change_log_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
 ALTER TABLE ONLY notification ALTER COLUMN id SET DEFAULT nextval('notification_id_seq'::regclass);
 
 
@@ -4056,20 +4032,6 @@ ALTER TABLE ONLY notification ALTER COLUMN id SET DEFAULT nextval('notification_
 --
 
 ALTER TABLE ONLY notification_subscription ALTER COLUMN id SET DEFAULT nextval('notification_subscription_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY rules ALTER COLUMN id SET DEFAULT nextval('rules_id_seq'::regclass);
-
-
---
--- Name: text; Type: DEFAULT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY rules ALTER COLUMN text SET DEFAULT nextval('rules_text_seq'::regclass);
 
 
 --
@@ -4670,22 +4632,6 @@ ALTER TABLE ONLY public_hearing
 
 
 --
--- Name: rules_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY rules
-    ADD CONSTRAINT rules_pkey PRIMARY KEY (id);
-
-
---
--- Name: rules_session_year_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY rules
-    ADD CONSTRAINT rules_session_year_key UNIQUE (session_year);
-
-
---
 -- Name: sobi_fragment_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -4952,6 +4898,48 @@ CREATE INDEX daybreak_sponsor_pkey ON daybreak_bill_sponsor USING btree (report_
 
 
 --
+-- Name: law_change_log_action_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX law_change_log_action_date_time_idx ON law_change_log USING btree (action_date_time);
+
+
+--
+-- Name: law_change_log_law_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX law_change_log_law_id_idx ON law_change_log USING btree (law_id);
+
+
+--
+-- Name: law_change_log_published_date_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX law_change_log_published_date_idx ON law_change_log USING btree (published_date_time);
+
+
+--
+-- Name: law_change_log_sobi_fragment_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX law_change_log_sobi_fragment_id_idx ON law_change_log USING btree (law_file_name);
+
+
+--
+-- Name: law_tree_doc_id_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX law_tree_doc_id_idx ON law_tree USING btree (doc_id);
+
+
+--
+-- Name: law_tree_published_date_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX law_tree_published_date_idx ON law_tree USING btree (published_date);
+
+
+--
 -- Name: sobi_fragment_published_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -5032,7 +5020,7 @@ CREATE TRIGGER log_bill_amendment_same_as_updates_to_change_log BEFORE INSERT OR
 -- Name: log_bill_amendment_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
 --
 
-CREATE TRIGGER log_bill_amendment_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment FOR EACH ROW EXECUTE PROCEDURE log_bill_updates();
+CREATE TRIGGER log_bill_amendment_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON bill_amendment FOR EACH ROW EXECUTE PROCEDURE log_bill_updates('bill_amend_version');
 
 
 --
@@ -5103,6 +5091,20 @@ CREATE TRIGGER log_calendar_supplemental_updates_to_change_log BEFORE INSERT OR 
 --
 
 CREATE TRIGGER log_calendar_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON calendar FOR EACH ROW EXECUTE PROCEDURE log_calendar_updates();
+
+
+--
+-- Name: log_law_document_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_law_document_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON law_document FOR EACH ROW EXECUTE PROCEDURE log_law_updates();
+
+
+--
+-- Name: log_law_tree_updates_to_change_log; Type: TRIGGER; Schema: master; Owner: postgres
+--
+
+CREATE TRIGGER log_law_tree_updates_to_change_log BEFORE INSERT OR DELETE OR UPDATE ON law_tree FOR EACH ROW EXECUTE PROCEDURE log_law_updates();
 
 
 --
