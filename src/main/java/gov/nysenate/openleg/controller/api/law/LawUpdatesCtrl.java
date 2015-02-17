@@ -17,6 +17,7 @@ import gov.nysenate.openleg.model.law.LawVersionId;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
+import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,19 +78,20 @@ public class LawUpdatesCtrl extends BaseCtrl
      * Where lawId is the three letter id for the law (e.g. ABC or EDN).
      * @see #getAllUpdates for request params and output.
      */
-    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/")
-    public BaseResponse getUpdatesForLaw(@PathVariable String lawId) {
-        return null;
+    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates")
+    public BaseResponse getUpdatesForLaw(@PathVariable String lawId, WebRequest request) {
+        return getUpdatesForLaw(lawId, DateUtils.LONG_AGO.atStartOfDay(), DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
     @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from}")
-    public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from) {
-        return null;
+    public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, WebRequest request) {
+        return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
     @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from}/{to:.*\\.?.*}")
-    public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, @PathVariable String to) {
-        return null;
+    public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, @PathVariable String to,
+                                         WebRequest request) {
+        return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
     }
 
     /**
@@ -104,45 +106,86 @@ public class LawUpdatesCtrl extends BaseCtrl
      * Where locationId is the 'locationId' in {@link gov.nysenate.openleg.model.law.LawDocId}.
      * @see #getAllUpdates for request params and output.
      */
-    @RequestMapping(value = "/{lawId}/{locationId}/updates/")
-    public BaseResponse getUpdatesForLawDoc(@PathVariable String lawId, @PathVariable String locationId) {
-        return null;
+    @RequestMapping(value = "/{lawId}/{locationId}/updates")
+    public BaseResponse getUpdatesForLawDoc(@PathVariable String lawId, @PathVariable String locationId, WebRequest request) {
+        return getUpdatesForLawDoc(lawId, locationId, DateUtils.LONG_AGO.atStartOfDay(),
+                                   DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
     @RequestMapping(value = "/{lawId}/{locationId}/updates/{from}")
     public BaseResponse getUpdatesForLawDoc(@PathVariable String lawId, @PathVariable String locationId,
-                                            @PathVariable String from) {
-        return null;
+                                            @PathVariable String from, WebRequest request) {
+        return getUpdatesForLawDoc(lawId, locationId, parseISODateTime(from, "from"),
+                                   DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
     @RequestMapping(value = "/{lawId}/{locationId}/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForLawDoc(@PathVariable String lawId, @PathVariable String locationId,
-                                            @PathVariable String from, @PathVariable String to) {
-        return null;
+                                            @PathVariable String from, @PathVariable String to, WebRequest request) {
+        return getUpdatesForLawDoc(lawId, locationId, parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
     }
 
     /** --- Internal --- */
 
     private BaseResponse getAllUpdates(LocalDateTime from, LocalDateTime to, WebRequest request) {
-        LimitOffset limOff = getLimitOffset(request, 50);
-        Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
-        boolean detail = getBooleanParam(request, "detail", false);
-        SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
-        UpdateType updateType = getUpdateTypeFromParam(request);
-
-        if (!detail) {
+        BaseLawUpdatesParams params = getBaseParams(from, to, request);
+        if (!params.detail) {
             PaginatedList<UpdateToken<LawVersionId>> updateTokens =
-                lawUpdatesDao.getUpdates(updateRange, updateType, sortOrder, limOff);
-            return DateRangeListViewResponse.of(updateTokens.getResults().stream()
-                    .map(token -> new UpdateTokenView(token, new LawVersionIdView(token.getId())))
-                    .collect(toList()), updateRange, updateTokens.getTotal(), limOff);
+                lawUpdatesDao.getUpdates(params.updateRange, params.updateType, params.sortOrder, params.limOff);
+            return getTokenListResponse(params, updateTokens);
         }
         else {
             PaginatedList<UpdateDigest<LawDocId>> updateDigests =
-                lawUpdatesDao.getDetailedUpdates(updateRange, updateType, sortOrder, limOff);
-            return DateRangeListViewResponse.of(updateDigests.getResults().stream()
-                    .map(digest -> new UpdateDigestView(digest, new LawDocIdView(digest.getId())))
-                    .collect(toList()), updateRange, updateDigests.getTotal(), limOff);
+                lawUpdatesDao.getDetailedUpdates(params.updateRange, params.updateType, params.sortOrder, params.limOff);
+            return getDigestListResponse(params, updateDigests);
         }
+    }
+
+    private BaseResponse getUpdatesForLaw(String lawId, LocalDateTime from, LocalDateTime to, WebRequest request) {
+        BaseLawUpdatesParams params = getBaseParams(from, to, request);
+        PaginatedList<UpdateDigest<LawDocId>> updateDigests =
+            lawUpdatesDao.getDetailedUpdatesForLaw(lawId, params.updateRange, params.updateType,
+                                                   params.sortOrder, params.limOff);
+        return getDigestListResponse(params, updateDigests);
+    }
+
+    private BaseResponse getUpdatesForLawDoc(String lawId, String locationId, LocalDateTime from, LocalDateTime to,
+                                             WebRequest request) {
+        BaseLawUpdatesParams params = getBaseParams(from, to, request);
+        String docId = lawId + locationId;
+        PaginatedList<UpdateDigest<LawDocId>> updateDigests =
+            lawUpdatesDao.getDetailedUpdatesForDocument(docId, params.updateRange, params.updateType,
+                    params.sortOrder, params.limOff);
+        return getDigestListResponse(params, updateDigests);
+    }
+
+    private BaseResponse getTokenListResponse(BaseLawUpdatesParams params, PaginatedList<UpdateToken<LawVersionId>> updateTokens) {
+        return DateRangeListViewResponse.of(updateTokens.getResults().stream()
+                .map(token -> new UpdateTokenView(token, new LawVersionIdView(token.getId())))
+                .collect(toList()), params.updateRange, updateTokens.getTotal(), params.limOff);
+    }
+
+    private BaseResponse getDigestListResponse(BaseLawUpdatesParams params, PaginatedList<UpdateDigest<LawDocId>> updateDigests) {
+        return DateRangeListViewResponse.of(updateDigests.getResults().stream()
+            .map(digest -> new UpdateDigestView(digest, new LawDocIdView(digest.getId())))
+            .collect(toList()), params.updateRange, updateDigests.getTotal(), params.limOff);
+    }
+
+    private static class BaseLawUpdatesParams {
+        LimitOffset limOff;
+        Range<LocalDateTime> updateRange;
+        SortOrder sortOrder;
+        UpdateType updateType;
+        boolean detail;
+    }
+
+    private BaseLawUpdatesParams getBaseParams(LocalDateTime from, LocalDateTime to, WebRequest request) {
+        BaseLawUpdatesParams params = new BaseLawUpdatesParams();
+        params.limOff = getLimitOffset(request, 50);
+        params.updateRange = getClosedOpenRange(from, to, "from", "to");
+        params.sortOrder = getSortOrder(request, SortOrder.ASC);
+        params.updateType = getUpdateTypeFromParam(request);
+        params.detail = getBooleanParam(request, "detail", false);
+        return params;
     }
 }
