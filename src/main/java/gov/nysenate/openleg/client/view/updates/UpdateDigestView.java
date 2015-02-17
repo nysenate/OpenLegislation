@@ -20,13 +20,15 @@ public class UpdateDigestView extends UpdateTokenView implements ViewObject
             this.action = updateDigest.getAction();
             this.scope = WordUtils.capitalizeFully(updateDigest.getTable().replaceAll("_", " "));
             this.fields = new HashMap<>();
-            for (String key : updateDigest.getFields().keySet()) {
-                // Camel case the keys
-                this.fields.put(
-                    (key.contains("_"))
-                        ? key.substring(0, 1) + WordUtils.capitalizeFully(key, new char[]{'_'}).replace("_", "").substring(1)
-                        : key,
-                    updateDigest.getFields().get(key));
+            if (updateDigest.getFields() != null) {
+                for (String key : updateDigest.getFields().keySet()) {
+                    // Camel case the keys
+                    this.fields.put(
+                        (key.contains("_"))
+                            ? key.substring(0, 1) + WordUtils.capitalizeFully(key, new char[]{'_'}).replace("_", "").substring(1)
+                            : key,
+                       updateDigest.getFields().get(key));
+                }
             }
         }
     }

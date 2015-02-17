@@ -15,7 +15,10 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.rescore.Rescorer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -33,16 +36,21 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     protected static final String billIndexName = SearchIndex.BILL.getIndexName();
 
+    protected static final List<String> highlightedFields =
+        Arrays.asList("basePrintNo", "printNo", "title");
+
     /** {@inheritDoc} */
     @Override
     public SearchResults<BaseBillId> searchBills(QueryBuilder query, String sort, LimitOffset limOff) {
-        return searchBills(query, null, sort, limOff);
+        return searchBills(query, null, null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(billIndexName, query, postFilter, sort, limOff);
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, RescoreBuilder.Rescorer rescorer,
+                                                 String sort, LimitOffset limOff) {
+        SearchRequestBuilder searchBuilder =
+            getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer , sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Bill search result with query {} took {} ms", query, response.getTookInMillis());
         return getSearchResults(response, limOff, this::getBaseBillIdFromHit);
