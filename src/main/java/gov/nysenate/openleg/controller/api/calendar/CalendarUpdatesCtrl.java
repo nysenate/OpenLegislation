@@ -71,13 +71,13 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
         return getUpdatesDuring(from, LocalDateTime.now().toString(), detail, webRequest);
     }
 
-    @RequestMapping(value = "/updates/{from}/{to}")
+    @RequestMapping(value = "/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesDuring(@PathVariable String from, @PathVariable String to,
                                          @RequestParam(defaultValue = "false") boolean detail,
                                          WebRequest webRequest) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
-        Range<LocalDateTime> updateRange = Range.closedOpen(fromDateTime, toDateTime);
+        Range<LocalDateTime> updateRange = getClosedOpenRange(fromDateTime, toDateTime, "from", "to");
         SortOrder dateOrder = getSortOrder(webRequest, SortOrder.ASC);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
         UpdateType updateType = getUpdateTypeFromParam(webRequest);
@@ -132,13 +132,13 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
         return getUpdatesForCalendarDuring(year, calendarNo, from, LocalDateTime.now().toString(), webRequest);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from}/{to}")
+    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForCalendarDuring(@PathVariable int year, @PathVariable int calendarNo,
                                                     @PathVariable String from, @PathVariable String to,
                                                     WebRequest webRequest) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
-        Range<LocalDateTime> updateRange = Range.closedOpen(fromDateTime, toDateTime);
+        Range<LocalDateTime> updateRange = getClosedOpenRange(fromDateTime, toDateTime, "from", "to");
         SortOrder dateOrder = getSortOrder(webRequest, SortOrder.ASC);
         UpdateType updateType = getUpdateTypeFromParam(webRequest);
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);

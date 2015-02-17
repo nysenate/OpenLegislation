@@ -64,12 +64,12 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
      *
      * Expected Output: List of PublicHearingUpdateTokenView
      */
-    @RequestMapping(value = "/updates/{from}/{to}")
+    @RequestMapping(value = "/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getNewPublicHearingsDuring(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
                                                    @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime to,
                                                    WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 25);
-        Range<LocalDateTime> dateRange = Range.closedOpen(from, to);
+        Range<LocalDateTime> dateRange = getClosedOpenRange(from, to, "from", "to");
         PaginatedList<PublicHearingUpdateToken> updates = publicHearingDao.publicHearingsUpdatedDuring(dateRange, SortOrder.ASC, limOff);
         return ListViewResponse.of(updates.getResults().stream().map(token ->
                 new PublicHearingUpdateTokenView(token)).collect(Collectors.toList()), updates.getTotal(), limOff);

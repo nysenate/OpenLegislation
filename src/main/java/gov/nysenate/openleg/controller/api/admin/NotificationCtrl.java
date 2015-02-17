@@ -89,7 +89,7 @@ public class NotificationCtrl extends BaseCtrl
      * Return notifications for a given date/time range (GET) /api/3/admin/notifications/{from}/{to}
      * @see #getNotifications(WebRequest)
      */
-    @RequestMapping(value = "/{from}/{to}")
+    @RequestMapping(value = "/{from}/{to:.*\\.?.*}")
     public BaseResponse getNotifications(@PathVariable String from,
                                          @PathVariable String to,
                                          WebRequest request) {
@@ -102,7 +102,7 @@ public class NotificationCtrl extends BaseCtrl
     /** --- Internal --- */
 
     private BaseResponse getNotificationsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
-        Range<LocalDateTime> dateRange = Range.openClosed(from, to);
+        Range<LocalDateTime> dateRange = getClosedOpenRange(from, to, "from", "to");
         LimitOffset limOff = getLimitOffset(request, 25);
         SortOrder order = getSortOrder(request, SortOrder.DESC);
         boolean full = getBooleanParam(request, "full", false);

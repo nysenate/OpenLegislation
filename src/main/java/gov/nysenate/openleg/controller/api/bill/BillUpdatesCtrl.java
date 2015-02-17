@@ -81,7 +81,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         return getUpdatesDuring(fromDateTime, toDateTime, request);
     }
 
-    @RequestMapping(value = "/updates/{from}/{to}")
+    @RequestMapping(value = "/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesDuring(@PathVariable String from, @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
@@ -120,7 +120,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         return getUpdatesForBillDuring(sessionYear, printNo, fromDateTime, LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from}/{to}")
+    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForBillDuring(@PathVariable int sessionYear, @PathVariable String printNo,
                                                 @PathVariable String from, @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
@@ -133,7 +133,7 @@ public class BillUpdatesCtrl extends BaseCtrl
     private BaseResponse getUpdatesDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
         // Fetch params
         LimitOffset limOff = getLimitOffset(request, 50);
-        Range<LocalDateTime> updateRange = Range.closedOpen(from, to);
+        Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
         boolean detail = getBooleanParam(request, "detail", false);
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         String filter = request.getParameter("filter");
@@ -161,7 +161,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         BillUpdateField filterField = getUpdateFieldFromParam(request.getParameter("filter"));
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         LimitOffset limOff = getLimitOffset(request, 50);
-        Range<LocalDateTime> updateRange = Range.closedOpen(from, to);
+        Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
         UpdateType updateType = getUpdateTypeFromParam(request);
         PaginatedList<UpdateDigest<BaseBillId>> digests = billUpdatesDao.getDetailedUpdatesForBill(
             new BaseBillId(printNo, sessionYear), updateRange, updateType, filterField, sortOrder, limOff);

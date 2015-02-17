@@ -164,6 +164,44 @@ public abstract class BaseCtrl
     }
 
     /**
+     * Constructs a Range from the given parameters.  Throws an exception if the parameter values are invalid
+     * @param from T
+     * @param to T
+     * @param fromName String
+     * @param toName String
+     * @param fromOpen boolean
+     * @param toOpen boolean
+     * @param <T> Type
+     * @return Range<T>
+     */
+    protected <T extends Comparable> Range<T> getRange(T from, T to, String fromName, String toName,
+                                                                    boolean fromOpen, boolean toOpen) {
+        try {
+            return fromOpen ? toOpen ? Range.open(from, to) : Range.openClosed(from, to)
+                    : toOpen ? Range.closedOpen(from, to) : Range.closed(from, to);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidRequestParamEx((fromOpen ? "(" : "[") + from + " - " + to + (toOpen ? ")" : "]"),
+                    fromName + ", " + toName, "range", "Range start must not exceed range end");
+        }
+    }
+
+    protected <T extends Comparable> Range<T> getOpenRange(T from, T to, String fromName, String toName) {
+        return getRange(from, to, fromName, toName, true, true);
+    }
+
+    protected <T extends Comparable> Range<T> getOpenClosedRange(T from, T to, String fromName, String toName) {
+        return getRange(from, to, fromName, toName, true, false);
+    }
+
+    protected <T extends Comparable> Range<T> getClosedOpenRange(T from, T to, String fromName, String toName) {
+        return getRange(from, to, fromName, toName, false, true);
+    }
+
+    protected <T extends Comparable> Range<T> getClosedRange(T from, T to, String fromName, String toName) {
+        return getRange(from, to, fromName, toName, false, false);
+    }
+
+    /**
      * Parses the specified query param as a boolean or returns the default value if the param is not set.
      *
      * @param param WebRequest

@@ -52,13 +52,14 @@ public class SourceGetCtrl extends BaseCtrl
      *
      * Expected Output: List of SourceViewIds
      */
-    @RequestMapping("/sobi/{from}/{to}")
+    @RequestMapping("/sobi/{from}/{to:.*\\.?.*}")
     public BaseResponse getSobiSourcesDuring(@PathVariable String from, @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
         SortOrder order = getSortOrder(request, SortOrder.ASC);
         LimitOffset limOff = getLimitOffset(request, 10);
-        PaginatedList<SobiFile> sobiFiles = sobiDao.getSobiFilesDuring(Range.closed(fromDateTime, toDateTime), order, limOff);
+        Range<LocalDateTime> dateTimeRange = getClosedOpenRange(fromDateTime, toDateTime, "from", "to");
+        PaginatedList<SobiFile> sobiFiles = sobiDao.getSobiFilesDuring(dateTimeRange, order, limOff);
         return ListViewResponse.of(
             sobiFiles.getResults().stream()
                 .map(sobiFile -> new SourceIdView("SOBI File", sobiFile.getFileName(), sobiFile.getPublishedDateTime()))

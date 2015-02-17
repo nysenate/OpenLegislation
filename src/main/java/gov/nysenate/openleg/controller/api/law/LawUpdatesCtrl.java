@@ -60,7 +60,7 @@ public class LawUpdatesCtrl extends BaseCtrl
         return getAllUpdates(parseISODateTime(from, "from"), LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/updates/{from}/{to}")
+    @RequestMapping(value = "/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getAllUpdates(@PathVariable String from, @PathVariable String to, WebRequest request) {
         return getAllUpdates(parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
     }
@@ -87,7 +87,7 @@ public class LawUpdatesCtrl extends BaseCtrl
         return null;
     }
 
-    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from}/{to}")
+    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, @PathVariable String to) {
         return null;
     }
@@ -115,7 +115,7 @@ public class LawUpdatesCtrl extends BaseCtrl
         return null;
     }
 
-    @RequestMapping(value = "/{lawId}/{locationId}/updates/{from}/{to}")
+    @RequestMapping(value = "/{lawId}/{locationId}/updates/{from}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForLawDoc(@PathVariable String lawId, @PathVariable String locationId,
                                             @PathVariable String from, @PathVariable String to) {
         return null;
@@ -125,7 +125,7 @@ public class LawUpdatesCtrl extends BaseCtrl
 
     private BaseResponse getAllUpdates(LocalDateTime from, LocalDateTime to, WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 50);
-        Range<LocalDateTime> updateRange = Range.closedOpen(from, to);
+        Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
         boolean detail = getBooleanParam(request, "detail", false);
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         UpdateType updateType = getUpdateTypeFromParam(request);
