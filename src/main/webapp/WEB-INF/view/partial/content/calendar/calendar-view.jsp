@@ -2,8 +2,6 @@
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
 <section ng-controller="CalendarViewCtrl">
-    <!-- Search Bar -->
-    <open-component:bill-search-bar/>
 
     <div accordion id="calendar-view-body">
 

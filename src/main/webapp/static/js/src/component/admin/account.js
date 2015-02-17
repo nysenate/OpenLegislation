@@ -22,15 +22,13 @@ accountModule.factory('PassChangeAPI', ['$resource', function ($resource) {
 accountModule.controller('AccountSettingsCtrl', ['$scope', '$routeParams', '$location',
 function($scope, $routeParams, $location) {
 
-    $scope.selectedIndex = 0;
-
     var pageNames = ['passchange', 'notification_subscriptions'];
 
     $scope.init = function() {
         if ($routeParams.hasOwnProperty('view')) {
             var view = $routeParams['view'];
-            if (Number(view)===view && view%1===0) {
-                $scope.selectedIndex = view;
+            if (Number(view)) {
+                $scope.selectedIndex = Number(view);
             } else {
                 var viewIndex = pageNames.indexOf(view);
                 if (viewIndex >= 0) {

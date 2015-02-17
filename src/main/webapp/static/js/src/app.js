@@ -2,24 +2,24 @@
 
 var openApp = angular.module('open',
     // External modules
-    ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table',
+    ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar',
     // Internal modules
-     'open.bill', 'open.law', 'open.daybreak', 'open.account', 'open.notification.subscription']);
+     'open.bill', 'open.law', 'open.calendar', 'open.daybreak', 'open.account', 'open.notification.subscription']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
     $mdThemingProvider.theme('default')
-        .primaryColor('blue-grey', {
+        .primaryPalette('blue-grey', {
             'hue-1': '50',
             'hue-2': '400',
             'hue-3': '800'
         })
-        .accentColor('light-green', {
+        .accentPalette('light-green', {
             'hue-1': '300',
             'hue-2': '400',
             'hue-3': '600'
         });
-    $mdThemingProvider.theme('dark').primaryColor('grey');
+    $mdThemingProvider.theme('dark').primaryPalette('grey');
 })
 .config(function($resourceProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;

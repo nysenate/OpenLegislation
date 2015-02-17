@@ -1,19 +1,19 @@
-var contentModule = angular.module('content');
+var calendarModule = angular.module('open.calendar', ['open.core']);
 
-contentModule.factory('CalendarViewApi', ['$resource', function($resource) {
+calendarModule.factory('CalendarViewApi', ['$resource', function($resource) {
     return $resource(apiPath + '/calendars/:year/:calNo', {
         year: '@year',
         calNo: '@calNo'
     });
 }]);
 
-contentModule.factory('CurrentCalendarIdApi', ['$resource', function($resource) {
+calendarModule.factory('CurrentCalendarIdApi', ['$resource', function($resource) {
     return $resource(apiPath + '/calendars/:year?order=DESC&limit=1', {
         year: '@year'
     });
 }]);
 
-contentModule.factory('CalendarIdsApi', ['$resource', function($resource) {
+calendarModule.factory('CalendarIdsApi', ['$resource', function($resource) {
     return $resource(apiPath + '/calendars/:year?limit=all', {
         year: '@year'
     });
@@ -21,8 +21,8 @@ contentModule.factory('CalendarIdsApi', ['$resource', function($resource) {
 
 /** --- Calendar View Controller --- */
 
-var calendarController = contentModule.controller('CalendarViewCtrl', ['$scope', '$routeParams', '$location', '$q',
-    'CalendarViewApi', 'CurrentCalendarIdApi', 'CalendarIdsApi',
+calendarModule.controller('CalendarViewCtrl', ['$scope', '$routeParams', '$location', '$q',
+                                                'CalendarViewApi', 'CurrentCalendarIdApi', 'CalendarIdsApi',
 function($scope, $routeParams, $location, $q, CalendarViewApi, CurrentCalendarIdApi, CalendarIdsApi) {
     $scope.eventSources = [];
     $scope.calendarConfig = null;
@@ -196,7 +196,7 @@ function($scope, $routeParams, $location, $q, CalendarViewApi, CurrentCalendarId
     $scope.init();
 }]);
 
-calendarController.directive('calendarEntryTable', function() {
+calendarModule.directive('calendarEntryTable', function() {
     return {
         scope: {
             calEntries: '=calEntries'
@@ -208,7 +208,7 @@ calendarController.directive('calendarEntryTable', function() {
     };
 });
 
-calendarController.filter('sectionDisplayName', function() {
+calendarModule.filter('sectionDisplayName', function() {
     var sectionNameMap = {
        'ORDER_OF_THE_FIRST_REPORT' : "First Report",
        'ORDER_OF_THE_SECOND_REPORT' : "Second Report",
@@ -225,7 +225,7 @@ calendarController.filter('sectionDisplayName', function() {
     };
 });
 
-calendarController.filter('orderBySection', function() {
+calendarModule.filter('orderBySection', function() {
     var sectionOrder = [
         'ORDER_OF_THE_FIRST_REPORT',
         'ORDER_OF_THE_SECOND_REPORT',

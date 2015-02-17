@@ -45,7 +45,8 @@
                ng-class="{'md-raised': !newSubscriptionShown}">
       New
     </md-button>
-    <md-button class="md-primary md-raised" ng-disabled="selectedSubs == 0" ng-click="unsubscribeSelected()" aria-label="Remove selected subscriptions">
+    <md-button class="md-primary md-raised" ng-disabled="selectedSubs == 0" ng-click="unsubscribeSelected()"
+               aria-label="Remove selected subscriptions">
       Unsubscribe
     </md-button>
     <md-list class="notification-sub-list">
@@ -75,7 +76,7 @@
           <div class="margin-right-10">
             <md-input-container ng-if="['EMAIL', 'EMAIL_SIMPLE'].indexOf(newSubscription.target)>=0">
               <label>Address</label>
-              <input type="email" ng-model="newSubscription.address">
+              <input type="email" required ng-model="newSubscription.address">
             </md-input-container>
             <md-input-container ng-if="['EMAIL', 'EMAIL_SIMPLE'].indexOf(newSubscription.target)==-1">
               <label>Address</label>

@@ -69,6 +69,7 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/ngInfiniteScroll/build/ng-infinite-scroll.js',
                         '<%= bowerRoot %>/moment/min/moment.min.js',
                         '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
+                        '<%= bowerRoot %>/fullcalendar/fullcalendar.js',
                         '<%= bowerRoot %>/amcharts/dist/amcharts/amcharts.js',
                         '<%= bowerRoot %>/amcharts/dist/amcharts/serial.js'
                     ]//'<%= jsDest %>/main.min.js': ['<%= jsSource %>/**/*.js']

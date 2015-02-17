@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.slack;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +67,9 @@ public class SlackChatService {
      * @return String - the message with mentions added
      */
     public String addMentions(String message, Collection<String> mentions) {
-        String mentionString = mentions.stream().reduce("", (a, b) -> a + "<@" + b + "> ");
+        String mentionString = mentions.stream()
+                .filter(StringUtils::isNotBlank)
+                .reduce("", (a, b) -> a + "<@" + b + "> ");
         return mentionString + message;
     }
 }
