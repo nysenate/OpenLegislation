@@ -81,7 +81,7 @@ public class BillSearchCtrl extends BaseCtrl
             results.getResults().stream()
                 .map(r -> new SearchResultView((full)
                         ? new BillView(billData.getBill(r.getResult()))
-                        : new BillInfoView(billData.getBillInfo(r.getResult())), r.getRank()))
+                        : new BillInfoView(billData.getBillInfo(r.getResult())), r.getRank(), r.getHighlights()))
                 .collect(toList()), results.getTotalResults(), limOff);
     }
 }

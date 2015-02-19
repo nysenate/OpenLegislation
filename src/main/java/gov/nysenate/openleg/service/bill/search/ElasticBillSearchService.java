@@ -10,6 +10,7 @@ import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -31,6 +32,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
 
 import static java.util.stream.Collectors.toList;
 
@@ -62,12 +64,14 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     /** {@inheritDoc} */
     @Override
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException {
+        query = smartSearch(query);
         return searchBills(QueryBuilders.queryString(query), null, null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff) throws SearchException {
+        query = smartSearch(query);
         TermFilterBuilder sessionFilter = FilterBuilders.termFilter("session", session.getYear());
         return searchBills(
             QueryBuilders.filteredQuery(QueryBuilders.queryString(query), sessionFilter), null, null, sort, limOff);
@@ -89,6 +93,16 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         catch (ElasticsearchException ex) {
             throw new SearchException("Unexpected search exception!", ex);
         }
+    }
+
+    private String smartSearch(String query) {
+        if (query != null && !query.contains(":")) {
+            Matcher matcher = BillId.billIdPattern.matcher(query.replaceAll("\\s", ""));
+            if (matcher.matches()) {
+                query = String.format("printNo:%s AND session:%s", matcher.group("printNo"), matcher.group("year"));
+            }
+        }
+        return query;
     }
 
     /** {@inheritDoc} */

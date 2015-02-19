@@ -37,7 +37,7 @@ select {
 /** --- Angular Material --- */
 
 md-toolbar {
-  min-height: 70px;
+  min-height: 65px;
   &.auto-height {
     min-height: 0;
     height: auto;
@@ -58,9 +58,26 @@ md-card {
   &.content-card {
     @extend .md-whiteframe-z0;
     @extend .white-bg;
-    @extend .padding-10;
+    padding: 0;
+    margin: 10px;
+    .md-subheader {
+      background: #fafafa;
+      border-bottom: 1px solid #f1f1f1;
+      color: #555;
+      margin: 0;
+    }
     md-content {
-      margin-left: 16px;
+      margin: 0;
+      padding: 20px;
+
+    }
+  }
+}
+
+md-input-container {
+  &.md-default-theme {
+    label {
+      color: rgb(96, 125, 139);
     }
   }
 }
@@ -80,6 +97,8 @@ md-card {
 
 #content-wrapper {
   #content-header {
+    min-height: 66px;
+    font-size: 1.5rem;
   }
   #content {
     #content-pad {
@@ -224,6 +243,9 @@ a.result-link {
       @extend .md-whiteframe-z0;
     }
   }
+  em {
+    background: #fff6b4;
+  }
 }
 
 .inline-block {
@@ -251,7 +273,7 @@ $left-nav-width: 305px;
 }
 
 #logo-wrapper {
-  background: #fafafa;
+  height: 70px;
 }
 
 #logo {
@@ -440,7 +462,7 @@ a.slogan-link {
 .bill-updates-table {
   font-size: 0.8rem;
   width: 100%;
-  padding: 20px;
+  padding: 20px 0;
   tr {
     th {
       text-align: left;

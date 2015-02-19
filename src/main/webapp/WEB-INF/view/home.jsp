@@ -22,15 +22,16 @@
       <section>
         <div id="left-nav-spacer" hide-sm hide-md></div>
         <md-sidenav id="left-nav" class="md-sidenav-left" md-component-id="left" md-is-locked-open="$media('gt-md')">
-          <md-toolbar id="logo-wrapper">
-            <h1 id="logo">
-              <img src="${ctxPath}/static/img/NYSS_seal_transp.png"/>
-              <a class="gray-2-blue" href="${ctxPath}/">
-                <span class="blue3">Open </span>Legislation
+          <div id="logo-wrapper">
+            <div id="logo">
+              <%--<img src="${ctxPath}/static/img/NYSS_seal_transp.png"/>--%>
+              <a class="margin-left-10 gray2" href="${ctxPath}/">
+                <i style="font-size: 1.8rem;position: relative;top: 5px;" class="icon-list2 prefix-icon2"></i>
+                Open Legislation
               </a>
-              <small class="gray6">2.0</small>
-            </h1>
-          </md-toolbar>
+            </div>
+            <md-divider></md-divider>
+          </div>
 
           <%-- Left Nav Menu Items --%>
           <div class="left-nav-menu">
@@ -66,7 +67,7 @@
       <section id="content-wrapper" flex="1">
 
         <%-- Content Header --%>
-        <md-toolbar id="content-header">
+        <md-toolbar id="content-header" class="md-primary hide" ng-show="header.visible">
           <h1 class="top-bar-heading md-toolbar-tools">
             <i hide-gt-md ng-click="toggleLeftNav()" class="menu-icon icon-list2"></i>
             {{header.text}}

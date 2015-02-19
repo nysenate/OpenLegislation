@@ -7,7 +7,20 @@
       <md-toolbar class="md-toolbar-tools auto-height">
         <h6 class="margin-top-10 margin-bottom-10">{{bill.title}}</h6>
       </md-toolbar>
-      <md-toolbar class="md-hue-2 md-toolbar-tools auto-height">
+      <md-toolbar ng-if="bill.amendments.size > 1" class="md-toolbar-tools md-hue-2 auto-height">
+        <label class="margin-right-20">Version </label>
+        <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
+          <md-radio-button ng-repeat="(version, amd) in bill.amendments.items" class="md-accent md-hue-1"
+                           value="{{version}}">
+            <span ng-if="$first">Original</span>
+            <span ng-if="!$first">Revision {{version}}</span>
+            <span ng-if="$last"> (Latest)</span>
+            <br/>
+            <small>{{amd.publishDate | moment:'MMM D, YYYY'}}</small>
+          </md-radio-button>
+        </md-radio-group>
+      </md-toolbar>
+      <md-toolbar class=" md-toolbar-tools auto-height">
         <section layout="row" layout-sm="column"
                  layout-align="start center" layout-align-sm="start start">
           <div class="margin-bottom-10 margin-top-10" layout="row" layout-align="start center" style="margin-right:60px;">
@@ -38,19 +51,7 @@
           </div>
         </section>
       </md-toolbar>
-      <md-toolbar ng-if="bill.amendments.size > 1" class="md-toolbar-tools auto-height">
-        <label class="margin-right-20">Version </label>
-        <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
-          <md-radio-button ng-repeat="(version, amd) in bill.amendments.items" class="md-accent md-hue-1"
-                           value="{{version}}">
-            <span ng-if="$first">Original</span>
-            <span ng-if="!$first">Revision {{version}}</span>
-            <span ng-if="$last"> (Latest)</span>
-            <br/>
-            <small>{{amd.publishDate | moment:'MMM D, YYYY'}}</small>
-          </md-radio-button>
-        </md-radio-group>
-      </md-toolbar>
+
       <md-tabs md-selected="curr.selectedView" class="md-hue-2">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
@@ -58,6 +59,7 @@
           </md-tab-label>
         </md-tab>
         <md-tab label="Details">
+          <md-divider></md-divider>
           <%-- Substituted By --%>
           <md-card class="white-bg padding-10" ng-if="bill.substitutedBy">
             <md-button style="text-align: left;text-transform: none;" class="margin-left-10 md-warn"
@@ -69,14 +71,14 @@
           <%-- Enacting Clause --%>
           <md-card class="content-card" ng-if="!bill.billType.resolution">
             <md-subheader>Enacting Clause</md-subheader>
-            <md-content style="margin-left:16px;">
+            <md-content>
               <p class="text-medium">{{bill.amendments.items[curr.amdVersion].actClause | default:'Not Available'}}</p>
             </md-content>
           </md-card>
           <%-- Bill Summary --%>
-          <md-card class="md-whiteframe-z0 white-bg padding-10" ng-if="!bill.billType.resolution">
+          <md-card class="content-card" ng-if="!bill.billType.resolution">
             <md-subheader>Summary of Bill</md-subheader>
-            <md-content style="margin-left:16px;">
+            <md-content>
               <p class="text-medium">{{bill.summary | default:'Not Available'}}</p>
             </md-content>
           </md-card>
@@ -96,7 +98,7 @@
             <section flex style="width:100%" ng-if="bill.amendments.items[curr.amdVersion].coSponsors.size > 0">
               <md-subheader>{{bill.amendments.items[curr.amdVersion].coSponsors.size}} Co Sponsor(s)</md-subheader>
               <md-divider/>
-              <md-content style="margin-left:16px;max-height: 200px;" class="padding-10">
+              <md-content style="max-height: 200px;" class="padding-10">
                 <md-list>
                   <md-item ng-repeat="coSponsor in bill.amendments.items[curr.amdVersion].coSponsors.items">
                     <md-item-content>
@@ -116,7 +118,7 @@
             <section flex style="width:100%" ng-if="bill.amendments.items[curr.amdVersion].multiSponsors.size > 0">
               <md-subheader>{{bill.amendments.items[curr.amdVersion].multiSponsors.size}} Multi Sponsor(s)</md-subheader>
               <md-divider/>
-              <md-content style="margin-left:16px;max-height: 200px;" class="padding-10">
+              <md-content style="max-height: 200px;" class="padding-10">
                 <md-list>
                   <md-item ng-repeat="multiSponsor in bill.amendments.items[curr.amdVersion].multiSponsors.items">
                     <md-item-content>
@@ -261,7 +263,7 @@
           <%-- Agenda/Cal Refs --%>
           <md-card class="content-card" ng-if="bill.calendars.size > 0 || bill.committeeAgendas.size > 0">
             <md-subheader>Agenda/Calendar References</md-subheader>
-            <md-content style="margin-left:16px;">
+            <md-content>
               <md-list>
                 <md-item>
                   <md-item-content ng-repeat="agenda in bill.committeeAgendas.items">
@@ -283,9 +285,13 @@
         </md-tab>
         <%-- Sponsor Memo --%>
         <md-tab label="Memo" ng-disabled="bill.billType.resolution">
+          <md-divider></md-divider>
           <md-card class="content-card">
+            <md-subheader>
+              Sponsor's Memorandum
+            </md-subheader>
             <md-content ng-if="bill.amendments.items[curr.amdVersion].memo">
-            <pre class="bill-full-text margin-20" style=""
+            <pre class="bill-full-text" style=""
                  ng-bind-html="bill.amendments.items[curr.amdVersion].memo | prettySponsorMemo"></pre>
             </md-content>
             <md-content ng-if="bill.billType.chamber == 'ASSEMBLY'">
@@ -298,14 +304,18 @@
         </md-tab>
         <%-- Bill Actions --%>
         <md-tab label="Actions">
+          <md-divider></md-divider>
           <md-card class="content-card">
+            <md-subheader>
+              Bill Actions
+            </md-subheader>
             <md-content>
               <md-list>
                 <md-item hide-sm>
                   <md-item-content class="text-medium bold">
-                    <div style="width:140px" class="md-tile-left margin-10"><span>Date</span></div>
-                    <div style="width:60px" class="md-tile-left margin-10"><span>Bill</span></div>
-                    <div style="width:100px" class="md-tile-left margin-10"><span>Chamber</span></div>
+                    <div style="width:140px" class="margin-10"><span>Date</span></div>
+                    <div style="width:60px" class="margin-10"><span>Bill Id</span></div>
+                    <div style="width:100px" class="margin-10"><span>Chamber</span></div>
                     <div class="md-tile-content"><span>Action Text</span></div>
                   </md-item-content>
                   <md-divider/>
@@ -335,7 +345,8 @@
         </md-tab>
         <%-- Bill Text --%>
         <md-tab label="Full Text">
-          <md-card class="content-card margin-bottom-10" ng-if="bill.amendments.size > 1">
+          <md-divider></md-divider>
+          <md-card class="content-card" ng-if="bill.amendments.size > 1">
             <md-content layout="row">
               Compare with revision:
               <select ng-model="curr.compareVersion" ng-change="diffBills()" class="margin-left-20 white-bg">
@@ -346,19 +357,24 @@
               </select>
             </md-content>
           </md-card>
-          <md-content class="margin-10 padding-20">
-          <span ng-if="!bill.amendments.items[curr.amdVersion].fullText">Bill Text is not available yet. New bills or revisions
-          may not have full text available right away.</span>
-          <div ng-if="bill.amendments.items[curr.amdVersion].fullText">
-             <pre ng-if="!diffHtml" class="margin-left-20 bill-full-text">{{bill.amendments.items[curr.amdVersion].fullText}}</pre>
-             <pre ng-if="diffHtml" class="margin-left-20 bill-full-text" ng-bind-html="diffHtml"></pre>
-          </div>
-          </md-content>
+          <md-card class="content-card">
+            <md-subheader>Full Text</md-subheader>
+            <md-content class="margin-10 padding-20">
+              <span ng-if="!bill.amendments.items[curr.amdVersion].fullText">Bill Text is not available yet. New bills or revisions
+              may not have full text available right away.</span>
+              <div ng-if="bill.amendments.items[curr.amdVersion].fullText">
+                <pre ng-if="!diffHtml" class="margin-left-20 bill-full-text">{{bill.amendments.items[curr.amdVersion].fullText}}</pre>
+                <pre ng-if="diffHtml" class="margin-left-20 bill-full-text" ng-bind-html="diffHtml"></pre>
+              </div>
+            </md-content>
+          </md-card>
+
         </md-tab>
         <%-- Updates --%>
         <md-tab label="Update History" md-on-select="initialGetUpdates()">
-          <md-card>
-            <md-content layout="row" class="content-card padding-10">
+          <md-divider></md-divider>
+          <md-card class="content-card">
+            <md-content layout="row">
               <div flex>
                 <label>Filter by update type: </label>
                 <select ng-model="curr.updateTypeFilter" ng-change="getUpdates()" class="margin-left-10">
@@ -393,14 +409,14 @@
             <md-item>
               <md-item-content>
                 <div class="md-tile-content">
-                  <md-card>
-                    <md-content class="content-card">
-                      <md-subheader>
-                        <h3 class="bold margin-bottom-10">{{update.action}} - {{update.scope}}</h3>
-                        <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY'}}</h4>
-                        <h4>Processed Date- {{update.processedDateTime | moment:'MMM DD, YYYY hh:mm:ss'}}</h4>
-                        <h4>Source - <a>{{update.sourceId}}</a></h4>
-                      </md-subheader>
+                  <md-card class="content-card">
+                    <md-subheader>
+                      <span class="capitalize">{{update.action | lowercase}} - {{update.scope}}</span>
+                    </md-subheader>
+                    <md-content>
+                      <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY'}}</h4>
+                      <h4>Processed Date- {{update.processedDateTime | moment:'MMM DD, YYYY hh:mm:ss'}}</h4>
+                      <h4>Source - <a>{{update.sourceId}}</a></h4>
                       <table class="bill-updates-table">
                         <thead>
                         <tr>

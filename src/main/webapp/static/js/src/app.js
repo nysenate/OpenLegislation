@@ -29,7 +29,7 @@ openApp.config(function($mdThemingProvider) {
  * App Controller
  */
 openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($scope, $location, $mdSidenav) {
-    $scope.header = {text: '', visible: true};
+    $scope.header = {text: '', visible: false};
 
     $scope.toggleLeftNav = function() {
         $mdSidenav('left').toggle();
@@ -39,14 +39,17 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
         $scope.header.text = text;
     };
 
+    $scope.setHeaderVisible = function(visible) {
+        $scope.header.visible = visible;
+    };
+
     $scope.go = function(url) {
         $location.url(url);
     }
 }]);
 
 openApp.controller('LandingCtrl', ['$scope', function($scope) {
-    $scope.setHeaderText('About');
-    $scope.gal = 'sdf';
+    $scope.setHeaderVisible(false);
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'From 2009 To Present. Updated in real-time.',
           icon: 'icon-newspaper', url: ctxPath + '/bills'},
@@ -90,6 +93,7 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
         '    <a ng-class="{active: isSectionSelected(section)}" class="menu-item menu-title md-menu-item"' +
         '       ng-click="selectSection(section)" md-ink-ripple="#bbb" tab-index="-1"> {{section.title}}' +
         '    </a>' +
+        '    <md-divider></md-divider> '  +
         '    <div ng-if="section.items" ng-repeat="item in section.items">' +
         '      <a ng-class="{active: isItemSelected(item)}"' +
         '         class="menu-item menu-sub-item md-menu-item" md-ink-ripple="#bbb" ' +

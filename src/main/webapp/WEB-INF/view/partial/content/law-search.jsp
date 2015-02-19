@@ -3,7 +3,7 @@
 
 <section ng-controller="LawCtrl">
   <section ng-controller="LawListingCtrl">
-    <md-tabs md-selected="curr.selectedView">
+    <md-tabs md-selected="curr.selectedView" class="md-hue-2">
       <md-tab label="Listings">
         <md-card class="padding-10">
           <md-input-container>

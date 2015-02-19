@@ -3,8 +3,9 @@
 
 <section ng-controller="LawCtrl">
   <section ng-controller="LawViewCtrl">
-    <md-tabs md-selected="curr.selectedView">
-      <md-tab label="Back to Listings" md-on-select="backToListings()">
+    <md-tabs md-selected="curr.selectedView" class="md-hue-2">
+      <md-tab md-on-select="backToListings()">
+        <i class="prefix-icon2 icon-arrow-left5"></i>Back to Listings
       </md-tab>
       <md-tab label="{{curr.lawId}}">
         <pre ng-show="curr.nodes[depth].docType === 'SECTION'"

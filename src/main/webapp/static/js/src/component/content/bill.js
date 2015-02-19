@@ -91,9 +91,10 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
 
 /** --- Bill Search Controller --- */
 
-billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location','BillListingApi', 'BillSearchApi',
-                      function($scope, $filter, $routeParams, $location, BillListing, BillSearch) {
+billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location', '$sce', 'BillListingApi', 'BillSearchApi',
+                      function($scope, $filter, $routeParams, $location, $sce, BillListing, BillSearch) {
     $scope.setHeaderText('NYS Bills and Resolutions');
+    $scope.setHeaderVisible(true);
 
     var paginationModel = {
         firstPage: 1,
@@ -188,6 +189,14 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                     if (resetPagination) {
                         $scope.curr.pagination.currPage = 1;
                     }
+                    // Mark highlighted search results as safe html.
+                    angular.forEach($scope.billSearch.results, function(r) {
+                        for (prop in r.highlights) {
+                            if (r.highlights[prop][0]) {
+                                r.highlights[prop][0] = $sce.trustAsHtml(r.highlights[prop][0]);
+                            }
+                        }
+                    });
                     $scope.curr.pagination.setTotalItems($scope.billSearch.response.total);
                 });
         }
@@ -236,6 +245,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
                                        'BillGetApi', 'BillDiffApi', 'BillUpdatesApi',
     function($scope, $filter, $location, $routeParams, $sce, BillGetApi, BillDiffApi, BillUpdatesApi) {
 
+    $scope.setHeaderVisible(true);
     $scope.response = null;
     $scope.bill = null;
     $scope.curr = {

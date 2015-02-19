@@ -103,7 +103,7 @@ public abstract class ElasticBaseDao
                 .setMinScore(0.05f)
                 .setFetchSource(false);
         if (highlightedFields != null && !highlightedFields.isEmpty()) {
-            highlightedFields.stream().forEach(field -> searchBuilder.addHighlightedField(field));
+            highlightedFields.stream().forEach(field -> searchBuilder.addHighlightedField(field, 0, 0));
         }
         if (rescorer != null) {
             searchBuilder.addRescorer(rescorer);
