@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +42,11 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     @Autowired protected EventBus eventBus;
     @Autowired protected ElasticMemberSearchDao memberSearchDao;
     @Autowired protected MemberService memberDataService;
+
+    @PostConstruct
+    protected void init() {
+        eventBus.register(this);
+    }
 
     /** {@inheritDoc} */
     @Override
