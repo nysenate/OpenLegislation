@@ -14,6 +14,7 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -188,6 +188,11 @@ public abstract class ElasticBaseDao
     }
 
     protected void deleteIndex(String index) {
-        searchClient.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
+        try {
+            searchClient.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
+        }
+        catch (IndexMissingException ex) {
+            logger.info("Cannot delete index {} because it doesn't exist.", index);
+        }
     }
 }
