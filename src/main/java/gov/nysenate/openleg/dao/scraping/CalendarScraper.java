@@ -65,18 +65,12 @@ public class CalendarScraper extends LRSScraper{
                 URL contentURL = new URL(absHref);
                 String filename = null;
                 String activeInfo = null;
-                if (td.get(1).text().startsWith("Active List")) {
-
-                    //LocalDateTime activeListDate = LocalDateTime.parse(td.get(2).text());
+                if (td.get(1).text().startsWith("Active List")) {       //Create the file for parsing
                     System.out.println();
                     System.out.println();
-                    //System.out.println("PPPPPPPAAAAAARRRRSSSSSSEEEEEE DDDDDAAAATTTEEEEEEEE::::" + activeListDate);
-                    //DateUtils.getLrsWebsiteDateTime(td.get(2).text())
                     LocalDateTime listDate =  LocalDateTime. parse(td.get(2).text(), DateUtils.LRS_WEBSITE_DATETIME_FORMAT);
                     System.out.println("PARSE DATE with formatter:::: " + listDate);
-                    //filename = dateFormat.format(LocalDateTime.now()) + "." + td.get(0).text().trim().replace(".", "").replace(" ", "_").toLowerCase() +"_active_list_" + td.get(2).text().replace("/", "-").replace(" ", "").toLowerCase() + ".html";
                     filename = dateFormat.format(LocalDateTime.now()) + "." + td.get(0).text().trim().replace(".", "").replace(" ", "_").toLowerCase() + "_active_list_" + listDate + ".html";
-                    //activeInfo = "Active List\n" + td.get(2).text() + "\n" + activeCount + "\n";
                     activeInfo = "<h1>Active List</h1><h1>" + td.get(2).text() + "</h1><h1>" + activeCount +"</h1>\n";
                     activeCount++; //Oldest (highest) active list is the number 0
                 }else if (td.get(1).text().startsWith("Debate List")) {
@@ -92,5 +86,6 @@ public class CalendarScraper extends LRSScraper{
                 FileUtils.write(outfile, contents);
             }
         }
+
     }
 }

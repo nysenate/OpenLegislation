@@ -52,10 +52,6 @@ public class ActiveListHTMLParser {
         sequenceNo = Integer.parseInt(a.get(2).text());
         //System.out.println("sequenceNo:::::::::::"+sequenceNo);
 
-
-
-
-
         Elements h3 = doc.getElementsByTag("h3");
 
         String listTitle = h3.first().text();
@@ -92,17 +88,10 @@ public class ActiveListHTMLParser {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM-dd-yyyy");
         LocalDate calDate = LocalDate.parse(monthString + "-" + dayString + "-" + yearString, formatter);
-
-        //System.out.println(calDate.getMonthValue() + " " + calDate.getDayOfMonth() + " " + calDate.getYear());
         LocalDateTime reportDate = LocalDateTime.now();
-        //System.out.println("Current time (report time):");
-        //System.out.println(reportDate.getMonthValue() + " " + reportDate.getDayOfMonth() + " " + reportDate.getYear() + "   "
-        //        + reportDate.getHour() + " " + reportDate.getMinute() + " " + reportDate.getSecond());
 
         CalendarId calendarId = new CalendarId(sessionNumber, Integer.parseInt(yearString));
 
         return new ActiveListSpotcheckReference(sequenceNo, calendarId,  calDate, releasedDateTime, reportDate, entries);
-        //return new ActiveListSpotcheckReference(sequenceNo, calendarId,  calDate, releasedDateTime, entries);
-            //return null;
     }
 }

@@ -37,6 +37,7 @@ public class Environment
     @Value("${env.scraped.calendar}") private String calendarDirPath;
     @Value("${env.scraped.assemblyagenda}") private String assemblyAgendaDirPath;
     @Value("${env.scraped.senateagenda}") private String senateAgendaDirPath;
+    @Value("${env.scraped.billtext}") private String billTextDirPath;
     
     private File baseDir;
     private File stagingDir;
@@ -45,6 +46,7 @@ public class Environment
     private File calendarDirectory;
     private File assemblyAgendaDirectory;
     private File senateAgendaDirectory;
+    private File billTextDirectory;
 
     /** --- Api Auth --- */
 
@@ -102,6 +104,7 @@ public class Environment
         this.calendarDirectory = new File(calendarDirPath);
         this.assemblyAgendaDirectory = new File(assemblyAgendaDirPath);
         this.senateAgendaDirectory = new File(senateAgendaDirPath);
+        this.billTextDirectory = new File(billTextDirPath);
     }
 
     /** --- Basic Getters/Setters --- */
@@ -208,6 +211,14 @@ public class Environment
 
     public void setAssemblyAgendaDirectory(File assemblyAgendaDirectory) {
         this.assemblyAgendaDirectory = assemblyAgendaDirectory;
+    }
+
+    public File getBillTextDirectory() {
+        return billTextDirectory;
+    }
+
+    public void setBillTextDirectory(File billTextDirectory) {
+        this.billTextDirectory = billTextDirectory;
     }
 
     public boolean isNotificationsEnabled() {
