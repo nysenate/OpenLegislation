@@ -15,6 +15,8 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -93,7 +95,7 @@ public abstract class ElasticBaseDao
      * @return SearchRequestBuilder
      */
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
-                                                    List<String> highlightedFields, RescoreBuilder.Rescorer rescorer,
+                                                    List<HighlightBuilder.Field> highlightedFields, RescoreBuilder.Rescorer rescorer,
                                                     String sort, LimitOffset limitOffset) {
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
@@ -102,8 +104,8 @@ public abstract class ElasticBaseDao
                 .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : -1)
                 .setMinScore(0.05f)
                 .setFetchSource(false);
-        if (highlightedFields != null && !highlightedFields.isEmpty()) {
-            highlightedFields.stream().forEach(field -> searchBuilder.addHighlightedField(field, 0, 0));
+        if (highlightedFields != null) {
+            highlightedFields.stream().forEach(field -> searchBuilder.addHighlightedField(field));
         }
         if (rescorer != null) {
             searchBuilder.addRescorer(rescorer);

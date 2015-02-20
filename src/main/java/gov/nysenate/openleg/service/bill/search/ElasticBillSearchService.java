@@ -65,7 +65,9 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     @Override
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException {
         query = smartSearch(query);
-        return searchBills(QueryBuilders.queryString(query), null, null, sort, limOff);
+        RescoreBuilder.QueryRescorer rescorer = new RescoreBuilder.QueryRescorer(QueryBuilders.termQuery("session", SessionYear.current().getYear()));
+        rescorer.setRescoreQueryWeight(2.0f);
+        return searchBills(QueryBuilders.queryString(query), null, rescorer, sort, limOff);
     }
 
     /** {@inheritDoc} */
@@ -99,7 +101,8 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         if (query != null && !query.contains(":")) {
             Matcher matcher = BillId.billIdPattern.matcher(query.replaceAll("\\s", ""));
             if (matcher.matches()) {
-                query = String.format("printNo:%s AND session:%s", matcher.group("printNo"), matcher.group("year"));
+                query = String.format("(printNo:%s OR basePrintNo:%s) AND session:%s",
+                        matcher.group("printNo"), matcher.group("printNo"), matcher.group("year"));
             }
         }
         return query;
