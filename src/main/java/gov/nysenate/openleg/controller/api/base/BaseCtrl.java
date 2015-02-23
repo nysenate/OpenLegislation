@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.controller.api.base;
 
+import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
@@ -99,33 +100,6 @@ public abstract class BaseCtrl
     }
 
     /**
-     * Extracts a date range from the query parameters 'startDate' and 'endDate'.
-     *
-     * @param webRequest WebRequest
-     * @param defaultRange Range<LocalDate>
-     * @return Range<LocalDate>
-     */
-    protected Range<LocalDate> getDateRangeFromParams(WebRequest webRequest, Range<LocalDate> defaultRange) {
-        try {
-            LocalDate startDate = null;
-            LocalDate endDate = null;
-            if (webRequest.getParameterMap().containsKey("startDate")) {
-                startDate = LocalDate.from(DateTimeFormatter.ISO_DATE.parse(webRequest.getParameter("startDate")));
-            }
-            if (webRequest.getParameterMap().containsKey("endDate")) {
-                endDate = LocalDate.from(DateTimeFormatter.ISO_DATE.parse(webRequest.getParameter("endDate")));
-            }
-            return (startDate == null && endDate == null)
-                ? defaultRange
-                : Range.closed(startDate != null ? startDate : DateUtils.LONG_AGO,
-                                 endDate != null ? endDate   : DateUtils.THE_FUTURE);
-        }
-        catch (Exception ex) {
-            return defaultRange;
-        }
-    }
-
-    /**
      * Attempts to parse a date request parameter
      * Throws an InvalidRequestParameterException if the parsing went wrong
      *
@@ -165,40 +139,41 @@ public abstract class BaseCtrl
 
     /**
      * Constructs a Range from the given parameters.  Throws an exception if the parameter values are invalid
-     * @param from T
-     * @param to T
+     * @param lower T
+     * @param upper T
      * @param fromName String
-     * @param toName String
-     * @param fromOpen boolean
-     * @param toOpen boolean
-     * @param <T> Type
+     * @param upperName String
+     * @param lowerType BoundType
+     * @param upperType BoundType
+     * @param <T> T
      * @return Range<T>
      */
-    protected <T extends Comparable> Range<T> getRange(T from, T to, String fromName, String toName,
-                                                                    boolean fromOpen, boolean toOpen) {
+    protected <T extends Comparable> Range<T> getRange(T lower, T upper, String fromName, String upperName,
+                                                                    BoundType lowerType, BoundType upperType) {
         try {
-            return fromOpen ? toOpen ? Range.open(from, to) : Range.openClosed(from, to)
-                    : toOpen ? Range.closedOpen(from, to) : Range.closed(from, to);
+            return Range.range(lower, lowerType, upper, upperType);
         } catch (IllegalArgumentException ex) {
-            throw new InvalidRequestParamEx((fromOpen ? "(" : "[") + from + " - " + to + (toOpen ? ")" : "]"),
-                    fromName + ", " + toName, "range", "Range start must not exceed range end");
+            String rangeString = (lowerType == BoundType.OPEN ? "(" : "[") + lower + " - " +
+                    upper + (upperType == BoundType.OPEN ? ")" : "]");
+            throw new InvalidRequestParamEx( rangeString, fromName + ", " + upperName, "range",
+                                            "Range start must not exceed range end");
         }
     }
 
-    protected <T extends Comparable> Range<T> getOpenRange(T from, T to, String fromName, String toName) {
-        return getRange(from, to, fromName, toName, true, true);
+    protected <T extends Comparable> Range<T> getOpenRange(T lower, T upper, String fromName, String upperName) {
+        return getRange(lower, upper, fromName, upperName, BoundType.OPEN, BoundType.OPEN);
     }
 
-    protected <T extends Comparable> Range<T> getOpenClosedRange(T from, T to, String fromName, String toName) {
-        return getRange(from, to, fromName, toName, true, false);
+    protected <T extends Comparable> Range<T> getOpenClosedRange(T lower, T upper, String fromName, String upperName) {
+        return getRange(lower, upper, fromName, upperName, BoundType.OPEN, BoundType.CLOSED);
     }
 
-    protected <T extends Comparable> Range<T> getClosedOpenRange(T from, T to, String fromName, String toName) {
-        return getRange(from, to, fromName, toName, false, true);
+    protected <T extends Comparable> Range<T> getClosedOpenRange(T lower, T upper, String fromName, String upperName) {
+        return getRange(lower, upper, fromName, upperName, BoundType.CLOSED, BoundType.OPEN);
     }
 
-    protected <T extends Comparable> Range<T> getClosedRange(T from, T to, String fromName, String toName) {
-        return getRange(from, to, fromName, toName, false, false);
+    protected <T extends Comparable> Range<T> getClosedRange(T lower, T upper, String fromName, String upperName) {
+        return getRange(lower, upper, fromName, upperName, BoundType.CLOSED, BoundType.CLOSED);
     }
 
     /**

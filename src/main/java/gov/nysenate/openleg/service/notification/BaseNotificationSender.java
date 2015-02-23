@@ -9,7 +9,7 @@ public abstract class BaseNotificationSender implements NotificationSender {
     @Autowired
     protected Environment environment;
 
-    private static final String notificationDisplayPath = "/admin/notification/";
+    private static final String notificationDisplayPath = "/api/3/admin/notifications/";
 
     /**
      * Generates a url to the display page for the given notification
