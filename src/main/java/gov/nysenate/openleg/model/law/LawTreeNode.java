@@ -174,7 +174,6 @@ public class LawTreeNode implements Comparable<LawTreeNode>
         return lawTreeNode;
     }
 
-
     /**
      * Prints out this tree with formatting to show the hierarchy.
      *

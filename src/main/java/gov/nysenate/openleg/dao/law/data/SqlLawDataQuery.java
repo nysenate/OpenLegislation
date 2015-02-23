@@ -39,6 +39,12 @@ public enum SqlLawDataQuery implements BasicSqlQuery
 
     /** --- Law Trees --- */
 
+    SELECT_MAX_PUB_DATE(
+        "SELECT law_id, MAX(published_date) AS max_pub_date\n" +
+        "FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
+        "WHERE parent_doc_id IS NULL\n" +
+        "GROUP by law_id"
+    ),
     SELECT_LAW_TREE(
         "WITH max_date AS (\n" +
         "    SELECT max(published_date) AS pub_date FROM ${schema}." + SqlTable.LAW_TREE + "\n" +

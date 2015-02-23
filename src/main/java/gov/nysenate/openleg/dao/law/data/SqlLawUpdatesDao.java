@@ -95,7 +95,7 @@ public class SqlLawUpdatesDao extends SqlBaseDao implements LawUpdatesDao
 
     private static final RowMapper<UpdateToken<LawDocId>> lawDocIdUpdateTokenMapper = (rs, rowNum) -> {
         LocalDateTime lastPubDateTime = getLocalDateTimeFromRs(rs, "last_published_date_time");
-        LawDocId lawDocId = new LawDocId(rs.getString("document_id"), lastPubDateTime.toLocalDate(), rs.getString("law_id"));
+        LawDocId lawDocId = new LawDocId(rs.getString("document_id"), lastPubDateTime.toLocalDate());
         return new UpdateToken<>(lawDocId, rs.getString("last_source_file"), lastPubDateTime,
             getLocalDateTimeFromRs(rs, "last_processed_date_time"));
     };

@@ -1,9 +1,6 @@
 package gov.nysenate.openleg.service.law.data;
 
-import gov.nysenate.openleg.model.law.LawDocument;
-import gov.nysenate.openleg.model.law.LawFile;
-import gov.nysenate.openleg.model.law.LawInfo;
-import gov.nysenate.openleg.model.law.LawTree;
+import gov.nysenate.openleg.model.law.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,6 +38,16 @@ public interface LawDataService
      * @throws LawDocumentNotFoundEx - If there is no law document that meets the given criteria.
      */
     public LawDocument getLawDocument(String documentId, LocalDate endPublishedDate) throws LawDocumentNotFoundEx;
+
+    /**
+     * Similar to getLawDocument except the text is omitted which may result in a faster result.
+     *
+     * @param documentId String
+     * @param endPublishedDate LocalDate
+     * @return LawDocInfo
+     * @throws LawDocumentNotFoundEx
+     */
+    public LawDocInfo getLawDocInfo(String documentId, LocalDate endPublishedDate) throws LawDocumentNotFoundEx;
 
     /**
      * Retrieves all the LawDocuments from the backing store that are associated with the given lawId

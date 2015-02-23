@@ -25,9 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -48,16 +46,20 @@ public class CachedLawDataService implements LawDataService, CachingService
     private static final String lawTreeCacheName = "lawtree";
     private EhCacheCache lawTreeCache;
 
+    private Map<String, LocalDate> maxPubDates = new HashMap<>();
+
     @PostConstruct
     private void init() {
         eventBus.register(this);
         setupCaches();
+        maxPubDates = lawDataDao.getLastPublishedMap();
     }
 
     @PreDestroy
     private void cleanUp() {
         evictCaches();
         cacheManager.removeCache(lawTreeCacheName);
+        maxPubDates.clear();
     }
 
     /** --- CachingService implementation --- */
@@ -121,8 +123,13 @@ public class CachedLawDataService implements LawDataService, CachingService
     @Override
     public LawTree getLawTree(String lawId, LocalDate endPublishedDate) throws LawTreeNotFoundEx {
         if (lawId == null) throw new IllegalArgumentException("Supplied lawId cannot be null");
-        if (endPublishedDate == null) endPublishedDate = LocalDate.now();
         try {
+            if (endPublishedDate == null) {
+                if (maxPubDates.isEmpty()) {
+                    maxPubDates = lawDataDao.getLastPublishedMap();
+                }
+                endPublishedDate = maxPubDates.get(lawId);
+            }
             LawVersionId lawVersionId = new LawVersionId(lawId.toUpperCase(), endPublishedDate);
             LawTree lawTree;
             if (lawTreeCache.get(lawVersionId) != null) {
@@ -136,6 +143,23 @@ public class CachedLawDataService implements LawDataService, CachingService
         }
         catch (DataAccessException ex) {
             throw new LawTreeNotFoundEx(lawId, endPublishedDate, ex.getMessage());
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LawDocInfo getLawDocInfo(String documentId, LocalDate endPublishedDate) throws LawDocumentNotFoundEx {
+        if (documentId == null || documentId.length() < 4) {
+            throw new IllegalArgumentException("Document id cannot be less than 4 characters");
+        }
+        /** FIXME: This is not the most efficient way to retrieve this. */
+        Optional<LawDocInfo> docInfo =
+            getLawTree(documentId.substring(0, 3), endPublishedDate).getRootNode().find(documentId);
+        if (docInfo.isPresent()) {
+            return docInfo.get();
+        }
+        else {
+            throw new LawDocumentNotFoundEx(documentId, endPublishedDate, "Law tree was found but document was not matched");
         }
     }
 
@@ -166,6 +190,7 @@ public class CachedLawDataService implements LawDataService, CachingService
         if (lawTree == null) throw new IllegalArgumentException("Supplied lawTree cannot be null");
         lawDataDao.updateLawTree(lawFile, lawTree);
         lawTreeCache.put(lawTree.getLawVersionId(), lawTree);
+        maxPubDates.clear();
     }
 
     /** {@inheritDoc} */

@@ -15,6 +15,7 @@ import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class LawGetCtrl extends BaseCtrl
                                    @RequestParam(required = false) String fromLocation,
                                    @RequestParam(required = false) Integer depth,
                                    @RequestParam(defaultValue = "false") boolean full) {
-        LocalDate publishedDate = (date == null) ? LocalDate.now() : parseISODate(date, "date");
+        LocalDate publishedDate = (date != null) ? parseISODate(date, "date") : null;
         LawTree lawTree = lawDataService.getLawTree(lawId, publishedDate);
         ViewObjectResponse<LawTreeView> response =
             (full) ? new ViewObjectResponse<>(new LawTreeView(lawTree, fromLocation, depth,

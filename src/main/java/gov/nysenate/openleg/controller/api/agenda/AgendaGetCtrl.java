@@ -19,6 +19,7 @@ import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
+import gov.nysenate.openleg.service.agenda.search.AgendaSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,8 @@ public class AgendaGetCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(AgendaGetCtrl.class);
 
-    @Autowired
-    private AgendaDataService agendaDataService;
+    @Autowired private AgendaDataService agendaDataService;
+    @Autowired private AgendaSearchService agenda;
 
     /**
      * Agenda List Retrieval API

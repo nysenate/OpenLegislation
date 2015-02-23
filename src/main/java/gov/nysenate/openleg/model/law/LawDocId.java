@@ -21,11 +21,11 @@ public class LawDocId
 
     public LawDocId() {}
 
-    public LawDocId(String documentId, LocalDate publishedDate, String lawId) {
+    public LawDocId(String documentId, LocalDate publishedDate) {
         this.documentId = documentId;
         this.locationId = (documentId != null) ? documentId.substring(3) : null;
+        this.lawId = (documentId != null) ? documentId.substring(0, 3) : null;
         this.publishedDate = publishedDate;
-        this.lawId = lawId;
     }
 
     /** --- Basic Getters/Setters --- */

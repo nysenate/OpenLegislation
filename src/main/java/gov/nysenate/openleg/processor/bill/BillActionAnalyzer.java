@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ public class BillActionAnalyzer
     private static final Pattern deliveredGovPattern = Pattern.compile("DELIVERED TO GOVERNOR");
 
     /** Pattern for when bill has been signed into law by the governor. */
-    private static final Pattern signedPattern = Pattern.compile("SIGNED CHAP");
+    private static final Pattern signedPattern = Pattern.compile("SIGNED CHAP\\.(\\d+)");
 
     /** Pattern for when the bill is vetoed. */
     private static final Pattern vetoedPattern = Pattern.compile("VETO(?:ED)? MEMO");
@@ -125,6 +126,9 @@ public class BillActionAnalyzer
 
     /** If the bill is substituted by another bill, that bill's bill id will be set here. */
     private Optional<BaseBillId> substitutedBy = Optional.empty();
+
+    /** Chapter number and year if the bill was signed into law. */
+    private Optional<Pair<Integer, Integer>> chapterYearAndNum = Optional.empty();
 
     /** --- Constructors --- */
 
@@ -220,6 +224,7 @@ public class BillActionAnalyzer
         int year = action.getDate().getYear();
         Matcher committeeMatcher = committeeEventTextPattern.matcher(text);
         Matcher passedHouseMatcher = passedHousePattern.matcher(text);
+        Matcher signedMatcher =  signedPattern.matcher(text);
         if (billId.getBillType().isResolution() && adoptedPattern.matcher(text).find()) {
             currStatus = new BillStatus(ADOPTED, action.getDate());
         }
@@ -255,8 +260,13 @@ public class BillActionAnalyzer
         else if (deliveredGovPattern.matcher(text).find()) {
             currStatus = new BillStatus(DELIVERED_TO_GOV, action.getDate());
         }
-        else if (signedPattern.matcher(text).find()) {
+        else if (signedMatcher.find()) {
             currStatus = new BillStatus(SIGNED_BY_GOV, action.getDate());
+            if (signedMatcher.group(1) != null) {
+                Integer chapNum = Integer.parseInt(signedMatcher.group(1));
+                Integer chapYear = action.getDate().getYear();
+                chapterYearAndNum = Optional.of(Pair.of(chapYear, chapNum));
+            }
         }
         else if (vetoedPattern.matcher(text).find()) {
             // Ignore line item vetoes, since the bill would still have been signed.
@@ -392,5 +402,9 @@ public class BillActionAnalyzer
 
     public Optional<BaseBillId> getSubstitutedBy() {
         return substitutedBy;
+    }
+
+    public Optional<Pair<Integer, Integer>> getChapterYearAndNum() {
+        return chapterYearAndNum;
     }
 }

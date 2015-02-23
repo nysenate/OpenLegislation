@@ -32,6 +32,13 @@ public interface LawDataDao
     public List<LawInfo> getLawInfos();
 
     /**
+     * Returns a map of law ids to the last published law tree date.
+     *
+     * @return Map<String, LocalDate>
+     */
+    public Map<String, LocalDate> getLastPublishedMap();
+
+    /**
      * Retrieves and constructs a LawTree given the lawId and an ending publish date. This LawTree
      * can be used to determine the structure of a given law including the placement of its articles
      * and sections. The tree does not contain the text body of the laws however in an effort to
@@ -58,6 +65,15 @@ public interface LawDataDao
      */
     public LawDocument getLawDocument(String documentId, LocalDate endPublishDate) throws DataAccessException;
 
+    /**
+     * Retrieve all the law documents (with greatest pub date that is <= 'endPublishDate') for the
+     * given law id. A map of document id to LawDocument is returned.
+     *
+     * @param lawId String - The three letter law id.
+     * @param endPublishDate LocalDate
+     * @return Map<String, LawDocument>
+     * @throws DataAccessException
+     */
     public Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishDate) throws DataAccessException;
 
     /**
