@@ -17,6 +17,7 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.elasticsearch.search.rescore.Rescorer;
 import org.slf4j.Logger;
@@ -36,14 +37,10 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     protected static final String billIndexName = SearchIndex.BILL.getIndexName();
 
-    protected static final List<String> highlightedFields =
-        Arrays.asList("basePrintNo", "printNo", "title");
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, String sort, LimitOffset limOff) {
-        return searchBills(query, null, null, sort, limOff);
-    }
+    protected static final List<HighlightBuilder.Field> highlightedFields =
+        Arrays.asList(new HighlightBuilder.Field("basePrintNo").numOfFragments(0),
+                      new HighlightBuilder.Field("printNo").numOfFragments(0),
+                      new HighlightBuilder.Field("title").numOfFragments(0));
 
     /** {@inheritDoc} */
     @Override

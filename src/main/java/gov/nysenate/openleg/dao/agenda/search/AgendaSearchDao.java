@@ -16,13 +16,14 @@ import java.util.Collection;
 public interface AgendaSearchDao
 {
     /**
-     * Performs a search on all agendas without filtering on session year.
+     * Performs a search on the top level agenda.
      * @see #searchAgendas(QueryBuilder, FilterBuilder, String, LimitOffset)
+     * @returns SearchResults<AgendaId>
      */
     public SearchResults<AgendaId> searchAgendas(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff);
 
     /**
-     * Performs a free-form search across all the agendas using the query string syntax and a filter.
+     * Performs a search across all agendas broken down by committee.
      *
      * @param query String - Query Builder
      * @param postFilter FilterBuilder - Filter result set

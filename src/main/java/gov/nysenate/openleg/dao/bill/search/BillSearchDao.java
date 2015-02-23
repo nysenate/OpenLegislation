@@ -16,12 +16,6 @@ import java.util.Collection;
 public interface BillSearchDao
 {
     /**
-     * Performs a search on all bills without filtering on session year.
-     * @see #searchBills(QueryBuilder, FilterBuilder, RescoreBuilder.Rescorer, String, LimitOffset)
-     */
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, String sort, LimitOffset limOff);
-
-    /**
      * Performs a free-form search across all the bills using the query string syntax and a filter.
      *
      * @param query String - Query Builder
