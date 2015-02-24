@@ -8,6 +8,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class SqlApiUserService implements ApiUserService
 
     @Autowired
     protected MimeSendMailService sendMailService;
+
+
+    @Value("${domain.url}") private String domainUrl;
 
     private static final Logger logger = LoggerFactory.getLogger(SqlApiUserService.class);
 
@@ -74,9 +78,25 @@ public class SqlApiUserService implements ApiUserService
         return apiUserDao.getApiUserFromEmail(email);
     }
 
+    /**
+     * Attempt to activate a user based on the provided registration token. If a valid registration
+     * token is indeed supplied, then that user will have their account activated, and their
+     * API Key will be sent to them via email.
+     *
+     * @param registrationToken The supplied registration token.
+     */
     @Override
-    public void activateUser(String activationToken) {
+    public void activateUser(String registrationToken) {
+        try {
+            ApiUser user = apiUserDao.getApiUserFromToken(registrationToken);
+            user.setActive(true);
+            user.setAuthStatus(true);
+            apiUserDao.updateUser(user);
+            sendApikeyEmail(user);
 
+        } catch (EmptyResultDataAccessException e) {
+            throw new IllegalArgumentException("Invalid registration token supplied!");
+        }
     }
 
     /**
@@ -85,14 +105,25 @@ public class SqlApiUserService implements ApiUserService
      *
      * @param user The user to send the registration information to
      */
-    public void sendRegistrationEmail(ApiUser user)
-    {
+    public void sendRegistrationEmail(ApiUser user) {
         String message = String.format("Hello %s,\n\n\tThank you for your interest in Open Legislation. " +
                   "In order to receive your API key you must first activate your account by visiting the link below. " +
                   "Once you have confirmed your email address, an email will be sent to you containing your API Key.\n\n" +
-                  "Activate your account here:\nhttp://open.nysenate.gov/legislation/register/%s" +
-                  "\n\n-- NY Senate Development Team", user.getName(), user.getRegistrationToken());
+                  "Activate your account here:\n%s/%s" +
+                  "\n\n-- NY Senate Development Team", user.getName(), domainUrl + "/register", user.getRegistrationToken());
 
          sendMailService.sendMessage(user.getEmail(), "Open Legislation API Account Registration", message);
+    }
+
+    /**
+     * This method will send a user an email containing their API Key.
+     * It is called whenever a user confirms their email address via their registration token.
+     * @param user The user to send the API Key to.
+     */
+    public void sendApikeyEmail(ApiUser user) {
+        String message = String.format("Hello %s,\n\n\tThank you for your interest in Open Legislation." +
+                "Your API Key is the following:\n%s\n\n-- NY Senate Development Team", user.getName(), user.getApikey());
+
+        sendMailService.sendMessage(user.getEmail(), "Your Open Legislation API Key", message);
     }
 }
