@@ -30,6 +30,6 @@ public class RegistrationPageCtrl
             apiUserService.activateUser(regToken);
         } catch (Exception e) {
         }
-        return "home";
+        return "register";
     }
 }
