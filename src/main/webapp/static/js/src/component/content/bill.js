@@ -1,8 +1,11 @@
 var billModule = angular.module('open.bill', ['open.core']);
 
 billModule.factory('BillListingApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/bills/:sessionYear', {
-        sessionYear: '@sessionYear'
+    return $resource(apiPath + '/bills/:sessionYear?sort=:sort&limit=:limit&offset=:offset', {
+        sessionYear: '@sessionYear',
+        sort: '@sort',
+        limit: '@limit',
+        offset: '@offset'
     });
 }]);
 
@@ -237,6 +240,20 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
     /** Initialize */
     $scope.init();
+}]);
+
+/** --- Bill Info Controller --- */
+
+billModule.controller('BillInfoCtrl', ['$scope', 'BillListingApi', function($scope, BillListingApi) {
+    $scope.recentBillsResponse = BillListingApi.get({sessionYear: 2011, sort: 'publishedDateTime:DESC', limit: 5, offset: 1},
+        function() {
+            $scope.recentBills = $scope.recentBillsResponse.result.items;
+    });
+
+    $scope.recentStatusBillsResponse = BillListingApi.get({sessionYear: 2011, sort: 'status.actionDate:DESC', limit: 5, offset: 1},
+    function() {
+        $scope.recentStatusBills = $scope.recentStatusBillsResponse.result.items;
+    });
 }]);
 
 /** --- Bill View Controller --- */
