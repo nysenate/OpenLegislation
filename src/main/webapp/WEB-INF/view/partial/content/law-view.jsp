@@ -47,16 +47,16 @@
                   <span ng-show="!curr.showDoc[doc.locationId]">Show</span>
                   <span ng-show="curr.showDoc[doc.locationId]">Hide</span> text for {{doc.docType}} {{doc.docLevelId}}
                 </md-button>
-                <div ng-if="doc.docType == 'ARTICLE'">
-                  <md-button ng-if="!curr.expanded[doc.locationId]"
-                             ng-click="expandNodesBelow(doc)" class="md-primary md-hue-2" style="font-size:0.8rem;">
-                    <i class="icon-book2 prefix-icon2"></i>Expand Sections
-                  </md-button>
-                  <md-button ng-if="curr.expanded[doc.locationId]"
-                             ng-click="collapseNodesBelow(doc)" class="md-primary md-hue-2" style="font-size:0.8rem;">
-                    <i class="icon-book prefix-icon2"></i>Collapse Sections
-                  </md-button>
-                </div>
+                <%--<div ng-if="doc.docType == 'ARTICLE'">--%>
+                  <%--<md-button ng-if="!curr.expanded[doc.locationId]"--%>
+                             <%--ng-click="expandNodesBelow(doc)" class="md-primary md-hue-2" style="font-size:0.8rem;">--%>
+                    <%--<i class="icon-book2 prefix-icon2"></i>Expand Sections--%>
+                  <%--</md-button>--%>
+                  <%--<md-button ng-if="curr.expanded[doc.locationId]"--%>
+                             <%--ng-click="collapseNodesBelow(doc)" class="md-primary md-hue-2" style="font-size:0.8rem;">--%>
+                    <%--<i class="icon-book prefix-icon2"></i>Collapse Sections--%>
+                  <%--</md-button>--%>
+                <%--</div>--%>
               </div>
               <md-divider></md-divider>
               <div class="law-text" ng-if="curr.showDoc[doc.locationId]" ng-bind-html="curr.lawText[doc.locationId]"></div>

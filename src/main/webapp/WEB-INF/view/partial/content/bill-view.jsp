@@ -68,6 +68,62 @@
               This bill has been substituted by {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}.
             </md-button>
           </md-card>
+          <%-- Votes --%>
+          <md-card class="content-card" ng-if="bill.votes.size > 0">
+            <md-subheader>Committee/Floor Votes</md-subheader>
+            <md-content>
+              <section ng-repeat="vote in bill.votes.items">
+                <div>
+                  <h4 class="no-bottom-margin">{{vote.voteDate | moment:'MMM DD, YYYY'}} - {{vote.committee.name}}
+                    <span class="capitalize">{{vote.voteType | lowercase}}</span>
+                    Vote
+                  </h4>
+                  <p class="no-top-margin text-medium">Voted on Amendment Revision: {{veto.version | prettyAmendVersion}}</p>
+                  <md-divider></md-divider>
+                  <div layout="row" layout-align="center center" layout-sm="column" layout-align-sm="start start">
+                    <div flex>
+                      <table class="bill-votes-table">
+                        <thead>
+                        <tr>
+                          <th style="min-width: 100px;">Vote</th>
+                          <th>Count</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-class="{'positive': (voteType === 'AYE' || voteType === 'AYEWR'),
+                                     'negative': (voteType === 'NAY')}"
+                            ng-repeat="(voteType, votes) in vote.memberVotes.items">
+                          <td>{{voteType | voteTypeFilter}}</td>
+                          <td>{{votes.size}}</td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div flex>
+                      <md-content class="margin-left-16 padding-10" style="max-height: 200px;">
+                        <md-list>
+                          <md-item ng-repeat="(voteType, votes) in vote.memberVotes.items">
+                            <md-item-content ng-repeat="voteItem in votes.items">
+                              <div style="width:80px;" class="md-tile-left margin-right-10">
+                                <h5 style="margin:10px;">{{voteType}}</h5>
+                              </div>
+                              <div class="md-tile-left">
+                                <img class="margin-right-10" ng-src="http://lorempixel.com/50/50/food/{{$index}}"
+                                     style="height: 25px;width:25px;"/>
+                              </div>
+                              <div style="padding:0" class="md-tile-content">
+                                <span class="text-medium">{{voteItem.shortName}}</span>
+                              </div>
+                            </md-item-content>
+                          </md-item>
+                        </md-list>
+                      </md-content>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </md-content>
+          </md-card>
           <%-- Enacting Clause --%>
           <md-card class="content-card" ng-if="!bill.billType.resolution">
             <md-subheader>Enacting Clause</md-subheader>
@@ -202,62 +258,6 @@
               </span>
               <md-divider></md-divider>
               <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
-            </md-content>
-          </md-card>
-          <%-- Votes --%>
-          <md-card class="content-card" ng-if="bill.votes.size > 0">
-            <md-subheader>Committee/Floor Votes</md-subheader>
-            <md-content>
-              <section ng-repeat="vote in bill.votes.items">
-                <div>
-                  <h4 class="no-bottom-margin">{{vote.voteDate | moment:'MMM DD, YYYY'}} - {{vote.committee.name}}
-                    <span class="capitalize">{{vote.voteType | lowercase}}</span>
-                    Vote
-                  </h4>
-                  <p class="no-top-margin text-medium">Voted on Amendment Revision: {{veto.version | prettyAmendVersion}}</p>
-                  <md-divider></md-divider>
-                  <div layout="row" layout-align="center center" layout-sm="column" layout-align-sm="start start">
-                    <div flex>
-                      <table class="bill-votes-table">
-                        <thead>
-                        <tr>
-                          <th style="min-width: 100px;">Vote</th>
-                          <th>Count</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-class="{'positive': (voteType === 'AYE' || voteType === 'AYEWR'),
-                                     'negative': (voteType === 'NAY')}"
-                            ng-repeat="(voteType, votes) in vote.memberVotes.items">
-                          <td>{{voteType | voteTypeFilter}}</td>
-                          <td>{{votes.size}}</td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div flex>
-                      <md-content class="margin-left-16 padding-10" style="max-height: 200px;">
-                        <md-list>
-                          <md-item ng-repeat="(voteType, votes) in vote.memberVotes.items">
-                            <md-item-content ng-repeat="voteItem in votes.items">
-                              <div style="width:80px;" class="md-tile-left margin-right-10">
-                                <h5 style="margin:10px;">{{voteType}}</h5>
-                              </div>
-                              <div class="md-tile-left">
-                                <img class="margin-right-10" ng-src="http://lorempixel.com/50/50/food/{{$index}}"
-                                     style="height: 25px;width:25px;"/>
-                              </div>
-                              <div style="padding:0" class="md-tile-content">
-                                <span class="text-medium">{{voteItem.shortName}}</span>
-                              </div>
-                            </md-item-content>
-                          </md-item>
-                        </md-list>
-                      </md-content>
-                    </div>
-                  </div>
-                </div>
-              </section>
             </md-content>
           </md-card>
           <%-- Agenda/Cal Refs --%>

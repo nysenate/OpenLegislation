@@ -22,17 +22,25 @@
           </form>
           <section ng-show="billSearch.searched && curr.pagination.totalItems > 0">
             <md-card class="content-card">
-              <md-subheader class="md-primary">
+              <md-subheader>
                 {{curr.pagination.totalItems}} bills were matched. Viewing page {{curr.pagination.currPage}} of {{curr.pagination.lastPage}}.
               </md-subheader>
-              <md-content class="padding-20 no-top-margin">
+              <md-content class="no-top-margin">
                 <md-list>
                   <a ng-repeat="r in billSearch.results" ng-init="bill = r.result; highlights = r.highlights;" class="result-link"
                      ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
                     <md-item>
                       <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
+                        <div>
+                          <%--<img src="http://lorempixel.com/50/50/people/{{$index}}"--%>
+                               <%--style="width:40px;"/>--%>
+                        </div>
                         <div style="width:180px;padding:16px;">
-                          <h3 class="no-margin">{{bill.basePrintNo}} - {{bill.session}}</h3>
+                          <h3 class="no-margin">
+                            <span ng-if="!highlights.basePrintNo">{{bill.basePrintNo}}</span>
+                            <span ng-if="highlights.basePrintNo" ng-bind-html="highlights.basePrintNo[0]"></span>
+                            - {{bill.session}}
+                          </h3>
                           <h5 class="no-margin">{{bill.sponsor.member.fullName}}</h5>
                         </div>
                         <div flex class="md-tile-content">
@@ -48,18 +56,52 @@
                   </a>
                 </md-list>
               </md-content>
-              <div ng-show="curr.pagination.needsPagination()" class="md-whiteframe-z0 white-bg text-medium margin-10 padding-10"
+              <div ng-show="curr.pagination.needsPagination()" class="text-medium margin-10 padding-10"
                    layout="row" layout-align="left center">
-                <md-button ng-click="paginate('first')" class="md-primary md-no-ink margin-right-10">First</md-button>
+                <md-button ng-click="paginate('first')" class="md-primary md-no-ink margin-right-10"><i class="icon-first"></i>&nbsp;First</md-button>
                 <md-button ng-disabled="!curr.pagination.hasPrevPage()"
-                           ng-click="paginate('prev')" class="md-primary md-no-ink margin-right-10">Previous</md-button>
+                           ng-click="paginate('prev')" class="md-primary md-no-ink margin-right-10"><i class="icon-arrow-left5"></i>&nbsp;Previous</md-button>
                 <md-button ng-click="paginate('next')"
                            ng-disabled="!curr.pagination.hasNextPage()"
-                           class="md-primary md-no-ink margin-right-10">Next</md-button>
-                <md-button ng-click="paginate('last')" class="md-primary md-no-ink margin-right-10">Last</md-button>
+                           class="md-primary md-no-ink margin-right-10">Next&nbsp;<i class="icon-arrow-right5"></i></md-button>
+                <md-button ng-click="paginate('last')" class="md-primary md-no-ink margin-right-10">Last&nbsp;<i class="icon-last"></i></md-button>
               </div>
             </md-card>
+          </section>
+          <md-divider></md-divider>
+          <section hide ng-controller="BillInfoCtrl">
+            <section class="gray2-bg" layout="row" layout-sm="column">
+              <md-card flex class="content-card">
+                <md-subheader>
+                  Recently Introduced Legislation
+                </md-subheader>
+                <md-content>
+                    <div ng-repeat="bill in recentBills">
+                      <h3 class="no-margin">{{bill.basePrintNo}} - {{bill.session}}</h3>
+                    </div>
+                </md-content>
+              </md-card>
+              <md-card flex class="content-card">
+                <md-subheader>
+                  Recently Updated Legislation
+                </md-subheader>
+                <md-content>
+                  <div ng-repeat="bill in recentStatusBills">
+                    <h3 class="no-margin">{{bill.basePrintNo}} - {{bill.session}}</h3>
+                    <%--<h4 class="no-margin">{{bill.status.actionDate | moment:'MM DD YYYY'}} {{getStatusDesc(bill.status)}}</h4>--%>
+                  </div>
+                </md-content>
+              </md-card>
             </section>
+            <section class="gray4-bg" layout="row">
+              <md-card flex class="content-card">
+                <md-subheader>
+                  Overview of Current Session
+                </md-subheader>
+                <md-content></md-content>
+              </md-card>
+            </section>
+          </section>
         </section>
       </md-tab>
       <md-tab label="Advanced Search">
