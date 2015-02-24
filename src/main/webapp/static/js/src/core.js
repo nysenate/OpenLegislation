@@ -39,6 +39,77 @@ coreModule.filter('ordinalSuffix', ['$filter', function ($filter) {
     };
 }]);
 
+
+/**
+ * Converts the properties of an object to an array of key, value pairs.
+ * Useful when you want to use the orderBy filter on the properties of an object
+ */
+coreModule.filter('toDictionaryArray', function () {
+    return function (obj) {
+        if (!(obj instanceof Object)) return obj;
+
+        var arr = [];
+        for (var key in obj) {
+            arr.push({ key: key, value: obj[key] });
+        }
+        return arr;
+    }
+});
+
+/**
+ * The toggle-panel directive wraps your content in expandable/collapsible container.
+ *
+ * Ex Usage
+ * -----
+ * <toggle-panel label="My Title" open="true" extra-classes="my-css">
+ *   Insert your content here...
+ * </toggle-panel>
+ *
+ * Attributes
+ * ----------
+ * label (String) The text for your container header
+ * open (boolean) Set to true to expand the content, false to collapse
+ * extra-classes (String) Any css classes you want to apply to the outermost toggle panel container
+ * show-tip (boolean) Set to true to see a 'Click to expand section' tip when panel is collapsed.
+ */
+coreModule.directive('togglePanel', [function(){
+    return {
+        restrict: 'E',
+        scope: {
+            label: "@",
+            extraClasses: "@"
+        },
+        replace: true,
+        transclude: true,
+        template:
+        '<md-card class="{{extraClasses}}">' +
+        '   <md-card-content class="" ng-click="open=!open">' +
+        '       <div>' +
+        '       <a class="">{{label}}</a>' +
+        '       <span flex></span>' +
+        '       <span class="text-xsmall margin-left-20" ng-show="showTip && !open">(Click to expand section)</span>' +
+        '       <i ng-class="{\'icon-arrow-up4\': open, \'icon-arrow-down5\': !open}"></i>' +
+        '       </div>' +
+        '   </md-card-content>' +
+        '   <md-card-content class="panel-content" ng-cloak ng-transclude></md-card-content>' +
+        '</md-card>',
+        link : function($scope, $element, $attrs) {
+
+            // Convert attribute value to boolean using watch
+            $scope.$watch($attrs.open, function(open) {
+                $scope.open = open;
+            });
+            $scope.$watch($attrs.showTip, function(showTip) {
+                $scope.showTip = showTip;
+            });
+            $scope.$watch('open', function(newOpen, oldOpen){
+                var panelElem = $element.children(".panel-content");
+                (newOpen) ? panelElem.slideDown(200) : panelElem.slideUp(200);
+            });
+        }
+    }
+}]);
+
 /** --- CheckButton --- */
 
 coreModule.directive('checkButton', function(){

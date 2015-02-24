@@ -3,7 +3,7 @@
 <%@ page import="gov.nysenate.openleg.model.notification.NotificationTarget" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<section ng-controller="AccountSettingsCtrl">
+<section ng-controller="AccountSettingsCtrl" ng-init="setHeaderVisible(true)">
 <md-tabs class="md-primary" md-selected="selectedIndex" ng-init="setHeaderText('Admin Account Settings')">
 
 <!-- Change Password -->

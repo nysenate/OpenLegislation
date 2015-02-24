@@ -18,10 +18,11 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         /** --- Calendars --- */
 
         .when(ctxPath + '/calendars', {
-            templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
+            templateUrl: ctxPath + '/partial/content/calendar/calendar'
         })
         .when(ctxPath + '/calendars/:year/:calNo', {
-            templateUrl: ctxPath + '/partial/content/calendar/calendar-view'
+            templateUrl: ctxPath + '/partial/content/calendar/calendar',
+            reloadOnSearch: false
         })
 
         /** --- Laws --- */
