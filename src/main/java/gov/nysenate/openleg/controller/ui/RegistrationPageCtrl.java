@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.controller.ui;
 
+import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.SimpleResponse;
+import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,9 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 
 @Controller
-@RequestMapping("/register/")
+@RequestMapping("/register")
 public class RegistrationPageCtrl
 {
     @Autowired
@@ -23,7 +28,7 @@ public class RegistrationPageCtrl
      * @param regToken The user's registration token
      * @return The index to return them to
      */
-    @RequestMapping(value = "/{regToken}", method = RequestMethod.GET)
+    @RequestMapping(value = "/token/{regToken}", method = RequestMethod.GET)
     public String index(@PathVariable String regToken) {
         logger.info("Token: " +regToken);
         try {
@@ -31,5 +36,19 @@ public class RegistrationPageCtrl
         } catch (Exception e) {
         }
         return "register";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    public BaseResponse signup(WebRequest webRequest) {
+        String email =  webRequest.getParameter("email");
+        String name =  webRequest.getParameter("name");
+        try {
+            ApiUser apiUser = apiUserService.registerNewUser(email, name, "");
+            return new SimpleResponse(true, apiUser.getName() + " has been registered.", "api-signup");
+        }
+        catch (IllegalArgumentException ex) {
+            return new SimpleResponse(false, ex.getMessage(), "api-signup");
+        }
     }
 }
