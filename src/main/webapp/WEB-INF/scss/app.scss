@@ -240,7 +240,6 @@ a.result-link {
     color: $blue5;
     background: $gray3;
     md-item-content {
-      @extend .md-whiteframe-z0;
     }
   }
   em {
