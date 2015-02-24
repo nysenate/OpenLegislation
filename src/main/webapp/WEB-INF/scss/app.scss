@@ -252,6 +252,12 @@ a.result-link {
   display: inline-block;
 }
 
+.truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /** --- Left Nav --- */
 
 $left-nav-width: 305px;
@@ -720,56 +726,52 @@ md-list.notification-sub-list md-item md-item-content > div:nth-child(3) {
   margin: auto;
 }
 
-// Base Calendar Accordion
-.accordion dd.calendar-accordion>a {
-  @extend .blue1;
-  font-weight: 600;
-  border: 1px solid #d8d8d8;
-}
-
-// Open Calendar Accordion
-.accordion dd.calendar-accordion.calendar-accordion-open>a {
-  background: #165B81;
-  color: #FFF;
-}
-
-// Open Calendar Accordion hovered
-.accordion dd.calendar-accordion.calendar-accordion-open>a:hover {
-  background: #004D71;
-}
-
-// Nested Calendar Accordion
-.accordion dd.calendar-accordion.calendar-accordion-nested>a {
-  background: #D8D8D8;
-  border-color: #C2C2C2;
-}
-
-// Nested Calendar Accordion Hovered
-.accordion dd.calendar-accordion.calendar-accordion-nested>a:hover {
-  background: #C2C2C2;
-}
-
-// Nested Open Calendar Accordion
-.accordion dd.calendar-accordion.calendar-accordion-nested.calendar-accordion-open>a {
-  background: #2B6A90;
-}
-
-// Nested Open Calendar Accordion Hovered
-.accordion dd.calendar-accordion.calendar-accordion-nested.calendar-accordion-open>a:hover {
-  background: #004D71;
-}
-
-// Nested Calendar Accordion Padding
-.accordion .calendar-accordion>.content {
-  padding: 0%;
-}
+//// Base Calendar Accordion
+//.accordion dd.calendar-accordion>a {
+//  @extend .blue1;
+//  font-weight: 600;
+//  border: 1px solid #d8d8d8;
+//}
+//
+//// Open Calendar Accordion
+//.accordion dd.calendar-accordion.calendar-accordion-open>a {
+//  background: #165B81;
+//  color: #FFF;
+//}
+//
+//// Open Calendar Accordion hovered
+//.accordion dd.calendar-accordion.calendar-accordion-open>a:hover {
+//  background: #004D71;
+//}
+//
+//// Nested Calendar Accordion
+//.accordion dd.calendar-accordion.calendar-accordion-nested>a {
+//  background: #D8D8D8;
+//  border-color: #C2C2C2;
+//}
+//
+//// Nested Calendar Accordion Hovered
+//.accordion dd.calendar-accordion.calendar-accordion-nested>a:hover {
+//  background: #C2C2C2;
+//}
+//
+//// Nested Open Calendar Accordion
+//.accordion dd.calendar-accordion.calendar-accordion-nested.calendar-accordion-open>a {
+//  background: #2B6A90;
+//}
+//
+//// Nested Open Calendar Accordion Hovered
+//.accordion dd.calendar-accordion.calendar-accordion-nested.calendar-accordion-open>a:hover {
+//  background: #004D71;
+//}
+//
+//// Nested Calendar Accordion Padding
+//.accordion .calendar-accordion>.content {
+//  padding: 0%;
+//}
 
 .calendar-release-date {
   text-align: right;
-}
-
-.cal-entry-print-no {
-
 }
 
 .cal-entry-sponsor-img {

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
-<section ng-controller="DaybreakCtrl" id="daybreak-page">
+<section ng-controller="DaybreakCtrl" id="daybreak-page" ng-init="setHeaderVisible(true)">
     <md-tabs class='md-primary' md-selected="selectedIndex">
 
         <!-- Summary Tab -->
