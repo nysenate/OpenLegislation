@@ -1,13 +1,16 @@
 package gov.nysenate.openleg.client.view.law;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
+import gov.nysenate.openleg.model.law.LawType;
 
 import java.time.LocalDate;
 
 public class LawDocInfoView implements ViewObject
 {
     protected String lawId;
+    protected String lawName;
     protected String locationId;
     protected String title;
     protected String docType;
@@ -17,6 +20,7 @@ public class LawDocInfoView implements ViewObject
     public LawDocInfoView(LawDocInfo docInfo) {
         if (docInfo != null) {
             this.lawId = docInfo.getLawId();
+            this.lawName = LawChapterCode.valueOf(this.lawId).getName();
             this.locationId = docInfo.getLocationId();
             this.title = docInfo.getTitle();
             this.docType = docInfo.getDocType().name();
@@ -32,6 +36,10 @@ public class LawDocInfoView implements ViewObject
 
     public String getLawId() {
         return lawId;
+    }
+
+    public String getLawName() {
+        return lawName;
     }
 
     public String getLocationId() {

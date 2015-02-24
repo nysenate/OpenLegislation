@@ -303,10 +303,6 @@ public class LawTreeNode implements Comparable<LawTreeNode>
         return children;
     }
 
-    public void setChildren(LinkedHashMap<String, LawTreeNode> children) {
-        this.children = children;
-    }
-
     public LocalDate getRepealedDate() {
         return repealedDate;
     }

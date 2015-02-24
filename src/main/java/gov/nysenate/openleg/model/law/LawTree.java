@@ -1,6 +1,10 @@
 package gov.nysenate.openleg.model.law;
 
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Container for the root node that comprises the hierarchy of components within a law. Tree traversal methods
@@ -18,6 +22,9 @@ public class LawTree
     /** Reference to the root tree node (should be the chapter node) */
     protected LawTreeNode rootNode;
 
+    /** Map of doc id to all nodes within this law tree. Necessary for quick lookup. */
+    private Map<String, LawTreeNode> nodeLookupMap;
+
     /** --- Constructors --- */
 
     public LawTree(LawVersionId lawVersionId, LawTreeNode rootNode, LawInfo lawInfo) {
@@ -27,6 +34,18 @@ public class LawTree
         this.lawVersionId = lawVersionId;
         this.rootNode = rootNode;
         this.lawInfo = lawInfo;
+    }
+
+    /** --- Method --- */
+
+    public void rebuildLookupMap() {
+        this.nodeLookupMap = this.rootNode.getAllNodes().stream()
+            .collect(Collectors.toMap(LawTreeNode::getDocumentId, Function.identity()));
+    }
+
+    public Optional<LawTreeNode> find(String documentId) {
+        if (this.nodeLookupMap == null) rebuildLookupMap();
+        return Optional.ofNullable(this.nodeLookupMap.get(documentId));
     }
 
     /** --- Delegates --- */

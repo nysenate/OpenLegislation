@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.law.search;
 
-import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -59,7 +57,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     public SearchResults<LawDocId> searchLawDocs(String query, String lawId, String sort, LimitOffset limOff) throws SearchException {
         QueryBuilder queryBuilder = QueryBuilders.queryString(query);
         if (lawId != null) {
-            queryBuilder = QueryBuilders.filteredQuery(queryBuilder, FilterBuilders.termFilter("lawId", lawId));
+            queryBuilder = QueryBuilders.filteredQuery(queryBuilder, FilterBuilders.typeFilter(lawId));
         }
         return lawSearchDao.searchLawDocs(queryBuilder, null, null, sort, limOff);
     }

@@ -161,7 +161,9 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
                 throw new DataRetrievalFailureException("Failed to construct LawTree, since there was no " +
                                                         "matching root node");
             }
-            return new LawTree(new LawVersionId(lawId, publishedDate), root, info);
+            LawTree tree = new LawTree(new LawVersionId(lawId, publishedDate), root, info);
+            tree.rebuildLookupMap();
+            return tree;
         }
     }
 

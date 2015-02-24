@@ -152,11 +152,10 @@ public class CachedLawDataService implements LawDataService, CachingService
         if (documentId == null || documentId.length() < 4) {
             throw new IllegalArgumentException("Document id cannot be less than 4 characters");
         }
-        /** FIXME: This is not the most efficient way to retrieve this. */
-        Optional<LawDocInfo> docInfo =
-            getLawTree(documentId.substring(0, 3), endPublishedDate).getRootNode().find(documentId);
-        if (docInfo.isPresent()) {
-            return docInfo.get();
+        Optional<LawTreeNode> node =
+            getLawTree(documentId.substring(0, 3), endPublishedDate).find(documentId);
+        if (node.isPresent()) {
+            return node.get().getLawDocInfo();
         }
         else {
             throw new LawDocumentNotFoundEx(documentId, endPublishedDate, "Law tree was found but document was not matched");
