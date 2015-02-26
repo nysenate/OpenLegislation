@@ -3,7 +3,7 @@
 
 <section ng-controller="LawCtrl">
   <section ng-controller="LawViewCtrl">
-    <md-tabs md-selected="curr.selectedView" class="md-hue-2">
+    <md-tabs md-selected="curr.selectedView" class="md-primary">
       <md-tab md-on-select="backToListings()">
         <i class="prefix-icon2 icon-arrow-left5"></i>Back to Listings
       </md-tab>

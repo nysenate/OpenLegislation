@@ -5,7 +5,7 @@
   <section ng-controller="BillViewCtrl">
     <section ng-if="response.success === true" >
       <md-toolbar class="md-toolbar-tools auto-height">
-        <h6 class="margin-top-10 margin-bottom-10">{{bill.title}}</h6>
+        <h6 style="margin:20px 0;">{{bill.title}}</h6>
       </md-toolbar>
       <md-toolbar ng-if="bill.amendments.size > 1" class="md-toolbar-tools md-hue-2 auto-height">
         <label class="margin-right-20">Version </label>
@@ -52,7 +52,7 @@
         </section>
       </md-toolbar>
 
-      <md-tabs md-selected="curr.selectedView" class="md-hue-2">
+      <md-tabs md-selected="curr.selectedView" class="md-primary">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
             <span><i class="icon-search prefix-icon2"></i>Back to Search</span>
@@ -295,7 +295,13 @@
                  ng-bind-html="bill.amendments.items[curr.amdVersion].memo | prettySponsorMemo"></pre>
             </md-content>
             <md-content ng-if="bill.billType.chamber == 'ASSEMBLY'">
-              <div class="text-medium padding-20">Sponsor memos are not provided for Assembly bills.</div>
+              <div class="text-medium padding-20">Sponsor memos are not provided for Assembly bills.
+              <p ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0"
+                 ng-init="sameAsBill = bill.amendments.items[curr.amdVersion].sameAs.items[0]">
+                You can view the sponsor memo for the Senate version of this bill here:
+                <a target="_blank"
+                   ng-href="${ctxPath}/bills/{{sameAsBill.session}}/{{sameAsBill.basePrintNo}}?view=2">{{sameAsBill.basePrintNo}}</a>.</p>
+              </div>
             </md-content>
             <md-content ng-if="!bill.amendments.items[curr.amdVersion].memo && bill.billType.chamber == 'SENATE'">
               <div class="text-medium padding-20">Sponsor memo is not available.</div>
