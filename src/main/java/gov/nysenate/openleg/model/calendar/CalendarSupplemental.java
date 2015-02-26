@@ -95,6 +95,10 @@ public class CalendarSupplemental extends BaseLegislativeContent
         return new CalendarSupplementalId(calendarId, version);
     }
 
+    public List<CalendarSupplementalEntry> getAllEntries() {
+        return sectionEntries.values();
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public Version getVersion() {

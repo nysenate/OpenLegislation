@@ -13,11 +13,14 @@ public class SimpleActiveListView extends CalendarActiveListIdView{
 
     protected String notes;
 
+    protected int totalEntries;
+
     public SimpleActiveListView(CalendarActiveList activeList) {
         super(activeList.getCalendarActiveListId());
         this.calDate = activeList.getCalDate();
         this.releaseDateTime = activeList.getReleaseDateTime();
         this.notes = activeList.getNotes();
+        this.totalEntries = activeList.getEntries().size();
     }
 
     public LocalDate getCalDate() {
@@ -30,6 +33,10 @@ public class SimpleActiveListView extends CalendarActiveListIdView{
 
     public String getNotes() {
         return notes;
+    }
+
+    public int getTotalEntries() {
+        return totalEntries;
     }
 
     @Override

@@ -11,10 +11,13 @@ public class SimpleCalendarSupView extends CalendarSupIdView{
 
     protected LocalDateTime releaseDateTime;
 
+    protected int totalEntries;
+
     public SimpleCalendarSupView(CalendarSupplemental calendarSupplemental) {
         super(calendarSupplemental.getCalendarSupplementalId());
         this.calDate = calendarSupplemental.getCalDate();
         this.releaseDateTime = calendarSupplemental.getReleaseDateTime();
+        this.totalEntries = calendarSupplemental.getAllEntries().size();
     }
 
     public LocalDate getCalDate() {
@@ -23,6 +26,10 @@ public class SimpleCalendarSupView extends CalendarSupIdView{
 
     public LocalDateTime getReleaseDateTime() {
         return releaseDateTime;
+    }
+
+    public int getTotalEntries() {
+        return totalEntries;
     }
 
     @Override

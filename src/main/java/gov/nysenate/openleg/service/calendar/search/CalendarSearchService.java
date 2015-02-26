@@ -1,14 +1,16 @@
 package gov.nysenate.openleg.service.calendar.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.calendar.event.CalendarUpdateEvent;
 
-public interface CalendarSearchService {
+public interface CalendarSearchService extends IndexedSearchService<Calendar> {
 
     /**
      * Performs a generic search of all calendar types, returning a list of matching calendar ids.

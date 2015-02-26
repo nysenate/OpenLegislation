@@ -21,6 +21,12 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     SELECT_CALENDARS_COUNT(
         SELECT_CALENDAR_IDS.sql.replace("calendar_no, calendar_year", "COUNT(*)")
     ),
+    SELECT_TOTAL_COUNT(
+        "SELECT COUNT(*) FROM ${schema}." + SqlTable.CALENDAR
+    ),
+    SELECT_CALENDAR_YEAR_RANGE(
+        "SELECT min(calendar_year) AS min, max(calendar_year) AS max FROM ${schema}." + SqlTable.CALENDAR
+    ),
     UPDATE_CALENDAR(
         "UPDATE ${schema}." + SqlTable.CALENDAR + "\n" +
         "SET modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, " +

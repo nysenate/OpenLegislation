@@ -75,6 +75,22 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
 
     /** {@inheritDoc} */
     @Override
+    public Range<Integer> getActiveYearRange() {
+        if (getCalendarCount() == 0) {
+            throw new EmptyResultDataAccessException("Cannot retrieve active year range as there are no stored calendars", 1);
+        }
+        return jdbc.queryForObject(SqlCalendarQuery.SELECT_CALENDAR_YEAR_RANGE.getSql(schema()),
+                (rs, row) -> Range.closed(rs.getInt("min"), rs.getInt("max")));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int getCalendarCount() {
+        return jdbc.queryForObject(SqlCalendarQuery.SELECT_TOTAL_COUNT.getSql(schema()), Integer.class);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public int getCalendarCount(int year) {
         ImmutableParams yearParam = ImmutableParams.from(new MapSqlParameterSource("year", year));
         return jdbcNamed.queryForObject(SqlCalendarQuery.SELECT_CALENDARS_COUNT.getSql(schema()), yearParam, Integer.class);

@@ -56,6 +56,60 @@ coreModule.filter('toDictionaryArray', function () {
     }
 });
 
+coreModule.factory('PaginationModel', function() {
+    return {
+        firstPage: 1,
+        currPage: 1,
+        lastPage: 1,
+        itemsPerPage: 6,
+        totalItems: 0,
+
+        setTotalItems: function(totalResults) {
+            this.totalItems = totalResults;
+            this.lastPage = Math.ceil(this.totalItems / this.itemsPerPage);
+            if (this.currPage > this.lastPage) {
+                this.currPage = this.lastPage;
+            }
+        },
+
+        needsPagination: function() {
+            return this.totalItems > this.itemsPerPage;
+        },
+
+        getOffset: function() {
+            return this.itemsPerPage * (this.currPage - 1);
+        },
+
+        getLimit: function() {
+            return this.itemsPerPage;
+        },
+
+        nextPage: function() {
+            this.currPage += 1;
+        },
+
+        hasNextPage: function() {
+            return this.currPage < this.lastPage;
+        },
+
+        prevPage: function() {
+            this.currPage = Math.max(this.currPage - 1, 0);
+        },
+
+        hasPrevPage: function() {
+            return this.currPage > this.firstPage;
+        },
+
+        toLastPage: function() {
+            this.currPage = this.lastPage;
+        },
+
+        toFirstPage: function() {
+            this.currPage = this.firstPage;
+        }
+    };
+});
+
 /**
  * The toggle-panel directive wraps your content in expandable/collapsible container.
  *
@@ -85,10 +139,11 @@ coreModule.directive('togglePanel', [function(){
         '<md-card class="{{extraClasses}}">' +
         '   <md-card-content class="" ng-click="open=!open">' +
         '       <div>' +
-        '       <a class="">{{label}}</a>' +
-        '       <span flex></span>' +
-        '       <span class="text-xsmall margin-left-20" ng-show="showTip && !open">(Click to expand section)</span>' +
-        '       <i ng-class="{\'icon-arrow-up4\': open, \'icon-arrow-down5\': !open}"></i>' +
+        '           <a class="">{{label}}</a>' +
+        '           <span flex></span>' +
+        '           <i ng-class="{\'icon-arrow-up4\': open, \'icon-arrow-down5\': !open}" style="float: right"></i>' +
+        '           <span class="text-xsmall margin-left-20" ng-show="showTip && !open" style="float: right">' +
+        '               (Click to expand section)</span>' +
         '       </div>' +
         '   </md-card-content>' +
         '   <md-card-content class="panel-content" ng-cloak ng-transclude></md-card-content>' +

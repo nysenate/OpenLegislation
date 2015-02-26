@@ -14,27 +14,49 @@ calendarModule.factory('CurrentCalendarIdApi', ['$resource', function($resource)
 }]);
 
 calendarModule.factory('CalendarIdsApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/calendars/:year?limit=all', {
+    return $resource(apiPath + '/calendars/:year', {
         year: '@year'
     });
 }]);
 
+calendarModule.factory('CalendarSearchApi', ['$resource', function ($resource) {
+    return $resource(apiPath + '/calendars/search', {});
+}]);
+
 /** --- Calendar Page Controller --- */
 
-calendarModule.controller('CalendarPageCtrl', ['$scope', '$routeParams', '$location', '$q', '$filter', '$timeout',
-                                                'CalendarViewApi', 'CurrentCalendarIdApi', 'CalendarIdsApi',
-function($scope, $routeParams, $location, $q, $filter, $timeout, CalendarViewApi, CurrentCalendarIdApi) {
+calendarModule.controller('CalendarPageCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$q', '$filter', '$timeout',
+                                                'CalendarViewApi', 'CurrentCalendarIdApi',
+function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, CalendarViewApi, CurrentCalendarIdApi) {
 
     $scope.calendarView = null;
-
-    $scope.activeLists = [];
-    $scope.floorCals = {};
 
     $scope.calendarHeaderText = "";
 
     $scope.ctxPath = ctxPath;
 
     var pageNames = ['search', 'calendar', 'active-list', 'floor', 'updates'];
+
+    // If set to true, the active tab will be changed to active list or floor when the next calendar json response is loaded
+    $scope.changeTabOnLoad = false;
+
+    $scope.init = function() {
+        if ($routeParams.hasOwnProperty('year') && $routeParams.hasOwnProperty('calNo')) {
+            $scope.getCalendarViewById($routeParams.year, $routeParams.calNo);
+        } else {
+            console.log('loading current calendar');
+            loadCurrentCalendar(moment().year());
+        }
+        if ($routeParams.hasOwnProperty('view')) {
+            $scope.changeTab($routeParams['view']);
+        } else {
+            $scope.changeTabOnLoad = true;
+        }
+
+        $scope.$watch('activeIndex', function() { $location.search('view', pageNames[$scope.activeIndex]); });
+    };
+
+    /** --- Tab / Header Management --- */
 
     $scope.changeTab = function(pageName) {
         $scope.activeIndex = pageNames.indexOf(pageName);
@@ -45,7 +67,6 @@ function($scope, $routeParams, $location, $q, $filter, $timeout, CalendarViewApi
             var pageName = pageNames[$scope.activeIndex];
             var newHeader = "8)";
 
-            console.log('switching to', pageName, 'page');
             if (pageName == "search") {
                 newHeader = "Search for Calendars";
             } else if (pageName == "calendar") {
@@ -57,83 +78,103 @@ function($scope, $routeParams, $location, $q, $filter, $timeout, CalendarViewApi
         }, 0 );
     };
 
-    $scope.init = function() {
-        if ($routeParams.hasOwnProperty('year') && $routeParams.hasOwnProperty('calNo')) {
-            $scope.getCalendarViewById($routeParams.year, $routeParams.calNo);
-        } else {
-            $scope.redirectToCurrentCalendar(moment().year());
-        }
-        if ($routeParams.hasOwnProperty('view')) {
-            $scope.changeTab($routeParams['view']);
-        }
+    /** --- Get Calendar Data --- */
 
-        $scope.$watch('activeIndex', function() { $location.search('view', pageNames[$scope.activeIndex]); });
-        console.log('cal init!');
-    };
+    // Performs tasks that follow the loading of a new calendar view such as setting the header text and alerting child controllers
+    function processNewCalendarView() {
+        console.log('new calendar view!');
 
+        // Set the header text
+        $scope.calendarHeaderText = "Senate Calendar #" + $scope.calendarView['calendarNumber'] + " " +
+                $filter('moment')($scope.calendarView.calDate, 'll');
+        $scope.setCalendarHeaderText();
+
+        // Alert child scopes of new calendar view
+        $scope.$broadcast('newCalendarEvent');
+
+        // Switch to either the active list or floor tab depending on the received data
+        if ($scope.changeTabOnLoad) {
+            if ($scope.calendarView.activeLists.size > 0) {
+                $scope.changeTab('active-list');
+            } else {
+                $scope.changeTab('floor');
+            }
+            $scope.changeTabOnLoad = false;
+        }
+    }
+
+    // Loads a calendar according to the specified year and calendar number
     $scope.getCalendarViewById = function (calendarYear, calendarNo) {
+        console.log('loading calendar', calendarYear, calendarNo);
         var response = CalendarViewApi.get(
             {year: calendarYear, calNo: calendarNo }, function() {
                 if (response.success) {
                     $scope.calendarView = response.result;
-                    $scope.calendarHeaderText = "Senate Calendar #" + $scope.calendarView.calendarNumber + " " +
-                    $filter('moment')($scope.calendarView.calDate, 'll');
-                    $scope.setCalendarHeaderText();
-                    $scope.populateActiveLists();
-                    $scope.populateFloorCals();
-                    $scope.$broadcast('newCalendarEvent');
+                    processNewCalendarView();
                 }
             });
     };
 
-    $scope.redirectToCurrentCalendar = function(year) {
-        $scope.calendarViewResult = CurrentCalendarIdApi.get(
+    // Loads the most recent calendar
+    function loadCurrentCalendar(year) {
+        var response = CurrentCalendarIdApi.get(
             {year: year}, function() {
-                if ($scope.calendarViewResult.success && $scope.calendarViewResult.result.size > 0) {
-                    $scope.calendarView = $scope.calendarViewResult.result.items[0];
-                    $location.url(ctxPath + '/calendars/' + $scope.calendarView.year + '/' + $scope.calendarView.calendarNumber);
-                } else if (year == moment().year()) {
-                    $scope.redirectToCurrentCalendar(year - 1);
+                if (response['success'] && response['result']['size'] > 0) {
+                    $scope.calendarView = response['result']['items'][0];
+                    $location.path(ctxPath + '/calendars/' + $scope.calendarView['year'] + '/' + $scope.calendarView['calendarNumber']);
+                } else if (year === moment().year()) {
+                    loadCurrentCalendar(year - 1);
                 }
             });
+    }
+
+    // Calendar Bill Number Search
+
+    function getCalBillNumSearchTerm(calBillNum) {
+        return "\\*.billCalNo:" + calBillNum + " AND year:" + $scope.calendarView.year;
+    }
+
+    $scope.getCalBillNumUrl = function(calBillNum) {
+        var searchTerm = getCalBillNumSearchTerm(calBillNum);
+        return $location.path() + "?view=search&search=" + searchTerm;
     };
 
-    $scope.populateActiveLists = function() {
-        $scope.activeLists = [];
-        for (var seqNo=0; $scope.calendarView.activeLists.items.hasOwnProperty(seqNo); seqNo++) {
-            $scope.activeLists.push($scope.calendarView.activeLists.items[seqNo]);
-        }
-    };
-
-    $scope.populateFloorCals = function() {
-        $scope.floorCals = {};
-        if ($scope.calendarView.floorCalendar.year) {
-            $scope.floorCals = {floor: $scope.calendarView.floorCalendar};
-        }
-        if ($scope.calendarView.supplementalCalendars.size > 0) {
-            angular.forEach($scope.calendarView.supplementalCalendars.items, function (floorCal, version) {
-                $scope.floorCals[version] = floorCal;
-            });
-        }
-        console.log($scope.floorCals);
+    $scope.onCalBillNumClick = function (calBillNum) {
+        $scope.newSearchTerm = getCalBillNumSearchTerm(calBillNum);
+        $scope.changeTab('search');
     };
 
     $scope.init();
 }]);
 
 calendarModule.controller('CalendarActiveListCtrl', ['$scope', function($scope) {
+
+    $scope.activeLists = [];
+
     $scope.activeListFilter = {};
 
     $scope.displayedEntries = [];
 
+    // Creates a list of active list supplementals from a full calendar object in the parent scope
+    function populateActiveLists() {
+        if ($scope.calendarView) {
+            $scope.activeLists = [];
+            for (var seqNo = 0; $scope.calendarView.activeLists.items.hasOwnProperty(seqNo); seqNo++) {
+                $scope.activeLists.push($scope.calendarView.activeLists.items[seqNo]);
+            }
+            generateActiveListFilter();
+        }
+    }
+
+    // Initializes the filter object based on the current active lists
     function generateActiveListFilter() {
-        console.log('generateActiveListFilter');
         $scope.activeListFilter = {};
         angular.forEach($scope.activeLists, function(activeList) {
             $scope.activeListFilter[activeList['sequenceNumber']] = true;
         });
     }
 
+    // Sets the contents of the displayedEntries based on the currently active filter
     function filterActiveListEntries() {
         $scope.displayedEntries = [];
         angular.forEach($scope.activeLists, function(activeList) {
@@ -141,20 +182,38 @@ calendarModule.controller('CalendarActiveListCtrl', ['$scope', function($scope) 
                 $scope.displayedEntries = $scope.displayedEntries.concat(activeList['entries']['items']);
             }
         });
-        console.log($scope.displayedEntries);
     }
 
-    $scope.$watch('activeLists', generateActiveListFilter, true);
+    $scope.$watch('calendarView', populateActiveLists, true);
 
     $scope.$watch('activeListFilter', filterActiveListEntries, true);
 }]);
 
 calendarModule.controller('FloorCalendarCtrl', ['$scope', function($scope) {
+
+    $scope.floorCals = {};
+
     $scope.floorCalFilter = {};
 
     $scope.floorCalVersions = [];
 
     $scope.displayedSections = {};
+
+    // Creates a dictionary of floor calendar supplementals from a full calendar object in the parent scope
+    function populateFloorCals() {
+        if ($scope.calendarView) {
+            $scope.floorCals = {};
+            if ($scope.calendarView['floorCalendar']['year']) {
+                $scope.floorCals = {floor: $scope.calendarView['floorCalendar']};
+            }
+            if ($scope.calendarView['supplementalCalendars']['size'] > 0) {
+                angular.forEach($scope.calendarView['supplementalCalendars']['items'], function (floorCal, version) {
+                    $scope.floorCals[version] = floorCal;
+                });
+            }
+            generateFloorCalFilter();
+        }
+    }
 
     // Constructs a filter object for the currently loaded floor and supplemental calendars
     function generateFloorCalFilter() {
@@ -200,9 +259,99 @@ calendarModule.controller('FloorCalendarCtrl', ['$scope', function($scope) {
 
     $scope.sectionSortValue = sectionOrder.indexOf;
 
-    $scope.$watch('floorCals', generateFloorCalFilter, true);
+    $scope.$watch('calendarView', populateFloorCals, true);
 
     $scope.$watch('floorCalFilter', filterFloorCalendarEntries, true);
+}]);
+
+calendarModule.controller('CalendarSearchCtrl', ['$scope', '$routeParams', '$location', 'CalendarSearchApi', 'PaginationModel',
+function($scope, $routeParams, $location, SearchApi, paginationModel) {
+
+    $scope.searchResults = [];
+    $scope.searchResponse = {};
+
+    $scope.pagination = angular.extend({}, paginationModel);
+
+    $scope.searched = false;
+
+    $scope.init = function() {
+        if ($routeParams.hasOwnProperty('search')) {
+            newSearchTerm($routeParams['search']);
+        }
+    };
+
+    $scope.$watch('newSearchTerm', function(newTerm, oldTerm) {
+        if (newTerm && newTerm.length > 0) {
+            newSearchTerm(newTerm);
+        }
+    });
+
+    function newSearchTerm(newTerm) {
+        $scope.searchTerm = newTerm;
+        $scope.termSearch(true);
+    }
+
+    // Perform a simple serch based on the current search term
+    $scope.termSearch = function(resetPagination) {
+        var term = $scope.searchTerm;
+        console.log('searching for', term);
+        if (term) {
+            $location.search('search', term);
+            $scope.searched = false;
+            $scope.searchResponse = SearchApi.get({
+                    term: term, sort: $scope.sort, limit: $scope.pagination.getLimit(),
+                    offset: $scope.pagination.getOffset()},
+                function() {
+                    $scope.searchResults = $scope.searchResponse.result.items || [];
+                    $scope.searched = true;
+                    if (resetPagination) {
+                        $scope.pagination.currPage = 1;
+                    }
+                    $scope.pagination.setTotalItems($scope.searchResponse.total);
+                });
+        }
+        else {
+            $scope.searchResults = [];
+            $scope.pagination.setTotalItems(0);
+        }
+    };
+
+    // Manipulates the pagination object and displayed results based on the input action
+    $scope.paginate = function(action) {
+        var oldPage = $scope.pagination.currPage;
+        switch (action) {
+            case 'first': $scope.pagination.toFirstPage(); break;
+            case 'prev': $scope.pagination.prevPage(); break;
+            case 'next': $scope.pagination.nextPage(); break;
+            case 'last': $scope.pagination.toLastPage(); break;
+        }
+        if (oldPage !== $scope.pagination.currPage) {
+            $location.search('searchPage', $scope.pagination.currPage);
+            $scope.termSearch(false);
+        }
+    };
+
+    $scope.getTotalActiveListBills = function (cal) {
+        var count = 0;
+        angular.forEach(cal.activeLists.items, function (activeList) {
+            count += activeList.totalEntries;
+        });
+        return count;
+    };
+
+    $scope.getTotalFloorBills = function (cal) {
+        var count = 0;
+        if (cal.floorCalendar.year) {
+            count += cal.floorCalendar.totalEntries;
+        }
+        angular.forEach(cal.supplementalCalendars.items, function (supCal) {
+            count += supCal.totalEntries;
+        });
+        return count;
+    };
+
+    $scope.init();
+
 }]);
 
 calendarModule.controller('CalendarPickCtrl', ['$scope', '$q', 'CalendarIdsApi',
@@ -212,7 +361,6 @@ calendarModule.controller('CalendarPickCtrl', ['$scope', '$q', 'CalendarIdsApi',
         $scope.calendarIds = {};
 
         $scope.init = function () {
-            console.log('calendar picker init');
             $scope.eventSources.push($scope.getEventSourcesObject());
             $scope.calendarConfig = $scope.getCalendarConfig();
             //angular.element('#calendar-date-picker').fullCalendar('render');
@@ -229,8 +377,8 @@ calendarModule.controller('CalendarPickCtrl', ['$scope', '$q', 'CalendarIdsApi',
 
         $scope.getCalendarIds = function(year) {
             var deferred = $q.defer();
-            var promise = CalendarIdsApi.get(
-                {year: year}, function() {
+            var promise = CalendarIdsApi.get({year: year, limit: "all"},
+                function() {
                     if (promise.success) {
                         $scope.calendarIds[year] = promise.result.items;
                         deferred.resolve($scope.calendarIds);
@@ -321,11 +469,15 @@ calendarModule.controller('CalendarPickCtrl', ['$scope', '$q', 'CalendarIdsApi',
 calendarModule.directive('calendarEntryTable', function() {
     return {
         scope: {
-            calEntries: '=calEntries'
+            calEntries: '=calEntries',
+            getCalBillNumUrl: '&',
+            onCalBillNumClick: '&'
         },
         templateUrl: ctxPath + '/partial/content/calendar/calendar-entry-table',
         controller: function($scope) {
             $scope.billPageBaseUrl = ctxPath + '/bills';
+            $scope.onCalBillNumClick = $scope.onCalBillNumClick();
+            $scope.getCalBillNumUrl = $scope.getCalBillNumUrl();
         }
     };
 });
@@ -340,7 +492,6 @@ calendarModule.filter('sectionDisplayName', function() {
        'STARRED_ON_THIRD_READING' : "Starred on Third Reading"
     };
     return function(input) {
-        console.log(input);
         if (sectionNameMap.hasOwnProperty(input)) {
             return sectionNameMap[input];
         }

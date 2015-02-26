@@ -1,14 +1,22 @@
 package gov.nysenate.openleg.service.calendar.search;
 
+import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SearchIndex;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.search.CalendarSearchDao;
+import gov.nysenate.openleg.dao.calendar.search.ElasticCalendarSearchDao;
+import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
+import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.event.CalendarUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.*;
@@ -19,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class ElasticCalendarSearchService implements CalendarSearchService {
@@ -27,7 +37,9 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
 
     private static LimitOffset defaultLimitOffset = LimitOffset.HUNDRED;
 
-    @Autowired private CalendarSearchDao calendarSearchDao;
+    @Autowired private ElasticCalendarSearchDao calendarSearchDao;
+    @Autowired private CalendarDataService calendarDataService;
+    @Autowired private Environment env;
     @Autowired private EventBus eventBus;
 
     @PostConstruct
@@ -81,7 +93,52 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     @Subscribe
     @Override
     public synchronized void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent) {
-        calendarSearchDao.updateCalendarIndex(calendarUpdateEvent.getCalendar());
+        updateIndex(calendarUpdateEvent.getCalendar());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateIndex(Calendar content) {
+        if (env.isElasticIndexing()) {
+            calendarSearchDao.updateCalendarIndex(content);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateIndex(Collection<Calendar> content) {
+        if (env.isElasticIndexing()) {
+            calendarSearchDao.updateCalendarIndexBulk(content);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void clearIndex() {
+        calendarSearchDao.purgeIndices();
+        calendarSearchDao.createIndices();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void rebuildIndex() {
+        clearIndex();
+        Optional<Range<Integer>> calendarYearRange =  calendarDataService.getCalendarYearRange();
+        if (calendarYearRange.isPresent()) {
+            for (int year = calendarYearRange.get().lowerEndpoint();
+                 year <= calendarYearRange.get().upperEndpoint(); year++) {
+                updateIndex(calendarDataService.getCalendars(year, SortOrder.NONE, LimitOffset.ALL));
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleRebuildEvent(RebuildIndexEvent event) {
+        if (event.affects(SearchIndex.CALENDAR)) {
+            rebuildIndex();
+        }
     }
 
     /** --- Helper Methods --- */

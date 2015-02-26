@@ -1,11 +1,13 @@
 package gov.nysenate.openleg.service.calendar.data;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service interface for retrieving and saving Calendar data.
@@ -38,6 +40,18 @@ public interface CalendarDataService
      * @throws CalendarNotFoundEx - if no calendar supplemental exists for the given id
      */
     public CalendarSupplemental getCalendarSupplemental(CalendarSupplementalId supplementalId) throws CalendarNotFoundEx;
+
+    /**
+     * Gets a range of all years for which calendar data is present
+     * @return Optional<Range<Integer>>
+     */
+    public Optional<Range<Integer>> getCalendarYearRange();
+
+    /**
+     * Gets the total number of stored calendars
+     * @return int
+     */
+    public int getCalendarCount();
 
     /**
      * Gets the number of calendars that exist for the given year

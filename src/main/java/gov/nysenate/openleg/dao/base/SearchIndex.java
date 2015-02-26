@@ -8,6 +8,7 @@ public enum SearchIndex
     BILL("bills"),
     AGENDA("agendas"),
     CALENDAR("calendars"),
+    COMMITTEE("committees"),
     TRANSCRIPT("transcripts"),
     HEARING("hearings"),
     LAW("laws"),

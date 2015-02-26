@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.entity.committee.search;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.entity.committee.search.ElasticCommitteeSearchDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.CommitteeSessionId;
@@ -122,7 +123,9 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
     @Subscribe
     @Override
     public void handleRebuildEvent(RebuildIndexEvent event) {
-        rebuildIndex();
+        if (event.affects(SearchIndex.COMMITTEE)) {
+            rebuildIndex();
+        }
     }
 
     /** --- Internal Methods --- */

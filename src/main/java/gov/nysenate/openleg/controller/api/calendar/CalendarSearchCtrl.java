@@ -187,6 +187,4 @@ public class CalendarSearchCtrl extends BaseCtrl{
                         .collect(Collectors.toList()),
                 results.getTotalResults(), results.getLimitOffset());
     }
-
-    /** --- Exception Handlers --- */
 }

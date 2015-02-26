@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.calendar.data;
 
+import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
@@ -22,12 +23,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,11 +55,13 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
 
     /** --- CachingService implementation --- */
 
+    /** {@inheritDoc} */
     @Override
     public List<Ehcache> getCaches() {
         return Arrays.asList(calendarCache);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setupCaches() {
         calendarCache = new Cache(new CacheConfiguration().name(calendarDataCache)
@@ -66,12 +71,14 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
         cacheManager.addCache(calendarCache);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void evictCaches() {
         logger.info("clearing calendar cache");
         calendarCache.removeAll();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.CALENDAR)) {
@@ -79,12 +86,14 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void warmCaches() {
         evictCaches();
         getCalendars(LocalDate.now().getYear(), SortOrder.ASC, LimitOffset.ALL);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
         if (warmEvent.affects(ContentCache.CALENDAR)) {
@@ -94,6 +103,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
 
     /** --- CalendarDataService implementation --- */
 
+    /** {@inheritDoc} */
     @Override
     public Calendar getCalendar(CalendarId calendarId) throws CalendarNotFoundEx {
         if (calendarId == null) {
@@ -116,6 +126,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public CalendarActiveList getActiveList(CalendarActiveListId activeListId) throws CalendarNotFoundEx {
         if (activeListId == null) {
@@ -128,6 +139,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
         throw new CalendarNotFoundEx(activeListId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public CalendarSupplemental getCalendarSupplemental(CalendarSupplementalId supplementalId) throws CalendarNotFoundEx {
         if (supplementalId == null) {
@@ -140,6 +152,23 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
         throw new CalendarNotFoundEx(supplementalId);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Optional<Range<Integer>> getCalendarYearRange() {
+        try {
+            return Optional.of(calendarDao.getActiveYearRange());
+        } catch (EmptyResultDataAccessException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int getCalendarCount() {
+        return calendarDao.getCalendarCount();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public int getCalendarCount(int year) {
         try {
@@ -151,6 +180,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getActiveListCount(int year) {
         try {
@@ -162,6 +192,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getSupplementalCount(int year) {
         try {
@@ -183,6 +214,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
                 .collect(Collectors.toList());
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<CalendarActiveList> getActiveLists(int year, SortOrder sortOrder, LimitOffset limitOffset) {
         return calendarDao.getActiveListIds(year, sortOrder, limitOffset).stream()
@@ -190,6 +222,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
                 .collect(Collectors.toList());
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<CalendarSupplemental> getCalendarSupplementals(int year, SortOrder sortOrder, LimitOffset limitOffset) {
         return calendarDao.getCalendarSupplementalIds(year, sortOrder, limitOffset).stream()
