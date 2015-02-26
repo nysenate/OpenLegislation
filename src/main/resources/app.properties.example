@@ -20,6 +20,10 @@ default.admin.password =
 
 admin.email.regex = ^[A-z0-9._%+-]+@nysenate.gov$
 
+# --- Google Analytics --- */
+
+ga.tracking.id =
+
 # --- Data Directory Configuration --------------------------------------------
 
 # The directory path that serves as the root of the data environment.
