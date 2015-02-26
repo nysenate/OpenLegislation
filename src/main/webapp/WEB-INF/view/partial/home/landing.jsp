@@ -23,7 +23,7 @@
             </div>
           </div>
           <div class="md-tile-content margin-left-20">
-            <h3 class="no-margin bold">{{provideData.type}}</h3>
+            <h3 style="text-decoration: underline;" class="no-margin bold">{{provideData.type}}</h3>
             <h4>{{provideData.blurb}}</h4>
           </div>
         </md-item-content>
@@ -39,17 +39,17 @@
     <h3>Sign up for a free API Key</h3>
     <hr/>
      <form action="${ctxPath}/register/signup" method="post">
-    <div layout="row" layout-sm="column" layout-align="center center">
-        <md-input-container class="margin-right-20">
-            <label style="color:white;">Name</label>
-            <input type="text" style="color:white;border-color:white;"/>
-        </md-input-container>
-        <md-input-container class="margin-right-20">
-            <label style="color:white">Email</label>
-            <input type="email" style="color:white;border-color:white;"/>
-        </md-input-container>
-        <md-button style="width: 160px;color:white;" class="bold md-accent md-raised md-hue-3">Signup</md-button>
-    </div>
+        <div layout="row" layout-sm="column" layout-align="center center">
+            <md-input-container class="margin-right-20">
+                <label style="color:white;">Name</label>
+                <input type="text" name="name" style="color:white;border-color:white;"/>
+            </md-input-container>
+            <md-input-container class="margin-right-20">
+                <label style="color:white">Email</label>
+                <input type="email" name="email" style="color:white;border-color:white;"/>
+            </md-input-container>
+            <md-button style="width: 160px;color:white;" class="bold md-accent md-raised md-hue-3">Signup</md-button>
+        </div>
     </form>
     <hr/>
     <h3>

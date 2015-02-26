@@ -2,6 +2,7 @@ package gov.nysenate.openleg.controller.ui;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
+import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.service.auth.UsernameExistsException;
@@ -17,7 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 
 @Controller
 @RequestMapping("/register")
-public class RegistrationPageCtrl
+public class RegistrationPageCtrl extends BaseCtrl
 {
     @Autowired
     protected ApiUserService apiUserService;
@@ -44,6 +45,7 @@ public class RegistrationPageCtrl
     public BaseResponse signup(WebRequest webRequest) {
         String email =  webRequest.getParameter("email");
         String name =  webRequest.getParameter("name");
+        logger.info("Signing up {} with email {}", name, email);
         try {
             ApiUser apiUser = apiUserService.registerNewUser(email, name, "");
             return new SimpleResponse(true, apiUser.getName() + " has been registered.", "api-signup");
