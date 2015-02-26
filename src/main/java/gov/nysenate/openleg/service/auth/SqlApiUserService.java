@@ -50,7 +50,7 @@ public class SqlApiUserService implements ApiUserService
 
         try {
             if (apiUserDao.getApiUserFromEmail(email) != null)
-                throw new IllegalArgumentException("Email address already in use!");
+                throw new UsernameExistsException(email);
 
         } catch (EmptyResultDataAccessException e) {
 
@@ -110,7 +110,7 @@ public class SqlApiUserService implements ApiUserService
                   "In order to receive your API key you must first activate your account by visiting the link below. " +
                   "Once you have confirmed your email address, an email will be sent to you containing your API Key.\n\n" +
                   "Activate your account here:\n%s/%s" +
-                  "\n\n-- NY Senate Development Team", user.getName(), domainUrl + "/register", user.getRegistrationToken());
+                  "\n\n-- NY Senate Development Team", user.getName(), domainUrl + "/register/token", user.getRegistrationToken());
 
          sendMailService.sendMessage(user.getEmail(), "Open Legislation API Account Registration", message);
     }

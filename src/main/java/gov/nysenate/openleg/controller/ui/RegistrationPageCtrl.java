@@ -4,6 +4,7 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.service.auth.ApiUserService;
+import gov.nysenate.openleg.service.auth.UsernameExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class RegistrationPageCtrl
             ApiUser apiUser = apiUserService.registerNewUser(email, name, "");
             return new SimpleResponse(true, apiUser.getName() + " has been registered.", "api-signup");
         }
-        catch (IllegalArgumentException ex) {
+        catch (UsernameExistsException ex) {
             return new SimpleResponse(false, ex.getMessage(), "api-signup");
         }
     }
