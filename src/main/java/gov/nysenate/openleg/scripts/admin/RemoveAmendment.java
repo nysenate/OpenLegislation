@@ -32,6 +32,7 @@ public class RemoveAmendment extends BaseScript
         Options options = new Options();
         options.addOption("y", true, "Year of bill session");
         options.addOption("b", true, "Bill id");
+        options.addOption("t", "temporary", false, "Does not add the bill to the unpublished list if set");
 
         // Not currently used, Removes this bill from the list of amendments in its related bills
         // while not deleting it so it can still be referenced if needed.... Doesn't work with current lucene search implementation.
@@ -72,8 +73,10 @@ public class RemoveAmendment extends BaseScript
         process.push(storage, ChangeLogger.getEntries(), services);
 
         // Add the bill to the unpublished bill list
-        UnpublishListManager unpublishListManager = new UnpublishListManager();
-        unpublishListManager.addUnpublishedBill(billId + '-' + sessionYear);
+        if (!opts.hasOption('t')) {
+            UnpublishListManager unpublishListManager = new UnpublishListManager();
+            unpublishListManager.addUnpublishedBill(billId + '-' + sessionYear);
+        }
     }
 
     private void removeAmendmentFromOtherVersions(Storage storage, Bill bill) {
