@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
 <section ng-controller="BillCtrl">
   <section ng-controller="BillViewCtrl">
@@ -24,26 +23,27 @@
         <section layout="row" layout-sm="column"
                  layout-align="start center" layout-align-sm="start start">
           <div class="margin-bottom-10 margin-top-10" layout="row" layout-align="start center" style="margin-right:60px;">
-            <img class="margin-right-10" src="http://lorempixel.com/50/50/animals/8"
-                 style="height: 60px;min-width:60px;"/>
+            <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
+                 style="height: 60px;"/>
             <div layout="column" ng-if="!bill.sponsor.budget">
               <div ng-if="!bill.sponsor.rules" class="text-medium">Sponsored By</div>
               <div ng-if="bill.sponsor.rules" class="text-medium">
                 From the Rules Committee<span ng-if="bill.sponsor.member"> Via</span>
               </div>
               <div class="bold">{{bill.sponsor.member.fullName}}</div>
-              <%--<div class="text-small">District {{bill.sponsor.member.districtCode}}</div>--%>
+              <div class="text-small">District {{bill.sponsor.member.districtCode}}</div>
             </div>
             <div layout="column" ng-if="bill.sponsor.budget">
               <div class="bold">Budget Bill</div>
             </div>
           </div>
-          <div class="margin-bottom-10 margin-top-10" layout="column" style="margin-right:60px;">
+          <div class="margin-bottom-10 margin-top-10" layout="column" style="margin-right:60px;min-width: 280px;">
             <div class="text-medium">Status as of {{bill.status.actionDate | moment:'MMMM D, YYYY'}}</div>
             <div class="bold">
               <i ng-if="bill.signed === true" class="prefix-icon icon-checkmark"></i>
               <span>{{getStatusDesc(bill.status)}}</span>
             </div>
+            <milestones ng-hide="bill.billType.resolution" milestone-arr="bill.milestones" chamber="bill.billType.chamber"></milestones>
           </div>
           <div class="margin-bottom-10 margin-top-10" layout="column" ng-if="bill.programInfo">
             <div class="text-medium">Bill #{{bill.programInfo.sequenceNo + 1}} on the program for </div>
@@ -52,7 +52,7 @@
         </section>
       </md-toolbar>
 
-      <md-tabs md-selected="curr.selectedView" class="md-primary">
+      <md-tabs md-selected="curr.selectedView" class="md-primary" md-stretch-tabs="never">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
             <span><i class="icon-search prefix-icon2"></i>Back to Search</span>
@@ -108,11 +108,11 @@
                                 <h5 style="margin:10px;">{{voteType}}</h5>
                               </div>
                               <div class="md-tile-left">
-                                <img class="margin-right-10" ng-src="http://lorempixel.com/50/50/food/{{$index}}"
-                                     style="height: 25px;width:25px;"/>
+                                <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{voteItem.imgName}}"
+                                     style="height: 35px;width:29px;"/>
                               </div>
                               <div style="padding:0" class="md-tile-content">
-                                <span class="text-medium">{{voteItem.shortName}}</span>
+                                <span class="text-medium">{{voteItem.fullName}}</span>
                               </div>
                             </md-item-content>
                           </md-item>
@@ -159,11 +159,11 @@
                   <md-item ng-repeat="coSponsor in bill.amendments.items[curr.amdVersion].coSponsors.items">
                     <md-item-content>
                       <div class="md-tile-left">
-                        <img class="margin-right-10" ng-src="http://lorempixel.com/50/50/food/{{$index}}"
-                             style="height: 50px;width:50px;"/>
+                        <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{coSponsor.imgName}}"
+                             style="height:60px;width:auto;"/>
                       </div>
                       <div class="md-tile-content">
-                        <span class="text-medium">{{coSponsor.fullName}} (D)</span>
+                        <span class="text-medium">{{coSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
                       </div>
                     </md-item-content>
                   </md-item>
@@ -179,11 +179,11 @@
                   <md-item ng-repeat="multiSponsor in bill.amendments.items[curr.amdVersion].multiSponsors.items">
                     <md-item-content>
                       <div class="md-tile-left">
-                        <img class="margin-right-10" ng-src="http://lorempixel.com/50/50/food/{{$index}}"
-                             style="height: 50px;width:50px;"/>
+                        <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{multiSponsor.imgName}}"
+                             style="height: 60px;width:auto;"/>
                       </div>
                       <div class="md-tile-content">
-                        <span class="text-medium">{{multiSponsor.fullName}} (D)</span>
+                        <span class="text-medium">{{multiSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
                       </div>
                     </md-item-content>
                   </md-item>
@@ -267,16 +267,15 @@
               <md-list>
                 <md-item>
                   <md-item-content ng-repeat="agenda in bill.committeeAgendas.items">
-                    <md-button ng-if="bill.committeeAgendas.size > 0" class="text-medium md-primary margin-right-20"
-                               ng-href="${ctxPath}/agendas/{{agenda.agendaId.year}}/{{agenda.agendaId.number}}/{{agenda.committeeId.name}}">
+                    <a ng-if="bill.committeeAgendas.size > 0" class="gray-2-blue"
+                       ng-href="${ctxPath}/agendas/{{agenda.agendaId.year}}/{{agenda.agendaId.number}}/{{agenda.committeeId.name}}">
                       Committee Agenda #{{agenda.agendaId.number}} ({{agenda.agendaId.year}}) - {{agenda.committeeId.name}}
-                    </md-button>
+                    </a>
                   </md-item-content>
                   <md-item-content ng-repeat="calendar in bill.calendars.items">
-                    <md-button class="text-medium md-primary"
-                               ng-href="${ctxPath}/calendars/{{lastCalendar.year}}/{{lastCalendar.calendarNumber}}">
+                    <a class="gray-2-blue" ng-href="${ctxPath}/calendars/{{calendar.year}}/{{calendar.calendarNumber}}">
                       Senate Floor Calendar {{calendar.calendarNumber}} ({{calendar.year}})
-                    </md-button>
+                    </a>
                   </md-item-content>
                 </md-item>
               </md-list>

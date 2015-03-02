@@ -2,12 +2,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="open" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="open-layout" tagdir="/WEB-INF/tags/layout" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 
 <open-layout:head title="Open 2.0">
   <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/law.js"></script>
+  <script src="${ctxPath}/static/js/src/component/content/agenda.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/calendar.js"></script>
   <script src="${ctxPath}/static/js/src/component/report/daybreak.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/account.js"></script>
@@ -40,8 +40,8 @@
                 <menu-item url="${ctxPath}/">About</menu-item>
               </menu-section>
               <menu-section title="NYS Legislative Data">
-                <menu-item url="${ctxPath}/calendars">Senate Calendar</menu-item>
-                <menu-item url="${ctxPath}/agendas">Senate Agenda</menu-item>
+                <menu-item url="${ctxPath}/calendars">Senate Calendars</menu-item>
+                <menu-item url="${ctxPath}/agendas">Senate Agendas</menu-item>
                 <menu-item url="${ctxPath}/bills">Bills and Resolutions</menu-item>
                 <menu-item url="${ctxPath}/laws">NYS Laws</menu-item>
                 <menu-item url="${ctxPath}/members">Senate Membership</menu-item>

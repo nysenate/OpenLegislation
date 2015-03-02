@@ -5,43 +5,33 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         /** --- Bills --- */
 
-        .when(ctxPath + '/bills', { templateUrl: ctxPath + '/partial/content/bill-search', reloadOnSearch: false })
-        .when(ctxPath + '/bills/:session/:printNo', { templateUrl: ctxPath + '/partial/content/bill-view', reloadOnSearch: false })
+        .when(ctxPath + '/bills', { templateUrl: ctxPath + '/partial/content/bill/bill-search', reloadOnSearch: false })
+        .when(ctxPath + '/bills/:session/:printNo', { templateUrl: ctxPath + '/partial/content/bill/bill-view', reloadOnSearch: false })
 
         /** --- Agendas --- */
 
-        .when(ctxPath + '/agendas/', { template: 'Agendas Page' })
-        .when(ctxPath + '/agendas/:year/', { template: 'Agendas Page' })
-        .when(ctxPath + '/agendas/:year/:agendaNo', { template: 'Agendas Page' })
-        .when(ctxPath + '/agendas/:year/:agendaNo/:committee', { template: 'Agendas Page' })
+        .when(ctxPath + '/agendas/', { templateUrl: ctxPath + '/partial/content/agenda/agenda-search' })
+        .when(ctxPath + '/agendas/:year/', { templateUrl: ctxPath + '/partial/content/agenda/agenda-search' })
+        .when(ctxPath + '/agendas/:year/:agendaNo', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view' })
+        .when(ctxPath + '/agendas/:year/:agendaNo/:committee', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view' })
 
         /** --- Calendars --- */
 
-        .when(ctxPath + '/calendars', {
-            templateUrl: ctxPath + '/partial/content/calendar/calendar'
-        })
-        .when(ctxPath + '/calendars/:year/:calNo', {
-            templateUrl: ctxPath + '/partial/content/calendar/calendar',
-            reloadOnSearch: false
-        })
+        .when(ctxPath + '/calendars', { templateUrl: ctxPath + '/partial/content/calendar/calendar' })
+        .when(ctxPath + '/calendars/:year/:calNo', { templateUrl: ctxPath + '/partial/content/calendar/calendar', reloadOnSearch: false })
 
         /** --- Laws --- */
 
-        .when(ctxPath + '/laws', { templateUrl: ctxPath + '/partial/content/law-search' })
-        .when(ctxPath + '/laws/:lawId', { templateUrl: ctxPath + '/partial/content/law-view', reloadOnSearch: false })
+        .when(ctxPath + '/laws', { templateUrl: ctxPath + '/partial/content/law/law-search' })
+        .when(ctxPath + '/laws/:lawId', { templateUrl: ctxPath + '/partial/content/law/law-view', reloadOnSearch: false })
 
         /** --- Transcripts --- */
 
-        .when(ctxPath + '/transcripts', {
-            templateUrl: ctxPath + '/partial/content/..'
-        })
+        .when(ctxPath + '/transcripts', { templateUrl: ctxPath + '/partial/content/..' })
 
         /** --- Reports --- */
 
-        .when(ctxPath + '/admin/report/daybreak', {
-            templateUrl: ctxPath + '/partial/report/daybreak',
-            reloadOnSearch: false
-        })
+        .when(ctxPath + '/admin/report/daybreak', { templateUrl: ctxPath + '/partial/report/daybreak', reloadOnSearch: false })
 
         /** --- Admin --- */
 

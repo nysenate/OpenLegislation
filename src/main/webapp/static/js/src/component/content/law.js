@@ -26,6 +26,8 @@ lawModule.controller('LawCtrl', ['$scope', '$location', '$route', function($scop
 lawModule.controller('LawListingCtrl', ['$scope', '$location', '$route', 'LawListingApi',
                         function($scope, $location, $route, LawListingApi) {
     $scope.setHeaderText('NYS Laws');
+    $scope.setHeaderVisible(true);
+
     $scope.curr = {
         selectedView: 0,
         listingLimit: 20
@@ -48,6 +50,7 @@ lawModule.controller('LawListingCtrl', ['$scope', '$location', '$route', 'LawLis
 lawModule.controller('LawViewCtrl', ['$scope', '$routeParams', '$location', '$route', '$timeout', '$anchorScroll', '$sce',
                                      'LawTreeApi', 'LawDocApi',
                         function($scope, $routeParams, $location, $route, $timeout, $anchorScroll, $sce, LawTreeApi, LawDocApi) {
+    $scope.setHeaderVisible(true);
     $scope.curr = {
         lawId : $routeParams.lawId,
         lawRoot: null,

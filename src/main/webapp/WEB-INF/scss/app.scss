@@ -82,6 +82,10 @@ md-input-container {
   }
 }
 
+md-tooltip {
+  background: #333;
+}
+
 /** --- Hacks --- */
 
 .noselect {
@@ -99,6 +103,10 @@ md-input-container {
   #content-header {
     min-height: 66px;
     font-size: 1.5rem;
+    background: #f5f5f5;
+    h1 {
+      color: rgb(96,125,139);
+    }
   }
   #content {
     #content-pad {
@@ -256,6 +264,25 @@ a.result-link {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.serif-header {
+  font-family: 'Roboto Slab', serif;
+  font-weight: normal;
+}
+
+.docs-table {
+  width: 100%;
+  text-align: left;
+  padding: 20px;
+  font-size: 0.9rem;
+  td {
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+
+  }
+  max-width: 1200px;
+}
+
 
 /** --- Left Nav --- */
 
@@ -418,6 +445,30 @@ a.slogan-link {
 }
 
 /** --- Bill Page Styles --- */
+
+.bill-ms-container {
+  padding: 5px 0;
+}
+
+.bill-ms-step {
+  height: 10px;
+  width: 10px;
+  border: 1px solid rgba(255,255,255,.6);
+  float: left;
+  border-radius: 100%;
+  cursor: pointer;
+  &.filled {
+    background: rgb(174,213,129);
+    border: 1px solid rgb(151, 213, 84);
+  }
+}
+
+.bill-ms-line {
+  width: 25px;
+  height: 5px;
+  float: left;
+  border-bottom: 1px solid rgba(255,255,255,.7);
+}
 
 .bill-full-text {
   white-space: pre;

@@ -1,23 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
 <section ng-controller="BillCtrl">
   <section ng-controller="BillSearchCtrl">
     <md-tabs md-selected="curr.selectedView" class="md-primary">
-      <md-tab>
-        <md-tab-label><i class="icon-archive prefix-icon2"></i>Explore</md-tab-label>
-        <md-divider></md-divider>
-          <section ng-controller="BillExploreCtrl">
-            <section class="padding-20 text-medium">
-              <p>Open Legislation provides data for all New York State Bills and Resolutions that have
-              been introduced since 2009.</p>
-            </section>
-            <md-divider></md-divider>
-            <section class="padding-20">
-
-            </section>
-          </section>
-      </md-tab>
       <md-tab>
         <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
         <md-divider></md-divider>
@@ -84,72 +69,38 @@
               </div>
             </md-card>
           </section>
-          <section hide>
-            <md-content class="padding-20">
-              <p class="text-medium"><i class="icon-info prefix-icon2"></i>
-                Perform an advanced search by entering in one or more of the fields below. Each field will
-                be treated as an 'AND' operation.
-              </p>
-            </md-content>
-            <md-divider></md-divider>
-            <md-content layout="row" layout-wrap class="md-padding">
-              <md-input-container layout="column" flex="33">
-                <md-checkbox flex>Chamber: Senate</md-checkbox>
-                <md-checkbox flex>Chamber: Assembly</md-checkbox>
-                <md-divider></md-divider>
-                <md-checkbox flex>Type: Bill</md-checkbox>
-                <md-checkbox flex>Type: Resolution</md-checkbox>
-              </md-input-container>
-              <md-input-container layout="column" flex="33">
-                <md-checkbox flex>Has Vote Rolls</md-checkbox>
-                <md-checkbox flex>Has Amendments</md-checkbox>
-                <md-checkbox flex>Has Veto Memo</md-checkbox>
-                <md-checkbox flex>Has Approval Memo</md-checkbox>
-              </md-input-container>
-              <md-input-container layout="column" flex="33">
-                <md-checkbox flex>Is Budget Bill</md-checkbox>
-                <md-checkbox flex>Is Program Bill</md-checkbox>
-                <md-checkbox flex>Is Substituted</md-checkbox>
-                <md-checkbox flex>Is Uni-Bill</md-checkbox>
-              </md-input-container>
-            </md-content>
-            <md-divider></md-divider>
-            <md-content layout="row" layout-wrap class="md-padding">
-              <md-input-container flex="33">
-                <label>Title</label>
-                <input name="title"/>
-              </md-input-container>
-              <md-input-container flex="33">
-                <label>Enacting Clause</label>
-                <input name="act_clause"/>
-              </md-input-container>
-              <md-input-container flex="33">
-                <label>Sponsored By</label>
-                <input name="sponsor"/>
-              </md-input-container>
-              <md-input-container flex="33">
-                <label>Law Section</label>
-                <input name="law_section">
-              </md-input-container>
-              <md-input-container flex="33">
-                <label>Full Text</label>
-                <input name="fulltext"/>
-              </md-input-container>
-              <md-input-container flex="33">
-                <label>Memo</label>
-                <input name="memo"/>
-              </md-input-container>
-              <div flex="33">
-                <label class="margin-right-10">Status</label>
-                <select>
-                  <option>Any</option>
-                  <option>In Senate Committee</option>
-                  <option>In Assembly Committee</option>
-                </select>
-              </div>
-            </md-content>
-            <md-button class="md-accent md-raised md-hue-3 padding-10">Search</md-button>
+          <section>
+            <md-card class="content-card">
+              <md-subheader><strong>Basic Search Terms</strong></md-subheader>
+              <table class="docs-table">
+                <thead>
+                <tr><th>To search for</th><th>Use the field</th><th>Example</th></tr>
+                </thead>
+                <tbody>
+                <tr><td>Original Print No</td><td>basePrintNo</td><td>basePrintNo:S1234</td></tr>
+                <tr><td>Session Year</td><td>session</td><td>session:2015</td></tr>
+                <tr><td>Title</td><td>title</td><td>title:moose elk</td></tr>
+                <tr><td>Chamber</td><td>billType.chamber</td><td>billType.chamber:SENATE, billType.chamber:ASSEMBLY</td></tr>
+                <tr><td>Is a Resolution</td><td>billType.resolution</td><td>billType.resolution:true</td></tr>
+                <tr><td>Active Amendment Version</td><td>activeVersion</td><td>activeVersion:A</td></tr>
+                <tr><td>Published Year</td><td>year</td><td>year:2014</td></tr>
+                <tr><td>Published Date/Time</td><td>publishedDateTime</td><td>publishedDateTime:2015summary-01-02</td></tr>
+                <tr><td>Summary</td><td>summary</td><td>summary:moose, elk, or deer</td></tr>
+                </tbody>
+              </table>
+            </md-card>
           </section>
+        </section>
+      </md-tab>
+      <md-tab>
+        <md-tab-label><i class="icon-archive prefix-icon2"></i>Browse</md-tab-label>
+        <md-divider></md-divider>
+        <section ng-controller="BillExploreCtrl">
+          <a>Bills with recent status updates: api/3/bills/2015?sort=status.actionDate:DESC&limit=5</a><br/>
+          <a>Governor program bills: api/3/bills/2015/search?term=programInfo.name:Governor&sort=programInfo.sequenceNo:ASC</a><br/>
+          <a>Budget Bills api/3/bills/2015/search?term=sponsor.budget:true</a><br/>
+          <a></a>
+
         </section>
       </md-tab>
       <md-tab>

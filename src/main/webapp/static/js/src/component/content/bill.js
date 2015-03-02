@@ -193,7 +193,11 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
 /** --- Bill Info Controller --- */
 
-billModule.controller('BillInfoCtrl', ['$scope', 'BillListingApi', function($scope, BillListingApi) {
+billModule.controller('BillExploreCtrl', ['$scope', 'BillListingApi', function($scope, BillListingApi) {
+    $scope.setHeaderText("Explore NYS Legislation");
+    var i = 0;
+    $scope.senatorList = Array.apply(0, Array(63)).map(function() { i +=1; return i; });
+
     $scope.recentBillsResponse = BillListingApi.get({sessionYear: 2011, sort: 'publishedDateTime:DESC', limit: 5, offset: 1},
         function() {
             $scope.recentBills = $scope.recentBillsResponse.result.items;
@@ -279,53 +283,6 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         $location.search('view', 0);
         $location.path(ctxPath + '/bills');
     };
-
-    /**
-     * The milestones array from the bill api response only includes data for milestones that have been met. This
-     * method will return an array such that any missing milestones are also included (with null actionDates).
-     * @returns {Array}
-     */
-    $scope.getPaddedMilestones = function() {
-        var milestoneArr = [];
-        if ($scope.bill) {
-            milestoneArr = $scope.defaultBillMilestones($scope.bill.billType.chamber);
-            // Replacing part of the arrays that overlap.. maybe there is a cleaner way?
-            [].splice.apply(milestoneArr, [0, $scope.bill.milestones.size].concat($scope.bill.milestones.items));
-        }
-        return milestoneArr;
-    };
-
-    /**
-     * Returns an array of default milestones for a bill.
-     * @param chamber String - SENATE or ASSEMBLY
-     * @returns {Array}
-     */
-    $scope.defaultBillMilestones = function(chamber) {
-        var milestoneArr = [];
-        var createMilestone = function(desc) {
-            return {statusDesc: desc, actionDate: null};
-        };
-        var senateMilestones = [
-            createMilestone("In Senate Committee"),
-            createMilestone("On Senate Floor"),
-            createMilestone("Passed Senate")
-        ];
-        var assemblyMilestones = [
-            createMilestone("In Assembly Committee"),
-            createMilestone("On Assembly Floor"),
-            createMilestone("Passed Assembly")
-        ];
-        if (chamber == 'SENATE') {
-            milestoneArr = milestoneArr.concat(senateMilestones).concat(assemblyMilestones);
-        }
-        else {
-            milestoneArr = milestoneArr.concat(assemblyMilestones).concat(senateMilestones);
-        }
-        milestoneArr = milestoneArr.concat([
-            createMilestone("Sent to Governor"),
-            createMilestone("Signed Into Law")]);
-        return milestoneArr;
-    }
 }]);
 
 /** --- Filters --- */
@@ -366,3 +323,61 @@ billModule.filter('voteTypeFilter', function() {
         }
     }
 });
+
+/** --- Directives --- */
+
+billModule.directive('milestones', [function(){
+    /** Returns an array of milestone descriptions. */
+    var defaultMilestones = function(chamber) {
+        var milestoneArr = [];
+        var create = function(desc) {
+            return {statusDesc: desc, actionDate: null};
+        };
+        var senateMilestones = [create("In Senate Committee"), create("On Senate Floor"), create("Passed Senate")];
+        var assemblyMilestones = [create("In Assembly Committee"), create("On Assembly Floor"), create("Passed Assembly")];
+        if (chamber == 'SENATE') {
+            milestoneArr = milestoneArr.concat(senateMilestones).concat(assemblyMilestones);
+        }
+        else {
+            milestoneArr = milestoneArr.concat(assemblyMilestones).concat(senateMilestones);
+        }
+        milestoneArr = milestoneArr.concat([create("Sent to Governor"), create("Signed Into Law")]);
+        return milestoneArr;
+    };
+    /**
+     * The milestones array from the bill api response only includes data for milestones that have been met. This
+     * method will return an array such that any missing milestones are also included (with null actionDates).
+     * @returns {Array}
+     */
+    var getPaddedMilestones = function(milestoneArr, chamber) {
+        var paddedMsArr = [];
+        if (milestoneArr) {
+            paddedMsArr = defaultMilestones(chamber);
+            // Replacing part of the arrays that overlap.. maybe there is a cleaner way, idk...
+            [].splice.apply(paddedMsArr, [0, milestoneArr.size].concat(milestoneArr.items));
+        }
+        return paddedMsArr;
+    };
+
+    return {
+        restrict: 'E',
+        scope: {
+            'milestoneArr': '=',
+            'chamber': '='
+        },
+        replace: true,
+        template: '<div class="bill-ms-container">' +
+                    '<div ng-repeat="milestone in paddedMs">' +
+                      '<div class="bill-ms-step" ng-class="{\'filled\': milestone.actionDate !== null}">' +
+                        '<md-tooltip>{{milestone.statusDesc}}' +
+                          '<span ng-if="milestone.actionDate !== null"><br/>On {{milestone.actionDate | moment:\'MMM DD, YYYY\'}}</span>' +
+                          '<span ng-if="milestone.committeeName"><br/>{{milestone.committeeName}}</span>' +
+                        '</md-tooltip></div>' +
+                      '<div ng-class="{\'bill-ms-line\': $index !== 7}"></div>' +
+                    '</div>' +
+                  '</div>',
+        link: function($scope, $element, $attrs) {
+            $scope.paddedMs = getPaddedMilestones($scope.milestoneArr, $scope.chamber);
+        }
+    }
+}]);

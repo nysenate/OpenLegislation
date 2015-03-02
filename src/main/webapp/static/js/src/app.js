@@ -4,7 +4,8 @@ var openApp = angular.module('open',
     // External modules
     ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar',
     // Internal modules
-     'open.bill', 'open.law', 'open.calendar', 'open.daybreak', 'open.account', 'open.notification.subscription']);
+     'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.account',
+     'open.notification.subscription']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
@@ -48,8 +49,9 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
     }
 }]);
 
-openApp.controller('LandingCtrl', ['$scope', function($scope) {
+openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.setHeaderVisible(false);
+    $scope.email = 'islam@nysenate.gov';
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'From 2009 To Present. Updated in real-time.',
           icon: 'icon-newspaper', url: ctxPath + '/bills'},
@@ -69,6 +71,12 @@ openApp.controller('LandingCtrl', ['$scope', function($scope) {
         { type: 'Senate/Assembly Membership', blurb: 'Member data',
           icon: 'icon-users', url: ctxPath + '/members'}
     ];
+
+    $scope.signup = function() {
+        $http.post(ctxPath + '/register/signup', {name: $scope.name, email: $scope.email}).
+        success(function(data){console.log(data)});
+    };
+
 }]);
 
 /**
