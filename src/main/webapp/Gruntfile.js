@@ -71,7 +71,8 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
                         '<%= bowerRoot %>/fullcalendar/fullcalendar.js',
                         '<%= bowerRoot %>/amcharts/dist/amcharts/amcharts.js',
-                        '<%= bowerRoot %>/amcharts/dist/amcharts/serial.js'
+                        '<%= bowerRoot %>/amcharts/dist/amcharts/serial.js',
+                        '<%= bowerRoot %>/angular-utils-pagination/dirPagination.js'
                     ]//'<%= jsDest %>/main.min.js': ['<%= jsSource %>/**/*.js']
                 }
             }
