@@ -29,7 +29,7 @@ import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 import gov.nysenate.openleg.service.calendar.event.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
-import gov.nysenate.openleg.service.entity.member.MemberService;
+import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

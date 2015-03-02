@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.entity.member;
+package gov.nysenate.openleg.dao.entity.member.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;

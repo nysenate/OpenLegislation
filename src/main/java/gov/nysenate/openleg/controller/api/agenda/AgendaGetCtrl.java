@@ -4,7 +4,6 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
-import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.agenda.AgendaCommFlatView;
 import gov.nysenate.openleg.client.view.agenda.AgendaIdView;
@@ -37,8 +36,8 @@ public class AgendaGetCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(AgendaGetCtrl.class);
 
-    @Autowired private AgendaDataService agendaDataService;
-    @Autowired private AgendaSearchService agenda;
+    @Autowired private AgendaDataService agendaData;
+    @Autowired private AgendaSearchService agendaSearch;
 
     /**
      * Agenda List Retrieval API
@@ -48,11 +47,11 @@ public class AgendaGetCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{year}")
     public BaseResponse getAgendas(@PathVariable int year) {
-        List<AgendaId> agendaIds = agendaDataService.getAgendaIds(year, SortOrder.ASC);
+        List<AgendaId> agendaIds = agendaData.getAgendaIds(year, SortOrder.ASC);
         return ListViewResponse.of(
-            agendaIds.stream()
-                    .map(aid -> new AgendaSummaryView(agendaDataService.getAgenda(aid)))
-                    .collect(Collectors.toList()), agendaIds.size(), LimitOffset.ALL);
+                agendaIds.stream()
+                        .map(aid -> new AgendaSummaryView(agendaData.getAgenda(aid)))
+                        .collect(Collectors.toList()), agendaIds.size(), LimitOffset.ALL);
     }
 
     /**
@@ -64,7 +63,7 @@ public class AgendaGetCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}")
     public BaseResponse getAgenda(@PathVariable int year, @PathVariable int agendaNo) {
-        Agenda agenda = agendaDataService.getAgenda(new AgendaId(agendaNo, year));
+        Agenda agenda = agendaData.getAgenda(new AgendaId(agendaNo, year));
         return new ViewObjectResponse<>(new AgendaView(agenda));
     }
 
@@ -77,7 +76,7 @@ public class AgendaGetCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/{commName}")
     public BaseResponse getAgenda(@PathVariable int year, @PathVariable int agendaNo, @PathVariable String commName) {
-        Agenda agenda = agendaDataService.getAgenda(new AgendaId(agendaNo, year));
+        Agenda agenda = agendaData.getAgenda(new AgendaId(agendaNo, year));
         CommitteeId committeeId = new CommitteeId(Chamber.SENATE, commName);
         if (agenda.hasCommittee(committeeId)) {
             return new ViewObjectResponse<>(new AgendaCommFlatView(agenda, committeeId));

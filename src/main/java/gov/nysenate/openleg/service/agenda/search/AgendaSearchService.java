@@ -1,41 +1,28 @@
 package gov.nysenate.openleg.service.agenda.search;
 
-import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.agenda.Agenda;
-import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.agenda.event.AgendaUpdateEvent;
 import gov.nysenate.openleg.service.agenda.event.BulkAgendaUpdateEvent;
-import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 
 public interface AgendaSearchService
 {
     /**
-     *
-     * @param query String
-     * @param sort String
-     * @param limOff LimitOffset
-     * @return SearchResults<CommitteeAgendaId>
-     * @throws SearchException
+     * Performs a search across all committee agendas.
+     * @see #searchCommitteeAgendas(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, String sort, LimitOffset limOff) throws SearchException;
 
     /**
-     *
-     * @param year int
-     * @param sort String
-     * @param limOff LimitOffset
-     * @return SearchResults<CommitteeAgendaId>
-     * @throws SearchException
+     * Retrieve all committee agendas for a given year, with sorting.
+     * @see #searchCommitteeAgendas(String, int, String, gov.nysenate.openleg.dao.base.LimitOffset)
      */
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(int year, String sort, LimitOffset limOff) throws SearchException;
 
     /**
-     * Search for committee agendas using a free-form search.
+     * Search for committee agendas during a given year.
      *
      * @param query String - Lucene Query string
      * @param year int - Filter retrieved committee agendas by year

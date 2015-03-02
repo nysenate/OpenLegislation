@@ -6,12 +6,14 @@ public class MemberView extends SimpleMemberView
 {
     protected String fullName;
     protected Integer districtCode;
+    protected String imgName;
 
     public MemberView(Member member) {
         super(member);
         if (member != null) {
             this.fullName = member.getFullName();
             this.districtCode = member.getDistrictCode();
+            this.imgName = member.getImgName();
         }
     }
 
@@ -21,6 +23,10 @@ public class MemberView extends SimpleMemberView
 
     public Integer getDistrictCode() {
         return districtCode;
+    }
+
+    public String getImgName() {
+        return imgName;
     }
 
     @Override

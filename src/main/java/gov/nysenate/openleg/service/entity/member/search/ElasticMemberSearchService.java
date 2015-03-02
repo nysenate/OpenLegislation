@@ -14,7 +14,7 @@ import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
-import gov.nysenate.openleg.service.entity.member.MemberService;
+import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.entity.member.event.BulkMemberUpdateEvent;
 import gov.nysenate.openleg.service.entity.member.event.MemberUpdateEvent;
 import org.elasticsearch.ElasticsearchException;

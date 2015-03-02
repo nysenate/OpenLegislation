@@ -7,7 +7,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.service.entity.member.MemberService;
+import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

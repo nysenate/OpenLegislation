@@ -2,7 +2,7 @@ package gov.nysenate.openleg.dao.entity.committee;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.service.entity.member.MemberService;
+import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

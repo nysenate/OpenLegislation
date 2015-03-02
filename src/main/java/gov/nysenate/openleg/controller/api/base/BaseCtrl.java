@@ -188,15 +188,15 @@ public abstract class BaseCtrl
     }
 
     /**
-     * Parses the update type from the request parameters.
+     * Parses the update type from the request parameters. Defaults to the 'processed' date.
      *
      * @param request WebRequest
      * @return UpdateType
      */
     protected UpdateType getUpdateTypeFromParam(WebRequest request) {
         String type = request.getParameter("type");
-        return (type != null && type.equalsIgnoreCase("processed"))
-            ? UpdateType.PROCESSED_DATE : UpdateType.PUBLISHED_DATE;
+        return (type == null || type.equalsIgnoreCase("processed")) ? UpdateType.PROCESSED_DATE
+                                                                    : UpdateType.PUBLISHED_DATE;
     }
 
     protected NotificationType getNotificationTypeFromString(String text) {

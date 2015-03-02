@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.entity.member;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.dao.entity.member.data.SqlMemberDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;

@@ -29,6 +29,9 @@ public class Person
     /** The email address of the person. */
     private String email = "";
 
+    /** The name of the image for this person. */
+    private String imgName = "";
+
     /** --- Constructors --- */
 
     public Person () {}
@@ -71,6 +74,21 @@ public class Person
     @Override
     public int hashCode() {
         return Objects.hash(prefix, fullName, firstName, middleName, lastName, suffix, email);
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", prefix='" + prefix + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", suffix='" + suffix + '\'' +
+                ", email='" + email + '\'' +
+                ", imgName='" + imgName + '\'' +
+                '}';
     }
 
     /** --- Basic Getters/Setters --- */
@@ -137,5 +155,13 @@ public class Person
 
     public void setSuffix(String suffix) {
         this.suffix = suffix;
+    }
+
+    public String getImgName() {
+        return imgName;
+    }
+
+    public void setImgName(String imgName) {
+        this.imgName = imgName;
     }
 }

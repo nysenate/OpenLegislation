@@ -56,7 +56,7 @@ public class SqlFsSobiDaoTest extends BaseTests
 
     @Test
     public void testGetSobiFragment() throws Exception {
-
+        logger.info("{}", sobiDao.getSobiFragment("SOBI.D130110.T120242.TXT-0-BILL"));
     }
 
     @Test

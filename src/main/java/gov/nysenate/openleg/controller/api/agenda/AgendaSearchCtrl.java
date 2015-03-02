@@ -36,6 +36,7 @@ public class AgendaSearchCtrl extends BaseCtrl
 
     /**
      * Agenda Search API
+     * -----------------
      *
      * Search agendas across all year: (GET) /api/3/agendas/search
      * @see #searchAgendas(int, String, String, boolean, WebRequest)
@@ -53,6 +54,7 @@ public class AgendaSearchCtrl extends BaseCtrl
 
     /**
      * Agenda Search API
+     * -----------------
      *
      * Search agendas for a given year: (GET) /api/3/agendas/{year}/search
      * Request Parameters:              term - The lucene query string

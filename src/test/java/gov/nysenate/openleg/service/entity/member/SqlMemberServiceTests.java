@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.entity.member;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
 import org.slf4j.Logger;

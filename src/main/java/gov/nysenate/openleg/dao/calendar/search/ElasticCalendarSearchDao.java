@@ -115,7 +115,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      * @param bulkRequest
      */
     protected void addCalToBulkRequest(Calendar calendar, BulkRequestBuilder bulkRequest) {
-        logger.info("Preparing to index calendar {}", calendar);
+        logger.info("Preparing to index {}", calendar);
         CalendarView calendarView = calendarViewFactory.getCalendarView(calendar);
         bulkRequest.add(getCalendarIndexRequest(calendarView));
         if (calendarView.getFloorCalendar() != null) {

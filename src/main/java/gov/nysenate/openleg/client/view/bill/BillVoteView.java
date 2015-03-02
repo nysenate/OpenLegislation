@@ -4,11 +4,10 @@ import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
-import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
+import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
 
-import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class BillVoteView implements ViewObject
@@ -17,7 +16,7 @@ public class BillVoteView implements ViewObject
     protected String voteType;
     protected String voteDate;
     protected CommitteeIdView committee;
-    protected MapView<String, ListView<SimpleMemberView>> memberVotes;
+    protected MapView<String, ListView<MemberView>> memberVotes;
 
     public BillVoteView(BillVote billVote) {
         if(billVote != null) {
@@ -29,7 +28,7 @@ public class BillVoteView implements ViewObject
                 billVote.getMemberVotes().keySet().stream()
                     .collect(Collectors.toMap(BillVoteCode::name, voteCode ->
                         ListView.of(billVote.getMembersByVote(voteCode).stream()
-                            .map(m -> new SimpleMemberView(m))
+                            .map(m -> new MemberView(m))
                             .sorted((o1, o2) -> o1.getShortName().compareTo(o2.getShortName()))
                             .collect(Collectors.toList()))))
             );
@@ -52,7 +51,7 @@ public class BillVoteView implements ViewObject
         return committee;
     }
 
-    public MapView<String, ListView<SimpleMemberView>> getMemberVotes() {
+    public MapView<String, ListView<MemberView>> getMemberVotes() {
         return memberVotes;
     }
 

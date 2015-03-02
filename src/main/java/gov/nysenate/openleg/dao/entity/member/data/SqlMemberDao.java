@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.entity.member;
+package gov.nysenate.openleg.dao.entity.member.data;
 
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static gov.nysenate.openleg.dao.entity.member.SqlMemberQuery.*;
-
 @Repository("sqlMember")
 public class SqlMemberDao extends SqlBaseDao implements MemberDao
 {
@@ -33,7 +31,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     public Map<SessionYear, Member> getMemberById(int id) {
         MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
         List<Member> memberList =
-            jdbcNamed.query(SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
+            jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
         return getMemberSessionMap(memberList);
     }
 
@@ -43,14 +41,14 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("memberId", id);
         params.addValue("sessionYear", session.getYear());
-        return jdbcNamed.queryForObject(SELECT_MEMBER_BY_ID_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
+        return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_ID_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
     }
 
     @Override
     public Member getMemberBySessionId(int sessionMemberId) {
         ImmutableParams params = ImmutableParams.from(
                 new MapSqlParameterSource().addValue("sessionMemberId", sessionMemberId));
-        return jdbcNamed.queryForObject(SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL.getSql(schema()), params, new MemberRowMapper());
+        return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL.getSql(schema()), params, new MemberRowMapper());
     }
 
     /** {@inheritDoc} */
@@ -61,7 +59,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         params.addValue("chamber", chamber.name().toLowerCase());
         params.addValue("alternate", false);
         List<Member> members =
-            jdbcNamed.query(SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
+            jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SQL.getSql(schema()), params, new MemberRowMapper());
         return getMemberSessionMap(members);
     }
 
@@ -83,11 +81,11 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
         params.addValue("alternate", false);
         logger.trace("Fetching member {} ({}) from database...", lbdcShortName, sessionYear);
         try {
-            return jdbcNamed.queryForObject(SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
+            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema()), params, new MemberRowMapper());
         }
         catch (EmptyResultDataAccessException ex) {
             params.addValue("alternate", true);
-            return jdbcNamed.queryForObject(SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
+            return jdbcNamed.queryForObject(SqlMemberQuery.SELECT_MEMBER_BY_SHORTNAME_SESSION_SQL.getSql(schema(), LimitOffset.ONE),
                 params, new MemberRowMapper());
         }
     }
@@ -101,7 +99,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
                 .addValue("lbdcShortName", member.getLbdcShortName())
                 .addValue("sessionYear", member.getSessionYear().getYear()));
         int sessionMemberId = jdbcNamed.queryForObject(
-            INSERT_UNVERIFIED_SESSION_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
+            SqlMemberQuery.INSERT_UNVERIFIED_SESSION_MEMBER_SQL.getSql(schema()), params, new SingleColumnRowMapper<>());
         member.setSessionMemberId(sessionMemberId);
     }
 
@@ -109,7 +107,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     @Override
     public List<Member> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
         OrderBy orderBy = new OrderBy("last_name", sortOrder);
-        return jdbcNamed.query(SELECT_MEMBER_FRAGMENT.getSql(schema(), orderBy, limOff),
+        return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_FRAGMENT.getSql(schema(), orderBy, limOff),
                 new MapSqlParameterSource(), new MemberRowMapper());
     }
 
@@ -133,6 +131,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setMiddleName(rs.getString("middle_name"));
             member.setLastName(rs.getString("last_name"));
             member.setSuffix(rs.getString("suffix"));
+            member.setImgName(rs.getString("img_name"));
             return member;
         }
     }

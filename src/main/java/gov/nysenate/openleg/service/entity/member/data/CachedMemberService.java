@@ -1,8 +1,8 @@
-package gov.nysenate.openleg.service.entity.member;
+package gov.nysenate.openleg.service.entity.member.data;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.entity.member.MemberDao;
+import gov.nysenate.openleg.dao.entity.member.data.MemberDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;

@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.util;
 
 import org.apache.commons.io.filefilter.*;
+import org.springframework.core.io.UrlResource;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class FileIOUtils
@@ -84,6 +84,7 @@ public class FileIOUtils
     }
 
     /**
+     * Moves a file, deleting the destination file if it already exists.
      *
      * @param file File
      * @param directory File
@@ -96,5 +97,23 @@ public class FileIOUtils
             newFile.delete();
         }
         org.apache.commons.io.FileUtils.moveFileToDirectory(file, directory, true);
+    }
+
+    /**
+     * Writes out an InputStream to the destination file path specified.
+     *
+     * @param stuffToWrite InputStream
+     * @param destinationPath String
+     * @throws IOException
+     */
+    public static void writeToFile(InputStream stuffToWrite, String destinationPath) throws IOException {
+        OutputStream os = new FileOutputStream(destinationPath);
+        byte[] b = new byte[2048];
+        int length;
+        while ((length = stuffToWrite.read(b)) != -1) {
+            os.write(b, 0, length);
+        }
+        stuffToWrite.close();
+        os.close();
     }
 }

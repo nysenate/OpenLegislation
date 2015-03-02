@@ -46,7 +46,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
     private final static Map<BillUpdateField, BillUpdateTable> updateMappings = new HashMap<>();
     static {
-        updateMappings.put(ACT_CLAUSE, new BillUpdateTable(SqlTable.BILL, "act_clause"));
+        updateMappings.put(ACT_CLAUSE, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "act_clause"));
         updateMappings.put(ACTION, new BillUpdateTable(SqlTable.BILL_AMENDMENT_ACTION));
         updateMappings.put(ACTIVE_VERSION, new BillUpdateTable(SqlTable.BILL, "active_version"));
         updateMappings.put(APPROVAL, new BillUpdateTable(SqlTable.BILL_APPROVAL));

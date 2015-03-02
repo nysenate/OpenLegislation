@@ -66,8 +66,7 @@ public class LawTitleParser
         Matcher articleTitleMatcher = articleTitlePattern.matcher(bodyText);
         if (articleTitleMatcher.find()) {
             String title = articleTitleMatcher.group(3).replaceAll("\\\\n", "").replaceAll("\\s{2,}", " ");
-            // Chop the last character off
-            return title.substring(0, title.length() - 1).trim();
+            return title.trim();
         }
         return "";
     }
