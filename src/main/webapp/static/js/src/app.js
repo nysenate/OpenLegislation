@@ -2,7 +2,7 @@
 
 var openApp = angular.module('open',
     // External modules
-    ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar',
+    ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar', 'angularUtils.directives.dirPagination',
     // Internal modules
      'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.account',
      'open.notification.subscription']);
@@ -24,6 +24,9 @@ openApp.config(function($mdThemingProvider) {
 })
 .config(function($resourceProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
+})
+.config(function(paginationTemplateProvider) {
+    paginationTemplateProvider.setPath(ctxPath +'/static/bower_components/angular-utils-pagination/dirPagination.tpl.html');
 });
 
 /**
@@ -96,7 +99,7 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
     return {
         scope: {},    // Isolated scope
         template:
-        '<nav>' +
+        '<nav md-swipe-left="closeNav()">' +
         '  <div ng-repeat="section in menu.sections">' +
         '    <a ng-class="{active: isSectionSelected(section)}" class="menu-item menu-title md-menu-item"' +
         '       ng-click="selectSection(section)" md-ink-ripple="#bbb" tab-index="-1"> {{section.title}}' +
@@ -115,6 +118,10 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
         restrict: 'E',
         replace: true,
         controller : function($scope) {
+            $scope.closeNav = function() {
+                $mdSidenav('left').close();
+            };
+
             $scope.isSectionSelected = function(section) {
                 return section.active;
             };
