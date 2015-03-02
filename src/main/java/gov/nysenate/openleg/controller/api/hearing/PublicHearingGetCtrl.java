@@ -8,7 +8,6 @@ import gov.nysenate.openleg.client.view.hearing.PublicHearingPdfView;
 import gov.nysenate.openleg.client.view.hearing.PublicHearingView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.SearchException;
@@ -17,14 +16,11 @@ import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
 import gov.nysenate.openleg.service.hearing.search.PublicHearingSearchService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
@@ -51,7 +47,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
      *
      * Expected Output: List of PublicHearingView or PublicHearingIdView.
      */
-    @RequestMapping(value = "/")
+    @RequestMapping(value = "")
     public BaseResponse getAllHearings(@RequestParam(defaultValue = "date:desc") String sort,
                                        @RequestParam(defaultValue = "false") boolean full,
                                        WebRequest webRequest) throws SearchException {

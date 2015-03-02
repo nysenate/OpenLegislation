@@ -27,7 +27,9 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         /** --- Transcripts --- */
 
-        .when(ctxPath + '/transcripts', { templateUrl: ctxPath + '/partial/content/..' })
+        .when(ctxPath + '/transcripts', { templateUrl: ctxPath + '/partial/content/transcript-list'})
+        .when(ctxPath + '/transcripts/session/:filename', { templateUrl: ctxPath + '/partial/content/session-transcript-view'})
+        .when(ctxPath + '/transcripts/hearing/:filename', { templateUrl: ctxPath + '/partial/content/hearing-transcript-view'})
 
         /** --- Reports --- */
 

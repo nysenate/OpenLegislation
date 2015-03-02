@@ -18,7 +18,6 @@ import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptNotFoundEx;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import gov.nysenate.openleg.service.transcript.search.TranscriptSearchService;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,7 +57,7 @@ public class TranscriptGetCtrl extends BaseCtrl
      *
      * Expected Output: List of TranscriptView or TranscriptIdView.
      */
-    @RequestMapping(value = "/")
+    @RequestMapping(value = "")
     public BaseResponse getAllTranscripts(@RequestParam(defaultValue = "dateTime:desc") String sort,
                                           @RequestParam(defaultValue = "false") boolean summary,
                                           @RequestParam(defaultValue = "false") boolean full,
