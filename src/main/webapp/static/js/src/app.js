@@ -1,12 +1,11 @@
 /** --- Module configuration --- */
 
 var openApp = angular.module('open',
-<<<<<<< HEAD
 // External modules
     ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar', 'angularUtils.directives.dirPagination',
 // Internal modules
-        'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.transcript', 'open.account',
-        'open.notification.subscription']);
+    'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.transcript', 'open.account',
+    'open.notification.subscription']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
@@ -95,7 +94,6 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
             });
     };
 }]);
-
 
 /**
  * Main Menu Directive

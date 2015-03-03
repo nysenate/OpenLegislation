@@ -1,4 +1,3 @@
-
 var coreModule = angular.module('open.core', []);
 
 coreModule.filter('default', ['$filter', function($filter) {
