@@ -1,11 +1,11 @@
 /** --- Module configuration --- */
 
 var openApp = angular.module('open',
-    // External modules
+// External modules
     ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar', 'angularUtils.directives.dirPagination',
-    // Internal modules
-     'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.account',
-     'open.notification.subscription']);
+// Internal modules
+        'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.account',
+        'open.notification.subscription']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
@@ -54,7 +54,7 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
 
 openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.setHeaderVisible(false);
-    $scope.email = 'islam@nysenate.gov';
+    $scope.email = '';
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'From 2009 To Present. Updated in real-time.',
           icon: 'icon-newspaper', url: ctxPath + '/bills'},
@@ -75,12 +75,26 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
           icon: 'icon-users', url: ctxPath + '/members'}
     ];
 
-    $scope.signup = function() {
-        $http.post(ctxPath + '/register/signup', {name: $scope.name, email: $scope.email}).
-        success(function(data){console.log(data)});
-    };
+    $scope.signedup = false;
 
+    $scope.signup = function() {
+        $scope.errmsg = "";
+        $scope.processing = true;
+
+        $http.post(ctxPath + "/register/signup", {name:$scope.name, email:$scope.email}).success(function(data, status, headers, config) {            if (data.success == false) {
+                $scope.errmsg = data.message;
+
+            } else {
+                $scope.signedup = true;
+            }
+            $scope.processing = false;
+        })
+            .error(function(data, status, headers, config) {
+                $scope.processing = false;
+            });
+    };
 }]);
+
 
 /**
  * Main Menu Directive
@@ -99,7 +113,7 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
     return {
         scope: {},    // Isolated scope
         template:
-        '<nav md-swipe-left="closeNav()">' +
+        '<nav>' +
         '  <div ng-repeat="section in menu.sections">' +
         '    <a ng-class="{active: isSectionSelected(section)}" class="menu-item menu-title md-menu-item"' +
         '       ng-click="selectSection(section)" md-ink-ripple="#bbb" tab-index="-1"> {{section.title}}' +
@@ -118,10 +132,6 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
         restrict: 'E',
         replace: true,
         controller : function($scope) {
-            $scope.closeNav = function() {
-                $mdSidenav('left').close();
-            };
-
             $scope.isSectionSelected = function(section) {
                 return section.active;
             };
