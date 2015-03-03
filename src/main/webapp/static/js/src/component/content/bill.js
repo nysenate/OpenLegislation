@@ -18,6 +18,18 @@ billModule.factory('BillSearchApi', ['$resource', function($resource) {
     });
 }]);
 
+
+billModule.factory('BillAggUpdatesApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/bills/updates/:from/:to?order=:order&filter=:filter&limit=:limit&offset=:offset', {
+        from: '@from',
+        to: '@to',
+        order: '@order',
+        filter: '@filter',
+        limit: '@limit',
+        offset: '@offset'
+    });
+}]);
+
 billModule.factory('BillGetApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/:session/:printNo?detail=true', {
         session: '@session',
@@ -84,13 +96,6 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     };
     $scope.curr.pagination.itemsPerPage = 20;
 
-    /**
-     * Watch for changes to the current view.
-     */
-    $scope.$watch('curr.selectedView', function() {
-        $location.search('view', $scope.curr.selectedView);
-    });
-
     $scope.billSearch = {
         searched: false,
         term: $routeParams.search || '',
@@ -99,9 +104,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         error: false
     };
 
-    /**
-    * Initialize the bill search page.
-    */
+    /** Initialize the bill search page. */
     $scope.init = function() {
         $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
         $scope.simpleSearch(false);
@@ -161,12 +164,20 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         }
     };
 
-    $scope.paginate = function(newPage) {
-        $location.search('searchPage', newPage);
-        $scope.simpleSearch();
-    };
+    /** Watch for changes to the current view. */
+    $scope.$watch('curr.selectedView', function() {
+        $location.search('view', $scope.curr.selectedView);
+    });
 
-    /** Initialize */
+    /** Watch for changes to the current search page. */
+    $scope.$watch('curr.pagination.currPage', function(newPage, oldPage) {
+        if (newPage !== oldPage) {
+            $location.search('searchPage', newPage);
+            $scope.simpleSearch();
+            console.log("New page!");
+         }
+    });
+
     $scope.init();
 }]);
 
@@ -177,16 +188,27 @@ billModule.controller('BillExploreCtrl', ['$scope', 'BillListingApi', function($
 
     var i = 0;
     $scope.senatorList = Array.apply(0, Array(63)).map(function() { i +=1; return i; });
+}]);
 
-    $scope.recentBillsResponse = BillListingApi.get({sessionYear: 2011, sort: 'publishedDateTime:DESC', limit: 5, offset: 1},
-        function() {
-            $scope.recentBills = $scope.recentBillsResponse.result.items;
-    });
+/** --- Bill Updates Controller --- */
 
-    $scope.recentStatusBillsResponse = BillListingApi.get({sessionYear: 2011, sort: 'status.actionDate:DESC', limit: 5, offset: 1},
-    function() {
-        $scope.recentStatusBills = $scope.recentStatusBillsResponse.result.items;
-    });
+billModule.controller('BillUpdatesCtrl', ['$scope', 'BillAggUpdatesApi', 'PaginationModel',
+    function($scope, BillAggUpdatesApi, PaginationModel){
+
+    $scope.curr = {
+        pagination: angular.extend({}, PaginationModel)
+    };
+
+    $scope.billUpdates = {
+        response: {},
+        result: {}
+    };
+
+    $scope.init = function() {
+        $scope.billUpdates.response = BillAggUpdatesApi.get({}, function(){
+
+        })
+    }();
 }]);
 
 /** --- Bill View Controller --- */

@@ -30,7 +30,7 @@
             <md-card class="content-card">
               <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
                 <div flex> {{curr.pagination.totalItems}} bills were matched. Viewing page {{curr.pagination.currPage}} of {{curr.pagination.lastPage}}.  </div>
-                <div flex style="text-align: right;"><dir-pagination-controls boundary-links="true" on-page-change="paginate(newPageNumber)"></dir-pagination-controls></div>
+                <div flex style="text-align: right;"><dir-pagination-controls boundary-links="true"></dir-pagination-controls></div>
               </div>
               <md-content class="no-top-margin">
                 <md-list>
@@ -106,6 +106,13 @@
       <md-tab>
         <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
         <md-divider></md-divider>
+        <section ng-controller="BillUpdatesCtrl">
+          Date Range<br/> From <input type="date"/> To <input type="date" />
+          Type:
+          <md-select><md-option>Processed</md-option><md-option>Published</md-option></md-select>
+          <md-divider></md-divider>
+          {{billUpdates.response}}
+        </section>
       </md-tab>
       <md-tab>
         <md-tab-label>
