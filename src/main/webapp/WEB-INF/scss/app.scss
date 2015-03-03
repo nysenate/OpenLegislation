@@ -597,6 +597,17 @@ a.slogan-link {
   border-left:2px solid #ccc;
 }
 
+/** --- Transcript Page Styles --- */
+
+.transcript-node {
+  padding-left: 20px;
+  cursor: pointer;
+  border-left: 1px solid #ddd;
+  &:hover {
+    background: #efefef;
+  }
+}
+
 /** --- Styles for Report page --- */
 
 #daybreak-summary-table {

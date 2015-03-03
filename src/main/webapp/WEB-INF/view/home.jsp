@@ -9,6 +9,7 @@
   <script src="${ctxPath}/static/js/src/component/content/law.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/agenda.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/calendar.js"></script>
+  <script src="${ctxPath}/static/js/src/component/content/transcript.js"></script>
   <script src="${ctxPath}/static/js/src/component/report/daybreak.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/account.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/notification_sub.js"></script>
