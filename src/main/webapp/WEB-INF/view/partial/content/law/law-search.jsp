@@ -10,7 +10,7 @@
             <label>Filter law listing</label>
             <input ng-model-options="{debounce: 200}" ng-model="lawFilter"/>
           </md-input-container>
-        </md-card>kkj
+        </md-card>
         <md-card>
           <md-content class="text-medium">
             <md-list>
