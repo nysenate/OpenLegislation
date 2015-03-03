@@ -15,6 +15,7 @@ import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -247,6 +248,13 @@ public abstract class BaseCtrl
     public ErrorResponse handleUnauthenticatedException(AuthorizationException ex) {
         logger.debug("Authorization Exception! {}", ex.getMessage());
         return new ErrorResponse(ErrorCode.UNAUTHORIZED);
+    }
+
+    @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT, reason = "Client abort")
+    @ExceptionHandler(ClientAbortException.class)
+    public void handleClientAbortException(ClientAbortException ex) {
+        logger.debug("Client aborted");
+        // Do Nothing
     }
 
     private void pushExceptionNotification(Exception ex) {
