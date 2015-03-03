@@ -60,7 +60,11 @@ md-card {
     @extend .white-bg;
     padding: 0;
     margin: 10px;
-    .md-subheader {
+    .subheader {
+      font-size: 0.9rem;
+      padding: 10px;
+    }
+    .subheader, .md-subheader {
       background: #fafafa;
       border-bottom: 1px solid #f1f1f1;
       color: #555;
@@ -82,10 +86,6 @@ md-input-container {
   }
 }
 
-md-tooltip {
-  background: #333;
-}
-
 /** --- Hacks --- */
 
 .noselect {
@@ -103,6 +103,9 @@ md-tooltip {
   #content-header {
     min-height: 66px;
     font-size: 1.5rem;
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+    }
     background: #f5f5f5;
     h1 {
       color: rgb(96,125,139);
@@ -409,6 +412,33 @@ $left-nav-width: 305px;
   }
 }
 
+/** --- Pagination --- */
+
+ul.pagination {
+  margin: 0;
+  padding: 0;
+  li {
+    display: inline;
+    list-style-type: none;
+    border: 1px solid #ddd;
+    margin-right: 3px;
+    text-align: center;
+    &.active {
+      a {
+        font-weight: 600;
+        color: $blue2;
+      }
+    }
+    a {
+      font-size: 0.8rem;
+      text-decoration: none;
+      color: #999;
+      padding: 3px 7px;
+      vertical-align: initial;
+    }
+  }
+}
+
 /** --- Landing Page Styles --- */
 
 h1.slogan {
@@ -705,10 +735,6 @@ table.report-detail-table tbody tr td {
 
 .mismatch-diff-delete {
   color: red;
-}
-
-#pagination-button-group {
-  float: right;
 }
 
 .mismatch-dialog {

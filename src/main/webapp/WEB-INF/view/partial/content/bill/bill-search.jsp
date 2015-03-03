@@ -2,6 +2,7 @@
 
 <section ng-controller="BillCtrl">
   <section ng-controller="BillSearchCtrl">
+    {{moose}}
     <md-tabs md-selected="curr.selectedView" class="md-primary">
       <md-tab>
         <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
@@ -16,26 +17,30 @@
               </md-input-container>
             </md-content>
             <md-divider></md-divider>
-            <md-subheader ng-show="billSearch.searched && billSearch.term && curr.pagination.totalItems === 0"
+            <md-subheader ng-show="billSearch.searched && billSearch.term && !billSearch.error && curr.pagination.totalItems === 0"
                           class="margin-10 md-warn md-whiteframe-z0">
               <h4>No search results were found for '{{billSearch.term}}'</h4>
+            </md-subheader>
+            <md-subheader ng-show="billSearch.searched && billSearch.term && billSearch.error"
+                          class="margin-10 md-warn md-whiteframe-z0">
+              <h4>{{billSearch.error.message}}</h4>
             </md-subheader>
           </form>
           <section ng-show="billSearch.searched && curr.pagination.totalItems > 0">
             <md-card class="content-card">
-              <md-subheader>
-                {{curr.pagination.totalItems}} bills were matched. Viewing page {{curr.pagination.currPage}} of {{curr.pagination.lastPage}}.
-              </md-subheader>
+              <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
+                <div flex> {{curr.pagination.totalItems}} bills were matched. Viewing page {{curr.pagination.currPage}} of {{curr.pagination.lastPage}}.  </div>
+                <div flex style="text-align: right;"><dir-pagination-controls boundary-links="true" on-page-change="paginate(newPageNumber)"></dir-pagination-controls></div>
+              </div>
               <md-content class="no-top-margin">
                 <md-list>
-                  <a ng-repeat="r in billSearch.results" ng-init="bill = r.result; highlights = r.highlights;" class="result-link"
+                  <a class="result-link"
+                     dir-paginate="r in billSearch.results | itemsPerPage: 20"
+                     total-items="billSearch.response.total" current-page="curr.pagination.currPage"
+                     ng-init="bill = r.result; highlights = r.highlights;"
                      ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
                     <md-item>
                       <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
-                        <div>
-                          <%--<img src="http://lorempixel.com/50/50/people/{{$index}}"--%>
-                          <%--style="width:40px;"/>--%>
-                        </div>
                         <div style="width:180px;padding:16px;">
                           <h3 class="no-margin">
                             <span ng-if="!highlights.basePrintNo">{{bill.basePrintNo}}</span>
@@ -57,21 +62,16 @@
                   </a>
                 </md-list>
               </md-content>
-              <div ng-show="curr.pagination.needsPagination()" class="text-medium margin-10 padding-10"
-                   layout="row" layout-align="left center">
-                <md-button ng-click="paginate('first')" class="md-primary md-no-ink margin-right-10"><i class="icon-first"></i>&nbsp;First</md-button>
-                <md-button ng-disabled="!curr.pagination.hasPrevPage()"
-                           ng-click="paginate('prev')" class="md-primary md-no-ink margin-right-10"><i class="icon-arrow-left5"></i>&nbsp;Previous</md-button>
-                <md-button ng-click="paginate('next')"
-                           ng-disabled="!curr.pagination.hasNextPage()"
-                           class="md-primary md-no-ink margin-right-10">Next&nbsp;<i class="icon-arrow-right5"></i></md-button>
-                <md-button ng-click="paginate('last')" class="md-primary md-no-ink margin-right-10">Last&nbsp;<i class="icon-last"></i></md-button>
+              <div class="subheader" layout="row" layout-align="end center">
+                <div flex style="text-align: right;">
+                  <dir-pagination-controls boundary-links="true"></dir-pagination-controls>
+                </div>
               </div>
             </md-card>
           </section>
           <section>
             <md-card class="content-card">
-              <md-subheader><strong>Basic Search Terms</strong></md-subheader>
+              <md-subheader><strong>Bill / Resolution Search Tips</strong></md-subheader>
               <table class="docs-table">
                 <thead>
                 <tr><th>To search for</th><th>Use the field</th><th>Example</th></tr>

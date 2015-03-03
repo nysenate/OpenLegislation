@@ -1,11 +1,11 @@
 /** --- Module configuration --- */
 
 var openApp = angular.module('open',
-    // External modules
-    ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar',
-    // Internal modules
-     'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.account',
-     'open.notification.subscription']);
+// External modules
+    ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar', 'angularUtils.directives.dirPagination',
+// Internal modules
+        'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.account',
+        'open.notification.subscription']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
@@ -24,6 +24,9 @@ openApp.config(function($mdThemingProvider) {
 })
 .config(function($resourceProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
+})
+.config(function(paginationTemplateProvider) {
+    paginationTemplateProvider.setPath(ctxPath +'/static/bower_components/angular-utils-pagination/dirPagination.tpl.html');
 });
 
 /**
@@ -51,7 +54,7 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
 
 openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.setHeaderVisible(false);
-    $scope.email = 'islam@nysenate.gov';
+    $scope.email = '';
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'From 2009 To Present. Updated in real-time.',
           icon: 'icon-newspaper', url: ctxPath + '/bills'},
@@ -72,12 +75,26 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
           icon: 'icon-users', url: ctxPath + '/members'}
     ];
 
-    $scope.signup = function() {
-        $http.post(ctxPath + '/register/signup', {name: $scope.name, email: $scope.email}).
-        success(function(data){console.log(data)});
-    };
+    $scope.signedup = false;
 
+    $scope.signup = function() {
+        $scope.errmsg = "";
+        $scope.processing = true;
+
+        $http.post(ctxPath + "/register/signup", {name:$scope.name, email:$scope.email}).success(function(data, status, headers, config) {            if (data.success == false) {
+                $scope.errmsg = data.message;
+
+            } else {
+                $scope.signedup = true;
+            }
+            $scope.processing = false;
+        })
+            .error(function(data, status, headers, config) {
+                $scope.processing = false;
+            });
+    };
 }]);
+
 
 /**
  * Main Menu Directive

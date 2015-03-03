@@ -36,26 +36,36 @@
   </section>
   <section class="padding-20 white" style="background:rgb(116, 156, 77);">
     <h2>Integrate NYS legislative data with your App</h2>
-    <section ng-hide="">
-        <h3>Sign up for a free API Key</h3>
-        <hr/>
-        <form>
-            <div layout="row" layout-sm="column" layout-align="center center">
-                <md-input-container class="margin-right-20">
-                    <label style="color:white;">Name</label>
-                    <input type="text" name="name" ng-model="name" style="color:white;border-color:white;"/>
-                </md-input-container>
-                <md-input-container class="margin-right-20">
-                    <label style="color:white">Email</label>
-                    <input type="email" name="email" ng-model="email" style="color:white;border-color:white;"/>
-                </md-input-container>
-                <md-button ng-click="signup()" style="width: 160px;color:white;" class="bold md-accent md-raised md-hue-3">Signup</md-button>
-            </div>
-            <div layout="row">
-
-            </div>
-        </form>
-    </section>
+      <section ng-hide="signedup">
+          <h3>Sign up for a free API Key</h3>
+          <hr/>
+          <form method="post">
+              <div layout="row" layout-sm="column" layout-align="center center">
+                  <md-input-container class="margin-right-20">
+                      <label style="color:white;">Name</label>
+                      <input type="text" name="name" ng-model="name" style="color:white;border-color:white;"/>
+                  </md-input-container>
+                  <md-input-container class="margin-right-20">
+                      <label style="color:white">Email</label>
+                      <input type="email" name="email" ng-model="email" style="color:white;border-color:white;"/>
+                  </md-input-container>
+                  <md-button ng-click="signup()" style="width: 160px;color:white;" class="bold md-accent md-raised md-hue-3">Signup</md-button>
+              </div>
+              <div layout="row">
+                  <style> form div h3 {color: #ff0000;}  </style> <h3>{{errmsg}}</h3>
+              </div>
+          </form>
+      </section>
+      <section ng-show="signedup">
+          <h3>
+              Thanks for signing up, please check your email to receive your API key.
+          </h3>
+      </section>
+      <section ng-show="processing">
+          <h3>
+              Please wait while your account is created
+          </h3>
+      </section>
     <hr/>
     <h3>
       <a class="white" target="_blank" href="${ctxPath}/docs">View the JSON API Documentation</a>

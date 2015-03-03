@@ -10,11 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/register")
@@ -42,9 +42,9 @@ public class RegistrationPageCtrl extends BaseCtrl
 
     @ResponseBody
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public BaseResponse signup(WebRequest webRequest) {
-        String email =  webRequest.getParameter("email");
-        String name =  webRequest.getParameter("name");
+    public BaseResponse signup(WebRequest webRequest, @RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String name =  body.get("name");
         logger.info("Signing up {} with email {}", name, email);
         try {
             ApiUser apiUser = apiUserService.registerNewUser(email, name, "");
