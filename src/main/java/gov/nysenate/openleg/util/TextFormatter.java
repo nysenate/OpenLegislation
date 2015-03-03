@@ -12,7 +12,7 @@ public class TextFormatter {
     public static Pattern startPagePattern = Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
     public static Pattern endPagePattern = Pattern.compile("^\\s*(EXPLANATION--Matter|LBD[0-9-]+$)");
     public static Pattern textLinePattern = Pattern.compile("^ {1,5}[0-9]+ ");
-    private static Pattern billTextPageStartPatern = Pattern.compile("^(\\s+\\w.\\s\\d+(--\\w)?)?\\s{10,}\\d+(\\s{10,}(\\w.\\s\\d+(--\\w)?)?(\\d+-\\d+-\\d(--\\w)?)?)?$");
+    private static Pattern billTextPageStartPattern = Pattern.compile("^(\\s+[A-z]\\.\\s\\d+(--\\w)?)?\\s{10,}\\d+(\\s{10,}(\\w.\\s\\d+(--\\w)?)?(\\d+-\\d+-\\d(--\\w)?)?)?$");
 
     public static String append(Object... objects) {
         StringBuilder sb = new StringBuilder();
@@ -76,7 +76,7 @@ public class TextFormatter {
     }
 
     private static boolean isFirstLineOfNextPage(String line, int lineNum) {
-        Matcher billTextPageMatcher = billTextPageStartPatern.matcher(line);
+        Matcher billTextPageMatcher = billTextPageStartPattern.matcher(line);
         return lineNum > 10 && billTextPageMatcher.find(); // Ignore erroneous result in first 10 lines.
     }
 
