@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.law.event;
 
+import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.service.base.data.ContentUpdateEvent;
 
@@ -7,21 +8,21 @@ import java.time.LocalDateTime;
 
 public class LawUpdateEvent extends ContentUpdateEvent
 {
-    private LawTree lawTree;
+    private LawDocument lawDoc;
 
     /** --- Constructors --- */
 
-    public LawUpdateEvent(LawTree lawTree) {
-        this(lawTree, LocalDateTime.now());
+    public LawUpdateEvent(LawDocument lawDoc) {
+        this(lawDoc, LocalDateTime.now());
     }
 
-    public LawUpdateEvent(LawTree lawTree, LocalDateTime updateDateTime) {
+    public LawUpdateEvent(LawDocument lawDoc, LocalDateTime updateDateTime) {
         super(updateDateTime);
     }
 
     /** --- Basic Getters --- */
 
-    public LawTree getLawTree() {
-        return lawTree;
+    public LawDocument getLawDoc() {
+        return lawDoc;
     }
 }

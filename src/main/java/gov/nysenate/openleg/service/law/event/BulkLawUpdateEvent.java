@@ -1,29 +1,31 @@
 package gov.nysenate.openleg.service.law.event;
 
+import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.service.base.data.ContentUpdateEvent;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class BulkLawUpdateEvent extends ContentUpdateEvent
 {
-    private Collection<LawTree> lawTrees;
+    private Collection<LawDocument> lawDocuments = new ArrayList<>();
 
     /** --- Constructors --- */
 
-    public BulkLawUpdateEvent(Collection<LawTree> lawTrees) {
-        this(lawTrees, LocalDateTime.now());
+    public BulkLawUpdateEvent(Collection<LawDocument> lawDocument) {
+        this(lawDocument, LocalDateTime.now());
     }
 
-    public BulkLawUpdateEvent(Collection<LawTree> lawTrees, LocalDateTime updateDateTime) {
+    public BulkLawUpdateEvent(Collection<LawDocument> lawDocuments, LocalDateTime updateDateTime) {
         super(updateDateTime);
-        this.lawTrees = lawTrees;
+        this.lawDocuments = lawDocuments;
     }
 
     /** --- Basic Getters --- */
 
-    public Collection<LawTree> getLawTrees() {
-        return lawTrees;
+    public Collection<LawDocument> getLawDocuments() {
+        return lawDocuments;
     }
 }

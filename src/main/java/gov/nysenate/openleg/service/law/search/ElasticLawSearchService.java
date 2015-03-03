@@ -66,14 +66,18 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Subscribe
     @Override
     public void handleLawUpdate(LawUpdateEvent lawUpdateEvent) {
-
+        if (lawUpdateEvent != null && lawUpdateEvent.getLawDoc() != null) {
+            updateIndex(lawUpdateEvent.getLawDoc());
+        }
     }
 
     /** {@inheritDoc} */
     @Subscribe
     @Override
     public void handleBulkLawUpdate(BulkLawUpdateEvent bulkLawUpdateEvent) {
-
+        if (bulkLawUpdateEvent != null && !bulkLawUpdateEvent.getLawDocuments().isEmpty()) {
+            updateIndex(bulkLawUpdateEvent.getLawDocuments());
+        }
     }
 
     /** --- IndexedSearchService implementation --- */

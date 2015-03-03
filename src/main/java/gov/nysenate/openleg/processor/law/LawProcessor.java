@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
+import gov.nysenate.openleg.service.law.event.BulkLawUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,11 +149,12 @@ public class LawProcessor extends AbstractDataProcessor
      */
     private void persist(LawFile lawFile, Map<String, LawBuilder> lawBuilders) {
         // Persist the results
-        lawBuilders.forEach((k,v) ->{
-            logger.info("Persisting law documents for {}", k);
-            v.getProcessedLawDocuments().forEach(d -> lawDataService.saveLawDocument(lawFile, d));
-            logger.info("Persisting law tree for {}", k);
-            lawDataService.saveLawTree(lawFile, v.getProcessedLawTree());
+        lawBuilders.forEach((lawId, lawBuilder) ->{
+            logger.info("Persisting law documents for {}", lawId);
+            eventBus.post(new BulkLawUpdateEvent(lawBuilder.getProcessedLawDocuments()));
+            lawBuilder.getProcessedLawDocuments().forEach(d -> lawDataService.saveLawDocument(lawFile, d));
+            logger.info("Persisting law tree for {}", lawId);
+            lawDataService.saveLawTree(lawFile, lawBuilder.getProcessedLawTree());
         });
     }
 
