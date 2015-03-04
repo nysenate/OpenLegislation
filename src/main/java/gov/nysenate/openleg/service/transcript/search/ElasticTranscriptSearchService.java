@@ -2,11 +2,11 @@ package gov.nysenate.openleg.service.transcript.search;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.search.ElasticTranscriptSearchDao;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -17,7 +17,10 @@ import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import gov.nysenate.openleg.service.transcript.event.BulkTranscriptUpdateEvent;
 import gov.nysenate.openleg.service.transcript.event.TranscriptUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeFilterBuilder;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,8 +80,8 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
         return search(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), rangeFilter), null, sort, limOff);
     }
 
-    private SearchResults<TranscriptId> search(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
-        throws SearchException {
+    private SearchResults<TranscriptId> search(QueryBuilder query, FilterBuilder postFilter,
+                                               String sort, LimitOffset limOff) throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;
         try {
             return transcriptSearchDao.searchTranscripts(query, postFilter, sort, limOff);

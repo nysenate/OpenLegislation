@@ -613,12 +613,15 @@ a.slogan-link {
 
 /** --- Transcript Page Styles --- */
 
-.transcript-node {
-  padding-left: 20px;
+.transcript-result-link {
   cursor: pointer;
-  border-left: 1px solid #ddd;
-  &:hover {
-    background: #efefef;
+}
+
+.transcript-result-left {
+  width:180px;
+  padding:16px;
+  .h3 {
+    margin:0;
   }
 }
 

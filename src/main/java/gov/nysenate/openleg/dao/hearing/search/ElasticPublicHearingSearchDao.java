@@ -15,6 +15,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -31,12 +32,17 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
 
     protected static final String publicHearingIndexName = SearchIndex.HEARING.getIndexName();
 
+    protected static final List<HighlightBuilder.Field> highlightedFields =
+            Arrays.asList(new HighlightBuilder.Field("text").numOfFragments(2),
+                          new HighlightBuilder.Field("committees").numOfFragments(0),
+                          new HighlightBuilder.Field("title").numOfFragments(0));
+
     /** {@inheritDoc} */
     @Override
-    public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(publicHearingIndexName, query, filter, sort, limOff);
+    public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(publicHearingIndexName, query, postFilter, highlightedFields, null, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Public Hearing search result with query {} and filter {} took {} ms", query, filter, response.getTookInMillis());
+        logger.debug("Public Hearing search result with query {} and filter {} took {} ms", query, postFilter, response.getTookInMillis());
         return getSearchResults(response, limOff, this::getPublicHearingIdFromHit);
     }
 

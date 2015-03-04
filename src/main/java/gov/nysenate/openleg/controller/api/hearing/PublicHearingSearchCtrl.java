@@ -12,8 +12,6 @@ import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
 import gov.nysenate.openleg.service.hearing.search.PublicHearingSearchService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -75,7 +73,7 @@ public class PublicHearingSearchCtrl extends BaseCtrl
         return ListViewResponse.of(results.getResults().stream()
                 .map(r -> new SearchResultView((full)
                         ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
-                        : new PublicHearingIdView(r.getResult()), r.getRank()))
+                        : new PublicHearingIdView(r.getResult()), r.getRank(), r.getHighlights()))
                 .collect(toList()), results.getTotalResults(), limOff);
     }
 }

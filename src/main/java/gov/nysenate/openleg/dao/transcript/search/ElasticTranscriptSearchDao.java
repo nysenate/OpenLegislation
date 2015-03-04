@@ -15,6 +15,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -31,12 +32,15 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
 
     protected static final String transcriptIndexName = SearchIndex.TRANSCRIPT.getIndexName();
 
+    protected static final List<HighlightBuilder.Field> highlightedFields =
+            Arrays.asList(new HighlightBuilder.Field("text").numOfFragments(3));
+
     /** {@inheritDoc} */
     @Override
-    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(transcriptIndexName, query, filter, sort, limOff);
+    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(transcriptIndexName, query, postFilter, highlightedFields, null, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Transcript search result with query {} and filter {} took {} ms", query, filter, response.getTookInMillis());
+        logger.debug("Transcript search result with query {} and filter {} took {} ms", query, postFilter, response.getTookInMillis());
         return getSearchResults(response, limOff, this::getTranscriptIdFromHit);
     }
 
