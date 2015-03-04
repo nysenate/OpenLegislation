@@ -16,7 +16,7 @@
 </open-layout:head>
 
 <body ng-app="open">
-  <section layout="column" ng-controller="AppCtrl" layout-fill>
+  <section id="app-wrapper" layout="column" ng-controller="AppCtrl" layout-fill>
     <section layout="row">
 
       <%-- Left Nav --%>

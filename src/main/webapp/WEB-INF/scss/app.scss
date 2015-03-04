@@ -10,7 +10,6 @@
 html, body {
   height: 100%;
   font-family: 'Open Sans', sans-serif;
-  background: #f5f5f5;
 }
 
 table {
@@ -99,10 +98,18 @@ md-input-container {
 
 /** --- Layout --- */
 
+#app-wrapper {
+  background: #f5f5f5;
+}
+
 #content-wrapper {
+  max-width: 996px;
+  margin: auto;
+
   #content-header {
     min-height: 66px;
     font-size: 1.5rem;
+    box-shadow: none;
     @media (max-width: 768px) {
       font-size: 1.1rem;
     }
@@ -112,8 +119,11 @@ md-input-container {
     }
   }
   #content {
-    #content-pad {
-      padding: 10px;
+    min-height: 100vh;
+    @media (min-width: 1340px) {
+      .content-card {
+        margin: 10px 0;
+      }
     }
   }
 }
@@ -277,7 +287,7 @@ a.result-link {
   width: 100%;
   text-align: left;
   padding: 20px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   td {
     padding: 5px 0;
     border-bottom: 1px solid #ddd;
