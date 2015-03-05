@@ -93,6 +93,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     @Subscribe
     @Override
     public synchronized void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent) {
+
         updateIndex(calendarUpdateEvent.getCalendar());
     }
 
@@ -100,6 +101,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     @Override
     public void updateIndex(Calendar content) {
         if (env.isElasticIndexing()) {
+            logger.info("Indexing calendar {} into elastic search", content.getId());
             calendarSearchDao.updateCalendarIndex(content);
         }
     }
@@ -108,6 +110,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     @Override
     public void updateIndex(Collection<Calendar> content) {
         if (env.isElasticIndexing()) {
+            logger.info("Indexing {} calendars into elastic search", content.size());
             calendarSearchDao.updateCalendarIndexBulk(content);
         }
     }
