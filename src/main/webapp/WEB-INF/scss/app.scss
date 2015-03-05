@@ -254,6 +254,10 @@ a.white-2-blue {
   background: #fafafa;
 }
 
+.no-background {
+  background: transparent !important;
+}
+
 a.result-link {
   text-decoration: none;
   color: #555;

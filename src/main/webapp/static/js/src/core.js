@@ -110,6 +110,61 @@ coreModule.factory('PaginationModel', function() {
 });
 
 /**
+ * Updates List
+ *
+ * Displays a list of updates.
+ *
+ * Usage
+ * -----
+ * <update-list updates="updatesArray" [no-id] [no-details]></update-list>
+ *
+ * Attributes
+ * ----------
+ * updates - An array of update json objects
+ * displayId - (boolean) (default true) Display the affected content id for each update if true
+ * displayDetails - (boolean) (default true) Display a table of update details for each update if true
+ */
+coreModule.directive('updateList', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            updates: '='
+        },
+        templateUrl: ctxPath + '/partial/core/update-list',
+        link: function($scope, $elem, $attrs) {
+            $scope.displayId = !('noId' in $attrs);
+            $scope.displayDetails = !('noDetails' in $attrs);
+            console.log($scope.displayId, $scope.displayDetails, $attrs);
+        }
+    };
+});
+
+/**
+ * Update Id
+ *
+ * Generates a content id string for an update based on its scope
+ */
+coreModule.filter('updateId', function() {
+    return function (update) {
+        var scope = update['scope'];
+        var id = update['id'];
+        var idString = "";
+        // Calendars
+        if (scope.lastIndexOf("Calendar", 0) === 0) {
+            idString = id['year'] + "#" + id['calendarNumber'];
+            if (scope == "Calendar Supplemental") {
+                var supVersion = update['fields']['supVersion'];
+                idString += "-" + (supVersion == "" ? "floor" : supVersion)
+            } else if (scope == "Calendar Active List") {
+                idString += "-" + update['fields']['sequenceNo'];
+            }
+        }
+
+        return idString;
+    };
+});
+
+/**
  * The toggle-panel directive wraps your content in expandable/collapsible container.
  *
  * Ex Usage

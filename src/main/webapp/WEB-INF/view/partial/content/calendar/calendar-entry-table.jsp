@@ -15,8 +15,7 @@
             </div>
             <div style="width: 40px" hide-sm>
                 <a ng-bind="calEntry.billCalNo" class="cal-entry-cal-no"
-                        ng-href="{{getCalBillNumUrl(calEntry.billCalNo)}}"
-                        ng-click="onCalBillNumClick(calEntry.billCalNo)"></a>
+                        ng-href="{{getCalBillNumUrl(calEntry.billCalNo)}}"></a>
             </div>
             <div class="md-tile-content">
                 <a ng-bind="calEntry.basePrintNo" class="text-medium" hide-gt-sm

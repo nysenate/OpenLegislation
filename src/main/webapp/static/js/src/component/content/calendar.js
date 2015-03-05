@@ -23,9 +23,20 @@ calendarModule.factory('CalendarSearchApi', ['$resource', function ($resource) {
     return $resource(apiPath + '/calendars/search', {});
 }]);
 
+calendarModule.factory('CalendarUpdatesApi', ['$resource', function ($resource) {
+    return $resource(apiPath + '/calendars/:year/:calNo/updates', {
+        year: '@year',
+        calNo: '@calNo'
+    });
+}]);
+
+calendarModule.factory('CalendarAllUpdatesApi', ['$resource', function ($resource) {
+    return $resource(apiPath + '/calendars/updates');
+}]);
+
 /** --- Calendar Page Controller --- */
 
-calendarModule.controller('CalendarPageCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$q', '$filter', '$timeout',
+calendarModule.controller('CalendarViewCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$q', '$filter', '$timeout',
                                                 'CalendarViewApi', 'CurrentCalendarIdApi',
 function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, CalendarViewApi, CurrentCalendarIdApi) {
 
@@ -35,47 +46,22 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     $scope.ctxPath = ctxPath;
 
-    var pageNames = ['search', 'calendar', 'active-list', 'floor', 'updates'];
+    $scope.activeIndex = 2;
 
-    // If set to true, the active tab will be changed to active list or floor when the next calendar json response is loaded
-    $scope.changeTabOnLoad = false;
+    var pageNames = ['search', 'active-list', 'floor', 'updates'];
 
     $scope.init = function() {
-        if ($routeParams.hasOwnProperty('year') && $routeParams.hasOwnProperty('calNo')) {
-            $scope.getCalendarViewById($routeParams.year, $routeParams.calNo);
-        } else {
-            console.log('loading current calendar');
-            loadCurrentCalendar(moment().year());
+        $scope.getCalendarViewById($routeParams.year, $routeParams.calNo);
+        if ($routeParams.hasOwnProperty('view') && ['active-list', 'search'].indexOf($routeParams['view']) < 0) {
+            $scope.tabParam = $routeParams['view'];
         }
-        if ($routeParams.hasOwnProperty('view')) {
-            $scope.changeTab($routeParams['view']);
-        } else {
-            $scope.changeTabOnLoad = true;
-        }
-
-        $scope.$watch('activeIndex', function() { $location.search('view', pageNames[$scope.activeIndex]); });
     };
 
     /** --- Tab / Header Management --- */
 
     $scope.changeTab = function(pageName) {
+        console.log('changing view to', pageName);
         $scope.activeIndex = pageNames.indexOf(pageName);
-    };
-
-    $scope.setCalendarHeaderText = function() {
-        $timeout(function() {   // Set text on next digest to account for delay in active index change
-            var pageName = pageNames[$scope.activeIndex];
-            var newHeader = "8)";
-
-            if (pageName == "search") {
-                newHeader = "Search for Calendars";
-            } else if (pageName == "calendar") {
-                newHeader = "Browse Calendars";
-            } else if (["active-list", "floor", "updates"].indexOf(pageName) >= 0) {
-                newHeader = $scope.calendarHeaderText;
-            }
-            $scope.setHeaderText(newHeader);
-        }, 0 );
     };
 
     /** --- Get Calendar Data --- */
@@ -84,23 +70,32 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
     function processNewCalendarView() {
         console.log('new calendar view!');
 
+        $scope.calendarNum = $scope.calendarView['calendarNumber'];
+        $scope.year = $scope.calendarView['year'];
+
         // Set the header text
-        $scope.calendarHeaderText = "Senate Calendar #" + $scope.calendarView['calendarNumber'] + " " +
-                $filter('moment')($scope.calendarView.calDate, 'll');
-        $scope.setCalendarHeaderText();
+        $scope.setHeaderText("Senate Calendar #" + $scope.calendarView['calendarNumber'] + " " +
+                $filter('moment')($scope.calendarView.calDate, 'll'));
 
         // Alert child scopes of new calendar view
-        $scope.$broadcast('newCalendarEvent');
+        $rootScope.$emit('newCalendarEvent');
 
-        // Switch to either the active list or floor tab depending on the received data
-        if ($scope.changeTabOnLoad) {
-            if ($scope.calendarView.activeLists.size > 0) {
-                $scope.changeTab('active-list');
-            } else {
-                $scope.changeTab('floor');
-            }
-            $scope.changeTabOnLoad = false;
+        // Switch to the tab specified for the incoming route or by default the active list or floor tab
+        if ($scope.tabParam) {
+            $scope.changeTab($scope.tabParam)
+        } else if ($scope.calendarView.activeLists.size > 0) {
+            $scope.changeTab('active-list');
+        } else {
+            $scope.changeTab('floor');
         }
+
+        $scope.$watch('activeIndex', function() {
+            if ($scope.activeIndex >=0) {
+                $location.search('view', pageNames[$scope.activeIndex]);
+            } else {
+                $location.search('view', null);
+            }
+        });
     }
 
     // Loads a calendar according to the specified year and calendar number
@@ -128,26 +123,32 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
             });
     }
 
-    // Calendar Bill Number Search
-
-    function getCalBillNumSearchTerm(calBillNum) {
-        return "\\*.billCalNo:" + calBillNum + " AND year:" + $scope.calendarView.year;
-    }
-
-    $scope.getCalBillNumUrl = function(calBillNum) {
-        var searchTerm = getCalBillNumSearchTerm(calBillNum);
-        return $location.path() + "?view=search&search=" + searchTerm;
+    // Back to search
+    $scope.backToSearch = function() {
+        var currentParams = $location.search();
+        var url = ctxPath + "/calendars?view=";
+        if (currentParams.hasOwnProperty('sview')) {
+            url += currentParams['sview'];
+        } else {
+            url += 'search';
+        }
+        if (currentParams.hasOwnProperty('search')) {
+            url += '&search=' + currentParams['search'];
+        }
+        $location.url(url);
     };
 
-    $scope.onCalBillNumClick = function (calBillNum) {
-        $scope.newSearchTerm = getCalBillNumSearchTerm(calBillNum);
-        $scope.changeTab('search');
+    // Calendar Bill Number Search
+
+    $scope.getCalBillNumUrl = function(calBillNum) {
+        var searchTerm = "\\*.billCalNo:" + calBillNum + " AND year:" + $scope.calendarView.year;
+        return ctxPath + "/calendars?view=search&search=" + searchTerm;
     };
 
     $scope.init();
 }]);
 
-calendarModule.controller('CalendarActiveListCtrl', ['$scope', function($scope) {
+calendarModule.controller('CalendarActiveListCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
 
     $scope.activeLists = [];
 
@@ -184,12 +185,12 @@ calendarModule.controller('CalendarActiveListCtrl', ['$scope', function($scope) 
         });
     }
 
-    $scope.$watch('calendarView', populateActiveLists, true);
+    $rootScope.$on('newCalendarEvent', populateActiveLists);
 
     $scope.$watch('activeListFilter', filterActiveListEntries, true);
 }]);
 
-calendarModule.controller('FloorCalendarCtrl', ['$scope', function($scope) {
+calendarModule.controller('FloorCalendarCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
 
     $scope.floorCals = {};
 
@@ -259,9 +260,84 @@ calendarModule.controller('FloorCalendarCtrl', ['$scope', function($scope) {
 
     $scope.sectionSortValue = sectionOrder.indexOf;
 
-    $scope.$watch('calendarView', populateFloorCals, true);
+    $rootScope.$on('newCalendarEvent', populateFloorCals);
 
     $scope.$watch('floorCalFilter', filterFloorCalendarEntries, true);
+}]);
+
+calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'CalendarUpdatesApi',
+    function($scope, $rootScope, UpdatesApi) {
+        $scope.updates = [];
+        $scope.updatesOrder = "ASC";
+        var calendarGot = false;
+
+        $scope.getUpdates = function() {
+            var response = UpdatesApi.get({year: $scope.year, calNo: $scope.calendarNum, detail: true, order: $scope.updatesOrder},
+                function () {
+                    if (response.success) {
+                        $scope.updates = response['result']['items'];
+                    }
+                });
+        };
+
+        $rootScope.$on('newCalendarEvent', function() {
+            $scope.getUpdates();
+            calendarGot = true;
+        });
+
+        $scope.$watch('updatesOrder', function () {
+            if (calendarGot) {
+                $scope.getUpdates();
+            }
+        });
+    }]);
+
+/** --- Calendar Search Page --- */
+
+calendarModule.controller('CalendarSearchPageCtrl', ['$scope', '$routeParams', '$location', '$timeout',
+function ($scope, $routeParams, $location, $timeout) {
+
+    var pageNames = ['search', 'browse', 'updates'];
+
+    function init() {
+        if ($routeParams.hasOwnProperty('view')) {
+            $scope.changeTab($routeParams['view']);
+        }
+
+        $scope.$watch('activeIndex', function(newIndex, oldIndex) {
+            if (pageNames[newIndex]) {
+                $location.search('view', pageNames[newIndex]);
+            } else {
+                $location.search('view', null);
+            }
+        })
+    }
+
+    $scope.changeTab = function (pageName) {
+        console.log('changing view to', pageName);
+        $scope.activeIndex = pageNames.indexOf(pageName);
+    };
+
+    $scope.setCalendarHeaderText = function() {
+        $timeout(function() {   // Set text on next digest to account for delay in active index change
+            var pageName = pageNames[$scope.activeIndex];
+            var newHeader = "8)";
+
+            if (pageName == "search") {
+                newHeader = "Search for Calendars";
+            } else if (pageName == "browse") {
+                newHeader = "Browse Calendars";
+            } else if (pageName == "updates") {
+                newHeader = "View Calendar Updates";
+            }
+            $scope.setHeaderText(newHeader);
+        }, 0 );
+    };
+
+    init();
+    $scope.doodoo = 'googoo';
+    $scope.$watch('doodoo', $scope.oooooo, true);
+    $scope.oooooo = function() {console.log(moment($scope.doodoo));};
 }]);
 
 calendarModule.controller('CalendarSearchCtrl', ['$scope', '$routeParams', '$location', 'CalendarSearchApi', 'PaginationModel',
@@ -276,20 +352,10 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
 
     $scope.init = function() {
         if ($routeParams.hasOwnProperty('search')) {
-            newSearchTerm($routeParams['search']);
+            $scope.searchTerm = $routeParams['search'];
+            $scope.termSearch(true);
         }
     };
-
-    $scope.$watch('newSearchTerm', function(newTerm, oldTerm) {
-        if (newTerm && newTerm.length > 0) {
-            newSearchTerm(newTerm);
-        }
-    });
-
-    function newSearchTerm(newTerm) {
-        $scope.searchTerm = newTerm;
-        $scope.termSearch(true);
-    }
 
     // Perform a simple serch based on the current search term
     $scope.termSearch = function(resetPagination) {
@@ -350,133 +416,136 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
         return count;
     };
 
-    $scope.init();
+    $scope.getCalendarUrl = function(year, calNum) {
+        return ctxPath + "/calendars/" + year + "/" + calNum + "?search=" + $scope.searchTerm +
+            ($scope.pagination.currPage > 1 ? "&searchPage=" + $scope.pagination.currPage : "");
+    };
 
+    $scope.init();
 }]);
 
 calendarModule.controller('CalendarPickCtrl', ['$scope', '$q', 'CalendarIdsApi',
-    function($scope, $q, CalendarIdsApi) {
-        $scope.eventSources = [];
-        $scope.calendarConfig = null;
-        $scope.calendarIds = {};
+function($scope, $q, CalendarIdsApi) {
 
-        $scope.init = function () {
-            $scope.eventSources.push($scope.getEventSourcesObject());
-            $scope.calendarConfig = $scope.getCalendarConfig();
-            //angular.element('#calendar-date-picker').fullCalendar('render');
-        };
+    $scope.eventSources = [];
+    $scope.calendarConfig = null;
+    $scope.calendarIds = {};
 
-        $scope.setCalendarDate = function(date) {
-            // TODO make the calendar picker start on the date of the selected calendar
-            //console.log('setting calendar date');
-            //$scope.calendarYearDisplay = date.year();
-            //$scope.calendarMonthDisplay = date.month();
-            //console.log(date, $scope.calendarYearDisplay, $scope.calendarMonthDisplay);
-            ////angular.element('#calendar-date-picker').fullCalendar('gotoDate', date);
-        };
+    $scope.init = function () {
+        $scope.eventSources.push($scope.getEventSourcesObject());
+        $scope.calendarConfig = $scope.getCalendarConfig();
+        //angular.element('#calendar-date-picker').fullCalendar('render');
+    };
 
-        $scope.getCalendarIds = function(year) {
-            var deferred = $q.defer();
-            var promise = CalendarIdsApi.get({year: year, limit: "all"},
-                function() {
-                    if (promise.success) {
-                        $scope.calendarIds[year] = promise.result.items;
-                        deferred.resolve($scope.calendarIds);
-                    } else {
-                        deferred.reject("unsuccessful calendar id request");
-                    }
-                });
-            return deferred.promise;
-        };
+    $scope.setCalendarDate = function(date) {
+        // TODO make the calendar picker start on the date of the selected calendar
+        //console.log('setting calendar date');
+        //$scope.calendarYearDisplay = date.year();
+        //$scope.calendarMonthDisplay = date.month();
+        //console.log(date, $scope.calendarYearDisplay, $scope.calendarMonthDisplay);
+        ////angular.element('#calendar-date-picker').fullCalendar('gotoDate', date);
+    };
 
-        $scope.getEvent = function(calendarId) {
-            return {
-                title: "#" + calendarId.calendarNumber.toString(),
-                start: calendarId.calDate,
-                calNo: calendarId.calendarNumber
-            };
-        };
-
-        $scope.getCalendarEvents = function(start, end, callback) {
-            var events = [];
-            var calendarIdPromises = [];
-            for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
-                if (!$scope.calendarIds.hasOwnProperty(year)) {
-                    calendarIdPromises.push($scope.getCalendarIds(year));
+    $scope.getCalendarIds = function(year) {
+        var deferred = $q.defer();
+        var promise = CalendarIdsApi.get({year: year, limit: "all"},
+            function() {
+                if (promise.success) {
+                    $scope.calendarIds[year] = promise.result.items;
+                    deferred.resolve($scope.calendarIds);
+                } else {
+                    deferred.reject("unsuccessful calendar id request");
                 }
-            }
-            $q.all(calendarIdPromises).then(function() {
-                for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
-                    $scope.calendarIds[year]
-                        .map($scope.getEvent)
-                        .forEach(function (event) {
-                            events.push(event)
-                        });
-                }
-                callback(events);
             });
-        };
+        return deferred.promise;
+    };
 
-        $scope.getEventSourcesObject = function() {
-            return {
-                events: $scope.getCalendarEvents,
-                allDay: true,
-                className: 'calendar-event',
-                editable: false
+    $scope.getEvent = function(calendarId) {
+        return {
+            title: "#" + calendarId.calendarNumber.toString(),
+            start: calendarId.calDate,
+            calNo: calendarId.calendarNumber
+        };
+    };
+
+    $scope.getCalendarEvents = function(start, end, callback) {
+        var events = [];
+        var calendarIdPromises = [];
+        for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
+            if (!$scope.calendarIds.hasOwnProperty(year)) {
+                calendarIdPromises.push($scope.getCalendarIds(year));
             }
-        };
-
-        $scope.onEventClick = function(event, jsEvent, view) {
-            $scope.getCalendarViewById(event.start.getFullYear(), event.calNo);
-        };
-
-        $scope.viewDisplayHandler = function(view){
-            var viewStart = view.start;
-            $scope.calendarYearDisplay = viewStart.getFullYear();
-            $scope.calendarMonthDisplay = viewStart.getMonth();
-        };
-
-        $scope.$watch('isCalendarOpen', function(newValue, oldValue) {
-            if (newValue) {
-                angular.element('#calendar-date-picker').fullCalendar('render');
+        }
+        $q.all(calendarIdPromises).then(function() {
+            for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
+                $scope.calendarIds[year]
+                    .map($scope.getEvent)
+                    .forEach(function (event) {
+                        events.push(event)
+                    });
             }
+            callback(events);
         });
+    };
 
-        $scope.getCalendarConfig = function() {
-            return {
-                editable: false,
-                theme: false,
-                header:{
-                    left: 'prev',
-                    center: 'title',
-                    right: 'today next'
-                },
-                buttonText: {
-                    prev: 'LEFT',//'&laquo',
-                    next: 'RIGHT'//'&raquo'
-                },
-                aspectRatio: 1.5,
-                //viewDisplay: $scope.viewDisplayHandler,
-                //month: $scope.calendarMonthDisplay,
-                //year: $scope.calendarYearDisplay,
-                eventClick: $scope.onEventClick
-            };
+    $scope.getEventSourcesObject = function() {
+        return {
+            events: $scope.getCalendarEvents,
+            allDay: true,
+            className: 'calendar-event',
+            editable: false
+        }
+    };
+
+    $scope.onEventClick = function(event, jsEvent, view) {
+        $scope.getCalendarViewById(event.start.getFullYear(), event.calNo);
+    };
+
+    $scope.viewDisplayHandler = function(view){
+        var viewStart = view.start;
+        $scope.calendarYearDisplay = viewStart.getFullYear();
+        $scope.calendarMonthDisplay = viewStart.getMonth();
+    };
+
+    $scope.$watch('isCalendarOpen', function(newValue, oldValue) {
+        if (newValue) {
+            angular.element('#calendar-date-picker').fullCalendar('render');
+        }
+    });
+
+    $scope.getCalendarConfig = function() {
+        return {
+            editable: false,
+            theme: false,
+            header:{
+                left: 'prev',
+                center: 'title',
+                right: 'today next'
+            },
+            buttonText: {
+                prev: 'LEFT',//'&laquo',
+                next: 'RIGHT'//'&raquo'
+            },
+            aspectRatio: 1.5,
+            //viewDisplay: $scope.viewDisplayHandler,
+            //month: $scope.calendarMonthDisplay,
+            //year: $scope.calendarYearDisplay,
+            eventClick: $scope.onEventClick
         };
+    };
 
-        $scope.init();
-    }]);
+    $scope.init();
+}]);
 
 calendarModule.directive('calendarEntryTable', function() {
     return {
         scope: {
             calEntries: '=calEntries',
-            getCalBillNumUrl: '&',
-            onCalBillNumClick: '&'
+            getCalBillNumUrl: '&'
         },
         templateUrl: ctxPath + '/partial/content/calendar/calendar-entry-table',
         controller: function($scope) {
             $scope.billPageBaseUrl = ctxPath + '/bills';
-            $scope.onCalBillNumClick = $scope.onCalBillNumClick();
             $scope.getCalBillNumUrl = $scope.getCalBillNumUrl();
         }
     };
