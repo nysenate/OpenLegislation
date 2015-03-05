@@ -59,6 +59,9 @@ md-card {
     @extend .white-bg;
     padding: 0;
     margin: 10px;
+    &.no-margin {
+      margin: 0;
+    }
     .subheader {
       font-size: 0.9rem;
       padding: 10px;
@@ -103,7 +106,7 @@ md-input-container {
 }
 
 #content-wrapper {
-  max-width: 996px;
+  max-width: 960px;
   margin: auto;
 
   #content-header {
@@ -144,6 +147,10 @@ md-input-container {
 
 .text-large {
   font-size: 1.1rem;
+}
+
+.text-align-center {
+  text-align: center;
 }
 
 .bold {
@@ -282,20 +289,6 @@ a.result-link {
   font-family: 'Roboto Slab', serif;
   font-weight: normal;
 }
-
-.docs-table {
-  width: 100%;
-  text-align: left;
-  padding: 20px;
-  font-size: 0.8rem;
-  td {
-    padding: 5px 0;
-    border-bottom: 1px solid #ddd;
-
-  }
-  max-width: 1200px;
-}
-
 
 /** --- Left Nav --- */
 
@@ -446,6 +439,38 @@ ul.pagination {
       padding: 3px 7px;
       vertical-align: initial;
     }
+  }
+}
+
+/** --- Docs Tables --- */
+
+.docs-table {
+  width: 100%;
+  text-align: left;
+  padding: 20px;
+  font-size: 0.8rem;
+  td {
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+
+  }
+}
+
+/** --- Toggle Panel ---  */
+
+.toggle-panel {
+  &.open {
+    > .toggle-panel-bar {
+      border-bottom: 1px solid #ddd;
+      @include box-shadow(0 2px 4px #ddd);
+      background: rgb(96,125,139);
+      font-weight: bold;
+      color: white;
+    }
+  }
+  .toggle-panel-bar  {
+    cursor: pointer;
+    @include transition(all .2s ease-in);
   }
 }
 
