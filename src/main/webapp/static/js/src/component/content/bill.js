@@ -90,6 +90,10 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                       function($scope, $filter, $routeParams, $location, $sce, BillListing, BillSearch, PaginationModel) {
     $scope.setHeaderText('Search NYS Legislation');
 
+      $scope.$on('$locationChangeSuccess', function() {
+          $scope.curr.selectedView = $location.search().view || 0;
+      });
+
     $scope.curr = {
         selectedView: (parseInt($routeParams.view, 10) || 0),
         pagination: angular.extend({}, PaginationModel)
@@ -174,7 +178,6 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         if (newPage !== oldPage) {
             $location.search('searchPage', newPage);
             $scope.simpleSearch();
-            console.log("New page!");
          }
     });
 
@@ -229,8 +232,10 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
     $scope.diffHtml = null;
     $scope.updateHistory = null;
 
-    $scope.$watch('curr.selectedView', function() {
-        $location.search('view', $scope.curr.selectedView);
+    $scope.$watch('curr.selectedView', function(newView, oldView) {
+        if (newView !== oldView) {
+            $location.search('view', $scope.curr.selectedView);
+        }
     });
 
     $scope.init = function() {

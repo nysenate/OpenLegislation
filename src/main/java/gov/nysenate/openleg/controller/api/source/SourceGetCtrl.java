@@ -43,6 +43,7 @@ public class SourceGetCtrl extends BaseCtrl
 
     /**
      * SOBI File API
+     * -------------
      *
      * Retrieve a list of sobi files that were published between the given date range.
      * Usage: (GET) /api/3/sources/sobi/{from datetime}/{to datetime}
@@ -52,7 +53,7 @@ public class SourceGetCtrl extends BaseCtrl
      *
      * Expected Output: List of SourceViewIds
      */
-    @RequestMapping("/sobi/{from}/{to:.*\\.?.*}")
+    @RequestMapping("/sobi/{from}/{to:.+}")
     public BaseResponse getSobiSourcesDuring(@PathVariable String from, @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
@@ -68,13 +69,14 @@ public class SourceGetCtrl extends BaseCtrl
 
     /**
      * SOBI Fragment API
+     * -----------------
      *
      * Retrieve sobi fragments given a sobi file name.
      * Usage: (GET) /api/3/sources/sobi/{sobiFileName}
      *
      * Expected Output: List of SourceFileView containing the fragments
      */
-    @RequestMapping("/sobi/{sobiFileName}")
+    @RequestMapping("/sobi/{sobiFileName:.+}")
     public BaseResponse getSobiSource(@PathVariable String sobiFileName) {
         SobiFile sobiFile = sobiDao.getSobiFile(sobiFileName);
         List<SourceFileView> fragList = sobiDao.getSobiFragments(sobiFile, SortOrder.ASC).stream()
@@ -86,13 +88,14 @@ public class SourceGetCtrl extends BaseCtrl
 
     /**
      * SOBI Fragment API
+     * -----------------
      *
      * Retrieve a sobi fragment given a fragment id.
      * Usage: (GET) /api/3/sources/sobi/fragment/{fragmentId}
      *
      * Expected Output: SourceFileView
      */
-    @RequestMapping("/sobi/fragment/{fragmentId}")
+    @RequestMapping("/sobi/fragment/{fragmentId:.+}")
     public BaseResponse getSobiFragmentSource(@PathVariable String fragmentId) {
         SobiFragment fragment = sobiDao.getSobiFragment(fragmentId);
         return new ViewObjectResponse<>(

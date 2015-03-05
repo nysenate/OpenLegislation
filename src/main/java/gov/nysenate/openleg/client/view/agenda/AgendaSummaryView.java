@@ -4,11 +4,14 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.agenda.Agenda;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class AgendaSummaryView implements ViewObject
 {
     private AgendaIdView id;
     private LocalDate weekOf;
+    private LocalDateTime publishedDateTime;
+    private int totalAddendum;
     private int totalBillsConsidered;
     private int totalBillsVotedOn;
     private long totalCommittees;
@@ -20,6 +23,8 @@ public class AgendaSummaryView implements ViewObject
                 .filter(ia -> ia.getWeekOf() != null)
                 .map(ia -> ia.getWeekOf())
                 .findAny().orElse(null);
+            this.publishedDateTime = agenda.getPublishedDateTime();
+            this.totalAddendum = agenda.getAgendaInfoAddenda().size();
             this.totalBillsConsidered = agenda.getAgendaInfoAddenda().values().stream()
                 .flatMap(ia -> ia.getCommitteeInfoMap().values().stream())
                 .map(ic -> ic.getItems().size())
@@ -41,6 +46,14 @@ public class AgendaSummaryView implements ViewObject
 
     public LocalDate getWeekOf() {
         return weekOf;
+    }
+
+    public LocalDateTime getPublishedDateTime() {
+        return publishedDateTime;
+    }
+
+    public int getTotalAddendum() {
+        return totalAddendum;
     }
 
     public int getTotalBillsConsidered() {

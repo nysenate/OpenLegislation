@@ -2,16 +2,15 @@
 
 <section ng-controller="BillCtrl">
   <section ng-controller="BillSearchCtrl">
-    {{moose}}
-    <md-tabs md-selected="curr.selectedView" class="md-primary">
+    <md-tabs md-selected="curr.selectedView" class="md-primary" md-stretch-tabs="auto">
       <md-tab>
         <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
         <md-divider></md-divider>
-        <section>
+        <section class="margin-top-10">
           <form name="bill-search-form">
             <md-content class="padding-20">
               <md-input-container class="md-primary">
-                <label><i class="prefix-icon2 icon-search"></i>Search for a term or print no (e.g. 'S1234')</label>
+                <label><i class="prefix-icon2 icon-search"></i>Search for legislation</label>
                 <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
                        ng-model="billSearch.term" ng-model-options="{debounce: 300}" ng-change="simpleSearch(true)">
               </md-input-container>
@@ -71,7 +70,7 @@
           </section>
           <section>
             <md-card class="content-card">
-              <md-subheader><strong>Bill / Resolution Search Tips</strong></md-subheader>
+              <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
               <table class="docs-table">
                 <thead>
                 <tr><th>To search for</th><th>Use the field</th><th>Example</th></tr>
@@ -80,11 +79,11 @@
                 <tr><td>Original Print No</td><td>basePrintNo</td><td>basePrintNo:S1234</td></tr>
                 <tr><td>Session Year</td><td>session</td><td>session:2015</td></tr>
                 <tr><td>Title</td><td>title</td><td>title:moose elk</td></tr>
-                <tr><td>Chamber</td><td>billType.chamber</td><td>billType.chamber:SENATE, billType.chamber:ASSEMBLY</td></tr>
+                <tr><td>Chamber</td><td>billType.chamber</td><td>billType.chamber:SENATE<br/>billType.chamber:ASSEMBLY</td></tr>
                 <tr><td>Is a Resolution</td><td>billType.resolution</td><td>billType.resolution:true</td></tr>
                 <tr><td>Active Amendment Version</td><td>activeVersion</td><td>activeVersion:A</td></tr>
                 <tr><td>Published Year</td><td>year</td><td>year:2014</td></tr>
-                <tr><td>Published Date/Time</td><td>publishedDateTime</td><td>publishedDateTime:2015summary-01-02</td></tr>
+                <tr><td>Published Date/Time</td><td>publishedDateTime</td><td>publishedDateTime:2015-01-02<br/>publishedDateTime:[2015-01-02 TO 2015-01-04]</td></tr>
                 <tr><td>Summary</td><td>summary</td><td>summary:moose, elk, or deer</td></tr>
                 </tbody>
               </table>
@@ -93,7 +92,7 @@
         </section>
       </md-tab>
       <md-tab>
-        <md-tab-label><i class="icon-archive prefix-icon2"></i>Browse</md-tab-label>
+        <md-tab-label><i class="icon-docs prefix-icon2"></i>Browse</md-tab-label>
         <md-divider></md-divider>
         <section ng-controller="BillExploreCtrl">
           <a>Bills with recent status updates: api/3/bills/2015?sort=status.actionDate:DESC&limit=5</a><br/>

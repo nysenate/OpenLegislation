@@ -39,6 +39,10 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
         $mdSidenav('left').toggle();
     };
 
+    $scope.toggleRightNav = function() {
+        $mdSidenav('right').toggle();
+    };
+
     $scope.setHeaderText = function(text) {
         $scope.header.text = text;
     };
