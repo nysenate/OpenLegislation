@@ -329,14 +329,15 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             Matcher sameAsMatcher = sameAsPattern.matcher(data);
             if (sameAsMatcher.find()) {
                 specifiedAmendment.getSameAs().clear();
-                if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
-                    specifiedAmendment.setUniBill(true);
-                    syncUniBillText(specifiedAmendment, fragment);
-                }
                 List<String> sameAsMatches = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2).split(", ")));
                 for (String sameAs : sameAsMatches) {
                     specifiedAmendment.getSameAs().add(new BillId(sameAs.replace("-", "").replace(" ",""),
                                                        specifiedAmendment.getSession()));
+                }
+                // Check for uni-bill and sync
+                if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
+                    specifiedAmendment.setUniBill(true);
+                    syncUniBillText(specifiedAmendment, fragment);
                 }
             }
             else {
