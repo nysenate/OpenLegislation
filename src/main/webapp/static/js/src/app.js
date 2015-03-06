@@ -57,7 +57,7 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
 }]);
 
 openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.setHeaderVisible(false);
+    $scope.setHeaderVisible(true);
     $scope.email = '';
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'From 2009 To Present. Updated in real-time.',

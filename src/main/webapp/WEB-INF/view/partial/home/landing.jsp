@@ -3,15 +3,15 @@
 
 <section ng-controller="LandingCtrl">
   <section layout="row" layout-align="center center" style="rgb(243, 243, 243);">
-      <div hide show-gt-lg style="width:300px;" class="padding-10">
-        <img src="${ctxPath}/static/img/capitol_square.jpg" style="width:100%"/>
-      </div>
+      <%--<div hide show-gt-lg style="width:300px;" class="padding-10">--%>
+        <%--<img src="${ctxPath}/static/img/capitol_square_cropped.jpg" style="width:100%"/>--%>
+      <%--</div>--%>
     <h1 flex class="slogan no-margin">Search, explore, and
         <a target="_blank" href="${ctxPath}/docs" class="slogan-link">integrate</a> legislative information from the
         <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York&nbsp;State Senate</a>.
     </h1>
   </section>
-  <section class="padding-20" style="background:rgb(238, 238, 238);">
+  <section class="padding-20 margin-20" style="background:rgb(238, 238, 238);">
     <h2 class="thin-300">Data we currently provide</h2>
       <md-divider/>
     <md-list layout-gt-sm="row" layout-wrap>
@@ -34,7 +34,7 @@
     OpenLegislation continuously to collate and re-distribute the data using a REST API to various end-points including
     the <a href="http://www.nysenate.gov" class="slogan-link">nysenate.gov site.</a> </h4>
   </section>
-  <section class="padding-20 white" style="background:rgb(116, 156, 77);">
+  <section class="padding-20 margin-20 white" style="background:rgb(116, 156, 77);">
     <h2>Integrate NYS legislative data with your App</h2>
       <section ng-hide="signedup">
           <h3>Sign up for a free API Key</h3>
@@ -71,7 +71,7 @@
       <a class="white" target="_blank" href="${ctxPath}/docs">View the JSON API Documentation</a>
     </h3>
   </section>
-  <section class="padding-20 " style="background:rgb(238, 238, 238);">
+  <section class="padding-20 margin-20" style="background:rgb(238, 238, 238);">
     <h2 class="thin-300">Built on Open Source</h2>
     <h3 class="thin-300">OpenLegislation is developed using several open-source packages and frameworks.
      Source code is <a class="slogan-link" href="http://www.github.com/nysenate/OpenLegislation">published on GitHub</a>.

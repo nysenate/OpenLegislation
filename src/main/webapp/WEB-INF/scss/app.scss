@@ -481,8 +481,9 @@ ul.pagination {
 /** --- Landing Page Styles --- */
 
 h1.slogan {
-  font-size:2.8rem;
-  padding:20px;
+  font-size:2.7rem;
+  padding:60px;
+  text-align:center;
   color:#555;
   font-family: 'Roboto Slab', serif;
   font-weight: 300;
@@ -529,6 +530,11 @@ a.slogan-link {
   &.filled {
     background: rgb(174,213,129);
     border: 1px solid rgb(151, 213, 84);
+    &.vetoed {
+      background: $red1;
+      border-radius: 0;
+      border: 1px solid $red1;
+    }
   }
 }
 
