@@ -74,7 +74,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
             BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
             agendas.forEach(agenda ->
                 agenda.getCommittees().stream()
-                    .map(cid -> new AgendaCommFlatView(agenda, cid))
+                    .map(cid -> new AgendaCommFlatView(agenda, cid, null))
                     .forEach(cfv ->
                         bulkRequest.add(
                             searchClient.prepareIndex(agendaIndexName,

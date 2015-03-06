@@ -4,6 +4,7 @@ import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ public class AgendaInfoCommView implements ViewObject
     private String notes;
     private ListView<AgendaItemView> bills;
 
-    public AgendaInfoCommView(AgendaInfoCommittee infoComm) {
+    public AgendaInfoCommView(AgendaInfoCommittee infoComm, BillDataService billDataService) {
         if (infoComm != null) {
             this.committee = new CommitteeIdView(infoComm.getCommitteeId());
             this.chair = infoComm.getChair();
@@ -25,7 +26,7 @@ public class AgendaInfoCommView implements ViewObject
             this.meetingDateTime = infoComm.getMeetingDateTime();
             this.notes = infoComm.getNotes();
             this.bills = ListView.of(infoComm.getItems().stream()
-                    .map(i -> new AgendaItemView(i))
+                    .map(i -> new AgendaItemView(i, billDataService))
                     .collect(Collectors.toList()));
         }
     }

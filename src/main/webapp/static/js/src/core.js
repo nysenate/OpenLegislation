@@ -185,15 +185,16 @@ coreModule.directive('togglePanel', [function(){
         restrict: 'E',
         scope: {
             label: "@",
-            extraClasses: "@"
+            extraClasses: "@",
+            callback: "&"
         },
         replace: true,
         transclude: true,
         template:
-        '<md-card class="{{extraClasses}}">' +
-        '   <md-card-content class="" ng-click="open=!open">' +
+        '<md-card class="toggle-panel {{extraClasses}}" ng-class="{\'open\': open}">' +
+        '   <md-card-content class="toggle-panel-bar" ng-click="toggle()">' +
         '       <div>' +
-        '           <a class="">{{label}}</a>' +
+        '           <a class="toggle-panel-label">{{label}}</a>' +
         '           <span flex></span>' +
         '           <i ng-class="{\'icon-arrow-up4\': open, \'icon-arrow-down5\': !open}" style="float: right"></i>' +
         '           <span class="text-xsmall margin-left-20" ng-show="showTip && !open" style="float: right">' +
@@ -203,7 +204,12 @@ coreModule.directive('togglePanel', [function(){
         '   <md-card-content class="panel-content" ng-cloak ng-transclude></md-card-content>' +
         '</md-card>',
         link : function($scope, $element, $attrs) {
-
+            $scope.toggle = function() {
+                $scope.open = !$scope.open;
+                if ($scope.callback) {
+                    $scope.callback($scope.open);
+                }
+            };
             // Convert attribute value to boolean using watch
             $scope.$watch($attrs.open, function(open) {
                 $scope.open = open;

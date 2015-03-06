@@ -19,6 +19,7 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.agenda.search.AgendaSearchService;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class AgendaGetCtrl extends BaseCtrl
 
     @Autowired private AgendaDataService agendaData;
     @Autowired private AgendaSearchService agendaSearch;
+    @Autowired private BillDataService billData;
 
     /**
      * Agenda List Retrieval API
@@ -64,7 +66,7 @@ public class AgendaGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}")
     public BaseResponse getAgenda(@PathVariable int year, @PathVariable int agendaNo) {
         Agenda agenda = agendaData.getAgenda(new AgendaId(agendaNo, year));
-        return new ViewObjectResponse<>(new AgendaView(agenda));
+        return new ViewObjectResponse<>(new AgendaView(agenda, billData));
     }
 
     /**
@@ -79,7 +81,7 @@ public class AgendaGetCtrl extends BaseCtrl
         Agenda agenda = agendaData.getAgenda(new AgendaId(agendaNo, year));
         CommitteeId committeeId = new CommitteeId(Chamber.SENATE, commName);
         if (agenda.hasCommittee(committeeId)) {
-            return new ViewObjectResponse<>(new AgendaCommFlatView(agenda, committeeId));
+            return new ViewObjectResponse<>(new AgendaCommFlatView(agenda, committeeId, billData));
         }
         else {
             return new ViewObjectErrorResponse(

@@ -7,6 +7,28 @@
         <md-tab-label>
           <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
         </md-tab-label>
+        <section ng-controller="AgendaSearchCtrl">
+          <section class="margin-top-10">
+            <form>
+              <md-content class="padding-20">
+                <md-input-container class="md-primary">
+                  <label><i class="prefix-icon2 icon-search"></i>Search for committee agendas</label>
+                  <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
+                         ng-model="agendaSearch.term" ng-model-options="{debounce: 300}" ng-change="simpleSearch(true)">
+                </md-input-container>
+              </md-content>
+              <md-divider></md-divider>
+              <md-subheader ng-show="billSearch.searched && billSearch.term && !billSearch.error && curr.pagination.totalItems === 0"
+                            class="margin-10 md-warn md-whiteframe-z0">
+                <h4>No search results were found for '{{billSearch.term}}'</h4>
+              </md-subheader>
+              <md-subheader ng-show="billSearch.searched && billSearch.term && billSearch.error"
+                            class="margin-10 md-warn md-whiteframe-z0">
+                <h4>{{billSearch.error.message}}</h4>
+              </md-subheader>
+            </form>
+          </section>
+        </section>
       </md-tab>
       <md-tab>
         <md-tab-label><i class="icon-archive prefix-icon2"></i>Browse</md-tab-label>

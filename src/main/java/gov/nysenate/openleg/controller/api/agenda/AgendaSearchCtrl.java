@@ -12,6 +12,7 @@ import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.agenda.search.AgendaSearchService;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,9 @@ public class AgendaSearchCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(AgendaSearchCtrl.class);
 
-    @Autowired
-    private AgendaDataService agendaDataService;
-
-    @Autowired
-    private AgendaSearchService agendaSearchService;
+    @Autowired private AgendaDataService agendaData;
+    @Autowired private AgendaSearchService agendaSearch;
+    @Autowired private BillDataService billData;
 
     /**
      * Agenda Search API
@@ -48,7 +47,7 @@ public class AgendaSearchCtrl extends BaseCtrl
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        SearchResults<CommitteeAgendaId> results = agendaSearchService.searchCommitteeAgendas(term, sort, limOff);
+        SearchResults<CommitteeAgendaId> results = agendaSearch.searchCommitteeAgendas(term, sort, limOff);
         return getAgendaSearchResponse(full, limOff, results);
     }
 
@@ -70,7 +69,7 @@ public class AgendaSearchCtrl extends BaseCtrl
                                       @RequestParam(defaultValue = "false") boolean full,
                                       WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
-        SearchResults<CommitteeAgendaId> results = agendaSearchService.searchCommitteeAgendas(term, year, sort, limOff);
+        SearchResults<CommitteeAgendaId> results = agendaSearch.searchCommitteeAgendas(term, year, sort, limOff);
         return getAgendaSearchResponse(full, limOff, results);
     }
 
@@ -78,8 +77,8 @@ public class AgendaSearchCtrl extends BaseCtrl
         return ListViewResponse.of(
             results.getResults().stream()
                 .map(r -> new SearchResultView((full)
-                        ? new AgendaCommFlatView(agendaDataService.getAgenda(r.getResult().getAgendaId()),
-                        r.getResult().getCommitteeId())
+                        ? new AgendaCommFlatView(agendaData.getAgenda(r.getResult().getAgendaId()),
+                        r.getResult().getCommitteeId(), billData)
                         : new CommitteeAgendaIdView(r.getResult()), r.getRank()))
                 .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }

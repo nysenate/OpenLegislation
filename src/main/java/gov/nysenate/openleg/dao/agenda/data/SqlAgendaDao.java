@@ -153,6 +153,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
      * for an AgendaVoteAddendum.
      */
     private Map<CommitteeId, AgendaVoteCommittee> getAgendaVoteCommitteeMap(ImmutableParams agendaVoteParams) {
+        // Attendance list should be ordered by rank of members.
+        OrderBy rankOrderBy = new OrderBy("rank", SortOrder.ASC);
         List<AgendaVoteCommittee> voteComms =
             jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_VOTE_COMMITTEES.getSql(schema()), agendaVoteParams, agendaVoteCommRowMapper);
 
@@ -162,8 +164,8 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
                 of("committeeName", cid.getName(), "committeeChamber", cid.getChamber().asSqlEnum()));
             // Set the attendance list for each vote committee
             voteComm.setAttendance(
-                jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_VOTE_ATTENDANCE.getSql(schema()), voteCommParams,
-                    new AgendaVoteAttendanceRowMapper(memberService)));
+                jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_VOTE_ATTENDANCE.getSql(schema(), rankOrderBy, LimitOffset.ALL),
+                    voteCommParams, new AgendaVoteAttendanceRowMapper(memberService)));
             // Set the bills that were voted on
             AgendaCommVoteHandler agendaVoteHandler = new AgendaCommVoteHandler(memberService);
             jdbcNamed.query(SqlAgendaQuery.SELECT_AGENDA_COMM_VOTES.getSql(schema()), voteCommParams, agendaVoteHandler);
