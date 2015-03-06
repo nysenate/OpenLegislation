@@ -77,7 +77,7 @@ public class TranscriptSearchCtrl extends BaseCtrl
         return ListViewResponse.of(results.getResults().stream().map(r -> new SearchResultView(
                 (full) ? new TranscriptView(transcriptData.getTranscript(r.getResult()))
                         : (summary) ? new TranscriptInfoView(transcriptData.getTranscript(r.getResult()))
-                        : new TranscriptIdView(r.getResult()), r.getRank()))
+                        : new TranscriptIdView(r.getResult()), r.getRank(), r.getHighlights()))
                 .collect(toList()), results.getTotalResults(), limOff);
     }
 }
