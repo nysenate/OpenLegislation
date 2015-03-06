@@ -49,6 +49,7 @@ public class BillActionAnalyzer
 
     /** Pattern for when the bill is vetoed. */
     private static final Pattern vetoedPattern = Pattern.compile("VETO(?:ED)? MEMO");
+    private static final Pattern pocketVetoPattern = Pattern.compile("POCKET VETO");
 
     /** Pattern to detect a bill being delivered/returned from one chamber to another */
     private static final Pattern chamberDeliverPattern = Pattern.compile("(DELIVERED|RETURNED) TO (SENATE|ASSEMBLY)");
@@ -268,7 +269,7 @@ public class BillActionAnalyzer
                 chapterYearAndNum = Optional.of(Pair.of(chapYear, chapNum));
             }
         }
-        else if (vetoedPattern.matcher(text).find()) {
+        else if (vetoedPattern.matcher(text).find() || pocketVetoPattern.matcher(text).find()) {
             // Ignore line item vetoes, since the bill would still have been signed.
             if (!text.contains("LINE")) {
                 currStatus = new BillStatus(VETOED, action.getDate());
