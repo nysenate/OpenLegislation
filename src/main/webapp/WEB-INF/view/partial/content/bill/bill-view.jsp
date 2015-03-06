@@ -27,11 +27,11 @@
                  style="height: 60px;"/>
             <div layout="column" ng-if="!bill.sponsor.budget">
               <div ng-if="!bill.sponsor.rules" class="text-medium">Sponsored By</div>
-              <div ng-if="bill.sponsor.rules" class="text-medium">
+              <div ng-if="bill.sponsor.rules" class="text-medium bold">
                 From the Rules Committee<span ng-if="bill.sponsor.member"> Via</span>
               </div>
               <div class="bold">{{bill.sponsor.member.fullName}}</div>
-              <div class="text-small">District {{bill.sponsor.member.districtCode}}</div>
+              <div ng-if="bill.sponsor.member" class="text-small">District {{bill.sponsor.member.districtCode}}</div>
             </div>
             <div layout="column" ng-if="bill.sponsor.budget">
               <div class="bold">Budget Bill</div>
@@ -55,18 +55,45 @@
       <md-tabs md-selected="curr.selectedView" class="md-primary" md-stretch-tabs="never">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
-            <span><i class="icon-search prefix-icon2"></i>Back to Search</span>
+            <span><i class="icon-search prefix-icon2"></i>Search</span>
           </md-tab-label>
         </md-tab>
         <md-tab label="Details">
           <md-divider></md-divider>
           <%-- Substituted By --%>
-          <md-card class="white-bg padding-10" ng-if="bill.substitutedBy">
-            <md-button style="text-align: left;text-transform: none;" class="margin-left-10 md-warn"
+          <div ng-if="bill.substitutedBy" class="margin-20">
+            <md-button style="text-align: left;text-transform: none;" class="md-warn"
                        ng-href="${ctxPath}/bills/{{bill.substitutedBy.session}}/{{bill.substitutedBy.basePrintNo}}">
               <i class="icon-switch prefix-icon2"></i>
               This bill has been substituted by {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}.
             </md-button>
+          </div>
+          <md-card class="content-card" ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0">
+            <md-subheader>Same As Bill</md-subheader>
+            <md-content>
+              <md-list>
+                <md-item ng-repeat="sameAs in bill.amendments.items[curr.amdVersion].sameAs.items">
+                  <a class="result-link"
+                     ng-href="${ctxPath}/bills/{{sameAs.session}}/{{sameAs.basePrintNo}}?search={{billSearch.term}}&view=1">
+                    <md-item-content layout="row" layout-sm="column" layout-align-sm="start start" class="padding-10">
+                      <div class="text-medium margin-right-20" style="width:120px">
+                        <h4 class="no-margin">{{sameAs.printNo}} - {{sameAs.session}}</h4>
+                        <p class="no-margin">Same As Bill</p>
+                      </div>
+                      <div class="text-medium"
+                           ng-init="sameAsBill = bill.billInfoRefs.items[sameAs.basePrintNo + '-' + sameAs.session]">
+                        <p class="no-margin" ng-if="sameAsBill.sponsor.member.fullName">
+                          Sponsored By: {{sameAsBill.sponsor.member.fullName}}
+                        </p>
+                        <p class="no-margin" ng-if="sameAsBill.status.actionDate">
+                          Last Status as of {{sameAsBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(sameAsBill.status)}}
+                        </p>
+                      </div>
+                    </md-item-content>
+                  </a>
+                </md-item>
+              </md-list>
+            </md-content>
           </md-card>
           <%-- Votes --%>
           <md-card class="content-card" ng-if="bill.votes.size > 0">
@@ -124,6 +151,27 @@
               </section>
             </md-content>
           </md-card>
+          <%-- Veto Messages --%>
+          <md-card class="content-card" ng-if="bill.vetoMessages.size > 0">
+            <md-subheader>Veto Message From Governor</md-subheader>
+            <md-content ng-repeat="veto in bill.vetoMessages.items">
+              <span class="text-medium">Veto #{{veto.vetoNumber}} for Year {{veto.year}}</span>
+              <md-divider></md-divider>
+              <pre class="bill-full-text">{{veto.memoText}}</pre>
+            </md-content>
+          </md-card>
+          <%-- Approval Message --%>
+          <md-card class="content-card" ng-if="bill.approvalMessage">
+            <md-subheader>Approval Message From Governor</md-subheader>
+            <md-content>
+              <span class="text-medium">
+                Approval #{{bill.approvalMessage.approvalNumber}} for Year {{bill.approvalMessage.year}} - Chapter {{bill.approvalMessage.chapter}}
+              </span>
+              <md-divider></md-divider>
+              <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
+            </md-content>
+          </md-card>
+
           <%-- Enacting Clause --%>
           <md-card class="content-card" ng-if="!bill.billType.resolution">
             <md-subheader>Enacting Clause</md-subheader>
@@ -192,31 +240,10 @@
             </section>
           </md-card>
           <%-- Identical Legislation --%>
-          <md-card class="content-card" ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0 ||
-                                               bill.previousVersions.size > 0">
-            <md-subheader>Identical Legislation</md-subheader>
+          <md-card class="content-card" ng-if="bill.previousVersions.size > 0">
+            <md-subheader>Previous Versions of this Bill</md-subheader>
             <md-content>
               <md-list>
-                <md-item ng-repeat="sameAs in bill.amendments.items[curr.amdVersion].sameAs.items">
-                  <a class="result-link"
-                     ng-href="${ctxPath}/bills/{{sameAs.session}}/{{sameAs.basePrintNo}}?search={{billSearch.term}}&view=1">
-                    <md-item-content layout="row" layout-sm="column" layout-align-sm="start start" class="padding-10">
-                      <div class="text-medium margin-right-20" style="width:120px">
-                        <h4 class="no-margin">{{sameAs.printNo}} - {{sameAs.session}}</h4>
-                        <p class="no-margin">Same As Bill</p>
-                      </div>
-                      <div class="text-medium"
-                           ng-init="sameAsBill = bill.billInfoRefs.items[sameAs.basePrintNo + '-' + sameAs.session]">
-                        <p class="no-margin">
-                          Sponsored By: {{sameAsBill.sponsor.member.fullName}}
-                        </p>
-                        <p class="no-margin">
-                          Last Status as of {{sameAsBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(sameAsBill.status)}}
-                        </p>
-                      </div>
-                    </md-item-content>
-                  </a>
-                </md-item>
                 <md-item ng-repeat="prevVersion in bill.previousVersions.items">
                   <a class="result-link"
                      ng-href="${ctxPath}/bills/{{prevVersion.session}}/{{prevVersion.basePrintNo}}?search={{billSearch.term}}&view=1">
@@ -227,10 +254,10 @@
                       </div>
                       <div class="text-medium"
                            ng-init="prevBill = bill.billInfoRefs.items[prevVersion.basePrintNo + '-' + prevVersion.session]">
-                        <p class="no-margin">
+                        <p class="no-margin" ng-if="prevBill.sponsor.member.fullName">
                           Sponsored By: {{prevBill.sponsor.member.fullName}}
                         </p>
-                        <p class="no-margin">
+                        <p class="no-margin" ng-if="prevBill.status.actionDate">
                           Last Status as of {{prevBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(prevBill.status)}}
                         </p>
                       </div>
@@ -238,26 +265,6 @@
                   </a>
                 </md-item>
               </md-list>
-            </md-content>
-          </md-card>
-          <%-- Veto Messages --%>
-          <md-card class="content-card" ng-if="bill.vetoMessages.size > 0">
-            <md-subheader>Veto Message From Governor</md-subheader>
-            <md-content ng-repeat="veto in bill.vetoMessages.items">
-              <span class="text-medium">Veto #{{veto.vetoNumber}} for Year {{veto.year}}</span>
-              <md-divider></md-divider>
-              <pre class="bill-full-text">{{veto.memoText}}</pre>
-            </md-content>
-          </md-card>
-          <%-- Approval Message --%>
-          <md-card class="content-card" ng-if="bill.approvalMessage">
-            <md-subheader>Approval Message From Governor</md-subheader>
-            <md-content>
-              <span class="text-medium">
-                Approval #{{bill.approvalMessage.approvalNumber}} for Year {{bill.approvalMessage.year}} - Chapter {{bill.approvalMessage.chapter}}
-              </span>
-              <md-divider></md-divider>
-              <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
             </md-content>
           </md-card>
           <%-- Agenda/Cal Refs --%>
@@ -295,11 +302,11 @@
             </md-content>
             <md-content ng-if="bill.billType.chamber == 'ASSEMBLY'">
               <div class="text-medium padding-20">Sponsor memos are not provided for Assembly bills.
-              <p ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0"
-                 ng-init="sameAsBill = bill.amendments.items[curr.amdVersion].sameAs.items[0]">
-                You can view the sponsor memo for the Senate version of this bill here:
-                <a target="_blank"
-                   ng-href="${ctxPath}/bills/{{sameAsBill.session}}/{{sameAsBill.basePrintNo}}?view=2">{{sameAsBill.basePrintNo}}</a>.</p>
+                <p ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0"
+                   ng-init="sameAsBill = bill.amendments.items[curr.amdVersion].sameAs.items[0]">
+                  You can view the sponsor memo for the Senate version of this bill here:
+                  <a target="_blank"
+                     ng-href="${ctxPath}/bills/{{sameAsBill.session}}/{{sameAsBill.basePrintNo}}?view=2">{{sameAsBill.basePrintNo}}</a>.</p>
               </div>
             </md-content>
             <md-content ng-if="!bill.amendments.items[curr.amdVersion].memo && bill.billType.chamber == 'SENATE'">
@@ -384,11 +391,11 @@
                 <label>Filter by update type: </label>
                 <select ng-model="curr.updateTypeFilter" ng-change="getUpdates()" class="margin-left-10">
                   <option value="">All</option>
-                  <option value="act_clause">Enacting Clause</option>
                   <option value="action">Action</option>
                   <option value="active_version">Active Version</option>
                   <option value="approval">Approval Memo</option>
                   <option value="cosponsor">Co Sponsor</option>
+                  <option value="act_clause">Enacting Clause</option>
                   <option value="fulltext">Full Text</option>
                   <option value="law">Law</option>
                   <option value="memo">Memo</option>
@@ -432,7 +439,7 @@
                         <tbody>
                         <tr ng-repeat="(field, value) in update.fields">
                           <td>{{field}}</td>
-                          <td><pre style="max-height:300px;">{{value}}</pre></td>
+                          <td><pre>{{value}}</pre></td>
                         </tr>
                         </tbody>
                       </table>
@@ -452,10 +459,9 @@
     <section ng-if="response.success === false">
       <md-card>
         <md-content class="content-card padding-20">
-          <h4>Really sorry about that.</h4>
-          <a class="result-link text-medium padding-10"
-                     ng-href="${ctxPath}/bills"><span><i class="prefix-icon2 icon-arrow-left5"></i>Return to Bill Search</span></a>
-        </md-content>
+          <h4>Really sorry about that. You probably got to this page because the requested bill or resolution is not
+          in our system. Data for bills and resolutions are available from the 2009 to current session years.</h4>
+          </md-content>
       </md-card>
     </section>
   </section>

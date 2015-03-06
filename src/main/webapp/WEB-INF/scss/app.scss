@@ -456,7 +456,6 @@ ul.pagination {
   td {
     padding: 5px 0;
     border-bottom: 1px solid #ddd;
-
   }
 }
 
@@ -546,6 +545,7 @@ a.slogan-link {
 }
 
 .bill-full-text {
+  max-width: 520px;
   white-space: pre;
   font-family: 'Inconsolata', monospace;
   @media only screen and (max-width: 480px) {
@@ -554,11 +554,11 @@ a.slogan-link {
   @media only screen and (min-width: 481px) and (max-width: 600px) {
     font-size: 0.6rem;
   }
-  @media only screen and (min-width: 601px) and (max-width: 1200px) {
+  @media only screen and (min-width: 601px) {
     font-size: 0.9rem;
   }
-  @media only screen and (min-width: 1201px) {
-    font-size: 1.1rem;
+  @media only screen and (min-width: 800px) {
+    margin-left: 100px;
   }
 }
 
@@ -605,8 +605,10 @@ a.slogan-link {
       &:nth-child(2) {
         padding-left: 10px;
       }
+      pre {
+        max-height: 300px;
+      }
       border-bottom: 1px solid #ddd;
-      max-height: 300px;
       overflow: auto;
     }
   }
@@ -865,6 +867,7 @@ md-list.notification-sub-list md-item md-item-content > div:nth-child(3) {
 //  @extend .button;
 }
 
-#calendar-date-picker div.fc-day-content>div {
+#calendar-date-picker div.fc-day-content > div {
   height: 25px !important;
 }
+

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.client.view.bill;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.BillInfo;
+import gov.nysenate.openleg.model.bill.BillStatus;
 import gov.nysenate.openleg.model.bill.BillStatusType;
 
 import static java.util.stream.Collectors.toList;
@@ -14,6 +15,7 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
 {
     protected String summary;
     protected boolean signed;
+    protected boolean adopted;
     protected BillStatusView status;
     protected ListView<BillStatusView> milestones;
     protected ProgramInfoView programInfo;
@@ -22,9 +24,15 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
         super(billInfo);
         if (billInfo != null) {
             summary = billInfo.getSummary();
-            signed = !billInfo.getMilestones().isEmpty() &&
-                (billInfo.getMilestones().getLast().getStatusType().equals(BillStatusType.SIGNED_BY_GOV) ||
-                billInfo.getMilestones().getLast().getStatusType().equals(BillStatusType.ADOPTED));
+            if (!billInfo.getMilestones().isEmpty()) {
+                BillStatusType lastStatus = billInfo.getMilestones().getLast().getStatusType();
+                if (!billType.isResolution() && lastStatus.equals(BillStatusType.SIGNED_BY_GOV)) {
+                    signed = true;
+                }
+                else if (lastStatus.equals(BillStatusType.ADOPTED)) {
+                    adopted = true;
+                }
+            }
             billType = new BillTypeView(billInfo.getBillId().getBillType());
             programInfo = billInfo.getProgramInfo() != null ? new ProgramInfoView(billInfo.getProgramInfo()) : null;
             status = new BillStatusView(billInfo.getStatus());
@@ -38,6 +46,10 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
 
     public boolean isSigned() {
         return signed;
+    }
+
+    public boolean isAdopted() {
+        return adopted;
     }
 
     public BillStatusView getStatus() {

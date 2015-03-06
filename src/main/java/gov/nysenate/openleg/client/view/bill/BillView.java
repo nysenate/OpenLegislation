@@ -69,6 +69,7 @@ public class BillView extends BillInfoView implements ViewObject
 
             this.previousVersions = ListView.of(bill.getPreviousVersions().stream()
                 .map(BillIdView::new)
+                .sorted((a,b) -> Integer.compareUnsigned(b.getSession(), a.getSession()))
                 .collect(Collectors.toList()));
 
             this.committeeAgendas = ListView.of(bill.getCommitteeAgendas().stream()
