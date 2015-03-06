@@ -13,6 +13,9 @@
     <!-- The base is needed for angular HTML5 routing -->
     <base href="<%= (request.getContextPath().isEmpty()) ? "/" : request.getContextPath() %>">
 
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="${ctxPath}/static/favicon.ico"/>
+
     <!-- Main CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/dest/main.min.css"/>
 

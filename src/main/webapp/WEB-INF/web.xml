@@ -8,13 +8,14 @@
         <param-value>dev</param-value>
     </context-param>
 
+	<mime-mapping>
+		<extension>ico</extension>
+		<mime-type>image/x-icon</mime-type>
+	</mime-mapping>
+
 	<error-page>
 		<error-code>404</error-code>
 		<location>/WEB-INF/view/404.jsp</location>
-	</error-page>
-	<error-page>
-		<error-code>500</error-code>
-		<location>/500.jsp</location>
 	</error-page>
 
 </web-app>

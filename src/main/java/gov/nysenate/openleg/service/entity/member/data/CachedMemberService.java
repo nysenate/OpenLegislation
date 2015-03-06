@@ -1,16 +1,24 @@
 package gov.nysenate.openleg.service.entity.member.data;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.member.data.MemberDao;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheWarmEvent;
+import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +27,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class CachedMemberService implements MemberService
+public class CachedMemberService implements MemberService, CachingService
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedMemberService.class);
 
+    @Autowired
+    private EventBus eventBus;
+
     private Cache memberCache;
+    private static final String memberCacheName = "members";
 
     @Autowired
     private CacheManager cacheManager;
@@ -37,11 +51,63 @@ public class CachedMemberService implements MemberService
 
     @PostConstruct
     private void init() {
-        cacheManager.addCache("members");
-        this.memberCache = cacheManager.getCache("members");
+        eventBus.register(this);
+        setupCaches();
+        warmCaches();
+    }
+
+    @PreDestroy
+    private void cleanUp() {
+        evictCaches();
+        cacheManager.removeCache(memberCacheName);
+    }
+
+    /** --- Caching Service Implementation --- */
+
+    /** {@inheritDoc} */
+    @Override
+    public void setupCaches() {
+        this.memberCache = new Cache(new CacheConfiguration().name(memberCacheName).eternal(true));
+        cacheManager.addCache(this.memberCache);
     }
 
     /** {@inheritDoc} */
+    @Override
+    public List<Ehcache> getCaches() {
+        return Arrays.asList(memberCache);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
+        if (evictEvent.affects(ContentCache.MEMBER)) {
+            evictCaches();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void warmCaches() {
+        evictCaches();
+        logger.info("Warming up member cache");
+        memberDao.getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream().forEach(this::putMemberInCache);
+        logger.info("Done warming up member cache");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
+        if (warmEvent.affects(ContentCache.MEMBER)) {
+            warmCaches();
+        }
+    }
+
+    /** --- MemberService implementation --- */
+
+    /** {@inheritDoc} */
+    @Override
     public Member getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
         if (memberId <= 0) {
             throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");

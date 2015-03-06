@@ -86,6 +86,7 @@ public class CachedBillDataService implements BillDataService, CachingService
             .maxBytesLocalHeap(billCacheSizeMb, MemoryUnit.MEGABYTES)
             .sizeOfPolicy(defaultSizeOfPolicy()));
         cacheManager.addCache(this.billCache);
+        // This can only be called after the cache is added to the cache manager.
         this.billCache.setMemoryStoreEvictionPolicy(new BillCacheEvictionPolicy());
 
         // Bill Info cache will store BillInfo instances to speed up search and listings.
@@ -120,6 +121,7 @@ public class CachedBillDataService implements BillDataService, CachingService
                 sessionYear = sessionYear.next();
             }
         }
+        logger.info("Done warming up bill cache.");
     }
 
     /** {@inheritDoc} */
