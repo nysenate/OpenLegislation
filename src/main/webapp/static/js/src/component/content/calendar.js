@@ -30,11 +30,13 @@ calendarModule.factory('CalendarUpdatesApi', ['$resource', function ($resource) 
     });
 }]);
 
-calendarModule.factory('CalendarAllUpdatesApi', ['$resource', function ($resource) {
-    return $resource(apiPath + '/calendars/updates');
+calendarModule.factory('CalendarFullUpdatesApi', ['$resource', function ($resource) {
+    return $resource(apiPath + '/calendars/updates/:fromDateTime/:toDateTime/', {
+        fromDateTime: '@fromDateTime', toDateTime: '@toDateTime'
+    });
 }]);
 
-/** --- Calendar Page Controller --- */
+/** --- Calendar View --- */
 
 calendarModule.controller('CalendarViewCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$q', '$filter', '$timeout',
                                                 'CalendarViewApi', 'CurrentCalendarIdApi',
@@ -335,9 +337,6 @@ function ($scope, $routeParams, $location, $timeout) {
     };
 
     init();
-    $scope.doodoo = 'googoo';
-    $scope.$watch('doodoo', $scope.oooooo, true);
-    $scope.oooooo = function() {console.log(moment($scope.doodoo));};
 }]);
 
 calendarModule.controller('CalendarSearchCtrl', ['$scope', '$routeParams', '$location', 'CalendarSearchApi', 'PaginationModel',
@@ -535,6 +534,31 @@ function($scope, $q, CalendarIdsApi) {
     };
 
     $scope.init();
+}]);
+
+calendarModule.controller('CalendarFullUpdatesCtrl', ['$scope', 'CalendarFullUpdatesApi', 'debounce',
+function ($scope, UpdatesApi, debounce) {
+    $scope.updates = [];
+    $scope.updateOptions = {
+        order: "ASC",
+        detail: true
+    };
+    $scope.updateOptions.toDateTime = moment().startOf('minute').toDate();
+    $scope.updateOptions.fromDateTime = moment($scope.updateOptions.toDateTime).subtract(7, 'days').toDate();
+
+    $scope.getUpdates = function () {
+        var response = UpdatesApi.get({detail: $scope.updateOptions.detail,
+                                       fromDateTime: moment($scope.updateOptions.fromDateTime).toISOString(),
+                                       toDateTime: moment($scope.updateOptions.toDateTime).toISOString(),
+                                       limit: "all"
+            }, function() {
+                if (response.success) {
+                    $scope.updates = response['result']['items'];
+                }
+        });
+    };
+
+    $scope.$watch('updateOptions', debounce($scope.getUpdates, 500), true);
 }]);
 
 calendarModule.directive('calendarEntryTable', function() {

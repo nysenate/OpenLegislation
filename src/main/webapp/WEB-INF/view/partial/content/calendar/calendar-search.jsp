@@ -107,8 +107,27 @@
 
     <!-- Calendar Updates -->
     <md-tab label="Updates" md-on-select="setCalendarHeaderText()">
-      <section ng-init="">
-
+      <section ng-controller="CalendarFullUpdatesCtrl">
+        <md-content class="padding-20">
+          <div layout="row">
+            <h4 class="no-top-margin no-bottom-margin margin-right-10">Updates from</h4>
+            <input type="datetime-local" ng-model="updateOptions.fromDateTime" class="margin-right-10">
+            <h4 class="no-top-margin no-bottom-margin margin-right-10">to</h4>
+            <input type="datetime-local" ng-model="updateOptions.toDateTime" class="margin-right-10">
+          </div>
+          <div layout="row">
+            <h4 class="margin-right-10">Order</h4>
+            <md-select ng-model="updateOptions.order" class="margin-right-10">
+              <md-select-label>{{updateOptions.order=="ASC" ? "Oldest First" : "Newest First"}}</md-select-label>
+              <md-option value="ASC">Oldest First</md-option>
+              <md-option value="DESC">Newest First</md-option>
+            </md-select>
+            <%--<h4>Show Detail</h4>--%>
+            <%--<md-switch ng-model="updateOptions.detail"></md-switch>--%>
+          </div>
+          <md-divider></md-divider>
+        </md-content>
+        <update-list updates="updates" show-details="updateOptions.detail"></update-list>
       </section>
     </md-tab>
   </md-tabs>

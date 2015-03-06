@@ -110,6 +110,21 @@ coreModule.factory('PaginationModel', function() {
 });
 
 /**
+ * Debounce
+ *
+ * Calls the callback function after the specified time interval.  Restarts the interval if the function is called again.
+ */
+coreModule.factory('debounce', ['$timeout', function($timeout) {
+    return function(callback, interval) {
+        var timeout = null;
+        return function() {
+            $timeout.cancel(timeout);
+            timeout = $timeout(callback, interval);
+        };
+    };
+}]);
+
+/**
  * Updates List
  *
  * Displays a list of updates.
@@ -121,20 +136,21 @@ coreModule.factory('PaginationModel', function() {
  * Attributes
  * ----------
  * updates - An array of update json objects
- * displayId - (boolean) (default true) Display the affected content id for each update if true
- * displayDetails - (boolean) (default true) Display a table of update details for each update if true
+ * no-id - Update content ids will not be shown if this attribute is present
+ * no-details - The update details table will not be shown for each update if this attribute is present
  */
 coreModule.directive('updateList', function() {
     return {
         restrict: 'E',
         scope: {
-            updates: '='
+            updates: '=',
+            showId: '=?',
+            showDetails: '=?'
         },
         templateUrl: ctxPath + '/partial/core/update-list',
         link: function($scope, $elem, $attrs) {
-            $scope.displayId = !('noId' in $attrs);
-            $scope.displayDetails = !('noDetails' in $attrs);
-            console.log($scope.displayId, $scope.displayDetails, $attrs);
+            $scope.showId = $scope.showId || true;
+            $scope.showDetails = $scope.showDetails || true;
         }
     };
 });
@@ -143,6 +159,7 @@ coreModule.directive('updateList', function() {
  * Update Id
  *
  * Generates a content id string for an update based on its scope
+ * Returns a less specific Id if the update is an update token
  */
 coreModule.filter('updateId', function() {
     return function (update) {
@@ -152,11 +169,13 @@ coreModule.filter('updateId', function() {
         // Calendars
         if (scope.lastIndexOf("Calendar", 0) === 0) {
             idString = id['year'] + "#" + id['calendarNumber'];
-            if (scope == "Calendar Supplemental") {
-                var supVersion = update['fields']['supVersion'];
-                idString += "-" + (supVersion == "" ? "floor" : supVersion)
-            } else if (scope == "Calendar Active List") {
-                idString += "-" + update['fields']['sequenceNo'];
+            if ('fields' in update) {
+                if (scope == "Calendar Supplemental") {
+                    var supVersion = update['fields']['supVersion'];
+                    idString += "-" + (supVersion == "" ? "floor" : supVersion)
+                } else if (scope == "Calendar Active List") {
+                    idString += "-" + update['fields']['sequenceNo'];
+                }
             }
         }
 

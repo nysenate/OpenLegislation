@@ -77,7 +77,7 @@
               <md-option value="DESC">Newest First</md-option>
             </md-select>
         </md-toolbar>
-        <update-list updates="updates" no-id></update-list>
+        <update-list updates="updates" show-id="false"></update-list>
       </section>
     </md-tab>
   </md-tabs>

@@ -4,16 +4,19 @@
       <div class="md-tile-content">
         <md-card class="content-card">
           <md-subheader>
-            <span class="capitalize">{{update.action | lowercase}} - {{update.scope}}
-              <span ng-if="displayId">- {{update | updateId}}</span>
+            <span class="capitalize">
+              <span ng-if="showDetails && update.action && update.scope">
+                {{update.action | lowercase}} - {{update.scope}}
+              </span>
+              <span ng-if="showDetails && showId">-</span>
+              <span ng-if="showId">{{update | updateId}}</span>
             </span>
           </md-subheader>
           <md-content>
-            <%--<h4 ng-if="displayId" ng-repeat="(field, value) in update.id">{{field}} - {{value}}</h4>--%>
             <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY HH:mm:ss'}}</h4>
             <h4>Processed Date - {{update.processedDateTime | moment:'MMM DD, YYYY HH:mm:ss'}}</h4>
             <h4>Source - <a>{{update.sourceId}}</a></h4>
-            <table class="bill-updates-table" ng-if="displayDetails">
+            <table class="bill-updates-table" ng-if="showDetails && update.fields">
               <thead>
               <tr>
                 <th style="width:150px;">Field Name</th>
