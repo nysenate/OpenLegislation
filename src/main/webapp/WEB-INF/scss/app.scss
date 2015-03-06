@@ -606,6 +606,8 @@ a.slogan-link {
         padding-left: 10px;
       }
       border-bottom: 1px solid #ddd;
+      max-height: 300px;
+      overflow: auto;
     }
   }
 }
