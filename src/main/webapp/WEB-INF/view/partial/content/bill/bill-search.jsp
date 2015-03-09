@@ -155,11 +155,59 @@
         <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
         <md-divider></md-divider>
         <section ng-controller="BillUpdatesCtrl">
-          Date Range<br/> From <input type="date"/> To <input type="date" />
-          Type:
-          <md-select><md-option>Processed</md-option><md-option>Published</md-option></md-select>
-          <md-divider></md-divider>
-          {{billUpdates.response}}
+          <md-card class="content-card">
+            <md-subheader>Show bill updates during the following date range</md-subheader>
+            <div layout="row" class="padding-20">
+              <div flex>
+                <label>With </label>
+                <select ng-model="curr.type">
+                  <option value="processed">Processed Date</option>
+                  <option value="published">Published Date</option>
+                </select>
+              </div>
+              <div flex>
+                <label>From</label>
+                <input ng-model="curr.fromDate" type="date">
+              </div>
+              <div flex>
+                <label>To</label>
+                <input ng-model="curr.toDate" type="date">
+              </div>
+            </div>
+          </md-card>
+          <md-card class="content-card">
+            <md-subheader>
+              <strong>{{billUpdates.total}}</strong> bills were updated between {{billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.toDate | moment:'llll'}}
+            </md-subheader>
+            <md-list>
+              <a class="result-link text-medium"
+                 dir-paginate="billUpdate in billUpdates.result.items | itemsPerPage: 20"
+                 total-items="billUpdates.total" current-page="pagination.currPage"
+                 ng-init="bill = billUpdate.item"
+                 ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
+                <md-item>
+                  <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
+                    <div style="width:180px;padding:16px;">
+                      <h3 class="no-margin">
+                        <span>{{bill.basePrintNo}}</span> - {{bill.session}}
+                      </h3>
+                      <h5 class="no-margin">{{bill.sponsor.member.fullName}}</h5>
+                    </div>
+                    <div flex class="md-tile-content">
+                      <h4>{{bill.title}}</h4>
+                      <h6 class="gray7 no-margin capitalize">{{getStatusDesc(bill.status) | lowercase}}</h6>
+                    </div>
+                    <div flex class="md-tile-content">
+                      <h4><strong>Last Published:</strong> {{billUpdate.sourceDateTime | moment:'llll'}}</h4>
+                      <h4><strong>Last Processed:</strong> {{billUpdate.processedDateTime | moment:'llll'}}</h4>
+                      <h4><strong>Update Source Id:</strong> {{billUpdate.sourceId}}</h4>
+                    </div>
+                  </md-item-content>
+                  <md-divider ng-if="!$last"/>
+                </md-item>
+              </a>
+            </md-list>
+          </md-card>
         </section>
       </md-tab>
       <md-tab>

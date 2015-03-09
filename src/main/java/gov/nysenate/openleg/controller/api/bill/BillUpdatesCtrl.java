@@ -3,9 +3,10 @@ package gov.nysenate.openleg.controller.api.bill;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.DateRangeListViewResponse;
-import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.bill.BaseBillIdView;
+import gov.nysenate.openleg.client.view.bill.SimpleBillInfoView;
 import gov.nysenate.openleg.client.view.updates.UpdateDigestView;
+import gov.nysenate.openleg.client.view.updates.UpdateTokenModelView;
 import gov.nysenate.openleg.client.view.updates.UpdateTokenView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
@@ -18,6 +19,7 @@ import gov.nysenate.openleg.model.bill.BillUpdateField;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,6 +48,7 @@ public class BillUpdatesCtrl extends BaseCtrl
     private static final Logger logger = LoggerFactory.getLogger(BillUpdatesCtrl.class);
 
     @Autowired protected BillUpdatesDao billUpdatesDao;
+    @Autowired protected BillDataService billData;
 
     /**
      * Updated Bills API
@@ -61,6 +63,7 @@ public class BillUpdatesCtrl extends BaseCtrl
      * Where 'from' and 'to' are ISO date times.
      *
      * Request Params: detail (boolean) - Show update digests within each token.
+     *                 summary (boolean) - Return bill infos instead of just the bill id.
      *                 type (string) - Update type (processed, published) Default: published
      *                 filter (string) - Filter updates by a BillUpdateField value
      *                 limit, offset (int) - Paginate
@@ -135,6 +138,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         LimitOffset limOff = getLimitOffset(request, 50);
         Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
         boolean detail = getBooleanParam(request, "detail", false);
+        boolean summary = getBooleanParam(request, "summary", false);
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         String filter = request.getParameter("filter");
         UpdateType updateType = getUpdateTypeFromParam(request);
@@ -144,8 +148,11 @@ public class BillUpdatesCtrl extends BaseCtrl
             PaginatedList<UpdateToken<BaseBillId>> updateTokens =
                 billUpdatesDao.getUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
             return DateRangeListViewResponse.of(updateTokens.getResults().stream()
-                .map(token -> new UpdateTokenView(token, new BaseBillIdView(token.getId())))
-                .collect(toList()), updateRange, updateTokens.getTotal(), limOff);
+                .map(token ->
+                    (!summary) ? new UpdateTokenView(token, new BaseBillIdView(token.getId()))
+                               : new UpdateTokenModelView(token, new BaseBillIdView(token.getId()),
+                                                                 new SimpleBillInfoView(billData.getBillInfo(token.getId())))
+                ).collect(toList()), updateRange, updateTokens.getTotal(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<BaseBillId>> updateDigests =

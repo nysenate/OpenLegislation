@@ -20,9 +20,10 @@ billModule.factory('BillSearchApi', ['$resource', function($resource) {
 
 
 billModule.factory('BillAggUpdatesApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/bills/updates/:from/:to?order=:order&filter=:filter&limit=:limit&offset=:offset', {
+    return $resource(apiPath + '/bills/updates/:from/:to?order=:order&type=:type&filter=:filter&limit=:limit&offset=:offset&summary=true', {
         from: '@from',
         to: '@to',
+        type: '@type',
         order: '@order',
         filter: '@filter',
         limit: '@limit',
@@ -96,9 +97,10 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
     $scope.curr = {
         selectedView: (parseInt($routeParams.view, 10) || 0),
+        searching: false,
         pagination: angular.extend({}, PaginationModel)
     };
-    $scope.curr.pagination.itemsPerPage = 20;
+    $scope.curr.pagination.itemsPerPage = 10;
 
     $scope.billSearch = {
         searched: false,
@@ -118,6 +120,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         var term = $scope.billSearch.term;
         if (term) {
             $location.search("search", $scope.billSearch.term);
+            $scope.curr.searching = true;
             $scope.billSearch.searched = false;
             if (resetPagination) {
                 $scope.curr.pagination.currPage = 1;
@@ -140,10 +143,13 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                             }
                         });
                         $scope.curr.pagination.setTotalItems($scope.billSearch.response.total);
+                        $scope.curr.searching = false;
                     }
                 }, function(data) {
                     $scope.billSearch.searched = true;
+                    $scope.curr.searching = false;
                     $scope.billSearch.error = data.data;
+                    $scope.curr.pagination.setTotalItems(0);
                 });
         }
         else {
@@ -184,34 +190,47 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     $scope.init();
 }]);
 
-/** --- Bill Info Controller --- */
-
-billModule.controller('BillExploreCtrl', ['$scope', 'BillListingApi', function($scope, BillListingApi) {
-    $scope.setHeaderText("Explore NYS Legislation");
-
-    var i = 0;
-    $scope.senatorList = Array.apply(0, Array(63)).map(function() { i +=1; return i; });
-}]);
-
 /** --- Bill Updates Controller --- */
 
 billModule.controller('BillUpdatesCtrl', ['$scope', 'BillAggUpdatesApi', 'PaginationModel',
     function($scope, BillAggUpdatesApi, PaginationModel){
 
+    $scope.pagination = angular.extend({}, PaginationModel);
+
     $scope.curr = {
-        pagination: angular.extend({}, PaginationModel)
+        fromDate: moment().subtract(5, 'days').startOf('day').toDate(),
+        toDate: moment().endOf('day').toDate(),
+        type: 'published'
     };
 
     $scope.billUpdates = {
         response: {},
+        total: 0,
         result: {}
     };
 
     $scope.init = function() {
-        $scope.billUpdates.response = BillAggUpdatesApi.get({}, function(){
+        $scope.getUpdates();
+    };
 
-        })
-    }();
+    $scope.getUpdates = function() {
+        $scope.billUpdates.response = BillAggUpdatesApi.get({
+            from: $scope.curr.fromDate.toISOString(), to: $scope.curr.toDate.toISOString(),
+            type: $scope.curr.type
+        }, function() {
+            $scope.billUpdates.total = $scope.billUpdates.response.total;
+            $scope.billUpdates.result = $scope.billUpdates.response.result;
+        });
+    };
+
+    $scope.$watch('curr.fromDate', function(n, o) {
+        $scope.getUpdates();
+    });
+    $scope.$watch('curr.toDate', function(n, o) {
+        $scope.getUpdates();
+    });
+
+    $scope.init();
 }]);
 
 /** --- Bill View Controller --- */
@@ -374,7 +393,8 @@ billModule.directive('milestones', [function(){
         replace: true,
         template: '<div class="bill-ms-container">' +
                     '<div ng-repeat="milestone in paddedMs">' +
-                      '<div class="bill-ms-step" ng-class="{\'filled\': milestone.actionDate !== null}">' +
+                      '<div class="bill-ms-step" ng-class="{\'filled\': milestone.actionDate !== null, ' +
+                                                           '\'vetoed\': milestone.statusDesc == \'Vetoed\'}">' +
                         '<md-tooltip>{{milestone.statusDesc}}' +
                           '<span ng-if="milestone.actionDate !== null"><br/>On {{milestone.actionDate | moment:\'MMM DD, YYYY\'}}</span>' +
                           '<span ng-if="milestone.committeeName"><br/>{{milestone.committeeName}}</span>' +
