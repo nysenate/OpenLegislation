@@ -620,18 +620,19 @@ a.slogan-link {
   padding-left: 20px;
   cursor: pointer;
   border-left: 1px solid #ddd;
+
   .law-node-toggle-icon {
     visibility: hidden;
   }
+  background: #fff;
   &:hover {
-    background: #efefef;
+    background: #f5f5f5;
     .law-node-toggle-icon {
       visibility: visible;
     }
   }
   &.active {
-    background: #ededed;
-    color: $blue1;
+    background: #fafafa;
     .law-node-toggle-icon {
       visibility: visible;
     }
@@ -639,11 +640,12 @@ a.slogan-link {
 }
 
 .law-text {
-  padding:20px;
+  padding:40px;
   white-space: pre-line;
-  font-size: 0.9rem;
-  background: #fafafa;
-  border-left:2px solid #ccc;
+  font-size: 0.85rem;
+  background: white;
+  border-bottom:1px solid #ddd;
+  width: 100%;
 }
 
 /** --- Transcript Page Styles --- */
