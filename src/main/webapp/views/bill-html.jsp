@@ -1,4 +1,6 @@
-<%@ page language="java" import="gov.nysenate.openleg.util.*, java.util.Date, java.util.HashMap, java.util.ArrayList, java.util.Collections, java.util.List, java.util.Hashtable, java.util.TreeSet, java.util.StringTokenizer, java.util.regex.*, java.util.Iterator, java.text.* ,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page language="java" import="gov.nysenate.openleg.util.*, java.util.regex.*, java.text.* ,gov.nysenate.openleg.model.*" contentType="text/html" pageEncoding="utf-8"%>
+<%@ page import="java.util.*" %>
+<%@ page import="gov.nysenate.openleg.model.Calendar" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%!
     public <T> ArrayList<T> defaultList(ArrayList<T> list) {
@@ -68,6 +70,22 @@
         return new ArrayList<Action>(set);
     }
 %>
+
+<%
+	/** This is related to http://dev.nysenate.gov/issues/8477. */
+	HashMap<String, String> billsWithExternalPdfLinks = new HashMap<String, String>();
+	billsWithExternalPdfLinks.put("S2000-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/StateOpsBudget.pdf");
+	billsWithExternalPdfLinks.put("A3000-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/StateOpsBudget.pdf");
+	billsWithExternalPdfLinks.put("S2001-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/Leg-Judi.pdf");
+	billsWithExternalPdfLinks.put("A3001-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/Leg-Judi.pdf");
+	billsWithExternalPdfLinks.put("S2002-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/DEBT.pdf");
+	billsWithExternalPdfLinks.put("A3002-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/DEBT.pdf");
+	billsWithExternalPdfLinks.put("S2003-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/Local.pdf");
+	billsWithExternalPdfLinks.put("A3003-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/Local.pdf");
+	billsWithExternalPdfLinks.put("S2004-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/CapitalProjectsBudget.pdf");
+	billsWithExternalPdfLinks.put("A3004-2015", "https://www.budget.ny.gov/pubs/executive/eBudget1516/fy1516appropbills/CapitalProjectsBudget.pdf");
+%>
+
 <%
     Bill bill = (Bill)request.getAttribute("bill");
 	
@@ -143,8 +161,12 @@
             <div class='item-actions'>
                 <ul>
                     <li><a href="#" onclick="window.print(); return false;">Print Page</a></li>
-                    <li><a href="<%=appPath%>/api/1.0/pdf/bill/<%=bill.getBillId()%>">Original Bill Format (PDF)</a></li>
-                    <li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
+					<% if (billsWithExternalPdfLinks.containsKey(bill.getOid()) && bill.getFulltext().isEmpty()) { %>
+					<%= "<li><a href=" + billsWithExternalPdfLinks.get(bill.getOid()) + " >Original Bill Format (PDF)</a></li>" %>
+					<% } else { %>
+						<li><a href="<%=appPath%>/api/1.0/pdf/bill/<%=bill.getBillId()%>">Original Bill Format (PDF)</a></li>
+					<%	} %>
+					<li><script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=51a57fb0-3a12-4a9e-8dd0-2caebc74d677&amp;type=website"></script></li>
                     <li><a href="#Comments">Read or Leave Comments</a></li>
                 </ul>
             </div>
@@ -377,7 +399,12 @@
 			    <br/>
 			    <div class="pagebreak"></div>
 			    <h3 class="section" ><a id="Text" href="#Text" class="anchor ui-icon ui-icon-link"></a> Text</h3>
-			    <pre><%=TextFormatter.htmlTextPrintable(bill)%></pre>
+				<% if (billsWithExternalPdfLinks.containsKey(bill.getOid()) && bill.getFulltext().isEmpty()) { %>
+				<%= "<p style='text-align:center'>Note: The full text of this budget bill is currently available <a href=" + billsWithExternalPdfLinks.get(bill.getOid()) + " >here.</a></p>" %>
+				<% } %>
+				<pre><%=TextFormatter.htmlTextPrintable(bill)%></pre>
+
+
 			    <br/>
             </div>
         </div>
