@@ -16,41 +16,41 @@ SET search_path = master, pg_catalog;
 --
 
 COPY committee (name, id, current_version, chamber, current_session, full_name) FROM stdin;
-Aging	24	2014-03-13 14:48:16	senate	2013	\N
-Agriculture	14	2014-02-28 11:25:44	senate	2013	\N
-Alcoholism and Drug Abuse	12	2014-02-28 11:25:44	senate	2013	\N
-Banks	30	2014-03-13 14:48:16	senate	2013	\N
-Children and Families	27	2014-02-28 11:25:44	senate	2013	\N
-Cities	25	2014-03-13 14:48:16	senate	2013	\N
-Corporations, Authorities and Commissions	3	2014-02-28 11:25:44	senate	2013	\N
-Crime Victims, Crime and Correction	33	2014-02-28 11:25:44	senate	2013	\N
-Education	9	2014-03-13 14:48:16	senate	2013	\N
-Cultural Affairs, Tourism, Parks and Recreation	20	2014-02-28 11:25:44	senate	2013	\N
-Elections	32	2014-02-28 11:25:44	senate	2013	\N
-Environmental Conservation	17	2014-03-13 14:48:16	senate	2013	\N
-Ethics	4	2014-02-28 11:25:44	senate	2013	\N
-Higher Education	23	2014-02-28 11:25:44	senate	2013	\N
-Infrastructure and Capital Investment	58	2014-02-28 11:25:44	senate	2013	\N
-Racing, Gaming and Wagering	7	2014-03-13 14:48:16	senate	2013	\N
-Investigations and Government Operations	2	2014-02-28 11:25:44	senate	2013	\N
-Labor	11	2014-02-28 11:25:44	senate	2013	\N
-Local Government	22	2014-02-28 11:25:44	senate	2013	\N
-Veterans, Homeland Security and Military Affairs	8	2014-03-13 14:48:16	senate	2013	\N
-Mental Health and Developmental Disabilities	26	2014-02-28 11:25:44	senate	2013	\N
-Social Services	13	2014-02-28 11:25:44	senate	2013	\N
-Commerce, Economic Development and Small Business	19	2014-03-17 18:43:42	senate	2013	\N
-Civil Service and Pensions	15	2014-03-03 17:09:09	senate	2013	\N
-Codes	29	2014-03-03 17:09:09	senate	2013	\N
-Consumer Protection	16	2014-03-03 17:09:09	senate	2013	\N
-Energy and Telecommunications	31	2014-03-03 17:09:09	senate	2013	\N
-Finance	21	2014-03-03 17:09:09	senate	2013	\N
-Health	6	2014-03-03 17:09:09	senate	2013	\N
-Housing, Construction and Community Development	28	2014-03-03 17:09:09	senate	2013	\N
-Insurance	34	2014-03-03 17:09:09	senate	2013	\N
-Judiciary	5	2014-03-03 17:09:09	senate	2013	\N
-Rules	18	2014-03-03 17:09:09	senate	2013	\N
-Transportation	10	2014-03-03 17:09:09	senate	2013	\N
-New York City Education Subcommittee	63	2014-03-03 17:09:09	senate	2013	\N
+Aging	24	2015-01-22 16:58:51	senate	2015	\N
+Agriculture	14	2015-01-22 16:58:51	senate	2015	\N
+Alcoholism and Drug Abuse	12	2015-01-22 16:58:51	senate	2015	\N
+Banks	30	2015-01-22 16:58:51	senate	2015	\N
+Children and Families	27	2015-01-22 16:58:51	senate	2015	\N
+Cities	25	2015-01-22 16:58:51	senate	2015	\N
+Civil Service and Pensions	15	2015-01-22 16:58:51	senate	2015	\N
+Codes	29	2015-01-22 16:58:51	senate	2015	\N
+Commerce, Economic Development and Small Business	19	2015-01-22 16:58:51	senate	2015	\N
+Consumer Protection	16	2015-01-22 16:58:51	senate	2015	\N
+Corporations, Authorities and Commissions	3	2015-01-22 16:58:51	senate	2015	\N
+Crime Victims, Crime and Correction	33	2015-01-22 16:58:51	senate	2015	\N
+Cultural Affairs, Tourism, Parks and Recreation	20	2015-01-22 16:58:51	senate	2015	\N
+Education	9	2015-01-22 16:58:51	senate	2015	\N
+Elections	32	2015-01-22 16:58:51	senate	2015	\N
+Energy and Telecommunications	31	2015-01-22 16:58:51	senate	2015	\N
+Environmental Conservation	17	2015-01-22 16:58:51	senate	2015	\N
+Ethics	4	2015-01-22 16:58:51	senate	2015	\N
+Finance	21	2015-01-22 16:58:51	senate	2015	\N
+Health	6	2015-01-22 16:58:51	senate	2015	\N
+Higher Education	23	2015-01-22 16:58:51	senate	2015	\N
+Housing, Construction and Community Development	28	2015-01-22 16:58:51	senate	2015	\N
+Infrastructure and Capital Investment	58	2015-01-22 16:58:51	senate	2015	\N
+Insurance	34	2015-01-22 16:58:51	senate	2015	\N
+Investigations and Government Operations	2	2015-01-22 16:58:51	senate	2015	\N
+Judiciary	5	2015-01-22 16:58:51	senate	2015	\N
+Labor	11	2015-01-22 16:58:51	senate	2015	\N
+Local Government	22	2015-01-22 16:58:51	senate	2015	\N
+Mental Health and Developmental Disabilities	26	2015-01-22 16:58:51	senate	2015	\N
+Racing, Gaming and Wagering	7	2015-01-22 16:58:51	senate	2015	\N
+Rules	18	2015-01-22 16:58:51	senate	2015	\N
+Social Services	13	2015-01-22 16:58:51	senate	2015	\N
+Transportation	10	2015-01-22 16:58:51	senate	2015	\N
+Veterans, Homeland Security and Military Affairs	8	2015-01-22 16:58:51	senate	2015	\N
+New York City Education Subcommittee	63	2015-01-22 16:58:51	senate	2015	\N
 \.
 
 
@@ -58,7 +58,7 @@ New York City Education Subcommittee	63	2014-03-03 17:09:09	senate	2013	\N
 -- Name: committee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-SELECT pg_catalog.setval('committee_id_seq', 349, true);
+SELECT pg_catalog.setval('committee_id_seq', 699, true);
 
 
 --
@@ -152,46 +152,81 @@ COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, mee
 43	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Transportation	senate	\N
 41	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Veterans, Homeland Security and Military Affairs	senate	\N
 63	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	New York City Education Subcommittee	senate	\N
-106	Room 410 LOB	MONDAY	f		13:30:00	2013	2014-03-03 17:09:09	infinity	Civil Service and Pensions	senate	\N
 76	Room 410 LOB	MONDAY	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Civil Service and Pensions	senate	\N
-107	Room 124 CAP	TUESDAY	f		09:00:00	2013	2014-03-03 17:09:09	infinity	Codes	senate	\N
 77	Room 124 CAP	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Codes	senate	\N
 79	Room 801 LOB	MONDAY	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Consumer Protection	senate	\N
-105	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Banks	senate	\N
 86	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Environmental Conservation	senate	\N
 99	Room 510 LOB	TUESDAY	f		09:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Racing, Gaming and Wagering	senate	\N
 103	Room 816 LOB	TUESDAY	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Veterans, Homeland Security and Military Affairs	senate	\N
 78	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Commerce, Economic Development and Small Business	senate	\N
-109	Room 801 LOB	MONDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Consumer Protection	senate	\N
 83	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Education	senate	\N
-111	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-03-03 17:09:09	infinity	Energy and Telecommunications	senate	\N
 95	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Judiciary	senate	\N
 102	Room 124 CAP	TUESDAY	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Transportation	senate	\N
-119		\N	f		\N	2013	2014-03-03 17:09:09	infinity	New York City Education Subcommittee	senate	\N
 104		\N	f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	New York City Education Subcommittee	senate	\N
-110	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Education	senate	\N
-108	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-03 17:09:09	2014-03-17 18:43:42	Commerce, Economic Development and Small Business	senate	\N
 85	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Energy and Telecommunications	senate	\N
-112	Room 124 CAP	TUESDAY	f		11:00:00	2013	2014-03-03 17:09:09	infinity	Finance	senate	\N
 88	Room 124 CAP	TUESDAY	f		11:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Finance	senate	\N
-113	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-03-03 17:09:09	infinity	Health	senate	\N
 89	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Health	senate	\N
-114	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Housing, Construction and Community Development	senate	\N
 91	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Housing, Construction and Community Development	senate	\N
-115	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-03 17:09:09	infinity	Insurance	senate	\N
 93	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Insurance	senate	\N
-116	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Judiciary	senate	\N
-117		\N	f		\N	2013	2014-03-03 17:09:09	infinity	Rules	senate	\N
 100		\N	f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Rules	senate	\N
-118	Room 124 CAP	TUESDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Transportation	senate	\N
-120	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-03-13 14:48:16	infinity	Aging	senate	\N
-121	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-13 14:48:16	infinity	Banks	senate	\N
-122	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-13 14:48:16	infinity	Cities	senate	\N
-123	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-13 14:48:16	infinity	Education	senate	\N
-124	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-03-13 14:48:16	infinity	Environmental Conservation	senate	\N
-125	Room 510 LOB	TUESDAY	f		09:30:00	2013	2014-03-13 14:48:16	infinity	Racing, Gaming and Wagering	senate	\N
-126	Room 816 LOB	TUESDAY	f		13:30:00	2013	2014-03-13 14:48:16	infinity	Veterans, Homeland Security and Military Affairs	senate	\N
-127	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-17 18:43:42	infinity	Commerce, Economic Development and Small Business	senate	\N
+128	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2015	2015-01-22 16:58:51	infinity	Aging	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+129	Room 411 LOB	TUESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Agriculture	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+130	Room 813 LOB	TUESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Alcoholism and Drug Abuse	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+131	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2015	2015-01-22 16:58:51	infinity	Banks	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+132	Room 944 LOB	MONDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Children and Families	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+133	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2015	2015-01-22 16:58:51	infinity	Cities	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+134	Room 410 LOB	MONDAY	f		13:30:00	2015	2015-01-22 16:58:51	infinity	Civil Service and Pensions	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+135	Room 124 CAP	TUESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Codes	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+136	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2015	2015-01-22 16:58:51	infinity	Commerce, Economic Development and Small Business	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+137	Room 801 LOB	MONDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Consumer Protection	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+138	Room 801 LOB	MONDAY	f		13:30:00	2015	2015-01-22 16:58:51	infinity	Corporations, Authorities and Commissions	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+139	Room 123 CAP	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2015	2015-01-22 16:58:51	infinity	Crime Victims, Crime and Correction	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+140	Room 309 LOB	WEDNESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+141	Room 124 CAP	TUESDAY	f		10:00:00	2015	2015-01-22 16:58:51	infinity	Education	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+142	Room 813 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2015	2015-01-22 16:58:51	infinity	Elections	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+143	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2015	2015-01-22 16:58:51	infinity	Energy and Telecommunications	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+144	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2015	2015-01-22 16:58:51	infinity	Environmental Conservation	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+145		\N	f		\N	2015	2015-01-22 16:58:51	infinity	Ethics	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+146	Room 124 CAP	TUESDAY	f		11:00:00	2015	2015-01-22 16:58:51	infinity	Finance	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+147	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2015	2015-01-22 16:58:51	infinity	Health	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+148	Room 807 LOB	TUESDAY	f		12:30:00	2015	2015-01-22 16:58:51	infinity	Higher Education	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+149	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2015	2015-01-22 16:58:51	infinity	Housing, Construction and Community Development	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+150	Room 804 LOB	TUESDAY	f		12:00:00	2015	2015-01-22 16:58:51	infinity	Infrastructure and Capital Investment	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+151	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2015	2015-01-22 16:58:51	infinity	Insurance	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+152	Room 810 LOB	TUESDAY	f		12:30:00	2015	2015-01-22 16:58:51	infinity	Investigations and Government Operations	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+153	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2015	2015-01-22 16:58:51	infinity	Judiciary	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+154	Room 511 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2015	2015-01-22 16:58:51	infinity	Labor	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+155	Room 945 LOB	TUESDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Local Government	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+156	Room 816 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2015	2015-01-22 16:58:51	infinity	Mental Health and Developmental Disabilities	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+157	Room 510 LOB	TUESDAY	f		09:30:00	2015	2015-01-22 16:58:51	infinity	Racing, Gaming and Wagering	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+158		\N	f		\N	2015	2015-01-22 16:58:51	infinity	Rules	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+159	Room 946A LOB	TUESDAY	f		10:00:00	2015	2015-01-22 16:58:51	infinity	Social Services	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+160	Room 124 CAP	TUESDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Transportation	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+161	Room 816 LOB	TUESDAY	f		13:30:00	2015	2015-01-22 16:58:51	infinity	Veterans, Homeland Security and Military Affairs	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+162		\N	f		\N	2015	2015-01-22 16:58:51	infinity	New York City Education Subcommittee	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+164	Room 410 LOB	MONDAY	f		13:30:00	2013	2014-03-03 17:09:09	infinity	Civil Service and Pensions	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+165	Room 124 CAP	TUESDAY	f		09:00:00	2013	2014-03-03 17:09:09	infinity	Codes	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+167	Room 801 LOB	MONDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Consumer Protection	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+168	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Education	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+166	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-03 17:09:09	2014-03-17 18:43:42	Commerce, Economic Development and Small Business	senate	SOBI.D140317.T184342.TXT-1-COMMITTEE
+169	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-03-03 17:09:09	infinity	Energy and Telecommunications	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+170	Room 124 CAP	TUESDAY	f		11:00:00	2013	2014-03-03 17:09:09	infinity	Finance	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+173	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-03 17:09:09	infinity	Insurance	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+182	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-03-13 14:48:16	infinity	Environmental Conservation	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+171	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-03-03 17:09:09	infinity	Health	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+172	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Housing, Construction and Community Development	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+174	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Judiciary	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+175		\N	f		\N	2013	2014-03-03 17:09:09	infinity	Rules	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+176	Room 124 CAP	TUESDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Transportation	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+177		\N	f		\N	2013	2014-03-03 17:09:09	infinity	New York City Education Subcommittee	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+178	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-03-13 14:48:16	infinity	Aging	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+179	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-13 14:48:16	infinity	Banks	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+163	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Banks	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+180	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-13 14:48:16	infinity	Cities	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+181	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-13 14:48:16	infinity	Education	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+183	Room 510 LOB	TUESDAY	f		09:30:00	2013	2014-03-13 14:48:16	infinity	Racing, Gaming and Wagering	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+184	Room 816 LOB	TUESDAY	f		13:30:00	2013	2014-03-13 14:48:16	infinity	Veterans, Homeland Security and Military Affairs	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+185	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-17 18:43:42	infinity	Commerce, Economic Development and Small Business	senate	SOBI.D140317.T184342.TXT-1-COMMITTEE
 \.
 
 
@@ -201,329 +236,353 @@ SET search_path = public, pg_catalog;
 -- Data for Name: person; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, suffix, verified) FROM stdin;
-197	Shirley L. Huntley	Shirley	L.	Huntley	shuntley@nysenate.gov	Senator	\N	t
-256	Kathleen A. Marchione	Kathleen	A.	Marchione	marchione@nysenate.gov	Senator	\N	t
-257	Ted O'Brien	Ted	\N	O'Brien	obrien@nysenate.gov	Senator	\N	t
-199	Ruth Hassell-Thompson	Ruth	\N	Hassell-Thompson	hassellt@senate.state.ny.us	Senator	\N	t
-308	Michele Titus	Michele	\N	Titus	\N	Assembly Member	\N	t
-189	David Carlucci	David	\N	Carlucci	carlucci@nysenate.gov	Senator	\N	t
-204	Adriano Espaillat	Adriano	\N	Espaillat	espailla@nysenate.gov	Senator	\N	t
-207	Suzi Oppenheimer	Suzi	\N	Oppenheimer	oppenhei@senate.state.ny.us	Senator	\N	t
-214	David J. Valesky	David	J.	Valesky	valesky@senate.state.ny.us	Senator	\N	t
-220	Liz Krueger	Liz	\N	Krueger	lkrueger@senate.state.ny.us	Senator	\N	t
-250	Cecilia Tkaczyk	Cecilia	\N	Tkaczyk	tkaczyk@nysenate.gov	Senator	\N	t
-259	Brad Hoylman	Brad	\N	Hoylman	hoylman@nysenate.gov	Senator	\N	t
-270	Brian X. Foley	Brian	X.	Foley	bfoley@senate.state.ny.us	Senator	\N	t
-241	Martin J. Golden	Martin	J.	Golden	golden@senate.state.ny.us	Senator	\N	t
-227	Greg Ball	Greg	\N	Ball	gball@nysenate.gov	Senator	\N	t
-229	Tom Libous	Tom	\N	Libous	senator@senatorlibous.com	Senator	\N	t
-271	Vincent L. Leibell	Vincent	L.	Leibell	 leibell@senate.state.ny.us	Senator	\N	t
-232	John J. Bonacic	John	J.	Bonacic	bonacic@nysenate.gov	Senator	\N	t
-233	Catharine Young	Catharine	\N	Young	cyoung@senate.state.ny.us	Senator	\N	t
-269	Antoine M Thompson	Antoine	\N	Thompson	athompso@senate.state.ny.us	Senator	\N	t
-195	John A. DeFrancisco	John	A.	DeFrancisco	jdefranc@senate.state.ny.us	Senator	\N	t
-219	Toby Ann Stavisky	Toby	\N	Stavisky	stavisky@senate.state.ny.us	Senator	\N	t
-255	George Latimer	George	\N	Latimer	latimer@nysenate.gov	Senator	\N	t
-242	Patty Ritchie	Patty	\N	Ritchie	ritchie@nysenate.gov	Senator	\N	t
-309	Vivian Cook	Vivian	Cook	Cook	\N	Assembly Member	\N	t
-202	Michael Gianaris	Michael	\N	Gianaris	gianaris@nysenate.gov	Senator	\N	t
-251	James Sanders Jr.	James	\N	Sanders	sanders@nysenate.gov	Senator	Jr.	t
-210	Tony Avella	Tony	\N	Avella	avella@nysenate.gov	Senator	\N	t
-258	Terry Gipson	Terry	\N	Gipson	gipson@nysenate.gov	Senator	\N	t
-239	Carl Kruger	Carl	\N	Kruger	kruger@senate.state.ny.us	Senator	\N	t
-223	Lee M. Zeldin	Lee	M.	Zeldin	zeldin@nysenate.gov	Senator	\N	t
-273	Darrel J. Aubertine	Darrel	J.	Aubertine	aubertin@senate.state.ny.us	Senator	\N	t
-267	Frank Padavan	Frank	\N	Padavan	padavan@senate.state.ny.us	Senator	\N	t
-228	Andrew J Lanza	Andrew	\N	Lanza	lanza@senate.state.ny.us	Senator	\N	t
-235	Kevin S. Parker	Kevin	S.	Parker	parker@senate.state.ny.us	Senator	\N	t
-254	Phil Boyle	Phil	\N	Boyle	pboyle@nysenate.gov	Senator	\N	t
-191	Neil D. Breslin	Neil	D.	Breslin	breslin@senate.state.ny.us	Senator	\N	t
-221	Stephen M. Saland	Stephen	M.	Saland	 saland@nysenate.gov	Senator	\N	t
-198	Betty Little	Betty	\N	Little	little@senate.state.ny.us	Senator	\N	t
-274	Dale M. Volker	Dale	M.	Volker	volker@senate.state.ny.us	Senator	\N	t
-247	José Peralta	José	\N	Peralta	jperalta@nysenate.gov	Senator	\N	t
-205	Owen H. Johnson	Owen	H.	Johnson	ojohnson@senate.state.ny.us	Senator	\N	t
-206	Thomas K. Duane	Thomas	K.	Duane	duane@senate.state.ny.us	Senator	\N	t
-310	Barbara Clark	Barbara	\N	Clark	\N	Assembly Member	\N	t
-208	Roy J. McDonald	Roy	J.	McDonald	mcdonald@senate.state.ny.us	Senator	\N	t
-211	James S. Alesi	James	S.	Alesi	alesi@senate.state.ny.us	Senator	\N	t
-236	Joseph E. Robach	Joseph	E.	Robach	robach@nysenate.gov	Senator	\N	t
-226	Carl L Marcellino	Carl	\N	Marcellino	marcelli@senate.state.ny.us	Senator	\N	t
-196	Gustavo Rivera	Gustavo	\N	Rivera	grivera@nysenate.gov	Senator	\N	t
-224	Malcolm A. Smith	Malcolm	A.	Smith	masmith@senate.state.ny.us 	Senator	\N	t
-272	George Winner	George	\N	Winner	winner@senate.state.ny.us	Senator	\N	t
-268	Craig M. Johnson	Craig	M.	Johnson	johnson@senate.state.ny.us	Senator	\N	t
-263	Thomas P. Morahan	Thomas	P.	Morahan	district38@nysenate.gov	Senator	\N	t
-190	James L. Seward	James	L.	Seward	seward@senate.state.ny.us	Senator	\N	t
-243	Kemp Hannon	Kemp	\N	Hannon	hannon@nysenate.gov	Senator	\N	t
-261	Simcha Felder	Simcha	\N	Felder	felder@nysenate.gov	Senator	\N	t
-246	Patrick M. Gallivan	Patrick	M.	Gallivan	gallivan@nysenate.gov	Senator	\N	t
-234	Thomas F. O'Mara	Thomas	F.	O'Mara	omara@nysenate.gov	Senator	\N	t
-212	Joseph A. Griffo	Joseph	A.	Griffo	griffo@nysenate.gov	Senator	\N	t
-225	Michael H. Ranzenhofer	Michael	H.	Ranzenhofer	ranz@senate.state.ny.us	Senator	\N	t
-265	George Onorato	George	\N	Onorato	onorato@senate.state.ny.us	Senator	\N	t
-311	Michael DenDekker	Michael	\N	DenDekker	\N	Assembly Member	\N	t
-248	Timothy M. Kennedy	Timothy	M.	Kennedy	kennedy@nysenate.gov	Senator	\N	t
-217	Mark Grisanti	Mark	\N	Grisanti	grisanti@nysenate.gov	Senator	\N	t
-245	Martin Malavé Dilan	Martin	\N	Dilan	dilan@nysenate.gov	Senator	\N	t
-275	William T. Stachowski	William	T.	Stachowski	stachows@senate.state.ny.us	Senator	\N	t
-238	Kenneth P. LaValle	Kenneth	P.	LaValle	lavalle@nysenate.gov	Senator	\N	t
-201	Eric Adams	Eric	\N	Adams	eadams@senate.state.ny.us	Senator	\N	t
-216	Jack M. Martins	Jack	M.	Martins	martins@nysenate.gov	Senator	\N	t
-194	Bill Perkins	Bill	\N	Perkins	perkins@senate.state.ny.us	Senator	\N	t
-192	José M. Serrano	José	M.	Serrano	serrano@senate.state.ny.us	Senator	\N	t
-312	Jeffrion Aubry	Jeffrion	\N	Aubry	\N	Assembly Member	\N	t
-299	Grace Meng	Grace		Meng	\N	Assembly Member	\N	t
-286	Andrew Raia	Andrew		Raia	\N	Assembly Member	\N	t
-188	John L. Sampson	John	L.	Sampson	sampson@senate.state.ny.us	Senator	\N	t
-200	Velmanette Montgomery	Velmanette	\N	Montgomery	montgome@senate.state.ny.us	Senator	\N	t
-266	Eric T. Schneiderman	Eric	T.	Schneiderman	schneide@senate.state.ny.us	Senator	\N	t
-209	Jeffrey D. Klein	Jeffrey	D.	Klein	jdklein@senate.state.ny.us	Senator	\N	t
-213	Michael F. Nozzolio	Michael	F.	Nozzolio	nozzolio@senate.state.ny.us	Senator	\N	t
-215	Andrea Stewart-Cousins	Andrea	\N	Stewart-Cousins	scousins@senate.state.ny.us	Senator	\N	t
-218	John J. Flanagan	John	J.	Flanagan	flanagan@senate.state.ny.us	Senator	\N	t
-222	Diane J. Savino	Diane	J.	Savino	savino@senate.state.ny.us	Senator	\N	t
-230	George D. Maziarz	George	D.	Maziarz	maziarz@nysenate.gov	Senator	\N	t
-231	Daniel L. Squadron	Daniel	L.	Squadron	squadron@nysenate.gov	Senator	\N	t
-237	Hugh T. Farley	Hugh	T.	Farley	farley@senate.state.ny.us	Senator	\N	t
-249	Dean G. Skelos	Dean	G.	Skelos	skelos@nysenate.gov	Senator	\N	t
-193	William J. Larkin Jr.	William	J.	Larkin	larkin@senate.state.ny.us	Senator	Jr.	t
-264	Pedro Espada Jr.	Pedro	\N	Espada	espada@senate.state.ny.us	Senator	Jr.	t
-203	Joseph P. Addabbo Jr.	Joseph	P.	Addabbo	addabbo@senate.state.ny.us	Senator	Jr.	t
-244	Charles J. Fuschillo Jr.	Charles	J.	Fuschillo	fuschill@senate.state.ny.us	Senator	Jr.	t
-276	Hiram Monserrate	Hiram		Monserrate		Senator		t
-277	David Storobin	David		Storobin		Senator		t
-278	Marc Alessi 	Marc	\N	Alessi	\N	Assembly Member	\N	t
-279	Fred Thiele	Fred	\N	Thiele	\N	Assembly Member	\N	t
-280	L. Dean Murray	L.	Dean	Murray	\N	Assembly Member	\N	t
-281	Steven Englebright	Steven	\N	Englebright	\N	Assembly Member	\N	t
-282	Ginny Fields 	Ginny	\N	Fields	\N	Assembly Member	\N	t
-283	Philip Ramos	Philip	\N	Ramos	\N	Assembly Member	\N	t
-284	Michael J. Fitzpatrick	Michael	J.	Fitzpatrick	\N	Assembly Member	\N	t
-285	Philip Boyle	Philip	\N	Boyle	\N	Assembly Member	\N	t
-287	James Conte	James	\N	Conte	\N	Assembly Member	\N	t
-288	Robert Sweeney	Robert	\N	Sweeney	\N	Assembly Member	\N	t
-289	Joseph Saladino	Joseph	\N	Saladino	\N	Assembly Member	\N	t
-290	Charles Lavine	Charles	\N	Lavine	\N	Assembly Member	\N	t
-291	Robert Barra 	Robert	\N	Barra	\N	Assembly Member	\N	t
-292	Michael Montesano	Michael	\N	Montesano	\N	Assembly Member	\N	t
-293	Michelle Schimel	Michelle	\N	Schimel	\N	Assembly Member	\N	t
-294	Thomas McKevitt	Thomas	\N	McKevitt	\N	Assembly Member	\N	t
-295	Earlene Hooper	Earlene	\N	Hooper	\N	Assembly Member	\N	t
-296	David McDonough	David	\N	McDonough	\N	Assembly Member	\N	t
-297	Harvey Weisenberg	Harvey	\N	Weisenberg	\N	Assembly Member	\N	t
-298	Thomas Alfano 	Thomas	\N	Alfano	\N	Assembly Member	\N	t
-300	Audrey Pheffer	Audrey	\N	Pheffer	\N	Assembly Member	\N	t
-301	David Weprin	David	\N	Weprin	\N	Assembly Member	\N	t
-302	Rory Lancman	Rory	\N	Lancman	\N	Assembly Member	\N	t
-303	Ann-Margaret Carrozza 	Ann-Margaret	\N	Carrozza	\N	Assembly Member	\N	t
-304	Nettie Mayersohn	Nettie	\N	Mayersohn	\N	Assembly Member	\N	t
-305	Andrew Hevesi	Andrew	\N	Hevesi	\N	Assembly Member	\N	t
-306	William Scarborough	William	\N	Scarborough	\N	Assembly Member	\N	t
-307	Margaret Markey	Margaret	\N	Markey	\N	Assembly Member	\N	t
-314	Catherine Nolan	Catherine	\N	Nolan	\N	Assembly Member	\N	t
-315	Michael G. Miller	Michael	G.	Miller	\N	Assembly Member	\N	t
-316	Inez Barron	Inez	\N	Barron	\N	Assembly Member	\N	t
-317	Helene Weinstein	Helene	\N	Weinstein	\N	Assembly Member	\N	t
-318	Rhoda Jacobs	Rhoda	\N	Jacobs	\N	Assembly Member	\N	t
-319	Karim Camara	Karim	\N	Camara	\N	Assembly Member	\N	t
-320	James F. Brennan	James	F.	Brennan	\N	Assembly Member	\N	t
-321	Steven Cymbrowitz	Steven	\N	Cymbrowitz	\N	Assembly Member	\N	t
-322	Alec Brook-Krasny	Alec	\N	Brook-Krasny	\N	Assembly Member	\N	t
-323	William Colton	William	\N	Colton	\N	Assembly Member	\N	t
-324	Dov Hikind	Dov	\N	Hikind	\N	Assembly Member	\N	t
-325	Peter Abbate	Peter	\N	Abbate	\N	Assembly Member	\N	t
-326	Joseph Lentol	Joseph	\N	Lentol	\N	Assembly Member	\N	t
-327	Felix Ortiz	Felix	\N	Ortiz	\N	Assembly Member	\N	t
-328	Joan Millman	Joan	\N	Millman	\N	Assembly Member	\N	t
-329	Vito Lopez	Vito	\N	Lopez	\N	Assembly Member	\N	t
-330	Darryl Towns	Darryl	\N	Towns	\N	Assembly Member	\N	t
-331	"William Boyland	"William	\N	Boyland	\N	Assembly Member	\N	t
-332	Annette Robinson	Annette	\N	Robinson	\N	Assembly Member	\N	t
-333	Hakeem Jeffries	Hakeem	\N	Jeffries	\N	Assembly Member	\N	t
-334	N. Nick Perry	N.	Nick	Perry	\N	Assembly Member	\N	t
-335	Alan Maisel	Alan	\N	Maisel	\N	Assembly Member	\N	t
-336	Janele Hyer-Spencer 	Janele	\N	Hyer-Spencer	\N	Assembly Member	\N	t
-337	Matthew Titone	Matthew	\N	Titone	\N	Assembly Member	\N	t
-338	Louis Tobacco	Louis	\N	Tobacco	\N	Assembly Member	\N	t
-339	Michael Cusick	Michael	\N	Cusick	\N	Assembly Member	\N	t
-340	Sheldon Silver	Sheldon	\N	Silver	\N	Assembly Member	\N	t
-341	Micah Kellner	Micah	\N	Kellner	\N	Assembly Member	\N	t
-342	Deborah Glick	Deborah	\N	Glick	\N	Assembly Member	\N	t
-343	Linda Rosenthal	Linda	\N	Rosenthal	\N	Assembly Member	\N	t
-344	Adam Clayton Powell IV 	Adam	\N	Powell	\N	Assembly Member	IV	t
-345	Daniel O'Donnell	Daniel	\N	O'Donnell	\N	Assembly Member	\N	t
-347	Herman D. Farrell	Herman	D.	Farrell	\N	Assembly Member	\N	t
-349	Jonathan Bing	Jonathan	Bing	Bing	\N	Assembly Member	\N	t
-350	Brian Kavanagh	Brian	\N	Kavanagh	\N	Assembly Member	\N	t
-351	Richard Gottfried	Richard	\N	Gottfried	\N	Assembly Member	\N	t
-352	Peter Rivera	Peter	\N	Rivera	\N	Assembly Member	\N	t
-353	Vanessa Gibson	Vanessa	\N	Gibson	\N	Assembly Member	\N	t
-354	Jose Rivera	Jose	\N	Rivera	\N	Assembly Member	\N	t
-355	Michael Benjamin 	Michael	\N	Benjamin	\N	Assembly Member	\N	t
-356	Naomi Rivera	Naomi	\N	Rivera	\N	Assembly Member	\N	t
-357	Jeffrey Dinowitz	Jeffrey	\N	Dinowitz	\N	Assembly Member	\N	t
-358	Michael Benedetto	Michael	\N	Benedetto	\N	Assembly Member	\N	t
-359	Carl Heastie	Carl	\N	Heastie	\N	Assembly Member	\N	t
-360	Carmen E. Arroyo	Carmen	E.	Arroyo	\N	Assembly Member	\N	t
-361	Marcos Crespo	Marcos	\N	Crespo	\N	Assembly Member	\N	t
-362	Nelson Castro	Nelson	\N	Castro	\N	Assembly Member	\N	t
-363	J. Gary Pretlow	J.	Gary	Pretlow	\N	Assembly Member	\N	t
-364	Amy Paulin	Amy	\N	Paulin	\N	Assembly Member	\N	t
-365	Robert Castelli	Robert	\N	Castelli	\N	Assembly Member	\N	t
-368	Richard Brodsky 	Richard	\N	Brodsky	\N	Assembly Member	\N	t
-369	Mike Spano	Mike	\N	Spano	\N	Assembly Member	\N	t
-370	"Kenneth Zebrowski	"Kenneth	\N	Zebrowski	\N	Assembly Member	\N	t
-371	Ellen C. Jaffee	Ellen	C.	Jaffee	\N	Assembly Member	\N	t
-372	Nancy Calhoun	Nancy	\N	Calhoun	\N	Assembly Member	\N	t
-373	Ann Rabbitt	Ann	\N	Rabbitt	\N	Assembly Member	\N	t
-374	Aileen Gunther	Aileen	\N	Gunther	\N	Assembly Member	\N	t
-376	Frank Skartados 	Frank	\N	Skartados	\N	Assembly Member	\N	t
-377	Kevin Cahill	Kevin	\N	Cahill	\N	Assembly Member	\N	t
-378	Joel Miller	Joel	\N	Miller	\N	Assembly Member	\N	t
-379	Marcus Molinaro	Marcus	\N	Molinaro	\N	Assembly Member	\N	t
-380	John McEneny	John	\N	McEneny	\N	Assembly Member	\N	t
-381	George Amedore	George	\N	Amedore	\N	Assembly Member	\N	t
-382	Ronald Canestrari	Ronald	\N	Canestrari	\N	Assembly Member	\N	t
-383	Clifford Crouch	Clifford	\N	Crouch	\N	Assembly Member	\N	t
-384	Timothy P. Gordon 	Timothy	P.	Gordon	\N	Assembly Member	\N	t
-385	Robert Reilly	Robert	\N	Reilly	\N	Assembly Member	\N	t
-386	James Tedisco	James	\N	Tedisco	\N	Assembly Member	\N	t
-387	William Magee	William	\N	Magee	\N	Assembly Member	\N	t
-388	Tony Jordan	Tony	\N	Jordan	\N	Assembly Member	\N	t
-389	Teresa Sayward	Teresa	\N	Sayward	\N	Assembly Member	\N	t
-390	Janet Duprey	Janet	\N	Duprey	\N	Assembly Member	\N	t
-391	David Townsend 	David	\N	Townsend	\N	Assembly Member	\N	t
-392	RoAnn Destito	RoAnn	\N	Destito	\N	Assembly Member	\N	t
-393	Marc Butler	Marc	\N	Butler	\N	Assembly Member	\N	t
-394	Addie Jenne Russell	Addie	\N	Russell	\N	Assembly Member	\N	t
-395	Joan Christensen 	Joan	\N	Christensen	\N	Assembly Member	\N	t
-396	William Magnarelli	William	\N	Magnarelli	\N	Assembly Member	\N	t
-398	Dierdre Scozzafava 	Dierdre	\N	Scozzafava	\N	Assembly Member	\N	t
-399	Gary Finch	Gary	\N	Finch	\N	Assembly Member	\N	t
-400	William A. Barclay	William	A.	Barclay	\N	Assembly Member	\N	t
-401	Barbara Lifton	Barbara	\N	Lifton	\N	Assembly Member	\N	t
-402	Donna Lupardo	Donna	\N	Lupardo	\N	Assembly Member	\N	t
-403	Peter Lopez	Peter	\N	Lopez	\N	Assembly Member	\N	t
-404	Robert Oaks	Robert	Oaks	Oaks	\N	Assembly Member	\N	t
-405	Brian Kolb	Brian	Kolb	Kolb	\N	Assembly Member	\N	t
-406	Joseph Errigo 	Joseph	\N	Errigo	\N	Assembly Member	\N	t
-407	Susan John 	Susan	John	John	\N	Assembly Member	\N	t
-408	Joseph Morelle	Joseph	\N	Morelle	\N	Assembly Member	\N	t
-409	David Gantt	David	\N	Gantt	\N	Assembly Member	\N	t
-410	Bill Reilich	Bill	\N	Reilich	\N	Assembly Member	\N	t
-411	David Koon 	David	Koon	Koon	\N	Assembly Member	\N	t
-412	James Bacalles 	James	\N	Bacalles	\N	Assembly Member	\N	t
-413	Tom O'Mara 	Tom	\N	O'Mara	\N	Assembly Member	\N	t
-414	Francine DelMonte 	Francine	\N	DelMonte	\N	Assembly Member	\N	t
-415	Stephen Hawley	Stephen	\N	Hawley	\N	Assembly Member	\N	t
-416	Robin Schimminger	Robin	\N	Schimminger	\N	Assembly Member	\N	t
-417	Crystal Peoples-Stokes	Crystal	\N	Peoples-Stokes	\N	Assembly Member	\N	t
-418	Jane Corwin	Jane	\N	Corwin	\N	Assembly Member	\N	t
-419	Dennis H. Gabryszak	Dennis	H.	Gabryszak	\N	Assembly Member	\N	t
-420	Sam Hoyt	Sam	Hoyt	Hoyt	\N	Assembly Member	\N	t
-421	Mark J.F. Schroeder	Mark	J.F.	Schroeder	\N	Assembly Member	\N	t
-422	Jack Quinn III 	Jack	\N	Quinn	\N	Assembly Member	III	t
-423	Daniel Burling	Daniel	\N	Burling	\N	Assembly Member	\N	t
-424	James Hayes	James	\N	Hayes	\N	Assembly Member	\N	t
-425	Joseph Giglio	Joseph	\N	Giglio	\N	Assembly Member	\N	t
-426	William Parment 	William	\N	Parment	\N	Assembly Member	\N	t
-427	Daniel P. Losquadro	Daniel	P.	Losquadro	\N	Assembly Member	\N	t
-428	Alfred C. Graf	Alfred	C.	C.	\N	Assembly Member	\N	t
-429	Brian F. Curran	Brian	F.	Curran	\N	Assembly Member	\N	t
-430	Edward Ra	Edward	\N	Ra	\N	Assembly Member	\N	t
-431	Phillip Goldfeder	Phillip	\N	Goldfeder	\N	Assembly Member	\N	t
-432	Edward Braunstein	Edward	\N	Braunstein	\N	Assembly Member	\N	t
-433	Michael Simanowitz	Michael	\N	Simanowitz	\N	Assembly Member	\N	t
-434	Aravella Simotas	Aravella	\N	Simotas	\N	Assembly Member	\N	t
-435	Francisco Moya	Francisco	\N	Moya	\N	Assembly Member	\N	t
-436	Rafael Espinal	Rafael	\N	Espinal	\N	Assembly Member	\N	t
-437	Nicole Malliotakis	Nicole	\N	Malliotakis	\N	Assembly Member	\N	t
-438	Robert J. Rodriguez	Robert	J.	Rodriguez	\N	Assembly Member	\N	t
-439	Guillermo Linares	Guillermo	\N	Linares	\N	Assembly Member	\N	t
-440	Dan Quart	Dan	\N	Quart	\N	Assembly Member	\N	t
-441	Eric Stevenson	Eric	\N	Stevenson	\N	Assembly Member	\N	t
-442	Mark Gjonaj	Mark	\N	Gjonaj	\N	Assembly Member	\N	t
-443	Sandy Galef	Sandy	\N	Galef	\N	Assembly Member	\N	t
-444	Thomas Abinanti	Thomas	\N	Abinanti	\N	Assembly Member	\N	t
-445	Shelley Mayer	Shelley	\N	Mayer	\N	Assembly Member	\N	t
-446	Steve Katz	Steve	\N	Katz	\N	Assembly Member	\N	t
-447	Didi Barrett	Didi	\N	Barrett	\N	Assembly Member	\N	t
-448	Steven McLaughlin	Steven	\N	McLaughlin	\N	Assembly Member	\N	t
-449	Claudia Tenney	Claudia	\N	Tenney	\N	Assembly Member	\N	t
-450	Anthony Brindisi	Anthony	\N	Brindisi	\N	Assembly Member	\N	t
-451	Sam Roberts	Sam	\N	Roberts	\N	Assembly Member	\N	t
-452	Donald R. Miller	Donald	R.	Miller	\N	Assembly Member	\N	t
-453	Kenneth Blankenbush	Kenneth	\N	Blankenbush	\N	Assembly Member	\N	t
-454	Sean T. Hanna	Sean	T.	Hanna	\N	Assembly Member	\N	t
-455	Harry B. Bronson	Harry	B.	Bronson	\N	Assembly Member	\N	t
-456	Mark C. Johns	Mark	C.	Johns	\N	Assembly Member	\N	t
-458	Christopher Friend	Christopher	\N	Friend	\N	Assembly Member	\N	t
-457	Philip Palmesano	Philip	\N	Palmesano	\N	Assembly Member	\N	t
-459	John Ceretto	John	\N	Ceretto	\N	Assembly Member	\N	t
-460	Sean Ryan	Sean	\N	Ryan	\N	Assembly Member	\N	t
-461	Mickey Kearns	Mickey	\N	Kearns	\N	Assembly Member	\N	t
-462	Kevin Smardz	Kevin	\N	Smardz	\N	Assembly Member	\N	t
-463	Raymond Walter	Raymond	\N	Walter	\N	Assembly Member	\N	t
-464	Andrew Goodell	Andrew	\N	Goodell	\N	Assembly Member	\N	t
-240	Ruben Diaz	Ruben	\N	Diaz	diaz@senate.state.ny.us	Senator	Sr	t
-465	Adam Bradley	Adam		Bradley				t
-466	Patricia Eddington	Patricia		Eddington				t
-467	Keith L.T. Wright	Keith	L.T.	Wright				t
-468	Rob Walker	Rob		Walker				t
-469	Anthony Seminerio	Anthony		Seminerio				t
-471	Ruben Diaz Jr.	Ruben		Diaz			Jr.	t
-472	Al Graf	Al		Graf				t
-473	Thomas Kirwan	Thomas		Kirwan				t
-474	Joseph Borelli	Joseph		Borelli	\N	Assemblymember		t
-475	Joseph Borelli	Joseph		Borelli	\N	Assemblymember		t
-476	David Buchwald	David		Buchwald	\N	Assemblymember		t
-477	Maritza Davila	Maritza		Davila	\N	Assemblymember		t
-478	David DiPietro	David		DiPietro	\N	Assemblymember		t
-479	Patricia Fahy	Patricia		Fahy	\N	Assemblymember		t
-480	Andrew R. Garbarino	Andrew	R.	Garbarino	\N	Assemblymember		t
-481	Ron Kim	Ron		Kim	\N	Assemblymember		t
-482	Kieran Michael Lalor	Kieran	Michael	Lalor	\N	Assemblymember		t
-483	Chad A. Lupinacci	Chad	A.	Lupinacci	\N	Assemblymember		t
-484	John T. McDonald III	John	T.	McDonald	\N	Assemblymember	III	t
-485	Walter T. Mosley	Walter	T.	Mosley	\N	Assemblymember		t
-486	Bill Nojay	Bill		Nojay	\N	Assemblymember		t
-487	Steven Otis	Steven		Otis	\N	Assemblymember		t
-488	Anthony H. Palumbo	Anthony	H.	Palumbo	\N	Assemblymember		t
-489	Victor M. Pichardo	Victor	M.	Pichardo	\N	Assemblymember		t
-490	Gabriela Rosa	Gabriela		Rosa	\N	Assemblymember		t
-491	Nily Rozic	Nily		Rozic	\N	Assemblymember		t
-492	Angelo Santabarbara	Angelo		Santabarbara	\N	Assemblymember		t
-493	Luis R. Sepúlveda	Luis	R.	Sepúlveda	\N	Assemblymember		t
-494	James Skoufis	James		Skoufis	\N	Assemblymember		t
-495	Michaelle C. Solages	Michaelle	C.	Solages	\N	Assemblymember		t
-496	Dan Stec	Dan		Stec	\N	Assemblymember		t
-497	Phil Steck	Phil		Steck	\N	Assemblymember		t
-498	Greene							f
-499	Edward Hennessey	Edward	\N	Hennessey	\N	\N	\N	t
-397	Albert A. Stirpe	Albert	A.	Stirpe	\N	Assembly Member	\N	t
-500	WEISENBERGT	\N	\N	WEISENBERGT	\N	\N	\N	f
-501	RIVERA	\N	\N	RIVERA	\N	\N	\N	f
-502	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f
-503	B GOTTFRIED	B	\N	GOTTFRIED	\N	\N	\N	f
-504	RULES	\N	\N	RULES	\N	\N	\N	f
-505	MAGNARELLIS	\N	\N	MAGNARELLIS	\N	\N	\N	f
-506	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f
-507	M WEINSTEIN	M	\N	WEINSTEIN	\N	\N	\N	f
-508	CYMBROWITZSNY	\N	\N	CYMBROWITZSNY	\N	\N	\N	f
-509	I ZEBROWSKI	I	\N	ZEBROWSKI	\N	\N	\N	f
-510	E WEINSTEIN	E	\N	WEINSTEIN	\N	\N	\N	f
-511	BRAUNSTEINWITZ	\N	\N	BRAUNSTEINWITZ	\N	\N	\N	f
-512	BRAUNSTEINZ	\N	\N	BRAUNSTEINZ	\N	\N	\N	f
-513	STRIPE	\N	\N	STRIPE	\N	\N	\N	f
-514	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f
-515	S O'DONNELL	S	\N	O'DONNELL	\N	\N	\N	f
-516	T WEINSTEIN	T	\N	WEINSTEIN	\N	\N	\N	f
-517	B O'DONNELL	B	\N	O'DONNELL	\N	\N	\N	f
-518	O BENEDETTO	O	\N	BENEDETTO	\N	\N	\N	f
-519	R BENEDETTO	R	\N	BENEDETTO	\N	\N	\N	f
-520	L O'DONNELL	L	\N	O'DONNELL	\N	\N	\N	f
+COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, suffix, verified, img_name) FROM stdin;
+226	Carl L Marcellino	Carl	\N	Marcellino	marcelli@senate.state.ny.us	Senator	\N	t	407_carl_l_marcellino.jpg
+189	David Carlucci	David	\N	Carlucci	carlucci@nysenate.gov	Senator	\N	t	370_david_carlucci.jpg
+197	Shirley L. Huntley	Shirley	L.	Huntley	shuntley@nysenate.gov	Senator	\N	t	no_image.jpg
+257	Ted O'Brien	Ted	\N	O'Brien	obrien@nysenate.gov	Senator	\N	t	no_image.jpg
+188	John L. Sampson	John	L.	Sampson	sampson@senate.state.ny.us	Senator	\N	t	369_john_l._sampson.jpg
+207	Suzi Oppenheimer	Suzi	\N	Oppenheimer	oppenhei@senate.state.ny.us	Senator	\N	t	no_image.jpg
+238	Kenneth P. LaValle	Kenneth	P.	LaValle	lavalle@nysenate.gov	Senator	\N	t	419_kenneth_p._lavalle.jpg
+241	Martin J. Golden	Martin	J.	Golden	golden@senate.state.ny.us	Senator	\N	t	422_martin_j._golden.jpg
+210	Tony Avella	Tony	\N	Avella	avella@nysenate.gov	Senator	\N	t	391_tony_avella.jpg
+195	John A. DeFrancisco	John	A.	DeFrancisco	jdefranc@senate.state.ny.us	Senator	\N	t	376_john_a._defrancisco.jpg
+243	Kemp Hannon	Kemp	\N	Hannon	hannon@nysenate.gov	Senator	\N	t	424_kemp_hannon.jpg
+235	Kevin S. Parker	Kevin	S.	Parker	parker@senate.state.ny.us	Senator	\N	t	416_kevin_s._parker.jpg
+246	Patrick M. Gallivan	Patrick	M.	Gallivan	gallivan@nysenate.gov	Senator	\N	t	427_patrick_m._gallivan.jpg
+248	Timothy M. Kennedy	Timothy	M.	Kennedy	kennedy@nysenate.gov	Senator	\N	t	429_timothy_m._kennedy.jpg
+220	Liz Krueger	Liz	\N	Krueger	lkrueger@senate.state.ny.us	Senator	\N	t	401_liz_krueger.jpg
+254	Phil Boyle	Phil	\N	Boyle	pboyle@nysenate.gov	Senator	\N	t	433_phil_boyle.jpg
+204	Adriano Espaillat	Adriano	\N	Espaillat	espailla@nysenate.gov	Senator	\N	t	385_adriano_espaillat.jpg
+194	Bill Perkins	Bill	\N	Perkins	perkins@senate.state.ny.us	Senator	\N	t	375_bill_perkins.jpg
+191	Neil D. Breslin	Neil	D.	Breslin	breslin@senate.state.ny.us	Senator	\N	t	372_neil_d._breslin.jpg
+251	James Sanders Jr.	James	\N	Sanders	sanders@nysenate.gov	Senator	Jr.	t	432_james_sanders_jr..jpg
+250	Cecilia Tkaczyk	Cecilia	\N	Tkaczyk	tkaczyk@nysenate.gov	Senator	\N	t	no_image.jpg
+255	George Latimer	George	\N	Latimer	latimer@nysenate.gov	Senator	\N	t	434_george_latimer.jpg
+232	John J. Bonacic	John	J.	Bonacic	bonacic@nysenate.gov	Senator	\N	t	413_john_j._bonacic.jpg
+200	Velmanette Montgomery	Velmanette	\N	Montgomery	montgome@senate.state.ny.us	Senator	\N	t	381_velmanette_montgomery.jpg
+199	Ruth Hassell-Thompson	Ruth	\N	Hassell-Thompson	hassellt@senate.state.ny.us	Senator	\N	t	380_ruth_hassell-thompson.jpg
+190	James L. Seward	James	L.	Seward	seward@senate.state.ny.us	Senator	\N	t	371_james_l._seward.jpg
+312	Jeffrion Aubry	Jeffrion	\N	Aubry	\N	Assembly Member	\N	t	460_jeffrion_aubry.jpg
+229	Tom Libous	Tom	\N	Libous	senator@senatorlibous.com	Senator	\N	t	410_tom_libous.jpg
+225	Michael H. Ranzenhofer	Michael	H.	Ranzenhofer	ranz@senate.state.ny.us	Senator	\N	t	406_michael_h._ranzenhofer.jpg
+233	Catharine Young	Catharine	\N	Young	cyoung@senate.state.ny.us	Senator	\N	t	414_catharine_young.jpg
+270	Brian X. Foley	Brian	X.	Foley	bfoley@senate.state.ny.us	Senator	\N	t	no_image.jpg
+227	Greg Ball	Greg	\N	Ball	gball@nysenate.gov	Senator	\N	t	no_image.jpg
+271	Vincent L. Leibell	Vincent	L.	Leibell	 leibell@senate.state.ny.us	Senator	\N	t	no_image.jpg
+269	Antoine M Thompson	Antoine	\N	Thompson	athompso@senate.state.ny.us	Senator	\N	t	no_image.jpg
+258	Terry Gipson	Terry	\N	Gipson	gipson@nysenate.gov	Senator	\N	t	no_image.jpg
+239	Carl Kruger	Carl	\N	Kruger	kruger@senate.state.ny.us	Senator	\N	t	no_image.jpg
+223	Lee M. Zeldin	Lee	M.	Zeldin	zeldin@nysenate.gov	Senator	\N	t	no_image.jpg
+273	Darrel J. Aubertine	Darrel	J.	Aubertine	aubertin@senate.state.ny.us	Senator	\N	t	no_image.jpg
+215	Andrea Stewart-Cousins	Andrea	\N	Stewart-Cousins	scousins@senate.state.ny.us	Senator	\N	t	396_andrea_stewart-cousins.jpg
+261	Simcha Felder	Simcha	\N	Felder	felder@nysenate.gov	Senator	\N	t	439_simcha_felder.jpg
+245	Martin Malavé Dilan	Martin	\N	Dilan	dilan@nysenate.gov	Senator	\N	t	426_martin_malave_dilan.jpg
+192	José M. Serrano	José	M.	Serrano	serrano@senate.state.ny.us	Senator	\N	t	373_jose_m._serrano.jpg
+228	Andrew J Lanza	Andrew	\N	Lanza	lanza@senate.state.ny.us	Senator	\N	t	409_andrew_j_lanza.jpg
+212	Joseph A. Griffo	Joseph	A.	Griffo	griffo@nysenate.gov	Senator	\N	t	393_joseph_a._griffo.jpg
+198	Betty Little	Betty	\N	Little	little@senate.state.ny.us	Senator	\N	t	379_betty_little.jpg
+214	David J. Valesky	David	J.	Valesky	valesky@senate.state.ny.us	Senator	\N	t	395_david_j._valesky.jpg
+247	José Peralta	José	\N	Peralta	jperalta@nysenate.gov	Senator	\N	t	428_josé_peralta.jpg
+203	Joseph P. Addabbo Jr.	Joseph	P.	Addabbo	addabbo@senate.state.ny.us	Senator	Jr.	t	384_joseph_p._addabbo_jr..jpg
+237	Hugh T. Farley	Hugh	T.	Farley	farley@senate.state.ny.us	Senator	\N	t	418_hugh_t._farley.jpg
+218	John J. Flanagan	John	J.	Flanagan	flanagan@senate.state.ny.us	Senator	\N	t	399_john_j._flanagan.jpg
+259	Brad Hoylman	Brad	\N	Hoylman	hoylman@nysenate.gov	Senator	\N	t	438_brad_hoylman.jpg
+209	Jeffrey D. Klein	Jeffrey	D.	Klein	jdklein@senate.state.ny.us	Senator	\N	t	390_jeffrey_d._klein.jpg
+193	William J. Larkin Jr.	William	J.	Larkin	larkin@senate.state.ny.us	Senator	Jr.	t	374_william_j._larkin_jr..jpg
+256	Kathleen A. Marchione	Kathleen	A.	Marchione	marchione@nysenate.gov	Senator	\N	t	435_kathleen_a._marchione.jpg
+216	Jack M. Martins	Jack	M.	Martins	martins@nysenate.gov	Senator	\N	t	397_jack_m._martins.jpg
+213	Michael F. Nozzolio	Michael	F.	Nozzolio	nozzolio@senate.state.ny.us	Senator	\N	t	394_michael_f._nozzolio.jpg
+242	Patty Ritchie	Patty	\N	Ritchie	ritchie@nysenate.gov	Senator	\N	t	423_patty_ritchie.jpg
+196	Gustavo Rivera	Gustavo	\N	Rivera	grivera@nysenate.gov	Senator	\N	t	377_gustavo_rivera.jpg
+236	Joseph E. Robach	Joseph	E.	Robach	robach@nysenate.gov	Senator	\N	t	417_joseph_e._robach.jpg
+222	Diane J. Savino	Diane	J.	Savino	savino@senate.state.ny.us	Senator	\N	t	403_diane_j._savino.jpg
+249	Dean G. Skelos	Dean	G.	Skelos	skelos@nysenate.gov	Senator	\N	t	430_dean_g._skelos.jpg
+231	Daniel L. Squadron	Daniel	L.	Squadron	squadron@nysenate.gov	Senator	\N	t	412_daniel_l._squadron.jpg
+266	Eric T. Schneiderman	Eric	T.	Schneiderman	schneide@senate.state.ny.us	Senator	\N	t	no_image.jpg
+230	George D. Maziarz	George	D.	Maziarz	maziarz@nysenate.gov	Senator	\N	t	no_image.jpg
+264	Pedro Espada Jr.	Pedro	\N	Espada	espada@senate.state.ny.us	Senator	Jr.	t	no_image.jpg
+244	Charles J. Fuschillo Jr.	Charles	J.	Fuschillo	fuschill@senate.state.ny.us	Senator	Jr.	t	no_image.jpg
+276	Hiram Monserrate	Hiram		Monserrate		Senator		t	no_image.jpg
+277	David Storobin	David		Storobin		Senator		t	no_image.jpg
+278	Marc Alessi 	Marc	\N	Alessi	\N	Assembly Member	\N	t	no_image.jpg
+280	L. Dean Murray	L.	Dean	Murray	\N	Assembly Member	\N	t	no_image.jpg
+282	Ginny Fields 	Ginny	\N	Fields	\N	Assembly Member	\N	t	no_image.jpg
+450	Anthony Brindisi	Anthony	\N	Brindisi	\N	Assembly Member	\N	t	628_anthony_brindisi.jpg
+202	Michael Gianaris	Michael	\N	Gianaris	gianaris@nysenate.gov	Senator	\N	t	383_michael_gianaris.jpg
+219	Toby Ann Stavisky	Toby	\N	Stavisky	stavisky@senate.state.ny.us	Senator	\N	t	400_toby_ann_stavisky.jpg
+362	Nelson Castro	Nelson	\N	Castro	\N	Assembly Member	\N	t	no_image.jpg
+365	Robert Castelli	Robert	\N	Castelli	\N	Assembly Member	\N	t	no_image.jpg
+368	Richard Brodsky 	Richard	\N	Brodsky	\N	Assembly Member	\N	t	no_image.jpg
+369	Mike Spano	Mike	\N	Spano	\N	Assembly Member	\N	t	no_image.jpg
+372	Nancy Calhoun	Nancy	\N	Calhoun	\N	Assembly Member	\N	t	no_image.jpg
+373	Ann Rabbitt	Ann	\N	Rabbitt	\N	Assembly Member	\N	t	no_image.jpg
+378	Joel Miller	Joel	\N	Miller	\N	Assembly Member	\N	t	no_image.jpg
+379	Marcus Molinaro	Marcus	\N	Molinaro	\N	Assembly Member	\N	t	no_image.jpg
+380	John McEneny	John	\N	McEneny	\N	Assembly Member	\N	t	no_image.jpg
+381	George Amedore	George	\N	Amedore	\N	Assembly Member	\N	t	no_image.jpg
+382	Ronald Canestrari	Ronald	\N	Canestrari	\N	Assembly Member	\N	t	no_image.jpg
+384	Timothy P. Gordon 	Timothy	P.	Gordon	\N	Assembly Member	\N	t	no_image.jpg
+385	Robert Reilly	Robert	\N	Reilly	\N	Assembly Member	\N	t	no_image.jpg
+388	Tony Jordan	Tony	\N	Jordan	\N	Assembly Member	\N	t	no_image.jpg
+389	Teresa Sayward	Teresa	\N	Sayward	\N	Assembly Member	\N	t	no_image.jpg
+391	David Townsend 	David	\N	Townsend	\N	Assembly Member	\N	t	no_image.jpg
+392	RoAnn Destito	RoAnn	\N	Destito	\N	Assembly Member	\N	t	no_image.jpg
+395	Joan Christensen 	Joan	\N	Christensen	\N	Assembly Member	\N	t	no_image.jpg
+398	Dierdre Scozzafava 	Dierdre	\N	Scozzafava	\N	Assembly Member	\N	t	no_image.jpg
+403	Peter Lopez	Peter	\N	Lopez	\N	Assembly Member	\N	t	no_image.jpg
+406	Joseph Errigo 	Joseph	\N	Errigo	\N	Assembly Member	\N	t	no_image.jpg
+407	Susan John 	Susan	John	John	\N	Assembly Member	\N	t	no_image.jpg
+410	Bill Reilich	Bill	\N	Reilich	\N	Assembly Member	\N	t	no_image.jpg
+411	David Koon 	David	Koon	Koon	\N	Assembly Member	\N	t	no_image.jpg
+412	James Bacalles 	James	\N	Bacalles	\N	Assembly Member	\N	t	no_image.jpg
+413	Tom O'Mara 	Tom	\N	O'Mara	\N	Assembly Member	\N	t	no_image.jpg
+414	Francine DelMonte 	Francine	\N	DelMonte	\N	Assembly Member	\N	t	no_image.jpg
+419	Dennis H. Gabryszak	Dennis	H.	Gabryszak	\N	Assembly Member	\N	t	no_image.jpg
+420	Sam Hoyt	Sam	Hoyt	Hoyt	\N	Assembly Member	\N	t	no_image.jpg
+421	Mark J.F. Schroeder	Mark	J.F.	Schroeder	\N	Assembly Member	\N	t	no_image.jpg
+422	Jack Quinn III 	Jack	\N	Quinn	\N	Assembly Member	III	t	no_image.jpg
+423	Daniel Burling	Daniel	\N	Burling	\N	Assembly Member	\N	t	no_image.jpg
+424	James Hayes	James	\N	Hayes	\N	Assembly Member	\N	t	no_image.jpg
+426	William Parment 	William	\N	Parment	\N	Assembly Member	\N	t	no_image.jpg
+240	Ruben Diaz	Ruben	\N	Diaz	diaz@senate.state.ny.us	Senator	Sr	t	421_ruben_diaz.jpg
+234	Thomas F. O'Mara	Thomas	F.	O'Mara	omara@nysenate.gov	Senator	\N	t	415_thomas_f._o'mara.jpg
+452	Donald R. Miller	Donald	R.	Miller	\N	Assembly Member	\N	t	no_image.jpg
+454	Sean T. Hanna	Sean	T.	Hanna	\N	Assembly Member	\N	t	no_image.jpg
+462	Kevin Smardz	Kevin	\N	Smardz	\N	Assembly Member	\N	t	no_image.jpg
+465	Adam Bradley	Adam		Bradley				t	no_image.jpg
+466	Patricia Eddington	Patricia		Eddington				t	no_image.jpg
+468	Rob Walker	Rob		Walker				t	no_image.jpg
+469	Anthony Seminerio	Anthony		Seminerio				t	no_image.jpg
+471	Ruben Diaz Jr.	Ruben		Diaz			Jr.	t	no_image.jpg
+473	Thomas Kirwan	Thomas		Kirwan				t	no_image.jpg
+490	Gabriela Rosa	Gabriela		Rosa	\N	Assemblymember		t	no_image.jpg
+498	Greene							f	no_image.jpg
+499	Edward Hennessey	Edward	\N	Hennessey	\N	\N	\N	t	no_image.jpg
+500	WEISENBERGT	\N	\N	WEISENBERGT	\N	\N	\N	f	no_image.jpg
+501	RIVERA	\N	\N	RIVERA	\N	\N	\N	f	no_image.jpg
+502	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f	no_image.jpg
+503	B GOTTFRIED	B	\N	GOTTFRIED	\N	\N	\N	f	no_image.jpg
+504	RULES	\N	\N	RULES	\N	\N	\N	f	no_image.jpg
+505	MAGNARELLIS	\N	\N	MAGNARELLIS	\N	\N	\N	f	no_image.jpg
+506	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f	no_image.jpg
+507	M WEINSTEIN	M	\N	WEINSTEIN	\N	\N	\N	f	no_image.jpg
+508	CYMBROWITZSNY	\N	\N	CYMBROWITZSNY	\N	\N	\N	f	no_image.jpg
+509	I ZEBROWSKI	I	\N	ZEBROWSKI	\N	\N	\N	f	no_image.jpg
+510	E WEINSTEIN	E	\N	WEINSTEIN	\N	\N	\N	f	no_image.jpg
+511	BRAUNSTEINWITZ	\N	\N	BRAUNSTEINWITZ	\N	\N	\N	f	no_image.jpg
+512	BRAUNSTEINZ	\N	\N	BRAUNSTEINZ	\N	\N	\N	f	no_image.jpg
+513	STRIPE	\N	\N	STRIPE	\N	\N	\N	f	no_image.jpg
+514	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f	no_image.jpg
+447	Didi Barrett	Didi	\N	Barrett	\N	Assembly Member	\N	t	625_didi_barrett.jpg
+650	Peter Lopez	\N	\N	Lopez	\N	\N	\N	t	828_peter_lopez.jpg
+267	Frank Padavan	Frank	\N	Padavan	padavan@senate.state.ny.us	Senator	\N	t	no_image.jpg
+221	Stephen M. Saland	Stephen	M.	Saland	 saland@nysenate.gov	Senator	\N	t	no_image.jpg
+274	Dale M. Volker	Dale	M.	Volker	volker@senate.state.ny.us	Senator	\N	t	no_image.jpg
+205	Owen H. Johnson	Owen	H.	Johnson	ojohnson@senate.state.ny.us	Senator	\N	t	no_image.jpg
+206	Thomas K. Duane	Thomas	K.	Duane	duane@senate.state.ny.us	Senator	\N	t	no_image.jpg
+208	Roy J. McDonald	Roy	J.	McDonald	mcdonald@senate.state.ny.us	Senator	\N	t	no_image.jpg
+211	James S. Alesi	James	S.	Alesi	alesi@senate.state.ny.us	Senator	\N	t	no_image.jpg
+224	Malcolm A. Smith	Malcolm	A.	Smith	masmith@senate.state.ny.us 	Senator	\N	t	no_image.jpg
+272	George Winner	George	\N	Winner	winner@senate.state.ny.us	Senator	\N	t	no_image.jpg
+268	Craig M. Johnson	Craig	M.	Johnson	johnson@senate.state.ny.us	Senator	\N	t	no_image.jpg
+263	Thomas P. Morahan	Thomas	P.	Morahan	district38@nysenate.gov	Senator	\N	t	no_image.jpg
+265	George Onorato	George	\N	Onorato	onorato@senate.state.ny.us	Senator	\N	t	no_image.jpg
+217	Mark Grisanti	Mark	\N	Grisanti	grisanti@nysenate.gov	Senator	\N	t	no_image.jpg
+275	William T. Stachowski	William	T.	Stachowski	stachows@senate.state.ny.us	Senator	\N	t	no_image.jpg
+201	Eric Adams	Eric	\N	Adams	eadams@senate.state.ny.us	Senator	\N	t	no_image.jpg
+299	Grace Meng	Grace		Meng	\N	Assembly Member	\N	t	no_image.jpg
+287	James Conte	James	\N	Conte	\N	Assembly Member	\N	t	no_image.jpg
+288	Robert Sweeney	Robert	\N	Sweeney	\N	Assembly Member	\N	t	no_image.jpg
+291	Robert Barra 	Robert	\N	Barra	\N	Assembly Member	\N	t	no_image.jpg
+297	Harvey Weisenberg	Harvey	\N	Weisenberg	\N	Assembly Member	\N	t	no_image.jpg
+298	Thomas Alfano 	Thomas	\N	Alfano	\N	Assembly Member	\N	t	no_image.jpg
+300	Audrey Pheffer	Audrey	\N	Pheffer	\N	Assembly Member	\N	t	no_image.jpg
+302	Rory Lancman	Rory	\N	Lancman	\N	Assembly Member	\N	t	no_image.jpg
+303	Ann-Margaret Carrozza 	Ann-Margaret	\N	Carrozza	\N	Assembly Member	\N	t	no_image.jpg
+304	Nettie Mayersohn	Nettie	\N	Mayersohn	\N	Assembly Member	\N	t	no_image.jpg
+318	Rhoda Jacobs	Rhoda	\N	Jacobs	\N	Assembly Member	\N	t	no_image.jpg
+328	Joan Millman	Joan	\N	Millman	\N	Assembly Member	\N	t	no_image.jpg
+329	Vito Lopez	Vito	\N	Lopez	\N	Assembly Member	\N	t	no_image.jpg
+330	Darryl Towns	Darryl	\N	Towns	\N	Assembly Member	\N	t	no_image.jpg
+331	"William Boyland	"William	\N	Boyland	\N	Assembly Member	\N	t	no_image.jpg
+333	Hakeem Jeffries	Hakeem	\N	Jeffries	\N	Assembly Member	\N	t	no_image.jpg
+335	Alan Maisel	Alan	\N	Maisel	\N	Assembly Member	\N	t	no_image.jpg
+336	Janele Hyer-Spencer 	Janele	\N	Hyer-Spencer	\N	Assembly Member	\N	t	no_image.jpg
+338	Louis Tobacco	Louis	\N	Tobacco	\N	Assembly Member	\N	t	no_image.jpg
+341	Micah Kellner	Micah	\N	Kellner	\N	Assembly Member	\N	t	no_image.jpg
+344	Adam Clayton Powell IV 	Adam	\N	Powell	\N	Assembly Member	IV	t	no_image.jpg
+349	Jonathan Bing	Jonathan	Bing	Bing	\N	Assembly Member	\N	t	no_image.jpg
+353	Vanessa Gibson	Vanessa	\N	Gibson	\N	Assembly Member	\N	t	no_image.jpg
+354	Jose Rivera	Jose	\N	Rivera	\N	Assembly Member	\N	t	no_image.jpg
+355	Michael Benjamin 	Michael	\N	Benjamin	\N	Assembly Member	\N	t	no_image.jpg
+356	Naomi Rivera	Naomi	\N	Rivera	\N	Assembly Member	\N	t	no_image.jpg
+319	Karim Camara	Karim	\N	Camara	\N	Assembly Member	\N	t	no_image.jpg
+427	Daniel P. Losquadro	Daniel	P.	Losquadro	\N	Assembly Member	\N	t	no_image.jpg
+436	Rafael Espinal	Rafael	\N	Espinal	\N	Assembly Member	\N	t	no_image.jpg
+439	Guillermo Linares	Guillermo	\N	Linares	\N	Assembly Member	\N	t	no_image.jpg
+441	Eric Stevenson	Eric	\N	Stevenson	\N	Assembly Member	\N	t	no_image.jpg
+515	S O'DONNELL	S	\N	O'DONNELL	\N	\N	\N	f	no_image.jpg
+516	T WEINSTEIN	T	\N	WEINSTEIN	\N	\N	\N	f	no_image.jpg
+517	B O'DONNELL	B	\N	O'DONNELL	\N	\N	\N	f	no_image.jpg
+518	O BENEDETTO	O	\N	BENEDETTO	\N	\N	\N	f	no_image.jpg
+519	R BENEDETTO	R	\N	BENEDETTO	\N	\N	\N	f	no_image.jpg
+520	L O'DONNELL	L	\N	O'DONNELL	\N	\N	\N	f	no_image.jpg
+493	Luis R. Sepúlveda	Luis	R.	Sepúlveda	\N	Assemblymember		t	no_image.jpg
+713	Terrence P. Murphy	Terrence	P.	Murphy	\N	\N	\N	t	891_terrence_p._murphy.jpg
+707	Robert Ortt	Robert	\N	Ortt	\N	\N	\N	t	885_robert_ortt.jpg
+711	Jesse Hamilton	Jesse	\N	Hamilton	\N	\N	\N	t	889_jesse_hamilton.jpg
+715	Thomas Croci	Thomas	\N	Croci	\N	\N	\N	t	893_thomas_croci.jpg
+712	Susan Serino	Susan	\N	Serino	\N	\N	\N	t	890_susan_serino.jpg
+709	Rich Funke	Rich	\N	Funke	\N	\N	\N	t	887_rich_funke.jpg
+714	George Amedore	George	\N	Amedore	\N	\N	\N	t	892_george_amedore.jpg
+717	Michael Venditto	Michael	\N	Venditto	\N	\N	\N	t	895_michael_venditto.jpg
+716	Marc Panepinto	Marc	\N	Panepinto	\N	\N	\N	t	894_marc_panepinto.jpg
+710	Leroy Comrie	Leroy	\N	Comrie	\N	\N	\N	t	888_leroy_comrie.jpg
+359	Carl Heastie	Carl	\N	Heastie	\N	Assembly Member	\N	t	535_carl_heastie.jpg
+444	Thomas Abinanti	Thomas	\N	Abinanti	\N	Assembly Member	\N	t	622_thomas_abinanti.jpg
+721	Michael Blake	\N	\N	Blake	\N	\N	\N	t	899_michael_blake.jpg
+730	Karl Brabenec	\N	\N	Brabenec	\N	\N	\N	t	908_karl_brabenec.jpg
+311	Michael DenDekker	Michael	\N	DenDekker	\N	Assembly Member	\N	t	459_michael_dendekker.jpg
+357	Jeffrey Dinowitz	Jeffrey	\N	Dinowitz	\N	Assembly Member	\N	t	533_jeffrey_dinowitz.jpg
+425	Joseph Giglio	Joseph	\N	Giglio	\N	Assembly Member	\N	t	599_joseph_giglio.jpg
+342	Deborah Glick	Deborah	\N	Glick	\N	Assembly Member	\N	t	519_deborah_glick.jpg
+464	Andrew Goodell	Andrew	\N	Goodell	\N	Assembly Member	\N	t	642_andrew_goodell.jpg
+485	Walter T. Mosley	Walter	T.	Mosley	\N	Assemblymember		t	663_walter_t._mosley.jpg
+732	Dean Murray	\N	\N	Murray	\N	\N	\N	t	910_dean_murray.jpg
+451	Sam Roberts	Sam	\N	Roberts	\N	Assembly Member	\N	t	629_sam_roberts.jpg
+289	Joseph Saladino	Joseph	\N	Saladino	\N	Assembly Member	\N	t	473_joseph_saladino.jpg
+308	Michele Titus	Michele	\N	Titus	\N	Assembly Member	\N	t	456_michele_titus.jpg
+317	Helene Weinstein	Helene	\N	Weinstein	\N	Assembly Member	\N	t	494_helene_weinstein.jpg
+370	Kenneth Zebrowski	Kenneth	\N	Zebrowski	\N	Assembly Member	\N	t	545_"kenneth_zebrowski.jpg
+325	Peter Abbate	Peter	\N	Abbate	\N	Assembly Member	\N	t	502_peter_abbate.jpg
+360	Carmen E. Arroyo	Carmen	E.	Arroyo	\N	Assembly Member	\N	t	536_carmen_e._arroyo.jpg
+358	Michael Benedetto	Michael	\N	Benedetto	\N	Assembly Member	\N	t	534_michael_benedetto.jpg
+432	Edward Braunstein	Edward	\N	Braunstein	\N	Assembly Member	\N	t	610_edward_braunstein.jpg
+320	James F. Brennan	James	F.	Brennan	\N	Assembly Member	\N	t	497_james_f._brennan.jpg
+322	Alec Brook-Krasny	Alec	\N	Brook-Krasny	\N	Assembly Member	\N	t	499_alec_brook-krasny.jpg
+393	Marc Butler	Marc	\N	Butler	\N	Assembly Member	\N	t	567_marc_butler.jpg
+310	Barbara Clark	Barbara	\N	Clark	\N	Assembly Member	\N	t	458_barbara_clark.jpg
+323	William Colton	William	\N	Colton	\N	Assembly Member	\N	t	500_william_colton.jpg
+418	Jane Corwin	Jane	\N	Corwin	\N	Assembly Member	\N	t	592_jane_corwin.jpg
+383	Clifford Crouch	Clifford	\N	Crouch	\N	Assembly Member	\N	t	557_clifford_crouch.jpg
+429	Brian F. Curran	Brian	F.	Curran	\N	Assembly Member	\N	t	607_brian_f._curran.jpg
+339	Michael Cusick	Michael	\N	Cusick	\N	Assembly Member	\N	t	516_michael_cusick.jpg
+281	Steven Englebright	Steven	\N	Englebright	\N	Assembly Member	\N	t	466_steven_englebright.jpg
+443	Sandy Galef	Sandy	\N	Galef	\N	Assembly Member	\N	t	621_sandy_galef.jpg
+431	Phillip Goldfeder	Phillip	\N	Goldfeder	\N	Assembly Member	\N	t	609_phillip_goldfeder.jpg
+351	Richard Gottfried	Richard	\N	Gottfried	\N	Assembly Member	\N	t	527_richard_gottfried.jpg
+374	Aileen Gunther	Aileen	\N	Gunther	\N	Assembly Member	\N	t	549_aileen_gunther.jpg
+415	Stephen Hawley	Stephen	\N	Hawley	\N	Assembly Member	\N	t	589_stephen_hawley.jpg
+305	Andrew Hevesi	Andrew	\N	Hevesi	\N	Assembly Member	\N	t	488_andrew_hevesi.jpg
+295	Earlene Hooper	Earlene	\N	Hooper	\N	Assembly Member	\N	t	479_earlene_hooper.jpg
+371	Ellen C. Jaffee	Ellen	C.	Jaffee	\N	Assembly Member	\N	t	546_ellen_c._jaffee.jpg
+446	Steve Katz	Steve	\N	Katz	\N	Assembly Member	\N	t	624_steve_katz.jpg
+350	Brian Kavanagh	Brian	\N	Kavanagh	\N	Assembly Member	\N	t	526_brian_kavanagh.jpg
+290	Charles Lavine	Charles	\N	Lavine	\N	Assembly Member	\N	t	474_charles_lavine.jpg
+326	Joseph Lentol	Joseph	\N	Lentol	\N	Assembly Member	\N	t	503_joseph_lentol.jpg
+401	Barbara Lifton	Barbara	\N	Lifton	\N	Assembly Member	\N	t	575_barbara_lifton.jpg
+296	David McDonough	David	\N	McDonough	\N	Assembly Member	\N	t	480_david_mcdonough.jpg
+315	Michael G. Miller	Michael	G.	Miller	\N	Assembly Member	\N	t	492_michael_g._miller.jpg
+292	Michael Montesano	Michael	\N	Montesano	\N	Assembly Member	\N	t	476_michael_montesano.jpg
+314	Catherine Nolan	Catherine	\N	Nolan	\N	Assembly Member	\N	t	491_catherine_nolan.jpg
+404	Robert Oaks	Robert	Oaks	Oaks	\N	Assembly Member	\N	t	578_robert_oaks.jpg
+345	Daniel O'Donnell	Daniel	\N	O'Donnell	\N	Assembly Member	\N	t	522_daniel_o'donnell.jpg
+327	Felix Ortiz	Felix	\N	Ortiz	\N	Assembly Member	\N	t	504_felix_ortiz.jpg
+364	Amy Paulin	Amy	\N	Paulin	\N	Assembly Member	\N	t	540_amy_paulin.jpg
+334	N. Nick Perry	N.	Nick	Perry	\N	Assembly Member	\N	t	511_n._nick_perry.jpg
+363	J. Gary Pretlow	J.	Gary	Pretlow	\N	Assembly Member	\N	t	539_j._gary_pretlow.jpg
+440	Dan Quart	Dan	\N	Quart	\N	Assembly Member	\N	t	618_dan_quart.jpg
+286	Andrew Raia	Andrew		Raia	\N	Assembly Member	\N	t	462_andrew_raia.jpg
+283	Philip Ramos	Philip	\N	Ramos	\N	Assembly Member	\N	t	468_philip_ramos.jpg
+438	Robert J. Rodriguez	Robert	J.	Rodriguez	\N	Assembly Member	\N	t	616_robert_j._rodriguez.jpg
+343	Linda Rosenthal	Linda	\N	Rosenthal	\N	Assembly Member	\N	t	520_linda_rosenthal.jpg
+394	Addie Jenne Russell	Addie	\N	Russell	\N	Assembly Member	\N	t	568_addie_jenne_russell.jpg
+293	Michelle Schimel	Michelle	\N	Schimel	\N	Assembly Member	\N	t	477_michelle_schimel.jpg
+340	Sheldon Silver	Sheldon	\N	Silver	\N	Assembly Member	\N	t	517_sheldon_silver.jpg
+434	Aravella Simotas	Aravella	\N	Simotas	\N	Assembly Member	\N	t	612_aravella_simotas.jpg
+376	Frank Skartados 	Frank	\N	Skartados	\N	Assembly Member	\N	t	550_frank_skartados_.jpg
+449	Claudia Tenney	Claudia	\N	Tenney	\N	Assembly Member	\N	t	627_claudia_tenney.jpg
+279	Fred Thiele	Fred	\N	Thiele	\N	Assembly Member	\N	t	464_fred_thiele.jpg
+337	Matthew Titone	Matthew	\N	Titone	\N	Assembly Member	\N	t	514_matthew_titone.jpg
+316	Inez Barron	Inez	\N	Barron	\N	Assembly Member	\N	t	493_inez_barron.jpg
+453	Kenneth Blankenbush	Kenneth	\N	Blankenbush	\N	Assembly Member	\N	t	631_kenneth_blankenbush.jpg
+475	Joseph Borelli	Joseph		Borelli	\N	Assemblymember		t	653_joseph_borelli.jpg
+455	Harry B. Bronson	Harry	B.	Bronson	\N	Assembly Member	\N	t	633_harry_b._bronson.jpg
+476	David Buchwald	David		Buchwald	\N	Assemblymember		t	654_david_buchwald.jpg
+377	Kevin Cahill	Kevin	\N	Cahill	\N	Assembly Member	\N	t	551_kevin_cahill.jpg
+459	John Ceretto	John	\N	Ceretto	\N	Assembly Member	\N	t	637_john_ceretto.jpg
+361	Marcos Crespo	Marcos	\N	Crespo	\N	Assembly Member	\N	t	537_marcos_crespo.jpg
+321	Steven Cymbrowitz	Steven	\N	Cymbrowitz	\N	Assembly Member	\N	t	498_steven_cymbrowitz.jpg
+477	Maritza Davila	Maritza		Davila	\N	Assemblymember		t	655_maritza_davila.jpg
+478	David DiPietro	David		DiPietro	\N	Assemblymember		t	656_david_dipietro.jpg
+390	Janet Duprey	Janet	\N	Duprey	\N	Assembly Member	\N	t	564_janet_duprey.jpg
+479	Patricia Fahy	Patricia		Fahy	\N	Assemblymember		t	657_patricia_fahy.jpg
+284	Michael J. Fitzpatrick	Michael	J.	Fitzpatrick	\N	Assembly Member	\N	t	469_michael_j._fitzpatrick.jpg
+458	Christopher Friend	Christopher	\N	Friend	\N	Assembly Member	\N	t	636_christopher_friend.jpg
+409	David Gantt	David	\N	Gantt	\N	Assembly Member	\N	t	583_david_gantt.jpg
+480	Andrew R. Garbarino	Andrew	R.	Garbarino	\N	Assemblymember		t	658_andrew_r._garbarino.jpg
+442	Mark Gjonaj	Mark	\N	Gjonaj	\N	Assembly Member	\N	t	620_mark_gjonaj.jpg
+472	Al Graf	Al		Graf				t	651_al_graf.jpg
+324	Dov Hikind	Dov	\N	Hikind	\N	Assembly Member	\N	t	501_dov_hikind.jpg
+723	JEAN-PIERRE	\N	\N	JEAN-PIERRE	\N	\N	\N	t	901_jean-pierre.jpg
+724	Latoya Joyner	\N	\N	Joyner	\N	\N	\N	t	902_latoya_joyner.jpg
+461	Mickey Kearns	Mickey	\N	Kearns	\N	Assembly Member	\N	t	639_mickey_kearns.jpg
+481	Ron Kim	Ron		Kim	\N	Assemblymember		t	659_ron_kim.jpg
+405	Brian Kolb	Brian	Kolb	Kolb	\N	Assembly Member	\N	t	579_brian_kolb.jpg
+731	Peter Lawrence	\N	\N	Lawrence	\N	\N	\N	t	909_peter_lawrence.jpg
+726	Guillermo Linares	\N	\N	Linares	\N	\N	\N	t	904_guillermo_linares.jpg
+483	Chad A. Lupinacci	Chad	A.	Lupinacci	\N	Assemblymember		t	661_chad_a._lupinacci.jpg
+396	William Magnarelli	William	\N	Magnarelli	\N	Assembly Member	\N	t	570_william_magnarelli.jpg
+437	Nicole Malliotakis	Nicole	\N	Malliotakis	\N	Assembly Member	\N	t	615_nicole_malliotakis.jpg
+445	Shelley Mayer	Shelley	\N	Mayer	\N	Assembly Member	\N	t	623_shelley_mayer.jpg
+484	John T. McDonald III	John	T.	McDonald	\N	Assemblymember	III	t	662_john_t._mcdonald_iii.jpg
+448	Steven McLaughlin	Steven	\N	McLaughlin	\N	Assembly Member	\N	t	626_steven_mclaughlin.jpg
+435	Francisco Moya	Francisco	\N	Moya	\N	Assembly Member	\N	t	613_francisco_moya.jpg
+486	Bill Nojay	Bill		Nojay	\N	Assemblymember		t	664_bill_nojay.jpg
+487	Steven Otis	Steven		Otis	\N	Assemblymember		t	665_steven_otis.jpg
+457	Philip Palmesano	Philip	\N	Palmesano	\N	Assembly Member	\N	t	635_philip_palmesano.jpg
+488	Anthony H. Palumbo	Anthony	H.	Palumbo	\N	Assemblymember		t	666_anthony_h._palumbo.jpg
+417	Crystal Peoples-Stokes	Crystal	\N	Peoples-Stokes	\N	Assembly Member	\N	t	591_crystal_peoples-stokes.jpg
+727	Roxanne Persaud	\N	\N	Persaud	\N	\N	\N	t	905_roxanne_persaud.jpg
+489	Victor M. Pichardo	Victor	M.	Pichardo	\N	Assemblymember		t	667_victor_m._pichardo.jpg
+430	Edward Ra	Edward	\N	Ra	\N	Assembly Member	\N	t	608_edward_ra.jpg
+352	Peter Rivera	Peter	\N	Rivera	\N	Assembly Member	\N	t	528_peter_rivera.jpg
+332	Annette Robinson	Annette	\N	Robinson	\N	Assembly Member	\N	t	509_annette_robinson.jpg
+491	Nily Rozic	Nily		Rozic	\N	Assemblymember		t	669_nily_rozic.jpg
+460	Sean Ryan	Sean	\N	Ryan	\N	Assembly Member	\N	t	638_sean_ryan.jpg
+492	Angelo Santabarbara	Angelo		Santabarbara	\N	Assemblymember		t	670_angelo_santabarbara.jpg
+306	William Scarborough	William	\N	Scarborough	\N	Assembly Member	\N	t	489_william_scarborough.jpg
+416	Robin Schimminger	Robin	\N	Schimminger	\N	Assembly Member	\N	t	590_robin_schimminger.jpg
+433	Michael Simanowitz	Michael	\N	Simanowitz	\N	Assembly Member	\N	t	611_michael_simanowitz.jpg
+729	Jo Anne Simon	\N	\N	Simon	\N	\N	\N	t	907_jo_anne_simon.jpg
+494	James Skoufis	James		Skoufis	\N	Assemblymember		t	672_james_skoufis.jpg
+495	Michaelle C. Solages	Michaelle	C.	Solages	\N	Assemblymember		t	673_michaelle_c._solages.jpg
+496	Dan Stec	Dan		Stec	\N	Assemblymember		t	674_dan_stec.jpg
+497	Phil Steck	Phil		Steck	\N	Assemblymember		t	675_phil_steck.jpg
+397	Albert A. Stirpe	Albert	A.	Stirpe	\N	Assembly Member	\N	t	571_albert_a._stirpe.jpg
+463	Raymond Walter	Raymond	\N	Walter	\N	Assembly Member	\N	t	641_raymond_walter.jpg
+301	David Weprin	David	\N	Weprin	\N	Assembly Member	\N	t	484_david_weprin.jpg
+708	Carrie Woerner	\N	\N	Woerner	\N	\N	\N	t	886_carrie_woerner.jpg
+467	Keith L.T. Wright	Keith	L.T.	Wright				t	646_keith_l.t._wright.jpg
+400	William A. Barclay	William	A.	Barclay	\N	Assembly Member	\N	t	574_william_a._barclay.jpg
+720	Rodneyse Bichotte	\N	\N	Bichotte	\N	\N	\N	t	898_rodneyse_bichotte.jpg
+309	Vivian Cook	Vivian	Cook	Cook	\N	Assembly Member	\N	t	457_vivian_cook.jpg
+722	Erik Dilan	\N	\N	Dilan	\N	\N	\N	t	900_erik_dilan.jpg
+347	Herman D. Farrell	Herman	D.	Farrell	\N	Assembly Member	\N	t	524_herman_d._farrell.jpg
+399	Gary Finch	Gary	\N	Finch	\N	Assembly Member	\N	t	573_gary_finch.jpg
+456	Mark C. Johns	Mark	C.	Johns	\N	Assembly Member	\N	t	634_mark_c._johns.jpg
+725	Todd Kaminsky	\N	\N	Kaminsky	\N	\N	\N	t	903_todd_kaminsky.jpg
+482	Kieran Michael Lalor	Kieran	Michael	Lalor	\N	Assemblymember		t	660_kieran_michael_lalor.jpg
+402	Donna Lupardo	Donna	\N	Lupardo	\N	Assembly Member	\N	t	576_donna_lupardo.jpg
+387	William Magee	William	\N	Magee	\N	Assembly Member	\N	t	561_william_magee.jpg
+307	Margaret Markey	Margaret	\N	Markey	\N	Assembly Member	\N	t	490_margaret_markey.jpg
+294	Thomas McKevitt	Thomas	\N	McKevitt	\N	Assembly Member	\N	t	478_thomas_mckevitt.jpg
+408	Joseph Morelle	Joseph	\N	Morelle	\N	Assembly Member	\N	t	582_joseph_morelle.jpg
+728	Rebecca Seawright	\N	\N	Seawright	\N	\N	\N	t	906_rebecca_seawright.jpg
+386	James Tedisco	James	\N	Tedisco	\N	Assembly Member	\N	t	560_james_tedisco.jpg
+718	Latrice Walker	\N	\N	Walker	\N	\N	\N	t	896_latrice_walker.jpg
+733	Angela Wozniak	\N	\N	Wozniak 	\N	\N	\N	t	911_angela_wozniak.jpg
 \.
 
 
@@ -765,7 +824,6 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 603	202	assembly	f	Michael Gianaris
 604	255	assembly	f	George Latimer
 605	427	assembly	f	Daniel P. Losquadro
-606	428	assembly	f	Alfred C. Graf
 607	429	assembly	f	Brian F. Curran
 608	430	assembly	f	Edward Ra
 609	431	assembly	f	Phillip Goldfeder
@@ -858,6 +916,33 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 696	518	assembly	t	O BENEDETTO
 697	519	assembly	t	R BENEDETTO
 698	520	assembly	t	L O'DONNELL
+828	650	assembly	t	Peter Lopez
+901	723	assembly	t	JEAN-PIERRE
+902	724	assembly	t	Latoya Joyner
+886	708	assembly	t	Carrie Woerner
+907	729	assembly	t	Jo Anne Simon
+904	726	assembly	t	Guillermo Linares
+905	727	assembly	t	Roxanne Persaud
+909	731	assembly	t	Peter Lawrence
+900	722	assembly	t	Erik Dilan
+908	730	assembly	t	Karl Brabenec
+903	725	assembly	t	Todd Kaminsky
+911	733	assembly	t	Angela Wozniak
+910	732	assembly	t	Dean Murray
+898	720	assembly	t	Rodneyse Bichotte
+899	721	assembly	t	Michael Blake
+906	728	assembly	t	Rebecca Seawright
+896	718	assembly	t	Latrice Walker
+889	711	senate	t	Jesse Hamilton
+885	707	senate	t	Robert Ortt
+888	710	senate	t	Leroy Comrie
+894	716	senate	t	Marc Panepinto
+892	714	senate	t	George Amedore
+893	715	senate	t	Thomas Croci
+891	713	senate	t	Terrence P. Murphy
+890	712	senate	t	Susan Serino
+895	717	senate	t	Michael Venditto
+887	709	senate	t	Rich Funke
 \.
 
 
@@ -1555,6 +1640,219 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 690	696	BENEDETTO O	2013	\N	f
 691	697	BENEDETTO R	2013	\N	f
 692	698	O'DONNELL L	2013	\N	f
+710	400	STAVISKY	2015	16	f
+708	375	PERKINS	2015	30	f
+728	396	STEWART-COUSINS	2015	35	f
+702	393	GRIFFO	2015	47	f
+697	422	GOLDEN	2015	22	f
+704	371	SEWARD	2015	51	f
+705	438	HOYLMAN	2015	27	f
+725	395	VALESKY	2015	53	f
+696	427	GALLIVAN	2015	59	f
+707	401	KRUEGER	2015	28	f
+701	423	RITCHIE	2015	48	f
+715	412	SQUADRON	2015	26	f
+695	397	MARTINS	2015	7	f
+714	428	PERALTA	2015	13	f
+694	419	LAVALLE	2015	1	f
+713	416	PARKER	2015	21	f
+719	421	DIAZ	2015	32	f
+709	373	SERRANO	2015	29	f
+703	407	MARCELLINO	2015	5	f
+699	435	MARCHIONE	2015	43	f
+698	374	LARKIN	2015	39	f
+716	433	BOYLE	2015	4	f
+700	376	DEFRANCISCO	2015	50	f
+717	434	LATIMER	2015	37	f
+718	385	ESPAILLAT	2015	31	f
+730	409	LANZA	2015	24	f
+706	383	GIANARIS	2015	12	f
+712	429	KENNEDY	2015	63	f
+722	426	DILAN	2015	18	f
+721	370	CARLUCCI	2015	38	f
+724	403	SAVINO	2015	23	f
+737	625	BARRETT	2015	106	f
+731	611	SIMANOWITZ	2015	27	f
+758	502	ABBATE	2015	49	f
+732	669	ROZIC	2015	25	f
+770	622	ABINANTI	2015	92	f
+733	568	RUSSELL	2015	116	f
+741	638	RYAN	2015	149	f
+753	479	HOOPER	2015	18	f
+751	457	COOK	2015	32	f
+757	504	ORTIZ	2015	51	f
+755	462	RAIA	2015	12	f
+771	498	CYMBROWITZ	2015	45	f
+748	492	MILLER	2015	38	f
+759	590	SCHIMMINGER	2015	140	f
+769	627	TENNEY	2015	101	f
+745	545	ZEBROWSKI	2015	96	f
+739	657	FAHY	2015	109	f
+736	540	PAULIN	2015	88	f
+766	662	MCDONALD	2015	108	f
+767	591	PEOPLES-STOKES	2015	141	f
+764	549	GUNTHER	2015	100	f
+762	460	AUBRY	2015	35	f
+734	583	GANTT	2015	137	f
+752	613	MOYA	2015	39	f
+774	484	WEPRIN	2015	24	f
+738	527	GOTTFRIED	2015	75	f
+747	546	JAFFEE	2015	97	f
+746	621	GALEF	2015	95	f
+740	458	CLARK	2015	33	f
+773	623	MAYER	2015	90	f
+781	671	SEPULVEDA	2015	\N	f
+775	499	BROOK-KRASNY	2015	46	f
+822	828	LOPEZ	2015	102	f
+788	637	CERETTO	2015	145	f
+818	641	WALTER	2015	146	f
+783	536	ARROYO	2015	84	f
+779	654	BUCHWALD	2015	93	f
+799	628	BRINDISI	2015	119	f
+807	570	MAGNARELLI	2015	129	f
+803	561	MAGEE	2015	121	f
+778	496	CAMARA	2015	\N	f
+853	418	FARLEY	2015	49	f
+852	394	NOZZOLIO	2015	54	f
+854	410	LIBOUS	2015	52	f
+850	406	RANZENHOFER	2015	61	f
+851	439	FELDER	2015	17	f
+855	414	YOUNG	2015	57	f
+802	618	QUART	2015	73	f
+809	473	SALADINO	2015	9	f
+816	478	MCKEVITT	2015	17	f
+785	646	WRIGHT	2015	70	f
+777	663	MOSLEY	2015	57	f
+776	610	BRAUNSTEIN	2015	26	f
+786	557	CROUCH	2015	122	f
+806	674	STEC	2015	114	f
+805	469	FITZPATRICK	2015	8	f
+808	551	CAHILL	2015	103	f
+782	526	KAVANAGH	2015	74	f
+821	535	HEASTIE	2015	83	f
+811	501	HIKIND	2015	48	f
+817	608	RA	2015	19	f
+787	672	SKOUFIS	2015	99	f
+801	675	STECK	2015	110	f
+804	509	ROBINSON	2015	56	f
+815	574	BARCLAY	2015	120	f
+813	612	SIMOTAS	2015	36	f
+820	522	O'DONNELL	2015	69	f
+812	534	BENEDETTO	2015	82	f
+780	477	SCHIMEL	2015	16	f
+784	497	BRENNAN	2015	44	f
+800	575	LIFTON	2015	125	f
+810	476	MONTESANO	2015	15	f
+814	468	RAMOS	2015	6	f
+847	633	BRONSON	2015	138	f
+832	564	DUPREY	2015	115	f
+849	655	DAVILA	2015	53	f
+797	537	CRESPO	2015	85	f
+825	615	MALLIOTAKIS	2015	64	f
+793	474	LAVINE	2015	13	f
+798	456	TITUS	2015	31	f
+789	661	LUPINACCI	2015	10	f
+790	480	MCDONOUGH	2015	14	f
+846	592	CORWIN	2015	144	f
+792	459	DENDEKKER	2015	34	f
+796	651	GRAF	2015	5	f
+794	629	ROBERTS	2015	128	f
+795	519	GLICK	2015	66	f
+848	634	JOHNS	2015	135	f
+791	490	MARKEY	2015	30	f
+831	642	GOODELL	2015	150	f
+840	624	KATZ	2015	94	f
+839	639	KEARNS	2015	142	f
+833	666	PALUMBO	2015	2	f
+835	616	RODRIGUEZ	2015	68	f
+819	653	BORELLI	2015	62	f
+830	571	STIRPE	2015	127	f
+834	673	SOLAGES	2015	22	f
+841	656	DIPIETRO	2015	147	f
+836	503	LENTOL	2015	50	f
+727	372	BRESLIN	2015	44	f
+872	415	O'MARA	2015	58	f
+877	430	SKELOS	2015	9	f
+889	895	VENDITTO	2015	8	f
+720	391	AVELLA	2015	11	f
+726	384	ADDABBO	2015	15	f
+884	890	SERINO	2015	41	f
+887	893	CROCI	2015	3	f
+871	424	HANNON	2015	6	f
+886	892	AMEDORE	2015	46	f
+878	399	FLANAGAN	2015	2	f
+881	887	FUNKE	2015	55	f
+856	379	LITTLE	2015	45	f
+711	381	MONTGOMERY	2015	25	f
+885	891	MURPHY	2015	40	f
+879	885	ORTT	2015	62	f
+723	377	RIVERA	2015	33	f
+875	432	SANDERS	2015	10	f
+693	380	HASSELL-THOMPSON	2015	36	f
+882	888	COMRIE	2015	14	f
+883	889	HAMILTON	2015	20	f
+888	894	PANEPINTO	2015	60	f
+874	369	SAMPSON	2015	19	f
+876	390	KLEIN	2015	34	f
+873	417	ROBACH	2015	56	f
+729	413	BONACIC	2015	42	f
+761	582	MORELLE	2015	136	f
+894	900	DILAN	2015	54	f
+868	578	OAKS	2015	130	f
+897	903	KAMINSKY	2015	20	f
+902	908	BRABENEC	2015	98	f
+845	609	GOLDFEDER	2015	23	f
+826	560	TEDISCO	2015	112	f
+864	567	BUTLER	2015	118	f
+827	607	CURRAN	2015	21	f
+823	599	GIGLIO	2015	148	f
+859	626	MCLAUGHLIN	2015	107	f
+760	466	ENGLEBRIGHT	2015	4	f
+860	659	KIM	2015	40	f
+829	524	FARRELL	2015	71	f
+842	658	GARBARINO	2015	7	f
+844	491	NOLAN	2015	37	f
+837	539	PRETLOW	2015	89	f
+866	589	HAWLEY	2015	139	f
+895	901	JEAN-PIERRE	2015	11	f
+903	909	LAWRENCE	2015	134	f
+865	636	FRIEND	2015	124	f
+862	660	LALOR	2015	105	f
+869	635	PALMESANO	2015	132	f
+749	520	ROSENTHAL	2015	67	f
+905	911	WOZNIAK	2015	143	f
+863	631	BLANKENBUSH	2015	117	f
+750	489	SCARBOROUGH	2015	29	f
+899	905	PERSAUD	2015	59	f
+861	620	GJONAJ	2015	80	f
+828	573	FINCH	2015	126	f
+870	493	BARRON	2015	60	f
+867	664	NOJAY	2015	133	f
+890	896	WALKER	2015	55	f
+880	886	WOERNER	2015	113	f
+891	517	SILVER	2015	65	f
+898	904	LINARES	2015	72	f
+765	576	LUPARDO	2015	123	f
+901	907	SIMON	2015	52	f
+904	910	MURRAY	2015	3	f
+838	579	KOLB	2015	131	f
+756	516	CUSICK	2015	63	f
+763	500	COLTON	2015	47	f
+742	550	SKARTADOS	2015	104	f
+843	494	WEINSTEIN	2015	41	f
+896	902	JOYNER	2015	77	f
+744	528	RIVERA	2015	78	f
+743	514	TITONE	2015	61	f
+772	533	DINOWITZ	2015	81	f
+754	665	OTIS	2015	91	f
+900	906	SEAWRIGHT	2015	76	f
+735	511	PERRY	2015	58	f
+893	899	BLAKE	2015	79	f
+824	488	HEVESI	2015	28	f
+768	464	THIELE	2015	1	f
+892	898	BICHOTTE	2015	42	f
+858	667	PICHARDO	2015	86	f
+857	670	SANTABARBARA	2015	111	f
 \.
 
 
@@ -2871,54 +3169,6 @@ t	1293	3	member	Transportation	2014-02-28 11:25:44	2013	126	senate
 t	1294	4	member	Transportation	2014-02-28 11:25:44	2013	182	senate
 t	1295	5	member	Transportation	2014-02-28 11:25:44	2013	130	senate
 t	1296	6	member	Transportation	2014-02-28 11:25:44	2013	167	senate
-t	1414	2	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	126	senate
-t	1415	3	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	149	senate
-t	1416	4	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	183	senate
-t	1417	5	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	179	senate
-t	1418	6	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	173	senate
-t	1419	7	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	155	senate
-f	1420	8	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	172	senate
-f	1421	9	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	146	senate
-f	1422	10	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	137	senate
-f	1423	11	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	187	senate
-t	1424	1	chair_person	Finance	2014-03-03 17:09:09	2013	132	senate
-t	1425	2	member	Finance	2014-03-03 17:09:09	2013	169	senate
-t	1426	3	member	Finance	2014-03-03 17:09:09	2013	151	senate
-t	1427	4	member	Finance	2014-03-03 17:09:09	2013	155	senate
-t	1428	5	member	Finance	2014-03-03 17:09:09	2013	178	senate
-t	1429	6	member	Finance	2014-03-03 17:09:09	2013	149	senate
-t	1430	7	member	Finance	2014-03-03 17:09:09	2013	154	senate
-t	1431	8	member	Finance	2014-03-03 17:09:09	2013	180	senate
-t	1432	9	member	Finance	2014-03-03 17:09:09	2013	165	senate
-t	1433	10	member	Finance	2014-03-03 17:09:09	2013	130	senate
-t	1434	11	member	Finance	2014-03-03 17:09:09	2013	175	senate
-t	1435	12	member	Finance	2014-03-03 17:09:09	2013	135	senate
-t	1436	13	member	Finance	2014-03-03 17:09:09	2013	163	senate
-t	1437	14	member	Finance	2014-03-03 17:09:09	2013	150	senate
-t	1438	15	member	Finance	2014-03-03 17:09:09	2013	183	senate
-t	1439	16	member	Finance	2014-03-03 17:09:09	2013	162	senate
-t	1440	17	member	Finance	2014-03-03 17:09:09	2013	173	senate
-t	1441	18	member	Finance	2014-03-03 17:09:09	2013	159	senate
-t	1442	19	member	Finance	2014-03-03 17:09:09	2013	127	senate
-t	1443	20	member	Finance	2014-03-03 17:09:09	2013	170	senate
-t	1444	21	member	Finance	2014-03-03 17:09:09	2013	171	senate
-t	1445	22	member	Finance	2014-03-03 17:09:09	2013	153	senate
-f	1446	23	member	Finance	2014-03-03 17:09:09	2013	129	senate
-f	1447	24	member	Finance	2014-03-03 17:09:09	2013	177	senate
-f	1448	25	member	Finance	2014-03-03 17:09:09	2013	137	senate
-f	1449	26	member	Finance	2014-03-03 17:09:09	2013	133	senate
-f	1450	27	member	Finance	2014-03-03 17:09:09	2013	138	senate
-f	1451	28	member	Finance	2014-03-03 17:09:09	2013	174	senate
-f	1452	29	member	Finance	2014-03-03 17:09:09	2013	168	senate
-f	1453	30	member	Finance	2014-03-03 17:09:09	2013	172	senate
-f	1454	31	member	Finance	2014-03-03 17:09:09	2013	187	senate
-f	1455	32	member	Finance	2014-03-03 17:09:09	2013	131	senate
-f	1456	33	member	Finance	2014-03-03 17:09:09	2013	156	senate
-f	1457	34	member	Finance	2014-03-03 17:09:09	2013	157	senate
-f	1458	35	member	Finance	2014-03-03 17:09:09	2013	146	senate
-f	1459	36	member	Finance	2014-03-03 17:09:09	2013	140	senate
-f	1460	37	member	Finance	2014-03-03 17:09:09	2013	136	senate
-t	1461	1	chair_person	Health	2014-03-03 17:09:09	2013	180	senate
 f	1308	18	member	Transportation	2014-02-28 11:25:44	2013	156	senate
 f	1309	19	member	Transportation	2014-02-28 11:25:44	2013	158	senate
 t	1310	1	chair_person	Veterans, Homeland Security and Military Affairs	2014-02-28 11:25:44	2013	164	senate
@@ -2939,312 +3189,819 @@ t	1324	3	member	New York City Education Subcommittee	2014-02-28 11:25:44	2013	17
 t	1325	4	member	New York City Education Subcommittee	2014-02-28 11:25:44	2013	159	senate
 f	1326	5	member	New York City Education Subcommittee	2014-02-28 11:25:44	2013	131	senate
 f	1327	6	member	New York City Education Subcommittee	2014-02-28 11:25:44	2013	156	senate
-t	1328	1	chair_person	Banks	2014-03-03 17:09:09	2013	149	senate
-t	1329	2	vice_chair	Banks	2014-03-03 17:09:09	2013	151	senate
-t	1330	3	member	Banks	2014-03-03 17:09:09	2013	169	senate
-t	1331	4	member	Banks	2014-03-03 17:09:09	2013	132	senate
-t	1332	5	member	Banks	2014-03-03 17:09:09	2013	178	senate
-t	1333	6	member	Banks	2014-03-03 17:09:09	2013	144	senate
-t	1334	7	member	Banks	2014-03-03 17:09:09	2013	153	senate
-t	1335	8	member	Banks	2014-03-03 17:09:09	2013	163	senate
-t	1336	9	member	Banks	2014-03-03 17:09:09	2013	183	senate
-t	1337	10	member	Banks	2014-03-03 17:09:09	2013	162	senate
-t	1338	11	member	Banks	2014-03-03 17:09:09	2013	171	senate
-t	1339	12	member	Banks	2014-03-03 17:09:09	2013	147	senate
-f	1340	13	member	Banks	2014-03-03 17:09:09	2013	148	senate
-f	1341	14	member	Banks	2014-03-03 17:09:09	2013	174	senate
-f	1342	15	member	Banks	2014-03-03 17:09:09	2013	177	senate
-f	1343	16	member	Banks	2014-03-03 17:09:09	2013	172	senate
-f	1344	17	member	Banks	2014-03-03 17:09:09	2013	134	senate
-f	1345	18	member	Banks	2014-03-03 17:09:09	2013	158	senate
-t	1346	1	chair_person	Civil Service and Pensions	2014-03-03 17:09:09	2013	178	senate
-t	1347	2	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	180	senate
-t	1348	3	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	165	senate
-t	1349	4	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	153	senate
-t	1350	5	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	179	senate
-t	1351	6	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	159	senate
-t	1352	7	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	167	senate
-f	1353	8	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	134	senate
-f	1354	9	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	139	senate
-f	1355	10	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	137	senate
-f	1356	11	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	131	senate
-t	1357	1	chair_person	Codes	2014-03-03 17:09:09	2013	150	senate
-t	1358	2	member	Codes	2014-03-03 17:09:09	2013	141	senate
-t	1359	3	member	Codes	2014-03-03 17:09:09	2013	132	senate
-t	1360	4	member	Codes	2014-03-03 17:09:09	2013	155	senate
-t	1361	5	member	Codes	2014-03-03 17:09:09	2013	182	senate
-t	1362	6	member	Codes	2014-03-03 17:09:09	2013	178	senate
-t	1363	7	member	Codes	2014-03-03 17:09:09	2013	165	senate
-t	1364	8	member	Codes	2014-03-03 17:09:09	2013	183	senate
-t	1365	9	member	Codes	2014-03-03 17:09:09	2013	149	senate
-t	1366	10	member	Codes	2014-03-03 17:09:09	2013	147	senate
-f	1367	11	member	Codes	2014-03-03 17:09:09	2013	157	senate
-f	1368	12	member	Codes	2014-03-03 17:09:09	2013	131	senate
-f	1369	13	member	Codes	2014-03-03 17:09:09	2013	140	senate
-f	1370	14	member	Codes	2014-03-03 17:09:09	2013	176	senate
-f	1371	15	member	Codes	2014-03-03 17:09:09	2013	148	senate
-f	1372	16	member	Codes	2014-03-03 17:09:09	2013	129	senate
-t	1373	1	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	171	senate
-t	1374	2	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	141	senate
-t	1375	3	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	182	senate
-t	1376	4	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	181	senate
-t	1377	5	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	149	senate
-t	1378	6	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	173	senate
-t	1379	7	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	135	senate
-f	1380	8	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	146	senate
-f	1381	9	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	136	senate
-f	1382	10	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	134	senate
-f	1383	11	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	148	senate
-t	1384	1	chair_person	Consumer Protection	2014-03-03 17:09:09	2013	160	senate
-t	1385	2	member	Consumer Protection	2014-03-03 17:09:09	2013	141	senate
-t	1386	3	member	Consumer Protection	2014-03-03 17:09:09	2013	135	senate
-t	1387	4	member	Consumer Protection	2014-03-03 17:09:09	2013	144	senate
-t	1388	5	member	Consumer Protection	2014-03-03 17:09:09	2013	167	senate
-t	1389	6	member	Consumer Protection	2014-03-03 17:09:09	2013	159	senate
-t	1390	7	member	Consumer Protection	2014-03-03 17:09:09	2013	173	senate
-f	1391	8	member	Consumer Protection	2014-03-03 17:09:09	2013	176	senate
-f	1392	9	member	Consumer Protection	2014-03-03 17:09:09	2013	142	senate
-f	1393	10	member	Consumer Protection	2014-03-03 17:09:09	2013	158	senate
-f	1394	11	member	Consumer Protection	2014-03-03 17:09:09	2013	143	senate
-t	1395	1	chair_person	Education	2014-03-03 17:09:09	2013	155	senate
-t	1396	2	member	Education	2014-03-03 17:09:09	2013	151	senate
-t	1397	3	member	Education	2014-03-03 17:09:09	2013	165	senate
-t	1398	4	member	Education	2014-03-03 17:09:09	2013	175	senate
-t	1399	5	member	Education	2014-03-03 17:09:09	2013	135	senate
-t	1400	6	member	Education	2014-03-03 17:09:09	2013	163	senate
-t	1401	7	member	Education	2014-03-03 17:09:09	2013	167	senate
-t	1402	8	member	Education	2014-03-03 17:09:09	2013	162	senate
-t	1403	9	member	Education	2014-03-03 17:09:09	2013	173	senate
-t	1404	10	member	Education	2014-03-03 17:09:09	2013	127	senate
-t	1405	11	member	Education	2014-03-03 17:09:09	2013	171	senate
-t	1406	12	member	Education	2014-03-03 17:09:09	2013	147	senate
-f	1407	13	member	Education	2014-03-03 17:09:09	2013	143	senate
-f	1409	15	member	Education	2014-03-03 17:09:09	2013	174	senate
-f	1410	16	member	Education	2014-03-03 17:09:09	2013	168	senate
-f	1411	17	member	Education	2014-03-03 17:09:09	2013	156	senate
-f	1412	18	member	Education	2014-03-03 17:09:09	2013	128	senate
-f	1408	14	member	Education	2014-03-03 17:09:09	2013	139	senate
-t	1413	1	chair_person	Energy and Telecommunications	2014-03-03 17:09:09	2013	167	senate
-t	1519	14	member	Judiciary	2014-03-03 17:09:09	2013	147	senate
-f	1520	15	member	Judiciary	2014-03-03 17:09:09	2013	136	senate
-f	1521	16	member	Judiciary	2014-03-03 17:09:09	2013	174	senate
-f	1522	17	member	Judiciary	2014-03-03 17:09:09	2013	137	senate
-f	1523	18	member	Judiciary	2014-03-03 17:09:09	2013	140	senate
-f	1524	19	member	Judiciary	2014-03-03 17:09:09	2013	131	senate
-f	1525	20	member	Judiciary	2014-03-03 17:09:09	2013	156	senate
-f	1526	21	member	Judiciary	2014-03-03 17:09:09	2013	176	senate
-f	1527	22	member	Judiciary	2014-03-03 17:09:09	2013	139	senate
-f	1528	23	member	Judiciary	2014-03-03 17:09:09	2013	157	senate
-t	1555	2	vice_chair	Transportation	2014-03-03 17:09:09	2013	163	senate
-t	1557	4	member	Transportation	2014-03-03 17:09:09	2013	182	senate
-t	1558	5	member	Transportation	2014-03-03 17:09:09	2013	130	senate
-t	1559	6	member	Transportation	2014-03-03 17:09:09	2013	167	senate
-t	1560	7	member	Transportation	2014-03-03 17:09:09	2013	150	senate
-t	1561	8	member	Transportation	2014-03-03 17:09:09	2013	183	senate
-t	1562	9	member	Transportation	2014-03-03 17:09:09	2013	162	senate
-t	1563	10	member	Transportation	2014-03-03 17:09:09	2013	170	senate
-t	1564	11	member	Transportation	2014-03-03 17:09:09	2013	160	senate
-t	1565	12	member	Transportation	2014-03-03 17:09:09	2013	147	senate
-f	1566	13	member	Transportation	2014-03-03 17:09:09	2013	137	senate
-f	1567	14	member	Transportation	2014-03-03 17:09:09	2013	177	senate
-f	1568	15	member	Transportation	2014-03-03 17:09:09	2013	146	senate
-f	1569	16	member	Transportation	2014-03-03 17:09:09	2013	131	senate
-f	1570	17	member	Transportation	2014-03-03 17:09:09	2013	157	senate
-f	1571	18	member	Transportation	2014-03-03 17:09:09	2013	156	senate
-f	1572	19	member	Transportation	2014-03-03 17:09:09	2013	158	senate
-t	1573	1	chair_person	New York City Education Subcommittee	2014-03-03 17:09:09	2013	181	senate
-t	1574	2	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	165	senate
-t	1575	3	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	178	senate
-t	1576	4	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	147	senate
-f	1577	5	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	131	senate
-f	1578	6	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	156	senate
-t	1462	2	member	Health	2014-03-03 17:09:09	2013	164	senate
-t	1463	3	member	Health	2014-03-03 17:09:09	2013	151	senate
-t	1464	4	member	Health	2014-03-03 17:09:09	2013	181	senate
-t	1465	5	member	Health	2014-03-03 17:09:09	2013	178	senate
-t	1466	6	member	Health	2014-03-03 17:09:09	2013	130	senate
-t	1467	7	member	Health	2014-03-03 17:09:09	2013	159	senate
-t	1468	8	member	Health	2014-03-03 17:09:09	2013	127	senate
-t	1469	9	member	Health	2014-03-03 17:09:09	2013	170	senate
-t	1470	10	member	Health	2014-03-03 17:09:09	2013	153	senate
-f	1471	11	member	Health	2014-03-03 17:09:09	2013	133	senate
-f	1472	12	member	Health	2014-03-03 17:09:09	2013	168	senate
-f	1473	13	member	Health	2014-03-03 17:09:09	2013	136	senate
-f	1474	14	member	Health	2014-03-03 17:09:09	2013	187	senate
-f	1475	15	member	Health	2014-03-03 17:09:09	2013	148	senate
-f	1476	16	member	Health	2014-03-03 17:09:09	2013	176	senate
-f	1477	17	member	Health	2014-03-03 17:09:09	2013	142	senate
-t	1478	1	chair_person	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	170	senate
-t	1479	2	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	169	senate
-t	1480	3	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	141	senate
-t	1481	4	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	182	senate
-t	1482	5	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	150	senate
-t	1483	6	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	147	senate
-f	1484	7	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	140	senate
-f	1485	8	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	177	senate
-f	1486	9	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	129	senate
-t	1487	1	chair_person	Insurance	2014-03-03 17:09:09	2013	127	senate
-t	1488	2	member	Insurance	2014-03-03 17:09:09	2013	126	senate
-t	1489	3	member	Insurance	2014-03-03 17:09:09	2013	155	senate
-t	1490	4	member	Insurance	2014-03-03 17:09:09	2013	178	senate
-t	1491	5	member	Insurance	2014-03-03 17:09:09	2013	154	senate
-t	1492	6	member	Insurance	2014-03-03 17:09:09	2013	165	senate
-t	1493	7	member	Insurance	2014-03-03 17:09:09	2013	130	senate
-t	1494	8	member	Insurance	2014-03-03 17:09:09	2013	175	senate
-t	1495	9	member	Insurance	2014-03-03 17:09:09	2013	153	senate
-t	1496	10	member	Insurance	2014-03-03 17:09:09	2013	183	senate
-t	1497	11	member	Insurance	2014-03-03 17:09:09	2013	170	senate
-t	1498	12	member	Insurance	2014-03-03 17:09:09	2013	147	senate
-f	1499	13	member	Insurance	2014-03-03 17:09:09	2013	174	senate
-f	1500	14	member	Insurance	2014-03-03 17:09:09	2013	140	senate
-f	1501	15	member	Insurance	2014-03-03 17:09:09	2013	146	senate
-f	1502	16	member	Insurance	2014-03-03 17:09:09	2013	172	senate
-f	1503	17	member	Insurance	2014-03-03 17:09:09	2013	156	senate
-f	1504	18	member	Insurance	2014-03-03 17:09:09	2013	148	senate
-f	1505	19	member	Insurance	2014-03-03 17:09:09	2013	187	senate
-t	1506	1	chair_person	Judiciary	2014-03-03 17:09:09	2013	169	senate
-t	1507	2	member	Judiciary	2014-03-03 17:09:09	2013	132	senate
-t	1508	3	member	Judiciary	2014-03-03 17:09:09	2013	155	senate
-t	1509	4	member	Judiciary	2014-03-03 17:09:09	2013	180	senate
-t	1510	5	member	Judiciary	2014-03-03 17:09:09	2013	165	senate
-t	1511	6	member	Judiciary	2014-03-03 17:09:09	2013	175	senate
-t	1512	7	member	Judiciary	2014-03-03 17:09:09	2013	135	senate
-t	1513	8	member	Judiciary	2014-03-03 17:09:09	2013	150	senate
-t	1514	9	member	Judiciary	2014-03-03 17:09:09	2013	183	senate
-t	1515	10	member	Judiciary	2014-03-03 17:09:09	2013	159	senate
-t	1516	11	member	Judiciary	2014-03-03 17:09:09	2013	162	senate
-t	1517	12	member	Judiciary	2014-03-03 17:09:09	2013	160	senate
-t	1518	13	member	Judiciary	2014-03-03 17:09:09	2013	154	senate
-t	1529	1	chair_person	Rules	2014-03-03 17:09:09	2013	184	senate
-t	1530	2	vice_chair	Rules	2014-03-03 17:09:09	2013	166	senate
-t	1531	3	member	Rules	2014-03-03 17:09:09	2013	169	senate
-t	1532	4	member	Rules	2014-03-03 17:09:09	2013	126	senate
-t	1533	5	member	Rules	2014-03-03 17:09:09	2013	151	senate
-t	1534	6	member	Rules	2014-03-03 17:09:09	2013	155	senate
-t	1535	7	member	Rules	2014-03-03 17:09:09	2013	180	senate
-t	1536	8	member	Rules	2014-03-03 17:09:09	2013	130	senate
-t	1537	9	member	Rules	2014-03-03 17:09:09	2013	175	senate
-t	1538	10	member	Rules	2014-03-03 17:09:09	2013	163	senate
-t	1539	11	member	Rules	2014-03-03 17:09:09	2013	167	senate
-t	1540	12	member	Rules	2014-03-03 17:09:09	2013	150	senate
-t	1541	13	member	Rules	2014-03-03 17:09:09	2013	127	senate
-t	1542	14	member	Rules	2014-03-03 17:09:09	2013	171	senate
-t	1543	15	member	Rules	2014-03-03 17:09:09	2013	135	senate
-f	1544	16	member	Rules	2014-03-03 17:09:09	2013	152	senate
-f	1545	17	member	Rules	2014-03-03 17:09:09	2013	174	senate
-f	1546	18	member	Rules	2014-03-03 17:09:09	2013	137	senate
-f	1547	19	member	Rules	2014-03-03 17:09:09	2013	136	senate
-f	1548	20	member	Rules	2014-03-03 17:09:09	2013	129	senate
-f	1549	21	member	Rules	2014-03-03 17:09:09	2013	168	senate
-f	1550	22	member	Rules	2014-03-03 17:09:09	2013	172	senate
-f	1551	23	member	Rules	2014-03-03 17:09:09	2013	131	senate
-f	1552	24	member	Rules	2014-03-03 17:09:09	2013	140	senate
-f	1553	25	member	Rules	2014-03-03 17:09:09	2013	138	senate
-t	1554	1	chair_person	Transportation	2014-03-03 17:09:09	2013	173	senate
-t	1556	3	member	Transportation	2014-03-03 17:09:09	2013	126	senate
-t	1579	1	chair_person	Aging	2014-03-13 14:48:16	2013	171	senate
-t	1580	2	member	Aging	2014-03-13 14:48:16	2013	178	senate
-t	1581	3	member	Aging	2014-03-13 14:48:16	2013	181	senate
-t	1582	4	member	Aging	2014-03-13 14:48:16	2013	175	senate
-t	1583	5	member	Aging	2014-03-13 14:48:16	2013	144	senate
-t	1584	6	member	Aging	2014-03-13 14:48:16	2013	160	senate
-f	1585	7	member	Aging	2014-03-13 14:48:16	2013	177	senate
-f	1586	8	member	Aging	2014-03-13 14:48:16	2013	139	senate
-f	1587	9	member	Aging	2014-03-13 14:48:16	2013	156	senate
-f	1588	10	member	Aging	2014-03-13 14:48:16	2013	134	senate
-t	1589	1	chair_person	Banks	2014-03-13 14:48:16	2013	149	senate
-t	1590	2	vice_chair	Banks	2014-03-13 14:48:16	2013	151	senate
-t	1591	3	member	Banks	2014-03-13 14:48:16	2013	169	senate
-t	1592	4	member	Banks	2014-03-13 14:48:16	2013	132	senate
-t	1593	5	member	Banks	2014-03-13 14:48:16	2013	178	senate
-t	1594	6	member	Banks	2014-03-13 14:48:16	2013	144	senate
-t	1595	7	member	Banks	2014-03-13 14:48:16	2013	153	senate
-t	1596	8	member	Banks	2014-03-13 14:48:16	2013	163	senate
-t	1597	9	member	Banks	2014-03-13 14:48:16	2013	183	senate
-t	1598	10	member	Banks	2014-03-13 14:48:16	2013	162	senate
-t	1599	11	member	Banks	2014-03-13 14:48:16	2013	171	senate
-t	1600	12	member	Banks	2014-03-13 14:48:16	2013	147	senate
-f	1601	13	member	Banks	2014-03-13 14:48:16	2013	148	senate
-f	1602	14	member	Banks	2014-03-13 14:48:16	2013	174	senate
-f	1603	15	member	Banks	2014-03-13 14:48:16	2013	177	senate
-f	1604	16	member	Banks	2014-03-13 14:48:16	2013	172	senate
-f	1605	17	member	Banks	2014-03-13 14:48:16	2013	134	senate
-f	1606	18	member	Banks	2014-03-13 14:48:16	2013	158	senate
-f	1607	19	member	Banks	2014-03-13 14:48:16	2013	146	senate
-t	1608	1	chair_person	Cities	2014-03-13 14:48:16	2013	165	senate
-t	1609	2	member	Cities	2014-03-13 14:48:16	2013	164	senate
-t	1610	3	member	Cities	2014-03-13 14:48:16	2013	132	senate
-t	1611	4	member	Cities	2014-03-13 14:48:16	2013	154	senate
-f	1612	5	member	Cities	2014-03-13 14:48:16	2013	157	senate
-t	1646	1	chair_person	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	169	senate
-t	1647	2	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	141	senate
-t	1651	6	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	150	senate
-t	1652	7	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	162	senate
-f	1653	8	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	139	senate
-f	1654	9	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	143	senate
-f	1655	10	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	134	senate
-f	1656	11	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	128	senate
-t	1657	1	chair_person	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	164	senate
-t	1658	2	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	126	senate
-t	1659	3	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	155	senate
-t	1660	4	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	178	senate
-t	1661	5	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	149	senate
-t	1662	6	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	154	senate
-t	1663	7	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	130	senate
-t	1664	8	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	160	senate
-f	1665	9	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	139	senate
-f	1666	10	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	158	senate
-f	1667	11	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	134	senate
-f	1668	12	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	128	senate
-f	1669	13	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	143	senate
-t	1670	1	chair_person	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	153	senate
-t	1671	2	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	171	senate
-t	1672	3	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	141	senate
-f	1613	6	member	Cities	2014-03-13 14:48:16	2013	174	senate
-t	1614	1	chair_person	Education	2014-03-13 14:48:16	2013	155	senate
-t	1615	2	member	Education	2014-03-13 14:48:16	2013	151	senate
-t	1616	3	member	Education	2014-03-13 14:48:16	2013	165	senate
-t	1617	4	member	Education	2014-03-13 14:48:16	2013	175	senate
-t	1618	5	member	Education	2014-03-13 14:48:16	2013	135	senate
-t	1619	6	member	Education	2014-03-13 14:48:16	2013	163	senate
-t	1620	7	member	Education	2014-03-13 14:48:16	2013	167	senate
-t	1621	8	member	Education	2014-03-13 14:48:16	2013	162	senate
-t	1622	9	member	Education	2014-03-13 14:48:16	2013	173	senate
-t	1623	10	member	Education	2014-03-13 14:48:16	2013	127	senate
-t	1624	11	member	Education	2014-03-13 14:48:16	2013	171	senate
-t	1625	12	member	Education	2014-03-13 14:48:16	2013	147	senate
-f	1626	13	member	Education	2014-03-13 14:48:16	2013	143	senate
-f	1627	14	member	Education	2014-03-13 14:48:16	2013	139	senate
-f	1628	15	member	Education	2014-03-13 14:48:16	2013	174	senate
-f	1629	16	member	Education	2014-03-13 14:48:16	2013	168	senate
-f	1630	17	member	Education	2014-03-13 14:48:16	2013	156	senate
-f	1631	18	member	Education	2014-03-13 14:48:16	2013	128	senate
-f	1632	19	member	Education	2014-03-13 14:48:16	2013	187	senate
-t	1633	1	chair_person	Environmental Conservation	2014-03-13 14:48:16	2013	154	senate
-t	1634	2	vice_chair	Environmental Conservation	2014-03-13 14:48:16	2013	147	senate
-t	1635	3	member	Environmental Conservation	2014-03-13 14:48:16	2013	175	senate
-t	1636	4	member	Environmental Conservation	2014-03-13 14:48:16	2013	135	senate
-t	1637	5	member	Environmental Conservation	2014-03-13 14:48:16	2013	163	senate
-t	1638	6	member	Environmental Conservation	2014-03-13 14:48:16	2013	167	senate
-t	1639	7	member	Environmental Conservation	2014-03-13 14:48:16	2013	183	senate
-t	1640	8	member	Environmental Conservation	2014-03-13 14:48:16	2013	170	senate
-f	1641	9	member	Environmental Conservation	2014-03-13 14:48:16	2013	148	senate
-f	1642	10	member	Environmental Conservation	2014-03-13 14:48:16	2013	140	senate
-f	1643	11	member	Environmental Conservation	2014-03-13 14:48:16	2013	142	senate
-f	1644	12	member	Environmental Conservation	2014-03-13 14:48:16	2013	143	senate
-f	1645	13	member	Environmental Conservation	2014-03-13 14:48:16	2013	128	senate
-t	1648	3	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	126	senate
-t	1649	4	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	149	senate
-t	1650	5	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	144	senate
-t	1673	4	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	182	senate
-t	1674	5	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	181	senate
-t	1675	6	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	149	senate
-t	1676	7	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	173	senate
-t	1677	8	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	135	senate
-f	1678	9	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	146	senate
-f	1679	10	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	136	senate
-f	1680	11	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	134	senate
-f	1681	12	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	148	senate
+t	1682	1	chair_person	Aging	2015-01-22 16:58:51	2015	884	senate
+t	1683	2	member	Aging	2015-01-22 16:58:51	2015	851	senate
+t	1684	3	member	Aging	2015-01-22 16:58:51	2015	881	senate
+t	1685	4	member	Aging	2015-01-22 16:58:51	2015	697	senate
+t	1686	5	member	Aging	2015-01-22 16:58:51	2015	694	senate
+t	1687	6	member	Aging	2015-01-22 16:58:51	2015	699	senate
+t	1688	7	member	Aging	2015-01-22 16:58:51	2015	725	senate
+f	1689	8	member	Aging	2015-01-22 16:58:51	2015	719	senate
+f	1690	9	member	Aging	2015-01-22 16:58:51	2015	726	senate
+f	1691	10	member	Aging	2015-01-22 16:58:51	2015	705	senate
+f	1692	11	member	Aging	2015-01-22 16:58:51	2015	709	senate
+t	1693	1	chair_person	Agriculture	2015-01-22 16:58:51	2015	701	senate
+t	1694	2	member	Agriculture	2015-01-22 16:58:51	2015	696	senate
+t	1695	3	member	Agriculture	2015-01-22 16:58:51	2015	872	senate
+t	1696	4	member	Agriculture	2015-01-22 16:58:51	2015	850	senate
+t	1697	5	member	Agriculture	2015-01-22 16:58:51	2015	704	senate
+t	1698	6	member	Agriculture	2015-01-22 16:58:51	2015	725	senate
+t	1699	7	member	Agriculture	2015-01-22 16:58:51	2015	855	senate
+f	1700	8	member	Agriculture	2015-01-22 16:58:51	2015	888	senate
+f	1701	9	member	Agriculture	2015-01-22 16:58:51	2015	883	senate
+f	1702	10	member	Agriculture	2015-01-22 16:58:51	2015	711	senate
+f	1703	11	member	Agriculture	2015-01-22 16:58:51	2015	709	senate
+t	1704	1	chair_person	Alcoholism and Drug Abuse	2015-01-22 16:58:51	2015	886	senate
+t	1705	2	member	Alcoholism and Drug Abuse	2015-01-22 16:58:51	2015	729	senate
+t	1706	3	member	Alcoholism and Drug Abuse	2015-01-22 16:58:51	2015	721	senate
+t	1707	4	member	Alcoholism and Drug Abuse	2015-01-22 16:58:51	2015	887	senate
+t	1708	5	member	Alcoholism and Drug Abuse	2015-01-22 16:58:51	2015	701	senate
+f	1709	6	member	Alcoholism and Drug Abuse	2015-01-22 16:58:51	2015	713	senate
+f	1710	7	member	Alcoholism and Drug Abuse	2015-01-22 16:58:51	2015	693	senate
+t	1711	1	chair_person	Banks	2015-01-22 16:58:51	2015	724	senate
+t	1712	2	vice_chair	Banks	2015-01-22 16:58:51	2015	853	senate
+t	1713	3	member	Banks	2015-01-22 16:58:51	2015	886	senate
+t	1714	4	member	Banks	2015-01-22 16:58:51	2015	720	senate
+t	1715	5	member	Banks	2015-01-22 16:58:51	2015	729	senate
+t	1716	6	member	Banks	2015-01-22 16:58:51	2015	700	senate
+t	1717	7	member	Banks	2015-01-22 16:58:51	2015	697	senate
+t	1718	8	member	Banks	2015-01-22 16:58:51	2015	703	senate
+t	1719	9	member	Banks	2015-01-22 16:58:51	2015	699	senate
+t	1720	10	member	Banks	2015-01-22 16:58:51	2015	695	senate
+t	1721	11	member	Banks	2015-01-22 16:58:51	2015	885	senate
+t	1722	12	member	Banks	2015-01-22 16:58:51	2015	872	senate
+f	1723	13	member	Banks	2015-01-22 16:58:51	2015	883	senate
+f	1724	14	member	Banks	2015-01-22 16:58:51	2015	727	senate
+f	1725	15	member	Banks	2015-01-22 16:58:51	2015	719	senate
+f	1726	16	member	Banks	2015-01-22 16:58:51	2015	712	senate
+f	1727	17	member	Banks	2015-01-22 16:58:51	2015	717	senate
+f	1728	18	member	Banks	2015-01-22 16:58:51	2015	713	senate
+f	1729	19	member	Banks	2015-01-22 16:58:51	2015	875	senate
+t	1730	1	chair_person	Children and Families	2015-01-22 16:58:51	2015	851	senate
+t	1731	2	member	Children and Families	2015-01-22 16:58:51	2015	729	senate
+t	1732	3	member	Children and Families	2015-01-22 16:58:51	2015	724	senate
+t	1733	4	member	Children and Families	2015-01-22 16:58:51	2015	884	senate
+t	1734	5	member	Children and Families	2015-01-22 16:58:51	2015	855	senate
+f	1735	6	member	Children and Families	2015-01-22 16:58:51	2015	711	senate
+f	1736	7	member	Children and Families	2015-01-22 16:58:51	2015	709	senate
+t	1737	1	chair_person	Cities	2015-01-22 16:58:51	2015	730	senate
+t	1738	2	member	Cities	2015-01-22 16:58:51	2015	700	senate
+t	1739	3	member	Cities	2015-01-22 16:58:51	2015	881	senate
+t	1740	4	member	Cities	2015-01-22 16:58:51	2015	879	senate
+t	1741	5	member	Cities	2015-01-22 16:58:51	2015	724	senate
+f	1742	6	member	Cities	2015-01-22 16:58:51	2015	715	senate
+f	1743	7	member	Cities	2015-01-22 16:58:51	2015	714	senate
+t	1744	1	chair_person	Civil Service and Pensions	2015-01-22 16:58:51	2015	697	senate
+t	1755	1	chair_person	Codes	2015-01-22 16:58:51	2015	852	senate
+t	1756	2	vice_chair	Codes	2015-01-22 16:58:51	2015	730	senate
+t	1757	3	member	Codes	2015-01-22 16:58:51	2015	716	senate
+t	1758	4	member	Codes	2015-01-22 16:58:51	2015	700	senate
+t	1759	5	member	Codes	2015-01-22 16:58:51	2015	878	senate
+t	1760	6	member	Codes	2015-01-22 16:58:51	2015	696	senate
+t	1761	7	member	Codes	2015-01-22 16:58:51	2015	697	senate
+t	1762	8	member	Codes	2015-01-22 16:58:51	2015	702	senate
+t	1763	9	member	Codes	2015-01-22 16:58:51	2015	872	senate
+t	1764	10	member	Codes	2015-01-22 16:58:51	2015	724	senate
+f	1765	11	member	Codes	2015-01-22 16:58:51	2015	715	senate
+f	1766	12	member	Codes	2015-01-22 16:58:51	2015	718	senate
+f	1767	13	member	Codes	2015-01-22 16:58:51	2015	883	senate
+f	1768	14	member	Codes	2015-01-22 16:58:51	2015	707	senate
+f	1769	15	member	Codes	2015-01-22 16:58:51	2015	888	senate
+f	1770	16	member	Codes	2015-01-22 16:58:51	2015	708	senate
+t	1771	1	chair_person	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	716	senate
+t	1772	2	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	851	senate
+t	1773	3	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	696	senate
+t	1774	4	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	702	senate
+t	1775	5	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	856	senate
+t	1776	6	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	873	senate
+t	1777	7	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	725	senate
+f	1778	8	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	712	senate
+f	1779	9	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	883	senate
+f	1780	10	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	693	senate
+f	1781	11	member	Commerce, Economic Development and Small Business	2015-01-22 16:58:51	2015	875	senate
+t	1782	1	chair_person	Consumer Protection	2015-01-22 16:58:51	2015	889	senate
+t	1803	4	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	856	senate
+t	1804	5	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	852	senate
+t	1805	6	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	701	senate
+t	1806	7	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	724	senate
+t	1807	8	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	889	senate
+f	1808	9	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	693	senate
+f	1809	10	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	711	senate
+f	1810	11	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	714	senate
+f	1811	12	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	708	senate
+f	1812	13	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	723	senate
+t	1813	1	chair_person	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	856	senate
+t	1814	2	vice_chair	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	720	senate
+t	1815	3	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	729	senate
+t	1816	4	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	702	senate
+t	1817	5	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	703	senate
+t	1818	6	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	699	senate
+t	1819	7	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	701	senate
+t	1820	8	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	884	senate
+f	1821	9	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	709	senate
+f	1822	10	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	705	senate
+f	1823	11	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	712	senate
+f	1824	12	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	713	senate
+f	1825	13	member	Cultural Affairs, Tourism, Parks and Recreation	2015-01-22 16:58:51	2015	875	senate
+t	1826	1	chair_person	Education	2015-01-22 16:58:51	2015	878	senate
+t	1827	2	member	Education	2015-01-22 16:58:51	2015	720	senate
+t	1828	3	member	Education	2015-01-22 16:58:51	2015	853	senate
+t	1829	4	member	Education	2015-01-22 16:58:51	2015	730	senate
+t	1830	5	member	Education	2015-01-22 16:58:51	2015	694	senate
+t	1831	6	member	Education	2015-01-22 16:58:51	2015	856	senate
+t	1745	2	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	887	senate
+t	1746	3	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	730	senate
+t	1747	4	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	695	senate
+t	1748	5	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	879	senate
+t	1749	6	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	701	senate
+t	1750	7	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	724	senate
+f	1751	8	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	875	senate
+f	1752	9	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	726	senate
+f	1753	10	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	882	senate
+f	1754	11	member	Civil Service and Pensions	2015-01-22 16:58:51	2015	722	senate
+t	1783	2	member	Consumer Protection	2015-01-22 16:58:51	2015	886	senate
+t	1784	3	member	Consumer Protection	2015-01-22 16:58:51	2015	716	senate
+t	1785	4	member	Consumer Protection	2015-01-22 16:58:51	2015	856	senate
+t	1786	5	member	Consumer Protection	2015-01-22 16:58:51	2015	699	senate
+t	1787	6	member	Consumer Protection	2015-01-22 16:58:51	2015	873	senate
+t	1788	7	member	Consumer Protection	2015-01-22 16:58:51	2015	724	senate
+f	1789	8	member	Consumer Protection	2015-01-22 16:58:51	2015	882	senate
+f	1790	9	member	Consumer Protection	2015-01-22 16:58:51	2015	717	senate
+f	1791	10	member	Consumer Protection	2015-01-22 16:58:51	2015	714	senate
+f	1792	11	member	Consumer Protection	2015-01-22 16:58:51	2015	709	senate
+t	1793	1	chair_person	Corporations, Authorities and Commissions	2015-01-22 16:58:51	2015	850	senate
+t	1794	2	member	Corporations, Authorities and Commissions	2015-01-22 16:58:51	2015	878	senate
+t	1795	3	member	Corporations, Authorities and Commissions	2015-01-22 16:58:51	2015	698	senate
+t	1796	4	member	Corporations, Authorities and Commissions	2015-01-22 16:58:51	2015	695	senate
+t	1797	5	member	Corporations, Authorities and Commissions	2015-01-22 16:58:51	2015	879	senate
+f	1798	6	member	Corporations, Authorities and Commissions	2015-01-22 16:58:51	2015	708	senate
+f	1799	7	member	Corporations, Authorities and Commissions	2015-01-22 16:58:51	2015	715	senate
+t	1800	1	chair_person	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	696	senate
+t	1801	2	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	700	senate
+t	1802	3	member	Crime Victims, Crime and Correction	2015-01-22 16:58:51	2015	702	senate
+t	1866	2	vice_chair	Environmental Conservation	2015-01-22 16:58:51	2015	720	senate
+t	1867	3	member	Environmental Conservation	2015-01-22 16:58:51	2015	881	senate
+t	1868	4	member	Environmental Conservation	2015-01-22 16:58:51	2015	694	senate
+t	1897	16	member	Finance	2015-01-22 16:58:51	2015	872	senate
+t	1898	17	member	Finance	2015-01-22 16:58:51	2015	850	senate
+t	1899	18	member	Finance	2015-01-22 16:58:51	2015	701	senate
+t	1900	19	member	Finance	2015-01-22 16:58:51	2015	873	senate
+t	1901	20	member	Finance	2015-01-22 16:58:51	2015	724	senate
+t	1902	21	member	Finance	2015-01-22 16:58:51	2015	704	senate
+t	1903	22	member	Finance	2015-01-22 16:58:51	2015	725	senate
+t	1904	23	member	Finance	2015-01-22 16:58:51	2015	855	senate
+f	1916	35	member	Finance	2015-01-22 16:58:51	2015	723	senate
+f	1917	36	member	Finance	2015-01-22 16:58:51	2015	715	senate
+f	1918	37	member	Finance	2015-01-22 16:58:51	2015	710	senate
+t	1919	1	chair_person	Health	2015-01-22 16:58:51	2015	871	senate
+t	1925	7	member	Health	2015-01-22 16:58:51	2015	856	senate
+t	1926	8	member	Health	2015-01-22 16:58:51	2015	695	senate
+t	1955	1	chair_person	Housing, Construction and Community Development	2015-01-22 16:58:51	2015	855	senate
+t	2050	2	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	721	senate
+t	2051	3	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	851	senate
+t	2052	4	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	871	senate
+t	2053	5	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	885	senate
+t	2054	6	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	884	senate
+t	2055	7	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	704	senate
+f	2056	8	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	883	senate
+f	2057	9	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	707	senate
+f	2058	10	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	723	senate
+f	2059	11	member	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	709	senate
+t	2060	1	chair_person	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	729	senate
+t	2061	2	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	716	senate
+t	2062	3	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	721	senate
+t	2063	4	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	702	senate
+t	2064	5	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	699	senate
+t	2065	6	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	852	senate
+t	2066	7	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	850	senate
+f	2067	8	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	726	senate
+f	2068	9	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	882	senate
+f	2069	10	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	717	senate
+f	2070	11	member	Racing, Gaming and Wagering	2015-01-22 16:58:51	2015	875	senate
+t	2071	1	chair_person	Rules	2015-01-22 16:58:51	2015	877	senate
+t	1832	7	member	Education	2015-01-22 16:58:51	2015	703	senate
+t	1833	8	member	Education	2015-01-22 16:58:51	2015	850	senate
+t	1834	9	member	Education	2015-01-22 16:58:51	2015	873	senate
+t	1835	10	member	Education	2015-01-22 16:58:51	2015	884	senate
+t	1836	11	member	Education	2015-01-22 16:58:51	2015	704	senate
+t	1837	12	member	Education	2015-01-22 16:58:51	2015	725	senate
+f	1838	13	member	Education	2015-01-22 16:58:51	2015	717	senate
+f	1839	14	member	Education	2015-01-22 16:58:51	2015	726	senate
+f	1840	15	member	Education	2015-01-22 16:58:51	2015	727	senate
+f	1841	16	member	Education	2015-01-22 16:58:51	2015	883	senate
+f	1842	17	member	Education	2015-01-22 16:58:51	2015	711	senate
+f	1843	18	member	Education	2015-01-22 16:58:51	2015	714	senate
+f	1844	19	member	Education	2015-01-22 16:58:51	2015	710	senate
+t	1845	1	chair_person	Elections	2015-01-22 16:58:51	2015	881	senate
+t	1846	2	member	Elections	2015-01-22 16:58:51	2015	886	senate
+t	1847	3	member	Elections	2015-01-22 16:58:51	2015	720	senate
+t	1848	4	member	Elections	2015-01-22 16:58:51	2015	696	senate
+t	1849	5	member	Elections	2015-01-22 16:58:51	2015	699	senate
+t	1850	6	member	Elections	2015-01-22 16:58:51	2015	852	senate
+f	1851	7	member	Elections	2015-01-22 16:58:51	2015	882	senate
+f	1852	8	member	Elections	2015-01-22 16:58:51	2015	722	senate
+f	1853	9	member	Elections	2015-01-22 16:58:51	2015	707	senate
+t	1854	1	chair_person	Energy and Telecommunications	2015-01-22 16:58:51	2015	702	senate
+t	1855	2	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	721	senate
+t	1856	3	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	887	senate
+t	1857	4	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	878	senate
+t	1858	5	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	872	senate
+t	1859	6	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	701	senate
+t	1860	7	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	873	senate
+f	1861	8	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	713	senate
+f	1862	9	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	722	senate
+f	1863	10	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	883	senate
+f	1864	11	member	Energy and Telecommunications	2015-01-22 16:58:51	2015	712	senate
+t	1865	1	chair_person	Environmental Conservation	2015-01-22 16:58:51	2015	872	senate
+t	1869	5	member	Environmental Conservation	2015-01-22 16:58:51	2015	856	senate
+t	1870	6	member	Environmental Conservation	2015-01-22 16:58:51	2015	703	senate
+t	1871	7	member	Environmental Conservation	2015-01-22 16:58:51	2015	879	senate
+t	1872	8	member	Environmental Conservation	2015-01-22 16:58:51	2015	855	senate
+f	1873	9	member	Environmental Conservation	2015-01-22 16:58:51	2015	705	senate
+f	1874	10	member	Environmental Conservation	2015-01-22 16:58:51	2015	726	senate
+f	1875	11	member	Environmental Conservation	2015-01-22 16:58:51	2015	718	senate
+f	1876	12	member	Environmental Conservation	2015-01-22 16:58:51	2015	717	senate
+f	1877	13	member	Environmental Conservation	2015-01-22 16:58:51	2015	709	senate
+t	1878	1	chair_person	Ethics	2015-01-22 16:58:51	2015	720	senate
+t	1879	2	member	Ethics	2015-01-22 16:58:51	2015	730	senate
+t	1880	3	member	Ethics	2015-01-22 16:58:51	2015	853	senate
+t	1881	4	member	Ethics	2015-01-22 16:58:51	2015	885	senate
+t	1882	1	chair_person	Finance	2015-01-22 16:58:51	2015	700	senate
+t	1883	2	member	Finance	2015-01-22 16:58:51	2015	729	senate
+t	1884	3	member	Finance	2015-01-22 16:58:51	2015	853	senate
+t	1885	4	member	Finance	2015-01-22 16:58:51	2015	878	senate
+t	1886	5	member	Finance	2015-01-22 16:58:51	2015	697	senate
+t	1887	6	member	Finance	2015-01-22 16:58:51	2015	702	senate
+t	1888	7	member	Finance	2015-01-22 16:58:51	2015	696	senate
+t	1889	8	member	Finance	2015-01-22 16:58:51	2015	871	senate
+t	1890	9	member	Finance	2015-01-22 16:58:51	2015	730	senate
+t	1891	10	member	Finance	2015-01-22 16:58:51	2015	698	senate
+t	1892	11	member	Finance	2015-01-22 16:58:51	2015	694	senate
+t	1893	12	member	Finance	2015-01-22 16:58:51	2015	856	senate
+t	1894	13	member	Finance	2015-01-22 16:58:51	2015	703	senate
+t	1895	14	member	Finance	2015-01-22 16:58:51	2015	695	senate
+t	1896	15	member	Finance	2015-01-22 16:58:51	2015	852	senate
+f	1905	24	vice_chair	Finance	2015-01-22 16:58:51	2015	707	senate
+f	1906	25	member	Finance	2015-01-22 16:58:51	2015	727	senate
+f	1907	26	member	Finance	2015-01-22 16:58:51	2015	719	senate
+f	1908	27	member	Finance	2015-01-22 16:58:51	2015	722	senate
+f	1909	28	member	Finance	2015-01-22 16:58:51	2015	718	senate
+f	1910	29	member	Finance	2015-01-22 16:58:51	2015	693	senate
+f	1911	30	member	Finance	2015-01-22 16:58:51	2015	712	senate
+f	1912	31	member	Finance	2015-01-22 16:58:51	2015	711	senate
+f	1913	32	member	Finance	2015-01-22 16:58:51	2015	713	senate
+f	1914	33	member	Finance	2015-01-22 16:58:51	2015	714	senate
+f	1915	34	member	Finance	2015-01-22 16:58:51	2015	708	senate
+t	1920	2	vice_chair	Health	2015-01-22 16:58:51	2015	725	senate
+t	1921	3	member	Health	2015-01-22 16:58:51	2015	853	senate
+t	1922	4	member	Health	2015-01-22 16:58:51	2015	851	senate
+t	1923	5	member	Health	2015-01-22 16:58:51	2015	697	senate
+t	1924	6	member	Health	2015-01-22 16:58:51	2015	698	senate
+t	1927	9	member	Health	2015-01-22 16:58:51	2015	885	senate
+t	1928	10	member	Health	2015-01-22 16:58:51	2015	704	senate
+t	1929	11	member	Health	2015-01-22 16:58:51	2015	855	senate
+f	1930	12	vice_chair	Health	2015-01-22 16:58:51	2015	723	senate
+f	1931	13	member	Health	2015-01-22 16:58:51	2015	693	senate
+f	1932	14	member	Health	2015-01-22 16:58:51	2015	705	senate
+f	1933	15	member	Health	2015-01-22 16:58:51	2015	711	senate
+f	1934	16	member	Health	2015-01-22 16:58:51	2015	888	senate
+f	1935	17	member	Health	2015-01-22 16:58:51	2015	710	senate
+t	1936	1	chair_person	Higher Education	2015-01-22 16:58:51	2015	694	senate
+t	1937	2	member	Higher Education	2015-01-22 16:58:51	2015	887	senate
+t	1938	3	member	Higher Education	2015-01-22 16:58:51	2015	878	senate
+t	1939	4	member	Higher Education	2015-01-22 16:58:51	2015	881	senate
+t	1940	5	member	Higher Education	2015-01-22 16:58:51	2015	696	senate
+t	1941	6	member	Higher Education	2015-01-22 16:58:51	2015	702	senate
+t	1942	7	member	Higher Education	2015-01-22 16:58:51	2015	879	senate
+t	1943	8	member	Higher Education	2015-01-22 16:58:51	2015	701	senate
+t	1944	9	member	Higher Education	2015-01-22 16:58:51	2015	873	senate
+t	1945	10	member	Higher Education	2015-01-22 16:58:51	2015	884	senate
+t	1946	11	member	Higher Education	2015-01-22 16:58:51	2015	704	senate
+t	1947	12	member	Higher Education	2015-01-22 16:58:51	2015	725	senate
+f	1948	13	member	Higher Education	2015-01-22 16:58:51	2015	710	senate
+f	1949	14	member	Higher Education	2015-01-22 16:58:51	2015	727	senate
+f	1950	15	member	Higher Education	2015-01-22 16:58:51	2015	718	senate
+f	1951	16	member	Higher Education	2015-01-22 16:58:51	2015	707	senate
+f	1952	17	member	Higher Education	2015-01-22 16:58:51	2015	713	senate
+f	1953	18	member	Higher Education	2015-01-22 16:58:51	2015	714	senate
+f	1954	19	member	Higher Education	2015-01-22 16:58:51	2015	723	senate
+t	1956	2	member	Housing, Construction and Community Development	2015-01-22 16:58:51	2015	720	senate
+t	1957	3	member	Housing, Construction and Community Development	2015-01-22 16:58:51	2015	729	senate
+t	1958	4	member	Housing, Construction and Community Development	2015-01-22 16:58:51	2015	716	senate
+t	1959	5	member	Housing, Construction and Community Development	2015-01-22 16:58:51	2015	696	senate
+t	1960	6	member	Housing, Construction and Community Development	2015-01-22 16:58:51	2015	852	senate
+f	1961	7	member	Housing, Construction and Community Development	2015-01-22 16:58:51	2015	718	senate
+f	1962	8	member	Housing, Construction and Community Development	2015-01-22 16:58:51	2015	707	senate
+f	1963	9	member	Housing, Construction and Community Development	2015-01-22 16:58:51	2015	888	senate
+t	1964	1	chair_person	Infrastructure and Capital Investment	2015-01-22 16:58:51	2015	703	senate
+t	1965	2	member	Infrastructure and Capital Investment	2015-01-22 16:58:51	2015	721	senate
+t	1966	3	member	Infrastructure and Capital Investment	2015-01-22 16:58:51	2015	887	senate
+t	1967	4	member	Infrastructure and Capital Investment	2015-01-22 16:58:51	2015	696	senate
+t	1968	5	member	Infrastructure and Capital Investment	2015-01-22 16:58:51	2015	702	senate
+t	1969	6	member	Infrastructure and Capital Investment	2015-01-22 16:58:51	2015	873	senate
+f	1970	7	member	Infrastructure and Capital Investment	2015-01-22 16:58:51	2015	712	senate
+f	1971	8	member	Infrastructure and Capital Investment	2015-01-22 16:58:51	2015	882	senate
+f	1972	9	member	Infrastructure and Capital Investment	2015-01-22 16:58:51	2015	722	senate
+t	1973	1	chair_person	Insurance	2015-01-22 16:58:51	2015	704	senate
+t	1974	2	member	Insurance	2015-01-22 16:58:51	2015	720	senate
+t	1975	3	member	Insurance	2015-01-22 16:58:51	2015	721	senate
+t	1976	4	member	Insurance	2015-01-22 16:58:51	2015	878	senate
+t	1977	5	member	Insurance	2015-01-22 16:58:51	2015	697	senate
+t	1978	6	member	Insurance	2015-01-22 16:58:51	2015	730	senate
+t	1979	7	member	Insurance	2015-01-22 16:58:51	2015	698	senate
+t	1980	8	member	Insurance	2015-01-22 16:58:51	2015	694	senate
+t	1981	9	member	Insurance	2015-01-22 16:58:51	2015	695	senate
+t	1982	10	member	Insurance	2015-01-22 16:58:51	2015	872	senate
+t	1983	11	member	Insurance	2015-01-22 16:58:51	2015	889	senate
+t	1984	12	member	Insurance	2015-01-22 16:58:51	2015	855	senate
+f	1985	13	member	Insurance	2015-01-22 16:58:51	2015	727	senate
+f	1986	14	member	Insurance	2015-01-22 16:58:51	2015	718	senate
+f	1987	15	member	Insurance	2015-01-22 16:58:51	2015	712	senate
+f	1988	16	member	Insurance	2015-01-22 16:58:51	2015	717	senate
+f	1989	17	member	Insurance	2015-01-22 16:58:51	2015	888	senate
+f	1990	18	member	Insurance	2015-01-22 16:58:51	2015	713	senate
+f	1991	19	member	Insurance	2015-01-22 16:58:51	2015	875	senate
+t	1992	1	chair_person	Investigations and Government Operations	2015-01-22 16:58:51	2015	703	senate
+t	1993	2	member	Investigations and Government Operations	2015-01-22 16:58:51	2015	721	senate
+t	1994	3	member	Investigations and Government Operations	2015-01-22 16:58:51	2015	697	senate
+t	1995	4	member	Investigations and Government Operations	2015-01-22 16:58:51	2015	872	senate
+t	1996	5	member	Investigations and Government Operations	2015-01-22 16:58:51	2015	885	senate
+t	1997	6	member	Investigations and Government Operations	2015-01-22 16:58:51	2015	852	senate
+f	1998	7	member	Investigations and Government Operations	2015-01-22 16:58:51	2015	705	senate
+f	1999	8	member	Investigations and Government Operations	2015-01-22 16:58:51	2015	719	senate
+f	2000	9	member	Investigations and Government Operations	2015-01-22 16:58:51	2015	715	senate
+t	2001	1	chair_person	Judiciary	2015-01-22 16:58:51	2015	729	senate
+t	2002	2	member	Judiciary	2015-01-22 16:58:51	2015	720	senate
+t	2003	3	member	Judiciary	2015-01-22 16:58:51	2015	700	senate
+t	2004	4	member	Judiciary	2015-01-22 16:58:51	2015	878	senate
+t	2005	5	member	Judiciary	2015-01-22 16:58:51	2015	871	senate
+t	2006	6	member	Judiciary	2015-01-22 16:58:51	2015	730	senate
+t	2007	7	member	Judiciary	2015-01-22 16:58:51	2015	694	senate
+t	2008	8	member	Judiciary	2015-01-22 16:58:51	2015	856	senate
+t	2009	9	member	Judiciary	2015-01-22 16:58:51	2015	852	senate
+t	2010	10	member	Judiciary	2015-01-22 16:58:51	2015	872	senate
+t	2011	11	member	Judiciary	2015-01-22 16:58:51	2015	850	senate
+t	2012	12	member	Judiciary	2015-01-22 16:58:51	2015	724	senate
+t	2013	13	member	Judiciary	2015-01-22 16:58:51	2015	884	senate
+t	2014	14	member	Judiciary	2015-01-22 16:58:51	2015	889	senate
+f	2015	15	vice_chair	Judiciary	2015-01-22 16:58:51	2015	693	senate
+f	2016	16	member	Judiciary	2015-01-22 16:58:51	2015	727	senate
+f	2017	17	member	Judiciary	2015-01-22 16:58:51	2015	882	senate
+f	2018	18	member	Judiciary	2015-01-22 16:58:51	2015	719	senate
+f	2019	19	member	Judiciary	2015-01-22 16:58:51	2015	722	senate
+f	2020	20	member	Judiciary	2015-01-22 16:58:51	2015	718	senate
+f	2021	21	member	Judiciary	2015-01-22 16:58:51	2015	705	senate
+f	2022	22	member	Judiciary	2015-01-22 16:58:51	2015	708	senate
+f	2023	23	member	Judiciary	2015-01-22 16:58:51	2015	710	senate
+t	2024	1	chair_person	Labor	2015-01-22 16:58:51	2015	695	senate
+t	2025	2	member	Labor	2015-01-22 16:58:51	2015	700	senate
+t	2026	3	member	Labor	2015-01-22 16:58:51	2015	696	senate
+t	2027	4	member	Labor	2015-01-22 16:58:51	2015	871	senate
+t	2028	5	member	Labor	2015-01-22 16:58:51	2015	703	senate
+t	2029	6	member	Labor	2015-01-22 16:58:51	2015	699	senate
+t	2030	7	member	Labor	2015-01-22 16:58:51	2015	885	senate
+t	2031	8	member	Labor	2015-01-22 16:58:51	2015	873	senate
+t	2032	9	member	Labor	2015-01-22 16:58:51	2015	724	senate
+t	2033	10	member	Labor	2015-01-22 16:58:51	2015	889	senate
+f	2034	11	member	Labor	2015-01-22 16:58:51	2015	714	senate
+f	2035	12	member	Labor	2015-01-22 16:58:51	2015	726	senate
+f	2036	13	member	Labor	2015-01-22 16:58:51	2015	722	senate
+f	2037	14	member	Labor	2015-01-22 16:58:51	2015	708	senate
+f	2038	15	member	Labor	2015-01-22 16:58:51	2015	723	senate
+f	2039	16	member	Labor	2015-01-22 16:58:51	2015	875	senate
+t	2040	1	chair_person	Local Government	2015-01-22 16:58:51	2015	699	senate
+t	2041	2	member	Local Government	2015-01-22 16:58:51	2015	716	senate
+t	2042	3	member	Local Government	2015-01-22 16:58:51	2015	885	senate
+t	2043	4	member	Local Government	2015-01-22 16:58:51	2015	879	senate
+t	2044	5	member	Local Government	2015-01-22 16:58:51	2015	701	senate
+t	2045	6	member	Local Government	2015-01-22 16:58:51	2015	725	senate
+f	2046	7	member	Local Government	2015-01-22 16:58:51	2015	888	senate
+f	2047	8	member	Local Government	2015-01-22 16:58:51	2015	705	senate
+f	2048	9	member	Local Government	2015-01-22 16:58:51	2015	717	senate
+t	2049	1	chair_person	Mental Health and Developmental Disabilities	2015-01-22 16:58:51	2015	879	senate
+t	2072	2	vice_chair	Rules	2015-01-22 16:58:51	2015	854	senate
+t	2073	3	member	Rules	2015-01-22 16:58:51	2015	729	senate
+t	2074	4	member	Rules	2015-01-22 16:58:51	2015	721	senate
+t	2075	5	member	Rules	2015-01-22 16:58:51	2015	853	senate
+t	2076	6	member	Rules	2015-01-22 16:58:51	2015	878	senate
+t	2077	7	member	Rules	2015-01-22 16:58:51	2015	871	senate
+t	2078	8	member	Rules	2015-01-22 16:58:51	2015	698	senate
+t	2079	9	member	Rules	2015-01-22 16:58:51	2015	694	senate
+t	2080	10	member	Rules	2015-01-22 16:58:51	2015	856	senate
+t	2081	11	member	Rules	2015-01-22 16:58:51	2015	703	senate
+t	2082	12	member	Rules	2015-01-22 16:58:51	2015	852	senate
+t	2083	13	member	Rules	2015-01-22 16:58:51	2015	704	senate
+t	2084	14	member	Rules	2015-01-22 16:58:51	2015	855	senate
+t	2085	15	member	Rules	2015-01-22 16:58:51	2015	725	senate
+f	2086	16	vice_chair	Rules	2015-01-22 16:58:51	2015	728	senate
+f	2087	17	member	Rules	2015-01-22 16:58:51	2015	727	senate
+f	2088	18	member	Rules	2015-01-22 16:58:51	2015	722	senate
+f	2089	19	member	Rules	2015-01-22 16:58:51	2015	718	senate
+f	2090	20	member	Rules	2015-01-22 16:58:51	2015	706	senate
+f	2091	21	member	Rules	2015-01-22 16:58:51	2015	693	senate
+f	2092	22	member	Rules	2015-01-22 16:58:51	2015	707	senate
+f	2093	23	member	Rules	2015-01-22 16:58:51	2015	711	senate
+f	2094	24	member	Rules	2015-01-22 16:58:51	2015	713	senate
+f	2095	25	member	Rules	2015-01-22 16:58:51	2015	708	senate
+t	2096	1	chair_person	Social Services	2015-01-22 16:58:51	2015	721	senate
+t	2097	2	member	Social Services	2015-01-22 16:58:51	2015	853	senate
+t	2098	3	member	Social Services	2015-01-22 16:58:51	2015	694	senate
+t	2099	4	member	Social Services	2015-01-22 16:58:51	2015	856	senate
+t	2100	5	member	Social Services	2015-01-22 16:58:51	2015	695	senate
+f	2101	6	member	Social Services	2015-01-22 16:58:51	2015	711	senate
+f	2102	7	member	Social Services	2015-01-22 16:58:51	2015	715	senate
+t	2103	1	chair_person	Transportation	2015-01-22 16:58:51	2015	873	senate
+t	2104	2	vice_chair	Transportation	2015-01-22 16:58:51	2015	703	senate
+t	2105	3	member	Transportation	2015-01-22 16:58:51	2015	720	senate
+t	2106	4	member	Transportation	2015-01-22 16:58:51	2015	696	senate
+t	2107	5	member	Transportation	2015-01-22 16:58:51	2015	698	senate
+t	2108	6	member	Transportation	2015-01-22 16:58:51	2015	695	senate
+t	2109	7	member	Transportation	2015-01-22 16:58:51	2015	852	senate
+t	2110	8	member	Transportation	2015-01-22 16:58:51	2015	872	senate
+t	2111	9	member	Transportation	2015-01-22 16:58:51	2015	850	senate
+t	2112	10	member	Transportation	2015-01-22 16:58:51	2015	701	senate
+t	2113	11	member	Transportation	2015-01-22 16:58:51	2015	725	senate
+t	2114	12	member	Transportation	2015-01-22 16:58:51	2015	855	senate
+f	2115	13	member	Transportation	2015-01-22 16:58:51	2015	722	senate
+f	2116	14	member	Transportation	2015-01-22 16:58:51	2015	719	senate
+f	2117	15	member	Transportation	2015-01-22 16:58:51	2015	712	senate
+f	2118	16	member	Transportation	2015-01-22 16:58:51	2015	888	senate
+f	2119	17	member	Transportation	2015-01-22 16:58:51	2015	708	senate
+f	2120	18	member	Transportation	2015-01-22 16:58:51	2015	715	senate
+f	2121	19	member	Transportation	2015-01-22 16:58:51	2015	710	senate
+t	2122	1	chair_person	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	887	senate
+t	2123	2	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	886	senate
+t	2124	3	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	721	senate
+t	2125	4	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	878	senate
+t	2126	5	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	697	senate
+t	2127	6	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	702	senate
+t	2128	7	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	698	senate
+t	2129	8	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	879	senate
+f	2130	9	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	726	senate
+f	2131	10	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	882	senate
+f	2132	11	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	888	senate
+f	2133	12	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	875	senate
+f	2134	13	member	Veterans, Homeland Security and Military Affairs	2015-01-22 16:58:51	2015	709	senate
+t	2135	1	chair_person	New York City Education Subcommittee	2015-01-22 16:58:51	2015	851	senate
+t	2136	2	member	New York City Education Subcommittee	2015-01-22 16:58:51	2015	720	senate
+t	2137	3	member	New York City Education Subcommittee	2015-01-22 16:58:51	2015	697	senate
+t	2138	4	member	New York City Education Subcommittee	2015-01-22 16:58:51	2015	730	senate
+f	2139	5	member	New York City Education Subcommittee	2015-01-22 16:58:51	2015	708	senate
+f	2140	6	member	New York City Education Subcommittee	2015-01-22 16:58:51	2015	710	senate
+t	2141	1	chair_person	Banks	2014-03-03 17:09:09	2013	149	senate
+t	2142	2	vice_chair	Banks	2014-03-03 17:09:09	2013	151	senate
+t	2143	3	member	Banks	2014-03-03 17:09:09	2013	169	senate
+t	2144	4	member	Banks	2014-03-03 17:09:09	2013	132	senate
+t	2145	5	member	Banks	2014-03-03 17:09:09	2013	178	senate
+t	2146	6	member	Banks	2014-03-03 17:09:09	2013	144	senate
+t	2147	7	member	Banks	2014-03-03 17:09:09	2013	153	senate
+t	2148	8	member	Banks	2014-03-03 17:09:09	2013	163	senate
+t	2149	9	member	Banks	2014-03-03 17:09:09	2013	183	senate
+t	2150	10	member	Banks	2014-03-03 17:09:09	2013	162	senate
+t	2151	11	member	Banks	2014-03-03 17:09:09	2013	171	senate
+t	2152	12	member	Banks	2014-03-03 17:09:09	2013	147	senate
+f	2153	13	member	Banks	2014-03-03 17:09:09	2013	148	senate
+f	2154	14	member	Banks	2014-03-03 17:09:09	2013	174	senate
+f	2155	15	member	Banks	2014-03-03 17:09:09	2013	177	senate
+f	2156	16	member	Banks	2014-03-03 17:09:09	2013	172	senate
+f	2157	17	member	Banks	2014-03-03 17:09:09	2013	134	senate
+f	2158	18	member	Banks	2014-03-03 17:09:09	2013	158	senate
+t	2159	1	chair_person	Civil Service and Pensions	2014-03-03 17:09:09	2013	178	senate
+t	2160	2	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	180	senate
+t	2161	3	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	165	senate
+t	2162	4	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	153	senate
+t	2163	5	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	179	senate
+t	2164	6	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	159	senate
+t	2165	7	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	167	senate
+f	2166	8	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	134	senate
+f	2167	9	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	139	senate
+f	2168	10	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	137	senate
+f	2169	11	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	131	senate
+t	2170	1	chair_person	Codes	2014-03-03 17:09:09	2013	150	senate
+t	2171	2	member	Codes	2014-03-03 17:09:09	2013	141	senate
+t	2172	3	member	Codes	2014-03-03 17:09:09	2013	132	senate
+t	2173	4	member	Codes	2014-03-03 17:09:09	2013	155	senate
+t	2174	5	member	Codes	2014-03-03 17:09:09	2013	182	senate
+t	2175	6	member	Codes	2014-03-03 17:09:09	2013	178	senate
+t	2176	7	member	Codes	2014-03-03 17:09:09	2013	165	senate
+t	2177	8	member	Codes	2014-03-03 17:09:09	2013	183	senate
+t	2178	9	member	Codes	2014-03-03 17:09:09	2013	149	senate
+t	2179	10	member	Codes	2014-03-03 17:09:09	2013	147	senate
+f	2180	11	member	Codes	2014-03-03 17:09:09	2013	157	senate
+f	2181	12	member	Codes	2014-03-03 17:09:09	2013	131	senate
+f	2182	13	member	Codes	2014-03-03 17:09:09	2013	140	senate
+f	2183	14	member	Codes	2014-03-03 17:09:09	2013	176	senate
+f	2184	15	member	Codes	2014-03-03 17:09:09	2013	148	senate
+f	2185	16	member	Codes	2014-03-03 17:09:09	2013	129	senate
+t	2186	1	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	171	senate
+t	2187	2	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	141	senate
+t	2188	3	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	182	senate
+t	2189	4	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	181	senate
+t	2190	5	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	149	senate
+t	2191	6	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	173	senate
+t	2192	7	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	135	senate
+f	2193	8	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	146	senate
+f	2194	9	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	136	senate
+f	2195	10	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	134	senate
+f	2196	11	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	148	senate
+t	2197	1	chair_person	Consumer Protection	2014-03-03 17:09:09	2013	160	senate
+t	2198	2	member	Consumer Protection	2014-03-03 17:09:09	2013	141	senate
+t	2199	3	member	Consumer Protection	2014-03-03 17:09:09	2013	135	senate
+t	2200	4	member	Consumer Protection	2014-03-03 17:09:09	2013	144	senate
+t	2201	5	member	Consumer Protection	2014-03-03 17:09:09	2013	167	senate
+t	2202	6	member	Consumer Protection	2014-03-03 17:09:09	2013	159	senate
+t	2203	7	member	Consumer Protection	2014-03-03 17:09:09	2013	173	senate
+f	2204	8	member	Consumer Protection	2014-03-03 17:09:09	2013	176	senate
+f	2205	9	member	Consumer Protection	2014-03-03 17:09:09	2013	142	senate
+f	2206	10	member	Consumer Protection	2014-03-03 17:09:09	2013	158	senate
+f	2207	11	member	Consumer Protection	2014-03-03 17:09:09	2013	143	senate
+t	2208	1	chair_person	Education	2014-03-03 17:09:09	2013	155	senate
+t	2209	2	member	Education	2014-03-03 17:09:09	2013	151	senate
+t	2210	3	member	Education	2014-03-03 17:09:09	2013	165	senate
+t	2211	4	member	Education	2014-03-03 17:09:09	2013	175	senate
+t	2212	5	member	Education	2014-03-03 17:09:09	2013	135	senate
+t	2213	6	member	Education	2014-03-03 17:09:09	2013	163	senate
+t	2214	7	member	Education	2014-03-03 17:09:09	2013	167	senate
+t	2215	8	member	Education	2014-03-03 17:09:09	2013	162	senate
+t	2216	9	member	Education	2014-03-03 17:09:09	2013	173	senate
+t	2217	10	member	Education	2014-03-03 17:09:09	2013	127	senate
+t	2218	11	member	Education	2014-03-03 17:09:09	2013	171	senate
+t	2219	12	member	Education	2014-03-03 17:09:09	2013	147	senate
+f	2220	13	member	Education	2014-03-03 17:09:09	2013	143	senate
+f	2221	14	member	Education	2014-03-03 17:09:09	2013	139	senate
+f	2222	15	member	Education	2014-03-03 17:09:09	2013	174	senate
+f	2223	16	member	Education	2014-03-03 17:09:09	2013	168	senate
+f	2224	17	member	Education	2014-03-03 17:09:09	2013	156	senate
+f	2225	18	member	Education	2014-03-03 17:09:09	2013	128	senate
+t	2226	1	chair_person	Energy and Telecommunications	2014-03-03 17:09:09	2013	167	senate
+t	2227	2	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	126	senate
+t	2228	3	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	149	senate
+t	2229	4	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	183	senate
+t	2230	5	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	179	senate
+t	2231	6	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	173	senate
+t	2232	7	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	155	senate
+f	2233	8	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	172	senate
+f	2234	9	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	146	senate
+f	2235	10	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	137	senate
+f	2236	11	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	187	senate
+t	2237	1	chair_person	Finance	2014-03-03 17:09:09	2013	132	senate
+t	2238	2	member	Finance	2014-03-03 17:09:09	2013	169	senate
+t	2239	3	member	Finance	2014-03-03 17:09:09	2013	151	senate
+t	2240	4	member	Finance	2014-03-03 17:09:09	2013	155	senate
+t	2241	5	member	Finance	2014-03-03 17:09:09	2013	178	senate
+t	2242	6	member	Finance	2014-03-03 17:09:09	2013	149	senate
+t	2243	7	member	Finance	2014-03-03 17:09:09	2013	154	senate
+t	2244	8	member	Finance	2014-03-03 17:09:09	2013	180	senate
+t	2245	9	member	Finance	2014-03-03 17:09:09	2013	165	senate
+t	2246	10	member	Finance	2014-03-03 17:09:09	2013	130	senate
+t	2247	11	member	Finance	2014-03-03 17:09:09	2013	175	senate
+t	2248	12	member	Finance	2014-03-03 17:09:09	2013	135	senate
+t	2249	13	member	Finance	2014-03-03 17:09:09	2013	163	senate
+t	2250	14	member	Finance	2014-03-03 17:09:09	2013	150	senate
+t	2251	15	member	Finance	2014-03-03 17:09:09	2013	183	senate
+t	2252	16	member	Finance	2014-03-03 17:09:09	2013	162	senate
+t	2253	17	member	Finance	2014-03-03 17:09:09	2013	173	senate
+t	2254	18	member	Finance	2014-03-03 17:09:09	2013	159	senate
+t	2255	19	member	Finance	2014-03-03 17:09:09	2013	127	senate
+t	2256	20	member	Finance	2014-03-03 17:09:09	2013	170	senate
+t	2257	21	member	Finance	2014-03-03 17:09:09	2013	171	senate
+t	2258	22	member	Finance	2014-03-03 17:09:09	2013	153	senate
+f	2259	23	member	Finance	2014-03-03 17:09:09	2013	129	senate
+f	2260	24	member	Finance	2014-03-03 17:09:09	2013	177	senate
+f	2261	25	member	Finance	2014-03-03 17:09:09	2013	137	senate
+f	2262	26	member	Finance	2014-03-03 17:09:09	2013	133	senate
+f	2263	27	member	Finance	2014-03-03 17:09:09	2013	138	senate
+f	2264	28	member	Finance	2014-03-03 17:09:09	2013	174	senate
+f	2265	29	member	Finance	2014-03-03 17:09:09	2013	168	senate
+f	2266	30	member	Finance	2014-03-03 17:09:09	2013	172	senate
+f	2267	31	member	Finance	2014-03-03 17:09:09	2013	187	senate
+f	2268	32	member	Finance	2014-03-03 17:09:09	2013	131	senate
+f	2269	33	member	Finance	2014-03-03 17:09:09	2013	156	senate
+f	2270	34	member	Finance	2014-03-03 17:09:09	2013	157	senate
+f	2271	35	member	Finance	2014-03-03 17:09:09	2013	146	senate
+f	2272	36	member	Finance	2014-03-03 17:09:09	2013	140	senate
+f	2273	37	member	Finance	2014-03-03 17:09:09	2013	136	senate
+t	2274	1	chair_person	Health	2014-03-03 17:09:09	2013	180	senate
+t	2277	4	member	Health	2014-03-03 17:09:09	2013	181	senate
+t	2278	5	member	Health	2014-03-03 17:09:09	2013	178	senate
+t	2279	6	member	Health	2014-03-03 17:09:09	2013	130	senate
+t	2280	7	member	Health	2014-03-03 17:09:09	2013	159	senate
+t	2281	8	member	Health	2014-03-03 17:09:09	2013	127	senate
+t	2282	9	member	Health	2014-03-03 17:09:09	2013	170	senate
+t	2283	10	member	Health	2014-03-03 17:09:09	2013	153	senate
+f	2284	11	member	Health	2014-03-03 17:09:09	2013	133	senate
+f	2285	12	member	Health	2014-03-03 17:09:09	2013	168	senate
+f	2286	13	member	Health	2014-03-03 17:09:09	2013	136	senate
+f	2287	14	member	Health	2014-03-03 17:09:09	2013	187	senate
+f	2288	15	member	Health	2014-03-03 17:09:09	2013	148	senate
+f	2289	16	member	Health	2014-03-03 17:09:09	2013	176	senate
+f	2290	17	member	Health	2014-03-03 17:09:09	2013	142	senate
+t	2291	1	chair_person	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	170	senate
+t	2292	2	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	169	senate
+t	2319	1	chair_person	Judiciary	2014-03-03 17:09:09	2013	169	senate
+t	2320	2	member	Judiciary	2014-03-03 17:09:09	2013	132	senate
+t	2342	1	chair_person	Rules	2014-03-03 17:09:09	2013	184	senate
+t	2343	2	vice_chair	Rules	2014-03-03 17:09:09	2013	166	senate
+t	2344	3	member	Rules	2014-03-03 17:09:09	2013	169	senate
+t	2345	4	member	Rules	2014-03-03 17:09:09	2013	126	senate
+t	2346	5	member	Rules	2014-03-03 17:09:09	2013	151	senate
+t	2347	6	member	Rules	2014-03-03 17:09:09	2013	155	senate
+t	2348	7	member	Rules	2014-03-03 17:09:09	2013	180	senate
+t	2349	8	member	Rules	2014-03-03 17:09:09	2013	130	senate
+t	2350	9	member	Rules	2014-03-03 17:09:09	2013	175	senate
+t	2351	10	member	Rules	2014-03-03 17:09:09	2013	163	senate
+t	2352	11	member	Rules	2014-03-03 17:09:09	2013	167	senate
+t	2353	12	member	Rules	2014-03-03 17:09:09	2013	150	senate
+t	2354	13	member	Rules	2014-03-03 17:09:09	2013	127	senate
+t	2355	14	member	Rules	2014-03-03 17:09:09	2013	171	senate
+t	2356	15	member	Rules	2014-03-03 17:09:09	2013	135	senate
+f	2357	16	member	Rules	2014-03-03 17:09:09	2013	152	senate
+f	2358	17	member	Rules	2014-03-03 17:09:09	2013	174	senate
+f	2359	18	member	Rules	2014-03-03 17:09:09	2013	137	senate
+f	2360	19	member	Rules	2014-03-03 17:09:09	2013	136	senate
+f	2361	20	member	Rules	2014-03-03 17:09:09	2013	129	senate
+f	2362	21	member	Rules	2014-03-03 17:09:09	2013	168	senate
+f	2363	22	member	Rules	2014-03-03 17:09:09	2013	172	senate
+f	2364	23	member	Rules	2014-03-03 17:09:09	2013	131	senate
+f	2365	24	member	Rules	2014-03-03 17:09:09	2013	140	senate
+f	2366	25	member	Rules	2014-03-03 17:09:09	2013	138	senate
+t	2367	1	chair_person	Transportation	2014-03-03 17:09:09	2013	173	senate
+t	2368	2	vice_chair	Transportation	2014-03-03 17:09:09	2013	163	senate
+t	2369	3	member	Transportation	2014-03-03 17:09:09	2013	126	senate
+t	2370	4	member	Transportation	2014-03-03 17:09:09	2013	182	senate
+t	2371	5	member	Transportation	2014-03-03 17:09:09	2013	130	senate
+t	2372	6	member	Transportation	2014-03-03 17:09:09	2013	167	senate
+t	2373	7	member	Transportation	2014-03-03 17:09:09	2013	150	senate
+t	2374	8	member	Transportation	2014-03-03 17:09:09	2013	183	senate
+t	2375	9	member	Transportation	2014-03-03 17:09:09	2013	162	senate
+t	2376	10	member	Transportation	2014-03-03 17:09:09	2013	170	senate
+t	2377	11	member	Transportation	2014-03-03 17:09:09	2013	160	senate
+t	2378	12	member	Transportation	2014-03-03 17:09:09	2013	147	senate
+f	2379	13	member	Transportation	2014-03-03 17:09:09	2013	137	senate
+f	2380	14	member	Transportation	2014-03-03 17:09:09	2013	177	senate
+f	2381	15	member	Transportation	2014-03-03 17:09:09	2013	146	senate
+f	2382	16	member	Transportation	2014-03-03 17:09:09	2013	131	senate
+f	2383	17	member	Transportation	2014-03-03 17:09:09	2013	157	senate
+f	2384	18	member	Transportation	2014-03-03 17:09:09	2013	156	senate
+f	2385	19	member	Transportation	2014-03-03 17:09:09	2013	158	senate
+t	2386	1	chair_person	New York City Education Subcommittee	2014-03-03 17:09:09	2013	181	senate
+t	2387	2	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	165	senate
+t	2388	3	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	178	senate
+t	2389	4	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	147	senate
+f	2390	5	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	131	senate
+f	2391	6	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	156	senate
+t	2275	2	member	Health	2014-03-03 17:09:09	2013	164	senate
+t	2276	3	member	Health	2014-03-03 17:09:09	2013	151	senate
+t	2293	3	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	141	senate
+t	2294	4	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	182	senate
+t	2295	5	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	150	senate
+t	2296	6	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	147	senate
+f	2297	7	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	140	senate
+f	2298	8	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	177	senate
+f	2299	9	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	129	senate
+t	2300	1	chair_person	Insurance	2014-03-03 17:09:09	2013	127	senate
+t	2301	2	member	Insurance	2014-03-03 17:09:09	2013	126	senate
+t	2302	3	member	Insurance	2014-03-03 17:09:09	2013	155	senate
+t	2303	4	member	Insurance	2014-03-03 17:09:09	2013	178	senate
+t	2304	5	member	Insurance	2014-03-03 17:09:09	2013	154	senate
+t	2305	6	member	Insurance	2014-03-03 17:09:09	2013	165	senate
+t	2306	7	member	Insurance	2014-03-03 17:09:09	2013	130	senate
+t	2307	8	member	Insurance	2014-03-03 17:09:09	2013	175	senate
+t	2308	9	member	Insurance	2014-03-03 17:09:09	2013	153	senate
+t	2309	10	member	Insurance	2014-03-03 17:09:09	2013	183	senate
+t	2310	11	member	Insurance	2014-03-03 17:09:09	2013	170	senate
+t	2311	12	member	Insurance	2014-03-03 17:09:09	2013	147	senate
+f	2312	13	member	Insurance	2014-03-03 17:09:09	2013	174	senate
+f	2313	14	member	Insurance	2014-03-03 17:09:09	2013	140	senate
+f	2314	15	member	Insurance	2014-03-03 17:09:09	2013	146	senate
+f	2315	16	member	Insurance	2014-03-03 17:09:09	2013	172	senate
+f	2316	17	member	Insurance	2014-03-03 17:09:09	2013	156	senate
+f	2317	18	member	Insurance	2014-03-03 17:09:09	2013	148	senate
+f	2318	19	member	Insurance	2014-03-03 17:09:09	2013	187	senate
+t	2321	3	member	Judiciary	2014-03-03 17:09:09	2013	155	senate
+t	2322	4	member	Judiciary	2014-03-03 17:09:09	2013	180	senate
+t	2323	5	member	Judiciary	2014-03-03 17:09:09	2013	165	senate
+t	2324	6	member	Judiciary	2014-03-03 17:09:09	2013	175	senate
+t	2325	7	member	Judiciary	2014-03-03 17:09:09	2013	135	senate
+t	2326	8	member	Judiciary	2014-03-03 17:09:09	2013	150	senate
+t	2327	9	member	Judiciary	2014-03-03 17:09:09	2013	183	senate
+t	2328	10	member	Judiciary	2014-03-03 17:09:09	2013	159	senate
+t	2329	11	member	Judiciary	2014-03-03 17:09:09	2013	162	senate
+t	2330	12	member	Judiciary	2014-03-03 17:09:09	2013	160	senate
+t	2331	13	member	Judiciary	2014-03-03 17:09:09	2013	154	senate
+t	2332	14	member	Judiciary	2014-03-03 17:09:09	2013	147	senate
+f	2333	15	member	Judiciary	2014-03-03 17:09:09	2013	136	senate
+f	2334	16	member	Judiciary	2014-03-03 17:09:09	2013	174	senate
+f	2335	17	member	Judiciary	2014-03-03 17:09:09	2013	137	senate
+f	2336	18	member	Judiciary	2014-03-03 17:09:09	2013	140	senate
+f	2337	19	member	Judiciary	2014-03-03 17:09:09	2013	131	senate
+f	2338	20	member	Judiciary	2014-03-03 17:09:09	2013	156	senate
+f	2339	21	member	Judiciary	2014-03-03 17:09:09	2013	176	senate
+f	2340	22	member	Judiciary	2014-03-03 17:09:09	2013	139	senate
+f	2341	23	member	Judiciary	2014-03-03 17:09:09	2013	157	senate
+t	2392	1	chair_person	Aging	2014-03-13 14:48:16	2013	171	senate
+t	2393	2	member	Aging	2014-03-13 14:48:16	2013	178	senate
+t	2394	3	member	Aging	2014-03-13 14:48:16	2013	181	senate
+t	2395	4	member	Aging	2014-03-13 14:48:16	2013	175	senate
+t	2396	5	member	Aging	2014-03-13 14:48:16	2013	144	senate
+t	2397	6	member	Aging	2014-03-13 14:48:16	2013	160	senate
+f	2398	7	member	Aging	2014-03-13 14:48:16	2013	177	senate
+f	2399	8	member	Aging	2014-03-13 14:48:16	2013	139	senate
+f	2400	9	member	Aging	2014-03-13 14:48:16	2013	156	senate
+f	2401	10	member	Aging	2014-03-13 14:48:16	2013	134	senate
+t	2402	1	chair_person	Banks	2014-03-13 14:48:16	2013	149	senate
+t	2403	2	vice_chair	Banks	2014-03-13 14:48:16	2013	151	senate
+t	2404	3	member	Banks	2014-03-13 14:48:16	2013	169	senate
+t	2405	4	member	Banks	2014-03-13 14:48:16	2013	132	senate
+t	2406	5	member	Banks	2014-03-13 14:48:16	2013	178	senate
+t	2407	6	member	Banks	2014-03-13 14:48:16	2013	144	senate
+t	2408	7	member	Banks	2014-03-13 14:48:16	2013	153	senate
+t	2409	8	member	Banks	2014-03-13 14:48:16	2013	163	senate
+t	2410	9	member	Banks	2014-03-13 14:48:16	2013	183	senate
+t	2411	10	member	Banks	2014-03-13 14:48:16	2013	162	senate
+t	2412	11	member	Banks	2014-03-13 14:48:16	2013	171	senate
+t	2413	12	member	Banks	2014-03-13 14:48:16	2013	147	senate
+f	2414	13	member	Banks	2014-03-13 14:48:16	2013	148	senate
+f	2415	14	member	Banks	2014-03-13 14:48:16	2013	174	senate
+f	2416	15	member	Banks	2014-03-13 14:48:16	2013	177	senate
+f	2417	16	member	Banks	2014-03-13 14:48:16	2013	172	senate
+f	2418	17	member	Banks	2014-03-13 14:48:16	2013	134	senate
+f	2419	18	member	Banks	2014-03-13 14:48:16	2013	158	senate
+f	2420	19	member	Banks	2014-03-13 14:48:16	2013	146	senate
+t	2421	1	chair_person	Cities	2014-03-13 14:48:16	2013	165	senate
+t	2422	2	member	Cities	2014-03-13 14:48:16	2013	164	senate
+t	2423	3	member	Cities	2014-03-13 14:48:16	2013	132	senate
+t	2424	4	member	Cities	2014-03-13 14:48:16	2013	154	senate
+f	2425	5	member	Cities	2014-03-13 14:48:16	2013	157	senate
+f	2426	6	member	Cities	2014-03-13 14:48:16	2013	174	senate
+t	2427	1	chair_person	Education	2014-03-13 14:48:16	2013	155	senate
+t	2428	2	member	Education	2014-03-13 14:48:16	2013	151	senate
+t	2429	3	member	Education	2014-03-13 14:48:16	2013	165	senate
+t	2430	4	member	Education	2014-03-13 14:48:16	2013	175	senate
+t	2431	5	member	Education	2014-03-13 14:48:16	2013	135	senate
+t	2432	6	member	Education	2014-03-13 14:48:16	2013	163	senate
+t	2433	7	member	Education	2014-03-13 14:48:16	2013	167	senate
+t	2434	8	member	Education	2014-03-13 14:48:16	2013	162	senate
+t	2435	9	member	Education	2014-03-13 14:48:16	2013	173	senate
+t	2436	10	member	Education	2014-03-13 14:48:16	2013	127	senate
+t	2437	11	member	Education	2014-03-13 14:48:16	2013	171	senate
+t	2438	12	member	Education	2014-03-13 14:48:16	2013	147	senate
+f	2439	13	member	Education	2014-03-13 14:48:16	2013	143	senate
+f	2440	14	member	Education	2014-03-13 14:48:16	2013	139	senate
+f	2441	15	member	Education	2014-03-13 14:48:16	2013	174	senate
+f	2442	16	member	Education	2014-03-13 14:48:16	2013	168	senate
+f	2443	17	member	Education	2014-03-13 14:48:16	2013	156	senate
+f	2444	18	member	Education	2014-03-13 14:48:16	2013	128	senate
+f	2445	19	member	Education	2014-03-13 14:48:16	2013	187	senate
+t	2462	4	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	149	senate
+t	2463	5	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	144	senate
+t	2464	6	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	150	senate
+t	2465	7	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	162	senate
+f	2466	8	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	139	senate
+t	2471	2	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	126	senate
+t	2472	3	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	155	senate
+t	2473	4	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	178	senate
+t	2474	5	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	149	senate
+t	2475	6	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	154	senate
+t	2476	7	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	130	senate
+t	2477	8	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	160	senate
+f	2478	9	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	139	senate
+f	2479	10	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	158	senate
+f	2480	11	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	134	senate
+f	2481	12	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	128	senate
+f	2482	13	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	143	senate
+t	2484	2	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	171	senate
+t	2485	3	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	141	senate
+t	2486	4	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	182	senate
+t	2487	5	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	181	senate
+t	2488	6	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	149	senate
+t	2489	7	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	173	senate
+t	2490	8	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	135	senate
+f	2491	9	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	146	senate
+f	2492	10	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	136	senate
+f	2493	11	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	134	senate
+f	2494	12	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	148	senate
+t	2446	1	chair_person	Environmental Conservation	2014-03-13 14:48:16	2013	154	senate
+t	2447	2	vice_chair	Environmental Conservation	2014-03-13 14:48:16	2013	147	senate
+t	2448	3	member	Environmental Conservation	2014-03-13 14:48:16	2013	175	senate
+t	2449	4	member	Environmental Conservation	2014-03-13 14:48:16	2013	135	senate
+t	2450	5	member	Environmental Conservation	2014-03-13 14:48:16	2013	163	senate
+t	2451	6	member	Environmental Conservation	2014-03-13 14:48:16	2013	167	senate
+t	2452	7	member	Environmental Conservation	2014-03-13 14:48:16	2013	183	senate
+t	2453	8	member	Environmental Conservation	2014-03-13 14:48:16	2013	170	senate
+f	2454	9	member	Environmental Conservation	2014-03-13 14:48:16	2013	148	senate
+f	2455	10	member	Environmental Conservation	2014-03-13 14:48:16	2013	140	senate
+f	2456	11	member	Environmental Conservation	2014-03-13 14:48:16	2013	142	senate
+f	2457	12	member	Environmental Conservation	2014-03-13 14:48:16	2013	143	senate
+f	2458	13	member	Environmental Conservation	2014-03-13 14:48:16	2013	128	senate
+t	2459	1	chair_person	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	169	senate
+t	2460	2	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	141	senate
+t	2461	3	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	126	senate
+f	2467	9	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	143	senate
+f	2468	10	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	134	senate
+f	2469	11	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	128	senate
+t	2470	1	chair_person	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	164	senate
+t	2483	1	chair_person	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	153	senate
 \.
 
 
@@ -3252,14 +4009,14 @@ f	1681	12	member	Commerce, Economic Development and Small Business	2014-03-17 18
 -- Name: committee_member_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-SELECT pg_catalog.setval('committee_member_id_seq', 1681, true);
+SELECT pg_catalog.setval('committee_member_id_seq', 2494, true);
 
 
 --
 -- Name: committee_version_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-SELECT pg_catalog.setval('committee_version_id_seq', 127, true);
+SELECT pg_catalog.setval('committee_version_id_seq', 185, true);
 
 
 SET search_path = public, pg_catalog;
@@ -3268,7 +4025,7 @@ SET search_path = public, pg_catalog;
 -- Name: member_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('member_id_seq', 698, true);
+SELECT pg_catalog.setval('member_id_seq', 911, true);
 
 
 --
@@ -3282,17 +4039,16 @@ SELECT pg_catalog.setval('member_person_id_seq', 1, false);
 -- Name: person_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('person_id_seq', 520, true);
+SELECT pg_catalog.setval('person_id_seq', 733, true);
 
 
 --
 -- Name: session_member_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('session_member_id_seq', 692, true);
+SELECT pg_catalog.setval('session_member_id_seq', 905, true);
 
 
 --
 -- PostgreSQL database dump complete
 --
-

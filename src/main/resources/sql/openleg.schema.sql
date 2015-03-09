@@ -3770,16 +3770,18 @@ ALTER SEQUENCE member_person_id_seq OWNED BY member.person_id;
 -- Name: person; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
+
 CREATE TABLE person (
-    id integer NOT NULL,
-    full_name character varying,
-    first_name character varying,
-    middle_name character varying,
-    last_name character varying,
-    email character varying,
-    prefix character varying,
-    suffix character varying,
-    verified boolean DEFAULT true
+  id integer NOT NULL,
+  full_name character varying,
+  first_name character varying,
+  middle_name character varying,
+  last_name character varying,
+  email character varying,
+  prefix character varying,
+  suffix character varying,
+  verified boolean DEFAULT true,
+  img_name text
 );
 
 
@@ -3853,11 +3855,11 @@ COMMENT ON COLUMN person.suffix IS 'Suffix (Jr, Sr, etc)';
 --
 
 CREATE SEQUENCE person_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 
 ALTER TABLE public.person_id_seq OWNER TO postgres;
@@ -3868,6 +3870,20 @@ ALTER TABLE public.person_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE person_id_seq OWNED BY person.id;
 
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY person ALTER COLUMN id SET DEFAULT nextval('person_id_seq'::regclass);
+
+
+--
+-- Name: person_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY person
+ADD CONSTRAINT person_pkey PRIMARY KEY (id);
 
 --
 -- Name: session_member; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
