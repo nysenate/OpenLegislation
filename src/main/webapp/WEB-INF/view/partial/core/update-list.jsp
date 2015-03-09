@@ -1,5 +1,14 @@
-<md-list ng-repeat="update in updates">
-  <md-item>
+<md-list>
+  <md-item ng-show="pagination.totalItems > pagination.itemsPerPage">
+    <md-item-content>
+      <div class="md-tile-content" layout="row" layout-sm="column" layout-align="space-between center">
+        <div flex> {{pagination.totalItems}} updates. Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.  </div>
+        <div flex style="text-align: right;"><dir-pagination-controls boundary-links="true"></dir-pagination-controls></div>
+      </div>
+    </md-item-content>
+  </md-item>
+  <md-item dir-paginate="update in updateResponse.result.items | itemsPerPage: updateResponse.limit"
+         current-page="pagination.currPage" total-items="updateResponse.total">
     <md-item-content>
       <div class="md-tile-content">
         <md-card class="content-card">
@@ -32,6 +41,14 @@
             </table>
           </md-content>
         </md-card>
+      </div>
+    </md-item-content>
+  </md-item>
+  <md-item ng-show="pagination.totalItems > pagination.itemsPerPage">
+    <md-item-content>
+      <div class="md-tile-content" layout="row" layout-sm="column" layout-align="space-between center">
+        <div flex> {{pagination.totalItems}} updates. Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.  </div>
+        <div flex style="text-align: right;"><dir-pagination-controls boundary-links="true"></dir-pagination-controls></div>
       </div>
     </md-item-content>
   </md-item>

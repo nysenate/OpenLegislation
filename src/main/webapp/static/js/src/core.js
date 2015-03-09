@@ -131,19 +131,22 @@ coreModule.factory('debounce', ['$timeout', function($timeout) {
  *
  * Usage
  * -----
- * <update-list updates="updatesArray" [no-id] [no-details]></update-list>
+ * <update-list updates-response="updatesResponse" [pagination="pagination"]
+ *              [show-id="showId"] [show-details="showDetails"]></update-list>
  *
  * Attributes
  * ----------
- * updates - An array of update json objects
- * no-id - Update content ids will not be shown if this attribute is present
- * no-details - The update details table will not be shown for each update if this attribute is present
+ * updates-response - The full json updates api response
+ * pagination - pagination object - When included, the list will display a pagination bar based on this object
+ * show-id - boolean variable - default true - Content Ids will be shown when this is true
+ * show-details - boolean variable - default true - Update detail tables will be shown when this is true
  */
-coreModule.directive('updateList', function() {
+coreModule.directive('updateList', ['PaginationModel', function(PaginationModel) {
     return {
         restrict: 'E',
         scope: {
-            updates: '=',
+            updateResponse: '=',
+            pagination: '=?',
             showId: '=?',
             showDetails: '=?'
         },
@@ -151,9 +154,14 @@ coreModule.directive('updateList', function() {
         link: function($scope, $elem, $attrs) {
             $scope.showId = $scope.showId || true;
             $scope.showDetails = $scope.showDetails || true;
+            if (!$scope.pagination) {
+                $scope.paginationModel = angular.extend({}, PaginationModel);
+                $scope.paginationModel.itemsPerPage = Number.MAX_SAFE_INTEGER;
+            }
+
         }
     };
-});
+}]);
 
 /**
  * Update Id
@@ -163,17 +171,16 @@ coreModule.directive('updateList', function() {
  */
 coreModule.filter('updateId', function() {
     return function (update) {
-        var scope = update['scope'];
         var id = update['id'];
         var idString = "";
         // Calendars
-        if (scope.lastIndexOf("Calendar", 0) === 0) {
+        if ('calendarNumber' in id) {
             idString = id['year'] + "#" + id['calendarNumber'];
             if ('fields' in update) {
-                if (scope == "Calendar Supplemental") {
+                if ('supVersion' in update['fields']) {
                     var supVersion = update['fields']['supVersion'];
                     idString += "-" + (supVersion == "" ? "floor" : supVersion)
-                } else if (scope == "Calendar Active List") {
+                } else if ('sequenceNo' in update['fields']) {
                     idString += "-" + update['fields']['sequenceNo'];
                 }
             }

@@ -269,7 +269,7 @@ calendarModule.controller('FloorCalendarCtrl', ['$scope', '$rootScope', function
 
 calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'CalendarUpdatesApi',
     function($scope, $rootScope, UpdatesApi) {
-        $scope.updates = [];
+        $scope.updateResponse = {result:{items: []}};
         $scope.updatesOrder = "ASC";
         var calendarGot = false;
 
@@ -277,7 +277,7 @@ calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'Calen
             var response = UpdatesApi.get({year: $scope.year, calNo: $scope.calendarNum, detail: true, order: $scope.updatesOrder},
                 function () {
                     if (response.success) {
-                        $scope.updates = response['result']['items'];
+                        $scope.updateResponse = response;
                     }
                 });
         };
@@ -536,29 +536,103 @@ function($scope, $q, CalendarIdsApi) {
     $scope.init();
 }]);
 
-calendarModule.controller('CalendarFullUpdatesCtrl', ['$scope', 'CalendarFullUpdatesApi', 'debounce',
-function ($scope, UpdatesApi, debounce) {
-    $scope.updates = [];
+calendarModule.controller('CalendarFullUpdatesCtrl', ['$scope', '$routeParams', '$location', '$mdToast',
+                                                    'CalendarFullUpdatesApi', 'debounce', 'PaginationModel',
+function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, PaginationModel) {
+    $scope.updateResponse = {};
     $scope.updateOptions = {
         order: "ASC",
         detail: true
     };
-    $scope.updateOptions.toDateTime = moment().startOf('minute').toDate();
-    $scope.updateOptions.fromDateTime = moment($scope.updateOptions.toDateTime).subtract(7, 'days').toDate();
+    var initialTo = moment().startOf('minute');
+    var initialFrom = moment(initialTo).subtract(7, 'days');
+    $scope.updateOptions.toDateTime = initialTo.toDate();
+    $scope.updateOptions.fromDateTime = initialFrom.toDate();
 
-    $scope.getUpdates = function () {
-        var response = UpdatesApi.get({detail: $scope.updateOptions.detail,
-                                       fromDateTime: moment($scope.updateOptions.fromDateTime).toISOString(),
-                                       toDateTime: moment($scope.updateOptions.toDateTime).toISOString(),
-                                       limit: "all"
-            }, function() {
-                if (response.success) {
-                    $scope.updates = response['result']['items'];
+    $scope.pagination = angular.extend({}, PaginationModel);
+
+    function init() {
+        if ("uorder" in $routeParams && ["ASC", "DESC"].indexOf($routeParams['uorder']) >= 0) {
+            $scope.updateOptions.order = $routeParams['uorder'];
+        }
+        if ($routeParams.hasOwnProperty('udetail')) {
+            console.log('yo');
+            $scope.updateOptions.detail = false;
+        }
+        if ("ufrom" in $routeParams) {
+            var from = moment($routeParams['ufrom']);
+            if (from.isValid()) {
+                $scope.updateOptions.fromDateTime = from.toDate();
+            }
+        }
+        if ("uto" in $routeParams) {
+            var to = moment($routeParams['uto']);
+            if (to.isValid()) {
+                $scope.updateOptions.toDateTime = to.toDate();
+            }
+        }
+
+    }
+
+    $scope.getUpdates = function (resetPagination) {
+        if (resetPagination) {
+            $scope.pagination.currPage = 1;
+        }
+        var from = moment($scope.updateOptions.fromDateTime);
+        var to = moment($scope.updateOptions.toDateTime);
+        if (from.isAfter(to)) {
+            $scope.invalidRangeToast();
+            $scope.updateResponse = {};
+            $scope.pagination.setTotalItems(0);
+        } else if (from.isValid() && to.isValid()) {
+            $scope.updateResponse = UpdatesApi.get({
+                detail: $scope.updateOptions.detail,
+                fromDateTime: moment($scope.updateOptions.fromDateTime).toISOString(),
+                toDateTime: moment($scope.updateOptions.toDateTime).toISOString(),
+                limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
+            }, function () {
+                if ($scope.updateResponse.success) {
+                    $scope.pagination.setTotalItems($scope.updateResponse.total);
+                } else {
+                    $scope.pagination.setTotalItems(0);
                 }
+            });
+        }
+    };
+
+    $scope.invalidRangeToast = function () {
+        $mdToast.show({
+            template: '<md-toast>from date cannot exceed to date!</md-toast>',
+            parent: angular.element('.error-toast-parent')
         });
     };
 
-    $scope.$watch('updateOptions', debounce($scope.getUpdates, 500), true);
+    init();
+
+    $scope.$watch('updateOptions', function() {
+            debounce(function() {$scope.getUpdates(true);}, 500)();
+            var opts = $scope.updateOptions;
+            if (opts.order == "DESC") {
+                $location.search("uorder", "DESC");
+            } else { $location.search("uorder", null); }
+            if (!opts.detail) {
+                $location.search("udetail", false);
+            } else { $location.search("udetail", null); }
+            var to = moment(opts.toDateTime);
+            var from = moment(opts.fromDateTime);
+            if (to.isValid() && !to.isSame(initialTo)) {
+                $location.search("uto", to.toISOString());
+            } else { $location.search("uto", null); }
+            if (from.isValid() && !from.isSame(initialFrom)) {
+                $location.search("ufrom", from.toISOString());
+            } else { $location.search("ufrom", null); }
+        }, true);
+
+    $scope.$watch('pagination.currPage', function (newPage, oldPage) {
+        if (newPage !== oldPage && newPage > 0) {
+            $scope.getUpdates(false);
+        }
+    });
 }]);
 
 calendarModule.directive('calendarEntryTable', function() {
