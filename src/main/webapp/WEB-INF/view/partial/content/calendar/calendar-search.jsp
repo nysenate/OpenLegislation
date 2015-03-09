@@ -117,17 +117,16 @@
           </div>
           <div layout="row">
             <h4 class="margin-right-10">Order</h4>
-            <md-select ng-model="updateOptions.order" class="margin-right-10">
+            <md-select ng-model="updateOptions.order" class="margin-right-20">
               <md-select-label>{{updateOptions.order=="ASC" ? "Oldest First" : "Newest First"}}</md-select-label>
               <md-option value="ASC">Oldest First</md-option>
               <md-option value="DESC">Newest First</md-option>
             </md-select>
-            <%--<h4>Show Detail</h4>--%>
-            <%--<md-switch ng-model="updateOptions.detail"></md-switch>--%>
+            <h4>Show Detail</h4>
+            <md-switch class="ng-primary" ng-model="updateOptions.detail" aria-label="detaail"></md-switch>
           </div>
-          <md-divider></md-divider>
         </md-content>
-        <update-list updates="updates" show-details="updateOptions.detail"></update-list>
+        <update-list class="error-toast-parent" update-response="updateResponse" pagination="pagination" show-details="updateOptions.detail"></update-list>
       </section>
     </md-tab>
   </md-tabs>

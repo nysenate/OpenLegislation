@@ -77,7 +77,7 @@
               <md-option value="DESC">Newest First</md-option>
             </md-select>
         </md-toolbar>
-        <update-list updates="updates" show-id="false"></update-list>
+        <update-list update-response="updateResponse" ng-init="showId=false" show-id="showId"></update-list>
       </section>
     </md-tab>
   </md-tabs>
