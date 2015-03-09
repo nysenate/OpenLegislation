@@ -75,7 +75,7 @@
             {{header.text}}
           </h1>
         </md-toolbar>
-        <section id="content" ng-view>
+        <section id="content" ng-view autoscroll="true">
         </section>
       </section>
     </section>
