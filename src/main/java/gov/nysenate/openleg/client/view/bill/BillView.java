@@ -43,6 +43,7 @@ public class BillView extends BillInfoView implements ViewObject
 
             this.votes = ListView.of(bill.getAmendmentList().stream()
                 .flatMap(a -> a.getVotesList().stream())
+                .sorted()
                 .map(v -> new BillVoteView(v))
                 .collect(Collectors.toList()));
 

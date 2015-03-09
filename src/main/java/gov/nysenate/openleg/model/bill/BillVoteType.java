@@ -5,8 +5,8 @@ package gov.nysenate.openleg.model.bill;
  */
 public enum BillVoteType
 {
-    FLOOR(1),
-    COMMITTEE(2);
+    COMMITTEE(1),
+    FLOOR(2);
 
     int code;
 

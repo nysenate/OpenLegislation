@@ -124,15 +124,15 @@
                 <tr><td>Current Committee</td><td>status.committeeName</td><td>text</td><td>status.committeeName:Finance</td></tr>
                 <tr><td>Current Calendar No</td><td>status.billCalNo</td><td>number</td><td>status.billCalNo:123</td></tr>
                 <tr><td>Associated Program</td><td>programInfo.name</td><td>text</td><td>programInfo.name:Governor</td></tr>
-                <tr style="background:#f1f1f1;"><td colspan="4"><strong>Fields below this point are stored on the amendment and are always prefixed with '\*.'</strong></td> </tr>
+                <tr style="background:#f1f1f1;"><td colspan="4"><strong>The fields below are associated with each amendment and are always prefixed with '\*.'</strong></td> </tr>
                 <tr><td>Sponsor's Memo</td><td>\*.memo</td><td>text</td><td>\*.memo:Yogurt</td></tr>
                 <tr><td>Full Text</td><td>\*.fullText</td><td>text</td><td>\*.fullText:(cats OR kittens OR puppies)</td></tr>
                 <tr><td>Law Section</td><td>\*.lawSection</td><td>text</td><td>\*.lawSection:"Agriculture and Markets Law"</td></tr>
                 <tr><td>Law Code</td><td>\*.lawCode</td><td>text</td><td>\*.lawCode:Amd?12</td></tr>
                 <tr><td>Enacting Clause</td><td>\*.actClause</td><td>text</td><td>\*.actClause:lemon</td></tr>
                 <tr><td>Is Uni Bill</td><td>\*.uniBill</td><td>boolean</td><td>\*.uniBill:true</td></tr>
-                <tr><td>Cosponsor Last Name</td><td>\*.coSponsors.*.shortName</td><td>text</td><td>\*.coSponsors.\*.shortName:martins</td></tr>
-                <tr><td>Multi Sponsor Last Name</td><td>\*.multiSponsors.*.shortName</td><td>text</td><td>\*.multiSponsors.\*.shortName:barron</td></tr>
+                <tr><td>Cosponsor Last Name</td><td>\*.coSponsors.\*.shortName</td><td>text</td><td>\*.coSponsors.\*.shortName:martins</td></tr>
+                <tr><td>Multi Sponsor Last Name</td><td>\*.multiSponsors.\*.shortName</td><td>text</td><td>\*.multiSponsors.\*.shortName:barron</td></tr>
                 <tr style="background:#f1f1f1;"><td colspan="4"><strong>Vote Roll Data</strong></td> </tr>
                 <tr><td>Vote Count</td><td>votes.size</td><td>number</td><td>votes.size:>0</td></tr>
                 <tr><td>Vote Type</td><td>votes.\*.voteType</td><td>enum</td><td>votes.\*.voteType:COMMITTEE<br/>votes.\*.voteType:FLOOR</td></tr>
@@ -152,17 +152,6 @@
         </section>
       </md-tab>
       <md-tab>
-        <md-tab-label><i class="icon-docs prefix-icon2"></i>Browse</md-tab-label>
-        <md-divider></md-divider>
-        <section ng-controller="BillExploreCtrl">
-          <a>Bills with recent status updates: api/3/bills/2015?sort=status.actionDate:DESC&limit=5</a><br/>
-          <a>Governor program bills: api/3/bills/2015/search?term=programInfo.name:Governor&sort=programInfo.sequenceNo:ASC</a><br/>
-          <a>Budget Bills api/3/bills/2015/search?term=sponsor.budget:true</a><br/>
-          <a></a>
-
-        </section>
-      </md-tab>
-      <md-tab>
         <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
         <md-divider></md-divider>
         <section ng-controller="BillUpdatesCtrl">
@@ -177,7 +166,7 @@
         <md-tab-label>
           <i class="icon-question prefix-icon2"></i>About
         </md-tab-label>
-        <section class="padding-20 text-medium">
+        <section class="padding-20 margin-top-20 text-medium white-bg">
           <h4>The Basics</h4>
           <p>A <strong>bill</strong> is a formal proposal to add, amend,
             or repeal a body of law whereas a <strong>resolution</strong> is an official document of
