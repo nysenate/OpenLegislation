@@ -22,9 +22,12 @@
                    ng-href="{{billPageBaseUrl}}/{{calEntry.session}}/{{calEntry.basePrintNo}}"></a>
                 <a hide-gt-sm class="cal-entry-cal-no">Calendar Bill \#{{calEntry.billCalNo}}</a>
                 <div ng-bind="calEntry.title" class="truncate-text"></div>
-                <div layout="row" hide-sm>
-                    <img class="cal-entry-sponsor-img margin-right-10" src="http://placekitten.com/g/44/44"/>
-                    <span>
+                <div layout="row" hide-sm style="height: 40px">
+                    <div style="overflow: hidden">
+                        <img style="width: 40px; height: 52px;"
+                             ng-src="${ctxPath}/static/img/business_assets/members/mini/{{calEntry.sponsor.member.imgName}}"/>
+                    </div>
+                    <span class="margin-left-10">
                         <span ng-if="calEntry.sponsor.member">
                             <span ng-bind="calEntry.sponsor.member.fullName"></span> <br>
                             <span>

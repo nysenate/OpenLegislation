@@ -30,6 +30,7 @@ module.exports = function(grunt) {
                 files: {
                     '<%= cssDest %>/main.css':
                         ['<%= cssSource %>/*.css',
+                         '<%= bowerRoot %>/fullcalendar/fullcalendar.css',
                          '<%= bowerRoot %>/angular-material/angular-material.min.css']
                 }
             }
