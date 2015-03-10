@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -35,14 +36,17 @@ public class ApiAuthFilter implements Filter {
         String key = servletRequest.getParameter("key");
         String ipAddress = servletRequest.getLocalAddr();
 
-        logger.info(servletResponse.getClass().toString());
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         if (enabled) {
-            if (ipAddress.matches(filterAddress) || apiUserService.validateKey(key)) {
-                filterChain.doFilter(servletRequest, servletResponse);
+            String uiKey = (String) request.getSession().getAttribute("uiKey");
+            boolean isUiUser = uiKey != null && uiKey.equals(request.getHeader("UIKey"));
 
-            } else {
+            if (isUiUser || ipAddress.matches(filterAddress) || apiUserService.validateKey(key)) {
+                filterChain.doFilter(servletRequest, servletResponse);
+            }
+            else {
                 ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_KEY_REQUIRED);
                 response.getWriter().append(OutputUtils.toJson(errorResponse));
                 response.setContentType("application/json");
