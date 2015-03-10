@@ -17,6 +17,7 @@ import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
+import gov.nysenate.openleg.service.calendar.event.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.service.calendar.event.CalendarUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.*;
@@ -95,6 +96,13 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     public synchronized void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent) {
 
         updateIndex(calendarUpdateEvent.getCalendar());
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleBulkCalendarUpdateEvent(BulkCalendarUpdateEvent bulkCalendarUpdateEvent) {
+        updateIndex(bulkCalendarUpdateEvent.getCalendars());
     }
 
     /** {@inheritDoc} */

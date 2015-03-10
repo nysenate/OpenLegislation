@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
+import gov.nysenate.openleg.service.calendar.event.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.service.calendar.event.CalendarUpdateEvent;
 
 public interface CalendarSearchService extends IndexedSearchService<Calendar> {
@@ -87,4 +88,10 @@ public interface CalendarSearchService extends IndexedSearchService<Calendar> {
      * @param calendarUpdateEvent
      */
     public void handleCalendarUpdateEvent(CalendarUpdateEvent calendarUpdateEvent);
+
+    /**
+     * Handles a bulk calendar update event by indexing the updated calendars into the search index
+     * @param bulkCalendarUpdateEvent
+     */
+    public void handleBulkCalendarUpdateEvent(BulkCalendarUpdateEvent bulkCalendarUpdateEvent);
 }
