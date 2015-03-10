@@ -527,7 +527,7 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, CalendarIdsA
     // Set the search param to match the currently viewed month
     $scope.viewRenderHandler = function(view, element) {
         var monthStart = moment(view.start);
-        if (monthStart.month() != moment().month()) {
+        if (!monthStart.isSame(moment(), 'month')) {
             $location.search('bdate', monthStart.format("YYYY-MM-DD"));
         } else {
             $location.search('bdate', null);

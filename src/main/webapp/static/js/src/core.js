@@ -207,6 +207,7 @@ coreModule.filter('updateId', function() {
  * ----------
  * label (String) The text for your container header
  * open (boolean) Set to true to expand the content, false to collapse
+ * render-closed (boolean) Allows closed content to render when set to true
  * extra-classes (String) Any css classes you want to apply to the outermost toggle panel container
  * show-tip (boolean) Set to true to see a 'Click to expand section' tip when panel is collapsed.
  */
@@ -216,7 +217,8 @@ coreModule.directive('togglePanel', [function(){
         scope: {
             label: "@",
             extraClasses: "@",
-            callback: "&"
+            callback: "&",
+            renderClosed: "@"
         },
         replace: true,
         transclude: true,
@@ -231,7 +233,7 @@ coreModule.directive('togglePanel', [function(){
         '               (Click to expand section)</span>' +
         '       </div>' +
         '   </md-card-content>' +
-        '   <md-card-content class="panel-content" ng-cloak ng-transclude></md-card-content>' +
+        '   <md-card-content ng-if="open || renderClosed" ng-show="open" class="panel-content" ng-cloak ng-transclude></md-card-content>' +
         '</md-card>',
         link : function($scope, $element, $attrs) {
             $scope.toggle = function() {
@@ -240,6 +242,7 @@ coreModule.directive('togglePanel', [function(){
                     $scope.callback($scope.open);
                 }
             };
+            $scope.renderClosed = $scope.renderClosed == 'true';
             // Convert attribute value to boolean using watch
             $scope.$watch($attrs.open, function(open) {
                 $scope.open = open;

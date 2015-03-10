@@ -124,14 +124,12 @@
                 <md-option value="processed">Processed Date</md-option>
                 <md-option value="published">Published Date</md-option>
               </md-select>
-              <label class="margin-right-10">Order</label>
               <md-select ng-model="updateOptions.order" class="no-top-margin margin-right-20">
                 <md-select-label>{{updateOptions.order=="ASC" ? "Oldest First" : "Newest First"}}</md-select-label>
                 <md-option value="ASC">Oldest First</md-option>
                 <md-option value="DESC">Newest First</md-option>
               </md-select>
-              <label>Show Detail</label>
-              <md-checkbox class="md-accent md-hue-1" ng-model="updateOptions.detail" aria-label="detaail"></md-checkbox>
+              <md-checkbox class="md-accent md-hue-1" ng-model="updateOptions.detail" aria-label="detaail">Detail</md-checkbox>
             </div>
           </md-card-content>
         </md-card>
