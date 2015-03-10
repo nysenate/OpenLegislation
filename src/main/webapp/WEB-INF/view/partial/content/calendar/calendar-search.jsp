@@ -100,7 +100,7 @@
       <md-tab-label>
         <i class="icon-calendar prefix-icon2"></i>Browse
       </md-tab-label>
-      <md-card ng-controller="CalendarPickCtrl">
+      <md-card ng-controller="CalendarPickCtrl" class="content-card">
         <md-card-content id="calendar-date-picker" ui-calendar="calendarConfig" ng-model="eventSources"></md-card-content>
       </md-card>
     </md-tab>
