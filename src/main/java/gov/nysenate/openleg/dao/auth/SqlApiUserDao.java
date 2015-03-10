@@ -21,6 +21,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @param user The new apiuser
      * @throws org.springframework.dao.DataAccessException
      */
+    @Override
     public void insertUser (ApiUser user) throws DataAccessException {
         if (jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), getUserParams(user)) == 0)
             jdbcNamed.update(ApiUserQuery.INSERT_API_USER.getSql(schema()), getUserParams(user));
@@ -31,6 +32,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @param user The APIUser to update
      * @throws DataAccessException
      */
+    @Override
     public void updateUser(ApiUser user) throws DataAccessException {
         jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), getUserParams(user));
     }
@@ -52,6 +54,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @return The number of requests
      * @throws org.springframework.dao.DataAccessException
      */
+    @Override
     public long getNumRequests(String key) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("apikey", key));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_KEY.getSql(schema()), params,
@@ -64,6 +67,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @return the email address
      * @throws org.springframework.dao.DataAccessException
      */
+    @Override
     public String getEmailFromKey(String key) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("apikey", key));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_KEY.getSql(schema()), params,
@@ -76,6 +80,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @return The number of requests
      * @throws org.springframework.dao.DataAccessException
      */
+    @Override
     public long getNumRequestFromEmail(String email_addr) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
@@ -83,10 +88,37 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
     }
 
     /**
+     * Get the authentication status of the user with the given email address
+     * @param email_addr The user's email address
+     * @return Returns whether or not the user has authenticated their account
+     * @throws DataAccessException
+     */
+    @Override
+    public boolean getAuthStatusFromEmail(String email_addr) throws DataAccessException {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
+                (rs,row) -> rs.getBoolean("authenticated"));
+    }
+
+    /**
+     * Get the authentication status of the user with the given Api Key
+     * @param key The user's Api key
+     * @return Returns whether or not the user has authenticated their account
+     * @throws DataAccessException
+     */
+    @Override
+    public boolean getAuthStatusFromKey(String key) throws DataAccessException {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("apikey", key));
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_KEY.getSql(schema()), params,
+                (rs,row) -> rs.getBoolean("authenticated"));
+    }
+
+    /**
      * Get a user's Apikey
      * @param user The ApiUser
      * @return the key
      */
+    @Override
     public String getApiKey (ApiUser user) {
         return user.getApikey();
     }
@@ -97,6 +129,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @return The API key of the user, if their email is in the database
      * @throws org.springframework.dao.DataAccessException
      */
+    @Override
     public String getApiKeyFromEmail (String email_addr) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
@@ -109,6 +142,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @return The Registration Token of the user, if their email is in the database
      * @throws org.springframework.dao.DataAccessException
      */
+    @Override
     public String getRegTokenFromEmail (String email_addr) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
@@ -121,6 +155,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @return The email address if the reg. token is valid
      * @throws DataAccessException
      */
+    @Override
     public String getEmailFromToken(String regToken) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("registrationToken", regToken));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_TOKEN.getSql(schema()), params,
@@ -133,6 +168,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @return The name of the user if the email address is valid
      * @throws DataAccessException
      */
+    @Override
     public String getNameFromEmail(String email_addr) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
@@ -145,6 +181,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @return The name of the user's organization if the email address is valid
      * @throws DataAccessException
      */
+    @Override
     public String getOrganizationFromEmail(String email_addr) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params,
@@ -157,21 +194,20 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @return The ApiUser
      * @throws org.springframework.dao.DataAccessException
      */
-    public ApiUser getApiUserFromEmail(String email_addr) throws DataAccessException, EmptyResultDataAccessException {
+    @Override
+    public ApiUser getApiUserFromEmail(String email_addr) throws DataAccessException{
         final long requestCount = getNumRequestFromEmail(email_addr);
         final String name = getNameFromEmail(email_addr);
         final String orgName = getOrganizationFromEmail(email_addr);
         final String regToken = getRegTokenFromEmail(email_addr);
+        final boolean authStatus = getAuthStatusFromEmail(email_addr);
 
         ApiUser user = new ApiUser(email_addr);
         user.setNumRequests(requestCount);
         user.setName(name);
         user.setOrganizationName(orgName);
         user.setRegistrationToken(regToken);
-
-        if (requestCount > 0)
-            user.setAuthStatus(true);
-
+        user.setAuthStatus(authStatus);
         user.setApiKey(getApiKeyFromEmail(email_addr));
         return user;
     }
@@ -181,12 +217,14 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @param key The User's API key
      * @return The ApiUser
      */
+    @Override
     public ApiUser getApiUserFromKey(String key) {
         final long requestCount = getNumRequests(key);
         final String email = getEmailFromKey(key);
         final String name = getNameFromEmail(email);
         final String orgName = getOrganizationFromEmail(email);
         final String regToken = getRegTokenFromEmail(email);
+        final boolean authStatus = getAuthStatusFromKey(key);
 
         if (email.length() == 0)
             return null;
@@ -196,10 +234,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
         user.setName(name);
         user.setOrganizationName(orgName);
         user.setRegistrationToken(regToken);
-
-        if (requestCount > 0)
-            user.setAuthStatus(true);
-
+        user.setAuthStatus(authStatus);
         user.setApiKey(key);
         return user;
     }
@@ -209,6 +244,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @param token The registration token for the user
      * @return A user if the token is valid
      */
+    @Override
     public ApiUser getApiUserFromToken(String token) {
         String email = getEmailFromToken(token);
         if (email.length() == 0)
@@ -224,6 +260,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * Remove an ApiUser from the database
      * @param user The apiuser to be deleted
      */
+    @Override
     public void deleteApiUser(ApiUser user) throws DataAccessException {
         if (jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), getUserParams(user)) == 0)
             jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), getUserParams(user));
@@ -235,6 +272,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
      * @param email The user's email address
      * @throws DataAccessException
      */
+    @Override
     public void deleteApiUserByEmail(String email) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("email", email));
         if (jdbcNamed.update(ApiUserQuery.UPDATE_API_USER.getSql(schema()), params) == 0)

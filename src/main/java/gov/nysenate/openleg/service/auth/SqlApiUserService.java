@@ -79,6 +79,26 @@ public class SqlApiUserService implements ApiUserService
     }
 
     /**
+     * Check to see if a given Apikey is valid.
+     * If the key belongs to a user, and the user has activated their account
+     * then this method will return true.
+     *
+     * @param apikey The apikey used with the call to the API
+     * @return True if the key is valid and the user has activated their account.
+     */
+    @Override
+    public boolean validateKey(String apikey) {
+        ApiUser user = null;
+        try {
+            user = apiUserDao.getApiUserFromKey(apikey);
+
+        } catch (DataAccessException e) {
+            return false;
+        }
+        return user.getAuthStatus();
+    }
+
+    /**
      * Attempt to activate a user based on the provided registration token. If a valid registration
      * token is indeed supplied, then that user will have their account activated, and their
      * API Key will be sent to them via email.

@@ -36,7 +36,11 @@ public interface ApiUserDao {
 
     public String getRegTokenFromEmail (String email_addr) throws DataAccessException;
 
+    public String getEmailFromKey(String key) throws DataAccessException;
 
+    public String getNameFromEmail(String email) throws DataAccessException;
 
+    public boolean getAuthStatusFromEmail(String email) throws DataAccessException;
 
+    public boolean getAuthStatusFromKey(String key) throws DataAccessException;
 }

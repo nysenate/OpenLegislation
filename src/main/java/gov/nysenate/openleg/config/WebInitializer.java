@@ -59,5 +59,9 @@ public class WebInitializer implements WebApplicationInitializer
         DelegatingFilterProxy corsFilter = new DelegatingFilterProxy("corsFilter", dispatcherContext);
         servletContext.addFilter("corsFilter", corsFilter)
             .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
+
+        DelegatingFilterProxy apiAuthFilter = new DelegatingFilterProxy("apiAuthFilter", dispatcherContext);
+        servletContext.addFilter("apiAuthFilter", apiAuthFilter)
+                .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
     }
 }
