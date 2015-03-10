@@ -7,9 +7,10 @@
 
     <!-- Back to search -->
     <md-tab md-on-select="backToSearch()">
-      <md-tab-label>
-        <i class="icon-search prefix-icon2"></i>Search
-      </md-tab-label>
+      <md-tab-label ng-if="previousPage == 'search'"><i class="icon-search prefix-icon2"></i>back to search</md-tab-label>
+      <md-tab-label ng-if="previousPage == 'browse'"><i class="icon-calendar prefix-icon2"></i>back to browse</md-tab-label>
+      <md-tab-label ng-if="previousPage == 'updates'"><i class="icon-flag prefix-icon2"></i>back to updates</md-tab-label>
+      <md-tab-label ng-if="!previousPage"><i class="icon-search prefix-icon2"></i>search</md-tab-label>
     </md-tab>
 
     <!-- Active Lists -->

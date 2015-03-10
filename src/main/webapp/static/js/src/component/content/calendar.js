@@ -50,12 +50,15 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     $scope.activeIndex = 2;
 
-    var pageNames = ['search', 'active-list', 'floor', 'updates'];
+    var pageNames = ['sklerch', 'active-list', 'floor', 'updates'];
 
     $scope.init = function() {
         $scope.getCalendarViewById($routeParams.year, $routeParams.calNo);
-        if ($routeParams.hasOwnProperty('view') && ['active-list', 'search'].indexOf($routeParams['view']) < 0) {
+        if ($routeParams.hasOwnProperty('view') && ['active-list', 'sklerch'].indexOf($routeParams['view']) < 0) {
             $scope.tabParam = $routeParams['view'];
+        }
+        if ('sview' in $routeParams) {
+            $scope.previousPage = $routeParams['sview'];
         }
     };
 
@@ -63,8 +66,11 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     $scope.changeTab = function(pageName) {
         console.log('changing view to', pageName);
-        $scope.activeIndex = pageNames.indexOf(pageName);
+        var newIndex = pageNames.indexOf(pageName);
+        if (newIndex >= 0) $scope.activeIndex = newIndex;
     };
+
+
 
     /** --- Get Calendar Data --- */
 
@@ -92,9 +98,9 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
         }
 
         $scope.$watch('activeIndex', function() {
-            if ($scope.activeIndex >=0) {
+            if ($scope.activeIndex >=1) {
                 $location.search('view', pageNames[$scope.activeIndex]);
-            } else {
+            } else if ($scope.activeIndex < 0 || $scope.activeIndex >= pageNames.length) {
                 $location.search('view', null);
             }
         });
@@ -128,15 +134,15 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
     // Back to search
     $scope.backToSearch = function() {
         var currentParams = $location.search();
-        var url = ctxPath + "/calendars?view=";
-        if (currentParams.hasOwnProperty('sview')) {
-            url += currentParams['sview'];
-        } else {
-            url += 'search';
+        var url = ctxPath + "/calendars";
+        var firstParam = true;
+        for (var param in currentParams) {
+            if (param != 'view') {
+                url += (firstParam ? "?" : "&") + (param == 'sview' ? 'view' : param) + "=" + currentParams[param];
+                firstParam = false;
+            }
         }
-        if (currentParams.hasOwnProperty('search')) {
-            url += '&search=' + currentParams['search'];
-        }
+        console.log('newurl', url);
         $location.url(url);
     };
 
@@ -296,13 +302,13 @@ calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'Calen
 
 /** --- Calendar Search Page --- */
 
-calendarModule.controller('CalendarSearchPageCtrl', ['$scope', '$routeParams', '$location', '$timeout',
-function ($scope, $routeParams, $location, $timeout) {
+calendarModule.controller('CalendarSearchPageCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout',
+function ($scope, $rootScope, $routeParams, $location, $timeout) {
 
     var pageNames = ['search', 'browse', 'updates'];
 
     function init() {
-        if ($routeParams.hasOwnProperty('view')) {
+        if ('view' in $routeParams) {
             $scope.changeTab($routeParams['view']);
         }
 
@@ -334,6 +340,20 @@ function ($scope, $routeParams, $location, $timeout) {
             }
             $scope.setHeaderText(newHeader);
         }, 0 );
+    };
+
+    $scope.getCalendarUrl = function(year, calNum) {
+        var url = ctxPath + "/calendars/" + year + "/" + calNum;
+        var firstParam = true;
+        for (var param in $location.search()) {
+            url += (firstParam ? "?" : "&") + (param == "view" ? "sview" : param) + "=" + $location.search()[param];
+            firstParam = false;
+        }
+        return url;
+    };
+
+    $scope.renderCalendarEvent = function() {
+        $rootScope.$emit('renderCalendarEvent');
     };
 
     init();
@@ -415,16 +435,11 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
         return count;
     };
 
-    $scope.getCalendarUrl = function(year, calNum) {
-        return ctxPath + "/calendars/" + year + "/" + calNum + "?search=" + $scope.searchTerm +
-            ($scope.pagination.currPage > 1 ? "&searchPage=" + $scope.pagination.currPage : "");
-    };
-
     $scope.init();
 }]);
 
-calendarModule.controller('CalendarPickCtrl', ['$scope', '$q', 'CalendarIdsApi',
-function($scope, $q, CalendarIdsApi) {
+calendarModule.controller('CalendarPickCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout', '$q', 'CalendarIdsApi',
+function($scope, $rootScope, $routeParams, $location, $timeout, $q, CalendarIdsApi) {
 
     $scope.eventSources = [];
     $scope.calendarConfig = null;
@@ -433,16 +448,22 @@ function($scope, $q, CalendarIdsApi) {
     $scope.init = function () {
         $scope.eventSources.push($scope.getEventSourcesObject());
         $scope.calendarConfig = $scope.getCalendarConfig();
-        //angular.element('#calendar-date-picker').fullCalendar('render');
+        $scope.renderCalendar();
+        if ('bdate' in $routeParams) {
+            $scope.setCalendarDate($routeParams['bdate']);
+        }
     };
 
+    $scope.renderCalendar = function () {
+        $timeout(function () {
+            angular.element('#calendar-date-picker').fullCalendar('render');
+        });
+    };
+
+    $rootScope.$on('renderCalendarEvent', $scope.renderCalendar);
+
     $scope.setCalendarDate = function(date) {
-        // TODO make the calendar picker start on the date of the selected calendar
-        //console.log('setting calendar date');
-        //$scope.calendarYearDisplay = date.year();
-        //$scope.calendarMonthDisplay = date.month();
-        //console.log(date, $scope.calendarYearDisplay, $scope.calendarMonthDisplay);
-        ////angular.element('#calendar-date-picker').fullCalendar('gotoDate', date);
+        $timeout(function() {angular.element('#calendar-date-picker').fullCalendar('gotoDate', moment(date).toDate())});
     };
 
     $scope.getCalendarIds = function(year) {
@@ -461,9 +482,12 @@ function($scope, $q, CalendarIdsApi) {
 
     $scope.getEvent = function(calendarId) {
         return {
-            title: "#" + calendarId.calendarNumber.toString(),
+            title: window.screen.availWidth > 850
+                ? "Senate Calendar\n" + calendarId.year +" #" + calendarId.calendarNumber
+                : "#" + calendarId.calendarNumber,
             start: calendarId.calDate,
             calNo: calendarId.calendarNumber
+            //rendering: 'background'
         };
     };
 
@@ -497,38 +521,31 @@ function($scope, $q, CalendarIdsApi) {
     };
 
     $scope.onEventClick = function(event, jsEvent, view) {
-        $scope.getCalendarViewById(event.start.getFullYear(), event.calNo);
+        $location.url($scope.getCalendarUrl(event.start.getFullYear(), event.calNo));
     };
 
-    $scope.viewDisplayHandler = function(view){
-        var viewStart = view.start;
-        $scope.calendarYearDisplay = viewStart.getFullYear();
-        $scope.calendarMonthDisplay = viewStart.getMonth();
-    };
-
-    $scope.$watch('isCalendarOpen', function(newValue, oldValue) {
-        if (newValue) {
-            angular.element('#calendar-date-picker').fullCalendar('render');
+    // Set the search param to match the currently viewed month
+    $scope.viewRenderHandler = function(view, element) {
+        var monthStart = moment(view.start);
+        if (monthStart.month() != moment().month()) {
+            $location.search('bdate', monthStart.format("YYYY-MM-DD"));
+        } else {
+            $location.search('bdate', null);
         }
-    });
+    };
 
     $scope.getCalendarConfig = function() {
         return {
             editable: false,
             theme: false,
             header:{
-                left: 'prev',
+                left: 'prevYear prev,next nextYear today',
                 center: 'title',
-                right: 'today next'
+                right: ''
             },
-            buttonText: {
-                prev: 'LEFT',//'&laquo',
-                next: 'RIGHT'//'&raquo'
-            },
+            viewRender: $scope.viewRenderHandler,
+            fixedWeekCount: false,
             aspectRatio: 1.5,
-            //viewDisplay: $scope.viewDisplayHandler,
-            //month: $scope.calendarMonthDisplay,
-            //year: $scope.calendarYearDisplay,
             eventClick: $scope.onEventClick
         };
     };
@@ -541,7 +558,8 @@ calendarModule.controller('CalendarFullUpdatesCtrl', ['$scope', '$routeParams', 
 function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, PaginationModel) {
     $scope.updateResponse = {};
     $scope.updateOptions = {
-        order: "ASC",
+        order: "DESC",
+        type: "processed",
         detail: true
     };
     var initialTo = moment().startOf('minute');
@@ -558,6 +576,11 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, Pagin
         if ($routeParams.hasOwnProperty('udetail')) {
             console.log('yo');
             $scope.updateOptions.detail = false;
+        }
+        if ('utype' in $routeParams) {
+            if ($routeParams['utype'] == 'published') {
+                $scope.updateOptions.type = 'published';
+            }
         }
         if ("ufrom" in $routeParams) {
             var from = moment($routeParams['ufrom']);
@@ -586,7 +609,7 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, Pagin
             $scope.pagination.setTotalItems(0);
         } else if (from.isValid() && to.isValid()) {
             $scope.updateResponse = UpdatesApi.get({
-                detail: $scope.updateOptions.detail,
+                detail: $scope.updateOptions.detail, type: $scope.updateOptions.type,
                 fromDateTime: moment($scope.updateOptions.fromDateTime).toISOString(),
                 toDateTime: moment($scope.updateOptions.toDateTime).toISOString(),
                 limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
@@ -612,8 +635,8 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, Pagin
     $scope.$watch('updateOptions', function() {
             debounce(function() {$scope.getUpdates(true);}, 500)();
             var opts = $scope.updateOptions;
-            if (opts.order == "DESC") {
-                $location.search("uorder", "DESC");
+            if (opts.order == "ASC") {
+                $location.search("uorder", "ASC");
             } else { $location.search("uorder", null); }
             if (!opts.detail) {
                 $location.search("udetail", false);
