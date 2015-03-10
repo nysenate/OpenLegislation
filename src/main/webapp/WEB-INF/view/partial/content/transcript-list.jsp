@@ -5,10 +5,10 @@
 
   <%----- Browsing Tabs -----%>
 
-    <md-tabs class="md-primary">
+  <md-tabs class="md-primary" md-selected="currentPage.viewIndex">
     <md-tab label="Browse">
       <md-divider></md-divider>
-      <md-tabs class="md-primary">
+      <md-tabs class="md-primary" md-selected="currentPage.categoryIndex">
         <md-tab label="Session Transcripts">
           <md-divider></md-divider>
           <md-card>
@@ -71,7 +71,7 @@
 
     <md-tab label="Search">
       <md-divider></md-divider>
-      <md-tabs>
+      <md-tabs md-selected="currentPage.categoryIndex">
 
         <%----- Session Transcript Search -----%>
         <md-tab label="Session Transcripts">
@@ -83,7 +83,7 @@
                     <i class="prefix-icon2 icon-search"></i>
                     Search Session Transcripts
                   </label>
-                  <input ng-model="transcriptSearch.term" ng-model-options="{debounce: 300}" ng-change="searchTranscripts()" id="sessionSearch">
+                  <input ng-model="transcriptSearch.term" ng-model-options="{debounce: 300}" ng-change="searchTranscripts(true)" id="sessionSearch">
                 </md-input-container>
               </form>
             </md-content>
@@ -91,13 +91,19 @@
           <md-card class="content-card">
             <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
               <div flex>{{transcriptSearch.response.total}} matches were found.</div>
-              <div flex style="text-align: right;"><dir-pagination-controls boundary-links="true"></dir-pagination-controls></div>
+              <div flex style="text-align: right;">
+                <dir-pagination-controls boundary-links="true" on-page-change="changePage(newPageNumber)" pagination-id="session1"></dir-pagination-controls>
+              </div>
             </div>
             <md-content>
               <md-list>
-                <a dir-paginate="match in transcriptSearch.matches | itemsPerPage: 10"
-                   ng-click="go('${ctxPath}/transcripts/session/' + match.result.filename)"
-                   class="result-link transcript-result-link">
+                <a dir-paginate="match in transcriptSearch.matches | itemsPerPage: transcriptSearch.paginate.itemsPerPage"
+                   total-items="transcriptSearch.paginate.totalItems"
+                   current-page="transcriptSearch.paginate.currPage"
+                   pagination-id="session1"
+                   ng-href=${ctxPath}/transcripts/session/{{match.result.filename}}
+                   class="result-link transcript-result-link"
+                   target="_blank">
                   <md-item>
                     <md-item-content>
                       <div class="transcript-result-left">
@@ -123,16 +129,16 @@
             </md-content>
             <div class="subheader" layout="row" layout-align="end center">
               <div flex style="text-align: right;">
-                <dir-pagination-controls boundary-links="true"></dir-pagination-controls>
+                <dir-pagination-controls boundary-links="true" on-page-change="changePage(newPageNumber)" pagination-id="session1"></dir-pagination-controls>
               </div>
             </div>
           </md-card>
           <md-card class="content-card">
             <md-subheader><strong>Session Transcript Search Tips</strong></md-subheader>
             <table class="docs-table">
-            <thead>
-            <tr><th>To Search for</th><th>Use the field</th><th>Example</th></tr>
-            </thead>
+              <thead>
+              <tr><th>To Search for</th><th>Use the field</th><th>Example</th></tr>
+              </thead>
               <tbody>
               <tr><td>Filename</td><td>filename</td><td>filename:031297.v1</td></tr>
               <tr><td>Date and Time</td><td>dateTime</td><td>dateTime:"2014-03-03T15:44"</td></tr>
@@ -158,12 +164,22 @@
               </form>
             </md-content>
           </md-card>
-          <md-card>
+          <md-card class="content-card">
+            <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
+              <div flex>{{hearingSearch.response.total}} matches were found.</div>
+              <div flex style="text-align: right;">
+                <dir-pagination-controls boundary-links="true" on-page-change="changePage(newPageNumber)" pagination-id="hearing1"></dir-pagination-controls>
+              </div>
+            </div>
             <md-content>
               <md-list>
-                <a ng-repeat="match in hearingSearch.matches"
-                   ng-click="go('${ctxPath}/transcripts/hearing/' + match.result.filename)"
-                   class="result-link transcript-result-link">
+                <a dir-paginate="match in hearingSearch.matches | itemsPerPage: hearingSearch.paginate.itemsPerPage"
+                   total-items="hearingSearch.paginate.totalItems"
+                   current-page="hearingSearch.paginate.currPage"
+                   pagination-id="hearing1"
+                   ng-href="${ctxPath}/transcripts/hearing/{{match.result.filename}}"
+                   class="result-link transcript-result-link"
+                   target="_blank">
                   <md-item>
                     <md-item-content>
                       <div class="transcript-result-left">
@@ -187,9 +203,11 @@
                 </a>
               </md-list>
             </md-content>
-            <%--<div>--%>
-            <%--pagnation stuff here--%>
-            <%--</div>--%>
+            <div class="subheader" layout="row" layout-align="end center">
+              <div flex style="text-align: right;">
+                <dir-pagination-controls boundary-links="true" on-page-change="changePage(newPageNumber)" pagination-id="hearing1"></dir-pagination-controls>
+              </div>
+            </div>
           </md-card>
           <md-card class="content-card">
             <md-subheader><strong>Public Hearing Transcript Search Tips</strong></md-subheader>

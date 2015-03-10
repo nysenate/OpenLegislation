@@ -71,6 +71,10 @@ coreModule.factory('PaginationModel', function() {
             }
         },
 
+        reset: function() {
+            this.currPage = 1;
+        },
+
         needsPagination: function() {
             return this.totalItems > this.itemsPerPage;
         },
