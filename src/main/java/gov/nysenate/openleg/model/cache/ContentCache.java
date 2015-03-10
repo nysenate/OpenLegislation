@@ -13,5 +13,6 @@ public enum ContentCache
     LAW,
     COMMITTEE,
     MEMBER,
+    APIUSER,
     NOTIFICATION_SUBSCRIPTION
 }

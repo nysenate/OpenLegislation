@@ -1,24 +1,40 @@
 package gov.nysenate.openleg.service.auth;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.auth.ApiUserDao;
 import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheWarmEvent;
+import gov.nysenate.openleg.model.cache.ContentCache;
+import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.service.mail.MimeSendMailService;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 @Service
-public class SqlApiUserService implements ApiUserService
+public class CachedSqlApiUserService implements ApiUserService, CachingService
 {
     @Autowired
     protected ApiUserDao apiUserDao;
@@ -26,10 +42,67 @@ public class SqlApiUserService implements ApiUserService
     @Autowired
     protected MimeSendMailService sendMailService;
 
-
     @Value("${domain.url}") private String domainUrl;
 
-    private static final Logger logger = LoggerFactory.getLogger(SqlApiUserService.class);
+    @Autowired private CacheManager cacheManager;
+    @Autowired private EventBus eventBus;
+
+    private static final String apiUserCacheName = "apiusers";
+    private EhCacheCache apiUserCache;
+
+    private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
+
+    @PostConstruct
+    private void init() {
+        eventBus.register(this);
+        setupCaches();
+    }
+
+    @PreDestroy
+    private void cleanUp() {
+        evictCaches();
+        cacheManager.removeCache(apiUserCacheName);
+    }
+
+    /*** --- CachingService Implementation --- */
+
+    @Override
+    public void setupCaches() {
+        Cache cache = new Cache(new CacheConfiguration().name(apiUserCacheName)
+            .eternal(true)
+            .sizeOfPolicy(defaultSizeOfPolicy()));
+        cacheManager.addCache(cache);
+        this.apiUserCache = new EhCacheCache(cache);
+    }
+
+    @Override
+    public List<Ehcache> getCaches() {
+        return Arrays.asList(apiUserCache.getNativeCache());
+    }
+
+    @Override
+    @Subscribe
+    public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
+        if (evictEvent.affects(ContentCache.APIUSER)) {
+            evictCaches();
+        }
+    }
+
+    @Override
+    public void warmCaches() {
+        evictCaches();
+        // Feed in all the api users from the database into the cache
+    }
+
+    @Override
+    @Subscribe
+    public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
+        if (warmEvent.affects(ContentCache.APIUSER)) {
+            warmCaches();
+        }
+    }
+
+    /** --- ApiUserService Implementation --- */
 
     /**
      * This method will be called whenever there is an attempt to register a new user.
@@ -74,7 +147,7 @@ public class SqlApiUserService implements ApiUserService
      * @return An APIUser if the email is valid
      */
     @Override
-    public ApiUser getUser (String email) {
+    public ApiUser getUser(String email) {
         return apiUserDao.getApiUserFromEmail(email);
     }
 
@@ -88,10 +161,10 @@ public class SqlApiUserService implements ApiUserService
      */
     @Override
     public boolean validateKey(String apikey) {
+        // hit the cache first
         ApiUser user = null;
         try {
             user = apiUserDao.getApiUserFromKey(apikey);
-
         } catch (DataAccessException e) {
             return false;
         }
