@@ -5,6 +5,12 @@
 
 api.secret =
 
+# Whether or not API authentication should be enabled
+api.auth.enable = true
+
+# Ignore these IP Addresses when checking for an API key
+api.auth.ip.whitelist = 127.0.0.1
+
 # --- Admin Auth --------------------------------------------------------------
 
 # The default admin user name.
