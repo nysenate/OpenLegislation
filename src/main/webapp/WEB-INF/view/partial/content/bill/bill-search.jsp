@@ -8,12 +8,15 @@
         <md-divider></md-divider>
         <section class="margin-top-10">
           <form name="bill-search-form">
-            <md-content class="padding-20">
+            <md-content class="relative padding-20">
               <md-input-container class="md-primary">
                 <label><i class="prefix-icon2 icon-search"></i>Search for legislation</label>
                 <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
                        ng-model="billSearch.term" ng-model-options="{debounce: 300}" ng-change="simpleSearch(true)">
               </md-input-container>
+              <div ng-if="curr.searching" class="loading-pulse">
+                Searching bills...
+              </div>
             </md-content>
             <md-divider></md-divider>
             <md-subheader ng-show="billSearch.searched && billSearch.term && !billSearch.error && curr.pagination.totalItems === 0"
@@ -40,6 +43,10 @@
                      ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
                     <md-item>
                       <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
+                        <div hide-sm>
+                          <img class="" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
+                               style="height: 42px;width:33px;"/>
+                        </div>
                         <div style="width:180px;padding:16px;">
                           <h3 class="no-margin">
                             <span ng-if="!highlights.basePrintNo">{{bill.basePrintNo}}</span>
@@ -143,7 +150,7 @@
                 <tr style="background:#f1f1f1;"><td colspan="4"><strong>Bill Actions</strong></td></tr>
                 <tr><td>Action Count</td><td>actions.size</td><td>number</td><td>actions.size:>10</td></tr>
                 <tr><td>Action Date</td><td>actions.\*.date</td><td>date</td><td>actions.\*.date:>2015-02-01</td></tr>
-                <tr><td>Action Text</td><td>actions.\*.text</td><td>text</td><td>actions.\*.text:>Signed Chap</td></tr>
+                <tr><td>Action Text</td><td>actions.\*.text</td><td>text</td><td>actions.\*.text:"Signed Chap"</td></tr>
 
                 </tbody>
               </table>
@@ -160,53 +167,118 @@
             <div layout="row" class="padding-20">
               <div flex>
                 <label>With </label>
-                <select ng-model="curr.type">
+                <select class="margin-left-10" ng-model="curr.type">
                   <option value="processed">Processed Date</option>
                   <option value="published">Published Date</option>
                 </select>
               </div>
               <div flex>
                 <label>From</label>
-                <input ng-model="curr.fromDate" type="date">
+                <input class="margin-left-10" ng-model="curr.fromDate" type="date">
               </div>
               <div flex>
                 <label>To</label>
-                <input ng-model="curr.toDate" type="date">
+                <input class="margin-left-10" ng-model="curr.toDate" type="date">
+              </div>
+            </div>
+            <md-divider></md-divider>
+            <div layout="row" class="padding-20">
+              <div flex>
+                <label>Filter By </label>
+                <select class="margin-left-10" ng-model="curr.filter">
+                  <option value="">All</option>
+                  <option value="action">Action</option>
+                  <option value="active_version">Active Version</option>
+                  <option value="approval">Approval Memo</option>
+                  <option value="cosponsor">Co Sponsor</option>
+                  <option value="act_clause">Enacting Clause</option>
+                  <option value="fulltext">Full Text</option>
+                  <option value="law">Law</option>
+                  <option value="memo">Memo</option>
+                  <option value="multisponsor">Multi Sponsor</option>
+                  <option value="sponsor">Sponsor</option>
+                  <option value="status">Status</option>
+                  <option value="summary">Summary</option>
+                  <option value="title">Title</option>
+                  <option value="veto">Veto</option>
+                  <option value="vote">Vote</option>
+                </select>
+              </div>
+              <div flex>
+                <label>Sort By </label>
+                <select class="margin-left-10" ng-model="curr.sortOrder">
+                  <option value="desc" selected>Newest First</option>
+                  <option value="asc">Oldest First</option>
+                </select>
+              </div>
+              <div flex>
+                <md-checkbox class="md-hue-3 no-margin" ng-model="curr.detail" aria-label="detail">Show Detail</md-checkbox>
               </div>
             </div>
           </md-card>
-          <md-card class="content-card">
+          <md-card class="content-card" ng-if="billUpdates.response.success === true">
             <md-subheader>
-              <strong>{{billUpdates.total}}</strong> bills were updated between {{billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.toDate | moment:'llll'}}
+              <strong>{{billUpdates.total}} </strong>
+                <span ng-if="!curr.detail">bills were updated </span>
+                <span ng-if="curr.detail"> granular bill updates were made </span>
+              between {{billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.toDate | moment:'llll'}}
             </md-subheader>
-            <md-list>
-              <a class="result-link text-medium"
-                 dir-paginate="billUpdate in billUpdates.result.items | itemsPerPage: 20"
-                 total-items="billUpdates.total" current-page="pagination.currPage"
-                 ng-init="bill = billUpdate.item"
-                 ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
-                <md-item>
-                  <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
-                    <div style="width:180px;padding:16px;">
-                      <h3 class="no-margin">
-                        <span>{{bill.basePrintNo}}</span> - {{bill.session}}
-                      </h3>
-                      <h5 class="no-margin">{{bill.sponsor.member.fullName}}</h5>
+            <md-list ng-if="billUpdates.total > 0">
+              <div dir-paginate="billUpdate in billUpdates.result.items | itemsPerPage: 20"
+                   total-items="billUpdates.total" current-page="pagination.currPage"
+                   ng-init="bill = billUpdate.item">
+                <a class="result-link text-medium"
+                   ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
+                  <md-item>
+                    <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
+                      <div class="padding-16" style="width:180px;">
+                        <h3 class="no-margin">
+                          <span>{{bill.basePrintNo}}</span> - {{bill.session}}
+                        </h3>
+                        <h5 class="no-margin">{{bill.sponsor.member.fullName}}</h5>
+                      </div>
+                      <div flex class="md-tile-content">
+                        <h4>{{bill.title}}</h4>
+                        <h6 class="gray7 no-margin capitalize">{{getStatusDesc(bill.status) | lowercase}}</h6>
+                      </div>
+                      <div flex class="md-tile-content">
+                        <h4><strong>Last Published:</strong> {{billUpdate.sourceDateTime | moment:'llll'}}</h4>
+                        <h4><strong>Last Processed:</strong> {{billUpdate.processedDateTime | moment:'MMM D, YYYY h:mm:ss A'}}</h4>
+                        <h4><strong>Update Source Id:</strong> {{billUpdate.sourceId}}</h4>
+                      </div>
+                    </md-item-content>
+                  </md-item>
+                </a>
+                <md-item ng-if="curr.detail">
+                  <md-item-content>
+                    <div style="padding: 0 16px;" flex>
+                      <span class="text-medium bold gray10">{{billUpdate.action}} {{billUpdate.scope}}</span>
+                      <table class="bill-updates-table" style="width:100%;">
+                        <thead>
+                        <tr>
+                          <th style="width:150px;">Field Name</th>
+                          <th>Data</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="(field, value) in billUpdate.fields">
+                          <td>{{field}}</td>
+                          <td><pre>{{value}}</pre></td>
+                        </tr>
+                        </tbody>
+                      </table>
                     </div>
-                    <div flex class="md-tile-content">
-                      <h4>{{bill.title}}</h4>
-                      <h6 class="gray7 no-margin capitalize">{{getStatusDesc(bill.status) | lowercase}}</h6>
-                    </div>
-                    <div flex class="md-tile-content">
-                      <h4><strong>Last Published:</strong> {{billUpdate.sourceDateTime | moment:'llll'}}</h4>
-                      <h4><strong>Last Processed:</strong> {{billUpdate.processedDateTime | moment:'llll'}}</h4>
-                      <h4><strong>Update Source Id:</strong> {{billUpdate.sourceId}}</h4>
-                    </div>
+
                   </md-item-content>
-                  <md-divider ng-if="!$last"/>
                 </md-item>
-              </a>
+                <md-divider></md-divider>
+              </div>
             </md-list>
+          </md-card>
+          <md-card class="content-card" ng-if="billUpdates.response.success === false">
+            <md-subheader class="margin-10 md-warn">
+              <h4>{{billUpdates.errMsg}}</h4>
+            </md-subheader>
           </md-card>
         </section>
       </md-tab>
@@ -219,8 +291,8 @@
           <p>A <strong>bill</strong> is a formal proposal to add, amend,
             or repeal a body of law whereas a <strong>resolution</strong> is an official document of
             the NYS Legislature that is usually written with the intent to recognize the achievements
-            of individuals, communities, and organizations.</p>
-
+            of individuals, communities, and organizations.
+          </p>
           <p>Every bill must go through several stages in the legislative process before it can be
             signed into law.
           </p>

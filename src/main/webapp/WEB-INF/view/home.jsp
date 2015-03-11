@@ -28,7 +28,7 @@
             <div id="logo">
               <%--<img src="${ctxPath}/static/img/NYSS_seal_transp.png"/>--%>
               <a class="margin-left-10 gray2" href="${ctxPath}/">
-                <i style="font-size: 1.8rem;position: relative;top: 5px;" class="icon-list2 prefix-icon2"></i>
+                <img src="${ctxPath}/static/img/NYSS_seal_inv.png"/>
                 Open Legislation
               </a>
             </div>
@@ -38,10 +38,8 @@
           <%-- Left Nav Menu Items --%>
           <div class="left-nav-menu">
             <material-menu>
-              <menu-section title="Welcome">
-                <menu-item url="${ctxPath}/">About</menu-item>
-              </menu-section>
-              <menu-section title="NYS Legislative Data">
+              <menu-section title="Main Menu">
+                <menu-item url="${ctxPath}/">Home</menu-item>
                 <menu-item url="${ctxPath}/calendars">Senate Calendars</menu-item>
                 <menu-item url="${ctxPath}/agendas">Senate Agendas</menu-item>
                 <menu-item url="${ctxPath}/bills">Bills and Resolutions</menu-item>
@@ -80,5 +78,6 @@
       </section>
     </section>
   </section>
+  <input type="hidden" id="uikey" value="${uiKey}"/>
 </body>
 </html>

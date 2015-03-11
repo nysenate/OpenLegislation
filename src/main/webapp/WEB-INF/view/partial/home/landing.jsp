@@ -3,16 +3,18 @@
 
 <section ng-controller="LandingCtrl">
   <section layout="row" layout-align="center center" style="rgb(243, 243, 243);">
-      <%--<div hide show-gt-lg style="width:300px;" class="padding-10">--%>
-        <%--<img src="${ctxPath}/static/img/capitol_square_cropped.jpg" style="width:100%"/>--%>
-      <%--</div>--%>
+
     <h1 flex class="slogan no-margin">Search, explore, and
         <a target="_blank" href="${ctxPath}/docs" class="slogan-link">integrate</a> legislative information from the
-        <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York&nbsp;State Senate</a>.
+        <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York State Senate</a>.
     </h1>
   </section>
-  <section class="padding-20 margin-20" style="background:rgb(238, 238, 238);">
-    <h2 class="thin-300">Data we currently provide</h2>
+  <div class="padding-20 margin-20" style="margin-bottom:0;height:250px;background-size:cover;
+                                           background-image:url('${ctxPath}/static/img/capitol_square_cropped.jpg');">
+    &nbsp;
+  </div>
+  <section class="padding-20 margin-20" style="margin-top:0;background:rgb(238, 238, 238);">
+    <h2 class="thin-300">Browse up-to date legislative content</h2>
       <md-divider/>
     <md-list layout-gt-sm="row" layout-wrap>
       <md-item flex="50" class="provide-data-container" ng-repeat="provideData in dataWeProvide">
