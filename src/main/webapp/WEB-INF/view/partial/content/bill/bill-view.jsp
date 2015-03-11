@@ -40,7 +40,8 @@
           <div class="margin-bottom-10 margin-top-10" layout="column" style="margin-right:60px;min-width: 280px;">
             <div class="text-medium">Status as of {{bill.status.actionDate | moment:'MMMM D, YYYY'}}</div>
             <div class="bold">
-              <i ng-if="bill.signed === true" class="prefix-icon icon-checkmark"></i>
+              <i ng-if="bill.signed === true || bill.adopted === true" class="prefix-icon icon-checkmark"></i>
+              <i ng-if="bill.vetoed === true" class="prefix-icon icon-blocked"></i>
               <span>{{getStatusDesc(bill.status)}}</span>
             </div>
             <milestones ng-hide="bill.billType.resolution" milestone-arr="bill.milestones" chamber="bill.billType.chamber"></milestones>
@@ -105,7 +106,7 @@
                     <span class="capitalize">{{vote.voteType | lowercase}}</span>
                     Vote
                   </h4>
-                  <p class="no-top-margin text-medium">Voted on Amendment Revision: {{veto.version | prettyAmendVersion}}</p>
+                  <p class="no-top-margin text-medium">Voted on Amendment Revision: {{vote.version | prettyAmendVersion}}</p>
                   <md-divider></md-divider>
                   <div layout="row" layout-align="center center" layout-sm="column" layout-align-sm="start start">
                     <div flex>
@@ -423,7 +424,7 @@
                 <div class="md-tile-content">
                   <md-card class="content-card">
                     <md-subheader>
-                      <span class="capitalize">{{update.action | lowercase}} - {{update.scope}}</span>
+                      <span>{{update.action}} - {{update.scope}}</span>
                     </md-subheader>
                     <md-content>
                       <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY'}}</h4>

@@ -35,7 +35,7 @@
     the <a href="http://www.nysenate.gov" class="slogan-link">nysenate.gov site.</a> </h4>
   </section>
   <section class="padding-20 margin-20 white" style="background:rgb(116, 156, 77);">
-    <h2>Access NYS legislative data through the API</h2>
+    <h2>Access NYS legislative data through a JSON API</h2>
       <section ng-hide="signedup">
           <h3>Sign up for a free API Key</h3>
           <hr/>
