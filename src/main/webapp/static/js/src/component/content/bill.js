@@ -60,9 +60,22 @@ billModule.factory('BillDiffApi', ['$resource', function($resource) {
 
 /** --- Parent Bill Controller --- */
 
-billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route',
-                       function($scope, $rootScope, $location, $route) {
+billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route', '$routeParams',
+                       function($scope, $rootScope, $location, $route, $routeParams) {
     $scope.setHeaderVisible(true);
+    $scope.selectedView = (parseInt($routeParams.view, 10) || 0);
+
+    /** Watch for changes to the current view. */
+    $scope.$watch('selectedView', function(n, o) {
+        if (n !== o && $location.search().view !== n) {
+            $location.search('view', $scope.selectedView);
+            $scope.$broadcast('viewChange', $scope.selectedView);
+        }
+    });
+
+    $scope.$on('$locationChangeSuccess', function() {
+        $scope.selectedView = $location.search().view || 0;
+    });
 
     $scope.getStatusDesc = function(status) {
         var desc = "";
@@ -91,12 +104,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                       function($scope, $filter, $routeParams, $location, $sce, BillListing, BillSearch, PaginationModel) {
     $scope.setHeaderText('Search NYS Legislation');
 
-      $scope.$on('$locationChangeSuccess', function() {
-          $scope.curr.selectedView = $location.search().view || 0;
-      });
-
     $scope.curr = {
-        selectedView: (parseInt($routeParams.view, 10) || 0),
         searching: false,
         pagination: angular.extend({}, PaginationModel)
     };
@@ -112,8 +120,10 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
     /** Initialize the bill search page. */
     $scope.init = function() {
-        $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
-        $scope.simpleSearch(false);
+        if ($scope.selectedView == 0) {
+            $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
+            $scope.simpleSearch(false);
+        }
     };
 
     $scope.simpleSearch = function(resetPagination) {
@@ -138,7 +148,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                         angular.forEach($scope.billSearch.results, function(r) {
                             for (prop in r.highlights) {
                                 if (r.highlights[prop][0]) {
-                                    r.highlights[prop][0] = $sce.trustAsHtml(r.highlights[prop][0]);
+                                    r.highlights[prop][0] = $sce.trustAsHtml(String(r.highlights[prop][0]));
                                 }
                             }
                         });
@@ -174,11 +184,6 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         }
     };
 
-    /** Watch for changes to the current view. */
-    $scope.$watch('curr.selectedView', function() {
-        $location.search('view', $scope.curr.selectedView);
-    });
-
     /** Watch for changes to the current search page. */
     $scope.$watch('curr.pagination.currPage', function(newPage, oldPage) {
         if (newPage !== oldPage) {
@@ -192,45 +197,72 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
 /** --- Bill Updates Controller --- */
 
-billModule.controller('BillUpdatesCtrl', ['$scope', 'BillAggUpdatesApi', 'PaginationModel',
-    function($scope, BillAggUpdatesApi, PaginationModel){
+billModule.controller('BillUpdatesCtrl', ['$scope', '$location', 'BillAggUpdatesApi', 'PaginationModel',
+    function($scope, $location, BillAggUpdatesApi, PaginationModel){
 
     $scope.pagination = angular.extend({}, PaginationModel);
 
     $scope.curr = {
         fromDate: moment().subtract(5, 'days').startOf('day').toDate(),
         toDate: moment().endOf('day').toDate(),
-        type: 'published'
+        type: $location.$$search.type || 'published',
+        sortOrder: $location.$$search.sortOrder || 'desc',
+        detail: $location.$$search.detail === true,
+        filter: $location.$$search.filter ||  ''
     };
 
     $scope.billUpdates = {
         response: {},
+        fetching: false,
         total: 0,
-        result: {}
+        result: {},
+        errMsg: ''
     };
 
-    $scope.init = function() {
+    $scope.$on('viewChange', function(ev) {
         $scope.getUpdates();
-    };
+    });
 
     $scope.getUpdates = function() {
+        //console.log("fetching bill updates");
+        $scope.billUpdates.fetching = true;
         $scope.billUpdates.response = BillAggUpdatesApi.get({
             from: $scope.curr.fromDate.toISOString(), to: $scope.curr.toDate.toISOString(),
-            type: $scope.curr.type
+            type: $scope.curr.type, order: $scope.curr.sortOrder, detail: $scope.curr.detail,
+            filter: $scope.curr.filter, limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
         }, function() {
             $scope.billUpdates.total = $scope.billUpdates.response.total;
             $scope.billUpdates.result = $scope.billUpdates.response.result;
+            $scope.billUpdates.fetching = false;
+        }, function(resp) {
+            $scope.billUpdates.response.success = false;
+            $scope.billUpdates.total = 0;
+            $scope.billUpdates.errMsg = resp.data.message;
+            $scope.billUpdates.fetching = false;
         });
     };
 
-    $scope.$watch('curr.fromDate', function(n, o) {
-        $scope.getUpdates();
-    });
-    $scope.$watch('curr.toDate', function(n, o) {
-        $scope.getUpdates();
+    $scope.refreshParams = function() {
+        angular.forEach($scope.curr, function(val, key) {
+            var paramVal = val;
+            if (paramVal instanceof Date) {
+                paramVal = paramVal.toISOString();
+            }
+            $location.search(key, paramVal);
+        });
+    };
+
+    $scope.$watchCollection('curr', function(n, o) {
+        if ($scope.selectedView === 1) {
+            $scope.getUpdates();
+        }
     });
 
-    $scope.init();
+    $scope.$watch('pagination.currPage', function(newPage, oldPage) {
+        if (newPage !== oldPage) {
+            $scope.getUpdates();
+        }
+    });
 }]);
 
 /** --- Bill View Controller --- */

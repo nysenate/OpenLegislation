@@ -131,7 +131,7 @@ md-input-container {
   }
 }
 
-/** --- Common --- */
+/** --- Common Classes  --- */
 
 .text-xsmall {
   font-size: 0.7rem;
@@ -301,6 +301,15 @@ a.result-link {
 
 .member-image-mini {
   width: 55px;
+}
+
+/** --- Common Widgets --- */
+
+.loading-pulse {
+  position: absolute;
+  bottom: 15px;
+  color: $gray10;
+  font-size: 0.9rem;
 }
 
 /** --- Left Nav --- */
@@ -523,6 +532,29 @@ a.slogan-link {
 }
 
 /** --- Bill Page Styles --- */
+
+.bill-search-refine {
+  width: 240px;
+  background: $gray2;
+  margin: 10px 0 10px 10px;
+  h3 {
+    background:white;
+    font-size: 1rem;
+    padding: 10px;
+    margin: 0;
+  }
+  .refine-controls {
+    padding: 5px 10px;
+    label {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      display: block;
+    }
+    select {
+      width: 100%;
+    }
+  }
+}
 
 .bill-ms-container {
   padding: 5px 0;

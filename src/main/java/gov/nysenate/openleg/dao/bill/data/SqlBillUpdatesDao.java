@@ -7,7 +7,6 @@ import gov.nysenate.openleg.model.bill.BillUpdateField;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -46,6 +45,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
 
     private final static Map<BillUpdateField, BillUpdateTable> updateMappings = new HashMap<>();
     static {
+        updateMappings.put(PUBLISHED_BILL, new BillUpdateTable(SqlTable.BILL, "published_date_time"));
         updateMappings.put(ACT_CLAUSE, new BillUpdateTable(SqlTable.BILL_AMENDMENT, "act_clause"));
         updateMappings.put(ACTION, new BillUpdateTable(SqlTable.BILL_AMENDMENT_ACTION));
         updateMappings.put(ACTIVE_VERSION, new BillUpdateTable(SqlTable.BILL, "active_version"));

@@ -80,7 +80,7 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
         { type: 'Senate Floor Calendars', blurb: 'Listings of bills that are scheduled for discussion and voting on the senate floor.',
           icon: 'icon-calendar', url: ctxPath + '/calendars'},
 
-        { type: 'Senate/Assembly Membership', blurb: 'Member data',
+        { type: 'Senate/Assembly Membership', blurb: 'Senators and assemblymembers for the current session.',
           icon: 'icon-users', url: ctxPath + '/members'}
     ];
 
@@ -168,7 +168,6 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
             }
 
             $rootScope.$on('$routeChangeSuccess', function() {
-                console.log($location.url());
                 $scope.urlMap.some(function(secItem) {
                     if (secItem.re.test($location.url())) {
                         $scope.selectSection(secItem.secRef);

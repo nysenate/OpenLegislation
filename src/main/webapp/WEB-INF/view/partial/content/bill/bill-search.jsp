@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <section ng-controller="BillCtrl">
-  <section ng-controller="BillSearchCtrl">
-    <md-tabs md-selected="curr.selectedView" class="md-primary" md-stretch-tabs="auto">
+  <section>
+    <md-tabs md-selected="selectedView" class="md-primary" md-stretch-tabs="auto">
       <md-tab>
         <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
         <md-divider></md-divider>
-        <section class="margin-top-10">
+        <section ng-controller="BillSearchCtrl" class="margin-top-10">
           <form name="bill-search-form">
             <md-content class="relative padding-20">
               <md-input-container class="md-primary">
@@ -32,45 +32,62 @@
             <md-card class="content-card">
               <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
                 <div flex> {{curr.pagination.totalItems}} bills were matched. Viewing page {{curr.pagination.currPage}} of {{curr.pagination.lastPage}}.  </div>
-                <div flex style="text-align: right;"><dir-pagination-controls boundary-links="true"></dir-pagination-controls></div>
+                <div flex style="text-align: right;"><dir-pagination-controls pagination-id="bill-search" boundary-links="true"></dir-pagination-controls></div>
               </div>
-              <md-content class="no-top-margin">
-                <md-list>
-                  <a class="result-link"
-                     dir-paginate="r in billSearch.results | itemsPerPage: 20"
-                     total-items="billSearch.response.total" current-page="curr.pagination.currPage"
-                     ng-init="bill = r.result; highlights = r.highlights;"
-                     ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
-                    <md-item>
-                      <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
-                        <div hide-sm>
-                          <img class="" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
-                               style="height: 42px;width:33px;"/>
-                        </div>
-                        <div style="width:180px;padding:16px;">
-                          <h3 class="no-margin">
-                            <span ng-if="!highlights.basePrintNo">{{bill.basePrintNo}}</span>
-                            <span ng-if="highlights.basePrintNo" ng-bind-html="highlights.basePrintNo[0]"></span>
-                            - {{bill.session}}
-                          </h3>
-                          <h5 class="no-margin">{{bill.sponsor.member.fullName}}</h5>
-                        </div>
-                        <div flex class="md-tile-content">
-                          <h4>
-                            <span ng-if="!highlights.title">{{bill.title}}</span>
-                            <span ng-if="highlights.title" ng-bind-html="highlights.title[0]"></span>
-                          </h4>
-                          <h6 class="gray7 no-margin capitalize">{{getStatusDesc(bill.status) | lowercase}}</h6>
-                        </div>
-                      </md-item-content>
-                      <md-divider ng-if="!$last"/>
-                    </md-item>
-                  </a>
-                </md-list>
+              <md-content layout="row" style="padding:0;" class="no-top-margin">
+                <div ng-if="curr.pagination.totalItems > 5" class="bill-search-refine" hide-sm>
+                  <h3>Refine your search</h3>
+                  <md-divider></md-divider>
+                  <div class="refine-controls">
+                    <label>Sort By</label><select><option>Relevance</option><option>Latest Status Update</option></select><br/>
+                    <hr/>
+                    <label>Session</label><select><option>All Sessions</option><option>2015</option></select><br/>
+                    <label>Chamber</label><select><option>Any</option><option>Senate</option><option>Assembly</option></select><br/>
+                    <label>Type</label><select><option>Any</option><option>Bills</option><option>Resolution</option></select><br/>
+                    <label>Primary Sponsor</label><select></select><br/>
+                    <label>Current Status</label><select></select><br/>
+                  </div>
+                </div>
+                <div flex class="padding-20">
+                  <md-list>
+                    <a class="result-link"
+                       dir-paginate="r in billSearch.results | itemsPerPage: 20"
+                       total-items="billSearch.response.total" current-page="curr.pagination.currPage"
+                       ng-init="bill = r.result; highlights = r.highlights;" pagination-id="bill-search"
+                       ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
+                      <md-item>
+                        <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
+                          <div hide-sm>
+                            <img class="" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
+                                 style="height: 42px;width:33px;"/>
+                          </div>
+                          <div style="width:180px;padding:16px;">
+                            <h3 class="no-margin">
+                              <span ng-if="!highlights.basePrintNo">{{bill.basePrintNo}}</span>
+                              <span ng-if="highlights.basePrintNo" ng-bind-html="highlights.basePrintNo[0]"></span>
+                              - {{bill.session}}
+                            </h3>
+                            <h5 class="no-margin">{{bill.sponsor.member.fullName}}</h5>
+                          </div>
+                          <div flex class="md-tile-content">
+                            <h4>
+                              <span ng-if="!highlights.title">{{bill.title}}</span>
+                              <span ng-if="highlights.title" ng-bind-html="highlights.title[0]"></span>
+                            </h4>
+                            <h6 class="gray7 no-margin capitalize">{{getStatusDesc(bill.status) | lowercase}}</h6>
+                          </div>
+                        </md-item-content>
+                        <md-divider ng-if="!$last"/>
+                      </md-item>
+                    </a>
+                  </md-list>
+                </div>
+
+
               </md-content>
               <div class="subheader" layout="row" layout-align="end center">
                 <div flex style="text-align: right;">
-                  <dir-pagination-controls boundary-links="true"></dir-pagination-controls>
+                  <dir-pagination-controls pagination-id="bill-search" boundary-links="true"></dir-pagination-controls>
                 </div>
               </div>
             </md-card>
@@ -184,9 +201,10 @@
             <md-divider></md-divider>
             <div layout="row" class="padding-20">
               <div flex>
-                <label>Filter By </label>
+                <label>Type </label>
                 <select class="margin-left-10" ng-model="curr.filter">
                   <option value="">All</option>
+                  <option value="published_bill">Published</option>
                   <option value="action">Action</option>
                   <option value="active_version">Active Version</option>
                   <option value="approval">Approval Memo</option>
@@ -205,7 +223,7 @@
                 </select>
               </div>
               <div flex>
-                <label>Sort By </label>
+                <label>Sort </label>
                 <select class="margin-left-10" ng-model="curr.sortOrder">
                   <option value="desc" selected>Newest First</option>
                   <option value="asc">Oldest First</option>
@@ -216,17 +234,25 @@
               </div>
             </div>
           </md-card>
+          <div ng-if="billUpdates.fetching" class="text-medium text-align-center">Fetching updates, please wait.</div>
           <md-card class="content-card" ng-if="billUpdates.response.success === true">
             <md-subheader>
-              <strong>{{billUpdates.total}} </strong>
-                <span ng-if="!curr.detail">bills were updated </span>
-                <span ng-if="curr.detail"> granular bill updates were made </span>
-              between {{billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.toDate | moment:'llll'}}
+              <div>
+                <strong>{{billUpdates.total}} </strong>
+                  <span ng-if="!curr.detail">bills were updated </span>
+                  <span ng-if="curr.detail"> granular bill updates were made </span>
+                between {{billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.toDate | moment:'llll'}}
+              </div>
             </md-subheader>
+            <div class="subheader">
+              <div flex style="text-align: right;">
+                <dir-pagination-controls pagination-id="bill-updates" boundary-links="true"></dir-pagination-controls>
+              </div>
+            </div>
             <md-list ng-if="billUpdates.total > 0">
               <div dir-paginate="billUpdate in billUpdates.result.items | itemsPerPage: 20"
                    total-items="billUpdates.total" current-page="pagination.currPage"
-                   ng-init="bill = billUpdate.item">
+                   ng-init="bill = billUpdate.item" pagination-id="bill-updates">
                 <a class="result-link text-medium"
                    ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
                   <md-item>
@@ -274,6 +300,11 @@
                 <md-divider></md-divider>
               </div>
             </md-list>
+            <div class="subheader">
+              <div flex style="text-align: right;">
+                <dir-pagination-controls pagination-id="bill-updates" boundary-links="true"></dir-pagination-controls>
+              </div>
+            </div>
           </md-card>
           <md-card class="content-card" ng-if="billUpdates.response.success === false">
             <md-subheader class="margin-10 md-warn">
