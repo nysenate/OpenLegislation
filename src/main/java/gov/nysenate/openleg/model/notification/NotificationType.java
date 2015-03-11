@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.model.notification;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +12,8 @@ public enum NotificationType {
     EXCEPTION           (ExceptionNotification.class),
     REQUEST_EXCEPTION   (RequestExceptionNotification.class),
     PROCESS_EXCEPTION   (ProcessExceptionNotification.class),
-    SPOTCHECK           (SpotcheckNotification.class)
+    SPOTCHECK           (SpotcheckNotification.class),
+    NEW_API_KEY         (NewApiKeyNotification.class)
     ;
 
     private Class<? extends AllNotifications> notificationClass;
@@ -66,5 +65,6 @@ public enum NotificationType {
     private static interface ProcessExceptionNotification extends ExceptionNotification{}
 
     private static interface SpotcheckNotification extends AllNotifications {}
+    private static interface NewApiKeyNotification extends AllNotifications {}
 
 }
