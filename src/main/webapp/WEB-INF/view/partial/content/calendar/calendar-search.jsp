@@ -8,7 +8,7 @@
       <md-tab-label>
         <i class="icon-search prefix-icon2"></i>Search
       </md-tab-label>
-      <section ng-controller="CalendarSearchCtrl">
+      <section ng-if="pageNames[activeIndex] === 'search'" ng-controller="CalendarSearchCtrl">
         <form name="calendar-search-form">
           <md-content class="padding-20">
             <md-input-container class="md-primary">
@@ -25,15 +25,20 @@
         </form>
         <section ng-show="searched && pagination.totalItems > 0">
           <md-card class="content-card">
-            <md-subheader>
-              {{pagination.totalItems}} calendars were matched.&nbsp;&nbsp;
-              Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.
-            </md-subheader>
+            <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
+              <div flex>
+                {{pagination.totalItems}} calendars were matched.&nbsp;&nbsp;
+                Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.
+              </div>
+              <div flex style="text-align: right;"><dir-pagination-controls pagination-id="33" boundary-links="true"></dir-pagination-controls></div>
+            </div>
             <md-content class="no-top-margin">
               <md-list>
-                <a ng-repeat="r in searchResults" ng-init="cal = r.result; highlights = r.highlights;"
-                    class="result-link" ng-href="{{getCalendarUrl(cal.year, cal.calendarNumber)}}"
-                    ng-click="changeTab(cal.activeLists.size>0 ? 'active-list' : 'floor')">
+                <a dir-paginate="r in searchResults | itemsPerPage: 6"
+                   total-items="searchResponse.total" current-page="pagination.currPage"
+                   ng-init="cal = r.result" class="result-link" pagination-id="33"
+                   ng-href="{{getCalendarUrl(cal.year, cal.calendarNumber)}}"
+                   ng-click="changeTab(cal.activeLists.size>0 ? 'active-list' : 'floor')">
                   <md-item>
                     <md-item-content layout-sm="column" layout-align-sm="center start"
                         style="cursor: pointer;" >
@@ -66,32 +71,53 @@
                         </div>
                       </div>
                     </md-item-content>
-                    <%--<md-divider ng-if="!$last"/>--%>
                   </md-item>
                   <md-divider hide-gt-sm ng-hide="$last"></md-divider>
                 </a>
               </md-list>
             </md-content>
-            <div ng-show="pagination.needsPagination()" class="text-medium margin-10 padding-10"
-                layout="row" layout-align="left center">
-              <md-button ng-click="paginate('first')" class="md-primary md-no-ink margin-right-10">
-                <i class="icon-first"></i>&nbsp;First
-              </md-button>
-              <md-button ng-disabled="!pagination.hasPrevPage()"
-                  ng-click="paginate('prev')" class="md-primary md-no-ink margin-right-10">
-                <i class="icon-arrow-left5"></i>&nbsp;Previous
-              </md-button>
-              <md-button ng-click="paginate('next')"
-                  ng-disabled="!pagination.hasNextPage()"
-                  class="md-primary md-no-ink margin-right-10">
-                Next&nbsp;<i class="icon-arrow-right5"></i>
-              </md-button>
-              <md-button ng-click="paginate('last')" class="md-primary md-no-ink margin-right-10">
-                Last&nbsp;<i class="icon-last"></i>
-              </md-button>
-            </div>
           </md-card>
         </section>
+      </section>
+      <section>
+        <md-card class="content-card">
+          <md-subheader><strong>Quick search for Calendars</strong></md-subheader>
+          <div class="padding-20">
+            <p class="text-medium">Calendars are uniquely identified by their year and a calendar number, which corresponds
+              to their order within a year.  To find a specific calendar, enter its year and calendar number e.g.
+              <code>2015#5</code>.
+            </p>
+          </div>
+        </md-card>
+        <md-card class="content-card">
+          <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
+          <div class="padding-20">
+            <p class="text-medium">You can combine the field definitions documented below to perform targeted searches.
+              You can string together multiple search term fields with the following operators: <code>AND, OR, NOT</code>
+              as well as parenthesis for grouping. For more information refer to the
+              <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query docs</a>.</p>
+          </div>
+          <table class="docs-table">
+            <thead>
+            <tr><th>To search for</th><th>Use the field</th><th>With value type</th><th>Examples</th></tr>
+            </thead>
+            <tbody>
+            <tr style="background:#f1f1f1;"><td colspan="4"><strong>Basic Details</strong></td></tr>
+            <tr><td>Year</td><td>year</td><td>number</td><td>year:2015</td></tr>
+            <tr><td>Calendar Number</td><td>calendarNumber</td><td>number</td><td>calendarNumber:13</td></tr>
+            <tr><td>Calendar Date</td><td>calDate</td><td>date</td><td>calDate:2015-03-03<br/>calDate:[2015-03-01 TO 2015-03-10]</td></tr>
+            <tr><td>Release Date/Time</td><td>releaseDateTime</td><td>date-time</td><td>releaseDateTime:2015-03-03<br/>releaseDateTime:[2015-03-01 TO 2015-03-10]</td></tr>
+            <tr><td>Active List Count</td><td>activeLists.size</td><td>number</td><td>activeLists.size:>0</td></tr>
+            <tr style="background:#f1f1f1;"><td colspan="4"><strong>The fields below are associated with calendar bill entries and are always prefixed with '\*.'</strong></td> </tr>
+            <tr><td>Bill Print No.</td><td>\*.printNo</td><td>string</td><td>\*.printNo:S1111</td></tr>
+            <tr><td>Bill Calendar No.</td><td>\*.billCalNo</td><td>string</td><td>\*.billCalNo:81</td></tr>
+            <tr><td>Bill Title</td><td>\*.title</td><td>string</td><td>\*.title:town of Chester</td></tr>
+            <tr><td>Bill Sponsor</td><td>\*.shortName</td><td>string</td><td>\*.shortName:YOUNG</td></tr>
+            <tr><td>Bill Sponsor</td><td>\*.fullName</td><td>string</td><td>\*.fullName:Catharine Young</td></tr>
+            <tr><td>Bill Sponsor</td><td>\*.districtCode</td><td>number</td><td>\*.districtCode:57</td></tr>
+            </tbody>
+          </table>
+        </md-card>
       </section>
     </md-tab>
 
@@ -100,7 +126,7 @@
       <md-tab-label>
         <i class="icon-calendar prefix-icon2"></i>Browse
       </md-tab-label>
-      <md-card ng-controller="CalendarPickCtrl" class="content-card">
+      <md-card ng-if="pageNames[activeIndex] === 'browse'" ng-controller="CalendarPickCtrl" class="content-card">
         <md-card-content id="calendar-date-picker" ui-calendar="calendarConfig" ng-model="eventSources"></md-card-content>
       </md-card>
     </md-tab>
@@ -108,7 +134,7 @@
     <!-- Calendar Updates -->
     <md-tab md-on-select="setCalendarHeaderText()">
       <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
-      <section ng-controller="CalendarFullUpdatesCtrl">
+      <section ng-if="pageNames[activeIndex] === 'updates'" ng-controller="CalendarFullUpdatesCtrl">
         <md-card>
           <md-card-content class="padding-20">
             <div layout="row">

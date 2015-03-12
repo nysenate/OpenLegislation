@@ -50,7 +50,7 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     $scope.activeIndex = 2;
 
-    var pageNames = ['sklerch', 'active-list', 'floor', 'updates'];
+    $scope.pageNames = ['sklerch', 'active-list', 'floor', 'updates'];
 
     $scope.init = function() {
         $scope.getCalendarViewById($routeParams.year, $routeParams.calNo);
@@ -66,7 +66,7 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     $scope.changeTab = function(pageName) {
         console.log('changing view to', pageName);
-        var newIndex = pageNames.indexOf(pageName);
+        var newIndex = $scope.pageNames.indexOf(pageName);
         if (newIndex >= 0) $scope.activeIndex = newIndex;
     };
 
@@ -99,8 +99,8 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
         $scope.$watch('activeIndex', function() {
             if ($scope.activeIndex >=1) {
-                $location.search('view', pageNames[$scope.activeIndex]);
-            } else if ($scope.activeIndex < 0 || $scope.activeIndex >= pageNames.length) {
+                $location.search('view', $scope.pageNames[$scope.activeIndex]);
+            } else if ($scope.activeIndex < 0 || $scope.activeIndex >= $scope.pageNames.length) {
                 $location.search('view', null);
             }
         });
@@ -196,6 +196,8 @@ calendarModule.controller('CalendarActiveListCtrl', ['$scope', '$rootScope', fun
     $rootScope.$on('newCalendarEvent', populateActiveLists);
 
     $scope.$watch('activeListFilter', filterActiveListEntries, true);
+
+    populateActiveLists();
 }]);
 
 calendarModule.controller('FloorCalendarCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
@@ -271,32 +273,37 @@ calendarModule.controller('FloorCalendarCtrl', ['$scope', '$rootScope', function
     $rootScope.$on('newCalendarEvent', populateFloorCals);
 
     $scope.$watch('floorCalFilter', filterFloorCalendarEntries, true);
+
+    populateFloorCals();
 }]);
 
 calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'CalendarUpdatesApi',
     function($scope, $rootScope, UpdatesApi) {
         $scope.updateResponse = {result:{items: []}};
         $scope.updatesOrder = "ASC";
-        var calendarGot = false;
 
         $scope.getUpdates = function() {
-            var response = UpdatesApi.get({year: $scope.year, calNo: $scope.calendarNum, detail: true, order: $scope.updatesOrder},
-                function () {
-                    if (response.success) {
-                        $scope.updateResponse = response;
-                    }
-                });
+            if ($scope.year && $scope.calendarNum) {
+                var response = UpdatesApi.get({
+                        year: $scope.year,
+                        calNo: $scope.calendarNum,
+                        detail: true,
+                        order: $scope.updatesOrder
+                    },
+                    function () {
+                        if (response.success) {
+                            $scope.updateResponse = response;
+                        }
+                    });
+            }
         };
 
         $rootScope.$on('newCalendarEvent', function() {
             $scope.getUpdates();
-            calendarGot = true;
         });
 
         $scope.$watch('updatesOrder', function () {
-            if (calendarGot) {
-                $scope.getUpdates();
-            }
+            $scope.getUpdates();
         });
     }]);
 
@@ -305,7 +312,7 @@ calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'Calen
 calendarModule.controller('CalendarSearchPageCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout',
 function ($scope, $rootScope, $routeParams, $location, $timeout) {
 
-    var pageNames = ['search', 'browse', 'updates'];
+    $scope.pageNames = ['search', 'browse', 'updates'];
 
     function init() {
         if ('view' in $routeParams) {
@@ -313,8 +320,8 @@ function ($scope, $rootScope, $routeParams, $location, $timeout) {
         }
 
         $scope.$watch('activeIndex', function(newIndex, oldIndex) {
-            if (pageNames[newIndex]) {
-                $location.search('view', pageNames[newIndex]);
+            if ($scope.pageNames[newIndex]) {
+                $location.search('view', $scope.pageNames[newIndex]);
             } else {
                 $location.search('view', null);
             }
@@ -323,12 +330,12 @@ function ($scope, $rootScope, $routeParams, $location, $timeout) {
 
     $scope.changeTab = function (pageName) {
         console.log('changing view to', pageName);
-        $scope.activeIndex = pageNames.indexOf(pageName);
+        $scope.activeIndex = $scope.pageNames.indexOf(pageName);
     };
 
     $scope.setCalendarHeaderText = function() {
         $timeout(function() {   // Set text on next digest to account for delay in active index change
-            var pageName = pageNames[$scope.activeIndex];
+            var pageName = $scope.pageNames[$scope.activeIndex];
             var newHeader = "8)";
 
             if (pageName == "search") {
@@ -372,47 +379,42 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
     $scope.init = function() {
         if ($routeParams.hasOwnProperty('search')) {
             $scope.searchTerm = $routeParams['search'];
-            $scope.termSearch(true);
+            $scope.termSearch(false);
         }
+        $scope.$watch('pagination.currPage', function(newPage, oldPage) {
+            if (newPage !== oldPage && $scope.pagination.currPage > 0) {
+                if ($scope.pagination.currPage >1 ) {$location.search('searchPage', $scope.pagination.currPage);}
+                $scope.termSearch(false);
+            }
+        })
     };
 
     // Perform a simple serch based on the current search term
     $scope.termSearch = function(resetPagination) {
-        var term = $scope.searchTerm;
-        console.log('searching for', term);
-        if (term) {
-            $location.search('search', term);
-            $scope.searched = false;
-            $scope.searchResponse = SearchApi.get({
-                    term: term, sort: $scope.sort, limit: $scope.pagination.getLimit(),
-                    offset: $scope.pagination.getOffset()},
-                function() {
-                    $scope.searchResults = $scope.searchResponse.result.items || [];
-                    $scope.searched = true;
-                    if (resetPagination) {
-                        $scope.pagination.currPage = 1;
-                    }
-                    $scope.pagination.setTotalItems($scope.searchResponse.total);
-                });
-        }
-        else {
-            $scope.searchResults = [];
-            $scope.pagination.setTotalItems(0);
-        }
-    };
-
-    // Manipulates the pagination object and displayed results based on the input action
-    $scope.paginate = function(action) {
-        var oldPage = $scope.pagination.currPage;
-        switch (action) {
-            case 'first': $scope.pagination.toFirstPage(); break;
-            case 'prev': $scope.pagination.prevPage(); break;
-            case 'next': $scope.pagination.nextPage(); break;
-            case 'last': $scope.pagination.toLastPage(); break;
-        }
-        if (oldPage !== $scope.pagination.currPage) {
-            $location.search('searchPage', $scope.pagination.currPage);
-            $scope.termSearch(false);
+        console.log($scope.pagination.currPage);
+        // If pagination is to be reset and it is not on page 1 just change pagination to trigger the watch
+        if (resetPagination && $scope.pagination.currPage != 1) {
+            $scope.pagination.currPage = 1;
+        } else {
+            var term = $scope.searchTerm;
+            console.log('searching for', term);
+            if (term) {
+                $location.search('search', term);
+                $scope.searched = false;
+                $scope.searchResponse = SearchApi.get({
+                        term: term, sort: $scope.sort, limit: $scope.pagination.getLimit(),
+                        offset: $scope.pagination.getOffset()
+                    },
+                    function () {
+                        $scope.searchResults = $scope.searchResponse.result.items || [];
+                        $scope.searched = true;
+                        $scope.pagination.setTotalItems($scope.searchResponse.total);
+                    });
+            } else {
+                $scope.searchResults = [];
+                $scope.pagination.setTotalItems(0);
+                $location.search('search', null);
+            }
         }
     };
 
