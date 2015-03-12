@@ -26,7 +26,7 @@ openApp.config(function($mdThemingProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
 })
 .config(function(paginationTemplateProvider) {
-    paginationTemplateProvider.setPath(ctxPath +'/static/bower_components/angular-utils-pagination/dirPagination.tpl.html');
+    paginationTemplateProvider.setPath(ctxPath +'/static/tpl/dirPagination.tpl.html');
 })
 .config(function($httpProvider){
     // We set a ui key in the http header to allow front end users to bypass api key restrictions
