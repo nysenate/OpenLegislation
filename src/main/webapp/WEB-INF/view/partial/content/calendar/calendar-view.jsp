@@ -15,7 +15,7 @@
 
     <!-- Active Lists -->
     <md-tab label="Active List" md-on-select="setCalendarHeaderText()" ng-show="calendarView.activeLists.size > 0">
-      <section ng-controller="CalendarActiveListCtrl">
+      <section ng-if="pageNames[activeIndex] === 'active-list'" ng-controller="CalendarActiveListCtrl">
         <md-toolbar class="md-toolbar-tools supplemental-toolbar">
           <label ng-show="activeLists.length > 0" class="margin-right-20">Supplementals</label>
           <h4 class="md-toolbar-tools" ng-show="activeLists.length == 0">
@@ -45,7 +45,7 @@
 
     <!-- Supplemental Calendars -->
     <md-tab label="Floor" md-on-select="setCalendarHeaderText()">
-      <section ng-controller="FloorCalendarCtrl">
+      <section ng-if="pageNames[activeIndex] === 'floor'" ng-controller="FloorCalendarCtrl">
         <md-toolbar class="md-toolbar-tools supplemental-toolbar">
           <label class="margin-right-20">Supplementals</label>
             <span layout="row" layout-sm="column" ng-model="amdVersion">
@@ -69,7 +69,7 @@
     </md-tab>
 
     <md-tab label="Updates" md-on-select="setCalendarHeaderText()">
-      <section ng-controller="CalendarUpdatesCtrl">
+      <section ng-if="pageNames[activeIndex] === 'updates'" ng-controller="CalendarUpdatesCtrl">
         <md-toolbar class="md-toolbar-tools supplemental-toolbar">
             <span class="margin-right-10">Update Order:&nbsp;</span>
             <md-select ng-model="updatesOrder" class="no-margin">

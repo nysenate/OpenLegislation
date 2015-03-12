@@ -37,52 +37,6 @@ public interface CalendarSearchService extends IndexedSearchService<Calendar> {
             throws SearchException;
 
     /**
-     * Performs a search of active list calendars, returning a list of matching active list ids.
-     *
-     * @param query
-     * @param sort
-     * @return SearchResults<CalendarActiveListId> a list of active list calendar ids that match the given search parameters
-     * @throws SearchException When there is a search related error
-     */
-    public SearchResults<CalendarActiveListId> searchForActiveLists(String query, String sort, LimitOffset limitOffset)
-            throws SearchException;
-
-    /**
-     * Performs a search of active list calendars that were published on the given year, returning a list of matching active list ids.
-     *
-     * @param year
-     * @param query
-     * @param sort
-     * @return SearchResults<CalendarActiveListId> a list of active list calendar ids that match the given search parameters
-     * @throws SearchException When there is a search related error
-     */
-    public SearchResults<CalendarActiveListId> searchForActiveListsByYear(Integer year, String query, String sort, LimitOffset limitOffset)
-            throws SearchException;
-
-    /**
-     * Performs a search on supplemental calendars, returning a list of matching floor calendar ids.
-     *
-     * @param query
-     * @param sort
-     * @return SearchResults<CalendarSupplementalId> a list of supplemental calendar ids that match the given search parameters
-     * @throws SearchException When there is a search related error
-     */
-    public SearchResults<CalendarSupplementalId> searchForSupplementalCalendars(String query, String sort, LimitOffset limitOffset)
-            throws SearchException;
-
-    /**
-     * Performs a search on supplemental calendars that match that were published on the given year, returning a list of matching floor calendar ids.
-     *
-     * @param year
-     * @param query
-     * @param sort
-     * @return SearchResults<CalendarSupplementalId> a list of supplemental calendar ids that match the given search parameters
-     * @throws SearchException When there is a search related error
-     */
-    public SearchResults<CalendarSupplementalId> searchForSupplementalCalendarsByYear(Integer year, String query, String sort, LimitOffset limitOffset)
-            throws SearchException;
-
-    /**
      * Handles a calendar update event by indexing the updated calendar into the search index
      *
      * @param calendarUpdateEvent
