@@ -25,11 +25,15 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         .when(ctxPath + '/laws', { templateUrl: ctxPath + '/partial/content/law/law-search' })
         .when(ctxPath + '/laws/:lawId', { templateUrl: ctxPath + '/partial/content/law/law-view', reloadOnSearch: false })
 
-        /** --- Transcripts --- */
+        /** --- Members --- */
+        .when(ctxPath + '/members', { templateUrl: ctxPath + '/partial/content/member/member-search', reloadOnSearch: false})
+        .when(ctxPath + '/members/:sessionYear/:memberId', { templateUrl: ctxPath + '/partial/content/member/member-view', reloadOnSearch: false})
 
-        .when(ctxPath + '/transcripts', { templateUrl: ctxPath + '/partial/content/transcript-list', reloadOnSearch: false})
-        .when(ctxPath + '/transcripts/session/:filename', { templateUrl: ctxPath + '/partial/content/session-transcript-view', reloadOnSearch: false})
-        .when(ctxPath + '/transcripts/hearing/:filename', { templateUrl: ctxPath + '/partial/content/hearing-transcript-view'})
+    /** --- Transcripts --- */
+
+        .when(ctxPath + '/transcripts', { templateUrl: ctxPath + '/partial/content/transcript/transcript-list', reloadOnSearch: false})
+        .when(ctxPath + '/transcripts/session/:filename', { templateUrl: ctxPath + '/partial/content/transcript/session-transcript-view', reloadOnSearch: false})
+        .when(ctxPath + '/transcripts/hearing/:filename', { templateUrl: ctxPath + '/partial/content/transcript/hearing-transcript-view'})
 
         /** --- Reports --- */
 
