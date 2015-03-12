@@ -58,7 +58,7 @@ md-card {
     @extend .md-whiteframe-z0;
     @extend .white-bg;
     padding: 0;
-    margin: 10px;
+    margin: 10px 0;
     &.no-margin {
       margin: 0;
     }
@@ -123,10 +123,8 @@ md-input-container {
   }
   #content {
     min-height: 100vh;
-    @media (min-width: 1340px) {
-      .content-card {
-        margin: 10px 0;
-      }
+    .content-section {
+      padding: 0 10px 20px 10px;
     }
   }
 }
@@ -516,7 +514,12 @@ a.slogan-link {
   padding: 5px;
   cursor: pointer;
   &:hover {
-    background: $gray2;
+    .provide-data-icon {
+      background: $gray2;
+    }
+    h1.slogan {
+      color: $blue4;
+    }
   }
 }
 
@@ -535,16 +538,17 @@ a.slogan-link {
 
 .bill-search-refine {
   width: 240px;
-  background: $gray2;
-  margin: 10px 0 10px 10px;
+  background: $gray1;
+  margin: 10px 0 0 0;
+  font-size: 0.9rem;
   h3 {
     background:white;
     font-size: 1rem;
-    padding: 10px;
+    padding: 10px 10px 10px 15px;
     margin: 0;
   }
   .refine-controls {
-    padding: 5px 10px;
+    padding: 5px 10px 5px 15px;
     label {
       margin-top: 8px;
       font-size: 0.9rem;
@@ -552,6 +556,10 @@ a.slogan-link {
     }
     select {
       width: 100%;
+      display:block;
+    }
+    md-checkbox {
+      margin: 10px 2px 0 2px;
     }
   }
 }

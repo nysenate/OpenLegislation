@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <section ng-controller="BillCtrl">
-  <section ng-controller="BillViewCtrl">
+  <section ng-controller="BillViewCtrl" class="content-section">
     <section ng-if="response.success === true" >
       <md-toolbar class="md-toolbar-tools auto-height">
         <h6 style="margin:20px 0;">{{bill.title}}</h6>
@@ -421,7 +421,7 @@
           <md-list ng-repeat="update in updateHistory.items">
             <md-item>
               <md-item-content>
-                <div class="md-tile-content">
+                <div class="md-tile-content" style="padding:0;">
                   <md-card class="content-card">
                     <md-subheader>
                       <span>{{update.action}} - {{update.scope}}</span>

@@ -1,5 +1,12 @@
 var coreModule = angular.module('open.core', []);
 
+coreModule.factory('MemberApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/members/:sessionYear/:chamber?limit=1000', {
+        sessionYear: '@sessionYear',
+        chamber: '@chamber'
+    });
+}]);
+
 coreModule.filter('default', ['$filter', function($filter) {
     return function(input, defaultVal) {
         return (!input) ? defaultVal : input;

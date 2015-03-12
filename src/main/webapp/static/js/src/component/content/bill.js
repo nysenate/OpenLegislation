@@ -60,10 +60,12 @@ billModule.factory('BillDiffApi', ['$resource', function($resource) {
 
 /** --- Parent Bill Controller --- */
 
-billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route', '$routeParams',
-                       function($scope, $rootScope, $location, $route, $routeParams) {
+billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route', '$routeParams', 'MemberApi',
+                       function($scope, $rootScope, $location, $route, $routeParams, MemberApi) {
     $scope.setHeaderVisible(true);
     $scope.selectedView = (parseInt($routeParams.view, 10) || 0);
+    $scope.senators = [];
+    $scope.assemblyMembers = [];
 
     /** Watch for changes to the current view. */
     $scope.$watch('selectedView', function(n, o) {
@@ -76,6 +78,20 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
     $scope.$on('$locationChangeSuccess', function() {
         $scope.selectedView = $location.search().view || 0;
     });
+
+    $scope.init = function() {
+        var membersResponse = MemberApi.get({sessionYear: 2015, chamber: ''}, function() {
+            var members = membersResponse.result.items;
+            angular.forEach(members, function(m){
+                if (m.chamber === 'SENATE') {
+                    $scope.senators.push(m);
+                }
+                else {
+                    $scope.assemblyMembers.push(m);
+                }
+            });
+        });
+    }();
 
     $scope.getStatusDesc = function(status) {
         var desc = "";
@@ -108,11 +124,27 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         searching: false,
         pagination: angular.extend({}, PaginationModel)
     };
-    $scope.curr.pagination.itemsPerPage = 10;
+    $scope.curr.pagination.itemsPerPage = 6;
+
+    var defaultRefine = {
+        sort: '',
+        session: 2015,
+        chamber: '',
+        type: '',
+        sponsor: '',
+        status: '',
+        hasVotes: false,
+        isSigned: false,
+        isGovProg: false,
+        isRefined: false // Set to true if this model is updated
+    };
 
     $scope.billSearch = {
         searched: false,
         term: $routeParams.search || '',
+        refine: angular.extend({}, defaultRefine),
+        refineQuery: '',
+        sort: '',
         response: {},
         results: [],
         error: false
@@ -136,8 +168,9 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                 $scope.curr.pagination.currPage = 1;
                 $location.search('searchPage', 1);
             }
+            var query = $scope.applyRefineToQuery();
             $scope.billSearch.response = BillSearch.get({
-                term: term, sort: $scope.billSearch.sort, limit: $scope.curr.pagination.getLimit(),
+                term: query, sort: $scope.billSearch.sort, limit: $scope.curr.pagination.getLimit(),
                 offset: $scope.curr.pagination.getOffset()},
                 function() {
                     if ($scope.billSearch.response && $scope.billSearch.response.success) {
@@ -169,19 +202,46 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         }
     };
 
-    /**
-     * Gets the full bill view for a specified printNo and session year.
-     * @param printNo {string}
-     * @param session {int}
-     */
-    $scope.getBill = function(printNo, session) {
-        if (printNo && session) {
-            $scope.billViewResult = BillView.get({printNo: printNo, session: session}, function() {
-                if ($scope.billViewResult.success) {
-                    $scope.billView = $scope.billViewResult.result;
-                }
-            });
+    $scope.applyRefineToQuery = function() {
+        var refineQuery = '(' + $scope.billSearch.term + ')';
+        var refine = $scope.billSearch.refine;
+        $scope.billSearch.sort = refine.sort;
+        if (refine.session) {
+            refineQuery += ' AND session:' + refine.session;
         }
+        if (refine.chamber) {
+            refineQuery += ' AND billType.chamber:' + refine.chamber;
+        }
+        // Bill type
+        if (refine.type === 'bills') {
+            refineQuery += ' AND billType.resolution:false';
+        }
+        else if (refine.type === 'resolutions') {
+            refineQuery += ' AND billType.resolution:true';
+        }
+        // Bill Sponsor
+        if (refine.sponsor) {
+            refineQuery += ' AND sponsor.member.memberId:' + refine.sponsor;
+        }
+        // Bill status
+        if (refine.status) {
+            refineQuery += ' AND status.statusType:"' + refine.status + '"';
+        }
+        if (refine.hasVotes) {
+            refineQuery += ' AND votes.size:>0';
+        }
+        if (refine.isSigned) {
+            refineQuery += ' AND (signed:true OR adopted:true)'
+        }
+        if (refine.isGovProg) {
+            refineQuery += ' AND programInfo.name:Governor'
+        }
+        return refineQuery;
+    };
+
+    /** Reset the refine filters. */
+    $scope.resetRefine = function() {
+        $scope.billSearch.refine = angular.extend({}, defaultRefine);
     };
 
     /** Watch for changes to the current search page. */
@@ -190,6 +250,13 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
             $location.search('searchPage', newPage);
             $scope.simpleSearch();
          }
+    });
+
+    $scope.$watchCollection('billSearch.refine', function(n, o) {
+        if (!angular.equals(n, o)) {
+            $scope.billSearch.refine.isRefined = !angular.equals(n, defaultRefine);
+            $scope.simpleSearch();
+        }
     });
 
     $scope.init();

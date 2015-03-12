@@ -107,7 +107,7 @@ public class DataProcessCtrl extends BaseCtrl
      *
      * Expected Output: DataProcessRunDetailView
      */
-    @RequestMapping("/runs/{id:[0-9]+}")
+    @RequestMapping("/runs/id/{id:[0-9]+}")
     public BaseResponse getRuns(@PathVariable int id, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, 100);
         Optional<DataProcessRun> run = processLogs.getRun(id);

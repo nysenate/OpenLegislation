@@ -76,6 +76,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         bill.setPublishStatuses(getBillAmendPublishStatuses(baseParams));
         // Get the sponsor
         bill.setSponsor(getBillSponsor(baseParams));
+        // Get any additional sponsors
+        bill.setAdditionalSponsors(getAdditionalSponsors(baseParams));
         // Get the milestones
         bill.setMilestones(getBillMilestones(baseParams));
         // Get the actions
@@ -267,6 +269,20 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
         catch (EmptyResultDataAccessException ex) {
             return null;
+        }
+    }
+
+    /**
+     * Get any additional sponsors that were manually entered into the database.
+     */
+    public List<Member> getAdditionalSponsors(ImmutableParams baseParams) {
+        try {
+            OrderBy orderBy = new OrderBy("sequence_no", SortOrder.ASC);
+            return jdbcNamed.query(SqlBillQuery.SELECT_ADDTL_BILL_SPONSORS.getSql(schema(), orderBy, LimitOffset.ALL),
+                    baseParams, new BillMemberRowMapper(memberService));
+        }
+        catch (EmptyResultDataAccessException ex) {
+            return new ArrayList<>();
         }
     }
 
@@ -719,7 +735,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         public BillSponsor mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillSponsor sponsor = new BillSponsor();
             int sessionMemberId = rs.getInt("session_member_id");
-            SessionYear sessionYear = getSessionYearFromRs(rs, "bill_session_year");
             sponsor.setBudget(rs.getBoolean("budget_bill"));
             sponsor.setRules(rs.getBoolean("rules_sponsor"));
             if (sessionMemberId > 0) {

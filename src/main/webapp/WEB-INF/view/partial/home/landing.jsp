@@ -21,11 +21,11 @@
         <md-item-content ng-click="go(provideData.url)">
           <div class="md-tile-left">
             <div class="provide-data-icon">
-              <i ng-class="provideData.icon"></i>
+              <i ng-class="provideData.icon" class="blue-gray1"></i>
             </div>
           </div>
           <div class="md-tile-content margin-left-20">
-            <h3 style="text-decoration: underline;" class="no-margin bold">{{provideData.type}}</h3>
+            <h3 style="border-bottom:1px solid #ccc;padding-bottom: 5px;" class="no-margin bold">{{provideData.type}}</h3>
             <h4>{{provideData.blurb}}</h4>
           </div>
         </md-item-content>
