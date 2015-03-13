@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class NotificationSummaryView implements ViewObject{
 
-    protected int id;
+    protected long id;
     protected NotificationType type;
     protected LocalDateTime occurred;
     protected String summary;
@@ -20,7 +20,7 @@ public class NotificationSummaryView implements ViewObject{
         this.summary = notification.getSummary();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

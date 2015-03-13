@@ -1,9 +1,10 @@
-package gov.nysenate.openleg.service.notification;
+package gov.nysenate.openleg.service.notification.dispatch;
 
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationTarget;
+import gov.nysenate.openleg.service.notification.dispatch.BaseNotificationSender;
 import gov.nysenate.openleg.service.slack.SlackChatService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

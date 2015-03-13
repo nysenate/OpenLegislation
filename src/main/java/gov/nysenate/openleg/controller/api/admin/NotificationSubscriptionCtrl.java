@@ -10,7 +10,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationTarget;
 import gov.nysenate.openleg.model.notification.NotificationType;
-import gov.nysenate.openleg.service.notification.NotificationSubscriptionDataService;
+import gov.nysenate.openleg.service.notification.subscription.NotificationSubscriptionDataService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

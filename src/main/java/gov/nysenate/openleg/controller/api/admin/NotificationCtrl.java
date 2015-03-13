@@ -2,18 +2,22 @@ package gov.nysenate.openleg.controller.api.admin;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.DateRangeListViewResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
+import gov.nysenate.openleg.client.view.base.SearchResultView;
 import gov.nysenate.openleg.client.view.notification.NotificationSummaryView;
 import gov.nysenate.openleg.client.view.notification.NotificationView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
-import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.notification.NotificationDao;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
+import gov.nysenate.openleg.model.search.SearchResult;
+import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.notification.data.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -32,7 +36,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class NotificationCtrl extends BaseCtrl
 {
     @Autowired
-    private NotificationDao notificationDao;
+    private NotificationService notificationService;
 
     /**
      * Single Notification Retrieval API
@@ -46,7 +50,7 @@ public class NotificationCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{id:\\d+}")
     public BaseResponse getNotification(@PathVariable int id) {
-        return new ViewObjectResponse<>(new NotificationView(notificationDao.getNotification(id)));
+        return new ViewObjectResponse<>(new NotificationView(notificationService.getNotification(id)));
     }
 
     /**
@@ -98,6 +102,32 @@ public class NotificationCtrl extends BaseCtrl
         return getNotificationsDuring(fromDate, toDate, request);
     }
 
+    /**
+     * Notification Search API
+     * -----------------------
+     *
+     * Search across all notifications:  (GET) /api/3/admin/notifications/search
+     * Request Parameters:  term - The lucene query string
+     *                      sort - The lucene sort string (blank by default)
+     *                      full - Set to true to retrieve full notification responses (false by default)
+     *                      limit - Limit the number of results (default 25)
+     *                      offset - Start results from offset
+     */
+    @RequestMapping(value = "/search")
+    public BaseResponse searchForNotifications(@RequestParam(required = true) String term,
+                                               @RequestParam(defaultValue = "") String sort,
+                                               WebRequest request) {
+        LimitOffset limitOffset = getLimitOffset(request, 25);
+        boolean full = getBooleanParam(request, "full", false);
+        SearchResults<RegisteredNotification> results = notificationService.notificationSearch(term, sort, limitOffset);
+        return ListViewResponse.of(results.getResults().stream()
+                .map(r -> new SearchResultView(
+                        full ? new NotificationView(r.getResult())
+                                : new NotificationSummaryView(r.getResult()),
+                        r.getRank()))
+                .collect(Collectors.toList()), results.getTotalResults(), limitOffset);
+    }
+
 
     /** --- Internal --- */
 
@@ -107,10 +137,10 @@ public class NotificationCtrl extends BaseCtrl
         SortOrder order = getSortOrder(request, SortOrder.DESC);
         boolean full = getBooleanParam(request, "full", false);
         PaginatedList<RegisteredNotification> results =
-                notificationDao.getNotifications(getNotificationTypes(request), dateRange, order, limOff);
-        return ListViewResponse.of(results.getResults().stream().map(
+                notificationService.getNotificationList(getNotificationTypes(request), dateRange, order, limOff);
+        return DateRangeListViewResponse.of(results.getResults().stream().map(
                 (full) ? NotificationView::new : NotificationSummaryView::new)
-                .collect(Collectors.toList()), results.getTotal(), limOff);
+                .collect(Collectors.toList()), dateRange, results.getTotal(), limOff);
     }
 
     private Set<NotificationType> getNotificationTypes(WebRequest request) {

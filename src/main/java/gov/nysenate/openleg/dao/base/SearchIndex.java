@@ -12,7 +12,8 @@ public enum SearchIndex
     TRANSCRIPT("transcripts"),
     HEARING("hearings"),
     LAW("laws"),
-    MEMBER("members")
+    MEMBER("members"),
+    NOTIFICATION("notifications"),
     ;
 
     String indexName;

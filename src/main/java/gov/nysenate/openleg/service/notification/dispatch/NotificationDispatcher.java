@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.notification;
+package gov.nysenate.openleg.service.notification.dispatch;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -8,6 +8,8 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.notification.NotificationDao;
 import gov.nysenate.openleg.model.notification.*;
+import gov.nysenate.openleg.service.notification.data.NotificationService;
+import gov.nysenate.openleg.service.notification.subscription.NotificationSubscriptionDataService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -28,7 +30,7 @@ public class NotificationDispatcher {
     private Environment environment;
 
     @Autowired
-    private NotificationDao notificationDao;
+    private NotificationService notificationService;
 
     @Autowired
     private NotificationSubscriptionDataService subscriptionDataService;
@@ -65,7 +67,7 @@ public class NotificationDispatcher {
 
     @Subscribe
     public void handleNotificationEvent(Notification notification) {
-        RegisteredNotification registeredNotification = notificationDao.registerNotification(notification);
+        RegisteredNotification registeredNotification = notificationService.registerNotification(notification);
         dispatchNotification(registeredNotification);
     }
 

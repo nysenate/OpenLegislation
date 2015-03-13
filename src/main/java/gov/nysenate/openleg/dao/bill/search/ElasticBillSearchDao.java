@@ -10,21 +10,17 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
-import org.elasticsearch.search.rescore.Rescorer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +43,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, RescoreBuilder.Rescorer rescorer,
                                                  String sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
-            getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer , sort, limOff);
+            getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer , sort, limOff, false);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Bill search result with query {} took {} ms", query, response.getTookInMillis());
         return getSearchResults(response, limOff, this::getBaseBillIdFromHit);

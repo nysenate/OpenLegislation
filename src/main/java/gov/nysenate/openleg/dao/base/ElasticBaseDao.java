@@ -16,7 +16,6 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -75,11 +74,11 @@ public abstract class ElasticBaseDao
      * @see #getSearchRequest(String, org.elasticsearch.index.query.QueryBuilder,
      *                        org.elasticsearch.index.query.FilterBuilder, String, LimitOffset)
      *
-     * Highlighting and rescoring are not supported via this method.
+     * Highlighting, rescoring, and full source response are not supported via this method.
      */
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
                                                     String sort, LimitOffset limitOffset) {
-        return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset);
+        return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset, false);
     }
 
     /**
@@ -92,11 +91,12 @@ public abstract class ElasticBaseDao
      * @param rescorer - Optional rescorer that can be used to fine tune the query ranking.
      * @param sort - String to specify how results should be sorted, (e.g. field1:ASC, field2:DESC)
      * @param limitOffset - Restrict the number of results returned as well as paginate.
+     * @param fetchSource - Will return the indexed source fields when set to true
      * @return SearchRequestBuilder
      */
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
                                                     List<HighlightBuilder.Field> highlightedFields, RescoreBuilder.Rescorer rescorer,
-                                                    String sort, LimitOffset limitOffset) {
+                                                    String sort, LimitOffset limitOffset, boolean fetchSource) {
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(query)
@@ -104,7 +104,7 @@ public abstract class ElasticBaseDao
                 .setFrom(limitOffset.getOffsetStart() - 1)
                 .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : -1)
                 .setMinScore(0.05f)
-                .setFetchSource(false);
+                .setFetchSource(fetchSource);
         if (highlightedFields != null) {
             highlightedFields.stream().forEach(field -> searchBuilder.addHighlightedField(field));
         }
