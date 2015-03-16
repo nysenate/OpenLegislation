@@ -109,13 +109,17 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
     // Loads a calendar according to the specified year and calendar number
     $scope.getCalendarViewById = function (calendarYear, calendarNo) {
         console.log('loading calendar', calendarYear, calendarNo);
-        var response = CalendarViewApi.get(
+        $scope.calendarResponse = CalendarViewApi.get(
             {year: calendarYear, calNo: calendarNo }, function() {
-                if (response.success) {
-                    $scope.calendarView = response.result;
+                if ($scope.calendarResponse.success === true) {
+                    console.log('received successful calendar response');
+                    $scope.calendarView = $scope.calendarResponse.result;
                     processNewCalendarView();
                 }
-            });
+            }, function(response) {
+            $scope.setHeaderText(response.data.message);
+            $scope.calendarResponse = response.data;
+        });
     };
 
     // Loads the most recent calendar

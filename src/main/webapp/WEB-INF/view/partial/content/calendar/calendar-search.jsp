@@ -107,8 +107,9 @@
             <tr><td>Calendar Number</td><td>calendarNumber</td><td>number</td><td>calendarNumber:13</td></tr>
             <tr><td>Calendar Date</td><td>calDate</td><td>date</td><td>calDate:2015-03-03<br/>calDate:[2015-03-01 TO 2015-03-10]</td></tr>
             <tr><td>Release Date/Time</td><td>releaseDateTime</td><td>date-time</td><td>releaseDateTime:2015-03-03<br/>releaseDateTime:[2015-03-01 TO 2015-03-10]</td></tr>
-            <tr><td>Active List Count</td><td>activeLists.size</td><td>number</td><td>activeLists.size:>0</td></tr>
+            <tr><td>Active List Present</td><td>activeLists.size</td><td>number</td><td>activeLists.size:>0</td></tr>
             <tr style="background:#f1f1f1;"><td colspan="4"><strong>The fields below are associated with calendar bill entries and are always prefixed with '\*.'</strong></td> </tr>
+            <tr><td>Bill field on active list</td><td>activeLists\*.anyBillField</td><td></td><td>activeLists\*.title:acupuncture</td></tr>
             <tr><td>Bill Print No.</td><td>\*.printNo</td><td>string</td><td>\*.printNo:S1111</td></tr>
             <tr><td>Bill Calendar No.</td><td>\*.billCalNo</td><td>string</td><td>\*.billCalNo:81</td></tr>
             <tr><td>Bill Title</td><td>\*.title</td><td>string</td><td>\*.title:town of Chester</td></tr>
