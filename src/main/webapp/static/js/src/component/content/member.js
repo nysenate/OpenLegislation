@@ -30,18 +30,19 @@ memberModule.controller('MemberSearchCtrl', ['$scope', '$routeParams', '$locatio
             matches: [],
             response: {},
             paginate: angular.extend({}, PaginationModel),
-            doneLoadingResults: false,
             error: false
         };
 
         $scope.searchMembers = function(resetPagination) {
-            $scope.memberSearch.doneLoadingResults = false;
             if (resetPagination) {
                 $scope.memberSearch.paginate.reset();
+                $scope.memberSearch.paginate.itemsPerPage = 10;
+                $location.search('term', $scope.memberSearch.term);
+                $location.search('searchPage', $scope.memberSearch.paginate.currPage);
             }
             $scope.memberSearch.response = MemberSearchApi.get(
                 {
-                    term: $scope.memberSearch.term,
+                    term: addDefaultSessionYearToSearchTerm(),
                     limit: $scope.memberSearch.paginate.getLimit(),
                     offset: $scope.memberSearch.paginate.getOffset()
                 },
@@ -50,39 +51,100 @@ memberModule.controller('MemberSearchCtrl', ['$scope', '$routeParams', '$locatio
                         $scope.memberSearch.error = false;
                         $scope.memberSearch.matches = $scope.memberSearch.response.result.items || [];
                         $scope.memberSearch.paginate.setTotalItems($scope.memberSearch.response.total);
-                        $scope.memberSearch.doneLoadingResults = true;
                     }
                     else {
                         $scope.memberSearch.error = true;
                         $scope.memberSearch.matches = [];
-                        $scope.memberSearch.paginate.setTotalItems($scope.memberSearch.response.total);
                     }
                 })
         };
 
+        /* Add the current session year to the search term if none was specified. */
+        var addDefaultSessionYearToSearchTerm = function() {
+            if ($scope.memberSearch.term.indexOf("sessionYear") == -1) {
+                var currentSessionYear = new Date().getFullYear();
+                return $scope.memberSearch.term + " sessionYear:" + currentSessionYear;
+            }
+            else {
+                return $scope.memberSearch.term;
+            }
+        };
+
         $scope.changePage = function(newPageNumber) {
             $scope.memberSearch.paginate.currPage = newPageNumber;
+            $location.search('searchPage', $scope.memberSearch.paginate.currPage);
             $scope.searchMembers(false);
         };
 
         $scope.$on('$locationChangeSuccess', function() {
             $scope.memberSearch.term = $location.search().term;
             $scope.memberSearch.paginate.currPage = $location.search().searchPage;
-            if ($scope.memberSearch.doneLoadingResults) {
+            if ($scope.memberSearch.term) {
                 $scope.searchMembers(false);
             }
         });
 
-        $scope.$watch('memberSearch.term', function() {
-           $location.search('term', $scope.memberSearch.term);
-        });
-
-        $scope.$watch('memberSearch.paginate.currPage', function() {
-            $location.search('searchPage', $scope.memberSearch.paginate.currPage);
-        });
-
     }]);
 
+memberModule.controller('MemberBrowseCtrl', ['$scope', '$routeParams', 'MemberSearchApi',
+    function($scope, $routeParams, MemberSearchApi) {
+
+        $scope.sessionYears = [2015, 2013, 2011, 2009];
+        $scope.memberBrowse = {
+            response: {},
+            results: [],
+            filter: "",
+            senateSelected: true,
+            assemblySelected: false,
+            sessionYear: 2015
+        };
+
+        $scope.filterMembers = function() {
+            $scope.memberBrowse.response = MemberSearchApi.get(
+                {
+                    term: $scope.buildQuery(),
+                    limit: 999,
+                    offset: 0
+                },
+                function () {
+                    if ($scope.memberBrowse.response && $scope.memberBrowse.response.success) {
+                        $scope.memberBrowse.results = $scope.memberBrowse.response.result.items || [];
+                    }
+                    else {
+                        $scope.memberSearch.matches = [];
+                    }
+                })
+        };
+
+        $scope.buildQuery = function() {
+            var query = $scope.memberBrowse.filter;
+            if ($scope.memberBrowse.filter) {
+               query += " AND ";
+            }
+            if ($scope.memberBrowse.senateSelected && $scope.memberBrowse.assemblySelected) {
+                query += "chamber:senate OR chamber:assembly";
+            }
+            else if ($scope.memberBrowse.senateSelected) {
+               query += "chamber:senate";
+            }
+            else if ($scope.memberBrowse.assemblySelected) {
+                query += "chamber:assembly";
+            }
+            query += " AND sessionYear:" + $scope.memberBrowse.sessionYear;
+            return query;
+        };
+
+        $scope.$watch('memberBrowse.sessionYear', function() {
+            $scope.filterMembers();
+        });
+
+        $scope.init = function() {
+            $scope.filterMembers();
+        };
+
+        $scope.init();
+
+    }]);
 
 memberModule.controller('MemberViewCtrl', ['$scope', '$routeParams', 'MemberViewApi',
     function($scope, $routeParams, MemberViewApi) {
@@ -106,3 +168,12 @@ memberModule.controller('MemberViewCtrl', ['$scope', '$routeParams', 'MemberView
 
         $scope.init();
 }]);
+
+
+memberModule.filter('capitalize', function() {
+    return function(term) {
+        if (term) {
+            return term.charAt(0).toUpperCase() + term.slice(1).toLowerCase();
+        }
+    };
+});
