@@ -24,8 +24,9 @@
                 <div ng-bind="calEntry.title" class="truncate-text"></div>
                 <div layout="row" hide-sm style="height: 40px">
                     <div style="overflow: hidden">
-                        <img style="width: 40px; height: 52px;"
-                             ng-src="${ctxPath}/static/img/business_assets/members/mini/{{calEntry.sponsor.member.imgName}}"/>
+                        <img style="max-width: 40px; max-height: 52px;"
+                             ng-src="${ctxPath}/static/img/business_assets/members/mini/{{calEntry.sponsor.member.imgName}}"
+                             err-src="${ctxPath}/static/img/NYSS_seal_fancy.jpg"/>
                     </div>
                     <span class="margin-left-10">
                         <span ng-if="calEntry.sponsor.member">

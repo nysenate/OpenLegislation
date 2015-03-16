@@ -175,6 +175,28 @@ coreModule.directive('updateList', ['PaginationModel', function(PaginationModel)
 }]);
 
 /**
+ * Image Error Placeholder
+ *
+ * When set on an img tag, changes the src to a placeholder value if an error occurs while loading the image.
+ *
+ * Usage
+ * -----
+ * <img ng-src="imageURL" err-src="placeHolderURL"/>
+ */
+coreModule.directive('errSrc', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.bind('error', function() {
+                if (attrs.src != attrs.errSrc) {
+                    attrs.$set('src', attrs.errSrc);
+                }
+            });
+        }
+    }
+});
+
+/**
  * Update Id
  *
  * Generates a content id string for an update based on its scope
