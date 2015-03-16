@@ -5,10 +5,7 @@ OpenLegislation
 
 Dual BSD/GPL License. See the NYSenate `licensing page`_.
 
-This is the Java Web app project for the open-source legislative access system developed by the NY Senate beginning in 2009. It provides both a HTML-based browser and search interface, as well as XML and JSON-based RESTful APIs. It has been running live on NYSenate.gov for about 2 years now on our `legislation page`_ and is also used internally to support several applications.
-
-Developers looking to use the API can consult our `API Documentation`_ for more information or contact us on the NYSenate Developers `mailing list`_ or in #nyss_openlegislation channel on `FreeNode`_ (IRC).
-
+This is the Java Web app project for the open-source legislative access system developed by the NY Senate beginning in 2009. It provides both a HTML-based browser and search interface, as well as XML and JSON-based RESTful APIs.
 
 .. _API Documentation: http://openlegislation.readthedocs.org
 .. _legislation page: http://open.nysenate.gov/legislation
@@ -16,15 +13,17 @@ Developers looking to use the API can consult our `API Documentation`_ for more 
 .. _mailing list: http://groups.google.com/group/nyss-dev
 .. _licensing page: http://open.nysenate.gov/legislation/license/
 
-
 Current Senate Developers
 ---------------------------
 
+* Ash Islam <islam@nysenate.gov>
+* Kevin Caseiras <caseiras@nysenate.gov>
+* Sam Stouffer <stouffer@nysenate.gov>
 * Ken Zalewski <zalewski@nysenate.gov>
-* Graylin Kim <kim@nysenate.gov>
 
 Past Developers
 --------------------
 
 * Nathan Freitas <nathanfreitas@gmail.com>
 * Jared Williams <jared.mi.williams@gmail.com>
+* Graylin Kim <kim@nysenate.gov>
