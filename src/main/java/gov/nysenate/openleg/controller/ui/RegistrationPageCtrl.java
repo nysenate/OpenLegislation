@@ -32,10 +32,11 @@ public class RegistrationPageCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/token/{regToken}", method = RequestMethod.GET)
     public String index(@PathVariable String regToken) {
-        logger.info("Token: " +regToken);
         try {
             apiUserService.activateUser(regToken);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
+            logger.error("There was an issue with activating a user's reg token!", e);
         }
         return "register";
     }
@@ -45,7 +46,10 @@ public class RegistrationPageCtrl extends BaseCtrl
     public BaseResponse signup(WebRequest webRequest, @RequestBody Map<String, String> body) {
         String email = body.get("email");
         String name =  body.get("name");
-        logger.info("Signing up {} with email {}", name, email);
+        logger.info("{} with email {} is registering for an API key.", name, email);
+        if (email == null) {
+            return new SimpleResponse(false, "Email must be valid.", "api-signup");
+        }
         try {
             ApiUser apiUser = apiUserService.registerNewUser(email, name, "");
             return new SimpleResponse(true, apiUser.getName() + " has been registered.", "api-signup");

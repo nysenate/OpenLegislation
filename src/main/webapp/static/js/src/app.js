@@ -63,7 +63,6 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
 openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.setHeaderVisible(true);
     $scope.setHeaderText('');
-    $scope.email = '';
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'Discover current and prior legislation that impacts New York State.',
           icon: 'icon-newspaper', url: ctxPath + '/bills'},
@@ -84,23 +83,30 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
           icon: 'icon-users', url: ctxPath + '/members'}
     ];
 
+    /** Api Key Registration */
     $scope.signedup = false;
-
+    $scope.email = '';
     $scope.signup = function() {
-        $scope.errmsg = "";
-        $scope.processing = true;
-
-        $http.post(ctxPath + "/register/signup", {name:$scope.name, email:$scope.email}).success(function(data, status, headers, config) {            if (data.success == false) {
-                $scope.errmsg = data.message;
-
-            } else {
-                $scope.signedup = true;
-            }
-            $scope.processing = false;
-        })
+        $scope.errmsg = '';
+        if ($scope.email && $scope.email.indexOf('@') > -1) {
+            $scope.processing = true;
+            $http.post(ctxPath + "/register/signup", {name:$scope.name, email:$scope.email})
+            .success(function(data, status, headers, config) {
+                if (data.success == false) {
+                    $scope.errmsg = data.message;
+                }
+                else {
+                    $scope.signedup = true;
+                }
+                $scope.processing = false;
+            })
             .error(function(data, status, headers, config) {
                 $scope.processing = false;
             });
+        }
+        else {
+            $scope.errmsg = 'Please enter a valid email!';
+        }
     };
 }]);
 
