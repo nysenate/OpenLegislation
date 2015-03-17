@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <section ng-controller="AgendaCtrl">
-  <section>
+  <section class="content-section">
     <md-tabs md-selected="curr.selectedView" class="md-primary">
       <md-tab>
         <md-tab-label>

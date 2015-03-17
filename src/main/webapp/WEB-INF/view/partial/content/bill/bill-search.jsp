@@ -10,7 +10,7 @@
       <md-tab>
         <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
         <md-divider></md-divider>
-        <section ng-controller="BillSearchCtrl" class="margin-top-10">
+        <section ng-if="selectedView === 0" ng-controller="BillSearchCtrl" class="margin-top-10">
           <form name="bill-search-form">
             <md-content class="relative padding-20">
               <md-input-container class="md-primary">
@@ -103,7 +103,7 @@
                        dir-paginate="r in billSearch.results | itemsPerPage: 6"
                        total-items="billSearch.response.total" current-page="curr.pagination.currPage"
                        ng-init="bill = r.result; highlights = r.highlights;" pagination-id="bill-search"
-                       ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
+                       ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&searchPage={{curr.pagination.currPage}}">
                       <md-item>
                         <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
                           <div hide-sm>
@@ -225,10 +225,10 @@
       <md-tab>
         <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
         <md-divider></md-divider>
-        <section ng-controller="BillUpdatesCtrl">
+        <section ng-if="selectedView === 1" ng-controller="BillUpdatesCtrl">
           <md-card class="content-card">
             <md-subheader>Show bill updates during the following date range</md-subheader>
-            <div layout="row" class="padding-20">
+            <div layout="row" class="padding-20 text-medium">
               <div flex>
                 <label>With </label>
                 <select class="margin-left-10" ng-model="curr.type">
@@ -238,15 +238,15 @@
               </div>
               <div flex>
                 <label>From</label>
-                <input class="margin-left-10" ng-model="curr.fromDate" type="date">
+                <input class="margin-left-10" ng-model="curr.fromDate" type="datetime-local">
               </div>
               <div flex>
                 <label>To</label>
-                <input class="margin-left-10" ng-model="curr.toDate" type="date">
+                <input class="margin-left-10" ng-model="curr.toDate" type="datetime-local">
               </div>
             </div>
             <md-divider></md-divider>
-            <div layout="row" class="padding-20">
+            <div layout="row" class="padding-20 text-medium">
               <div flex>
                 <label>Type </label>
                 <select class="margin-left-10" ng-model="curr.filter">
@@ -364,7 +364,7 @@
         <md-tab-label>
           <i class="icon-question prefix-icon2"></i>About
         </md-tab-label>
-        <section class="padding-20 margin-top-20 text-medium white-bg">
+        <section ng-if="selectedView === 2" class="padding-20 margin-top-20 text-medium white-bg">
           <h4>The Basics</h4>
           <p>A <strong>bill</strong> is a formal proposal to add, amend,
             or repeal a body of law whereas a <strong>resolution</strong> is an official document of
@@ -388,6 +388,8 @@
             <li>Veto</li>
             <li>Signed Into Law</li>
           </ul>
+
+          TODO..
         </section>
       </md-tab>
     </md-tabs>

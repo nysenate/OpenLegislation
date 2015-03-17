@@ -10,7 +10,7 @@
   <md-item dir-paginate="update in updateResponse.result.items | itemsPerPage: updateResponse.limit"
          current-page="pagination.currPage" total-items="updateResponse.total">
     <md-item-content>
-      <div class="md-tile-content">
+      <div class="md-tile-content" style="padding:0;">
         <md-card class="content-card">
           <md-subheader>
             <span class="capitalize">

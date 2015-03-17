@@ -1,14 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
-<section ng-controller="CalendarSearchPageCtrl" ng-init="setHeaderVisible(true)">
+<section class="content-section" ng-controller="CalendarSearchPageCtrl" ng-init="setHeaderVisible(true)">
   <md-tabs class="md-primary" md-selected="activeIndex">
-
     <md-tab md-on-select="setCalendarHeaderText()">
       <md-tab-label>
         <i class="icon-search prefix-icon2"></i>Search
       </md-tab-label>
-      <section ng-if="pageNames[activeIndex] === 'search'" ng-controller="CalendarSearchCtrl">
+      <section class="margin-top-10" ng-if="pageNames[activeIndex] === 'search'" ng-controller="CalendarSearchCtrl">
         <form name="calendar-search-form">
           <md-content class="padding-20">
             <md-input-container class="md-primary">
@@ -136,8 +135,8 @@
     <md-tab md-on-select="setCalendarHeaderText()">
       <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
       <section ng-if="pageNames[activeIndex] === 'updates'" ng-controller="CalendarFullUpdatesCtrl">
-        <md-card>
-          <md-card-content class="padding-20">
+        <md-card class="content-card">
+          <md-card-content>
             <div layout="row">
               <label class="margin-right-10">Calendar updates from</label>
               <input type="datetime-local" ng-model="updateOptions.fromDateTime" class="margin-right-10">
