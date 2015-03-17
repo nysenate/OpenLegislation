@@ -251,7 +251,7 @@
                 <label>Type </label>
                 <select class="margin-left-10" ng-model="curr.filter">
                   <option value="">All</option>
-                  <option value="published_bill">Published</option>
+                  <option value="published_bill">Newly Published</option>
                   <option value="action">Action</option>
                   <option value="active_version">Active Version</option>
                   <option value="approval">Approval Memo</option>
@@ -291,7 +291,7 @@
                 between {{billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.toDate | moment:'llll'}}
               </div>
             </md-subheader>
-            <div class="subheader">
+            <div class="subheader" ng-show="billUpdates.total > 0">
               <div flex style="text-align: right;">
                 <dir-pagination-controls pagination-id="bill-updates" boundary-links="true"></dir-pagination-controls>
               </div>
@@ -347,7 +347,7 @@
                 <md-divider></md-divider>
               </div>
             </md-list>
-            <div class="subheader">
+            <div class="subheader" ng-show="billUpdates.total > 0">
               <div flex style="text-align: right;">
                 <dir-pagination-controls pagination-id="bill-updates" boundary-links="true"></dir-pagination-controls>
               </div>

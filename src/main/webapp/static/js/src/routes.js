@@ -10,8 +10,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         /** --- Agendas --- */
 
-        .when(ctxPath + '/agendas/', { templateUrl: ctxPath + '/partial/content/agenda/agenda-search' })
-        .when(ctxPath + '/agendas/:year/', { templateUrl: ctxPath + '/partial/content/agenda/agenda-search' })
+        .when(ctxPath + '/agendas/', { templateUrl: ctxPath + '/partial/content/agenda/agenda-search', reloadOnSearch: false})
         .when(ctxPath + '/agendas/:year/:agendaNo', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view' })
         .when(ctxPath + '/agendas/:year/:agendaNo/:committee', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view' })
 

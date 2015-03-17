@@ -32,9 +32,11 @@ billModule.factory('BillAggUpdatesApi', ['$resource', function($resource) {
 }]);
 
 billModule.factory('BillGetApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/bills/:session/:printNo?detail=true', {
+    return $resource(apiPath + '/bills/:session/:printNo?view=:view&version=:version', {
         session: '@session',
-        printNo: '@printNo'
+        printNo: '@printNo',
+        view: '@view',
+        version: '@version'
     });
 }]);
 
@@ -63,9 +65,9 @@ billModule.factory('BillDiffApi', ['$resource', function($resource) {
 billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route', '$routeParams', 'MemberApi',
                        function($scope, $rootScope, $location, $route, $routeParams, MemberApi) {
     $scope.setHeaderVisible(true);
+    $scope.setHeaderText('Search NYS Legislation');
+
     $scope.selectedView = (parseInt($routeParams.view, 10) || 0);
-    $scope.senators = [];
-    $scope.assemblyMembers = [];
 
     /** Watch for changes to the current view. */
     $scope.$watch('selectedView', function(n, o) {
@@ -78,20 +80,6 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
     $scope.$on('$locationChangeSuccess', function() {
         $scope.selectedView = $location.search().view || 0;
     });
-
-    $scope.init = function() {
-        var membersResponse = MemberApi.get({sessionYear: 2015, chamber: ''}, function() {
-            var members = membersResponse.result.items;
-            angular.forEach(members, function(m){
-                if (m.chamber === 'SENATE') {
-                    $scope.senators.push(m);
-                }
-                else {
-                    $scope.assemblyMembers.push(m);
-                }
-            });
-        });
-    }();
 
     $scope.getStatusDesc = function(status) {
         var desc = "";
@@ -116,10 +104,8 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
 /** --- Bill Search Controller --- */
 
 billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location', '$sce',
-                                        'BillListingApi', 'BillSearchApi', 'PaginationModel',
-                      function($scope, $filter, $routeParams, $location, $sce, BillListing, BillSearch, PaginationModel) {
-    $scope.setHeaderText('Search NYS Legislation');
-
+                                        'MemberApi', 'BillListingApi', 'BillSearchApi', 'PaginationModel',
+                      function($scope, $filter, $routeParams, $location, $sce, MemberApi, BillListing, BillSearch, PaginationModel) {
     $scope.curr = {
         searching: false,
         pagination: angular.extend({}, PaginationModel)
@@ -128,7 +114,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
     var defaultRefine = {
         sort: '',
-        session: 2015,
+        session: '',
         chamber: '',
         type: '',
         sponsor: '',
@@ -150,12 +136,31 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         error: false
     };
 
+    $scope.senators = [];
+    $scope.assemblyMembers = [];
+
     /** Initialize the bill search page. */
     $scope.init = function() {
         if ($scope.selectedView == 0) {
             $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
             $scope.simpleSearch(false);
+            $scope.initMembers();
         }
+    };
+
+    /** Initialize the members listing for the refine panel. */
+    $scope.initMembers = function() {
+        var membersResponse = MemberApi.get({sessionYear: 2015, chamber: ''}, function() {
+            var members = membersResponse.result.items;
+            angular.forEach(members, function(m){
+                if (m.chamber === 'SENATE') {
+                    $scope.senators.push(m);
+                }
+                else {
+                    $scope.assemblyMembers.push(m);
+                }
+            });
+        });
     };
 
     $scope.simpleSearch = function(resetPagination) {
@@ -177,14 +182,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                         $scope.billSearch.error = false;
                         $scope.billSearch.results = $scope.billSearch.response.result.items || [];
                         $scope.billSearch.searched = true;
-                        // Mark highlighted search results as safe html.
-                        angular.forEach($scope.billSearch.results, function(r) {
-                            for (prop in r.highlights) {
-                                if (r.highlights[prop][0]) {
-                                    r.highlights[prop][0] = $sce.trustAsHtml(String(r.highlights[prop][0]));
-                                }
-                            }
-                        });
+                        $scope.markHighlightsAsSafe($scope.billSearch.results);
                         $scope.curr.pagination.setTotalItems($scope.billSearch.response.total);
                         $scope.curr.searching = false;
                     }
@@ -244,6 +242,19 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         $scope.billSearch.refine = angular.extend({}, defaultRefine);
     };
 
+    // Mark highlighted search results as safe html.
+    $scope.markHighlightsAsSafe = function(results) {
+        angular.forEach(results, function(r) {
+            if (r.hasOwnProperty('highlights')) {
+                for (prop in r['highlights']) {
+                    if (r['highlights'][prop][0]) {
+                        r['highlights'][prop][0] = $sce.trustAsHtml(String(r['highlights'][prop][0]));
+                    }
+                }
+            }
+        });
+    };
+
     /** Watch for changes to the current search page. */
     $scope.$watch('curr.pagination.currPage', function(newPage, oldPage) {
         if (newPage !== oldPage) {
@@ -268,10 +279,11 @@ billModule.controller('BillUpdatesCtrl', ['$scope', '$location', 'BillAggUpdates
     function($scope, $location, BillAggUpdatesApi, PaginationModel){
 
     $scope.pagination = angular.extend({}, PaginationModel);
+    $scope.pagination.itemsPerPage = 20;
 
     $scope.curr = {
-        fromDate: moment().subtract(5, 'days').startOf('day').toDate(),
-        toDate: moment().endOf('day').toDate(),
+        fromDate: moment().subtract(5, 'days').startOf('minute').toDate(),
+        toDate: moment().startOf('minute').toDate(),
         type: $location.$$search.type || 'published',
         sortOrder: $location.$$search.sortOrder || 'desc',
         detail: $location.$$search.detail === true,
@@ -291,7 +303,6 @@ billModule.controller('BillUpdatesCtrl', ['$scope', '$location', 'BillAggUpdates
     });
 
     $scope.getUpdates = function() {
-        //console.log("fetching bill updates");
         $scope.billUpdates.fetching = true;
         $scope.billUpdates.response = BillAggUpdatesApi.get({
             from: $scope.curr.fromDate.toISOString(), to: $scope.curr.toDate.toISOString(),
@@ -340,6 +351,8 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
 
     $scope.response = null;
     $scope.bill = null;
+    $scope.loading = false;
+    $scope.fullTextFetched = {}; // Contains a dict of versions to indicate the ones where text was fetched.
     $scope.curr = {
         amdVersion: '',
         compareVersion: 'None',
@@ -354,12 +367,23 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         if (newView !== oldView) {
             $location.search('view', $scope.curr.selectedView);
         }
+        if (newView === 4) { // selected full text tab
+            $scope.fetchFullText();
+        }
+    });
+
+    $scope.$watch('curr.amdVersion', function(newVersion, oldVersion){
+        if (newVersion !== oldVersion && $scope.curr.selectedView === 4) {
+            $scope.fetchFullText();
+        }
     });
 
     $scope.init = function() {
         $scope.session = $routeParams.session;
         $scope.printNo = $routeParams.printNo;
-        $scope.response = BillGetApi.get({printNo: $scope.printNo, session: $scope.session}, function() {
+        $scope.loading = true;
+        $scope.response = BillGetApi.get({printNo: $scope.printNo, session: $scope.session, view: 'with_refs_no_fulltext'},
+        function() {
             if ($scope.response.success) {
                 $scope.bill = $scope.response.result;
                 $scope.setHeaderText('NYS ' + $scope.bill.billType.desc + ' ' +
@@ -367,11 +391,32 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
                     $scope.bill.basePrintNo + '-' + $scope.bill.session);
                 $scope.curr.amdVersion = $scope.bill.activeVersion;
             }
+            $scope.loading = false;
         }, function(response) {
             $scope.setHeaderText(response.data.message);
             $scope.response = response.data;
+            $scope.loading = false;
         });
     }();
+
+    $scope.fetchFullText = function() {
+        if (!$scope.fullTextFetched[$scope.curr.amdVersion]) {
+            $scope.loading = true;
+            var fullTextResponse = BillGetApi.get(
+                {printNo: $scope.printNo, session: $scope.session, view: 'only_fulltext', version: $scope.curr.amdVersion},
+                function() {
+                    if (fullTextResponse.success) {
+                        var version = fullTextResponse.result.version;
+                        var text = fullTextResponse.result.fullText;
+                        $scope.bill.amendments.items[version].fullText = text;
+                        $scope.fullTextFetched[version] = true;
+                    }
+                    $scope.loading = false;
+                }, function() {
+                    $scope.loading = false;
+                });
+        }
+    };
 
     $scope.diffBills = function() {
         if ($scope.curr.compareVersion !== 'None') {

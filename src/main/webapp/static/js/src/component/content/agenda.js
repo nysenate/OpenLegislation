@@ -16,22 +16,86 @@ agendaModule.factory('AgendaGetApi', ['$resource', function($resource){
     });
 }]);
 
-
-agendaModule.controller('AgendaCtrl', ['$scope', '$rootScope', '$location', '$route',
-    function($scope, $rootScope, $location, $route) {
+agendaModule.controller('AgendaCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$route',
+    function($scope, $rootScope, $routeParams, $location, $route) {
         $scope.setHeaderVisible(true);
+        $scope.selectedView = (parseInt($routeParams.view, 10) || 0) % 3;
+
+        /** Watch for changes to the current view. */
+        $scope.$watch('selectedView', function(n, o) {
+            if (n !== o && $location.search().view !== n) {
+                $location.search('view', $scope.selectedView);
+                $scope.$broadcast('viewChange', $scope.selectedView);
+            }
+        });
+
+        $scope.$on('$locationChangeSuccess', function() {
+            $scope.selectedView = $location.search().view || 0;
+        });
+
+
     }
 ]);
 
-agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route',
-    function($scope, $location, $route) {
-        $scope.setHeaderText('Search Senate Agendas');
+agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$routeParams',
+    function($scope, $location, $route, $routeParams) {
+        $scope.tabInit = function() {
+            $scope.setHeaderText('Search Senate Agendas');
+        };
+
+        $scope.agendaSearch = {
+            searched: false,
+            term: $routeParams.search || '',
+            response: {},
+            result: [],
+            error: false
+        };
+
+        $scope.$on('viewChange', function() {
+            $scope.tabInit();
+        });
+
+        $scope.init = function() {
+            $scope.tabInit();
+        };
+
+        $scope.init();
     }
 ]);
 
 agendaModule.controller('AgendaBrowseCtrl', ['$scope', '$rootScope', '$location', '$route',
     function($scope, $rootScope, $location, $route) {
-        $scope.setHeaderText('Browse Senate Agendas');
+        $scope.tabInit = function() {
+            $scope.setHeaderText('Browse Senate Agendas');
+        };
+
+        $scope.$on('viewChange', function() {
+            $scope.tabInit();
+        });
+
+        $scope.init = function() {
+            $scope.tabInit();
+        };
+
+        $scope.init();
+    }
+]);
+
+agendaModule.controller('AgendaUpdatesCtrl', ['$scope', '$rootScope', '$location', '$route',
+    function($scope, $rootScope, $location, $route) {
+        $scope.tabInit = function() {
+            $scope.setHeaderText('View Senate Agenda Updates');
+        };
+
+        $scope.$on('viewChange', function() {
+            $scope.tabInit();
+        });
+
+        $scope.init = function() {
+            $scope.tabInit();
+        };
+
+        $scope.init();
     }
 ]);
 
@@ -52,7 +116,8 @@ agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams'
             });
         };
 
-        $scope.generateVoteLookup = function(){
+        // A vote-lookap map is generated to make it easier to display vote information in the template.
+        $scope.generateVoteLookup = function() {
             angular.forEach($scope.agenda.committeeAgendas.items, function(commAgenda) {
                 angular.forEach(commAgenda.addenda.items, function(commAddendum) {
                     if (commAddendum.hasVotes === true) {
@@ -62,10 +127,6 @@ agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams'
                     }
                 })
             });
-        };
-
-        $scope.test = function(open) {
-            console.log(open);
         };
 
         /** Initialize */

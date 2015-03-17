@@ -99,7 +99,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     private String smartSearch(String query) {
         if (query != null && !query.contains(":")) {
             Matcher matcher = BillId.billIdPattern.matcher(query.replaceAll("\\s", ""));
-            if (matcher.matches()) {
+            if (matcher.find()) {
                 query = String.format("(printNo:%s OR basePrintNo:%s) AND session:%s",
                         matcher.group("printNo"), matcher.group("printNo"), matcher.group("year"));
             }

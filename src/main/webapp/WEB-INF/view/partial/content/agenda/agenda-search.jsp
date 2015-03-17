@@ -2,12 +2,12 @@
 
 <section ng-controller="AgendaCtrl">
   <section class="content-section">
-    <md-tabs md-selected="curr.selectedView" class="md-primary">
+    <md-tabs md-selected="selectedView" class="md-primary">
       <md-tab>
         <md-tab-label>
           <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
         </md-tab-label>
-        <section ng-controller="AgendaSearchCtrl">
+        <section ng-if="selectedView === 0" ng-controller="AgendaSearchCtrl">
           <section class="margin-top-10">
             <form>
               <md-content class="padding-20">
@@ -45,16 +45,17 @@
       </md-tab>
       <md-tab>
         <md-tab-label><i class="icon-archive prefix-icon2"></i>Browse</md-tab-label>
+        <section ng-if="selectedView === 1" ng-controller="AgendaBrowseCtrl">
+
+        </section>
       </md-tab>
       <md-tab>
         <md-tab-label>
           <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
         </md-tab-label>
-      </md-tab>
-      <md-tab>
-        <md-tab-label>
-          <md-tab-label><i class="icon-question prefix-icon2"></i>About</md-tab-label>
-        </md-tab-label>
+        <section ng-if="selectedView === 2" ng-controller="AgendaUpdatesCtrl">
+
+        </section>
       </md-tab>
     </md-tabs>
   </section>

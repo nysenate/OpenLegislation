@@ -6,6 +6,8 @@ import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.base.ModelView;
+import gov.nysenate.openleg.client.view.base.StringView;
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.bill.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -24,6 +26,7 @@ import gov.nysenate.openleg.service.bill.search.BillSearchService;
 import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.OutputUtils;
 import gov.nysenate.openleg.util.StringDiffer;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,30 @@ public class BillGetCtrl extends BaseCtrl
 
     @Autowired protected BillDataService billData;
     @Autowired protected BillSearchService billSearch;
+
+    protected enum BillViewLevel
+    {
+        DEFAULT,                // Basic bill view (models the BillView class)
+        INFO,                   // Bill info view
+        NO_FULLTEXT,            // Basic bill view with full text stripped
+        ONLY_FULLTEXT,          // Only the full text for a specific amendment
+        WITH_REFS,              // Bill view with summary views for all related bills
+        WITH_REFS_NO_FULLTEXT;  // Bill view with no full text and with summary views for all related bills
+
+        public static BillViewLevel getValue(String type) {
+            if (StringUtils.isNotBlank(type)) {
+                try {
+                    return BillViewLevel.valueOf(type.toUpperCase());
+                }
+                catch (IllegalArgumentException ex) {
+                    return BillViewLevel.DEFAULT;
+                }
+            }
+            else {
+                return DEFAULT;
+            }
+        }
+    }
 
     /**
      * Bill listing API
@@ -93,17 +120,38 @@ public class BillGetCtrl extends BaseCtrl
      * Expected Output: BillView, DetailedBillView, or BillInfoView
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
-    public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo,
-                                @RequestParam(defaultValue = "false") boolean summary,
-                                @RequestParam(defaultValue = "false") boolean detail) {
+    public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo, WebRequest request) {
         BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
-        return new ViewObjectResponse<>(
-            (summary)
-                ? new BillInfoView(billData.getBillInfo(baseBillId))
-                : (detail)
-                    ? new DetailBillView(billData.getBill(baseBillId), billData)
-                    : new BillView(billData.getBill(baseBillId)),
-            "Data for bill " + baseBillId);
+        BillViewLevel level = BillViewLevel.getValue(request.getParameter("view"));
+        ViewObject viewObject;
+        switch (level) {
+            case INFO: viewObject = new BillInfoView(billData.getBillInfo(baseBillId)); break;
+            case WITH_REFS: viewObject = new DetailBillView(billData.getBill(baseBillId), billData); break;
+            case NO_FULLTEXT: viewObject = new BillView(getFullTextStrippedBill(baseBillId)); break;
+            case WITH_REFS_NO_FULLTEXT: viewObject = new DetailBillView(getFullTextStrippedBill(baseBillId), billData); break;
+            case ONLY_FULLTEXT: {
+                Version amdVersion = Version.DEFAULT;
+                if (request.getParameter("version") != null) {
+                    amdVersion = Version.of(request.getParameter("version"));
+                }
+                Bill bill = billData.getBill(baseBillId);
+                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.getValue(), bill.getAmendment(amdVersion).getFullText());
+                break;
+            }
+            default: viewObject = new BillView(billData.getBill(baseBillId));
+        }
+        return new ViewObjectResponse<>(viewObject, "Data for bill " + baseBillId);
+    }
+
+    /**
+     * Returns a Bill with the full text removed.
+     * @param baseBillId BaseBillId
+     * @return Bill
+     */
+    private Bill getFullTextStrippedBill(BaseBillId baseBillId) {
+        Bill strippedBill = billData.getBill(baseBillId);
+        strippedBill.getAmendmentList().forEach(a -> a.setFullText(""));
+        return strippedBill;
     }
 
     /**

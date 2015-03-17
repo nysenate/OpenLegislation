@@ -380,8 +380,9 @@
             <md-card class="content-card">
               <md-subheader>Full Text</md-subheader>
               <md-content class="margin-10 padding-20">
-              <span ng-if="!bill.amendments.items[curr.amdVersion].fullText">Bill Text is not available yet. New bills or revisions
-              may not have full text available right away.</span>
+                <span ng-if="!loading && !bill.amendments.items[curr.amdVersion].fullText">
+                  Bill Text is not available yet.</span>
+                <span ng-if="loading">Loading full text, please wait.</span>
                 <div ng-if="bill.amendments.items[curr.amdVersion].fullText">
                   <pre ng-if="!diffHtml" class="margin-left-20 bill-full-text">{{bill.amendments.items[curr.amdVersion].fullText}}</pre>
                   <pre ng-if="diffHtml" class="margin-left-20 bill-full-text" ng-bind-html="diffHtml"></pre>
