@@ -83,6 +83,15 @@ public abstract class SqlBaseDao
     }
 
     /**
+     * Gets a new parameter map containing params for the given date time range
+     */
+    protected static MapSqlParameterSource getDateTimeRangeParams(Range<LocalDateTime> dateTimeRange) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        addDateTimeRangeParams(params, dateTimeRange);
+        return params;
+    }
+
+    /**
      * Applies the published date / modified date column values.
      */
     protected static void addModPubDateParams(LocalDateTime modifiedDate, LocalDateTime publishedDate, MapSqlParameterSource params) {

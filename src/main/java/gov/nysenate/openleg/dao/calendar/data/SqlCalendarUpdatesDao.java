@@ -6,7 +6,6 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
-import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -100,12 +99,6 @@ public class SqlCalendarUpdatesDao extends SqlBaseDao implements CalendarUpdates
         digest.setTable(rs.getString("table_name"));
         return digest;
     };
-
-    private MapSqlParameterSource getDateTimeRangeParams(Range<LocalDateTime> dateTimeRange) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        addDateTimeRangeParams(params, dateTimeRange);
-        return params;
-    }
 
     private MapSqlParameterSource getCalendarIdParams(CalendarId calendarId, Range<LocalDateTime> dateTimeRange) {
         return getDateTimeRangeParams(dateTimeRange)
