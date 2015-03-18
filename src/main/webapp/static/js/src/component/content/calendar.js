@@ -48,7 +48,7 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     $scope.ctxPath = ctxPath;
 
-    $scope.activeIndex = 2;
+    $scope.curr = {activeIndex: 2};
 
     $scope.pageNames = ['sklerch', 'active-list', 'floor', 'updates'];
 
@@ -60,6 +60,15 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
         if ('sview' in $routeParams) {
             $scope.previousPage = $routeParams['sview'];
         }
+
+        $scope.$watch('curr.activeIndex', function(newIndex, oldIndex) {
+            console.log('activeIndexChange', newIndex);
+            if (newIndex >=1) {
+                $location.search('view', $scope.pageNames[newIndex]);
+            } else if (newIndex < 0 || newIndex >= $scope.pageNames.length) {
+                $location.search('view', null);
+            }
+        });
     };
 
     /** --- Tab / Header Management --- */
@@ -67,7 +76,7 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
     $scope.changeTab = function(pageName) {
         console.log('changing view to', pageName);
         var newIndex = $scope.pageNames.indexOf(pageName);
-        if (newIndex >= 0) $scope.activeIndex = newIndex;
+        if (newIndex >= 0) $scope.curr.activeIndex = newIndex;
     };
 
 
@@ -96,14 +105,6 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
         } else {
             $scope.changeTab('floor');
         }
-
-        $scope.$watch('activeIndex', function() {
-            if ($scope.activeIndex >=1) {
-                $location.search('view', $scope.pageNames[$scope.activeIndex]);
-            } else if ($scope.activeIndex < 0 || $scope.activeIndex >= $scope.pageNames.length) {
-                $location.search('view', null);
-            }
-        });
     }
 
     // Loads a calendar according to the specified year and calendar number
@@ -283,11 +284,14 @@ calendarModule.controller('FloorCalendarCtrl', ['$scope', '$rootScope', function
 
 calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'CalendarUpdatesApi',
     function($scope, $rootScope, UpdatesApi) {
+        console.log("hi im updates ctrl");
         $scope.updateResponse = {result:{items: []}};
         $scope.updatesOrder = "ASC";
 
         $scope.getUpdates = function() {
             if ($scope.year && $scope.calendarNum) {
+                $scope.loadingUpdates = true;
+                $scope.updateResponse = {result:{items: []}};
                 var response = UpdatesApi.get({
                         year: $scope.year,
                         calNo: $scope.calendarNum,
@@ -295,9 +299,13 @@ calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'Calen
                         order: $scope.updatesOrder
                     },
                     function () {
+                        $scope.loadingUpdates = false;
                         if (response.success) {
                             $scope.updateResponse = response;
                         }
+                    },
+                    function () {
+                        $scope.loadingUpdates = false;
                     });
             }
         };
@@ -444,8 +452,8 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
     $scope.init();
 }]);
 
-calendarModule.controller('CalendarPickCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout', '$q', 'CalendarIdsApi',
-function($scope, $rootScope, $routeParams, $location, $timeout, $q, CalendarIdsApi) {
+calendarModule.controller('CalendarPickCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout', '$q', '$mdToast', 'CalendarIdsApi',
+function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, CalendarIdsApi) {
 
     $scope.eventSources = [];
     $scope.calendarConfig = null;
@@ -505,6 +513,9 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, CalendarIdsA
                 calendarIdPromises.push($scope.getCalendarIds(year));
             }
         }
+        if (calendarIdPromises.length > 0) {
+            $scope.showLoadingToast();
+        }
         $q.all(calendarIdPromises).then(function() {
             for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
                 $scope.calendarIds[year]
@@ -513,8 +524,27 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, CalendarIdsA
                         events.push(event)
                     });
             }
+            $scope.hideLoadingToast();
             callback(events);
         });
+    };
+
+    $scope.showLoadingToast = function() {
+        console.log("showing toast..");
+        if (!$scope.mdToastActive) {
+            $scope.mdToastActive = true;
+            $mdToast.show({
+                template: "<md-toast>loading calendars... <md-progress-circular md-mode='indeterminate' md-diameter='20'></md-progress-circular></md-toast>",
+                hideDelay: false,
+                parent: angular.element("#calendar-date-picker"),
+                position: "fit"
+            });
+        }
+    };
+
+    $scope.hideLoadingToast = function () {
+        $mdToast.hide();
+        $scope.mdToastActive = false;
     };
 
     $scope.getEventSourcesObject = function() {
@@ -614,17 +644,21 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, Pagin
             $scope.updateResponse = {};
             $scope.pagination.setTotalItems(0);
         } else if (from.isValid() && to.isValid()) {
+            $scope.loadingUpdates = true;
             $scope.updateResponse = UpdatesApi.get({
                 detail: $scope.updateOptions.detail, type: $scope.updateOptions.type,
                 fromDateTime: moment($scope.updateOptions.fromDateTime).toISOString(),
                 toDateTime: moment($scope.updateOptions.toDateTime).toISOString(),
                 limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
             }, function () {
+                $scope.loadingUpdates = false;
                 if ($scope.updateResponse.success) {
                     $scope.pagination.setTotalItems($scope.updateResponse.total);
                 } else {
                     $scope.pagination.setTotalItems(0);
                 }
+            }, function () {
+                $scope.loadingUpdates = false;
             });
         }
     };

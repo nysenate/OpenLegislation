@@ -159,7 +159,9 @@
             </div>
           </md-card-content>
         </md-card>
-        <update-list class="error-toast-parent" update-response="updateResponse" pagination="pagination" show-details="updateOptions.detail"></update-list>
+        <md-progress-linear md-mode="indeterminate" ng-show="loadingUpdates"></md-progress-linear>
+        <update-list class="error-toast-parent" ng-show="!loadingUpdates"
+                     update-response="updateResponse" pagination="pagination" show-details="updateOptions.detail"></update-list>
       </section>
     </md-tab>
   </md-tabs>

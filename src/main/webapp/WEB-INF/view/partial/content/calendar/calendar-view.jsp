@@ -4,7 +4,7 @@
 <section ng-controller="CalendarViewCtrl" ng-init="setHeaderVisible(true)">
 
   <section ng-if="calendarResponse.success === true">
-    <md-tabs class="md-primary" md-selected="activeIndex">
+    <md-tabs class="md-primary" md-selected="curr.activeIndex">
 
       <!-- Back to search -->
       <md-tab md-on-select="backToSearch()">
@@ -15,24 +15,21 @@
       </md-tab>
 
       <!-- Active Lists -->
-      <md-tab label="Active List" md-on-select="setCalendarHeaderText()" ng-show="calendarView.activeLists.size > 0">
-        <section ng-if="pageNames[activeIndex] === 'active-list'" ng-controller="CalendarActiveListCtrl">
+      <md-tab label="Active List" md-on-select="setCalendarHeaderText()" ng-disabled="calendarView.activeLists.size < 1">
+        <section ng-if="pageNames[curr.activeIndex] === 'active-list'" ng-controller="CalendarActiveListCtrl">
           <md-toolbar class="md-toolbar-tools supplemental-toolbar">
             <label ng-show="activeLists.length > 0" class="margin-right-20">Supplementals</label>
-            <h4 class="md-toolbar-tools" ng-show="activeLists.length == 0">
-              This calendar does not contain active lists
-            </h4>
-              <span layout="row" layout-sm="column">
-                <md-checkbox ng-repeat="activeList in activeLists" class="md-accent md-hue-1"
-                             ng-init="seqNo = activeList['sequenceNumber']; selected = activeListFilter[seqNo]"
-                             ng-model="selected" ng-change="activeListFilter[seqNo] = selected"
-                             ng-disabled="activeLists.length<2">
-                  <span ng-if="$first">Original</span>
-                  <span ng-if="!$first">Supplemental {{seqNo}}</span>
-                  <br/>
-                  <small>{{activeLists[seqNo].releaseDateTime | moment:'MMM D h:mm A'}}</small>
-                </md-checkbox>
-              </span>
+            <span layout="row" layout-sm="column">
+              <md-checkbox ng-repeat="activeList in activeLists" class="md-accent md-hue-1"
+                           ng-init="seqNo = activeList['sequenceNumber']; selected = activeListFilter[seqNo]"
+                           ng-model="selected" ng-change="activeListFilter[seqNo] = selected"
+                           ng-disabled="activeLists.length<2">
+                <span ng-if="$first">Original</span>
+                <span ng-if="!$first">Supplemental {{seqNo}}</span>
+                <br/>
+                <small>{{activeLists[seqNo].releaseDateTime | moment:'MMM D h:mm A'}}</small>
+              </md-checkbox>
+            </span>
           </md-toolbar>
           <md-content class="no-background">
             <md-card ng-show="displayedEntries.length>0" style="background: #fff">
@@ -46,7 +43,7 @@
 
       <!-- Supplemental Calendars -->
       <md-tab label="Floor" md-on-select="setCalendarHeaderText()">
-        <section ng-if="pageNames[activeIndex] === 'floor'" ng-controller="FloorCalendarCtrl">
+        <section ng-if="pageNames[curr.activeIndex] === 'floor'" ng-controller="FloorCalendarCtrl">
           <md-toolbar class="md-toolbar-tools supplemental-toolbar">
             <label class="margin-right-20">Supplementals</label>
               <span layout="row" layout-sm="column" ng-model="amdVersion">
@@ -70,7 +67,7 @@
       </md-tab>
 
       <md-tab label="Updates" md-on-select="setCalendarHeaderText()">
-        <section ng-if="pageNames[activeIndex] === 'updates'" ng-controller="CalendarUpdatesCtrl">
+        <section ng-if="pageNames[curr.activeIndex] === 'updates'" ng-controller="CalendarUpdatesCtrl">
           <md-toolbar class="md-toolbar-tools supplemental-toolbar">
               <span class="margin-right-10">Update Order:&nbsp;</span>
               <md-select ng-model="updatesOrder" class="no-margin">
@@ -79,7 +76,8 @@
                 <md-option value="DESC">Newest First</md-option>
               </md-select>
           </md-toolbar>
-          <update-list update-response="updateResponse" ng-init="showId=false" show-id="showId"></update-list>
+          <md-progress-linear md-mode="indeterminate" ng-if="loadingUpdates"></md-progress-linear>
+          <update-list ng-if="!loadingUpdates" update-response="updateResponse" ng-init="showId=false" show-id="showId"></update-list>
         </section>
       </md-tab>
     </md-tabs>
