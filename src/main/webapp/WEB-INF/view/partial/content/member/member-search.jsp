@@ -1,14 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
-<section ng-controller="MemberSearchCtrl">
-  <section ng-controller="MemberBrowseCtrl">
+<section ng-controller="MemberCtrl">
 
-    <md-tabs class="md-primary">
-      <md-tab>
-        <md-tab-label>
-          <i class="icon-archive prefix-icon2"></i>
-          Browse
-        </md-tab-label>
+  <md-tabs md-selected="selectedView" class="md-primary">
+    <md-tab>
+      <md-tab-label>
+        <i class="icon-archive prefix-icon2"></i>
+        Browse
+      </md-tab-label>
+      <section ng-if="selectedView === 0" ng-controller="MemberBrowseCtrl">
         <md-toolbar class="md-toolbar-tools">
           <span layout="row" layout-sm="column">
             <md-checkbox ng-model="memberBrowse.senateSelected" style="padding-top: 6px;"
@@ -68,13 +68,14 @@
           </md-grid-tile>
 
         </md-grid-list>
-      </md-tab>
-      <md-tab>
-        <md-tab-label>
-          <i class="icon-search prefix-icon2"></i>
-          Search
-        </md-tab-label>
-
+      </section>
+    </md-tab>
+    <md-tab>
+      <md-tab-label>
+        <i class="icon-search prefix-icon2"></i>
+        Search
+      </md-tab-label>
+      <section ng-if="selectedView === 1" ng-controller="MemberSearchCtrl">
         <md-card>
           <md-content class="md-padding">
             <form name = searchForm>
@@ -150,9 +151,10 @@
             </tbody>
           </table>
         </md-card>
-      </md-tab>
+      </section>
+    </md-tab>
 
 
-    </md-tabs>
-  </section>
+  </md-tabs>
+</section>
 </section>

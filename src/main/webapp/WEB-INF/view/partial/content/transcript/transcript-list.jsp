@@ -88,13 +88,23 @@
               </form>
             </md-content>
           </md-card>
-          <md-card class="content-card">
+          <md-card ng-if="transcriptSearch.term && !transcriptSearch.paginate.totalItems" class="content-card">
             <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
-              <div flex>{{transcriptSearch.response.total}} matches were found.</div>
+              <div flex>
+                No Results Found.
+              </div>
+            </div>
+          </md-card>
+          <md-card ng-if="transcriptSearch.term && transcriptSearch.paginate.totalItems" class="content-card">
+            <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
+              <div flex>{{transcriptSearch.response.total}} Transcripts were found. Viewing page
+                {{transcriptSearch.paginate.currPage}} of {{transcriptSearch.paginate.lastPage}}</div>
               <div flex style="text-align: right;">
                 <dir-pagination-controls boundary-links="true" on-page-change="changePage(newPageNumber)" pagination-id="session1"></dir-pagination-controls>
               </div>
             </div>
+          </md-card>
+          <md-card ng-if="transcriptSearch.paginate.totalItems" class="content-card">
             <md-content>
               <md-list>
                 <a dir-paginate="match in transcriptSearch.matches | itemsPerPage: transcriptSearch.paginate.itemsPerPage"
@@ -134,6 +144,15 @@
             </div>
           </md-card>
           <md-card class="content-card">
+            <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
+            <div class="padding-20">
+              <p class="text-medium">
+                You can combine the field definitions documented below to perform targeted searches.
+                You can string together multiple search term fields with the following operators: <code>AND, OR, NOT</code>
+                as well as parenthesis for grouping. For more information refer to the
+                <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query docs</a>.
+              </p>
+            </div>
             <md-subheader><strong>Session Transcript Search Tips</strong></md-subheader>
             <table class="docs-table">
               <thead>
@@ -164,13 +183,21 @@
               </form>
             </md-content>
           </md-card>
-          <md-card class="content-card">
+          <md-card ng-if="hearingSearch.term && !hearingSearch.paginate.totalItems" class="content-card">
             <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
-              <div flex>{{hearingSearch.response.total}} matches were found.</div>
+              <div flex>No matches were found.</div>
+            </div>
+          </md-card>
+          <md-card ng-if="hearingSearch.term && hearingSearch.paginate.totalItems" class="content-card">
+            <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
+              <div flex>{{hearingSearch.response.total}} matches were found. Viewing page
+                {{currentPage.hearingSearchPage}} of {{hearingSearch.paginate.lastPage}}.</div>
               <div flex style="text-align: right;">
                 <dir-pagination-controls boundary-links="true" on-page-change="changePage(newPageNumber)" pagination-id="hearing1"></dir-pagination-controls>
               </div>
             </div>
+          </md-card>
+          <md-card ng-if="hearingSearch.paginate.totalItems" class="content-card">
             <md-content>
               <md-list>
                 <a dir-paginate="match in hearingSearch.matches | itemsPerPage: hearingSearch.paginate.itemsPerPage"
@@ -210,6 +237,15 @@
             </div>
           </md-card>
           <md-card class="content-card">
+            <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
+            <div class="padding-20">
+              <p class="text-medium">
+                You can combine the field definitions documented below to perform targeted searches.
+                You can string together multiple search term fields with the following operators: <code>AND, OR, NOT</code>
+                as well as parenthesis for grouping. For more information refer to the
+                <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query docs</a>.
+              </p>
+            </div>
             <md-subheader><strong>Public Hearing Transcript Search Tips</strong></md-subheader>
             <table class="docs-table">
               <thead>
