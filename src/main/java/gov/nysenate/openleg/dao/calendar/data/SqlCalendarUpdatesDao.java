@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.calendar.data;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.updates.UpdateContentType;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
@@ -85,7 +86,7 @@ public class SqlCalendarUpdatesDao extends SqlBaseDao implements CalendarUpdates
 
     private static RowMapper<UpdateToken<CalendarId>> calendarUpdateTokenRowMapper = (rs, rowNum) ->
         new UpdateToken<>(
-            new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")),
+            new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")), UpdateContentType.CALENDAR,
             rs.getString("last_fragment_id"), getLocalDateTimeFromRs(rs, "last_published_date_time"),
             getLocalDateTimeFromRs(rs, "last_processed_date_time")
         );

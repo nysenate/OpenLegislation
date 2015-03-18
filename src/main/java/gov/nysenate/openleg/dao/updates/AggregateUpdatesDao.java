@@ -27,9 +27,9 @@ public interface AggregateUpdatesDao {
      * @param limitOffset LimitOffset - Limit the response
      * @return PaginatedList<UpdateToken<Properties>>
      */
-    public PaginatedList<UpdateToken<Properties>> getUpdateTokens(Range<LocalDateTime> dateTimeRange,
-                                                                 Set<UpdateContentType> types, UpdateType updateType,
-                                                                 SortOrder order, LimitOffset limitOffset);
+    public PaginatedList<UpdateToken<Map<String, String>>> getUpdateTokens(Range<LocalDateTime> dateTimeRange,
+                                                                           Set<UpdateContentType> types, UpdateType updateType,
+                                                                           SortOrder order, LimitOffset limitOffset);
 
     /**
      * Gets an aggregation of update digests that report all updates for each content item of the
@@ -44,18 +44,18 @@ public interface AggregateUpdatesDao {
      * @param detail boolean - will return detailed update digests if set to true
      * @return PaginatedList<UpdateToken<Properties>>
      */
-    public PaginatedList<UpdateDigest<Properties>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
-                                                                    Set<UpdateContentType> types, UpdateType updateType,
-                                                                    SortOrder order, LimitOffset limitOffset,
-                                                                    boolean detail);
+    public PaginatedList<UpdateDigest<Map<String, String>>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
+                                                                             Set<UpdateContentType> types, UpdateType updateType,
+                                                                             SortOrder order, LimitOffset limitOffset,
+                                                                             boolean detail);
 
     /**
      * An override of getUpdateDigests that does not return detailed digests
      * @see #getUpdateDigests
      */
-    public default PaginatedList<UpdateDigest<Properties>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
-                                                                            Set<UpdateContentType> types, UpdateType updateType,
-                                                                            SortOrder order, LimitOffset limitOffset) {
+    public default PaginatedList<UpdateDigest<Map<String, String>>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
+                                                                                     Set<UpdateContentType> types, UpdateType updateType,
+                                                                                     SortOrder order, LimitOffset limitOffset) {
         return getUpdateDigests(dateTimeRange, types, updateType, order, limitOffset, false);
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillUpdateField;
+import gov.nysenate.openleg.model.updates.UpdateContentType;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
@@ -156,7 +157,7 @@ public class SqlBillUpdatesDao extends SqlBaseDao implements BillUpdatesDao
     /** --- Row Mappers -- */
 
     private static final RowMapper<UpdateToken<BaseBillId>> getBillUpdateTokenFromRs = (rs, rowNum) ->
-        new UpdateToken<>(new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")),
+        new UpdateToken<>(new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")), UpdateContentType.BILL,
             rs.getString("last_fragment_id"), getLocalDateTimeFromRs(rs, "last_published_date_time"),
             getLocalDateTimeFromRs(rs, "last_processed_date_time"));
 

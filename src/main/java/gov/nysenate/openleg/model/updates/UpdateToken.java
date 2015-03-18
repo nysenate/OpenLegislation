@@ -12,11 +12,14 @@ public class UpdateToken<ContentId>
     protected String sourceId;
     protected LocalDateTime sourceDateTime;
     protected LocalDateTime processedDateTime;
+    protected UpdateContentType contentType;
 
     /** --- Constructors --- */
 
-    public UpdateToken(ContentId id, String sourceId, LocalDateTime sourceDateTime, LocalDateTime processedDateTime) {
+    public UpdateToken(ContentId id, UpdateContentType contentType, String sourceId,
+                       LocalDateTime sourceDateTime, LocalDateTime processedDateTime) {
         this.id = id;
+        this.contentType = contentType;
         this.sourceId = sourceId;
         this.sourceDateTime = sourceDateTime;
         this.processedDateTime = processedDateTime;
@@ -30,6 +33,14 @@ public class UpdateToken<ContentId>
 
     public void setId(ContentId id) {
         this.id = id;
+    }
+
+    public UpdateContentType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(UpdateContentType contentType) {
+        this.contentType = contentType;
     }
 
     public String getSourceId() {

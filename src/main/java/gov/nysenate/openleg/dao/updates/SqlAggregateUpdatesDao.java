@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 
 import static gov.nysenate.openleg.dao.updates.SqlAggregateUpdatesQuery.*;
@@ -19,11 +19,11 @@ public class SqlAggregateUpdatesDao extends SqlBaseDao implements AggregateUpdat
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<UpdateToken<Properties>> getUpdateTokens(Range<LocalDateTime> dateTimeRange,
-                                                                  Set<UpdateContentType> types, UpdateType updateType,
-                                                                  SortOrder order, LimitOffset limitOffset) {
+    public PaginatedList<UpdateToken<Map<String, String>>> getUpdateTokens(Range<LocalDateTime> dateTimeRange,
+                                                                           Set<UpdateContentType> types, UpdateType updateType,
+                                                                           SortOrder order, LimitOffset limitOffset) {
         String query = buildQuery(schema(), limitOffset, order, types, UpdateReturnType.TOKEN, updateType);
-        PaginatedRowHandler<UpdateToken<Properties>> rowHandler =
+        PaginatedRowHandler<UpdateToken<Map<String, String>>> rowHandler =
                 new PaginatedRowHandler<>(limitOffset, "total_updated", aggregateUpdateTokenRowMapper);
         jdbcNamed.query(query, getDateTimeRangeParams(dateTimeRange), rowHandler);
         return rowHandler.getList();
@@ -31,26 +31,27 @@ public class SqlAggregateUpdatesDao extends SqlBaseDao implements AggregateUpdat
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<UpdateDigest<Properties>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
-                                                                    Set<UpdateContentType> types, UpdateType updateType,
-                                                                    SortOrder order, LimitOffset limitOffset, boolean detail) {
+    public PaginatedList<UpdateDigest<Map<String, String>>> getUpdateDigests(Range<LocalDateTime> dateTimeRange,
+                                                                             Set<UpdateContentType> types, UpdateType updateType,
+                                                                             SortOrder order, LimitOffset limitOffset, boolean detail) {
         String query = buildQuery(schema(), limitOffset, order, types,
                 detail ? UpdateReturnType.DETAIL_DIGEST : UpdateReturnType.DIGEST, updateType);
-        PaginatedRowHandler<UpdateDigest<Properties>> rowHandler =
+        PaginatedRowHandler<UpdateDigest<Map<String, String>>> rowHandler =
                 new PaginatedRowHandler<>(limitOffset, "total_updated", aggregateUpdateDigestRowMapper);
         jdbcNamed.query(query, getDateTimeRangeParams(dateTimeRange), rowHandler);
         return rowHandler.getList();
     }
 
-    protected static final RowMapper<UpdateToken<Properties>> aggregateUpdateTokenRowMapper = (rs, num) -> {
-        Properties id = new Properties();
-        id.putAll(getHstoreMap(rs, "id"));
-        return new UpdateToken<>(id, rs.getString("last_source_id"),
-                getLocalDateTimeFromRs(rs, "last_published_date_time"), getLocalDateTimeFromRs(rs, "last_processed_date_time"));
-    };
+    protected static final RowMapper<UpdateToken<Map<String, String>>> aggregateUpdateTokenRowMapper = (rs, num) ->
+            new UpdateToken<>(getHstoreMap(rs, "id"),
+                    UpdateContentType.getValue(rs.getString("content_type")),
+                    rs.getString("last_source_id"),
+                    getLocalDateTimeFromRs(rs, "last_published_date_time"),
+                    getLocalDateTimeFromRs(rs, "last_processed_date_time"));
 
-    protected static final RowMapper<UpdateDigest<Properties>> aggregateUpdateDigestRowMapper = (rs, num) -> {
-        UpdateDigest<Properties> digest = new UpdateDigest<>(aggregateUpdateTokenRowMapper.mapRow(rs, num));
+
+    protected static final RowMapper<UpdateDigest<Map<String, String>>> aggregateUpdateDigestRowMapper = (rs, num) -> {
+        UpdateDigest<Map<String, String>> digest = new UpdateDigest<>(aggregateUpdateTokenRowMapper.mapRow(rs, num));
         digest.setAction(rs.getString("action"));
         digest.setTable(rs.getString("table_name"));
         try {

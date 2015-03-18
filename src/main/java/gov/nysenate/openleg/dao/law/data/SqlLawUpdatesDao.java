@@ -4,6 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.law.LawDocId;
 import gov.nysenate.openleg.model.law.LawVersionId;
+import gov.nysenate.openleg.model.updates.UpdateContentType;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
@@ -89,14 +90,14 @@ public class SqlLawUpdatesDao extends SqlBaseDao implements LawUpdatesDao
 
     private static final RowMapper<UpdateToken<LawVersionId>> lawIdUpdateTokenMapper = (rs, rowNum) -> {
         LocalDateTime lastPubDateTime = getLocalDateTimeFromRs(rs, "last_published_date_time");
-        return new UpdateToken<>(new LawVersionId(rs.getString("law_id"), lastPubDateTime.toLocalDate()),
+        return new UpdateToken<>(new LawVersionId(rs.getString("law_id"), lastPubDateTime.toLocalDate()), UpdateContentType.LAW,
             rs.getString("last_source_file"), lastPubDateTime, getLocalDateTimeFromRs(rs, "last_processed_date_time"));
     };
 
     private static final RowMapper<UpdateToken<LawDocId>> lawDocIdUpdateTokenMapper = (rs, rowNum) -> {
         LocalDateTime lastPubDateTime = getLocalDateTimeFromRs(rs, "last_published_date_time");
         LawDocId lawDocId = new LawDocId(rs.getString("document_id"), lastPubDateTime.toLocalDate());
-        return new UpdateToken<>(lawDocId, rs.getString("last_source_file"), lastPubDateTime,
+        return new UpdateToken<>(lawDocId, UpdateContentType.LAW, rs.getString("last_source_file"), lastPubDateTime,
             getLocalDateTimeFromRs(rs, "last_processed_date_time"));
     };
 

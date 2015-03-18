@@ -22,9 +22,9 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     /** --- Standard Table Templates --- */
 
     STANDARD_UPDATE_SUBQUERY(
-        "\tSELECT %s AS id,\n" +        // id selector e.g. ARRAY['id_col1', id_val1, 'id_col2', id_val2, ...]
-        "\t\t%s\n" +                    // column replace string e.g. "${sobiColumns}"
-        "\tFROM ${schema}.%s\n" +       // table name
+        "\tSELECT %s AS id,\n" +            // id selector e.g. ARRAY['id_col1', id_val1, 'id_col2', id_val2, ...]
+        "\t\t'%s' as content_type, %s\n" +  // content type, column replace string e.g. "${sobiColumns}"
+        "\tFROM ${schema}.%s\n" +           // table name
         "\tWHERE ${dateColumn} BETWEEN :startDateTime AND :endDateTime"
     ),
     STANDARD_DIGEST_COLUMNS(
@@ -50,8 +50,8 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
 
     AGENDA_UPDATE_SUBQUERY(
         String.format(STANDARD_UPDATE_SUBQUERY.sql,
-            "ARRAY['agendaNumber', agenda_no::text, 'agendaYear', year::text]",
-            "${sobiColumns}", SqlTable.AGENDA_CHANGE_LOG)
+            "ARRAY['agendaNumber', agenda_no::text, 'year', year::text]",
+            "AGENDA", "${sobiColumns}", SqlTable.AGENDA_CHANGE_LOG)
     ),
     AGENDA_UPDATE_TOKEN_SUBQUERY(
         AGENDA_UPDATE_SUBQUERY.sql + "\n\tGROUP BY agenda_no, year"
@@ -62,7 +62,7 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     BILL_UPDATE_SUBQUERY(
         String.format(STANDARD_UPDATE_SUBQUERY.sql,
             "ARRAY['printNo', bill_print_no, 'session', bill_session_year::text]",
-            "${sobiColumns}", SqlTable.BILL_CHANGE_LOG)
+            "BILL", "${sobiColumns}", SqlTable.BILL_CHANGE_LOG)
     ),
     BILL_UPDATE_TOKEN_SUBQUERY(
         BILL_UPDATE_SUBQUERY.sql + "\n\tGROUP BY bill_print_no, bill_session_year"
@@ -73,7 +73,7 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     CALENDAR_UPDATE_SUBQUERY(
         String.format(STANDARD_UPDATE_SUBQUERY.sql,
             "ARRAY['calNo', calendar_no::text, 'year', calendar_year::text]",
-            "${sobiColumns}", SqlTable.CALENDAR_CHANGE_LOG)
+            "CALENDAR", "${sobiColumns}", SqlTable.CALENDAR_CHANGE_LOG)
     ),
     CALENDAR_UPDATE_TOKEN_SUBQUERY(
         CALENDAR_UPDATE_SUBQUERY.sql + "\n\tGROUP BY calendar_no, calendar_year"
@@ -92,12 +92,14 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     ),
 
     LAW_UPDATE_SUBQUERY(
-        String.format(STANDARD_UPDATE_SUBQUERY.sql, "ARRAY['lawId', law_id, 'lawDocId', document_id]",
-            "${lawColumns}", SqlTable.LAW_CHANGE_LOG)
+        String.format(STANDARD_UPDATE_SUBQUERY.sql,
+            "ARRAY['lawDocId', document_id, 'publishedDate', published_date_time::date::text]",
+            "LAW", "${lawColumns}", SqlTable.LAW_CHANGE_LOG)
     ),
     LAW_UPDATE_TOKEN_SUBQUERY(
-        String.format(STANDARD_UPDATE_SUBQUERY.sql, "ARRAY['lawId', law_id]",
-            "${lawColumns}", SqlTable.LAW_CHANGE_LOG) + "\n\tGROUP BY law_id"
+        String.format(STANDARD_UPDATE_SUBQUERY.sql,
+            "ARRAY['lawId', law_id, 'publishedDate', MAX(published_date_time)::date::text]",
+            "LAW", "${lawColumns}", SqlTable.LAW_CHANGE_LOG) + "\n\tGROUP BY law_id"
     ),
     ;
 

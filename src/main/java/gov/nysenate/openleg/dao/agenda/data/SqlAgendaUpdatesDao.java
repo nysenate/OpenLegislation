@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.agenda.data;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.agenda.AgendaId;
-import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.updates.UpdateContentType;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import static gov.nysenate.openleg.dao.agenda.data.SqlAgendaUpdatesQuery.*;
 
@@ -71,7 +70,7 @@ public class SqlAgendaUpdatesDao extends SqlBaseDao implements AgendaUpdatesDao
 
     private static final RowMapper<UpdateToken<AgendaId>> agendaUpdateTokenRowMapper = (rs, rowNum) ->
         new UpdateToken<>(
-            new AgendaId(rs.getInt("agenda_no"), rs.getInt("year")),
+            new AgendaId(rs.getInt("agenda_no"), rs.getInt("year")), UpdateContentType.AGENDA,
             rs.getString("last_fragment_id"), getLocalDateTimeFromRs(rs, "last_published_date_time"),
             getLocalDateTimeFromRs(rs, "last_processed_date_time"));
 

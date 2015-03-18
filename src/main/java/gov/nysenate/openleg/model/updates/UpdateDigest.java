@@ -12,11 +12,11 @@ public class UpdateDigest<ContentId> extends UpdateToken<ContentId> {
     /** --- Constructors --- */
 
     public UpdateDigest(UpdateToken<ContentId> token) {
-        super(token.id, token.sourceId, token.sourceDateTime, token.processedDateTime);
+        super(token.id, token.contentType, token.sourceId, token.sourceDateTime, token.processedDateTime);
     }
 
-    public UpdateDigest(ContentId id, String sourceId, LocalDateTime sourceDateTime, LocalDateTime processedDateTime) {
-        super(id, sourceId, sourceDateTime, processedDateTime);
+    public UpdateDigest(ContentId id, UpdateContentType contentType, String sourceId, LocalDateTime sourceDateTime, LocalDateTime processedDateTime) {
+        super(id, contentType, sourceId, sourceDateTime, processedDateTime);
     }
 
     /** --- Basic Getters / Setters */
