@@ -15,6 +15,20 @@ memberModule.factory('MemberSearchApi', ['$resource', function($resource) {
     })
 }]);
 
+memberModule.controller('MemberCtrl', ['$scope', '$routeParams', '$location',
+    function($scope, $routeParams, $location) {
+        $scope.selectedView =  (parseInt($routeParams.view, 10) || 0);
+
+        $scope.$watch('selectedView', function() {
+            $location.search('view', $scope.selectedView);
+        });
+
+        $scope.$on('$locationChangeSuccess', function() {
+            $scope.selectedView = $location.search().view;
+        });
+
+    }]);
+
 memberModule.controller('MemberSearchCtrl', ['$scope', '$routeParams', '$location', 'MemberSearchApi', 'PaginationModel',
     function($scope, $routeParams, $location, MemberSearchApi, PaginationModel) {
 
@@ -109,9 +123,6 @@ memberModule.controller('MemberBrowseCtrl', ['$scope', '$routeParams', 'MemberSe
                 function () {
                     if ($scope.memberBrowse.response && $scope.memberBrowse.response.success) {
                         $scope.memberBrowse.results = $scope.memberBrowse.response.result.items || [];
-                    }
-                    else {
-                        $scope.memberSearch.matches = [];
                     }
                 })
         };

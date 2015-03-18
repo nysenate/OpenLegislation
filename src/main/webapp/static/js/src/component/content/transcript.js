@@ -1,7 +1,7 @@
 var transcriptModule = angular.module('open.transcript', ['open.core']);
 
 transcriptModule.factory('SessionTranscriptListingApi', ['$resource', function($resource) {
-    return $resource(apiPath + "/transcripts?summary=true", {
+    return $resource(apiPath + "/transcripts?summary=true&limit=15", {
     });
 }]);
 
@@ -12,7 +12,7 @@ transcriptModule.factory('SessionTranscriptDetailsApi', ['$resource', function($
 }]);
 
 transcriptModule.factory('PublicHearingListingApi', ['$resource', function($resource) {
-    return $resource(apiPath + "/hearings?full=true", {
+    return $resource(apiPath + "/hearings?full=true&limit=15", {
     });
 }]);
 
