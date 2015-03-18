@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -25,6 +25,8 @@
   
   
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
   
 
   
@@ -44,9 +46,12 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+        
+          <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -56,8 +61,9 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul class="current">
+          
+          
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
@@ -88,6 +94,13 @@
 <li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws Api</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-list-of-law-ids">Get a list of law ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#get-the-law-structure">Get the law structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-law-sub-document">Get a law sub document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#more-coming-soon">More coming soon</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-single-transcript">Get a single Transcript</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-transcript-pdf">Get a transcript pdf</a></li>
@@ -100,6 +113,16 @@
 <li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-list-of-public-hearings">Get a list of public hearings</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-single-member">Get a single Member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-list-of-members">Get a list of members</a></li>
+<li class="toctree-l2"><a class="reference internal" href="members.html#search-for-members">Search for members</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agg_updates.html#get-aggregate-updates">Get aggregate updates</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="search_api.html#term">term</a></li>
 <li class="toctree-l2"><a class="reference internal" href="search_api.html#sort">sort</a></li>
@@ -108,6 +131,7 @@
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -138,7 +162,7 @@
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="bills-and-resolutions-api">
 <h1><strong>Bills and Resolutions API</strong><a class="headerlink" href="#bills-and-resolutions-api" title="Permalink to this headline">¶</a></h1>
@@ -605,16 +629,12 @@ structure.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02</p>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Due to performance reasons, the days between fromDateTime and toDateTime must be &lt;= 100</p>
-</div>
 <p><strong>Optional Params</strong></p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="13%" />
-<col width="23%" />
-<col width="64%" />
+<col width="12%" />
+<col width="25%" />
+<col width="63%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Parameter</th>
@@ -623,26 +643,34 @@ structure.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>detail</td>
+<tr class="row-even"><td>type</td>
+<td>(processed|published)</td>
+<td>The type of bill update (see below for explanation)</td>
+</tr>
+<tr class="row-odd"><td>detail</td>
 <td>boolean</td>
 <td>Set to true to see <a class="reference internal" href="#detailed-update-digests">detailed update digests</a></td>
 </tr>
-<tr class="row-odd"><td>filter</td>
+<tr class="row-even"><td>filter</td>
 <td>string</td>
 <td>Filter by update type. See <a class="reference internal" href="#update-filters">update filters</a></td>
 </tr>
-<tr class="row-even"><td>order</td>
+<tr class="row-odd"><td>order</td>
 <td>string (asc|desc)</td>
 <td>Order the results by update date/time</td>
 </tr>
 </tbody>
 </table>
+<p>There are two types of updates, &#8216;processed&#8217; and &#8216;published&#8217;. Processed refers to the date that OpenLeg processed
+the data which is useful if you are trying to stay synchronized with OpenLeg. Published refers to the date during
+which data was intended to be published. This can differ from the processed date because OpenLeg can periodically
+reprocess it&#8217;s data to fix issues. By default the type is set to published.</p>
 <p><strong>Examples</strong></p>
 <p>Bills that were updated between November 1, 2014 and November 5, 2014</p>
 <div class="highlight-python"><div class="highlight"><pre>/api/3/bills/updates/2014-11-01T00:00:00/2014-11-05T00:00:00
 </pre></div>
 </div>
-<p><strong>Response (detail = false)</strong></p>
+<p id="bill-update-token-response"><strong>Response (detail = false)</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -754,7 +782,7 @@ may only want to know which bills have had status updates, or which bills had fu
 <div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
 </pre></div>
 </div>
-<p><strong>Response</strong></p>
+<p id="bill-update-digest-response"><strong>Response</strong></p>
 <p>Sample response:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -805,7 +833,7 @@ may only want to know which bills have had status updates, or which bills had fu
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="calendars.html" class="btn btn-neutral float-right" title="Senate Calendar API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="calendars.html" class="btn btn-neutral float-right" title="Senate Calendar API">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Open Legislation v2.0 API Docs"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -821,7 +849,8 @@ may only want to know which bills have had status updates, or which bills had fu
     </p>
   </div>
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
 </footer>
         </div>
       </div>

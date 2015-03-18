@@ -257,9 +257,9 @@ Search across all session years
 ::
    (GET) /api/3/calendars/search?term=YOUR_TERM
 
-Search within a session year
+Search within a year
 ::
-   (GET) /api/3/calendars/{sessionYear}/search?term=YOUR_TERM
+   (GET) /api/3/calendars/{year}/search?term=YOUR_TERM
 
 
 **Required Params**
@@ -276,8 +276,6 @@ Search within a session year
 | Parameter    | Values             | Description                                                                     |
 +==============+====================+=================================================================================+
 | sort         | string             | :ref:`ElasticSearch sort string<search-sort>`                                   |
-+--------------+--------------------+---------------------------------------------------------------------------------+
-| calendarType | string             | (default full) The type of calendar to search (full, active_list, supplemental) |
 +--------------+--------------------+---------------------------------------------------------------------------------+
 
 Also takes all :ref:`calendar listing optional params<cal-list-params>` with the exception of order
@@ -319,6 +317,8 @@ Calendars that were updated between June 15th and June 20th of 2014
 ::
     (GET) /api/3/calendars/updates/2014-06-15T00:00:00/2014-06-20T00:00:00
 
+.. _calendar-update-token-response:
+
 **Response (detail=false)**
 
 .. code-block:: javascript
@@ -326,7 +326,7 @@ Calendars that were updated between June 15th and June 20th of 2014
     {
       "success" : true,
       "message" : "",
-      "responseType" : "calendar-id-update-token list",
+      "responseType" : "update-token list",
       "total" : 4,
       "offsetStart" : 1,
       "offsetEnd" : 4,
@@ -381,6 +381,8 @@ Get all updates for a calendar
 Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 20th, 2014
 ::
     (GET) /api/3/calendars/2014/54/updates/2014-06-20T09:00:00/2014-06-20T17:00:00
+
+.. _calendar-update-digest-response:
 
 **Response**
 

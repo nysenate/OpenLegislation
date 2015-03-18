@@ -35,7 +35,6 @@ Full Public Hearing Response
           "name" : "EDUCATION",                       // Name of committee/task force/other group
           "chamber" : "SENATE"                        // Chamber of committee
         } ],
-        "attendance" : [ ],                           // Legislatures present at hearing. (Currently not used)
         "startTime" : "10:00",                        // Time the public hearing started
         "endTime" : "14:00",                          // Time the public hearing ended
         "text" : "\n\n\n       1     BEFORE THE NE.." // The text of the public hearing

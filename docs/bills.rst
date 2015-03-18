@@ -471,6 +471,8 @@ Bills that were updated between November 1, 2014 and November 5, 2014
 ::
     /api/3/bills/updates/2014-11-01T00:00:00/2014-11-05T00:00:00
 
+.. _bill-update-token-response:
+
 **Response (detail = false)**
 
 .. code-block:: javascript
@@ -569,6 +571,8 @@ Updates on a specific bil during a given date/time range.
 Updates for S1234-2013 between December 1, 2014 and December 2, 2014
 ::
     /api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
+
+.. _bill-update-digest-response:
 
 **Response**
 

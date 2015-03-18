@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,8 +28,10 @@
   
 
   
+
+  
     <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
-        <link rel="next" title="Search APIs" href="search_api.html"/>
+        <link rel="next" title="Senate Members API" href="members.html"/>
         <link rel="prev" title="Senate Floor Transcripts API" href="transcripts_floor.html"/> 
 
   
@@ -44,9 +46,12 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+        
+          <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -56,8 +61,9 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul class="current">
+          
+          
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
@@ -88,6 +94,13 @@
 <li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws Api</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-list-of-law-ids">Get a list of law ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#get-the-law-structure">Get the law structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-law-sub-document">Get a law sub document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#more-coming-soon">More coming soon</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-single-transcript">Get a single Transcript</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-transcript-pdf">Get a transcript pdf</a></li>
@@ -100,6 +113,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#get-a-list-of-public-hearings">Get a list of public hearings</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-single-member">Get a single Member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-list-of-members">Get a list of members</a></li>
+<li class="toctree-l2"><a class="reference internal" href="members.html#search-for-members">Search for members</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agg_updates.html#get-aggregate-updates">Get aggregate updates</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="search_api.html#term">term</a></li>
 <li class="toctree-l2"><a class="reference internal" href="search_api.html#sort">sort</a></li>
@@ -108,6 +131,7 @@
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -138,7 +162,7 @@
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="public-hearing-transcripts-api">
 <h1><strong>Public Hearing Transcripts API</strong><a class="headerlink" href="#public-hearing-transcripts-api" title="Permalink to this headline">¶</a></h1>
@@ -169,7 +193,6 @@
       <span class="s2">&quot;name&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDUCATION&quot;</span><span class="p">,</span>                       <span class="c1">// Name of committee/task force/other group</span>
       <span class="s2">&quot;chamber&quot;</span> <span class="o">:</span> <span class="s2">&quot;SENATE&quot;</span>                        <span class="c1">// Chamber of committee</span>
     <span class="p">}</span> <span class="p">],</span>
-    <span class="s2">&quot;attendance&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">],</span>                           <span class="c1">// Legislatures present at hearing. (Currently not used)</span>
     <span class="s2">&quot;startTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;10:00&quot;</span><span class="p">,</span>                        <span class="c1">// Time the public hearing started</span>
     <span class="s2">&quot;endTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;14:00&quot;</span><span class="p">,</span>                          <span class="c1">// Time the public hearing ended</span>
     <span class="s2">&quot;text&quot;</span> <span class="o">:</span> <span class="s2">&quot;\n\n\n       1     BEFORE THE NE..&quot;</span> <span class="c1">// The text of the public hearing</span>
@@ -269,7 +292,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="search_api.html" class="btn btn-neutral float-right" title="Search APIs"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="members.html" class="btn btn-neutral float-right" title="Senate Members API">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="transcripts_floor.html" class="btn btn-neutral" title="Senate Floor Transcripts API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -285,7 +308,8 @@
     </p>
   </div>
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
 </footer>
         </div>
       </div>

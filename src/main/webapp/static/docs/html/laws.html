@@ -1,0 +1,474 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>NYS Laws Api &mdash; Open Legislation 2.0-alpha documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
+        <link rel="next" title="Senate Floor Transcripts API" href="transcripts_floor.html"/>
+        <link rel="prev" title="Committee API" href="committees.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#terminology">Terminology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-a-single-bill">Get a single bill</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-pdf-of-bill-text">Get PDF of bill text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-a-list-of-bills">Get a list of bills</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#search-for-bills">Search for bills</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bills.html#get-bill-updates">Get bill updates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-single-calendar">Get a single calendar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-listing-of-calendars">Get a listing of calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#search-for-calendars">Search for calendars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-calendar-updates">Get calendar updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-specific-calendar-updates">Get specific calendar updates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Committee API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-current-committee-version">Get a current committee version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#get-all-current-committees">Get all current committees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href=""><strong>NYS Laws Api</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-list-of-law-ids">Get a list of law ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-the-law-structure">Get the law structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-law-sub-document">Get a law sub document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#more-coming-soon">More coming soon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-single-transcript">Get a single Transcript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-transcript-pdf">Get a transcript pdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-list-of-transcripts">Get a list of transcripts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Public Hearing Transcripts API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-single-public-hearing">Get a single Public Hearing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-public-hearing-pdf">Get a public hearing pdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-list-of-public-hearings">Get a list of public hearings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-single-member">Get a single Member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-list-of-members">Get a list of members</a></li>
+<li class="toctree-l2"><a class="reference internal" href="members.html#search-for-members">Search for members</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agg_updates.html#get-aggregate-updates">Get aggregate updates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="search_api.html#term">term</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_api.html#sort">sort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_api.html#search-response">Search Response</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="reference.html">Open Legislation</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="reference.html">Docs</a> &raquo;</li>
+      
+    <li><strong>NYS Laws Api</strong></li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/laws.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="nys-laws-api">
+<h1><strong>NYS Laws Api</strong><a class="headerlink" href="#nys-laws-api" title="Permalink to this headline">¶</a></h1>
+<p>In order to utilize the Laws API we&#8217;ll go over some quick terminology:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Law Id:</th><td class="field-body">A three letter code that identifies the law, e.g. EDN for Education Law.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Document Id:</th><td class="field-body">A string that identifies a particular document within a body of law. Contains the three letter law id
+so it can uniquely identify a document.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Location Id:</th><td class="field-body">This is simply the document id without the three letter law id prefix.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Published Date:</th><td class="field-body">Since the nature of laws are fairly temporal we keep track of changes to the laws using the published date.
+It&#8217;s possible to retrieve law documents roughly as they were represented during any week since October 2014.</td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="section" id="get-a-list-of-law-ids">
+<h2>Get a list of law ids<a class="headerlink" href="#get-a-list-of-law-ids" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span>
+</pre></div>
+</div>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="23%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>limit</td>
+<td>1 - 1000</td>
+<td>Number of results to return</td>
+</tr>
+<tr class="row-odd"><td>offset</td>
+<td>&gt;= 1</td>
+<td>Result number to start from</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response</strong></p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Listing of consolidated and unconsolidated NYS Laws&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;law-info list&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;total&quot;</span><span class="o">:</span> <span class="mi">134</span><span class="p">,</span>
+    <span class="s2">&quot;offsetStart&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;offsetEnd&quot;</span><span class="o">:</span> <span class="mi">134</span><span class="p">,</span>
+    <span class="s2">&quot;limit&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;lawId&quot;</span><span class="o">:</span> <span class="s2">&quot;ABC&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Alcoholic Beverage Control&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lawType&quot;</span><span class="o">:</span> <span class="s2">&quot;CONSOLIDATED&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;chapter&quot;</span><span class="o">:</span> <span class="s2">&quot;3-B&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;lawId&quot;</span><span class="o">:</span> <span class="s2">&quot;ABP&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Abandoned Property&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lawType&quot;</span><span class="o">:</span> <span class="s2">&quot;CONSOLIDATED&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;chapter&quot;</span><span class="o">:</span> <span class="s2">&quot;1&quot;</span>
+            <span class="p">},</span>
+    <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <em>lawId</em> in the response is the three letter id for the law.</p>
+</div>
+<div class="section" id="get-the-law-structure">
+<h2>Get the law structure<a class="headerlink" href="#get-the-law-structure" title="Permalink to this headline">¶</a></h2>
+<p>Laws are represented as a collection of sub documents, each of which is structured within a hierarchy.
+The following call will provide the structure of the law.</p>
+<p><strong>Usage</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="22%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>date</td>
+<td>ISO date</td>
+<td>Fetch law structure as it appeared prior to or on this date.</td>
+</tr>
+<tr class="row-odd"><td>full</td>
+<td>boolean</td>
+<td>If set to true, all the law text will also be returned.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/ABC                  // Get latest law structure for ABC law
+/api/3/laws/TAX?date=2015-01-01  // Get law structure for TAX law as it appeared on or before 01/01/2015
+/api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// /api/3/laws/RPT</span>
+<span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;The document structure for RPT law&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;law-tree&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;lawVersion&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;lawId&quot;</span><span class="o">:</span> <span class="s2">&quot;RPT&quot;</span><span class="p">,</span>                                <span class="c1">// Three letter law id</span>
+        <span class="s2">&quot;activeDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2015-01-02&quot;</span>                     <span class="c1">// Date on which this law content was up to date</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;info&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;lawId&quot;</span><span class="o">:</span> <span class="s2">&quot;RPT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Real Property Tax&quot;</span><span class="p">,</span>                   <span class="c1">// Name of the law</span>
+        <span class="s2">&quot;lawType&quot;</span><span class="o">:</span> <span class="s2">&quot;CONSOLIDATED&quot;</span><span class="p">,</span>                     <span class="c1">// One of CONSOLIDATED, UNCONSOLIDATED, COURT_ACTS, RULES, MISC</span>
+        <span class="s2">&quot;chapter&quot;</span><span class="o">:</span> <span class="s2">&quot;50-A&quot;</span>                              <span class="c1">// Chapter of law</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;documents&quot;</span><span class="o">:</span> <span class="p">{</span>                                     <span class="c1">// This is a repeating document structure</span>
+        <span class="s2">&quot;lawId&quot;</span><span class="o">:</span> <span class="s2">&quot;RPT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;locationId&quot;</span><span class="o">:</span> <span class="s2">&quot;-CH50-A&quot;</span><span class="p">,</span>                       <span class="c1">// The location id identifes this sub document within this law</span>
+        <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Real Property Tax&quot;</span><span class="p">,</span>                  <span class="c1">// Title of this sub document if available.</span>
+        <span class="s2">&quot;docType&quot;</span><span class="o">:</span> <span class="s2">&quot;CHAPTER&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;docLevelId&quot;</span><span class="o">:</span> <span class="s2">&quot;50-A&quot;</span><span class="p">,</span>                          <span class="c1">// The doc level id identifies the sub document within the current</span>
+                                                       <span class="c1">// level in the hierarchy. For example if &#39;docType&#39; is ARTICLE</span>
+                                                       <span class="c1">// and docLevelId is 1, it means this is Article 1.</span>
+
+        <span class="s2">&quot;activeDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span><span class="p">,</span>                    <span class="c1">// Date this particular document was updated</span>
+        <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>                               <span class="c1">// Preserves ordering of sub documents</span>
+        <span class="s2">&quot;repealedDate&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>                          <span class="c1">// Date this document was repealed (if applicable)</span>
+        <span class="s2">&quot;repealed&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>                             <span class="c1">// This will be true if the document was repealed,</span>
+                                                       <span class="c1">// &#39;repealedDate&#39; will be set with the date.</span>
+        <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>                                  <span class="c1">// Text of this document (only set when ?full=true)</span>
+        <span class="s2">&quot;documents&quot;</span><span class="o">:</span> <span class="p">{</span>                                 <span class="c1">// Contains the sub documents of this document</span>
+            <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>                                 <span class="c1">// It&#39;s a recursive structure</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;lawId&quot;</span><span class="o">:</span> <span class="s2">&quot;RPT&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;locationId&quot;</span><span class="o">:</span> <span class="s2">&quot;A1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;SHORT TITLE; DEFINITIONS&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;docType&quot;</span><span class="o">:</span> <span class="s2">&quot;ARTICLE&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;docLevelId&quot;</span><span class="o">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;activeDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;repealedDate&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="s2">&quot;documents&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;lawId&quot;</span><span class="o">:</span> <span class="s2">&quot;RPT&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;locationId&quot;</span><span class="o">:</span> <span class="s2">&quot;100&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Short title&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;docType&quot;</span><span class="o">:</span> <span class="s2">&quot;SECTION&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;docLevelId&quot;</span><span class="o">:</span> <span class="s2">&quot;100&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;activeDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;sequenceNo&quot;</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+                            <span class="s2">&quot;repealedDate&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                            <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                            <span class="s2">&quot;documents&quot;</span><span class="o">:</span> <span class="p">{</span>              <span class="c1">// Note there are no sub documents for this doc</span>
+                                <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">[],</span>
+                                <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mi">0</span>
+                            <span class="p">},</span>
+                            <span class="s2">&quot;repealed&quot;</span><span class="o">:</span> <span class="kc">false</span>
+                        <span class="p">},</span>
+    <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When the request parameter <strong>full</strong> is set to true the &#8216;text&#8217; fields within all the sub-documents will contain
+the text body. Note that response can be rather large (several MB) for certain laws so keep that in mind.</p>
+<p>If you want to retrieve a specific law document use the following API call:</p>
+</div>
+<div class="section" id="get-a-law-sub-document">
+<h2>Get a law sub document<a class="headerlink" href="#get-a-law-sub-document" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The lawId once again is the three letter code (e.g. EDN, TAX) and locationId is the identifier for the sub document.
+You can discover the locationId when you make an API request for the law structure (see above section). See the
+&#8216;locationId&#8217; field for that response.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/TAX/8/     // Get section 8 of Tax law
+/api/3/laws/EDN/A2/    // Get article 2 of Education law
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A trailing slash is important for this API call because the locationId may have periods which would otherwise be interpreted as an extension of sorts. When in doubt, try adding the trailing slash.</p>
+</div>
+<p><strong>Response</strong></p>
+<p>The response here is straight-forward.</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Law document for location A2 in EDN law &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;law-document&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;lawId&quot;</span><span class="o">:</span> <span class="s2">&quot;EDN&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;locationId&quot;</span><span class="o">:</span> <span class="s2">&quot;A2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;DIGNITY FOR ALL STUDENTS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;docType&quot;</span><span class="o">:</span> <span class="s2">&quot;ARTICLE&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;docLevelId&quot;</span><span class="o">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;activeDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2014-09-22&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;  ARTICLE 2 (text truncated for brevity)&quot;</span>  <span class="c1">// The text body of the law will be here</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If the law document was not found you will receive an error response</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;The requested law document was not found&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;errorCode&quot;</span><span class="o">:</span> <span class="mi">21</span><span class="p">,</span>
+    <span class="s2">&quot;errorData&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;lawDocId&quot;</span><span class="o">:</span> <span class="s2">&quot;EDNA22&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;endDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2015-01-09&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;errorDataType&quot;</span><span class="o">:</span> <span class="s2">&quot;law-doc-query&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="more-coming-soon">
+<h2>More coming soon<a class="headerlink" href="#more-coming-soon" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="transcripts_floor.html" class="btn btn-neutral float-right" title="Senate Floor Transcripts API">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="committees.html" class="btn btn-neutral" title="Committee API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, NY State Senate Technology Services.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0-alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -25,6 +25,8 @@
   
   
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
   
 
   
@@ -44,9 +46,12 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+        
+          <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -56,8 +61,9 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul class="current">
+          
+          
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
@@ -88,6 +94,13 @@
 <li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws Api</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-list-of-law-ids">Get a list of law ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#get-the-law-structure">Get the law structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-law-sub-document">Get a law sub document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#more-coming-soon">More coming soon</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-single-transcript">Get a single Transcript</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-transcript-pdf">Get a transcript pdf</a></li>
@@ -100,6 +113,16 @@
 <li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-list-of-public-hearings">Get a list of public hearings</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-single-member">Get a single Member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-list-of-members">Get a list of members</a></li>
+<li class="toctree-l2"><a class="reference internal" href="members.html#search-for-members">Search for members</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agg_updates.html#get-aggregate-updates">Get aggregate updates</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="search_api.html"><strong>Search APIs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="search_api.html#term">term</a></li>
 <li class="toctree-l2"><a class="reference internal" href="search_api.html#sort">sort</a></li>
@@ -108,6 +131,7 @@
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -138,7 +162,7 @@
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="senate-calendar-api">
 <h1><strong>Senate Calendar API</strong><a class="headerlink" href="#senate-calendar-api" title="Permalink to this headline">¶</a></h1>
@@ -416,8 +440,8 @@ structure.</p>
 <div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/calendars/search?term=YOUR_TERM
 </pre></div>
 </div>
-<p>Search within a session year</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/calendars/{sessionYear}/search?term=YOUR_TERM
+<p>Search within a year</p>
+<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/calendars/{year}/search?term=YOUR_TERM
 </pre></div>
 </div>
 <p><strong>Required Params</strong></p>
@@ -457,10 +481,6 @@ structure.</p>
 <tr class="row-even"><td>sort</td>
 <td>string</td>
 <td><a class="reference internal" href="search_api.html#search-sort"><em>ElasticSearch sort string</em></a></td>
-</tr>
-<tr class="row-odd"><td>calendarType</td>
-<td>string</td>
-<td>(default full) The type of calendar to search (full, active_list, supplemental)</td>
 </tr>
 </tbody>
 </table>
@@ -515,11 +535,11 @@ structure.</p>
 <div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/calendars/updates/2014-06-15T00:00:00/2014-06-20T00:00:00
 </pre></div>
 </div>
-<p><strong>Response (detail=false)</strong></p>
+<p id="calendar-update-token-response"><strong>Response (detail=false)</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;calendar-id-update-token list&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
   <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
   <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
   <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
@@ -590,7 +610,7 @@ structure.</p>
 <div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/calendars/2014/54/updates/2014-06-20T09:00:00/2014-06-20T17:00:00
 </pre></div>
 </div>
-<p><strong>Response</strong></p>
+<p id="calendar-update-digest-response"><strong>Response</strong></p>
 <div class="highlight-javascript" id="detailed-update-digests"><div class="highlight"><pre><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -637,7 +657,7 @@ structure.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="committees.html" class="btn btn-neutral float-right" title="Committee API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="committees.html" class="btn btn-neutral float-right" title="Committee API">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="bills.html" class="btn btn-neutral" title="Bills and Resolutions API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -653,7 +673,8 @@ structure.</p>
     </p>
   </div>
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
 </footer>
         </div>
       </div>
