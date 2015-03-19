@@ -2,7 +2,7 @@
 
 <section ng-controller="BillCtrl">
   <section ng-controller="BillViewCtrl" class="content-section">
-    <section ng-if="response.success === true" >
+    <section ng-if="response.success === true" md-theme="{{billTheme}}">
       <md-toolbar class="md-toolbar-tools auto-height">
         <h6 style="margin:20px 0;">{{bill.title}}</h6>
       </md-toolbar>

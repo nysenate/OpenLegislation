@@ -2,7 +2,7 @@
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
 <section ng-controller="LawCtrl">
-  <section ng-controller="LawViewCtrl">
+  <section class="content-section" ng-controller="LawViewCtrl">
     <md-tabs md-selected="curr.selectedView" class="md-primary">
       <md-tab md-on-select="backToListings()">
         <i class="prefix-icon2 icon-arrow-left5"></i>Back to Listings
@@ -29,10 +29,10 @@
                   </h4>
                 </div>
                 <div class="md-tile-content">
+                  <h4 class="bold" ng-hide="doc.docType === 'SECTION'">Sections (&sect;{{doc.fromSection}} - &sect;{{doc.toSection}})</h4>
                   <h4><span ng-if="doc.title">{{doc.title}}</span>
-                      <span class="red1" ng-if="!doc.title">Title not available</span>
+                    <span class="red1" ng-if="!doc.title">Title not available</span>
                   </h4>
-                  <h4 ng-hide="doc.docType === 'SECTION'">Sections (&sect;{{doc.fromSection}} - &sect;{{doc.toSection}})</h4>
                   <p class="green2" ng-show="doc.docType === 'SECTION' && doc.activeDate !== '2014-09-22'">
                     Updated on {{doc.activeDate | moment:'MM/DD/YYYY'}}
                   </p>
@@ -54,7 +54,7 @@
             <md-item ng-if="curr.showNested[doc.locationId]">
               <md-item-content>
                 <md-list style="width:100%;" class="no-padding" ng-if="doc.docType !== 'SECTION'">
-                  <div ng-repeat="doc in doc.documents.items" class="margin-left-20" ng-include="'law-tree-snippet.html'"></div>
+                  <div ng-repeat="doc in doc.documents.items" ng-include="'law-tree-snippet.html'"></div>
                 </md-list>
                 <div class="law-text" ng-if="doc.docType === 'SECTION'" ng-bind-html="curr.lawText[doc.locationId]"></div>
               </md-item-content>

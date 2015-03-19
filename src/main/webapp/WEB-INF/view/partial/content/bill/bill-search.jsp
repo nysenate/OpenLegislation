@@ -110,7 +110,7 @@
                             <img class="" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
                                  style="height: 42px;width:33px;"/>
                           </div>
-                          <div style="width:180px;padding:16px;">
+                          <div style="width:160px;padding:16px;">
                             <h3 class="no-margin">
                               <span ng-if="!highlights.basePrintNo">{{bill.basePrintNo}}</span>
                               <span ng-if="highlights.basePrintNo" ng-bind-html="highlights.basePrintNo[0]"></span>
@@ -120,8 +120,8 @@
                           </div>
                           <div flex class="md-tile-content">
                             <h4>
-                              <span ng-if="!highlights.title">{{bill.title}}</span>
-                              <span ng-if="highlights.title" ng-bind-html="highlights.title[0]"></span>
+                              <span class="text-small" ng-if="!highlights.title">{{bill.title}}</span>
+                              <span class="text-small" ng-if="highlights.title" ng-bind-html="highlights.title[0]"></span>
                             </h4>
                             <h6 class="gray7 no-margin capitalize">{{bill.status.actionDate | moment:'ll'}} - {{getStatusDesc(bill.status) | lowercase}}</h6>
                           </div>
@@ -358,38 +358,6 @@
               <h4>{{billUpdates.errMsg}}</h4>
             </md-subheader>
           </md-card>
-        </section>
-      </md-tab>
-      <md-tab>
-        <md-tab-label>
-          <i class="icon-question prefix-icon2"></i>About
-        </md-tab-label>
-        <section ng-if="selectedView === 2" class="padding-20 margin-top-20 text-medium white-bg">
-          <h4>The Basics</h4>
-          <p>A <strong>bill</strong> is a formal proposal to add, amend,
-            or repeal a body of law whereas a <strong>resolution</strong> is an official document of
-            the NYS Legislature that is usually written with the intent to recognize the achievements
-            of individuals, communities, and organizations.
-          </p>
-          <p>Every bill must go through several stages in the legislative process before it can be
-            signed into law.
-          </p>
-          <ul>
-            <li>The Idea</li>
-            <li>Sponsorship</li>
-            <li>Bill Drafting</li>
-            <li>Introduction</li>
-            <li>Committee Actions</li>
-            <li>Revision</li>
-            <li>Assembly Ways & Means and Senate Finance</li>
-            <li>Rules Committees</li>
-            <li>Floor Vote</li>
-            <li>The Governor</li>
-            <li>Veto</li>
-            <li>Signed Into Law</li>
-          </ul>
-
-          TODO..
         </section>
       </md-tab>
     </md-tabs>
