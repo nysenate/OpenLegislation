@@ -62,7 +62,6 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
         }
 
         $scope.$watch('curr.activeIndex', function(newIndex, oldIndex) {
-            console.log('activeIndexChange', newIndex);
             if (newIndex >=1) {
                 $location.search('view', $scope.pageNames[newIndex]);
             } else if (newIndex < 0 || newIndex >= $scope.pageNames.length) {
@@ -85,7 +84,6 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     // Performs tasks that follow the loading of a new calendar view such as setting the header text and alerting child controllers
     function processNewCalendarView() {
-        console.log('new calendar view!');
 
         $scope.calendarNum = $scope.calendarView['calendarNumber'];
         $scope.year = $scope.calendarView['year'];
@@ -147,7 +145,6 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
                 firstParam = false;
             }
         }
-        console.log('newurl', url);
         $location.url(url);
     };
 
@@ -284,7 +281,6 @@ calendarModule.controller('FloorCalendarCtrl', ['$scope', '$rootScope', function
 
 calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'CalendarUpdatesApi',
     function($scope, $rootScope, UpdatesApi) {
-        console.log("hi im updates ctrl");
         $scope.updateResponse = {result:{items: []}};
         $scope.updatesOrder = "ASC";
 
@@ -324,7 +320,7 @@ calendarModule.controller('CalendarUpdatesCtrl', ['$scope', '$rootScope', 'Calen
 calendarModule.controller('CalendarSearchPageCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout',
 function ($scope, $rootScope, $routeParams, $location, $timeout) {
 
-    $scope.pageNames = ['search', 'browse', 'updates'];
+    $scope.pageNames = ['browse', 'search', 'updates'];
 
     function init() {
         if ('view' in $routeParams) {
@@ -358,7 +354,7 @@ function ($scope, $rootScope, $routeParams, $location, $timeout) {
                 newHeader = "View Calendar Updates";
             }
             $scope.setHeaderText(newHeader);
-        }, 0 );
+        });
     };
 
     $scope.getCalendarUrl = function(year, calNum) {
@@ -403,7 +399,6 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
 
     // Perform a simple serch based on the current search term
     $scope.termSearch = function(resetPagination) {
-        console.log($scope.pagination.currPage);
         // If pagination is to be reset and it is not on page 1 just change pagination to trigger the watch
         if (resetPagination && $scope.pagination.currPage != 1) {
             $scope.pagination.currPage = 1;
@@ -452,19 +447,21 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
     $scope.init();
 }]);
 
-calendarModule.controller('CalendarPickCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout', '$q', '$mdToast', 'CalendarIdsApi',
+calendarModule.controller('CalendarBrowseCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout', '$q', '$mdToast', 'CalendarIdsApi',
 function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, CalendarIdsApi) {
 
     $scope.eventSources = [];
     $scope.calendarConfig = null;
     $scope.calendarIds = {};
+    $scope.requestsInProgress = 0;
 
     $scope.init = function () {
         $scope.eventSources.push($scope.getEventSourcesObject());
         $scope.calendarConfig = $scope.getCalendarConfig();
-        $scope.renderCalendar();
         if ('bdate' in $routeParams) {
             $scope.setCalendarDate($routeParams['bdate']);
+        } else {
+            $scope.renderCalendar();
         }
     };
 
@@ -477,7 +474,13 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
     $rootScope.$on('renderCalendarEvent', $scope.renderCalendar);
 
     $scope.setCalendarDate = function(date) {
-        $timeout(function() {angular.element('#calendar-date-picker').fullCalendar('gotoDate', moment(date).toDate())});
+        var momentDate = moment(date);
+        if (momentDate.isValid()) {
+            $timeout(function() {
+                angular.element('#calendar-date-picker').fullCalendar('gotoDate', moment(date).toDate());
+                $scope.renderCalendar();
+            });
+        }
     };
 
     $scope.getCalendarIds = function(year) {
@@ -508,15 +511,19 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
     $scope.getCalendarEvents = function(start, end, callback) {
         var events = [];
         var calendarIdPromises = [];
+        var years = [];
         for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
             if (!$scope.calendarIds.hasOwnProperty(year)) {
                 calendarIdPromises.push($scope.getCalendarIds(year));
+                years.push(year);
             }
         }
         if (calendarIdPromises.length > 0) {
+            console.log("loading calendar ids for", years.join(", "));
             $scope.showLoadingToast();
         }
-        $q.all(calendarIdPromises).then(function() {
+        $scope.requestsInProgress += 1;
+        $q.all(calendarIdPromises).then(function () {
             for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
                 $scope.calendarIds[year]
                     .map($scope.getEvent)
@@ -524,17 +531,20 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
                         events.push(event)
                     });
             }
+            $scope.requestsInProgress -= 1;
             $scope.hideLoadingToast();
             callback(events);
         });
+
     };
 
     $scope.showLoadingToast = function() {
-        console.log("showing toast..");
-        if (!$scope.mdToastActive) {
-            $scope.mdToastActive = true;
+        if ($scope.requestsInProgress < 1) {
             $mdToast.show({
-                template: "<md-toast>loading calendars... <md-progress-circular md-mode='indeterminate' md-diameter='20'></md-progress-circular></md-toast>",
+                template: "<md-toast>" +
+                          "  loading calendars... " +
+                          "  <md-progress-circular md-mode='indeterminate' md-diameter='20'></md-progress-circular>" +
+                          "</md-toast>",
                 hideDelay: false,
                 parent: angular.element("#calendar-date-picker"),
                 position: "fit"
@@ -543,8 +553,9 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
     };
 
     $scope.hideLoadingToast = function () {
-        $mdToast.hide();
-        $scope.mdToastActive = false;
+        if ($scope.requestsInProgress < 1) {
+            $mdToast.hide();
+        }
     };
 
     $scope.getEventSourcesObject = function() {
@@ -610,7 +621,6 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, Pagin
             $scope.updateOptions.order = $routeParams['uorder'];
         }
         if ($routeParams.hasOwnProperty('udetail')) {
-            console.log('yo');
             $scope.updateOptions.detail = false;
         }
         if ('utype' in $routeParams) {
@@ -644,6 +654,7 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, Pagin
             $scope.updateResponse = {};
             $scope.pagination.setTotalItems(0);
         } else if (from.isValid() && to.isValid()) {
+            console.log("Getting updates from", from.toISOString(), "to", to.toISOString());
             $scope.loadingUpdates = true;
             $scope.updateResponse = UpdatesApi.get({
                 detail: $scope.updateOptions.detail, type: $scope.updateOptions.type,
@@ -673,7 +684,7 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, Pagin
     init();
 
     $scope.$watch('updateOptions', function() {
-            debounce(function() {$scope.getUpdates(true);}, 500)();
+            $scope.getUpdates(true);
             var opts = $scope.updateOptions;
             if (opts.order == "ASC") {
                 $location.search("uorder", "ASC");

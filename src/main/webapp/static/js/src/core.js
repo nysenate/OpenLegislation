@@ -121,21 +121,6 @@ coreModule.factory('PaginationModel', function() {
 });
 
 /**
- * Debounce
- *
- * Calls the callback function after the specified time interval.  Restarts the interval if the function is called again.
- */
-coreModule.factory('debounce', ['$timeout', function($timeout) {
-    return function(callback, interval) {
-        var timeout = null;
-        return function() {
-            $timeout.cancel(timeout);
-            timeout = $timeout(callback, interval);
-        };
-    };
-}]);
-
-/**
  * Updates List
  *
  * Displays a list of updates.

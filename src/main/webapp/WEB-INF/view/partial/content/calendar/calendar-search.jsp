@@ -3,6 +3,20 @@
 
 <section class="content-section" ng-controller="CalendarSearchPageCtrl" ng-init="setHeaderVisible(true)">
   <md-tabs class="md-primary" md-selected="activeIndex">
+
+    <!-- Browse Calendars -->
+
+    <md-tab md-on-select="setCalendarHeaderText(); renderCalendarEvent()">
+      <md-tab-label>
+        <i class="icon-calendar prefix-icon2"></i>Browse
+      </md-tab-label>
+      <md-card ng-if="pageNames[activeIndex] === 'browse'" ng-controller="CalendarBrowseCtrl" class="content-card">
+        <md-card-content id="calendar-date-picker" ui-calendar="calendarConfig" ng-model="eventSources"></md-card-content>
+      </md-card>
+    </md-tab>
+
+    <!-- Search Calendars -->
+
     <md-tab md-on-select="setCalendarHeaderText()">
       <md-tab-label>
         <i class="icon-search prefix-icon2"></i>Search
@@ -121,16 +135,6 @@
       </section>
     </md-tab>
 
-    <!-- Calendar Date Picker -->
-    <md-tab md-on-select="setCalendarHeaderText(); renderCalendarEvent()">
-      <md-tab-label>
-        <i class="icon-calendar prefix-icon2"></i>Browse
-      </md-tab-label>
-      <md-card ng-if="pageNames[activeIndex] === 'browse'" ng-controller="CalendarPickCtrl" class="content-card">
-        <md-card-content id="calendar-date-picker" ui-calendar="calendarConfig" ng-model="eventSources"></md-card-content>
-      </md-card>
-    </md-tab>
-
     <!-- Calendar Updates -->
     <md-tab md-on-select="setCalendarHeaderText()">
       <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
@@ -139,9 +143,11 @@
           <md-card-content>
             <div layout="row">
               <label class="margin-right-10">Calendar updates from</label>
-              <input type="datetime-local" ng-model="updateOptions.fromDateTime" class="margin-right-10">
+              <input type="datetime-local" class="margin-right-10"
+                     ng-model="updateOptions.fromDateTime" ng-model-options="{debounce: 300}">
               <label class="margin-right-10">to</label>
-              <input type="datetime-local" ng-model="updateOptions.toDateTime" class="margin-right-10">
+              <input type="datetime-local" class="margin-right-10"
+                     ng-model="updateOptions.toDateTime" ng-model-options="{debounce: 300}">
             </div>
             <div layout="row" layout-align="start center">
               <label class="margin-right-10">Using</label>
