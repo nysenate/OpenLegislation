@@ -20,7 +20,9 @@ openApp.config(function($mdThemingProvider) {
             'hue-2': '400',
             'hue-3': '600'
         });
-    $mdThemingProvider.theme('dark').primaryPalette('grey');
+    $mdThemingProvider.theme('success').primaryPalette('green');
+    $mdThemingProvider.theme('failure').primaryPalette('red');
+
 })
 .config(function($resourceProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
@@ -38,6 +40,7 @@ openApp.config(function($mdThemingProvider) {
  */
 openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($scope, $location, $mdSidenav) {
     $scope.header = {text: '', visible: false};
+    $scope.activeSession = 2015;
 
     $scope.toggleLeftNav = function() {
         $mdSidenav('left').toggle();
@@ -138,7 +141,7 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
         '         class="menu-item menu-sub-item md-menu-item" md-ink-ripple="#bbb" ' +
         '         ng-show="isSectionSelected(section)" tab-index="-1"' +
         '         ng-href="{{item.url}}">' +
-        '         <span ng-bind="item.title"></span>' +
+        '         <span><i ng-class="item.icon" class="prefix-icon2"></i><span ng-bind="item.title"></span></span>' +
         '      </a>' +
         '    </div>' +
         '  </div>' +
@@ -193,7 +196,7 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
                     angular.forEach($sections, function(_s) {
                         var section = {title: _s.title, items: []};
                         angular.forEach($(_s).children('menu-item'), function(_i) {
-                            var item = {url: $(_i).attr('url'), title: $(_i).text()};
+                            var item = {url: $(_i).attr('url'), title: $(_i).text(), icon: $(_i).attr('icon')};
                             section.items.push(item);
                         });
                         scope.menu.sections.push(section);

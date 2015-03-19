@@ -20,14 +20,12 @@
 <body ng-app="open">
   <section id="app-wrapper" layout="column" ng-controller="AppCtrl" layout-fill>
     <section layout="row">
-
       <%-- Left Nav --%>
       <section>
         <div id="left-nav-spacer" hide-sm hide-md></div>
         <md-sidenav id="left-nav" class="md-sidenav-left" md-component-id="left" md-is-locked-open="$media('gt-md')">
           <div id="logo-wrapper">
             <div id="logo">
-              <%--<img src="${ctxPath}/static/img/NYSS_seal_transp.png"/>--%>
               <a class="margin-left-10 gray2" href="${ctxPath}/">
                 <img src="${ctxPath}/static/img/NYSS_seal_inv.png"/>
                 Open Legislation
@@ -35,27 +33,26 @@
             </div>
             <md-divider></md-divider>
           </div>
-
           <%-- Left Nav Menu Items --%>
           <div class="left-nav-menu">
             <material-menu>
               <menu-section title="Main Menu">
-                <menu-item url="${ctxPath}/">Home</menu-item>
-                <menu-item url="${ctxPath}/calendars">Senate Calendars</menu-item>
-                <menu-item url="${ctxPath}/agendas">Senate Agendas</menu-item>
-                <menu-item url="${ctxPath}/bills">Bills and Resolutions</menu-item>
-                <menu-item url="${ctxPath}/laws">NYS Laws</menu-item>
-                <menu-item url="${ctxPath}/members">Senate Membership</menu-item>
-                <menu-item url="${ctxPath}/transcripts">Floor/Hearing Transcripts</menu-item>
+                <menu-item url="${ctxPath}/" icon="icon-house">Home</menu-item>
+                <menu-item url="${ctxPath}/calendars" icon="icon-calendar">Senate Calendars</menu-item>
+                <menu-item url="${ctxPath}/agendas" icon="icon-megaphone">Senate Agendas / Meetings</menu-item>
+                <menu-item url="${ctxPath}/bills" icon="icon-docs">Bills and Resolutions</menu-item>
+                <menu-item url="${ctxPath}/laws" icon="icon-bookmarks">New York State Laws</menu-item>
+                <menu-item url="${ctxPath}/members" icon="icon-users">Senate / Assembly Membership</menu-item>
+                <menu-item url="${ctxPath}/transcripts" icon="icon-text">Floor/Hearing Transcripts</menu-item>
               </menu-section>
               <shiro:user>
-              <menu-section title="Admin">
-                <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
-              </menu-section>
-              <menu-section title="Reports">
-                <menu-item url="${ctxPath}/admin/report/daybreak">Daybreak Report</menu-item>
-                <%-- --%>
-              </menu-section>
+                <menu-section title="Admin">
+                  <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
+                </menu-section>
+                <menu-section title="Reports">
+                  <menu-item url="${ctxPath}/admin/report/daybreak">Daybreak Report</menu-item>
+                  <%-- --%>
+                </menu-section>
               </shiro:user>
               <menu-section title="API Documentation">
               </menu-section>
@@ -63,10 +60,8 @@
           </div>
         </md-sidenav>
       </section>
-        
       <%-- Main Content Area --%>
       <section id="content-wrapper" flex="1">
-
         <%-- Content Header --%>
         <md-toolbar id="content-header" class="md-primary hide" ng-show="header.visible">
           <h1 class="top-bar-heading md-toolbar-tools">
