@@ -27,7 +27,7 @@
           <div id="logo-wrapper">
             <div id="logo">
               <a class="margin-left-10 gray2" href="${ctxPath}/">
-                <img src="${ctxPath}/static/img/NYSS_seal_inv.png"/>
+                <img src="${ctxPath}/static/img/NYSS_seal_transp.png"/>
                 Open Legislation
               </a>
             </div>
@@ -54,7 +54,8 @@
                   <%-- --%>
                 </menu-section>
               </shiro:user>
-              <menu-section title="API Documentation">
+              <menu-section title="JSON API">
+                <menu-item url="http://openleg-dev.nysenate.gov/docs">Documentation</menu-item>
               </menu-section>
             </material-menu>
           </div>

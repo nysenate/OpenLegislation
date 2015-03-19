@@ -323,8 +323,9 @@ $left-nav-width: 305px;
   width: $left-nav-width;
   min-width: $left-nav-width;
   position: fixed;
-  background: #384047;
-  @include box-shadow(-4px 0 16px #333);
+  background: #fafafa;
+  border-right: 1px solid #ddd;
+  @include box-shadow(none);
   @media print {
     display: none;
   }
@@ -343,11 +344,13 @@ $left-nav-width: 305px;
   line-height: 64px;
   margin:0;
   font-size: 1.4rem;
+  background: #f1f1f1;
   a {
     font-family: 'Roboto Slab', serif;
     font-weight: normal;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     text-decoration: none;
+    color: #607d8b;
   }
   img {
     top: 14px;
@@ -368,7 +371,7 @@ $left-nav-width: 305px;
   border-width: 0;
   cursor: pointer;
   display: block;
-  color: #eee;
+  color: #777;
   font-size: 0.8rem;
   line-height: 40px;
   max-height: 40px;
@@ -392,7 +395,7 @@ $left-nav-width: 305px;
   font-weight: bold;
 }
 .menu-item.menu-title {
-  color: white;
+  color: #444;
   font-weight: bold;
   font-size: 14px;
   padding-left: 20px;
@@ -403,13 +406,12 @@ $left-nav-width: 305px;
 .menu-item.menu-title:hover,
 .menu-item.menu-title:focus,
 .menu-item.active, {
-  color: white;
-  background: #596671;
+  color: $blue2;
   font-weight: bold;
 }
 
 .menu-item:hover {
-  background: #596671;
+  background: #eee;
 }
 
 .top-bar-heading {
@@ -514,6 +516,12 @@ a.slogan-link {
   border-bottom:2px solid $blue5;
 }
 
+.hero-img {
+  margin-bottom:0;
+  height:250px;
+  background-size:cover;
+}
+
 .provide-data-container {
   padding: 5px;
   cursor: pointer;
@@ -524,6 +532,10 @@ a.slogan-link {
     h1.slogan {
       color: $blue4;
     }
+  }
+  .provide-data-type {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
   }
 }
 
