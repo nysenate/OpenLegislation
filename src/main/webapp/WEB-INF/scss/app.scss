@@ -371,7 +371,7 @@ $left-nav-width: 305px;
   border-width: 0;
   cursor: pointer;
   display: block;
-  color: #777;
+  color: #333;
   font-size: 0.8rem;
   line-height: 40px;
   max-height: 40px;
@@ -527,10 +527,10 @@ a.slogan-link {
   cursor: pointer;
   &:hover {
     .provide-data-icon {
-      background: $gray2;
+      border-color: $blue2;
     }
-    h1.slogan {
-      color: $blue4;
+    .provide-data-type {
+      color: $blue2;
     }
   }
   .provide-data-type {

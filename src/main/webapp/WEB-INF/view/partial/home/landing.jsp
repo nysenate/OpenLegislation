@@ -3,17 +3,15 @@
 
 <section ng-controller="LandingCtrl">
   <section layout="row" layout-align="center center" style="rgb(243, 243, 243);">
-
     <h1 flex class="slogan no-margin">Search, explore, and
         <a target="_blank" href="${ctxPath}/docs" class="slogan-link">integrate</a> legislative information from the
         <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York State Senate</a>.
     </h1>
   </section>
-  <div class="padding-20 margin-20" style="margin-bottom:0;height:250px;background-size:cover;
-                                           background-image:url('${ctxPath}/static/img/capitol_square_cropped.jpg');">
+  <div class="padding-20 margin-20 hero-img" style="background-image:url('${ctxPath}/static/img/capitol_square_cropped.jpg');">
     &nbsp;
   </div>
-  <section class="padding-20 margin-20" style="margin-top:0;background:rgb(238, 238, 238);">
+  <section class="padding-20 margin-20 white-bg" style="margin-top:0;">
     <h2 class="thin-300">Browse up-to date legislative content</h2>
       <md-divider/>
     <md-list layout-gt-sm="row" layout-wrap>
@@ -25,7 +23,7 @@
             </div>
           </div>
           <div class="md-tile-content margin-left-20">
-            <h3 style="border-bottom:1px solid #ccc;padding-bottom: 5px;" class="no-margin bold">{{provideData.type}}</h3>
+            <h3 class="no-margin bold provide-data-type">{{provideData.type}}</h3>
             <h4>{{provideData.blurb}}</h4>
           </div>
         </md-item-content>

@@ -53,7 +53,7 @@
         </section>
       </md-toolbar>
 
-      <md-tabs md-selected="curr.selectedView" class="md-primary" md-stretch-tabs="never">
+      <md-tabs md-selected="curr.selectedView" class="" md-stretch-tabs="never">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
             <span><i class="icon-search prefix-icon2"></i>Search</span>
@@ -392,7 +392,7 @@
           </section>
         </md-tab>
         <%-- Updates --%>
-        <md-tab label="Update History" md-on-select="initialGetUpdates()">
+        <md-tab label="Change Log" md-on-select="initialGetUpdates()">
           <md-divider></md-divider>
           <section ng-if="curr.selectedView === 5">
             <md-card class="content-card">
