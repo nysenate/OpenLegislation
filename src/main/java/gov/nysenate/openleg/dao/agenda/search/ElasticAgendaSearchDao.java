@@ -49,11 +49,10 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
         SearchRequestBuilder searchBuilder = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Committee Agenda search result with query {} took {} ms", query, response.getTookInMillis());
-        return getSearchResults(response, limOff, (hit) -> {
-            String[] type = hit.getType().split("-");
-            return new CommitteeAgendaId(
-                getAgendaIdFromHit(hit), new CommitteeId(Chamber.SENATE, hit.getId()));
-        });
+        return getSearchResults(response, limOff, (hit) ->
+            new CommitteeAgendaId(
+                getAgendaIdFromHit(hit), new CommitteeId(Chamber.SENATE, hit.getId()))
+        );
     }
 
     private AgendaId getAgendaIdFromHit(SearchHit hit) {

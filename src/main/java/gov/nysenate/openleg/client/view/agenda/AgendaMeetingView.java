@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.agenda;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +11,15 @@ public class AgendaMeetingView implements ViewObject
     private String location;
     private LocalDateTime meetingDateTime;
     private String notes;
+
+    public AgendaMeetingView(AgendaInfoCommittee infoComm) {
+        if (infoComm != null) {
+            this.chair = infoComm.getChair();
+            this.location = infoComm.getLocation();
+            this.meetingDateTime = infoComm.getMeetingDateTime();
+            this.notes = infoComm.getNotes();
+        }
+    }
 
     public AgendaMeetingView(String chair, String location, LocalDateTime meetingDateTime, String notes) {
         this.chair = chair;

@@ -135,7 +135,6 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         results: [],
         error: false
     };
-
     $scope.senators = [];
     $scope.assemblyMembers = [];
 
@@ -362,6 +361,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
     };
     $scope.diffHtml = null;
     $scope.updateHistory = null;
+    $scope.billTheme = 'default';
 
     $scope.$watch('curr.selectedView', function(newView, oldView) {
         if (newView !== oldView) {
@@ -388,8 +388,14 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
                 $scope.bill = $scope.response.result;
                 $scope.setHeaderText('NYS ' + $scope.bill.billType.desc + ' ' +
                     $filter('resolutionOrBill')($scope.bill.billType.resolution) + ' ' +
-                    $scope.bill.basePrintNo + '-' + $scope.bill.session);
+                    $scope.bill.basePrintNo + '-' + $scope.bill.session + (($scope.bill.session !== $scope.activeSession) ? " (Inactive) " : ""));
                 $scope.curr.amdVersion = $scope.bill.activeVersion;
+                if ($scope.bill.vetoed) {
+                    $scope.billTheme = 'failure';
+                }
+                else if ($scope.bill.signed) {
+                    $scope.billTheme = 'success';
+                }
             }
             $scope.loading = false;
         }, function(response) {
