@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <section ng-controller="AgendaCtrl">
-  <section ng-controller="AgendaViewCtrl">
+  <section class="content-section" ng-controller="AgendaViewCtrl">
     <section ng-if="response.success === true">
       <md-toolbar class="md-toolbar-tools md-tall" layout="row">
         <div flex-gt-sm="33" flex-sm="100">
@@ -21,20 +21,22 @@
           <div class="bold">{{agenda.totalBillsVotedOn}}</div><span class="text-medium">Bills Voted On</span>
         </div>
       </md-toolbar>
-      <md-tabs md-selected="1" class="md-primary" md-stretch-tabs="never">
+      <md-tabs md-selected="1" class="margin-top-10" md-stretch-tabs="never">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
-            <span><i class="icon-search prefix-icon2"></i>Search</span>
+            <span><i class="icon-search prefix-icon2"></i>{{searchTabName}}</span>
           </md-tab-label>
         </md-tab>
         <md-tab>
           <md-tab-label>Committees</md-tab-label>
           <section>
             <p class="text-medium margin-left-10 gray10"><i class="prefix-icon2 icon-info"></i>Click on a committee to view the agenda</p>
-            <toggle-panel label="{{comm.committeeId.name}}" callback="test"
-                          class="content-card" ng-repeat="comm in agenda.committeeAgendas.items">
+            <toggle-panel label="{{comm.committeeId.name}}" data-committee="{{comm.committeeId.name.toLowerCase()}}"
+                          class="content-card"
+                          ng-repeat="comm in agenda.committeeAgendas.items"
+                          open="{{selectedComm[comm.committeeId.name.toLowerCase()]}}">
               <section ng-repeat="addn in comm.addenda.items">
-                <p class="text-medium text-align-center">
+                <p class="bold text-medium text-align-center">
                   <span ng-if="addn.addendumId === ''">Initial&nbsp;</span>Addendum {{addn.addendumId}}
                 </p>
                 <md-divider></md-divider>

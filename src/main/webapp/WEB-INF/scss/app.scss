@@ -384,8 +384,6 @@ $left-nav-width: 305px;
   text-decoration: none;
   width: 100%;
   z-index: 1;
-  @include transition(0.45s cubic-bezier(0.35, 0, 0.25, 1));
-  @include transition-property(max-height, background-color, opacity);
 }
 .menu-item.ng-hide {
   max-height: 0;
@@ -401,7 +399,6 @@ $left-nav-width: 305px;
   padding-left: 20px;
   text-align: left;
   text-transform: uppercase;
-  @include transition(color 0.35s cubic-bezier(0.35, 0, 0.25, 1));
 }
 .menu-item.menu-title:hover,
 .menu-item.menu-title:focus,
@@ -481,21 +478,66 @@ ul.pagination {
   }
 }
 
+/** --- Tooltips --- */
+
+.cal-tooltip {
+  position: absolute;
+  width:140px;
+  color: #FFFFFF;
+  background: $blue1;
+  text-align: center;
+  border-radius: 0px;
+  visibility: visible;
+  opacity: 0.9;
+  bottom: 30px;
+  left: 50%;
+  margin-left: -90px;
+  z-index: 10000;
+  &:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 25%;
+    margin-left: -8px;
+    width: 0; height: 0;
+    border-top: 8px solid $blue1;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+  }
+}
+.cal-tooltip.agenda-meeting {
+  bottom: 55px;
+  width:300px;
+  text-align: left;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
 /** --- Toggle Panel ---  */
 
 .toggle-panel {
+//  @include transition(all .2s ease-in);
+  .toggle-panel-bar  {
+    &:hover {
+      background: #eee;
+    }
+    cursor: pointer;
+    color: #555;
+    .toggle-panel-label {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #555;
+    }
+  }
   &.open {
     > .toggle-panel-bar {
       border-bottom: 1px solid #ddd;
-      @include box-shadow(0 2px 4px #ddd);
-      background: rgb(96,125,139);
-      font-weight: bold;
-      color: white;
+//      @include box-shadow(none);
+      .toggle-panel-label {
+        color: $blue2;
+      }
+//      background: rgb(96,125,139);
     }
-  }
-  .toggle-panel-bar  {
-    cursor: pointer;
-    @include transition(all .2s ease-in);
   }
 }
 
@@ -717,6 +759,25 @@ a.slogan-link {
   background: white;
   border-bottom:1px solid #ddd;
   width: 100%;
+}
+
+/** --- Agenda Page --- */
+
+// Agenda calendar events
+.agenda-event {
+  &.fc-event-hori {
+    margin-bottom: 5px;
+    padding: 4px;
+    background: #fafafa;
+    border: 1px none #ddd;
+    border-bottom-style: solid;
+    border-radius: 0;
+    color: $blue2;
+    cursor: pointer;
+    &:hover {
+      background: #eee;
+    }
+  }
 }
 
 /** --- Transcript Page Styles --- */

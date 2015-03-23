@@ -11,8 +11,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         /** --- Agendas --- */
 
         .when(ctxPath + '/agendas/', { templateUrl: ctxPath + '/partial/content/agenda/agenda-search', reloadOnSearch: false})
-        .when(ctxPath + '/agendas/:year/:agendaNo', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view' })
-        .when(ctxPath + '/agendas/:year/:agendaNo/:committee', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view' })
+        .when(ctxPath + '/agendas/:year/:agendaNo', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view', reloadOnSearch: false })
 
         /** --- Calendars --- */
 
@@ -40,14 +39,12 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         /** --- Admin --- */
 
-        .when(ctxPath + '/admin', {
-            template: 'Manage Page'
-        })
+        .when(ctxPath + '/admin', { template: 'Manage Page' })
+        .when(ctxPath + '/admin/account', { templateUrl: ctxPath + '/partial/admin/account', reloadOnSearch: false })
 
-        .when(ctxPath + '/admin/account', {
-            templateUrl: ctxPath + '/partial/admin/account',
-            reloadOnSearch: false
-        })
+        /** --- Docs --- */
+
+        .when(ctxPath + '/docs', { redirectTo: ctxPath + '/docs'})
 
         /** --- Home Page --- */
 
