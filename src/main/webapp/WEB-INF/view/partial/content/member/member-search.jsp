@@ -43,9 +43,9 @@
           </md-content>
         </md-card>
 
-        <md-grid-list md-cols-sm="1" md-cols-md="2" md-cols-gt-md="3" md-row-height="7:3" md-gutter="12px" md-gutter-sm="6px">
-          <md-grid-tile ng-repeat="member in memberBrowse.results" ng-if="memberBrowse.response.success" md-rowspan="1" md-colspan="1">
-            <md-card class="content-card" style="width: 100%; height: 100%;">
+        <div layout="row" layout-wrap layout-align="center center">
+            <md-card ng-repeat="member in memberBrowse.results" ng-if="memberBrowse.response.success"
+                     class="content-card" style="height: 125px; width: 300px;margin-right: 10px;">
               <a ng-href="${ctxPath}/members/{{member.sessionYear}}/{{member.memberId}}"
                  class="result-link">
                 <md-item>
@@ -64,10 +64,7 @@
                 </md-item>
               </a>
             </md-card>
-
-          </md-grid-tile>
-
-        </md-grid-list>
+        </div>
       </section>
     </md-tab>
     <md-tab>
