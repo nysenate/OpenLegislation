@@ -601,8 +601,8 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
 }]);
 
 calendarModule.controller('CalendarFullUpdatesCtrl', ['$scope', '$routeParams', '$location', '$mdToast',
-                                                    'CalendarFullUpdatesApi', 'debounce', 'PaginationModel',
-function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, PaginationModel) {
+                                                    'CalendarFullUpdatesApi', 'PaginationModel',
+function ($scope, $routeParams, $location, $mdToast, UpdatesApi, PaginationModel) {
     $scope.updateResponse = {};
     $scope.updateOptions = {
         order: "DESC",
@@ -647,19 +647,19 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, Pagin
         if (resetPagination) {
             $scope.pagination.currPage = 1;
         }
-        var from = moment($scope.updateOptions.fromDateTime);
-        var to = moment($scope.updateOptions.toDateTime);
+        var from = moment.parseZone($scope.updateOptions.fromDateTime);
+        var to = moment.parseZone($scope.updateOptions.toDateTime);
+        console.log($scope.updateOptions.fromDateTime,from, $scope.toZonelessISOString(from.local()));
         if (from.isAfter(to)) {
             $scope.invalidRangeToast();
             $scope.updateResponse = {};
             $scope.pagination.setTotalItems(0);
         } else if (from.isValid() && to.isValid()) {
-            console.log("Getting updates from", from.toISOString(), "to", to.toISOString());
+            console.log("Getting updates from", $scope.toZonelessISOString(from), "to", $scope.toZonelessISOString(to));
             $scope.loadingUpdates = true;
             $scope.updateResponse = UpdatesApi.get({
                 detail: $scope.updateOptions.detail, type: $scope.updateOptions.type,
-                fromDateTime: moment($scope.updateOptions.fromDateTime).toISOString(),
-                toDateTime: moment($scope.updateOptions.toDateTime).toISOString(),
+                fromDateTime: $scope.toZonelessISOString(from), toDateTime: $scope.toZonelessISOString(to),
                 limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
             }, function () {
                 $scope.loadingUpdates = false;
@@ -692,13 +692,13 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, debounce, Pagin
             if (!opts.detail) {
                 $location.search("udetail", false);
             } else { $location.search("udetail", null); }
-            var to = moment(opts.toDateTime);
-            var from = moment(opts.fromDateTime);
+            var to = moment(opts.toDateTime).local();
+            var from = moment(opts.fromDateTime).local();
             if (to.isValid() && !to.isSame(initialTo)) {
-                $location.search("uto", to.toISOString());
+                $location.search("uto", $scope.toZonelessISOString(to));
             } else { $location.search("uto", null); }
             if (from.isValid() && !from.isSame(initialFrom)) {
-                $location.search("ufrom", from.toISOString());
+                $location.search("ufrom", $scope.toZonelessISOString(from));
             } else { $location.search("ufrom", null); }
         }, true);
 
