@@ -42,6 +42,10 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
     $scope.header = {text: '', visible: false};
     $scope.activeSession = 2015;
 
+    $scope.toZonelessISOString = function (momentDate) {
+        return momentDate.format('YYYY-MM-DDTHH:mm:ss.SSS');
+    };
+
     $scope.toggleLeftNav = function() {
         $mdSidenav('left').toggle();
     };
