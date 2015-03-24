@@ -121,7 +121,8 @@ public class AgendaGetCtrl extends BaseCtrl
                     .getAgendaInfoAddenda().values().stream()
                     .forEach(addn -> {
                         if (addn.getCommitteeInfoMap().containsKey(commAgendaId.getCommitteeId())) {
-                            meetingViews.add(new AgendaMeetingDetailView(commAgendaId, addn.getCommittee(commAgendaId.getCommitteeId())));
+                            meetingViews.add(new AgendaMeetingDetailView(
+                                commAgendaId, addn.getCommittee(commAgendaId.getCommitteeId()), addn.getId(), addn.getWeekOf()));
                         }
                     });
         });

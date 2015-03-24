@@ -6,19 +6,6 @@
       <md-toolbar class="md-toolbar-tools auto-height">
         <h6 style="margin:20px 0;">{{bill.title}}</h6>
       </md-toolbar>
-      <md-toolbar ng-if="bill.amendments.size > 1" class="md-toolbar-tools md-hue-2 auto-height">
-        <label class="margin-right-20">Version </label>
-        <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
-          <md-radio-button ng-repeat="(version, amd) in bill.amendments.items" class="md-accent md-hue-1"
-                           value="{{version}}">
-            <span ng-if="$first">Original</span>
-            <span ng-if="!$first">Revision {{version}}</span>
-            <span ng-if="$last"> (Latest)</span>
-            <br/>
-            <small>{{amd.publishDate | moment:'MMM D, YYYY'}}</small>
-          </md-radio-button>
-        </md-radio-group>
-      </md-toolbar>
       <md-toolbar class=" md-toolbar-tools auto-height">
         <section layout="row" layout-sm="column"
                  layout-align="start center" layout-align-sm="start start">
@@ -52,8 +39,21 @@
           </div>
         </section>
       </md-toolbar>
+      <md-toolbar ng-if="bill.amendments.size > 1" class="md-toolbar-tools md-hue-2 auto-height">
+        <label class="margin-right-20">Version </label>
+        <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
+          <md-radio-button ng-repeat="(version, amd) in bill.amendments.items" class="md-accent md-hue-1"
+                           value="{{version}}">
+            <span ng-if="$first">Original</span>
+            <span ng-if="!$first">Revision {{version}}</span>
+            <span ng-if="$last"> (Latest)</span>
+            <br/>
+            <small>{{amd.publishDate | moment:'MMM D, YYYY'}}</small>
+          </md-radio-button>
+        </md-radio-group>
+      </md-toolbar>
 
-      <md-tabs md-selected="curr.selectedView" class="" md-stretch-tabs="never">
+      <md-tabs md-selected="curr.selectedView" class="margin-top-10" md-stretch-tabs="never">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
             <span><i class="icon-search prefix-icon2"></i>Search</span>
@@ -210,7 +210,7 @@
                       <md-item-content>
                         <div class="md-tile-left">
                           <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{coSponsor.imgName}}"
-                               style="height:60px;width:auto;"/>
+                               style="height:60px;width:45px;"/>
                         </div>
                         <div class="md-tile-content">
                           <span class="text-medium">{{coSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
@@ -230,7 +230,7 @@
                       <md-item-content>
                         <div class="md-tile-left">
                           <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{multiSponsor.imgName}}"
-                               style="height: 60px;width:auto;"/>
+                               style="height: 60px;width:45px;"/>
                         </div>
                         <div class="md-tile-content">
                           <span class="text-medium">{{multiSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
@@ -381,7 +381,7 @@
               <md-subheader>Full Text</md-subheader>
               <md-content class="margin-10 padding-20">
                 <span ng-if="!loading && !bill.amendments.items[curr.amdVersion].fullText">
-                  Bill Text is not available yet.</span>
+                  Not available.</span>
                 <span ng-if="loading">Loading full text, please wait.</span>
                 <div ng-if="bill.amendments.items[curr.amdVersion].fullText">
                   <pre ng-if="!diffHtml" class="margin-left-20 bill-full-text">{{bill.amendments.items[curr.amdVersion].fullText}}</pre>

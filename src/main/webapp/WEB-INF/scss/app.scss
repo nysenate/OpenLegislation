@@ -486,13 +486,12 @@ ul.pagination {
   color: #FFFFFF;
   background: $blue1;
   text-align: center;
-  border-radius: 0px;
-  visibility: visible;
+  border-radius: 0;
   opacity: 0.9;
   bottom: 30px;
   left: 50%;
   margin-left: -90px;
-  z-index: 10000;
+  z-index: 100 !important;
   &:after {
     content: '';
     position: absolute;
@@ -503,6 +502,7 @@ ul.pagination {
     border-top: 8px solid $blue1;
     border-right: 8px solid transparent;
     border-left: 8px solid transparent;
+    z-index: 100;
   }
 }
 .cal-tooltip.agenda-meeting {
@@ -543,9 +543,21 @@ ul.pagination {
 
 /** --- Landing Page Styles --- */
 
+.hero-img {
+  margin-bottom:0;
+  height:600px;
+  background-size:cover;
+}
+
+.slogan-container {
+  padding: 20px;
+  margin: -300px 20px 20px 20px;
+  background: white;
+}
+
 h1.slogan {
   font-size:2.7rem;
-  padding:60px;
+  padding:20px;
   text-align:center;
   color:#555;
   font-family: 'Roboto Slab', serif;
@@ -556,12 +568,6 @@ a.slogan-link {
   color:$blue5;
   text-decoration: none;
   border-bottom:2px solid $blue5;
-}
-
-.hero-img {
-  margin-bottom:0;
-  height:250px;
-  background-size:cover;
 }
 
 .provide-data-container {

@@ -55,12 +55,12 @@ public class AgendaInfoAddendum extends BaseLegislativeContent implements Serial
         this.committeeInfoMap.put(infoCommittee.getCommitteeId(), infoCommittee);
     }
 
-    public AgendaInfoCommittee getCommittee(String name) {
-        return this.committeeInfoMap.get(name);
+    public AgendaInfoCommittee getCommittee(CommitteeId committeeId) {
+        return this.committeeInfoMap.get(committeeId);
     }
 
-    public void removeCommittee(String name) {
-        this.committeeInfoMap.remove(name);
+    public void removeCommittee(CommitteeId committeeId) {
+        this.committeeInfoMap.remove(committeeId);
     }
 
     /** --- Overrides --- */

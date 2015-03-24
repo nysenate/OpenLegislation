@@ -1,11 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <section ng-controller="AgendaCtrl">
   <section class="content-section" ng-controller="AgendaViewCtrl">
+    <h4 ng-hide="response.success === true">Loading Agenda</h4>
     <section ng-if="response.success === true">
       <md-toolbar class="md-toolbar-tools md-tall" layout="row">
         <div flex-gt-sm="33" flex-sm="100">
-          <div class="bold"><i class="icon-calendar prefix-icon2"></i>Week of {{agenda.weekOf | moment:'MMM Do'}}</div>
+          <div class="bold">
+            <i class="icon-calendar prefix-icon2"></i>Week of {{agenda.weekOf | moment:'MMM Do'}}
+          </div>
           <span class="text-medium">Published {{agenda.publishedDateTime | moment:'MM/DD/YYYY h:mm:ss A'}}</span>
         </div>
         <div hide-sm flex class="text-align-center">
@@ -30,16 +32,21 @@
         <md-tab>
           <md-tab-label>Committees</md-tab-label>
           <section>
-            <p class="text-medium margin-left-10 gray10"><i class="prefix-icon2 icon-info"></i>Click on a committee to view the agenda</p>
+            <md-card class="content-card">
+              <p class="text-medium margin-left-10 gray10">
+                <i class="prefix-icon2 icon-question"></i>Click on a committee to view the agenda.
+                <md-divider></md-divider>
+                <i class="prefix-icon2 icon-info"></i>Note: A committee may receive multiple updates (i.e. addenda) which can either overwrite prior meeting details or supplement it.
+              </p>
+            </md-card>
             <toggle-panel label="{{comm.committeeId.name}}" data-committee="{{comm.committeeId.name.toLowerCase()}}"
                           class="content-card"
                           ng-repeat="comm in agenda.committeeAgendas.items"
                           open="{{selectedComm[comm.committeeId.name.toLowerCase()]}}">
               <section ng-repeat="addn in comm.addenda.items">
-                <p class="bold text-medium text-align-center">
+                <p class="bold text-medium text-align-center padding-10 blue1 no-bottom-margin">
                   <span ng-if="addn.addendumId === ''">Initial&nbsp;</span>Addendum {{addn.addendumId}}
                 </p>
-                <md-divider></md-divider>
                 <div layout="row" layout-sm="column">
                   <md-card flex class="content-card no-margin">
                     <md-subheader>Meeting Information</md-subheader>
@@ -70,7 +77,7 @@
                     </md-content>
                   </md-card>
                 </div>
-                <toggle-panel class="content-card no-margin" label="Bills on the Agenda ({{addn.bills.size}})" open="false">
+                <toggle-panel class="content-card no-margin" label="Bills added to the Agenda ({{addn.bills.size}})" open="false">
                   <md-content style="max-height:500px;">
                     <md-list>
                       <a id="{{bill.billId.basePrintNo}}-{{bill.billId.session}}" class="result-link" ng-repeat="bill in addn.bills.items"
@@ -103,7 +110,7 @@
             </toggle-panel>
           </section>
         </md-tab>
-        <md-tab label="Updates History">
+        <md-tab label="Change Log">
 
         </md-tab>
       </md-tabs>
