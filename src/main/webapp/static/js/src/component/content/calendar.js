@@ -52,6 +52,8 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     $scope.pageNames = ['sklerch', 'active-list', 'floor', 'updates'];
 
+    $scope.openSections = {};
+
     $scope.init = function() {
         $scope.getCalendarViewById($routeParams.year, $routeParams.calNo);
         if ($routeParams.hasOwnProperty('view') && ['active-list', 'sklerch'].indexOf($routeParams['view']) < 0) {
@@ -96,13 +98,17 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
         $rootScope.$emit('newCalendarEvent');
 
         // Switch to the tab specified for the incoming route or by default the active list or floor tab
-        if ($scope.tabParam) {
-            $scope.changeTab($scope.tabParam)
-        } else if ($scope.calendarView.activeLists.size > 0) {
-            $scope.changeTab('active-list');
-        } else {
-            $scope.changeTab('floor');
+        if (!$scope.tabParam || $scope.pageNames.indexOf($scope.tabParam) < 0) {
+            if ($scope.calendarView.activeLists.size > 0) {
+                $scope.tabParam = 'active-list';
+            } else {
+                $scope.tabParam = 'floor';
+            }
         }
+
+        $scope.scrollToBill($location.hash());
+
+        $scope.changeTab($scope.tabParam)
     }
 
     // Loads a calendar according to the specified year and calendar number
@@ -134,7 +140,83 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
             });
     }
 
-    // Back to search
+    // Scrolls to the bill specified by identifier
+    $scope.scrollToBill = function (identifier) {
+        var billCalNoPattern = /^\d+$/;
+        var printNoPattern = /^([SA]\d+)[A-Z]?$/i;
+        var calEntryPredicate;
+        var attrName;
+        if (billCalNoPattern.test(identifier)) {
+            calEntryPredicate = getCalEntryPredicate('billCalNo', parseInt(identifier));
+            attrName = "data-cal-no";
+        } else {
+            var pnResult = printNoPattern.exec(identifier);
+            if (pnResult) {
+                calEntryPredicate = getCalEntryPredicate('basePrintNo', pnResult[1]);
+                attrName = "data-print-no";
+            } else {
+                return;
+            }
+        }
+
+        if ($scope.tabParam === "floor" || $scope.tabParam === "active-list" && !billInActiveList(calEntryPredicate)) {
+            var openSection = billInFloorCal(calEntryPredicate);
+            if (openSection) {
+                $scope.tabParam = "floor";
+                $scope.openSections[openSection] = true;
+            }
+        }
+        $timeout( function() {
+            $timeout(function () {
+                var selector = "md-item[" + attrName + "='" + identifier + "']";
+                $('html, body').animate({
+                    scrollTop : $(selector).offset().top
+                })
+            });
+        });
+    };
+
+    // returns a predicate that takes in an object and returns true if the 'field' property of the object equals the matchingValue
+    function getCalEntryPredicate(field, matchingValue) {
+        return function(calEntry) {
+            return calEntry[field] === matchingValue;
+        }
+    }
+
+    // Returns true if the current active lists contain an entry that matches the given predicate
+    function billInActiveList(calEntryPredicate) {
+        var activeLists = $scope.calendarView.activeLists.items;
+        for(var ali in activeLists) {
+            for (var ei in activeLists[ali].entries.items) {
+                if (calEntryPredicate(activeLists[ali].entries.items[ei])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Searches through every floor calendar entry returning the containing section of the first entry that matches
+    //  the given predicate.  Returns false if no entries match
+    function billInFloorCal(calEntryPredicate) {
+        var floorCals = [$scope.calendarView.floorCalendar];
+        for (var k in $scope.calendarView.supplementalCalendars.items) {
+            floorCals.push($scope.calendarView.supplementalCalendars.items[k]);
+        }
+        for (var fci in floorCals) {
+            var floorCalSections = floorCals[fci].entriesBySection.items;
+            for (var section in floorCalSections) {
+                for (var entry in floorCalSections[section].items) {
+                    if (calEntryPredicate(floorCalSections[section].items[entry])) {
+                        return section;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // Returns to the search page, restoring any saved request parameters
     $scope.backToSearch = function() {
         var currentParams = $location.search();
         var url = ctxPath + "/calendars";
@@ -261,16 +343,7 @@ calendarModule.controller('FloorCalendarCtrl', ['$scope', '$rootScope', function
         }
     };
 
-    var sectionOrder = [
-        'ORDER_OF_THE_FIRST_REPORT',
-        'ORDER_OF_THE_SECOND_REPORT',
-        'ORDER_OF_THE_SPECIAL_REPORT',
-        'THIRD_READING_FROM_SPECIAL_REPORT',
-        'THIRD_READING',
-        'STARRED_ON_THIRD_READING'
-    ];
-
-    $scope.sectionSortValue = sectionOrder.indexOf;
+    $scope.sectionSortValue = sectionArray.indexOf;
 
     $rootScope.$on('newCalendarEvent', populateFloorCals);
 
@@ -499,9 +572,9 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
 
     $scope.getEvent = function(calendarId) {
         return {
-            title: window.screen.availWidth > 850
-                ? "Senate Calendar\n" + calendarId.year +" #" + calendarId.calendarNumber
-                : "#" + calendarId.calendarNumber,
+            title: (window.innerWidth > 1175 ? "Senate Calendar\n" : "")
+                + (window.innerWidth > 550 ? calendarId.year + " " : "")
+                + "#" + calendarId.calendarNumber,
             start: calendarId.calDate,
             calNo: calendarId.calendarNumber
             //rendering: 'background'
@@ -586,7 +659,8 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
             editable: false,
             theme: false,
             header:{
-                left: 'prevYear prev,next nextYear today',
+                left: window.innerWidth > 550 ? 'prevYear prev,next nextYear today'
+                    : window.innerWidth > 380 ? 'prev,next,today' : 'prev,next',
                 center: 'title',
                 right: ''
             },
@@ -649,7 +723,6 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, PaginationModel
         }
         var from = moment.parseZone($scope.updateOptions.fromDateTime);
         var to = moment.parseZone($scope.updateOptions.toDateTime);
-        console.log($scope.updateOptions.fromDateTime,from, $scope.toZonelessISOString(from.local()));
         if (from.isAfter(to)) {
             $scope.invalidRangeToast();
             $scope.updateResponse = {};
@@ -740,20 +813,20 @@ calendarModule.filter('sectionDisplayName', function() {
     };
 });
 
+var sectionArray = [
+    'ORDER_OF_THE_FIRST_REPORT',
+    'ORDER_OF_THE_SECOND_REPORT',
+    'ORDER_OF_THE_SPECIAL_REPORT',
+    'THIRD_READING_FROM_SPECIAL_REPORT',
+    'THIRD_READING',
+    'STARRED_ON_THIRD_READING'
+];
 calendarModule.filter('orderBySection', function() {
-    var sectionOrder = [
-        'ORDER_OF_THE_FIRST_REPORT',
-        'ORDER_OF_THE_SECOND_REPORT',
-        'ORDER_OF_THE_SPECIAL_REPORT',
-        'THIRD_READING_FROM_SPECIAL_REPORT',
-        'THIRD_READING',
-        'STARRED_ON_THIRD_READING'
-    ];
     return function(obj) {
         var array = [];
         Object.keys(obj).forEach(function(key) { array.push(obj[key]); });
         array.sort(function(a, b) {
-            return sectionOrder.indexOf(a.items[0].sectionType) - sectionOrder.indexOf(b.items[0].sectionType);
+            return sectionArray.indexOf(a.items[0].sectionType) - sectionArray.indexOf(b.items[0].sectionType);
         });
         return array;
     };
