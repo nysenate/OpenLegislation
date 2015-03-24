@@ -2,18 +2,15 @@
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 
 <section ng-controller="LandingCtrl">
-  <section layout="row" layout-align="center center" style="rgb(243, 243, 243);">
-    <h1 flex class="slogan no-margin">Search, explore, and
-        <a target="_blank" href="${ctxPath}/docs" class="slogan-link">integrate</a> legislative information from the
-        <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York State Senate</a>.
-    </h1>
-  </section>
-  <div class="padding-20 margin-20 hero-img" style="background-image:url('${ctxPath}/static/img/capitol_square_cropped.jpg');">
+  <div class="padding-20 hero-img" style="background-image:url('${ctxPath}/static/img/capitol_square_cropped.png');">
     &nbsp;
   </div>
-  <section class="padding-20 margin-20 white-bg" style="margin-top:0;">
-    <h2 class="thin-300">Browse up-to date legislative content</h2>
-      <md-divider/>
+  <section class="slogan-container">
+    <h1 class="slogan">Search, explore, and
+      <a target="_blank" href="${ctxPath}/docs" class="slogan-link">integrate</a> legislative information from the
+      <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York State Senate</a>
+    </h1>
+    <md-divider/>
     <md-list layout-gt-sm="row" layout-wrap>
       <md-item flex="50" class="provide-data-container" ng-repeat="provideData in dataWeProvide">
         <md-item-content ng-click="go(provideData.url)">

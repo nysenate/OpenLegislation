@@ -1,8 +1,12 @@
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="java.time.format.TextStyle" %>
+<%@ page import="java.util.Locale" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="open" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="open-layout" tagdir="/WEB-INF/tags/layout" %>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
+<% request.setAttribute("today", LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH)); %>
 
 <open-layout:head title="Open 2.0">
   <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
@@ -16,14 +20,29 @@
   <script src="${ctxPath}/static/js/src/component/admin/account.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/notification_sub.js"></script>
 </open-layout:head>
-
+<!--
+                      __     __,
+                      \,`~"~` /
+      .-=-.           /    . .\   Hello.
+     / .-. \          {  =    Y}= Hope you're having a nice ${today}.
+    (_/   \ \          \      /
+           \ \        _/`'`'`b
+            \ `.__.-'`        \-._
+             |            '.__ `'-;_
+             |            _.' `'-.__)
+              \    ;_..--'/     //  \
+              |   /  /   |     //    |
+              \  \ \__)   \   //    /
+               \__)        './/   .'
+                             `'-'`
+-->
 <body ng-app="open">
   <section id="app-wrapper" layout="column" ng-controller="AppCtrl" layout-fill>
     <section layout="row">
       <%-- Left Nav --%>
       <section>
         <div id="left-nav-spacer" hide-sm hide-md></div>
-        <md-sidenav id="left-nav" class="md-sidenav-left" md-component-id="left" md-is-locked-open="$media('gt-md')">
+        <md-sidenav id="left-nav" class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
           <div id="logo-wrapper">
             <div id="logo">
               <a class="margin-left-10 gray2" href="${ctxPath}/">
@@ -64,7 +83,7 @@
       <%-- Main Content Area --%>
       <section id="content-wrapper" flex="1">
         <%-- Content Header --%>
-        <md-toolbar id="content-header" class="md-primary hide" ng-show="header.visible">
+        <md-toolbar id="content-header" class="md-primary" ng-class="{'header-visible': header.visible }">
           <h1 class="top-bar-heading md-toolbar-tools">
             <i hide-gt-md ng-click="toggleLeftNav()" class="menu-icon icon-list2"></i>
             {{header.text}}

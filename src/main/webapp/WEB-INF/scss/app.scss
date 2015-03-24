@@ -110,15 +110,27 @@ md-input-container {
   margin: auto;
 
   #content-header {
-    min-height: 66px;
+    min-height: 70px;
     font-size: 1.5rem;
     box-shadow: none;
+    display: none;
     @media (max-width: 768px) {
       font-size: 1.1rem;
     }
     background: #f5f5f5;
     h1 {
       color: rgb(96,125,139);
+    }
+    .md-toolbar-tools {
+      height: 70px;
+      max-height: 70px;
+    }
+    &.header-visible {
+      display: block;
+    }
+    /* Content header should always be visible on mobile (for the menu). */
+    @media (max-width: 599px) {
+      display: block;
     }
   }
   #content {
@@ -516,7 +528,6 @@ ul.pagination {
 /** --- Toggle Panel ---  */
 
 .toggle-panel {
-//  @include transition(all .2s ease-in);
   .toggle-panel-bar  {
     &:hover {
       background: #eee;
@@ -532,11 +543,9 @@ ul.pagination {
   &.open {
     > .toggle-panel-bar {
       border-bottom: 1px solid #ddd;
-//      @include box-shadow(none);
       .toggle-panel-label {
         color: $blue2;
       }
-//      background: rgb(96,125,139);
     }
   }
 }
@@ -547,16 +556,26 @@ ul.pagination {
   margin-bottom:0;
   height:600px;
   background-size:cover;
+  background-repeat: no-repeat;
+  @media (max-width: 599px) {
+    background-size: contain;
+  }
 }
 
 .slogan-container {
   padding: 20px;
   margin: -300px 20px 20px 20px;
+  @media (max-width: 599px) {
+    margin: -450px 20px 20px 20px;
+  }
   background: white;
 }
 
 h1.slogan {
   font-size:2.7rem;
+  @media (max-width: 599px) {
+    font-size:2rem;
+  }
   padding:20px;
   text-align:center;
   color:#555;

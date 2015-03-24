@@ -1,5 +1,6 @@
 /** --- Module configuration --- */
 
+/** Such dependencies. wow. */
 var openApp = angular.module('open',
 // External modules
     ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar', 'angularUtils.directives.dirPagination',
@@ -37,39 +38,63 @@ openApp.config(function($mdThemingProvider) {
 
 /**
  * App Controller
+ * --------------
+ *
+ * Since AppCtrl is the top-most parent controller, some useful utility methods are included here to be used
+ * by the children controller.
  */
 openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($scope, $location, $mdSidenav) {
     $scope.header = {text: '', visible: false};
     $scope.activeSession = 2015;
 
-    $scope.toZonelessISOString = function (momentDate) {
-        return momentDate.format('YYYY-MM-DDTHH:mm:ss.SSS');
-    };
-
+    /**
+     * Toggle the left navigation menu (only works on mobile, left nav is locked on larger screens).
+     */
     $scope.toggleLeftNav = function() {
         $mdSidenav('left').toggle();
     };
 
-    $scope.toggleRightNav = function() {
-        $mdSidenav('right').toggle();
-    };
-
+    /**
+     * Set the text of the top header bar. This should be called by any controller that is responsible for
+     * rendering a view.
+     * @param text string
+     */
     $scope.setHeaderText = function(text) {
         $scope.header.text = text;
     };
 
+    /**
+     * If the screen is larger than 'sm', indicate whether to display the top header bar.
+     * On small screens, the header will always be visible since it contains the mobile menu.
+     *
+     * @param visible boolean
+     */
     $scope.setHeaderVisible = function(visible) {
         $scope.header.visible = visible;
     };
 
+    /**
+     * Navigate to the given url. Useful for ngClick callbacks.
+     * @param url string
+     */
     $scope.go = function(url) {
         $location.url(url);
-    }
+    };
+
+    $scope.toZonelessISOString = function (momentDate) {
+        return momentDate.format('YYYY-MM-DDTHH:mm:ss.SSS');
+    };
 }]);
 
+/**
+ * Landing Controller
+ * ------------------
+ *
+ * The landing controller is responsible for the home page content as well as handling new api-key registrations.
+ */
 openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.setHeaderVisible(true);
-    $scope.setHeaderText('');
+    $scope.setHeaderVisible(false);
+    $scope.setHeaderText('Home');
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'Discover current and prior legislation that impacts New York State.',
           icon: 'icon-newspaper', url: ctxPath + '/bills'},
