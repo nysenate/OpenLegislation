@@ -1,13 +1,13 @@
 <md-list>
     <md-item hide-sm>
         <md-item-content layout="row">
-            <h4 style="width: 70px"><br/>Bill &#35;</h4>
-            <h4 style="width: 40px">Cal.<br/> Bill &#35;</h4>
+            <h4 style="width: 70px"><br/>Print &#35;</h4>
+            <h4 style="width: 40px"><br/>Bill &#35;</h4>
             <h4 class="md-tile-content no-margin"><br/>Title &amp; Sponsor</h4>
         </md-item-content>
         <md-divider class="md-default-theme"></md-divider>
     </md-item>
-    <md-item ng-repeat="calEntry in calEntries">
+    <md-item ng-repeat="calEntry in calEntries" data-print-no="{{calEntry.printNo}}" data-cal-no="{{calEntry.billCalNo}}">
         <md-item-content layout="row" class="md-padding">
             <div style="width: 70px" hide-sm>
                 <a ng-bind="calEntry.basePrintNo" class="text-large"
@@ -21,7 +21,7 @@
                 <a ng-bind="calEntry.basePrintNo" class="text-medium" hide-gt-sm
                    ng-href="{{billPageBaseUrl}}/{{calEntry.session}}/{{calEntry.basePrintNo}}"></a>
                 <a hide-gt-sm class="cal-entry-cal-no">Calendar Bill \#{{calEntry.billCalNo}}</a>
-                <div ng-bind="calEntry.title" class="truncate-text"></div>
+                <div ng-bind="calEntry.title"></div>
                 <div layout="row" hide-sm style="height: 40px">
                     <div style="overflow: hidden">
                         <img style="max-width: 40px; max-height: 52px;"

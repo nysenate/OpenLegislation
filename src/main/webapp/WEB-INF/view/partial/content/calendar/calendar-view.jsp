@@ -58,7 +58,8 @@
               </span>
           </md-toolbar>
           <md-content class="no-background">
-            <toggle-panel ng-repeat="(section, entries) in displayedSections" extra-classes="content-card"
+            <toggle-panel ng-repeat="(section, entries) in displayedSections"
+                          open="{{openSections[section]}}"
                           label="{{section | sectionDisplayName}}" show-tip="true">
               <calendar-entry-table cal-entries="entries" get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
             </toggle-panel>
