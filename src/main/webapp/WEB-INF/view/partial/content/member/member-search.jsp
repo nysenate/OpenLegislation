@@ -47,13 +47,11 @@
             <md-card ng-repeat="member in memberBrowse.results" ng-if="memberBrowse.response.success"
                      class="content-card" style="height: 125px; width: 300px;margin-right: 10px;">
               <a ng-href="${ctxPath}/members/{{member.sessionYear}}/{{member.memberId}}"
-                 class="result-link">
+                 class="result-link" style="display:block; height:100%;">
                 <md-item>
                   <md-item-content>
-                    <div style="padding-left: 20px; padding-top: 20px">
                       <img ng-src="${ctxPath}/static/img/business_assets/members/mini/{{member.imgName}}"
-                           style="width: 70px;">
-                    </div>
+                           style="width: 70px; display:block;" class="margin-left-10 margin-top-10">
                     <div class="md-tile-content">
                       <h3>{{member.fullName}}</h3>
                       <h6 class="gray7 no-margin">{{member.chamber | capitalize}}: {{member.sessionYear}}</h6>
