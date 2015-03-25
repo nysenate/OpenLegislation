@@ -88,6 +88,33 @@ md-input-container {
   }
 }
 
+md-tab.active {
+  md-tab-label {
+    font-weight: bold;
+  }
+}
+
+/** --- Transitions --- */
+
+.fade {
+  opacity: 1;
+}
+.fade.ng-enter {
+  @include transition(all .5s ease);
+}
+.fade.ng-enter {
+  opacity: 0;
+}
+.fade.ng-enter-active {
+  opacity: 1;
+}
+.fade.ng-leave {
+  opacity: 1;
+}
+.fade.ng-leave-active {
+  opacity: 0;
+}
+
 /** --- Hacks --- */
 
 .noselect {
@@ -128,8 +155,8 @@ md-input-container {
     &.header-visible {
       display: block;
     }
-    /* Content header should always be visible on mobile (for the menu). */
-    @media (max-width: 599px) {
+    /* Content header should always be visible when there's no room for the left nav. */
+    @media (max-width: 959px) {
       display: block;
     }
   }
@@ -465,6 +492,12 @@ ul.pagination {
       a {
         font-weight: 600;
         color: $blue2;
+      }
+    }
+    &:hover {
+      background: #eee;
+      a {
+        color: $blue3;
       }
     }
     a {

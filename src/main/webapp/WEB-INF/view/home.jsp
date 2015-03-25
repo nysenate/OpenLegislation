@@ -89,7 +89,7 @@
             {{header.text}}
           </h1>
         </md-toolbar>
-        <section id="content" ng-view autoscroll="true">
+        <section id="content" ng-view class="fade" autoscroll="true">
         </section>
       </section>
     </section>
