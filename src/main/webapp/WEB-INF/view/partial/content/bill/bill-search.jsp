@@ -75,10 +75,10 @@
                     <select id="refine_sponsor" ng-model="billSearch.refine.sponsor">
                       <option value="">Any</option>
                       <optgroup ng-show="billSearch.refine.chamber !== 'ASSEMBLY'" label="Senators">
-                        <option ng-repeat="senator in senators" value="{{senator.memberId}}">Senate: {{senator.shortName}}</option>
+                        <option ng-repeat="senator in senators" value="{{senator.memberId}}">{{senator.shortName}}</option>
                       </optgroup>
                       <optgroup ng-show="billSearch.refine.chamber !== 'SENATE'" label="Assembly Members">
-                        <option ng-repeat="assm in assemblyMembers" value="{{assm.memberId}}">Assembly: {{assm.shortName}}</option>
+                        <option ng-repeat="assm in assemblyMembers" value="{{assm.memberId}}">{{assm.shortName}}</option>
                       </optgroup>
                     </select>
                     <label for="refine_status">Current Status</label>
@@ -120,8 +120,8 @@
                           </div>
                           <div flex class="md-tile-content">
                             <h4>
-                              <span class="text-small" ng-if="!highlights.title">{{bill.title}}</span>
-                              <span class="text-small" ng-if="highlights.title" ng-bind-html="highlights.title[0]"></span>
+                              <span class="text-medium" ng-if="!highlights.title">{{bill.title}}</span>
+                              <span class="text-medium" ng-if="highlights.title" ng-bind-html="highlights.title[0]"></span>
                             </h4>
                             <h6 class="gray7 no-margin capitalize">{{bill.status.actionDate | moment:'ll'}} - {{getStatusDesc(bill.status) | lowercase}}</h6>
                           </div>
@@ -140,8 +140,7 @@
             </md-card>
           </section>
           <section>
-            <md-card class="content-card">
-              <md-subheader><strong>Quick search for Legislation</strong></md-subheader>
+            <toggle-panel label="Quick Search Tips" open="true" extra-classes="content-card">
               <div class="padding-20">
                 <p class="text-medium">Each bill and resolution has a print number and session year. If you are looking for a specific
                   piece of legislation, you can simply enter it's print number in the search box, e.g. <code>S1234-2013</code>.
@@ -151,9 +150,8 @@
                   you will need to enter it in quotes, e.g.&nbsp;<code>"Start UP NY"</code>. For more advanced queries see below.
                 </p>
               </div>
-            </md-card>
-            <md-card class="content-card">
-              <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
+            </toggle-panel>
+            <toggle-panel label="Advanced Search Guide" open="false" extra-classes="content-card">
               <div class="padding-20">
                 <p class="text-medium">You can combine the field definitions documented below to perform targeted searches.
                   You can string together multiple search term fields with the following operators: <code>AND, OR, NOT</code>
@@ -208,17 +206,16 @@
                 <tr><td>Vote Count</td><td>votes.size</td><td>number</td><td>votes.size:>0</td></tr>
                 <tr><td>Vote Type</td><td>votes.\*.voteType</td><td>enum</td><td>votes.\*.voteType:COMMITTEE<br/>votes.\*.voteType:FLOOR</td></tr>
                 <tr><td colspan="4"><strong>There are 6 vote codes: AYE, NAY, AYEWR (Aye with reservations), ABS (Absent), EXC (Excused), ABD (Abstained)<br/>
-                Only AYE is shown in the examples below but you can use any of them.</strong></td></tr>
+                  Only AYE is shown in the examples below but you can use any of them.</strong></td></tr>
                 <tr><td>Ayes Count</td><td>votes.\*.AYE.size</td><td>number</td><td>votes.\*.AYE.size:>10</td></tr>
                 <tr><td>Member that voted Aye</td><td>votes.\*.AYE.\*.shortName</td><td>text</td><td>votes.\*.AYE.\*.shortName:Funke</td></tr>
                 <tr style="background:#f1f1f1;"><td colspan="4"><strong>Bill Actions</strong></td></tr>
                 <tr><td>Action Count</td><td>actions.size</td><td>number</td><td>actions.size:>10</td></tr>
                 <tr><td>Action Date</td><td>actions.\*.date</td><td>date</td><td>actions.\*.date:>2015-02-01</td></tr>
                 <tr><td>Action Text</td><td>actions.\*.text</td><td>text</td><td>actions.\*.text:"Signed Chap"</td></tr>
-
                 </tbody>
               </table>
-            </md-card>
+            </toggle-panel>
           </section>
         </section>
       </md-tab>
@@ -228,7 +225,7 @@
         <section ng-if="selectedView === 1" ng-controller="BillUpdatesCtrl">
           <md-card class="content-card">
             <md-subheader>Show bill updates during the following date range</md-subheader>
-            <div layout="row" class="padding-20 text-medium">
+            <div layout="row" layout-sm="column" class="padding-20 text-medium">
               <div flex>
                 <label>With </label>
                 <select class="margin-left-10" ng-model="curr.type">
@@ -246,7 +243,7 @@
               </div>
             </div>
             <md-divider></md-divider>
-            <div layout="row" class="padding-20 text-medium">
+            <div layout="row" layout-sm="column"class="padding-20 text-medium">
               <div flex>
                 <label>Type </label>
                 <select class="margin-left-10" ng-model="curr.filter">

@@ -474,17 +474,6 @@ billModule.filter('prettyAmendVersion', function() {
     }
 });
 
-billModule.filter('prettySponsorMemo', function($sce){
-    var headingPattern = /(([A-Z][A-Za-z ]+)+:)/g;
-    return function(memo) {
-        if (memo) {
-            var htmlMemo = memo.replace(headingPattern, "<div class='bill-memo-heading'>$1</div>");
-            return $sce.trustAsHtml(htmlMemo);
-        }
-        return memo;
-    }
-});
-
 billModule.filter('voteTypeFilter', function() {
     return function(voteType) {
         switch (voteType) {

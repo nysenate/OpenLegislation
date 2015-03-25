@@ -1,12 +1,15 @@
+<md-card class="content-card">
+  <md-subheader flex><strong>{{pagination.totalItems}}</strong> <span ng-show="showDetails"> granular </span> updates
+    <span ng-show="fromDate && toDate">between {{fromDate | moment:'lll'}} and {{toDate | moment:'lll'}}.</span>
+    <span ng-show="pagination.totalItems > 0">Viewing page {{pagination.currPage}} of {{pagination.lastPage}}. </span>
+  </md-subheader>
+  <div class="subheader" ng-if="pagination.totalItems > pagination.itemsPerPage">
+    <div flex style="text-align: right;">
+      <dir-pagination-controls boundary-links="true"></dir-pagination-controls>
+    </div>
+  </div>
+</md-card>
 <md-list>
-  <md-item ng-show="pagination.totalItems > pagination.itemsPerPage">
-    <md-item-content>
-      <div class="md-tile-content" layout="row" layout-sm="column" layout-align="space-between center">
-        <div flex> {{pagination.totalItems}} updates. Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.  </div>
-        <div flex style="text-align: right;"><dir-pagination-controls boundary-links="true"></dir-pagination-controls></div>
-      </div>
-    </md-item-content>
-  </md-item>
   <md-item dir-paginate="update in updateResponse.result.items | itemsPerPage: updateResponse.limit"
          current-page="pagination.currPage" total-items="updateResponse.total">
     <md-item-content>
@@ -44,12 +47,11 @@
       </div>
     </md-item-content>
   </md-item>
-  <md-item ng-show="pagination.totalItems > pagination.itemsPerPage">
-    <md-item-content>
-      <div class="md-tile-content" layout="row" layout-sm="column" layout-align="space-between center">
-        <div flex> {{pagination.totalItems}} updates. Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.  </div>
-        <div flex style="text-align: right;"><dir-pagination-controls boundary-links="true"></dir-pagination-controls></div>
-      </div>
-    </md-item-content>
-  </md-item>
 </md-list>
+<md-card class="content-card" ng-if="pagination.totalItems > pagination.itemsPerPage">
+  <div class="subheader">
+    <div flex style="text-align: right;">
+      <dir-pagination-controls boundary-links="true"></dir-pagination-controls>
+    </div>
+  </div>
+</md-card>

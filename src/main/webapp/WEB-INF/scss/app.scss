@@ -583,6 +583,15 @@ ul.pagination {
   }
 }
 
+/** --- Full Calendar --- */
+
+.fc-header-title {
+  h2 {
+    font-family: 'Roboto Slab', 'Open Sans', sans-serif;
+    font-weight: normal;
+  }
+}
+
 /** --- Landing Page Styles --- */
 
 .hero-img {
@@ -829,11 +838,14 @@ a.slogan-link {
     background: #fafafa;
     border: 1px none #ddd;
     border-bottom-style: solid;
-    border-radius: 0;
-    color: $blue2;
+    border-top-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    color: $blue3;
     cursor: pointer;
     &:hover {
-      background: #eee;
+      background: white;
     }
   }
 }

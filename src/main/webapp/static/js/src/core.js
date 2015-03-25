@@ -144,20 +144,53 @@ coreModule.directive('updateList', ['PaginationModel', function(PaginationModel)
             updateResponse: '=',
             pagination: '=?',
             showId: '=?',
-            showDetails: '=?'
+            showDetails: '=?',
+            fromDate: '=?',
+            toDate: '=?'
         },
         templateUrl: ctxPath + '/partial/core/update-list',
         link: function($scope, $elem, $attrs) {
             $scope.showId = $scope.showId || true;
-            $scope.showDetails = $scope.showDetails || true;
+            $scope.showDetails = $scope.showDetails || false;
             if (!$scope.pagination) {
                 $scope.paginationModel = angular.extend({}, PaginationModel);
                 $scope.paginationModel.itemsPerPage = Number.MAX_SAFE_INTEGER;
             }
-
         }
     };
 }]);
+
+
+/**
+ * Update Id
+ *
+ * Generates a content id string for an update based on its scope
+ * Returns a less specific Id if the update is an update token
+ */
+coreModule.filter('updateId', function() {
+    return function (update) {
+        var contentType = update['contentType'];
+        var id = update['id'];
+        var idString = "";
+        // Calendars
+        if (contentType === 'CALENDAR') {
+            idString = 'Calendar ' + id['calendarNumber'] + ' (' + id['year'] + ')';
+            if ('fields' in update) {
+                if ('supVersion' in update['fields']) {
+                    var supVersion = update['fields']['supVersion'];
+                    idString += "-" + (supVersion == "" ? "floor" : supVersion)
+                } else if ('sequenceNo' in update['fields']) {
+                    idString += "-" + update['fields']['sequenceNo'];
+                }
+            }
+        }
+        // Agendas
+        else if (contentType === 'AGENDA') {
+            idString = 'Agenda ' + id['number'] + ' (' + id['year'] + ')';
+        }
+        return idString;
+    };
+});
 
 /**
  * Image Error Placeholder
@@ -179,33 +212,6 @@ coreModule.directive('errSrc', function() {
             });
         }
     }
-});
-
-/**
- * Update Id
- *
- * Generates a content id string for an update based on its scope
- * Returns a less specific Id if the update is an update token
- */
-coreModule.filter('updateId', function() {
-    return function (update) {
-        var id = update['id'];
-        var idString = "";
-        // Calendars
-        if ('calendarNumber' in id) {
-            idString = id['year'] + "#" + id['calendarNumber'];
-            if ('fields' in update) {
-                if ('supVersion' in update['fields']) {
-                    var supVersion = update['fields']['supVersion'];
-                    idString += "-" + (supVersion == "" ? "floor" : supVersion)
-                } else if ('sequenceNo' in update['fields']) {
-                    idString += "-" + update['fields']['sequenceNo'];
-                }
-            }
-        }
-
-        return idString;
-    };
 });
 
 /**

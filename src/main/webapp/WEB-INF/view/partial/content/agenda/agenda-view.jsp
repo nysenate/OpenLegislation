@@ -34,8 +34,6 @@
           <section>
             <md-card class="content-card">
               <p class="text-medium margin-left-10 gray10">
-                <i class="prefix-icon2 icon-question"></i>Click on a committee to view the agenda.
-                <md-divider></md-divider>
                 <i class="prefix-icon2 icon-info"></i>Note: A committee may receive multiple updates (i.e. addenda) which can either overwrite prior meeting details or supplement it.
               </p>
             </md-card>
@@ -84,7 +82,7 @@
                          ng-href="${ctxPath}/bills/{{bill.billId.session}}/{{bill.billId.basePrintNo}}">
                         <md-item>
                           <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
-                            <div style="width:180px;padding:16px;">
+                            <div style="width:200px;padding:16px;">
                               <h3 class="no-margin"><span>{{bill.billId.printNo}}</span> - {{bill.billId.session}}</h3>
                               <h5 class="no-margin">{{bill.billInfo.sponsor.member.fullName}}</h5>
                               <h5 ng-show="bill.message" class="no-margin green2"><i class="icon-forward prefix-icon2"></i>{{bill.message}}</h5>

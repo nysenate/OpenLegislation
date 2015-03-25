@@ -173,29 +173,6 @@
                 <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
               </md-content>
             </md-card>
-
-            <%-- Enacting Clause --%>
-            <md-card class="content-card" ng-if="!bill.billType.resolution">
-              <md-subheader>Enacting Clause</md-subheader>
-              <md-content>
-                <p class="text-medium">{{bill.amendments.items[curr.amdVersion].actClause | default:'Not Available'}}</p>
-              </md-content>
-            </md-card>
-            <%-- Bill Summary --%>
-            <md-card class="content-card" ng-if="!bill.billType.resolution">
-              <md-subheader>Summary of Bill</md-subheader>
-              <md-content>
-                <p class="text-medium">{{bill.summary | default:'Not Available'}}</p>
-              </md-content>
-            </md-card>
-            <%-- Law Section --%>
-            <md-card class="content-card">
-              <md-subheader>Affected Law</md-subheader>
-              <md-content>
-                <span class="text-medium">Primary Law Section - {{bill.amendments.items[curr.amdVersion].lawSection}}</span>
-                <p class="text-medium">Law Code - {{bill.amendments.items[curr.amdVersion].lawCode | default:'N/A'}}</p>
-              </md-content>
-            </md-card>
             <%-- Co/Multi --%>
             <md-card layout="row" layout-sm="column" layout-align="start start" class="content-card"
                      ng-if="bill.amendments.items[curr.amdVersion].coSponsors.size > 0 ||
@@ -240,6 +217,29 @@
                   </md-list>
                 </md-content>
               </section>
+            </md-card>
+
+            <%-- Enacting Clause --%>
+            <md-card class="content-card" ng-if="!bill.billType.resolution">
+              <md-subheader>Enacting Clause</md-subheader>
+              <md-content>
+                <p class="text-medium">{{bill.amendments.items[curr.amdVersion].actClause | default:'Not Available'}}</p>
+              </md-content>
+            </md-card>
+            <%-- Bill Summary --%>
+            <md-card class="content-card" ng-if="!bill.billType.resolution">
+              <md-subheader>Summary of Bill</md-subheader>
+              <md-content>
+                <p class="text-medium">{{bill.summary | default:'Not Available'}}</p>
+              </md-content>
+            </md-card>
+            <%-- Law Section --%>
+            <md-card class="content-card">
+              <md-subheader>Affected Law</md-subheader>
+              <md-content>
+                <span class="text-medium">Primary Law Section - {{bill.amendments.items[curr.amdVersion].lawSection}}</span>
+                <p class="text-medium">Law Code - {{bill.amendments.items[curr.amdVersion].lawCode | default:'N/A'}}</p>
+              </md-content>
             </md-card>
             <%-- Identical Legislation --%>
             <md-card class="content-card" ng-if="bill.previousVersions.size > 0">
@@ -301,8 +301,8 @@
                 Sponsor's Memorandum
               </md-subheader>
               <md-content ng-if="bill.amendments.items[curr.amdVersion].memo">
-            <pre class="bill-full-text" style=""
-                 ng-bind-html="bill.amendments.items[curr.amdVersion].memo | prettySponsorMemo"></pre>
+            <pre class="bill-full-text"
+                 ng-bind="bill.amendments.items[curr.amdVersion].memo"></pre>
               </md-content>
               <md-content ng-if="bill.billType.chamber == 'ASSEMBLY'">
                 <div class="text-medium padding-20">Sponsor memos are not provided for Assembly bills.
@@ -396,7 +396,7 @@
           <md-divider></md-divider>
           <section ng-if="curr.selectedView === 5">
             <md-card class="content-card">
-              <md-content layout="row">
+              <md-content layout="row" layout-sm="column">
                 <div flex>
                   <label>Filter by update type: </label>
                   <select ng-model="curr.updateTypeFilter" ng-change="getUpdates()" class="margin-left-10">

@@ -23,12 +23,8 @@ public class UpdateDigestView extends UpdateTokenView implements ViewObject
             this.fields = new HashMap<>();
             if (updateDigest.getFields() != null) {
                 for (String key : updateDigest.getFields().keySet()) {
-                    // Camel case the keys
                     this.fields.put(
-                        (key.contains("_"))
-                            ? key.substring(0, 1) + WordUtils.capitalizeFully(key, new char[]{'_'}).replace("_", "").substring(1)
-                            : key,
-                       updateDigest.getFields().get(key));
+                        WordUtils.capitalizeFully(key, new char[]{'_'}).replace("_", " "), updateDigest.getFields().get(key));
                 }
             }
         }

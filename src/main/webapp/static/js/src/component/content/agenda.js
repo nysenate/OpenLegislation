@@ -25,11 +25,18 @@ agendaModule.factory('AgendaSearchApi', ['$resource', function($resource) {
     });
 }]);
 
-agendaModule.factory('AgendaGetApi', ['$resource', function($resource){
+agendaModule.factory('AgendaGetApi', ['$resource', function($resource) {
     return $resource(apiPath + '/agendas/:year/:agendaNo/', {
         year: '@year',
         agendaNo: '@agendaNo'
     });
+}]);
+
+agendaModule.factory('AgendaAggUpdatesApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/agendas/updates/:from/:to', {
+        from: '@from',
+        to: '@to'
+    })
 }]);
 
 agendaModule.controller('AgendaCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$route',
@@ -119,10 +126,13 @@ agendaModule.controller('AgendaBrowseCtrl', ['$scope', '$rootScope', '$location'
         $scope.meetingEventSources = [];
         $scope.meetings = {};
         $scope.agendaSet = {};
+        $scope.yearsFetched = {};
+        $scope.loading = false;
 
         $scope.curr = {
-            fromDateTime: moment().startOf('year').toDate(),
-            toDateTime: moment().endOf('year').toDate()
+            selectedDateTime: null,
+            month: null,
+            year: null
         };
 
         $scope.tabInit = function() {
@@ -136,14 +146,21 @@ agendaModule.controller('AgendaBrowseCtrl', ['$scope', '$rootScope', '$location'
         $scope.init = function() {
             $scope.tabInit();
             $scope.calendarConfig = $scope.getCalendarConfig();
-            $scope.renderCalendar($routeParams['bdate']);
-            $scope.fetchMeetingEvents();
+            // Set the selected date time to either the route param or the current date.
+            // This datetime will set the month the calendar renders first, which will trigger the api call
+            // to get the meetings.
+            $scope.curr.selectedDateTime =
+                ($routeParams['bdate'] && moment($routeParams['bdate']).isValid())
+                    ? moment($routeParams['bdate']).toDate()
+                    : new Date();
+            $scope.curr.month = $scope.curr.selectedDateTime.getMonth();
+            $scope.curr.year = $scope.curr.selectedDateTime.getFullYear();
         };
 
         $scope.renderCalendar = function(selectedDate) {
             $timeout(function() {
-                if (selectedDate && moment(selectedDate).isValid()) {
-                    angular.element('#agenda-date-picker').fullCalendar('gotoDate', moment(selectedDate).toDate());
+                if (selectedDate) {
+                    angular.element('#agenda-date-picker').fullCalendar('gotoDate', selectedDate);
                 }
                 angular.element('#agenda-date-picker').fullCalendar('render');
             });
@@ -151,11 +168,22 @@ agendaModule.controller('AgendaBrowseCtrl', ['$scope', '$rootScope', '$location'
 
         // Set the search param to match the currently viewed month
         $scope.viewRenderHandler = function(view, element) {
+            var month = moment(view.start).month();
             var year = moment(view.start).year();
-            if (!$scope.agendaSet.hasOwnProperty(year)) {
-                console.log(year);
+            if (!$scope.yearsFetched.hasOwnProperty(year)) {
+                $scope.fetchMeetingEvents(year);
             }
+            $scope.curr.month = month;
+            $scope.curr.year = year;
         };
+
+        $scope.updateSelectedDate = function() {
+            $scope.curr.selectedDateTime = new Date($scope.curr.year, $scope.curr.month);
+        };
+
+        $scope.$watch('curr.selectedDateTime', function(newDate) {
+            $scope.renderCalendar(newDate);
+        });
 
         $scope.agendaEventClickHandler = function(calEvent) {
             $location.url($scope.getAgendaUrlFromEvent(calEvent));
@@ -173,13 +201,15 @@ agendaModule.controller('AgendaBrowseCtrl', ['$scope', '$rootScope', '$location'
 
         $scope.getAgendaUrlFromEvent = function(event) {
             var url = window.ctxPath + '/agendas/' + event.agendaId.year + '/' + event.agendaId.number
-                                     + '?comm=' + event.committeeId.name + '&sview=browse';
+                                     + '?sview=browse' + ((event.committeeId) ? '&comm=' + event.committeeId.name : '');
             return url;
         };
 
-        $scope.fetchMeetingEvents = function() {
-            var meetingResponse = AgendaMeetingApi.get({from: $scope.curr.fromDateTime.toISOString(),
-                                                        to: $scope.curr.toDateTime.toISOString()},
+        $scope.fetchMeetingEvents = function(year) {
+            $scope.yearsFetched[year] = true;
+            $scope.loading = true;
+            var meetingResponse = AgendaMeetingApi.get({from: new Date(year, 0, 1).toISOString(),
+                                                        to: new Date(year + 1, 0, 1).toISOString()},
                 function() {
                     var meetings = meetingResponse.result.items;
                     var meetingEvents = [];
@@ -194,14 +224,14 @@ agendaModule.controller('AgendaBrowseCtrl', ['$scope', '$rootScope', '$location'
                                 start: m.weekOf,
                                 end: moment(m.weekOf).endOf('week').toISOString(),
                                 allDay: true,
-                                color: '#3a87ad',
-                                textColor: 'white',
-                                agendaId: m.agendaId
+                                agendaId: m.agendaId,
+                                color: '#43AC6A',
+                                textColor: 'white'
                             });
                             $scope.agendaSet[m.agendaId.year][m.agendaId.number] = true;
                         }
                         meetingEvents.push({
-                            title: '\n' + m.committeeId.name,
+                            title: '\n' + m.committeeId.name + ((m.addendum) ? '\nAddendum: ' + m.addendum : ''),
                             start: m.meeting.meetingDateTime,
                             allDay: false,
                             notes: m.meeting.notes,
@@ -214,7 +244,10 @@ agendaModule.controller('AgendaBrowseCtrl', ['$scope', '$rootScope', '$location'
                         editable: false,
                         className: 'agenda-event'
                     });
-                    $scope.renderCalendar();
+                    $scope.loading = false;
+
+                }, function() {
+                    $scope.loading = false;
                 });
         };
 
@@ -243,10 +276,29 @@ agendaModule.controller('AgendaBrowseCtrl', ['$scope', '$rootScope', '$location'
     }
 ]);
 
-agendaModule.controller('AgendaUpdatesCtrl', ['$scope', '$rootScope', '$location', '$route',
-    function($scope, $rootScope, $location, $route) {
+agendaModule.controller('AgendaUpdatesCtrl', ['$scope', '$rootScope', '$location', 'PaginationModel', 'AgendaAggUpdatesApi',
+    function($scope, $rootScope, $location, PaginationModel, AgendaAggUpdatesApi) {
+
+        $scope.pagination = angular.extend({}, PaginationModel);
+        $scope.pagination.itemsPerPage = 20;
+
+        $scope.curr = {
+            fromDate: moment().subtract(30, 'days').startOf('minute').toDate(),
+            toDate: moment().startOf('minute').toDate(),
+            type: $location.$$search.type || 'published',
+            sortOrder: $location.$$search.sortOrder || 'desc',
+            detail: $location.$$search.detail || false
+        };
+
+        $scope.agendaUpdates = {
+            response: {},
+            fetching: false,
+            result: {},
+            errMsg: ''
+        };
+
         $scope.tabInit = function() {
-            $scope.setHeaderText('View Senate Agenda Updates');
+            $scope.setHeaderText('Agenda Updates');
         };
 
         $scope.$on('viewChange', function() {
@@ -256,6 +308,41 @@ agendaModule.controller('AgendaUpdatesCtrl', ['$scope', '$rootScope', '$location
         $scope.init = function() {
             $scope.tabInit();
         };
+
+        $scope.getUpdates = function() {
+            $scope.agendaUpdates.fetching = true;
+            $scope.agendaUpdates.response = AgendaAggUpdatesApi.get({
+                from: $scope.curr.fromDate.toISOString(), to: $scope.curr.toDate.toISOString(),
+                type: $scope.curr.type, order: $scope.curr.sortOrder, detail: $scope.curr.detail,
+                filter: $scope.curr.filter, limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
+            }, function() {
+                $scope.agendaUpdates.result = $scope.agendaUpdates.response.result;
+                $scope.pagination.setTotalItems($scope.agendaUpdates.response.total);
+                $scope.agendaUpdates.fetching = false;
+            }, function(resp) {
+                $scope.agendaUpdates.response.success = false;
+                $scope.pagination.setTotalItems(0);
+                $scope.agendaUpdates.errMsg = resp.data.message;
+                $scope.agendaUpdates.fetching = false;
+            });
+        };
+
+        $scope.$on('viewChange', function(ev) {
+            $scope.getUpdates();
+        });
+
+        $scope.$watchCollection('curr', function(n, o) {
+            if ($scope.selectedView === 2) {
+                $scope.getUpdates();
+                $scope.pagination.reset();
+            }
+        });
+
+        $scope.$watch('pagination.currPage', function(newPage, oldPage) {
+            if (newPage !== oldPage) {
+                $scope.getUpdates();
+            }
+        });
 
         $scope.init();
     }
