@@ -65,9 +65,9 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
         $scope.$watch('curr.activeIndex', function(newIndex, oldIndex) {
             if (newIndex >=1) {
-                $location.search('view', $scope.pageNames[newIndex]);
+                $location.search('view', $scope.pageNames[newIndex]).replace();
             } else if (newIndex < 0 || newIndex >= $scope.pageNames.length) {
-                $location.search('view', null);
+                $location.search('view', null).replace();
             }
         });
     };
@@ -79,8 +79,6 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
         var newIndex = $scope.pageNames.indexOf(pageName);
         if (newIndex >= 0) $scope.curr.activeIndex = newIndex;
     };
-
-
 
     /** --- Get Calendar Data --- */
 
@@ -142,6 +140,7 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     // Scrolls to the bill specified by identifier
     $scope.scrollToBill = function (identifier) {
+        identifier = identifier.toUpperCase();
         var billCalNoPattern = /^\d+$/;
         var printNoPattern = /^([SA]\d+)[A-Z]?$/i;
         var calEntryPredicate;
@@ -232,9 +231,8 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     // Calendar Bill Number Search
 
-    $scope.getCalBillNumUrl = function(calBillNum) {
-        var searchTerm = "\\*.billCalNo:" + calBillNum + " AND year:" + $scope.calendarView.year;
-        return ctxPath + "/calendars?view=search&search=" + searchTerm;
+    $scope.getCalBillNumUrl = function(year, calBillNum) {
+        return ctxPath + "/calendars?view=search&sfield=billCalNo&syear=" + year + "&svalue=" + calBillNum;
     };
 
     $scope.init();
@@ -395,17 +393,18 @@ function ($scope, $rootScope, $routeParams, $location, $timeout) {
 
     $scope.pageNames = ['browse', 'search', 'updates'];
 
+    $scope.activeYears = [];
+    for (var year = moment().year(); year >= 2009; year--) {
+        $scope.activeYears.push(year);
+    }
+
     function init() {
         if ('view' in $routeParams) {
             $scope.changeTab($routeParams['view']);
         }
 
         $scope.$watch('activeIndex', function(newIndex, oldIndex) {
-            if ($scope.pageNames[newIndex]) {
-                $location.search('view', $scope.pageNames[newIndex]);
-            } else {
-                $location.search('view', null);
-            }
+            $scope.setSearchParam('view', $scope.pageNames[newIndex]);
         })
     }
 
@@ -430,12 +429,15 @@ function ($scope, $rootScope, $routeParams, $location, $timeout) {
         });
     };
 
-    $scope.getCalendarUrl = function(year, calNum) {
+    $scope.getCalendarUrl = function(year, calNum, hash) {
         var url = ctxPath + "/calendars/" + year + "/" + calNum;
         var firstParam = true;
         for (var param in $location.search()) {
             url += (firstParam ? "?" : "&") + (param == "view" ? "sview" : param) + "=" + $location.search()[param];
             firstParam = false;
+        }
+        if (hash) {
+            url += "#" + hash;
         }
         return url;
     };
@@ -453,50 +455,166 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
     $scope.searchResults = [];
     $scope.searchResponse = {};
 
-    $scope.pagination = angular.extend({}, paginationModel);
+    $scope.searchActiveIndex = 0;
 
-    $scope.searched = false;
-
-    $scope.init = function() {
-        if ($routeParams.hasOwnProperty('search')) {
-            $scope.searchTerm = $routeParams['search'];
-            $scope.termSearch(false);
-        }
-        $scope.$watch('pagination.currPage', function(newPage, oldPage) {
-            if (newPage !== oldPage && $scope.pagination.currPage > 0) {
-                if ($scope.pagination.currPage >1 ) {$location.search('searchPage', $scope.pagination.currPage);}
-                $scope.termSearch(false);
-            }
-        })
+    $scope.searchQuery = {
+        term: "",
+        sort: ""
     };
 
-    // Perform a simple serch based on the current search term
+     var defaultFields = {
+        year: null,
+        fieldName: "",
+        fieldValue: "",
+        activeList: false,
+        order: ""
+    };
+    $scope.searchFields = angular.extend({}, defaultFields);
+    var fieldStorage = angular.extend({}, defaultFields);
+
+    $scope.fieldOptions = {calendarNumber:'Calendar No.', printNo: 'Print No.', billCalNo: 'Bill Calendar No.'};
+    $scope.orderOptions = {DESC: 'Newest First', ASC: 'Oldest First'};
+
+    $scope.pagination = angular.extend({}, paginationModel);
+
+    $scope.searching = false;
+
+    $scope.init = function() {
+        if ('stype' in $routeParams && $routeParams['stype'] === 'string') {
+            $scope.searchActiveIndex = 1;
+        }
+        if ('search' in $routeParams && $scope.searchActiveIndex === 1) {
+            $scope.searchQuery.term = $routeParams['search'];
+        }
+        if ('sort' in $routeParams && $scope.searchActiveIndex ===1) {
+            $scope.searchQuery.sort = $routeParams['sort'];
+        }
+        if ('syear' in $routeParams) {
+            var year = parseInt($routeParams['syear']);
+            if ($scope.activeYears.indexOf(year) >= 0) {
+                $scope.searchFields.year = year;
+            }
+        }
+        if ('sfield' in $routeParams && $routeParams['sfield'] in $scope.fieldOptions) {
+            $scope.searchFields.fieldName = $routeParams['sfield'];
+        }
+        if ('svalue' in $routeParams) {
+            $scope.searchFields.fieldValue = $routeParams['svalue'];
+        }
+        if ('sactlist' in $routeParams) {
+            $scope.searchFields.activeList = $routeParams['sactlist'] === 'true';
+        }
+        if ('sorder' in $routeParams && $routeParams['sorder'] in $scope.orderOptions) {
+            $scope.searchFields.order = $routeParams['sorder'];
+        }
+        $scope.$watchCollection('searchFields', $scope.fieldSearch);
+        $scope.$watch('pagination.currPage', function(newPage, oldPage) {
+            if (newPage !== oldPage && newPage > 0) {
+                $scope.setSearchParam('searchPage', newPage, newPage > 1);
+                $scope.termSearch(false);
+            }
+        });
+        $scope.$watch('searchActiveIndex', function(newIndex, oldIndex) {
+            if (newIndex === 0) {
+                $scope.fieldSearch();
+            }
+            $scope.setSearchParam('stype', 'string', newIndex === 1);
+            setFieldParameters();
+            setQueryParameters();
+        });
+        $scope.$watchCollection('searchQuery', function (newQ, oldQ) {
+            $scope.termSearch(true);
+            setQueryParameters();
+        });
+    };
+
+    // Perform a simple search based on the current search term
     $scope.termSearch = function(resetPagination) {
         // If pagination is to be reset and it is not on page 1 just change pagination to trigger the watch
         if (resetPagination && $scope.pagination.currPage != 1) {
             $scope.pagination.currPage = 1;
         } else {
-            var term = $scope.searchTerm;
-            console.log('searching for', term);
+            var term = $scope.searchQuery.term;
+            var sort = $scope.searchQuery.sort;
             if (term) {
-                $location.search('search', term);
-                $scope.searched = false;
+                console.log("searching.", "term:", term, "sort:", sort);
+                $scope.searching = true;
                 $scope.searchResponse = SearchApi.get({
-                        term: term, sort: $scope.sort, limit: $scope.pagination.getLimit(),
+                        term: term, sort: sort, limit: $scope.pagination.getLimit(),
                         offset: $scope.pagination.getOffset()
                     },
                     function () {
                         $scope.searchResults = $scope.searchResponse.result.items || [];
-                        $scope.searched = true;
+                        $scope.searching = false;
                         $scope.pagination.setTotalItems($scope.searchResponse.total);
-                    });
+                    }, function() {$scope.searching = false;});
             } else {
+                console.log("not searching.");
                 $scope.searchResults = [];
                 $scope.pagination.setTotalItems(0);
-                $location.search('search', null);
             }
         }
     };
+
+    $scope.fieldSearch = function () {
+        if ($scope.searchActiveIndex === 0) {
+            var queryString = buildFieldQuery();
+            var sortString = getFieldSortString();
+            if ($scope.searchQuery.term !== queryString) {
+                $scope.searchQuery.term = queryString ? queryString : "";
+            }
+            if ($scope.searchQuery.sort !== getFieldSortString()) {
+                $scope.searchQuery.sort = sortString;
+            }
+        }
+        setFieldParameters();
+    };
+
+    function addSearchTerm(query, term) {
+        return query ? query + " AND " + term : term;
+    }
+
+    // Constructs a search query string from the current search fields
+    function buildFieldQuery() {
+        var query = false;
+        if ($scope.searchFields.year) {
+            query = addSearchTerm(query, "year:" + $scope.searchFields.year);
+        }
+        if ($scope.searchFields.fieldName && $scope.searchFields.fieldValue) {
+            if ($scope.searchFields.fieldName === "calendarNumber") {
+                query = addSearchTerm(query, "calendarNumber:" + $scope.searchFields.fieldValue);
+            } else {
+                query = addSearchTerm(query, ($scope.searchFields.activeList ? "activeLists" : "")
+                                                + "\\*." + $scope.searchFields.fieldName + ":" + $scope.searchFields.fieldValue);
+            }
+        }
+        return query;
+    }
+
+    function getFieldSortString() {
+        if ($scope.searchFields.order in $scope.orderOptions) {
+            return "calDate:" + $scope.searchFields.order;
+        }
+        return "";
+    }
+
+    function setFieldParameters() {
+        angular.forEach({
+            syear: $scope.searchFields.year,
+            sfield: $scope.searchFields.fieldName,
+            svalue: $scope.searchFields.fieldValue,
+            sactlist: $scope.searchFields.activeList,
+            sorder: $scope.searchFields.order
+        }, function(value, paramName) {
+            $scope.setSearchParam(paramName, value, $scope.searchActiveIndex === 0);
+        });
+    }
+
+    function setQueryParameters() {
+        // Only display search parameter if query search tab is active
+        $scope.setSearchParam('search', $scope.searchQuery.term, $scope.searchActiveIndex === 1);
+        $scope.setSearchParam('sort', $scope.searchQuery.sort, $scope.searchActiveIndex === 1);
+    }
 
     $scope.getTotalActiveListBills = function (cal) {
         var count = 0;
@@ -520,17 +638,19 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
     $scope.init();
 }]);
 
-calendarModule.controller('CalendarBrowseCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout', '$q', '$mdToast', 'CalendarIdsApi',
-function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, CalendarIdsApi) {
+calendarModule.controller('CalendarBrowseCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$timeout', '$q',
+                                                 '$mdToast', '$mdMedia', 'CalendarIdsApi',
+function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, $mdMedia, CalendarIdsApi) {
 
     $scope.eventSources = [];
     $scope.calendarConfig = null;
     $scope.calendarIds = {};
     $scope.requestsInProgress = 0;
+    $scope.events = [];
 
     $scope.init = function () {
-        $scope.eventSources.push($scope.getEventSourcesObject());
-        $scope.calendarConfig = $scope.getCalendarConfig();
+        $scope.eventSources.push(getEventSourcesObject());
+        $scope.calendarConfig = getCalendarConfig();
         if ('bdate' in $routeParams) {
             $scope.setCalendarDate($routeParams['bdate']);
         } else {
@@ -550,68 +670,69 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
         var momentDate = moment(date);
         if (momentDate.isValid()) {
             $timeout(function() {
-                angular.element('#calendar-date-picker').fullCalendar('gotoDate', moment(date).toDate());
+                angular.element('#calendar-date-picker').fullCalendar('gotoDate', momentDate.toDate());
                 $scope.renderCalendar();
             });
         }
     };
 
-    $scope.getCalendarIds = function(year) {
+    function getCalendarIds(year) {
         var deferred = $q.defer();
-        var promise = CalendarIdsApi.get({year: year, limit: "all"},
+        var idResponse = CalendarIdsApi.get({year: year, limit: "all"},
             function() {
-                if (promise.success) {
-                    $scope.calendarIds[year] = promise.result.items;
+                if (idResponse.success) {
+                    $scope.calendarIds[year] = idResponse.result.items;
                     deferred.resolve($scope.calendarIds);
                 } else {
                     deferred.reject("unsuccessful calendar id request");
                 }
             });
         return deferred.promise;
-    };
+    }
 
-    $scope.getEvent = function(calendarId) {
+    function getEvent(calendarId) {
         return {
-            title: (window.innerWidth > 1175 ? "Senate Calendar\n" : "")
-                + (window.innerWidth > 550 ? calendarId.year + " " : "")
+            title: ($mdMedia('gt-sm') ?
+                    ($mdMedia('gt-lg') ? "Senate Calendar\n" : "")
+                    + calendarId.year + " " : "")
                 + "#" + calendarId.calendarNumber,
             start: calendarId.calDate,
             calNo: calendarId.calendarNumber
             //rendering: 'background'
         };
-    };
+    }
 
-    $scope.getCalendarEvents = function(start, end, callback) {
-        var events = [];
+    function getCalendarEvents(start, end, callback) {
         var calendarIdPromises = [];
         var years = [];
         for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
-            if (!$scope.calendarIds.hasOwnProperty(year)) {
-                calendarIdPromises.push($scope.getCalendarIds(year));
+            if ($scope.activeYears.indexOf(year) >= 0 && !$scope.calendarIds.hasOwnProperty(year)) {
+                calendarIdPromises.push(getCalendarIds(year));
                 years.push(year);
             }
         }
         if (calendarIdPromises.length > 0) {
             console.log("loading calendar ids for", years.join(", "));
-            $scope.showLoadingToast();
+            showLoadingToast();
+            $scope.requestsInProgress += 1;
+            $q.all(calendarIdPromises).then(function () {
+                for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
+                    $scope.calendarIds[year]
+                        .map(getEvent)
+                        .forEach(function (event) {
+                            $scope.events.push(event);
+                        });
+                }
+                $scope.requestsInProgress -= 1;
+                hideLoadingToast();
+                callback($scope.events);
+            });
+        } else {
+            callback($scope.events);
         }
-        $scope.requestsInProgress += 1;
-        $q.all(calendarIdPromises).then(function () {
-            for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
-                $scope.calendarIds[year]
-                    .map($scope.getEvent)
-                    .forEach(function (event) {
-                        events.push(event)
-                    });
-            }
-            $scope.requestsInProgress -= 1;
-            $scope.hideLoadingToast();
-            callback(events);
-        });
+    }
 
-    };
-
-    $scope.showLoadingToast = function() {
+    function showLoadingToast() {
         if ($scope.requestsInProgress < 1) {
             $mdToast.show({
                 template: "<md-toast>" +
@@ -623,38 +744,34 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
                 position: "fit"
             });
         }
-    };
+    }
 
-    $scope.hideLoadingToast = function () {
+    function hideLoadingToast () {
         if ($scope.requestsInProgress < 1) {
             $mdToast.hide();
         }
-    };
+    }
 
-    $scope.getEventSourcesObject = function() {
+    function getEventSourcesObject() {
         return {
-            events: $scope.getCalendarEvents,
+            events: getCalendarEvents,
             allDay: true,
             className: 'calendar-event',
             editable: false
         }
-    };
+    }
 
-    $scope.onEventClick = function(event, jsEvent, view) {
+    function onEventClick(event, jsEvent, view) {
         $location.url($scope.getCalendarUrl(event.start.getFullYear(), event.calNo));
-    };
+    }
 
     // Set the search param to match the currently viewed month
-    $scope.viewRenderHandler = function(view, element) {
+    function viewRenderHandler(view, element) {
         var monthStart = moment(view.start);
-        if (!monthStart.isSame(moment(), 'month')) {
-            $location.search('bdate', monthStart.format("YYYY-MM-DD"));
-        } else {
-            $location.search('bdate', null);
-        }
-    };
+        $scope.setSearchParam('bdate', monthStart.format('YYYY-MM-DD'), !monthStart.isSame(moment(), 'month'));
+    }
 
-    $scope.getCalendarConfig = function() {
+    function getCalendarConfig() {
         return {
             editable: false,
             theme: false,
@@ -664,12 +781,12 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, Ca
                 center: 'title',
                 right: ''
             },
-            viewRender: $scope.viewRenderHandler,
+            viewRender: viewRenderHandler,
             fixedWeekCount: false,
             aspectRatio: 1.5,
-            eventClick: $scope.onEventClick
+            eventClick: onEventClick
         };
-    };
+    }
 
     $scope.init();
 }]);
@@ -694,8 +811,8 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, PaginationModel
         if ("uorder" in $routeParams && ["ASC", "DESC"].indexOf($routeParams['uorder']) >= 0) {
             $scope.updateOptions.order = $routeParams['uorder'];
         }
-        if ($routeParams.hasOwnProperty('udetail')) {
-            $scope.updateOptions.detail = false;
+        if (!$routeParams.hasOwnProperty('udetail') || $routeParams['udetail'] !== "false") {
+            $scope.updateOptions.detail = true;
         }
         if ('utype' in $routeParams) {
             if ($routeParams['utype'] == 'published') {
@@ -733,7 +850,8 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, PaginationModel
             $scope.updateResponse = UpdatesApi.get({
                 detail: $scope.updateOptions.detail, type: $scope.updateOptions.type,
                 fromDateTime: $scope.toZonelessISOString(from), toDateTime: $scope.toZonelessISOString(to),
-                limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
+                limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset(),
+                order: $scope.updateOptions.order
             }, function () {
                 $scope.loadingUpdates = false;
                 if ($scope.updateResponse.success) {
@@ -756,24 +874,16 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, PaginationModel
 
     init();
 
-    $scope.$watch('updateOptions', function() {
+    $scope.$watchCollection('updateOptions', function() {
             $scope.getUpdates(true);
             var opts = $scope.updateOptions;
-            if (opts.order == "ASC") {
-                $location.search("uorder", "ASC");
-            } else { $location.search("uorder", null); }
-            if (!opts.detail) {
-                $location.search("udetail", false);
-            } else { $location.search("udetail", null); }
+            $scope.setSearchParam('uorder', opts.order, opts.order === "ASC");
+            $scope.setSearchParam('udetail', opts.detail);
             var to = moment(opts.toDateTime).local();
             var from = moment(opts.fromDateTime).local();
-            if (to.isValid() && !to.isSame(initialTo)) {
-                $location.search("uto", $scope.toZonelessISOString(to));
-            } else { $location.search("uto", null); }
-            if (from.isValid() && !from.isSame(initialFrom)) {
-                $location.search("ufrom", $scope.toZonelessISOString(from));
-            } else { $location.search("ufrom", null); }
-        }, true);
+            $scope.setSearchParam('uto', $scope.toZonelessISOString(to), to.isValid() && !to.isSame(initialTo));
+            $scope.setSearchParam('ufrom', $scope.toZonelessISOString(from), from.isValid() && !from.isSame(initialFrom));
+        });
 
     $scope.$watch('pagination.currPage', function (newPage, oldPage) {
         if (newPage !== oldPage && newPage > 0) {
@@ -785,6 +895,7 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, PaginationModel
 calendarModule.directive('calendarEntryTable', function() {
     return {
         scope: {
+            year: '=',
             calEntries: '=calEntries',
             getCalBillNumUrl: '&'
         },

@@ -108,6 +108,9 @@ md-tab.active {
 .fade.ng-enter-active {
   opacity: 1;
 }
+.fade.fade-out.ng-leave {
+  @include transition(all .5s ease);
+}
 .fade.ng-leave {
   opacity: 1;
 }
@@ -212,6 +215,10 @@ md-tab.active {
 
 .margin-bottom-10 {
   margin-bottom: 10px !important;
+}
+
+.margin-5 {
+  margin: 5px;
 }
 
 .margin-10 {

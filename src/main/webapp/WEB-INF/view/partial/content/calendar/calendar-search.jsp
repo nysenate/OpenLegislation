@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
+
 <section class="content-section" ng-controller="CalendarSearchPageCtrl" ng-init="setHeaderVisible(true)">
   <md-tabs class="md-primary" md-selected="activeIndex">
 
@@ -21,36 +22,77 @@
       <md-tab-label>
         <i class="icon-search prefix-icon2"></i>Search
       </md-tab-label>
-      <section class="margin-top-10" ng-if="pageNames[activeIndex] === 'search'" ng-controller="CalendarSearchCtrl">
+      <section ng-if="pageNames[activeIndex] === 'search'" ng-controller="CalendarSearchCtrl">
+
         <form name="calendar-search-form">
-          <md-content class="padding-20">
-            <md-input-container class="md-primary">
-              <label><i class="prefix-icon2 icon-search"></i>Search for calendars</label>
-              <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
-                  ng-model="searchTerm" ng-model-options="{debounce: 300}" ng-change="termSearch(true)">
-            </md-input-container>
-          </md-content>
-          <md-divider></md-divider>
-          <md-subheader ng-show="searched && searchTerm && pagination.totalItems === 0"
-              class="margin-10 md-warn md-whiteframe-z0">
-            <h4>No search results were found for '{{searchTerm}}'</h4>
-          </md-subheader>
+          <md-tabs md-selected="searchActiveIndex">
+            <md-tab label="field search">
+              <md-content layout="row" layout-sm="column" class="padding-20">
+                <select name="year-select" ng-model="searchFields.year" class="margin-right-20"
+                        style="margin-bottom: 30px; margin-top: 20px"
+                        ng-options="year for year in activeYears">
+                  <option value="">-- Year --</option>
+                </select>
+                <div layout="row" style="height: 85px">
+                  <select ng-model="searchFields.fieldName"
+                          style="margin-bottom: 30px; margin-top: 20px"
+                          ng-options="value as label for (value, label) in fieldOptions">
+                    <option value="">-- Field Name --</option>
+                  </select>
+                  <md-input-container style="height: 78px" class="margin-right-10">
+                    <label>Field Value</label>
+                    <input type="text" ng-model="searchFields.fieldValue" ng-model-options="{debounce: 300}">
+                  </md-input-container>
+                </div>
+                <select ng-model="searchFields.order" style="margin-bottom: 30px; margin-top: 20px"
+                        ng-options="value as label for (value, label) in orderOptions">
+                  <option value="">-- Sort Order --</option>
+                </select>
+                <md-checkbox ng-model="searchFields.activeList" ng-disabled="searchFields.fieldName === 'calendarNumber'"
+                             class="margin-top-20">
+                  Active List Only
+                </md-checkbox>
+              </md-content>
+            </md-tab>
+            <md-tab label="query search">
+              <md-content class="padding-20" layout="row" layout-sm="column">
+                <md-input-container class="md-primary" flex="60">
+                  <label><i class="prefix-icon2 icon-search"></i>Search for calendars</label>
+                  <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
+                      ng-model="searchQuery.term" ng-model-options="{debounce: 300}">
+                </md-input-container>
+                <md-input-container class="md-primary" flex="40">
+                  <label><i class="prefix-icon2 icon-search"></i>Sort By</label>
+                  <input tabindex="2" style="font-size:1.4rem;" name="quick-term"
+                         ng-model="searchQuery.sort" ng-model-options="{debounce: 300}">
+                </md-input-container>
+              </md-content>
+            </md-tab>
+          </md-tabs>
         </form>
-        <section ng-show="searched && pagination.totalItems > 0">
+
+        <md-divider></md-divider>
+        <md-subheader ng-show="!searching && searchQuery.term && pagination.totalItems === 0"
+                      class="margin-10 md-warn md-whiteframe-z0">
+          <h4>No search results were found for '{{searchQuery.term}}'</h4>
+        </md-subheader>
+        <md-progress-linear md-mode="indeterminate" ng-show="searching"></md-progress-linear>
+
+        <section ng-show="!searching && searchQuery.term && pagination.totalItems > 0">
           <md-card class="content-card">
             <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
-              <div flex>
-                {{pagination.totalItems}} calendars were matched.&nbsp;&nbsp;
+              <div class="margin-5">
+                {{pagination.totalItems}} calendars were matched.&nbsp;&nbsp;<br hide-gt-sm/>
                 Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.
               </div>
-              <div flex style="text-align: right;"><dir-pagination-controls pagination-id="33" boundary-links="true"></dir-pagination-controls></div>
+              <dir-pagination-controls pagination-id="33" boundary-links="true"></dir-pagination-controls>
             </div>
             <md-content class="no-top-margin">
               <md-list>
                 <a dir-paginate="r in searchResults | itemsPerPage: 6"
                    total-items="searchResponse.total" current-page="pagination.currPage"
                    ng-init="cal = r.result" class="result-link" pagination-id="33"
-                   ng-href="{{getCalendarUrl(cal.year, cal.calendarNumber)}}"
+                   ng-href="{{getCalendarUrl(cal.year, cal.calendarNumber, searchActiveIndex === 0 && ['billCalNo', 'printNo'].indexOf(searchFields.fieldName) >= 0 ? searchFields.fieldValue : null)}}"
                    ng-click="changeTab(cal.activeLists.size>0 ? 'active-list' : 'floor')">
                   <md-item>
                     <md-item-content layout-sm="column" layout-align-sm="center start"
@@ -67,20 +109,19 @@
                       <div class="md-tile-content" layout="column">
                         <div layout-gt-sm="row" layout-align="start end">
                           <h5 class="no-margin" style="width: 200px">
-                            {{cal.activeLists.size}} Active List Supplementals
-                          </h5>
-                          <h6 class="no-margin">
                             {{getTotalActiveListBills(cal)}} Total Active List Bills
-                          </h6>
+                          </h5>
+                          <h5 class="no-margin" hide-sm style="width: 200px">
+                            {{cal.activeLists.size > 0 ? cal.activeLists.size - 1 : 0}} Active List Supplementals
+                          </h5>
                         </div>
                         <div layout-gt-sm="row" layout-align="start end">
                           <h5 class="no-margin" style="width: 200px">
-                            {{(cal.floorCalendar.year ? 1 : 0) + cal.supplementalCalendars.size}}
-                            Floor Supplementals
-                          </h5>
-                          <h6 class="no-margin">
                             {{getTotalFloorBills(cal)}} Total Floor Bills
-                          </h6>
+                          </h5>
+                          <h5 class="no-margin" hide-sm style="width: 200px">
+                            {{cal.supplementalCalendars.size}} Floor Supplementals
+                          </h5>
                         </div>
                       </div>
                     </md-item-content>
@@ -91,47 +132,51 @@
             </md-content>
           </md-card>
         </section>
-      </section>
-      <section>
-        <md-card class="content-card">
-          <md-subheader><strong>Quick search for Calendars</strong></md-subheader>
-          <div class="padding-20">
-            <p class="text-medium">Calendars are uniquely identified by their year and a calendar number, which corresponds
-              to their order within a year.  To find a specific calendar, enter its year and calendar number e.g.
-              <code>2015#5</code>.
-            </p>
-          </div>
-        </md-card>
-        <md-card class="content-card">
-          <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
-          <div class="padding-20">
-            <p class="text-medium">You can combine the field definitions documented below to perform targeted searches.
-              You can string together multiple search term fields with the following operators: <code>AND, OR, NOT</code>
-              as well as parenthesis for grouping. For more information refer to the
-              <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query docs</a>.</p>
-          </div>
-          <table class="docs-table">
-            <thead>
-            <tr><th>To search for</th><th>Use the field</th><th>With value type</th><th>Examples</th></tr>
-            </thead>
-            <tbody>
-            <tr style="background:#f1f1f1;"><td colspan="4"><strong>Basic Details</strong></td></tr>
-            <tr><td>Year</td><td>year</td><td>number</td><td>year:2015</td></tr>
-            <tr><td>Calendar Number</td><td>calendarNumber</td><td>number</td><td>calendarNumber:13</td></tr>
-            <tr><td>Calendar Date</td><td>calDate</td><td>date</td><td>calDate:2015-03-03<br/>calDate:[2015-03-01 TO 2015-03-10]</td></tr>
-            <tr><td>Release Date/Time</td><td>releaseDateTime</td><td>date-time</td><td>releaseDateTime:2015-03-03<br/>releaseDateTime:[2015-03-01 TO 2015-03-10]</td></tr>
-            <tr><td>Active List Present</td><td>activeLists.size</td><td>number</td><td>activeLists.size:>0</td></tr>
-            <tr style="background:#f1f1f1;"><td colspan="4"><strong>The fields below are associated with calendar bill entries and are always prefixed with '\*.'</strong></td> </tr>
-            <tr><td>Bill field on active list</td><td>activeLists\*.anyBillField</td><td></td><td>activeLists\*.title:acupuncture</td></tr>
-            <tr><td>Bill Print No.</td><td>\*.printNo</td><td>string</td><td>\*.printNo:S1111</td></tr>
-            <tr><td>Bill Calendar No.</td><td>\*.billCalNo</td><td>string</td><td>\*.billCalNo:81</td></tr>
-            <tr><td>Bill Title</td><td>\*.title</td><td>string</td><td>\*.title:town of Chester</td></tr>
-            <tr><td>Bill Sponsor</td><td>\*.shortName</td><td>string</td><td>\*.shortName:YOUNG</td></tr>
-            <tr><td>Bill Sponsor</td><td>\*.fullName</td><td>string</td><td>\*.fullName:Catharine Young</td></tr>
-            <tr><td>Bill Sponsor</td><td>\*.districtCode</td><td>number</td><td>\*.districtCode:57</td></tr>
-            </tbody>
-          </table>
-        </md-card>
+
+        <!-- Search Documentation -->
+        <section ng-if="searchActiveIndex == 1" class="fade fade-out">
+          <md-card class="content-card">
+            <md-subheader><strong>Quick search for Calendars</strong></md-subheader>
+            <div class="padding-20">
+              <p class="text-medium">Calendars are uniquely identified by their year and a calendar number, which corresponds
+                to their order within a year.  To find a specific calendar, enter its year and calendar number e.g.
+                <code>2015#5</code>.
+              </p>
+            </div>
+          </md-card>
+          <md-card class="content-card">
+            <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
+            <div class="padding-20">
+              <p class="text-medium">You can combine the field definitions documented below to perform targeted searches.
+                You can string together multiple search term fields with the following operators: <code>AND, OR, NOT</code>
+                as well as parenthesis for grouping. Additionally, you can specify a sort order for the search results
+                using one or more of the fields below e.g. <code>activeLists.size:ASC, calDate:DESC</code>
+                For more information refer to the
+                <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query docs</a>.</p>
+            </div>
+            <table class="docs-table">
+              <thead>
+              <tr><th>To search for</th><th>Use the field</th><th>With value type</th><th>Examples</th></tr>
+              </thead>
+              <tbody>
+              <tr style="background:#f1f1f1;"><td colspan="4"><strong>Basic Details</strong></td></tr>
+              <tr><td>Year</td><td>year</td><td>number</td><td>year:2015</td></tr>
+              <tr><td>Calendar Number</td><td>calendarNumber</td><td>number</td><td>calendarNumber:13</td></tr>
+              <tr><td>Calendar Date</td><td>calDate</td><td>date</td><td>calDate:2015-03-03<br/>calDate:[2015-03-01 TO 2015-03-10]</td></tr>
+              <tr><td>Release Date/Time</td><td>releaseDateTime</td><td>date-time</td><td>releaseDateTime:2015-03-03<br/>releaseDateTime:[2015-03-01 TO 2015-03-10]</td></tr>
+              <tr><td>Active List Present</td><td>activeLists.size</td><td>number</td><td>activeLists.size:>0</td></tr>
+              <tr style="background:#f1f1f1;"><td colspan="4"><strong>The fields below are associated with calendar bill entries and are always prefixed with '\*.'</strong></td> </tr>
+              <tr><td>Bill field on active list</td><td>activeLists\*.anyBillField</td><td></td><td>activeLists\*.title:acupuncture</td></tr>
+              <tr><td>Bill Print No.</td><td>\*.printNo</td><td>string</td><td>\*.printNo:S1111</td></tr>
+              <tr><td>Bill Calendar No.</td><td>\*.billCalNo</td><td>string</td><td>\*.billCalNo:81</td></tr>
+              <tr><td>Bill Title</td><td>\*.title</td><td>string</td><td>\*.title:town of Chester</td></tr>
+              <tr><td>Bill Sponsor</td><td>\*.shortName</td><td>string</td><td>\*.shortName:YOUNG</td></tr>
+              <tr><td>Bill Sponsor</td><td>\*.fullName</td><td>string</td><td>\*.fullName:Catharine Young</td></tr>
+              <tr><td>Bill Sponsor</td><td>\*.districtCode</td><td>number</td><td>\*.districtCode:57</td></tr>
+              </tbody>
+            </table>
+          </md-card>
+        </section>
       </section>
     </md-tab>
 

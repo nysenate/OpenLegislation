@@ -2,7 +2,7 @@
     <md-item hide-sm>
         <md-item-content layout="row">
             <h4 style="width: 70px"><br/>Print &#35;</h4>
-            <h4 style="width: 40px"><br/>Bill &#35;</h4>
+            <h4 style="width: 40px">Bill<br/>Cal &#35;</h4>
             <h4 class="md-tile-content no-margin"><br/>Title &amp; Sponsor</h4>
         </md-item-content>
         <md-divider class="md-default-theme"></md-divider>
@@ -15,12 +15,12 @@
             </div>
             <div style="width: 40px" hide-sm>
                 <a ng-bind="calEntry.billCalNo" class="cal-entry-cal-no"
-                        ng-href="{{getCalBillNumUrl(calEntry.billCalNo)}}"></a>
+                        ng-href="{{getCalBillNumUrl(year, calEntry.billCalNo)}}"></a>
             </div>
             <div class="md-tile-content">
                 <a ng-bind="calEntry.basePrintNo" class="text-medium" hide-gt-sm
                    ng-href="{{billPageBaseUrl}}/{{calEntry.session}}/{{calEntry.basePrintNo}}"></a>
-                <a hide-gt-sm class="cal-entry-cal-no">Calendar Bill \#{{calEntry.billCalNo}}</a>
+                <a hide-gt-sm class="cal-entry-cal-no">Bill Calendar \#{{calEntry.billCalNo}}</a>
                 <div ng-bind="calEntry.title"></div>
                 <div layout="row" hide-sm style="height: 40px">
                     <div style="overflow: hidden">

@@ -13,7 +13,7 @@
 <open-layout:body>
     <section layout="column" layout-fill>
         <section layout="row">
-            <md-sidenav style="width:300px" class="md-sidenav-left" md-component-id="left" md-is-locked-open="$media('gt-md')">
+            <md-sidenav style="width:300px" class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
                 <div class="top-bar-wrapper">
                     <ul class="title-area">
                         <li class="name">

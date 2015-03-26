@@ -34,7 +34,7 @@
           <md-content class="no-background">
             <md-card ng-show="displayedEntries.length>0" style="background: #fff">
               <md-card-content>
-                <calendar-entry-table cal-entries="displayedEntries" get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
+                <calendar-entry-table cal-entries="displayedEntries" year="year" get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
               </md-card-content>
             </md-card>
           </md-content>
@@ -61,7 +61,7 @@
             <toggle-panel ng-repeat="(section, entries) in displayedSections"
                           open="{{openSections[section]}}"
                           label="{{section | sectionDisplayName}}" show-tip="true">
-              <calendar-entry-table cal-entries="entries" get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
+              <calendar-entry-table cal-entries="entries" year="year" get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
             </toggle-panel>
           </md-content>
         </section>

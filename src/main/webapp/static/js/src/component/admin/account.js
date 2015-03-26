@@ -40,7 +40,7 @@ function($scope, $routeParams, $location) {
 
     $scope.$watch('selectedIndex', function () {
         if ($scope.selectedIndex >= 0 && $scope.selectedIndex < pageNames.length) {
-            $location.search('view', pageNames[$scope.selectedIndex])
+            $location.search('view', pageNames[$scope.selectedIndex]).replace()
         }
     });
 

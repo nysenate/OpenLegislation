@@ -81,9 +81,19 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
         $location.url(url);
     };
 
+    /** Given a moment date object, return an iso-8601 string representing the local time */
     $scope.toZonelessISOString = function (momentDate) {
         return momentDate.format('YYYY-MM-DDTHH:mm:ss.SSS');
     };
+
+    /**
+     * Sets the request/search param 'paramName' to paramValue if condition is not false.
+     * If param value is null/empty/false or condition is false, the request param is set to null,
+     * effectively removing it from the url.  Replaces last url in history
+     */
+    $scope.setSearchParam = function(paramName, paramValue, condition) {
+        $location.search(paramName, (condition !== false && paramValue) ? paramValue : null).replace();
+    }
 }]);
 
 /**
