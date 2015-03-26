@@ -34,9 +34,7 @@ public class ApiAuthFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String key = servletRequest.getParameter("key");
         String ipAddress = servletRequest.getLocalAddr();
-
-        logger.info(servletResponse.getClass().toString());
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        HttpServletResponse response =   (HttpServletResponse) servletResponse;
 
         if (enabled) {
             if (ipAddress.matches(filterAddress) || apiUserService.validateKey(key)) {
@@ -48,7 +46,6 @@ public class ApiAuthFilter implements Filter {
                 response.setContentType("application/json");
                 response.setStatus(401);
                 response.flushBuffer();
-                logger.info("Invalid key used in API request.");
             }
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
