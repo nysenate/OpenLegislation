@@ -94,7 +94,10 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService
     @Override
     public void warmCaches() {
         evictCaches();
+        logger.info("Warming up API User Cache");
+
         // Feed in all the api users from the database into the cache
+        apiUserDao.getAllUsers().forEach(user -> apiUserCache.put(user.getApikey(), user));
     }
 
     @Override
@@ -127,9 +130,8 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService
         try {
             if (apiUserDao.getApiUserFromEmail(email) != null)
                 throw new UsernameExistsException(email);
-
         } catch (EmptyResultDataAccessException e) {
-
+            // User does not exist as expected
         }
 
         ApiUser newUser = new ApiUser(email);
@@ -141,6 +143,8 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService
 
         apiUserDao.insertUser(newUser);
         sendRegistrationEmail(newUser);
+        apiUserCache.put(newUser.getApikey(), newUser);
+
         return newUser;
     }
 
@@ -166,12 +170,25 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService
     public boolean validateKey(String apikey) {
         // hit the cache first
         ApiUser user = null;
-        try {
-            user = apiUserDao.getApiUserFromKey(apikey);
-        } catch (DataAccessException e) {
-            return false;
+        user = (apiUserCache.get(apikey) != null) ? (ApiUser) apiUserCache.get(apikey).get() : null;
+
+        // If the user is stored in the cache, then retrieve their information
+        if (user != null) {
+            return user.getAuthStatus();
+
+        } else {
+            // Fetch the user from the database
+            try {
+                user = apiUserDao.getApiUserFromKey(apikey);
+
+            } catch (DataAccessException e) {
+                return false;
+            }
+
+            // Add the user to the cache
+            apiUserCache.put(user.getApikey(), user);
+            return user.getAuthStatus();
         }
-        return user.getAuthStatus();
     }
 
     /**
