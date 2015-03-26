@@ -31,6 +31,9 @@ public enum ApiUserQuery implements BasicSqlQuery
     SELECT_BY_TOKEN(
             "SELECT * FROM public." +SqlTable.API_USER+ " WHERE reg_token = :registrationToken"
     ),
+    SELECT_ALL_USERS(
+            "SELECT * FROM public." +SqlTable.API_USER
+    ),
     DELETE_USER(
         "DELETE FROM public." +SqlTable.API_USER+ " WHERE email_addr = :email"
     );
