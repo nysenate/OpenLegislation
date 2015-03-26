@@ -65,9 +65,8 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     @Override
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException {
         query = smartSearch(query);
-        RescoreBuilder.QueryRescorer rescorer = new RescoreBuilder.QueryRescorer(QueryBuilders.termQuery("session", SessionYear.current().getYear()));
-        rescorer.setRescoreQueryWeight(2.0f);
-        return searchBills(QueryBuilders.queryString(query), null, rescorer, sort, limOff);
+        QueryBuilder queryBuilder = QueryBuilders.queryString(query);
+        return searchBills(queryBuilder, null, null, sort, limOff);
     }
 
     /** {@inheritDoc} */

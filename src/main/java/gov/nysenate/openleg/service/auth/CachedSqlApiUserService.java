@@ -7,6 +7,8 @@ import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
+import gov.nysenate.openleg.model.notification.Notification;
+import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.service.mail.MimeSendMailService;
 import net.sf.ehcache.Cache;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -203,7 +206,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService
             user.setAuthStatus(true);
             apiUserDao.updateUser(user);
             sendApikeyEmail(user);
-
+            sendNewApiUserNotification(user);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Invalid registration token supplied!");
         }
@@ -235,5 +238,18 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService
                 "Your API Key is the following:\n%s\n\n-- NY Senate Development Team", user.getName(), user.getApikey());
 
         sendMailService.sendMessage(user.getEmail(), "Your Open Legislation API Key", message);
+    }
+
+    /**
+     * --- Internal Methods ---
+     */
+
+    private void sendNewApiUserNotification(ApiUser user) {
+        boolean named = user.getName() != null;
+        String summary = (named ? user.getName() : user.getEmail()) + " is now registered as an API user!";
+        String message = (named ? "name: " + user.getName() + "\n" : "") +
+                         (user.getOrganizationName() != null ? "organization: " + user.getOrganizationName() + "\n" : "") +
+                         "email: " + user.getEmail();
+        eventBus.post(new Notification(NotificationType.NEW_API_KEY, LocalDateTime.now(), summary, message));
     }
 }

@@ -58,7 +58,7 @@ md-card {
     @extend .md-whiteframe-z0;
     @extend .white-bg;
     padding: 0;
-    margin: 10px;
+    margin: 10px 0;
     &.no-margin {
       margin: 0;
     }
@@ -123,15 +123,13 @@ md-input-container {
   }
   #content {
     min-height: 100vh;
-    @media (min-width: 1340px) {
-      .content-card {
-        margin: 10px 0;
-      }
+    .content-section {
+      padding: 0 10px 20px 10px;
     }
   }
 }
 
-/** --- Common --- */
+/** --- Common Classes  --- */
 
 .text-xsmall {
   font-size: 0.7rem;
@@ -205,13 +203,22 @@ md-input-container {
   margin-right: 20px;
 }
 
+.padding-5 {
+  padding: 5px;
+}
+
 .padding-10 {
   padding: 10px;
+}
+
+.padding-16 {
+  padding: 16px;
 }
 
 .padding-20 {
   padding: 20px;
 }
+
 
 .no-margin {
   margin: 0;
@@ -292,6 +299,19 @@ a.result-link {
 .serif-header {
   font-family: 'Roboto Slab', serif;
   font-weight: normal;
+}
+
+.member-image-mini {
+  width: 55px;
+}
+
+/** --- Common Widgets --- */
+
+.loading-pulse {
+  position: absolute;
+  bottom: 15px;
+  color: $gray10;
+  font-size: 0.9rem;
 }
 
 /** --- Left Nav --- */
@@ -498,7 +518,12 @@ a.slogan-link {
   padding: 5px;
   cursor: pointer;
   &:hover {
-    background: $gray2;
+    .provide-data-icon {
+      background: $gray2;
+    }
+    h1.slogan {
+      color: $blue4;
+    }
   }
 }
 
@@ -514,6 +539,34 @@ a.slogan-link {
 }
 
 /** --- Bill Page Styles --- */
+
+.bill-search-refine {
+  width: 240px;
+  background: $gray1;
+  margin: 10px 0 0 0;
+  font-size: 0.9rem;
+  h3 {
+    background:white;
+    font-size: 1rem;
+    padding: 10px 10px 10px 15px;
+    margin: 0;
+  }
+  .refine-controls {
+    padding: 5px 10px 5px 15px;
+    label {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      display: block;
+    }
+    select {
+      width: 100%;
+      display:block;
+    }
+    md-checkbox {
+      margin: 10px 2px 0 2px;
+    }
+  }
+}
 
 .bill-ms-container {
   padding: 5px 0;
@@ -871,5 +924,9 @@ md-list.notification-sub-list md-item md-item-content > div:nth-child(3) {
 
 #calendar-date-picker div.fc-day-content > div {
   height: 25px !important;
+}
+
+.fc-state-default {
+  background-image: none !important;
 }
 

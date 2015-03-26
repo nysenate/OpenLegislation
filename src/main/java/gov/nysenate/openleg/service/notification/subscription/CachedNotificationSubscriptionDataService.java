@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.notification;
+package gov.nysenate.openleg.service.notification.subscription;
 
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.notification.NotificationSubscriptionDao;

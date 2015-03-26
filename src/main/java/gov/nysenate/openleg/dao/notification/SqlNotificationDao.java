@@ -5,7 +5,10 @@ import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
+import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.DateUtils;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -29,7 +32,7 @@ public class SqlNotificationDao extends SqlBaseDao implements NotificationDao {
     /**
      * {@inheritDoc}
      */
-    @Override
+//    @Override
     public RegisteredNotification getNotification(int notificationId) {
         MapSqlParameterSource params = new MapSqlParameterSource("id", notificationId);
         return jdbcNamed.queryForObject(SELECT_NOTIFICATION_BY_ID.getSql(schema()), params, notificationRowMapper);
@@ -38,7 +41,7 @@ public class SqlNotificationDao extends SqlBaseDao implements NotificationDao {
     /**
      * {@inheritDoc}
      */
-    @Override
+//    @Override
     public PaginatedList<RegisteredNotification> getNotifications(Collection<NotificationType> types,
                                                         Range<LocalDateTime> dateTimeRange,
                                                         SortOrder order, LimitOffset limitOffset) {
@@ -48,6 +51,11 @@ public class SqlNotificationDao extends SqlBaseDao implements NotificationDao {
         jdbcNamed.query(SELECT_NOTIFICATIONS.getSql(schema(), new OrderBy("occurred", order), limitOffset),
                         params, rowHandler);
         return rowHandler.getList();
+    }
+
+    @Override
+    public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limitOffset) {
+        return null;
     }
 
     /**

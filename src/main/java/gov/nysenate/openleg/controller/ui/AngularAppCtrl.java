@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.controller.ui;
 
+import gov.nysenate.openleg.util.RandomUtils;
+import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,7 @@ public class AngularAppCtrl
     private static final Logger logger = LoggerFactory.getLogger(AngularAppCtrl.class);
 
     @Value("${ga.tracking.id}") private String gaTrackingId;
+    @Value("${api.secret}") private String apiSecret;
 
     @RequestMapping({"/",
                      "/data/**",
@@ -33,6 +36,9 @@ public class AngularAppCtrl
                      "/manage/**"})
     public String home(HttpServletRequest request) {
         request.setAttribute("gaTrackingId", gaTrackingId);
+        String randomUiKey = RandomUtils.getRandomString(64);
+        request.getSession().setAttribute("uiKey", randomUiKey);
+        request.setAttribute("uiKey", randomUiKey);
         return "home";
     }
 

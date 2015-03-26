@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.notification;
+package gov.nysenate.openleg.service.notification.dispatch;
 
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;

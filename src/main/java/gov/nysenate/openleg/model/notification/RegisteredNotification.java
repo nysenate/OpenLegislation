@@ -8,23 +8,23 @@ import java.time.LocalDateTime;
 public class RegisteredNotification extends Notification {
 
     /** a unique arbitrary id assigned to the notification */
-    protected int id;
+    protected long id;
 
     /** --- Constructors --- */
 
-    public RegisteredNotification(int id, NotificationType type, LocalDateTime occurred, String summary, String message) {
+    public RegisteredNotification(long id, NotificationType type, LocalDateTime occurred, String summary, String message) {
         super(type, occurred, summary, message);
         this.id = id;
     }
 
-    public RegisteredNotification(Notification that, int id) {
+    public RegisteredNotification(Notification that, long id) {
         super(that);
         this.id = id;
     }
 
     /** --- Getters --- */
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

@@ -28,6 +28,19 @@
               </md-subheader>
             </form>
           </section>
+          <section>
+            <md-card class="content-card">
+              <md-subheader><strong>Quick search for Agendas</strong></md-subheader>
+              <div class="padding-20">
+                <p class="text-medium">Senate committee agendas contain meeting details such as where the meeting took place and
+                  which bills were discussed/voted on. The committee agendas are grouped into a <strong>weekly agenda</strong>.
+                  Each weekly agenda is identified by an agenda number and a calendar year, e.g. 2-2015, where 2 is the agenda number
+                  and 2015 is the calendar year.
+                </p>
+                <p class="text-medium"></p>
+              </div>
+            </md-card>
+          </section>
         </section>
       </md-tab>
       <md-tab>

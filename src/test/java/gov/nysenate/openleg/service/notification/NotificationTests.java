@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationTarget;
 import gov.nysenate.openleg.model.notification.NotificationType;
+import gov.nysenate.openleg.service.notification.subscription.NotificationSubscriptionDataService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

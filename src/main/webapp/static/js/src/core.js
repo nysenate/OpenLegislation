@@ -1,5 +1,12 @@
 var coreModule = angular.module('open.core', []);
 
+coreModule.factory('MemberApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/members/:sessionYear/:chamber?limit=1000', {
+        sessionYear: '@sessionYear',
+        chamber: '@chamber'
+    });
+}]);
+
 coreModule.filter('default', ['$filter', function($filter) {
     return function(input, defaultVal) {
         return (!input) ? defaultVal : input;
@@ -168,6 +175,28 @@ coreModule.directive('updateList', ['PaginationModel', function(PaginationModel)
 }]);
 
 /**
+ * Image Error Placeholder
+ *
+ * When set on an img tag, changes the src to a placeholder value if an error occurs while loading the image.
+ *
+ * Usage
+ * -----
+ * <img ng-src="imageURL" err-src="placeHolderURL"/>
+ */
+coreModule.directive('errSrc', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.bind('error', function() {
+                if (attrs.src != attrs.errSrc) {
+                    attrs.$set('src', attrs.errSrc);
+                }
+            });
+        }
+    }
+});
+
+/**
  * Update Id
  *
  * Generates a content id string for an update based on its scope
@@ -207,6 +236,7 @@ coreModule.filter('updateId', function() {
  * ----------
  * label (String) The text for your container header
  * open (boolean) Set to true to expand the content, false to collapse
+ * render-closed (boolean) Allows closed content to render when set to true
  * extra-classes (String) Any css classes you want to apply to the outermost toggle panel container
  * show-tip (boolean) Set to true to see a 'Click to expand section' tip when panel is collapsed.
  */
@@ -216,7 +246,8 @@ coreModule.directive('togglePanel', [function(){
         scope: {
             label: "@",
             extraClasses: "@",
-            callback: "&"
+            callback: "&",
+            renderClosed: "@"
         },
         replace: true,
         transclude: true,
@@ -231,7 +262,7 @@ coreModule.directive('togglePanel', [function(){
         '               (Click to expand section)</span>' +
         '       </div>' +
         '   </md-card-content>' +
-        '   <md-card-content class="panel-content" ng-cloak ng-transclude></md-card-content>' +
+        '   <md-card-content ng-if="open || renderClosed" ng-show="open" class="panel-content" ng-cloak ng-transclude></md-card-content>' +
         '</md-card>',
         link : function($scope, $element, $attrs) {
             $scope.toggle = function() {
@@ -240,6 +271,7 @@ coreModule.directive('togglePanel', [function(){
                     $scope.callback($scope.open);
                 }
             };
+            $scope.renderClosed = $scope.renderClosed == 'true';
             // Convert attribute value to boolean using watch
             $scope.$watch($attrs.open, function(open) {
                 $scope.open = open;

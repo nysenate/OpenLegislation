@@ -14,15 +14,11 @@ import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
-import gov.nysenate.openleg.util.DateUtils;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.authz.UnauthenticatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -259,7 +255,7 @@ public abstract class BaseCtrl
 
     private void pushExceptionNotification(Exception ex) {
         LocalDateTime occurred = LocalDateTime.now();
-        String summary = ex.getMessage();
+        String summary = ex.getMessage() != null ? ex.getMessage() : "Request Exception";
         String message = "The following exception was thrown while handling a request at " + occurred + ":\n\n"
                 + ExceptionUtils.getStackTrace(ex);
         Notification notification = new Notification(REQUEST_EXCEPTION, occurred, summary, message);

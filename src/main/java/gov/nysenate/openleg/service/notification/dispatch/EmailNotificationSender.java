@@ -1,7 +1,8 @@
-package gov.nysenate.openleg.service.notification;
+package gov.nysenate.openleg.service.notification.dispatch;
 
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.service.mail.SendMailService;
+import gov.nysenate.openleg.service.notification.dispatch.BaseNotificationSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 

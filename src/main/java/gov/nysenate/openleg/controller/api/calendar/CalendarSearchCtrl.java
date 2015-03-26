@@ -7,9 +7,7 @@ import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
@@ -47,9 +45,7 @@ public class CalendarSearchCtrl extends BaseCtrl{
      * Performs a search across all calendars: (GET) /api/3/calendars/search
      * Request Parameters:      term - The lucene query string
      *                          sort - The lucene sort string (blank by default)
-     *                          calendarType - The type of calendar to search (full, active_list, supplemental)
-     *                                  (default full)
-     *                          full - If true, full calendars will be returned including
+     *                          detail - If true, full calendars will be returned including
      *                                  active list and supplemental entries (default false)
      *                          limit - Limit the number of results (default 100)
      *                          offset - Start results from offset (default 1)
@@ -57,11 +53,10 @@ public class CalendarSearchCtrl extends BaseCtrl{
     @RequestMapping(value = "/search")
     public BaseResponse searchCalendars(@RequestParam(required = true) String term,
                                         @RequestParam(defaultValue = "") String sort,
-                                        @RequestParam(defaultValue = "full") String calendarType,
-                                        @RequestParam(defaultValue = "false") boolean full,
+                                        @RequestParam(defaultValue = "false") boolean detail,
                                         WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
-        return getCalendarSearchResponse(term, sort, calendarType, full, limitOffset, null);
+        return getCalendarSearchResponse(term, sort, limitOffset, null, detail);
     }
 
     /**
@@ -70,8 +65,6 @@ public class CalendarSearchCtrl extends BaseCtrl{
      * Performs a search across all calendars: (GET) /api/3/calendars/{year}/search
      * Request Parameters:      term - The lucene query string
      *                          sort - The lucene sort string (blank by default)
-     *                          calendarType - The type of calendar to search (full, active_list, supplemental)
-     *                                  (default full)
      *                          full - If true, full calendars will be returned including
      *                                  active list and supplemental entries (default false)
      *                          limit - Limit the number of results (default 100)
@@ -81,11 +74,10 @@ public class CalendarSearchCtrl extends BaseCtrl{
     public BaseResponse searchCalendarsOfYear(@PathVariable Integer year,
                                               @RequestParam(required = true) String term,
                                               @RequestParam(defaultValue = "") String sort,
-                                              @RequestParam(defaultValue = "full") String calendarType,
-                                              @RequestParam(defaultValue = "false") boolean full,
+                                              @RequestParam(defaultValue = "false") boolean detail,
                                       WebRequest webRequest) throws SearchException, InvalidRequestParamEx {
         LimitOffset limitOffset = getLimitOffset(webRequest, 100);
-        return getCalendarSearchResponse(term, sort, calendarType, full, limitOffset, year);
+        return getCalendarSearchResponse(term, sort, limitOffset, year, detail);
     }
 
     /**
@@ -97,94 +89,34 @@ public class CalendarSearchCtrl extends BaseCtrl{
      *
      * @param term
      * @param sort
-     * @param calendarType
-     * @param full
      * @param limitOffset
      * @param year
      * @return
      * @throws SearchException
      * @throws gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx
      */
-    private BaseResponse getCalendarSearchResponse(String term, String sort, String calendarType, boolean full,
-                                                   LimitOffset limitOffset, Integer year)
+    private BaseResponse getCalendarSearchResponse(String term, String sort, LimitOffset limitOffset, Integer year, boolean detail)
             throws SearchException, InvalidRequestParamEx {
-        BaseResponse response;
-        switch (calendarType) {
-            case "full":
-                SearchResults<CalendarId> calResults = (year == null)
-                        ? calendarSearchService.searchForCalendars(term, sort, limitOffset)
-                        : calendarSearchService.searchForCalendarsByYear(year, term, sort, limitOffset);
-                response = getCalendarSearchResultResponse(calResults, full);
-                break;
-            case "active_list":
-                SearchResults<CalendarActiveListId> activeListResults = (year == null)
-                        ? calendarSearchService.searchForActiveLists(term, sort, limitOffset)
-                        : calendarSearchService.searchForActiveListsByYear(year, term, sort, limitOffset);
-                response = getActiveListSearchResultResponse(activeListResults, full);
-                break;
-            case "supplemental":
-                SearchResults<CalendarSupplementalId> supplementalCalendarResults = (year == null)
-                        ? calendarSearchService.searchForSupplementalCalendars(term, sort, limitOffset)
-                        : calendarSearchService.searchForSupplementalCalendarsByYear(year, term, sort, limitOffset);
-                response = getFloorCalendarSearchResultResponse(supplementalCalendarResults, full);
-                break;
-            default:
-                throw new InvalidRequestParamEx(calendarType, "calendarType", "String", "full|active_list|floor");
-        }
-        return response;
+        SearchResults<CalendarId> calResults = (year == null)
+            ? calendarSearchService.searchForCalendars(term, sort, limitOffset)
+            : calendarSearchService.searchForCalendarsByYear(year, term, sort, limitOffset);
+        return getCalendarSearchResultResponse(calResults, detail);
     }
 
     /**
      * Generates a calendar list response from calendar search results
      * @param results
-     * @param full
      * @return
      */
-    private BaseResponse getCalendarSearchResultResponse(SearchResults<CalendarId> results, boolean full) {
+    private BaseResponse getCalendarSearchResultResponse(SearchResults<CalendarId> results, boolean detail) {
         return ListViewResponse.of(
                 results.getResults().stream()
-                        .map(result -> new SearchResultView((full)
+                        .map(result -> new SearchResultView((detail)
                                 ? calendarViewFactory.getCalendarView(
-                                        calendarDataService.getCalendar(result.getResult()))
+                                calendarDataService.getCalendar(result.getResult()))
                                 : new SimpleCalendarView(calendarDataService.getCalendar(result.getResult())),
                                 result.getRank()))
                         .collect(Collectors.toList()),
                 results.getTotalResults(), results.getLimitOffset() );
-    }
-
-    /**
-     * Generates an active list list response from active list search results
-     * @param results
-     * @param full
-     * @return
-     */
-    private BaseResponse getActiveListSearchResultResponse(SearchResults<CalendarActiveListId> results, boolean full) {
-        return ListViewResponse.of(
-                results.getResults().stream()
-                        .map(result -> new SearchResultView((full)
-                                ? calendarViewFactory.getActiveListView(
-                                        calendarDataService.getActiveList(result.getResult()))
-                                : new SimpleActiveListView(calendarDataService.getActiveList(result.getResult())),
-                                result.getRank()))
-                        .collect(Collectors.toList()),
-                results.getTotalResults(), results.getLimitOffset());
-    }
-
-    /**
-     * Generates a floor calendar list response from floor calendar search results
-     * @param results
-     * @param full
-     * @return
-     */
-    private BaseResponse getFloorCalendarSearchResultResponse(SearchResults<CalendarSupplementalId> results, boolean full) {
-        return ListViewResponse.of(
-                results.getResults().stream()
-                        .map(result -> new SearchResultView((full)
-                                ? calendarViewFactory.getCalendarSupView(
-                                        calendarDataService.getCalendarSupplemental(result.getResult()))
-                                : new SimpleCalendarSupView(calendarDataService.getCalendarSupplemental(result.getResult())),
-                                result.getRank()))
-                        .collect(Collectors.toList()),
-                results.getTotalResults(), results.getLimitOffset());
     }
 }

@@ -3,27 +3,29 @@
 
 <section ng-controller="LandingCtrl">
   <section layout="row" layout-align="center center" style="rgb(243, 243, 243);">
-      <%--<div hide show-gt-lg style="width:300px;" class="padding-10">--%>
-        <%--<img src="${ctxPath}/static/img/capitol_square_cropped.jpg" style="width:100%"/>--%>
-      <%--</div>--%>
+
     <h1 flex class="slogan no-margin">Search, explore, and
         <a target="_blank" href="${ctxPath}/docs" class="slogan-link">integrate</a> legislative information from the
-        <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York&nbsp;State Senate</a>.
+        <a class="slogan-link" href="http://www.nysenate.gov">New&nbsp;York State Senate</a>.
     </h1>
   </section>
-  <section class="padding-20 margin-20" style="background:rgb(238, 238, 238);">
-    <h2 class="thin-300">Data we currently provide</h2>
+  <div class="padding-20 margin-20" style="margin-bottom:0;height:250px;background-size:cover;
+                                           background-image:url('${ctxPath}/static/img/capitol_square_cropped.jpg');">
+    &nbsp;
+  </div>
+  <section class="padding-20 margin-20" style="margin-top:0;background:rgb(238, 238, 238);">
+    <h2 class="thin-300">Browse up-to date legislative content</h2>
       <md-divider/>
     <md-list layout-gt-sm="row" layout-wrap>
       <md-item flex="50" class="provide-data-container" ng-repeat="provideData in dataWeProvide">
         <md-item-content ng-click="go(provideData.url)">
           <div class="md-tile-left">
             <div class="provide-data-icon">
-              <i ng-class="provideData.icon"></i>
+              <i ng-class="provideData.icon" class="blue-gray1"></i>
             </div>
           </div>
           <div class="md-tile-content margin-left-20">
-            <h3 style="text-decoration: underline;" class="no-margin bold">{{provideData.type}}</h3>
+            <h3 style="border-bottom:1px solid #ccc;padding-bottom: 5px;" class="no-margin bold">{{provideData.type}}</h3>
             <h4>{{provideData.blurb}}</h4>
           </div>
         </md-item-content>
@@ -35,7 +37,7 @@
     the <a href="http://www.nysenate.gov" class="slogan-link">nysenate.gov site.</a> </h4>
   </section>
   <section class="padding-20 margin-20 white" style="background:rgb(116, 156, 77);">
-    <h2>Access NYS legislative data through the API</h2>
+    <h2>Access NYS legislative data through a JSON API</h2>
       <section ng-hide="signedup">
           <h3>Sign up for a free API Key</h3>
           <hr/>

@@ -17,7 +17,8 @@ public class UpdateDigestView extends UpdateTokenView implements ViewObject
     public UpdateDigestView(UpdateDigest<?> updateDigest, ViewObject idView) {
         super(updateDigest, idView);
         if (updateDigest != null) {
-            this.action = updateDigest.getAction();
+            this.action = (updateDigest.getAction() != null) ? WordUtils.capitalizeFully(updateDigest.getAction())
+                                                             : updateDigest.getAction();
             this.scope = WordUtils.capitalizeFully(updateDigest.getTable().replaceAll("_", " "));
             this.fields = new HashMap<>();
             if (updateDigest.getFields() != null) {

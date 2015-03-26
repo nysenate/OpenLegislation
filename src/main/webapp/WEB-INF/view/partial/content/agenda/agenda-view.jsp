@@ -24,7 +24,7 @@
       <md-tabs md-selected="1" class="md-primary" md-stretch-tabs="never">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
-            <span><i class="icon-arrow-left5 prefix-icon2"></i>Back to Search</span>
+            <span><i class="icon-search prefix-icon2"></i>Search</span>
           </md-tab-label>
         </md-tab>
         <md-tab>
@@ -85,10 +85,11 @@
                             </div>
                             <div flex class="md-tile-content" ng-if="addn.hasVotes" ng-init="billVote = votes[bill.billId.basePrintNo]">
                               <h5 ng-if="billVote.amended">Amended</h5>
-                              <h4>Votes: <span class="text-medium no-margin" ng-repeat="(type, vote) in billVote.vote.memberVotes.items">
+                              <h4 ng-show="billVote.vote.memberVotes.size > 0">Votes: <span class="text-medium no-margin" ng-repeat="(type, vote) in billVote.vote.memberVotes.items">
                                   {{type}} ({{vote.size}})
                               </span></h4>
-                              <h5 class="no-margin">Action: {{billVote.action | agendaActionFilter}}</h5>
+                              <h5 ng-show="billVote.action" class="no-margin">Action: {{billVote.action | agendaActionFilter}}</h5>
+                              <h5 ng-hide="billVote" class="no-margin">No Vote Taken On Bill</h5>
                             </div>
                           </md-item-content>
                         </md-item>

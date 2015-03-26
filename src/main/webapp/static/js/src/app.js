@@ -5,7 +5,7 @@ var openApp = angular.module('open',
     ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar', 'angularUtils.directives.dirPagination',
 // Internal modules
     'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.transcript', 'open.account',
-    'open.notification.subscription']);
+    'open.notification.subscription', 'open.member']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
@@ -26,7 +26,11 @@ openApp.config(function($mdThemingProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
 })
 .config(function(paginationTemplateProvider) {
-    paginationTemplateProvider.setPath(ctxPath +'/static/bower_components/angular-utils-pagination/dirPagination.tpl.html');
+    paginationTemplateProvider.setPath(ctxPath +'/static/tpl/dirPagination.tpl.html');
+})
+.config(function($httpProvider){
+    // We set a ui key in the http header to allow front end users to bypass api key restrictions
+    $httpProvider.defaults.headers.common['UIKey'] = $("#uikey").val();
 });
 
 /**
@@ -58,24 +62,25 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
 
 openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.setHeaderVisible(true);
+    $scope.setHeaderText('');
     $scope.email = '';
     $scope.dataWeProvide = [
-        { type: 'New York State Bills and Resolutions', blurb: 'From 2009 To Present. Updated in real-time.',
+        { type: 'New York State Bills and Resolutions', blurb: 'Discover current and prior legislation that impacts New York State.',
           icon: 'icon-newspaper', url: ctxPath + '/bills'},
 
-        { type: 'New York State Laws', blurb: 'From 2014. Updated weekly.',
+        { type: 'New York State Laws', blurb: 'Search through the current laws of NYS.',
           icon: 'icon-bookmarks', url: ctxPath + '/laws'},
 
-        { type: 'Senate Session/Hearing Transcripts', blurb: 'From 1993 to Present.',
+        { type: 'Senate Session/Hearing Transcripts', blurb: 'Records of Senate session floor discussion since 1993.',
           icon: 'icon-text', url: ctxPath + '/transcripts'},
 
-        { type: 'Senate Committee Agendas', blurb: 'From 2009 To Present. Updated in real-time.',
+        { type: 'Senate Committee Agendas', blurb: 'Committee meetings to discuss bills and the votes to move them to the floor.',
           icon: 'icon-clipboard', url: ctxPath + '/agendas'},
 
-        { type: 'Senate Floor Calendars', blurb: 'From 2009 To Present. Updated in real-time.',
+        { type: 'Senate Floor Calendars', blurb: 'Listings of bills that are scheduled for discussion and voting on the senate floor.',
           icon: 'icon-calendar', url: ctxPath + '/calendars'},
 
-        { type: 'Senate/Assembly Membership', blurb: 'Member data',
+        { type: 'Senate/Assembly Membership', blurb: 'Senators and assemblymembers for the current session.',
           icon: 'icon-users', url: ctxPath + '/members'}
     ];
 
@@ -163,7 +168,6 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
             }
 
             $rootScope.$on('$routeChangeSuccess', function() {
-                console.log($location.url());
                 $scope.urlMap.some(function(secItem) {
                     if (secItem.re.test($location.url())) {
                         $scope.selectSection(secItem.secRef);

@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.model.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents the basic structure of a search response with additional information such
@@ -41,6 +43,13 @@ public class SearchResults<ResultType>
     @Override
     public String toString() {
         return "SearchResults{" + "resultCount=" + totalResults + ", results=" + results + ", limitOffset=" + limitOffset + '}';
+    }
+
+    /** --- Functional Getters/Setters --- */
+
+    public PaginatedList<ResultType> toPaginatedList() {
+        return new PaginatedList<>(totalResults, limitOffset,
+                results.stream().map(SearchResult::getResult).collect(Collectors.toList()));
     }
 
     /** --- Basic Getters/Setters --- */

@@ -5,6 +5,7 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.DateRangeListViewResponse;
 import gov.nysenate.openleg.client.view.bill.BaseBillIdView;
 import gov.nysenate.openleg.client.view.bill.SimpleBillInfoView;
+import gov.nysenate.openleg.client.view.updates.UpdateDigestModelView;
 import gov.nysenate.openleg.client.view.updates.UpdateDigestView;
 import gov.nysenate.openleg.client.view.updates.UpdateTokenModelView;
 import gov.nysenate.openleg.client.view.updates.UpdateTokenView;
@@ -158,7 +159,11 @@ public class BillUpdatesCtrl extends BaseCtrl
             PaginatedList<UpdateDigest<BaseBillId>> updateDigests =
                 billUpdatesDao.getDetailedUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
             return DateRangeListViewResponse.of(updateDigests.getResults().stream()
-                .map(digest -> new UpdateDigestView(digest, new BaseBillIdView(digest.getId())))
+                .map(digest ->
+                        (!summary) ? new UpdateDigestView(digest, new BaseBillIdView(digest.getId()))
+                                   : new UpdateDigestModelView(digest, new BaseBillIdView(digest.getId()),
+                                                                       new SimpleBillInfoView(billData.getBillInfo(digest.getId())))
+                )
                 .collect(toList()), updateRange, updateDigests.getTotal(), limOff);
         }
     }

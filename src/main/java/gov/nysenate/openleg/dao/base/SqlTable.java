@@ -42,6 +42,7 @@ public enum SqlTable
     BILL_MILESTONE               ("bill_milestone"),
     BILL_PREVIOUS_VERSION        ("bill_previous_version"),
     BILL_SPONSOR                 ("bill_sponsor"),
+    BILL_ADDITIONAL_SPONSOR      ("bill_sponsor_additional"),
     BILL_VETO                    ("bill_veto"),
 
     BILL_CHANGE_LOG              ("bill_change_log"),
