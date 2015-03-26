@@ -365,7 +365,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
 
     $scope.$watch('curr.selectedView', function(newView, oldView) {
         if (newView !== oldView) {
-            $location.search('view', $scope.curr.selectedView);
+            $location.search('view', $scope.curr.selectedView).replace();
         }
         if (newView === 4) { // selected full text tab
             $scope.fetchFullText();
@@ -447,7 +447,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
     $scope.getUpdates = function() {
         $scope.updateHistoryResponse = BillUpdatesApi.get(
             {printNo: $scope.printNo, session: $scope.session, order: $scope.curr.updateOrder,
-             filter: $scope.curr.updateTypeFilter, offset: 1, limit: 200}, function() {
+             filter: $scope.curr.updateTypeFilter, offset: 1, limit: 1000}, function() {
             if ($scope.updateHistoryResponse.success === true) {
                 $scope.updateHistory = $scope.updateHistoryResponse.result;
             }

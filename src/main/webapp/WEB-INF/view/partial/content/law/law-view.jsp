@@ -1,13 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
 <section ng-controller="LawCtrl">
   <section class="content-section" ng-controller="LawViewCtrl">
     <md-tabs md-selected="curr.selectedView" class="md-primary">
       <md-tab md-on-select="backToListings()">
-        <i class="prefix-icon2 icon-arrow-left5"></i>Back to Listings
+        Listings
       </md-tab>
-      <md-tab label="{{curr.lawId}}">
+      <md-tab label="{{curr.lawId}} Directory">
         <pre ng-show="curr.nodes[depth].docType === 'SECTION'"
              class="margin-left-20 bill-full-text" style="white-space: pre-line;">
           {{curr.lawText}}
@@ -53,7 +52,7 @@
             </md-item>
             <md-item ng-if="curr.showNested[doc.locationId]">
               <md-item-content>
-                <md-list style="width:100%;" class="no-padding" ng-if="doc.docType !== 'SECTION'">
+                <md-list style="width:100%;margin-left:20px;" class="no-padding" ng-if="doc.docType !== 'SECTION'">
                   <div ng-repeat="doc in doc.documents.items" ng-include="'law-tree-snippet.html'"></div>
                 </md-list>
                 <div class="law-text" ng-if="doc.docType === 'SECTION'" ng-bind-html="curr.lawText[doc.locationId]"></div>
@@ -63,13 +62,16 @@
         </script>
 
         <!-- Invoke the law tree template using the first law tree level -->
-        <md-card class="no-margin">
-          <md-content class="gray10-bg">
+        <md-card class="law-container">
+          <md-content>
             <md-list>
               <div ng-repeat="doc in curr.lawTree" ng-include="'law-tree-snippet.html'"></div>
             </md-list>
           </md-content>
         </md-card>
+      </md-tab>
+      <md-tab label="Change Log">
+
       </md-tab>
     </md-tabs>
   </section>

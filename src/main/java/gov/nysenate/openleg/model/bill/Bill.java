@@ -79,6 +79,10 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** Associated floor calendar ids. */
     protected List<CalendarId> calendars = new ArrayList<>();
 
+    protected Integer chapterNum;
+
+    protected Integer chapterYear;
+
     /** --- Constructors --- */
 
     public Bill() {}
@@ -467,5 +471,21 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     public void setCalendars(List<CalendarId> calendars) {
         this.calendars = calendars;
+    }
+
+    public Integer getChapterNum() {
+        return chapterNum;
+    }
+
+    public void setChapterNum(Integer chapterNum) {
+        this.chapterNum = chapterNum;
+    }
+
+    public Integer getChapterYear() {
+        return chapterYear;
+    }
+
+    public void setChapterYear(Integer chapterYear) {
+        this.chapterYear = chapterYear;
     }
 }

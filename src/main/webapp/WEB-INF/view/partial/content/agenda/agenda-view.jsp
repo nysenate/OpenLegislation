@@ -108,8 +108,19 @@
             </toggle-panel>
           </section>
         </md-tab>
-        <md-tab label="Change Log">
-
+        <md-tab label="Change Log" md-on-select="getUpdates()">
+          <md-card class="content-card">
+            <md-content layout="row" layout-sm="column">
+              <div flex>
+                <label>Sort By: </label>
+                <select ng-model="curr.updateOrder" ng-change="getUpdates()" class="margin-left-10">
+                  <option value="desc">Newest First</option>
+                  <option value="asc">Oldest First</option>
+                </select>
+              </div>
+            </md-content>
+          </md-card>
+          <update-list update-response="updatesResponse" pagination="updatesPagination" show-details="true"></update-list>
         </md-tab>
       </md-tabs>
     </section>

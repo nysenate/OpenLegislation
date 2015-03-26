@@ -94,7 +94,7 @@ lawModule.controller('LawViewCtrl', ['$scope', '$routeParams', '$location', '$ro
                 node.documents = lawTreeResponse.result.documents.documents;
             });
         }
-        $location.search('location', node.locationId);
+        $location.search('location', node.locationId).replace();
     };
 
     $scope.toggleNodeText = function(node) {

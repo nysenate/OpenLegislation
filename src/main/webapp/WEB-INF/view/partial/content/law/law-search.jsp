@@ -2,7 +2,10 @@
 <section ng-controller="LawCtrl">
   <section class="content-section" ng-controller="LawListingCtrl">
     <md-tabs md-selected="curr.selectedView" class="md-primary">
-      <md-tab label="Listings">
+      <md-tab>
+        <md-tab-label>
+          <i class="icon-list prefix-icon2"></i>Listings
+        </md-tab-label>
         <md-card class="content-card">
           <md-content>
             <md-input-container>
@@ -31,7 +34,12 @@
           </md-content>
         </md-card>
       </md-tab>
-        <md-tab label="Search"></md-tab>
+      <md-tab>
+        <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
+      </md-tab>
+      <md-tab>
+        <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
+      </md-tab>
     </md-tabs>
   </section>
 </section>

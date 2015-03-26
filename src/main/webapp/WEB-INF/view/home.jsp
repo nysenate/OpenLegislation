@@ -50,7 +50,6 @@
                 Open Legislation
               </a>
             </div>
-            <md-divider></md-divider>
           </div>
           <%-- Left Nav Menu Items --%>
           <div class="left-nav-menu">

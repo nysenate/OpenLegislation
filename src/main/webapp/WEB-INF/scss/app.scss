@@ -99,8 +99,8 @@ md-tab.active {
 .fade {
   opacity: 1;
 }
-.fade.ng-enter {
-  @include transition(all .5s ease);
+.fade.ng-enter, .fade.ng-leave {
+  @include transition(all .25s ease);
 }
 .fade.ng-enter {
   opacity: 0;
@@ -796,6 +796,11 @@ a.slogan-link {
 
 /** --- Law Page Styles --- */
 
+.law-container {
+  @include box-shadow(0 1px 3px #ddd);
+  margin: 10px 0;
+}
+
 .law-node {
   padding-left: 20px;
   cursor: pointer;
@@ -806,13 +811,13 @@ a.slogan-link {
   }
   background: #fff;
   &:hover {
-    background: #f5f5f5;
+    color: $blue3;
     .law-node-toggle-icon {
       visibility: visible;
     }
   }
   &.active {
-    background: #fafafa;
+    color: $blue4;
     .law-node-toggle-icon {
       visibility: visible;
     }
@@ -847,6 +852,18 @@ a.slogan-link {
     &:hover {
       background: white;
     }
+  }
+}
+
+.agenda-search {
+  div {
+    padding: 16px;
+  }
+  label:not(:first-child) {
+    margin-left: 10px;
+  }
+  select, input {
+    margin-left: 10px;
   }
 }
 

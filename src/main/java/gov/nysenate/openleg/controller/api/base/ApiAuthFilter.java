@@ -16,14 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component("apiAuthFilter")
-public class ApiAuthFilter implements Filter {
+public class ApiAuthFilter implements Filter
+{
     private static final Logger logger = LoggerFactory.getLogger(ApiAuthFilter.class);
 
     @Autowired
     protected ApiUserService apiUserService;
 
     @Value("${api.auth.ip.whitelist}") private String filterAddress;
-
     @Value("${api.auth.enable}") private boolean enabled;
 
     @Override

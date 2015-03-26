@@ -470,9 +470,8 @@
     <section ng-if="response.success === false">
       <md-card>
         <md-content class="content-card padding-20">
-          <h4>Really sorry about that. You probably got to this page because the requested bill or resolution is not
-          in our system. Data for bills and resolutions are available from the 2009 to current session years.</h4>
-          </md-content>
+          <h4>Please note that data for bills and resolutions are only available from 2009.</h4>
+        </md-content>
       </md-card>
     </section>
   </section>

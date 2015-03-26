@@ -51,26 +51,50 @@
         </md-tab-label>
         <section ng-if="selectedView === 1" ng-controller="AgendaSearchCtrl">
           <section class="margin-top-10">
-            <form>
-              <md-content class="padding-20">
-                <md-input-container class="md-primary">
-                  <label><i class="prefix-icon2 icon-search"></i>Search for committee agendas</label>
-                  <input tabindex="1" style="font-size:1.4rem;" name="term"
-                         ng-model="agendaSearch.term" ng-model-options="{debounce: 300}" ng-change="simpleSearch(true)">
-                </md-input-container>
-              </md-content>
-              <md-divider></md-divider>
-              <md-subheader class="margin-10 md-warn md-whiteframe-z0">
-                <h4>No search results were found for </h4>
-              </md-subheader>
-              <md-subheader ng-show="" class="margin-10 md-warn md-whiteframe-z0">
-                <h4></h4>
-              </md-subheader>
-            </form>
+            <md-card class="content-card text-medium">
+              <form class="agenda-search">
+                <div>
+                  <label>Agenda No</label>
+                  <select></select>
+                  <label>Agenda Year</label>
+                  <select></select>
+                </div>
+                <md-divider></md-divider>
+                <div>
+                  <label>Committee</label>
+                  <select></select>
+                  <label>Meeting Start Date</label>
+                  <input type="date">
+                  <label>Meeting End Date</label>
+                  <input type="date">
+                </div>
+                <md-divider></md-divider>
+                <div>
+                  <label>Contains Bill Print No</label>
+                  <input type="text">
+                </div>
+              </form>
+            </md-card>
+              <%--<md-content class="padding-20">--%>
+                <%--<md-input-container class="md-primary">--%>
+                  <%--<label>Agenda Number</label>--%>
+                  <%--<select></select>--%>
+                  <%--<label>Year</label>--%>
+                  <%--<select></select>--%>
+                  <%--&lt;%&ndash;<input tabindex="1" style="font-size:1.4rem;" name="term"&ndash;%&gt;--%>
+                         <%--&lt;%&ndash;ng-model="agendaSearch.term" ng-model-options="{debounce: 300}" ng-change="simpleSearch(true)">&ndash;%&gt;--%>
+                <%--</md-input-container>--%>
+              <%--</md-content>--%>
+            <md-divider></md-divider>
+            <md-subheader class="margin-10 md-warn md-whiteframe-z0">
+              <h4>No search results were found for </h4>
+            </md-subheader>
+            <md-subheader ng-show="" class="margin-10 md-warn md-whiteframe-z0">
+              <h4></h4>
+            </md-subheader>
             <md-card>
               <md-content>
                 <code style="max-width: 400px;">{{agendaSearch.results}}</code>
-
               </md-content>
             </md-card>
           </section>
@@ -127,8 +151,7 @@
             </div>
           </md-card>
           <div ng-if="agendaUpdates.fetching" class="text-medium text-align-center">Fetching updates, please wait.</div>
-          <update-list class="error-toast-parent"
-                       ng-show="!agendaUpdates.fetching && agendaUpdates.response.success === true"
+          <update-list ng-show="!agendaUpdates.fetching && agendaUpdates.response.success === true"
                        update-response="agendaUpdates.response"
                        from-date="curr.fromDate" to-date="curr.toDate"
                        pagination="pagination" show-details="curr.detail">

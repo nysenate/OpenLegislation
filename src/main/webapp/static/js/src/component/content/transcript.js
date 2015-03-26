@@ -114,7 +114,7 @@ transcriptModule.controller('TranscriptListingCtrl', ['$scope', '$routeParams', 
                     if ($scope.hearingSearch.response && $scope.hearingSearch.response.success) {
                         $scope.hearingSearch.error = false;
                         $scope.hearingSearch.matches = $scope.hearingSearch.response.result.items || [];
-                        $scope.hearingSearch.paginate.setTotalItems($scope.hearingSearch.response.total)
+                        $scope.hearingSearch.paginate.setTotalItems($scope.hearingSearch.response.total);
 
                         angular.forEach($scope.hearingSearch.matches, function(match) {
                             for (field in match.highlights) {
