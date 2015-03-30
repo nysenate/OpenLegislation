@@ -108,7 +108,7 @@
             </toggle-panel>
           </section>
         </md-tab>
-        <md-tab label="Change Log" md-on-select="getUpdates()">
+        <md-tab label="Updates" md-on-select="getUpdates()">
           <md-card class="content-card">
             <md-content layout="row" layout-sm="column">
               <div flex>

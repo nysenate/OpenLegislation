@@ -392,7 +392,7 @@
           </section>
         </md-tab>
         <%-- Updates --%>
-        <md-tab label="Change Log" md-on-select="initialGetUpdates()">
+        <md-tab label="Updates" md-on-select="initialGetUpdates()">
           <md-divider></md-divider>
           <section ng-if="curr.selectedView === 5">
             <md-card class="content-card">
