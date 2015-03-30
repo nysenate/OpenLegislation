@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class CachedAgendaDataService implements AgendaDataService, CachingService
+public class CachedAgendaDataService implements AgendaDataService, CachingService<AgendaId>
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedAgendaDataService.class);
 
@@ -84,6 +84,11 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
         if (evictEvent.affects(ContentCache.AGENDA)) {
             evictCaches();
         }
+    }
+
+    @Override
+    public void evictContent(AgendaId agendaId) {
+        agendaCache.evict(agendaId);
     }
 
     /**

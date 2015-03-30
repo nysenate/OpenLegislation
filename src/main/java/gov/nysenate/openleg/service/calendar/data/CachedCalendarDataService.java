@@ -34,7 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class CachedCalendarDataService implements CalendarDataService, CachingService
+public class CachedCalendarDataService implements CalendarDataService, CachingService<CalendarId>
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedCalendarDataService.class);
 
@@ -76,6 +76,12 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     public void evictCaches() {
         logger.info("clearing calendar cache");
         calendarCache.removeAll();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void evictContent(CalendarId calendarId) {
+        calendarCache.remove(calendarId);
     }
 
     /** {@inheritDoc} */

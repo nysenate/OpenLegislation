@@ -11,7 +11,7 @@ import java.util.List;
 
 import static net.sf.ehcache.config.SizeOfPolicyConfiguration.MaxDepthExceededBehavior.ABORT;
 
-public interface CachingService
+public interface CachingService<ContentId>
 {
     static final Logger logger = LoggerFactory.getLogger(CachingService.class);
 
@@ -24,6 +24,11 @@ public interface CachingService
      * Returns all cache instances.
      */
     public List<Ehcache> getCaches();
+
+    /**
+     * Evicts a single item from the cache based on the given content id
+     */
+    public void evictContent(ContentId contentId);
 
     /**
      * (Default Method)

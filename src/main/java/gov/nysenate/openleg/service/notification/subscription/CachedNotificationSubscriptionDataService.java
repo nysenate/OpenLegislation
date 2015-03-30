@@ -26,7 +26,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class CachedNotificationSubscriptionDataService implements NotificationSubscriptionDataService, CachingService {
+public class CachedNotificationSubscriptionDataService implements NotificationSubscriptionDataService, CachingService
+{
 
     @Autowired private CacheManager cacheManager;
     @Autowired private EventBus eventBus;
@@ -122,6 +123,12 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
         if (evictEvent.affects(ContentCache.NOTIFICATION_SUBSCRIPTION)) {
             evictCaches();
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void evictContent(Object o) {
+        evictCaches();
     }
 
     /**

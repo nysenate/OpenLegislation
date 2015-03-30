@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class CachedMemberService implements MemberService, CachingService
+public class CachedMemberService implements MemberService, CachingService<Integer>
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedMemberService.class);
 
@@ -84,6 +84,12 @@ public class CachedMemberService implements MemberService, CachingService
         if (evictEvent.affects(ContentCache.MEMBER)) {
             evictCaches();
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void evictContent(Integer sessionMemberId) {
+        memberCache.remove(sessionMemberId);
     }
 
     /** {@inheritDoc} */

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -24,7 +25,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
     @Autowired
     private DaybreakDao daybreakDao;
 
-    private OpenlegThreadFactory threadFactory = new OpenlegThreadFactory("daybreak-process");
+    private ThreadFactory threadFactory = new OpenlegThreadFactory("daybreak-process");
 
     /** --- Interfaced Methods --- */
 

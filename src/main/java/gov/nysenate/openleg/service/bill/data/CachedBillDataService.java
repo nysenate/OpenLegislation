@@ -17,6 +17,8 @@ import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import net.sf.ehcache.*;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
@@ -39,7 +41,7 @@ import java.util.Optional;
  * in-memory caches to reduce the number of database queries involved in retrieving bill data.
  */
 @Service
-public class CachedBillDataService implements BillDataService, CachingService
+public class CachedBillDataService implements BillDataService, CachingService<BaseBillId>
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataService.class);
 
@@ -131,6 +133,14 @@ public class CachedBillDataService implements BillDataService, CachingService
         if (evictEvent.affects(ContentCache.BILL)) {
             evictCaches();
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void evictContent(BaseBillId baseBillId) {
+        logger.debug("evicting {}", baseBillId);
+        billInfoCache.remove(baseBillId);
+        billCache.remove(baseBillId);
     }
 
     /** {@inheritDoc} */

@@ -33,10 +33,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class CachedCommitteeDataService implements CommitteeDataService, CachingService {
+public class CachedCommitteeDataService implements CommitteeDataService, CachingService<CommitteeSessionId> {
 
     private static final Logger logger = LoggerFactory.getLogger(CachedCommitteeDataService.class);
 
@@ -87,6 +86,12 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     public void evictCaches() {
         logger.info("clearing the committee cache.");
         committeeCache.removeAll();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void evictContent(CommitteeSessionId committeeSessionId) {
+        committeeCache.remove(committeeSessionId);
     }
 
     /** {@inheritDoc} */

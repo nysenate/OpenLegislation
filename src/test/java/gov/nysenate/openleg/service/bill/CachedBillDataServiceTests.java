@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
+import gov.nysenate.openleg.service.bill.data.CachedBillDataService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
@@ -13,11 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collection;
+
 public class CachedBillDataServiceTests extends BaseTests
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedBillDataServiceTests.class);
 
-    @Autowired BillDataService billData;
+    @Autowired
+    CachedBillDataService billData;
 
     @Autowired EventBus eventBus;
 
@@ -41,6 +45,29 @@ public class CachedBillDataServiceTests extends BaseTests
     public void testGetBillInfo() throws Exception {
         StopWatch sw = new StopWatch();
         sw.start();
+        sw.stop();
+        sw.reset();
+        logger.info("time {}", sw.getTime());
+    }
+
+    @Test
+    public void evictContentTest() {
+        StopWatch sw = new StopWatch();
+        BaseBillId id = new BaseBillId("S1", 2015);
+        billData.evictCaches();
+        sw.start();
+        billData.getBill(id);
+        sw.stop();
+        logger.info("time {}", sw.getTime());
+        sw.reset();
+        sw.start();
+        billData.getBill(id);
+        sw.stop();
+        logger.info("time {}", sw.getTime());
+        sw.reset();
+        billData.evictContent(id);
+        sw.start();
+        billData.getBill(id);
         sw.stop();
         logger.info("time {}", sw.getTime());
     }

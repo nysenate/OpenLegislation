@@ -15,9 +15,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +35,7 @@ import java.util.regex.Pattern;
 
 
 @Service
-public class CachedSqlApiUserService implements ApiUserService, CachingService
+public class CachedSqlApiUserService implements ApiUserService, CachingService<String>
 {
     @Autowired
     protected ApiUserDao apiUserDao;
@@ -89,6 +87,11 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService
         if (evictEvent.affects(ContentCache.APIUSER)) {
             evictCaches();
         }
+    }
+
+    @Override
+    public void evictContent(String key) {
+        apiUserCache.evict(key);
     }
 
     @Override

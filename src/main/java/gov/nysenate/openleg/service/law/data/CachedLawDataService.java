@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.toList;
  * Service interface for retrieving and saving NYS Law data.
  */
 @Service
-public class CachedLawDataService implements LawDataService, CachingService
+public class CachedLawDataService implements LawDataService, CachingService<LawVersionId>
 {
     private static final Logger logger = LoggerFactory.getLogger(CachedLawDataService.class);
 
@@ -88,6 +88,12 @@ public class CachedLawDataService implements LawDataService, CachingService
         if (evictEvent.affects(ContentCache.LAW)) {
             evictCaches();
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void evictContent(LawVersionId lawVersionId) {
+        lawTreeCache.evict(lawVersionId);
     }
 
     /** {@inheritDoc} */
