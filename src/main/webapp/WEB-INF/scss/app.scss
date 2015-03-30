@@ -193,6 +193,10 @@ md-tab.active {
   text-align: center;
 }
 
+.text-align-right {
+  text-align: right;
+}
+
 .bold {
   font-weight: 600 !important;
 }
@@ -264,7 +268,6 @@ md-tab.active {
 .padding-20 {
   padding: 20px;
 }
-
 
 .no-margin {
   margin: 0;
@@ -599,6 +602,46 @@ ul.pagination {
   }
 }
 
+/** --- Search UI --- */
+
+.search-refine-panel {
+  width: 240px;
+  background: $gray1;
+  margin: 10px 0 0 0;
+  font-size: 0.9rem;
+  h3 {
+    background:white;
+    font-size: 1rem;
+    padding: 10px 10px 10px 15px;
+    margin: 0;
+  }
+  .refine-controls {
+    padding: 5px 10px 5px 15px;
+    label {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      display: block;
+    }
+    select, input {
+      width: 100%;
+      display:block;
+      border: 1px solid #ddd;
+    }
+    md-checkbox {
+      margin: 10px 2px 0 2px;
+    }
+    hr {
+      border: 0;
+      height: 1px;
+      background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
+      background-image:    -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
+      background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
+      background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
+    }
+  }
+}
+
+
 /** --- Landing Page Styles --- */
 
 .hero-img {
@@ -673,34 +716,6 @@ a.slogan-link {
 }
 
 /** --- Bill Page Styles --- */
-
-.bill-search-refine {
-  width: 240px;
-  background: $gray1;
-  margin: 10px 0 0 0;
-  font-size: 0.9rem;
-  h3 {
-    background:white;
-    font-size: 1rem;
-    padding: 10px 10px 10px 15px;
-    margin: 0;
-  }
-  .refine-controls {
-    padding: 5px 10px 5px 15px;
-    label {
-      margin-top: 8px;
-      font-size: 0.9rem;
-      display: block;
-    }
-    select {
-      width: 100%;
-      display:block;
-    }
-    md-checkbox {
-      margin: 10px 2px 0 2px;
-    }
-  }
-}
 
 .bill-ms-container {
   padding: 5px 0;

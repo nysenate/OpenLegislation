@@ -78,7 +78,7 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
     });
 
     $scope.$on('$locationChangeSuccess', function() {
-        $scope.selectedView = $location.search().view || 0;
+        $scope.selectedView = +($location.search().view) || 0;
     });
 
     $scope.getStatusDesc = function(status) {

@@ -4,12 +4,12 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 
-public class CommitteeAgendaIdView implements ViewObject
+public class CommAgendaIdView implements ViewObject
 {
     private AgendaIdView agendaId;
     private CommitteeIdView committeeId;
 
-    public CommitteeAgendaIdView(CommitteeAgendaId committeeAgendaId) {
+    public CommAgendaIdView(CommitteeAgendaId committeeAgendaId) {
         if (committeeAgendaId != null) {
             agendaId = new AgendaIdView(committeeAgendaId.getAgendaId());
             committeeId = new CommitteeIdView(committeeAgendaId.getCommitteeId());

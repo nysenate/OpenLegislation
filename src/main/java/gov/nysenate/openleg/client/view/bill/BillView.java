@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.client.view.bill;
 
-import gov.nysenate.openleg.client.view.agenda.CommitteeAgendaIdView;
+import gov.nysenate.openleg.client.view.agenda.CommAgendaIdView;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
@@ -26,7 +26,7 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<CommitteeVersionIdView> pastCommittees;
     protected ListView<BillActionView> actions;
     protected ListView<BillIdView> previousVersions;
-    protected ListView<CommitteeAgendaIdView> committeeAgendas;
+    protected ListView<CommAgendaIdView> committeeAgendas;
     protected ListView<CalendarIdView> calendars;
 
     public BillView(Bill bill) {
@@ -74,7 +74,7 @@ public class BillView extends BillInfoView implements ViewObject
                 .collect(Collectors.toList()));
 
             this.committeeAgendas = ListView.of(bill.getCommitteeAgendas().stream()
-                .map(CommitteeAgendaIdView::new)
+                .map(CommAgendaIdView::new)
                 .collect(Collectors.toList()));
 
             this.calendars = ListView.of(bill.getCalendars().stream()
@@ -120,7 +120,7 @@ public class BillView extends BillInfoView implements ViewObject
         return previousVersions;
     }
 
-    public ListView<CommitteeAgendaIdView> getCommitteeAgendas() {
+    public ListView<CommAgendaIdView> getCommitteeAgendas() {
         return committeeAgendas;
     }
 

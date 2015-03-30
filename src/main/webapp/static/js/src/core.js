@@ -7,6 +7,13 @@ coreModule.factory('MemberApi', ['$resource', function($resource) {
     });
 }]);
 
+coreModule.factory('CommitteeListingApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/committees/:sessionYear/senate', {
+        sessionYear: '@sessionYear'
+    });
+}]);
+
+
 coreModule.filter('default', ['$filter', function($filter) {
     return function(input, defaultVal) {
         return (!input) ? defaultVal : input;
@@ -74,7 +81,7 @@ coreModule.factory('PaginationModel', function() {
             this.totalItems = totalResults;
             this.lastPage = Math.ceil(this.totalItems / this.itemsPerPage);
             if (this.currPage > this.lastPage) {
-                this.currPage = this.lastPage;
+                this.currPage = 1
             }
         },
 
@@ -87,7 +94,7 @@ coreModule.factory('PaginationModel', function() {
         },
 
         getOffset: function() {
-            return this.itemsPerPage * (this.currPage - 1);
+            return (this.itemsPerPage * (this.currPage - 1)) + 1;
         },
 
         getLimit: function() {

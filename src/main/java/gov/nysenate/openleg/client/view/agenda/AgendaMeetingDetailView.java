@@ -9,7 +9,7 @@ import java.time.LocalDate;
 /**
  * Adds the agenda/committee ids to the meeting view.
  */
-public class AgendaMeetingDetailView extends CommitteeAgendaIdView implements ViewObject
+public class AgendaMeetingDetailView extends CommAgendaIdView implements ViewObject
 {
     protected String addendum;
     protected LocalDate weekOf;

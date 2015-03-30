@@ -1,5 +1,5 @@
 <md-card class="content-card">
-  <md-subheader flex><strong>{{pagination.totalItems}}</strong> <span ng-show="showDetails"> granular </span> updates
+  <md-subheader flex><strong>{{updateResponse.total}}</strong> <span ng-show="showDetails"> granular </span> updates
     <span ng-show="fromDate && toDate">between {{fromDate | moment:'lll'}} and {{toDate | moment:'lll'}}.</span>
     <span ng-show="pagination.totalItems > 0">Viewing page {{pagination.currPage}} of {{pagination.lastPage}}. </span>
   </md-subheader>

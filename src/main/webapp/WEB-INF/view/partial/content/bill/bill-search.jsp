@@ -42,7 +42,7 @@
                 <div flex style="text-align: right;"><dir-pagination-controls pagination-id="bill-search" boundary-links="true"></dir-pagination-controls></div>
               </div>
               <md-content layout="row" style="padding:0;" class="no-top-margin">
-                <div class="bill-search-refine" hide-sm>
+                <div class="search-refine-panel" hide-sm>
                   <h3>Refine your search</h3>
                   <md-divider></md-divider>
                   <div class="refine-controls">
@@ -51,6 +51,7 @@
                       <option value="">Relevance</option>
                       <option value="status.actionDate:desc">Recent Status Update</option>
                       <option value="milestones.size:desc">Milestone Count</option>
+                      <option value="votes.items.memberVotes.items.NAY.size:desc">Most Nay Votes (Voted Bills only)</option>
                     </select>
                     <hr/>
                     <label for="refine_session">Session</label>

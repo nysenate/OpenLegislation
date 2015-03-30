@@ -53,62 +53,96 @@
           <section class="margin-top-10">
             <md-card class="content-card text-medium">
               <form class="agenda-search">
-                <div>
-                  <label>Agenda No</label>
-                  <select></select>
-                  <label>Agenda Year</label>
-                  <select></select>
-                </div>
-                <md-divider></md-divider>
-                <div>
-                  <label>Committee</label>
-                  <select></select>
-                  <label>Meeting Start Date</label>
-                  <input type="date">
-                  <label>Meeting End Date</label>
-                  <input type="date">
-                </div>
-                <md-divider></md-divider>
-                <div>
-                  <label>Contains Bill Print No</label>
-                  <input type="text">
+                <div flex>
+                  <label>Search for agendas by year</label>
+                  <select ng-model="searchParams.year" ng-change="selectedYearChanged()">
+                    <option ng-repeat="year in years">{{year}}</option>
+                  </select>
                 </div>
               </form>
             </md-card>
-              <%--<md-content class="padding-20">--%>
-                <%--<md-input-container class="md-primary">--%>
-                  <%--<label>Agenda Number</label>--%>
-                  <%--<select></select>--%>
-                  <%--<label>Year</label>--%>
-                  <%--<select></select>--%>
-                  <%--&lt;%&ndash;<input tabindex="1" style="font-size:1.4rem;" name="term"&ndash;%&gt;--%>
-                         <%--&lt;%&ndash;ng-model="agendaSearch.term" ng-model-options="{debounce: 300}" ng-change="simpleSearch(true)">&ndash;%&gt;--%>
-                <%--</md-input-container>--%>
-              <%--</md-content>--%>
-            <md-divider></md-divider>
-            <md-subheader class="margin-10 md-warn md-whiteframe-z0">
-              <h4>No search results were found for </h4>
-            </md-subheader>
-            <md-subheader ng-show="" class="margin-10 md-warn md-whiteframe-z0">
-              <h4></h4>
-            </md-subheader>
-            <md-card>
-              <md-content>
-                <code style="max-width: 400px;">{{agendaSearch.results}}</code>
-              </md-content>
+            <md-card ng-if="agendaSearch.error" class="content-card">
+              <md-subheader class="md-warn">{{agendaSearch.error.message}}</md-subheader>
             </md-card>
-          </section>
-          <section>
-            <toggle-panel open="true" label="Quick search for Agendas" extra-classes="content-card">
-              <div class="padding-20">
-                <p class="text-medium">Senate committee agendas contain meeting details such as where the meeting took place and
-                  which bills were discussed/voted on. The committee agendas are grouped into a <strong>weekly agenda</strong>.
-                  Each weekly agenda is identified by an agenda number and a calendar year, e.g. 2-2015, where 2 is the agenda number
-                  and 2015 is the calendar year.
-                </p>
-                <p class="text-medium"></p>
+            <md-card class="content-card">
+              <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
+                <div flex> {{pagination.totalItems}} committee agendas were matched.
+                  <span ng-if="pagination.totalItems > 0">
+                    Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.
+                  </span>
+                </div>
+                <div flex class="text-align-right">
+                  <dir-pagination-controls pagination-id="agenda-search" boundary-links="true"></dir-pagination-controls>
+                </div>
               </div>
-            </toggle-panel>
+              <md-content layout="row" style="padding:0" class="no-top-margin">
+                <div class="search-refine-panel" hide-sm>
+                  <h3>Refine your search</h3>
+                  <md-divider></md-divider>
+                  <div class="refine-controls">
+                    <label for="sort_by_param">Sort By</label>
+                    <select id="sort_by_param" ng-model="searchSort" ng-change="simpleSearch(false)">
+                      <option value="">Relevance</option>
+                      <option value="agenda.id.number:desc">Newest First</option>
+                      <option value="agenda.id.number:asc">Oldest First</option>
+                    </select>
+                    <hr/>
+                    <label for="week_of_param">Week Of</label>
+                    <select id="week_of_param" ng-model="searchParams.weekOf">
+                      <option value="">Any</option>
+                      <option ng-repeat="weekOf in weekOfListing">{{weekOf}}</option>
+                    </select>
+                    <label for="agenda_no_param">Agenda No</label>
+                    <select id="agenda_no_param" ng-model="searchParams.agendaNo">
+                      <option value="">Any</option>
+                      <option ng-repeat="agendaNo in agendaNoList">{{agendaNo}}</option>
+                    </select>
+                    <label for="committee_param">Committee</label>
+                    <select id="committee_param" ng-model="searchParams.commName">
+                      <option value="">Any</option>
+                      <option ng-repeat="comm in committeeListing">{{comm.name}}</option>
+                    </select>
+                    <label for="bill_print_no_param">Has Bill Print No</label>
+                    <input id="bill_print_no_param" type="text" ng-model="searchParams.printNo" ng-model-options="{debounce: 300}"
+                           placeholder="e.g. S1234"/>
+                    <md-button ng-click="resetSearchParams() && simpleSearch(true)" class="md-primary margin-top-10">Reset Filters</md-button>
+                  </div>
+                </div>
+                <div class="padding-20" ng-if="agendaSearch.response.total === 0">
+                  <p class="red1 text-medium bold">No results were found after applying your filters.</p>
+                </div>
+                <div flex class="padding-20">
+                  <a class="result-link"
+                     dir-paginate="r in agendaSearch.results | itemsPerPage: 6"
+                     total-items="agendaSearch.response.total" current-page="pagination.currPage"
+                     ng-init="commAgenda = r.result;" 
+                     pagination-id="agenda-search"
+                     ng-href="${ctxPath}/agendas/{{commAgenda.agendaId.year}}/{{commAgenda.agendaId.number}}/{{commAgenda.committeeId.name}}?view=1">
+                    <md-item>
+                      <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
+                        <div class="padding-16" style="width:300px">
+                          <h4 class="no-margin">
+                            Agenda {{commAgenda.agendaId.number}} ({{commAgenda.agendaId.year}})
+                          </h4>
+                          <h5 class="no-margin">{{commAgenda.committeeId.name}}</h5>
+                        </div>
+                        <div class="padding-16">
+                          <h5 class="no-margin">Week Of: {{commAgenda.weekOf | moment:'ll'}}</h5>
+                          <h5 class="no-margin">Bills Considered: {{commAgenda.totalBillsConsidered}}</h5>
+                          <h5 class="no-margin">Bills Voted On: {{commAgenda.totalBillsVotedOn}}</h5>
+                        </div>
+                      </md-item-content>
+                      <md-divider ng-if="!$last"/>
+                    </md-item>
+                  </a>
+                </div>
+              </md-content>
+              <div class="subheader" layout="row" layout-align="end center">
+                <div flex style="text-align: right;">
+                  <dir-pagination-controls pagination-id="agenda-search" boundary-links="true"></dir-pagination-controls>
+                </div>
+              </div>
+            </md-card>
           </section>
         </section>
       </md-tab>

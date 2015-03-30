@@ -3,7 +3,8 @@ package gov.nysenate.openleg.controller.api.agenda;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.agenda.AgendaCommFlatView;
-import gov.nysenate.openleg.client.view.agenda.CommitteeAgendaIdView;
+import gov.nysenate.openleg.client.view.agenda.CommAgendaIdView;
+import gov.nysenate.openleg.client.view.agenda.CommAgendaSummaryView;
 import gov.nysenate.openleg.client.view.base.SearchResultView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -76,10 +77,12 @@ public class AgendaSearchCtrl extends BaseCtrl
     private BaseResponse getAgendaSearchResponse(boolean full, LimitOffset limOff, SearchResults<CommitteeAgendaId> results) {
         return ListViewResponse.of(
             results.getResults().stream()
-                .map(r -> new SearchResultView((full)
+                .map(r ->
+                    new SearchResultView((full)
                         ? new AgendaCommFlatView(agendaData.getAgenda(r.getResult().getAgendaId()),
-                        r.getResult().getCommitteeId(), billData)
-                        : new CommitteeAgendaIdView(r.getResult()), r.getRank()))
+                                                 r.getResult().getCommitteeId(), billData)
+                        : new CommAgendaSummaryView(r.getResult(), agendaData.getAgenda(r.getResult().getAgendaId())),
+                    r.getRank()))
                 .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 }

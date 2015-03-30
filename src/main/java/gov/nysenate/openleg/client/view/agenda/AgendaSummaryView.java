@@ -19,24 +19,12 @@ public class AgendaSummaryView implements ViewObject
     public AgendaSummaryView(Agenda agenda) {
         if (agenda != null) {
             this.id = new AgendaIdView(agenda.getId());
-            this.weekOf = agenda.getAgendaInfoAddenda().values().stream()
-                .filter(ia -> ia.getWeekOf() != null)
-                .map(ia -> ia.getWeekOf())
-                .findAny().orElse(null);
+            this.weekOf = agenda.getWeekOf().orElse(null);
             this.publishedDateTime = agenda.getPublishedDateTime();
             this.totalAddendum = agenda.getAgendaInfoAddenda().size();
-            this.totalBillsConsidered = agenda.getAgendaInfoAddenda().values().stream()
-                .flatMap(ia -> ia.getCommitteeInfoMap().values().stream())
-                .map(ic -> ic.getItems().size())
-                .reduce(0, Integer::sum);
-            this.totalBillsVotedOn = agenda.getAgendaVoteAddenda().values().stream()
-                .flatMap(ia -> ia.getCommitteeVoteMap().values().stream())
-                .map(ic -> ic.getVotedBills().size())
-                .reduce(0, Integer::sum);
-            this.totalCommittees = agenda.getAgendaInfoAddenda().values().stream()
-                .flatMap(ia -> ia.getCommitteeInfoMap().keySet().stream())
-                .distinct()
-                .count();
+            this.totalBillsConsidered = agenda.totalBillsConsidered();
+            this.totalBillsVotedOn = agenda.totalBillsVoted();
+            this.totalCommittees = agenda.totalCommittees();
         }
     }
 

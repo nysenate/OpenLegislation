@@ -2,7 +2,7 @@ var agendaModule = angular.module('open.agenda', ['open.core']);
 
 agendaModule.factory('AgendaListingApi', ['$resource', function($resource){
     return $resource(apiPath + '/agendas/:year?sort=:sort&limit=:limit&offset=:offset', {
-        sessionYear: '@year',
+        year: '@year',
         sort: '@sort',
         limit: '@limit',
         offset: '@offset'
@@ -17,7 +17,7 @@ agendaModule.factory('AgendaMeetingApi', ['$resource', function($resource){
 }]);
 
 agendaModule.factory('AgendaSearchApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/agendas/search?term=:term', {
+    return $resource(apiPath + '/agendas/search?term=:term&sort=:sort&limit=:limit&offset=:offset', {
         term: '@term',
         sort: '@sort',
         limit: '@limit',
@@ -59,24 +59,71 @@ agendaModule.controller('AgendaCtrl', ['$scope', '$rootScope', '$routeParams', '
         /** Watch for changes to the current view. */
         $scope.$watch('selectedView', function(n, o) {
             if (n !== o && $location.search().view !== n) {
-                $location.search('view', $scope.selectedView);
+                $location.search('view', $scope.selectedView).replace();
                 $scope.$broadcast('viewChange', $scope.selectedView);
             }
         });
 
         $scope.$on('$locationChangeSuccess', function() {
-            $scope.selectedView = $location.search().view || 0;
+            $scope.selectedView = +($location.search().view) || 0;
         });
     }
 ]);
 
-agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$routeParams', 'PaginationModel', 'AgendaSearchApi',
-    function($scope, $location, $route, $routeParams, PaginationModel, AgendaSearchApi) {
+agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$routeParams', 
+                                             'PaginationModel', 'AgendaListingApi', 'AgendaSearchApi', 'CommitteeListingApi',
+    function($scope, $location, $route, $routeParams, PaginationModel, AgendaListingApi, AgendaSearchApi, CommitteeListingApi) {
         $scope.tabInit = function() {
             $scope.setHeaderText('Search Agendas');
         };
         $scope.pagination = angular.extend({}, PaginationModel);
-        $scope.pagination.itemsPerPage = 10;
+        $scope.pagination.itemsPerPage = 6;
+
+        $scope.searchParams = {
+            year: $routeParams['year'] || 2015,
+            agendaNo: $routeParams['agendaNo'] || '',
+            commName: $routeParams['commName'] || '',
+            printNo: $routeParams['printNo'] || '',
+            weekOf: $routeParams['weekOf'] || ''
+        };
+
+        // Mapping of search param names to search query field names.
+        $scope.searchParamFields = {
+            year: 'agenda.id.year',
+            agendaNo: 'agenda.id.number',
+            commName: 'committee.committeeId.name',
+            printNo: 'committee.addenda.items.bills.items.billId.printNo',
+            weekOf: 'agenda.weekOf'
+        };
+
+        $scope.searchSort = '';
+
+        $scope.getWeekOfListing = function() {
+            var weekOfListResponse = AgendaListingApi.get({year: $scope.searchParams.year, limit: 100}, function(){
+                $scope.weekOfListing = weekOfListResponse.result.items.map(function(a) {return a.weekOf});
+            });
+        };
+
+        $scope.selectedYearChanged = function() {
+            $scope.searchParams['weekOf'] = '';
+            $scope.getWeekOfListing();
+        };
+
+        $scope.resetSearchParams = function() {
+            for (p in $scope.searchParams) {
+                if ($scope.searchParams.hasOwnProperty(p) && p !== 'year') {
+                    $scope.searchParams[p] = '';
+                }
+            }
+        };
+
+        $scope.years = [2015, 2014, 2013, 2012, 2011, 2010, 2009];
+
+        // Create list of numbers between 1 and 20.
+        $scope.agendaNoList = Array.apply(0, Array(20)).map(function(x,i) { return i + 1; });
+        var committees = CommitteeListingApi.get({sessionYear: $scope.searchParams.year}, function() {
+            $scope.committeeListing = committees.result.items;
+        });
 
         $scope.agendaSearch = {
             searched: false,
@@ -86,31 +133,50 @@ agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$
             results: [],
             error: false
         };
+
         $scope.$on('viewChange', function() {
             $scope.tabInit();
         });
+
+        var buildSearch = function() {
+            var queryList = [];
+            for (var p in $scope.searchParams) {
+                if ($scope.searchParams.hasOwnProperty(p)) {
+                    if ($scope.searchParams[p]) {
+                        queryList.push('(' + $scope.searchParamFields[p] + ':"' + $scope.searchParams[p] + '")');
+                        $scope.setSearchParam(p, $scope.searchParams[p]);
+                    }
+                    else {
+                        $scope.setSearchParam(p, $scope.searchParams[p], false);
+                    }
+                }
+            }
+            return queryList.join(' AND ');
+        };
+        
         $scope.init = function() {
             $scope.tabInit();
+            $scope.getWeekOfListing();
         };
+        
         $scope.simpleSearch = function(resetPagination) {
-            var term = $scope.agendaSearch.term;
+            var term = buildSearch();
             if (term) {
-                $location.search("search", $scope.agendaSearch.term);
                 $scope.agendaSearch.searching = true;
                 $scope.agendaSearch.searched = false;
                 if (resetPagination) {
-                    $scope.pagination.currPage = 1;
-                    $location.search('searchPage', 1);
+                    $scope.pagination.reset();
                 }
                 $scope.agendaSearch.response = AgendaSearchApi.get({
-                    term: term, limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()},
+                    term: term, limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset(),
+                    sort: $scope.searchSort},
                 function() {
                     if ($scope.agendaSearch.response && $scope.agendaSearch.response.success) {
                         $scope.agendaSearch.error = false;
                         $scope.agendaSearch.results = $scope.agendaSearch.response.result.items || [];
                         $scope.agendaSearch.searched = true;
-                        $scope.pagination.setTotalItems($scope.agendaSearch.response.total);
                         $scope.agendaSearch.searching = false;
+                        $scope.pagination.setTotalItems($scope.agendaSearch.response.total);
                     }
                 }, function(data) {
                     $scope.agendaSearch.searched = true;
@@ -118,9 +184,20 @@ agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$
                     $scope.agendaSearch.error = data.data;
                     $scope.agendaSearch.results = [];
                     $scope.pagination.setTotalItems(0);
+                    $scope.pagination.reset();
                 });
             }
         };
+
+        $scope.$watch('pagination.currPage', function(newPage, oldPage) {
+            if (newPage !== oldPage) {
+                $scope.simpleSearch(false);
+            }
+        });
+
+        $scope.$watchCollection('searchParams', function(n, o) {
+            $scope.simpleSearch();
+        });
 
         $scope.init();
     }

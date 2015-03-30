@@ -5,11 +5,10 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * An Agenda is essentially a list of items (bills) that are brought up for discussion in
@@ -85,6 +84,59 @@ public class Agenda extends BaseLegislativeContent implements Serializable
 
     public void putAgendaVoteAddendum(AgendaVoteAddendum addendum) {
         this.agendaVoteAddenda.put(addendum.getId(), addendum);
+    }
+
+    /**
+     * Finds any 'weekOf' set within the info addenda and returns it, If the data is not complete, it could be possible
+     * that the agenda doesn't have a weekOf set in which case an empty Optional is returned.
+     * @return Optional<LocalDate>.
+     */
+    public Optional<LocalDate> getWeekOf() {
+        return agendaInfoAddenda.values().stream()
+            .filter(ia -> ia.getWeekOf() != null)
+            .map(ia -> ia.getWeekOf())
+            .findAny();
+    }
+
+    public Integer totalBillsConsidered() {
+        return totalBillsConsidered(Optional.empty());
+    }
+
+    public Integer totalBillsConsidered(Optional<CommitteeId> committeeId) {
+        return agendaInfoAddenda.values().stream()
+            .flatMap(ia ->
+                    (committeeId.isPresent())
+                    ? (ia.getCommitteeInfoMap().containsKey(committeeId.get()))
+                        ? Stream.of(ia.getCommitteeInfoMap().get(committeeId.get()))
+                        : Stream.empty()
+                    : ia.getCommitteeInfoMap().values().stream()
+            )
+            .map(ic -> ic.getItems().size())
+            .reduce(0, Integer::sum);
+    }
+
+    public Integer totalBillsVoted() {
+        return totalBillsVoted(Optional.empty());
+    }
+
+    public Integer totalBillsVoted(Optional<CommitteeId> committeeId) {
+        return agendaVoteAddenda.values().stream()
+            .flatMap(ia ->
+                (committeeId.isPresent())
+                    ? (ia.getCommitteeVoteMap().containsKey(committeeId.get()))
+                        ? Stream.of(ia.getCommitteeVoteMap().get(committeeId.get()))
+                        : Stream.empty()
+                    : ia.getCommitteeVoteMap().values().stream()
+            )
+            .map(ic -> ic.getVotedBills().size())
+            .reduce(0, Integer::sum);
+    }
+
+    public Long totalCommittees() {
+        return agendaInfoAddenda.values().stream()
+            .flatMap(ia -> ia.getCommitteeInfoMap().keySet().stream())
+            .distinct()
+            .count();
     }
 
     /**
