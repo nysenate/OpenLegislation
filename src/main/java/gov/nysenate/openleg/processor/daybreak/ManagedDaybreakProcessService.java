@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.daybreak;
 
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.daybreak.*;
+import gov.nysenate.openleg.util.OpenlegThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
     @Autowired
     private DaybreakDao daybreakDao;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(8);
-
-    @PreDestroy
-    public void destroy() {
-        executorService.shutdown();
-    }
+    private OpenlegThreadFactory threadFactory = new OpenlegThreadFactory("daybreak-process");
 
     /** --- Interfaced Methods --- */
 
@@ -96,17 +92,18 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
     @Override
     public int processFragments(List<DaybreakFragment> fragments) {
         if (fragments.size() > 0) {
+            ExecutorService executorService = Executors.newFixedThreadPool(4, threadFactory);
             logger.info("Processing " + fragments.size() + " daybreak fragments");
-        }
-        for(DaybreakFragment daybreakFragment : fragments) {
-            executorService.submit(() -> processFragment(daybreakFragment));
-        }
-        executorService.shutdown();
-        try {
-            // Allow maximum of 30 minutes before un-blocking
-            executorService.awaitTermination(30, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            for (DaybreakFragment daybreakFragment : fragments) {
+                executorService.submit(() -> processFragment(daybreakFragment));
+            }
+            executorService.shutdown();
+            try {
+                // Allow maximum of 30 minutes before un-blocking
+                executorService.awaitTermination(30, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return fragments.size();
     }
