@@ -237,12 +237,21 @@ SET search_path = public, pg_catalog;
 --
 
 COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, suffix, verified, img_name) FROM stdin;
+230	George D. Maziarz	George	D.	Maziarz	maziarz@nysenate.gov	Senator	\N	t	George D. Maziarz.jpg
+217	Mark Grisanti	Mark	\N	Grisanti	grisanti@nysenate.gov	Senator	\N	t	Mark Grisanti.jpg
+208	Roy J. McDonald	Roy	J.	McDonald	mcdonald@senate.state.ny.us	Senator	\N	t	Roy J. McDonald.jpg
+273	Darrel J. Aubertine	Darrel	J.	Aubertine	aubertin@senate.state.ny.us	Senator	\N	t	Darrel J. Aubertine.jpg
+250	Cecilia Tkaczyk	Cecilia	\N	Tkaczyk	tkaczyk@nysenate.gov	Senator	\N	t	Cecilia Tkaczyk.jpg
+257	Ted O'Brien	Ted	\N	O'Brien	obrien@nysenate.gov	Senator	\N	t	Ted O'Brien.jpg
+227	Greg Ball	Greg	\N	Ball	gball@nysenate.gov	Senator	\N	t	Greg Ball.jpg
+207	Suzi Oppenheimer	Suzi	\N	Oppenheimer	oppenhei@senate.state.ny.us	Senator	\N	t	Suzi Oppenheimer.jpg
+197	Shirley L. Huntley	Shirley	L.	Huntley	shuntley@nysenate.gov	Senator	\N	t	Shirley L. Huntley.jpg
+271	Vincent L. Leibell	Vincent	L.	Leibell	 leibell@senate.state.ny.us	Senator	\N	t	Vincent L. Leibell.jpg
+269	Antoine M Thompson	Antoine	\N	Thompson	athompso@senate.state.ny.us	Senator	\N	t	Antoine M Thompson.jpg
+270	Brian X. Foley	Brian	X.	Foley	bfoley@senate.state.ny.us	Senator	\N	t	Brian X. Foley.jpg
 226	Carl L Marcellino	Carl	\N	Marcellino	marcelli@senate.state.ny.us	Senator	\N	t	407_carl_l_marcellino.jpg
 189	David Carlucci	David	\N	Carlucci	carlucci@nysenate.gov	Senator	\N	t	370_david_carlucci.jpg
-197	Shirley L. Huntley	Shirley	L.	Huntley	shuntley@nysenate.gov	Senator	\N	t	no_image.jpg
-257	Ted O'Brien	Ted	\N	O'Brien	obrien@nysenate.gov	Senator	\N	t	no_image.jpg
 188	John L. Sampson	John	L.	Sampson	sampson@senate.state.ny.us	Senator	\N	t	369_john_l._sampson.jpg
-207	Suzi Oppenheimer	Suzi	\N	Oppenheimer	oppenhei@senate.state.ny.us	Senator	\N	t	no_image.jpg
 238	Kenneth P. LaValle	Kenneth	P.	LaValle	lavalle@nysenate.gov	Senator	\N	t	419_kenneth_p._lavalle.jpg
 241	Martin J. Golden	Martin	J.	Golden	golden@senate.state.ny.us	Senator	\N	t	422_martin_j._golden.jpg
 210	Tony Avella	Tony	\N	Avella	avella@nysenate.gov	Senator	\N	t	391_tony_avella.jpg
@@ -257,7 +266,6 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 194	Bill Perkins	Bill	\N	Perkins	perkins@senate.state.ny.us	Senator	\N	t	375_bill_perkins.jpg
 191	Neil D. Breslin	Neil	D.	Breslin	breslin@senate.state.ny.us	Senator	\N	t	372_neil_d._breslin.jpg
 251	James Sanders Jr.	James	\N	Sanders	sanders@nysenate.gov	Senator	Jr.	t	432_james_sanders_jr..jpg
-250	Cecilia Tkaczyk	Cecilia	\N	Tkaczyk	tkaczyk@nysenate.gov	Senator	\N	t	no_image.jpg
 255	George Latimer	George	\N	Latimer	latimer@nysenate.gov	Senator	\N	t	434_george_latimer.jpg
 232	John J. Bonacic	John	J.	Bonacic	bonacic@nysenate.gov	Senator	\N	t	413_john_j._bonacic.jpg
 200	Velmanette Montgomery	Velmanette	\N	Montgomery	montgome@senate.state.ny.us	Senator	\N	t	381_velmanette_montgomery.jpg
@@ -267,14 +275,6 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 229	Tom Libous	Tom	\N	Libous	senator@senatorlibous.com	Senator	\N	t	410_tom_libous.jpg
 225	Michael H. Ranzenhofer	Michael	H.	Ranzenhofer	ranz@senate.state.ny.us	Senator	\N	t	406_michael_h._ranzenhofer.jpg
 233	Catharine Young	Catharine	\N	Young	cyoung@senate.state.ny.us	Senator	\N	t	414_catharine_young.jpg
-270	Brian X. Foley	Brian	X.	Foley	bfoley@senate.state.ny.us	Senator	\N	t	no_image.jpg
-227	Greg Ball	Greg	\N	Ball	gball@nysenate.gov	Senator	\N	t	no_image.jpg
-271	Vincent L. Leibell	Vincent	L.	Leibell	 leibell@senate.state.ny.us	Senator	\N	t	no_image.jpg
-269	Antoine M Thompson	Antoine	\N	Thompson	athompso@senate.state.ny.us	Senator	\N	t	no_image.jpg
-258	Terry Gipson	Terry	\N	Gipson	gipson@nysenate.gov	Senator	\N	t	no_image.jpg
-239	Carl Kruger	Carl	\N	Kruger	kruger@senate.state.ny.us	Senator	\N	t	no_image.jpg
-223	Lee M. Zeldin	Lee	M.	Zeldin	zeldin@nysenate.gov	Senator	\N	t	no_image.jpg
-273	Darrel J. Aubertine	Darrel	J.	Aubertine	aubertin@senate.state.ny.us	Senator	\N	t	no_image.jpg
 215	Andrea Stewart-Cousins	Andrea	\N	Stewart-Cousins	scousins@senate.state.ny.us	Senator	\N	t	396_andrea_stewart-cousins.jpg
 261	Simcha Felder	Simcha	\N	Felder	felder@nysenate.gov	Senator	\N	t	439_simcha_felder.jpg
 245	Martin Malavé Dilan	Martin	\N	Dilan	dilan@nysenate.gov	Senator	\N	t	426_martin_malave_dilan.jpg
@@ -299,10 +299,6 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 222	Diane J. Savino	Diane	J.	Savino	savino@senate.state.ny.us	Senator	\N	t	403_diane_j._savino.jpg
 249	Dean G. Skelos	Dean	G.	Skelos	skelos@nysenate.gov	Senator	\N	t	430_dean_g._skelos.jpg
 231	Daniel L. Squadron	Daniel	L.	Squadron	squadron@nysenate.gov	Senator	\N	t	412_daniel_l._squadron.jpg
-266	Eric T. Schneiderman	Eric	T.	Schneiderman	schneide@senate.state.ny.us	Senator	\N	t	no_image.jpg
-230	George D. Maziarz	George	D.	Maziarz	maziarz@nysenate.gov	Senator	\N	t	no_image.jpg
-264	Pedro Espada Jr.	Pedro	\N	Espada	espada@senate.state.ny.us	Senator	Jr.	t	no_image.jpg
-244	Charles J. Fuschillo Jr.	Charles	J.	Fuschillo	fuschill@senate.state.ny.us	Senator	Jr.	t	no_image.jpg
 276	Hiram Monserrate	Hiram		Monserrate		Senator		t	no_image.jpg
 277	David Storobin	David		Storobin		Senator		t	no_image.jpg
 278	Marc Alessi 	Marc	\N	Alessi	\N	Assembly Member	\N	t	no_image.jpg
@@ -340,6 +336,12 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 414	Francine DelMonte 	Francine	\N	DelMonte	\N	Assembly Member	\N	t	no_image.jpg
 419	Dennis H. Gabryszak	Dennis	H.	Gabryszak	\N	Assembly Member	\N	t	no_image.jpg
 420	Sam Hoyt	Sam	Hoyt	Hoyt	\N	Assembly Member	\N	t	no_image.jpg
+258	Terry Gipson	Terry	\N	Gipson	gipson@nysenate.gov	Senator	\N	t	Terry Gipson.jpg
+223	Lee M. Zeldin	Lee	M.	Zeldin	zeldin@nysenate.gov	Senator	\N	t	Lee M. Zeldin.jpg
+244	Charles J. Fuschillo Jr.	Charles	J.	Fuschillo	fuschill@senate.state.ny.us	Senator	Jr.	t	Charles J. Fuschillo Jr..jpg
+239	Carl Kruger	Carl	\N	Kruger	kruger@senate.state.ny.us	Senator	\N	t	Carl Kruger.jpg
+266	Eric T. Schneiderman	Eric	T.	Schneiderman	schneide@senate.state.ny.us	Senator	\N	t	Eric T. Schneiderman.jpg
+264	Pedro Espada Jr.	Pedro	\N	Espada	espada@senate.state.ny.us	Senator	Jr.	t	Pedro Espada Jr..jpg
 421	Mark J.F. Schroeder	Mark	J.F.	Schroeder	\N	Assembly Member	\N	t	no_image.jpg
 422	Jack Quinn III 	Jack	\N	Quinn	\N	Assembly Member	III	t	no_image.jpg
 423	Daniel Burling	Daniel	\N	Burling	\N	Assembly Member	\N	t	no_image.jpg
@@ -376,21 +378,6 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 514	PEOPLES-STOKE	\N	\N	PEOPLES-STOKE	\N	\N	\N	f	no_image.jpg
 447	Didi Barrett	Didi	\N	Barrett	\N	Assembly Member	\N	t	625_didi_barrett.jpg
 650	Peter Lopez	\N	\N	Lopez	\N	\N	\N	t	828_peter_lopez.jpg
-267	Frank Padavan	Frank	\N	Padavan	padavan@senate.state.ny.us	Senator	\N	t	no_image.jpg
-221	Stephen M. Saland	Stephen	M.	Saland	 saland@nysenate.gov	Senator	\N	t	no_image.jpg
-274	Dale M. Volker	Dale	M.	Volker	volker@senate.state.ny.us	Senator	\N	t	no_image.jpg
-205	Owen H. Johnson	Owen	H.	Johnson	ojohnson@senate.state.ny.us	Senator	\N	t	no_image.jpg
-206	Thomas K. Duane	Thomas	K.	Duane	duane@senate.state.ny.us	Senator	\N	t	no_image.jpg
-208	Roy J. McDonald	Roy	J.	McDonald	mcdonald@senate.state.ny.us	Senator	\N	t	no_image.jpg
-211	James S. Alesi	James	S.	Alesi	alesi@senate.state.ny.us	Senator	\N	t	no_image.jpg
-224	Malcolm A. Smith	Malcolm	A.	Smith	masmith@senate.state.ny.us 	Senator	\N	t	no_image.jpg
-272	George Winner	George	\N	Winner	winner@senate.state.ny.us	Senator	\N	t	no_image.jpg
-268	Craig M. Johnson	Craig	M.	Johnson	johnson@senate.state.ny.us	Senator	\N	t	no_image.jpg
-263	Thomas P. Morahan	Thomas	P.	Morahan	district38@nysenate.gov	Senator	\N	t	no_image.jpg
-265	George Onorato	George	\N	Onorato	onorato@senate.state.ny.us	Senator	\N	t	no_image.jpg
-217	Mark Grisanti	Mark	\N	Grisanti	grisanti@nysenate.gov	Senator	\N	t	no_image.jpg
-275	William T. Stachowski	William	T.	Stachowski	stachows@senate.state.ny.us	Senator	\N	t	no_image.jpg
-201	Eric Adams	Eric	\N	Adams	eadams@senate.state.ny.us	Senator	\N	t	no_image.jpg
 299	Grace Meng	Grace		Meng	\N	Assembly Member	\N	t	no_image.jpg
 287	James Conte	James	\N	Conte	\N	Assembly Member	\N	t	no_image.jpg
 288	Robert Sweeney	Robert	\N	Sweeney	\N	Assembly Member	\N	t	no_image.jpg
@@ -420,6 +407,19 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 319	Karim Camara	Karim	\N	Camara	\N	Assembly Member	\N	t	no_image.jpg
 427	Daniel P. Losquadro	Daniel	P.	Losquadro	\N	Assembly Member	\N	t	no_image.jpg
 436	Rafael Espinal	Rafael	\N	Espinal	\N	Assembly Member	\N	t	no_image.jpg
+224	Malcolm A. Smith	Malcolm	A.	Smith	masmith@senate.state.ny.us 	Senator	\N	t	Malcolm A. Smith.jpg
+221	Stephen M. Saland	Stephen	M.	Saland	 saland@nysenate.gov	Senator	\N	t	Stephen M. Saland.jpg
+206	Thomas K. Duane	Thomas	K.	Duane	duane@senate.state.ny.us	Senator	\N	t	Thomas K. Duane.jpg
+211	James S. Alesi	James	S.	Alesi	alesi@senate.state.ny.us	Senator	\N	t	James S. Alesi.jpg
+201	Eric Adams	Eric	\N	Adams	eadams@senate.state.ny.us	Senator	\N	t	Eric Adams.jpg
+205	Owen H. Johnson	Owen	H.	Johnson	ojohnson@senate.state.ny.us	Senator	\N	t	Owen H. Johnson.jpg
+268	Craig M. Johnson	Craig	M.	Johnson	johnson@senate.state.ny.us	Senator	\N	t	Craig M. Johnson.jpg
+263	Thomas P. Morahan	Thomas	P.	Morahan	district38@nysenate.gov	Senator	\N	t	Thomas P. Morahan.jpg
+274	Dale M. Volker	Dale	M.	Volker	volker@senate.state.ny.us	Senator	\N	t	Dale M. Volker.jpg
+272	George Winner	George	\N	Winner	winner@senate.state.ny.us	Senator	\N	t	George Winner.jpg
+265	George Onorato	George	\N	Onorato	onorato@senate.state.ny.us	Senator	\N	t	George Onorato.jpg
+267	Frank Padavan	Frank	\N	Padavan	padavan@senate.state.ny.us	Senator	\N	t	Frank Padavan.jpg
+275	William T. Stachowski	William	T.	Stachowski	stachows@senate.state.ny.us	Senator	\N	t	William T. Stachowski.jpg
 439	Guillermo Linares	Guillermo	\N	Linares	\N	Assembly Member	\N	t	no_image.jpg
 441	Eric Stevenson	Eric	\N	Stevenson	\N	Assembly Member	\N	t	no_image.jpg
 515	S O'DONNELL	S	\N	O'DONNELL	\N	\N	\N	f	no_image.jpg
@@ -584,7 +584,6 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 718	Latrice Walker	\N	\N	Walker	\N	\N	\N	t	896_latrice_walker.jpg
 733	Angela Wozniak	\N	\N	Wozniak 	\N	\N	\N	t	911_angela_wozniak.jpg
 \.
-
 
 --
 -- Data for Name: member; Type: TABLE DATA; Schema: public; Owner: postgres
