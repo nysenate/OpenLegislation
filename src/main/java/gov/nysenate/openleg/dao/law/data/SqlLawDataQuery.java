@@ -45,6 +45,11 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "WHERE parent_doc_id IS NULL\n" +
         "GROUP by law_id"
     ),
+    SELECT_ALL_PUB_DATES(
+        "SELECT DISTINCT published_date \n" +
+        "FROM ${schema}." + SqlTable.LAW_TREE + "\n" +
+        "WHERE law_id = :lawId"
+    ),
     SELECT_LAW_TREE(
         "WITH max_date AS (\n" +
         "    SELECT max(published_date) AS pub_date FROM ${schema}." + SqlTable.LAW_TREE + "\n" +

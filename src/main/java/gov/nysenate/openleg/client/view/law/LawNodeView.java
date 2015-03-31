@@ -17,7 +17,7 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
     protected LocalDate repealedDate;
     protected String fromSection;
     protected String toSection;
-    protected String text;  // Including the text here, can be null when just displaying structure.
+    protected String text;  // Can be null when just displaying structure.
 
     protected ListView<LawNodeView> documents;
 
@@ -29,7 +29,9 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
         super((treeNode != null) ? treeNode.getLawDocInfo() : null);
         if (treeNode != null) {
             initFromLawTreeNode(treeNode);
-            this.text = (docMap != null) ? docMap.get(treeNode.getDocumentId()).getText() : null;
+            this.text = (docMap != null && docMap.containsKey(treeNode.getDocumentId()))
+                ? docMap.get(treeNode.getDocumentId()).getText()
+                : null;
             if (depth == null || depth > 0) {
                 final Integer childDepth = (depth != null) ? depth - 1 : null;
                 this.documents = ListView.of(

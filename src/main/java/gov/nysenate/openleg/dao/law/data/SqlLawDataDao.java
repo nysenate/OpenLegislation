@@ -65,7 +65,13 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
         // Handle the tree retrieval
         LawTreeRowCallbackHandler lawTreeHandler = new LawTreeRowCallbackHandler(lawInfo);
         jdbcNamed.query(SqlLawDataQuery.SELECT_LAW_TREE.getSql(schema(), orderBy, LimitOffset.ALL), treeParams, lawTreeHandler);
-        return lawTreeHandler.getLawTree();
+        LawTree lawTree = lawTreeHandler.getLawTree();
+        // Set all available published dates using a separate query
+        lawTree.setPublishedDates(jdbcNamed.query(SqlLawDataQuery.SELECT_ALL_PUB_DATES.getSql(
+            schema(), new OrderBy("published_date", SortOrder.ASC), LimitOffset.ALL), treeParams, (rs, rowNum) -> {
+            return getLocalDateFromRs(rs, "published_date");
+        }));
+        return lawTree;
     }
 
     /** {@inheritDoc} */

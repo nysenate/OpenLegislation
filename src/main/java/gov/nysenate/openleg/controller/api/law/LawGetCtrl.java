@@ -12,6 +12,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawInfo;
 import gov.nysenate.openleg.model.law.LawTree;
+import gov.nysenate.openleg.model.law.LawTreeNode;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
@@ -25,7 +26,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 import static java.util.stream.Collectors.toList;
@@ -40,6 +44,17 @@ public class LawGetCtrl extends BaseCtrl
 
     /** --- Request Handlers --- */
 
+    /**
+     * Law Listing API
+     * ---------------
+     *
+     * Get a listing of available laws.
+     *
+     * Usage
+     * (GET) /api/3/laws
+     *
+     * Expected output: List of LawInfoView
+     */
     @RequestMapping("")
     public BaseResponse getLaws(WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, 0);
@@ -51,6 +66,23 @@ public class LawGetCtrl extends BaseCtrl
         return response;
     }
 
+    /**
+     * Law Tree API
+     * ------------
+     *
+     * Retrieves a law tree with various options to control the resulting output.
+     *
+     * Usage
+     * (GET) /api/3/laws/{lawId}
+     *
+     * Optional Params:
+     * date (iso date) - The published date of the law tree (defaults to latest law tree)
+     * fromLocation (string) - Start the law tree at a certain node based on location id.
+     * depth (integer) - Output child nodes up to the specified depth (defaults to the full depth of the tree)
+     * full (boolean) - If set to true all document text will also be fetched. (defaults to no document text)
+     *
+     * Expected output: LawTreeView
+     */
     @RequestMapping("/{lawId}")
     public BaseResponse getLawTree(@PathVariable String lawId, @RequestParam(required = false) String date,
                                    @RequestParam(required = false) String fromLocation,
@@ -66,15 +98,40 @@ public class LawGetCtrl extends BaseCtrl
         return response;
     }
 
+    /**
+     * Law Document API
+     * ----------------
+     *
+     * Retrieves a law document (with an optional active date).
+     *
+     * Usage
+     * (GET) /api/3/laws/{lawId}/{locationId}
+     *
+     * Optional Params:
+     * date (iso date) - Published date of the document (defaults to latest).
+     * refTreeDate (iso date) - Published date of the containing law tree (defaults to latest).
+     *
+     * Expected output: LawDocWithRefsView
+     */
     @RequestMapping("/{lawId}/{locationId}")
     public BaseResponse getLawDocument(@PathVariable String lawId, @PathVariable String locationId,
-                                       @RequestParam(required = false)
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        if (date == null) {
-            date = LocalDate.now();
+                                       @RequestParam(required = false) String date,
+                                       @RequestParam(required = false) String refTreeDate) {
+        LocalDate activeDate = (date != null) ? parseISODate(date, "date") : LocalDate.now();
+        String documentId = lawId + locationId;
+        LawDocument doc = lawDataService.getLawDocument(documentId, activeDate);
+        LocalDate refTreeLocalDate = (refTreeDate != null) ? parseISODate(refTreeDate, "refTreeDate") : LocalDate.now();
+        // Build out the parent location id list.
+        LinkedList<String> parentLocationIds = new LinkedList<>();
+        Optional<LawTreeNode> lawTreeNodeOpt = lawDataService.getLawTree(lawId, refTreeLocalDate).find(documentId);
+        if (lawTreeNodeOpt.isPresent()) {
+            LawTreeNode lawTreeNode = lawTreeNodeOpt.get();
+            while (lawTreeNode.getParent() != null) {
+                lawTreeNode = lawTreeNode.getParent();
+                parentLocationIds.addFirst(lawTreeNode.getLocationId());
+            }
         }
-        LawDocument doc = lawDataService.getLawDocument(lawId + locationId, date);
-        ViewObjectResponse<LawDocView> response = new ViewObjectResponse<>(new LawDocView(doc));
+        ViewObjectResponse<LawDocWithRefsView> response = new ViewObjectResponse<>(new LawDocWithRefsView(doc, parentLocationIds));
         response.setMessage("Law document for location " + locationId + " in " + lawId + " law ");
         return response;
     }

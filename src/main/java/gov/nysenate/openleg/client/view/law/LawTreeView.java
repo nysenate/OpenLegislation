@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.law.LawTreeNode;
 import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ public class LawTreeView implements ViewObject
 {
     protected LawVersionIdView lawVersion;
     protected LawInfoView info;
+    protected List<LocalDate> publishedDates;
     protected LawNodeView documents;
 
     public LawTreeView(LawTree lawTree, String fromLocation, Integer depth) {
@@ -24,6 +26,7 @@ public class LawTreeView implements ViewObject
         if (lawTree != null) {
             lawVersion = new LawVersionIdView(lawTree.getLawVersionId());
             info = new LawInfoView(lawTree.getLawInfo());
+            publishedDates = lawTree.getPublishedDates();
             if (fromLocation != null && !fromLocation.isEmpty()) {
                 Optional<LawTreeNode> fromNode = lawTree.getRootNode().findNode(info.lawId + fromLocation, false);
                 if (fromNode.isPresent()) {
@@ -51,6 +54,10 @@ public class LawTreeView implements ViewObject
 
     public LawInfoView getInfo() {
         return info;
+    }
+
+    public List<LocalDate> getPublishedDates() {
+        return publishedDates;
     }
 
     public LawNodeView getDocuments() {
