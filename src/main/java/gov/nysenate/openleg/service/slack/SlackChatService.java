@@ -1,5 +1,10 @@
 package gov.nysenate.openleg.service.slack;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
+import gov.nysenate.openleg.util.OutputUtils;
+import jdk.nashorn.internal.parser.JSONParser;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +52,7 @@ public class SlackChatService {
      * @param mentions Collection<String>
      */
     public void sendMessage(String text, Collection<String> mentions) {
-        sendMessage(addMentions(text, mentions));
+        sendMessage(new SlackMessage(text).setMentions(mentions));
     }
 
     /**
@@ -58,18 +63,5 @@ public class SlackChatService {
         if (slackApi != null) {
             slackApi.call(message);
         }
-    }
-
-    /**
-     * Adds slack api formatted user name mentions to the front of a string message
-     * @param message String
-     * @param mentions Collection<String>
-     * @return String - the message with mentions added
-     */
-    public String addMentions(String message, Collection<String> mentions) {
-        String mentionString = mentions.stream()
-                .filter(StringUtils::isNotBlank)
-                .reduce("", (a, b) -> a + "<@" + b + "> ");
-        return mentionString + message;
     }
 }

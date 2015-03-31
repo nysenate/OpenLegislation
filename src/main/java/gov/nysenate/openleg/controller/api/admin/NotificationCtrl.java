@@ -1,10 +1,13 @@
 package gov.nysenate.openleg.controller.api.admin;
 
 import com.google.common.collect.Range;
+import com.google.common.primitives.Ints;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.DateRangeListViewResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
+import gov.nysenate.openleg.client.response.error.ErrorCode;
+import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.base.SearchResultView;
 import gov.nysenate.openleg.client.view.notification.NotificationSummaryView;
 import gov.nysenate.openleg.client.view.notification.NotificationView;
@@ -17,8 +20,10 @@ import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.notification.data.NotificationNotFoundException;
 import gov.nysenate.openleg.service.notification.data.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -100,6 +105,12 @@ public class NotificationCtrl extends BaseCtrl
         LocalDateTime fromDate = parseISODateTime(from, "from");
         LocalDateTime toDate = parseISODateTime(to, "to");
         return getNotificationsDuring(fromDate, toDate, request);
+    }
+
+    @ExceptionHandler(NotificationNotFoundException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public BaseResponse handleNotificationNotFoundException(NotificationNotFoundException ex) {
+        return new ViewObjectErrorResponse(ErrorCode.NOTIFICATION_NOT_FOUND, Ints.checkedCast(ex.getId()));
     }
 
     /**

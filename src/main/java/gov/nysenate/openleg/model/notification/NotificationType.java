@@ -12,6 +12,7 @@ public enum NotificationType {
     EXCEPTION           (ExceptionNotification.class),
     REQUEST_EXCEPTION   (RequestExceptionNotification.class),
     PROCESS_EXCEPTION   (ProcessExceptionNotification.class),
+    WARNING             (WarningNotification.class),
     SPOTCHECK           (SpotcheckNotification.class),
     NEW_API_KEY         (NewApiKeyNotification.class)
     ;
@@ -63,6 +64,8 @@ public enum NotificationType {
     private static interface ExceptionNotification extends AllNotifications {}
     private static interface RequestExceptionNotification extends ExceptionNotification{}
     private static interface ProcessExceptionNotification extends ExceptionNotification{}
+
+    private static interface WarningNotification extends AllNotifications {}
 
     private static interface SpotcheckNotification extends AllNotifications {}
     private static interface NewApiKeyNotification extends AllNotifications {}
