@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.base.data;
 
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
@@ -50,6 +51,13 @@ public interface CachingService<ContentId>
      * @param evictEvent CacheEvictEvent
      */
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent);
+
+    /**
+     * Intercept an evict Id event and evict the specified content
+     * if the caching service has any of the affected caches
+     * @param evictIdEvent CacheEvictIdEvent
+     */
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent<ContentId> evictIdEvent);
 
     /**
      * Pre-fetch a subset of currently active data and store it in the cache.

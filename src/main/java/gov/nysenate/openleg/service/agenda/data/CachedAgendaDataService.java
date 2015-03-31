@@ -7,6 +7,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
@@ -83,6 +84,15 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.AGENDA)) {
             evictCaches();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent<AgendaId> evictIdEvent) {
+        if (evictIdEvent.affects(ContentCache.AGENDA)) {
+            evictContent(evictIdEvent.getContentId());
         }
     }
 

@@ -2,9 +2,11 @@ package gov.nysenate.openleg.service.calendar.data;
 
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.data.CalendarDao;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
@@ -85,10 +87,20 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     }
 
     /** {@inheritDoc} */
+    @Subscribe
     @Override
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.CALENDAR)) {
             evictCaches();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent<CalendarId> evictIdEvent) {
+        if (evictIdEvent.affects(ContentCache.CALENDAR)) {
+            evictContent(evictIdEvent.getContentId());
         }
     }
 
@@ -100,6 +112,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     }
 
     /** {@inheritDoc} */
+    @Subscribe
     @Override
     public synchronized void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
         if (warmEvent.affects(ContentCache.CALENDAR)) {

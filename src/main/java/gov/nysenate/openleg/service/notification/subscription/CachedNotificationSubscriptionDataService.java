@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.service.notification.subscription;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.notification.NotificationSubscriptionDao;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
@@ -118,9 +120,19 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     /**
      * {@inheritDoc}
      */
+    @Subscribe
     @Override
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.NOTIFICATION_SUBSCRIPTION)) {
+            evictCaches();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent evictIdEvent) {
+        if (evictIdEvent.affects(ContentCache.NOTIFICATION_SUBSCRIPTION)) {
             evictCaches();
         }
     }
@@ -142,6 +154,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     /**
      * {@inheritDoc}
      */
+    @Subscribe
     @Override
     public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
         if (warmEvent.affects(ContentCache.NOTIFICATION_SUBSCRIPTION)) {

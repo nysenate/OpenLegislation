@@ -10,12 +10,14 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillInfo;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
+import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.*;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -132,6 +134,15 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     public synchronized void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.BILL)) {
             evictCaches();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent<BaseBillId> evictIdEvent) {
+        if (evictIdEvent.affects(ContentCache.BILL)) {
+            evictContent(evictIdEvent.getContentId());
         }
     }
 

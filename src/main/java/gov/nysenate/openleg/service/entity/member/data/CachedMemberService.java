@@ -7,6 +7,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.member.data.MemberDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -83,6 +84,15 @@ public class CachedMemberService implements MemberService, CachingService<Intege
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.MEMBER)) {
             evictCaches();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent<Integer> evictIdEvent) {
+        if (evictIdEvent.affects(ContentCache.MEMBER)) {
+            evictContent(evictIdEvent.getContentId());
         }
     }
 

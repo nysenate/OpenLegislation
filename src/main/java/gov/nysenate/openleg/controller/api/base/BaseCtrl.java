@@ -10,12 +10,16 @@ import gov.nysenate.openleg.client.view.error.InvalidParameterView;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
+import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authz.AuthorizationException;
@@ -32,6 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.*;
 
 import static gov.nysenate.openleg.model.notification.NotificationType.REQUEST_EXCEPTION;
 
@@ -174,6 +179,30 @@ public abstract class BaseCtrl
     }
 
     /**
+     * Extracts and parses an integer param from the given web request, throws an exception if it doesn't parse
+     */
+    protected int getIntegerParam(WebRequest request, String paramName) {
+        String intString = request.getParameter(paramName);
+        try {
+            return Integer.parseInt(intString);
+        } catch (NumberFormatException ex) {
+            throw new InvalidRequestParamEx(intString, paramName, "integer", "integer");
+        }
+    }
+
+    /**
+     * An overload of getIntegerParam that returns a default int value if there is a parsing error
+     * @see #getIntegerParam
+     */
+    protected int getIntegerParam(WebRequest request, String paramName, int defaultVal) {
+        try {
+            return getIntegerParam(request, paramName);
+        } catch (InvalidRequestParamEx ex) {
+            return defaultVal;
+        }
+    }
+
+    /**
      * Parses the specified query param as a boolean or returns the default value if the param is not set.
      *
      * @param param WebRequest
@@ -196,6 +225,10 @@ public abstract class BaseCtrl
                                                                     : UpdateType.PUBLISHED_DATE;
     }
 
+    /**
+     * Attempts to parse a NotificationType from the provided string.
+     * @throws gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx if the text does not match a NotificationType
+     */
     protected NotificationType getNotificationTypeFromString(String text) {
         try {
             return NotificationType.getValue(text);
@@ -205,6 +238,54 @@ public abstract class BaseCtrl
                             .map(NotificationType::toString)
                             .reduce("", (a, b) -> a + "|" + b));
         }
+    }
+
+    protected <T extends Enum<T>> T getEnumParameter(Class<T> enumType, String paramName, String paramValue) {
+        try {
+            return T.valueOf(enumType, StringUtils.upperCase(paramValue));
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            throw new InvalidRequestParamEx(paramValue, paramName, "string",
+                    Arrays.asList(enumType.getEnumConstants()).stream()
+                            .map(Enum::toString)
+                            .reduce("", (a, b) -> (StringUtils.isNotBlank(a) ? a + "|" : "") + b));
+        }
+    }
+
+    protected <T extends Enum<T>> T getEnumParameter(Class<T> enumType, String paramName, String paramValue, T defaultValue) {
+        try {
+            return getEnumParameter(enumType, paramName, paramValue);
+        } catch (InvalidRequestParamEx ex) {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Checks that the given parameter names are present in the provided web request
+     * @param request WebRequest
+     * @param paramNamesAndTypes Map<String, String> - A map of parameter names to their type
+     * @throws MissingServletRequestParameterException if a parameter is not present in the web request
+     */
+    protected void requireParameters(WebRequest request, Map<String, String> paramNamesAndTypes)
+            throws MissingServletRequestParameterException {
+        for (String paramName : paramNamesAndTypes.keySet()) {
+            if (request.getParameter(paramName) == null) {
+                throw new MissingServletRequestParameterException(paramName, paramNamesAndTypes.get(paramName));
+            }
+        }
+    }
+
+    /**
+     * A convenient overload of requireParameters that constructs the paramNamesAndTypes map from an array
+     *  in the format [name1, type1, name2, type2, ... ]
+     *  @see #requireParameters
+     */
+    protected void requireParameters(WebRequest request, String... paramNamesAndTypes)
+            throws MissingServletRequestParameterException {
+        Map<String, String> paramMap = new HashMap<>();
+        for (int i = 0; i < paramNamesAndTypes.length / 2; i++) {
+            paramMap.put(paramNamesAndTypes[2 * i], paramNamesAndTypes[2 * i + 1]);
+        }
+        requireParameters(request, paramMap);
     }
 
     /** --- Generic Exception Handlers --- */

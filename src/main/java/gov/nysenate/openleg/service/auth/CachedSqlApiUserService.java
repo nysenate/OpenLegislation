@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.auth.ApiUserDao;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.notification.Notification;
@@ -86,6 +87,15 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.APIUSER)) {
             evictCaches();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent<String> evictIdEvent) {
+        if (evictIdEvent.affects(ContentCache.APIUSER)) {
+            evictContent(evictIdEvent.getContentId());
         }
     }
 

@@ -9,19 +9,31 @@ import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.cache.CacheStatsView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
+import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
+import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.CommitteeSessionId;
+import gov.nysenate.openleg.model.law.LawVersionId;
+import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -70,17 +82,9 @@ public class CacheCtrl extends BaseCtrl
     @RequiresAuthentication
     @RequestMapping(value = "/{cacheType}", method = RequestMethod.PUT)
     public BaseResponse warmCache(@PathVariable String cacheType) {
-        BaseResponse response;
-        try {
-            Set<ContentCache> targetCaches = getTargetCaches(cacheType);
-            eventBus.post(new CacheWarmEvent(targetCaches));
-            response = new SimpleResponse(true, "Cache warming requests completed.", "cache-warm");
-        }
-        catch (IllegalArgumentException ex) {
-            response = new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
-            response.setMessage("Invalid cacheType: " + cacheType);
-        }
-        return response;
+        Set<ContentCache> targetCaches = getTargetCaches(cacheType);
+        eventBus.post(new CacheWarmEvent(targetCaches));
+        return new SimpleResponse(true, "Cache warming requests completed for " + targetCaches, "cache-warm");
     }
 
     /**
@@ -92,29 +96,112 @@ public class CacheCtrl extends BaseCtrl
     @RequiresAuthentication
     @RequestMapping(value = "/{cacheType}", method = RequestMethod.DELETE)
     public BaseResponse deleteCache(@PathVariable String cacheType) {
-        BaseResponse response;
-        try {
-            Set<ContentCache> targetCaches = getTargetCaches(cacheType);
-            eventBus.post(new CacheEvictEvent(targetCaches));
-            response = new SimpleResponse(true, "Cache eviction request sent.", "cache-evict");
-        }
-        catch (IllegalArgumentException ex) {
-            response = new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
-            response.setMessage("Invalid cacheType: " + cacheType);
-        }
-        return response;
+        Set<ContentCache> targetCaches = getTargetCaches(cacheType);
+        eventBus.post(new CacheEvictEvent(targetCaches));
+        return new SimpleResponse(true, "Cache eviction request sent for " + targetCaches, "cache-evict");
+    }
+
+    /**
+     * Cache Evict by Id API
+     *
+     * Delete the entry in the specified cache designated by the given id:
+     *      (DELETE) /api/3/cache/{cacheType}/id
+     *
+     * The id is specified through required request parameters, which depend on the cacheType
+     *
+     * Request params for BILL: printNo (string) - a bill print number
+     *                          session (integer) - session year of the bill
+     *
+     * Request params for AGENDA: agendaNo (integer) - an agenda number
+     *                            year (integer) - year of the agenda
+     *
+     * Request params for CALENDAR: calNo (integer) - a calendar number
+     *                              year (integer) - year of the calendar
+     *
+     * Request params for LAW: lawId (string) - three letter law identifier
+     *                         publishedDate (date) - published date of this law version
+     *
+     * Request params for COMMITTEE: chamber (string) - senate or assembly
+     *                               committeeName (string) - the name of the committee
+     *                               year (integer) - year of the committee
+     *
+     * Request params for MEMBER: memberId (integer) - member id
+     *
+     * Request params for APIUSER: key (string) - api user's key
+     */
+    @RequiresAuthentication
+    @RequestMapping(value = "/{cacheType}/id", method = RequestMethod.DELETE)
+    public BaseResponse evictContentId(@PathVariable String cacheType, WebRequest webRequest)
+            throws MissingServletRequestParameterException {
+        ContentCache targetCache = getTargetCache(cacheType);
+        Object contentId = getContentId(targetCache, webRequest);
+        eventBus.post(new CacheEvictIdEvent<>(targetCache, contentId));
+        return new SimpleResponse(true, "Cache eviction request sent for " + targetCache + ": " + contentId, "cache-evict");
     }
 
     /** --- Internal --- */
 
-    private Set<ContentCache> getTargetCaches(String cacheType) throws IllegalArgumentException {
-        Set<ContentCache> targetCaches;
+    private Set<ContentCache> getTargetCaches(String cacheType) {
         if (cacheType.equalsIgnoreCase("all")) {
-            targetCaches = Sets.newHashSet(ContentCache.values());
+            return Sets.newHashSet(ContentCache.values());
         }
-        else {
-            targetCaches = Sets.newHashSet(ContentCache.valueOf(cacheType.toUpperCase()));
+        return Sets.newHashSet(getTargetCache(cacheType));
+    }
+
+    private ContentCache getTargetCache(String cacheType) {
+        return getEnumParameter(ContentCache.class, "cacheType", cacheType);
+    }
+
+    private Object getContentId(ContentCache targetCache, WebRequest request)
+            throws MissingServletRequestParameterException {
+        switch (targetCache) {
+            case BILL:
+                return getBaseBillId(request);
+            case AGENDA:
+                return getAgendaId(request);
+            case CALENDAR:
+                return getCalendarId(request);
+            case LAW:
+                return getLawVersionId(request);
+            case COMMITTEE:
+                return getCommitteeSessionId(request);
+            case MEMBER:
+                requireParameters(request, "memberId", "integer");
+                return getIntegerParam(request, "memberId");
+            case APIUSER:
+                requireParameters(request, "key", "string");
+                return request.getParameter("key");
+            case NOTIFICATION_SUBSCRIPTION:
+                return "all subscriptions";
+            default:
+                return null;
         }
-        return targetCaches;
+    }
+
+    private BaseBillId getBaseBillId(WebRequest request) throws MissingServletRequestParameterException {
+        requireParameters(request, "printNo", "string", "session", "integer");
+        return new BaseBillId(request.getParameter("printNo"), getIntegerParam(request, "session"));
+    }
+
+    private AgendaId getAgendaId(WebRequest request) throws MissingServletRequestParameterException {
+        requireParameters(request, "agendaNo", "integer", "year", "integer");
+        return new AgendaId(getIntegerParam(request, "agendaNo"), getIntegerParam(request, "year"));
+    }
+
+    private CalendarId getCalendarId(WebRequest request) throws MissingServletRequestParameterException {
+        requireParameters(request, "calNo", "integer", "year", "integer");
+        return new CalendarId(getIntegerParam(request, "calNo"), getIntegerParam(request, "year"));
+    }
+
+    private LawVersionId getLawVersionId(WebRequest request) throws MissingServletRequestParameterException {
+        requireParameters(request, "lawId", "string", "publishedDate", "date");
+        return new LawVersionId(request.getParameter("lawId"), parseISODate(request.getParameter("publishedDate"), "publishedDate"));
+    }
+
+    private CommitteeSessionId getCommitteeSessionId(WebRequest request) throws MissingServletRequestParameterException {
+        requireParameters(request, "chamber", "string", "committeeName", "string", "year", "integer");
+            return new CommitteeSessionId(getEnumParameter(Chamber.class, "chamber", request.getParameter("chamber")),
+                    request.getParameter("committeeName"),
+                    SessionYear.of(getIntegerParam(request, "year")));
     }
 }

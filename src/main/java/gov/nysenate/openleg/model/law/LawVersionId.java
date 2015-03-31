@@ -33,6 +33,11 @@ public class LawVersionId
         return Objects.equals(this.lawId, other.lawId) && Objects.equals(this.publishedDate, other.publishedDate);
     }
 
+    @Override
+    public String toString() {
+        return lawId + "v" + publishedDate;
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public String getLawId() {

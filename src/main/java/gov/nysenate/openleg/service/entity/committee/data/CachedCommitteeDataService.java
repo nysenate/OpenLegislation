@@ -8,6 +8,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.committee.data.CommitteeDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.entity.*;
@@ -100,6 +101,15 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     public synchronized void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.COMMITTEE)) {
             evictCaches();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent<CommitteeSessionId> evictIdEvent) {
+        if (evictIdEvent.affects(ContentCache.COMMITTEE)) {
+            evictContent(evictIdEvent.getContentId());
         }
     }
 

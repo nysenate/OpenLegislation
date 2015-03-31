@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.law.data;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.law.data.LawDataDao;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
@@ -87,6 +88,15 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.LAW)) {
             evictCaches();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleCacheEvictIdEvent(CacheEvictIdEvent<LawVersionId> evictIdEvent) {
+        if (evictIdEvent.affects(ContentCache.LAW)) {
+            evictContent(evictIdEvent.getContentId());
         }
     }
 
