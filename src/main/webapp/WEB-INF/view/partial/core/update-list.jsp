@@ -25,8 +25,8 @@
             </span>
           </md-subheader>
           <md-content>
-            <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY HH:mm:ss'}}</h4>
-            <h4>Processed Date - {{update.processedDateTime | moment:'MMM DD, YYYY HH:mm:ss'}}</h4>
+            <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY h:mm:ss A'}}</h4>
+            <h4>Processed Date - {{update.processedDateTime | moment:'MMM DD, YYYY h:mm:ss A'}}</h4>
             <h4>Source - <a>{{update.sourceId}}</a></h4>
             <table class="bill-updates-table" ng-if="showDetails && update.fields">
               <thead>
