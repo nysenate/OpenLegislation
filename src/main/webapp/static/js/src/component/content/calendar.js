@@ -54,6 +54,8 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     $scope.openSections = {};
 
+    $scope.highlightValue = "none";
+
     $scope.init = function() {
         $scope.getCalendarViewById($routeParams.year, $routeParams.calNo);
         if ($routeParams.hasOwnProperty('view') && ['active-list', 'sklerch'].indexOf($routeParams['view']) < 0) {
@@ -158,21 +160,26 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
             }
         }
 
+        $scope.highlightValue = identifier;
+
+        var openSection;
+
         if ($scope.tabParam === "floor" || $scope.tabParam === "active-list" && !billInActiveList(calEntryPredicate)) {
-            var openSection = billInFloorCal(calEntryPredicate);
+            openSection = billInFloorCal(calEntryPredicate);
             if (openSection) {
                 $scope.tabParam = "floor";
                 $scope.openSections[openSection] = true;
             }
         }
-        $timeout( function() {
-            $timeout(function () {
-                var selector = "md-item[" + attrName + "='" + identifier + "']";
-                $('html, body').animate({
-                    scrollTop : $(selector).offset().top
-                })
-            });
-        });
+        $timeout(function () {
+            var containerSelector = ($scope.tabParam === "active-list" ?
+                    "#active-list-table" : ("calendar-entry-table." + openSection)) + ">section";
+            var entrySelector = "md-item[" + attrName + "='" + identifier + "']";
+            console.log(containerSelector, entrySelector);
+            $(containerSelector).animate({
+                scrollTop : $(entrySelector).parent().scrollTop() + $(entrySelector).offset().top - $(entrySelector).parent().offset().top
+            })
+        }, 500);
     };
 
     // returns a predicate that takes in an object and returns true if the 'field' property of the object equals the matchingValue
@@ -411,6 +418,10 @@ function ($scope, $rootScope, $routeParams, $location, $timeout) {
     $scope.changeTab = function (pageName) {
         console.log('changing view to', pageName);
         $scope.activeIndex = $scope.pageNames.indexOf(pageName);
+    };
+
+    $scope.pageIsActive = function (pageName) {
+        return $scope.activeIndex == $scope.pageNames.indexOf(pageName);
     };
 
     $scope.setCalendarHeaderText = function() {
@@ -716,8 +727,8 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, $m
             showLoadingToast();
             $scope.requestsInProgress += 1;
             $q.all(calendarIdPromises).then(function () {
-                for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
-                    $scope.calendarIds[year]
+                for (var i in years){
+                    $scope.calendarIds[years[i]]
                         .map(getEvent)
                         .forEach(function (event) {
                             $scope.events.push(event);
@@ -878,7 +889,7 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, PaginationModel
             $scope.getUpdates(true);
             var opts = $scope.updateOptions;
             $scope.setSearchParam('uorder', opts.order, opts.order === "ASC");
-            $scope.setSearchParam('udetail', opts.detail);
+            //$scope.setSearchParam('udetail', opts.detail, opts.detail === false);
             var to = moment(opts.toDateTime).local();
             var from = moment(opts.fromDateTime).local();
             $scope.setSearchParam('uto', $scope.toZonelessISOString(to), to.isValid() && !to.isSame(initialTo));
@@ -897,7 +908,8 @@ calendarModule.directive('calendarEntryTable', function() {
         scope: {
             year: '=',
             calEntries: '=calEntries',
-            getCalBillNumUrl: '&'
+            getCalBillNumUrl: '&',
+            highlightValue: "="
         },
         templateUrl: ctxPath + '/partial/content/calendar/calendar-entry-table',
         controller: function($scope) {

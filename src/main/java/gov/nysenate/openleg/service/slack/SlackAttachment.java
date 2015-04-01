@@ -12,6 +12,10 @@ public class SlackAttachment {
     private String text;
     private String pretext;
     private String color;
+
+    private String title;
+    private String titleLink;
+
     private List<SlackField> fields;
 
 
@@ -86,6 +90,18 @@ public class SlackAttachment {
         return this;
     }
 
+    public SlackAttachment setTitle(String title) {
+        this.title = title;
+
+        return this;
+    }
+
+    public SlackAttachment setTitleLink(String titleLink) {
+        this.titleLink = titleLink;
+
+        return this;
+    }
+
     public JsonObject toJson() {
         JsonObject data = new JsonObject();
 
@@ -105,6 +121,14 @@ public class SlackAttachment {
 
         if(color != null) {
             data.addProperty("color", color);
+        }
+
+        if (title != null) {
+            data.addProperty("title", title);
+        }
+
+        if (titleLink != null) {
+            data.addProperty("title_link", titleLink);
         }
 
         if(fields != null && fields.size() > 0) {

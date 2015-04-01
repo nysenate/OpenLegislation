@@ -69,6 +69,8 @@ public enum ErrorCode
     USER_DOES_NOT_EXIST(192, "The entered username is not currently registered as a user"),
     SAME_PASSWORD(193, "The new password cannot match the existing password"),
 
+    NOTIFICATION_NOT_FOUND(194, "The requested notification was not found"),
+
     /** --- General --- */
 
     UNAUTHORIZED(401, "Not authorized to perform this request."),

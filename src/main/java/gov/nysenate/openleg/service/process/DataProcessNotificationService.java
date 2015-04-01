@@ -29,7 +29,7 @@ public class DataProcessNotificationService {
      */
     public void exceptionNotification(Throwable ex) {
         LocalDateTime occurred = LocalDateTime.now();
-        String summary = ex.getMessage();
+        String summary = "Processing Exception at " + occurred + " - " + ExceptionUtils.getStackFrames(ex)[0];
         String message = "The following exception occurred while processing data at " + occurred + "\n"
                          + ExceptionUtils.getStackTrace(ex);
         Notification notification = new Notification(PROCESS_EXCEPTION, occurred, summary, message);

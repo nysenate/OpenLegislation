@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.service.slack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.StringUtils;
 
 public class SlackMessage {
 
@@ -15,6 +17,7 @@ public class SlackMessage {
 
     private String text     = null;
     private String username = null;
+    private List<String> mentions = null;
 
     public SlackMessage() {
 
@@ -66,7 +69,7 @@ public class SlackMessage {
         if(text == null) {
             throw new IllegalArgumentException("Missing Text field @ SlackMessage");
         } else {
-            slackMessage.addProperty("text", text);
+            slackMessage.addProperty("text", addMentions(text, mentions));
         }
 
         if(attach != null && attach.size() > 0) {
@@ -130,5 +133,37 @@ public class SlackMessage {
         }
 
         return this;
+    }
+
+    public SlackMessage setMentions(Collection<String> mentions) {
+        if (mentions != null) {
+            this.mentions = new ArrayList<>(mentions);
+        }
+
+        return this;
+    }
+
+    public SlackMessage addMention(String mention) {
+        if (StringUtils.isNotBlank(mention)) {
+            if (mentions == null) {
+                mentions = new ArrayList<>();
+            }
+            mentions.add(mention);
+        }
+
+        return this;
+    }
+
+    /**
+     * Adds slack api formatted user name mentions to the front of a string message
+     * @param message String
+     * @param mentions Collection<String>
+     * @return String - the message with mentions added
+     */
+    private String addMentions(String message, Collection<String> mentions) {
+        String mentionString = mentions.stream()
+                .filter(StringUtils::isNotBlank)
+                .reduce("", (a, b) -> a + "<@" + b + "> ");
+        return mentionString + (message != null ? "\n" + message : "");
     }
 }

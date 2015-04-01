@@ -158,7 +158,7 @@ coreModule.directive('updateList', ['PaginationModel', function(PaginationModel)
         templateUrl: ctxPath + '/partial/core/update-list',
         link: function($scope, $elem, $attrs) {
             $scope.showId = $scope.showId || true;
-            $scope.showDetails = $scope.showDetails || false;
+            $scope.showDetails = $scope.showDetails !== false;
             if (!$scope.pagination) {
                 $scope.paginationModel = angular.extend({}, PaginationModel);
                 $scope.paginationModel.itemsPerPage = Number.MAX_SAFE_INTEGER;

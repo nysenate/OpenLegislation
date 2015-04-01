@@ -167,7 +167,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     /** {@inheritDoc} */
     @Override
     public Bill getBill(BaseBillId billId) throws BillNotFoundEx {
-        if (billId == null) {
+        if (billId != null) {
             throw new IllegalArgumentException("BillId cannot be null");
         }
         try {

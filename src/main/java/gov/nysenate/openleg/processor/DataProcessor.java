@@ -72,9 +72,7 @@ public class DataProcessor
                 ingest();
             }
             catch (Exception ex) {
-                String label = "Unexpected processing error!";
-                logger.error(label, ex);
-                currentRun.addException(label, ex);
+                eventBus.post(new DataProcessErrorEvent("Unexpected Processing Error", ex));
             }
             processLogService.finishRun(currentRun);
             logger.info("Exiting data processor.");
@@ -106,7 +104,7 @@ public class DataProcessor
     @Subscribe
     public void handleDataProcessErrorEvent(DataProcessErrorEvent ev) {
         if (currentRun != null) {
-            currentRun.addException(ev.getMessage());
+            currentRun.addException(ev.getMessage(), ev.getEx());
         }
     }
 

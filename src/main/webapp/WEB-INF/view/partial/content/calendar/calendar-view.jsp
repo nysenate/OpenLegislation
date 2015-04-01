@@ -17,7 +17,7 @@
       <!-- Active Lists -->
       <md-tab label="Active List" md-on-select="setCalendarHeaderText()" ng-disabled="calendarView.activeLists.size < 1">
         <section ng-if="pageNames[curr.activeIndex] === 'active-list'" ng-controller="CalendarActiveListCtrl">
-          <md-toolbar class="md-toolbar-tools supplemental-toolbar">
+          <md-toolbar class="md-toolbar-tools supplemental-toolbar" ng-if="activeLists.length > 1">
             <label ng-show="activeLists.length > 0" class="margin-right-20">Supplementals</label>
             <span layout="row" layout-sm="column">
               <md-checkbox ng-repeat="activeList in activeLists" class="md-accent md-hue-1"
@@ -34,7 +34,9 @@
           <md-content class="no-background">
             <md-card ng-show="displayedEntries.length>0" style="background: #fff">
               <md-card-content>
-                <calendar-entry-table cal-entries="displayedEntries" year="year" get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
+                <calendar-entry-table id="active-list-table" cal-entries="displayedEntries" year="year"
+                                      highlight-value="highlightValue"
+                                      get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
               </md-card-content>
             </md-card>
           </md-content>
@@ -44,7 +46,7 @@
       <!-- Supplemental Calendars -->
       <md-tab label="Floor" md-on-select="setCalendarHeaderText()">
         <section ng-if="pageNames[curr.activeIndex] === 'floor'" ng-controller="FloorCalendarCtrl">
-          <md-toolbar class="md-toolbar-tools supplemental-toolbar">
+          <md-toolbar class="md-toolbar-tools supplemental-toolbar" ng-if="floorCalVersions.length > 1">
             <label class="margin-right-20">Supplementals</label>
               <span layout="row" layout-sm="column" ng-model="amdVersion">
                 <md-checkbox ng-repeat="version in floorCalVersions |orderBy:versionSortValue"
@@ -61,7 +63,8 @@
             <toggle-panel ng-repeat="(section, entries) in displayedSections"
                           open="{{openSections[section]}}"
                           label="{{section | sectionDisplayName}}" show-tip="true">
-              <calendar-entry-table cal-entries="entries" year="year" get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
+              <calendar-entry-table class="{{section}}" cal-entries="entries" year="year" highlight-value="highlightValue"
+                                    get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
             </toggle-panel>
           </md-content>
         </section>
