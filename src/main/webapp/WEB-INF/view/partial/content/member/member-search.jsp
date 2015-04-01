@@ -121,7 +121,13 @@
               </a>
             </md-list>
           </md-content>
+          <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
+            <div flex style="text-align: right;">
+              <dir-pagination-controls boundary-links="true" on-page-change="changePage(newPageNumber)"></dir-pagination-controls>
+            </div>
+          </div>
         </md-card>
+
         <md-card class="content-card">
           <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
           <div class="padding-20">
