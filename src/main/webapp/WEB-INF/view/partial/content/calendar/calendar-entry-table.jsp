@@ -1,3 +1,4 @@
+<section style="max-height: 65vh; overflow-y: scroll">
 <md-list>
     <md-item hide-sm>
         <md-item-content layout="row">
@@ -8,19 +9,25 @@
         <md-divider class="md-default-theme"></md-divider>
     </md-item>
     <md-item ng-repeat="calEntry in calEntries" data-print-no="{{calEntry.printNo}}" data-cal-no="{{calEntry.billCalNo}}">
-        <md-item-content layout="row" class="md-padding">
+        <md-item-content layout="row" class="md-padding"
+                         ng-class="{'cal-entry-highlight': calEntry.printNo === highlightValue || calEntry.billCalNo == highlightValue}">
             <div style="width: 70px" hide-sm>
                 <a ng-bind="calEntry.basePrintNo" class="text-large"
                    ng-href="{{billPageBaseUrl}}/{{calEntry.session}}/{{calEntry.basePrintNo}}"></a>
             </div>
             <div style="width: 40px" hide-sm>
                 <a ng-bind="calEntry.billCalNo" class="cal-entry-cal-no"
-                        ng-href="{{getCalBillNumUrl(year, calEntry.billCalNo)}}"></a>
+                        ng-href="{{getCalBillNumUrl(year, calEntry.billCalNo)}}">
+                  <md-tooltip>Search for calendars <br>that contain this bill</md-tooltip>
+                </a>
             </div>
             <div class="md-tile-content">
                 <a ng-bind="calEntry.basePrintNo" class="text-medium" hide-gt-sm
                    ng-href="{{billPageBaseUrl}}/{{calEntry.session}}/{{calEntry.basePrintNo}}"></a>
-                <a hide-gt-sm class="cal-entry-cal-no">Bill Calendar \#{{calEntry.billCalNo}}</a>
+                <span hide-gt-sm>Bill Calendar </span>
+                <a hide-gt-sm class="cal-entry-cal-no" ng-href="{{getCalBillNumUrl(year, calEntry.billCalNo)}}">
+                  \#{{calEntry.billCalNo}}
+                </a>
                 <div ng-bind="calEntry.title"></div>
                 <div layout="row" hide-sm style="height: 40px">
                     <div style="overflow: hidden">
@@ -44,3 +51,4 @@
         <md-divider ng-show="!$last" class="md-default-theme"></md-divider>
     </md-item>
 </md-list>
+</section>
