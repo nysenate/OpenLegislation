@@ -4,10 +4,13 @@ import com.google.common.base.Splitter;
 import com.google.common.primitives.Ints;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -29,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -162,6 +166,24 @@ public abstract class ElasticBaseDao
                 SortBuilders.fieldSort(k).order(org.elasticsearch.search.sort.SortOrder.valueOf(v.toUpperCase()))));
         }
         return sortBuilders;
+    }
+
+    /**
+     * Performs a get request on the given index for the document designated by the given type and id
+     * returns an optional that is empty if a document does not exist for the given request parameters
+     * @param index String - a search index
+     * @param type String - a search type
+     * @param id String - the id of the desired document
+     * @param responseMapper Function<GetResponse, T> - a function that maps the response to the desired class
+     * @param <T> The type to be returned
+     * @return Optional<T></T>
+     */
+    protected <T> Optional<T> getRequest(String index, String type, String id, Function<GetResponse, T> responseMapper) {
+        GetResponse getResponse = searchClient.prepareGet(index, type, id).execute().actionGet();
+        if (getResponse.isExists()) {
+            return Optional.of(responseMapper.apply(getResponse));
+        }
+        return Optional.empty();
     }
 
     /**

@@ -18,21 +18,17 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
-public class ElasticNotificationDao extends ElasticBaseDao implements NotificationDao, IndexedSearchService<RegisteredNotification> {
+public class ElasticNotificationSearchDao extends ElasticBaseDao implements NotificationSearchDao, IndexedSearchService<RegisteredNotification> {
 
-    Logger logger = LoggerFactory.getLogger(ElasticNotificationDao.class);
+    Logger logger = LoggerFactory.getLogger(ElasticNotificationSearchDao.class);
 
     protected static final String notificationIndex = SearchIndex.NOTIFICATION.getIndexName();
     protected static final String notificationType = "notifications";
@@ -40,6 +36,12 @@ public class ElasticNotificationDao extends ElasticBaseDao implements Notificati
     protected static final String idId = "id";
 
     /** --- Implemented Methods --- */
+
+    @Override
+    public Optional<RegisteredNotification> getNotification(long notificationId) {
+        return getRequest(notificationIndex, notificationType, Long.toString(notificationId),
+                getResponse -> getNotificationFromSourceMap(getResponse.getSource()));
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -49,7 +51,7 @@ public class ElasticNotificationDao extends ElasticBaseDao implements Notificati
         FilterBuilder fullFilter = FilterBuilders.andFilter(filter, FilterBuilders.typeFilter(notificationType));
         SearchRequestBuilder request = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, true);
         SearchResponse response = request.execute().actionGet();
-        return getSearchResults(response, limitOffset, this::getNotificationFromHit);
+        return getSearchResults(response, limitOffset, hit -> getNotificationFromSourceMap(hit.getSource()));
     }
 
     /** {@inheritDoc} */
@@ -109,10 +111,8 @@ public class ElasticNotificationDao extends ElasticBaseDao implements Notificati
         return response.getVersion();
     }
 
-    protected RegisteredNotification getNotificationFromHit(SearchHit hit) {
-        long id = Long.parseLong(hit.getId());
-        logger.info("{}", OutputUtils.toJson(hit));
-        Map<String, Object> source = hit.getSource();
+    protected RegisteredNotification getNotificationFromSourceMap(Map<String, Object> source) {
+        long id = Long.parseLong(source.get("id").toString());
         NotificationType type = NotificationType.getValue(source.get("type").toString());
         LocalDateTime occurred = LocalDateTime.parse(source.get("occurred").toString());
         String summary = source.get("summary") != null ? source.get("summary").toString() : "";

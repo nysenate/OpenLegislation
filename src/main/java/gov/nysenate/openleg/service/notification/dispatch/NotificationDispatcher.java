@@ -6,7 +6,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.dao.notification.NotificationDao;
 import gov.nysenate.openleg.model.notification.*;
 import gov.nysenate.openleg.service.notification.data.NotificationService;
 import gov.nysenate.openleg.service.notification.subscription.NotificationSubscriptionDataService;
