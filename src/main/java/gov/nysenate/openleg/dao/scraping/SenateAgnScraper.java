@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.scraping;
 
+import gov.nysenate.openleg.model.base.SessionYear;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -14,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kyle on 11/12/14.
@@ -22,9 +25,11 @@ import java.time.LocalDateTime;
 public class SenateAgnScraper extends LRSScraper{
     private static final Logger logger = Logger.getLogger(LRSScraper.class);
     String senateAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=SENAGEN";
+    private File outfile;
 
     protected URL senateURL;
     private File senateAgendaDirectory;
+
 
     @PostConstruct
     public void init() throws IOException {
@@ -33,7 +38,7 @@ public class SenateAgnScraper extends LRSScraper{
     }
 
     @Override
-    public void scrape() throws IOException {
+    public List<File> scrape() throws IOException {
         logger.info("SCRETCHING landing page.");
         Document doc = Jsoup.connect(senateURL.toString()).timeout(10000).get();
 
@@ -58,13 +63,22 @@ public class SenateAgnScraper extends LRSScraper{
                 URL contentURL = new URL(absHref);
 
                 String filename = dateFormat.format(LocalDateTime.now()) + ".all_senate_agendas.html";
-                File outfile = new File(senateAgendaDirectory, filename);
+                outfile = new File(senateAgendaDirectory, filename);
                 logger.info("Fetching all committee agendas");
                 String contents = IOUtils.toString(contentURL);
                 logger.info("Writing content to "+filename);
                 FileUtils.write(outfile, contents);
             }
         }
+        ArrayList<File> list = new ArrayList<File>();
+        list.add(outfile);
+        return list;
+
+    }
+
+    @Override
+    public List<File> scrape(String billType, String billNo, SessionYear sessionYear) throws IOException {
+        return null;
     }
 
 }

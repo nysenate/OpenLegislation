@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.service.scraping;
 
 import gov.nysenate.openleg.dao.scraping.LRSScraper;
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.StringDiffer;
 import org.apache.commons.io.FileUtils;
@@ -20,6 +22,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,51 +38,96 @@ public class BillTextScraper extends LRSScraper {
     protected URL billURLBase;
 
     private File billTextDirectory;
+    private File billMemoDirectory;
+    private String textFileName = null, memoFileName = null, billType, billNo, sessionYear;// memo = "Y";
+    private boolean memo = false;
+    private BillId billId;
+    private File textFile, memoFile;
 
     @PostConstruct
     public void init() throws IOException {
         billURLBase = new URL(allBills);
         this.billTextDirectory = environment.getBillTextDirectory();
+        this.billMemoDirectory = environment.getBillMemoDirectory();
+    }
+
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public List<File> scrape() throws IOException {
+        return null;
     }
 
     @Override
-    public void scrape() throws IOException {
+    public List<File> scrape(String billType, String billNo, SessionYear sessionYear) throws IOException {
         String text = "";
-        String billType = "A", billNo = "100", sessionYear = "2015";
+        String memoText = "";
+        ArrayList<File> list = new ArrayList<File>();
+
+        String path = null;
+
+        billId = new BillId(billType+billNo, sessionYear);
 
         logger.info("FETCHING landing page.");
-        String path = "http://public.leginfo.state.ny.us/navigate.cgi?NVDTO" +
-                ":=&QUERYDATA=" + billType + billNo + "&QUERYTYPE=BILLNO&SESSYR=" + sessionYear + "&CBTEXT=Y";
-        //String newPath = ("http://public.leginfo.state.ny.us/navigate.cgi?NVDTO:=&QUERYDATA=S1&QUERYTYPE=BILLNO&SESSYR=2015&CBTEXT=Y");
-
+         path = "http://public.leginfo.state.ny.us/navigate.cgi?NVDTO" +
+                 ":=&QUERYDATA=" + billType + billNo + "&QUERYTYPE=BILLNO&SESSYR=" + sessionYear + "&CBTEXT=Y" +
+                 "&CBSPONMEMO=Y";
         try {
             Document doc = Jsoup.connect(path).timeout(10000).get();
             Elements preTags = doc.getElementsByTag("pre");
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder textBuilder = new StringBuilder();
 
+            /* Used for getting only text
             for (Element pre : preTags)
-                processNode(pre, stringBuilder);
+                processNode(pre, textBuilder);
+            */
 
-            text = stringBuilder.toString();
+            textBuilder.append(billType+billNo + "\n" + sessionYear + "\n");
+            for (int i = 0; i <preTags.size()-1; i++)                    //gets all bill text
+                processNode(preTags.get(i), textBuilder);
+
+            text = textBuilder.toString();
+
+            //gets print number to use in filename
             Elements printNoEle = doc.getElementsByClass("nv_bot_info").get(0).getElementsByTag("strong");
             String printNo = printNoEle.get(0).text();
-            makeFile(text, printNo, sessionYear);
-            //scrapeAllTypes(text, billType);
+            makeFile(text, printNo, false);
+            list.add(textFile);
+
+            if (billType.equalsIgnoreCase("A") | billType.equalsIgnoreCase("S")) {
+                StringBuilder memoBuilder = new StringBuilder();
+                //memoBuilder.append(billType+billNo + "\n" + sessionYear + "\n");
+                memoBuilder.append(billType + billNo + "\n" + sessionYear + "\n");
+                processNode(preTags.get(preTags.size() - 1), memoBuilder);    //gets memo text
+
+                memoText = memoBuilder.toString();
+
+
+                makeFile(memoText, printNo, true);
+                list.add(memoFile);
+
+            }
         } catch (Exception e) {
-            logger.info("Could not establish connection to LRS");
+            logger.info("Could not establish connection to LRS Website");
             e.printStackTrace();
         }
+        return list;
     }
 
-    public void makeFile(String text, String printNo, String sessionYear) throws Exception{
-        //DateUtils.LRS_WEBSITE_DATETIME_FORMAT);
-        //LocalDateTime date = LocalDateTime.now();
-        String filename = dateFormat.format(LocalDateTime.now()) + ".bill_" + printNo +  ".txt";
-        File outfile = new File(billTextDirectory, filename);
-        FileUtils.write(outfile, text);
+    public void makeFile(String text, String printNo, boolean memo) throws Exception{
+        if (memo == false) {
+            textFileName = dateFormat.format(LocalDateTime.now()) + ".bill_" + printNo + ".txt";
+            textFile = new File(billTextDirectory, textFileName);
+            FileUtils.write(textFile, text);
+        }else if (memo == true){
+            memoFileName = dateFormat.format(LocalDateTime.now()) + ".bill_" + printNo + "_memo.txt";
+            memoFile = new File(billMemoDirectory, memoFileName);
+            FileUtils.write(memoFile, text);
+        }
     }
-
-
     /**
      *
      * @param ele
@@ -98,5 +146,31 @@ public class BillTextScraper extends LRSScraper {
                 stringBuilder.append(((TextNode) t).text());
             }
         }
+    }
+
+    public String getMemoFileName(){
+        return memoFileName;
+    }
+    public String getTextFileName(){
+        return textFileName;
+    }
+    public File getBillTextDirectory(){
+        return billTextDirectory;
+    }
+    public File getBillMemoDirectory(){
+        return billMemoDirectory;
+    }
+    public BillId getBillId(){
+        return billId;
+    }
+
+    public String getBillType(){
+        return billType;
+    }
+    public String getBillNo(){
+        return billNo;
+    }
+    public String getSessionYear(){
+        return sessionYear;
     }
 }

@@ -20,7 +20,7 @@ public interface ActiveListReferenceDAO {
     public ActiveListSpotcheckReference getCalendarReference(CalendarActiveListId cal, LocalDateTime time);
     public ActiveListSpotcheckReference getMostRecentReference(CalendarActiveListId cal);
     public List<ActiveListSpotcheckReference> getMostRecentEachYear(int year);
-    public ActiveListSpotcheckReference getCurrentCalendar(CalendarActiveListId cal, Range<LocalDate> dateRange) throws DataAccessException;
+    public ActiveListSpotcheckReference getCurrentCalendar(CalendarActiveListId cal, Range<LocalDateTime> dateRange) throws DataAccessException;
 
     //public ActiveListSpotcheckReference getRange
     //DELETE

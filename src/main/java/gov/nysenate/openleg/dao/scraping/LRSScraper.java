@@ -1,14 +1,17 @@
 package gov.nysenate.openleg.dao.scraping;
 
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.model.base.SessionYear;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +30,8 @@ public abstract class LRSScraper {
     protected final Pattern bottomPattern = Pattern.compile("src=\\\"(frmload\\.cgi\\?BOT-([0-9]+))\\\">");
 
 
-    public abstract void scrape () throws IOException;
+    public abstract List<File> scrape () throws IOException;
+    public abstract List<File> scrape (String billType, String billNo, SessionYear sessionYear) throws IOException;
 
 
     public URL resolveLink(URL url, String link) throws MalformedURLException

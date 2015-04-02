@@ -38,7 +38,8 @@ public class Environment
     @Value("${env.scraped.assemblyagenda}") private String assemblyAgendaDirPath;
     @Value("${env.scraped.senateagenda}") private String senateAgendaDirPath;
     @Value("${env.scraped.billtext}") private String billTextDirPath;
-    
+    @Value("${env.scraped.billmemo}") private String billMemoDirPath;
+
     private File baseDir;
     private File stagingDir;
     private File archiveDir;
@@ -47,6 +48,7 @@ public class Environment
     private File assemblyAgendaDirectory;
     private File senateAgendaDirectory;
     private File billTextDirectory;
+    private File billMemoDirectory;
 
     /** --- Api Auth --- */
 
@@ -105,6 +107,7 @@ public class Environment
         this.assemblyAgendaDirectory = new File(assemblyAgendaDirPath);
         this.senateAgendaDirectory = new File(senateAgendaDirPath);
         this.billTextDirectory = new File(billTextDirPath);
+        this.billMemoDirectory = new File(billMemoDirPath);
     }
 
     /** --- Basic Getters/Setters --- */
@@ -243,5 +246,13 @@ public class Environment
 
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
+    }
+
+    public File getBillMemoDirectory() {
+        return billMemoDirectory;
+    }
+
+    public void setBillMemoDirectory(File billMemoDirectory) {
+        this.billMemoDirectory = billMemoDirectory;
     }
 }

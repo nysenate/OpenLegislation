@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.scraping;
 
+import gov.nysenate.openleg.model.base.SessionYear;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -14,7 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 
 /**
@@ -28,6 +31,7 @@ public class AssemblyAgnScraper extends LRSScraper {
 
     protected URL agendaURL;
     private File assemblyAgendaDirectory;
+    private File outfile = null;
 
     @PostConstruct
     public void init() throws IOException {
@@ -36,7 +40,7 @@ public class AssemblyAgnScraper extends LRSScraper {
     }
 
     @Override
-    public void scrape() throws IOException {
+    public List<File> scrape() throws IOException {
         System.out.println("ASSEMBLY AGENDA DIRECTORY ::::::: " + environment.getAssemblyAgendaDirectory());
         logger.info("SCRETCHING landing page.");
         Document doc = Jsoup.connect(agendaURL.toString()).timeout(10000).get();
@@ -56,18 +60,26 @@ public class AssemblyAgnScraper extends LRSScraper {
         Elements links = agendaPage.select("a");
 
         for (Element link : links){
-            if (link.text().equalsIgnoreCase("All Committee Agendas")){
+            if (link.text().equalsIgnoreCase("All Committee Agendas")){ //possibility for error in generating filename
                 String absHref = link.attr("abs:href");
                 System.out.println(absHref);
                 URL contentURL = new URL(absHref);
 
                 String filename = dateFormat.format(LocalDateTime.now()) + ".all_assembly_agendas.html";
-                File outfile = new File(assemblyAgendaDirectory, filename);
+                outfile = new File(assemblyAgendaDirectory, filename);
                 logger.info("Fetching all committee agendas");
                 String contents = IOUtils.toString(contentURL);
                 logger.info("Writing content to "+filename);
                 FileUtils.write(outfile, contents);
             }
         }
+        ArrayList<File> list = new ArrayList<>();
+        list.add(outfile);
+        return list;
+    }
+
+    @Override
+    public List<File> scrape(String billType, String billNo, SessionYear sessionYear) throws IOException {
+        return null;
     }
 }
