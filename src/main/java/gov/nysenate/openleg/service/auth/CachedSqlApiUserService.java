@@ -260,7 +260,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     private void sendNewApiUserNotification(ApiUser user) {
         boolean named = user.getName() != null;
         String summary = (named ? user.getName() : user.getEmail()) + " is now registered as an API user!";
-        String message = (named ? "name: " + user.getName() + "\n" : "") +
+        String message = summary + "\n" + (named ? "name: " + user.getName() + "\n" : "") +
                          (user.getOrganizationName() != null ? "organization: " + user.getOrganizationName() + "\n" : "") +
                          "email: " + user.getEmail();
         eventBus.post(new Notification(NotificationType.NEW_API_KEY, LocalDateTime.now(), summary, message));

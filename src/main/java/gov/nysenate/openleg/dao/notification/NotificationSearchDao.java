@@ -4,10 +4,20 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.search.SearchResults;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 
-public interface NotificationDao {
+import java.util.Optional;
+
+public interface NotificationSearchDao {
+
+    /**
+     * Retrieves a notification based on its numeric id
+     * @param notificationId long - notification numeric id
+     * @return RegisteredNotification
+     */
+    public Optional<RegisteredNotification> getNotification(long notificationId) throws ElasticsearchException;
 
     /**
      * Performs a search across all notifications using the given query, filter, and sort string

@@ -33,7 +33,8 @@ public class AngularAppCtrl
                      "/laws/**",
                      "/sources/**",
                      "/reports/**",
-                     "/manage/**"})
+                     "/manage/**",
+                     "/admin/**"})
     public String home(HttpServletRequest request) {
         request.setAttribute("gaTrackingId", gaTrackingId);
         String randomUiKey = RandomUtils.getRandomString(64);

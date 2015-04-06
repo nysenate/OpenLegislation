@@ -4,7 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.notification.ElasticNotificationDao;
+import gov.nysenate.openleg.dao.notification.NotificationSearchDao;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
@@ -20,22 +20,22 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class ElasticNotificationSevice implements NotificationService {
+public class ElasticNotificationService implements NotificationService {
 
-    @Autowired protected ElasticNotificationDao notificationDao;
+    @Autowired protected NotificationSearchDao notificationDao;
 
     /** {@inheritDoc} */
     @Override
-    public RegisteredNotification getNotification(long notificationId) {
-        SearchResults<RegisteredNotification> results = notificationDao.searchNotifications(QueryBuilders.matchAllQuery(),
-                FilterBuilders.idsFilter("notification").ids(Long.toString(notificationId)), null, LimitOffset.ALL);
-        if (!results.hasResults()) {
-            throw new NotificationNotFoundException(notificationId);
+    public RegisteredNotification getNotification(long notificationId) throws NotificationNotFoundException {
+        Optional<RegisteredNotification> notificationOptional = notificationDao.getNotification(notificationId);
+        if (notificationOptional.isPresent()) {
+            return notificationOptional.get();
         }
-        return results.getResults().get(0).getResult();
+        throw new NotificationNotFoundException(notificationId);
     }
 
     /** {@inheritDoc} */
