@@ -33,7 +33,7 @@
           <md-content class="no-background">
             <md-card ng-show="displayedEntries.length > 0" class="content-card">
               <md-card-content>
-                <calendar-entry-table id="active-list-table" cal-entries="displayedEntries" year="year"
+                <calendar-entry-table section-type="active-list" cal-entries="displayedEntries" year="year"
                                       highlight-value="highlightValue"
                                       get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
               </md-card-content>
@@ -62,8 +62,9 @@
             <toggle-panel ng-repeat="(section, entries) in displayedSections" class="content-card"
                           open="{{openSections[section]}}"
                           label="{{section | sectionDisplayName}} - {{entries.length}} Bills" show-tip="true">
-              <calendar-entry-table class="{{section}}" cal-entries="entries" year="year" highlight-value="highlightValue"
-                                    get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
+              <calendar-entry-table section-type="{{section}}" cal-entries="entries" year="year" highlight-value="highlightValue"
+                                    get-cal-bill-num-url="getCalBillNumUrl">
+              </calendar-entry-table>
             </toggle-panel>
           </md-content>
         </section>

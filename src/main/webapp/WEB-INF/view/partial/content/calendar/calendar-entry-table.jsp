@@ -13,7 +13,9 @@
                          ng-class="{'cal-entry-highlight': calEntry.printNo === highlightValue || calEntry.billCalNo == highlightValue}">
             <div style="width: 70px" hide-sm>
                 <a ng-bind="calEntry.basePrintNo" class="text-large blue3"
-                   ng-href="{{billPageBaseUrl}}/{{calEntry.session}}/{{calEntry.basePrintNo}}"></a>
+                   ng-href="{{billPageBaseUrl}}/{{calEntry.session}}/{{calEntry.basePrintNo}}">
+                    <md-tooltip>View this bill</md-tooltip>
+                </a>
             </div>
             <div style="width: 40px" hide-sm>
                 <a ng-bind="calEntry.billCalNo" class="cal-entry-cal-no blue4"

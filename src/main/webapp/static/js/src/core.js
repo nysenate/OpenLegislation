@@ -290,9 +290,10 @@ coreModule.directive('togglePanel', [function(){
         '               (Click to expand section)</span>' +
         '       </div>' +
         '   </md-card-content>' +
-        '   <md-card-content ng-if="open || renderClosed" ng-show="open" class="panel-content" ng-cloak ng-transclude></md-card-content>' +
+        '   <md-card-content ng-if="opened || renderClosed" ng-show="open" class="panel-content" ng-cloak ng-transclude></md-card-content>' +
         '</md-card>',
         link : function($scope, $element, $attrs) {
+            $scope.opened = false;
             $scope.toggle = function() {
                 $scope.open = !$scope.open;
                 if ($scope.callback) {
@@ -310,6 +311,8 @@ coreModule.directive('togglePanel', [function(){
             $scope.$watch('open', function(newOpen, oldOpen){
                 var panelElem = $element.children(".panel-content");
                 (newOpen) ? panelElem.slideDown(200) : panelElem.slideUp(200);
+                $scope.opened = newOpen || $scope.opened;
+                console.log("opened", $scope.opened);
             });
         }
     }

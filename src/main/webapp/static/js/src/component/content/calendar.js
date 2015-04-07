@@ -170,10 +170,12 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
                 $scope.tabParam = "floor";
                 $scope.openSections[openSection] = true;
             }
+        } else {
+            openSection = "active-list";
         }
+        $scope.$broadcast("billScrollEvent", openSection);
         $timeout(function () {
-            var containerSelector = ($scope.tabParam === "active-list" ?
-                    "#active-list-table" : ("calendar-entry-table." + openSection)) + ">section";
+            var containerSelector = "section." + openSection;
             var entrySelector = "md-item[" + attrName + "='" + identifier + "']";
             console.log(containerSelector, entrySelector);
             $(containerSelector).animate({
@@ -909,12 +911,25 @@ calendarModule.directive('calendarEntryTable', function() {
             year: '=',
             calEntries: '=calEntries',
             getCalBillNumUrl: '&',
-            highlightValue: "="
+            highlightValue: "=",
+            sectionType: "@"
         },
         templateUrl: ctxPath + '/partial/content/calendar/calendar-entry-table',
         controller: function($scope) {
             $scope.billPageBaseUrl = ctxPath + '/bills';
             $scope.getCalBillNumUrl = $scope.getCalBillNumUrl();
+            $scope.listingLimit = 20;
+
+            $scope.keepScrolling = function() {
+                $scope.listingLimit += 10;
+            };
+
+            $scope.$on('billScrollEvent', function (sectionType) {
+                if ($scope.sectionType == sectionType) {
+                    $scope.listingLimit = 99999;
+                    console.log("buffed listing limit of", $scope.sectionType);
+                }
+            });
         }
     };
 });

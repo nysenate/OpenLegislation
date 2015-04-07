@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class CheckMailService {
+public class CheckMailService
+{
     private static final Logger logger = LoggerFactory.getLogger(CheckMailService.class);
 
     @Autowired
