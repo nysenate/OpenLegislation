@@ -46,7 +46,7 @@
                 <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
                        ng-model="lawSearch.term" ng-model-options="{debounce: 300}" ng-change="simpleSearch(true)">
               </md-input-container>
-              <div ng-if="curr.searching" class="loading-pulse">
+              <div ng-if="lawSearch.searching" class="loading-pulse">
                 Searching laws...
               </div>
             </md-content>

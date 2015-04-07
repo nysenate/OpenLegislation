@@ -121,6 +121,7 @@ lawModule.controller('LawSearchCtrl', ['$scope', '$location', '$routeParams', 'L
 
     $scope.lawSearch = {
         term: $routeParams.search || '',
+        searching: false,
         searched: false,
         response: null,
         error: null,
@@ -141,17 +142,22 @@ lawModule.controller('LawSearchCtrl', ['$scope', '$location', '$routeParams', 'L
                 $scope.pagination.reset();
             }
             $scope.lawSearch.searched = false;
+            $scope.lawSearch.searching = true;
             $scope.lawSearch.response = LawFullSearchApi.get(
                 {term: term, limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()},
                 function() {
-                    $scope.lawSearch.results = $scope.lawSearch.response.result.items;
+                    if ($scope.lawSearch.response.result) {
+                        $scope.lawSearch.results = $scope.lawSearch.response.result.items;
+                        safeHighlights($scope.lawSearch.results);
+                    }
                     $scope.pagination.setTotalItems($scope.lawSearch.response.total);
-                    safeHighlights($scope.lawSearch.results);
                     $scope.lawSearch.searched = true;
+                    $scope.lawSearch.searching = false;
                 },
                 function() {
                     $scope.lawSearch.error = $scope.lawSearch.response;
                     $scope.lawSearch.searched = true;
+                    $scope.lawSearch.searching = false;
                 });
         }
     };
