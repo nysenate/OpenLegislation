@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class CheckMailService {
-    private static final Logger logger = LoggerFactory.getLogger(CheckMailService.class);
+public class DaybreakCheckMailService {
+    private static final Logger logger = LoggerFactory.getLogger(DaybreakCheckMailService.class);
 
     @Autowired
     Environment environment;
