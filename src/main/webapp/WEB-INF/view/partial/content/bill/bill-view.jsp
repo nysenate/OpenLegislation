@@ -97,7 +97,92 @@
                 </md-list>
               </md-content>
             </md-card>
-            <%-- Votes --%>
+            <%-- Veto Messages --%>
+            <md-card class="content-card" ng-if="bill.vetoMessages.size > 0">
+              <md-subheader>Veto Message From Governor</md-subheader>
+              <md-content ng-repeat="veto in bill.vetoMessages.items">
+                <span class="text-medium">Veto #{{veto.vetoNumber}} for Year {{veto.year}}</span>
+                <md-divider></md-divider>
+                <pre class="bill-full-text">{{veto.memoText}}</pre>
+              </md-content>
+            </md-card>
+            <%-- Approval Message --%>
+            <md-card class="content-card" ng-if="bill.approvalMessage">
+              <md-subheader>Approval Message From Governor</md-subheader>
+              <md-content>
+              <span class="text-medium">
+                Approval #{{bill.approvalMessage.approvalNumber}} for Year {{bill.approvalMessage.year}} - Chapter {{bill.approvalMessage.chapter}}
+              </span>
+                <md-divider></md-divider>
+                <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
+              </md-content>
+            </md-card>
+            <%-- Co/Multi --%>
+            <md-card layout="row" layout-sm="column" layout-align="start start" class="content-card"
+                     ng-if="bill.amendments.items[curr.amdVersion].coSponsors.size > 0 ||
+                        bill.amendments.items[curr.amdVersion].multiSponsors.size > 0">
+              <%-- Co-Prime Sponsor --%>
+              <section flex style="width:100%" ng-if="bill.additionalSponsors.size > 0">
+                <md-subheader>{{bill.additionalSponsors.size}} Co-Prime Sponsor(s)</md-subheader>
+                <md-divider/>
+                <md-content style="max-height: 200px;" class="padding-10">
+                  <md-list>
+                    <md-item ng-repeat="coPrimeSponsor in bill.additionalSponsors.items">
+                      <md-item-content>
+                        <div class="md-tile-left">
+                          <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{coPrimeSponsor.imgName}}"
+                               style="height:60px;width:45px;"/>
+                        </div>
+                        <div class="md-tile-content">
+                          <span class="text-medium">{{coPrimeSponsor.fullName}} - District {{coPrimeSponsor.districtCode}}</span>
+                        </div>
+                      </md-item-content>
+                    </md-item>
+                  </md-list>
+                </md-content>
+              </section>
+              <%-- Co Sponsor --%>
+              <section flex style="width:100%" ng-if="bill.amendments.items[curr.amdVersion].coSponsors.size > 0">
+                <md-subheader>{{bill.amendments.items[curr.amdVersion].coSponsors.size}} Co Sponsor(s)</md-subheader>
+                <md-divider/>
+                <md-content style="max-height: 200px;" class="padding-10">
+                  <md-list>
+                    <md-item ng-repeat="coSponsor in bill.amendments.items[curr.amdVersion].coSponsors.items">
+                      <md-item-content>
+                        <div class="md-tile-left">
+                          <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{coSponsor.imgName}}"
+                               style="height:60px;width:45px;"/>
+                        </div>
+                        <div class="md-tile-content">
+                          <span class="text-medium">{{coSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
+                        </div>
+                      </md-item-content>
+                    </md-item>
+                  </md-list>
+                </md-content>
+              </section>
+              <%-- Multi Sponsor --%>
+              <section flex style="width:100%" ng-if="bill.amendments.items[curr.amdVersion].multiSponsors.size > 0">
+                <md-subheader>{{bill.amendments.items[curr.amdVersion].multiSponsors.size}} Multi Sponsor(s)</md-subheader>
+                <md-divider/>
+                <md-content style="max-height: 200px;" class="padding-10">
+                  <md-list>
+                    <md-item ng-repeat="multiSponsor in bill.amendments.items[curr.amdVersion].multiSponsors.items">
+                      <md-item-content>
+                        <div class="md-tile-left">
+                          <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{multiSponsor.imgName}}"
+                               style="height: 60px;width:45px;"/>
+                        </div>
+                        <div class="md-tile-content">
+                          <span class="text-medium">{{multiSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
+                        </div>
+                      </md-item-content>
+                    </md-item>
+                  </md-list>
+                </md-content>
+              </section>
+            </md-card>
+           <%-- Votes --%>
             <md-card class="content-card" ng-if="bill.votes.size > 0">
               <md-subheader>Committee/Floor Votes</md-subheader>
               <md-content>
@@ -153,73 +238,7 @@
                 </section>
               </md-content>
             </md-card>
-            <%-- Veto Messages --%>
-            <md-card class="content-card" ng-if="bill.vetoMessages.size > 0">
-              <md-subheader>Veto Message From Governor</md-subheader>
-              <md-content ng-repeat="veto in bill.vetoMessages.items">
-                <span class="text-medium">Veto #{{veto.vetoNumber}} for Year {{veto.year}}</span>
-                <md-divider></md-divider>
-                <pre class="bill-full-text">{{veto.memoText}}</pre>
-              </md-content>
-            </md-card>
-            <%-- Approval Message --%>
-            <md-card class="content-card" ng-if="bill.approvalMessage">
-              <md-subheader>Approval Message From Governor</md-subheader>
-              <md-content>
-              <span class="text-medium">
-                Approval #{{bill.approvalMessage.approvalNumber}} for Year {{bill.approvalMessage.year}} - Chapter {{bill.approvalMessage.chapter}}
-              </span>
-                <md-divider></md-divider>
-                <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
-              </md-content>
-            </md-card>
-            <%-- Co/Multi --%>
-            <md-card layout="row" layout-sm="column" layout-align="start start" class="content-card"
-                     ng-if="bill.amendments.items[curr.amdVersion].coSponsors.size > 0 ||
-                        bill.amendments.items[curr.amdVersion].multiSponsors.size > 0">
-              <%-- Co Sponsor --%>
-              <section flex style="width:100%" ng-if="bill.amendments.items[curr.amdVersion].coSponsors.size > 0">
-                <md-subheader>{{bill.amendments.items[curr.amdVersion].coSponsors.size}} Co Sponsor(s)</md-subheader>
-                <md-divider/>
-                <md-content style="max-height: 200px;" class="padding-10">
-                  <md-list>
-                    <md-item ng-repeat="coSponsor in bill.amendments.items[curr.amdVersion].coSponsors.items">
-                      <md-item-content>
-                        <div class="md-tile-left">
-                          <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{coSponsor.imgName}}"
-                               style="height:60px;width:45px;"/>
-                        </div>
-                        <div class="md-tile-content">
-                          <span class="text-medium">{{coSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
-                        </div>
-                      </md-item-content>
-                    </md-item>
-                  </md-list>
-                </md-content>
-              </section>
-              <%-- Multi Sponsor --%>
-              <section flex style="width:100%" ng-if="bill.amendments.items[curr.amdVersion].multiSponsors.size > 0">
-                <md-subheader>{{bill.amendments.items[curr.amdVersion].multiSponsors.size}} Multi Sponsor(s)</md-subheader>
-                <md-divider/>
-                <md-content style="max-height: 200px;" class="padding-10">
-                  <md-list>
-                    <md-item ng-repeat="multiSponsor in bill.amendments.items[curr.amdVersion].multiSponsors.items">
-                      <md-item-content>
-                        <div class="md-tile-left">
-                          <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{multiSponsor.imgName}}"
-                               style="height: 60px;width:45px;"/>
-                        </div>
-                        <div class="md-tile-content">
-                          <span class="text-medium">{{multiSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
-                        </div>
-                      </md-item-content>
-                    </md-item>
-                  </md-list>
-                </md-content>
-              </section>
-            </md-card>
-
-            <%-- Enacting Clause --%>
+          <%-- Enacting Clause --%>
             <md-card class="content-card" ng-if="!bill.billType.resolution">
               <md-subheader>Enacting Clause</md-subheader>
               <md-content>
