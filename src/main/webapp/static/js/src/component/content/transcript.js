@@ -1,7 +1,11 @@
 var transcriptModule = angular.module('open.transcript', ['open.core']);
 
-transcriptModule.factory('SessionTranscriptListingApi', ['$resource', function($resource) {
-    return $resource(apiPath + "/transcripts?summary=true&limit=15", {
+transcriptModule.factory('SessionListingApi', ['$resource', function($resource) {
+    return $resource(apiPath + "/transcripts/:year?summary=true&limit=:limit&offset=:offset&sort=:sort", {
+        year: '@year',
+        limit: '@limit',
+        offset: '@offset',
+        sort: 'dateTime:desc'
     });
 }]);
 
@@ -12,7 +16,11 @@ transcriptModule.factory('SessionTranscriptDetailsApi', ['$resource', function($
 }]);
 
 transcriptModule.factory('PublicHearingListingApi', ['$resource', function($resource) {
-    return $resource(apiPath + "/hearings?full=true&limit=15", {
+    return $resource(apiPath + "/hearings/:year?full=true&limit=:limit&offset=:offset&sort=:soft", {
+        year: '@year',
+        limit: '@limit',
+        offset: '@offset',
+        sort: 'date:desc'
     });
 }]);
 
@@ -40,9 +48,121 @@ transcriptModule.factory('PublicHearingSearchApi', ['$resource', function ($reso
 
 /** --- Transcript Controllers --- */
 
-transcriptModule.controller('TranscriptListingCtrl', ['$scope', '$routeParams', '$sce', '$location', 'PaginationModel',
-    'SessionTranscriptListingApi', 'PublicHearingListingApi', 'TranscriptSearchApi', 'PublicHearingSearchApi',
-    function($scope, $routeParams, $sce, $location, PaginationModel, SessionTranscriptListingApi, PublicHearingListingApi,
+transcriptModule.controller('TranscriptCtrl', ['$scope', '$routeParams', function($scope, $routeParams) {
+
+    $scope.view = 0;
+
+    $scope.init = function() {
+        $scope.setHeaderVisible(true);
+        $scope.setHeaderText("Transcripts");
+    };
+
+    $scope.init();
+}]);
+
+transcriptModule.controller('TranscriptBrowseCtrl', ['$scope', '$routeParams', '$location', 'PaginationModel',
+    'SessionListingApi', 'PublicHearingListingApi',
+    function($scope, $routeParams, $location, PaginationModel, SessionListingApi, PublicHearingListingApi) {
+
+        $scope.years = [2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004, 2003,
+            2002, 2001, 2000, 1999, 1998, 1997, 1996, 1995, 1994, 1993];
+
+        $scope.selectedYear = $scope.years[0];
+
+        $scope.checkbox = 1; // 1 = session selected, 2 = hearing selected
+
+        $scope.hearing = {
+            results: [],
+            paginate: angular.extend({}, PaginationModel)
+        };
+
+        $scope.session = {
+            results: [],
+            paginate: angular.extend({}, PaginationModel)
+        };
+
+        $scope.filterResults = function() {
+            if (sessionIsSelected()) {
+                $scope.fetchSessions();
+            }
+            if (hearingIsSelected()) {
+                $scope.fetchHearings();
+            }
+        };
+
+        $scope.fetchSessions = function() {
+            $scope.sessionResponse = SessionListingApi.get(
+                {
+                    year: $scope.selectedYear,
+                    limit: $scope.session.paginate.getLimit(),
+                    offset: $scope.session.paginate.getOffset()
+                },
+                function() {
+                    if ($scope.sessionResponse && $scope.sessionResponse.success) {
+                        $scope.session.results = $scope.sessionResponse.result.items || [];
+                        $scope.session.paginate.setTotalItems($scope.sessionResponse.total);
+                    }
+                    else {
+                        $scope.session.results = [];
+                    }
+                }
+            )
+        };
+
+        $scope.fetchHearings = function() {
+            $scope.hearingResponse = PublicHearingListingApi.get(
+                {
+                    year: $scope.selectedYear,
+                    limit: $scope.hearing.paginate.getLimit(),
+                    offset: $scope.hearing.paginate.getOffset()
+                },
+                function() {
+                    if ($scope.hearingResponse && $scope.hearingResponse.success) {
+                        $scope.hearing.results = $scope.hearingResponse.result.items || [];
+                        $scope.hearing.paginate.setTotalItems($scope.hearingResponse.total);
+                    }
+                    else {
+                        $scope.hearing.results = [];
+                    }
+                }
+            )
+        };
+
+        $scope.changePage = function(newPageNumber) {
+            if (sessionIsSelected()) {
+                $scope.session.paginate.currPage = newPageNumber;
+            }
+            if (hearingIsSelected()) {
+                $scope.hearing.paginate.currPage = newPageNumber
+            }
+            $scope.filterResults();
+        };
+
+        $scope.$watch('selectedYear', function() {
+            $scope.filterResults();
+        });
+
+        $scope.init = function() {
+            $scope.session.paginate.itemsPerPage = 20;
+            $scope.hearing.paginate.itemsPerPage = 20;
+
+            $scope.fetchSessions();
+        };
+
+        $scope.init();
+
+        var sessionIsSelected = function() {
+            return $scope.checkbox == 1;
+        };
+
+        var hearingIsSelected = function() {
+            return $scope.checkbox == 2;
+        };
+}]);
+
+transcriptModule.controller('TranscriptSearchCtrl', ['$scope', '$routeParams', '$sce', '$location', 'PaginationModel',
+    'TranscriptSearchApi', 'PublicHearingSearchApi',
+    function($scope, $routeParams, $sce, $location, PaginationModel,
              TranscriptSearchApi, PublicHearingSearchApi) {
 
         /* --- Session Transcript Search --- */
@@ -56,10 +176,9 @@ transcriptModule.controller('TranscriptListingCtrl', ['$scope', '$routeParams', 
         };
 
         $scope.searchTranscripts = function(resetPagination) {
+            $scope.test = "Start Search";
             if (resetPagination) {
                 $scope.transcriptSearch.paginate.reset();
-                $scope.currentPage.sessionSearchPage = 1;
-                $scope.setSearchPage($scope.currentPage.sessionSearchPage);
             }
             $scope.transcriptSearch.response = TranscriptSearchApi.get({
                     term: $scope.transcriptSearch.term,
@@ -102,8 +221,6 @@ transcriptModule.controller('TranscriptListingCtrl', ['$scope', '$routeParams', 
         $scope.searchHearings = function(resetPagination) {
             if (resetPagination) {
                 $scope.hearingSearch.paginate.reset();
-                $scope.currentPage.hearingSearchPage = 1;
-                $scope.setSearchPage($scope.currentPage.hearingSearchPage);
             }
             $scope.hearingSearch.response = PublicHearingSearchApi.get({
                     term: $scope.hearingSearch.term,
@@ -134,133 +251,17 @@ transcriptModule.controller('TranscriptListingCtrl', ['$scope', '$routeParams', 
                 })
         };
 
-        /* --- Url Parameters --- */
-
-        var views = ["browse", "search"];
-        var categories = ["session", "hearing"];
-
-        $scope.currentPage = {
-            viewIndex: parseInt($routeParams.view, 10) || 0,
-            categoryIndex: parseInt($routeParams.category, 10) || 0,
-            sessionSearchPage: 1, // Currently viewed search page for session search.
-            hearingSearchPage: 1 // Currently viewed search page for hearing search.
-        };
-
-        $scope.changePage = function(newPageNumber) {
-            if ($location.search().category == "session") {
-                $scope.currentPage.sessionSearchPage = newPageNumber;
-            }
-            else if ($location.search().category == "hearing") {
-                $scope.currentPage.hearingSearchPage = newPageNumber;
-            }
-            $scope.setSearchPage(newPageNumber);
-        };
-
-        // Manually reload page when back button used.
-        // Updates search results when paginating through results.
-        $scope.$on('$locationChangeSuccess', function() {
-            $scope.currentPage.viewIndex = views.indexOf($location.search().view || 0);
-            $scope.currentPage.categoryIndex = categories.indexOf($location.search().category || 0);
-
-            if (viewingSearchTab()) {
-                if (viewingSessionTab()) {
-                    $scope.currentPage.sessionSearchPage = $location.search().searchPage;
-                    $scope.transcriptSearch.paginate.currPage = $scope.currentPage.sessionSearchPage;
-                    $scope.searchTranscripts(false);
-                }
-                else if (viewingHearingTab()) {
-                    $scope.currentPage.hearingSearchPage = $location.search().searchPage;
-                    $scope.hearingSearch.paginate.currPage = $scope.currentPage.hearingSearchPage;
-                    $scope.searchHearings(false);
-                }
-            }
-            else {
-                $location.search('searchPage', null);
-            }
-        });
-
-        /* --- Update url params when switching views. --- */
-        $scope.$watch('currentPage.viewIndex', function() {
-            $location.search('view', viewIndexToString());
-            if (viewIndexToString() != "search") {
-                $location.search('searchPage', null);
-            }
-            else if (viewIndexToString() == "search") {
-                $scope.updateSearchTabParams(viewIndexToString());
-            }
-        });
-
-        /* --- Update url params when switching categories. --- */
-        $scope.$watch('currentPage.categoryIndex', function() {
-            $location.search('category', categories[$scope.currentPage.categoryIndex]);
-            $scope.updateSearchTabParams(viewIndexToString());
-        });
-
-        $scope.setSearchPage = function(pageNum) {
-          $location.search('searchPage', pageNum);
-        };
-
-        /* --- Internal Methods --- */
-
-        // Update the searchPage url parameter depending on the page being viewed.
-        $scope.updateSearchTabParams = function(category) {
-            if (category == "search") {
-                if (categories[$scope.currentPage.categoryIndex] == "session") {
-                    $location.search('searchPage', $scope.currentPage.sessionSearchPage);
-                }
-                else {
-                    $location.search('searchPage', $scope.currentPage.hearingSearchPage);
-                }
-            }
-        };
-
-        var viewingSearchTab = function () {
-            return $scope.currentPage.viewIndex == views.indexOf("search");
-        };
-
-        var viewingSessionTab = function () {
-            return $scope.currentPage.categoryIndex == categories.indexOf("session");
-        };
-
-        var viewingHearingTab = function () {
-            return $scope.currentPage.categoryIndex == categories.indexOf("hearing");
-        };
-
-        var viewIndexToString = function () {
-            return views[$scope.currentPage.viewIndex];
-        };
-
-        var categoryParamIndex = function () {
-            return categories.indexOf($location.search().category);
-        };
-
-        var viewParamIndex = function () {
-            return views.indexOf($location.search().view);
-        };
-
         /* --- Initialization --- */
 
         $scope.init = function() {
             $scope.setHeaderVisible(true);
             $scope.setHeaderText("Transcripts");
-            $scope.currentPage.viewIndex =  viewParamIndex();
-            $scope.currentPage.categoryIndex = categoryParamIndex();
-
-            if (!$scope.transcriptListingResponse || !$scope.transcriptListingResponse.success) {
-                $scope.transcriptListingResponse = SessionTranscriptListingApi.get({}, function () {
-                    $scope.transcriptListing = $scope.transcriptListingResponse.result.items;
-                })
-            }
-            if (!$scope.publicHearingListingResponse || !$scope.publicHearingListingResponse.success) {
-                $scope.publicHearingListingResponse = PublicHearingListingApi.get({}, function () {
-                    $scope.publicHearingListing = $scope.publicHearingListingResponse.result.items;
-                })
-            }
             $scope.searchTranscripts(false);
         };
         $scope.init();
     }
 ]);
+
 
 transcriptModule.controller('SessionTranscriptViewCtrl', ['$scope', '$routeParams', '$location', '$filter', 'SessionTranscriptDetailsApi',
     function($scope, $routeParams, $location, $filter, SessionTranscriptDetailsApi) {
