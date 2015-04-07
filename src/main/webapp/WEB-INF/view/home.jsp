@@ -45,20 +45,21 @@
         <md-sidenav id="left-nav" class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
           <div id="logo-wrapper">
             <div id="logo">
-              <a class="margin-left-10 gray2" href="${ctxPath}/">
-                <img src="${ctxPath}/static/img/NYSS_seal_transp.png"/>
-                Open Legislation
+              <a class="margin-left-10" href="${ctxPath}/">
+                <img src="${ctxPath}/static/img/NYSS_seal.png"/>
+                <span>Open</span> Legislation
               </a>
+              <span class="beta-tag">2.0 BETA</span>
             </div>
           </div>
           <%-- Left Nav Menu Items --%>
           <div class="left-nav-menu">
             <material-menu>
               <menu-section title="Main Menu">
-                <menu-item url="${ctxPath}/" icon="icon-house">Home</menu-item>
+                <menu-item url="${ctxPath}/" icon="icon-home">Home</menu-item>
                 <menu-item url="${ctxPath}/calendars" icon="icon-calendar">Senate Calendars</menu-item>
                 <menu-item url="${ctxPath}/agendas" icon="icon-megaphone">Senate Agendas / Meetings</menu-item>
-                <menu-item url="${ctxPath}/bills" icon="icon-docs">Bills and Resolutions</menu-item>
+                <menu-item url="${ctxPath}/bills" icon="icon-documents">Bills and Resolutions</menu-item>
                 <menu-item url="${ctxPath}/laws" icon="icon-bookmarks">New York State Laws</menu-item>
                 <menu-item url="${ctxPath}/members" icon="icon-users">Senate / Assembly Membership</menu-item>
                 <menu-item url="${ctxPath}/transcripts" icon="icon-text">Floor/Hearing Transcripts</menu-item>
@@ -84,7 +85,7 @@
         <%-- Content Header --%>
         <md-toolbar id="content-header" class="md-primary" ng-class="{'header-visible': header.visible }">
           <h1 class="top-bar-heading md-toolbar-tools">
-            <i hide-gt-md ng-click="toggleLeftNav()" class="menu-icon icon-list2"></i>
+            <i hide-gt-md ng-click="toggleLeftNav()" class="menu-icon icon-menu"></i>
             {{header.text}}
           </h1>
         </md-toolbar>

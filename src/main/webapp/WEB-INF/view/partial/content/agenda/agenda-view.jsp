@@ -42,69 +42,77 @@
                           ng-repeat="comm in agenda.committeeAgendas.items"
                           open="{{selectedComm[comm.committeeId.name.toLowerCase()]}}">
               <section ng-repeat="addn in comm.addenda.items">
-                <p class="bold text-medium text-align-center padding-10 blue1 no-bottom-margin">
+                <p class="bold padding-10 blue1 no-bottom-margin">
                   <span ng-if="addn.addendumId === ''">Initial&nbsp;</span>Addendum {{addn.addendumId}}
                 </p>
-                <div layout="row" layout-sm="column">
-                  <md-card flex class="content-card no-margin">
-                    <md-subheader>Meeting Information</md-subheader>
-                    <md-card-content class="text-medium">
-                      <p><strong>Meeting Date/Time:</strong> {{addn.meeting.meetingDateTime | moment:'MMM D, YYYY h:mm A'}}</p>
-                      <p><strong>Location:</strong> {{addn.meeting.location}}</p>
-                      <p><strong>Chair:</strong> {{addn.meeting.chair}}</p>
-                      <p><strong>Notes:</strong> <pre style="white-space: pre-line">{{addn.meeting.notes}}</pre></p>
-                    </md-card-content>
-                  </md-card>
-                  <md-card flex ng-if="addn.hasVotes && addn.voteInfo.attendanceList.items" class="content-card no-margin">
-                    <md-subheader>Voting Attendance ({{addn.voteInfo.attendanceList.size}})</md-subheader>
-                    <md-content class="text-medium" style="max-height:250px;">
+                <md-divider></md-divider>
+                <section class="padding-20">
+                  <div layout="row" layout-sm="column">
+                    <md-card flex class="content-card no-margin">
+                      <md-subheader>Meeting Information</md-subheader>
+                      <md-card-content class="text-medium">
+                        <p><strong>Meeting Date/Time:</strong> {{addn.meeting.meetingDateTime | moment:'MMM D, YYYY h:mm A'}}</p>
+                        <p><strong>Location:</strong> {{addn.meeting.location}}</p>
+                        <p><strong>Chair:</strong> {{addn.meeting.chair}}</p>
+                        <p><strong>Notes:</strong> <pre style="white-space: pre-line">{{addn.meeting.notes}}</pre></p>
+                      </md-card-content>
+                    </md-card>
+                    <md-card flex ng-if="addn.hasVotes && addn.voteInfo.attendanceList.items" class="content-card no-margin">
+                      <md-subheader>Voting Attendance ({{addn.voteInfo.attendanceList.size}})</md-subheader>
+                      <md-content class="text-medium" style="max-height:250px;">
+                        <md-list>
+                          <md-item ng-repeat="senator in addn.voteInfo.attendanceList.items">
+                            <md-item-content>
+                              <div style="width:20px" class="margin-right-10">{{senator.rank}}</div>
+                              <div>
+                                <img style="max-height:50px;width:auto;"
+                                     ng-src="${ctxPath}/static/img/business_assets/members/mini/{{senator.member.imgName}}"/>
+                              </div>
+                              <div class="md-tile-content" style="padding:10px;">
+                                {{senator.member.fullName}} ({{senator.party}}) - {{senator.attend}}
+                              </div>
+                            </md-item-content>
+                          </md-item>
+                        </md-list>
+                      </md-content>
+                    </md-card>
+                  </div>
+                  <toggle-panel class="margin-top-10 no-margin content-card" ng-if="addn.bills.size > 0" open="false"
+                                class="content-card no-margin" label="Bills added to the Agenda ({{addn.bills.size}})">
+                    <md-content style="max-height:500px;">
                       <md-list>
-                        <md-item ng-repeat="senator in addn.voteInfo.attendanceList.items">
-                          <md-item-content>
-                            <div style="width:20px" class="margin-right-10">{{senator.rank}}</div>
-                            <div>
-                              <img style="max-height:50px;width:auto;"
-                                   ng-src="${ctxPath}/static/img/business_assets/members/mini/{{senator.member.imgName}}"/>
-                            </div>
-                            <div class="md-tile-content" style="padding:10px;">
-                              {{senator.member.fullName}} ({{senator.party}}) - {{senator.attend}}
-                            </div>
-                          </md-item-content>
-                        </md-item>
+                        <a id="{{bill.billId.basePrintNo}}-{{bill.billId.session}}" class="result-link"
+                           ng-repeat="bill in addn.bills.items"
+                           ng-href="${ctxPath}/bills/{{bill.billId.session}}/{{bill.billId.basePrintNo}}">
+                          <md-item>
+                            <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
+                              <div style="width:180px;padding:16px;">
+                                <h3 class="no-margin"><span>{{bill.billId.printNo}}</span> - {{bill.billId.session}}</h3>
+                                <h5 class="no-margin">{{bill.billInfo.sponsor.member.fullName}}</h5>
+                                <h5 ng-show="bill.message" class="no-margin green2"><i class="icon-forward prefix-icon2"></i>{{bill.message}}</h5>
+                              </div>
+                              <div flex class="md-tile-content">
+                                <h4><span class="text-small">{{bill.billInfo.title}}</span></h4>
+                              </div>
+                              <div flex class="md-tile-content" ng-if="addn.hasVotes" ng-init="billVote = votes[bill.billId.basePrintNo]">
+                                <h5 ng-if="billVote.amended">Amended</h5>
+                                <h4 ng-show="billVote.vote.memberVotes.size > 0">
+                                  Votes:
+                                  <span class="text-small blue4 no-margin" ng-repeat="(type, vote) in billVote.vote.memberVotes.items">
+                                    {{type}} ({{vote.size}})
+                                  </span>
+                                </h4>
+                                <h4 ng-show="billVote.action" class="no-margin">Action: {{billVote.action | agendaActionFilter}}</h4>
+                                <h5 ng-hide="billVote" class="no-margin">No Vote Taken On Bill</h5>
+                              </div>
+                            </md-item-content>
+                          </md-item>
+                        </a>
                       </md-list>
                     </md-content>
-                  </md-card>
-                </div>
-                <toggle-panel class="content-card no-margin" label="Bills added to the Agenda ({{addn.bills.size}})" open="false">
-                  <md-content style="max-height:500px;">
-                    <md-list>
-                      <a id="{{bill.billId.basePrintNo}}-{{bill.billId.session}}" class="result-link" ng-repeat="bill in addn.bills.items"
-                         ng-href="${ctxPath}/bills/{{bill.billId.session}}/{{bill.billId.basePrintNo}}">
-                        <md-item>
-                          <md-item-content layout-sm="column" layout-align-sm="center start" style="cursor: pointer;">
-                            <div style="width:200px;padding:16px;">
-                              <h3 class="no-margin"><span>{{bill.billId.printNo}}</span> - {{bill.billId.session}}</h3>
-                              <h5 class="no-margin">{{bill.billInfo.sponsor.member.fullName}}</h5>
-                              <h5 ng-show="bill.message" class="no-margin green2"><i class="icon-forward prefix-icon2"></i>{{bill.message}}</h5>
-                            </div>
-                            <div flex class="md-tile-content">
-                              <h4><span class="text-medium">{{bill.billInfo.title}}</span></h4>
-                            </div>
-                            <div flex class="md-tile-content" ng-if="addn.hasVotes" ng-init="billVote = votes[bill.billId.basePrintNo]">
-                              <h5 ng-if="billVote.amended">Amended</h5>
-                              <h4 ng-show="billVote.vote.memberVotes.size > 0">Votes: <span class="text-medium no-margin" ng-repeat="(type, vote) in billVote.vote.memberVotes.items">
-                                  {{type}} ({{vote.size}})
-                              </span></h4>
-                              <h5 ng-show="billVote.action" class="no-margin">Action: {{billVote.action | agendaActionFilter}}</h5>
-                              <h5 ng-hide="billVote" class="no-margin">No Vote Taken On Bill</h5>
-                            </div>
-                          </md-item-content>
-                        </md-item>
-                      </a>
-                    </md-list>
-                  </md-content>
-                </toggle-panel>
-              </section>
+                  </toggle-panel>
+                </section>
+                </section>
             </toggle-panel>
           </section>
         </md-tab>

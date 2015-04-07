@@ -1,15 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
-<section ng-controller="MemberCtrl">
-
-  <md-tabs md-selected="selectedView" class="md-primary">
+<section class="content-section" ng-controller="MemberCtrl">
+  <md-tabs md-selected="selectedView" class="md-primary" md-no-bar>
     <md-tab>
       <md-tab-label>
         <i class="icon-archive prefix-icon2"></i>
         Browse
       </md-tab-label>
       <section ng-if="selectedView === 0" ng-controller="MemberBrowseCtrl">
-        <md-toolbar class="md-toolbar-tools">
+        <md-toolbar class="md-toolbar-tools md-hue-2">
           <span layout="row" layout-sm="column">
             <md-checkbox ng-model="memberBrowse.senateSelected" style="padding-top: 6px;"
                          ng-change="filterMembers()"
@@ -29,12 +27,12 @@
             </md-select>
           </span>
         </md-toolbar>
-        <md-card>
+        <md-card class="content-card">
           <md-content class="md-padding">
             <form name="filterForum">
               <md-input-container class="md-primary">
                 <label for="filterMembers">
-                  <i class="icon-search prefix-icon2"></i>
+                  <i class="icon-funnel prefix-icon2"></i>
                   Filter Members
                 </label>
                 <input ng-model="memberBrowse.filter" ng-model-options="{debounce: 300}" ng-change="filterMembers()" id="filterMembers">
@@ -67,7 +65,7 @@
     </md-tab>
     <md-tab>
       <md-tab-label>
-        <i class="icon-search prefix-icon2"></i>
+        <i class="icon-magnifying-glass prefix-icon2"></i>
         Search
       </md-tab-label>
       <section ng-if="selectedView === 1" ng-controller="MemberSearchCtrl">
@@ -76,7 +74,7 @@
             <form name = searchForm>
               <md-input-container class="md-primary">
                 <label for="memberSearch">
-                  <i class="icon-search prefix-icon2"></i>
+                  <i class="icon-magnifying-glass prefix-icon2"></i>
                   Search Members
                 </label>
                 <input ng-model="memberSearch.term" ng-model-options="{debounce: 300}" ng-change="searchMembers(true)" id="memberSearch">

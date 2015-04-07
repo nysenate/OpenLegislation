@@ -31,7 +31,7 @@
     OpenLegislation continuously to collate and re-distribute the data using a REST API to various end-points including
     the <a href="http://www.nysenate.gov" class="slogan-link">nysenate.gov site.</a> </h4>
   </section>
-  <section class="padding-20 margin-20 white" style="background:rgb(116, 156, 77);">
+  <section class="padding-20 margin-20 white blue4-bg">
     <h2>Access NYS legislative data through a JSON API</h2>
       <section ng-hide="signedup">
           <h3><i class="icon-key prefix-icon2"></i>Sign up for a free API Key</h3>
@@ -64,8 +64,8 @@
       <a class="white" target="_blank" href="${ctxPath}/docs">View the JSON API Documentation</a>
     </h3>
   </section>
-  <section class="padding-20 margin-20" style="background:rgb(238, 238, 238);">
-    <h2 class="thin-300"><i class="icon-sharable prefix-icon2"></i>Built on Open Source</h2>
+  <section class="padding-20 margin-20 gray3-bg">
+    <h2 class="thin-300"><i class="icon-shareable prefix-icon2"></i>Built on Open Source</h2>
     <h3 class="thin-300">OpenLegislation is developed using several open-source packages and frameworks.
      Source code is <a class="slogan-link" href="http://www.github.com/nysenate/OpenLegislation">published on GitHub</a>.
      Feel free to open any tickets with issues you are having or contact the development team at senatedev@nysenate.gov.

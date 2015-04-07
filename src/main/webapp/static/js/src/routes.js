@@ -21,7 +21,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         /** --- Laws --- */
 
-        .when(ctxPath + '/laws', { templateUrl: ctxPath + '/partial/content/law/law-search' })
+        .when(ctxPath + '/laws', { templateUrl: ctxPath + '/partial/content/law/law-search', reloadOnSearch: false})
         .when(ctxPath + '/laws/:lawId', { templateUrl: ctxPath + '/partial/content/law/law-view', reloadOnSearch: false })
 
         /** --- Members --- */

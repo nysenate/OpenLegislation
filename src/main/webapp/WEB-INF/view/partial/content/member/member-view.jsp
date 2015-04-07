@@ -1,16 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
-<%--<section ng-controller="MemberSearchCtrl">--%>
-
-<section ng-controller="MemberViewCtrl">
-
-  <md-toolbar>
-    <div class="md-toolbar-tools">
-      New York State {{memberView.result.chamber | capitalize}}: {{memberView.result.sessionYear}}
-    </div>
-  </md-toolbar>
-
-  <md-card flex>
+<section class="content-section" ng-controller="MemberViewCtrl">
+  <md-card class="content-card" flex>
     <md-item>
       <md-item-content>
         <div style="width:180px;">
@@ -30,5 +20,5 @@
       </md-item-content>
     </md-item>
   </md-card>
+  <small>More coming soon..</small>
 </section>
-<%--</section>--%>

@@ -112,599 +112,619 @@
 
 /** --- Reset --- */
 /* line 10, ../../../WEB-INF/scss/app.scss */
-html, body { height: 100%; font-family: 'Open Sans', sans-serif; }
+html, body { font-family: 'Open Sans', sans-serif; background: #f5f5f5; }
 
 /* line 15, ../../../WEB-INF/scss/app.scss */
-table { border-spacing: 0; }
+body { height: 100%; }
+
 /* line 19, ../../../WEB-INF/scss/app.scss */
+table { border-spacing: 0; }
+/* line 23, ../../../WEB-INF/scss/app.scss */
 table thead tr th { border-bottom: 1px solid #ddd; }
 
-/* line 26, ../../../WEB-INF/scss/app.scss */
+/* line 30, ../../../WEB-INF/scss/app.scss */
 pre { font-family: 'Inconsolata', monospace; }
 
-/* line 30, ../../../WEB-INF/scss/app.scss */
+/* line 34, ../../../WEB-INF/scss/app.scss */
 select { background: white; border-color: #ddd; padding: 2px; }
 
 /** --- Angular Material --- */
-/* line 38, ../../../WEB-INF/scss/app.scss */
+/* line 42, ../../../WEB-INF/scss/app.scss */
 md-toolbar { min-height: 65px; }
-/* line 40, ../../../WEB-INF/scss/app.scss */
+/* line 44, ../../../WEB-INF/scss/app.scss */
 md-toolbar.auto-height { min-height: 0; height: auto; max-height: none; }
-/* line 45, ../../../WEB-INF/scss/app.scss */
+/* line 49, ../../../WEB-INF/scss/app.scss */
 md-toolbar.md-info-tools { min-height: 0; width: auto; padding: 10px; }
 
-/* line 52, ../../../WEB-INF/scss/app.scss */
+/* line 56, ../../../WEB-INF/scss/app.scss */
 .md-whiteframe-z0, md-card.content-card { -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); }
 
-/* line 57, ../../../WEB-INF/scss/app.scss */
+/* line 61, ../../../WEB-INF/scss/app.scss */
 md-card.content-card { padding: 0; margin: 10px 0; }
-/* line 62, ../../../WEB-INF/scss/app.scss */
+/* line 66, ../../../WEB-INF/scss/app.scss */
 md-card.content-card.no-margin { margin: 0; }
-/* line 65, ../../../WEB-INF/scss/app.scss */
-md-card.content-card .subheader { font-size: 0.9rem; padding: 10px; }
 /* line 69, ../../../WEB-INF/scss/app.scss */
+md-card.content-card .subheader { font-size: 0.9rem; padding: 10px; }
+/* line 73, ../../../WEB-INF/scss/app.scss */
 md-card.content-card .subheader, md-card.content-card .md-subheader { background: #fafafa; border-bottom: 1px solid #f1f1f1; color: #555; margin: 0; }
-/* line 75, ../../../WEB-INF/scss/app.scss */
+/* line 79, ../../../WEB-INF/scss/app.scss */
 md-card.content-card md-content { margin: 0; padding: 20px; }
 
-/* line 85, ../../../WEB-INF/scss/app.scss */
+/* line 89, ../../../WEB-INF/scss/app.scss */
 md-input-container.md-default-theme label { color: #607d8b; }
 
-/* line 92, ../../../WEB-INF/scss/app.scss */
+/* line 96, ../../../WEB-INF/scss/app.scss */
 md-tab.active md-tab-label { font-weight: bold; }
 
+/* line 103, ../../../WEB-INF/scss/app.scss */
+.md-tabs-content .md-tab-content.ng-animate { transition: none !important; }
+
+/** Fixes the tab pagination color when default theme is applied. */
+/* line 110, ../../../WEB-INF/scss/app.scss */
+md-tabs.md-default-theme .md-paginator md-icon { color: white; }
+
 /** --- Transitions --- */
-/* line 99, ../../../WEB-INF/scss/app.scss */
+/* line 116, ../../../WEB-INF/scss/app.scss */
 .fade { opacity: 1; }
 
-/* line 102, ../../../WEB-INF/scss/app.scss */
+/* line 119, ../../../WEB-INF/scss/app.scss */
 .fade.ng-enter, .fade.ng-leave { -webkit-transition: all 0.25s ease; -moz-transition: all 0.25s ease; -o-transition: all 0.25s ease; transition: all 0.25s ease; }
 
-/* line 105, ../../../WEB-INF/scss/app.scss */
+/* line 122, ../../../WEB-INF/scss/app.scss */
 .fade.ng-enter { opacity: 0; }
 
-/* line 108, ../../../WEB-INF/scss/app.scss */
+/* line 125, ../../../WEB-INF/scss/app.scss */
 .fade.ng-enter-active { opacity: 1; }
 
-/* line 111, ../../../WEB-INF/scss/app.scss */
+/* line 128, ../../../WEB-INF/scss/app.scss */
 .fade.fade-out.ng-leave { -webkit-transition: all 0.5s ease; -moz-transition: all 0.5s ease; -o-transition: all 0.5s ease; transition: all 0.5s ease; }
 
-/* line 114, ../../../WEB-INF/scss/app.scss */
+/* line 131, ../../../WEB-INF/scss/app.scss */
 .fade.ng-leave { opacity: 1; }
 
-/* line 117, ../../../WEB-INF/scss/app.scss */
+/* line 134, ../../../WEB-INF/scss/app.scss */
 .fade.ng-leave-active { opacity: 0; }
 
 /** --- Hacks --- */
-/* line 123, ../../../WEB-INF/scss/app.scss */
+/* line 140, ../../../WEB-INF/scss/app.scss */
 .noselect { -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
 
 /** --- Layout --- */
-/* line 134, ../../../WEB-INF/scss/app.scss */
+/* line 151, ../../../WEB-INF/scss/app.scss */
 #app-wrapper { background: #f5f5f5; }
 
-/* line 138, ../../../WEB-INF/scss/app.scss */
-#content-wrapper { max-width: 960px; margin: auto; }
-/* line 142, ../../../WEB-INF/scss/app.scss */
-#content-wrapper #content-header { min-height: 70px; font-size: 1.5rem; box-shadow: none; display: none; background: #f5f5f5; /* Content header should always be visible when there's no room for the left nav. */ }
-@media (max-width: 768px) { /* line 142, ../../../WEB-INF/scss/app.scss */
+/* line 156, ../../../WEB-INF/scss/app.scss */
+#content-wrapper #content-header { min-height: 70px; font-size: 1.5rem; box-shadow: none; display: none; margin-bottom: 20px; background: #165b81; /* Content header should always be visible when there's no room for the left nav. */ }
+@media (max-width: 768px) { /* line 156, ../../../WEB-INF/scss/app.scss */
   #content-wrapper #content-header { font-size: 1.1rem; } }
-/* line 151, ../../../WEB-INF/scss/app.scss */
-#content-wrapper #content-header h1 { color: #607d8b; }
-/* line 154, ../../../WEB-INF/scss/app.scss */
-#content-wrapper #content-header .md-toolbar-tools { height: 70px; max-height: 70px; }
-/* line 158, ../../../WEB-INF/scss/app.scss */
-#content-wrapper #content-header.header-visible { display: block; }
-@media (max-width: 959px) { /* line 142, ../../../WEB-INF/scss/app.scss */
-  #content-wrapper #content-header { display: block; } }
 /* line 166, ../../../WEB-INF/scss/app.scss */
+#content-wrapper #content-header h1 { color: white; }
+/* line 169, ../../../WEB-INF/scss/app.scss */
+#content-wrapper #content-header .md-toolbar-tools { height: 70px; max-height: 70px; }
+/* line 173, ../../../WEB-INF/scss/app.scss */
+#content-wrapper #content-header.header-visible { display: block; }
+@media (max-width: 959px) { /* line 156, ../../../WEB-INF/scss/app.scss */
+  #content-wrapper #content-header { display: block; } }
+/* line 181, ../../../WEB-INF/scss/app.scss */
 #content-wrapper #content { min-height: 100vh; }
-/* line 168, ../../../WEB-INF/scss/app.scss */
-#content-wrapper #content .content-section { padding: 0 10px 20px 10px; }
+/* line 183, ../../../WEB-INF/scss/app.scss */
+#content-wrapper #content .content-section { padding: 0 10px 20px 10px; max-width: 1100px; margin: auto; }
 
 /** --- Common Classes  --- */
-/* line 176, ../../../WEB-INF/scss/app.scss */
+/* line 193, ../../../WEB-INF/scss/app.scss */
 .text-xsmall { font-size: 0.7rem; }
 
-/* line 180, ../../../WEB-INF/scss/app.scss */
+/* line 197, ../../../WEB-INF/scss/app.scss */
 .text-small { font-size: 0.8rem; }
 
-/* line 184, ../../../WEB-INF/scss/app.scss */
+/* line 201, ../../../WEB-INF/scss/app.scss */
 .text-medium { font-size: 0.9rem; }
 
-/* line 188, ../../../WEB-INF/scss/app.scss */
+/* line 205, ../../../WEB-INF/scss/app.scss */
 .text-large { font-size: 1.1rem; }
 
-/* line 192, ../../../WEB-INF/scss/app.scss */
+/* line 209, ../../../WEB-INF/scss/app.scss */
 .text-align-center { text-align: center; }
 
-/* line 196, ../../../WEB-INF/scss/app.scss */
+/* line 213, ../../../WEB-INF/scss/app.scss */
 .text-align-right { text-align: right; }
 
-/* line 200, ../../../WEB-INF/scss/app.scss */
+/* line 217, ../../../WEB-INF/scss/app.scss */
 .bold { font-weight: 600 !important; }
 
-/* line 204, ../../../WEB-INF/scss/app.scss */
+/* line 221, ../../../WEB-INF/scss/app.scss */
 .thin-300 { font-weight: 300; }
 
-/* line 208, ../../../WEB-INF/scss/app.scss */
+/* line 225, ../../../WEB-INF/scss/app.scss */
+.tight-lines { line-height: 1.1em; }
+
+/* line 229, ../../../WEB-INF/scss/app.scss */
 .margin-top-20 { margin-top: 20px !important; }
 
-/* line 212, ../../../WEB-INF/scss/app.scss */
+/* line 233, ../../../WEB-INF/scss/app.scss */
 .margin-bottom-20 { margin-bottom: 20px !important; }
 
-/* line 216, ../../../WEB-INF/scss/app.scss */
+/* line 237, ../../../WEB-INF/scss/app.scss */
 .margin-top-10 { margin-top: 10px !important; }
 
-/* line 220, ../../../WEB-INF/scss/app.scss */
+/* line 241, ../../../WEB-INF/scss/app.scss */
 .margin-bottom-10 { margin-bottom: 10px !important; }
 
-/* line 224, ../../../WEB-INF/scss/app.scss */
+/* line 245, ../../../WEB-INF/scss/app.scss */
 .margin-5 { margin: 5px; }
 
-/* line 228, ../../../WEB-INF/scss/app.scss */
+/* line 249, ../../../WEB-INF/scss/app.scss */
 .margin-10 { margin: 10px; }
 
-/* line 232, ../../../WEB-INF/scss/app.scss */
+/* line 253, ../../../WEB-INF/scss/app.scss */
 .margin-20 { margin: 20px; }
 
-/* line 236, ../../../WEB-INF/scss/app.scss */
+/* line 257, ../../../WEB-INF/scss/app.scss */
 .margin-left-10 { margin-left: 10px; }
 
-/* line 240, ../../../WEB-INF/scss/app.scss */
+/* line 261, ../../../WEB-INF/scss/app.scss */
 .margin-left-16 { margin-left: 16px; }
 
-/* line 244, ../../../WEB-INF/scss/app.scss */
+/* line 265, ../../../WEB-INF/scss/app.scss */
 .margin-left-20 { margin-left: 20px; }
 
-/* line 248, ../../../WEB-INF/scss/app.scss */
+/* line 269, ../../../WEB-INF/scss/app.scss */
 .margin-right-10 { margin-right: 10px; }
 
-/* line 252, ../../../WEB-INF/scss/app.scss */
+/* line 273, ../../../WEB-INF/scss/app.scss */
 .margin-right-20 { margin-right: 20px; }
 
-/* line 256, ../../../WEB-INF/scss/app.scss */
+/* line 277, ../../../WEB-INF/scss/app.scss */
 .padding-5 { padding: 5px; }
 
-/* line 260, ../../../WEB-INF/scss/app.scss */
+/* line 281, ../../../WEB-INF/scss/app.scss */
 .padding-10 { padding: 10px; }
 
-/* line 264, ../../../WEB-INF/scss/app.scss */
+/* line 285, ../../../WEB-INF/scss/app.scss */
 .padding-16 { padding: 16px; }
 
-/* line 268, ../../../WEB-INF/scss/app.scss */
+/* line 289, ../../../WEB-INF/scss/app.scss */
 .padding-20 { padding: 20px; }
 
-/* line 272, ../../../WEB-INF/scss/app.scss */
+/* line 293, ../../../WEB-INF/scss/app.scss */
 .no-margin { margin: 0; }
 
-/* line 276, ../../../WEB-INF/scss/app.scss */
+/* line 297, ../../../WEB-INF/scss/app.scss */
 .no-padding { padding: 0; }
 
-/* line 280, ../../../WEB-INF/scss/app.scss */
+/* line 301, ../../../WEB-INF/scss/app.scss */
 .no-top-margin { margin-top: 0; }
 
-/* line 284, ../../../WEB-INF/scss/app.scss */
+/* line 305, ../../../WEB-INF/scss/app.scss */
 .no-bottom-margin { margin-bottom: 0; }
 
-/* line 288, ../../../WEB-INF/scss/app.scss */
+/* line 309, ../../../WEB-INF/scss/app.scss */
 .relative { position: relative; }
 
-/* line 292, ../../../WEB-INF/scss/app.scss */
+/* line 313, ../../../WEB-INF/scss/app.scss */
 .capitalize { text-transform: capitalize; }
 
-/* line 296, ../../../WEB-INF/scss/app.scss */
+/* line 317, ../../../WEB-INF/scss/app.scss */
 a.gray-2-blue { color: #666666; -webkit-transition: all 0.2s linear; -moz-transition: all 0.2s linear; -o-transition: all 0.2s linear; transition: all 0.2s linear; }
-/* line 299, ../../../WEB-INF/scss/app.scss */
+/* line 320, ../../../WEB-INF/scss/app.scss */
 a.gray-2-blue:hover { color: #006b80; }
 
-/* line 304, ../../../WEB-INF/scss/app.scss */
+/* line 325, ../../../WEB-INF/scss/app.scss */
 a.white-2-blue { color: white; -webkit-transition: all 0.2s linear; -moz-transition: all 0.2s linear; -o-transition: all 0.2s linear; transition: all 0.2s linear; }
-/* line 307, ../../../WEB-INF/scss/app.scss */
+/* line 328, ../../../WEB-INF/scss/app.scss */
 a.white-2-blue:hover { background: rgba(255, 255, 255, 0.1); }
 
-/* line 312, ../../../WEB-INF/scss/app.scss */
+/* line 333, ../../../WEB-INF/scss/app.scss */
 .no-height { height: 0; }
 
-/* line 316, ../../../WEB-INF/scss/app.scss */
+/* line 337, ../../../WEB-INF/scss/app.scss */
 .light-background { background: #fafafa; }
 
-/* line 320, ../../../WEB-INF/scss/app.scss */
+/* line 341, ../../../WEB-INF/scss/app.scss */
 .no-background { background: transparent !important; }
 
-/* line 324, ../../../WEB-INF/scss/app.scss */
+/* line 345, ../../../WEB-INF/scss/app.scss */
 a.result-link { text-decoration: none; color: #555; }
-/* line 327, ../../../WEB-INF/scss/app.scss */
+/* line 348, ../../../WEB-INF/scss/app.scss */
 a.result-link:hover { color: #165b81; background: #f1f1f1; }
-/* line 333, ../../../WEB-INF/scss/app.scss */
+/* line 354, ../../../WEB-INF/scss/app.scss */
 a.result-link em { background: #fff6b4; }
 
-/* line 338, ../../../WEB-INF/scss/app.scss */
+/* line 359, ../../../WEB-INF/scss/app.scss */
 .inline-block { display: inline-block; }
 
-/* line 342, ../../../WEB-INF/scss/app.scss */
+/* line 363, ../../../WEB-INF/scss/app.scss */
 .truncate-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* line 348, ../../../WEB-INF/scss/app.scss */
+/* line 369, ../../../WEB-INF/scss/app.scss */
 .serif-header { font-family: 'Roboto Slab', serif; font-weight: normal; }
 
-/* line 353, ../../../WEB-INF/scss/app.scss */
+/* line 374, ../../../WEB-INF/scss/app.scss */
 .member-image-mini { width: 55px; }
 
 /** --- Common Widgets --- */
-/* line 359, ../../../WEB-INF/scss/app.scss */
+/* line 380, ../../../WEB-INF/scss/app.scss */
 .loading-pulse { position: absolute; bottom: 15px; color: #666666; font-size: 0.9rem; }
 
 /** --- Left Nav --- */
-/* line 370, ../../../WEB-INF/scss/app.scss */
-#left-nav { min-height: 100vh; width: 305px; min-width: 305px; position: fixed; background: #fafafa; border-right: 1px solid #ddd; -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none; }
-@media print { /* line 370, ../../../WEB-INF/scss/app.scss */
+/* line 391, ../../../WEB-INF/scss/app.scss */
+#left-nav { min-height: 100vh; width: 305px; min-width: 305px; position: fixed; background: #fafafa; -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none; }
+@media print { /* line 391, ../../../WEB-INF/scss/app.scss */
   #left-nav { display: none; } }
 
-/* line 383, ../../../WEB-INF/scss/app.scss */
+/* line 403, ../../../WEB-INF/scss/app.scss */
 #left-nav-spacer { width: 305px; }
 
-/* line 387, ../../../WEB-INF/scss/app.scss */
+/* line 407, ../../../WEB-INF/scss/app.scss */
 #logo-wrapper { height: 70px; }
 
-/* line 391, ../../../WEB-INF/scss/app.scss */
-#logo { padding-left: 10px; line-height: 64px; margin: 0; font-size: 1.4rem; background: #f1f1f1; }
-/* line 397, ../../../WEB-INF/scss/app.scss */
-#logo a { font-family: 'Roboto Slab', serif; font-weight: normal; font-size: 1.5rem; text-decoration: none; color: #607d8b; }
-/* line 404, ../../../WEB-INF/scss/app.scss */
+/* line 411, ../../../WEB-INF/scss/app.scss */
+#logo { padding-left: 10px; height: 70px; margin: 0; font-size: 1.4rem; background: #008cba; }
+/* line 417, ../../../WEB-INF/scss/app.scss */
+#logo a { font-family: 'Roboto Slab', serif; font-weight: normal; font-size: 1.5rem; text-decoration: none; color: white; }
+/* line 424, ../../../WEB-INF/scss/app.scss */
 #logo img { top: 14px; height: 45px; position: relative; }
 
-/* line 411, ../../../WEB-INF/scss/app.scss */
+/* line 431, ../../../WEB-INF/scss/app.scss */
+.beta-tag { color: white; font-size: .4em; position: absolute; top: 5px; right: 10px; }
+
+/* line 439, ../../../WEB-INF/scss/app.scss */
 .left-nav-menu { width: 100%; padding-top: 20px; }
 
-/* line 418, ../../../WEB-INF/scss/app.scss */
+/* line 446, ../../../WEB-INF/scss/app.scss */
 .menu-item { background: none; border-width: 0; cursor: pointer; display: block; color: #333; font-size: 0.8rem; line-height: 40px; max-height: 40px; opacity: 1; margin: 0; outline: none; padding: 0px 35px; position: relative; text-align: left; text-decoration: none; width: 100%; z-index: 1; }
 
-/* line 437, ../../../WEB-INF/scss/app.scss */
+/* line 465, ../../../WEB-INF/scss/app.scss */
 .menu-item.ng-hide { max-height: 0; opacity: 0; }
 
-/* line 441, ../../../WEB-INF/scss/app.scss */
+/* line 469, ../../../WEB-INF/scss/app.scss */
 .menu-item:focus { font-weight: bold; }
 
-/* line 444, ../../../WEB-INF/scss/app.scss */
+/* line 472, ../../../WEB-INF/scss/app.scss */
 .menu-item.menu-title { color: #444; font-weight: bold; font-size: 14px; padding-left: 20px; text-align: left; text-transform: uppercase; }
 
-/* line 454, ../../../WEB-INF/scss/app.scss */
-.menu-item.menu-title:hover, .menu-item.menu-title:focus, .menu-item.active { color: #006b80; font-weight: bold; }
+/* line 482, ../../../WEB-INF/scss/app.scss */
+.menu-item.menu-title:hover, .menu-item.menu-title:focus, .menu-item.active { color: #2b6a90; font-weight: bold; }
 
-/* line 459, ../../../WEB-INF/scss/app.scss */
+/* line 487, ../../../WEB-INF/scss/app.scss */
 .menu-item:hover { background: #eee; }
 
-/* line 463, ../../../WEB-INF/scss/app.scss */
+/* line 491, ../../../WEB-INF/scss/app.scss */
 .top-bar-heading { color: #ffffff; font-family: 'Roboto Slab', sans-serif; font-weight: bold; }
-/* line 467, ../../../WEB-INF/scss/app.scss */
+/* line 495, ../../../WEB-INF/scss/app.scss */
 .top-bar-heading .menu-icon { background: none; border: 1px solid #ddd; padding: 5px; margin-right: 25px; cursor: pointer; min-width: 35px; font-size: 1.4rem; }
-@media print { /* line 467, ../../../WEB-INF/scss/app.scss */
+@media print { /* line 495, ../../../WEB-INF/scss/app.scss */
   .top-bar-heading .menu-icon { display: none; } }
-@media only screen and (max-width: 600px) { /* line 463, ../../../WEB-INF/scss/app.scss */
+@media only screen and (max-width: 600px) { /* line 491, ../../../WEB-INF/scss/app.scss */
   .top-bar-heading { font-size: 1.0rem; } }
-@media only screen and (min-width: 601px) and (max-width: 1200px) { /* line 463, ../../../WEB-INF/scss/app.scss */
+@media only screen and (min-width: 601px) and (max-width: 1200px) { /* line 491, ../../../WEB-INF/scss/app.scss */
   .top-bar-heading { font-size: 1.2rem; } }
-@media only screen and (min-width: 1201px) { /* line 463, ../../../WEB-INF/scss/app.scss */
+@media only screen and (min-width: 1201px) { /* line 491, ../../../WEB-INF/scss/app.scss */
   .top-bar-heading { font-size: 1.4rem; } }
 
 /** --- Pagination --- */
-/* line 492, ../../../WEB-INF/scss/app.scss */
+/* line 520, ../../../WEB-INF/scss/app.scss */
 ul.pagination { margin: 0; padding: 0; }
-/* line 495, ../../../WEB-INF/scss/app.scss */
+/* line 523, ../../../WEB-INF/scss/app.scss */
 ul.pagination li { display: inline; list-style-type: none; border: 1px solid #ddd; margin-right: 3px; text-align: center; }
-/* line 502, ../../../WEB-INF/scss/app.scss */
+/* line 530, ../../../WEB-INF/scss/app.scss */
 ul.pagination li.active a { font-weight: 600; color: #006b80; }
-/* line 507, ../../../WEB-INF/scss/app.scss */
+/* line 535, ../../../WEB-INF/scss/app.scss */
 ul.pagination li:hover { background: #eee; }
-/* line 509, ../../../WEB-INF/scss/app.scss */
+/* line 537, ../../../WEB-INF/scss/app.scss */
 ul.pagination li:hover a { color: #008cba; }
-/* line 513, ../../../WEB-INF/scss/app.scss */
+/* line 541, ../../../WEB-INF/scss/app.scss */
 ul.pagination li a { font-size: 0.8rem; text-decoration: none; color: #999; padding: 3px 7px; vertical-align: initial; }
 
 /** --- Docs Tables --- */
-/* line 525, ../../../WEB-INF/scss/app.scss */
+/* line 553, ../../../WEB-INF/scss/app.scss */
 .docs-table { width: 100%; text-align: left; padding: 20px; font-size: 0.8rem; }
-/* line 530, ../../../WEB-INF/scss/app.scss */
+/* line 558, ../../../WEB-INF/scss/app.scss */
 .docs-table td { padding: 5px 0; border-bottom: 1px solid #ddd; }
 
 /** --- Tooltips --- */
-/* line 538, ../../../WEB-INF/scss/app.scss */
+/* line 566, ../../../WEB-INF/scss/app.scss */
 .cal-tooltip { position: absolute; width: 140px; color: #FFFFFF; background: #204056; text-align: center; border-radius: 0; opacity: 0.9; bottom: 30px; left: 50%; margin-left: -90px; z-index: 100 !important; }
-/* line 550, ../../../WEB-INF/scss/app.scss */
+/* line 578, ../../../WEB-INF/scss/app.scss */
 .cal-tooltip:after { content: ''; position: absolute; top: 100%; left: 25%; margin-left: -8px; width: 0; height: 0; border-top: 8px solid #204056; border-right: 8px solid transparent; border-left: 8px solid transparent; z-index: 100; }
 
-/* line 563, ../../../WEB-INF/scss/app.scss */
+/* line 591, ../../../WEB-INF/scss/app.scss */
 .cal-tooltip.agenda-meeting { bottom: 55px; width: 300px; text-align: left; padding: 10px; font-size: 0.9rem; }
 
 /** --- Toggle Panel ---  */
-/* line 574, ../../../WEB-INF/scss/app.scss */
+/* line 602, ../../../WEB-INF/scss/app.scss */
 .toggle-panel .toggle-panel-bar { cursor: pointer; color: #555; }
-/* line 575, ../../../WEB-INF/scss/app.scss */
+/* line 603, ../../../WEB-INF/scss/app.scss */
 .toggle-panel .toggle-panel-bar:hover { background: #eee; }
-/* line 580, ../../../WEB-INF/scss/app.scss */
+/* line 608, ../../../WEB-INF/scss/app.scss */
 .toggle-panel .toggle-panel-bar .toggle-panel-label { font-size: 0.9rem; font-weight: bold; color: #555; }
-/* line 587, ../../../WEB-INF/scss/app.scss */
+/* line 615, ../../../WEB-INF/scss/app.scss */
 .toggle-panel.open > .toggle-panel-bar { border-bottom: 1px solid #ddd; }
-/* line 589, ../../../WEB-INF/scss/app.scss */
-.toggle-panel.open > .toggle-panel-bar .toggle-panel-label { color: #006b80; }
+/* line 617, ../../../WEB-INF/scss/app.scss */
+.toggle-panel.open > .toggle-panel-bar .toggle-panel-label { color: #008cba; }
 
 /** --- Full Calendar --- */
-/* line 599, ../../../WEB-INF/scss/app.scss */
+/* line 627, ../../../WEB-INF/scss/app.scss */
 .fc-header-title h2 { font-family: 'Roboto Slab', 'Open Sans', sans-serif; font-weight: normal; }
 
 /** --- Search UI --- */
-/* line 607, ../../../WEB-INF/scss/app.scss */
+/* line 635, ../../../WEB-INF/scss/app.scss */
 .search-refine-panel { width: 240px; background: #fafafa; margin: 10px 0 0 0; font-size: 0.9rem; }
-/* line 612, ../../../WEB-INF/scss/app.scss */
+/* line 640, ../../../WEB-INF/scss/app.scss */
 .search-refine-panel h3 { background: white; font-size: 1rem; padding: 10px 10px 10px 15px; margin: 0; }
-/* line 618, ../../../WEB-INF/scss/app.scss */
+/* line 646, ../../../WEB-INF/scss/app.scss */
 .search-refine-panel .refine-controls { padding: 5px 10px 5px 15px; }
-/* line 620, ../../../WEB-INF/scss/app.scss */
+/* line 648, ../../../WEB-INF/scss/app.scss */
 .search-refine-panel .refine-controls label { margin-top: 8px; font-size: 0.9rem; display: block; }
-/* line 625, ../../../WEB-INF/scss/app.scss */
+/* line 653, ../../../WEB-INF/scss/app.scss */
 .search-refine-panel .refine-controls select, .search-refine-panel .refine-controls input { width: 100%; display: block; border: 1px solid #ddd; }
-/* line 630, ../../../WEB-INF/scss/app.scss */
+/* line 658, ../../../WEB-INF/scss/app.scss */
 .search-refine-panel .refine-controls md-checkbox { margin: 10px 2px 0 2px; }
-/* line 633, ../../../WEB-INF/scss/app.scss */
+/* line 661, ../../../WEB-INF/scss/app.scss */
 .search-refine-panel .refine-controls hr { border: 0; height: 1px; background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); background-image: -moz-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); background-image: -ms-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); }
 
 /** --- Landing Page Styles --- */
-/* line 647, ../../../WEB-INF/scss/app.scss */
+/* line 675, ../../../WEB-INF/scss/app.scss */
 .hero-img { margin-bottom: 0; height: 600px; background-size: cover; background-repeat: no-repeat; }
-@media (max-width: 599px) { /* line 647, ../../../WEB-INF/scss/app.scss */
+@media (max-width: 599px) { /* line 675, ../../../WEB-INF/scss/app.scss */
   .hero-img { background-size: contain; } }
 
-/* line 657, ../../../WEB-INF/scss/app.scss */
+/* line 685, ../../../WEB-INF/scss/app.scss */
 .slogan-container { padding: 20px; margin: -300px 20px 20px 20px; background: white; }
-@media (max-width: 599px) { /* line 657, ../../../WEB-INF/scss/app.scss */
+@media (max-width: 599px) { /* line 685, ../../../WEB-INF/scss/app.scss */
   .slogan-container { margin: -450px 20px 20px 20px; } }
 
-/* line 666, ../../../WEB-INF/scss/app.scss */
+/* line 694, ../../../WEB-INF/scss/app.scss */
 h1.slogan { font-size: 2.7rem; padding: 20px; text-align: center; color: #555; font-family: 'Roboto Slab', serif; font-weight: 300; }
-@media (max-width: 599px) { /* line 666, ../../../WEB-INF/scss/app.scss */
+@media (max-width: 599px) { /* line 694, ../../../WEB-INF/scss/app.scss */
   h1.slogan { font-size: 2rem; } }
 
-/* line 678, ../../../WEB-INF/scss/app.scss */
+/* line 706, ../../../WEB-INF/scss/app.scss */
 a.slogan-link { color: #165b81; text-decoration: none; border-bottom: 2px solid #165b81; }
 
-/* line 684, ../../../WEB-INF/scss/app.scss */
+/* line 712, ../../../WEB-INF/scss/app.scss */
 .provide-data-container { padding: 5px; cursor: pointer; }
-/* line 688, ../../../WEB-INF/scss/app.scss */
+/* line 716, ../../../WEB-INF/scss/app.scss */
 .provide-data-container:hover .provide-data-icon { border-color: #006b80; }
-/* line 691, ../../../WEB-INF/scss/app.scss */
+/* line 719, ../../../WEB-INF/scss/app.scss */
 .provide-data-container:hover .provide-data-type { color: #006b80; }
-/* line 695, ../../../WEB-INF/scss/app.scss */
+/* line 723, ../../../WEB-INF/scss/app.scss */
 .provide-data-container .provide-data-type { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
 
-/* line 701, ../../../WEB-INF/scss/app.scss */
+/* line 729, ../../../WEB-INF/scss/app.scss */
 .provide-data-icon { text-align: center; height: 60px; width: 60px; border: 2px solid #999; }
-/* line 706, ../../../WEB-INF/scss/app.scss */
+/* line 734, ../../../WEB-INF/scss/app.scss */
 .provide-data-icon i { font-size: 2rem; line-height: 56px; }
 
-/* line 712, ../../../WEB-INF/scss/app.scss */
+/* line 740, ../../../WEB-INF/scss/app.scss */
 .signup-err { color: #b5002a; background: #ddd; padding: 10px; }
 
 /** --- Bill Page Styles --- */
-/* line 720, ../../../WEB-INF/scss/app.scss */
+/* line 748, ../../../WEB-INF/scss/app.scss */
 .bill-ms-container { padding: 5px 0; }
 
-/* line 724, ../../../WEB-INF/scss/app.scss */
+/* line 752, ../../../WEB-INF/scss/app.scss */
 .bill-ms-step { height: 10px; width: 10px; border: 1px solid rgba(255, 255, 255, 0.6); float: left; border-radius: 100%; cursor: pointer; }
-/* line 731, ../../../WEB-INF/scss/app.scss */
+/* line 759, ../../../WEB-INF/scss/app.scss */
 .bill-ms-step.filled { background: #aed581; border: 1px solid #97d554; }
-/* line 734, ../../../WEB-INF/scss/app.scss */
+/* line 762, ../../../WEB-INF/scss/app.scss */
 .bill-ms-step.filled.vetoed { background: #b5002a; border-radius: 0; border: 1px solid #b5002a; }
 
-/* line 742, ../../../WEB-INF/scss/app.scss */
+/* line 770, ../../../WEB-INF/scss/app.scss */
 .bill-ms-line { width: 25px; height: 5px; float: left; border-bottom: 1px solid rgba(255, 255, 255, 0.7); }
 
-/* line 749, ../../../WEB-INF/scss/app.scss */
+/* line 777, ../../../WEB-INF/scss/app.scss */
 .bill-full-text { max-width: 520px; white-space: pre; font-family: 'Inconsolata', monospace; }
-@media only screen and (max-width: 480px) { /* line 749, ../../../WEB-INF/scss/app.scss */
+@media only screen and (max-width: 480px) { /* line 777, ../../../WEB-INF/scss/app.scss */
   .bill-full-text { font-size: 0.4rem; } }
-@media only screen and (min-width: 481px) and (max-width: 600px) { /* line 749, ../../../WEB-INF/scss/app.scss */
+@media only screen and (min-width: 481px) and (max-width: 600px) { /* line 777, ../../../WEB-INF/scss/app.scss */
   .bill-full-text { font-size: 0.6rem; } }
-@media only screen and (min-width: 601px) { /* line 749, ../../../WEB-INF/scss/app.scss */
+@media only screen and (min-width: 601px) { /* line 777, ../../../WEB-INF/scss/app.scss */
   .bill-full-text { font-size: 0.9rem; } }
-@media only screen and (min-width: 800px) { /* line 749, ../../../WEB-INF/scss/app.scss */
+@media only screen and (min-width: 800px) { /* line 777, ../../../WEB-INF/scss/app.scss */
   .bill-full-text { margin-left: 100px; } }
 
-/* line 767, ../../../WEB-INF/scss/app.scss */
+/* line 795, ../../../WEB-INF/scss/app.scss */
 .bill-memo-heading { font-weight: 400; display: block; margin: 20px 0; color: rgba(0, 0, 0, 0.54); white-space: pre-line; }
 
-/* line 775, ../../../WEB-INF/scss/app.scss */
+/* line 803, ../../../WEB-INF/scss/app.scss */
 .bill-votes-table { font-size: 0.9rem; width: 100%; padding: 20px; }
-/* line 780, ../../../WEB-INF/scss/app.scss */
+/* line 808, ../../../WEB-INF/scss/app.scss */
 .bill-votes-table tr.positive { background: #F1F8E9; }
-/* line 783, ../../../WEB-INF/scss/app.scss */
+/* line 811, ../../../WEB-INF/scss/app.scss */
 .bill-votes-table tr.negative { background: #FFEBEE; }
-/* line 786, ../../../WEB-INF/scss/app.scss */
+/* line 814, ../../../WEB-INF/scss/app.scss */
 .bill-votes-table tr th { text-align: left; }
-/* line 789, ../../../WEB-INF/scss/app.scss */
+/* line 817, ../../../WEB-INF/scss/app.scss */
 .bill-votes-table tr td { padding: 5px 10px 5px 5px; }
 
-/* line 795, ../../../WEB-INF/scss/app.scss */
+/* line 823, ../../../WEB-INF/scss/app.scss */
 .bill-updates-table { font-size: 0.8rem; width: 100%; padding: 20px 0; }
-/* line 800, ../../../WEB-INF/scss/app.scss */
+/* line 828, ../../../WEB-INF/scss/app.scss */
 .bill-updates-table tr th { text-align: left; }
-/* line 803, ../../../WEB-INF/scss/app.scss */
+/* line 831, ../../../WEB-INF/scss/app.scss */
 .bill-updates-table tr td { border-bottom: 1px solid #ddd; overflow: auto; }
-/* line 804, ../../../WEB-INF/scss/app.scss */
+/* line 832, ../../../WEB-INF/scss/app.scss */
 .bill-updates-table tr td:nth-child(1) { border-right: 1px solid #ddd; }
-/* line 807, ../../../WEB-INF/scss/app.scss */
+/* line 835, ../../../WEB-INF/scss/app.scss */
 .bill-updates-table tr td:nth-child(2) { padding-left: 10px; }
-/* line 810, ../../../WEB-INF/scss/app.scss */
+/* line 838, ../../../WEB-INF/scss/app.scss */
 .bill-updates-table tr td pre { max-height: 300px; }
 
 /** --- Law Page Styles --- */
-/* line 821, ../../../WEB-INF/scss/app.scss */
+/* line 849, ../../../WEB-INF/scss/app.scss */
 .law-container { -webkit-box-shadow: 0 1px 3px #dddddd; -moz-box-shadow: 0 1px 3px #dddddd; box-shadow: 0 1px 3px #dddddd; margin: 10px 0; }
 
-/* line 826, ../../../WEB-INF/scss/app.scss */
+/* line 856, ../../../WEB-INF/scss/app.scss */
+.law-listing-filter.content-card md-content { padding: 2px 15px; }
+
+/* line 862, ../../../WEB-INF/scss/app.scss */
 .law-node { padding-left: 20px; cursor: pointer; border-left: 1px solid #ddd; background: #fff; }
-/* line 831, ../../../WEB-INF/scss/app.scss */
+/* line 867, ../../../WEB-INF/scss/app.scss */
 .law-node .law-node-toggle-icon { visibility: hidden; }
-/* line 835, ../../../WEB-INF/scss/app.scss */
+/* line 871, ../../../WEB-INF/scss/app.scss */
 .law-node:hover { color: #008cba; }
-/* line 837, ../../../WEB-INF/scss/app.scss */
+/* line 873, ../../../WEB-INF/scss/app.scss */
 .law-node:hover .law-node-toggle-icon { visibility: visible; }
-/* line 841, ../../../WEB-INF/scss/app.scss */
+/* line 877, ../../../WEB-INF/scss/app.scss */
 .law-node.active { color: #2b6a90; }
-/* line 843, ../../../WEB-INF/scss/app.scss */
+/* line 879, ../../../WEB-INF/scss/app.scss */
 .law-node.active .law-node-toggle-icon { visibility: visible; }
 
-/* line 849, ../../../WEB-INF/scss/app.scss */
-.law-text { padding: 40px; white-space: pre-line; font-size: 0.85rem; background: white; border-bottom: 1px solid #ddd; width: 100%; }
+/* line 885, ../../../WEB-INF/scss/app.scss */
+.law-text { padding: 40px; margin: 0 20px; white-space: pre-line; font-size: 0.85rem; background: white; border-width: 1px; border-style: none solid solid solid; border-color: #ddd; width: 100%; }
 
 /** --- Agenda Page --- */
-/* line 862, ../../../WEB-INF/scss/app.scss */
+/* line 901, ../../../WEB-INF/scss/app.scss */
 .agenda-event.fc-event-hori { margin-bottom: 5px; padding: 4px; background: #fafafa; border: 1px none #ddd; border-bottom-style: solid; border-top-right-radius: 0 !important; border-top-left-radius: 0 !important; border-bottom-right-radius: 0 !important; border-bottom-left-radius: 0 !important; color: #008cba; cursor: pointer; }
-/* line 874, ../../../WEB-INF/scss/app.scss */
+/* line 913, ../../../WEB-INF/scss/app.scss */
 .agenda-event.fc-event-hori:hover { background: white; }
 
-/* line 881, ../../../WEB-INF/scss/app.scss */
+/* line 920, ../../../WEB-INF/scss/app.scss */
 .agenda-search div { padding: 16px; }
-/* line 884, ../../../WEB-INF/scss/app.scss */
+/* line 923, ../../../WEB-INF/scss/app.scss */
 .agenda-search label:not(:first-child) { margin-left: 10px; }
-/* line 887, ../../../WEB-INF/scss/app.scss */
+/* line 926, ../../../WEB-INF/scss/app.scss */
 .agenda-search select, .agenda-search input { margin-left: 10px; }
 
 /** --- Transcript Page Styles --- */
-/* line 894, ../../../WEB-INF/scss/app.scss */
+/* line 933, ../../../WEB-INF/scss/app.scss */
 .transcript-result-link { cursor: pointer; }
 
-/* line 898, ../../../WEB-INF/scss/app.scss */
+/* line 937, ../../../WEB-INF/scss/app.scss */
 .transcript-result-left { width: 180px; padding: 16px; }
-/* line 901, ../../../WEB-INF/scss/app.scss */
+/* line 940, ../../../WEB-INF/scss/app.scss */
 .transcript-result-left .h3 { margin: 0; }
 
 /** --- Styles for Report page --- */
-/* line 908, ../../../WEB-INF/scss/app.scss */
+/* line 947, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table { table-layout: auto; border: 1px solid #ccc; }
-/* line 911, ../../../WEB-INF/scss/app.scss */
+/* line 950, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table th { text-align: center; }
-/* line 914, ../../../WEB-INF/scss/app.scss */
+/* line 953, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table .th-section { border: 1px none #ccc; border-left-style: solid; text-align: center; background: #ededed; }
-/* line 920, ../../../WEB-INF/scss/app.scss */
+/* line 959, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table .delta-column { padding: 0 5px 0 0; border-right: 1px solid #ccc; font-size: .7em; }
 
-/* line 927, ../../../WEB-INF/scss/app.scss */
+/* line 966, ../../../WEB-INF/scss/app.scss */
 .blue-title-icon { color: #006b80; margin-right: 20px; }
 
-/* line 933, ../../../WEB-INF/scss/app.scss */
+/* line 972, ../../../WEB-INF/scss/app.scss */
 #noDataAvailable h3 { text-align: center; color: #aaa; }
 
-/* line 939, ../../../WEB-INF/scss/app.scss */
+/* line 978, ../../../WEB-INF/scss/app.scss */
 .prefix-icon { margin-right: 5px; }
 
-/* line 943, ../../../WEB-INF/scss/app.scss */
+/* line 982, ../../../WEB-INF/scss/app.scss */
 .prefix-icon2 { margin-right: 10px; }
 
-/* line 947, ../../../WEB-INF/scss/app.scss */
+/* line 986, ../../../WEB-INF/scss/app.scss */
 .postfix-icon { margin-left: 5px; }
 
-/* line 951, ../../../WEB-INF/scss/app.scss */
+/* line 990, ../../../WEB-INF/scss/app.scss */
 .new-error { color: red; }
 
-/* line 955, ../../../WEB-INF/scss/app.scss */
+/* line 994, ../../../WEB-INF/scss/app.scss */
 .closed-error { color: green; }
 
-/* line 959, ../../../WEB-INF/scss/app.scss */
+/* line 998, ../../../WEB-INF/scss/app.scss */
 .existing-error { color: #aaa; }
 
 /** --- Styles for Report Error Page --- */
-/* line 965, ../../../WEB-INF/scss/app.scss */
+/* line 1004, ../../../WEB-INF/scss/app.scss */
 .st-sort-ascent:before { content: '\25B2'; }
 
-/* line 968, ../../../WEB-INF/scss/app.scss */
+/* line 1007, ../../../WEB-INF/scss/app.scss */
 .st-sort-descent:before { content: '\25BC'; }
 
-/* line 972, ../../../WEB-INF/scss/app.scss */
+/* line 1011, ../../../WEB-INF/scss/app.scss */
 .report-table-snippet { height: 20px; overflow: hidden; }
 
-/* line 977, ../../../WEB-INF/scss/app.scss */
+/* line 1016, ../../../WEB-INF/scss/app.scss */
 #report-detail-container { padding: 10px !important; }
 
-/* line 981, ../../../WEB-INF/scss/app.scss */
+/* line 1020, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table tbody tr:nth-child(odd) { background-color: #ccc; }
 
-/* line 985, ../../../WEB-INF/scss/app.scss */
+/* line 1024, ../../../WEB-INF/scss/app.scss */
 .report-detail-table .rpp-selector { float: right; }
 
-/* line 990, ../../../WEB-INF/scss/app.scss */
+/* line 1029, ../../../WEB-INF/scss/app.scss */
 #daybreak-page button.ng-scope, #daybreak-page .check-butt { margin-right: 4px; }
 
-/* line 997, ../../../WEB-INF/scss/app.scss */
+/* line 1036, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:first-child { width: 6em; }
 
-/* line 1002, ../../../WEB-INF/scss/app.scss */
+/* line 1041, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(2) { width: 10em; }
 
-/* line 1007, ../../../WEB-INF/scss/app.scss */
+/* line 1046, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(3) { width: 6em; }
 
-/* line 1012, ../../../WEB-INF/scss/app.scss */
+/* line 1051, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(4) { width: 14em; }
 
-/* line 1017, ../../../WEB-INF/scss/app.scss */
+/* line 1056, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(5) { width: 35em; }
 
-/* line 1022, ../../../WEB-INF/scss/app.scss */
+/* line 1061, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(6) { width: 5em; }
 
-/* line 1026, ../../../WEB-INF/scss/app.scss */
+/* line 1065, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table tbody tr td { border: 1px solid #eee; }
 
-/* line 1030, ../../../WEB-INF/scss/app.scss */
+/* line 1069, ../../../WEB-INF/scss/app.scss */
 .current-page { color: #006b80; }
 
-/* line 1038, ../../../WEB-INF/scss/app.scss */
+/* line 1077, ../../../WEB-INF/scss/app.scss */
 .mismatch-diff-insert { color: green; }
 
-/* line 1042, ../../../WEB-INF/scss/app.scss */
+/* line 1081, ../../../WEB-INF/scss/app.scss */
 .mismatch-diff-delete { color: red; }
 
-/* line 1046, ../../../WEB-INF/scss/app.scss */
+/* line 1085, ../../../WEB-INF/scss/app.scss */
 .mismatch-dialog { width: 46em; height: 25em; }
 
-/* line 1051, ../../../WEB-INF/scss/app.scss */
+/* line 1090, ../../../WEB-INF/scss/app.scss */
 .mismatch-dialog-tabs md-content { max-height: 13em; }
 
-/* line 1055, ../../../WEB-INF/scss/app.scss */
+/* line 1094, ../../../WEB-INF/scss/app.scss */
 .margin-top-5 { margin-top: 5px; }
 
-/* line 1059, ../../../WEB-INF/scss/app.scss */
+/* line 1098, ../../../WEB-INF/scss/app.scss */
 .stats-block-container { margin-bottom: 10px; }
 
-/* line 1063, ../../../WEB-INF/scss/app.scss */
+/* line 1102, ../../../WEB-INF/scss/app.scss */
 .stats-block-title { font-weight: 600; text-align: center; padding: 5px; background: #f1f1f1; margin-bottom: 0; border-bottom: 1px solid #ddd; }
 
-/* line 1072, ../../../WEB-INF/scss/app.scss */
+/* line 1111, ../../../WEB-INF/scss/app.scss */
 .stats-block-number { font-weight: 600; font-size: 1.5rem; background: #fafafa; display: block; padding: 5px; }
 
 /** --- Admin Account Settings --- */
-/* line 1082, ../../../WEB-INF/scss/app.scss */
+/* line 1121, ../../../WEB-INF/scss/app.scss */
 md-list.notification-sub-list md-item md-item-content > div:first-child { width: 4em; }
 
-/* line 1086, ../../../WEB-INF/scss/app.scss */
+/* line 1125, ../../../WEB-INF/scss/app.scss */
 md-list.notification-sub-list md-item md-item-content > div:nth-child(2) { width: 13em; }
 
-/* line 1090, ../../../WEB-INF/scss/app.scss */
+/* line 1129, ../../../WEB-INF/scss/app.scss */
 md-list.notification-sub-list md-item md-item-content > div:nth-child(3) { width: 11em; }
 
 /** --- Calendar View --- */
-/* line 1096, ../../../WEB-INF/scss/app.scss */
+/* line 1135, ../../../WEB-INF/scss/app.scss */
 .cal-entry-sponsor-img { background: 50% 50% no-repeat; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; }
 
-/* line 1103, ../../../WEB-INF/scss/app.scss */
+/* line 1142, ../../../WEB-INF/scss/app.scss */
+.cal-entry-highlight { background: #fbfdb0; }
+
+/* line 1146, ../../../WEB-INF/scss/app.scss */
 .supplemental-toolbar { height: 88px; }
 
 /** --- Calendar Picker Styling --- */
-/* line 1113, ../../../WEB-INF/scss/app.scss */
+/* line 1156, ../../../WEB-INF/scss/app.scss */
 #calendar-date-picker div.fc-day-content > div { height: 25px !important; }
 
-/* line 1117, ../../../WEB-INF/scss/app.scss */
+/* line 1160, ../../../WEB-INF/scss/app.scss */
 .fc-state-default { background-image: none !important; }
 
 /** --- Color Palette --- */
@@ -948,658 +968,964 @@ ul.bill-milestone-large li.active .milestone-date { background: #348853; color: 
 /* line 24, ../../../WEB-INF/scss/colors.scss */
 .gray10-bg { background: #666666; }
 
-@font-face { font-family: "icomoon"; src: url('../../fonts/icomoon.eot?iuno13') format('embedded-opentype'), url('../../fonts/icomoon.eot?#iefixiuno13') format('embedded-opentype'), url('../../fonts/icomoon.woff?iuno13') format('woff'), url('../../fonts/icomoon.ttf?iuno13') format('truetype'), url('../../fonts/icomoon.svg?iuno13#icomoon') format('svg'); }
+@font-face { font-family: "icomoon"; src: url('../../fonts/icomoon.eot?5vwo6d') format('embedded-opentype'), url('../../fonts/icomoon.eot?#iefix5vwo6d') format('embedded-opentype'), url('../../fonts/icomoon.woff?5vwo6d') format('woff'), url('../../fonts/icomoon.ttf?5vwo6d') format('truetype'), url('../../fonts/icomoon.svg?5vwo6d#icomoon') format('svg'); }
 
 /* line 6, ../../../WEB-INF/scss/icons.scss */
 [class^="icon-"], [class*=" icon-"] { font-family: 'icomoon'; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; /* Better Font Rendering =========== */ -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
-/* line 21, ../../../WEB-INF/scss/icons.scss */
-.icon-mobile:before { content: "\e601"; }
+/* line 20, ../../../WEB-INF/scss/icons.scss */
+.icon-add-to-list:before { content: "\e601"; }
 
 /* line 24, ../../../WEB-INF/scss/icons.scss */
-.icon-mouse:before { content: "\e602"; }
+.icon-classic-computer:before { content: "\e602"; }
 
-/* line 27, ../../../WEB-INF/scss/icons.scss */
-.icon-directions:before { content: "\e603"; }
+/* line 28, ../../../WEB-INF/scss/icons.scss */
+.icon-controller-fast-backward:before { content: "\e603"; }
 
-/* line 30, ../../../WEB-INF/scss/icons.scss */
-.icon-mail:before { content: "\e604"; }
-
-/* line 33, ../../../WEB-INF/scss/icons.scss */
-.icon-paperplane:before { content: "\e605"; }
+/* line 32, ../../../WEB-INF/scss/icons.scss */
+.icon-creative-commons-attribution:before { content: "\e604"; }
 
 /* line 36, ../../../WEB-INF/scss/icons.scss */
-.icon-pencil:before { content: "\e606"; }
+.icon-creative-commons-noderivs:before { content: "\e605"; }
 
-/* line 39, ../../../WEB-INF/scss/icons.scss */
-.icon-feather:before { content: "\e607"; }
+/* line 40, ../../../WEB-INF/scss/icons.scss */
+.icon-creative-commons-noncommercial-eu:before { content: "\e606"; }
 
-/* line 42, ../../../WEB-INF/scss/icons.scss */
-.icon-paperclip:before { content: "\e608"; }
-
-/* line 45, ../../../WEB-INF/scss/icons.scss */
-.icon-drawer:before { content: "\e609"; }
+/* line 44, ../../../WEB-INF/scss/icons.scss */
+.icon-creative-commons-noncommercial-us:before { content: "\e607"; }
 
 /* line 48, ../../../WEB-INF/scss/icons.scss */
-.icon-reply:before { content: "\e60a"; }
+.icon-creative-commons-public-domain:before { content: "\e608"; }
 
-/* line 51, ../../../WEB-INF/scss/icons.scss */
-.icon-reply-all:before { content: "\e60b"; }
+/* line 52, ../../../WEB-INF/scss/icons.scss */
+.icon-creative-commons-remix:before { content: "\e609"; }
 
-/* line 54, ../../../WEB-INF/scss/icons.scss */
-.icon-forward:before { content: "\e60c"; }
-
-/* line 57, ../../../WEB-INF/scss/icons.scss */
-.icon-user:before { content: "\e60d"; }
+/* line 56, ../../../WEB-INF/scss/icons.scss */
+.icon-creative-commons-share:before { content: "\e60a"; }
 
 /* line 60, ../../../WEB-INF/scss/icons.scss */
-.icon-users:before { content: "\e60e"; }
+.icon-creative-commons-sharealike:before { content: "\e60b"; }
 
-/* line 63, ../../../WEB-INF/scss/icons.scss */
-.icon-user-add:before { content: "\e60f"; }
+/* line 64, ../../../WEB-INF/scss/icons.scss */
+.icon-creative-commons:before { content: "\e60c"; }
 
-/* line 66, ../../../WEB-INF/scss/icons.scss */
-.icon-vcard:before { content: "\e610"; }
-
-/* line 69, ../../../WEB-INF/scss/icons.scss */
-.icon-export:before { content: "\e611"; }
+/* line 68, ../../../WEB-INF/scss/icons.scss */
+.icon-document-landscape:before { content: "\e60d"; }
 
 /* line 72, ../../../WEB-INF/scss/icons.scss */
-.icon-location:before { content: "\e612"; }
+.icon-remove-user:before { content: "\e60e"; }
 
-/* line 75, ../../../WEB-INF/scss/icons.scss */
-.icon-map:before { content: "\e613"; }
+/* line 76, ../../../WEB-INF/scss/icons.scss */
+.icon-warning:before { content: "\e60f"; }
 
-/* line 78, ../../../WEB-INF/scss/icons.scss */
-.icon-compass:before { content: "\e614"; }
-
-/* line 81, ../../../WEB-INF/scss/icons.scss */
-.icon-location2:before { content: "\e615"; }
+/* line 80, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-bold-down:before { content: "\e610"; }
 
 /* line 84, ../../../WEB-INF/scss/icons.scss */
-.icon-target:before { content: "\e616"; }
+.icon-arrow-bold-left:before { content: "\e611"; }
 
-/* line 87, ../../../WEB-INF/scss/icons.scss */
-.icon-share:before { content: "\e617"; }
+/* line 88, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-bold-right:before { content: "\e612"; }
 
-/* line 90, ../../../WEB-INF/scss/icons.scss */
-.icon-sharable:before { content: "\e618"; }
-
-/* line 93, ../../../WEB-INF/scss/icons.scss */
-.icon-heart:before { content: "\e619"; }
+/* line 92, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-bold-up:before { content: "\e613"; }
 
 /* line 96, ../../../WEB-INF/scss/icons.scss */
-.icon-heart2:before { content: "\e61a"; }
+.icon-arrow-down:before { content: "\e614"; }
 
-/* line 99, ../../../WEB-INF/scss/icons.scss */
-.icon-star:before { content: "\e61b"; }
+/* line 100, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-left:before { content: "\e615"; }
 
-/* line 102, ../../../WEB-INF/scss/icons.scss */
-.icon-star2:before { content: "\e61c"; }
-
-/* line 105, ../../../WEB-INF/scss/icons.scss */
-.icon-thumbsup:before { content: "\e61d"; }
+/* line 104, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-long-down:before { content: "\e616"; }
 
 /* line 108, ../../../WEB-INF/scss/icons.scss */
-.icon-thumbsdown:before { content: "\e61e"; }
+.icon-arrow-long-left:before { content: "\e617"; }
 
-/* line 111, ../../../WEB-INF/scss/icons.scss */
-.icon-chat:before { content: "\e61f"; }
+/* line 112, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-long-right:before { content: "\e618"; }
 
-/* line 114, ../../../WEB-INF/scss/icons.scss */
-.icon-comment:before { content: "\e620"; }
-
-/* line 117, ../../../WEB-INF/scss/icons.scss */
-.icon-quote:before { content: "\e621"; }
+/* line 116, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-long-up:before { content: "\e619"; }
 
 /* line 120, ../../../WEB-INF/scss/icons.scss */
-.icon-house:before { content: "\e622"; }
+.icon-arrow-right:before { content: "\e61a"; }
 
-/* line 123, ../../../WEB-INF/scss/icons.scss */
-.icon-popup:before { content: "\e623"; }
+/* line 124, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-up:before { content: "\e61b"; }
 
-/* line 126, ../../../WEB-INF/scss/icons.scss */
-.icon-search:before { content: "\e624"; }
-
-/* line 129, ../../../WEB-INF/scss/icons.scss */
-.icon-flashlight:before { content: "\e625"; }
+/* line 128, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-with-circle-down:before { content: "\e61c"; }
 
 /* line 132, ../../../WEB-INF/scss/icons.scss */
-.icon-printer:before { content: "\e626"; }
+.icon-arrow-with-circle-left:before { content: "\e61d"; }
 
-/* line 135, ../../../WEB-INF/scss/icons.scss */
-.icon-bell:before { content: "\e627"; }
+/* line 136, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-with-circle-right:before { content: "\e61e"; }
 
-/* line 138, ../../../WEB-INF/scss/icons.scss */
-.icon-link:before { content: "\e628"; }
-
-/* line 141, ../../../WEB-INF/scss/icons.scss */
-.icon-flag:before { content: "\e629"; }
+/* line 140, ../../../WEB-INF/scss/icons.scss */
+.icon-arrow-with-circle-up:before { content: "\e61f"; }
 
 /* line 144, ../../../WEB-INF/scss/icons.scss */
-.icon-cog:before { content: "\e62a"; }
+.icon-bookmark:before { content: "\e620"; }
 
-/* line 147, ../../../WEB-INF/scss/icons.scss */
-.icon-tools:before { content: "\e62b"; }
+/* line 148, ../../../WEB-INF/scss/icons.scss */
+.icon-bookmarks:before { content: "\e621"; }
 
-/* line 150, ../../../WEB-INF/scss/icons.scss */
-.icon-tag:before { content: "\e62d"; }
-
-/* line 153, ../../../WEB-INF/scss/icons.scss */
-.icon-camera:before { content: "\e62e"; }
+/* line 152, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-down:before { content: "\e622"; }
 
 /* line 156, ../../../WEB-INF/scss/icons.scss */
-.icon-megaphone:before { content: "\e62f"; }
+.icon-chevron-left:before { content: "\e623"; }
 
-/* line 159, ../../../WEB-INF/scss/icons.scss */
-.icon-leaf:before { content: "\e632"; }
+/* line 160, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-right:before { content: "\e624"; }
 
-/* line 162, ../../../WEB-INF/scss/icons.scss */
-.icon-new:before { content: "\e635"; }
-
-/* line 165, ../../../WEB-INF/scss/icons.scss */
-.icon-graduation:before { content: "\e636"; }
+/* line 164, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-small-down:before { content: "\e625"; }
 
 /* line 168, ../../../WEB-INF/scss/icons.scss */
-.icon-book:before { content: "\e637"; }
+.icon-chevron-small-left:before { content: "\e626"; }
 
-/* line 171, ../../../WEB-INF/scss/icons.scss */
-.icon-newspaper:before { content: "\e638"; }
+/* line 172, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-small-right:before { content: "\e627"; }
 
-/* line 174, ../../../WEB-INF/scss/icons.scss */
-.icon-bag:before { content: "\e639"; }
-
-/* line 177, ../../../WEB-INF/scss/icons.scss */
-.icon-airplane:before { content: "\e63a"; }
+/* line 176, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-small-up:before { content: "\e628"; }
 
 /* line 180, ../../../WEB-INF/scss/icons.scss */
-.icon-lifebuoy:before { content: "\e63b"; }
+.icon-chevron-thin-down:before { content: "\e629"; }
 
-/* line 183, ../../../WEB-INF/scss/icons.scss */
-.icon-eye:before { content: "\e63c"; }
+/* line 184, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-thin-left:before { content: "\e62a"; }
 
-/* line 186, ../../../WEB-INF/scss/icons.scss */
-.icon-clock:before { content: "\e63d"; }
-
-/* line 189, ../../../WEB-INF/scss/icons.scss */
-.icon-microphone:before { content: "\e63e"; }
+/* line 188, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-thin-right:before { content: "\e62b"; }
 
 /* line 192, ../../../WEB-INF/scss/icons.scss */
-.icon-calendar:before { content: "\e63f"; }
+.icon-chevron-thin-up:before { content: "\e62c"; }
 
-/* line 195, ../../../WEB-INF/scss/icons.scss */
-.icon-bolt:before { content: "\e640"; }
+/* line 196, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-up:before { content: "\e62d"; }
 
-/* line 198, ../../../WEB-INF/scss/icons.scss */
-.icon-thunder:before { content: "\e641"; }
-
-/* line 201, ../../../WEB-INF/scss/icons.scss */
-.icon-droplet:before { content: "\e642"; }
+/* line 200, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-with-circle-down:before { content: "\e62e"; }
 
 /* line 204, ../../../WEB-INF/scss/icons.scss */
-.icon-cd:before { content: "\e643"; }
+.icon-chevron-with-circle-left:before { content: "\e62f"; }
 
-/* line 207, ../../../WEB-INF/scss/icons.scss */
-.icon-briefcase:before { content: "\e644"; }
+/* line 208, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-with-circle-right:before { content: "\e630"; }
 
-/* line 210, ../../../WEB-INF/scss/icons.scss */
-.icon-air:before { content: "\e645"; }
-
-/* line 213, ../../../WEB-INF/scss/icons.scss */
-.icon-hourglass:before { content: "\e646"; }
+/* line 212, ../../../WEB-INF/scss/icons.scss */
+.icon-chevron-with-circle-up:before { content: "\e631"; }
 
 /* line 216, ../../../WEB-INF/scss/icons.scss */
-.icon-gauge:before { content: "\e647"; }
+.icon-cloud:before { content: "\e632"; }
 
-/* line 219, ../../../WEB-INF/scss/icons.scss */
-.icon-language:before { content: "\e648"; }
+/* line 220, ../../../WEB-INF/scss/icons.scss */
+.icon-controller-fast-forward:before { content: "\e633"; }
 
-/* line 222, ../../../WEB-INF/scss/icons.scss */
-.icon-network:before { content: "\e649"; }
-
-/* line 225, ../../../WEB-INF/scss/icons.scss */
-.icon-key:before { content: "\e64a"; }
+/* line 224, ../../../WEB-INF/scss/icons.scss */
+.icon-controller-jump-to-start:before { content: "\e634"; }
 
 /* line 228, ../../../WEB-INF/scss/icons.scss */
-.icon-battery:before { content: "\e64b"; }
+.icon-controller-next:before { content: "\e635"; }
 
-/* line 231, ../../../WEB-INF/scss/icons.scss */
-.icon-bucket:before { content: "\e64c"; }
+/* line 232, ../../../WEB-INF/scss/icons.scss */
+.icon-controller-paus:before { content: "\e636"; }
 
-/* line 234, ../../../WEB-INF/scss/icons.scss */
-.icon-magnet:before { content: "\e64d"; }
-
-/* line 237, ../../../WEB-INF/scss/icons.scss */
-.icon-drive:before { content: "\e64e"; }
+/* line 236, ../../../WEB-INF/scss/icons.scss */
+.icon-controller-play:before { content: "\e637"; }
 
 /* line 240, ../../../WEB-INF/scss/icons.scss */
-.icon-cup:before { content: "\e64f"; }
+.icon-controller-record:before { content: "\e638"; }
 
-/* line 243, ../../../WEB-INF/scss/icons.scss */
-.icon-rocket:before { content: "\e650"; }
+/* line 244, ../../../WEB-INF/scss/icons.scss */
+.icon-controller-stop:before { content: "\e639"; }
 
-/* line 246, ../../../WEB-INF/scss/icons.scss */
-.icon-brush:before { content: "\e651"; }
-
-/* line 249, ../../../WEB-INF/scss/icons.scss */
-.icon-suitcase:before { content: "\e652"; }
+/* line 248, ../../../WEB-INF/scss/icons.scss */
+.icon-controller-volume:before { content: "\e63a"; }
 
 /* line 252, ../../../WEB-INF/scss/icons.scss */
-.icon-cone:before { content: "\e653"; }
+.icon-dot-single:before { content: "\e63b"; }
 
-/* line 255, ../../../WEB-INF/scss/icons.scss */
-.icon-earth:before { content: "\e654"; }
+/* line 256, ../../../WEB-INF/scss/icons.scss */
+.icon-dots-three-horizontal:before { content: "\e63c"; }
 
-/* line 258, ../../../WEB-INF/scss/icons.scss */
-.icon-keyboard:before { content: "\e655"; }
-
-/* line 261, ../../../WEB-INF/scss/icons.scss */
-.icon-browser:before { content: "\e656"; }
+/* line 260, ../../../WEB-INF/scss/icons.scss */
+.icon-dots-three-vertical:before { content: "\e63d"; }
 
 /* line 264, ../../../WEB-INF/scss/icons.scss */
-.icon-publish:before { content: "\e657"; }
+.icon-dots-two-horizontal:before { content: "\e63e"; }
 
-/* line 267, ../../../WEB-INF/scss/icons.scss */
-.icon-progress-3:before { content: "\e658"; }
+/* line 268, ../../../WEB-INF/scss/icons.scss */
+.icon-dots-two-vertical:before { content: "\e63f"; }
 
-/* line 270, ../../../WEB-INF/scss/icons.scss */
-.icon-progress-2:before { content: "\e659"; }
-
-/* line 273, ../../../WEB-INF/scss/icons.scss */
-.icon-brogress-1:before { content: "\e65a"; }
+/* line 272, ../../../WEB-INF/scss/icons.scss */
+.icon-download:before { content: "\e640"; }
 
 /* line 276, ../../../WEB-INF/scss/icons.scss */
-.icon-progress-0:before { content: "\e65b"; }
+.icon-emoji-flirt:before { content: "\e641"; }
 
-/* line 279, ../../../WEB-INF/scss/icons.scss */
-.icon-sun:before { content: "\e65c"; }
+/* line 280, ../../../WEB-INF/scss/icons.scss */
+.icon-flow-branch:before { content: "\e642"; }
 
-/* line 282, ../../../WEB-INF/scss/icons.scss */
-.icon-sun2:before { content: "\e65d"; }
-
-/* line 285, ../../../WEB-INF/scss/icons.scss */
-.icon-adjust:before { content: "\e65e"; }
+/* line 284, ../../../WEB-INF/scss/icons.scss */
+.icon-flow-cascade:before { content: "\e643"; }
 
 /* line 288, ../../../WEB-INF/scss/icons.scss */
-.icon-code:before { content: "\e65f"; }
+.icon-flow-line:before { content: "\e644"; }
 
-/* line 291, ../../../WEB-INF/scss/icons.scss */
-.icon-screen:before { content: "\e660"; }
+/* line 292, ../../../WEB-INF/scss/icons.scss */
+.icon-flow-parallel:before { content: "\e645"; }
 
-/* line 294, ../../../WEB-INF/scss/icons.scss */
-.icon-infinity:before { content: "\e661"; }
-
-/* line 297, ../../../WEB-INF/scss/icons.scss */
-.icon-light-bulb:before { content: "\e662"; }
+/* line 296, ../../../WEB-INF/scss/icons.scss */
+.icon-flow-tree:before { content: "\e646"; }
 
 /* line 300, ../../../WEB-INF/scss/icons.scss */
-.icon-database:before { content: "\e664"; }
+.icon-install:before { content: "\e647"; }
 
-/* line 303, ../../../WEB-INF/scss/icons.scss */
-.icon-voicemail:before { content: "\e665"; }
+/* line 304, ../../../WEB-INF/scss/icons.scss */
+.icon-layers:before { content: "\e648"; }
 
-/* line 306, ../../../WEB-INF/scss/icons.scss */
-.icon-clipboard:before { content: "\e666"; }
-
-/* line 309, ../../../WEB-INF/scss/icons.scss */
-.icon-cart:before { content: "\e667"; }
+/* line 308, ../../../WEB-INF/scss/icons.scss */
+.icon-open-book:before { content: "\e649"; }
 
 /* line 312, ../../../WEB-INF/scss/icons.scss */
-.icon-box:before { content: "\e668"; }
+.icon-resize-100:before { content: "\e64a"; }
 
-/* line 315, ../../../WEB-INF/scss/icons.scss */
-.icon-ticket:before { content: "\e669"; }
+/* line 316, ../../../WEB-INF/scss/icons.scss */
+.icon-resize-full-screen:before { content: "\e64b"; }
 
-/* line 318, ../../../WEB-INF/scss/icons.scss */
-.icon-rss:before { content: "\e66a"; }
-
-/* line 321, ../../../WEB-INF/scss/icons.scss */
-.icon-signal:before { content: "\e66b"; }
+/* line 320, ../../../WEB-INF/scss/icons.scss */
+.icon-save:before { content: "\e64c"; }
 
 /* line 324, ../../../WEB-INF/scss/icons.scss */
-.icon-thermometer:before { content: "\e66c"; }
+.icon-select-arrows:before { content: "\e64d"; }
 
-/* line 327, ../../../WEB-INF/scss/icons.scss */
-.icon-droplets:before { content: "\e66d"; }
+/* line 328, ../../../WEB-INF/scss/icons.scss */
+.icon-sound-mute:before { content: "\e64e"; }
 
-/* line 330, ../../../WEB-INF/scss/icons.scss */
-.icon-statistics:before { content: "\e66e"; }
-
-/* line 333, ../../../WEB-INF/scss/icons.scss */
-.icon-pie:before { content: "\e66f"; }
+/* line 332, ../../../WEB-INF/scss/icons.scss */
+.icon-sound:before { content: "\e64f"; }
 
 /* line 336, ../../../WEB-INF/scss/icons.scss */
-.icon-bars:before { content: "\e670"; }
+.icon-trash:before { content: "\e650"; }
 
-/* line 339, ../../../WEB-INF/scss/icons.scss */
-.icon-graph:before { content: "\e671"; }
+/* line 340, ../../../WEB-INF/scss/icons.scss */
+.icon-triangle-down:before { content: "\e651"; }
 
-/* line 342, ../../../WEB-INF/scss/icons.scss */
-.icon-lock:before { content: "\e672"; }
-
-/* line 345, ../../../WEB-INF/scss/icons.scss */
-.icon-lock-open:before { content: "\e673"; }
+/* line 344, ../../../WEB-INF/scss/icons.scss */
+.icon-triangle-left:before { content: "\e652"; }
 
 /* line 348, ../../../WEB-INF/scss/icons.scss */
-.icon-logout:before { content: "\e674"; }
+.icon-triangle-right:before { content: "\e653"; }
 
-/* line 351, ../../../WEB-INF/scss/icons.scss */
-.icon-login:before { content: "\e675"; }
+/* line 352, ../../../WEB-INF/scss/icons.scss */
+.icon-triangle-up:before { content: "\e654"; }
 
-/* line 354, ../../../WEB-INF/scss/icons.scss */
-.icon-checkmark:before { content: "\e676"; }
-
-/* line 357, ../../../WEB-INF/scss/icons.scss */
-.icon-cross:before { content: "\e677"; }
+/* line 356, ../../../WEB-INF/scss/icons.scss */
+.icon-uninstall:before { content: "\e655"; }
 
 /* line 360, ../../../WEB-INF/scss/icons.scss */
-.icon-minus:before { content: "\e678"; }
+.icon-upload-to-cloud:before { content: "\e656"; }
 
-/* line 363, ../../../WEB-INF/scss/icons.scss */
-.icon-plus:before { content: "\e679"; }
+/* line 364, ../../../WEB-INF/scss/icons.scss */
+.icon-upload:before { content: "\e657"; }
 
-/* line 366, ../../../WEB-INF/scss/icons.scss */
-.icon-cross2:before { content: "\e67a"; }
-
-/* line 369, ../../../WEB-INF/scss/icons.scss */
-.icon-minus2:before { content: "\e67b"; }
+/* line 368, ../../../WEB-INF/scss/icons.scss */
+.icon-add-user:before { content: "\e658"; }
 
 /* line 372, ../../../WEB-INF/scss/icons.scss */
-.icon-plus2:before { content: "\e67c"; }
+.icon-address:before { content: "\e659"; }
 
-/* line 375, ../../../WEB-INF/scss/icons.scss */
-.icon-cross3:before { content: "\e67d"; }
+/* line 376, ../../../WEB-INF/scss/icons.scss */
+.icon-adjust:before { content: "\e65a"; }
 
-/* line 378, ../../../WEB-INF/scss/icons.scss */
-.icon-minus3:before { content: "\e67e"; }
-
-/* line 381, ../../../WEB-INF/scss/icons.scss */
-.icon-plus3:before { content: "\e67f"; }
+/* line 380, ../../../WEB-INF/scss/icons.scss */
+.icon-air:before { content: "\e65b"; }
 
 /* line 384, ../../../WEB-INF/scss/icons.scss */
-.icon-erase:before { content: "\e680"; }
+.icon-aircraft-landing:before { content: "\e65c"; }
 
-/* line 387, ../../../WEB-INF/scss/icons.scss */
-.icon-blocked:before { content: "\e681"; }
+/* line 388, ../../../WEB-INF/scss/icons.scss */
+.icon-aircraft-take-off:before { content: "\e65d"; }
 
-/* line 390, ../../../WEB-INF/scss/icons.scss */
-.icon-info:before { content: "\e682"; }
-
-/* line 393, ../../../WEB-INF/scss/icons.scss */
-.icon-info2:before { content: "\e683"; }
+/* line 392, ../../../WEB-INF/scss/icons.scss */
+.icon-aircraft:before { content: "\e65e"; }
 
 /* line 396, ../../../WEB-INF/scss/icons.scss */
-.icon-question:before { content: "\e684"; }
+.icon-align-bottom:before { content: "\e65f"; }
 
-/* line 399, ../../../WEB-INF/scss/icons.scss */
-.icon-help:before { content: "\e685"; }
+/* line 400, ../../../WEB-INF/scss/icons.scss */
+.icon-align-horizontal-middle:before { content: "\e660"; }
 
-/* line 402, ../../../WEB-INF/scss/icons.scss */
-.icon-warning:before { content: "\e686"; }
-
-/* line 405, ../../../WEB-INF/scss/icons.scss */
-.icon-cycle:before { content: "\e687"; }
+/* line 404, ../../../WEB-INF/scss/icons.scss */
+.icon-align-left:before { content: "\e661"; }
 
 /* line 408, ../../../WEB-INF/scss/icons.scss */
-.icon-cw:before { content: "\e688"; }
+.icon-align-right:before { content: "\e662"; }
 
-/* line 411, ../../../WEB-INF/scss/icons.scss */
-.icon-ccw:before { content: "\e689"; }
+/* line 412, ../../../WEB-INF/scss/icons.scss */
+.icon-align-top:before { content: "\e663"; }
 
-/* line 414, ../../../WEB-INF/scss/icons.scss */
-.icon-shuffle:before { content: "\e68a"; }
-
-/* line 417, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow:before { content: "\e68b"; }
+/* line 416, ../../../WEB-INF/scss/icons.scss */
+.icon-align-vertical-middle:before { content: "\e664"; }
 
 /* line 420, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow2:before { content: "\e68c"; }
+.icon-archive:before { content: "\e665"; }
 
-/* line 423, ../../../WEB-INF/scss/icons.scss */
-.icon-retweet:before { content: "\e68d"; }
+/* line 424, ../../../WEB-INF/scss/icons.scss */
+.icon-area-graph:before { content: "\e666"; }
 
-/* line 426, ../../../WEB-INF/scss/icons.scss */
-.icon-loop:before { content: "\e68e"; }
-
-/* line 429, ../../../WEB-INF/scss/icons.scss */
-.icon-history:before { content: "\e68f"; }
+/* line 428, ../../../WEB-INF/scss/icons.scss */
+.icon-attachment:before { content: "\e667"; }
 
 /* line 432, ../../../WEB-INF/scss/icons.scss */
-.icon-back:before { content: "\e690"; }
+.icon-awareness-ribbon:before { content: "\e668"; }
 
-/* line 435, ../../../WEB-INF/scss/icons.scss */
-.icon-switch:before { content: "\e691"; }
+/* line 436, ../../../WEB-INF/scss/icons.scss */
+.icon-back-in-time:before { content: "\e669"; }
 
-/* line 438, ../../../WEB-INF/scss/icons.scss */
-.icon-list:before { content: "\e692"; }
-
-/* line 441, ../../../WEB-INF/scss/icons.scss */
-.icon-add-to-list:before { content: "\e693"; }
+/* line 440, ../../../WEB-INF/scss/icons.scss */
+.icon-back:before { content: "\e66a"; }
 
 /* line 444, ../../../WEB-INF/scss/icons.scss */
-.icon-layout:before { content: "\e694"; }
+.icon-bar-graph:before { content: "\e66b"; }
 
-/* line 447, ../../../WEB-INF/scss/icons.scss */
-.icon-list2:before { content: "\e695"; }
+/* line 448, ../../../WEB-INF/scss/icons.scss */
+.icon-battery:before { content: "\e66c"; }
 
-/* line 450, ../../../WEB-INF/scss/icons.scss */
-.icon-text:before { content: "\e696"; }
-
-/* line 453, ../../../WEB-INF/scss/icons.scss */
-.icon-text2:before { content: "\e697"; }
+/* line 452, ../../../WEB-INF/scss/icons.scss */
+.icon-beamed-note:before { content: "\e66d"; }
 
 /* line 456, ../../../WEB-INF/scss/icons.scss */
-.icon-document:before { content: "\e698"; }
+.icon-bell:before { content: "\e66e"; }
 
-/* line 459, ../../../WEB-INF/scss/icons.scss */
-.icon-docs:before { content: "\e699"; }
+/* line 460, ../../../WEB-INF/scss/icons.scss */
+.icon-blackboard:before { content: "\e66f"; }
 
-/* line 462, ../../../WEB-INF/scss/icons.scss */
-.icon-landscape:before { content: "\e69a"; }
-
-/* line 465, ../../../WEB-INF/scss/icons.scss */
-.icon-pictures:before { content: "\e69b"; }
+/* line 464, ../../../WEB-INF/scss/icons.scss */
+.icon-block:before { content: "\e670"; }
 
 /* line 468, ../../../WEB-INF/scss/icons.scss */
-.icon-folder:before { content: "\e69e"; }
+.icon-book:before { content: "\e671"; }
 
-/* line 471, ../../../WEB-INF/scss/icons.scss */
-.icon-archive:before { content: "\e69f"; }
+/* line 472, ../../../WEB-INF/scss/icons.scss */
+.icon-bowl:before { content: "\e672"; }
 
-/* line 474, ../../../WEB-INF/scss/icons.scss */
-.icon-trash:before { content: "\e6a0"; }
-
-/* line 477, ../../../WEB-INF/scss/icons.scss */
-.icon-upload:before { content: "\e6a1"; }
+/* line 476, ../../../WEB-INF/scss/icons.scss */
+.icon-box:before { content: "\e673"; }
 
 /* line 480, ../../../WEB-INF/scss/icons.scss */
-.icon-download:before { content: "\e6a2"; }
+.icon-briefcase:before { content: "\e674"; }
 
-/* line 483, ../../../WEB-INF/scss/icons.scss */
-.icon-disk:before { content: "\e6a3"; }
+/* line 484, ../../../WEB-INF/scss/icons.scss */
+.icon-browser:before { content: "\e675"; }
 
-/* line 486, ../../../WEB-INF/scss/icons.scss */
-.icon-install:before { content: "\e6a4"; }
-
-/* line 489, ../../../WEB-INF/scss/icons.scss */
-.icon-cloud:before { content: "\e6a5"; }
+/* line 488, ../../../WEB-INF/scss/icons.scss */
+.icon-brush:before { content: "\e676"; }
 
 /* line 492, ../../../WEB-INF/scss/icons.scss */
-.icon-upload2:before { content: "\e6a6"; }
+.icon-bucket:before { content: "\e677"; }
 
-/* line 495, ../../../WEB-INF/scss/icons.scss */
-.icon-bookmark:before { content: "\e6a7"; }
+/* line 496, ../../../WEB-INF/scss/icons.scss */
+.icon-cake:before { content: "\e678"; }
 
-/* line 498, ../../../WEB-INF/scss/icons.scss */
-.icon-bookmarks:before { content: "\e6a8"; }
-
-/* line 501, ../../../WEB-INF/scss/icons.scss */
-.icon-book2:before { content: "\e6a9"; }
+/* line 500, ../../../WEB-INF/scss/icons.scss */
+.icon-calculator:before { content: "\e679"; }
 
 /* line 504, ../../../WEB-INF/scss/icons.scss */
-.icon-play:before { content: "\e6aa"; }
+.icon-calendar:before { content: "\e67a"; }
 
-/* line 507, ../../../WEB-INF/scss/icons.scss */
-.icon-pause:before { content: "\e6ab"; }
+/* line 508, ../../../WEB-INF/scss/icons.scss */
+.icon-camera:before { content: "\e67b"; }
 
-/* line 510, ../../../WEB-INF/scss/icons.scss */
-.icon-record:before { content: "\e6ac"; }
-
-/* line 513, ../../../WEB-INF/scss/icons.scss */
-.icon-stop:before { content: "\e6ad"; }
+/* line 512, ../../../WEB-INF/scss/icons.scss */
+.icon-ccw:before { content: "\e67c"; }
 
 /* line 516, ../../../WEB-INF/scss/icons.scss */
-.icon-next:before { content: "\e6ae"; }
+.icon-chat:before { content: "\e67d"; }
 
-/* line 519, ../../../WEB-INF/scss/icons.scss */
-.icon-previous:before { content: "\e6af"; }
+/* line 520, ../../../WEB-INF/scss/icons.scss */
+.icon-check:before { content: "\e67e"; }
 
-/* line 522, ../../../WEB-INF/scss/icons.scss */
-.icon-first:before { content: "\e6b0"; }
-
-/* line 525, ../../../WEB-INF/scss/icons.scss */
-.icon-last:before { content: "\e6b1"; }
+/* line 524, ../../../WEB-INF/scss/icons.scss */
+.icon-circle-with-cross:before { content: "\e67f"; }
 
 /* line 528, ../../../WEB-INF/scss/icons.scss */
-.icon-resize-enlarge:before { content: "\e6b2"; }
+.icon-circle-with-minus:before { content: "\e680"; }
 
-/* line 531, ../../../WEB-INF/scss/icons.scss */
-.icon-resize-shrink:before { content: "\e6b3"; }
+/* line 532, ../../../WEB-INF/scss/icons.scss */
+.icon-circle-with-plus:before { content: "\e681"; }
 
-/* line 534, ../../../WEB-INF/scss/icons.scss */
-.icon-volume:before { content: "\e6b4"; }
-
-/* line 537, ../../../WEB-INF/scss/icons.scss */
-.icon-sound:before { content: "\e6b5"; }
+/* line 536, ../../../WEB-INF/scss/icons.scss */
+.icon-circle:before { content: "\e682"; }
 
 /* line 540, ../../../WEB-INF/scss/icons.scss */
-.icon-mute:before { content: "\e6b6"; }
+.icon-circular-graph:before { content: "\e683"; }
 
-/* line 543, ../../../WEB-INF/scss/icons.scss */
-.icon-flow-cascade:before { content: "\e6b7"; }
+/* line 544, ../../../WEB-INF/scss/icons.scss */
+.icon-clapperboard:before { content: "\e684"; }
 
-/* line 546, ../../../WEB-INF/scss/icons.scss */
-.icon-flow-branch:before { content: "\e6b8"; }
-
-/* line 549, ../../../WEB-INF/scss/icons.scss */
-.icon-flow-tree:before { content: "\e6b9"; }
+/* line 548, ../../../WEB-INF/scss/icons.scss */
+.icon-clipboard:before { content: "\e685"; }
 
 /* line 552, ../../../WEB-INF/scss/icons.scss */
-.icon-flow-line:before { content: "\e6ba"; }
+.icon-clock:before { content: "\e686"; }
 
-/* line 555, ../../../WEB-INF/scss/icons.scss */
-.icon-flow-parallel:before { content: "\e6bb"; }
+/* line 556, ../../../WEB-INF/scss/icons.scss */
+.icon-code:before { content: "\e687"; }
 
-/* line 558, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-left:before { content: "\e6bc"; }
-
-/* line 561, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-down:before { content: "\e6bd"; }
+/* line 560, ../../../WEB-INF/scss/icons.scss */
+.icon-cog:before { content: "\e688"; }
 
 /* line 564, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-up-upload:before { content: "\e6be"; }
+.icon-colours:before { content: "\e689"; }
 
-/* line 567, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-right:before { content: "\e6bf"; }
+/* line 568, ../../../WEB-INF/scss/icons.scss */
+.icon-compass:before { content: "\e68a"; }
 
-/* line 570, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-left2:before { content: "\e6c0"; }
-
-/* line 573, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-down2:before { content: "\e6c1"; }
+/* line 572, ../../../WEB-INF/scss/icons.scss */
+.icon-copy:before { content: "\e68b"; }
 
 /* line 576, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-up:before { content: "\e6c2"; }
+.icon-credit-card:before { content: "\e68c"; }
 
-/* line 579, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-right2:before { content: "\e6c3"; }
+/* line 580, ../../../WEB-INF/scss/icons.scss */
+.icon-credit:before { content: "\e68d"; }
 
-/* line 582, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-left3:before { content: "\e6c4"; }
-
-/* line 585, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-down3:before { content: "\e6c5"; }
+/* line 584, ../../../WEB-INF/scss/icons.scss */
+.icon-cross:before { content: "\e68e"; }
 
 /* line 588, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-up2:before { content: "\e6c6"; }
+.icon-cup:before { content: "\e68f"; }
 
-/* line 591, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-right3:before { content: "\e6c7"; }
+/* line 592, ../../../WEB-INF/scss/icons.scss */
+.icon-cw:before { content: "\e690"; }
 
-/* line 594, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-left4:before { content: "\e6c8"; }
-
-/* line 597, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-down4:before { content: "\e6c9"; }
+/* line 596, ../../../WEB-INF/scss/icons.scss */
+.icon-cycle:before { content: "\e691"; }
 
 /* line 600, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-up3:before { content: "\e6ca"; }
+.icon-database:before { content: "\e692"; }
 
-/* line 603, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-right4:before { content: "\e6cb"; }
+/* line 604, ../../../WEB-INF/scss/icons.scss */
+.icon-dial-pad:before { content: "\e693"; }
 
-/* line 606, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-left5:before { content: "\e6cc"; }
-
-/* line 609, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-down5:before { content: "\e6cd"; }
+/* line 608, ../../../WEB-INF/scss/icons.scss */
+.icon-direction:before { content: "\e694"; }
 
 /* line 612, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-up4:before { content: "\e6ce"; }
+.icon-document:before { content: "\e695"; }
 
-/* line 615, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-right5:before { content: "\e6cf"; }
+/* line 616, ../../../WEB-INF/scss/icons.scss */
+.icon-documents:before { content: "\e696"; }
 
-/* line 618, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-left6:before { content: "\e6d0"; }
-
-/* line 621, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-down6:before { content: "\e6d1"; }
+/* line 620, ../../../WEB-INF/scss/icons.scss */
+.icon-drink:before { content: "\e697"; }
 
 /* line 624, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-up5:before { content: "\e6d2"; }
+.icon-drive:before { content: "\e698"; }
 
-/* line 627, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-right6:before { content: "\e6d3"; }
+/* line 628, ../../../WEB-INF/scss/icons.scss */
+.icon-drop:before { content: "\e699"; }
 
-/* line 630, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-left7:before { content: "\e6d4"; }
-
-/* line 633, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-down7:before { content: "\e6d5"; }
+/* line 632, ../../../WEB-INF/scss/icons.scss */
+.icon-edit:before { content: "\e69a"; }
 
 /* line 636, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-up6:before { content: "\e6d6"; }
+.icon-email:before { content: "\e69b"; }
 
-/* line 639, ../../../WEB-INF/scss/icons.scss */
-.icon-uniE6D7:before { content: "\e6d7"; }
+/* line 640, ../../../WEB-INF/scss/icons.scss */
+.icon-emoji-happy:before { content: "\e69c"; }
 
-/* line 642, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-left8:before { content: "\e6d8"; }
-
-/* line 645, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-down8:before { content: "\e6d9"; }
+/* line 644, ../../../WEB-INF/scss/icons.scss */
+.icon-emoji-neutral:before { content: "\e69d"; }
 
 /* line 648, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-up7:before { content: "\e6da"; }
+.icon-emoji-sad:before { content: "\e69e"; }
 
-/* line 651, ../../../WEB-INF/scss/icons.scss */
-.icon-arrow-right7:before { content: "\e6db"; }
+/* line 652, ../../../WEB-INF/scss/icons.scss */
+.icon-erase:before { content: "\e69f"; }
 
-/* line 654, ../../../WEB-INF/scss/icons.scss */
-.icon-menu:before { content: "\e6dc"; }
-
-/* line 657, ../../../WEB-INF/scss/icons.scss */
-.icon-ellipsis:before { content: "\e6dd"; }
+/* line 656, ../../../WEB-INF/scss/icons.scss */
+.icon-eraser:before { content: "\e6a0"; }
 
 /* line 660, ../../../WEB-INF/scss/icons.scss */
-.icon-dots:before { content: "\e6de"; }
+.icon-export:before { content: "\e6a1"; }
 
-/* line 663, ../../../WEB-INF/scss/icons.scss */
-.icon-dot:before { content: "\e6df"; }
+/* line 664, ../../../WEB-INF/scss/icons.scss */
+.icon-eye:before { content: "\e6a2"; }
 
-/* line 666, ../../../WEB-INF/scss/icons.scss */
-.icon-cc:before { content: "\e6e0"; }
+/* line 668, ../../../WEB-INF/scss/icons.scss */
+.icon-feather:before { content: "\e6a3"; }
+
+/* line 672, ../../../WEB-INF/scss/icons.scss */
+.icon-flag:before { content: "\e6a4"; }
+
+/* line 676, ../../../WEB-INF/scss/icons.scss */
+.icon-flash:before { content: "\e6a5"; }
+
+/* line 680, ../../../WEB-INF/scss/icons.scss */
+.icon-flashlight:before { content: "\e6a6"; }
+
+/* line 684, ../../../WEB-INF/scss/icons.scss */
+.icon-flat-brush:before { content: "\e6a7"; }
+
+/* line 688, ../../../WEB-INF/scss/icons.scss */
+.icon-folder-images:before { content: "\e6a8"; }
+
+/* line 692, ../../../WEB-INF/scss/icons.scss */
+.icon-folder-music:before { content: "\e6a9"; }
+
+/* line 696, ../../../WEB-INF/scss/icons.scss */
+.icon-folder-video:before { content: "\e6aa"; }
+
+/* line 700, ../../../WEB-INF/scss/icons.scss */
+.icon-folder:before { content: "\e6ab"; }
+
+/* line 704, ../../../WEB-INF/scss/icons.scss */
+.icon-forward:before { content: "\e6ac"; }
+
+/* line 708, ../../../WEB-INF/scss/icons.scss */
+.icon-funnel:before { content: "\e6ad"; }
+
+/* line 712, ../../../WEB-INF/scss/icons.scss */
+.icon-game-controller:before { content: "\e6ae"; }
+
+/* line 716, ../../../WEB-INF/scss/icons.scss */
+.icon-gauge:before { content: "\e6af"; }
+
+/* line 720, ../../../WEB-INF/scss/icons.scss */
+.icon-globe:before { content: "\e6b0"; }
+
+/* line 724, ../../../WEB-INF/scss/icons.scss */
+.icon-graduation-cap:before { content: "\e6b1"; }
+
+/* line 728, ../../../WEB-INF/scss/icons.scss */
+.icon-grid:before { content: "\e6b2"; }
+
+/* line 732, ../../../WEB-INF/scss/icons.scss */
+.icon-hair-cross:before { content: "\e6b3"; }
+
+/* line 736, ../../../WEB-INF/scss/icons.scss */
+.icon-hand:before { content: "\e6b4"; }
+
+/* line 740, ../../../WEB-INF/scss/icons.scss */
+.icon-heart-outlined:before { content: "\e6b5"; }
+
+/* line 744, ../../../WEB-INF/scss/icons.scss */
+.icon-heart:before { content: "\e6b6"; }
+
+/* line 748, ../../../WEB-INF/scss/icons.scss */
+.icon-help-with-circle:before { content: "\e6b7"; }
+
+/* line 752, ../../../WEB-INF/scss/icons.scss */
+.icon-help:before { content: "\e6b8"; }
+
+/* line 756, ../../../WEB-INF/scss/icons.scss */
+.icon-home:before { content: "\e6b9"; }
+
+/* line 760, ../../../WEB-INF/scss/icons.scss */
+.icon-hour-glass:before { content: "\e6ba"; }
+
+/* line 764, ../../../WEB-INF/scss/icons.scss */
+.icon-image-inverted:before { content: "\e6bb"; }
+
+/* line 768, ../../../WEB-INF/scss/icons.scss */
+.icon-image:before { content: "\e6bc"; }
+
+/* line 772, ../../../WEB-INF/scss/icons.scss */
+.icon-images:before { content: "\e6bd"; }
+
+/* line 776, ../../../WEB-INF/scss/icons.scss */
+.icon-inbox:before { content: "\e6be"; }
+
+/* line 780, ../../../WEB-INF/scss/icons.scss */
+.icon-infinity:before { content: "\e6bf"; }
+
+/* line 784, ../../../WEB-INF/scss/icons.scss */
+.icon-info-with-circle:before { content: "\e6c0"; }
+
+/* line 788, ../../../WEB-INF/scss/icons.scss */
+.icon-info:before { content: "\e6c1"; }
+
+/* line 792, ../../../WEB-INF/scss/icons.scss */
+.icon-key:before { content: "\e6c2"; }
+
+/* line 796, ../../../WEB-INF/scss/icons.scss */
+.icon-keyboard:before { content: "\e6c3"; }
+
+/* line 800, ../../../WEB-INF/scss/icons.scss */
+.icon-lab-flask:before { content: "\e6c4"; }
+
+/* line 804, ../../../WEB-INF/scss/icons.scss */
+.icon-landline:before { content: "\e6c5"; }
+
+/* line 808, ../../../WEB-INF/scss/icons.scss */
+.icon-language:before { content: "\e6c6"; }
+
+/* line 812, ../../../WEB-INF/scss/icons.scss */
+.icon-laptop:before { content: "\e6c7"; }
+
+/* line 816, ../../../WEB-INF/scss/icons.scss */
+.icon-leaf:before { content: "\e6c8"; }
+
+/* line 820, ../../../WEB-INF/scss/icons.scss */
+.icon-level-down:before { content: "\e6c9"; }
+
+/* line 824, ../../../WEB-INF/scss/icons.scss */
+.icon-level-up:before { content: "\e6ca"; }
+
+/* line 828, ../../../WEB-INF/scss/icons.scss */
+.icon-lifebuoy:before { content: "\e6cb"; }
+
+/* line 832, ../../../WEB-INF/scss/icons.scss */
+.icon-light-bulb:before { content: "\e6cc"; }
+
+/* line 836, ../../../WEB-INF/scss/icons.scss */
+.icon-light-down:before { content: "\e6cd"; }
+
+/* line 840, ../../../WEB-INF/scss/icons.scss */
+.icon-light-up:before { content: "\e6ce"; }
+
+/* line 844, ../../../WEB-INF/scss/icons.scss */
+.icon-line-graph:before { content: "\e6cf"; }
+
+/* line 848, ../../../WEB-INF/scss/icons.scss */
+.icon-link:before { content: "\e6d0"; }
+
+/* line 852, ../../../WEB-INF/scss/icons.scss */
+.icon-list:before { content: "\e6d1"; }
+
+/* line 856, ../../../WEB-INF/scss/icons.scss */
+.icon-location-pin:before { content: "\e6d2"; }
+
+/* line 860, ../../../WEB-INF/scss/icons.scss */
+.icon-location:before { content: "\e6d3"; }
+
+/* line 864, ../../../WEB-INF/scss/icons.scss */
+.icon-lock-open:before { content: "\e6d4"; }
+
+/* line 868, ../../../WEB-INF/scss/icons.scss */
+.icon-lock:before { content: "\e6d5"; }
+
+/* line 872, ../../../WEB-INF/scss/icons.scss */
+.icon-log-out:before { content: "\e6d6"; }
+
+/* line 876, ../../../WEB-INF/scss/icons.scss */
+.icon-login:before { content: "\e6d7"; }
+
+/* line 880, ../../../WEB-INF/scss/icons.scss */
+.icon-loop:before { content: "\e6d8"; }
+
+/* line 884, ../../../WEB-INF/scss/icons.scss */
+.icon-magnet:before { content: "\e6d9"; }
+
+/* line 888, ../../../WEB-INF/scss/icons.scss */
+.icon-magnifying-glass:before { content: "\e6da"; }
+
+/* line 892, ../../../WEB-INF/scss/icons.scss */
+.icon-mail:before { content: "\e6db"; }
+
+/* line 896, ../../../WEB-INF/scss/icons.scss */
+.icon-man:before { content: "\e6dc"; }
+
+/* line 900, ../../../WEB-INF/scss/icons.scss */
+.icon-map:before { content: "\e6dd"; }
+
+/* line 904, ../../../WEB-INF/scss/icons.scss */
+.icon-mask:before { content: "\e6de"; }
+
+/* line 908, ../../../WEB-INF/scss/icons.scss */
+.icon-medal:before { content: "\e6df"; }
+
+/* line 912, ../../../WEB-INF/scss/icons.scss */
+.icon-megaphone:before { content: "\e6e0"; }
+
+/* line 916, ../../../WEB-INF/scss/icons.scss */
+.icon-menu:before { content: "\e6e1"; }
+
+/* line 920, ../../../WEB-INF/scss/icons.scss */
+.icon-message:before { content: "\e6e2"; }
+
+/* line 924, ../../../WEB-INF/scss/icons.scss */
+.icon-mic:before { content: "\e6e3"; }
+
+/* line 928, ../../../WEB-INF/scss/icons.scss */
+.icon-minus:before { content: "\e6e4"; }
+
+/* line 932, ../../../WEB-INF/scss/icons.scss */
+.icon-mobile:before { content: "\e6e5"; }
+
+/* line 936, ../../../WEB-INF/scss/icons.scss */
+.icon-modern-mic:before { content: "\e6e6"; }
+
+/* line 940, ../../../WEB-INF/scss/icons.scss */
+.icon-moon:before { content: "\e6e7"; }
+
+/* line 944, ../../../WEB-INF/scss/icons.scss */
+.icon-mouse:before { content: "\e6e8"; }
+
+/* line 948, ../../../WEB-INF/scss/icons.scss */
+.icon-music:before { content: "\e6e9"; }
+
+/* line 952, ../../../WEB-INF/scss/icons.scss */
+.icon-network:before { content: "\e6ea"; }
+
+/* line 956, ../../../WEB-INF/scss/icons.scss */
+.icon-new-message:before { content: "\e6eb"; }
+
+/* line 960, ../../../WEB-INF/scss/icons.scss */
+.icon-new:before { content: "\e6ec"; }
+
+/* line 964, ../../../WEB-INF/scss/icons.scss */
+.icon-news:before { content: "\e6ed"; }
+
+/* line 968, ../../../WEB-INF/scss/icons.scss */
+.icon-note:before { content: "\e6ee"; }
+
+/* line 972, ../../../WEB-INF/scss/icons.scss */
+.icon-notification:before { content: "\e6ef"; }
+
+/* line 976, ../../../WEB-INF/scss/icons.scss */
+.icon-old-mobile:before { content: "\e6f0"; }
+
+/* line 980, ../../../WEB-INF/scss/icons.scss */
+.icon-old-phone:before { content: "\e6f1"; }
+
+/* line 984, ../../../WEB-INF/scss/icons.scss */
+.icon-palette:before { content: "\e6f2"; }
+
+/* line 988, ../../../WEB-INF/scss/icons.scss */
+.icon-paper-plane:before { content: "\e6f3"; }
+
+/* line 992, ../../../WEB-INF/scss/icons.scss */
+.icon-pencil:before { content: "\e6f4"; }
+
+/* line 996, ../../../WEB-INF/scss/icons.scss */
+.icon-phone:before { content: "\e6f5"; }
+
+/* line 1000, ../../../WEB-INF/scss/icons.scss */
+.icon-pie-chart:before { content: "\e6f6"; }
+
+/* line 1004, ../../../WEB-INF/scss/icons.scss */
+.icon-pin:before { content: "\e6f7"; }
+
+/* line 1008, ../../../WEB-INF/scss/icons.scss */
+.icon-plus:before { content: "\e6f8"; }
+
+/* line 1012, ../../../WEB-INF/scss/icons.scss */
+.icon-popup:before { content: "\e6f9"; }
+
+/* line 1016, ../../../WEB-INF/scss/icons.scss */
+.icon-power-plug:before { content: "\e6fa"; }
+
+/* line 1020, ../../../WEB-INF/scss/icons.scss */
+.icon-price-ribbon:before { content: "\e6fb"; }
+
+/* line 1024, ../../../WEB-INF/scss/icons.scss */
+.icon-price-tag:before { content: "\e6fc"; }
+
+/* line 1028, ../../../WEB-INF/scss/icons.scss */
+.icon-print:before { content: "\e6fd"; }
+
+/* line 1032, ../../../WEB-INF/scss/icons.scss */
+.icon-progress-empty:before { content: "\e6fe"; }
+
+/* line 1036, ../../../WEB-INF/scss/icons.scss */
+.icon-progress-full:before { content: "\e6ff"; }
+
+/* line 1040, ../../../WEB-INF/scss/icons.scss */
+.icon-progress-one:before { content: "\e700"; }
+
+/* line 1044, ../../../WEB-INF/scss/icons.scss */
+.icon-progress-two:before { content: "\e701"; }
+
+/* line 1048, ../../../WEB-INF/scss/icons.scss */
+.icon-publish:before { content: "\e702"; }
+
+/* line 1052, ../../../WEB-INF/scss/icons.scss */
+.icon-quote:before { content: "\e703"; }
+
+/* line 1056, ../../../WEB-INF/scss/icons.scss */
+.icon-radio:before { content: "\e704"; }
+
+/* line 1060, ../../../WEB-INF/scss/icons.scss */
+.icon-reply-all:before { content: "\e705"; }
+
+/* line 1064, ../../../WEB-INF/scss/icons.scss */
+.icon-reply:before { content: "\e706"; }
+
+/* line 1068, ../../../WEB-INF/scss/icons.scss */
+.icon-retweet:before { content: "\e707"; }
+
+/* line 1072, ../../../WEB-INF/scss/icons.scss */
+.icon-rocket:before { content: "\e708"; }
+
+/* line 1076, ../../../WEB-INF/scss/icons.scss */
+.icon-round-brush:before { content: "\e709"; }
+
+/* line 1080, ../../../WEB-INF/scss/icons.scss */
+.icon-rss:before { content: "\e70a"; }
+
+/* line 1084, ../../../WEB-INF/scss/icons.scss */
+.icon-ruler:before { content: "\e70b"; }
+
+/* line 1088, ../../../WEB-INF/scss/icons.scss */
+.icon-scissors:before { content: "\e70c"; }
+
+/* line 1092, ../../../WEB-INF/scss/icons.scss */
+.icon-share-alternitive:before { content: "\e70d"; }
+
+/* line 1096, ../../../WEB-INF/scss/icons.scss */
+.icon-share:before { content: "\e70e"; }
+
+/* line 1100, ../../../WEB-INF/scss/icons.scss */
+.icon-shareable:before { content: "\e70f"; }
+
+/* line 1104, ../../../WEB-INF/scss/icons.scss */
+.icon-shield:before { content: "\e710"; }
+
+/* line 1108, ../../../WEB-INF/scss/icons.scss */
+.icon-shop:before { content: "\e711"; }
+
+/* line 1112, ../../../WEB-INF/scss/icons.scss */
+.icon-shopping-bag:before { content: "\e712"; }
+
+/* line 1116, ../../../WEB-INF/scss/icons.scss */
+.icon-shopping-basket:before { content: "\e713"; }
+
+/* line 1120, ../../../WEB-INF/scss/icons.scss */
+.icon-shopping-cart:before { content: "\e714"; }
+
+/* line 1124, ../../../WEB-INF/scss/icons.scss */
+.icon-shuffle:before { content: "\e715"; }
+
+/* line 1128, ../../../WEB-INF/scss/icons.scss */
+.icon-signal:before { content: "\e716"; }
+
+/* line 1132, ../../../WEB-INF/scss/icons.scss */
+.icon-sound-mix:before { content: "\e717"; }
+
+/* line 1136, ../../../WEB-INF/scss/icons.scss */
+.icon-sports-club:before { content: "\e718"; }
+
+/* line 1140, ../../../WEB-INF/scss/icons.scss */
+.icon-spreadsheet:before { content: "\e719"; }
+
+/* line 1144, ../../../WEB-INF/scss/icons.scss */
+.icon-squared-cross:before { content: "\e71a"; }
+
+/* line 1148, ../../../WEB-INF/scss/icons.scss */
+.icon-squared-minus:before { content: "\e71b"; }
+
+/* line 1152, ../../../WEB-INF/scss/icons.scss */
+.icon-squared-plus:before { content: "\e71c"; }
+
+/* line 1156, ../../../WEB-INF/scss/icons.scss */
+.icon-star-outlined:before { content: "\e71d"; }
+
+/* line 1160, ../../../WEB-INF/scss/icons.scss */
+.icon-star:before { content: "\e71e"; }
+
+/* line 1164, ../../../WEB-INF/scss/icons.scss */
+.icon-stopwatch:before { content: "\e71f"; }
+
+/* line 1168, ../../../WEB-INF/scss/icons.scss */
+.icon-suitcase:before { content: "\e720"; }
+
+/* line 1172, ../../../WEB-INF/scss/icons.scss */
+.icon-swap:before { content: "\e721"; }
+
+/* line 1176, ../../../WEB-INF/scss/icons.scss */
+.icon-sweden:before { content: "\e600"; }
+
+/* line 1180, ../../../WEB-INF/scss/icons.scss */
+.icon-switch:before { content: "\e722"; }
+
+/* line 1184, ../../../WEB-INF/scss/icons.scss */
+.icon-tablet:before { content: "\e723"; }
+
+/* line 1188, ../../../WEB-INF/scss/icons.scss */
+.icon-tag:before { content: "\e724"; }
+
+/* line 1192, ../../../WEB-INF/scss/icons.scss */
+.icon-text-document-inverted:before { content: "\e725"; }
+
+/* line 1196, ../../../WEB-INF/scss/icons.scss */
+.icon-text-document:before { content: "\e726"; }
+
+/* line 1200, ../../../WEB-INF/scss/icons.scss */
+.icon-text:before { content: "\e727"; }
+
+/* line 1204, ../../../WEB-INF/scss/icons.scss */
+.icon-thermometer:before { content: "\e728"; }
+
+/* line 1208, ../../../WEB-INF/scss/icons.scss */
+.icon-thumbs-down:before { content: "\e729"; }
+
+/* line 1212, ../../../WEB-INF/scss/icons.scss */
+.icon-thumbs-up:before { content: "\e72a"; }
+
+/* line 1216, ../../../WEB-INF/scss/icons.scss */
+.icon-thunder-cloud:before { content: "\e72b"; }
+
+/* line 1220, ../../../WEB-INF/scss/icons.scss */
+.icon-ticket:before { content: "\e72c"; }
+
+/* line 1224, ../../../WEB-INF/scss/icons.scss */
+.icon-time-slot:before { content: "\e72d"; }
+
+/* line 1228, ../../../WEB-INF/scss/icons.scss */
+.icon-tools:before { content: "\e72e"; }
+
+/* line 1232, ../../../WEB-INF/scss/icons.scss */
+.icon-traffic-cone:before { content: "\e72f"; }
+
+/* line 1236, ../../../WEB-INF/scss/icons.scss */
+.icon-tree:before { content: "\e730"; }
+
+/* line 1240, ../../../WEB-INF/scss/icons.scss */
+.icon-trophy:before { content: "\e731"; }
+
+/* line 1244, ../../../WEB-INF/scss/icons.scss */
+.icon-tv:before { content: "\e732"; }
+
+/* line 1248, ../../../WEB-INF/scss/icons.scss */
+.icon-typing:before { content: "\e733"; }
+
+/* line 1252, ../../../WEB-INF/scss/icons.scss */
+.icon-unread:before { content: "\e734"; }
+
+/* line 1256, ../../../WEB-INF/scss/icons.scss */
+.icon-untag:before { content: "\e735"; }
+
+/* line 1260, ../../../WEB-INF/scss/icons.scss */
+.icon-user:before { content: "\e736"; }
+
+/* line 1264, ../../../WEB-INF/scss/icons.scss */
+.icon-users:before { content: "\e737"; }
+
+/* line 1268, ../../../WEB-INF/scss/icons.scss */
+.icon-v-card:before { content: "\e738"; }
+
+/* line 1272, ../../../WEB-INF/scss/icons.scss */
+.icon-video:before { content: "\e739"; }
+
+/* line 1276, ../../../WEB-INF/scss/icons.scss */
+.icon-vinyl:before { content: "\e73a"; }
+
+/* line 1280, ../../../WEB-INF/scss/icons.scss */
+.icon-voicemail:before { content: "\e73b"; }
+
+/* line 1284, ../../../WEB-INF/scss/icons.scss */
+.icon-wallet:before { content: "\e73c"; }
+
+/* line 1288, ../../../WEB-INF/scss/icons.scss */
+.icon-water:before { content: "\e73d"; }
 
 /*!
  * FullCalendar v1.6.7 Stylesheet

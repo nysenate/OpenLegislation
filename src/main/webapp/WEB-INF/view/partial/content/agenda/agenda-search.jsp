@@ -2,7 +2,7 @@
 
 <section ng-controller="AgendaCtrl">
   <section class="content-section">
-    <md-tabs md-selected="selectedView" class="md-primary">
+    <md-tabs md-selected="selectedView" class="md-primary" md-no-bar>
       <md-tab>
         <md-tab-label><i class="icon-calendar prefix-icon2"></i>Browse</md-tab-label>
         <section ng-if="selectedView === 0" ng-controller="AgendaBrowseCtrl">
@@ -47,7 +47,7 @@
       </md-tab>
       <md-tab>
         <md-tab-label>
-          <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
+          <md-tab-label><i class="icon-magnifying-glass prefix-icon2"></i>Search</md-tab-label>
         </md-tab-label>
         <section ng-if="selectedView === 1" ng-controller="AgendaSearchCtrl">
           <section class="margin-top-10">
@@ -102,9 +102,12 @@
                       <option value="">Any</option>
                       <option ng-repeat="comm in committeeListing">{{comm.name}}</option>
                     </select>
-                    <label for="bill_print_no_param">Has Bill Print No</label>
+                    <label for="bill_print_no_param">Bill Base Print No</label>
                     <input id="bill_print_no_param" type="text" ng-model="searchParams.printNo" ng-model-options="{debounce: 300}"
                            placeholder="e.g. S1234"/>
+                    <label for="notes_param">Meeting Notes</label>
+                    <input id="notes_param" type="text" ng-model="searchParams.notes" ng-model-options="{debounce: 300}"
+                           placeholder="e.g. Off the floor"/>
                     <md-button ng-click="resetSearchParams() && simpleSearch(true)" class="md-primary margin-top-10">Reset Filters</md-button>
                   </div>
                 </div>

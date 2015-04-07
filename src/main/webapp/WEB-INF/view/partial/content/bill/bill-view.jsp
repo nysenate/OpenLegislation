@@ -53,10 +53,10 @@
         </md-radio-group>
       </md-toolbar>
 
-      <md-tabs md-selected="curr.selectedView" class="margin-top-10" md-stretch-tabs="never">
+      <md-tabs md-selected="curr.selectedView" class="margin-top-10">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
-            <span><i class="icon-search prefix-icon2"></i>Search</span>
+            <span><i class="icon-magnifying-glass prefix-icon2"></i>Search</span>
           </md-tab-label>
         </md-tab>
         <md-tab label="Details">
@@ -66,7 +66,7 @@
             <div ng-if="bill.substitutedBy" class="margin-20">
               <md-button style="text-align: left;text-transform: none;" class="md-warn"
                          ng-href="${ctxPath}/bills/{{bill.substitutedBy.session}}/{{bill.substitutedBy.basePrintNo}}">
-                <i class="icon-switch prefix-icon2"></i>
+                <i class="icon-copy prefix-icon2"></i>
                 This bill has been substituted by {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}.
               </md-button>
             </div>
@@ -427,43 +427,7 @@
                 </div>
               </md-content>
             </md-card>
-            <md-list ng-repeat="update in updateHistory.items">
-              <md-item>
-                <md-item-content>
-                  <div class="md-tile-content" style="padding:0;">
-                    <md-card class="content-card">
-                      <md-subheader>
-                        <span>{{update.action}} - {{update.scope}}</span>
-                      </md-subheader>
-                      <md-content>
-                        <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY'}}</h4>
-                        <h4>Processed Date- {{update.processedDateTime | moment:'MMM DD, YYYY hh:mm:ss'}}</h4>
-                        <h4>Source - <a>{{update.sourceId}}</a></h4>
-                        <table class="bill-updates-table">
-                          <thead>
-                          <tr>
-                            <th style="width:150px;">Field Name</th>
-                            <th>Data</th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          <tr ng-repeat="(field, value) in update.fields">
-                            <td>{{field}}</td>
-                            <td><pre>{{value}}</pre></td>
-                          </tr>
-                          </tbody>
-                        </table>
-                      </md-content>
-                    </md-card>
-                  </div>
-                </md-item-content>
-              </md-item>
-            </md-list>
-            <md-card ng-if="updateHistory.size == 0">
-              <md-content class="red1 content-card padding-20">
-                No updates found.
-              </md-content>
-            </md-card>
+            <update-list update-response="updateHistoryResponse" show-details="true"></update-list>
           </section>
         </md-tab>
     </section>

@@ -1,14 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
-<section ng-controller="CalendarViewCtrl" ng-init="setHeaderVisible(true)">
+<section class="content-section" ng-controller="CalendarViewCtrl" ng-init="setHeaderVisible(true)">
 
   <section ng-if="calendarResponse.success === true">
-    <md-tabs class="md-primary" md-selected="curr.activeIndex">
+    <md-tabs class="md-primary" md-selected="curr.activeIndex" md-no-bar>
 
       <!-- Back to search -->
       <md-tab md-on-select="backToSearch()">
-        <md-tab-label ng-if="previousPage == 'search'"><i class="icon-search prefix-icon2"></i>back to search</md-tab-label>
+        <md-tab-label ng-if="previousPage == 'search'"><i class="icon-magnifying-glass prefix-icon2"></i>back to search</md-tab-label>
         <md-tab-label ng-if="previousPage == 'browse'"><i class="icon-calendar prefix-icon2"></i>back to browse</md-tab-label>
         <md-tab-label ng-if="previousPage == 'updates'"><i class="icon-flag prefix-icon2"></i>back to updates</md-tab-label>
         <md-tab-label ng-if="!previousPage"><i class="icon-calendar prefix-icon2"></i>browse</md-tab-label>
@@ -32,7 +31,7 @@
             </span>
           </md-toolbar>
           <md-content class="no-background">
-            <md-card ng-show="displayedEntries.length>0" style="background: #fff">
+            <md-card ng-show="displayedEntries.length > 0" class="content-card">
               <md-card-content>
                 <calendar-entry-table id="active-list-table" cal-entries="displayedEntries" year="year"
                                       highlight-value="highlightValue"
@@ -46,7 +45,7 @@
       <!-- Supplemental Calendars -->
       <md-tab label="Floor" md-on-select="setCalendarHeaderText()">
         <section ng-if="pageNames[curr.activeIndex] === 'floor'" ng-controller="FloorCalendarCtrl">
-          <md-toolbar class="md-toolbar-tools supplemental-toolbar" ng-if="floorCalVersions.length > 1">
+          <md-toolbar class="md-toolbar-tools md-hue-2 supplemental-toolbar" ng-if="floorCalVersions.length > 1">
             <label class="margin-right-20">Supplementals</label>
               <span layout="row" layout-sm="column" ng-model="amdVersion">
                 <md-checkbox ng-repeat="version in floorCalVersions |orderBy:versionSortValue"
@@ -60,9 +59,9 @@
               </span>
           </md-toolbar>
           <md-content class="no-background">
-            <toggle-panel ng-repeat="(section, entries) in displayedSections"
+            <toggle-panel ng-repeat="(section, entries) in displayedSections" class="content-card"
                           open="{{openSections[section]}}"
-                          label="{{section | sectionDisplayName}}" show-tip="true">
+                          label="{{section | sectionDisplayName}} - {{entries.length}} Bills" show-tip="true">
               <calendar-entry-table class="{{section}}" cal-entries="entries" year="year" highlight-value="highlightValue"
                                     get-cal-bill-num-url="getCalBillNumUrl"></calendar-entry-table>
             </toggle-panel>
@@ -72,7 +71,7 @@
 
       <md-tab label="Updates" md-on-select="setCalendarHeaderText()">
         <section ng-if="pageNames[curr.activeIndex] === 'updates'" ng-controller="CalendarUpdatesCtrl">
-          <md-toolbar class="md-toolbar-tools supplemental-toolbar">
+          <md-toolbar class="md-toolbar-tools md-hue-2 supplemental-toolbar">
               <span class="margin-right-10">Update Order:&nbsp;</span>
               <md-select ng-model="updatesOrder" class="no-margin">
                 <md-select-label>{{ updatesOrder == 'ASC' ? 'Oldest First' : 'Newest First' }}</md-select-label>

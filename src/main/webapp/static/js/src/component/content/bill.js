@@ -128,7 +128,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     $scope.billSearch = {
         searched: false,
         term: $routeParams.search || '',
-        refine: angular.extend({}, defaultRefine),
+        refine: angular.extend({}, defaultRefine, {sort: '_score:desc,session:desc'}),
         refineQuery: '',
         sort: '',
         response: {},
@@ -163,7 +163,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     };
 
     $scope.simpleSearch = function(resetPagination) {
-        var term = $scope.billSearch.term;
+        var term = $scope.billSearch.term || '*';
         if (term) {
             $location.search("search", $scope.billSearch.term);
             $scope.curr.searching = true;
@@ -172,7 +172,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                 $scope.curr.pagination.currPage = 1;
                 $location.search('searchPage', 1);
             }
-            var query = $scope.applyRefineToQuery();
+            var query = $scope.applyRefineToQuery(term);
             $scope.billSearch.response = BillSearch.get({
                 term: query, sort: $scope.billSearch.sort, limit: $scope.curr.pagination.getLimit(),
                 offset: $scope.curr.pagination.getOffset()},
@@ -199,8 +199,8 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         }
     };
 
-    $scope.applyRefineToQuery = function() {
-        var refineQuery = '(' + $scope.billSearch.term + ')';
+    $scope.applyRefineToQuery = function(term) {
+        var refineQuery = '(' + term + ')';
         var refine = $scope.billSearch.refine;
         $scope.billSearch.sort = refine.sort;
         if (refine.session) {

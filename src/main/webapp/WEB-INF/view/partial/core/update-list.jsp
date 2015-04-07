@@ -1,3 +1,4 @@
+<!-- Template for displaying generic paginated content updates -->
 <md-card class="content-card">
   <md-subheader flex><strong>{{updateResponse.total}}</strong> <span ng-show="showDetails"> granular </span> updates
     <span ng-show="fromDate && toDate">between {{fromDate | moment:'lll'}} and {{toDate | moment:'lll'}}.</span>
@@ -28,7 +29,7 @@
             <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY h:mm:ss A'}}</h4>
             <h4>Processed Date - {{update.processedDateTime | moment:'MMM DD, YYYY h:mm:ss A'}}</h4>
             <h4>Source - <a>{{update.sourceId}}</a></h4>
-            <table class="bill-updates-table" ng-if="showDetails && update.fields">
+            <table class="bill-updates-table" ng-if="showDetails && update.fieldCount > 0">
               <thead>
               <tr>
                 <th style="width:150px;">Field Name</th>
@@ -37,7 +38,7 @@
               </thead>
               <tbody>
               <tr ng-repeat="(field, value) in update.fields">
-                <td>{{field}}</td>
+                <td class="blue4">{{field}}</td>
                 <td><pre style="max-height:300px;">{{value}}</pre></td>
               </tr>
               </tbody>

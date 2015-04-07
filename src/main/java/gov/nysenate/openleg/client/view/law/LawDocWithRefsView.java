@@ -15,7 +15,7 @@ public class LawDocWithRefsView extends LawDocView
 
     @Override
     public String getViewType() {
-        return "law-document-with-parent-refs";
+        return "law-doc-info-detail";
     }
 
     public List<String> getParentLocationIds() {

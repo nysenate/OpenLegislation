@@ -10,12 +10,13 @@ var openApp = angular.module('open',
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
+    var openBlue = $mdThemingProvider.extendPalette('blue', {
+        '500': '008cba',
+        '800': '2B6A90'
+    });
+    $mdThemingProvider.definePalette('openBlue', openBlue);
     $mdThemingProvider.theme('default')
-        .primaryPalette('blue-grey', {
-            'hue-1': '50',
-            'hue-2': '400',
-            'hue-3': '800'
-        })
+        .primaryPalette('openBlue')
         .accentPalette('light-green', {
             'hue-1': '300',
             'hue-2': '400',
@@ -107,20 +108,15 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.setHeaderText('Home');
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'Discover current and prior legislation that impacts New York State.',
-          icon: 'icon-newspaper', url: ctxPath + '/bills'},
-
+          icon: 'icon-documents', url: ctxPath + '/bills'},
         { type: 'New York State Laws', blurb: 'Search through the current laws of NYS.',
           icon: 'icon-bookmarks', url: ctxPath + '/laws'},
-
         { type: 'Senate Session/Hearing Transcripts', blurb: 'Records of Senate session floor discussion since 1993.',
           icon: 'icon-text', url: ctxPath + '/transcripts'},
-
         { type: 'Senate Committee Agendas', blurb: 'Committee meetings to discuss bills and the votes to move them to the floor.',
-          icon: 'icon-clipboard', url: ctxPath + '/agendas'},
-
+          icon: 'icon-megaphone', url: ctxPath + '/agendas'},
         { type: 'Senate Floor Calendars', blurb: 'Listings of bills that are scheduled for discussion and voting on the senate floor.',
           icon: 'icon-calendar', url: ctxPath + '/calendars'},
-
         { type: 'Senate/Assembly Membership', blurb: 'Senators and assemblymembers for the current session.',
           icon: 'icon-users', url: ctxPath + '/members'}
     ];

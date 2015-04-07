@@ -84,7 +84,8 @@ agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$
             agendaNo: $routeParams['agendaNo'] || '',
             commName: $routeParams['commName'] || '',
             printNo: $routeParams['printNo'] || '',
-            weekOf: $routeParams['weekOf'] || ''
+            weekOf: $routeParams['weekOf'] || '',
+            notes: $routeParams['notes'] || ''
         };
 
         // Mapping of search param names to search query field names.
@@ -92,11 +93,12 @@ agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$
             year: 'agenda.id.year',
             agendaNo: 'agenda.id.number',
             commName: 'committee.committeeId.name',
-            printNo: 'committee.addenda.items.bills.items.billId.printNo',
-            weekOf: 'agenda.weekOf'
+            printNo: 'committee.addenda.items.bills.items.billId.basePrintNo',
+            weekOf: 'agenda.weekOf',
+            notes: 'committee.addenda.items.meeting.notes'
         };
 
-        $scope.searchSort = '';
+        $scope.searchSort = 'agenda.id.number:desc';
 
         $scope.getWeekOfListing = function() {
             var weekOfListResponse = AgendaListingApi.get({year: $scope.searchParams.year, limit: 100}, function(){

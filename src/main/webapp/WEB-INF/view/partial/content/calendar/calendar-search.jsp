@@ -1,9 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
-
 
 <section class="content-section" ng-controller="CalendarSearchPageCtrl" ng-init="setHeaderVisible(true)">
-  <md-tabs class="md-primary" md-selected="activeIndex">
+  <md-tabs class="md-primary" md-selected="activeIndex" md-no-bar>
 
     <!-- Browse Calendars -->
 
@@ -20,24 +18,22 @@
 
     <md-tab md-on-select="setCalendarHeaderText()">
       <md-tab-label>
-        <i class="icon-search prefix-icon2"></i>Search
+        <i class="icon-magnifying-glass prefix-icon2"></i>Search
       </md-tab-label>
       <section ng-if="pageNames[activeIndex] === 'search'" ng-controller="CalendarSearchCtrl">
-
         <form name="calendar-search-form">
-          <md-tabs md-selected="searchActiveIndex">
+          <md-tabs md-selected="searchActiveIndex" class="md-primary md-hue-2">
             <md-tab label="field search">
               <md-content layout="row" layout-sm="column" class="padding-20">
                 <select name="year-select" ng-model="searchFields.year" class="margin-right-20"
                         style="margin-bottom: 30px; margin-top: 20px"
                         ng-options="year for year in activeYears">
-                  <option value="">-- Year --</option>
+                  <option value="">All Years</option>
                 </select>
                 <div layout="row" style="height: 85px">
                   <select ng-model="searchFields.fieldName"
                           style="margin-bottom: 30px; margin-top: 20px"
                           ng-options="value as label for (value, label) in fieldOptions">
-                    <option value="">-- Field Name --</option>
                   </select>
                   <md-input-container style="height: 78px" class="margin-right-10">
                     <label>Field Value</label>
@@ -49,7 +45,7 @@
                   <option value="">-- Sort Order --</option>
                 </select>
                 <md-checkbox ng-model="searchFields.activeList" ng-disabled="searchFields.fieldName === 'calendarNumber'"
-                             class="margin-top-20">
+                             class="margin-top-20 md-hue-2">
                   Active List Only
                 </md-checkbox>
               </md-content>
@@ -57,12 +53,12 @@
             <md-tab label="query search">
               <md-content class="padding-20" layout="row" layout-sm="column">
                 <md-input-container class="md-primary" flex="60">
-                  <label><i class="prefix-icon2 icon-search"></i>Search for calendars</label>
+                  <label><i class="prefix-icon2 icon-magnifying-glass"></i>Search for calendars</label>
                   <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
                       ng-model="searchQuery.term" ng-model-options="{debounce: 300}">
                 </md-input-container>
                 <md-input-container class="md-primary" flex="40">
-                  <label><i class="prefix-icon2 icon-search"></i>Sort By</label>
+                  <label><i class="prefix-icon2 icon-align-bottom"></i>Sort By</label>
                   <input tabindex="2" style="font-size:1.4rem;" name="quick-term"
                          ng-model="searchQuery.sort" ng-model-options="{debounce: 300}">
                 </md-input-container>
@@ -135,17 +131,15 @@
 
         <!-- Search Documentation -->
         <section ng-if="searchActiveIndex == 1" class="fade fade-out">
-          <md-card class="content-card">
-            <md-subheader><strong>Quick search for Calendars</strong></md-subheader>
+          <toggle-panel label="Quick search for Calendars" open="true" extra-classes="content-card">
             <div class="padding-20">
               <p class="text-medium">Calendars are uniquely identified by their year and a calendar number, which corresponds
                 to their order within a year.  To find a specific calendar, enter its year and calendar number e.g.
                 <code>2015#5</code>.
               </p>
             </div>
-          </md-card>
-          <md-card class="content-card">
-            <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
+          </toggle-panel>
+          <toggle-panel label="Advanced Search Guide" open="false" extra-classes="content-card">
             <div class="padding-20">
               <p class="text-medium">You can combine the field definitions documented below to perform targeted searches.
                 You can string together multiple search term fields with the following operators: <code>AND, OR, NOT</code>
@@ -175,7 +169,7 @@
               <tr><td>Bill Sponsor</td><td>\*.districtCode</td><td>number</td><td>\*.districtCode:57</td></tr>
               </tbody>
             </table>
-          </md-card>
+          </toggle-panel>
         </section>
       </section>
     </md-tab>
@@ -185,30 +179,45 @@
       <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
       <section ng-if="pageNames[activeIndex] === 'updates'" ng-controller="CalendarFullUpdatesCtrl">
         <md-card class="content-card">
-          <md-card-content>
+          <md-subheader>Show calendar updates during the following date range</md-subheader>
+          <div class="padding-20 text-medium">
             <div layout="row">
-              <label class="margin-right-10">Calendar updates from</label>
-              <input type="datetime-local" class="margin-right-10"
-                     ng-model="updateOptions.fromDateTime" ng-model-options="{debounce: 300}">
-              <label class="margin-right-10">to</label>
-              <input type="datetime-local" class="margin-right-10"
-                     ng-model="updateOptions.toDateTime" ng-model-options="{debounce: 300}">
+              <div flex>
+                <label class="margin-right-10">From</label>
+                <input type="datetime-local" class="margin-right-10"
+                       ng-model="updateOptions.fromDateTime" ng-model-options="{debounce: 300}">
+              </div>
+              <div flex>
+                <label class="margin-right-10">To</label>
+                <input type="datetime-local" class="margin-right-10"
+                       ng-model="updateOptions.toDateTime" ng-model-options="{debounce: 300}">
+              </div>
             </div>
+          </div>
+          <md-divider></md-divider>
+          <div style="padding-left:20px" class="text-medium">
             <div layout="row" layout-align="start center">
-              <label class="margin-right-10">Using</label>
-              <md-select ng-model="updateOptions.type" class="no-top-margin margin-right-20">
-                <md-select-label>{{updateOptions.type=="processed" ? "Processed Date" : "Published Date"}}</md-select-label>
-                <md-option value="processed">Processed Date</md-option>
-                <md-option value="published">Published Date</md-option>
-              </md-select>
-              <md-select ng-model="updateOptions.order" class="no-top-margin margin-right-20">
-                <md-select-label>{{updateOptions.order=="ASC" ? "Oldest First" : "Newest First"}}</md-select-label>
-                <md-option value="ASC">Oldest First</md-option>
-                <md-option value="DESC">Newest First</md-option>
-              </md-select>
-              <md-checkbox class="md-accent md-hue-1" ng-model="updateOptions.detail" aria-label="detaail">Detail</md-checkbox>
+              <div flex>
+                <label class="margin-right-10">Using</label>
+                <md-select ng-model="updateOptions.type" class="no-top-margin margin-right-20">
+                  <md-select-label>{{updateOptions.type=="processed" ? "Processed Date" : "Published Date"}}</md-select-label>
+                  <md-option value="processed">Processed Date</md-option>
+                  <md-option value="published">Published Date</md-option>
+                </md-select>
+              </div>
+              <div flex>
+                <label class="margin-right-10">Sort</label>
+                <md-select ng-model="updateOptions.order" class="no-top-margin margin-right-20">
+                  <md-select-label>{{updateOptions.order=="ASC" ? "Oldest First" : "Newest First"}}</md-select-label>
+                  <md-option value="ASC">Oldest First</md-option>
+                  <md-option value="DESC">Newest First</md-option>
+                </md-select>
+              </div>
+              <div flex>
+                <md-checkbox class="md-accent md-hue-1" ng-model="updateOptions.detail" aria-label="detaail">Show Detail</md-checkbox>
+              </div>
             </div>
-          </md-card-content>
+          </div>
         </md-card>
         <md-progress-linear md-mode="indeterminate" ng-show="loadingUpdates"></md-progress-linear>
         <update-list class="error-toast-parent" ng-show="!loadingUpdates"

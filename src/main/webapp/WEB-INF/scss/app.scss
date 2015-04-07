@@ -8,8 +8,12 @@
 /** --- Reset --- */
 
 html, body {
-  height: 100%;
   font-family: 'Open Sans', sans-serif;
+  background: #f5f5f5;
+}
+
+body {
+  height: 100%;
 }
 
 table {
@@ -94,6 +98,19 @@ md-tab.active {
   }
 }
 
+.md-tabs-content {
+  .md-tab-content {
+    &.ng-animate {
+      transition: none !important;
+    }
+  }
+}
+
+/** Fixes the tab pagination color when default theme is applied. */
+md-tabs.md-default-theme .md-paginator md-icon {
+  color: white;
+}
+
 /** --- Transitions --- */
 
 .fade {
@@ -136,20 +153,18 @@ md-tab.active {
 }
 
 #content-wrapper {
-  max-width: 960px;
-  margin: auto;
-
   #content-header {
     min-height: 70px;
     font-size: 1.5rem;
     box-shadow: none;
     display: none;
+    margin-bottom: 20px;
     @media (max-width: 768px) {
       font-size: 1.1rem;
     }
-    background: #f5f5f5;
+    background: $blue5;
     h1 {
-      color: rgb(96,125,139);
+      color: white;
     }
     .md-toolbar-tools {
       height: 70px;
@@ -167,6 +182,8 @@ md-tab.active {
     min-height: 100vh;
     .content-section {
       padding: 0 10px 20px 10px;
+      max-width: 1100px;
+      margin: auto;
     }
   }
 }
@@ -203,6 +220,10 @@ md-tab.active {
 
 .thin-300 {
   font-weight: 300;
+}
+
+.tight-lines {
+  line-height: 1.1em;
 }
 
 .margin-top-20 {
@@ -373,7 +394,6 @@ $left-nav-width: 305px;
   min-width: $left-nav-width;
   position: fixed;
   background: #fafafa;
-  border-right: 1px solid #ddd;
   @include box-shadow(none);
   @media print {
     display: none;
@@ -390,22 +410,30 @@ $left-nav-width: 305px;
 
 #logo {
   padding-left:10px;
-  line-height: 64px;
+  height: 70px;
   margin:0;
   font-size: 1.4rem;
-  background: #f1f1f1;
+  background: $blue3;
   a {
     font-family: 'Roboto Slab', serif;
     font-weight: normal;
     font-size: 1.5rem;
     text-decoration: none;
-    color: #607d8b;
+    color: white;
   }
   img {
     top: 14px;
     height: 45px;
     position: relative;
   }
+}
+
+.beta-tag {
+  color: white;
+  font-size: .4em;
+  position: absolute;
+  top: 5px;
+  right: 10px;
 }
 
 .left-nav-menu {
@@ -452,7 +480,7 @@ $left-nav-width: 305px;
 .menu-item.menu-title:hover,
 .menu-item.menu-title:focus,
 .menu-item.active, {
-  color: $blue2;
+  color: $blue4;
   font-weight: bold;
 }
 
@@ -587,7 +615,7 @@ ul.pagination {
     > .toggle-panel-bar {
       border-bottom: 1px solid #ddd;
       .toggle-panel-label {
-        color: $blue2;
+        color: $blue3;
       }
     }
   }
@@ -823,6 +851,14 @@ a.slogan-link {
   margin: 10px 0;
 }
 
+.law-listing-filter {
+  &.content-card {
+    md-content {
+      padding: 2px 15px;
+    }
+  }
+}
+
 .law-node {
   padding-left: 20px;
   cursor: pointer;
@@ -848,10 +884,13 @@ a.slogan-link {
 
 .law-text {
   padding:40px;
+  margin: 0 20px;
   white-space: pre-line;
   font-size: 0.85rem;
   background: white;
-  border-bottom:1px solid #ddd;
+  border-width:1px;
+  border-style: none solid solid solid;
+  border-color: #ddd;
   width: 100%;
 }
 

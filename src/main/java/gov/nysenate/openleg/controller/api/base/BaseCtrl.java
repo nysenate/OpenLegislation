@@ -106,16 +106,16 @@ public abstract class BaseCtrl
      * Throws an InvalidRequestParameterException if the parsing went wrong
      *
      * @param dateString The parameter value to be parsed
-     * @param parameterName The name of the parameter.  Used to generate the exception
+     * @param parameter The name of the parameter.  Used to generate the exception
      * @return LocalDate
      * @throws InvalidRequestParamEx
      */
-    protected LocalDate parseISODate(String dateString, String parameterName) {
+    protected LocalDate parseISODate(String dateString, String parameter) {
         try {
             return LocalDate.from(DateTimeFormatter.ISO_DATE.parse(dateString));
         }
         catch (DateTimeParseException ex) {
-            throw new InvalidRequestParamEx(dateString, parameterName,
+            throw new InvalidRequestParamEx(dateString, parameter,
                 "date", "ISO 8601 date formatted string e.g. 2014-10-27 for October 27, 2014");
         }
     }

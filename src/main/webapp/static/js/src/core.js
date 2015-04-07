@@ -128,6 +128,28 @@ coreModule.factory('PaginationModel', function() {
 });
 
 /**
+ * Safe Highlights Directive
+ * -------------------------
+ */
+coreModule.factory('safeHighlights', ['$sce', function($sce) {
+    return function (results) {
+        angular.forEach(results, function(r) {
+            if (r.hasOwnProperty('highlights')) {
+                for (var prop in r['highlights']) {
+                    var highlightCount = r['highlights'][prop].length || 0;
+                    for (var i = 0; i < highlightCount; i++) {
+                        if (r['highlights'][prop][i]) {
+                            r['highlights'][prop][i] =
+                                $sce.trustAsHtml(String(r['highlights'][prop][i]).replace(/\\n/g, ' ... '));
+                        }
+                    }
+                }
+            }
+        });
+    }
+}]);
+
+/**
  * Updates List
  *
  * Displays a list of updates.
@@ -195,6 +217,14 @@ coreModule.filter('updateId', function() {
         else if (contentType === 'AGENDA') {
             idString = 'Agenda ' + id['number'] + ' (' + id['year'] + ')';
         }
+        // Laws
+        else if (contentType === 'LAW') {
+            idString = id['lawId'] + ' (' + id['locationId'] + ')';
+        }
+        // Bills
+        else if (contentType === 'BILL') {
+            idString = id['basePrintNo'] + '-' + id['session'];
+        }
         return idString;
     };
 });
@@ -255,8 +285,8 @@ coreModule.directive('togglePanel', [function(){
         '       <div>' +
         '           <a class="toggle-panel-label">{{label}}</a>' +
         '           <span flex></span>' +
-        '           <i ng-class="{\'icon-arrow-up4\': open, \'icon-arrow-down5\': !open}" style="float: right"></i>' +
-        '           <span class="text-xsmall margin-left-20" ng-show="showTip && !open" style="float: right">' +
+        '           <i ng-class="{\'icon-chevron-up\': open, \'icon-chevron-down\': !open}" style="float: right"></i>' +
+        '           <span class="text-xsmall margin-right-20" ng-show="showTip && !open" style="float: right">' +
         '               (Click to expand section)</span>' +
         '       </div>' +
         '   </md-card-content>' +

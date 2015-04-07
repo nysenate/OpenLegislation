@@ -474,11 +474,11 @@ function($scope, $routeParams, $location, SearchApi, paginationModel) {
     };
 
      var defaultFields = {
-        year: null,
-        fieldName: "",
+        year: 2015,
+        fieldName: "calendarNumber",
         fieldValue: "",
         activeList: false,
-        order: ""
+        order: "DESC"
     };
     $scope.searchFields = angular.extend({}, defaultFields);
     var fieldStorage = angular.extend({}, defaultFields);

@@ -34,7 +34,7 @@ memberModule.controller('MemberSearchCtrl', ['$scope', '$routeParams', '$locatio
 
         $scope.init = function() {
             $scope.setHeaderVisible(true);
-            $scope.setHeaderText("Members");
+            $scope.setHeaderText("Search Members");
         };
 
         $scope.init();
@@ -150,6 +150,8 @@ memberModule.controller('MemberBrowseCtrl', ['$scope', '$routeParams', 'MemberSe
         });
 
         $scope.init = function() {
+            $scope.setHeaderVisible(true);
+            $scope.setHeaderText("Browse Members");
             $scope.filterMembers();
         };
 

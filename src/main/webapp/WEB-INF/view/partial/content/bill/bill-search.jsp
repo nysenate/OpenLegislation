@@ -6,15 +6,15 @@
 
 <section ng-controller="BillCtrl">
   <section class="content-section">
-    <md-tabs md-selected="selectedView" class="md-primary" md-stretch-tabs="auto">
+    <md-tabs md-selected="selectedView" md-no-bar class="md-primary" md-stretch-tabs="auto">
       <md-tab>
-        <md-tab-label><i class="icon-search prefix-icon2"></i>Search</md-tab-label>
+        <md-tab-label><i class="icon-magnifying-glass prefix-icon2"></i>Search</md-tab-label>
         <md-divider></md-divider>
         <section ng-if="selectedView === 0" ng-controller="BillSearchCtrl" class="margin-top-10">
           <form name="bill-search-form">
             <md-content class="relative padding-20">
               <md-input-container class="md-primary">
-                <label><i class="prefix-icon2 icon-search"></i>Search for legislation</label>
+                <label><i class="prefix-icon2 icon-magnifying-glass"></i>Search for legislation</label>
                 <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
                        ng-model="billSearch.term" ng-model-options="{debounce: 300}" ng-change="simpleSearch(true)">
               </md-input-container>
@@ -36,7 +36,7 @@
           <section ng-show="(billSearch.searched || curr.searching) && curr.pagination.totalItems > 0 || billSearch.refine.isRefined">
             <md-card class="content-card">
               <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
-                <div flex> {{curr.pagination.totalItems}} bills were matched.
+                <div flex> {{curr.pagination.totalItems}} bills were found.
                   <span ng-if="curr.pagination.totalItems > 0">Viewing page {{curr.pagination.currPage}} of {{curr.pagination.lastPage}}.</span>
                 </div>
                 <div flex style="text-align: right;"><dir-pagination-controls pagination-id="bill-search" boundary-links="true"></dir-pagination-controls></div>
@@ -48,7 +48,7 @@
                   <div class="refine-controls">
                     <label for="refine_sort_by">Sort By</label>
                     <select id="refine_sort_by" ng-model="billSearch.refine.sort">
-                      <option value="">Relevance</option>
+                      <option value="_score:desc,session:desc">Relevance</option>
                       <option value="status.actionDate:desc">Recent Status Update</option>
                       <option value="milestones.size:desc">Milestone Count</option>
                       <option value="votes.items.memberVotes.items.NAY.size:desc">Most Nay Votes (Voted Bills only)</option>
@@ -223,7 +223,7 @@
       <md-tab>
         <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
         <md-divider></md-divider>
-        <section ng-if="selectedView === 1" ng-controller="BillUpdatesCtrl">
+        <section ng-show="selectedView === 1" ng-controller="BillUpdatesCtrl">
           <md-card class="content-card">
             <md-subheader>Show bill updates during the following date range</md-subheader>
             <div layout="row" layout-sm="column" class="padding-20 text-medium">

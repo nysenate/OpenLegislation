@@ -46,6 +46,7 @@ public class LawUpdatesCtrl extends BaseCtrl
      * ------------------------------
      *
      * Usages:
+     * (GET) /api/3/laws/updates/  (last 7 days)
      * (GET) /api/3/laws/updates/{from date-time}
      * (GET) /api/3/laws/updates/{from date-time}/{to date-time}
      *
@@ -56,6 +57,11 @@ public class LawUpdatesCtrl extends BaseCtrl
      *
      * Expected Response: List of UpdateTokenView<LawVersionId> or UpdateDigestTokenView<LawDocId> if detail = true
      */
+    @RequestMapping(value = "/updates")
+    public BaseResponse getAllUpdates(WebRequest request) {
+        return getAllUpdates(LocalDateTime.now().minusDays(7), LocalDateTime.now(), request);
+    }
+
     @RequestMapping(value = "/updates/{from}")
     public BaseResponse getAllUpdates(@PathVariable String from, WebRequest request) {
         return getAllUpdates(parseISODateTime(from, "from"), LocalDateTime.now(), request);
