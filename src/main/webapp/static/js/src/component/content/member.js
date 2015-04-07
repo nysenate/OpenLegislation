@@ -27,17 +27,17 @@ memberModule.controller('MemberCtrl', ['$scope', '$routeParams', '$location',
             $scope.selectedView = $location.search().view;
         });
 
-    }]);
-
-memberModule.controller('MemberSearchCtrl', ['$scope', '$routeParams', '$location', 'MemberSearchApi', 'PaginationModel',
-    function($scope, $routeParams, $location, MemberSearchApi, PaginationModel) {
-
         $scope.init = function() {
             $scope.setHeaderVisible(true);
             $scope.setHeaderText("Search Members");
         };
 
         $scope.init();
+
+    }]);
+
+memberModule.controller('MemberSearchCtrl', ['$scope', '$routeParams', '$location', 'MemberSearchApi', 'PaginationModel',
+    function($scope, $routeParams, $location, MemberSearchApi, PaginationModel) {
 
         $scope.memberSearch = {
             term: "",
