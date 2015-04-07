@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
-<section ng-controller="SessionTranscriptViewCtrl">
+<section class="content-section" ng-controller="SessionTranscriptViewCtrl">
 
   <md-toolbar>
     <div class="md-toolbar-tools">
@@ -14,7 +13,7 @@
       <md-divider></md-divider>
     </md-tab>
     <md-tab label="Details">
-      <md-content>
+      <md-content class="margin-top-20">
         <div class="margin-left-20 bill-full-text">
           {{sessionTranscriptDetails.text}}
         </div>

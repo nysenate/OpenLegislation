@@ -1,8 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
-<section ng-controller="HearingTranscriptViewCtrl">
-
+<section class="content-section" ng-controller="HearingTranscriptViewCtrl">
 
   <md-tabs md-selected="1">
     <md-tab label="Back" md-on-select="back()">

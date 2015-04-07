@@ -11,12 +11,12 @@
           <span layout="row" layout-sm="column">
             <md-checkbox ng-model="memberBrowse.senateSelected" style="padding-top: 6px;"
                          ng-change="filterMembers()"
-                         class="md-accent md-hue-1">
+                         class="md-accent md-hue-2">
               <span>Senate</span>
             </md-checkbox>
             <md-checkbox ng-model="memberBrowse.assemblySelected" style="padding-top: 6px"
                          ng-change="filterMembers()"
-                         class="md-accent md-hue-1">
+                         class="md-accent md-hue-2">
               <span>Assembly</span>
             </md-checkbox>
               <h6 style="padding-left: 12px;">Session Year:</h6>
@@ -69,7 +69,7 @@
         Search
       </md-tab-label>
       <section ng-if="selectedView === 1" ng-controller="MemberSearchCtrl">
-        <md-card>
+        <md-card class="content-card">
           <md-content class="md-padding">
             <form name = searchForm>
               <md-input-container class="md-primary">
@@ -136,7 +136,6 @@
               <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query docs</a>.
             </p>
           </div>
-          <md-subheader><strong>Member Search Tips</strong></md-subheader>
           <table class="docs-table">
             <thead>
             <tr><th>To Search for</th><th>Use the field</th><th>Example</th></tr>

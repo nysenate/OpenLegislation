@@ -1,19 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
-<section ng-controller="TranscriptCtrl">
+<section class="content-section" ng-controller="TranscriptCtrl">
 
   <%----- Browsing Tabs -----%>
 
-  <md-tabs class="md-primary" md-selected="view">
+  <md-tabs class="md-primary" md-selected="view" md-no-bar>
     <md-tab>
       <md-tab-label>
         <i class="icon-archive prefix-icon2"></i>
         Browse
       </md-tab-label>
-      <md-divider></md-divider>
       <section ng-if="view === 0" ng-controller="TranscriptBrowseCtrl">
-        <md-toolbar class="md-toolbar-tools">
+        <md-toolbar class="md-toolbar-tools md-hue-2">
           <span layout="row" layout-sm="column">
             <md-checkbox ng-model="checkbox"
                          ng-true-value="1"
@@ -52,7 +50,7 @@
             </div>
           </div>
         </md-card>
-        <md-card ng-if="checkbox == 1">
+        <md-card ng-if="checkbox == 1" class="content-card">
           <md-content>
             <md-list>
               <a dir-paginate="session in session.results | itemsPerPage: session.paginate.itemsPerPage"
@@ -97,7 +95,7 @@
             </div>
           </div>
         </md-card>
-        <md-card ng-if="checkbox == 2">
+        <md-card ng-if="checkbox == 2" class="content-card">
           <md-content>
             <md-list>
               <a dir-paginate="hearing in hearing.results | itemsPerPage: hearing.paginate.itemsPerPage"
@@ -132,21 +130,20 @@
 
     <md-tab>
       <md-tab-label>
-        <i class="icon-search prefix-icon2"></i>
+        <i class="icon-magnifying-glass prefix-icon2"></i>
         Search
       </md-tab-label>
-      <md-divider></md-divider>
       <section ng-if="view == 1" ng-controller="TranscriptSearchCtrl">
-        <md-tabs md-selected="currentPage.categoryIndex">
+        <md-tabs md-selected="currentPage.categoryIndex" class="md-primary md-hue-2">
 
           <%----- Session Transcript Search -----%>
           <md-tab label="Session Transcripts">
-            <md-card>
+            <md-card class="content-card">
               <md-content class="md-padding">
                 <form name="searchForm">
                   <md-input-container class="md-primary">
                     <label for="sessionSearch">
-                      <i class="prefix-icon2 icon-search"></i>
+                      <i class="prefix-icon2 icon-magnifying-glass"></i>
                       Search Session Transcripts
                     </label>
                     <input ng-model="transcriptSearch.term" ng-model-options="{debounce: 300}" ng-change="searchTranscripts(true)" id="sessionSearch">
@@ -210,7 +207,7 @@
               </div>
             </md-card>
             <md-card class="content-card">
-              <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
+              <md-subheader><strong>Session Transcript Search Guide</strong></md-subheader>
               <div class="padding-20">
                 <p class="text-medium">
                   You can combine the field definitions documented below to perform targeted searches.
@@ -219,7 +216,6 @@
                   <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query docs</a>.
                 </p>
               </div>
-              <md-subheader><strong>Session Transcript Search Tips</strong></md-subheader>
               <table class="docs-table">
                 <thead>
                 <tr><th>To Search for</th><th>Use the field</th><th>Example</th></tr>
@@ -236,12 +232,12 @@
 
           <%----- Public Hearing Search -----%>
           <md-tab label="Public Hearing Transcripts">
-            <md-card>
+            <md-card class="content-card">
               <md-content class="md-padding">
                 <form name="searchForm"> <%--  --%>
                   <md-input-container class="md-primary">
                     <label for="hearingSearch">
-                      <i class="prefix-icon2 icon-search"></i>
+                      <i class="prefix-icon2 icon-magnifying-glass"></i>
                       Search Public Hearing Transcripts
                     </label>
                     <input ng-model="hearingSearch.term" ng-model-options="{debounce: 300}" ng-change="searchHearings()" id="hearingSearch">
@@ -303,7 +299,7 @@
               </div>
             </md-card>
             <md-card class="content-card">
-              <md-subheader><strong>Advanced Search Guide</strong></md-subheader>
+              <md-subheader><strong>Public Hearing Search Guide</strong></md-subheader>
               <div class="padding-20">
                 <p class="text-medium">
                   You can combine the field definitions documented below to perform targeted searches.
@@ -312,7 +308,6 @@
                   <a href="http://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query docs</a>.
                 </p>
               </div>
-              <md-subheader><strong>Public Hearing Transcript Search Tips</strong></md-subheader>
               <table class="docs-table">
                 <thead>
                 <tr><th>To Search for</th><th>Use the field</th><th>Example</th></tr>

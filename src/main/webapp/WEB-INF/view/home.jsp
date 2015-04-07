@@ -73,9 +73,6 @@
                   <%-- --%>
                 </menu-section>
               </shiro:user>
-              <menu-section title="JSON API">
-                <menu-item url="http://openleg-dev.nysenate.gov/docs">Documentation</menu-item>
-              </menu-section>
             </material-menu>
           </div>
         </md-sidenav>
