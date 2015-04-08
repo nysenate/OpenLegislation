@@ -35,14 +35,14 @@
                   <i class="icon-funnel prefix-icon2"></i>
                   Filter Members
                 </label>
-                <input ng-model="memberBrowse.filter" ng-model-options="{debounce: 300}" ng-change="filterMembers()" id="filterMembers">
+                <input id="filterMembers" ng-model="memberBrowse.filter">
               </md-input-container>
             </form>
           </md-content>
         </md-card>
 
         <div layout="row" layout-wrap layout-align="center center">
-            <md-card ng-repeat="member in memberBrowse.results" ng-if="memberBrowse.response.success"
+            <md-card ng-repeat="member in memberBrowse.results | filter:memberBrowse.filter" ng-if="memberBrowse.response.success"
                      class="content-card" style="height: 125px; width: 300px;margin-right: 10px;">
               <a ng-href="${ctxPath}/members/{{member.sessionYear}}/{{member.memberId}}"
                  class="result-link" style="display:block; height:100%;">
