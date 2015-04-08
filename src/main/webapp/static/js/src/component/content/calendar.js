@@ -173,7 +173,6 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
         } else {
             openSection = "active-list";
         }
-        $scope.$broadcast("billScrollEvent", openSection);
         $timeout(function () {
             var containerSelector = "section." + openSection;
             var entrySelector = "md-item[" + attrName + "='" + identifier + "']";
@@ -660,6 +659,7 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, $m
     $scope.calendarIds = {};
     $scope.requestsInProgress = 0;
     $scope.events = [];
+    $scope.loadedYears = [];    // years for which ids have been loaded into the event list
 
     $scope.init = function () {
         $scope.eventSources.push(getEventSourcesObject());
@@ -719,7 +719,7 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, $m
         var calendarIdPromises = [];
         var years = [];
         for (var year = start.getFullYear(); year <= end.getFullYear(); year++) {
-            if ($scope.activeYears.indexOf(year) >= 0 && !$scope.calendarIds.hasOwnProperty(year)) {
+            if ($scope.activeYears.indexOf(year) >= 0 && $scope.loadedYears.indexOf(year) < 0) {
                 calendarIdPromises.push(getCalendarIds(year));
                 years.push(year);
             }
@@ -730,11 +730,14 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, $m
             $scope.requestsInProgress += 1;
             $q.all(calendarIdPromises).then(function () {
                 for (var i in years){
-                    $scope.calendarIds[years[i]]
-                        .map(getEvent)
-                        .forEach(function (event) {
-                            $scope.events.push(event);
-                        });
+                    if ($scope.loadedYears.indexOf(years[i]) < 0) {
+                        $scope.calendarIds[years[i]]
+                            .map(getEvent)
+                            .forEach(function (event) {
+                                $scope.events.push(event);
+                            });
+                        $scope.loadedYears.push(years[i]);
+                    }
                 }
                 $scope.requestsInProgress -= 1;
                 hideLoadingToast();
