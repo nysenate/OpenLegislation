@@ -3,7 +3,7 @@ package gov.nysenate.openleg.service.spotcheck;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 
-public interface SpotcheckRunService {
+public interface SpotcheckRunService<ContentId> {
 
 
     /**
@@ -13,9 +13,9 @@ public interface SpotcheckRunService {
      * and save a new spotcheck report.
      *  Returns a reference to the generated report if it was successful, null if not
      *
-     *  @return SpotCheckReport<BaseBillId>
+     *  @return SpotCheckReport<ContentId>
      */
-    public SpotCheckReport<BaseBillId> runSpotcheck();
+    public SpotCheckReport<ContentId> runSpotcheck();
 
     /**
      * Generates a new spotcheck report from reference data.
@@ -23,7 +23,7 @@ public interface SpotcheckRunService {
      *  Openleg data, and then saving the resulting report.
      *  Returns a reference to the generated report if it was successful, null if not
      *
-     *  @return SpotCheckReport<BaseBillId>
+     *  @return SpotCheckReport<ContentId>
      */
-    public SpotCheckReport<BaseBillId> generateReport();
+    public SpotCheckReport<ContentId> generateReport();
 }

@@ -1,13 +1,8 @@
 package gov.nysenate.openleg.script;
 
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
-import gov.nysenate.openleg.processor.daybreak.ManagedDaybreakProcessService;
-import gov.nysenate.openleg.service.spotcheck.CheckMailService;
-import gov.nysenate.openleg.service.spotcheck.DaybreakCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.DaybreakCheckMailService;
 import gov.nysenate.openleg.service.spotcheck.DaybreakSpotcheckRunService;
-import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
@@ -15,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 public class SpotCheckCLI extends BaseScript
@@ -27,7 +20,7 @@ public class SpotCheckCLI extends BaseScript
     protected DaybreakSpotcheckRunService spotcheckRunService;
 
     @Autowired
-    protected CheckMailService checkMailService;
+    protected DaybreakCheckMailService checkMailService;
 
     @Autowired
     protected DaybreakProcessService daybreakProcessService;

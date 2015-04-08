@@ -80,6 +80,17 @@ public class Environment
     /** Enable spot-check report runs at scheduled intervals. */
     @Value("${scheduler.spotcheck.enabled}") private boolean spotcheckScheduled;
 
+    /** --- Email Settings --- */
+
+    /** Imaps host, username, and password for the application's email account*/
+    @Value("${checkmail.host}") private String emailHost;
+    @Value("${checkmail.user}") private String emailUser;
+    @Value("${checkmail.pass}") private String emailPass;
+
+    /** Incoming emails are stored in the receiving folder and archived in the processed folder */
+    @Value("${checkmail.receiving}") private String emailReceivingFolder;
+    @Value("${checkmail.processed}") private String emailProcessedFolder;
+
     /** --- Notifications --- */
     @Value("${notifications.enabled}")
     private boolean notificationsEnabled;
@@ -243,5 +254,37 @@ public class Environment
 
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
+    }
+
+    public String getEmailHost() {
+        return emailHost;
+    }
+
+    public void setEmailHost(String emailHost) {
+        this.emailHost = emailHost;
+    }
+
+    public String getEmailUser() {
+        return emailUser;
+    }
+
+    public void setEmailUser(String emailUser) {
+        this.emailUser = emailUser;
+    }
+
+    public String getEmailPass() {
+        return emailPass;
+    }
+
+    public void setEmailPass(String emailPass) {
+        this.emailPass = emailPass;
+    }
+
+    public String getEmailReceivingFolder() {
+        return emailReceivingFolder;
+    }
+
+    public String getEmailProcessedFolder() {
+        return emailProcessedFolder;
     }
 }

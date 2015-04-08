@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.util;
 
+import gov.nysenate.openleg.config.Environment;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.Properties;
 
 @Service
 public class MailUtils {
+
+    @Autowired private Environment environment;
 
     @Value("${mail.smtp.host}") private String host;
     @Value("${mail.smtp.port}") private String port;
@@ -70,7 +74,6 @@ public class MailUtils {
      * Establishes a connection to a mail server and returns the resulting connection object
      * The store must be closed on its own.
      *
-     * @param protocol The mail protocol to use for the connection
      * @param host the mail host
      * @param user the username of the mail account
      * @param password the password for the username
@@ -88,6 +91,10 @@ public class MailUtils {
             throw ex;
         }
         return store;
+    }
+
+    public Store getCheckMailStore() throws MessagingException {
+        return getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
     }
 
     /**

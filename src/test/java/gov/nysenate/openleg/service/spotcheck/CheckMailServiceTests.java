@@ -4,13 +4,22 @@ import gov.nysenate.openleg.BaseTests;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 public class CheckMailServiceTests extends BaseTests{
 
     @Autowired
-    private CheckMailService checkMailService;
+    private DaybreakCheckMailService daybreakCheckMailService;
+
+    @Autowired private List<CheckMailService> checkMailServices;
 
     @Test
     public void checkMailTest() {
-        checkMailService.checkMail();
+        daybreakCheckMailService.checkMail();
+    }
+
+    @Test
+    public void allCheckMailTest() {
+        checkMailServices.forEach(CheckMailService::checkMail);
     }
 }

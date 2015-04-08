@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by kyle on 10/29/14.
- */
 public class ActiveListHTMLParser {
 
     public static ActiveListSpotcheckReference getSpotcheckReference(File html) throws Exception {

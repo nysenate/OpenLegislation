@@ -21,12 +21,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
-public class DaybreakSpotcheckRunService implements SpotcheckRunService {
+public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBillId> {
 
     private static final Logger logger = LoggerFactory.getLogger(DaybreakSpotcheckRunService.class);
 
     @Autowired
-    CheckMailService checkMailService;
+    DaybreakCheckMailService checkMailService;
 
     @Autowired
     DaybreakDao daybreakDao;
@@ -62,7 +62,7 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService {
     @Override
     public SpotCheckReport<BaseBillId> runSpotcheck() {
         // If checkmail finds and saves daybreaks, parse/store reference data and run a report
-        if (checkMailService.checkMail()) {
+        if (checkMailService.checkMail() > 0) {
             daybreakProcessService.collateDaybreakReports();
             daybreakProcessService.processPendingFragments();
             return generateReport();
