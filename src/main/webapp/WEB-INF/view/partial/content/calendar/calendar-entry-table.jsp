@@ -1,4 +1,4 @@
-<section style="max-height: 65vh; overflow-y: scroll">
+<section class="{{sectionType}}" style="max-height: 65vh; overflow-y: scroll">
 <md-list>
     <md-item hide-sm>
         <md-item-content layout="row">
