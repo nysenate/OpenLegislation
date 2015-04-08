@@ -301,7 +301,7 @@
                       </a>
                     </md-item-content>
                     <md-item-content ng-repeat="calendar in bill.calendars.items">
-                      <a class="gray-2-blue" ng-href="${ctxPath}/calendars/{{calendar.year}}/{{calendar.calendarNumber}}">
+                      <a class="gray-2-blue" ng-href="${ctxPath}/calendars/{{calendar.year}}/{{calendar.calendarNumber}}#{{bill.printNo}}">
                         Senate Floor Calendar {{calendar.calendarNumber}} ({{calendar.year}})
                       </a>
                     </md-item-content>
