@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 
-<section ng-controller="LandingCtrl">
+<section class="content-section" ng-controller="LandingCtrl">
   <div class="padding-20 hero-img" style="background-image:url('${ctxPath}/static/img/capitol_square_cropped.png');">
     &nbsp;
   </div>
