@@ -19,6 +19,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBillId> {
@@ -49,9 +53,9 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBill
     @Scheduled(cron = "${scheduler.spotcheck.cron}")
     public void scheduledSpotcheck() {
         if (env.isSpotcheckScheduled()) {
-            SpotCheckReport<BaseBillId> spotCheckReport = runSpotcheck();
-            if (spotCheckReport != null) {
-                spotcheckCompleteNotification(spotCheckReport);
+            List<SpotCheckReport<BaseBillId>> spotCheckReports = runSpotcheck();
+            if (spotCheckReports.size() > 0) {
+                spotcheckCompleteNotification(spotCheckReports.get(0));
             }
         }
     }
@@ -60,12 +64,12 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBill
      * {@inheritDoc}
      */
     @Override
-    public SpotCheckReport<BaseBillId> runSpotcheck() {
+    public List<SpotCheckReport<BaseBillId>> runSpotcheck() {
         // If checkmail finds and saves daybreaks, parse/store reference data and run a report
         if (checkMailService.checkMail() > 0) {
             daybreakProcessService.collateDaybreakReports();
             daybreakProcessService.processPendingFragments();
-            return generateReport();
+            return generateReports();
         }
         return null;
     }
@@ -74,7 +78,7 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBill
      * {@inheritDoc}
      */
     @Override
-    public SpotCheckReport<BaseBillId> generateReport() {
+    public List<SpotCheckReport<BaseBillId>> generateReports() {
         logger.info("looking for unchecked daybreak references...");
         try {
             LocalDate reportDate = daybreakDao.getCurrentReportDate();
@@ -85,7 +89,7 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBill
                             LocalDateTime.now().minusWeeks(1), LocalDateTime.now());
                     spotCheckReportService.saveReport(daybreakReport);
                     logger.info("generated daybreak spotcheck {}", daybreakReport.getReportId());
-                    return daybreakReport;
+                    return Collections.singletonList(daybreakReport);
                 } catch (ReferenceDataNotFoundEx referenceDataNotFoundEx) {
                     logger.error("Report not found! \n{}", ExceptionUtils.getStackTrace(referenceDataNotFoundEx));
                 } catch (DataAccessException ex) {
@@ -97,7 +101,25 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBill
         } catch (DataAccessException ex) {
             logger.info("no daybreak reports found");
         }
-        return null;
+        return Collections.emptyList();
+    }
+
+    @Override
+    public int collate() {
+        int reports = checkMailService.checkMail();
+        daybreakProcessService.collateDaybreakReports();
+        daybreakProcessService.processPendingFragments();
+        return reports;
+    }
+
+    @Override
+    public String getIngestType() {
+        return "daybreak-bill";
+    }
+
+    @Override
+    public String getCollateType() {
+        return "daybreak-report";
     }
 
     /** --- Internal Methods --- */
