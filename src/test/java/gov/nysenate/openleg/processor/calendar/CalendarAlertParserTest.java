@@ -14,17 +14,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class CalendarAlertParserTest extends BaseTests {
 
     @Autowired
     private CalendarAlertParser parser;
 
-    private static final File simpleAlertFile = new File("/data/cal_alerts/floor_cal_alert-2015-10-20150219T143033.html");
-    private static final File alertFile = new File("/data/cal_alerts/floor_cal_alert-2015-28B-20150331T185833.html");
+    private final File simpleAlertFile = new File(getClass().getClassLoader().getResource("calendarAlerts/floor_cal_alert-2015-10-20150219T143033.html").getFile());
+    private final File alertFile = new File(getClass().getClassLoader().getResource("calendarAlerts/floor_cal_alert-2015-28B-20150331T185833.html").getFile());
+    private final File simpleActiveListFile = new File(getClass().getClassLoader().getResource("calendarAlerts/active_list_alert-2015-10-20150224T193238.html").getFile());
 
     @Test
     public void parsesSimpleCalendarIdInfo() {
@@ -38,6 +40,17 @@ public class CalendarAlertParserTest extends BaseTests {
         Calendar actualCalendar = parser.parse(alertFile);
         CalendarId expectedId = new CalendarId(28, 2015);
         assertThat(actualCalendar.getId(), is(expectedId));
+    }
+
+    @Test
+    public void parsesSupplementalVersion() {
+        Calendar actualCalendar = parser.parse(simpleAlertFile);
+        assertThat(actualCalendar.getSupplementalMap().keySet().size(), is(1));
+        assertThat(actualCalendar.getSupplemental(Version.DEFAULT), is(not(nullValue())));
+
+        actualCalendar = parser.parse(alertFile);
+        assertThat(actualCalendar.getSupplementalMap().keySet().size(), is(1));
+        assertThat(actualCalendar.getSupplemental(Version.B), is(not(nullValue())));
     }
 
     @Test
@@ -57,7 +70,7 @@ public class CalendarAlertParserTest extends BaseTests {
     }
 
     @Test
-    public void parsesOrderOfFirstReportSupplementalEntries() {
+    public void parsesOrderOfFirstReportEntries() {
         SessionYear sessionYear = SessionYear.of(2015);
         CalendarSectionType sectionType = CalendarSectionType.ORDER_OF_THE_FIRST_REPORT;
         CalendarSupplementalEntry entry = new CalendarSupplementalEntry(
@@ -67,37 +80,66 @@ public class CalendarAlertParserTest extends BaseTests {
         assertThat(getSupplementalEntries(actualCalendar, Version.DEFAULT, sectionType), hasItem(entry));
     }
 
-    private List<CalendarSupplementalEntry> getSupplementalEntries(Calendar actualCalendar, Version version, CalendarSectionType sectionType) {
-        return actualCalendar.getSupplemental(version).getSectionEntries().get(sectionType);
+    @Test
+    public void parsesOrderOfSecondReportEntries() {
+        SessionYear sessionYear = SessionYear.of(2015);
+        CalendarSectionType sectionType = CalendarSectionType.ORDER_OF_THE_SECOND_REPORT;
+        CalendarSupplementalEntry entry = new CalendarSupplementalEntry(
+                70, sectionType, new BillId("S2236", sessionYear), null, null);
+
+        Calendar actualCalendar = parser.parse(simpleAlertFile);
+        assertThat(getSupplementalEntries(actualCalendar, Version.DEFAULT, sectionType), hasItem(entry));
+    }
+
+    @Test
+    public void parsesOnThirdReadingEntries() {
+        SessionYear sessionYear = SessionYear.of(2015);
+        CalendarSectionType sectionType = CalendarSectionType.THIRD_READING;
+        CalendarSupplementalEntry entry = new CalendarSupplementalEntry(
+                49, sectionType, new BillId("S2314", sessionYear), null, null);
+
+        Calendar actualCalendar = parser.parse(simpleAlertFile);
+        assertThat(getSupplementalEntries(actualCalendar, Version.DEFAULT, sectionType), hasItem(entry));
     }
 
     private CalendarId simpleCalendarId() {
         return new CalendarId(10, 2015);
     }
 
-    // matches File: /data/floor_cal_alert-2015-10A-20150225T121900
-    private Calendar createSimpleTestCalendar() {
-        SessionYear session = SessionYear.of(2015);
+    private List<CalendarSupplementalEntry> getSupplementalEntries(Calendar actualCalendar, Version version, CalendarSectionType sectionType) {
+        return actualCalendar.getSupplemental(version).getSectionEntries().get(sectionType);
+    }
 
-        CalendarId calId = new CalendarId(10, 2015);
-        Calendar expectedCalendar = new Calendar(calId);
-        CalendarSupplemental supplemental = new CalendarSupplemental(
-                calId, Version.A, LocalDate.of(2015, 2, 25), LocalDateTime.of(2015, 2, 25, 12, 19, 0));
+    @Test
+    public void parsesActiveListInfo() {
+        CalendarId calendarId = simpleCalendarId();
+        int sequenceNo = 0;
+        String notes = "";
+        LocalDateTime expectedReleaseDate = LocalDateTime.of(2015, 2, 24, 19, 32, 38);
+        LocalDate expectedCalDate = expectedReleaseDate.toLocalDate();
 
-        CalendarSupplementalEntry supplementalEntry = new CalendarSupplementalEntry(
-                78, CalendarSectionType.ORDER_OF_THE_FIRST_REPORT, new BillId("S290", session), null, false);
-        supplemental.addEntry(supplementalEntry);
+        Calendar actualCalendar = parser.parse(simpleActiveListFile);
+        assertThat(actualCalendar.getActiveListMap().size(), is(1));
+        assertThat(actualCalendar.getActiveList(0), is(notNullValue()));
+        assertThat(actualCalendar.getActiveList(0).getCalendarId(), is(calendarId));
+        assertThat(actualCalendar.getActiveList(0).getSequenceNo(), is(sequenceNo));
+        assertThat(actualCalendar.getActiveList(0).getNotes(), is(notes));
+        assertThat(actualCalendar.getActiveList(0).getCalDate(), is(expectedCalDate));
+        assertThat(actualCalendar.getActiveList(0).getReleaseDateTime(), is(expectedReleaseDate));
+    }
 
-        supplementalEntry = new CalendarSupplementalEntry(
-                68, CalendarSectionType.ORDER_OF_THE_SECOND_REPORT, new BillId("S456", session), null, false);
-        supplemental.addEntry(supplementalEntry);
+    // TODO: test sequence number generation
 
-        supplementalEntry = new CalendarSupplementalEntry(
-                11, CalendarSectionType.THIRD_READING, new BillId("S1314A", session), null, false);
-        supplemental.addEntry(supplementalEntry);
+    @Test
+    public void parsesActiveListEntries() {
+        CalendarId id = simpleCalendarId();
+        SessionYear sessionYear = SessionYear.of(id.getYear());
+        CalendarActiveListEntry entry = new CalendarActiveListEntry(46, new BillId("S2405", sessionYear ));
 
-        expectedCalendar.putSupplemental(supplemental);
+        Calendar actualCalendar = parser.parse(simpleActiveListFile);
+        assertThat(actualCalendar.getActiveList(0).getEntries(), hasItem(entry));
 
-        return expectedCalendar;
+        entry = new CalendarActiveListEntry(77, new BillId("S3407", sessionYear ));
+        assertThat(actualCalendar.getActiveList(0).getEntries(), hasItem(entry));
     }
 }
