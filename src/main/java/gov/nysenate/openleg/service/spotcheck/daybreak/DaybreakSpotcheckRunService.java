@@ -75,7 +75,7 @@ public class DaybreakSpotcheckRunService extends BaseSpotcheckRunService<BaseBil
      * {@inheritDoc}
      */
     @Override
-    public List<SpotCheckReport<BaseBillId>> doGenerateReports() {
+    protected List<SpotCheckReport<BaseBillId>> doGenerateReports() {
         logger.info("looking for unchecked daybreak references...");
         try {
             LocalDate reportDate = daybreakDao.getCurrentReportDate();
@@ -101,8 +101,9 @@ public class DaybreakSpotcheckRunService extends BaseSpotcheckRunService<BaseBil
         return Collections.emptyList();
     }
 
+    /** {@inheritDoc} */
     @Override
-    public int doCollate() {
+    protected int doCollate() {
         int reports = checkMailService.checkMail();
         daybreakProcessService.collateDaybreakReports();
         daybreakProcessService.processPendingFragments();

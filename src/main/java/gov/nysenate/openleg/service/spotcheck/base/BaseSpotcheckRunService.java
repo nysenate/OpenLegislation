@@ -6,6 +6,8 @@ import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -14,6 +16,9 @@ import java.util.List;
 
 public abstract class BaseSpotcheckRunService<ContentId> implements SpotcheckRunService<ContentId>
 {
+
+    private static final Logger logger = LoggerFactory.getLogger(BaseSpotcheckRunService.class);
+
     @Autowired
     private EventBus eventBus;
 
@@ -47,18 +52,19 @@ public abstract class BaseSpotcheckRunService<ContentId> implements SpotcheckRun
     /**
      * @see #generateReports()
      */
-    protected abstract List<SpotCheckReport<ContentId>> doGenerateReports();
+    protected abstract List<SpotCheckReport<ContentId>> doGenerateReports() throws Exception;
 
     /**
      * @see #collate()
      */
-    protected abstract int doCollate();
+    protected abstract int doCollate() throws Exception;
 
     /**
      * Sends out a notification reporting the given spotcheck exception
      * @param ex Exception - an exception that was raised during a spotcheck action
      */
     private void handleSpotcheckException(Exception ex) {
+        logger.error("Spotcheck Error:\n{}", ExceptionUtils.getStackTrace(ex));
         eventBus.post(new Notification(
                 NotificationType.SPOTCHECK_EXCEPTION,
                 LocalDateTime.now(),
