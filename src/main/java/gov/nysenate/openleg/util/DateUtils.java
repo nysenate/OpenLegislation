@@ -23,8 +23,7 @@ public abstract class DateUtils
     public final static DateTimeFormatter LRS_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH.mm.ss'Z'");
     public final static DateTimeFormatter LRS_WEBSITE_DATETIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm a");
 
-    public final static DateTimeFormatter MINIMAL_ISO_DATE = DateTimeFormatter.ofPattern("yyyyMMdd");
-    public final static DateTimeFormatter MINIMAL_ISO_DATE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
+    public final static DateTimeFormatter BASIC_ISO_DATE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
 
     /** --- Reference Dates --- */
 

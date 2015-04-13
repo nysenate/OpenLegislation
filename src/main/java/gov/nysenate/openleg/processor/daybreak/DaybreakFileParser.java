@@ -8,9 +8,11 @@ import gov.nysenate.openleg.model.daybreak.DaybreakFragment;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,12 +36,8 @@ public class DaybreakFileParser {
      * @return
      */
     public static List<DaybreakFragment> extractDaybreakFragments(DaybreakFile daybreakFile) throws IOException{
-        if(daybreakFile.getDaybreakDocType()== DaybreakDocType.PAGE_FILE){
-            // This parser isn't for page files
-            /** @see gov.nysenate.openleg.processor.daybreak.DaybreakPageFileParser */
-            logger.error("Daybreak page file " + daybreakFile.getFileName() + " was passed to an html parser");
-            return null;
-        }
+        Assert.isTrue(daybreakFile.getDaybreakDocType() != DaybreakDocType.PAGE_FILE, "This parser is not for page files");
+
         List<DaybreakFragment> daybreakFragments = new ArrayList<>();
 
         String fullText = FileUtils.readFileToString(daybreakFile.getFile(), "UTF-8").replaceAll("\\r?\\n", " ");

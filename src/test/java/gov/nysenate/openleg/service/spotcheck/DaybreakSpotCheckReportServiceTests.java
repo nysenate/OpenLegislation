@@ -6,6 +6,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
+import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakCheckReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
 import org.slf4j.Logger;

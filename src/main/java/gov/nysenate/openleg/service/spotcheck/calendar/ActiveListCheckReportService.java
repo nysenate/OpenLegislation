@@ -1,13 +1,13 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.calendar.CalendarActiveList;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportNotFoundEx;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 
 import java.time.LocalDateTime;
 import java.util.List;

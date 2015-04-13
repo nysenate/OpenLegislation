@@ -147,6 +147,16 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
 
     /** {@inheritDoc} */
     @Override
+    public Agenda getAgenda(LocalDate weekOf) throws AgendaNotFoundEx {
+        try {
+            return agendaDao.getAgenda(weekOf);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new AgendaNotFoundEx(weekOf);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public List<AgendaId> getAgendaIds(int year, SortOrder idOrder) {
         return agendaDao.getAgendaIds(year, idOrder);
     }

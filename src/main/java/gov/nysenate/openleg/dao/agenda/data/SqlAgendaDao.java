@@ -27,6 +27,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -48,6 +49,19 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         ImmutableParams agendaIdParams = ImmutableParams.from(getAgendaIdParams(agendaId));
         Agenda agenda =
             jdbcNamed.queryForObject(SqlAgendaQuery.SELECT_AGENDA_BY_ID.getSql(schema()), agendaIdParams, agendaRowMapper);
+        // Set the info addenda
+        agenda.setAgendaInfoAddenda(getAgendaInfoAddenda(agendaIdParams));
+        // Set the vote addenda
+        agenda.setAgendaVoteAddenda(getAgendaVoteAddenda(agendaIdParams));
+        return agenda;
+    }
+
+    @Override
+    public Agenda getAgenda(LocalDate weekOf) throws DataAccessException {
+        ImmutableParams agendaWeekOfParams = ImmutableParams.from(new MapSqlParameterSource("weekOf", toDate(weekOf)));
+        Agenda agenda = jdbcNamed.queryForObject(SqlAgendaQuery.SELECT_AGENDA_BY_WEEK_OF.getSql(schema(), LimitOffset.ONE),
+                                                 agendaWeekOfParams, agendaRowMapper);
+        ImmutableParams agendaIdParams = ImmutableParams.from(getAgendaIdParams(agenda.getId()));
         // Set the info addenda
         agenda.setAgendaInfoAddenda(getAgendaInfoAddenda(agendaIdParams));
         // Set the vote addenda

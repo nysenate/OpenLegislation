@@ -1,6 +1,5 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.base;
 
-import gov.nysenate.openleg.model.daybreak.DaybreakMessage;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -65,7 +63,7 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
     protected abstract String getCheckMailType();
 
     protected String getSentDateString(Message message) throws MessagingException {
-        return DateUtils.getLocalDateTime(message.getSentDate()).format(DateUtils.MINIMAL_ISO_DATE_TIME);
+        return DateUtils.getLocalDateTime(message.getSentDate()).format(DateUtils.BASIC_ISO_DATE_TIME);
     }
 
     /** Gets all messages from the source folder whose subjects match the given pattern */

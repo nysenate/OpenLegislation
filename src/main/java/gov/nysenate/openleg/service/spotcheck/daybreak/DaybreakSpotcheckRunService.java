@@ -1,14 +1,13 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.daybreak;
 
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.notification.Notification;
-import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
+import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckRunService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 @Service
-public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBillId> {
+public class DaybreakSpotcheckRunService extends BaseSpotcheckRunService<BaseBillId> {
 
     private static final Logger logger = LoggerFactory.getLogger(DaybreakSpotcheckRunService.class);
 
@@ -78,7 +75,7 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBill
      * {@inheritDoc}
      */
     @Override
-    public List<SpotCheckReport<BaseBillId>> generateReports() {
+    public List<SpotCheckReport<BaseBillId>> doGenerateReports() {
         logger.info("looking for unchecked daybreak references...");
         try {
             LocalDate reportDate = daybreakDao.getCurrentReportDate();
@@ -105,7 +102,7 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBill
     }
 
     @Override
-    public int collate() {
+    public int doCollate() {
         int reports = checkMailService.checkMail();
         daybreakProcessService.collateDaybreakReports();
         daybreakProcessService.processPendingFragments();
@@ -120,38 +117,5 @@ public class DaybreakSpotcheckRunService implements SpotcheckRunService<BaseBill
     @Override
     public String getCollateType() {
         return "daybreak-report";
-    }
-
-    /** --- Internal Methods --- */
-
-    /**
-     * Generates and sends a notification for a new daybreak spotcheck report
-     * @param daybreakReport SpotCheckReport<BaseBillId>
-     */
-    private void spotcheckCompleteNotification(SpotCheckReport<BaseBillId> daybreakReport) {
-        String summary = "New spotcheck report: " + daybreakReport.getReportDateTime();
-        StringBuilder messageBuilder = new StringBuilder();
-
-        messageBuilder.append(summary)
-                .append("\n\n");
-
-        messageBuilder.append(env.getUrl())
-                .append("/admin/report/daybreak/")
-                .append(daybreakReport.getReportDateTime())
-                .append("\n\n");
-
-        messageBuilder.append("Total open errors: ").append(daybreakReport.getOpenMismatchCount()).append("\n");
-
-        daybreakReport.getMismatchStatusTypeCounts().forEach((status, typeCounts) -> {
-            long totalTypeCounts = typeCounts.values().stream().reduce(0L, (a, b) -> a + b);
-            messageBuilder.append(status).append(": ").append(totalTypeCounts).append("\n");
-            typeCounts.forEach((type, count) ->
-                    messageBuilder.append("\t").append(type).append(": ").append(count).append("\n"));
-        });
-
-        Notification notification = new Notification(NotificationType.SPOTCHECK, daybreakReport.getReportDateTime(),
-                                                     summary, messageBuilder.toString());
-
-        eventBus.post(notification);
     }
 }

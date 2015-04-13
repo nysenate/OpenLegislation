@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.base;
 
 public interface CheckMailService {
 

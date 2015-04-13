@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.daybreak;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
@@ -14,6 +14,7 @@ import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
 import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;

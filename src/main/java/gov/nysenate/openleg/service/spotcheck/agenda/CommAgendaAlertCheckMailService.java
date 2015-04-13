@@ -1,6 +1,8 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.agenda;
 
-import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.service.spotcheck.base.CheckMailService;
+import gov.nysenate.openleg.service.spotcheck.base.SimpleCheckMailService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -32,13 +34,13 @@ public class CommAgendaAlertCheckMailService extends SimpleCheckMailService impl
         if (subjectMatcher.matches()) {
             String addendum = subjectMatcher.group(2);
             if (StringUtils.isBlank(addendum)) {
-                addendum = "initial";
+                addendum = "original";
             }
             LocalDate weekOf = LocalDate.parse(subjectMatcher.group(3), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
             LocalDateTime posted = LocalDateTime.parse(subjectMatcher.group(4).replace("\\s+", " "),
                     DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
             String filename = String.format("agenda_alert-%s-%s-%s-%s.html",
-                    weekOf.format(DateUtils.MINIMAL_ISO_DATE),
+                    weekOf.format(DateTimeFormatter.BASIC_ISO_DATE),
                     subjectMatcher.group(1).replace(' ', '_').replace(',', '.'), addendum,
                     getSentDateString(message));
             return new File(new File(environment.getStagingDir(), "alerts"), filename);

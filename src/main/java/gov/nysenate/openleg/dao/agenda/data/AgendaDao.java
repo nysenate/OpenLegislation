@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -21,6 +22,14 @@ public interface AgendaDao
      * @throws DataAccessException
      */
     public Agenda getAgenda(AgendaId agendaId) throws DataAccessException;
+
+    /**
+     * Get an agenda that starts with a certain date
+     * @param weekOf LocalDate - a date (should be a monday)
+     * @return Agenda
+     * @throws DataAccessException - if no such agenda exists
+     */
+    public Agenda getAgenda(LocalDate weekOf) throws DataAccessException;
 
     /**
      * Retrieve a list of agenda ids for all the agendas processed during the given year.

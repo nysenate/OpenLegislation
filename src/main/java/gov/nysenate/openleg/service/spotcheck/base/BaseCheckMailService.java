@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.base;
 
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.util.MailUtils;

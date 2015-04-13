@@ -1,5 +1,7 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.calendar;
 
+import gov.nysenate.openleg.service.spotcheck.base.CheckMailService;
+import gov.nysenate.openleg.service.spotcheck.base.SimpleCheckMailService;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;

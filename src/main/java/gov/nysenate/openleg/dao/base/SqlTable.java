@@ -23,6 +23,9 @@ public enum SqlTable
     AGENDA_VOTE_COMMITTEE_ITEM   ("agenda_vote_committee_item"),
     AGENDA_VOTE_COMMITTEE_VOTE   ("agenda_vote_committee_vote"),
 
+    AGENDA_ALERT_INFO_COMMITTEE  ("agenda_alert_info_committee"),
+    AGENDA_ALERT_INFO_COMMITTEE_ITEM ("agenda_alert_info_committee_item"),
+
     AGENDA_CHANGE_LOG            ("agenda_change_log"),
 
     API_USER                     ("apiuser"),

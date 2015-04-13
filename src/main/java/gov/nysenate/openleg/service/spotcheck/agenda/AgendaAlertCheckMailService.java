@@ -1,6 +1,7 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.agenda;
 
-import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.service.spotcheck.base.CheckMailService;
+import gov.nysenate.openleg.service.spotcheck.base.SimpleCheckMailService;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
@@ -33,7 +34,7 @@ public class AgendaAlertCheckMailService extends SimpleCheckMailService implemen
         if (subjectMatcher.matches()) {
             LocalDate weekOf = LocalDate.parse(subjectMatcher.group(1), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
             String filename = String.format("agenda_alert-%s-full-%s.html",
-                    weekOf.format(DateUtils.MINIMAL_ISO_DATE), getSentDateString(message));
+                    weekOf.format(DateTimeFormatter.BASIC_ISO_DATE), getSentDateString(message));
             return new File(new File(environment.getStagingDir(), "alerts"), filename);
         }
         throw new IllegalArgumentException();

@@ -61,7 +61,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
 
     /** --- Interfaced Methods --- */
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public DaybreakFile getDaybreakFile(LocalDate reportDate, String fileName) throws DataAccessException {
         MapSqlParameterSource params = getReportDateParams(reportDate);
@@ -71,7 +71,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                                         params, new DaybreakFileRowMapper());
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public DaybreakFile getDaybreakFile(LocalDate reportDate, DaybreakDocType fileType) throws DataAccessException {
         MapSqlParameterSource params = getReportDateParams(reportDate);
@@ -81,7 +81,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                                             params, new DaybreakFileRowMapper());
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public DaybreakReport<DaybreakFile> getDaybreakReport(LocalDate reportDate) throws DataAccessException {
         // Get all files for the given report date
@@ -100,7 +100,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public DaybreakReportSet<DaybreakFile> getIncomingReports() throws IOException {
         logger.debug("Getting incoming files from " + incomingDaybreakDir.getAbsolutePath());
@@ -122,7 +122,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return reportSet;
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public DaybreakFragment getDaybreakFragment(DaybreakBillId daybreakBillId) throws DataAccessException {
         // Get the main fragment data
@@ -135,7 +135,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return daybreakFragment;
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public List<DaybreakFragment> getDaybreakFragments(LocalDate reportDate) throws DataAccessException {
         // Get a list of all fragments for the report date
@@ -152,7 +152,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return daybreakFragments;
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public List<DaybreakFragment> getPendingDaybreakFragments() {
         try {
@@ -184,7 +184,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public Map<BillId, PageFileEntry> getPageFileEntries(DaybreakBillId daybreakBillId) throws DataAccessException {
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
@@ -194,7 +194,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
                 PageFileEntry::getSenateBillId : PageFileEntry::getAssemblyBillId);
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public Map<BaseBillId, Map<BillId, PageFileEntry>> getAllPageFileEntries(LocalDate reportDate) throws DataAccessException {
         // Get a list of all page file entries
@@ -216,7 +216,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return reportPageFileEntries;
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public DaybreakBill getDaybreakBill(DaybreakBillId daybreakBillId)  throws DataAccessException{
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
@@ -227,7 +227,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return daybreakBill;
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public DaybreakBill getCurrentDaybreakBill(BaseBillId baseBillId) throws DataAccessException {
         return getDaybreakBillAtDate(baseBillId, LocalDate.now());
@@ -238,13 +238,13 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return getDaybreakBillAtDate(baseBillId, getCurrentReportDate(dateRange));
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public DaybreakBill getDaybreakBillAtDate(BaseBillId baseBillId, LocalDate referenceDate) {
         return getDaybreakBill(new DaybreakBillId(baseBillId, getCurrentReportDate()));
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public List<DaybreakBill> getDaybreakBills(LocalDate reportDate)  throws DataAccessException{
         MapSqlParameterSource params = getReportDateParams(reportDate);
@@ -255,25 +255,25 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return daybreakBills;
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public List<DaybreakBill> getCurrentDaybreakBills() throws DataAccessException {
         return getDaybreakBills(getCurrentReportDate());
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public List<DaybreakBill> getCurrentDaybreakBills(Range<LocalDate> dateRange) {
         return getDaybreakBills(getCurrentReportDate(dateRange));
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public LocalDate getCurrentReportDate() throws DataAccessException {
         return getCurrentReportDate(Range.closed(DateUtils.LONG_AGO, LocalDate.now()));
     }
 
-    /** {@InheritDoc }  */
+    /** {@inheritDoc }  */
     @Override
     public LocalDate getCurrentReportDate(Range<LocalDate> dateRange) throws DataAccessException {
         MapSqlParameterSource params = getReportDateRangeParams(dateRange);
@@ -302,7 +302,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         return jdbcNamed.query(SqlDaybreakQuery.SELECT_REPORTS.getSql(schema()), params, new DaybreakReportDateRowMapper());
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void archiveDaybreakFile(DaybreakFile daybreakFile) throws IOException {
         File archivedFile = new File(this.archiveDaybreakDir, daybreakFile.getFile().getName());
@@ -313,7 +313,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         daybreakFile.setFile(archivedFile);
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void updateDaybreakFile(DaybreakFile daybreakFile) {
         MapSqlParameterSource params = getDaybreakFileParams(daybreakFile);
@@ -322,7 +322,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void updateDaybreakFragment(DaybreakFragment daybreakFragment) {
         MapSqlParameterSource params = getDaybreakFragmentParams(daybreakFragment);
@@ -331,14 +331,14 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void setPendingProcessing(DaybreakBillId daybreakBillId) {
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PENDING_PROCESSING.getSql(schema()), params);
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void setPendingProcessing(LocalDate reportDate) {
         MapSqlParameterSource params = getReportDateParams(reportDate);
@@ -347,14 +347,14 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         updateDaybreakReport(reportDate);
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void setProcessed(DaybreakBillId daybreakBillId) {
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
         jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PROCESSED.getSql(schema()), params);
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void setProcessed(LocalDate reportDate) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, true, false);
@@ -363,7 +363,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FRAGMENT_PROCESSED_REPORT.getSql(schema()), params);
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void updatePageFileEntry(PageFileEntry pageFileEntry) {
         MapSqlParameterSource params = getPageFileEntryParams(pageFileEntry);
@@ -372,7 +372,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void updateDaybreakBill(DaybreakBill daybreakBill) {
         // Update the bill table
@@ -387,7 +387,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         updateDaybreakBillMultiSponsors(daybreakBill.getDaybreakBillId(), daybreakBill.getMultiSponsors());
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void updateDaybreakReport(LocalDate reportDate) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, false, false);
@@ -396,7 +396,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         }
     }
 
-    /** {@InheritDoc } */
+    /** {@inheritDoc } */
     @Override
     public void updateDaybreakReportSetChecked(LocalDate reportDate, boolean checked) {
         MapSqlParameterSource params = getDaybreakReportParams(reportDate, true, checked);
@@ -432,7 +432,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     /**
      * Gets all actions for the specified daybreak bill sorted by sequence number
      * @param daybreakBillId
-     * @return
+     * @return List<BillAction>
      */
     private List<BillAction> getDaybreakBillActions(DaybreakBillId daybreakBillId){
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);

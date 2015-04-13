@@ -12,5 +12,7 @@ public enum SpotCheckRefType
 
     LBDC_ACTIVE_LIST,
 
+    LBDC_AGENDA_ALERT,
+
 
 }

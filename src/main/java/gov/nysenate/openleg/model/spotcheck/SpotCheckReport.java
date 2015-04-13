@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
+
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,7 +11,7 @@ import java.util.Map;
  * A SpotCheckReport is basically a collection of observations that have 1 or more mismatches associated
  * within them. The ContentKey is templated to allow for reports on specific content types.
  *
- * @see gov.nysenate.openleg.service.spotcheck.SpotCheckReportService
+ * @see SpotCheckReportService
  * @param <ContentKey>
  */
 public class SpotCheckReport<ContentKey>

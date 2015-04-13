@@ -13,6 +13,13 @@ public enum SqlAgendaQuery implements BasicSqlQuery
     SELECT_AGENDA_BY_ID(
         SELECT_AGENDAS_BY_YEAR.sql + " AND agenda_no = :agendaNo"
     ),
+    SELECT_AGENDA_BY_WEEK_OF(
+        "SELECT a.agenda_no, a.year, a.modified_date_time, a.published_date_time\n" +
+        "FROM ${schema}." + SqlTable.AGENDA + " a\n" +
+        "   JOIN ${schema}." + SqlTable.AGENDA_INFO_ADDENDUM + " ai\n" +
+        "   ON a.agenda_no = ai.agenda_no AND a.year = ai.year\n" +
+        "WHERE ai.week_of = :weekOf"
+    ),
     UPDATE_AGENDA(
         "UPDATE ${schema}." + SqlTable.AGENDA + "\n" +
         "SET published_date_time = :publishedDateTime, modified_date_time = :modifiedDateTime, " +

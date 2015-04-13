@@ -10,6 +10,7 @@
 src/main/webapp/.sass-cache/**
 src/main/webapp/static/bower_components/**
 src/main/webapp/static/css/src/**
+src/main/webapp/node_modules/**
 src/main/webapp/META-INF/**
 node_modules/**
 target

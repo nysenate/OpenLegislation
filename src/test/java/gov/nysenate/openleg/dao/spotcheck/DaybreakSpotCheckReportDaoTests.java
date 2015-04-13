@@ -7,7 +7,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
-import gov.nysenate.openleg.service.spotcheck.DaybreakCheckService;
+import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakCheckService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
 import org.slf4j.Logger;

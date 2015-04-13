@@ -19,24 +19,20 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportNotFoundEx;
-import gov.nysenate.openleg.service.spotcheck.DaybreakCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
-import static gov.nysenate.openleg.util.DateUtils.atEndOfDay;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.format.annotation.DateTimeFormat.ISO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController

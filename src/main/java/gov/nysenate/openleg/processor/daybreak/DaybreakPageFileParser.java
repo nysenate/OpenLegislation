@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -31,12 +32,7 @@ public class DaybreakPageFileParser {
      * @throws IOException
      */
     public static List<PageFileEntry> extractPageFileEntries(DaybreakFile daybreakFile) throws IOException{
-        if(daybreakFile.getDaybreakDocType()!= DaybreakDocType.PAGE_FILE){
-            // This parser is only for page files
-            /** @see gov.nysenate.openleg.processor.daybreak.DaybreakFileParser */
-            logger.error("non page file " + daybreakFile.getFileName() + " was passed to a DaybreakPageFile parser");
-            return null;
-        }
+        Assert.isTrue(daybreakFile.getDaybreakDocType() == DaybreakDocType.PAGE_FILE, "this method only parses page files");
 
         List<PageFileEntry> pageFileEntries = new ArrayList<>();
 

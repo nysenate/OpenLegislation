@@ -1,20 +1,17 @@
-package gov.nysenate.openleg.service.spotcheck;
+package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.activelist.ActiveListReferenceDAO;
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.calendar.CalendarActiveList;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
-import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeSet;
 
 /**

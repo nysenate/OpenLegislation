@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -21,6 +22,14 @@ public interface AgendaDataService
      * @throws AgendaNotFoundEx - If an agenda with the given agendaId could not be found.
      */
     public Agenda getAgenda(AgendaId agendaId) throws AgendaNotFoundEx;
+
+    /**
+     * Retreives an agenda for the week of a date
+     * @param weekOf - LocalDate
+     * @return Agenda
+     * @throws AgendaNotFoundEx - If no such agenda can be found
+     */
+    public Agenda getAgenda(LocalDate weekOf) throws AgendaNotFoundEx;
 
     /**
      * Retrieves a list of agenda ids for a given year.

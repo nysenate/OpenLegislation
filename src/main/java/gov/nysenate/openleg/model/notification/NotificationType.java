@@ -12,6 +12,7 @@ public enum NotificationType {
     EXCEPTION           (ExceptionNotification.class),
     REQUEST_EXCEPTION   (RequestExceptionNotification.class),
     PROCESS_EXCEPTION   (ProcessExceptionNotification.class),
+    SPOTCHECK_EXCEPTION (SpotcheckExceptionNotification.class),
     WARNING             (WarningNotification.class),
     SPOTCHECK           (SpotcheckNotification.class),
     NEW_API_KEY         (NewApiKeyNotification.class)
@@ -19,7 +20,8 @@ public enum NotificationType {
 
     private Class<? extends AllNotifications> notificationClass;
 
-    private static ImmutableSet<NotificationType> ALL_NOTIFICATION_TYPES = ImmutableSet.copyOf(NotificationType.values());
+    private static final ImmutableSet<NotificationType> ALL_NOTIFICATION_TYPES =
+            ImmutableSet.copyOf(NotificationType.values());
 
     private NotificationType(Class<? extends AllNotifications> notificationClass) {
         this.notificationClass = notificationClass;
@@ -64,6 +66,7 @@ public enum NotificationType {
     private static interface ExceptionNotification extends AllNotifications {}
     private static interface RequestExceptionNotification extends ExceptionNotification{}
     private static interface ProcessExceptionNotification extends ExceptionNotification{}
+    private static interface SpotcheckExceptionNotification extends ExceptionNotification{}
 
     private static interface WarningNotification extends AllNotifications {}
 

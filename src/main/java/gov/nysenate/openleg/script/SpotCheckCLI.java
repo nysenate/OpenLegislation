@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.script;
 
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
-import gov.nysenate.openleg.service.spotcheck.DaybreakCheckMailService;
-import gov.nysenate.openleg.service.spotcheck.DaybreakSpotcheckRunService;
+import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakCheckMailService;
+import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakSpotcheckRunService;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;

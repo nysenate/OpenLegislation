@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.service.spotcheck;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.service.spotcheck.base.CheckMailService;
+import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakCheckMailService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
