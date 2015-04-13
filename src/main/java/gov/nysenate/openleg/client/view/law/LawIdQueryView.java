@@ -24,6 +24,6 @@ public class LawIdQueryView implements ViewObject
     }
 
     public String getEndDate() {
-        return endDate.toString();
+        return (endDate != null) ? endDate.toString() : null;
     }
 }
