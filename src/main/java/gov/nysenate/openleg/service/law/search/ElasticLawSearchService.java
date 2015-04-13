@@ -15,9 +15,11 @@ import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.law.event.BulkLawUpdateEvent;
 import gov.nysenate.openleg.service.law.event.LawUpdateEvent;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +61,15 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
         if (lawId != null) {
             queryBuilder = QueryBuilders.filteredQuery(queryBuilder, FilterBuilders.typeFilter(lawId));
         }
-        return lawSearchDao.searchLawDocs(queryBuilder, null, null, sort, limOff);
+        try {
+            return lawSearchDao.searchLawDocs(queryBuilder, null, null, sort, limOff);
+        }
+        catch (SearchParseException ex) {
+            throw new SearchException("Invalid query string", ex);
+        }
+        catch (ElasticsearchException ex) {
+            throw new SearchException("Unexpected search exception!", ex);
+        }
     }
 
     /** {@inheritDoc} */
