@@ -36,7 +36,7 @@ public abstract class BaseCalendarAlertParser {
     protected LocalDateTime parseReleaseDateTime(File file) {
         String dateTimeString = file.getName().split("-")[3];
         dateTimeString = dateTimeString.split("\\.")[0];
-        return LocalDateTime.parse(dateTimeString, DateUtils.MINIMAL_ISO_DATE_TIME);
+        return LocalDateTime.parse(dateTimeString, DateUtils.BASIC_ISO_DATE_TIME);
     }
 
     protected LocalDate parseCalendarDate(File file) {
