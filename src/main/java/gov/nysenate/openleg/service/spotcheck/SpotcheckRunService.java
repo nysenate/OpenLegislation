@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.service.spotcheck;
 
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import gov.nysenate.openleg.processor.base.ProcessService;
 
-public interface SpotcheckRunService<ContentId> {
+import java.util.List;
+
+public interface SpotcheckRunService<ContentId> extends ProcessService {
 
 
     /**
@@ -15,15 +17,23 @@ public interface SpotcheckRunService<ContentId> {
      *
      *  @return SpotCheckReport<ContentId>
      */
-    public SpotCheckReport<ContentId> runSpotcheck();
+    default List<SpotCheckReport<ContentId>> runSpotcheck() {
+        collate();
+        return generateReports();
+    }
 
     /**
-     * Generates a new spotcheck report from reference data.
+     * Generates new spotcheck reports from reference data.
      * This includes checking for the most recent processed unchecked reference data, checking the reference data against
      *  Openleg data, and then saving the resulting report.
-     *  Returns a reference to the generated report if it was successful, null if not
+     *  Returns a list of reports that were generated
      *
      *  @return SpotCheckReport<ContentId>
      */
-    public SpotCheckReport<ContentId> generateReport();
+    List<SpotCheckReport<ContentId>> generateReports();
+
+    @Override
+    default int ingest() {
+        return generateReports().size();
+    }
 }

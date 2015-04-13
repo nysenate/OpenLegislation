@@ -153,9 +153,11 @@ lawModule.controller('LawSearchCtrl', ['$scope', '$location', '$routeParams', 'L
                     $scope.pagination.setTotalItems($scope.lawSearch.response.total);
                     $scope.lawSearch.searched = true;
                     $scope.lawSearch.searching = false;
+                    $scope.lawSearch.error = false;
                 },
-                function() {
-                    $scope.lawSearch.error = $scope.lawSearch.response;
+                function(error) {
+                    $scope.pagination.setTotalItems(0);
+                    $scope.lawSearch.error = error.data;
                     $scope.lawSearch.searched = true;
                     $scope.lawSearch.searching = false;
                 });

@@ -61,7 +61,7 @@ public class SpotCheckCLI extends BaseScript
                 daybreakProcessService.ingest();
             }
             if (report) {
-                spotcheckRunService.generateReport();
+                spotcheckRunService.generateReports();
             }
         } else {
             spotcheckRunService.runSpotcheck();
