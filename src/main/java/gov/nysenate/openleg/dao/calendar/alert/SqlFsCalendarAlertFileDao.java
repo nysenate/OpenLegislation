@@ -27,9 +27,9 @@ import static gov.nysenate.openleg.dao.calendar.alert.SqlCalendarAlertFileQuery.
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
-public class SqlFsCalendarAlertDao extends SqlBaseDao {
+public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(SqlFsCalendarAlertDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(SqlFsCalendarAlertFileDao.class);
 
     private static final Pattern calendarAlertFilePattern =
             Pattern.compile("^(floor_cal|active_list)_alert-\\d{4}-\\d+[A-Z]?-\\d{8}T\\d{6}.html$");
