@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.calendar.alert.SqlCalendarAlertDao;
 import gov.nysenate.openleg.dao.calendar.alert.SqlFsCalendarAlertFileDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
@@ -28,6 +29,9 @@ public class CalendarAlertSpotCheckRunService extends BaseSpotcheckRunService<Ca
     private SqlFsCalendarAlertFileDao fileDao;
 
     @Autowired
+    private SqlCalendarAlertDao calendarAlertDao;
+
+    @Autowired
     private CalendarAlertParser parser;
 
     @Override
@@ -52,7 +56,7 @@ public class CalendarAlertSpotCheckRunService extends BaseSpotcheckRunService<Ca
             file.setPendingProcessing(false);
             fileDao.updateCalendarAlertFile(file);
 
-            // TODO calendarAlertDao.updateCalendar(calendar) ... -> save calendar reference into database
+            calendarAlertDao.updateCalendar(calendar, file);
         }
     }
 

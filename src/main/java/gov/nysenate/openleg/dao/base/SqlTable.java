@@ -56,7 +56,12 @@ public enum SqlTable
     CALENDAR_SUPPLEMENTAL        ("calendar_supplemental"),
     CALENDAR_SUP_ENTRY           ("calendar_supplemental_entry"),
 
-    ALERT_CALENDAR_FILE("alert_calendar_file"),
+    ALERT_CALENDAR_FILE          ("alert_calendar_file"),
+    ALERT_CALENDAR               ("alert_calendar_reference"),
+    ALERT_CALENDAR_ACTIVE_LIST   ("alert_active_list_reference"),
+    ALERT_CALENDAR_ACTIVE_LIST_ENTRY ("alert_active_list_entry_reference"),
+    ALERT_CALENDAR_SUPPLEMENTAL  ("alert_supplemental_reference"),
+    ALERT_CALENDAR_SUP_ENTRY     ("alert_supplemental_entry_reference"),
 
     CALENDAR_CHANGE_LOG          ("calendar_change_log"),
 
