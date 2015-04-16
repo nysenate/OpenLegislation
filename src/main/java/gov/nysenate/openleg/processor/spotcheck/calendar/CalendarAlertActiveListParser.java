@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.spotcheck.calendar;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarActiveList;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
 import org.apache.commons.io.FileUtils;
@@ -23,9 +24,10 @@ public class CalendarAlertActiveListParser extends BaseCalendarAlertParser{
      * @return
      * @throws IOException
      */
-    protected CalendarActiveList parseActiveList(File file) throws IOException {
+    protected CalendarActiveList parseActiveList(Calendar calendar, File file) throws IOException {
+        int sequenceNum = calendar.getActiveListMap().size();
         CalendarActiveList activeList = new CalendarActiveList(
-                parseCalendarId(file), 0, "", parseCalendarDate(file), parseReleaseDateTime(file));
+                calendar.getId(), sequenceNum, "", parseCalendarDate(file), parseReleaseDateTime(file));
 
         parseActiveListEntries(file, activeList);
         return activeList;

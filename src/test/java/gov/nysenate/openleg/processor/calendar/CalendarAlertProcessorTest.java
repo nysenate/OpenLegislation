@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
-import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertParser;
+import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,10 +19,10 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class CalendarAlertParserTest extends BaseTests {
+public class CalendarAlertProcessorTest extends BaseTests {
 
     @Autowired
-    private CalendarAlertParser parser;
+    private CalendarAlertProcessor process;
 
     private final File simpleAlertFile = new File(getClass().getClassLoader().getResource("calendarAlerts/floor_cal_alert-2015-10-20150219T143033.html").getFile());
     private final File alertFile = new File(getClass().getClassLoader().getResource("calendarAlerts/floor_cal_alert-2015-28B-20150331T185833.html").getFile());
@@ -30,25 +30,25 @@ public class CalendarAlertParserTest extends BaseTests {
 
     @Test
     public void parsesSimpleCalendarIdInfo() {
-        Calendar actualCalendar = parser.parse(simpleAlertFile);
+        Calendar actualCalendar = process.process(simpleAlertFile);
         CalendarId expectedCalendarId = simpleCalendarId();
         assertThat(actualCalendar.getId(), is(expectedCalendarId));
     }
 
     @Test
     public void parsesCalendarIdInfoWhenVersionPresent() {
-        Calendar actualCalendar = parser.parse(alertFile);
+        Calendar actualCalendar = process.process(alertFile);
         CalendarId expectedId = new CalendarId(28, 2015);
         assertThat(actualCalendar.getId(), is(expectedId));
     }
 
     @Test
     public void parsesSupplementalVersion() {
-        Calendar actualCalendar = parser.parse(simpleAlertFile);
+        Calendar actualCalendar = process.process(simpleAlertFile);
         assertThat(actualCalendar.getSupplementalMap().keySet().size(), is(1));
         assertThat(actualCalendar.getSupplemental(Version.DEFAULT), is(not(nullValue())));
 
-        actualCalendar = parser.parse(alertFile);
+        actualCalendar = process.process(alertFile);
         assertThat(actualCalendar.getSupplementalMap().keySet().size(), is(1));
         assertThat(actualCalendar.getSupplemental(Version.B), is(not(nullValue())));
     }
@@ -60,7 +60,7 @@ public class CalendarAlertParserTest extends BaseTests {
         CalendarSupplemental expectedSupplemental = new CalendarSupplemental(
                 calendarId, Version.DEFAULT, dateTime.toLocalDate(), dateTime);
 
-        Calendar actualCalendar = parser.parse(simpleAlertFile);
+        Calendar actualCalendar = process.process(simpleAlertFile);
         CalendarSupplemental actualSupplemental = actualCalendar.getSupplemental(Version.DEFAULT);
 
         assertThat(actualSupplemental.getCalendarId(), is(expectedSupplemental.getCalendarId()));
@@ -76,7 +76,7 @@ public class CalendarAlertParserTest extends BaseTests {
         CalendarSupplementalEntry entry = new CalendarSupplementalEntry(
                 78, sectionType, new BillId("S390", sessionYear), null, null);
 
-        Calendar actualCalendar = parser.parse(simpleAlertFile);
+        Calendar actualCalendar = process.process(simpleAlertFile);
         assertThat(getSupplementalEntries(actualCalendar, Version.DEFAULT, sectionType), hasItem(entry));
     }
 
@@ -87,7 +87,7 @@ public class CalendarAlertParserTest extends BaseTests {
         CalendarSupplementalEntry entry = new CalendarSupplementalEntry(
                 70, sectionType, new BillId("S2236", sessionYear), null, null);
 
-        Calendar actualCalendar = parser.parse(simpleAlertFile);
+        Calendar actualCalendar = process.process(simpleAlertFile);
         assertThat(getSupplementalEntries(actualCalendar, Version.DEFAULT, sectionType), hasItem(entry));
     }
 
@@ -98,7 +98,7 @@ public class CalendarAlertParserTest extends BaseTests {
         CalendarSupplementalEntry entry = new CalendarSupplementalEntry(
                 49, sectionType, new BillId("S2314", sessionYear), null, null);
 
-        Calendar actualCalendar = parser.parse(simpleAlertFile);
+        Calendar actualCalendar = process.process(simpleAlertFile);
         assertThat(getSupplementalEntries(actualCalendar, Version.DEFAULT, sectionType), hasItem(entry));
     }
 
@@ -118,7 +118,7 @@ public class CalendarAlertParserTest extends BaseTests {
         LocalDateTime expectedReleaseDate = LocalDateTime.of(2015, 2, 24, 19, 32, 38);
         LocalDate expectedCalDate = expectedReleaseDate.toLocalDate();
 
-        Calendar actualCalendar = parser.parse(simpleActiveListFile);
+        Calendar actualCalendar = process.process(simpleActiveListFile);
         assertThat(actualCalendar.getActiveListMap().size(), is(1));
         assertThat(actualCalendar.getActiveList(0), is(notNullValue()));
         assertThat(actualCalendar.getActiveList(0).getCalendarId(), is(calendarId));
@@ -136,7 +136,7 @@ public class CalendarAlertParserTest extends BaseTests {
         SessionYear sessionYear = SessionYear.of(id.getYear());
         CalendarActiveListEntry entry = new CalendarActiveListEntry(46, new BillId("S2405", sessionYear ));
 
-        Calendar actualCalendar = parser.parse(simpleActiveListFile);
+        Calendar actualCalendar = process.process(simpleActiveListFile);
         assertThat(actualCalendar.getActiveList(0).getEntries(), hasItem(entry));
 
         entry = new CalendarActiveListEntry(77, new BillId("S3407", sessionYear ));

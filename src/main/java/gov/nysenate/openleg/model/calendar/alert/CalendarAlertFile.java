@@ -19,6 +19,8 @@ public class CalendarAlertFile extends BaseSourceData {
         else {
             throw new FileNotFoundException(file.getAbsolutePath());
         }
+        // By default, a file is unprocessed.
+        this.setPendingProcessing(true);
     }
 
     public File getFile() {

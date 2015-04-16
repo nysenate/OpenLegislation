@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.spotcheck.calendar;
 
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.util.DateUtils;
 import org.jsoup.select.Elements;
 
@@ -10,12 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public abstract class BaseCalendarAlertParser {
-
-    protected CalendarId parseCalendarId(File file) {
-        int year = Integer.valueOf(splitFileName(file)[1]);
-        String calNo = parseCalNo(file);
-        return new CalendarId(Integer.valueOf(calNo), year);
-    }
 
     protected String parseCalNo(File file) {
         String calNoAndVersion = parseCalNoAndVersion(file);
@@ -47,15 +40,15 @@ public abstract class BaseCalendarAlertParser {
         return new Elements(entryRows.subList(1, entryRows.size()));
     }
 
+    protected String[] splitFileName(File file) {
+        return file.getName().split("-");
+    }
+
     private boolean isDefaultVersion(String calNoAndVersion) {
         return !calNoAndVersion.matches("\\d+[A-Z]");
     }
 
     private String parseCalNoAndVersion(File file) {
         return splitFileName(file)[2];
-    }
-
-    private String[] splitFileName(File file) {
-        return file.getName().split("-");
     }
 }

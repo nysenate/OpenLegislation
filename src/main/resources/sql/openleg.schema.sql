@@ -1938,6 +1938,299 @@ ALTER TABLE master.calendar_supplemental_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE calendar_supplemental_id_seq OWNED BY calendar_supplemental.id;
 
+--
+-- Name: alert_calendar_reference; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE alert_calendar_reference (
+  calendar_no integer NOT NULL,
+  calendar_year smallint NOT NULL,
+  modified_date_time timestamp without time zone,
+  published_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_file text
+);
+
+
+ALTER TABLE master.alert_calendar_reference OWNER TO postgres;
+
+--
+-- Name: TABLE alert_calendar_reference; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE alert_calendar_reference IS 'Calendar listings ';
+
+
+--
+-- Name: COLUMN alert_calendar_reference.calendar_no; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_calendar_reference.calendar_no IS 'Calendar number for a session day';
+
+
+--
+-- Name: COLUMN alert_calendar_reference.calendar_year; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_calendar_reference.calendar_year IS 'The year for this calendar';
+
+
+--
+-- Name: alert_active_list_reference; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE alert_active_list_reference (
+  id integer NOT NULL,
+  sequence_no smallint,
+  calendar_no smallint,
+  calendar_year smallint,
+  calendar_date date,
+  release_date_time timestamp without time zone,
+  notes text,
+  modified_date_time timestamp without time zone,
+  published_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_file text
+);
+
+
+ALTER TABLE master.alert_active_list_reference OWNER TO postgres;
+
+--
+-- Name: TABLE alert_active_list_reference; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE alert_active_list_reference IS 'Listing of all calendar active lists';
+
+
+--
+-- Name: alert_active_list_entry_reference_entry; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE alert_active_list_entry_reference (
+  calendar_active_list_id smallint NOT NULL,
+  bill_calendar_no smallint NOT NULL,
+  bill_print_no text,
+  bill_amend_version character(1),
+  bill_session_year smallint,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_file text
+);
+
+
+ALTER TABLE master.alert_active_list_entry_reference OWNER TO postgres;
+
+--
+-- Name: TABLE alert_active_list_entry_reference_entry; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE alert_active_list_entry_reference IS 'Entries for each calendar active list';
+
+
+--
+-- Name: alert_active_list_reference_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE alert_active_list_reference_id_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+
+ALTER TABLE master.alert_active_list_reference_id_seq OWNER TO postgres;
+
+--
+-- Name: alert_active_list_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+--
+
+ALTER SEQUENCE alert_active_list_reference_id_seq OWNED BY alert_active_list_reference.id;
+
+--
+-- Name: calendar_supplemental; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE alert_supplemental_reference (
+  id integer NOT NULL,
+  calendar_no smallint NOT NULL,
+  calendar_year smallint NOT NULL,
+  sup_version text NOT NULL,
+  calendar_date date,
+  release_date_time timestamp without time zone,
+  modified_date_time timestamp without time zone,
+  published_date_time timestamp without time zone,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_file text
+);
+
+
+ALTER TABLE master.alert_supplemental_reference OWNER TO postgres;
+
+--
+-- Name: TABLE calendar_supplemental; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE alert_supplemental_reference IS 'Calendar entries are published through supplementals';
+
+
+--
+-- Name: alert_supplemental_entry_reference; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE alert_supplemental_entry_reference (
+  id integer NOT NULL,
+  calendar_sup_id integer,
+  section_code smallint,
+  bill_calendar_no smallint,
+  bill_print_no text,
+  bill_amend_version character(1),
+  bill_session_year smallint,
+  sub_bill_print_no text,
+  sub_bill_amend_version character(1),
+  sub_bill_session_year smallint,
+  high boolean,
+  created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  last_file text
+);
+
+
+ALTER TABLE master.alert_supplemental_entry_reference OWNER TO postgres;
+
+--
+-- Name: TABLE alert_supplemental_entry_reference; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE alert_supplemental_entry_reference IS 'These entries indentify bills that have been added to a calendar';
+
+
+--
+-- Name: COLUMN alert_supplemental_entry_reference.sub_bill_print_no; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_supplemental_entry_reference.sub_bill_print_no IS 'The substituted bill''s print no, null if not substituted.';
+
+
+--
+-- Name: COLUMN alert_supplemental_entry_reference.sub_bill_amend_version; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_supplemental_entry_reference.sub_bill_amend_version IS 'The substituted bill''s amendment version, null if not substituted.';
+
+
+--
+-- Name: COLUMN alert_supplemental_entry_reference.sub_bill_session_year; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_supplemental_entry_reference.sub_bill_session_year IS 'The substituted bill''s session year, null if not substituted.';
+
+
+--
+-- Name: COLUMN alert_supplemental_entry_reference.high; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_supplemental_entry_reference.high IS 'True if bill has not yet properly aged';
+
+
+--
+-- Name: alert_supplemental_entry_reference_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE alert_supplemental_entry_reference_id_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+
+ALTER TABLE master.alert_supplemental_entry_reference_id_seq OWNER TO postgres;
+
+--
+-- Name: alert_supplemental_entry_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+--
+
+ALTER SEQUENCE alert_supplemental_entry_reference_id_seq OWNED BY alert_supplemental_entry_reference.id;
+
+
+--
+-- Name: alert_supplemental_reference_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE alert_supplemental_reference_id_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+
+ALTER TABLE master.alert_supplemental_reference_id_seq OWNER TO postgres;
+
+--
+-- Name: calendar_supplemental_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+--
+
+ALTER SEQUENCE alert_supplemental_reference_id_seq OWNED BY calendar_supplemental.id;
+
+--
+-- Name: alert_calendar_file; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE alert_calendar_file (
+    file_name text NOT NULL,
+    processed_date_time timestamp without time zone,
+    processed_count smallint DEFAULT 0 NOT NULL,
+    staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    pending_processing boolean DEFAULT true NOT NULL,
+    archived boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE alert_calendar_file OWNER TO postgres;
+
+--
+-- Name: COLUMN alert_calendar_file.processed_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_calendar_file.processed_date_time IS 'The date time this file was last processed.';
+
+
+--
+-- Name: COLUMN alert_calendar_file.processed_count; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_calendar_file.processed_count IS 'Number of times this file has been processed.';
+
+
+--
+-- Name: COLUMN alert_calendar_file.staged_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_calendar_file.staged_date_time IS 'The date time this file was saved into database.';
+
+
+--
+-- Name: COLUMN alert_calendar_file.pending_processing; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_calendar_file.pending_processing IS 'Indicates if this file is waiting to be processed.';
+
+
+--
+-- Name: COLUMN alert_calendar_file.archived; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN alert_calendar_file.archived IS 'Indicates if the file has been moved into the archive directory.';
+
+
+--
+-- Name: alert_calendar_file_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY alert_calendar_file
+    ADD CONSTRAINT alert_calendar_file_pkey PRIMARY KEY (file_name);
+
 
 --
 -- Name: committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace:
@@ -3986,6 +4279,26 @@ ALTER TABLE ONLY calendar_supplemental ALTER COLUMN id SET DEFAULT nextval('cale
 
 ALTER TABLE ONLY calendar_supplemental_entry ALTER COLUMN id SET DEFAULT nextval('calendar_supplemental_entry_id_seq'::regclass);
 
+--
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_active_list_reference ALTER COLUMN id SET DEFAULT nextval('alert_active_list_reference_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_supplemental_reference ALTER COLUMN id SET DEFAULT nextval('alert_supplemental_reference_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_supplemental_entry_reference ALTER COLUMN id SET DEFAULT nextval('alert_supplemental_entry_reference_id_seq'::regclass);
+
 
 --
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
@@ -4396,6 +4709,35 @@ ADD CONSTRAINT calendar_active_list_pkey PRIMARY KEY (id);
 -- Name: calendar_change_log_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
 --
 
+--
+-- Name: alert_active_list_reference_calendar_no_calendar_year_sequence_no_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY alert_active_list_reference
+ADD CONSTRAINT alert_active_list_reference_calendar_no_calendar_year_sequence_no_key UNIQUE (calendar_no, calendar_year, sequence_no);
+
+
+--
+-- Name: alert_active_list_entry_reference_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY alert_active_list_entry_reference
+ADD CONSTRAINT alert_active_list_entry_reference_pkey PRIMARY KEY (calendar_active_list_id, bill_calendar_no);
+
+
+--
+-- Name: alert_active_list_reference_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY alert_active_list_reference
+ADD CONSTRAINT alert_active_list_reference_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: calendar_change_log_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+
 ALTER TABLE ONLY calendar_change_log
 ADD CONSTRAINT calendar_change_log_pkey PRIMARY KEY (id);
 
@@ -4430,6 +4772,38 @@ ADD CONSTRAINT calendar_supplemental_entry_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY calendar_supplemental
 ADD CONSTRAINT calendar_supplemental_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: alert_calendar_reference_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY alert_calendar_reference
+ADD CONSTRAINT alert_calendar_reference_pkey PRIMARY KEY (calendar_no, calendar_year);
+
+
+--
+-- Name: alert_supplemental_reference_calendar_no_calendar_year_sup_version_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY alert_supplemental_reference
+ADD CONSTRAINT alert_supplemental_reference_calendar_no_calendar_year_sup_version_key UNIQUE (calendar_no, calendar_year, sup_version);
+
+
+--
+-- Name: alert_supplemental_entry_reference_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY alert_supplemental_entry_reference
+ADD CONSTRAINT alert_supplemental_entry_reference_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: alert_supplemental_reference_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY alert_supplemental_reference
+ADD CONSTRAINT alert_supplemental_reference_pkey PRIMARY KEY (id);
 
 
 --
@@ -5610,6 +5984,71 @@ ADD CONSTRAINT calendar_supplemental_entry_last_fragment_id_fkey FOREIGN KEY (la
 
 ALTER TABLE ONLY calendar_supplemental
 ADD CONSTRAINT calendar_supplemental_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: alert_active_list_reference_calendar_number_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_active_list_reference
+ADD CONSTRAINT alert_active_list_reference_alert_calendar_reference_number_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES alert_calendar_reference(calendar_no, calendar_year);
+
+
+--
+-- Name: alert_active_list_entry_reference_calendar_active_list_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_active_list_entry_reference
+ADD CONSTRAINT alert_active_list_entry_reference_alert_active_list_reference_id_fkey FOREIGN KEY (calendar_active_list_id) REFERENCES alert_active_list_reference(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: alert_active_list_reference_last_file_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_active_list_reference
+ADD CONSTRAINT alert_active_list_reference_last_file_id_fkey FOREIGN KEY (last_file) REFERENCES alert_calendar_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: alert_last_file_reference_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_calendar_reference
+ADD CONSTRAINT alert_calendar_reference_last_file_id_fkey FOREIGN KEY (last_file) REFERENCES alert_calendar_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: alert_supplemental_reference_calendar_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_supplemental_reference
+ADD CONSTRAINT alert_supplemental_reference_alert_calendar_reference_no_fkey FOREIGN KEY (calendar_no, calendar_year) REFERENCES alert_calendar_reference(calendar_no, calendar_year);
+
+
+--
+-- Name: alert_supplemental_entry_reference_calendar_sup_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_supplemental_entry_reference
+ADD CONSTRAINT alert_supplemental_entry_reference_alert_supplemental_reference_id_fkey FOREIGN KEY (calendar_sup_id) REFERENCES alert_supplemental_reference(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: alert_supplemental_entry_reference_last_file_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_supplemental_entry_reference
+ADD CONSTRAINT alert_supplemental_entry_reference_last_file_id_fkey FOREIGN KEY (last_file) REFERENCES alert_calendar_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: alert_supplemental_reference_last_file_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY alert_supplemental_reference
+ADD CONSTRAINT alert_supplemental_reference_last_file_id_fkey FOREIGN KEY (last_file) REFERENCES alert_calendar_file(file_name) ON UPDATE CASCADE ON DELETE CASCADE;
+
 
 
 --

@@ -7,8 +7,10 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertParser;
+import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckRunService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.util.List;
 @Service
 public class CalendarAlertSpotCheckRunService extends BaseSpotcheckRunService<CalendarId> {
 
+    private Logger logger = LoggerFactory.getLogger(CalendarAlertSpotCheckRunService.class);
     @Autowired
     private ActiveListAlertCheckMailService activeListMailService;
 
@@ -32,7 +35,7 @@ public class CalendarAlertSpotCheckRunService extends BaseSpotcheckRunService<Ca
     private SqlCalendarAlertDao calendarAlertDao;
 
     @Autowired
-    private CalendarAlertParser parser;
+    private CalendarAlertProcessor processor;
 
     @Override
     protected List<SpotCheckReport<CalendarId>> doGenerateReports() throws Exception {
@@ -47,25 +50,27 @@ public class CalendarAlertSpotCheckRunService extends BaseSpotcheckRunService<Ca
         return newAlerts;
     }
 
+    private void archiveFiles() throws IOException {
+        List<CalendarAlertFile> incomingFiles = fileDao.getIncomingCalendarAlerts();
+        for (CalendarAlertFile file : incomingFiles) {
+            logger.info("archiving file " + file.getFile().getName());
+            fileDao.updateCalendarAlertFile(file);
+            file = fileDao.archiveCalendarAlertFile(file);
+            fileDao.updateCalendarAlertFile(file);
+        }
+    }
+
     private void parseFiles() {
-        List<CalendarAlertFile> files = fileDao.getPendingCalendarAlertFiles(LimitOffset.ALL);
+        List<CalendarAlertFile> files = fileDao.getPendingCalendarAlertFiles(LimitOffset.THOUSAND);
+        logger.info("Processing " + files.size() + " files.");
         for (CalendarAlertFile file : files) {
-            Calendar calendar = parser.parse(file.getFile());
+            logger.info("Processing calendar from file: " + file.getFile().getName());
+            Calendar calendar = processor.process(file.getFile());
             file.setProcessedCount(file.getProcessedCount() + 1);
             file.setProcessedDateTime(LocalDateTime.now());
             file.setPendingProcessing(false);
             fileDao.updateCalendarAlertFile(file);
-
             calendarAlertDao.updateCalendar(calendar, file);
-        }
-    }
-
-    private void archiveFiles() throws IOException {
-        List<CalendarAlertFile> incomingFiles = fileDao.getIncomingCalendarAlerts();
-        for (CalendarAlertFile file : incomingFiles) {
-            fileDao.updateCalendarAlertFile(file);
-            file = fileDao.archiveCalendarAlertFile(file);
-            fileDao.updateCalendarAlertFile(file);
         }
     }
 

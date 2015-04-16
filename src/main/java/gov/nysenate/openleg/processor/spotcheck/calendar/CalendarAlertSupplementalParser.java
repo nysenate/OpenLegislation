@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor.spotcheck.calendar;
 
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSectionType;
 import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry;
@@ -19,9 +20,9 @@ import java.util.Map;
 @Service
 public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
 
-    protected CalendarSupplemental parseSupplemental(File file) throws IOException {
+    protected CalendarSupplemental parseSupplemental(CalendarId calendarId, File file) throws IOException {
         CalendarSupplemental supplemental = new CalendarSupplemental(
-                parseCalendarId(file), parseVersion(file), parseCalendarDate(file), parseReleaseDateTime(file));
+                calendarId, parseVersion(file), parseCalendarDate(file), parseReleaseDateTime(file));
         parseSupplementalEntries(file, supplemental);
         return supplemental;
     }
@@ -53,6 +54,9 @@ public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
                 break;
             case "BILLS ON THIRD READING":
                 calendarSectionType = CalendarSectionType.THIRD_READING;
+                break;
+            case "BILLS ON THIRD READING FROM SPECIAL REPORT":
+                calendarSectionType = CalendarSectionType.THIRD_READING_FROM_SPECIAL_REPORT;
                 break;
             default:
                 calendarSectionType = null; // TODO handle other types.
