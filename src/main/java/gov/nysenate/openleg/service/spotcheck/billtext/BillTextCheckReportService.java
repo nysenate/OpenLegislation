@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.bill.text;
+package gov.nysenate.openleg.service.spotcheck.billtext;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
@@ -6,10 +6,7 @@ import gov.nysenate.openleg.dao.bill.text.SqlBillTextReferenceDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportNotFoundEx;
+import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
@@ -48,6 +45,10 @@ public class BillTextCheckReportService implements SpotCheckReportService<BaseBi
         //scrapeStuff();
     }
 
+    @Override
+    public SpotCheckRefType getSpotcheckRefType() {
+        return SpotCheckRefType.LBCD_SCRAPED_BILL;
+    }
 
     public void scrapeStuff(String billType, String billNo, int session) throws IOException{
         SessionYear sessionYear = new SessionYear(session);

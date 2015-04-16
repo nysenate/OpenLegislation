@@ -1,6 +1,5 @@
-package gov.nysenate.openleg.service.bill.text;
+package gov.nysenate.openleg.service.spotcheck.billtext;
 
-import gov.nysenate.openleg.client.view.spotcheck.ObservationView;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
@@ -8,24 +7,14 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
-import gov.nysenate.openleg.service.bill.data.APIBillDataService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
-import gov.nysenate.openleg.service.scraping.BillTextScraper;
-import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
-import gov.nysenate.openleg.util.StringDiffer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by kyle on 2/19/15.
@@ -66,7 +55,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
     @Override
     public SpotCheckObservation<BaseBillId> check(Bill content, BillTextSpotcheckReference reference) {
 
-        return new SpotCheckObservation<BaseBillId>(new SpotCheckReferenceId(SpotCheckRefType.LBDC_BILL_TEXT,
+        return new SpotCheckObservation<BaseBillId>(new SpotCheckReferenceId(SpotCheckRefType.LBCD_SCRAPED_BILL,
                 content.getPublishedDateTime()), content.getBaseBillId());  // x = new SpotCheckObservation<BaseBillId>();
 
     }
