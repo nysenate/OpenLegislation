@@ -13,8 +13,9 @@ import java.util.List;
 public interface BillTextReferenceDao {
 
     public BillTextSpotcheckReference getMostRecentBillTextReference(BaseBillId id, LocalDateTime start, LocalDateTime end);
+    public BillTextSpotcheckReference getPKBillTextReference(BaseBillId id, LocalDateTime refDateTime);
     public List<BillTextSpotcheckReference> getBillTextReference(BaseBillId id);
     public BillTextSpotcheckReference getBillTextReference(BaseBillId id, LocalDateTime refDateTime);
     public void insertBillTextReference(BillTextSpotcheckReference ref);
-
+    public void deleteBillTextReference(BillTextSpotcheckReference ref);
 }

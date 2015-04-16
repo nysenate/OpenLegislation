@@ -2,8 +2,10 @@ package gov.nysenate.openleg.stupid;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.bill.text.SqlBillTextReferenceDao;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.text.BillTextCheckReportService;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.util.StringDiffer;
@@ -30,9 +32,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by kyle on 1/29/15.
  */
-public class BillTextScraperTest extends BaseTests {
+public class BillTextTest extends BaseTests{
     @Autowired
     BillTextCheckReportService report;
     @Test
@@ -59,19 +60,19 @@ public class BillTextScraperTest extends BaseTests {
     }
     @Test
     public void getBillTest(){
-        BaseBillId id2 = new BaseBillId("S1", 2015);
+        BaseBillId id2 = new BaseBillId("S1", new SessionYear(2015));
+
         String str =                                              "2015-03-31 12:52:39.986";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
 
-        BillTextSpotcheckReference ref = dao.getBillTextReference(id2, dateTime);
+        BillTextSpotcheckReference ref = dao.getPKBillTextReference(id2, dateTime);
 
-            System.out.println("________________________________");
-            System.out.println("print no:::: "+ ref.getPrintNo());
-            //System.out.println("Amend:::: "+ ref.getAmendment());
-            System.out.println("Session Year:::: "+ ref.getSessionYear());
-            System.out.println("refDate :::: "+ ref.getReferenceDate());
-
+        System.out.println("________________turned to ref object________________");
+        System.out.println("print no:::: "+ ref.getPrintNo());
+        System.out.println("Amend:::: "+ ref.getAmendment());
+        System.out.println("refDate:::: "+ ref.getReferenceDate());
+        System.out.println("Session Year:::: "+ ref.getSessionYear());
     }
 
     /////////////////////////////////////////////////////////////////////////////

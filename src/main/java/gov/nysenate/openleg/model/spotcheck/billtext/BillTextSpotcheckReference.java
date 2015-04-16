@@ -3,20 +3,28 @@ package gov.nysenate.openleg.model.spotcheck.billtext;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Created by kyle on 3/3/15.
  */
 public class BillTextSpotcheckReference{
+    //print number for referenced bill eg. "S100"
     private String printNo;
+    //DateTime this reference was generated
     private LocalDateTime referenceDate;
+    //main text of the bill
     private String text;
+    //text in the memo of the bill
     private String memo;
-    //private String sessionYear;
     private Version amendment;
+    //session year that the bill referenced is from
     private SessionYear sessionYear;
 
     public BillTextSpotcheckReference(){}
@@ -57,6 +65,9 @@ public class BillTextSpotcheckReference{
         this.sessionYear = sessionYear;
         this.memo = memo;
         this.amendment = amendment;
+    }
+    public SpotCheckReferenceId getReferenceId() {
+        return new SpotCheckReferenceId(SpotCheckRefType.LBDC_BILL, this.referenceDate.truncatedTo(ChronoUnit.DAYS));
     }
 
     public String getPrintNo() {

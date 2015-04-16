@@ -30,9 +30,14 @@ public enum SpotCheckRefType
         this.refName = refName;
     }
 
+<<<<<<< Updated upstream
     public String getRefName() {
         return refName;
     }
+=======
+    LBDC_ACTIVE_LIST,
+    LBDC_BILL,
+>>>>>>> Stashed changes
 
     private static final ImmutableMap<String, SpotCheckRefType> refNameMap = ImmutableMap.copyOf(
             Arrays.asList(SpotCheckRefType.values()).stream()

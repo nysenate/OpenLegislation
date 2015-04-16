@@ -17,17 +17,18 @@ public enum SpotCheckMismatchType
     BILL_AMENDMENT_PUBLISH,
     BILL_COSPONSOR,
     BILL_FULLTEXT_PAGE_COUNT,
+    BILL_FULL_TEXT,
     BILL_LAW_CODE,
     BILL_LAW_CODE_SUMMARY,
     BILL_LAW_SECTION,
     BILL_MEMO,
     BILL_MULTISPONSOR,
+    BILL_SESSION_YEAR,
     BILL_SPONSOR,
     BILL_SPONSOR_MEMO,
     BILL_SAMEAS,
     BILL_SUMMARY,
     BILL_TITLE,
-    BILL_FULL_TEXT,
 
 
     /** --- Active List data mismatches --- */

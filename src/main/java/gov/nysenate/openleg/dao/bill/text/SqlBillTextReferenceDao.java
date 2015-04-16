@@ -31,7 +31,17 @@ public class SqlBillTextReferenceDao extends SqlBaseDao implements BillTextRefer
     @Override
     public void insertBillTextReference(BillTextSpotcheckReference ref) {
         MapSqlParameterSource params = getParams(ref);
+        KeyHolder key = new GeneratedKeyHolder();
+        if (jdbcNamed.update(SqlBillTextReferenceQuery.UPDATE_BILL_REFERENCE.getSql(schema()), params, key,new String[] { "id" }) == 0){
+            jdbcNamed.update(SqlBillTextReferenceQuery.INSERT_BILL_TEXT_REFERENCE.getSql(schema()), params, key,new String[] { "id" });
+        }
         jdbcNamed.update(SqlBillTextReferenceQuery.INSERT_BILL_TEXT_REFERENCE.getSql(schema()), params);
+    }
+
+    @Override
+    public void deleteBillTextReference(BillTextSpotcheckReference ref) {
+        MapSqlParameterSource params = getParams(ref);
+        jdbcNamed.update(SqlBillTextReferenceQuery.DELETE_BILL_REFERENCE.getSql(schema()), params);
     }
 
     @Override
@@ -52,6 +62,11 @@ public class SqlBillTextReferenceDao extends SqlBaseDao implements BillTextRefer
     public BillTextSpotcheckReference getBillTextReference(BaseBillId id, LocalDateTime refDateTime) {
         MapSqlParameterSource params = getParams(id, refDateTime);
         return jdbcNamed.queryForObject(SqlBillTextReferenceQuery.SELECT_BILL_TEXT_REFERENCE.getSql(schema()), params, new BillRowMapper());
+    }
+    @Override
+    public BillTextSpotcheckReference getPKBillTextReference(BaseBillId id, LocalDateTime refDateTime) {
+        MapSqlParameterSource params = getParams(id, refDateTime);
+        return jdbcNamed.queryForObject(SqlBillTextReferenceQuery.SELECT_PK_BILL_TEXT_REFERENCE.getSql(schema()), params, new BillRowMapper());
     }
 
 
@@ -91,6 +106,7 @@ public class SqlBillTextReferenceDao extends SqlBaseDao implements BillTextRefer
         public BillTextSpotcheckReference mapRow(ResultSet rs, int rowNum) throws SQLException {
             BillTextSpotcheckReference ref = new BillTextSpotcheckReference();
             ref.setPrintNo(rs.getString("bill_print_no"));
+            ref.setSessionYear(SessionYear.of(rs.getInt("bill_session_year")));
             ref.setText(rs.getString("text"));
             ref.setMemo(rs.getString("memo"));
             ref.setReferenceDate(DateUtils.getLocalDateTime(rs.getTimestamp("reference_date_time")));

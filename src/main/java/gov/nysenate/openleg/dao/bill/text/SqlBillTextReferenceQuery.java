@@ -8,33 +8,22 @@ import gov.nysenate.openleg.dao.base.SqlTable;
  */
 public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
 
-    INSERT_BILL_TEXT_REFERENCE(         //complete
+    INSERT_BILL_TEXT_REFERENCE(
         "INSERT INTO ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
-        "(bill_print_no, bill_session_year, reference_date_time, bill_amend_version, text, memo) " +
+              "(bill_print_no, bill_session_year, reference_date_time, bill_amend_version, text, memo) " +
         "VALUES(:bill_print_no, :bill_session_year, :reference_date_time,:bill_amend_version, :text, :memo)"
     ),
-    UPDATE_BILL_TEXT_REFERENCE(
-            "UPDATE ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
-                    "SET release_date_time = :release_date_time\n" +
-                    "WHERE sequence_no = :sequence_no AND bill_print_no = :bill_print_no AND bill_session_year =:bill_session_year\n" +
-                    " AND reference_date_time = :reference_date_time" +
-                    "///////////////////////////////////////////////////////////////////////////////////////////////////////" +
-                    "//////////////////////////////////////////////////////////////////////////////////////////////////////////" +
-                    "//////////////////////////////////////////////////////////////////////////////////////////////////////" +
-            "/////////////////////////////////////////////////////////////////////////////////////////////////////////////////"
-
-    ),
-    DELETE_REFERENCE_ENTRIES(               //works
-            "DELETE FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
-                    "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year AND\n" +
-                    "reference_date_time = :reference_date_time"
-    ),
-    SELECT_BILL_TEXT_REFERENCE(             //complete
+    SELECT_BILL_TEXT_REFERENCE(
             "SELECT * FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
                     "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year\n" +
                     "AND bill_amend_version = :bill_amend_version AND reference_date_time = :reference_date_time"
     ),
-    SELECT_ALL_BILL_TEXT_REFERENCE(             //complete
+    SELECT_PK_BILL_TEXT_REFERENCE(
+            "SELECT * FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
+                    "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year\n" +
+                    "AND reference_date_time = :reference_date_time"
+    ),
+    SELECT_ALL_BILL_TEXT_REFERENCE(
             "SELECT * FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
                     "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year\n" +
                     "AND bill_amend_version = :bill_amend_version"
@@ -53,6 +42,17 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
             " AND reference_date_time BETWEEN :begin AND :end\n" +
             "ORDER BY reference_date_time DESC\n" +
             "LIMIT 1"
+    ),
+    DELETE_BILL_REFERENCE(
+           "DELETE FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
+            "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year AND\n" +
+            "reference_date_time = :reference_date_time"
+    ),
+    UPDATE_BILL_REFERENCE(      //probably works, I assume
+            "UPDATE ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
+                    "SET text = :text, memo = :memo, bill_amend_version = :bill_amend_version\n" +
+                    "WHERE bill_print_no = :bill_print_no AND bill_session_year =:bill_session_year\n" +
+                    "AND reference_date_time = :reference_date_time"
     )
 
     ;
@@ -66,3 +66,12 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
         return this.sql;
     }
 }
+
+
+
+
+
+
+
+
+
