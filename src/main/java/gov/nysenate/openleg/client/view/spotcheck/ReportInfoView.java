@@ -13,6 +13,7 @@ public class ReportInfoView<ContentKey> implements ViewObject
     protected String referenceType;
     protected LocalDateTime referenceDateTime;
     protected LocalDateTime reportDateTime;
+    protected String notes;
     protected Map<SpotCheckMismatchStatus, Long> mismatchStatuses;
     protected Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> mismatchTypes;
 
@@ -21,6 +22,7 @@ public class ReportInfoView<ContentKey> implements ViewObject
             this.referenceType = report.getReferenceType().name();
             this.referenceDateTime = report.getReferenceDateTime();
             this.reportDateTime = report.getReportDateTime();
+            this.notes = report.getNotes();
             this.mismatchStatuses = report.getMismatchStatusCounts();
             this.mismatchTypes = report.getMismatchTypeStatusCounts();
         }
@@ -36,6 +38,10 @@ public class ReportInfoView<ContentKey> implements ViewObject
 
     public LocalDateTime getReportDateTime() {
         return reportDateTime;
+    }
+
+    public String getNotes() {
+        return notes;
     }
 
     public Map<SpotCheckMismatchStatus, Long> getMismatchStatuses() {

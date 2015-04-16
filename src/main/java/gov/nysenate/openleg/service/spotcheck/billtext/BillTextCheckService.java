@@ -6,10 +6,7 @@ import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
-<<<<<<< Updated upstream:src/main/java/gov/nysenate/openleg/service/spotcheck/billtext/BillTextCheckService.java
-=======
 import org.apache.commons.lang3.StringUtils;
->>>>>>> Stashed changes:src/main/java/gov/nysenate/openleg/service/bill/text/BillTextCheckService.java
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,17 +50,12 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         BaseBillId baseBillId = bill.getBaseBillId();
         SpotCheckReferenceId referenceId = reference.getReferenceId();
 
-<<<<<<< Updated upstream:src/main/java/gov/nysenate/openleg/service/spotcheck/billtext/BillTextCheckService.java
-        return new SpotCheckObservation<BaseBillId>(new SpotCheckReferenceId(SpotCheckRefType.LBCD_SCRAPED_BILL,
-                content.getPublishedDateTime()), content.getBaseBillId());  // x = new SpotCheckObservation<BaseBillId>();
-=======
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(referenceId, baseBillId);
         //Add mismatches to observation
         checkBillText(bill, reference, observation);
         checkMemoText(bill, reference, observation);
         checkSessionYear(bill, reference, observation);
         checkAmendment(bill, reference, observation);
->>>>>>> Stashed changes:src/main/java/gov/nysenate/openleg/service/bill/text/BillTextCheckService.java
 
 
         //return new SpotCheckObservation<BaseBillId>(new SpotCheckReferenceId(SpotCheckRefType.LBDC_BILL,

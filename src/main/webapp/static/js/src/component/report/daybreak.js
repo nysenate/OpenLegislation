@@ -5,14 +5,14 @@ var daybreakModule = angular.module('open.daybreak', ['open.core', 'smart-table'
 
 // Gets summaries for reports that were generated within the specified range
 daybreakModule.factory('DaybreakSummaryAPI', ['$resource', function($resource) {
-    return $resource(adminApiPath + "/spotcheck/daybreaks/:startDate/:endDate", {
+    return $resource(adminApiPath + "/spotcheck/daybreak/:startDate/:endDate", {
         startDate: '@startDate', endDate: '@endDate'
     });
 }]);
 
 // Gets a full detailed report corresponding to the given date time
 daybreakModule.factory('DaybreakDetailAPI', ['$resource', function($resource) {
-    return $resource(adminApiPath + "/spotcheck/daybreaks/:reportDateTime", {
+    return $resource(adminApiPath + "/spotcheck/daybreak/:reportDateTime", {
         reportDateTime: '@reportDateTime'
     });
 }]);

@@ -38,6 +38,12 @@ public enum SpotCheckMismatchType
     LIST_CALENDAR_MISMATCH,
     LIST_ENTRY_MISMATCH,
 
+    /** --- Agenda Committee Meeting info mismatches --- */
 
+    AGENDA_BILL_LISTING,
+    AGENDA_CHAIR,
+    AGENDA_MEETING_TIME,
+    AGENDA_LOCATION,
+    AGENDA_NOTES,
 
 }

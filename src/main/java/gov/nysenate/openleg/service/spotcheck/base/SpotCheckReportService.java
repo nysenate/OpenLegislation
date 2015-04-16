@@ -2,10 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.base;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportNotFoundEx;
+import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +17,12 @@ import java.util.List;
  */
 public interface SpotCheckReportService<ContentKey>
 {
+
+    /**
+     * @return The SpotCheckRefType that is used for this report
+     */
+    public SpotCheckRefType getSpotcheckRefType();
+
     /**
      * Generate a SpotCheckReport across all available data. The reference data used for
      * comparison will be the most recent data between the given start and end range.
@@ -47,8 +50,8 @@ public interface SpotCheckReportService<ContentKey>
      * report will only contain observations that have mismatches and will also have data that's been
      * associated with the context of prior reports that have been saved.
      *
-     * @param reportId SpotCheckReportId - Retrieve a previously saved report by id.
-     * @return SpotCheckReport<ContentKey>
+     *
+     * @param reportId
      */
     public SpotCheckReport<ContentKey> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx;
 
@@ -59,7 +62,7 @@ public interface SpotCheckReportService<ContentKey>
      * @param end LocalDateTime - The latest report date (inclusive)
      * @param dateOrder SortOrder - Order the reports by report date
      * @param limOff LimitOffset - Limit/Offset the result set
-     * @return List<SpotCheckReport<ContentKey>> - List of report ids
+     * @return List<SpotCheckReportId> - List of report ids
      */
     public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end,
                                                 SortOrder dateOrder, LimitOffset limOff);
@@ -67,7 +70,7 @@ public interface SpotCheckReportService<ContentKey>
     /**
      * Wipe a report as well as all of its associated observations and mismatches from the backing store.
      *
-     * @param reportId SpotCheckReportId - Delete a previously saved report by id.
+     * @param reportId
      */
     public void deleteReport(SpotCheckReportId reportId);
 }

@@ -158,7 +158,7 @@ public abstract class SqlBaseDao
      */
     public static String toHstoreString(Map<String, String> hstoreMap) {
         return hstoreMap.entrySet().stream()
-            .map(kv -> kv.getKey() + "=>" + kv.getValue())
+            .map(kv -> kv.getKey() + "=>" + kv.getValue().replaceAll("([,=> ])", "\\\\$1").replaceAll("'", "''"))
             .collect(Collectors.joining(","));
     }
 

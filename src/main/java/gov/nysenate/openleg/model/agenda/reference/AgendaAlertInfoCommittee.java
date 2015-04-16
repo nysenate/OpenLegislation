@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.model.agenda.reference;
 
 import com.google.common.collect.ImmutableList;
+import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommitteeItem;
+import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
@@ -43,6 +45,10 @@ public class AgendaAlertInfoCommittee
 
     public AgendaAlertInfoCommId getAgendaAlertInfoCommId() {
         return new AgendaAlertInfoCommId(referenceId.getRefActiveDateTime(), weekOf, committeeId, addendum);
+    }
+
+    public AgendaAlertId getAlertId() {
+        return new AgendaAlertId(referenceId.getRefActiveDateTime(), weekOf);
     }
 
     /** --- Getters / Setters --- */

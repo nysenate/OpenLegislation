@@ -5,11 +5,8 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
-import gov.nysenate.openleg.client.response.error.ErrorCode;
-import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.cache.CacheStatsView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
-import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -22,7 +19,6 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeSessionId;
 import gov.nysenate.openleg.model.law.LawVersionId;
-import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.slf4j.Logger;
@@ -149,7 +145,7 @@ public class CacheCtrl extends BaseCtrl
     }
 
     private ContentCache getTargetCache(String cacheType) {
-        return getEnumParameter(ContentCache.class, "cacheType", cacheType);
+        return getEnumParameter("cacheType", cacheType, ContentCache.class);
     }
 
     private Object getContentId(ContentCache targetCache, WebRequest request)
@@ -200,7 +196,7 @@ public class CacheCtrl extends BaseCtrl
 
     private CommitteeSessionId getCommitteeSessionId(WebRequest request) throws MissingServletRequestParameterException {
         requireParameters(request, "chamber", "string", "committeeName", "string", "year", "integer");
-            return new CommitteeSessionId(getEnumParameter(Chamber.class, "chamber", request.getParameter("chamber")),
+            return new CommitteeSessionId(getEnumParameter("chamber", request.getParameter("chamber"), Chamber.class),
                     request.getParameter("committeeName"),
                     SessionYear.of(getIntegerParam(request, "year")));
     }

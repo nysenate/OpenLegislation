@@ -14,7 +14,7 @@ public enum SpotCheckRefType
     LBDC_DAYBREAK("daybreak"),             // DayBreaks consist of a set of files sent by LBDC weekly
                                // which consist of a dump of basic information for all bills
                                // that are active in the current session.
-    LBCD_SCRAPED_BILL("scraped-bill"),
+    LBDC_SCRAPED_BILL("scraped-bill"),
 
     LBDC_FLOOR_CALENDAR("alert-floor"),
 
@@ -30,14 +30,9 @@ public enum SpotCheckRefType
         this.refName = refName;
     }
 
-<<<<<<< Updated upstream
     public String getRefName() {
         return refName;
     }
-=======
-    LBDC_ACTIVE_LIST,
-    LBDC_BILL,
->>>>>>> Stashed changes
 
     private static final ImmutableMap<String, SpotCheckRefType> refNameMap = ImmutableMap.copyOf(
             Arrays.asList(SpotCheckRefType.values()).stream()

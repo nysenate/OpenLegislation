@@ -6,10 +6,7 @@ import gov.nysenate.openleg.dao.bill.text.SqlBillTextReferenceDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-<<<<<<< Updated upstream:src/main/java/gov/nysenate/openleg/service/spotcheck/billtext/BillTextCheckReportService.java
-=======
 import gov.nysenate.openleg.model.bill.Bill;
->>>>>>> Stashed changes:src/main/java/gov/nysenate/openleg/service/bill/text/BillTextCheckReportService.java
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
@@ -25,7 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,7 +48,7 @@ public class BillTextCheckReportService implements SpotCheckReportService<BaseBi
 
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
-        return SpotCheckRefType.LBCD_SCRAPED_BILL;
+        return SpotCheckRefType.LBDC_SCRAPED_BILL;
     }
 
     public void scrapeStuff(String billType, String billNo, int session) throws IOException{
@@ -75,7 +72,7 @@ public class BillTextCheckReportService implements SpotCheckReportService<BaseBi
 
         //Gets bill from openleg processed info
         Bill bill = billDataService.getBill(new BaseBillId(b.getPrintNo(), b.getSessionYear()));
-        report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_BILL,
+        report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_SCRAPED_BILL,
                 b.getReferenceDate().truncatedTo(ChronoUnit.SECONDS),
                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
 
@@ -90,7 +87,7 @@ public class BillTextCheckReportService implements SpotCheckReportService<BaseBi
 
         }
         ////////////////
-        SpotCheckReferenceId refId = new SpotCheckReferenceId(SpotCheckRefType.LBDC_BILL, b.getReferenceDate());
+        SpotCheckReferenceId refId = new SpotCheckReferenceId(SpotCheckRefType.LBDC_SCRAPED_BILL, b.getReferenceDate());
         SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(refId, bill.getBaseBillId());
         ///////////
         SpotCheckMismatch mismatch = new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT, b.getText(), bill.getFullText());
@@ -120,7 +117,7 @@ public class BillTextCheckReportService implements SpotCheckReportService<BaseBi
 
     @Override
     public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

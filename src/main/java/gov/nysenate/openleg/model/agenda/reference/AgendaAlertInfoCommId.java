@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.model.agenda.reference;
 
+import com.google.common.base.Objects;
+import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
@@ -21,6 +24,36 @@ public class AgendaAlertInfoCommId extends AgendaAlertId {
         super(referenceDateTime, weekOf);
         this.committeeId = committeeId;
         this.addendum = addendum;
+    }
+
+    /** --- Overridden Methods --- */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AgendaAlertInfoCommId)) return false;
+        if (!super.equals(o)) return false;
+        AgendaAlertInfoCommId that = (AgendaAlertInfoCommId) o;
+        return Objects.equal(committeeId, that.committeeId) &&
+                Objects.equal(addendum, that.addendum);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), committeeId, addendum);
+    }
+
+    @Override
+    public String toString() {
+        return committeeId + " " + addendum + " " + super.toString();
+    }
+
+    /** --- Functional Getters / Setters --- */
+
+    // The alerts do not use openleg agenda ids so an agenda id is needed to generate the corresponding CommitteeAgendaAddendumId
+    public CommitteeAgendaAddendumId getCommiteeAgendaAddendumId(AgendaId agendaId) {
+        return new CommitteeAgendaAddendumId(agendaId != null ? agendaId : new AgendaId(0, 0),
+                committeeId, addendum);
     }
 
     /** --- Getters / Setters --- */

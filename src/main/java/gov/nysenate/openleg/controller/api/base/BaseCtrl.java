@@ -10,15 +10,11 @@ import gov.nysenate.openleg.client.view.error.InvalidParameterView;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.notification.Notification;
-import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -37,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.function.Function;
 
 import static gov.nysenate.openleg.model.notification.NotificationType.REQUEST_EXCEPTION;
 
@@ -210,7 +207,7 @@ public abstract class BaseCtrl
      * @return boolean
      */
     protected boolean getBooleanParam(WebRequest request, String param, boolean defaultVal) {
-        return (request.getParameter(param) != null) ? BooleanUtils.toBoolean(request.getParameter(param)) : defaultVal;
+        return request.getParameter(param) != null ? BooleanUtils.toBoolean(request.getParameter(param)) : defaultVal;
     }
 
     /**
@@ -221,42 +218,63 @@ public abstract class BaseCtrl
      */
     protected UpdateType getUpdateTypeFromParam(WebRequest request) {
         String type = request.getParameter("type");
-        return (type == null || type.equalsIgnoreCase("processed")) ? UpdateType.PROCESSED_DATE
-                                                                    : UpdateType.PUBLISHED_DATE;
+        return "published".equalsIgnoreCase(type) ? UpdateType.PUBLISHED_DATE : UpdateType.PROCESSED_DATE;
+    }
+
+    private <T extends Enum<T>> InvalidRequestParamEx getEnumParamEx(Class<T> enumType, Function<T, String> valueFunction,
+                                                        String paramName, String paramValue) {
+        throw new InvalidRequestParamEx(paramValue, paramName, "string",
+                Arrays.asList(enumType.getEnumConstants()).stream()
+                        .map(valueFunction)
+                        .reduce("", (a, b) -> (StringUtils.isNotBlank(a) ? a + "|" : "") + b));
     }
 
     /**
-     * Attempts to parse a NotificationType from the provided string.
-     * @throws gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx if the text does not match a NotificationType
+     * Attempts to map the given request parameter to an enum by finding an enum instance whose name matches the parameter
+     * @throws InvalidRequestParamEx if no such enum was found
      */
-    protected NotificationType getNotificationTypeFromString(String text) {
-        try {
-            return NotificationType.getValue(text);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRequestParamEx(text, "type", "String",
-                    NotificationType.getAllNotificationTypes().stream()
-                            .map(NotificationType::toString)
-                            .reduce("", (a, b) -> a + "|" + b));
+    protected <T extends Enum<T>> T getEnumParameter(String paramName, String paramValue, Class<T> enumType)
+            throws InvalidRequestParamEx {
+        T result = getEnumParameter(paramValue, enumType, null);
+        if (result != null) {
+            return result;
         }
+        throw getEnumParamEx(enumType, Enum::toString, paramName, paramValue);
     }
-
-    protected <T extends Enum<T>> T getEnumParameter(Class<T> enumType, String paramName, String paramValue) {
+    /**
+     * Attempts to map the given request parameter to an enum by finding an enum instance whose name matches the parameter
+     * returns a default value if no such enum was found
+     */
+    protected <T extends Enum<T>> T getEnumParameter(String paramValue, Class<T> enumType, T defaultValue) {
         try {
             return T.valueOf(enumType, StringUtils.upperCase(paramValue));
         } catch (IllegalArgumentException | NullPointerException ex) {
-            throw new InvalidRequestParamEx(paramValue, paramName, "string",
-                    Arrays.asList(enumType.getEnumConstants()).stream()
-                            .map(Enum::toString)
-                            .reduce("", (a, b) -> (StringUtils.isNotBlank(a) ? a + "|" : "") + b));
+            return defaultValue;
         }
     }
 
-    protected <T extends Enum<T>> T getEnumParameter(Class<T> enumType, String paramName, String paramValue, T defaultValue) {
-        try {
-            return getEnumParameter(enumType, paramName, paramValue);
-        } catch (InvalidRequestParamEx ex) {
-            return defaultValue;
+    /**
+     * Attempts to map the given request parameter to an enum by finding an enum using the given mapFunction
+     * @throws InvalidRequestParamEx if the mapFunction returns null that lists possible values using the
+     *                                  given valueFunction
+     */
+    protected <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType, Function<String, T> mapFunction,
+                                                            Function<T, String> valueFunction,
+                                                            String paramName, String paramValue) {
+        T result = getEnumParameterByValue(enumType, mapFunction, paramValue, null);
+        if (result != null) {
+            return result;
         }
+        throw getEnumParamEx(enumType, valueFunction, paramName, paramValue);
+    }
+    /**
+     * Attempts to map the given request parameter to an enum by finding an enum using the given mapFunction
+     * returns a default value if the map function returns null
+     */
+    protected <T extends Enum<T>> T getEnumParameterByValue(Class<T> enumType,Function<String, T> mapFunction,
+                                                            String paramValue, T defaultValue) {
+        T result = mapFunction.apply(paramValue);
+        return result != null ? result : defaultValue;
     }
 
     /**

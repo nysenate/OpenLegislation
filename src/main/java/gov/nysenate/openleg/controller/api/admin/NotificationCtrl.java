@@ -160,7 +160,7 @@ public class NotificationCtrl extends BaseCtrl
     private Set<NotificationType> getTypesFromStrings(String[] types) {
         Set<NotificationType> typeSet = new HashSet<>();
         for (String type : types) {
-            typeSet.addAll(NotificationType.getCoverage(getNotificationTypeFromString(type)));
+            typeSet.addAll(NotificationType.getCoverage(getEnumParameter("type", type, NotificationType.class)));
         }
         return typeSet;
     }

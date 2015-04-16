@@ -90,7 +90,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
 
     private NotificationSubscription buildSubscriptionFromParams(String type, String target, String address) {
         String user = (String) SecurityUtils.getSubject().getPrincipal();
-        NotificationType notificationType = getNotificationTypeFromString(type);
+        NotificationType notificationType = getEnumParameter("type", type, NotificationType.class);
         NotificationTarget notificationTarget = getNotificationTargetFromString(target);
         return new NotificationSubscription(user, notificationType, notificationTarget, address);
     }

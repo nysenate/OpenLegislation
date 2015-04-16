@@ -67,7 +67,7 @@ public class BillTextSpotcheckReference{
         this.amendment = amendment;
     }
     public SpotCheckReferenceId getReferenceId() {
-        return new SpotCheckReferenceId(SpotCheckRefType.LBDC_BILL, this.referenceDate.truncatedTo(ChronoUnit.DAYS));
+        return new SpotCheckReferenceId(SpotCheckRefType.LBDC_SCRAPED_BILL, this.referenceDate.truncatedTo(ChronoUnit.DAYS));
     }
 
     public String getPrintNo() {

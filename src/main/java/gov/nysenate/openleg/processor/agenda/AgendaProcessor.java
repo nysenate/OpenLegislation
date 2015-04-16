@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor.agenda;
 
 import gov.nysenate.openleg.model.agenda.*;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
@@ -99,7 +100,7 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
 
                         // Construct the committee info model using the parsed data.
                         AgendaInfoCommittee infoCommittee =
-                            new AgendaInfoCommittee(committeeId, chair, location, notes, meetDateTime);
+                            new AgendaInfoCommittee(committeeId, agendaId, Version.of(addendumId), chair, location, notes, meetDateTime);
                         // A committee will have a collection of bills that are up for consideration.
                         NodeList xmlBills = xml.getNodeList("bills/bill", xmlCommittee);
                         for (int k = 0; k < xmlBills.getLength(); k++) {

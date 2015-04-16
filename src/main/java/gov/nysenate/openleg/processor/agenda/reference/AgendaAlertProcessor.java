@@ -25,8 +25,8 @@ public class AgendaAlertProcessor {
     public void processAgendaAlerts() throws ParseError, IOException {
         for (File alertFile : agendaAlertDao.getIncomingAgendaAlerts()) {
             logger.info("processing agenda alert {}", alertFile.getName());
-            AgendaAlertParser.parseAgendaAlert(alertFile)
-                    .forEach(agendaAlertDao::updateAgendaAlertInfoCommittee);
+            List<AgendaAlertInfoCommittee> references = AgendaAlertParser.parseAgendaAlert(alertFile);
+            references.forEach(agendaAlertDao::updateAgendaAlertInfoCommittee);
             logger.info("archiving agenda alert {}", alertFile.getName());
             agendaAlertDao.archiveAgendaAlert(alertFile);
         }

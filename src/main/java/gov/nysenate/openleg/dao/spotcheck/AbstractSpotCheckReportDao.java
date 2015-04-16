@@ -64,13 +64,14 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             .addValue("reportDateTime", toDate(id.getReportDateTime())));
         // Check for the report record or throw a DataAccessException if not present
         SpotCheckReport<ContentKey> report =
-            jdbcNamed.queryForObject(SELECT_REPORT.getSql(schema()), reportIdParams, (rs,row) ->
-                new SpotCheckReport<>(
-                    new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
-                        getLocalDateTimeFromRs(rs, "reference_date_time"),
-                        getLocalDateTimeFromRs(rs, "report_date_time"))
-                )
-        );
+                jdbcNamed.queryForObject(SELECT_REPORT.getSql(schema()), reportIdParams, (rs, row) ->
+                    new SpotCheckReport<>(
+                        new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
+                            getLocalDateTimeFromRs(rs, "reference_date_time"),
+                            getLocalDateTimeFromRs(rs, "report_date_time")),
+                        rs.getString("notes")
+                    )
+                );
         // Obtain all the current and prior observations/mismatches
         Map<ContentKey, SpotCheckObservation<ContentKey>> obsMap = new HashMap<>();
         ReportObservationsHandler handler = new ReportObservationsHandler();
@@ -85,9 +86,10 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                                                 SortOrder dateOrder, LimitOffset limOff) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
             .addValue("startDateTime", toDate(start))
-            .addValue("endDateTime", toDate(end)));
+            .addValue("endDateTime", toDate(end))
+            .addValue("referenceType", refType.toString()));
         OrderBy orderBy = new OrderBy("report_date_time", dateOrder);
-        return jdbcNamed.query(SELECT_REPORTS_BY_DATE.getSql(schema(), orderBy, limOff), params, (rs,row) ->
+        return jdbcNamed.query(SELECT_REPORTS_BY_DATE_AND_TYPE.getSql(schema(), orderBy, limOff), params, (rs,row) ->
             new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
                                   getLocalDateTimeFromRs(rs, "reference_date_time"),
                                   getLocalDateTimeFromRs(rs, "report_date_time"))
@@ -260,7 +262,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         return new MapSqlParameterSource()
             .addValue("referenceType", report.getReferenceType().name())
             .addValue("reportDateTime", toDate(report.getReportDateTime()))
-            .addValue("referenceDateTime", toDate(report.getReferenceDateTime()));
+            .addValue("referenceDateTime", toDate(report.getReferenceDateTime()))
+            .addValue("notes", report.getNotes());
     }
 
     private MapSqlParameterSource getObservationParams(ImmutableParams reportParams,

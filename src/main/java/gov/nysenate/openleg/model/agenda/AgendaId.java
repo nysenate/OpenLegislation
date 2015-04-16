@@ -29,7 +29,7 @@ public class AgendaId implements Serializable, Comparable<AgendaId>
 
     @Override
     public String toString() {
-        return "#" + number + " (" + year +")";
+        return year + "-" + number;
     }
 
     @Override

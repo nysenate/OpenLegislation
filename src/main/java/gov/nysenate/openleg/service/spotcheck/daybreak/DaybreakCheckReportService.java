@@ -52,6 +52,11 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BaseBi
 
     /** --- Implemented Methods --- */
 
+    @Override
+    public SpotCheckRefType getSpotcheckRefType() {
+        return SpotCheckRefType.LBDC_DAYBREAK;
+    }
+
     /** {@inheritDoc} */
     @Override
     public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
@@ -117,7 +122,8 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BaseBi
         daybreakDao.updateDaybreakReportSetChecked(report.getReferenceDateTime().toLocalDate(), true);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param reportId*/
     @Override
     public SpotCheckReport<BaseBillId> getReport(SpotCheckReportId reportId) {
         if (reportId == null) {
@@ -140,11 +146,12 @@ public class DaybreakCheckReportService implements SpotCheckReportService<BaseBi
         return reportDao.getReportIds(SpotCheckRefType.LBDC_DAYBREAK, start, end, dateOrder, limOff);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param reportId*/
     @Override
     public void deleteReport(SpotCheckReportId reportId) {
         if (reportId == null) {
-            throw new IllegalArgumentException("Supplied reportId to delete cannot be null");
+            throw new IllegalArgumentException("Supplied reportId cannot be null");
         }
         reportDao.deleteReport(reportId);
     }

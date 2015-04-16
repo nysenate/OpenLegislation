@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.agenda;
 
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
@@ -21,6 +22,12 @@ public class AgendaInfoCommittee implements Serializable
     /** Reference to the id of the committee this info is associated with. */
     private CommitteeId committeeId;
 
+    /** Reference to the parent agenda */
+    private AgendaId agendaId;
+
+    /** The version of this committee meeting */
+    private Version addendum;
+
     /** Name of the committee chair. */
     private String chair;
 
@@ -40,8 +47,11 @@ public class AgendaInfoCommittee implements Serializable
 
     public AgendaInfoCommittee() {}
 
-    public AgendaInfoCommittee(CommitteeId committeeId, String chair, String location, String notes, LocalDateTime meetDateTime) {
+    public AgendaInfoCommittee(CommitteeId committeeId, AgendaId agendaId, Version addendum,
+                               String chair, String location, String notes, LocalDateTime meetDateTime) {
         this();
+        this.setAgendaId(agendaId);
+        this.setAddendum(addendum);
         this.setCommitteeId(committeeId);
         this.setChair(chair);
         this.setLocation(location);
@@ -53,6 +63,10 @@ public class AgendaInfoCommittee implements Serializable
 
     public void addCommitteeItem(AgendaInfoCommitteeItem item) {
         items.add(item);
+    }
+
+    public CommitteeAgendaAddendumId getId() {
+        return new CommitteeAgendaAddendumId(agendaId, committeeId, addendum);
     }
 
     /** --- Overrides --- */
@@ -123,5 +137,21 @@ public class AgendaInfoCommittee implements Serializable
 
     public void setItems(List<AgendaInfoCommitteeItem> items) {
         this.items = items;
+    }
+
+    public AgendaId getAgendaId() {
+        return agendaId;
+    }
+
+    public void setAgendaId(AgendaId agendaId) {
+        this.agendaId = agendaId;
+    }
+
+    public Version getAddendum() {
+        return addendum;
+    }
+
+    public void setAddendum(Version addendum) {
+        this.addendum = addendum;
     }
 }

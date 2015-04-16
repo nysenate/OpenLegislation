@@ -8,7 +8,7 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
     SELECT_INFO_COMMITTEE(
         "SELECT * FROM ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE +" a\n" +
         "   LEFT JOIN ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE_ITEM + " ai\n" +
-        "   ON a.id = ai.agenda_alert_info_committee_id"
+        "   ON a.id = ai.alert_info_committee_id"
     ),
     SELECT_INFO_COMMITTEE_BY_ID(
         SELECT_INFO_COMMITTEE.sql + "\n" +
@@ -34,7 +34,8 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
     SET_INFO_COMMITTEE_CHECKED(
         "UPDATE ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
         "SET checked = :checked\n" +
-        "WHERE reference_date_time = :referenceDateTime AND week_of = :weekOf"
+        "WHERE reference_date_time = :referenceDateTime AND week_of = :weekOf AND chamber = :chamber::chamber\n" +
+        "       AND committee_name = :committeeName AND addendum_id = :addendumId"
     ),
     DELETE_INFO_COMMITTEE(
         "DELETE FROM ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +

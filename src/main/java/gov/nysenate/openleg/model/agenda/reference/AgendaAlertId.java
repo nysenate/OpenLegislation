@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.agenda.reference;
 
+import com.google.common.base.Objects;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
@@ -20,6 +21,27 @@ public class AgendaAlertId {
     public AgendaAlertId(LocalDateTime referenceDateTime, LocalDate weekOf) {
         this.referenceDateTime = referenceDateTime;
         this.weekOf = weekOf;
+    }
+
+    /** --- Overridden Methods --- */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AgendaAlertId)) return false;
+        AgendaAlertId that = (AgendaAlertId) o;
+        return Objects.equal(referenceDateTime, that.referenceDateTime) &&
+                Objects.equal(weekOf, that.weekOf);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(referenceDateTime, weekOf);
+    }
+
+    @Override
+    public String toString() {
+        return "weekOf:" + weekOf + " refDate:" + referenceDateTime;
     }
 
     /** --- Getters / Setters --- */

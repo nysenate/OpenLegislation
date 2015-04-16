@@ -7,6 +7,7 @@ import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.dao.common.BillVoteIdRowMapper;
 import gov.nysenate.openleg.dao.common.BillVoteRowHandler;
 import gov.nysenate.openleg.model.agenda.*;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteId;
@@ -313,8 +314,11 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
 
     static RowMapper<AgendaInfoCommittee> agendaInfoCommRowMapper = (rs, rowNum) -> {
         AgendaInfoCommittee infoComm = new AgendaInfoCommittee();
+        infoComm.setAgendaId(
+            new AgendaId(rs.getInt("agenda_no"), rs.getInt("year")));
         infoComm.setCommitteeId(
-            new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")), rs.getString("committee_name")));
+                new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")), rs.getString("committee_name")));
+        infoComm.setAddendum(Version.of(rs.getString("addendum_id")));
         infoComm.setChair(rs.getString("chair"));
         infoComm.setLocation(rs.getString("location"));
         infoComm.setMeetingDateTime(getLocalDateTimeFromRs(rs, "meeting_date_time"));

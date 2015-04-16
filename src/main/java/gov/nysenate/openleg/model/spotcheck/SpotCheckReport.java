@@ -22,7 +22,8 @@ public class SpotCheckReport<ContentKey>
     /** All observations associated with this report. */
     protected Map<ContentKey, SpotCheckObservation<ContentKey>> observations = new HashMap<>();
 
-    /** All observations/mismatches that have been resolved since prior report of same type. */
+    /** miscellaneous notes pertaining to this report */
+    protected String notes;
 
     /** --- Constructors --- */
 
@@ -30,6 +31,11 @@ public class SpotCheckReport<ContentKey>
 
     public SpotCheckReport(SpotCheckReportId reportId) {
         this.reportId = reportId;
+    }
+
+    public SpotCheckReport(SpotCheckReportId reportId, String notes) {
+        this(reportId);
+        this.notes = notes;
     }
 
     /** --- Methods --- */
@@ -175,5 +181,13 @@ public class SpotCheckReport<ContentKey>
 
     public void setObservations(Map<ContentKey, SpotCheckObservation<ContentKey>> observations) {
         this.observations = observations;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

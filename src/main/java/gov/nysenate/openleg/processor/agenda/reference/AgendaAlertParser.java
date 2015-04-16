@@ -11,6 +11,9 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.util.ScrapeUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +21,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.HtmlUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,6 +63,7 @@ public class AgendaAlertParser {
         if (!filenameMatcher.matches()) {
             throw new IllegalArgumentException("agenda alert filename does not match specification: " + agendaAlert.getName());
         }
+
         LocalDate weekOf = LocalDate.parse(filenameMatcher.group(1), DateTimeFormatter.BASIC_ISO_DATE);
         LocalDateTime refDateTime = LocalDateTime.parse(filenameMatcher.group(3), DateUtils.BASIC_ISO_DATE_TIME);
 
@@ -68,15 +73,20 @@ public class AgendaAlertParser {
 
         List<AgendaAlertInfoCommittee> alertInfoCommittees = new ArrayList<>();
 
-        Document document = Jsoup.parse(agendaAlert, "UTF-8");
+        String fileContents = FileUtils.readFileToString(agendaAlert, "ISO-8859-1")
+                        .replaceAll("\u001A", "");  // Replace unknown characters with a blank
+
+        Document document = Jsoup.parse(fileContents);
         Elements bodyElements = document.getElementsByTag("body").first().children();
 
         Element headerElement = null, notesElement = null, billTableElement = null;
 
+        // committee meetings consist of a header (<h3>) notes (<p>) and a bill listing(<table>)
+        // iterate through all committee meeting elements, parsing each
         for (Element currentElement : bodyElements) {
-            if (currentElement.tag().getName().equalsIgnoreCase("p")) {
+            if ("p".equalsIgnoreCase(currentElement.tag().getName())) {
                 notesElement = currentElement;
-            } else if (currentElement.tag().getName().equalsIgnoreCase("table")) {
+            } else if ("table".equalsIgnoreCase(currentElement.tag().getName())) {
                 billTableElement = currentElement;
             } else {
                 if (headerElement != null) {
@@ -84,7 +94,7 @@ public class AgendaAlertParser {
                             headerElement, notesElement, billTableElement, addendum));
                     headerElement = notesElement = billTableElement = null;
                 }
-                if (currentElement.tag().getName().equalsIgnoreCase("h3")) {
+                if ("h3".equalsIgnoreCase(currentElement.tag().getName())) {
                     headerElement = currentElement;
                 }
             }
@@ -100,13 +110,13 @@ public class AgendaAlertParser {
         aaic.setWeekOf(weekOf);
         aaic.setAddendum(addendum);
 
-        String[] headerLines = headerElement.html().split("<br>");
+        String[] headerLines = ScrapeUtils.getFormattedText(headerElement).split("\n");
         aaic.setCommitteeId(getCommitteeId(headerLines[0]));
         aaic.setChair(getChair(headerLines[1]));
         aaic.setMeetingDateTime(getMeetingTime(headerLines[2]));
         aaic.setLocation(headerLines[3].trim());
 
-        aaic.setNotes(notesElement != null ? notesElement.text() : "");
+        aaic.setNotes(notesElement != null ? ScrapeUtils.getFormattedText(notesElement).trim() : "");
 
         if (billTableElement != null) {
             getCommitteeItems(billTableElement, SessionYear.of(aaic.getWeekOf().getYear()))
@@ -121,7 +131,7 @@ public class AgendaAlertParser {
         if (committeeNameMatcher.matches()) {
             return new CommitteeId(Chamber.SENATE, committeeNameMatcher.group(1).trim());
         }
-        throw new ParseError("could not parse committee name from '" + committeeNameLine + "'");
+        throw new ParseError("could not parse committee name from " + committeeNameLine + "");
     }
 
     private static String getChair(String chairLine) throws ParseError {
@@ -129,7 +139,7 @@ public class AgendaAlertParser {
         if (chairMatcher.matches()) {
             return chairMatcher.group(1);
         }
-        throw new ParseError("could not parse chair from '" + chairLine + "'");
+        throw new ParseError("could not parse chair " + chairLine + "");
     }
 
     private static LocalDateTime getMeetingTime(String meetingTimeLine) throws ParseError {
@@ -154,15 +164,14 @@ public class AgendaAlertParser {
     private static List<AgendaInfoCommitteeItem> getCommitteeItems(Element billTableElement, SessionYear sessionYear) {
         Elements rows = billTableElement.getElementsByTag("tr");
         List<AgendaInfoCommitteeItem> committeeItems = new ArrayList<>();
-        for (Element row : rows) {
-            if (row.getElementsByTag("th").isEmpty()) {
-                String[] billEntry = row.children().first().html().split("<br>");
-                committeeItems.add(new AgendaInfoCommitteeItem(
-                        new BillId("S" + billEntry[0].trim(), sessionYear),
-                        billEntry.length > 1 ? billEntry[1].trim() : ""
-                ));
-            }
-        }
+        rows.stream().filter(row -> row.getElementsByTag("th").isEmpty())
+                .forEach(row -> {
+                    String[] billEntry = ScrapeUtils.getFormattedText(row.children().first()).split("\n");
+                    committeeItems.add(new AgendaInfoCommitteeItem(
+                            new BillId(billEntry[0].replaceAll("^\\s*(\\d+[A-z]?)\\s*$", "S$1"), sessionYear),
+                            billEntry.length > 1 ? billEntry[1].trim() : ""
+                    ));
+                });
         return committeeItems;
     }
 }

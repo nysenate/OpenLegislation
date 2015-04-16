@@ -126,8 +126,8 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
 
     /** {@inheritDoc} */
     @Override
-    public void setAgendaAlertChecked(AgendaAlertId agendaAlertId, boolean checked) {
-        MapSqlParameterSource params = getAgendaAlertIdParams(agendaAlertId);
+    public void setAgendaAlertChecked(AgendaAlertInfoCommId agendaAlertId, boolean checked) {
+        MapSqlParameterSource params = getAgendaAlertInfoCommIdParams(agendaAlertId);
         params.addValue("checked", checked);
         jdbcNamed.update(SET_INFO_COMMITTEE_CHECKED.getSql(schema()), params);
     }
@@ -163,7 +163,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
         aaic.setAddendum(Version.of(rs.getString("addendum_id")));
         aaic.setCommitteeId(new CommitteeId(
                 Chamber.getValue(rs.getString("chamber")),
-                rs.getString("commitee_name")
+                rs.getString("committee_name")
         ));
         aaic.setChair(rs.getString("chair"));
         aaic.setLocation(rs.getString("location"));
@@ -230,7 +230,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     private MapSqlParameterSource getAgendaInfoCommItemParams(AgendaInfoCommitteeItem aici, int aaicId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("alertInfoCommitteeId", aaicId);
-        params.addValue("billPrintNo", aici.getBillId().getPrintNo());
+        params.addValue("billPrintNo", aici.getBillId().getBasePrintNo());
         params.addValue("billSessionYear", aici.getBillId().getSession().getYear());
         params.addValue("billAmendVersion", aici.getBillId().getVersion().getValue());
         params.addValue("message", aici.getMessage());

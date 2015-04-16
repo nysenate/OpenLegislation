@@ -4,6 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.agenda.reference.AgendaAlertId;
 import gov.nysenate.openleg.model.agenda.reference.AgendaAlertInfoCommId;
 import gov.nysenate.openleg.model.agenda.reference.AgendaAlertInfoCommittee;
+import org.springframework.dao.DataAccessException;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public interface AgendaAlertDao {
      * @param agendaCommInfoId AgendaAlertInfoCommId
      * @return AgendaAlertInfoCommittee
      */
-    AgendaAlertInfoCommittee getAgendaAlertInfoCommittee(AgendaAlertInfoCommId agendaCommInfoId);
+    AgendaAlertInfoCommittee getAgendaAlertInfoCommittee(AgendaAlertInfoCommId agendaCommInfoId) throws DataAccessException;
 
     /**
      * Get all unchecked Committee meeting references that fall within the given date time range
@@ -44,6 +45,6 @@ public interface AgendaAlertDao {
      */
     void updateAgendaAlertInfoCommittee(AgendaAlertInfoCommittee aaic);
 
-    /** Set all committee meeting references that fall under the given agenda alert id as checked */
-    void setAgendaAlertChecked(AgendaAlertId agendaAlertId, boolean checked);
+    /** Sets the reference corresponding to the given id as checked */
+    void setAgendaAlertChecked(AgendaAlertInfoCommId agendaAlertId, boolean checked);
 }
