@@ -27,11 +27,6 @@ public class ActiveListScrapingService  {
     }
 
     //would just add more files to that directory.set up new directory for each scrape?
-    /*@Autowired
-    private void scrape() throws Exception{
-        CalendarScraper cScraper = new CalendarScraper();
-        cScraper.scrape();
-    }*/
     public void parse() throws Exception{
         ActiveListHTMLParser parser = new ActiveListHTMLParser();
         File dir = new File(diretoryName);

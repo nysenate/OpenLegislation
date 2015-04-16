@@ -27,13 +27,16 @@ public enum SpotCheckMismatchType
     BILL_SAMEAS,
     BILL_SUMMARY,
     BILL_TITLE,
+    BILL_FULL_TEXT,
+
 
     /** --- Active List data mismatches --- */
 
     LIST_CAL_DATE,
     LIST_RELEASE_DATE_TIME,
     LIST_CALENDAR_MISMATCH,
-    LIST_ENTRY_MISMATCH
+    LIST_ENTRY_MISMATCH,
+
 
 
 }

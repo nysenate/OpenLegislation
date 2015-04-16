@@ -11,6 +11,8 @@ public enum SpotCheckRefType
     LBDC_FLOOR_CALENDAR,
 
     LBDC_ACTIVE_LIST,
+    LBDC_BILL_TEXT,
+    LBDC_BILL_MEMO,
 
     LBDC_AGENDA_ALERT,
 

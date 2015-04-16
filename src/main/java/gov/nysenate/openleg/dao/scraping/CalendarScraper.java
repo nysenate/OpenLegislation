@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.scraping;
 
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -15,12 +16,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class CalendarScraper extends LRSScraper{
     private static final Logger logger = Logger.getLogger(LRSScraper.class);
     protected static final String allCalendars = "http://leginfo.state.ny.us/ASMSEN/menugetl.cgi?COMMONQUERY=CALENDAR";
     protected URL calendarURL;
+    private File outfile = null;
 
 
     private File calendarDirectory;
@@ -35,7 +39,7 @@ public class CalendarScraper extends LRSScraper{
     //Active list sequence number get from parsing the page here with all the calendars
     //ToDo Scraping doesn't handle going through the supplemental calendar intermediary page
     @Override
-    public void scrape() throws IOException{
+    public List<File> scrape() throws IOException{
         logger.info("SCRETCHING landing page.");
         Document doc = Jsoup.connect(calendarURL.toString()).get();
 
@@ -78,7 +82,7 @@ public class CalendarScraper extends LRSScraper{
                 }else{
                     filename = dateFormat.format(LocalDateTime.now()) + "." + td.get(0).text().trim().replace(".", "").replace(" ", "_").replace("\u00a0", "").toLowerCase() + ".html";
                 }
-                File outfile = new File(calendarDirectory, filename);
+                outfile = new File(calendarDirectory, filename);
                 logger.info("Fetching " + td.get(1).text().trim());
 
                 String contents = activeInfo + IOUtils.toString(contentURL);
@@ -86,6 +90,14 @@ public class CalendarScraper extends LRSScraper{
                 FileUtils.write(outfile, contents);
             }
         }
-
+        ArrayList<File> list = new ArrayList<File>();
+        list.add(outfile);
+        return list;
     }
+
+    @Override
+    public List<File> scrape(String billType, String billNo, SessionYear sessionYear) throws IOException {
+        return null;
+    }
+
 }

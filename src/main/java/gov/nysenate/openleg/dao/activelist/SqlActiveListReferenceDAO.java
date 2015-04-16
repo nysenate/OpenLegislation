@@ -49,7 +49,6 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
 
     void addActiveListEntry(int keyId, CalendarActiveListEntry entry){
         MapSqlParameterSource params = getEntryParams(keyId, entry);
-
         jdbcNamed.update(SqlActiveListReferenceQuery.INSERT_ACTIVE_LIST_REFERENCE_ENTRY.getSql(schema()), params);
     }
 
@@ -74,7 +73,7 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
 
     //todo
     @Override
-    public ActiveListSpotcheckReference getCurrentCalendar(CalendarActiveListId cal, Range<LocalDate> dateRange) throws DataAccessException {
+    public ActiveListSpotcheckReference getCurrentCalendar(CalendarActiveListId cal, Range<LocalDateTime> dateRange) throws DataAccessException {
         MapSqlParameterSource params= null;// = getActiveListIdParams(cal, dateRange);
 
         return jdbcNamed.queryForObject(SqlActiveListReferenceQuery.SELECT_ACTIVE_LIST.getSql(schema()), params, new ActiveRowMapper());

@@ -38,7 +38,8 @@ public class Environment
     @Value("${env.scraped.assemblyagenda}") private String assemblyAgendaDirPath;
     @Value("${env.scraped.senateagenda}") private String senateAgendaDirPath;
     @Value("${env.scraped.billtext}") private String billTextDirPath;
-    
+    @Value("${env.scraped.billmemo}") private String billMemoDirPath;
+
     private File baseDir;
     private File stagingDir;
     private File archiveDir;
@@ -47,6 +48,7 @@ public class Environment
     private File assemblyAgendaDirectory;
     private File senateAgendaDirectory;
     private File billTextDirectory;
+    private File billMemoDirectory;
 
     /** --- Api Auth --- */
 
@@ -116,6 +118,7 @@ public class Environment
         this.assemblyAgendaDirectory = new File(assemblyAgendaDirPath);
         this.senateAgendaDirectory = new File(senateAgendaDirPath);
         this.billTextDirectory = new File(billTextDirPath);
+        this.billMemoDirectory = new File(billMemoDirPath);
     }
 
     /** --- Basic Getters/Setters --- */
@@ -256,6 +259,30 @@ public class Environment
         this.notificationsEnabled = notificationsEnabled;
     }
 
+    public File getBillMemoDirectory() {
+        return billMemoDirectory;
+    }
+
+    public void setBillMemoDirectory(File billMemoDirectory) {
+        this.billMemoDirectory = billMemoDirectory;
+    }
+
+    public void setBaseDir(File baseDir) {
+        this.baseDir = baseDir;
+    }
+
+    public void setStagingDir(File stagingDir) {
+        this.stagingDir = stagingDir;
+    }
+
+    public void setArchiveDir(File archiveDir) {
+        this.archiveDir = archiveDir;
+    }
+
+    public void setApiSecret(String apiSecret) {
+        this.apiSecret = apiSecret;
+    }
+
     public String getEmailHost() {
         return emailHost;
     }
@@ -284,7 +311,15 @@ public class Environment
         return emailReceivingFolder;
     }
 
+    public void setEmailReceivingFolder(String emailReceivingFolder) {
+        this.emailReceivingFolder = emailReceivingFolder;
+    }
+
     public String getEmailProcessedFolder() {
         return emailProcessedFolder;
+    }
+
+    public void setEmailProcessedFolder(String emailProcessedFolder) {
+        this.emailProcessedFolder = emailProcessedFolder;
     }
 }
