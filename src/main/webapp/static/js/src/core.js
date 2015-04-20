@@ -37,6 +37,15 @@ coreModule.filter('sessionYear', ['$filter', function ($filter) {
     };
 }]);
 
+coreModule.filter('label', function() {
+    return function (item, labelMap) {
+        if (item in labelMap) {
+            return labelMap[item];
+        }
+        return item;
+    };
+})
+
 /**
  * Appends an appropriate ordinal suffix to the input number
  */

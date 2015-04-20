@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.model.spotcheck;
 
 import com.google.common.collect.ImmutableMap;
+import gov.nysenate.openleg.util.OutputUtils;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,14 @@ public enum SpotCheckRefType
 
     public static SpotCheckRefType getByRefName(String refName) {
         return refNameMap.get(refName);
+    }
+
+    /**
+     * Get a json object of each refType mapped to its refName
+     */
+    public static String getJsonMap() {
+        return OutputUtils.toJson(EnumSet.allOf(SpotCheckRefType.class).stream()
+                .collect(Collectors.toMap(SpotCheckRefType::name, SpotCheckRefType::getRefName)));
     }
 
 }

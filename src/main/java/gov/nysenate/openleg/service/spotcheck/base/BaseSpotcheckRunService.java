@@ -88,7 +88,9 @@ public abstract class BaseSpotcheckRunService<ContentId> implements SpotcheckRun
                 .append("\n\n");
 
         messageBuilder.append(env.getUrl())
-                .append("/admin/report/daybreak/")
+                .append("/admin/report/spotcheck?type=")
+                .append(daybreakReport.getReferenceType().getRefName())
+                .append("&runTime")
                 .append(daybreakReport.getReportDateTime())
                 .append("\n\n");
 
