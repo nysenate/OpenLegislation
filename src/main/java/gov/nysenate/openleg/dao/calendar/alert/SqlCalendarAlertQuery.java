@@ -25,6 +25,10 @@ public enum SqlCalendarAlertQuery implements BasicSqlQuery {
         "(calendar_no, calendar_year, modified_date_time, published_date_time, last_file) \n" +
         "VALUES (:calendarNo, :year, :modifiedDateTime, :publishedDateTime, :lastFile)"
     ),
+    SELECT_CALENDAR_RANGE(
+        "SELECT * FROM ${schema}." + SqlTable.ALERT_CALENDAR + "\n" +
+        "WHERE published_date_time BETWEEN :startTime AND :endTime"
+    ),
 
     /** --- Calendar Supplemental --- */
 

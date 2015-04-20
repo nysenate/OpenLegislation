@@ -39,6 +39,7 @@ public class CalendarAlertProcessor extends BaseCalendarAlertParser {
             calendar = calendarAlertDao.getCalendar(calendarId);
         } catch (EmptyResultDataAccessException e) {
             calendar = new Calendar(calendarId);
+            calendar.setPublishedDateTime(parseReleaseDateTime(file));
         }
 
         if (isSupplemental(file)) {

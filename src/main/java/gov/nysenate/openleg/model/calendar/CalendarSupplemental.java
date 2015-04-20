@@ -89,6 +89,11 @@ public class CalendarSupplemental extends BaseLegislativeContent
         return Objects.hash(version, calendarId, calDate, releaseDateTime, sectionEntries);
     }
 
+    @Override
+    public String toString() {
+        return version.toString() + " " + calendarId.toString() + " " + calDate.toString() + " " + releaseDateTime.toString();
+    }
+
     /** --- Functional Getters/Setters --- */
 
     public CalendarSupplementalId getCalendarSupplementalId() {

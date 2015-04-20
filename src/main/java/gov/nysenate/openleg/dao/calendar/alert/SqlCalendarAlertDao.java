@@ -64,6 +64,17 @@ public class SqlCalendarAlertDao extends SqlBaseDao {
         updateCalActiveLists(calendar, file, calParams);
     }
 
+    public List<Calendar> getCalendarAlertsByDateRange(LocalDateTime start, LocalDateTime end) {
+        MapSqlParameterSource params = getDateRangeParams(start, end);
+        List<Calendar> calendars = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_CALENDAR_RANGE.getSql(schema()), params, new CalendarListRowMapper());
+        for (Calendar cal: calendars) {
+            ImmutableParams calParams = ImmutableParams.from(getCalendarIdParams(cal.getId()));
+            cal.setSupplementalMap(getCalSupplementals(calParams));
+            cal.setActiveListMap(getActiveListMap(calParams));
+        }
+        return calendars;
+    }
+
     /** --- Internal Methods --- */
 
     /**
@@ -150,10 +161,28 @@ public class SqlCalendarAlertDao extends SqlBaseDao {
     {
         @Override
         public Calendar mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Calendar calendar = new Calendar(new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
+            Calendar calendar = setCalendarIdFromResultSet(rs);
             setModPubDatesFromResultSet(calendar, rs);
             return calendar;
         }
+    }
+
+    private class CalendarListRowMapper implements RowMapper<List<Calendar>> {
+
+        @Override
+        public List<Calendar> mapRow(ResultSet rs, int rowNum) throws SQLException {
+            List<Calendar> calendars = new ArrayList<>();
+            while(rs.next()) {
+                Calendar calendar = setCalendarIdFromResultSet(rs);
+                setModPubDatesFromResultSet(calendar, rs);
+                calendars.add(calendar);
+            }
+            return calendars;
+        }
+    }
+
+    private Calendar setCalendarIdFromResultSet(ResultSet rs) throws SQLException {
+        return new Calendar(new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year")));
     }
 
     private class CalendarIdRowMapper implements RowMapper<CalendarId>
@@ -289,6 +318,13 @@ public class SqlCalendarAlertDao extends SqlBaseDao {
         addCalendarIdParams(calendar.getId(), params);
         addModPubDateParams(calendar.getModifiedDateTime(), calendar.getPublishedDateTime(), params);
         addLastFile(file, params);
+        return params;
+    }
+
+    private MapSqlParameterSource getDateRangeParams(LocalDateTime start, LocalDateTime end) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("startTime", toDate(start));
+        params.addValue("endTime", toDate(end));
         return params;
     }
 

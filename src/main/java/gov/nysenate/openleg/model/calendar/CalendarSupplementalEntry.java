@@ -54,6 +54,11 @@ public class CalendarSupplementalEntry
         return Objects.hash(billCalNo, sectionType, billId, subBillId, billHigh);
     }
 
+    @Override
+    public String toString() {
+        return billCalNo.toString() + " " + sectionType.toString() + " " + billId.toString() + " " + subBillId.toString() + " " + billHigh.toString();
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public Integer getBillCalNo() {

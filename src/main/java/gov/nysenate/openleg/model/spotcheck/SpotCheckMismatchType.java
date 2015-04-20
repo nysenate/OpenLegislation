@@ -46,4 +46,11 @@ public enum SpotCheckMismatchType
     AGENDA_LOCATION,
     AGENDA_NOTES,
 
+    /** --- Calendar mismatches --- */
+    CALENDAR_SUPP_VERSION,
+    CALENDAR_SECTION_TYPE,
+    CALENDAR_SUPP_ENTRY,
+    CALENDAR_ACTIVE_LIST,
+    CALENDAR_ACTIVE_LIST_ENTRY,
+
 }
