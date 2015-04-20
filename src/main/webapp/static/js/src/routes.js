@@ -36,7 +36,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         /** --- Reports --- */
 
-        .when(ctxPath + '/admin/report/daybreak', { templateUrl: ctxPath + '/partial/report/daybreak', reloadOnSearch: false })
+        .when(ctxPath + '/admin/report/spotcheck', { templateUrl: ctxPath + '/partial/report/spotcheck', reloadOnSearch: false })
 
         /** --- Admin --- */
 

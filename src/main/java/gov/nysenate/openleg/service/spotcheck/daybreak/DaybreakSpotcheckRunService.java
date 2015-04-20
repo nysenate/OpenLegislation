@@ -51,7 +51,7 @@ public class DaybreakSpotcheckRunService extends BaseSpotcheckRunService<BaseBil
     public void scheduledSpotcheck() {
         if (env.isSpotcheckScheduled()) {
             List<SpotCheckReport<BaseBillId>> spotCheckReports = runSpotcheck();
-            if (spotCheckReports.size() > 0) {
+            if (!spotCheckReports.isEmpty()) {
                 spotcheckCompleteNotification(spotCheckReports.get(0));
             }
         }
@@ -68,7 +68,7 @@ public class DaybreakSpotcheckRunService extends BaseSpotcheckRunService<BaseBil
             daybreakProcessService.processPendingFragments();
             return generateReports();
         }
-        return null;
+        return Collections.emptyList();
     }
 
     /**

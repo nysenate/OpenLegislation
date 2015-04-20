@@ -1,7 +1,20 @@
+<%@ page import="gov.nysenate.openleg.util.OutputUtils" %>
+<%@ page import="java.util.Arrays" %>
+<%@ page import="com.google.common.collect.Maps" %>
+<%@ page import="java.util.EnumSet" %>
+<%@ page import="gov.nysenate.openleg.model.spotcheck.SpotCheckRefType" %>
+<%@ page import="java.util.stream.Collectors" %>
+<%@ page import="gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
-<section ng-controller="DaybreakCtrl" id="daybreak-page" ng-init="setHeaderVisible(true)">
+<%
+  String refTypeMap = SpotCheckRefType.getJsonMap();
+  String mismatchMap = SpotCheckMismatchType.getJsonMap();
+  String daybreakInitArgs = refTypeMap + ", " + mismatchMap;
+%>
+
+<section ng-controller="DaybreakCtrl" id="daybreak-page" ng-init='init(<%=daybreakInitArgs%>)'>
   <md-tabs class='md-primary' md-selected="selectedIndex">
 
     <!-- Summary Tab -->
@@ -21,12 +34,13 @@
               <md-button ng-click="newDateRange()" class="md-primary md-raised" aria-label="change date range">Go</md-button>
             </form>
           </div>
-          <table id='daybreak-summary-table' st-table="reportSummaries" class="table table-striped">
+          <table id='daybreak-summary-table' st-table="displaySummaries" st-safe-src="reportSummaries" class="table table-striped">
             <thead>
               <tr>
-                <th rowspan="2">Report Date/Time</th>
+                <th rowspan="2" st-sort="reportDateTime">Report Date/Time</th>
+                <th rowspan="2" st-sort="referenceType">Report Type</th>
+                <th rowspan="2">Notes</th>
                 <th class="th-section"  colspan="5">Mismatch Statuses</th>
-                <th class="th-section" colspan="20">Mismatch Types</th>
               </tr>
               <tr>
                 <th style="border-left:1px solid #ccc;">Total Open</th>
@@ -34,25 +48,19 @@
                 <th>Regress</th>
                 <th>Existing</th>
                 <th>Resolved</th>
-                <th style="border-left:1px solid #ccc;" colspan="2">Sponsor</th>
-                <th colspan="2">Co-sp</th>
-                <th colspan="2">Multi-sp</th>
-                <th colspan="2">Title</th>
-                <th colspan="2">Law/Sum</th>
-                <th colspan="2">Action</th>
-                <th colspan="2">Page</th>
-                <th colspan="2">Publish</th>
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="summary in reportSummaries">
+              <tr ng-repeat="summary in displaySummaries">
                 <td>
-                  <a href="#" ng-click="openReportDetail(summary.reportDateTime.toString())">
+                  <a href="#" ng-click="openReportDetail(summary.referenceType, summary.reportDateTime.toString())">
                     {{summary.reportDateTime | moment:'lll'}}
                   </a>
                 </td>
+                <td ng-bind="summary.referenceType"></td>
+                <td ng-bind="summary.notes"></td>
                 <td style="border-left:1px solid #ccc; font-weight:bold">{{summary.openMismatches}}</td>
-                <td style="width: 60px">
+                <td style="width: 60px"> |
                   <span class="prefix-icon icon-arrow-up4 new-error"></span>
                   {{ (summary.mismatchStatuses['NEW'] | default:0) }}
                 </td>
@@ -67,54 +75,6 @@
                 <td style="width: 60px">
                   <span class="prefix-icon icon-arrow-down5 closed-error"></span>
                   {{ summary.mismatchStatuses['RESOLVED'] | default:0 }}
-                </td>
-                <td style="border-left:1px solid #ccc;">
-                  {{ computeMismatchCount(summary, 'BILL_SPONSOR') }}
-                </td>
-                <td class="delta-column">
-                  <span ng-class="mismatchDiffClass(summary,'BILL_SPONSOR')">{{ computeMismatchDiff(summary, 'BILL_SPONSOR', true) }}</span>
-                </td>
-                <td>
-                  {{ computeMismatchCount(summary, 'BILL_COSPONSOR') }}
-                </td>
-                <td class="delta-column">
-                  <span ng-class="mismatchDiffClass(summary,'BILL_COSPONSOR')">{{ computeMismatchDiff(summary, 'BILL_COSPONSOR', true) }}</span>
-                </td>
-                <td>
-                  {{ computeMismatchCount(summary, 'BILL_MULTISPONSOR') }}
-                </td>
-                <td class="delta-column">
-                  <span ng-class="mismatchDiffClass(summary,'BILL_MULTISPONSOR')">{{ computeMismatchDiff(summary, 'BILL_MULTISPONSOR', true) }}</span>
-                </td>
-                <td>
-                  {{ computeMismatchCount(summary, 'BILL_TITLE') }}
-                </td>
-                <td class="delta-column">
-                  <span ng-class="mismatchDiffClass(summary,'BILL_TITLE')">{{ computeMismatchDiff(summary, 'BILL_TITLE', true) }}</span>
-                </td>
-                <td>
-                  {{ computeMismatchCount(summary, 'BILL_LAW_CODE_SUMMARY') }}
-                </td>
-                <td class="delta-column">
-                  <span ng-class="mismatchDiffClass(summary,'BILL_LAW_CODE_SUMMARY')">{{ computeMismatchDiff(summary, 'BILL_LAW_CODE_SUMMARY', true) }}</span>
-                </td>
-                <td>
-                  {{ computeMismatchCount(summary, 'BILL_ACTION') }}
-                </td>
-                <td class="delta-column">
-                  <span ng-class="mismatchDiffClass(summary,'BILL_ACTION')">{{ computeMismatchDiff(summary, 'BILL_ACTION', true) }}</span>
-                </td>
-                <td>
-                  {{ computeMismatchCount(summary, 'BILL_FULLTEXT_PAGE_COUNT') }}
-                </td>
-                <td class="delta-column">
-                  <span ng-class="mismatchDiffClass(summary,'BILL_FULLTEXT_PAGE_COUNT')">{{ computeMismatchDiff(summary, 'BILL_FULLTEXT_PAGE_COUNT', true) }}</span>
-                </td>
-                <td>
-                  {{ computeMismatchCount(summary, 'BILL_AMENDMENT_PUBLISH') }}
-                </td>
-                <td class="delta-column" style="border-right:none;">
-                  <span ng-class="mismatchDiffClass(summary,'BILL_AMENDMENT_PUBLISH')">{{ computeMismatchDiff(summary, 'BILL_AMENDMENT_PUBLISH', true) }}</span>
                 </td>
               </tr>
             </tbody>

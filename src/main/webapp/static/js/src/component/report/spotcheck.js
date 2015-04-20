@@ -5,51 +5,88 @@ var daybreakModule = angular.module('open.daybreak', ['open.core', 'smart-table'
 
 // Gets summaries for reports that were generated within the specified range
 daybreakModule.factory('DaybreakSummaryAPI', ['$resource', function($resource) {
-    return $resource(adminApiPath + "/spotcheck/daybreak/:startDate/:endDate", {
+    return $resource(adminApiPath + "/spotcheck/summaries/:startDate/:endDate", {
         startDate: '@startDate', endDate: '@endDate'
     });
 }]);
 
 // Gets a full detailed report corresponding to the given date time
 daybreakModule.factory('DaybreakDetailAPI', ['$resource', function($resource) {
-    return $resource(adminApiPath + "/spotcheck/daybreak/:reportDateTime", {
+    return $resource(adminApiPath + "/spotcheck/:reportType/:reportDateTime", {
+        reportType: '@reportType',
         reportDateTime: '@reportDateTime'
     });
 }]);
 
+var reportTypeMap = {};
+var mismatchTypeMap = {};
+
+daybreakModule.filter('mismatchStatusLabel', ['$filter', function ($filter) {
+    var statusLabelMap = {
+        RESOLVED: "Closed",
+        NEW: "Opened",
+        EXISTING: "Existing",
+        REGRESSION: "Reopened",
+        IGNORE: "Ignored"
+    };
+    return function(status) {
+        return $filter('label')(status, statusLabelMap);
+    };
+}]);
+
+daybreakModule.filter('mismatchTypeLabel', ['$filter', function ($filter) {
+    return function(type) {
+        return $filter('label')(type, mismatchTypeMap);
+    };
+}]);
+
+daybreakModule.filter('reportTypeLabel', ['$filter', function ($filter) {
+    return function(type) {
+        return $filter('label')(type, reportTypeMap);
+    }
+}]);
+
 /** --- Parent Daybreak Controller --- */
 
-daybreakModule.controller('DaybreakCtrl', ['$scope', '$routeParams', '$location', '$timeout',
-function ($scope, $routeParams, $location, $timeout) {
+daybreakModule.controller('DaybreakCtrl', ['$scope', '$routeParams', '$location', '$timeout', '$filter',
+function ($scope, $routeParams, $location, $timeout, $filter) {
 
     // The date of the currently open report, null if no open reports
-    $scope.openReport = null;
+    $scope.openReportDateTime = null;
+
+    $scope.openReportType = null;
 
     // The index of the currently selected tab
     $scope.selectedIndex = 0;
 
-    function init() {
-        $scope.setHeaderText("View Daybreak Reports");
+    $scope.rtmap = {};
+    $scope.mtmap = {};
 
-        if ($routeParams.hasOwnProperty('report')) {
-            $scope.openReportDetail($routeParams['report']);
+    $scope.init = function (rtmap, mtmap) {
+        $scope.rtmap = reportTypeMap = rtmap;
+        $scope.mtmap = mismatchTypeMap = mtmap;
+
+        $scope.setHeaderVisible(true);
+        $scope.setHeaderText("View SpotCheck Reports");
+
+        if ($routeParams.hasOwnProperty('runTime') && $routeParams.hasOwnProperty('type')) {
+            $scope.openReportDetail($routeParams['type'], $routeParams['runTime']);
         }
-    }
+    };
 
     // Loads a new report in the detail tab
-    $scope.openReportDetail = function(reportDateTime) {
-        if ($scope.openReport != reportDateTime) {
-            $scope.openReport = reportDateTime;
-            console.log("new report: ", $scope.openReport);
-            $timeout(function () {
-                $scope.$broadcast('newReportDetail')
-            }, 1);
-            $location.search('report', $scope.openReport);
+    $scope.openReportDetail = function(reportType, reportDateTime) {
+        if ($scope.openReportDateTime != reportDateTime || $scope.openReportType != reportType) {
+            $scope.openReportType = reportType;
+            $scope.openReportDateTime = reportDateTime;
+            console.log("new report: ", $scope.openReportType, $scope.openReportDateTime);
+            $timeout(function () {$scope.$broadcast('newReportDetail')});
+            $location.search('type', $filter('reportTypeLabel')($scope.openReportType));
+            $location.search('runTime', $scope.openReportDateTime);
         }
         $scope.selectedIndex = 1;
     };
 
-    init();
 }]);
 
 /** --- Report Summary Controller --- */
@@ -148,50 +185,6 @@ daybreakModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routePa
 
 /** --- Report Detail Controller --- */
 
-daybreakModule.filter('mismatchStatusLabel', function () {
-    var statusLabelMap = {
-        RESOLVED: "Closed",
-        NEW: "Opened",
-        EXISTING: "Existing",
-        REGRESSION: "Reopened",
-        IGNORE: "Ignored"
-    };
-    return function(status) {
-        if (statusLabelMap.hasOwnProperty(status)) {
-            return statusLabelMap[status];
-        }
-        return status;
-    };
-});
-
-daybreakModule.filter('mismatchTypeLabel', function () {
-    var typeLabelMap = {
-        BILL_ACTIVE_AMENDMENT: "Amendment",
-        BILL_SPONSOR: "Sponsor",
-        BILL_MULTISPONSOR: "Multi Sponsor",
-        BILL_ACTION: "Action",
-        BILL_COSPONSOR: "Co Sponsor",
-        BILL_AMENDMENT_PUBLISH: "Publish",
-        BILL_FULLTEXT_PAGE_COUNT: "Page Count",
-        BILL_LAW_CODE: "Law Code",
-        BILL_LAW_CODE_SUMMARY: "Law/Summary",
-        BILL_SPONSOR_MEMO: "Sponsor Memo",
-        BILL_SAMEAS: "Same As",
-        BILL_SUMMARY: "Summary",
-        BILL_TITLE: "Title",
-        BILL_LAW_SECTION: "Law Section",
-        BILL_MEMO: "Memo",
-        REFERENCE_DATA_MISSING: "Missing Ref.",
-        OBSERVE_DATA_MISSING: "Missing Bill"
-    };
-    return function(type) {
-        if (typeLabelMap.hasOwnProperty(type)) {
-            return typeLabelMap[type];
-        }
-        return type;
-    };
-});
-
 daybreakModule.directive('mismatchDiff', function(){
     return {
         restrict: 'E',
@@ -252,26 +245,27 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
     $scope.filterWatchersInitialized = false;
 
     // Initialization function
-    $scope.init = function (reportDateTime) {
+    $scope.init = function () {
         $scope.report = null;
         $scope.totals = null;
         $scope.filteredTypeTotals = null;
         $scope.dataDetails = {};
         $scope.tableData = [];
         $scope.filteredTableData = [];
-        console.log("new report detail detected: ", reportDateTime);
-        $scope.reportDateTime = reportDateTime;
+        $scope.reportType = $scope.openReportType;
+        $scope.reportDateTime = $scope.openReportDateTime;
+        console.log("new report detail detected: ", $scope.reportType, $scope.reportDateTime);
         $scope.getReportDetails();
     };
 
     $scope.$on('newReportDetail', function () {
         console.log("new report detail detected");
-        $scope.init($scope.$parent.openReport);
+        $scope.init();
     });
 
     // Fetch the report by parsing the url for the report date/time
     $scope.getReportDetails = function() {
-        $scope.report = DaybreakDetailAPI.get({reportDateTime: $scope.reportDateTime}, function() {
+        $scope.report = DaybreakDetailAPI.get({reportType: $scope.reportType, reportDateTime: $scope.reportDateTime}, function() {
             $scope.referenceDateTime = $scope.report.details.referenceDateTime;
             $scope.extractTableData();
             $scope.filterInit();

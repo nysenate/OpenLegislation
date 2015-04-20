@@ -16,7 +16,7 @@
   <script src="${ctxPath}/static/js/src/component/content/agenda.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/member.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/transcript.js"></script>
-  <script src="${ctxPath}/static/js/src/component/report/daybreak.js"></script>
+  <script src="${ctxPath}/static/js/src/component/report/spotcheck.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/account.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/notification_sub.js"></script>
 </open-layout:head>
@@ -69,7 +69,7 @@
                   <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
                 </menu-section>
                 <menu-section title="Reports">
-                  <menu-item url="${ctxPath}/admin/report/daybreak">Daybreak Report</menu-item>
+                  <menu-item url="${ctxPath}/admin/report/spotcheck">Spotcheck Reports</menu-item>
                   <%-- --%>
                 </menu-section>
               </shiro:user>
