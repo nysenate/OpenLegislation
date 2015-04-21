@@ -98,6 +98,7 @@
               <span class="icon-graph blue-title-icon"></span>
               {{openReportType | reportType}} {{referenceDateTime | moment:'ll'}} | Report Date: {{reportDateTime | moment:'lll'}}
             </h4>
+            <p ng-if="report.details.notes">Notes: {{report.details.notes}}</p>
 
             <hr style="margin-top:.5em;"/>
 
@@ -110,7 +111,7 @@
                 <span ng-switch-when="true"><span class="icon-arrow-up prefix-icon"/>Hide filter</span>
               </md-button>
               <br/>
-              <div ng-show="showMismatchFilter">
+              <div ng-show="showMismatchFilter" style="padding-top: 10px">
                 <div class="row button-group panel minimal" style="margin-bottom:10px;">
                   <check-button btn-class="" ng-model="errorFilter.all" aria-label="Show all mismatches">
                     Total<br/>{{ totals.total }}
@@ -120,7 +121,8 @@
                   </check-button>
                   <check-button btn-class="" ng-model="errorFilter.statuses[status]"
                                 ng-repeat="(status, total) in totals.statuses"
-                                aria-label="Show {{status | mismatchStatusLabel}} mismatches">
+                                aria-label="Show {{status | mismatchStatusLabel}} mismatches"
+                                ng-if="total > 0">
                     {{status | mismatchStatusLabel}}<br/>{{totals.statuses[status]}}
                   </check-button>
                 </div>
@@ -238,26 +240,34 @@
         <md-tab label="LBDC"><md-content ng-bind="currentMismatch.referenceData"></md-content></md-tab>
         <md-tab label="Openleg"><md-content ng-bind="currentMismatch.observedData"></md-content></md-tab>
         <md-tab label="Prior Occurrences">
-            <%--<accordion>--%>
-            <%--<accordion-group ng-repeat="priorMismatch in currentMismatch.prior.items"--%>
-            <%--label="REPORT: {{formatReportDate(priorMismatch.reportId.reportDateTime)}} DAYBREAK: {{formatReferenceDate(priorMismatch.reportId.referenceDateTime)}} STATUS: {{getLabel('statuses', priorMismatch.status)}}">--%>
-            <%--<mismatch-diff diff="priorMismatch.diff"></mismatch-diff>--%>
-            <%--</accordion-group>--%>
-            <%--</accordion>--%>
+          <toggle-panel ng-repeat="priorMismatch in currentMismatch.prior.items"
+              label="{{priorMismatch.reportId.reportDateTime | moment:'lll'}}">
+            <div layout="row" layout-align="space-around">
+              <h5 class="no-margin">Reference Date: {{priorMismatch.reportId.referenceDateTime | moment:'lll'}}</h5>
+              <h5 class="no-margin">Status: {{priorMismatch.status | mismatchStatusLabel}}</h5>
+            </div>
+            <md-divider></md-divider>
+            <p>
+              <mismatch-diff diff="priorMismatch.diff"></mismatch-diff>
+            </p>
+          </toggle-panel>
         </md-tab>
         <md-tab label="Other Mismatches">
           <md-content>
-            <ul ng-show="allMismatches.length > 1">
+            <ul ng-show="allMismatches.length > 1" style="list-style-type: none">
               <li ng-repeat="mismatch in allMismatches">
                 <span ng-show="mismatch.mismatchType==currentMismatch.mismatchType">
                   {{mismatch.mismatchType | mismatchTypeLabel}} - {{mismatch.status | mismatchStatusLabel}}
                 </span>
                 <a href="#" ng-show="mismatch.mismatchType!=currentMismatch.mismatchType"
-                   ng-click="openNewDetail(getMismatchId(observation, mismatch))">
+                   ng-click="openNewDetail(getMismatchId(details.observation, mismatch))">
                     {{mismatch.mismatchType | mismatchTypeLabel}} - {{mismatch.status | mismatchStatusLabel}}
                 </a>
               </li>
             </ul>
+            <h4 ng-show="allMismatches.length <= 1" class="text-align-center">
+              No other mismatches for {{contentId}}
+            </h4>
           <md-content>
         </md-tab>
       </md-tabs>

@@ -59,8 +59,11 @@ daybreakModule.filter('reportType', function(){
 
 daybreakModule.filter('contentType', function() {
     var contentTypeMap = {
+        LBDC_ACTIVE_LIST: "Active List",
+        LBDC_AGENDA_ALERT: "Agenda",
         LBDC_DAYBREAK: "Bill",
-        LBDC_AGENDA_ALERT: "Agenda"
+        LBDC_FLOOR_CALENDAR: "Floor Cal",
+        LBDC_SCRAPED_BILL: "Bill"
     };
     return function(reportType) {
         if (contentTypeMap.hasOwnProperty(reportType)) {
@@ -377,11 +380,12 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
 
     // Generates a mismatch id
     $scope.getMismatchId = function (observation, mismatch) {
-        return JSON.stringify(observation) + '-' + mismatch.mismatchType;
+        return JSON.stringify(observation.key) + '-' + mismatch.mismatchType;
     };
 
     var contentTypeIdMap = {
         LBDC_DAYBREAK: getBillId,
+        LBDC_SCRAPED_BILL: getBillId,
         LBDC_AGENDA_ALERT: getAgendaId
     };
     $scope.getContentId = function(reportType, key) {
@@ -402,6 +406,7 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
 
     var contentTypeUrlMap = {
         LBDC_DAYBREAK: getBillUrl,
+        LBDC_SCRAPED_BILL: getBillUrl,
         LBDC_AGENDA_ALERT: getAgendaUrl
     };
     $scope.getContentUrl = function(reportType, key) {
@@ -597,6 +602,7 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
         $scope.errorFilter = getDefaultFilter($scope.totals);
         $scope.statusCount=Object.keys($scope.totals.statuses).length + 2;
         $scope.typeCount=Object.keys($scope.totals.types).length;
+        $scope.onStatusFilterUpdate();
     };
 
     // Activate filter watchers

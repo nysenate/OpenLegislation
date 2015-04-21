@@ -962,6 +962,10 @@ a.slogan-link {
   }
 }
 
+table.table-striped tbody tr:nth-child(odd) {
+  background-color: #d0f3ff;
+}
+
 .blue-title-icon {
   color: #006b80;
   margin-right: 20px;
@@ -1014,10 +1018,6 @@ a.slogan-link {
 
 #report-detail-container {
   padding: 10px !important;
-}
-
-table.report-detail-table tbody tr:nth-child(odd) {
-  background-color: #ccc;
 }
 
 .report-detail-table .rpp-selector {
