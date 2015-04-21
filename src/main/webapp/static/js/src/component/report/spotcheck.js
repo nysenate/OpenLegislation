@@ -46,6 +46,30 @@ daybreakModule.filter('reportTypeLabel', ['$filter', function ($filter) {
     }
 }]);
 
+daybreakModule.filter('reportType', function(){
+    return function(type) {
+        for (var key in reportTypeMap) {
+            if (reportTypeMap.hasOwnProperty(key) && (type === key || type === reportTypeMap[key])) {
+                return key;
+            }
+        }
+        return null;
+    }
+});
+
+daybreakModule.filter('contentType', function() {
+    var contentTypeMap = {
+        LBDC_DAYBREAK: "Bill",
+        LBDC_AGENDA_ALERT: "Agenda"
+    };
+    return function(reportType) {
+        if (contentTypeMap.hasOwnProperty(reportType)) {
+            return contentTypeMap[reportType];
+        }
+        return "Content";
+    };
+});
+
 /** --- Parent Daybreak Controller --- */
 
 daybreakModule.controller('DaybreakCtrl', ['$scope', '$routeParams', '$location', '$timeout', '$filter',
@@ -59,6 +83,8 @@ function ($scope, $routeParams, $location, $timeout, $filter) {
     // The index of the currently selected tab
     $scope.selectedIndex = 0;
 
+    $scope.tabNames = ['summary', 'report'];
+
     $scope.rtmap = {};
     $scope.mtmap = {};
 
@@ -67,7 +93,7 @@ function ($scope, $routeParams, $location, $timeout, $filter) {
         $scope.mtmap = mismatchTypeMap = mtmap;
 
         $scope.setHeaderVisible(true);
-        $scope.setHeaderText("View SpotCheck Reports");
+        $scope.setHeaderText("View Spotcheck Reports");
 
         if ($routeParams.hasOwnProperty('runTime') && $routeParams.hasOwnProperty('type')) {
             $scope.openReportDetail($routeParams['type'], $routeParams['runTime']);
@@ -76,110 +102,138 @@ function ($scope, $routeParams, $location, $timeout, $filter) {
 
     // Loads a new report in the detail tab
     $scope.openReportDetail = function(reportType, reportDateTime) {
+        $scope.selectedIndex = 1;
         if ($scope.openReportDateTime != reportDateTime || $scope.openReportType != reportType) {
             $scope.openReportType = reportType;
             $scope.openReportDateTime = reportDateTime;
             console.log("new report: ", $scope.openReportType, $scope.openReportDateTime);
             $timeout(function () {$scope.$broadcast('newReportDetail')});
-            $location.search('type', $filter('reportTypeLabel')($scope.openReportType));
-            $location.search('runTime', $scope.openReportDateTime);
+            $scope.setReportSearchParams();
         }
-        $scope.selectedIndex = 1;
     };
+
+    $scope.setReportSearchParams = function() {
+        if ($scope.tabNames[$scope.selectedIndex] === 'report') {
+            $scope.clearSearchParams();
+            $scope.setSearchParam('type', $filter('reportTypeLabel')($scope.openReportType));
+            $scope.setSearchParam('runTime', $scope.openReportDateTime);
+        }
+    };
+
+    $scope.$watch('selectedIndex', function() {
+        $scope.$broadcast('tabChangeEvent', $scope.selectedIndex);
+        $scope.setReportSearchParams();
+    });
 
 }]);
 
 /** --- Report Summary Controller --- */
 
 daybreakModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routeParams', '$location', 'DaybreakSummaryAPI',
-    function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
+function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
+    $scope.reportSummaries = [];
+    $scope.dataProvider = [];
+    $scope.response = null;
 
-        $scope.reportSummaries = [];
-        $scope.dataProvider = [];
-        $scope.response = null;
+    $scope.params = {
+        summaryType: "all",
+        inputStartDate: null,
+        inputEndDate: null
+    };
 
-        $scope.init = function() {
-            $scope.dateInit();
-            $scope.getSummaries();
-        };
+    $scope.init = function() {
+        if ('type' in $routeParams) {
+            $scope.params.summaryType = $filter('reportType')($routeParams['type']) || "all";
+        }
+        if ($routeParams.hasOwnProperty('endDate') && moment($routeParams['endDate']).isValid()) {
+            $scope.endDate = moment($routeParams['endDate']);
+        } else {
+            $scope.endDate = moment();
+        }
+        if ($routeParams.hasOwnProperty('startDate') && moment($routeParams['startDate']).isValid()) {
+            $scope.startDate = moment($routeParams['startDate']);
+        } else {
+            $scope.startDate = moment($scope.endDate).subtract(3, 'months');
+        }
+        $scope.params.inputStartDate = moment($scope.startDate).toDate();
+        $scope.params.inputEndDate = moment($scope.endDate).toDate();
+    };
 
-        $scope.dateInit = function() {
-            if ($routeParams.hasOwnProperty('endDate') && moment($routeParams['endDate']).isValid()) {
-                $scope.endDate = moment($routeParams['endDate']);
-            } else {
-                $scope.endDate = moment();
-            }
-            if ($routeParams.hasOwnProperty('startDate') && moment($routeParams['startDate']).isValid()) {
-                $scope.startDate = moment($routeParams['startDate']);
-            } else {
-                $scope.startDate = moment($scope.endDate).subtract(3, 'months');
-            }
-            $scope.inputStartDate = moment($scope.startDate).toDate();
-            $scope.inputEndDate = moment($scope.endDate).toDate();
-        };
+    $scope.getSummaries = function() {
+        console.log("getting new summaries");
+        var summaryType = $scope.params.summaryType !== "all" ? $filter('reportTypeLabel')($scope.params.summaryType) : [];
+        $scope.response = DaybreakSummaryAPI.get({startDate: $scope.startDate.format(),
+                                                  endDate: $scope.endDate.format(),
+                                                  reportType: summaryType},
+            function() {
+                if ($scope.response.success) {
+                    $scope.reportSummaries = $scope.response.reports.items;
+                    console.log("summaries received");
+                }
+            });
+    };
 
-        $scope.getSummaries = function() {
-            $scope.response = DaybreakSummaryAPI.get({startDate: $scope.startDate.format(), endDate: $scope.endDate.format()},
-                function() {
-                    if ($scope.response.success) {
-                        $scope.reportSummaries = $scope.response.reports.items;
-                    }
-                });
-        };
+    // Watch the params for changes and make a request for report summaries if there were changes
+    $scope.$watchCollection('params', function() {
+        $scope.endDate = moment($scope.params.inputEndDate);
+        $scope.startDate = moment($scope.params.inputStartDate);
+        $scope.getSummaries();
+        $scope.setSummarySearchParams();
+    });
 
-        $scope.newDateRange = function() {
-            $scope.endDate = moment($scope.inputEndDate);
-            $scope.startDate = moment($scope.inputStartDate);
-            $scope.getSummaries();
-            $scope.setDateParams();
-        };
+    $scope.setSummarySearchParams = function () {
+        if ($scope.tabNames[$scope.selectedIndex] === "summary") {
+            $scope.clearSearchParams();
+            $scope.setSearchParam('type', $filter('reportTypeLabel')($scope.params.summaryType),
+                $scope.params.summaryType !== "all");
+            $scope.setSearchParam('startDate', $scope.startDate.format('YYYY-MM-DD'));
+            $scope.setSearchParam('endDate', $scope.endDate.format('YYYY-MM-DD'));
+        }
+    };
 
-        $scope.setDateParams = function () {
-            $location.search('startDate', $scope.startDate.format('YYYY-MM-DD'));
-            $location.search('endDate', $scope.endDate.format('YYYY-MM-DD'));
-        };
+    $scope.$on('tabChangeEvent', $scope.setSummarySearchParams);
 
-        $scope.getChartPoint = function(reportSummary) {
-            var point = reportSummary.mismatchStatuses;
-            point.reportDateTime = reportSummary.reportDateTime;
-            return point;
-        };
+    $scope.getChartPoint = function(reportSummary) {
+        var point = reportSummary.mismatchStatuses;
+        point.reportDateTime = reportSummary.reportDateTime;
+        return point;
+    };
 
-        // Compute the total number of mismatches for a given type.
-        $scope.computeMismatchCount = function(summaryItem, type) {
-            var defaultFilter = $filter('default');
-            var mismatchType = summaryItem['mismatchTypes'][type];
-            if (!mismatchType) return 0;
-            return (defaultFilter(mismatchType['NEW'], 0) +
-            defaultFilter(mismatchType['EXISTING'], 0) +
-            defaultFilter(mismatchType['REGRESSION'], 0));
-        };
+    // Compute the total number of mismatches for a given type.
+    $scope.computeMismatchCount = function(summaryItem, type) {
+        var defaultFilter = $filter('default');
+        var mismatchType = summaryItem['mismatchTypes'][type];
+        if (!mismatchType) return 0;
+        return (defaultFilter(mismatchType['NEW'], 0) +
+        defaultFilter(mismatchType['EXISTING'], 0) +
+        defaultFilter(mismatchType['REGRESSION'], 0));
+    };
 
-        // Compute the difference between open issues and resolved issues. Set 'abs' to true to
-        // return the absolute value of the result.
-        $scope.computeMismatchDiff = function(summaryItem, type, abs) {
-            var defaultFilter = $filter('default');
-            var mismatchType = summaryItem['mismatchTypes'][type];
-            if (!mismatchType) return 0;
-            var diff = (defaultFilter(mismatchType['NEW'], 0) +
-            defaultFilter(mismatchType['REGRESSION'], 0) -
-            defaultFilter(mismatchType['RESOLVED'], 0));
-            return (abs) ? Math.abs(diff) : diff;
-        };
+    // Compute the difference between open issues and resolved issues. Set 'abs' to true to
+    // return the absolute value of the result.
+    $scope.computeMismatchDiff = function(summaryItem, type, abs) {
+        var defaultFilter = $filter('default');
+        var mismatchType = summaryItem['mismatchTypes'][type];
+        if (!mismatchType) return 0;
+        var diff = (defaultFilter(mismatchType['NEW'], 0) +
+        defaultFilter(mismatchType['REGRESSION'], 0) -
+        defaultFilter(mismatchType['RESOLVED'], 0));
+        return (abs) ? Math.abs(diff) : diff;
+    };
 
-        // Return a css class based on whether the mismatch count is positive or negative
-        $scope.mismatchDiffClass = function(summaryItem, type) {
-            var val = $scope.computeMismatchDiff(summaryItem, type, false);
-            if (val > 0) {
-                return "postfix-icon icon-arrow-up4 new-error";
-            }
-            else if (val < 0) {
-                return "postfix-icon icon-arrow-down5 closed-error";
-            }
-            return "postfix-icon icon-minus3 existing-error";
-        };
+    // Return a css class based on whether the mismatch count is positive or negative
+    $scope.mismatchDiffClass = function(summaryItem, type) {
+        var val = $scope.computeMismatchDiff(summaryItem, type, false);
+        if (val > 0) {
+            return "postfix-icon icon-arrow-up4 new-error";
+        }
+        else if (val < 0) {
+            return "postfix-icon icon-arrow-down5 closed-error";
+        }
+        return "postfix-icon icon-minus3 existing-error";
+    };
 
-        $scope.init();
+    $scope.init();
 
 }]);
 
@@ -199,8 +253,10 @@ daybreakModule.directive('mismatchDiff', function(){
     };
 });
 
-daybreakModule.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'initialMismatchId', 'getDetails', 'findFirstOpenedDates', 'getMismatchId',
-function($scope, $mdDialog, initialMismatchId, getDetails, findFirstOpenedDates, getMismatchId) {
+daybreakModule.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'initialMismatchId', 'reportType',
+    'getDetails', 'findFirstOpenedDates', 'getMismatchId', 'getContentId', 'getContentUrl',
+function($scope, $mdDialog, initialMismatchId, reportType,
+         getDetails, findFirstOpenedDates, getMismatchId, getContentId, getContentUrl) {
 
     $scope.selectedIndex = 0;
 
@@ -210,13 +266,16 @@ function($scope, $mdDialog, initialMismatchId, getDetails, findFirstOpenedDates,
 
     $scope.findFirstOpenedDates = findFirstOpenedDates;
 
+    $scope.reportType = reportType;
+
     $scope.newDetails = function (details) {
         $scope.details = details;
 
-        $scope.printNo = $scope.details.observation.key.printNo;
-        $scope.observation = $scope.details.observation;
-        $scope.currentMismatch = $scope.details.mismatch;
-        $scope.allMismatches = $scope.details.observation.mismatches.items;
+        $scope.contentId = getContentId(reportType, details.observation.key);
+        $scope.contentUrl = getContentUrl(reportType, details.observation.key);
+        $scope.observation = details.observation;
+        $scope.currentMismatch = details.mismatch;
+        $scope.allMismatches = details.observation.mismatches.items;
 
         $scope.firstOpened = $scope.findFirstOpenedDates($scope.currentMismatch);
     };
@@ -254,12 +313,10 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
         $scope.filteredTableData = [];
         $scope.reportType = $scope.openReportType;
         $scope.reportDateTime = $scope.openReportDateTime;
-        console.log("new report detail detected: ", $scope.reportType, $scope.reportDateTime);
         $scope.getReportDetails();
     };
 
     $scope.$on('newReportDetail', function () {
-        console.log("new report detail detected");
         $scope.init();
     });
 
@@ -270,19 +327,22 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
             $scope.extractTableData();
             $scope.filterInit();
             $scope.activateFilterWatchers();
+            console.log("report detail received:", $scope.report.details.referenceType, $scope.report.details.referenceDateTime);
         });
+        console.log("new report detail requested: ", $scope.reportType, $scope.reportDateTime);
     };
 
     // Extracts an array of table rows from the report data
     $scope.extractTableData = function() {
         if ($scope.report && $scope.report.success) {
-            console.log("success!");
             angular.forEach($scope.report.details.observations, function(obs) {
                 angular.forEach(obs.mismatches.items, function(m) {
+                    var reportType = $scope.report.details.referenceType;
                     var mismatchId = $scope.getMismatchId(obs, m);
                     var firstOpened = $scope.findFirstOpenedDates(m).reportDateTime;
                     var rowData = {
-                        printNo: obs.key.printNo,
+                        contentId: $scope.getContentId(reportType, obs.key),
+                        contentUrl: $scope.getContentUrl(reportType, obs.key),
                         type: m.mismatchType,
                         status: m.status,
                         firstOpened: firstOpened,
@@ -304,7 +364,7 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
         if(currentMismatch.status == "NEW") {
             return {reportDateTime: $scope.reportDateTime, referenceDateTime: $scope.report.details.referenceDateTime};
         }
-        for (index in currentMismatch.prior.items) {
+        for (var index in currentMismatch.prior.items) {
             if(currentMismatch.prior.items[index].status == "NEW") {
                 return {
                     reportDateTime: currentMismatch.prior.items[index].reportId.reportDateTime,
@@ -317,12 +377,47 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
 
     // Generates a mismatch id
     $scope.getMismatchId = function (observation, mismatch) {
-        return observation.key.printNo + '-' + observation.key.session.year + '-' + mismatch.mismatchType;
+        return JSON.stringify(observation) + '-' + mismatch.mismatchType;
     };
 
-    $scope.getBillLink = function(printNo) {
-        return ctxPath + "/bills/" + $filter('sessionYear')(moment($scope.referenceDateTime).year()) + "/" + printNo;
+    var contentTypeIdMap = {
+        LBDC_DAYBREAK: getBillId,
+        LBDC_AGENDA_ALERT: getAgendaId
     };
+    $scope.getContentId = function(reportType, key) {
+        if (contentTypeIdMap.hasOwnProperty(reportType)) {
+            return contentTypeIdMap[reportType](key);
+        }
+        return reportType + "?!";
+    };
+
+    function getBillId(key) {
+        return key.basePrintNo;
+    }
+
+    function getAgendaId(key) {
+        return key.agendaId.year + '-' + key.agendaId.number + ' ' + key.committeeId.name +
+            (key.addendum !== "DEFAULT" ? ('-' + key.addendum) : "");
+    }
+
+    var contentTypeUrlMap = {
+        LBDC_DAYBREAK: getBillUrl,
+        LBDC_AGENDA_ALERT: getAgendaUrl
+    };
+    $scope.getContentUrl = function(reportType, key) {
+        if (contentTypeUrlMap.hasOwnProperty(reportType)) {
+            return contentTypeUrlMap[reportType](key);
+        }
+        return "";
+    };
+
+    function getBillUrl(key) {
+        return ctxPath + "/bills/" + key.session.year + "/" + key.basePrintNo;
+    }
+
+    function getAgendaUrl(key) {
+        return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
+    }
 
     $scope.getMismatchDetails = function(mismatchId) {
         return $scope.dataDetails[mismatchId];
@@ -333,14 +428,16 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
         $mdDialog.show({
             templateUrl: 'mismatchDetailWindow',
             controller: 'detailDialogCtrl',
-            //parent: $element,
             locals: {
-                initialMismatchId: mismatchId
+                initialMismatchId: mismatchId,
+                reportType: $filter('reportType')($scope.reportType)
             },
             resolve: {
                 getDetails: function() { return $scope.getMismatchDetails; },
                 findFirstOpenedDates: function() {return $scope.findFirstOpenedDates;},
-                getMismatchId: function() { return $scope.getMismatchId; }
+                getMismatchId: function() { return $scope.getMismatchId; },
+                getContentId: function() { return $scope.getContentId;},
+                getContentUrl: function() {return $scope.getContentUrl;}
             }
         });
     };
