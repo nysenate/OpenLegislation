@@ -1,9 +1,4 @@
-<%@ page import="gov.nysenate.openleg.util.OutputUtils" %>
-<%@ page import="java.util.Arrays" %>
-<%@ page import="com.google.common.collect.Maps" %>
-<%@ page import="java.util.EnumSet" %>
 <%@ page import="gov.nysenate.openleg.model.spotcheck.SpotCheckRefType" %>
-<%@ page import="java.util.stream.Collectors" %>
 <%@ page import="gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
@@ -23,31 +18,37 @@
       <md-card>
         <md-card-content ng-controller="DaybreakSummaryCtrl" style="padding-left: 10px">
           <div>
-            <form style="display: inline-block">
-              <h4 style="display: inline-block">
+            <form>
+              <h4>
                 <span class="icon-statistics blue-title-icon"></span>
-                Daybreak Reports from&nbsp;
+                <md-select ng-model="params.summaryType">
+                  <md-option value="all">All</md-option>
+                  <md-option ng-repeat="(type, label) in rtmap" value="{{type}}">{{type}}</md-option>
+                </md-select>
+                Spotcheck Reports
               </h4>
-              <input type="date" ng-model="inputStartDate">
-              <h4 style="display: inline-block">&nbsp;to&nbsp;</h4>
-              <input type="date" ng-model="inputEndDate">
-              <md-button ng-click="newDateRange()" class="md-primary md-raised" aria-label="change date range">Go</md-button>
+              <h4>
+                from
+                <input type="date" ng-model="params.inputStartDate">
+                to
+                <input type="date" ng-model="params.inputEndDate">
+              </h4>
             </form>
           </div>
           <table id='daybreak-summary-table' st-table="displaySummaries" st-safe-src="reportSummaries" class="table table-striped">
             <thead>
               <tr>
-                <th rowspan="2" st-sort="reportDateTime">Report Date/Time</th>
-                <th rowspan="2" st-sort="referenceType">Report Type</th>
-                <th rowspan="2">Notes</th>
+                <th rowspan="2" st-sort="reportDateTime" style="max-width:11em">Report Date/Time</th>
+                <th rowspan="2" st-sort="referenceType" style="max-width:12.5em">Report Type</th>
+                <th rowspan="2" style="width:6em">Notes</th>
                 <th class="th-section"  colspan="5">Mismatch Statuses</th>
               </tr>
               <tr>
-                <th style="border-left:1px solid #ccc;">Total Open</th>
-                <th>New</th>
-                <th>Regress</th>
-                <th>Existing</th>
-                <th>Resolved</th>
+                <th style="border-left:1px solid #ccc; width: 3em">Total Open</th>
+                <th style="width:3.7em">New</th>
+                <th style="width:3.7em">Regress</th>
+                <th style="width:3.7em">Existing</th>
+                <th style="width:3.7em">Resolved</th>
               </tr>
             </thead>
             <tbody>
@@ -58,21 +59,21 @@
                   </a>
                 </td>
                 <td ng-bind="summary.referenceType"></td>
-                <td ng-bind="summary.notes"></td>
+                <td ng-bind="summary.notes" style="max-width:10em; overflow:hidden; text-overflow:ellipsis"></td>
                 <td style="border-left:1px solid #ccc; font-weight:bold">{{summary.openMismatches}}</td>
-                <td style="width: 60px"> |
+                <td>
                   <span class="prefix-icon icon-arrow-up4 new-error"></span>
                   {{ (summary.mismatchStatuses['NEW'] | default:0) }}
                 </td>
-                <td style="width: 60px">
+                <td>
                   <span class="prefix-icon icon-arrow-up4 new-error"></span>
                   {{ (summary.mismatchStatuses['REGRESSION'] | default:0) }}
                 </td>
-                <td style="width: 60px">
+                <td>
                   <span class="prefix-icon icon-cycle existing-error"></span>
                   {{ summary.mismatchStatuses['EXISTING'] | default:0 }}
                 </td>
-                <td style="width: 60px">
+                <td>
                   <span class="prefix-icon icon-arrow-down5 closed-error"></span>
                   {{ summary.mismatchStatuses['RESOLVED'] | default:0 }}
                 </td>
@@ -85,9 +86,9 @@
 
     <!-- Detail Tab -->
 
-    <md-tab ng-show="openReport!=null">
+    <md-tab ng-show="openReportDateTime != null && openReportType != null">
       <md-tab-label>
-          {{openReport | moment:'lll'}}
+          {{openReportType | reportTypeLabel}} {{openReportDateTime | moment:'lll'}}
       </md-tab-label>
       <section ng-controller="DaybreakDetailCtrl">
         <md-card>
@@ -95,7 +96,7 @@
             <!--Title-->
             <h4>
               <span class="icon-graph blue-title-icon"></span>
-              LBDC {{referenceDateTime | moment:'ll'}} | Report Date: {{reportDateTime | moment:'lll'}}
+              {{openReportType | reportType}} {{referenceDateTime | moment:'ll'}} | Report Date: {{reportDateTime | moment:'lll'}}
             </h4>
 
             <hr style="margin-top:.5em;"/>
@@ -158,7 +159,7 @@
                 </td>
               </tr>
               <tr>
-                <th st-sort="printNo">Bill Id</th>
+                <th st-sort="printNo">{{reportType | reportType | contentType}} Id</th>
                 <th st-sort="type">Mismatch Type</th>
                 <th st-sort="status">Status</th>
                 <th st-sort="firstOpened">Opened At</th>
@@ -168,12 +169,12 @@
               </thead>
               <tbody>
                 <tr ng-repeat="row in displayData">
-                  <td style="width: 100px;">
-                    <a ng-href="{{getBillLink(row.printNo)}}" target="_blank">{{row.printNo}}</a>
+                  <td>
+                    <a ng-href="{{row.contentUrl}}" target="_blank">{{row.contentId}}</a>
                   </td>
                   <td>{{row.type | mismatchTypeLabel}}</td>
                   <td>{{row.status | mismatchStatusLabel}}</td>
-                  <td style="width: 260px;">
+                  <td>
                     <a href="#" ng-click="openReportDetail(row.firstOpened)"
                        ng-show="row.firstOpened!=reportDateTime && row.firstOpened!='Unknown'">
                       {{row.firstOpened | moment:'lll'}}
@@ -218,7 +219,7 @@
     <md-content class="md-padding mismatch-dialog">
       <div>
         <h5 style="display: inline-block">
-          Bill: {{printNo}}<br/>
+          {{reportType | contentType}}: <a ng-href="{{contentUrl}}" target="_blank">{{contentId}}</a><br/>
           Mismatch: {{currentMismatch.mismatchType | mismatchTypeLabel}}<br/>
           Status: {{currentMismatch.status | mismatchStatusLabel}}
         </h5>

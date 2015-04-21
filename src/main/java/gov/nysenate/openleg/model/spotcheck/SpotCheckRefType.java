@@ -18,11 +18,11 @@ public enum SpotCheckRefType
                                // that are active in the current session.
     LBDC_SCRAPED_BILL("scraped-bill"),
 
-    LBDC_FLOOR_CALENDAR("alert-floor"),
+    LBDC_FLOOR_CALENDAR("floor-alert"),
 
-    LBDC_ACTIVE_LIST("alert-activelist"),
+    LBDC_ACTIVE_LIST("activelist-alert"),
 
-    LBDC_AGENDA_ALERT("alert-agenda"),
+    LBDC_AGENDA_ALERT("agenda-alert"),
 
     ;
 

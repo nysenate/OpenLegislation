@@ -94,7 +94,11 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
      */
     $scope.setSearchParam = function(paramName, paramValue, condition) {
         $location.search(paramName, (condition !== false && paramValue) ? paramValue : null).replace();
-    }
+    };
+
+    $scope.clearSearchParams = function() {
+        $location.search({});
+    };
 }]);
 
 /**
