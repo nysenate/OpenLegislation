@@ -51,12 +51,17 @@ public enum SpotCheckMismatchType
     AGENDA_LOCATION("Location"),
     AGENDA_NOTES("Notes"),
 
-    /** --- Calendar mismatches --- */
-    CALENDAR_SUPP_VERSION("Supplemental Version"),
-    CALENDAR_SECTION_TYPE("Supplemental Section"),
-    CALENDAR_SUPP_ENTRY("Supplemental Entry"),
-    CALENDAR_ACTIVE_LIST("Active List"),
-    CALENDAR_ACTIVE_LIST_ENTRY("Active List Entry"),
+    /** --- Supplemental mismatches --- */
+    SUPPLEMENTAL_VERSION("Supplemental Version"),
+    SUPPLEMENTAL_CAL_DATE("Supplemental Calendar Date"),
+    SUPPLEMENTAL_SECTION_TYPE("Supplemental Section"),
+    SUPPLEMENTAL_ENTRY("Supplemental Entry"),
+
+    /** --- Active list mismatches --- */
+    ACTIVE_LIST_SEQUENCE_NO("Active List Sequence No"),
+    ACTIVE_LIST_CAL_DATE("Active List Cal Date"),
+    ACTIVE_LIST_NOTES("Active List Notes"),
+    ACTIVE_LIST_ENTRY("Active List Entry"),
 
     ;
 

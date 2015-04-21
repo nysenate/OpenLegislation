@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.calendar;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -36,7 +35,7 @@ public class CalendarSpotCheckService implements SpotCheckService<CalendarId, Ca
         if (calendarsEqual(content, reference)) {
             return observation;
         } else {
-            compareSupplementalMap(observation, content, reference);
+            compareSupplementals(observation, content, reference);
             compareActiveLists(observation, content, reference);
             return observation;
         }
@@ -51,82 +50,135 @@ public class CalendarSpotCheckService implements SpotCheckService<CalendarId, Ca
                Objects.equals(content.getActiveListMap(), other.getActiveListMap());
     }
 
-    private void compareSupplementalMap(SpotCheckObservation<CalendarId> observation, Calendar content, Calendar reference) {
-        compareSupplementalVersions(observation, content, reference);
-        compareSupplementals(observation, content, reference);
-    }
-
-    private void compareSupplementalVersions(SpotCheckObservation<CalendarId> observation, Calendar content, Calendar reference) {
-        Set<Version> contentVersions = content.getSupplementalMap().keySet();
-        Set<Version> referenceVersions = reference.getSupplementalMap().keySet();
-        if (!Sets.symmetricDifference(contentVersions, referenceVersions).isEmpty()) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.CALENDAR_SUPP_VERSION,
-                                                          StringUtils.join(referenceVersions), StringUtils.join(contentVersions)));
-        }
-    }
-
     private void compareSupplementals(SpotCheckObservation<CalendarId> observation, Calendar content, Calendar reference) {
-        // Converting to Set should be ok, no duplicate supplementals expected since each has a unique Version.
-        Set<CalendarSupplemental> contentSupplementals = Sets.newHashSet(content.getSupplementalMap().values());
-        Set<CalendarSupplemental> referenceSupplementals = Sets.newHashSet(reference.getSupplementalMap().values());
+        Set<CalendarSupplemental> contentSupplementals = ImmutableSortedSet.copyOf(content.getSupplementalMap().values());
+        Set<CalendarSupplemental> referenceSupplementals = ImmutableSortedSet.copyOf(reference.getSupplementalMap().values());
 
         Set<CalendarSupplemental> differenceSet = Sets.symmetricDifference(contentSupplementals, referenceSupplementals).immutableCopy();
         for (CalendarSupplemental diff : differenceSet) {
-            CalendarSupplemental contentSuppDiff = content.getSupplementalMap().keySet().contains(diff.getVersion()) ? content.getSupplemental(diff.getVersion()) : null;
-            CalendarSupplemental referenceSuppDiff = reference.getSupplementalMap().keySet().contains(diff.getVersion()) ? reference.getSupplemental(diff.getVersion()) : null;
-
-            if (contentSuppDiff == null || referenceSuppDiff == null) {
-                observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.CALENDAR_SUPP_ENTRY,
-                                                              referenceSuppDiff == null ? "" : referenceSuppDiff.toString(),
-                                                              contentSuppDiff == null ? "" : contentSuppDiff.toString()));
-            } else {
-                compareSectionTypes(observation, contentSuppDiff, referenceSuppDiff);
-                compareSuppEntries(observation, contentSuppDiff, referenceSuppDiff);
-            }
+            recordMismatch(observation, content, reference, diff);
         }
     }
 
-    private void compareSectionTypes(SpotCheckObservation<CalendarId> observation, CalendarSupplemental contentSuppDiff, CalendarSupplemental referenceSuppDiff) {
-        Set<CalendarSectionType> contentSectionTypes = contentSuppDiff.getSectionEntries().keySet();
-        Set<CalendarSectionType> referenceSectionTypes = referenceSuppDiff.getSectionEntries().keySet();
+    private void recordMismatch(SpotCheckObservation<CalendarId> observation, Calendar content, Calendar reference, CalendarSupplemental diff) {
+        CalendarSupplemental contentSuppDiff = getMatchingSupplementalIfExists(content, diff);
+        CalendarSupplemental referenceSuppDiff = getMatchingSupplementalIfExists(reference, diff);
 
+        if (contentSuppDiff == null || referenceSuppDiff == null) {
+            recordVersionMismatch(observation, contentSuppDiff, referenceSuppDiff);
+        } else {
+            checkForSupplementalCalDateMismatch(observation, contentSuppDiff, referenceSuppDiff);
+
+            Set<CalendarSectionType> contentSectionTypes = contentSuppDiff.getSectionEntries().keySet();
+            Set<CalendarSectionType> referenceSectionTypes = referenceSuppDiff.getSectionEntries().keySet();
+
+            checkForTypeMismatch(observation, contentSectionTypes, referenceSectionTypes);
+            checkForSuppEntryMismatch(observation, contentSuppDiff, referenceSuppDiff, contentSectionTypes, referenceSectionTypes);
+        }
+    }
+
+    private void recordVersionMismatch(SpotCheckObservation<CalendarId> observation, CalendarSupplemental contentSuppDiff,
+                                       CalendarSupplemental referenceSuppDiff) {
+        // TODO: Version.Default toString() == "" -> not going to show well in a diff.
+        observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.SUPPLEMENTAL_VERSION,
+                                                      referenceSuppDiff == null ? "" : referenceSuppDiff.getVersion().toString(),
+                                                      contentSuppDiff == null ? "" : contentSuppDiff.getVersion().toString()));
+    }
+
+    private void checkForSupplementalCalDateMismatch(SpotCheckObservation<CalendarId> observation, CalendarSupplemental contentSuppDiff,
+                                                     CalendarSupplemental referenceSuppDiff) {
+        String contentDate = contentSuppDiff.getCalDate() == null ? "" : contentSuppDiff.getCalDate().toString();
+        String referenceDate = referenceSuppDiff.getCalDate() == null ? "" : referenceSuppDiff.getCalDate().toString();
+        if (!StringUtils.equals(contentDate, referenceDate)) {
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.SUPPLEMENTAL_CAL_DATE, referenceDate, contentDate));
+        }
+
+    }
+
+    private void checkForTypeMismatch(SpotCheckObservation<CalendarId> observation, Set<CalendarSectionType> contentSectionTypes,
+                                      Set<CalendarSectionType> referenceSectionTypes) {
         if (!Sets.symmetricDifference(contentSectionTypes, referenceSectionTypes).isEmpty()) {
             observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.CALENDAR_SECTION_TYPE, StringUtils.join(referenceSectionTypes, "\n"),
+                    SpotCheckMismatchType.SUPPLEMENTAL_SECTION_TYPE, StringUtils.join(referenceSectionTypes, "\n"),
                     StringUtils.join(contentSectionTypes, "\n")));
         }
     }
 
-    private void compareSuppEntries(SpotCheckObservation<CalendarId> observation, CalendarSupplemental contentSuppDiff, CalendarSupplemental referenceSuppDiff) {
-        Set<CalendarSupplementalEntry> contentSuppEntries = Sets.newHashSet(contentSuppDiff.getAllEntries());
-        Set<CalendarSupplementalEntry> referenceSuppEntries = Sets.newHashSet(referenceSuppDiff.getAllEntries());
+    private void checkForSuppEntryMismatch(SpotCheckObservation<CalendarId> observation, CalendarSupplemental contentSuppDiff,
+                                           CalendarSupplemental referenceSuppDiff, Set<CalendarSectionType> contentSectionTypes,
+                                           Set<CalendarSectionType> referenceSectionTypes) {
+        // Look at the union to avoid double reporting section type errors.
+        Set<CalendarSectionType> sectionTypesUnion = Sets.union(contentSectionTypes, referenceSectionTypes);
+        for (CalendarSectionType type : sectionTypesUnion) {
+            Set<CalendarSupplementalEntry> contentEntries = ImmutableSortedSet.copyOf(contentSuppDiff.getEntriesBySection(type));
+            Set<CalendarSupplementalEntry> referenceEntries = ImmutableSortedSet.copyOf(referenceSuppDiff.getEntriesBySection(type));
 
-        if (!Sets.symmetricDifference(contentSuppEntries, referenceSuppEntries).isEmpty()) {
-            observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.CALENDAR_SUPP_ENTRY, StringUtils.join(referenceSuppEntries.toString(), "\n"),
-                    StringUtils.join(contentSuppEntries.toString(), "\n")));
+            if (!Sets.symmetricDifference(contentEntries, referenceEntries).isEmpty()) {
+                observation.addMismatch(new SpotCheckMismatch(
+                        SpotCheckMismatchType.SUPPLEMENTAL_ENTRY, StringUtils.join(referenceEntries, "\n"),
+                        StringUtils.join(contentEntries, "\n")));
+            }
         }
     }
 
+    /**
+     * Returns the matching supplemental from a calendar, null if it no match exists.
+     */
+    private CalendarSupplemental getMatchingSupplementalIfExists(Calendar content, CalendarSupplemental diff) {
+        return content.getSupplementalMap().keySet().contains(diff.getVersion()) ? content.getSupplemental(diff.getVersion()) : null;
+    }
+
     private void compareActiveLists(SpotCheckObservation<CalendarId> observation, Calendar content, Calendar reference) {
-        // Safe to convert to Set since each contain link to their TreeMap key value. (assuming they have been created correctly)
         Set<CalendarActiveList> contentActiveLists = Sets.newHashSet(content.getActiveListMap().values());
         Set<CalendarActiveList> referenceActiveLists = Sets.newHashSet(reference.getActiveListMap().values());
 
         Set<CalendarActiveList> activeListDiffs = Sets.symmetricDifference(contentActiveLists, referenceActiveLists).immutableCopy();
         for (CalendarActiveList activeListDiff : activeListDiffs) {
-            // Examine in more detail all Active List differences. So we can find differences between individual active list entries.
             CalendarActiveList contentDiff = getActiveListIfExists(content, activeListDiff.getSequenceNo());
             CalendarActiveList referenceDiff = getActiveListIfExists(reference, activeListDiff.getSequenceNo());
 
             if (contentDiff == null || referenceDiff == null) {
-                observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.CALENDAR_ACTIVE_LIST,
-                                                              referenceDiff == null ? "" : referenceDiff.toString(),
-                                                              contentDiff == null ? "" : contentDiff.toString()));
+                recordSequenceNoMismatch(observation, contentDiff, referenceDiff);
             } else {
-                compareActiveListInfo(observation, contentDiff, referenceDiff);
-                compareActiveListEntries(observation, contentDiff, referenceDiff);
+                checkForActiveListCalDateMismatch(observation, contentDiff, referenceDiff);
+                checkForNotesMismatch(observation, contentDiff, referenceDiff);
+                checkForActiveListEntryMismatch(observation, contentDiff, referenceDiff);
             }
+        }
+    }
+
+    private void recordSequenceNoMismatch(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff,
+                                          CalendarActiveList referenceDiff) {
+        observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_SEQUENCE_NO,
+                                                      referenceDiff == null ? "" : referenceDiff.getSequenceNo().toString(),
+                                                      contentDiff == null ? "" : contentDiff.getSequenceNo().toString()));
+    }
+
+    private void checkForActiveListCalDateMismatch(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff,
+                                                   CalendarActiveList referenceDiff) {
+        String contentCalDate = contentDiff.getCalDate() == null ? "" : contentDiff.getCalDate().toString();
+        String referenceCalDate = referenceDiff.getCalDate() == null ? "" : referenceDiff.getCalDate().toString();
+        if (!StringUtils.equals(contentCalDate, referenceCalDate)) {
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE, referenceCalDate, contentCalDate));
+        }
+    }
+
+    private void checkForNotesMismatch(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff,
+                                       CalendarActiveList referenceDiff) {
+        if (!StringUtils.equals(contentDiff.getNotes(), referenceDiff.getNotes())) {
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_NOTES,
+                                                          referenceDiff.getNotes(), contentDiff.getNotes()));
+        }
+    }
+
+    private void checkForActiveListEntryMismatch(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff,
+                                                 CalendarActiveList referenceDiff) {
+        Set<CalendarActiveListEntry> contentDiffEntries = Sets.newHashSet(contentDiff.getEntries());
+        Set<CalendarActiveListEntry> referenceDiffEntries = Sets.newHashSet(referenceDiff.getEntries());
+        if (!Sets.symmetricDifference(contentDiffEntries, referenceDiffEntries).isEmpty()) {
+            observation.addMismatch(new SpotCheckMismatch(
+                    SpotCheckMismatchType.ACTIVE_LIST_ENTRY,
+                    StringUtils.join(referenceDiffEntries, "\n"), StringUtils.join(contentDiffEntries, "\n")));
         }
     }
 
@@ -135,29 +187,5 @@ public class CalendarSpotCheckService implements SpotCheckService<CalendarId, Ca
      */
     private CalendarActiveList getActiveListIfExists(Calendar calendar, int sequenceNo) {
         return calendar.getActiveListMap().keySet().contains(sequenceNo) ? calendar.getActiveList(sequenceNo) : null;
-    }
-
-    private void compareActiveListInfo(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff, CalendarActiveList referenceDiff) {
-        Set<String> contentDiffInfo = new HashSet<>();
-        contentDiffInfo.add(contentDiff.toString());
-        Set<String> referenceDiffInfo = new HashSet<>();
-        referenceDiffInfo.add(referenceDiff.toString());
-
-        if (!Sets.symmetricDifference(contentDiffInfo, referenceDiffInfo).isEmpty()) {
-            observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.CALENDAR_ACTIVE_LIST,
-                    StringUtils.join(referenceDiffInfo, "\n"), StringUtils.join(contentDiffInfo, "\n")));
-        }
-    }
-
-    private void compareActiveListEntries(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff, CalendarActiveList referenceDiff) {
-        // compare entries
-        Set<CalendarActiveListEntry> contentDiffEntries = Sets.newHashSet(contentDiff.getEntries());
-        Set<CalendarActiveListEntry> referenceDiffEntries = Sets.newHashSet(referenceDiff.getEntries());
-        if (!Sets.symmetricDifference(contentDiffEntries, referenceDiffEntries).isEmpty()) {
-            observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.CALENDAR_ACTIVE_LIST_ENTRY,
-                    StringUtils.join(referenceDiffEntries, "\n"), StringUtils.join(contentDiffEntries, "\n")));
-        }
     }
 }
