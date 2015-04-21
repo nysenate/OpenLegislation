@@ -4,6 +4,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.alert.SqlCalendarAlertDao;
 import gov.nysenate.openleg.dao.calendar.data.SqlCalendarDao;
+import gov.nysenate.openleg.dao.spotcheck.CalendarAlertReportDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.spotcheck.*;
@@ -11,13 +12,19 @@ import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class CalendarCheckReportService implements SpotCheckReportService<CalendarId>{
+
+    @Autowired
+    private CalendarAlertReportDao reportDao;
 
     @Autowired
     private SqlCalendarAlertDao referenceDao;
@@ -47,6 +54,37 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
         return report;
     }
 
+    @Override
+    public void saveReport(SpotCheckReport<CalendarId> report) {
+        reportDao.saveReport(report);
+    }
+
+    @Override
+    public SpotCheckReport<CalendarId> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx {
+        if (reportId == null) {
+            throw new IllegalArgumentException("Supplies reportId cannot be null.");
+        }
+        try {
+            return reportDao.getReport(reportId);
+        }
+        catch (EmptyResultDataAccessException e) {
+            throw new SpotCheckReportNotFoundEx(reportId);
+        }
+    }
+
+    @Override
+    public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
+        return reportDao.getReportIds(getSpotcheckRefType(), start, end, dateOrder, limOff);
+    }
+
+    @Override
+    public void deleteReport(SpotCheckReportId reportId) {
+        if (reportId == null) {
+            throw new IllegalArgumentException("Cannot delete a null reportId.");
+        }
+        reportDao.deleteReport(reportId);
+    }
+
     private List<SpotCheckObservation<CalendarId>> createObservations(List<Calendar> references) {
         List<SpotCheckObservation<CalendarId>> observations = new ArrayList<>();
         for(Calendar reference: references) {
@@ -56,7 +94,6 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
                 observations.add(checkService.check(actual, reference));
             }
             catch (DataAccessException e) {
-                // actual data is missing this calendar
                 SpotCheckReferenceId obsRefId = new SpotCheckReferenceId(
                         getSpotcheckRefType(), reference.getPublishedDateTime().truncatedTo(ChronoUnit.SECONDS));
 
@@ -78,25 +115,5 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
            }
         }
         return dateTime;
-    }
-
-    @Override
-    public void saveReport(SpotCheckReport<CalendarId> report) {
-
-    }
-
-    @Override
-    public SpotCheckReport<CalendarId> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx {
-        return null;
-    }
-
-    @Override
-    public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
-        return null;
-    }
-
-    @Override
-    public void deleteReport(SpotCheckReportId reportId) {
-
     }
 }
