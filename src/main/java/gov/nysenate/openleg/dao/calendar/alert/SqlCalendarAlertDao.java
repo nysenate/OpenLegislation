@@ -67,6 +67,25 @@ public class SqlCalendarAlertDao extends SqlBaseDao {
     public List<Calendar> getCalendarAlertsByDateRange(LocalDateTime start, LocalDateTime end) {
         MapSqlParameterSource params = getDateRangeParams(start, end);
         List<Calendar> calendars = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_CALENDAR_RANGE.getSql(schema()), params, new CalendarListRowMapper());
+        return populateCalendars(calendars);
+    }
+
+    public void markAsChecked(CalendarId id) {
+        MapSqlParameterSource params  = getCalendarIdParams(id);
+        params.addValue("checked", true);
+        jdbcNamed.update(SqlCalendarAlertQuery.MARK_CHECKED.getSql(schema()), params);
+    }
+
+    public List<Calendar> getUnChecked() {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("checked", false);
+        List<Calendar> calendars = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_UNCHECKED.getSql(schema()), params, new CalendarListRowMapper());
+        return populateCalendars(calendars);
+    }
+
+    /** --- Internal Methods --- */
+
+    private List<Calendar> populateCalendars(List<Calendar> calendars) {
         for (Calendar cal: calendars) {
             ImmutableParams calParams = ImmutableParams.from(getCalendarIdParams(cal.getId()));
             cal.setSupplementalMap(getCalSupplementals(calParams));
@@ -74,8 +93,6 @@ public class SqlCalendarAlertDao extends SqlBaseDao {
         }
         return calendars;
     }
-
-    /** --- Internal Methods --- */
 
     /**
      * Retrieves all the supplementals for a particular calendar.

@@ -48,9 +48,8 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
         SpotCheckReportId reportId = new SpotCheckReportId(getSpotcheckRefType(),
                                                            referenceDateTime.truncatedTo(ChronoUnit.SECONDS),
                                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
-        SpotCheckReport report = new SpotCheckReport(reportId);
+        SpotCheckReport<CalendarId> report = new SpotCheckReport<>(reportId);
         report.addObservations(createObservations(references));
-
         return report;
     }
 
@@ -102,7 +101,7 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
                                                               id.toString(), ""));
                 observations.add(observation);
             }
-            // TODO: mark reference object as "checked" in db
+            referenceDao.markAsChecked(id);
         }
         return observations;
     }
