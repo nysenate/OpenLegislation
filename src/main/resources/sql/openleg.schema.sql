@@ -1948,7 +1948,9 @@ CREATE TABLE alert_calendar_reference (
   modified_date_time timestamp without time zone,
   published_date_time timestamp without time zone,
   created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-  last_file text
+  last_file text,
+  checked boolean DEFAULT false NOT NULL,
+  prod_checked boolean DEFAULT false NOT NULL
 );
 
 
