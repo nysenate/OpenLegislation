@@ -166,7 +166,7 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
         console.log("getting new summaries");
         var summaryType = $scope.params.summaryType !== "all" ? $filter('reportTypeLabel')($scope.params.summaryType) : [];
         $scope.response = DaybreakSummaryAPI.get({startDate: $scope.startDate.format(),
-                                                  endDate: $scope.endDate.format(),
+                                                  endDate: $scope.endDate.endOf('day').format(),
                                                   reportType: summaryType},
             function() {
                 if ($scope.response.success) {

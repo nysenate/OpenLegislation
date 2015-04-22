@@ -52,7 +52,8 @@ public class SpotCheckCtrl extends BaseCtrl
     public void init() {
         reportServiceMap = ImmutableMap.copyOf(
                 reportServices.stream()
-                        .collect(Collectors.toMap(SpotCheckReportService::getSpotcheckRefType, Function.identity())));
+                        .collect(Collectors.toMap(SpotCheckReportService::getSpotcheckRefType, Function.identity(),
+                                (a, b) -> b)));
     }
 
     /**

@@ -13,8 +13,8 @@
                          ng-class="{'cal-entry-highlight': calEntry.printNo === highlightValue || calEntry.billCalNo == highlightValue}">
             <div style="width: 70px" hide-sm>
                 <a ng-bind="calEntry.basePrintNo" class="text-large blue3"
-                   ng-href="{{billPageBaseUrl}}/{{calEntry.session}}/{{calEntry.basePrintNo}}">
-                    <md-tooltip>View this bill</md-tooltip>
+                   ng-href="{{calEntry.publishedDateTime ? billPageBaseUrl + '/' + calEntry.session + '/' + calEntry.basePrintNo : ''}}">
+                    <md-tooltip ng-if="calEntry.publishedDateTime">View this bill</md-tooltip>
                 </a>
             </div>
             <div style="width: 40px" hide-sm>
@@ -31,14 +31,13 @@
                   \#{{calEntry.billCalNo}}
                 </a>
                 <div class="margin-bottom-10 text-medium" ng-bind="calEntry.title"></div>
-                <div layout="row" hide-sm style="height: 40px">
+                <div layout="row" hide-sm style="height: 40px" ng-if="calEntry.sponsor">
                     <div style="overflow: hidden">
                         <img style="max-width: 40px; max-height: 52px;"
                              ng-src="${ctxPath}/static/img/business_assets/members/mini/{{calEntry.sponsor.member.imgName || 'null'}}"
                              err-src="${ctxPath}/static/img/NYSS_seal_fancy.jpg"/>
                     </div>
                     <span class="margin-left-10 text-medium">
-                        <span ng-if="!calEntry.sponsor">Sponsor Not Available</span>
                         <span ng-if="calEntry.sponsor.member">
                             <span class="blue1 bold" ng-bind="calEntry.sponsor.member.fullName"></span> <br>
                             <span>

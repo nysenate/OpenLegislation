@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import java.io.File;
+import java.time.Duration;
 
 /**
  * The Environment class contains various configuration options to be used throughout the application.
@@ -82,6 +83,11 @@ public class Environment
     /** Enable spot-check report runs at scheduled intervals. */
     @Value("${scheduler.spotcheck.enabled}") private boolean spotcheckScheduled;
 
+    /** --- Spotcheck Settings --- */
+
+    @Value("${spotcheck.alert.grace.period}") private int rawAlertGracePeriod;
+    private Duration spotcheckAlertGracePeriod;
+
     /** --- Email Settings --- */
 
     /** Imaps host, username, and password for the application's email account*/
@@ -119,6 +125,7 @@ public class Environment
         this.senateAgendaDirectory = new File(senateAgendaDirPath);
         this.billTextDirectory = new File(billTextDirPath);
         this.billMemoDirectory = new File(billMemoDirPath);
+        this.spotcheckAlertGracePeriod = Duration.ofMinutes(rawAlertGracePeriod);
     }
 
     /** --- Basic Getters/Setters --- */
@@ -321,5 +328,13 @@ public class Environment
 
     public void setEmailProcessedFolder(String emailProcessedFolder) {
         this.emailProcessedFolder = emailProcessedFolder;
+    }
+
+    public Duration getSpotcheckAlertGracePeriod() {
+        return spotcheckAlertGracePeriod;
+    }
+
+    public void setSpotcheckAlertGracePeriod(Duration spotcheckAlertGracePeriod) {
+        this.spotcheckAlertGracePeriod = spotcheckAlertGracePeriod;
     }
 }

@@ -62,11 +62,11 @@
                 <td ng-bind="summary.notes" style="max-width:10em; overflow:hidden; text-overflow:ellipsis"></td>
                 <td style="border-left:1px solid #ccc; font-weight:bold">{{summary.openMismatches}}</td>
                 <td>
-                  <span class="prefix-icon icon-arrow-up4 new-error"></span>
+                  <span class="prefix-icon icon-chevron-up new-error"></span>
                   {{ (summary.mismatchStatuses['NEW'] | default:0) }}
                 </td>
                 <td>
-                  <span class="prefix-icon icon-arrow-up4 new-error"></span>
+                  <span class="prefix-icon icon-chevron-up new-error"></span>
                   {{ (summary.mismatchStatuses['REGRESSION'] | default:0) }}
                 </td>
                 <td>
@@ -74,7 +74,7 @@
                   {{ summary.mismatchStatuses['EXISTING'] | default:0 }}
                 </td>
                 <td>
-                  <span class="prefix-icon icon-arrow-down5 closed-error"></span>
+                  <span class="prefix-icon icon-chevron-down closed-error"></span>
                   {{ summary.mismatchStatuses['RESOLVED'] | default:0 }}
                 </td>
               </tr>
@@ -177,7 +177,7 @@
                   <td>{{row.type | mismatchTypeLabel}}</td>
                   <td>{{row.status | mismatchStatusLabel}}</td>
                   <td>
-                    <a href="#" ng-click="openReportDetail(row.firstOpened)"
+                    <a href="#" ng-click="openReportDetail(openReportType, row.firstOpened)"
                        ng-show="row.firstOpened!=reportDateTime && row.firstOpened!='Unknown'">
                       {{row.firstOpened | moment:'lll'}}
                     </a>

@@ -1,8 +1,6 @@
-package gov.nysenate.openleg.model.agenda.reference;
+package gov.nysenate.openleg.model.spotcheck.agenda;
 
 import com.google.common.base.Objects;
-import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

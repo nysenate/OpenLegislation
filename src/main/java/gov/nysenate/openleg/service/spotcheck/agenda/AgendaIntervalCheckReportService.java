@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class AgendaCheckReportService extends BaseAgendaCheckReportService {
+public class AgendaIntervalCheckReportService extends BaseAgendaCheckReportService{
 
     @Autowired
     CachedAgendaDataService agendaDataService;
@@ -22,10 +22,10 @@ public class AgendaCheckReportService extends BaseAgendaCheckReportService {
     /** {@inheritDoc} */
     @Override
     protected List<AgendaAlertInfoCommittee> getReferences(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        List<AgendaAlertInfoCommittee> references = agendaAlertDao.getUncheckedAgendaAlertReferences(Range.closed(start, end));
+        List<AgendaAlertInfoCommittee> references = agendaAlertDao.getAgendaAlertReferences(Range.closed(start, end));
         if (references.isEmpty()) {
             throw new ReferenceDataNotFoundEx(
-                    String.format("no unchecked agenda references were found within the given range %s to %s", start, end));
+                    String.format("no agenda references were found within the given range %s to %s", start, end));
         }
         return references;
     }
@@ -39,6 +39,6 @@ public class AgendaCheckReportService extends BaseAgendaCheckReportService {
     /** {@inheritDoc} */
     @Override
     protected void setReferenceChecked(AgendaAlertInfoCommittee reference) {
-        agendaAlertDao.setAgendaAlertChecked(reference.getAgendaAlertInfoCommId(), true);
+        // Do nothing
     }
 }

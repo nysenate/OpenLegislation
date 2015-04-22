@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processor.agenda.reference;
 
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommitteeItem;
-import gov.nysenate.openleg.model.agenda.reference.AgendaAlertInfoCommittee;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -13,7 +13,6 @@ import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.ScrapeUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,7 +20,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.util.HtmlUtils;
 
 import java.io.File;
 import java.io.IOException;

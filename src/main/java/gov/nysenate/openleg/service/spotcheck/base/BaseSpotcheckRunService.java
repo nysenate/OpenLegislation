@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckAbortException;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -64,14 +65,16 @@ public abstract class BaseSpotcheckRunService<ContentId> implements SpotcheckRun
      * @param ex Exception - an exception that was raised during a spotcheck action
      */
     private void handleSpotcheckException(Exception ex) {
-        logger.error("Spotcheck Error:\n{}", ExceptionUtils.getStackTrace(ex));
-        eventBus.post(new Notification(
-                NotificationType.SPOTCHECK_EXCEPTION,
-                LocalDateTime.now(),
-                "Spotcheck Error: " + ExceptionUtils.getStackFrames(ex)[0],
-                "An error occurred while running a spotcheck report at " + LocalDateTime.now() + ":\n" +
-                        ExceptionUtils.getStackTrace(ex)
-        ));
+        if (!(ex instanceof SpotCheckAbortException)) {
+            logger.error("Spotcheck Error:\n{}", ExceptionUtils.getStackTrace(ex));
+            eventBus.post(new Notification(
+                    NotificationType.SPOTCHECK_EXCEPTION,
+                    LocalDateTime.now(),
+                    "Spotcheck Error: " + ExceptionUtils.getStackFrames(ex)[0],
+                    "An error occurred while running a spotcheck report at " + LocalDateTime.now() + ":\n" +
+                            ExceptionUtils.getStackTrace(ex)
+            ));
+        }
     }
 
     /**

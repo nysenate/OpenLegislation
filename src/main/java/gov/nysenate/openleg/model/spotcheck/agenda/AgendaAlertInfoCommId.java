@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.agenda.reference;
+package gov.nysenate.openleg.model.spotcheck.agenda;
 
 import com.google.common.base.Objects;
 import gov.nysenate.openleg.model.agenda.AgendaId;

@@ -3,12 +3,13 @@ package gov.nysenate.openleg.dao.agenda.reference;
 import com.google.common.collect.Range;
 import com.google.common.io.Files;
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.dao.daybreak.SqlFsDaybreakDao;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommitteeItem;
-import gov.nysenate.openleg.model.agenda.reference.AgendaAlertId;
-import gov.nysenate.openleg.model.agenda.reference.AgendaAlertInfoCommId;
-import gov.nysenate.openleg.model.agenda.reference.AgendaAlertInfoCommittee;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertId;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommId;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -92,16 +93,24 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     @Override
     public AgendaAlertInfoCommittee getAgendaAlertInfoCommittee(AgendaAlertInfoCommId agendaCommInfoId) {
         AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
-        jdbcNamed.query(SELECT_INFO_COMMITTEE_BY_ID.getSql(schema()),
+        jdbcNamed.query(SELECT_INFO_COMMITTEE_BY_ID.getSql(schema(), LimitOffset.ONE),
                 getAgendaAlertInfoCommIdParams(agendaCommInfoId), rowHandler);
         List<AgendaAlertInfoCommittee> result = rowHandler.getAlertInfoCommittees();
         if (result.size() == 1) {
             return result.get(0);
         }
-        if (result.size() == 0) {
+        if (result.isEmpty()) {
             throw new EmptyResultDataAccessException(1);
         }
         throw new IncorrectResultSizeDataAccessException(1, result.size());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<AgendaAlertInfoCommittee> getAgendaAlertReferences(Range<LocalDateTime> dateTimeRange) {
+        AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
+        jdbcNamed.query(SELECT_IN_RANGE.getSql(schema()), getDateTimeRangeParams(dateTimeRange), rowHandler);
+        return rowHandler.getAlertInfoCommittees();
     }
 
     /** {@inheritDoc} */

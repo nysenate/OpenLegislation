@@ -1,9 +1,7 @@
-package gov.nysenate.openleg.model.agenda.reference;
+package gov.nysenate.openleg.model.spotcheck.agenda;
 
 import com.google.common.collect.ImmutableList;
-import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommitteeItem;
-import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;

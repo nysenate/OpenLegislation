@@ -15,9 +15,12 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
         "WHERE a.reference_date_time = :referenceDateTime AND a.week_of = :weekOf AND a.addendum_id = :addendumId" +
         "   AND a.chamber = :chamber::chamber AND a.committee_name = :committeeName"
     ),
-    SELECT_UNCHECKED_IN_RANGE(
+    SELECT_IN_RANGE(
         SELECT_INFO_COMMITTEE.sql + "\n" +
-        "WHERE checked = FALSE AND reference_date_time BETWEEN :startDateTime AND :endDateTime"
+        "WHERE reference_date_time BETWEEN :startDateTime AND :endDateTime"
+    ),
+    SELECT_UNCHECKED_IN_RANGE(
+        SELECT_IN_RANGE.sql + " AND checked = FALSE"
     ),
     INSERT_INFO_COMMITTEE(
         "INSERT INTO ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
