@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
@@ -14,6 +15,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,7 +45,13 @@ public class BillPdfView
             margin = resolutionMargin;
         }
 
-        List<List<String>> pages = BillTextUtils.getPages(ba.getFullText());
+        List<List<String>> pages;
+        if (ba.getFullText() == null || ba.getFullText().isEmpty()) {
+            pages = Arrays.asList(Arrays.asList("No full text available for " + bill.getBaseBillId().withVersion(version)));
+        }
+        else {
+            pages = BillTextUtils.getPages(ba.getFullText());
+        }
         for (List<String> page : pages) {
             PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
             PDPageContentStream contentStream = new PDPageContentStream(doc, pg);

@@ -9,6 +9,7 @@ import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.Bill;
 
+import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  */
 public class BillView extends BillInfoView implements ViewObject
 {
+    protected ListView<String> amendmentVersions;
     protected MapView<String, BillAmendmentView> amendments;
     protected ListView<BillVoteView> votes;
     protected ListView<VetoMessageView> vetoMessages;
@@ -40,6 +42,7 @@ public class BillView extends BillInfoView implements ViewObject
                 }
             });
             this.amendments = MapView.of(amendmentMap);
+            this.amendmentVersions = ListView.ofStringList(amendmentMap.keySet().stream().collect(Collectors.toList()));
 
             this.votes = ListView.of(bill.getAmendmentList().stream()
                 .flatMap(a -> a.getVotesList().stream())
@@ -86,6 +89,10 @@ public class BillView extends BillInfoView implements ViewObject
     @Override
     public String getViewType() {
         return "bill";
+    }
+
+    public ListView<String> getAmendmentVersions() {
+        return amendmentVersions;
     }
 
     public MapView<String, BillAmendmentView> getAmendments() {
