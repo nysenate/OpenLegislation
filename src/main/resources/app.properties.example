@@ -171,8 +171,18 @@ scheduler.spotcheck.enabled = true
 # When to process data. (Default: 0 */5 * * * *)
 scheduler.process.cron = 0 */5 * * * *
 
-# When to run spot-check reports. (Default: 0 */2 * * * FRI-SAT)
+# When to run daybreak reports. (Default: 0 */2 * * * FRI-SAT)
 scheduler.spotcheck.cron = 0 */2 * * * FRI-SAT
+
+# When to run agenda alert interval based spotcheck report. (Default: 0 0 0 * * SAT)
+scheduler.spotcheck.agenda.cron = 0 0 0 * * SAT
+
+# --- Spotcheck Configuration -------------------------------------------------
+
+# The amount of time (in minutes) allowed after an alert arrival for data to come in
+# Spotcheck reports in which content was not found corresponding to a reference that
+#   is younger than this grace period will be aborted
+spotcheck.alert.grace.period = 60
 
 # --- Mail Configuration ------------------------------------------------------
 
