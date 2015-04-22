@@ -3,14 +3,10 @@ package gov.nysenate.openleg.stupid;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.activelist.ActiveListReferenceDAO;
 import gov.nysenate.openleg.dao.activelist.SqlActiveListReferenceDAO;
-import gov.nysenate.openleg.dao.activelist.SqlActiveListReferenceQuery;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.spotcheck.ActiveListSpotcheckReference;
-import gov.nysenate.openleg.util.DateUtils;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Created by kyle on 11/21/14.
@@ -68,10 +63,10 @@ public class ActiveListDAOTest extends BaseTests {
 
         //    public CalendarActiveListEntry(Integer calNo, BillId billId)
 
-        List<CalendarActiveListEntry> entries = new ArrayList<CalendarActiveListEntry>();
-        entries.add(new CalendarActiveListEntry(1, new BillId("bill1", 2010, "a")));
-        entries.add(new CalendarActiveListEntry(2, new BillId("bill2", 2010, "b")));
-        entries.add(new CalendarActiveListEntry(3, new BillId("bill3", 2010, "c")));
+        List<CalendarEntry> entries = new ArrayList<CalendarEntry>();
+        entries.add(new CalendarEntry(1, new BillId("bill1", 2010, "a")));
+        entries.add(new CalendarEntry(2, new BillId("bill2", 2010, "b")));
+        entries.add(new CalendarEntry(3, new BillId("bill3", 2010, "c")));
 
         DateTimeFormatter formatterCalDate = DateTimeFormatter.ofPattern("MMMM-dd-yyyy");
         //String text = ;

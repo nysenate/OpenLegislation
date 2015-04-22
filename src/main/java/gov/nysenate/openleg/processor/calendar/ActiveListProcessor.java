@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarActiveList;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
@@ -86,7 +86,7 @@ public class ActiveListProcessor extends AbstractDataProcessor implements SobiPr
                         String billPrintNo = xml.getString("bill/@no", xmlCalNo);
                         if (!Strings.isNullOrEmpty(billPrintNo)) {
                             BillId billId = new BillId(billPrintNo, sessionYear);
-                            CalendarActiveListEntry entry = new CalendarActiveListEntry(calNo, billId);
+                            CalendarEntry entry = new CalendarEntry(calNo, billId);
                             activeList.addEntry(entry);
                         }
                     }

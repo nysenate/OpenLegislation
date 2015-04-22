@@ -19,7 +19,7 @@ public class AgendaItemView implements ViewObject
         if (item != null) {
             billId = new BillIdView(item.getBillId());
             if (billDataService != null) {
-                this.billInfo = new SimpleBillInfoView(billDataService.getBillInfo(BaseBillId.of(item.getBillId())));
+                this.billInfo = new SimpleBillInfoView(billDataService.getBillInfoSafe(BaseBillId.of(item.getBillId())));
             }
             this.message = item.getMessage();
         }

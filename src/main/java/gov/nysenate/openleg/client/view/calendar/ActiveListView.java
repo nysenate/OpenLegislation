@@ -8,19 +8,19 @@ import java.util.stream.Collectors;
 
 public class ActiveListView extends SimpleActiveListView
 {
-    ListView<ActiveListEntryView> entries;
+    ListView<CalendarEntryView> entries;
 
     public ActiveListView(CalendarActiveList activeList, BillDataService billDataService) {
         super(activeList);
         this.entries = ListView.of(
                 activeList.getEntries().stream()
-                        .map(entry -> new ActiveListEntryView(entry, billDataService))
-                        .sorted(ActiveListEntryView.activeListEntryViewComparator)
+                        .map(entry -> new CalendarEntryView(entry, billDataService))
+                        .sorted(CalendarEntryView.calEntryViewComparator)
                         .collect(Collectors.toList())
         );
     }
 
-    public ListView<ActiveListEntryView> getEntries() {
+    public ListView<CalendarEntryView> getEntries() {
         return entries;
     }
 

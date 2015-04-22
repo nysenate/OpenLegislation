@@ -20,7 +20,7 @@ public class BillInfo
     protected String summary;
     protected BillStatus status;
     protected BillSponsor sponsor;
-    protected LinkedList<BillStatus> milestones;
+    protected LinkedList<BillStatus> milestones = new LinkedList<>();
     protected BillId substitutedBy;
     protected ProgramInfo programInfo;
 

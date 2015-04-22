@@ -34,10 +34,11 @@
                 <div layout="row" hide-sm style="height: 40px">
                     <div style="overflow: hidden">
                         <img style="max-width: 40px; max-height: 52px;"
-                             ng-src="${ctxPath}/static/img/business_assets/members/mini/{{calEntry.sponsor.member.imgName}}"
+                             ng-src="${ctxPath}/static/img/business_assets/members/mini/{{calEntry.sponsor.member.imgName || 'null'}}"
                              err-src="${ctxPath}/static/img/NYSS_seal_fancy.jpg"/>
                     </div>
                     <span class="margin-left-10 text-medium">
+                        <span ng-if="!calEntry.sponsor">Sponsor Not Available</span>
                         <span ng-if="calEntry.sponsor.member">
                             <span class="blue1 bold" ng-bind="calEntry.sponsor.member.fullName"></span> <br>
                             <span>

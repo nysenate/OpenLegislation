@@ -3,7 +3,7 @@ package gov.nysenate.openleg.service.spotcheck.calendar;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.activelist.ActiveListReferenceDAO;
 import gov.nysenate.openleg.model.calendar.CalendarActiveList;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
@@ -52,9 +52,9 @@ public class ActiveListSpotCheckService<ContentKey, ContentType, ReferenceType> 
         }
         TreeSet referenceSet = new TreeSet();
         TreeSet contentSet = new TreeSet();
-        for (CalendarActiveListEntry entry : reference.getEntries()) referenceSet.add(entry);
+        for (CalendarEntry entry : reference.getEntries()) referenceSet.add(entry);
 
-        for (CalendarActiveListEntry entry : content.getEntries()) contentSet.add(entry);
+        for (CalendarEntry entry : content.getEntries()) contentSet.add(entry);
 
 
         SpotCheckReferenceId referenceId = reference.getReferenceId();

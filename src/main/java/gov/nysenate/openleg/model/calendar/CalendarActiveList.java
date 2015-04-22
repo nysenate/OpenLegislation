@@ -27,7 +27,7 @@ public class CalendarActiveList extends BaseLegislativeContent
     private LocalDateTime releaseDateTime;
 
     /** Active list entries. */
-    private List<CalendarActiveListEntry> entries;
+    private List<CalendarEntry> entries;
 
     /** --- Constructors --- */
 
@@ -50,7 +50,7 @@ public class CalendarActiveList extends BaseLegislativeContent
 
     /** --- Functional Getters/Setters --- */
 
-    public void addEntry(CalendarActiveListEntry entry) {
+    public void addEntry(CalendarEntry entry) {
         this.entries.add(entry);
     }
 
@@ -129,11 +129,11 @@ public class CalendarActiveList extends BaseLegislativeContent
         this.releaseDateTime = releaseDateTime;
     }
 
-    public List<CalendarActiveListEntry> getEntries() {
+    public List<CalendarEntry> getEntries() {
         return entries;
     }
 
-    public void setEntries(List<CalendarActiveListEntry> entries) {
+    public void setEntries(List<CalendarEntry> entries) {
         this.entries = entries;
     }
 }

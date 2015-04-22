@@ -39,6 +39,17 @@ public interface BillDataService
     public BillInfo getBillInfo(BaseBillId billId) throws BillNotFoundEx;
 
     /**
+     * Retrieves a BillInfo instance for the matching BillId. This contains
+     * less information that the Bill for the puposes of displaying in listings.
+     * If the requested BillInfo is not found, returns a dummy BillInfo that indicates
+     * that data is not yet available for the given bill id.
+     *
+     * @param billId BaseBillId
+     * @return BillInfo
+     */
+    public BillInfo getBillInfoSafe(BaseBillId billId);
+
+    /**
      * Retrieve a list of BaseBillIds within the specified session year in ascending order.
      * This can be useful for functions that need to iterate over the entire collection of
      * bills such as cache warming and search indexing.

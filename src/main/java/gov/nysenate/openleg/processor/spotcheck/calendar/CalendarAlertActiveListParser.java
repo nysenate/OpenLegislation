@@ -4,7 +4,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarActiveList;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -49,8 +49,8 @@ public class CalendarAlertActiveListParser extends BaseCalendarAlertParser{
         }
     }
 
-    private CalendarActiveListEntry extractEntry(CalendarActiveList activeList, Element entry) {
-        return new CalendarActiveListEntry(extractBillCalNo(entry), extractBillId(entry, activeList));
+    private CalendarEntry extractEntry(CalendarActiveList activeList, Element entry) {
+        return new CalendarEntry(extractBillCalNo(entry), extractBillId(entry, activeList));
     }
 
     private BillId extractBillId(Element entry, CalendarActiveList activeList) {

@@ -7,9 +7,7 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 
 import java.util.Comparator;
 
-public class CalendarSupEntryView extends SimpleBillInfoView {
-
-    protected int billCalNo;
+public class CalendarSupEntryView extends CalendarEntryView {
 
     protected String sectionType;
 
@@ -18,20 +16,15 @@ public class CalendarSupEntryView extends SimpleBillInfoView {
     protected boolean billHigh;
 
     public CalendarSupEntryView(CalendarSupplementalEntry supEntry, BillDataService billDataService) {
-        super(supEntry != null ? billDataService.getBillInfo(BillId.getBaseId(supEntry.getBillId())) : null);
+        super(supEntry, billDataService);
 
         if (supEntry != null) {
-            this.billCalNo = supEntry.getBillCalNo();
             this.sectionType = supEntry.getSectionType().toString();
             this.subBillInfo = supEntry.getSubBillId() != null
                     ? new SimpleBillInfoView(billDataService.getBillInfo(BillId.getBaseId(supEntry.getSubBillId())))
                     : null;
             this.billHigh = supEntry.getBillHigh();
         }
-    }
-
-    public int getBillCalNo() {
-        return billCalNo;
     }
 
     public String getSectionType() {

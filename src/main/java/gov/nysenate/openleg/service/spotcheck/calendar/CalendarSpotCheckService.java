@@ -173,8 +173,8 @@ public class CalendarSpotCheckService implements SpotCheckService<CalendarId, Ca
 
     private void checkForActiveListEntryMismatch(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff,
                                                  CalendarActiveList referenceDiff) {
-        Set<CalendarActiveListEntry> contentDiffEntries = Sets.newHashSet(contentDiff.getEntries());
-        Set<CalendarActiveListEntry> referenceDiffEntries = Sets.newHashSet(referenceDiff.getEntries());
+        Set<CalendarEntry> contentDiffEntries = Sets.newHashSet(contentDiff.getEntries());
+        Set<CalendarEntry> referenceDiffEntries = Sets.newHashSet(referenceDiff.getEntries());
         if (!Sets.symmetricDifference(contentDiffEntries, referenceDiffEntries).isEmpty()) {
             observation.addMismatch(new SpotCheckMismatch(
                     SpotCheckMismatchType.ACTIVE_LIST_ENTRY,

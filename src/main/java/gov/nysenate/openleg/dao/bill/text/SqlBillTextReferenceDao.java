@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.dao.bill.text;
 
-import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
 import gov.nysenate.openleg.util.DateUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,13 +13,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
-import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by kyle on 3/19/15.

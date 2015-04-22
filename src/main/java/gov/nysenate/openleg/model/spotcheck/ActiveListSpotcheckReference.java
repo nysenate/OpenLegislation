@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.spotcheck;
 
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ public class ActiveListSpotcheckReference {
     private LocalDateTime releaseDateTime;
 
     /** Active list entries. */
-    private List<CalendarActiveListEntry> entries;
+    private List<CalendarEntry> entries;
 
     /** The date time that the reference is generated (current time) */
     private LocalDateTime referenceDate;
@@ -37,7 +37,7 @@ public class ActiveListSpotcheckReference {
 
     public ActiveListSpotcheckReference(Integer sequenceNo, CalendarId calendarId, LocalDate calDate,
                                         LocalDateTime releasedDateTime, LocalDateTime referenceDate,
-                                        List<CalendarActiveListEntry> entries){
+                                        List<CalendarEntry> entries){
         this.sequenceNo = sequenceNo;
         this.calendarId = calendarId;
         //this.notes = notes;
@@ -92,11 +92,11 @@ public class ActiveListSpotcheckReference {
         this.referenceDate = referenceDate;
     }
 
-    public List<CalendarActiveListEntry> getEntries() {
+    public List<CalendarEntry> getEntries() {
         return entries;
     }
 
-    public void setEntries(List<CalendarActiveListEntry> entries) {
+    public void setEntries(List<CalendarEntry> entries) {
         this.entries = entries;
     }
 }

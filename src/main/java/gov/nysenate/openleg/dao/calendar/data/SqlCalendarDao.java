@@ -221,7 +221,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     /**
      * Retrieve entries for a specific active list.
      */
-    private List<CalendarActiveListEntry> getActiveListEntries(ImmutableParams activeListParams) {
+    private List<CalendarEntry> getActiveListEntries(ImmutableParams activeListParams) {
         return jdbcNamed.query(SqlCalendarQuery.SELECT_CALENDAR_ACTIVE_LIST_ENTRIES.getSql(schema()), activeListParams,
                                new CalendarActiveListEntryRowMapper());
     }
@@ -248,7 +248,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
             ImmutableParams actListParams = ImmutableParams.from(getCalActiveListParams(actList, fragment));
             jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_ACTIVE_LIST.getSql(schema()), actListParams);
             // Insert the active list entries
-            for (CalendarActiveListEntry entry : actList.getEntries()) {
+            for (CalendarEntry entry : actList.getEntries()) {
                 ImmutableParams entryParams = ImmutableParams.from(getCalActiveListEntryParams(actList, entry, fragment));
                 jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_ACTIVE_LIST_ENTRY.getSql(schema()), entryParams);
             }
@@ -363,11 +363,11 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         }
     }
 
-    protected class CalendarActiveListEntryRowMapper implements RowMapper<CalendarActiveListEntry>
+    protected class CalendarActiveListEntryRowMapper implements RowMapper<CalendarEntry>
     {
         @Override
-        public CalendarActiveListEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
-            CalendarActiveListEntry entry = new CalendarActiveListEntry();
+        public CalendarEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
+            CalendarEntry entry = new CalendarEntry();
             entry.setBillCalNo(rs.getInt("bill_calendar_no"));
             entry.setBillId(new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"),
                                        rs.getString("bill_amend_version")));
@@ -473,7 +473,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     }
 
     protected static MapSqlParameterSource getCalActiveListEntryParams(CalendarActiveList actList,
-                                                                       CalendarActiveListEntry entry, SobiFragment fragment) {
+                                                                       CalendarEntry entry, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(actList.getCalendarId(), params);
         params.addValue("sequenceNo", actList.getSequenceNo());

@@ -7,6 +7,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillInfo;
@@ -211,6 +212,21 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
         }
         catch (EmptyResultDataAccessException ex) {
             throw new BillNotFoundEx(billId, ex);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public BillInfo getBillInfoSafe(BaseBillId billId) {
+        try {
+            return getBillInfo(billId);
+        } catch (BillNotFoundEx ex) {
+            BillInfo dummyInfo = new BillInfo();
+            dummyInfo.setBillId(billId);
+            String message = "Data is currently not available for this bill";
+            dummyInfo.setTitle(message);
+            dummyInfo.setSummary(message);
+            return dummyInfo;
         }
     }
 

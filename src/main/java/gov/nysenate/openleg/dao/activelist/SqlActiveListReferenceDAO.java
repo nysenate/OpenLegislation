@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.activelist;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.spotcheck.ActiveListSpotcheckReference;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,11 +42,11 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
         jdbcNamed.update(SqlActiveListReferenceQuery.DELETE_REFERENCE_ENTRIES.getSql(schema()), paramId);
         act.getEntries().forEach(entry -> addActiveListEntry(alId, entry));
         act.getEntries().stream()
-                .map(CalendarActiveListEntry::getBillId)
+                .map(CalendarEntry::getBillId)
                 .collect(Collectors.toList());
     }
 
-    void addActiveListEntry(int keyId, CalendarActiveListEntry entry){
+    void addActiveListEntry(int keyId, CalendarEntry entry){
         MapSqlParameterSource params = getEntryParams(keyId, entry);
         jdbcNamed.update(SqlActiveListReferenceQuery.INSERT_ACTIVE_LIST_REFERENCE_ENTRY.getSql(schema()), params);
     }
@@ -79,11 +78,11 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
         return jdbcNamed.queryForObject(SqlActiveListReferenceQuery.SELECT_ACTIVE_LIST.getSql(schema()), params, new ActiveRowMapper());
     }
 
-    List<CalendarActiveListEntry> getEntries(CalendarActiveListId cal, CalendarActiveListEntry entry){
+    List<CalendarEntry> getEntries(CalendarActiveListId cal, CalendarEntry entry){
         MapSqlParameterSource params = getEntryParams(cal, entry);
         return jdbcNamed.query(SqlActiveListReferenceQuery.SELECT_ACTIVE_LIST_REFERENCE_ENTRIES.getSql(schema()), params, new EntryRowMapper());
     }
-    public MapSqlParameterSource getEntryParams(int keyId, CalendarActiveListEntry entry){
+    public MapSqlParameterSource getEntryParams(int keyId, CalendarEntry entry){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("bill_print_no", entry.getBillId().getPrintNo());
         params.addValue("bill_session_no", entry.getBillId().getSession().getYear());
@@ -95,7 +94,7 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
 
         return params;
     }
-    public MapSqlParameterSource getEntryParams(CalendarActiveListId cal, CalendarActiveListEntry entry){
+    public MapSqlParameterSource getEntryParams(CalendarActiveListId cal, CalendarEntry entry){
         MapSqlParameterSource params = getActiveListIdParams(cal);
         params.addValue("bill_print_no", entry.getBillId().getPrintNo());
         params.addValue("bill_session_no", entry.getBillId().getSession().getYear());
@@ -147,11 +146,11 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
             return activeList;
         }
     }
-    private class EntryRowMapper implements RowMapper<CalendarActiveListEntry>
+    private class EntryRowMapper implements RowMapper<CalendarEntry>
     {
         @Override
-        public CalendarActiveListEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
-            CalendarActiveListEntry entry = new CalendarActiveListEntry();
+        public CalendarEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
+            CalendarEntry entry = new CalendarEntry();
             entry.setBillId(new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")));
             entry.setBillCalNo(rs.getInt("bill_calendar_no"));
             return entry;

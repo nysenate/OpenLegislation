@@ -4,17 +4,10 @@ import gov.nysenate.openleg.model.bill.BillId;
 
 import java.util.Objects;
 
-public class CalendarSupplementalEntry
+public class CalendarSupplementalEntry extends CalendarEntry
 {
-    /** This calendar number refers to a specific entry on the calendar.
-     *  This value is consistent for this entry across all calendars during a year. */
-    private Integer billCalNo = 0;
-
     /** The section this calendar entry belongs in. */
     private CalendarSectionType sectionType;
-
-    /** The BillId referenced in this calendar entry. */
-    private BillId billId;
 
     /** The substituted bill's BillId for this calendar entity. null if not substituted. */
     private BillId subBillId;
@@ -28,9 +21,8 @@ public class CalendarSupplementalEntry
 
     public  CalendarSupplementalEntry(Integer billCalNo, CalendarSectionType sectionType,
                                      BillId billId, BillId subBillId, Boolean billHigh) {
-        this.billCalNo = billCalNo;
+        super(billCalNo, billId);
         this.sectionType = sectionType;
-        this.billId = billId;
         this.subBillId = subBillId;
         this.billHigh = billHigh;
     }

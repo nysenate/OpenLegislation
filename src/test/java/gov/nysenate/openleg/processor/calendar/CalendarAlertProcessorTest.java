@@ -134,12 +134,12 @@ public class CalendarAlertProcessorTest extends BaseTests {
     public void parsesActiveListEntries() {
         CalendarId id = simpleCalendarId();
         SessionYear sessionYear = SessionYear.of(id.getYear());
-        CalendarActiveListEntry entry = new CalendarActiveListEntry(46, new BillId("S2405", sessionYear ));
+        CalendarEntry entry = new CalendarEntry(46, new BillId("S2405", sessionYear ));
 
         Calendar actualCalendar = process.process(simpleActiveListFile);
         assertThat(actualCalendar.getActiveList(0).getEntries(), hasItem(entry));
 
-        entry = new CalendarActiveListEntry(77, new BillId("S3407", sessionYear ));
+        entry = new CalendarEntry(77, new BillId("S3407", sessionYear ));
         assertThat(actualCalendar.getActiveList(0).getEntries(), hasItem(entry));
     }
 }

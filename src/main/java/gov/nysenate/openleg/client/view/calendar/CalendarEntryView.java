@@ -2,19 +2,19 @@ package gov.nysenate.openleg.client.view.calendar;
 
 import gov.nysenate.openleg.client.view.bill.SimpleBillInfoView;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 
 import java.util.Comparator;
 
-public class ActiveListEntryView extends SimpleBillInfoView {
+public class CalendarEntryView extends SimpleBillInfoView {
 
     protected int billCalNo;
 
-    public ActiveListEntryView(CalendarActiveListEntry activeListEntry, BillDataService billDataService) {
-        super(activeListEntry != null ? billDataService.getBillInfo(BillId.getBaseId(activeListEntry.getBillId())) : null);
-        if (activeListEntry != null) {
-            this.billCalNo = activeListEntry.getBillCalNo();
+    public CalendarEntryView(CalendarEntry calendarEntry, BillDataService billDataService) {
+        super(calendarEntry != null ? billDataService.getBillInfoSafe(BillId.getBaseId(calendarEntry.getBillId())) : null);
+        if (calendarEntry != null) {
+            this.billCalNo = calendarEntry.getBillCalNo();
         }
     }
 
@@ -22,7 +22,7 @@ public class ActiveListEntryView extends SimpleBillInfoView {
         return billCalNo;
     }
 
-    public static Comparator<ActiveListEntryView> activeListEntryViewComparator =
+    public static Comparator<CalendarEntryView> calEntryViewComparator =
             (ent1, ent2) -> Integer.compare(ent1.billCalNo, ent2.billCalNo);
 
     @Override

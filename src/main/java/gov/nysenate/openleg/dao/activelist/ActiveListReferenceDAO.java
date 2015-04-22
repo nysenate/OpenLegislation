@@ -1,13 +1,10 @@
 package gov.nysenate.openleg.dao.activelist;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.model.calendar.CalendarActiveList;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
 import gov.nysenate.openleg.model.spotcheck.ActiveListSpotcheckReference;
 import org.springframework.dao.DataAccessException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

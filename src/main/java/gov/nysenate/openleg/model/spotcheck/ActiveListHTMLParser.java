@@ -2,20 +2,15 @@ package gov.nysenate.openleg.model.spotcheck;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.calendar.CalendarActiveListEntry;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.spotcheck.ActiveListSpotcheckReference;
 import gov.nysenate.openleg.util.DateUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
-import javax.mail.Session;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,7 +22,7 @@ import java.util.regex.Pattern;
 public class ActiveListHTMLParser {
 
     public static ActiveListSpotcheckReference getSpotcheckReference(File html) throws Exception {
-        List<CalendarActiveListEntry> entries = new ArrayList();
+        List<CalendarEntry> entries = new ArrayList();
         //Get sequence number from previous page
         //todo Get CalendarId from previous page, can use yearstring for year though
         String monthString = null, dayString = null, yearString = null;
@@ -77,7 +72,7 @@ public class ActiveListHTMLParser {
             calNo = rowElements.get(0).text();          //gets the calendar number as a string from table for a bill
             billPrintNo = rowElements.get(1).text();         //gets the bill printNumber
 
-            CalendarActiveListEntry listEntry = new CalendarActiveListEntry(Integer.parseInt(calNo),
+            CalendarEntry listEntry = new CalendarEntry(Integer.parseInt(calNo),
                     new BillId(billPrintNo, SessionYear.of(sessionNumber)));// BillId billId);
 
             entries.add(listEntry);                         //add current entry to the list
