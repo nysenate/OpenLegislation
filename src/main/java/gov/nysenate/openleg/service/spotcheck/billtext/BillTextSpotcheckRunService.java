@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.billtext;
 
 import gov.nysenate.openleg.dao.bill.text.SqlBillTextReferenceDao;
-import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
@@ -81,6 +79,7 @@ public class BillTextSpotcheckRunService extends BaseSpotcheckRunService<BaseBil
                     new BillTextSpotcheckReference(id.getPrintNo(), id.getSession(), LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
                             billText, memoText, Version.of(amendment));
             addToDatabase(b);
+            dao.deleteBillFromScrapeQueue(id);
             return 1;
         }
         return 0;

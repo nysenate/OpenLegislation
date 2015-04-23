@@ -68,6 +68,11 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
     SELECT_SCRAPE_QUEUE(
             "SELECT * FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
                     "ORDER BY added_time asc"
+    ),
+    DELETE_SCRAPE_QUEUE(
+            "DELETE FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
+                    "WHERE print_no =:print_no AND session_year = :session_year"
+
     )
 
 

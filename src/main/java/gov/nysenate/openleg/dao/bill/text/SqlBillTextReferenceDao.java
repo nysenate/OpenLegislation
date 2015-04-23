@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
 import gov.nysenate.openleg.util.DateUtils;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -72,13 +73,23 @@ public class SqlBillTextReferenceDao extends SqlBaseDao implements BillTextRefer
 
     @Override
     public void addBillToScrapeQueue(BaseBillId id) {
-        MapSqlParameterSource params = getParams(id);
-        jdbcNamed.update(SqlBillTextReferenceQuery.INSERT_SCRAPE_QUEUE.getSql(schema()), params);
+        try {
+            MapSqlParameterSource params = getQueueParams(id);
+            jdbcNamed.update(SqlBillTextReferenceQuery.INSERT_SCRAPE_QUEUE.getSql(schema()), params);
+        }catch(DuplicateKeyException ignored){}
+    }
+    @Override
+    public void deleteBillFromScrapeQueue(BaseBillId id){
+        MapSqlParameterSource params = getQueueParams(id);
+        jdbcNamed.update(SqlBillTextReferenceQuery.DELETE_SCRAPE_QUEUE.getSql(schema()), params);
+
     }
 
     @Override
     public List<BaseBillId> getScrapeQueue() {
         MapSqlParameterSource params = new MapSqlParameterSource();
+
+
 
         return jdbcNamed.query(SqlBillTextReferenceQuery.SELECT_SCRAPE_QUEUE.getSql(schema()), params,
                 (rs, rowNum) ->
@@ -112,6 +123,13 @@ public class SqlBillTextReferenceDao extends SqlBaseDao implements BillTextRefer
         params.addValue("bill_print_no", id.getPrintNo());
         params.addValue("bill_session_year", id.getSession().getYear());
         params.addValue("bill_amend_version", id.getVersion().getValue());
+
+        return params;
+    }
+    public MapSqlParameterSource getQueueParams(BaseBillId id) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("print_no", id.getPrintNo());
+        params.addValue("session_year", id.getSession().getYear());
 
         return params;
     }

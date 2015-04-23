@@ -21,4 +21,6 @@ public interface BillTextReferenceDao {
     public BillTextSpotcheckReference getBillTextReference(BaseBillId id, LocalDateTime refDateTime);
     public void insertBillTextReference(BillTextSpotcheckReference ref);
     public void deleteBillTextReference(BillTextSpotcheckReference ref);
-}
+    public void deleteBillFromScrapeQueue(BaseBillId id);
+
+    }
