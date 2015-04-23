@@ -5,7 +5,6 @@ import gov.nysenate.openleg.util.DateUtils;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public abstract class BaseCalendarAlertParser {
@@ -30,10 +29,6 @@ public abstract class BaseCalendarAlertParser {
         String dateTimeString = file.getName().split("-")[3];
         dateTimeString = dateTimeString.split("\\.")[0];
         return LocalDateTime.parse(dateTimeString, DateUtils.BASIC_ISO_DATE_TIME);
-    }
-
-    protected LocalDate parseCalendarDate(File file) {
-        return parseReleaseDateTime(file).toLocalDate();
     }
 
     protected Elements deleteHeaderRow(Elements entryRows) {

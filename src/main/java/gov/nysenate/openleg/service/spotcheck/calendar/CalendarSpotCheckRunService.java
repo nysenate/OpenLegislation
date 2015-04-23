@@ -6,9 +6,11 @@ import gov.nysenate.openleg.dao.calendar.alert.SqlFsCalendarAlertFileDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
+import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckRunService;
+import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
-public class CalendarAlertSpotCheckRunService extends BaseSpotcheckRunService<CalendarId> {
+public class CalendarSpotCheckRunService extends BaseSpotcheckRunService<CalendarId> {
 
-    private Logger logger = LoggerFactory.getLogger(CalendarAlertSpotCheckRunService.class);
+    private Logger logger = LoggerFactory.getLogger(CalendarSpotCheckRunService.class);
+
     @Autowired
     private ActiveListAlertCheckMailService activeListMailService;
 
@@ -37,9 +41,21 @@ public class CalendarAlertSpotCheckRunService extends BaseSpotcheckRunService<Ca
     @Autowired
     private CalendarAlertProcessor processor;
 
+    @Autowired
+    private CalendarReportService reportService;
+
     @Override
     protected List<SpotCheckReport<CalendarId>> doGenerateReports() throws Exception {
-        return null;
+        logger.info("Running a Calendar spotcheck report");
+        try {
+            SpotCheckReport<CalendarId> report = reportService.generateReport(DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now());
+            reportService.saveReport(report);
+            return Collections.singletonList(report);
+        }
+        catch (ReferenceDataNotFoundEx e) {
+            logger.info("No reports generated: {}", e);
+        }
+        return Collections.emptyList();
     }
 
     @Override

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CalendarCheckReportService implements SpotCheckReportService<CalendarId>{
+public class CalendarReportService implements SpotCheckReportService<CalendarId> {
 
     @Autowired
     private CalendarAlertReportDao reportDao;
@@ -33,7 +33,7 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
     private SqlCalendarDao actualDao;
 
     @Autowired
-    private CalendarSpotCheckService checkService;
+    private CalendarCheckService checkService;
 
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
@@ -42,9 +42,8 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
 
     @Override
     public SpotCheckReport<CalendarId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        List<Calendar> references = referenceDao.getCalendarAlertsByDateRange(start, end);
+        List<Calendar> references = retrieveReferences(start, end);
         LocalDateTime referenceDateTime = getMostRecentReference(references);
-
         SpotCheckReportId reportId = new SpotCheckReportId(getSpotcheckRefType(),
                                                            referenceDateTime.truncatedTo(ChronoUnit.SECONDS),
                                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
@@ -65,8 +64,7 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
         }
         try {
             return reportDao.getReport(reportId);
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             throw new SpotCheckReportNotFoundEx(reportId);
         }
     }
@@ -84,15 +82,23 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
         reportDao.deleteReport(reportId);
     }
 
+    private List<Calendar> retrieveReferences(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
+        List<Calendar> references = referenceDao.getCalendarAlertsByDateRange(start, end);
+        if (references.isEmpty()) {
+            throw new ReferenceDataNotFoundEx(
+                    String.format("No calendar alerts references were found between %s and %s", start, end));
+        }
+        return references;
+    }
+
     private List<SpotCheckObservation<CalendarId>> createObservations(List<Calendar> references) {
         List<SpotCheckObservation<CalendarId>> observations = new ArrayList<>();
-        for(Calendar reference: references) {
+        for (Calendar reference : references) {
             CalendarId id = reference.getId();
             try {
                 Calendar actual = actualDao.getCalendar(id);
                 observations.add(checkService.check(actual, reference));
-            }
-            catch (DataAccessException e) {
+            } catch (DataAccessException e) {
                 SpotCheckReferenceId obsRefId = new SpotCheckReferenceId(
                         getSpotcheckRefType(), reference.getPublishedDateTime().truncatedTo(ChronoUnit.SECONDS));
 
@@ -107,11 +113,11 @@ public class CalendarCheckReportService implements SpotCheckReportService<Calend
     }
 
     private LocalDateTime getMostRecentReference(List<Calendar> references) {
-        LocalDateTime dateTime = LocalDateTime.from(DateUtils.LONG_AGO);
-        for (Calendar cal: references) {
-           if(cal.getPublishedDateTime().isAfter(dateTime)) {
-               dateTime = cal.getPublishedDateTime();
-           }
+        LocalDateTime dateTime = LocalDateTime.from(DateUtils.LONG_AGO.atStartOfDay());
+        for (Calendar cal : references) {
+            if (cal.getPublishedDateTime().isAfter(dateTime)) {
+                dateTime = cal.getPublishedDateTime();
+            }
         }
         return dateTime;
     }

@@ -75,12 +75,6 @@ public class CalendarActiveList extends BaseLegislativeContent
         return Objects.hash(sequenceNo, calendarId, notes, calDate, releaseDateTime, entries);
     }
 
-    @Override
-    public String toString() {
-        return sequenceNo.toString() + " " + calendarId.toString() + " " + notes + " " + calDate.toString() + " " +
-               releaseDateTime.toString();
-    }
-
     /** --- Functional Getters/Setters --- */
 
     public CalendarActiveListId getCalendarActiveListId() {

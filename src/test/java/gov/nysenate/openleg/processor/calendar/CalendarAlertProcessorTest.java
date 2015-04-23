@@ -56,9 +56,10 @@ public class CalendarAlertProcessorTest extends BaseTests {
     @Test
     public void parsesSupplementalInfo() {
         CalendarId calendarId = simpleCalendarId();
-        LocalDateTime dateTime = LocalDateTime.of(2015, 2, 19, 14, 30, 33);
+        LocalDateTime releaseDateTime = LocalDateTime.of(2015, 2, 19, 14, 30, 33);
+        LocalDate calendarDate = LocalDate.of(2015, 2, 25);
         CalendarSupplemental expectedSupplemental = new CalendarSupplemental(
-                calendarId, Version.DEFAULT, dateTime.toLocalDate(), dateTime);
+                calendarId, Version.DEFAULT, calendarDate, releaseDateTime);
 
         Calendar actualCalendar = process.process(simpleAlertFile);
         CalendarSupplemental actualSupplemental = actualCalendar.getSupplemental(Version.DEFAULT);
@@ -116,7 +117,7 @@ public class CalendarAlertProcessorTest extends BaseTests {
         int sequenceNo = 0;
         String notes = "";
         LocalDateTime expectedReleaseDate = LocalDateTime.of(2015, 2, 24, 19, 32, 38);
-        LocalDate expectedCalDate = expectedReleaseDate.toLocalDate();
+        LocalDate expectedCalDate = LocalDate.of(2015, 2, 25);
 
         Calendar actualCalendar = process.process(simpleActiveListFile);
         assertThat(actualCalendar.getActiveListMap().size(), is(1));

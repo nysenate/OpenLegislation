@@ -39,6 +39,11 @@ public class CalendarEntry
         return Objects.hash(billCalNo, billId);
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(billCalNo) + " " + (billId == null ? "" : billId.toString());
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public Integer getBillCalNo() {

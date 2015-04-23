@@ -48,7 +48,8 @@ public class CalendarSupplementalEntry extends CalendarEntry
 
     @Override
     public String toString() {
-        return billCalNo.toString() + " " + sectionType.toString() + " " + billId.toString() + " " + subBillId.toString() + " " + billHigh.toString();
+        return billCalNo.toString() + " " + sectionType.toString() + " " + billId.toString() + " " +
+               (subBillId == null ? "" : subBillId.toString());
     }
 
     /** --- Basic Getters/Setters --- */

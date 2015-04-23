@@ -10,13 +10,21 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class CalendarAlertActiveListParser extends BaseCalendarAlertParser{
+
+    private static final Logger logger = LoggerFactory.getLogger(CalendarAlertActiveListParser.class);
 
     /**
      * Parses a Calendar Active List from an LBDC Alert email file.
@@ -60,5 +68,25 @@ public class CalendarAlertActiveListParser extends BaseCalendarAlertParser{
 
     private int extractBillCalNo(Element entry) {
         return Integer.valueOf(entry.select("td").get(0).text());
+    }
+
+    private LocalDate parseCalendarDate(File file) {
+        try {
+            String html = FileUtils.readFileToString(file);
+            Document doc = Jsoup.parse(html);
+            Element title = doc.select("h3[align]").get(0);
+            String calTitle = title.text();
+
+            Pattern calDatePattern = Pattern.compile("Active List (?<date>\\w+ \\w+ \\d{1,2}, \\d{4}).*");
+            Matcher matcher = calDatePattern.matcher(calTitle);
+            if (matcher.find()) {
+                String dateString = matcher.group("date");
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEEE MMMM d, yyyy");
+                return LocalDate.from(dtf.parse(dateString));
+            }
+        } catch (IOException e) {
+            logger.info("Unable to parse active list cal date from file: " + file.getName(), e);
+        }
+        return null;
     }
 }
