@@ -38,10 +38,16 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
     ),
     SELECT_BILL_TEXT_RANGE(
             "Select * FROM ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
-            " WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year\n" +
-            " AND reference_date_time BETWEEN :begin AND :end\n" +
-            "ORDER BY reference_date_time DESC\n" +
-            "LIMIT 1"
+                    " WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year\n" +
+                    " AND reference_date_time BETWEEN :startDateTime AND :endDateTime\n" +
+                    "ORDER BY reference_date_time DESC\n" +
+                    "LIMIT 1"
+    ),
+    SELECT_ALL_BILL_TEXT_RANGE(
+            "Select * FROM ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
+                    " WHERE reference_date_time BETWEEN :startDateTime AND :endDateTime\n" +
+                    "ORDER BY reference_date_time DESC\n" +
+                    "LIMIT 1"
     ),
     DELETE_BILL_REFERENCE(
            "DELETE FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
@@ -53,7 +59,17 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
                     "SET text = :text, memo = :memo, bill_amend_version = :bill_amend_version\n" +
                     "WHERE bill_print_no = :bill_print_no AND bill_session_year =:bill_session_year\n" +
                     "AND reference_date_time = :reference_date_time"
+    ),
+    INSERT_SCRAPE_QUEUE(
+            "INSERT INTO ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
+                    "(bill_print_no, bill_session_year, added_time) " +
+                    "VALUES(:bill_print_no, :bill_session_year, :added_time)"
+    ),
+    SELECT_SCRAPE_QUEUE(
+            "SELECT * FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
+                    "ORDER BY added_time asc"
     )
+
 
     ;
     private String sql;

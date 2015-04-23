@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.scraping;
 
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,7 +32,7 @@ public abstract class LRSScraper {
 
 
     public abstract List<File> scrape () throws IOException;
-    public abstract List<File> scrape (String billType, String billNo, SessionYear sessionYear) throws IOException;
+    public abstract List<File> scrape(BaseBillId id) throws IOException;
 
 
     public URL resolveLink(URL url, String link) throws MalformedURLException

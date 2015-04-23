@@ -50,6 +50,7 @@ public enum SqlTable
     BILL_ADDITIONAL_SPONSOR      ("bill_sponsor_additional"),
     BILL_VETO                    ("bill_veto"),
     BILL_TEXT_REFERENCE          ("bill_text_reference"),
+    BILL_SCRAPE_QUEUE            ("bill_scrape_queue"),
 
     BILL_CHANGE_LOG              ("bill_change_log"),
 

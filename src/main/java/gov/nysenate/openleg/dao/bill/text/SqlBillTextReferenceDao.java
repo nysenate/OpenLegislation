@@ -27,10 +27,9 @@ public class SqlBillTextReferenceDao extends SqlBaseDao implements BillTextRefer
     public void insertBillTextReference(BillTextSpotcheckReference ref) {
         MapSqlParameterSource params = getParams(ref);
         KeyHolder key = new GeneratedKeyHolder();
-        if (jdbcNamed.update(SqlBillTextReferenceQuery.UPDATE_BILL_REFERENCE.getSql(schema()), params, key,new String[] { "id" }) == 0){
-            jdbcNamed.update(SqlBillTextReferenceQuery.INSERT_BILL_TEXT_REFERENCE.getSql(schema()), params, key,new String[] { "id" });
+        if (jdbcNamed.update(SqlBillTextReferenceQuery.UPDATE_BILL_REFERENCE.getSql(schema()), params) == 0){
+            jdbcNamed.update(SqlBillTextReferenceQuery.INSERT_BILL_TEXT_REFERENCE.getSql(schema()), params);
         }
-        jdbcNamed.update(SqlBillTextReferenceQuery.INSERT_BILL_TEXT_REFERENCE.getSql(schema()), params);
     }
 
     @Override
@@ -45,6 +44,13 @@ public class SqlBillTextReferenceDao extends SqlBaseDao implements BillTextRefer
         Range<LocalDateTime> range = Range.closed(start, end);
         addDateTimeRangeParams(params,  range);
         return jdbcNamed.queryForObject(SqlBillTextReferenceQuery.SELECT_BILL_TEXT_RANGE.getSql(schema()), params, new BillRowMapper());
+    }
+    @Override
+    public BillTextSpotcheckReference getMostRecentBillTextReference(LocalDateTime start, LocalDateTime end) {
+        MapSqlParameterSource params = new MapSqlParameterSource();       //not sure if need this or need to change
+        Range<LocalDateTime> range = Range.closed(start, end);
+        addDateTimeRangeParams(params,  range);
+        return jdbcNamed.queryForObject(SqlBillTextReferenceQuery.SELECT_ALL_BILL_TEXT_RANGE.getSql(schema()), params, new BillRowMapper());
     }
 
     @Override
@@ -62,6 +68,21 @@ public class SqlBillTextReferenceDao extends SqlBaseDao implements BillTextRefer
     public BillTextSpotcheckReference getPKBillTextReference(BaseBillId id, LocalDateTime refDateTime) {
         MapSqlParameterSource params = getParams(id, refDateTime);
         return jdbcNamed.queryForObject(SqlBillTextReferenceQuery.SELECT_PK_BILL_TEXT_REFERENCE.getSql(schema()), params, new BillRowMapper());
+    }
+
+    @Override
+    public void addBillToScrapeQueue(BaseBillId id) {
+        MapSqlParameterSource params = getParams(id);
+        jdbcNamed.update(SqlBillTextReferenceQuery.INSERT_SCRAPE_QUEUE.getSql(schema()), params);
+    }
+
+    @Override
+    public List<BaseBillId> getScrapeQueue() {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+
+        return jdbcNamed.query(SqlBillTextReferenceQuery.SELECT_SCRAPE_QUEUE.getSql(schema()), params,
+                (rs, rowNum) ->
+                new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
     }
 
 
@@ -95,6 +116,7 @@ public class SqlBillTextReferenceDao extends SqlBaseDao implements BillTextRefer
         return params;
     }
     /*----------   Bill Row Mapper   -------*/
+
 
     private class BillRowMapper implements RowMapper<BillTextSpotcheckReference>{
         @Override
