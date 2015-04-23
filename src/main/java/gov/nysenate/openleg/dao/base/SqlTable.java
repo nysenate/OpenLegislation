@@ -28,6 +28,8 @@ public enum SqlTable
 
     AGENDA_CHANGE_LOG            ("agenda_change_log"),
 
+    API_REQUEST                  ("request"),
+    API_RESPONSE                 ("response"),
     API_USER                     ("apiuser"),
 
     BILL                         ("bill"),

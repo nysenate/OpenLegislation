@@ -156,8 +156,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
 
         apiUserDao.insertUser(newUser);
         sendRegistrationEmail(newUser);
-        apiUserCache.put(newUser.getApikey(), newUser);
-
         return newUser;
     }
 
