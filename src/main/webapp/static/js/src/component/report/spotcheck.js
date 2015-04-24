@@ -251,7 +251,7 @@ daybreakModule.directive('mismatchDiff', function(){
         template:
         "<span ng-repeat='segment in diff' ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
         "'mismatch-diff-insert': segment.operation=='INSERT', 'mismatch-diff-delete': segment.operation=='DELETE'}\" >" +
-        "{{segment.text}}" +
+        "   <span {{segment.text}}" +
         "</span>"
     };
 });
@@ -400,8 +400,12 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
     }
 
     function getAgendaId(key) {
-        return key.agendaId.year + '-' + key.agendaId.number + ' ' + key.committeeId.name +
-            (key.addendum !== "DEFAULT" ? ('-' + key.addendum) : "");
+        var commNameAndAddendum = ' ' + key.committeeId.name + (key.addendum !== "DEFAULT" ? ('-' + key.addendum) : "");
+        if (key.agendaId.year > 0) {
+            return key.agendaId.year + '-' + key.agendaId.number + commNameAndAddendum;
+        }
+        var dateString = moment(key.agendaId.number).format('l');
+        return dateString + commNameAndAddendum;
     }
 
     var contentTypeUrlMap = {
@@ -421,7 +425,14 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
     }
 
     function getAgendaUrl(key) {
-        return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
+        if (key.agendaId.year > 0) {
+            return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
+        }
+        if (key.agendaId.year == -1) {
+            return "http://open.nysenate.gov/legislation/meeting/" + key.committeeId.name.replace(/[ ,]+/g, '-') + '-' +
+                    moment(key.agendaId.number).format('MM-DD-YYYY');
+        }
+        return "";
     }
 
     $scope.getMismatchDetails = function(mismatchId) {

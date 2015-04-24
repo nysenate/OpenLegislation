@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.agenda.AgendaId;
 
 public class AgendaIdView implements ViewObject
 {
-    private int number;
+    private long number;
     private int year;
 
     public AgendaIdView(AgendaId agendaId) {
@@ -15,7 +15,7 @@ public class AgendaIdView implements ViewObject
         }
     }
 
-    public int getNumber() {
+    public long getNumber() {
         return number;
     }
 

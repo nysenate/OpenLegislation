@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +66,7 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
         logger.info("Checking references...");
         // Check the references to generate observations, which are added to the report
         report.addObservations(getObservations(references));
+        report.setNotes(getNotes());
 
         return report;
     }
@@ -114,11 +115,11 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
 
     /**
      * Retrieves an agenda for the week of the given date
-     * @param weekOf LocalDate
-     * @return Agenda
+     *
+     * @param agendaAlertInfoCommittee@return Agenda
      * @throws AgendaNotFoundEx
      */
-    protected abstract Agenda getAgenda(LocalDate weekOf) throws AgendaNotFoundEx;
+    protected abstract Agenda getAgenda(AgendaAlertInfoCommittee agendaAlertInfoCommittee) throws AgendaNotFoundEx;
 
     /**
      * Marks the given reference as being checked
@@ -126,18 +127,21 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
      */
     protected abstract void setReferenceChecked(AgendaAlertInfoCommittee reference);
 
+    protected String getNotes() {
+        return null;
+    }
+
     /**
      * Given a list of references, performs checks on the corresponding data, generating a list of observations
      * @return List<SpotcheckObservation>
      */
     protected List<SpotCheckObservation<CommitteeAgendaAddendumId>> getObservations(List<AgendaAlertInfoCommittee> references) {
         List<SpotCheckObservation<CommitteeAgendaAddendumId>> observations = new ArrayList<>();
-        int unknownAgendaId = 0;
         for (AgendaAlertInfoCommittee reference : references) {
             Agenda agenda = null;
             try {
                 // Attempt to get the committee meeting info that corresponds to the reference
-                agenda = getAgenda(reference.getWeekOf());
+                agenda = getAgenda(reference);
                 String addendumId = reference.getAddendum().getValue();
                 CommitteeId committeeId = reference.getCommitteeId();
                 if (agenda.getAgendaInfoAddendum(addendumId) == null
@@ -156,9 +160,11 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
                     throw new SpotCheckAbortException();
                 }
                 // Add a missing data observation if the committee meeting info was not found
+                AgendaId obsAgId = agenda != null ? agenda.getId()
+                        : ex.getAgendaId() != null ? ex.getAgendaId()
+                        : new AgendaId(reference.getMeetingDateTime().toLocalDate().atStartOfDay(ZoneId.of("gmt")).toInstant().toEpochMilli(), 0);
                 SpotCheckObservation<CommitteeAgendaAddendumId> obs = new SpotCheckObservation<>(reference.getReferenceId(),
-                        reference.getAgendaAlertInfoCommId()
-                                .getCommiteeAgendaAddendumId(agenda != null ? agenda.getId() : new AgendaId(unknownAgendaId++, 0)));
+                        reference.getAgendaAlertInfoCommId().getCommiteeAgendaAddendumId(obsAgId));
                 obs.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
                         reference.getAgendaAlertInfoCommId().toString(), ""));
                 observations.add(obs);

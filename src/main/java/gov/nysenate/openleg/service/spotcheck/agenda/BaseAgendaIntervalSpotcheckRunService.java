@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.agenda;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
@@ -12,16 +13,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 
-@Service
 public abstract class BaseAgendaIntervalSpotcheckRunService extends BaseAgendaSpotcheckRunService {
 
     private static final Logger logger = LoggerFactory.getLogger(AgendaSpotcheckRunService.class);
-
-    @Autowired
-    AgendaIntervalCheckReportService reportService;
 
     @Autowired
     Environment environment;
@@ -35,4 +33,9 @@ public abstract class BaseAgendaIntervalSpotcheckRunService extends BaseAgendaSp
         }
     }
 
+    @Override
+    protected Range<LocalDateTime> getCheckRange() {
+        LocalDateTime now = LocalDateTime.now();
+        return Range.closed(now.minus(checkRange), now);
+    }
 }

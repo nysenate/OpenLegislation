@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.agenda.reference;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommId;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import org.springframework.dao.DataAccessException;
@@ -46,6 +47,22 @@ public interface AgendaAlertDao {
     List<AgendaAlertInfoCommittee> getUncheckedAgendaAlertReferences(Range<LocalDateTime> dateTimeRange);
 
     /**
+     * Get all Committee meeting references that fall within the given date time range
+     * References with the same meeting date and committee name are merged to match 1.9.2 addendum convention
+     * @param dateTimeRange Range<LocalDateTime>
+     * @return List<AgendaAlertInfoCommittee>
+     */
+    List<AgendaAlertInfoCommittee> getProdAgendaAlertReferences(Range<LocalDateTime> dateTimeRange);
+
+    /**
+     * Get all prod unchecked Committee meeting references that fall within the given date time range
+     * References with the same meeting date and committee name are merged to match 1.9.2 addendum convention
+     * @param dateTimeRange Range<LocalDateTime>
+     * @return List<AgendaAlertInfoCommittee>
+     */
+    List<AgendaAlertInfoCommittee> getProdUncheckedAgendaAlertReferences(Range<LocalDateTime> dateTimeRange);
+
+    /**
      * Insert/update a comittee meeting reference
      * @param aaic AgendaAlertInfoCommittee
      */
@@ -53,4 +70,7 @@ public interface AgendaAlertDao {
 
     /** Sets the reference corresponding to the given id as checked */
     void setAgendaAlertChecked(AgendaAlertInfoCommId agendaAlertId, boolean checked);
+
+    /** Sets all references with the given committee id and meeting time as prod checked */
+    void setAgendaAlertProdChecked(AgendaAlertInfoCommittee alertInfoCommittee, boolean checked);
 }

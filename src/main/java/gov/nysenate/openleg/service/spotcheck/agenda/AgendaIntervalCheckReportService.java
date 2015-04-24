@@ -9,7 +9,6 @@ import gov.nysenate.openleg.service.agenda.data.CachedAgendaDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,10 +29,11 @@ public class AgendaIntervalCheckReportService extends BaseAgendaCheckReportServi
         return references;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param agendaAlertInfoCommittee*/
     @Override
-    protected Agenda getAgenda(LocalDate weekOf) throws AgendaNotFoundEx {
-        return agendaDataService.getAgenda(weekOf);
+    protected Agenda getAgenda(AgendaAlertInfoCommittee agendaAlertInfoCommittee) throws AgendaNotFoundEx {
+        return agendaDataService.getAgenda(agendaAlertInfoCommittee.getWeekOf());
     }
 
     /** {@inheritDoc} */

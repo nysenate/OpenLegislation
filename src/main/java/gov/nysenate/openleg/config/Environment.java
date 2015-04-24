@@ -111,6 +111,9 @@ public class Environment
     /** The domain and the context path of the application */
     @Value ("${domain.url}") private String url;
 
+    /** The domain and context path for the 1.9.2 prod server */
+    @Value ("${old.prod.url}") private String oldProdUrl;
+
     /** --- Constructors --- */
 
     public Environment() {}
@@ -336,5 +339,13 @@ public class Environment
 
     public void setSpotcheckAlertGracePeriod(Duration spotcheckAlertGracePeriod) {
         this.spotcheckAlertGracePeriod = spotcheckAlertGracePeriod;
+    }
+
+    public String getOldProdUrl() {
+        return oldProdUrl;
+    }
+
+    public void setOldProdUrl(String oldProdUrl) {
+        this.oldProdUrl = oldProdUrl;
     }
 }

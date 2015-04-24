@@ -17,7 +17,7 @@ public class CommitteeAgendaReportDao extends AbstractSpotCheckReportDao<Committ
     public CommitteeAgendaAddendumId getKeyFromMap(Map<String, String> keyMap) {
         return new CommitteeAgendaAddendumId(
                 new AgendaId(
-                        Integer.parseInt(keyMap.get("agenda_no")),
+                        Long.parseLong(keyMap.get("agenda_no")),
                         Integer.parseInt(keyMap.get("year"))
                 ),
                 new CommitteeId(

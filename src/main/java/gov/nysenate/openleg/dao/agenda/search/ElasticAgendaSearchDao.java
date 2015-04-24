@@ -88,7 +88,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     @Override
     public void deleteAgendaFromIndex(AgendaId agendaId) {
         if (agendaId != null) {
-            deleteEntry(agendaIndexName, Integer.toString(agendaId.getYear()), Integer.toString(agendaId.getNumber()));
+            deleteEntry(agendaIndexName, Integer.toString(agendaId.getYear()), Long.toString(agendaId.getNumber()));
         }
     }
 
