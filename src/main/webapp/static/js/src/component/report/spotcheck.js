@@ -250,9 +250,24 @@ daybreakModule.directive('mismatchDiff', function(){
         },
         template:
         "<span ng-repeat='segment in diff' ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
-        "'mismatch-diff-insert': segment.operation=='INSERT', 'mismatch-diff-delete': segment.operation=='DELETE'}\" >" +
-        "   <span {{segment.text}}" +
-        "</span>"
+        "       'mismatch-diff-insert': segment.operation=='INSERT', " +
+        "       'mismatch-diff-delete': segment.operation=='DELETE'}\" >" +
+        "   {{segment.text}}" +
+        //"   <span ng-if=\"segment.operation=='EQUAL'\" ng-bind='segment.text'></span>" +
+        //"   <span ng-if=\"segment.operation!='EQUAL'\" ng-repeat='subsegment in spaceSplit(segment.text) track by $index'" +
+        //"           ng-bind='subsegment'" +
+        //"           ng-class=\"{'mismatch-diff-insert-space': segment.operation=='INSERT' && containsSpace(subsegment)," +
+        //"                       'mismatch-diff-delete-space': segment.operation=='DELETE' && containsSpace(subsegment)}\">" +
+        //"   </span>" +
+        "</span>",
+        controller: function ($scope) {
+            $scope.spaceSplit = function(text) {
+                return text.split(/(\s+)/);
+            };
+            $scope.containsSpace = function(text) {
+                return /\s+/.test(text);
+            };
+        }
     };
 });
 
