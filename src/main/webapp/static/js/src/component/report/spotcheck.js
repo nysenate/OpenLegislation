@@ -62,7 +62,7 @@ daybreakModule.filter('contentType', function() {
         LBDC_ACTIVE_LIST: "Active List",
         LBDC_AGENDA_ALERT: "Agenda",
         LBDC_DAYBREAK: "Bill",
-        LBDC_FLOOR_CALENDAR: "Floor Cal",
+        LBDC_CALENDAR_ALERT: "Floor Cal",
         LBDC_SCRAPED_BILL: "Bill"
     };
     return function(reportType) {
@@ -250,9 +250,24 @@ daybreakModule.directive('mismatchDiff', function(){
         },
         template:
         "<span ng-repeat='segment in diff' ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
-        "'mismatch-diff-insert': segment.operation=='INSERT', 'mismatch-diff-delete': segment.operation=='DELETE'}\" >" +
-        "{{segment.text}}" +
-        "</span>"
+        "       'mismatch-diff-insert': segment.operation=='INSERT', " +
+        "       'mismatch-diff-delete': segment.operation=='DELETE'}\" >" +
+        "   {{segment.text}}" +
+        //"   <span ng-if=\"segment.operation=='EQUAL'\" ng-bind='segment.text'></span>" +
+        //"   <span ng-if=\"segment.operation!='EQUAL'\" ng-repeat='subsegment in spaceSplit(segment.text) track by $index'" +
+        //"           ng-bind='subsegment'" +
+        //"           ng-class=\"{'mismatch-diff-insert-space': segment.operation=='INSERT' && containsSpace(subsegment)," +
+        //"                       'mismatch-diff-delete-space': segment.operation=='DELETE' && containsSpace(subsegment)}\">" +
+        //"   </span>" +
+        "</span>",
+        controller: function ($scope) {
+            $scope.spaceSplit = function(text) {
+                return text.split(/(\s+)/);
+            };
+            $scope.containsSpace = function(text) {
+                return /\s+/.test(text);
+            };
+        }
     };
 });
 
@@ -386,7 +401,8 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
     var contentTypeIdMap = {
         LBDC_DAYBREAK: getBillId,
         LBDC_SCRAPED_BILL: getBillId,
-        LBDC_AGENDA_ALERT: getAgendaId
+        LBDC_AGENDA_ALERT: getAgendaId,
+        LBDC_CALENDAR_ALERT: getCalendarId
     };
     $scope.getContentId = function(reportType, key) {
         if (contentTypeIdMap.hasOwnProperty(reportType)) {
@@ -400,14 +416,23 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
     }
 
     function getAgendaId(key) {
-        return key.agendaId.year + '-' + key.agendaId.number + ' ' + key.committeeId.name +
-            (key.addendum !== "DEFAULT" ? ('-' + key.addendum) : "");
+        var commNameAndAddendum = ' ' + key.committeeId.name + (key.addendum !== "DEFAULT" ? ('-' + key.addendum) : "");
+        if (key.agendaId.year > 0) {
+            return key.agendaId.year + '-' + key.agendaId.number + commNameAndAddendum;
+        }
+        var dateString = moment(key.agendaId.number).format('l');
+        return dateString + commNameAndAddendum;
+    }
+
+    function getCalendarId(key) {
+        return key.calNo + ', ' + key.year;
     }
 
     var contentTypeUrlMap = {
         LBDC_DAYBREAK: getBillUrl,
         LBDC_SCRAPED_BILL: getBillUrl,
-        LBDC_AGENDA_ALERT: getAgendaUrl
+        LBDC_AGENDA_ALERT: getAgendaUrl,
+        LBDC_CALENDAR_ALERT: getCalendarUrl
     };
     $scope.getContentUrl = function(reportType, key) {
         if (contentTypeUrlMap.hasOwnProperty(reportType)) {
@@ -421,7 +446,18 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
     }
 
     function getAgendaUrl(key) {
-        return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
+        if (key.agendaId.year > 0) {
+            return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
+        }
+        if (key.agendaId.year == -1) {
+            return "http://open.nysenate.gov/legislation/meeting/" + key.committeeId.name.replace(/[ ,]+/g, '-') + '-' +
+                    moment(key.agendaId.number).format('MM-DD-YYYY');
+        }
+        return "";
+    }
+
+    function getCalendarUrl(key) {
+        return ctxPath + "/calendars/" +  key.year + "/" + key.calNo;
     }
 
     $scope.getMismatchDetails = function(mismatchId) {

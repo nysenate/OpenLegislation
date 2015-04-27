@@ -222,4 +222,9 @@ slack.notification.line.limit = 5
 # --- Domain Configuration ----------------------------------------------------
 
 # The domain url and context path that openleg is hosted on (used for generating links)
+# do not use a trailing slash
 domain.url = http://localhost:8080/legislation
+
+# The url for the 1.9.2 prod server (default http://open.nysenate.gov/legislation)
+# do not use a trailing slash
+old.prod.url = http://open.nysenate.gov/legislation

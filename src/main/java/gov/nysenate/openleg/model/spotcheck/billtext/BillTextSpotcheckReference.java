@@ -77,6 +77,10 @@ public class BillTextSpotcheckReference{
         this.printNo = printNo;
     }
 
+    public BaseBillId getBaseBillId(){
+        return new BaseBillId(printNo, sessionYear);
+    }
+
     public String getText() {
         return text;
     }

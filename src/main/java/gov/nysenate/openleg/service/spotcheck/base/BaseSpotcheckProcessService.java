@@ -6,19 +6,17 @@ import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckAbortException;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import gov.nysenate.openleg.processor.base.ProcessService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 
-public abstract class BaseSpotcheckRunService<ContentId> implements SpotcheckRunService<ContentId>
+public abstract class BaseSpotcheckProcessService<ContentId> implements ProcessService
 {
-
-    private static final Logger logger = LoggerFactory.getLogger(BaseSpotcheckRunService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseSpotcheckProcessService.class);
 
     @Autowired
     private EventBus eventBus;
@@ -26,18 +24,9 @@ public abstract class BaseSpotcheckRunService<ContentId> implements SpotcheckRun
     @Autowired
     private Environment env;
 
-    /** {@inheritDoc} */
-    @Override
-    public List<SpotCheckReport<ContentId>> generateReports() {
-        try {
-            return doGenerateReports();
-        } catch (Exception ex) {
-            handleSpotcheckException(ex);
-            return Collections.emptyList();
-        }
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int collate() {
         try {
@@ -48,20 +37,35 @@ public abstract class BaseSpotcheckRunService<ContentId> implements SpotcheckRun
         }
     }
 
-    /** --- Internal Methods --- */
-
-    /**
-     * @see #generateReports()
-     */
-    protected abstract List<SpotCheckReport<ContentId>> doGenerateReports() throws Exception;
-
     /**
      * @see #collate()
      */
     protected abstract int doCollate() throws Exception;
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int ingest() {
+        try {
+            return doIngest();
+        } catch (Exception ex) {
+            handleSpotcheckException(ex);
+            return 0;
+        }
+    }
+
+    /**
+     * @see #ingest()
+     */
+    protected abstract int doIngest() throws Exception;
+
+
+    /** --- Internal Methods --- */
+
+    /**
      * Sends out a notification reporting the given spotcheck exception
+     *
      * @param ex Exception - an exception that was raised during a spotcheck action
      */
     private void handleSpotcheckException(Exception ex) {
@@ -72,18 +76,19 @@ public abstract class BaseSpotcheckRunService<ContentId> implements SpotcheckRun
                     LocalDateTime.now(),
                     "Spotcheck Error: " + ExceptionUtils.getStackFrames(ex)[0],
                     "An error occurred while running a spotcheck report at " + LocalDateTime.now() + ":\n" +
-                            ExceptionUtils.getStackTrace(ex)
+                    ExceptionUtils.getStackTrace(ex)
             ));
         }
     }
 
     /**
      * Generates and sends a notification for a new daybreak spotcheck report
+     *
      * @param daybreakReport SpotCheckReport<BaseBillId>
      */
     protected void spotcheckCompleteNotification(SpotCheckReport<ContentId> daybreakReport) {
         String summary = "New " + daybreakReport.getReportId().getReferenceType() +
-                " spotcheck report: " + daybreakReport.getReportDateTime();
+                         " spotcheck report: " + daybreakReport.getReportDateTime();
 
         StringBuilder messageBuilder = new StringBuilder();
 
@@ -103,11 +108,11 @@ public abstract class BaseSpotcheckRunService<ContentId> implements SpotcheckRun
             long totalTypeCounts = typeCounts.values().stream().reduce(0L, (a, b) -> a + b);
             messageBuilder.append(status).append(": ").append(totalTypeCounts).append("\n");
             typeCounts.forEach((type, count) ->
-                    messageBuilder.append("\t").append(type).append(": ").append(count).append("\n"));
+                                       messageBuilder.append("\t").append(type).append(": ").append(count).append("\n"));
         });
 
         Notification notification = new Notification(NotificationType.SPOTCHECK, daybreakReport.getReportDateTime(),
-                summary, messageBuilder.toString());
+                                                     summary, messageBuilder.toString());
 
         eventBus.post(notification);
     }

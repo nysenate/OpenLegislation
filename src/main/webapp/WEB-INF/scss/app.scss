@@ -1074,11 +1074,11 @@ table.report-detail-table tbody tr td {
 }
 
 .mismatch-diff-insert {
-  color: green;
+  background-color: #99ff99;
 }
 
 .mismatch-diff-delete {
-  color: red;
+  background-color: #ff8888;
 }
 
 .mismatch-dialog {

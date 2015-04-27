@@ -13,12 +13,17 @@ public class AgendaId implements Serializable, Comparable<AgendaId>
     private static final long serialVersionUID = -8234649498537551140L;
 
     /** The agenda's calendar number. Starts at 1 at the beginning of each calendar year. */
-    private int number;
+    private long number;
 
     /** The year this agenda was active in. */
     private int year;
 
     /** --- Constructors --- */
+
+    public AgendaId(Long number, int year) {
+        this.number = number;
+        this.year = year;
+    }
 
     public AgendaId(Integer number, int year) {
         this.number = number;
@@ -56,7 +61,7 @@ public class AgendaId implements Serializable, Comparable<AgendaId>
 
     /** --- Basic Getters/Setters --- */
 
-    public Integer getNumber() {
+    public Long getNumber() {
         return number;
     }
 

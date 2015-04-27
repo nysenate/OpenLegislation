@@ -6,25 +6,20 @@ import gov.nysenate.openleg.dao.calendar.alert.SqlFsCalendarAlertFileDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckRunService;
-import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @Service
-public class CalendarSpotCheckRunService extends BaseSpotcheckRunService<CalendarId> {
+public class CalendarSpotCheckProcessService extends BaseSpotcheckProcessService<CalendarId> {
 
-    private Logger logger = LoggerFactory.getLogger(CalendarSpotCheckRunService.class);
+    private Logger logger = LoggerFactory.getLogger(CalendarSpotCheckProcessService.class);
 
     @Autowired
     private ActiveListAlertCheckMailService activeListMailService;
@@ -41,32 +36,9 @@ public class CalendarSpotCheckRunService extends BaseSpotcheckRunService<Calenda
     @Autowired
     private CalendarAlertProcessor processor;
 
-    @Autowired
-    private CalendarReportService reportService;
-
-    @Override
-    protected List<SpotCheckReport<CalendarId>> doGenerateReports() throws Exception {
-        logger.info("Running a Calendar spotcheck report");
-        try {
-            SpotCheckReport<CalendarId> report = reportService.generateReport(DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now());
-            reportService.saveReport(report);
-            return Collections.singletonList(report);
-        }
-        catch (ReferenceDataNotFoundEx e) {
-            logger.info("No reports generated: {}", e);
-        }
-        return Collections.emptyList();
-    }
-
     @Override
     protected int doCollate() throws Exception {
         int newAlerts = activeListMailService.checkMail() + supplementalMailService.checkMail();
-        archiveFiles();
-        parseFiles();
-        return newAlerts;
-    }
-
-    private void archiveFiles() throws IOException {
         List<CalendarAlertFile> incomingFiles = fileDao.getIncomingCalendarAlerts();
         for (CalendarAlertFile file : incomingFiles) {
             logger.info("archiving file " + file.getFile().getName());
@@ -74,20 +46,29 @@ public class CalendarSpotCheckRunService extends BaseSpotcheckRunService<Calenda
             file = fileDao.archiveCalendarAlertFile(file);
             fileDao.updateCalendarAlertFile(file);
         }
+        return newAlerts;
     }
 
-    private void parseFiles() {
+    @Override
+    protected int doIngest() throws Exception {
+        int processedCount = 0;
         List<CalendarAlertFile> files = fileDao.getPendingCalendarAlertFiles(LimitOffset.THOUSAND);
         logger.info("Processing " + files.size() + " files.");
         for (CalendarAlertFile file : files) {
             logger.info("Processing calendar from file: " + file.getFile().getName());
             Calendar calendar = processor.process(file.getFile());
-            file.setProcessedCount(file.getProcessedCount() + 1);
-            file.setProcessedDateTime(LocalDateTime.now());
-            file.setPendingProcessing(false);
-            fileDao.updateCalendarAlertFile(file);
+            updateCalendarFile(file);
             calendarAlertDao.updateCalendar(calendar, file);
+            processedCount++;
         }
+        return processedCount;
+    }
+
+    private void updateCalendarFile(CalendarAlertFile file) {
+        file.setProcessedCount(file.getProcessedCount() + 1);
+        file.setProcessedDateTime(LocalDateTime.now());
+        file.setPendingProcessing(false);
+        fileDao.updateCalendarAlertFile(file);
     }
 
     @Override

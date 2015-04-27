@@ -2,7 +2,7 @@ package gov.nysenate.openleg.script;
 
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakCheckMailService;
-import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakSpotcheckRunService;
+import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakSpotcheckProcessService;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ public class SpotCheckCLI extends BaseScript
     private static final Logger logger = LoggerFactory.getLogger(SpotCheckCLI.class);
 
     @Autowired
-    protected DaybreakSpotcheckRunService spotcheckRunService;
+    protected DaybreakSpotcheckProcessService spotcheckRunService;
 
     @Autowired
     protected DaybreakCheckMailService checkMailService;
@@ -61,10 +61,10 @@ public class SpotCheckCLI extends BaseScript
                 daybreakProcessService.ingest();
             }
             if (report) {
-                spotcheckRunService.generateReports();
+                // TODO: call report running implementation
             }
         } else {
-            spotcheckRunService.runSpotcheck();
+            // TODO: call report running implementation
         }
     }
 }

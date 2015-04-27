@@ -9,9 +9,13 @@ public class AgendaNotFoundEx extends RuntimeException
     private AgendaId agendaId;
     private LocalDate weekOf;
 
-    public AgendaNotFoundEx(AgendaId agendaId) {
-        super("The agenda with id " + agendaId + " could not be found.");
+    public AgendaNotFoundEx(AgendaId agendaId, Throwable cause) {
+        super("The agenda with id " + agendaId + " could not be found.", cause);
         this.agendaId = agendaId;
+    }
+
+    public AgendaNotFoundEx(AgendaId agendaId) {
+        this(agendaId, null);
     }
 
     public AgendaNotFoundEx(LocalDate weekOf) {
@@ -20,6 +24,10 @@ public class AgendaNotFoundEx extends RuntimeException
 
     public AgendaNotFoundEx(String message) {
         super(message);
+    }
+
+    public AgendaNotFoundEx(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public AgendaId getAgendaId() {

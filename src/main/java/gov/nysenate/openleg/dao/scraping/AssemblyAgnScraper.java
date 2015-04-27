@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.dao.scraping;
 
-import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -16,9 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
 
 /**
  * Created by kyle on 11/10/14.
@@ -79,7 +77,7 @@ public class AssemblyAgnScraper extends LRSScraper {
     }
 
     @Override
-    public List<File> scrape(String billType, String billNo, SessionYear sessionYear) throws IOException {
+    public List<File> scrape(BaseBillId id) throws IOException {
         return null;
     }
 }

@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
 @Service
 public class AgendaSpotCheckService
@@ -78,7 +79,7 @@ public class AgendaSpotCheckService
 
     private void checkChair(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
                             AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
-        if (!StringUtils.equals(content.getChair(), reference.getChair())) {
+        if (!StringUtils.equals(trim(content.getChair()), trim(reference.getChair()))) {
             obs.addMismatch(new SpotCheckMismatch(AGENDA_CHAIR, reference.getChair(), content.getChair()));
         }
     }
@@ -94,14 +95,14 @@ public class AgendaSpotCheckService
 
     private void checkLocation(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
                                AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
-        if (!StringUtils.equals(content.getLocation(), reference.getLocation())) {
+        if (!StringUtils.equals(trim(content.getLocation()), trim(reference.getLocation()))) {
             obs.addMismatch(new SpotCheckMismatch(AGENDA_LOCATION, reference.getLocation(), content.getLocation()));
         }
     }
 
     private void checkNotes(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
                             AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
-        if (!StringUtils.equals(content.getNotes(), reference.getNotes())) {
+        if (!StringUtils.equals(trim(content.getNotes()), trim(reference.getNotes()))) {
             obs.addMismatch(new SpotCheckMismatch(AGENDA_NOTES, reference.getNotes(), content.getNotes()));
         }
     }

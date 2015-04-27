@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.spotcheck.billtext;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.text.SqlBillTextReferenceDao;
+import gov.nysenate.openleg.dao.spotcheck.BaseBillIdSpotCheckReportDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -10,11 +11,13 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
+import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.ScrapedBillMemoParser;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -40,7 +43,10 @@ public class BillTextCheckReportService implements SpotCheckReportService<BaseBi
     SqlBillTextReferenceDao dao;
     @Autowired
     BillDataService billDataService;
-
+    @Autowired
+    BaseBillIdSpotCheckReportDao reportDao;
+    @Autowired
+    BillTextCheckService billTextCheckService;
 
     @PostConstruct
     public void init() throws IOException{
@@ -51,73 +57,54 @@ public class BillTextCheckReportService implements SpotCheckReportService<BaseBi
         return SpotCheckRefType.LBDC_SCRAPED_BILL;
     }
 
-    public void scrapeStuff(String billType, String billNo, int session) throws IOException{
-        SessionYear sessionYear = new SessionYear(session);
-
-        List<File> textFileList = scraper.scrape(billType, billNo, sessionYear);
-        String printNo = billType + billNo;
-
-        //bill and memo parsed from file they're scraped into, retrieves amendment from memo parser
-        String billText = scrapedBillTextParser.getBillText(textFileList.get(0), billType);
-        String memoText = scrapedBillMemoParser.getBillMemoText(textFileList.get(1));
-        String amendment = scrapedBillMemoParser.getAmendment();
-        BillTextSpotcheckReference b =
-                new BillTextSpotcheckReference(printNo, sessionYear, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
-                billText, memoText, Version.of(amendment));
-
-        //adds reference to db
-        addToDatabase(b);
-
+    @Override
+    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
+        BillTextSpotcheckReference b;
+        try {
+            b = dao.getMostRecentBillTextReference(start, end);
+        }catch(EmptyResultDataAccessException ex){
+            return null;
+        }
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
-
-        //Gets bill from openleg processed info
-        Bill bill = billDataService.getBill(new BaseBillId(b.getPrintNo(), b.getSessionYear()));
         report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_SCRAPED_BILL,
                 b.getReferenceDate().truncatedTo(ChronoUnit.SECONDS),
                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
+        report.setNotes(b.getBaseBillId().toString());
 
-        report.addObservation(billTextObservation(b, bill));
-
-
-    }
-    public SpotCheckObservation<BaseBillId> billTextObservation(BillTextSpotcheckReference b, Bill bill){
-
-
-        for (int i = 0; i< 10; i++){
-
+        //Gets bill from openleg processed info
+        try {
+            Bill bill = billDataService.getBill(new BaseBillId(b.getPrintNo(), b.getSessionYear()));
+            report.addObservation(billTextCheckService.check(bill, b));
+        }catch(BillNotFoundEx e){
+            SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(b.getReferenceId(),
+                    new BaseBillId(b.getPrintNo(), b.getSessionYear()));
+            ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, b.getBaseBillId().toString(), ""));
+            report.addObservation(ob);
         }
-        ////////////////
-        SpotCheckReferenceId refId = new SpotCheckReferenceId(SpotCheckRefType.LBDC_SCRAPED_BILL, b.getReferenceDate());
-        SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(refId, bill.getBaseBillId());
-        ///////////
-        SpotCheckMismatch mismatch = new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT, b.getText(), bill.getFullText());
-        sourceMissingObs.addMismatch(mismatch);
-
-        return sourceMissingObs;
-    }
-
-    public void addToDatabase(BillTextSpotcheckReference ref){
-        dao.insertBillTextReference(ref);
-    }
-
-    @Override
-    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        return null;
+        return report;
     }
 
     @Override
     public void saveReport(SpotCheckReport<BaseBillId> report) {
-
+        reportDao.saveReport(report);
     }
 
     @Override
     public SpotCheckReport<BaseBillId> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx {
-        return null;
+        if (reportId == null) {
+            throw new IllegalArgumentException("Supplied reportId cannot be null");
+        }
+        try {
+            return reportDao.getReport(reportId);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new SpotCheckReportNotFoundEx(reportId);
+        }
+
     }
 
     @Override
     public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
-        return Collections.emptyList();
+        return reportDao.getReportIds(SpotCheckRefType.LBDC_SCRAPED_BILL, start, end, dateOrder, limOff);
     }
 
     @Override
@@ -125,7 +112,7 @@ public class BillTextCheckReportService implements SpotCheckReportService<BaseBi
         if (reportId == null) {
             throw new IllegalArgumentException("Supplied reportId to delete cannot be null");
         }
-        ////////////////////////////////////////////////////dao.deleteBillTextReference(reportId);
 
+        reportDao.deleteReport(reportId);
     }
 }

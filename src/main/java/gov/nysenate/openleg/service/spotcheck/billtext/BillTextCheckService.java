@@ -63,7 +63,6 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         return observation;
     }
 
-
     public void checkBillText(Bill bill, BillTextSpotcheckReference reference, SpotCheckObservation<BaseBillId> obsrv){
         if (!stringEquals(reference.getText(), bill.getFullText(), false, true)){
             obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT, reference.getText(), bill.getFullText()));

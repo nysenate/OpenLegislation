@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.agenda.reference;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Range;
 import com.google.common.io.Files;
 import gov.nysenate.openleg.config.Environment;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -121,6 +123,20 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
         return rowHandler.getAlertInfoCommittees();
     }
 
+    @Override
+    public List<AgendaAlertInfoCommittee> getProdUncheckedAgendaAlertReferences(Range<LocalDateTime> dateTimeRange) {
+        AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
+        jdbcNamed.query(SELECT_PROD_UNCHECKED_IN_RANGE.getSql(schema()), getDateTimeRangeParams(dateTimeRange), rowHandler);
+        return groupAlertInfoCommittees(rowHandler.getAlertInfoCommittees());
+    }
+
+    @Override
+    public List<AgendaAlertInfoCommittee> getProdAgendaAlertReferences(Range<LocalDateTime> dateTimeRange) {
+        AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
+        jdbcNamed.query(SELECT_IN_RANGE.getSql(schema()), getDateTimeRangeParams(dateTimeRange), rowHandler);
+        return groupAlertInfoCommittees(rowHandler.getAlertInfoCommittees());
+    }
+
     /** {@inheritDoc} */
     @Override
     public void updateAgendaAlertInfoCommittee(AgendaAlertInfoCommittee aaic) {
@@ -128,7 +144,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamed.update(INSERT_INFO_COMMITTEE.getSql(schema()), getAgendaAlertInfoCommParams(aaic),
-                            keyHolder, new String[]{"id"});
+                keyHolder, new String[]{"id"});
 
         aaic.getItems().forEach(item -> insertAAICItem(item, keyHolder.getKey().intValue()));
     }
@@ -139,6 +155,14 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
         MapSqlParameterSource params = getAgendaAlertInfoCommIdParams(agendaAlertId);
         params.addValue("checked", checked);
         jdbcNamed.update(SET_INFO_COMMITTEE_CHECKED.getSql(schema()), params);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setAgendaAlertProdChecked(AgendaAlertInfoCommittee alertInfoCommittee, boolean checked) {
+        MapSqlParameterSource params = getAgendaAlertInfoCommParams(alertInfoCommittee)
+                .addValue("checked", checked);
+        jdbcNamed.update(SET_MEETING_PROD_CHECKED.getSql(schema()), params);
     }
 
     /** --- Internal Methods --- */
@@ -158,6 +182,21 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
      */
     private void insertAAICItem(AgendaInfoCommitteeItem aici, int aaicId) {
         jdbcNamed.update(INSERT_INFO_COMMITTEE_ITEM.getSql(schema()), getAgendaInfoCommItemParams(aici, aaicId));
+    }
+
+    private List<AgendaAlertInfoCommittee> groupAlertInfoCommittees(List<AgendaAlertInfoCommittee> alertInfoCommittees) {
+        Map<CommitteeId, ArrayListMultimap<LocalDate, AgendaAlertInfoCommittee>> aaicMap = new HashMap<>();
+        alertInfoCommittees.forEach(aaic -> {
+            if (!aaicMap.containsKey(aaic.getCommitteeId())) {
+                aaicMap.put(aaic.getCommitteeId(), ArrayListMultimap.create());
+            }
+            aaicMap.get(aaic.getCommitteeId()).put(aaic.getMeetingDateTime().toLocalDate(), aaic);
+        });
+        return aaicMap.values().stream()
+                .flatMap(multiMap -> multiMap.keySet().stream().map(multiMap::get))
+                .filter(aaicList -> !aaicList.isEmpty())
+                .map(aaicList -> aaicList.stream().reduce(null, AgendaAlertInfoCommittee::merge))
+                .collect(Collectors.toList());
     }
 
     /** --- Row Mappers --- */

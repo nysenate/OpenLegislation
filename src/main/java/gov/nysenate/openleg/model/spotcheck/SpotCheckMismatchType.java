@@ -23,6 +23,7 @@ public enum SpotCheckMismatchType
     BILL_COSPONSOR("Co Sponsor"),
     BILL_FULLTEXT_PAGE_COUNT("Page Count"),
     BILL_FULL_TEXT("Full Text"),
+    BILL_FULL_TEXT_NORMALIZAED("Full Text Normalized Spaces"),
     BILL_LAW_CODE("Law Code"),
     BILL_LAW_CODE_SUMMARY("Law/Summary"),
     BILL_LAW_SECTION("Law Section"),

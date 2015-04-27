@@ -20,14 +20,17 @@ public class AgendaAlertProcessor {
     @Autowired
     private AgendaAlertDao agendaAlertDao;
 
-    public void processAgendaAlerts() throws ParseError, IOException {
+    public int processAgendaAlerts() throws ParseError, IOException {
+        int processedCount = 0;
         for (File alertFile : agendaAlertDao.getIncomingAgendaAlerts()) {
             logger.info("processing agenda alert {}", alertFile.getName());
             List<AgendaAlertInfoCommittee> references = AgendaAlertParser.parseAgendaAlert(alertFile);
             references.forEach(agendaAlertDao::updateAgendaAlertInfoCommittee);
             logger.info("archiving agenda alert {}", alertFile.getName());
             agendaAlertDao.archiveAgendaAlert(alertFile);
+            processedCount++;
         }
+        return processedCount;
     }
 
 }
