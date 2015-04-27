@@ -117,16 +117,16 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
 
     /** {@inheritDoc} */
     @Override
-    public List<AgendaAlertInfoCommittee> getUncheckedAgendaAlertReferences(Range<LocalDateTime> dateTimeRange) {
+    public List<AgendaAlertInfoCommittee> getUncheckedAgendaAlertReferences() {
         AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
-        jdbcNamed.query(SELECT_UNCHECKED_IN_RANGE.getSql(schema()), getDateTimeRangeParams(dateTimeRange), rowHandler);
+        jdbcNamed.query(SELECT_UNCHECKED.getSql(schema()), rowHandler);
         return rowHandler.getAlertInfoCommittees();
     }
 
     @Override
-    public List<AgendaAlertInfoCommittee> getProdUncheckedAgendaAlertReferences(Range<LocalDateTime> dateTimeRange) {
+    public List<AgendaAlertInfoCommittee> getProdUncheckedAgendaAlertReferences() {
         AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
-        jdbcNamed.query(SELECT_PROD_UNCHECKED_IN_RANGE.getSql(schema()), getDateTimeRangeParams(dateTimeRange), rowHandler);
+        jdbcNamed.query(SELECT_PROD_UNCHECKED.getSql(schema()), rowHandler);
         return groupAlertInfoCommittees(rowHandler.getAlertInfoCommittees());
     }
 

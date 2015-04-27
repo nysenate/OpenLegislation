@@ -41,10 +41,9 @@ public interface AgendaAlertDao {
 
     /**
      * Get all unchecked Committee meeting references that fall within the given date time range
-     * @param dateTimeRange Range<LocalDateTime>
      * @return List<AgendaAlertInfoCommittee>
      */
-    List<AgendaAlertInfoCommittee> getUncheckedAgendaAlertReferences(Range<LocalDateTime> dateTimeRange);
+    List<AgendaAlertInfoCommittee> getUncheckedAgendaAlertReferences();
 
     /**
      * Get all Committee meeting references that fall within the given date time range
@@ -57,10 +56,9 @@ public interface AgendaAlertDao {
     /**
      * Get all prod unchecked Committee meeting references that fall within the given date time range
      * References with the same meeting date and committee name are merged to match 1.9.2 addendum convention
-     * @param dateTimeRange Range<LocalDateTime>
      * @return List<AgendaAlertInfoCommittee>
      */
-    List<AgendaAlertInfoCommittee> getProdUncheckedAgendaAlertReferences(Range<LocalDateTime> dateTimeRange);
+    List<AgendaAlertInfoCommittee> getProdUncheckedAgendaAlertReferences();
 
     /**
      * Insert/update a comittee meeting reference

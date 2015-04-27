@@ -6,6 +6,7 @@ import gov.nysenate.openleg.dao.calendar.alert.SqlFsCalendarAlertFileDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
 import org.slf4j.Logger;
@@ -69,6 +70,11 @@ public class CalendarSpotCheckProcessService extends BaseSpotcheckProcessService
         file.setProcessedDateTime(LocalDateTime.now());
         file.setPendingProcessing(false);
         fileDao.updateCalendarAlertFile(file);
+    }
+
+    @Override
+    protected SpotCheckRefType getRefType() {
+        return SpotCheckRefType.LBDC_CALENDAR_ALERT;
     }
 
     @Override

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.spotcheck.billtext;
 import gov.nysenate.openleg.dao.bill.text.SqlBillTextReferenceDao;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.ScrapedBillMemoParser;
@@ -33,7 +34,7 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
     @Autowired
     ScrapedBillTextParser scrapedBillTextParser;
     @Autowired
-    BillTextCheckReportService reportService;
+    BillTextReportService reportService;
 
     private static final Logger logger = LoggerFactory.getLogger(BillTextSpotcheckProcessService.class);
 
@@ -65,6 +66,11 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
     @Override
     public int doIngest() throws Exception {
         return 0;
+    }
+
+    @Override
+    protected SpotCheckRefType getRefType() {
+        return SpotCheckRefType.LBDC_SCRAPED_BILL;
     }
 
     @Override

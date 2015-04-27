@@ -14,6 +14,7 @@ import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
 import gov.nysenate.openleg.service.spotcheck.agenda.AgendaSpotcheckProcessService;
+import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,8 @@ public class DataProcessor
 
     @Autowired private AgendaSpotcheckProcessService agendaSpotcheckProcessService;
 
+    @Autowired private List<BaseSpotcheckProcessService> spotcheckProcessServices;
+
     private List<ProcessService> processServices;
 
     /** Hold a reference to the current data process run instance for event-based logging purposes. */
@@ -58,6 +61,7 @@ public class DataProcessor
             .add(publicHearingProcessService)
             .add(lawProcessService)
             .add(agendaSpotcheckProcessService)
+            .addAll(spotcheckProcessServices)
             .build();
     }
 

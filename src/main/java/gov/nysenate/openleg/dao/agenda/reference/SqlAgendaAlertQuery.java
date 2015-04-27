@@ -19,19 +19,21 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
         SELECT_INFO_COMMITTEE.sql + "\n" +
         "WHERE reference_date_time BETWEEN :startDateTime AND :endDateTime"
     ),
-    SELECT_UNCHECKED_IN_RANGE(
-        SELECT_IN_RANGE.sql + " AND checked = FALSE"
+    SELECT_UNCHECKED(
+        SELECT_INFO_COMMITTEE.sql + "\n" +
+        "WHERE checked = FALSE"
     ),
-    SELECT_PROD_UNCHECKED_IN_RANGE(
+    SELECT_PROD_UNCHECKED(
         SELECT_INFO_COMMITTEE.sql + "\n" +
         "WHERE prod_checked = FALSE\n" +
         "UNION\n" +
         "SELECT aaic_checked.*, aaici.*\n" +
         "   FROM master.agenda_alert_info_committee aaic\n" +
         "   JOIN master.agenda_alert_info_committee aaic_checked\n" +
-        "       ON aaic.meeting_date_time = aaic_checked.meeting_date_time\n" +
+        "       ON aaic.meeting_date_time::date = aaic_checked.meeting_date_time::date\n" +
         "           AND aaic.chamber = aaic_checked.chamber\n" +
         "           AND aaic.committee_name = aaic_checked.committee_name\n" +
+        "           AND aaic_checked.prod_checked = TRUE\n" +
         "   LEFT JOIN master.agenda_alert_info_committee_item aaici\n" +
         "       ON aaic_checked.id = aaici.alert_info_committee_id\n" +
         "WHERE aaic.prod_checked = FALSE"

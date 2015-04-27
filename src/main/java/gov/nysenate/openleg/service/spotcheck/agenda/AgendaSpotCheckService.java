@@ -79,8 +79,10 @@ public class AgendaSpotCheckService
 
     private void checkChair(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
                             AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
-        if (!StringUtils.equals(trim(content.getChair()), trim(reference.getChair()))) {
-            obs.addMismatch(new SpotCheckMismatch(AGENDA_CHAIR, reference.getChair(), content.getChair()));
+        String refChair = StringUtils.trim(reference.getChair());
+        String contentChair = StringUtils.trim(content.getChair());
+        if (!StringUtils.equals(refChair, contentChair)) {
+            obs.addMismatch(new SpotCheckMismatch(AGENDA_CHAIR, refChair, contentChair));
         }
     }
 
@@ -89,21 +91,25 @@ public class AgendaSpotCheckService
         if (content.getMeetingDateTime() == null
                 || !content.getMeetingDateTime().equals(reference.getMeetingDateTime())) {
             obs.addMismatch(new SpotCheckMismatch(AGENDA_MEETING_TIME,
-                    String.valueOf(content.getMeetingDateTime()), String.valueOf(reference.getMeetingDateTime())));
+                    String.valueOf(reference.getMeetingDateTime()), String.valueOf(content.getMeetingDateTime())));
         }
     }
 
     private void checkLocation(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
                                AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
-        if (!StringUtils.equals(trim(content.getLocation()), trim(reference.getLocation()))) {
-            obs.addMismatch(new SpotCheckMismatch(AGENDA_LOCATION, reference.getLocation(), content.getLocation()));
+        String refLocation = StringUtils.trim(reference.getLocation());
+        String contentLocation = StringUtils.trim(content.getLocation());
+        if (!StringUtils.equals(refLocation, contentLocation)) {
+            obs.addMismatch(new SpotCheckMismatch(AGENDA_LOCATION, refLocation, contentLocation));
         }
     }
 
     private void checkNotes(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
                             AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
-        if (!StringUtils.equals(trim(content.getNotes()), trim(reference.getNotes()))) {
-            obs.addMismatch(new SpotCheckMismatch(AGENDA_NOTES, reference.getNotes(), content.getNotes()));
+        String refNotes = StringUtils.trim(reference.getNotes());
+        String contentNotes = StringUtils.trim(content.getNotes());
+        if (!StringUtils.equals(refNotes, contentNotes)) {
+            obs.addMismatch(new SpotCheckMismatch(AGENDA_NOTES, refNotes, contentNotes));
         }
     }
 }

@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.spotcheck.agenda;
 
-import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class AgendaIntervalCheckReportService extends BaseAgendaCheckReportService{
+public class AgendaReportService extends BaseAgendaCheckReportService {
 
     @Autowired
     CachedAgendaDataService agendaDataService;
@@ -21,10 +20,10 @@ public class AgendaIntervalCheckReportService extends BaseAgendaCheckReportServi
     /** {@inheritDoc} */
     @Override
     protected List<AgendaAlertInfoCommittee> getReferences(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        List<AgendaAlertInfoCommittee> references = agendaAlertDao.getAgendaAlertReferences(Range.closed(start, end));
+        List<AgendaAlertInfoCommittee> references = agendaAlertDao.getUncheckedAgendaAlertReferences();
         if (references.isEmpty()) {
             throw new ReferenceDataNotFoundEx(
-                    String.format("no agenda references were found within the given range %s to %s", start, end));
+                    String.format("no unchecked agenda references were found within the given range %s to %s", start, end));
         }
         return references;
     }
@@ -39,6 +38,6 @@ public class AgendaIntervalCheckReportService extends BaseAgendaCheckReportServi
     /** {@inheritDoc} */
     @Override
     protected void setReferenceChecked(AgendaAlertInfoCommittee reference) {
-        // Do nothing
+        agendaAlertDao.setAgendaAlertChecked(reference.getAgendaAlertInfoCommId(), true);
     }
 }

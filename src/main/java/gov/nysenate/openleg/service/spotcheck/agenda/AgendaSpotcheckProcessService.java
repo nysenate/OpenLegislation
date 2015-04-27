@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.agenda;
 
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.agenda.reference.AgendaAlertProcessor;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
 import org.slf4j.Logger;
@@ -32,6 +33,11 @@ public class AgendaSpotcheckProcessService extends BaseSpotcheckProcessService<C
     @Override
     protected int doIngest() throws Exception {
         return agendaAlertProcessor.processAgendaAlerts();
+    }
+
+    @Override
+    protected SpotCheckRefType getRefType() {
+        return SpotCheckRefType.LBDC_AGENDA_ALERT;
     }
 
     @Override

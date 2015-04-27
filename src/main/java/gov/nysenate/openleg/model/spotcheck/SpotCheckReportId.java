@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.spotcheck;
 import com.google.common.collect.ComparisonChain;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class SpotCheckReportId implements Comparable<SpotCheckReportId>
 {
@@ -19,13 +20,12 @@ public class SpotCheckReportId implements Comparable<SpotCheckReportId>
 
     public SpotCheckReportId(SpotCheckRefType referenceType, LocalDateTime reportDateTime) {
         this.referenceType = referenceType;
-        this.reportDateTime = reportDateTime;
+        this.reportDateTime = reportDateTime.truncatedTo(ChronoUnit.SECONDS);
     }
 
     public SpotCheckReportId(SpotCheckRefType referenceType, LocalDateTime referenceDateTime, LocalDateTime reportDateTime) {
-        this.referenceType = referenceType;
-        this.referenceDateTime = referenceDateTime;
-        this.reportDateTime = reportDateTime;
+        this(referenceType, reportDateTime);
+        this.referenceDateTime = referenceDateTime.truncatedTo(ChronoUnit.SECONDS);
     }
 
     /** --- Overrides --- */
