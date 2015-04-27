@@ -44,33 +44,12 @@ public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
         Map<Element, Elements> sectionTypeToEntryRows = mapSectionTypeToEntryRows(sectionTypes, entryTables);
 
         for (Element sectionType : sectionTypeToEntryRows.keySet()) {
-            CalendarSectionType calendarSectionType = extractSectionType(sectionType);
+            CalendarSectionType calendarSectionType = CalendarSectionType.valueOflrsRepresentation(sectionType.text());
 
             for (Element entryRow : sectionTypeToEntryRows.get(sectionType)) {
                 supplemental.addEntry(createSupplementalEntry(supplemental, calendarSectionType, entryRow));
             }
         }
-    }
-
-    private CalendarSectionType extractSectionType(Element sectionType) {
-        CalendarSectionType calendarSectionType;
-        switch (sectionType.text()) {
-            case "BILLS ON ORDER OF FIRST REPORT":
-                calendarSectionType = CalendarSectionType.ORDER_OF_THE_FIRST_REPORT;
-                break;
-            case "BILLS ON ORDER OF SECOND REPORT":
-                calendarSectionType = CalendarSectionType.ORDER_OF_THE_SECOND_REPORT;
-                break;
-            case "BILLS ON THIRD READING":
-                calendarSectionType = CalendarSectionType.THIRD_READING;
-                break;
-            case "BILLS ON THIRD READING FROM SPECIAL REPORT":
-                calendarSectionType = CalendarSectionType.THIRD_READING_FROM_SPECIAL_REPORT;
-                break;
-            default:
-                calendarSectionType = null; // TODO handle other types.
-        }
-        return calendarSectionType;
     }
 
     private Map<Element, Elements> mapSectionTypeToEntryRows(Elements sectionTypes, Elements sectionEntryTables) {

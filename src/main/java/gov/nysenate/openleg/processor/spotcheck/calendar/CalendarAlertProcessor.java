@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Service
 public class CalendarAlertProcessor extends BaseCalendarAlertParser {
@@ -39,8 +40,9 @@ public class CalendarAlertProcessor extends BaseCalendarAlertParser {
             calendar = calendarAlertDao.getCalendar(calendarId);
         } catch (EmptyResultDataAccessException e) {
             calendar = new Calendar(calendarId);
-            calendar.setPublishedDateTime(parseReleaseDateTime(file));
         }
+        calendar.setPublishedDateTime(parseReleaseDateTime(file));
+        calendar.setModifiedDateTime(LocalDateTime.now());
 
         if (isSupplemental(file)) {
             try {

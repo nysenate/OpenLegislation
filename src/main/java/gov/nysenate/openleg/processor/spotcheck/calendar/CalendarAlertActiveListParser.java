@@ -33,7 +33,8 @@ public class CalendarAlertActiveListParser extends BaseCalendarAlertParser{
      * @throws IOException
      */
     protected CalendarActiveList parseActiveList(Calendar calendar, File file) throws IOException {
-        int sequenceNum = calendar.getActiveListMap().size();
+//        int sequenceNum = calendar.getActiveListMap().size();
+        int sequenceNum = 0; // TODO: need example of sequence num in alert email for correct implementation.
         CalendarActiveList activeList = new CalendarActiveList(
                 calendar.getId(), sequenceNum, "", parseCalendarDate(file), parseReleaseDateTime(file));
 

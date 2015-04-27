@@ -13,6 +13,7 @@ import gov.nysenate.openleg.service.spotcheck.agenda.IntervalAgendaReportService
 import gov.nysenate.openleg.service.spotcheck.agenda.OldApiAgendaReportService;
 import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.CalendarReportService;
+import gov.nysenate.openleg.service.spotcheck.calendar.ProdCalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
@@ -54,6 +55,7 @@ public class SpotcheckRunService {
 
     /** Calendar Report Services */
     @Autowired CalendarReportService calendarReportService;
+    @Autowired ProdCalendarReportService prodCalendarReportService;
 
     /** A multimap of reports that run whenever pertinent references are generated */
     SetMultimap<SpotCheckRefType, SpotCheckReportService> eventTriggeredReports;
@@ -70,6 +72,7 @@ public class SpotcheckRunService {
                 .put(LBDC_DAYBREAK, daybreakReportService)
                 .put(LBDC_SCRAPED_BILL, billTextReportService)
                 .put(LBDC_CALENDAR_ALERT, calendarReportService)
+                .put(LBDC_CALENDAR_ALERT, prodCalendarReportService)
                 .build();
         weeklyReports = ImmutableSet.<SpotCheckReportService>builder()
                 .add(weeklyAgendaReportService)
