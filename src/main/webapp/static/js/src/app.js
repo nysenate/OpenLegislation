@@ -108,7 +108,7 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($sc
  * The landing controller is responsible for the home page content as well as handling new api-key registrations.
  */
 openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.setHeaderVisible(false);
+    $scope.setHeaderVisible(true);
     $scope.setHeaderText('Home');
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'Discover current and prior legislation that impacts New York State.',

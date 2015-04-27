@@ -38,6 +38,7 @@ public class AngularAppCtrl
     public String home(HttpServletRequest request) {
         request.setAttribute("gaTrackingId", gaTrackingId);
         String randomUiKey = RandomUtils.getRandomString(64);
+        request.getSession().setMaxInactiveInterval(3600);
         request.getSession().setAttribute("uiKey", randomUiKey);
         request.setAttribute("uiKey", randomUiKey);
         return "home";

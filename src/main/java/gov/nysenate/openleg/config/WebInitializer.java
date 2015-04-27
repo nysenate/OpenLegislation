@@ -60,10 +60,12 @@ public class WebInitializer implements WebApplicationInitializer
         servletContext.addFilter("corsFilter", corsFilter)
             .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
 
+        /** Api Key Authentication */
         DelegatingFilterProxy apiAuthFilter = new DelegatingFilterProxy("apiAuthFilter", dispatcherContext);
         servletContext.addFilter("apiAuthFilter", apiAuthFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
 
+        /** Api Request Logging */
         DelegatingFilterProxy apiLogFilter = new DelegatingFilterProxy("apiLogFilter", dispatcherContext);
         servletContext.addFilter("apiLogFilter", apiLogFilter)
                 .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE), false, BaseCtrl.BASE_API_PATH + "/*");
