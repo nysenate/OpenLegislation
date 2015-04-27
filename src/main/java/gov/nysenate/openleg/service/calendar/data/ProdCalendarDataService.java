@@ -8,24 +8,47 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 @Service
 public class ProdCalendarDataService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProdCalendarDataService.class);
+
     private static final String BASE_URL = "http://open.nysenate.gov/legislation/2.0/calendar/";
 
     private static final ObjectMapper mapper = new ObjectMapper();
+
+    /**
+     * Retrieves a list of production calendars from start and end dates.
+     * @see #getCalendar(LocalDate)
+     */
+    public List<Calendar> getCalendarsByRange(LocalDateTime start, LocalDateTime end) {
+        LocalDate startDay = start.toLocalDate();
+        LocalDate endDay = end.toLocalDate();
+        List<Calendar> calendars = new ArrayList<>();
+        for (LocalDate date = startDay; date.isBefore(endDay.plusDays(1)); date = date.plusDays(1)) {
+            try {
+                calendars.add(getCalendar(date));
+            } catch (IOException e) {
+                logger.info("Error loading api call", e);
+            } catch (CalendarNotFoundException e) {
+                logger.debug("No Calendar found for date " + date.toString());
+            }
+        }
+        return calendars;
+    }
 
     /**
      * Creates a {@link Calendar} from Open Legislation v1.9 data.
@@ -33,29 +56,34 @@ public class ProdCalendarDataService {
      * @param calDate The date of the calendar to create.
      * @return
      * @throws IOException
+     * @throws gov.nysenate.openleg.service.calendar.data.ProdCalendarDataService.CalendarNotFoundException
+     * if no calendar exists for the given date.
      */
-    public Calendar getCalendar(LocalDate calDate) throws IOException {
+    private Calendar getCalendar(LocalDate calDate) throws IOException, CalendarNotFoundException {
         final CalendarId calendarId = getCalendarId(calDate);
         Calendar calendar = new Calendar(calendarId);
         calendar.setSupplementalMap(getSupplementals(calDate, calendarId));
         calendar.setActiveListMap(getActiveListMap(calDate, calendarId));
+
+        // Calendar published date not exposed in api.
+        calendar.setPublishedDateTime(calDate.atTime(LocalTime.now()));
         return calendar;
     }
 
-    private CalendarId getCalendarId(LocalDate calDate) throws IOException {
+    private CalendarId getCalendarId(LocalDate calDate) throws IOException, CalendarNotFoundException {
         JsonNode calendarNode = traverseToCalendarData(createSupplementalUrl(calDate));
         int calNo = Integer.valueOf(calendarNode.get("no").asText());
         int year = Integer.valueOf(calendarNode.get("sessionYear").asText());
         return new CalendarId(calNo, year);
     }
 
-    private TreeMap<Integer, CalendarActiveList> getActiveListMap(LocalDate calDate, CalendarId calendarId) throws IOException {
+    private TreeMap<Integer, CalendarActiveList> getActiveListMap(LocalDate calDate, CalendarId calendarId) throws IOException, CalendarNotFoundException {
         TreeMap<Integer, CalendarActiveList> activeListMap = new TreeMap<>();
         JsonNode calendarNode = traverseToCalendarData(createActiveListUrl(calDate));
         for (JsonNode activeListNode : calendarNode.get("supplementals").get(0).get("sequences")) {
             int sequenceNo = activeListNode.get("no").asInt();
             LocalDateTime releaseDate = getDateFromMilliSecs(activeListNode.get("releaseDateTime").asLong());
-            CalendarActiveList activeList = new CalendarActiveList(calendarId, sequenceNo, "", calDate, releaseDate);
+            CalendarActiveList activeList = new CalendarActiveList(calendarId, sequenceNo, null, calDate, releaseDate);
 
             for (JsonNode listEntryNode : activeListNode.get("calendarEntries")) {
                 int billCalNo = listEntryNode.get("no").asInt();
@@ -68,7 +96,7 @@ public class ProdCalendarDataService {
         return activeListMap;
     }
 
-    private TreeMap<Version, CalendarSupplemental> getSupplementals(LocalDate calDate, CalendarId calendarId) throws IOException {
+    private TreeMap<Version, CalendarSupplemental> getSupplementals(LocalDate calDate, CalendarId calendarId) throws IOException, CalendarNotFoundException {
         TreeMap<Version, CalendarSupplemental> supplementals = new TreeMap<>();
         JsonNode calendarNode = traverseToCalendarData(createSupplementalUrl(calDate));
         for (JsonNode supp : calendarNode.get("supplementals")) {
@@ -117,10 +145,14 @@ public class ProdCalendarDataService {
     /**
      * @return the JsonNode where calendar data begins.
      */
-    private JsonNode traverseToCalendarData(URL url) throws IOException {
+    private JsonNode traverseToCalendarData(URL url) throws IOException, CalendarNotFoundException {
         String json = IOUtils.toString(url);
         JsonNode root = mapper.readTree(json);
-        return root.get("response").get("results").get(0).get("data").get("calendar");
+        JsonNode firstResult = root.get("response").get("results").get(0);
+        if (firstResult == null) {
+            throw new CalendarNotFoundException();
+        }
+        return firstResult.get("data").get("calendar");
     }
 
     private String formatCalDate(LocalDate calDate) {
@@ -130,5 +162,11 @@ public class ProdCalendarDataService {
     private BillId getBillId(JsonNode entryNode) {
         JsonNode billNode = entryNode.get("bill");
         return new BillId(billNode.get("senateBillNo").asText().split("-")[0], SessionYear.of(billNode.get("year").asInt()));
+    }
+
+    /** --- Exceptions --- */
+
+    private class CalendarNotFoundException extends Exception {
+
     }
 }
