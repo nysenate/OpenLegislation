@@ -23,7 +23,7 @@ import java.util.TreeMap;
 @Service
 public class ProdCalendarDataService {
 
-    private static final String baseUrl = "http://open.nysenate.gov/legislation/2.0/calendar/";
+    private static final String BASE_URL = "http://open.nysenate.gov/legislation/2.0/calendar/";
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -107,11 +107,11 @@ public class ProdCalendarDataService {
     }
 
     private URL createSupplementalUrl(LocalDate calDate) throws MalformedURLException {
-        return new URL(baseUrl + "floor-" + formatCalDate(calDate) + ".json");
+        return new URL(BASE_URL + "floor-" + formatCalDate(calDate) + ".json");
     }
 
     private URL createActiveListUrl(LocalDate calDate) throws MalformedURLException {
-        return new URL(baseUrl + "active-" + formatCalDate(calDate) + ".json");
+        return new URL(BASE_URL + "active-" + formatCalDate(calDate) + ".json");
     }
 
     /**

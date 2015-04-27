@@ -62,7 +62,7 @@ daybreakModule.filter('contentType', function() {
         LBDC_ACTIVE_LIST: "Active List",
         LBDC_AGENDA_ALERT: "Agenda",
         LBDC_DAYBREAK: "Bill",
-        LBDC_FLOOR_CALENDAR: "Floor Cal",
+        LBDC_CALENDAR_ALERT: "Floor Cal",
         LBDC_SCRAPED_BILL: "Bill"
     };
     return function(reportType) {
@@ -401,7 +401,8 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
     var contentTypeIdMap = {
         LBDC_DAYBREAK: getBillId,
         LBDC_SCRAPED_BILL: getBillId,
-        LBDC_AGENDA_ALERT: getAgendaId
+        LBDC_AGENDA_ALERT: getAgendaId,
+        LBDC_CALENDAR_ALERT: getCalendarId
     };
     $scope.getContentId = function(reportType, key) {
         if (contentTypeIdMap.hasOwnProperty(reportType)) {
@@ -423,10 +424,15 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
         return dateString + commNameAndAddendum;
     }
 
+    function getCalendarId(key) {
+        return key.calNo + ', ' + key.year;
+    }
+
     var contentTypeUrlMap = {
         LBDC_DAYBREAK: getBillUrl,
         LBDC_SCRAPED_BILL: getBillUrl,
-        LBDC_AGENDA_ALERT: getAgendaUrl
+        LBDC_AGENDA_ALERT: getAgendaUrl,
+        LBDC_CALENDAR_ALERT: getCalendarUrl
     };
     $scope.getContentUrl = function(reportType, key) {
         if (contentTypeUrlMap.hasOwnProperty(reportType)) {
@@ -448,6 +454,10 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
                     moment(key.agendaId.number).format('MM-DD-YYYY');
         }
         return "";
+    }
+
+    function getCalendarUrl(key) {
+        return ctxPath + "/calendars/" +  key.year + "/" + key.calNo;
     }
 
     $scope.getMismatchDetails = function(mismatchId) {

@@ -37,7 +37,7 @@ public class CalendarReportService implements SpotCheckReportService<CalendarId>
 
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
-        return SpotCheckRefType.LBDC_FLOOR_CALENDAR;
+        return SpotCheckRefType.LBDC_CALENDAR_ALERT;
     }
 
     @Override

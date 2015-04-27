@@ -43,7 +43,7 @@ public class FloorCalendarSpotcheckReference {
 
 
     public SpotCheckReferenceId getReferenceId() {
-        return new SpotCheckReferenceId(SpotCheckRefType.LBDC_FLOOR_CALENDAR, referenceDate);
+        return new SpotCheckReferenceId(SpotCheckRefType.LBDC_CALENDAR_ALERT, referenceDate);
     }
 
     public LocalDateTime getReferenceDate() {
