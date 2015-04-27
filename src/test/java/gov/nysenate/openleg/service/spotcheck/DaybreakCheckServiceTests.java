@@ -9,7 +9,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.daybreak.DaybreakBill;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
-import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class DaybreakCheckServiceTests extends BaseTests
     SpotCheckService<BaseBillId, Bill, DaybreakBill> billSpotCheck;
 
     @Autowired
-    DaybreakCheckReportService daybreakReport;
+    DaybreakReportService daybreakReport;
 
     @Autowired
     BillDataService billData;

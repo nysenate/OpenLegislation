@@ -32,7 +32,7 @@ import java.util.List;
  * Created by kyle on 3/12/15.
  */
 @Service("LRSBillTextReport")
-public class BillTextCheckReportService implements SpotCheckReportService<BaseBillId>{
+public class BillTextReportService implements SpotCheckReportService<BaseBillId>{
     @Autowired
     BillTextScraper scraper;
     @Autowired

@@ -20,8 +20,6 @@ public enum SpotCheckRefType
 
     LBDC_CALENDAR_ALERT("floor-alert"),
 
-    LBDC_ACTIVE_LIST("activelist-alert"),
-
     LBDC_AGENDA_ALERT("agenda-alert"),
 
     ;

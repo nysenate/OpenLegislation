@@ -137,6 +137,7 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
      */
     protected List<SpotCheckObservation<CommitteeAgendaAddendumId>> getObservations(List<AgendaAlertInfoCommittee> references) {
         List<SpotCheckObservation<CommitteeAgendaAddendumId>> observations = new ArrayList<>();
+        List<AgendaAlertInfoCommittee> checkedReferences = new ArrayList<>();
         for (AgendaAlertInfoCommittee reference : references) {
             Agenda agenda = null;
             try {
@@ -152,27 +153,31 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
 
                 // Check the content against the reference, generating an observation
                 observations.add(checkService.check(content, reference));
-
+                checkedReferences.add(reference);
             } catch (AgendaNotFoundEx ex) {
-                // Abort the check if the reference is still in its grace period
+                // Add a data not found mismatch if the reference is past its grace period
                 if (LocalDateTime.now().minus(environment.getSpotcheckAlertGracePeriod())
-                        .isBefore(reference.getReferenceId().getRefActiveDateTime())) {
-                    throw new SpotCheckAbortException();
+                        .isAfter(reference.getReferenceId().getRefActiveDateTime())) {
+                    // Add a missing data observation if the committee meeting info was not found
+                    AgendaId obsAgId = agenda != null ? agenda.getId()
+                            : ex.getAgendaId() != null ? ex.getAgendaId()
+                            : new AgendaId(reference.getMeetingDateTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(), 0);
+                    SpotCheckObservation<CommitteeAgendaAddendumId> obs = new SpotCheckObservation<>(reference.getReferenceId(),
+                            reference.getAgendaAlertInfoCommId().getCommiteeAgendaAddendumId(obsAgId));
+                    obs.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
+                            reference.getAgendaAlertInfoCommId().toString(), ""));
+                    observations.add(obs);
+                    logger.info("Committee Meeting Agenda {} | {} mismatch(es). | {}",
+                            reference.getAgendaAlertInfoCommId(), obs.getMismatches().size(), obs.getMismatchTypes());
+                    checkedReferences.add(reference);
                 }
-                // Add a missing data observation if the committee meeting info was not found
-                AgendaId obsAgId = agenda != null ? agenda.getId()
-                        : ex.getAgendaId() != null ? ex.getAgendaId()
-                        : new AgendaId(reference.getMeetingDateTime().toLocalDate().atStartOfDay(ZoneId.of("gmt")).toInstant().toEpochMilli(), 0);
-                SpotCheckObservation<CommitteeAgendaAddendumId> obs = new SpotCheckObservation<>(reference.getReferenceId(),
-                        reference.getAgendaAlertInfoCommId().getCommiteeAgendaAddendumId(obsAgId));
-                obs.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
-                        reference.getAgendaAlertInfoCommId().toString(), ""));
-                observations.add(obs);
-                logger.info("Committee Meeting Agenda {} | {} mismatch(es). | {}",
-                        reference.getAgendaAlertInfoCommId(), obs.getMismatches().size(), obs.getMismatchTypes());
             }
         }
-        references.forEach(this::setReferenceChecked);
+        // Cancel the report if no references were checked
+        if (checkedReferences.isEmpty()) {
+            throw new SpotCheckAbortException();
+        }
+        checkedReferences.forEach(this::setReferenceChecked);
         return observations;
     }
 }

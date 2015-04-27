@@ -1,13 +1,10 @@
 package gov.nysenate.openleg.service.spotcheck.agenda;
 
-import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.view.oldapi.OldMeetingView;
 import gov.nysenate.openleg.dao.agenda.oldapi.OldApiMeetingDao;
 import gov.nysenate.openleg.dao.base.OldApiDocumentNotFoundEx;
 import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
@@ -16,14 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.Temporal;
 import java.util.List;
 
 @Service
-public class OldApiAgendaCheckReportService extends BaseAgendaCheckReportService {
+public class OldApiAgendaReportService extends BaseAgendaCheckReportService {
 
     private int dummyAgendaNo = 0;
 
@@ -32,7 +27,7 @@ public class OldApiAgendaCheckReportService extends BaseAgendaCheckReportService
 
     @Override
     protected List<AgendaAlertInfoCommittee> getReferences(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        List<AgendaAlertInfoCommittee> refs =  agendaAlertDao.getProdUncheckedAgendaAlertReferences(Range.closed(start, end));
+        List<AgendaAlertInfoCommittee> refs =  agendaAlertDao.getProdUncheckedAgendaAlertReferences();
         if (refs.isEmpty()) {
             throw new ReferenceDataNotFoundEx(
                     String.format("no 1.9.2 agenda references were found within the given range %s to %s", start, end));
@@ -46,7 +41,7 @@ public class OldApiAgendaCheckReportService extends BaseAgendaCheckReportService
 
     @Override
     protected Agenda getAgenda(AgendaAlertInfoCommittee aaic) throws AgendaNotFoundEx {
-        AgendaId agendaId = new AgendaId(aaic.getMeetingDateTime().toLocalDate().atStartOfDay(ZoneId.of("GMT")).toInstant().toEpochMilli(), -1);
+        AgendaId agendaId = new AgendaId(aaic.getMeetingDateTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(), -1);
         try {
             OldMeetingView meetingView = meetingDao.getMeeting(aaic.getCommitteeId(), aaic.getMeetingDateTime().toLocalDate());
             AgendaInfoCommittee meetingInfo = getAgendaInfoCommittee(meetingView, agendaId, aaic.getAddendum());

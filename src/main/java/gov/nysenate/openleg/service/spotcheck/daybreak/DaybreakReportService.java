@@ -34,9 +34,9 @@ import static java.util.stream.Collectors.toSet;
  * and save reports for bill data.
  */
 @Service("daybreakReport")
-public class DaybreakCheckReportService implements SpotCheckReportService<BaseBillId>
+public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
 {
-    private static final Logger logger = LoggerFactory.getLogger(DaybreakCheckReportService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DaybreakReportService.class);
 
     @Autowired
     private DaybreakCheckService daybreakCheckService;

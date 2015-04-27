@@ -5,7 +5,7 @@ import gov.nysenate.openleg.dao.bill.text.SqlBillTextReferenceDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
-import gov.nysenate.openleg.service.spotcheck.billtext.BillTextCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
 import gov.nysenate.openleg.service.spotcheck.billtext.BillTextSpotcheckProcessService;
 import gov.nysenate.openleg.util.StringDiffer;
 import org.jsoup.Jsoup;
@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class BillTextTest extends BaseTests{
     @Autowired
-    BillTextCheckReportService report;
+    BillTextReportService report;
     @Test
     public void reportTest() throws Exception{
         //report.scrapeStuff(BaseBillId("S1", SessionYear.of(2015)));

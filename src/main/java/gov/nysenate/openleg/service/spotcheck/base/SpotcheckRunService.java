@@ -1,39 +1,134 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
+import com.google.common.collect.*;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceEvent;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.processor.base.ProcessService;
+import gov.nysenate.openleg.service.spotcheck.agenda.AgendaReportService;
+import gov.nysenate.openleg.service.spotcheck.agenda.IntervalAgendaReportService;
+import gov.nysenate.openleg.service.spotcheck.agenda.OldApiAgendaReportService;
+import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
+import gov.nysenate.openleg.service.spotcheck.calendar.CalendarReportService;
+import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
+import gov.nysenate.openleg.util.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.annotation.PostConstruct;
 
-public interface SpotcheckRunService<ContentId> extends ProcessService {
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Set;
 
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
 
-    /**
-     * Performs the entire process required to generate a new spotcheck report.
-     * First, the reference source is checked for new references. If new references are available, then they are saved
-     * locally, parsed into reference data and put into the data store.  Finally, the reference data is used to generate
-     * and save a new spotcheck report.
-     *  Returns a reference to the generated report if it was successful, null if not
-     *
-     *  @return SpotCheckReport<ContentId>
-     */
-    default List<SpotCheckReport<ContentId>> runSpotcheck() {
-        collate();
-        return generateReports();
+/**
+ * Runs spotcheck reports based on scheduling and events
+ */
+@Service
+public class SpotcheckRunService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SpotcheckRunService.class);
+
+    @Autowired Environment env;
+
+    @Autowired EventBus eventBus;
+
+    @Autowired SpotCheckNotificationService spotCheckNotificationService;
+
+    /** Agenda Report Services */
+    @Autowired AgendaReportService agendaReportService;
+    @Autowired IntervalAgendaReportService weeklyAgendaReportService;
+    @Autowired OldApiAgendaReportService oldApiAgendaReportService;
+
+    /** Bill Report Services */
+    @Autowired DaybreakReportService daybreakReportService;
+    @Autowired BillTextReportService billTextReportService;
+
+    /** Calendar Report Services */
+    @Autowired CalendarReportService calendarReportService;
+
+    /** A multimap of reports that run whenever pertinent references are generated */
+    SetMultimap<SpotCheckRefType, SpotCheckReportService> eventTriggeredReports;
+
+    /** A set of reports that automatically run weekly */
+    Set<SpotCheckReportService> weeklyReports;
+
+    @PostConstruct
+    public void init() {
+        eventBus.register(this);
+        eventTriggeredReports = ImmutableSetMultimap.<SpotCheckRefType, SpotCheckReportService>builder()
+                .put(LBDC_AGENDA_ALERT, agendaReportService)
+                .put(LBDC_AGENDA_ALERT, oldApiAgendaReportService)
+                .put(LBDC_DAYBREAK, daybreakReportService)
+                .put(LBDC_SCRAPED_BILL, billTextReportService)
+                .put(LBDC_CALENDAR_ALERT, calendarReportService)
+                .build();
+        weeklyReports = ImmutableSet.<SpotCheckReportService>builder()
+                .add(weeklyAgendaReportService)
+                .build();
     }
 
     /**
-     * Generates new spotcheck reports from reference data.
-     * This includes checking for the most recent processed unchecked reference data, checking the reference data against
-     *  Openleg data, and then saving the resulting report.
-     *  Returns a list of reports that were generated
-     *
-     *  @return SpotCheckReport<ContentId>
+     * Runs all weekly reports according to the cron in app.properties
      */
-    List<SpotCheckReport<ContentId>> generateReports();
+    @Scheduled(cron = "${scheduler.spotcheck.weekly.cron}")
+    public void runWeeklyReports() {
+        Range<LocalDateTime> weekRange = Range.closed(LocalDateTime.now().minus(Duration.ofDays(7)), LocalDateTime.now());
+        weeklyReports.forEach(reportService -> runReport(reportService, weekRange));
+    }
 
-    @Override
-    default int ingest() {
-        return generateReports().size();
+    /**
+     * Given a spotcheck reference event, runs all reports that use the event's spotcheck reference type
+     * @param referenceEvent SpotCheckReferenceEvent
+     */
+    @Subscribe
+    public void handleSpotcheckReferenceEvent(SpotCheckReferenceEvent referenceEvent) {
+        runReports(referenceEvent.getRefType());
+    }
+
+    /**
+     * Run all reports that use the give reference type for the given date time range
+     *
+     * @param refType SpotCheckRefType
+     * @param reportRange Range<LocalDateTime>
+     */
+    public void runReports(SpotCheckRefType refType, Range<LocalDateTime> reportRange) {
+        eventTriggeredReports.get(refType)
+                .forEach(reportService -> runReport(reportService, reportRange));
+    }
+
+    /**
+     * Run all reports that use the given reference type
+     *
+     * @param refType SpotCheckRefType
+     */
+    public void runReports(SpotCheckRefType refType) {
+        runReports(refType, DateUtils.ALL_DATE_TIMES);
+    }
+
+    /** --- Internal Methods --- */
+
+    private void runReport(SpotCheckReportService<?> reportService, Range<LocalDateTime> reportRange) {
+        logger.info("Attempting to run a {} report..", reportService.getSpotcheckRefType());
+        try {
+            SpotCheckReport report = reportService.generateReport(
+                    DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange));
+            logger.info("Saving report: {} {} {}", report.getReportDateTime(), report.getReferenceType(),
+                    report.getNotes() != null, report.getNotes(), "");
+            reportService.saveReport(report);
+            spotCheckNotificationService.spotcheckCompleteNotification(report);
+        } catch (ReferenceDataNotFoundEx ex) {
+            logger.info("No report generated: no {} references could be found", reportService.getSpotcheckRefType());
+        } catch (Exception ex) {
+            spotCheckNotificationService.handleSpotcheckException(ex, true);
+        }
     }
 }
