@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.service.spotcheck.calendar;
 
-import gov.nysenate.openleg.dao.calendar.alert.SqlCalendarAlertDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.service.calendar.data.ProdCalendarDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,23 +10,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class CalendarReportService extends BaseCalendarReportService {
+public class ProdCalendarReportService extends BaseCalendarReportService {
 
     @Autowired
-    private SqlCalendarAlertDao alertDao;
+    private ProdCalendarDataService dataService;
 
     @Override
     protected String getReportNotes() {
-        return "";
-    }
-
-    @Override
-    protected List<Calendar> getReferences(LocalDateTime start, LocalDateTime end) {
-        return alertDao.getCalendarAlertsByDateRange(start, end);
+        return "1.9.2";
     }
 
     @Override
     protected void markAsChecked(CalendarId id) {
-        alertDao.markAsChecked(id);
+    }
+
+    @Override
+    protected List<Calendar> getReferences(LocalDateTime start, LocalDateTime end) {
+        return dataService.getCalendarsByRange(start, end);
     }
 }
