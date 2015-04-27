@@ -62,7 +62,7 @@ public class SpotCheckNotificationService {
         messageBuilder.append(env.getUrl())
                 .append("/admin/report/spotcheck?type=")
                 .append(daybreakReport.getReferenceType().getRefName())
-                .append("&runTime")
+                .append("&runTime=")
                 .append(daybreakReport.getReportDateTime())
                 .append("\n\n");
 
