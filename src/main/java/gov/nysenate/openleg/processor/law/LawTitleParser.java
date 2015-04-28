@@ -3,18 +3,21 @@ package gov.nysenate.openleg.processor.law;
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LawTitleParser
 {
     private static final Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
 
     protected static String sectionTitlePattern = "(?i)((?:Section|§)\\s*%s).?\\s(.+?)\\.(.*)";
-    protected static Pattern articleTitlePattern = Pattern.compile("((ARTICLE|TITLE).+?\\\\n)(.+?)\\\\nSection");
+    protected static Pattern articleTitlePattern = Pattern.compile("((ARTICLE|TITLE).+?\\\\n)(.+?)\\\\n(Section)?");
 
     /** --- Methods --- */
 
@@ -66,7 +69,7 @@ public class LawTitleParser
         Matcher articleTitleMatcher = articleTitlePattern.matcher(bodyText);
         if (articleTitleMatcher.find()) {
             String title = articleTitleMatcher.group(3).replaceAll("\\\\n", "").replaceAll("\\s{2,}", " ");
-            return title.trim();
+            return capitalizeTitle(title.trim());
         }
         return "";
     }
@@ -95,4 +98,16 @@ public class LawTitleParser
         }
         return StringUtils.abbreviate(title, 140);
     }
+
+    protected static String capitalizeTitle(String title) {
+        if (title != null && !title.isEmpty()) {
+            String capStr = WordUtils.capitalizeFully(title);
+            return Stream.of(capStr.split(" "))
+                    .map(s -> (s.matches("(Of|Or|The|For|A|And|An)")) ? s.toLowerCase() : s)
+                    .collect(Collectors.joining(" "));
+        }
+        return title;
+    }
+
+
 }
