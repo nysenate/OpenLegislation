@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processor.spotcheck.calendar;
 
-import gov.nysenate.openleg.dao.calendar.alert.SqlCalendarAlertDao;
+import gov.nysenate.openleg.dao.calendar.alert.CalendarAlertDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class CalendarAlertProcessor extends BaseCalendarAlertParser {
     private CalendarAlertActiveListParser activeListParser;
 
     @Autowired
-    private SqlCalendarAlertDao calendarAlertDao;
+    private CalendarAlertDao calendarAlertDao;
 
     /**
      * Parses a Calendar object from an LRS alert email file.

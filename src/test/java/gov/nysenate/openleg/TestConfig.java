@@ -1,6 +1,8 @@
 package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.config.CacheConfigurationTests;
+import gov.nysenate.openleg.dao.calendar.alert.CalendarAlertDao;
+import gov.nysenate.openleg.processor.calendar.MockCalendarAlertDao;
 import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,5 +42,10 @@ public class TestConfig
     @Bean
     public CacheConfigurationTests.CacheTester cacheTester() {
         return new CacheConfigurationTests.CacheTester(cacheManager);
+    }
+
+    @Bean
+    public CalendarAlertDao calendarAlertDao() {
+        return new MockCalendarAlertDao();
     }
 }

@@ -33,7 +33,7 @@ import static gov.nysenate.openleg.util.DateUtils.toDate;
  * but are based off LBDC Alert emails and used in the qa process.
  */
 @Repository
-public class SqlCalendarAlertDao extends SqlBaseDao {
+public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao {
     private static final Logger logger = LoggerFactory.getLogger(SqlCalendarDao.class);
 
     public Calendar getCalendar(CalendarId calendarId) throws DataAccessException {
