@@ -90,10 +90,10 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     }
 
     private String createSearchId(LawDocId lawDocId) {
-        return lawDocId.getLocationId() + "-DATE-" + lawDocId.getPublishedDate().toString();
+        return lawDocId.getLocationId();
     }
 
     private String createSearchId(LawDocView lawDocView) {
-        return lawDocView.getLocationId() + "-DATE-" + lawDocView.getActiveDate().toString();
+        return lawDocView.getLocationId();
     }
 }

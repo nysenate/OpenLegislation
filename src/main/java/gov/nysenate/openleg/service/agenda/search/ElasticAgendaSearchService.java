@@ -11,6 +11,7 @@ import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -118,6 +119,15 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
             catch (Exception ex) {
                 logger.error("Unexpected exception during handling of Agenda RebuildIndexEvent!", ex);
             }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.AGENDA)) {
+            clearIndex();
         }
     }
 

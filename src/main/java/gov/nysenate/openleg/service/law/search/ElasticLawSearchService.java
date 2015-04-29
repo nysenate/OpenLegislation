@@ -9,6 +9,7 @@ import gov.nysenate.openleg.dao.law.data.LawDataDao;
 import gov.nysenate.openleg.dao.law.search.ElasticLawSearchDao;
 import gov.nysenate.openleg.model.law.LawDocId;
 import gov.nysenate.openleg.model.law.LawDocument;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -128,6 +129,15 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.LAW)) {
             rebuildIndex();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.LAW)) {
+            clearIndex();
         }
     }
 }

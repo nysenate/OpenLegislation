@@ -8,6 +8,7 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
@@ -96,6 +97,15 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.NOTIFICATION)) {
             rebuildIndex();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.NOTIFICATION)) {
+            clearIndex();
         }
     }
 

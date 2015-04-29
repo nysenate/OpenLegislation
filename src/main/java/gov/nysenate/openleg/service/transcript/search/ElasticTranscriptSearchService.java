@@ -7,6 +7,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.search.ElasticTranscriptSearchDao;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -166,6 +167,15 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
             catch (Exception ex) {
                 logger.error("Unexpected exception during handling of transcript index rebuild event.", ex);
             }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.TRANSCRIPT)) {
+            clearIndex();
         }
     }
 }

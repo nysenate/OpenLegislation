@@ -8,6 +8,7 @@ import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.SearchIndex;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.slf4j.Logger;
@@ -55,6 +56,22 @@ public class SearchIndexCtrl extends BaseCtrl
             Set<SearchIndex> targetIndices = getTargetIndices(indexType);
             eventBus.post(new RebuildIndexEvent(targetIndices));
             response = new SimpleResponse(true, "Search index rebuild request completed", "index-rebuild");
+        }
+        catch (IllegalArgumentException ex) {
+            response = new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);
+            response.setMessage("Invalid search index: " + indexType);
+        }
+        return response;
+    }
+
+    @RequiresAuthentication
+    @RequestMapping(value = "/{indexType}", method = RequestMethod.DELETE)
+    public BaseResponse clearIndex(@PathVariable String indexType) {
+        BaseResponse response;
+        try {
+            Set<SearchIndex> targetIndices = getTargetIndices(indexType);
+            eventBus.post(new ClearIndexEvent(targetIndices));
+            response = new SimpleResponse(true, "Search index clear request completed", "index-clear");
         }
         catch (IllegalArgumentException ex) {
             response = new ErrorResponse(ErrorCode.INVALID_ARGUMENTS);

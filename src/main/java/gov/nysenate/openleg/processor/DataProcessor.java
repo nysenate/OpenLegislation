@@ -57,11 +57,11 @@ public class DataProcessor
         eventBus.register(this);
         processServices = ImmutableList.<ProcessService>builder()
             .add(sobiProcessService)
-            .add(transcriptProcessService)
-            .add(publicHearingProcessService)
+//            .add(transcriptProcessService)
+//            .add(publicHearingProcessService)
             .add(lawProcessService)
-            .add(agendaSpotcheckProcessService)
-            .addAll(spotcheckProcessServices)
+//            .add(agendaSpotcheckProcessService)
+//            .addAll(spotcheckProcessServices)
             .build();
     }
 

@@ -10,6 +10,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.search.ElasticCalendarSearchDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -115,6 +116,15 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.CALENDAR)) {
             rebuildIndex();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.CALENDAR)) {
+            clearIndex();
         }
     }
 

@@ -9,6 +9,7 @@ import gov.nysenate.openleg.dao.hearing.search.ElasticPublicHearingSearchDao;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -153,6 +154,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
 
     /** {@inheritDoc} */
     @Override
+    @Subscribe
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.HEARING)) {
             logger.info("Handling public hearing re-index event.");
@@ -161,6 +163,15 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
             } catch (Exception ex) {
                 logger.error("Unexpected exception during handling of public hearing index rebuild event.", ex);
             }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.HEARING)) {
+            clearIndex();
         }
     }
 }

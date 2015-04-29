@@ -11,6 +11,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -196,6 +197,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     @Subscribe
     public void handleRebuildEvent(RebuildIndexEvent event) {
@@ -207,6 +209,15 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
             catch (Exception ex) {
                 logger.error("Unexpected exception during handling of Bill RebuildIndexEvent!", ex);
             }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.BILL)) {
+            clearIndex();
         }
     }
 

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.base.search;
 
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 
 import java.util.Collection;
@@ -32,4 +33,10 @@ public interface IndexedSearchService<T>
      * by the implementation and recreating them in full from the backing store.
      */
     public void handleRebuildEvent(RebuildIndexEvent event);
+
+    /**
+     * Handle a clear search index event by checking to see if event affects any of the indices managed
+     * by the implementation and clearing them from the backing store.
+     */
+    public void handleClearEvent(ClearIndexEvent event);
 }

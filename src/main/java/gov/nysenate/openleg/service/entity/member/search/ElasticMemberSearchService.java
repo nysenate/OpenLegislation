@@ -10,6 +10,7 @@ import gov.nysenate.openleg.dao.entity.member.search.ElasticMemberSearchDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -141,6 +142,15 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
             } catch (Exception ex) {
                 logger.error("Unexpected exception during handling of member index rebuild event.", ex);
             }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.MEMBER)) {
+            clearIndex();
         }
     }
 

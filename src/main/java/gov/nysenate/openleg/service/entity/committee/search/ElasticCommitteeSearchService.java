@@ -8,6 +8,7 @@ import gov.nysenate.openleg.dao.entity.committee.search.ElasticCommitteeSearchDa
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.CommitteeSessionId;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
+import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -21,13 +22,16 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
-@Service
-public class ElasticCommitteeSearchService implements CommitteeSearchService {
 
+@Service
+public class ElasticCommitteeSearchService implements CommitteeSearchService
+{
     @Autowired
     ElasticCommitteeSearchDao committeeSearchDao;
+
     @Autowired
     CommitteeDataService committeeDataService;
+
     @Autowired
     EventBus eventBus;
 
@@ -125,6 +129,15 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService {
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.COMMITTEE)) {
             rebuildIndex();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Subscribe
+    public void handleClearEvent(ClearIndexEvent event) {
+        if (event.affects(SearchIndex.COMMITTEE)) {
+            clearIndex();
         }
     }
 
