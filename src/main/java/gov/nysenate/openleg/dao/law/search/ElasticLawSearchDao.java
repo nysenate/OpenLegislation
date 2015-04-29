@@ -16,6 +16,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -27,6 +29,8 @@ import java.util.List;
 @Repository
 public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
 {
+    private static final Logger logger = LoggerFactory.getLogger(ElasticLawSearchDao.class);
+
     protected static String lawIndexName = SearchIndex.LAW.getIndexName();
 
     protected static List<HighlightBuilder.Field> highlightFields =
@@ -38,7 +42,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, FilterBuilder postFilter,
                                                  RescoreBuilder.Rescorer rescorer, String sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
-            getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, false);
+            getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, true);
         SearchResponse response = searchBuilder.execute().actionGet();
         return getSearchResults(response, limOff, this::getLawDocIdFromHit);
     }
@@ -82,11 +86,9 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     /** --- Internal --- */
 
     private LawDocId getLawDocIdFromHit(SearchHit hit) {
-        String id = hit.getId();
-        String[] idParts = id.split("-DATE-");
-        String docId = hit.getType() + idParts[0];
-        LocalDate publishedDate = LocalDate.parse(idParts[1]);
-        return new LawDocId(docId, publishedDate);
+        String locationId = hit.getId();
+        String docId = hit.getType() + locationId;
+        return new LawDocId(docId, LocalDate.parse((String) hit.getSource().get("activeDate")));
     }
 
     private String createSearchId(LawDocId lawDocId) {
