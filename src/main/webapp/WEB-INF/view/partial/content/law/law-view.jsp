@@ -29,6 +29,12 @@
           <md-progress-circular md-mode="indeterminate"></md-progress-circular>
         </div>
 
+        <md-button ng-show="!loading"
+                   ng-click="curr.showDoc[curr.lawRoot.documents.locationId] = !curr.showDoc[curr.lawRoot.documents.locationId]">
+          <span class="text-small margin-right-20">
+            <i class="icon-text prefix-icon2"></i>Toggle chapter text
+          </span>
+        </md-button>
         <md-button ng-show="!loading" ng-click="collapseNodesBelow(curr.lawRoot.documents);">
           <span class="text-small">
             <i class="icon-chevron-up prefix-icon2"></i>Collapse open documents
@@ -104,6 +110,9 @@
         <!-- Invoke the law tree template using the first law tree level -->
         <md-card class="law-container">
           <md-content>
+            <div ng-show="curr.showDoc[curr.lawRoot.documents.locationId]" class="law-text no-margin"
+                 ng-bind-html="curr.lawText[curr.lawRoot.documents.locationId]">
+            </div>
             <md-list>
               <div ng-repeat="doc in curr.lawTree | limitTo:listingLimit" ng-include="'law-tree-snippet.html'"></div>
             </md-list>

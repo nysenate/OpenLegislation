@@ -288,6 +288,10 @@ lawModule.controller('LawViewCtrl', ['$scope', '$q', '$routeParams', '$location'
         $scope.lawTreeResponse = LawTreeApi.get({lawId: $scope.curr.lawId}, function(){
             $scope.curr.lawRoot = $scope.lawTreeResponse.result;
             $scope.curr.lawTree = $scope.curr.lawRoot.documents.documents.items;
+            if (!$scope.curr.lawTree.length) {
+                $scope.curr.showDoc[$scope.curr.lawRoot.documents.locationId] = true;
+            }
+            $scope.fetchLawDoc($scope.curr.lawRoot.documents);
             $scope.setHeaderText($scope.curr.lawRoot.info.name + " Law");
             if (!$routeParams.location) {
                 $scope.loading = false;

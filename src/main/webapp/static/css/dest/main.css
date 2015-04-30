@@ -573,158 +573,160 @@ a.slogan-link { color: #165b81; text-decoration: none; border-bottom: 2px solid 
 
 /* line 885, ../../../WEB-INF/scss/app.scss */
 .law-text { padding: 40px; margin: 0 20px; white-space: pre-line; font-size: 0.85rem; background: white; border-width: 1px; border-style: none solid solid solid; border-color: #ddd; width: 100%; }
+/* line 886, ../../../WEB-INF/scss/app.scss */
+.law-text.no-margin { margin: 0; }
 
 /** --- Agenda Page --- */
-/* line 901, ../../../WEB-INF/scss/app.scss */
+/* line 904, ../../../WEB-INF/scss/app.scss */
 .agenda-event.fc-event-hori { margin-bottom: 5px; padding: 4px; background: #fafafa; border: 1px none #ddd; border-bottom-style: solid; border-top-right-radius: 0 !important; border-top-left-radius: 0 !important; border-bottom-right-radius: 0 !important; border-bottom-left-radius: 0 !important; color: #008cba; cursor: pointer; }
-/* line 913, ../../../WEB-INF/scss/app.scss */
+/* line 916, ../../../WEB-INF/scss/app.scss */
 .agenda-event.fc-event-hori:hover { background: white; }
 
-/* line 920, ../../../WEB-INF/scss/app.scss */
-.agenda-search div { padding: 16px; }
 /* line 923, ../../../WEB-INF/scss/app.scss */
-.agenda-search label:not(:first-child) { margin-left: 10px; }
+.agenda-search div { padding: 16px; }
 /* line 926, ../../../WEB-INF/scss/app.scss */
+.agenda-search label:not(:first-child) { margin-left: 10px; }
+/* line 929, ../../../WEB-INF/scss/app.scss */
 .agenda-search select, .agenda-search input { margin-left: 10px; }
 
 /** --- Transcript Page Styles --- */
-/* line 933, ../../../WEB-INF/scss/app.scss */
+/* line 936, ../../../WEB-INF/scss/app.scss */
 .transcript-result-link { cursor: pointer; }
 
-/* line 937, ../../../WEB-INF/scss/app.scss */
-.transcript-result-left { width: 180px; padding: 16px; }
 /* line 940, ../../../WEB-INF/scss/app.scss */
+.transcript-result-left { width: 180px; }
+/* line 942, ../../../WEB-INF/scss/app.scss */
 .transcript-result-left .h3 { margin: 0; }
 
 /** --- Styles for Report page --- */
-/* line 947, ../../../WEB-INF/scss/app.scss */
+/* line 949, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table { table-layout: auto; border: 1px solid #ccc; }
-/* line 950, ../../../WEB-INF/scss/app.scss */
+/* line 952, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table th { text-align: center; }
-/* line 953, ../../../WEB-INF/scss/app.scss */
+/* line 955, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table .th-section { border: 1px none #ccc; border-left-style: solid; text-align: center; background: #ededed; }
-/* line 959, ../../../WEB-INF/scss/app.scss */
+/* line 961, ../../../WEB-INF/scss/app.scss */
 #daybreak-summary-table .delta-column { padding: 0 5px 0 0; border-right: 1px solid #ccc; font-size: .7em; }
 
-/* line 966, ../../../WEB-INF/scss/app.scss */
-.blue-title-icon { color: #006b80; margin-right: 20px; }
+/* line 968, ../../../WEB-INF/scss/app.scss */
+table.table-striped tbody tr:nth-child(odd) { background-color: #d0f3ff; }
 
 /* line 972, ../../../WEB-INF/scss/app.scss */
-#noDataAvailable h3 { text-align: center; color: #aaa; }
+.blue-title-icon { color: #006b80; margin-right: 20px; }
 
 /* line 978, ../../../WEB-INF/scss/app.scss */
+#noDataAvailable h3 { text-align: center; color: #aaa; }
+
+/* line 984, ../../../WEB-INF/scss/app.scss */
 .prefix-icon { margin-right: 5px; }
 
-/* line 982, ../../../WEB-INF/scss/app.scss */
+/* line 988, ../../../WEB-INF/scss/app.scss */
 .prefix-icon2 { margin-right: 10px; }
 
-/* line 986, ../../../WEB-INF/scss/app.scss */
+/* line 992, ../../../WEB-INF/scss/app.scss */
 .postfix-icon { margin-left: 5px; }
 
-/* line 990, ../../../WEB-INF/scss/app.scss */
+/* line 996, ../../../WEB-INF/scss/app.scss */
 .new-error { color: red; }
 
-/* line 994, ../../../WEB-INF/scss/app.scss */
+/* line 1000, ../../../WEB-INF/scss/app.scss */
 .closed-error { color: green; }
 
-/* line 998, ../../../WEB-INF/scss/app.scss */
+/* line 1004, ../../../WEB-INF/scss/app.scss */
 .existing-error { color: #aaa; }
 
 /** --- Styles for Report Error Page --- */
-/* line 1004, ../../../WEB-INF/scss/app.scss */
+/* line 1010, ../../../WEB-INF/scss/app.scss */
 .st-sort-ascent:before { content: '\25B2'; }
 
-/* line 1007, ../../../WEB-INF/scss/app.scss */
+/* line 1013, ../../../WEB-INF/scss/app.scss */
 .st-sort-descent:before { content: '\25BC'; }
 
-/* line 1011, ../../../WEB-INF/scss/app.scss */
+/* line 1017, ../../../WEB-INF/scss/app.scss */
 .report-table-snippet { height: 20px; overflow: hidden; }
 
-/* line 1016, ../../../WEB-INF/scss/app.scss */
+/* line 1022, ../../../WEB-INF/scss/app.scss */
 #report-detail-container { padding: 10px !important; }
 
-/* line 1020, ../../../WEB-INF/scss/app.scss */
-table.report-detail-table tbody tr:nth-child(odd) { background-color: #ccc; }
-
-/* line 1024, ../../../WEB-INF/scss/app.scss */
+/* line 1026, ../../../WEB-INF/scss/app.scss */
 .report-detail-table .rpp-selector { float: right; }
 
-/* line 1029, ../../../WEB-INF/scss/app.scss */
+/* line 1031, ../../../WEB-INF/scss/app.scss */
 #daybreak-page button.ng-scope, #daybreak-page .check-butt { margin-right: 4px; }
 
-/* line 1036, ../../../WEB-INF/scss/app.scss */
+/* line 1038, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:first-child { width: 6em; }
 
-/* line 1041, ../../../WEB-INF/scss/app.scss */
+/* line 1043, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(2) { width: 10em; }
 
-/* line 1046, ../../../WEB-INF/scss/app.scss */
+/* line 1048, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(3) { width: 6em; }
 
-/* line 1051, ../../../WEB-INF/scss/app.scss */
+/* line 1053, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(4) { width: 14em; }
 
-/* line 1056, ../../../WEB-INF/scss/app.scss */
+/* line 1058, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(5) { width: 35em; }
 
-/* line 1061, ../../../WEB-INF/scss/app.scss */
+/* line 1063, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table thead tr th:nth-child(6) { width: 5em; }
 
-/* line 1065, ../../../WEB-INF/scss/app.scss */
+/* line 1067, ../../../WEB-INF/scss/app.scss */
 table.report-detail-table tbody tr td { border: 1px solid #eee; }
 
-/* line 1069, ../../../WEB-INF/scss/app.scss */
+/* line 1071, ../../../WEB-INF/scss/app.scss */
 .current-page { color: #006b80; }
 
-/* line 1077, ../../../WEB-INF/scss/app.scss */
-.mismatch-diff-insert { color: green; }
+/* line 1079, ../../../WEB-INF/scss/app.scss */
+.mismatch-diff-insert { background-color: #99ff99; }
 
-/* line 1081, ../../../WEB-INF/scss/app.scss */
-.mismatch-diff-delete { color: red; }
+/* line 1083, ../../../WEB-INF/scss/app.scss */
+.mismatch-diff-delete { background-color: #ff8888; }
 
-/* line 1085, ../../../WEB-INF/scss/app.scss */
+/* line 1087, ../../../WEB-INF/scss/app.scss */
 .mismatch-dialog { width: 46em; height: 25em; }
 
-/* line 1090, ../../../WEB-INF/scss/app.scss */
+/* line 1092, ../../../WEB-INF/scss/app.scss */
 .mismatch-dialog-tabs md-content { max-height: 13em; }
 
-/* line 1094, ../../../WEB-INF/scss/app.scss */
+/* line 1096, ../../../WEB-INF/scss/app.scss */
 .margin-top-5 { margin-top: 5px; }
 
-/* line 1098, ../../../WEB-INF/scss/app.scss */
+/* line 1100, ../../../WEB-INF/scss/app.scss */
 .stats-block-container { margin-bottom: 10px; }
 
-/* line 1102, ../../../WEB-INF/scss/app.scss */
+/* line 1104, ../../../WEB-INF/scss/app.scss */
 .stats-block-title { font-weight: 600; text-align: center; padding: 5px; background: #f1f1f1; margin-bottom: 0; border-bottom: 1px solid #ddd; }
 
-/* line 1111, ../../../WEB-INF/scss/app.scss */
+/* line 1113, ../../../WEB-INF/scss/app.scss */
 .stats-block-number { font-weight: 600; font-size: 1.5rem; background: #fafafa; display: block; padding: 5px; }
 
 /** --- Admin Account Settings --- */
-/* line 1121, ../../../WEB-INF/scss/app.scss */
+/* line 1123, ../../../WEB-INF/scss/app.scss */
 md-list.notification-sub-list md-item md-item-content > div:first-child { width: 4em; }
 
-/* line 1125, ../../../WEB-INF/scss/app.scss */
+/* line 1127, ../../../WEB-INF/scss/app.scss */
 md-list.notification-sub-list md-item md-item-content > div:nth-child(2) { width: 13em; }
 
-/* line 1129, ../../../WEB-INF/scss/app.scss */
+/* line 1131, ../../../WEB-INF/scss/app.scss */
 md-list.notification-sub-list md-item md-item-content > div:nth-child(3) { width: 11em; }
 
 /** --- Calendar View --- */
-/* line 1135, ../../../WEB-INF/scss/app.scss */
+/* line 1137, ../../../WEB-INF/scss/app.scss */
 .cal-entry-sponsor-img { background: 50% 50% no-repeat; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; }
 
-/* line 1142, ../../../WEB-INF/scss/app.scss */
+/* line 1144, ../../../WEB-INF/scss/app.scss */
 .cal-entry-highlight { background: #fbfdb0; }
 
-/* line 1146, ../../../WEB-INF/scss/app.scss */
+/* line 1148, ../../../WEB-INF/scss/app.scss */
 .supplemental-toolbar { height: 88px; }
 
 /** --- Calendar Picker Styling --- */
-/* line 1156, ../../../WEB-INF/scss/app.scss */
+/* line 1158, ../../../WEB-INF/scss/app.scss */
 #calendar-date-picker div.fc-day-content > div { height: 25px !important; }
 
-/* line 1160, ../../../WEB-INF/scss/app.scss */
+/* line 1162, ../../../WEB-INF/scss/app.scss */
 .fc-state-default { background-image: none !important; }
 
 /** --- Color Palette --- */

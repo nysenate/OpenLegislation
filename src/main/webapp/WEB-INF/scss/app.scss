@@ -883,6 +883,9 @@ a.slogan-link {
 }
 
 .law-text {
+  &.no-margin {
+    margin: 0;
+  }
   padding:40px;
   margin: 0 20px;
   white-space: pre-line;
