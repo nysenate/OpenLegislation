@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.scraping;
 
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 @Repository
 public class CalendarScraper extends LRSScraper{
@@ -32,14 +30,19 @@ public class CalendarScraper extends LRSScraper{
     @PostConstruct
     public void init() throws IOException{
         calendarURL = new URL(allCalendars);
-        this.calendarDirectory = environment.getCalendarDirectory();
+        this.calendarDirectory = new File(environment.getScrapedStagingDir(), "calendar");
+        try {
+            FileUtils.forceMkdir(calendarDirectory);
+        } catch (IOException ex) {
+            logger.error("could not create assembly agenda scraped staging dir " + calendarDirectory.getPath());
+        }
     }
 
 
     //Active list sequence number get from parsing the page here with all the calendars
     //ToDo Scraping doesn't handle going through the supplemental calendar intermediary page
     @Override
-    public List<File> scrape() throws IOException{
+    public int scrape() throws IOException{
         logger.info("SCRETCHING landing page.");
         Document doc = Jsoup.connect(calendarURL.toString()).get();
 
@@ -92,12 +95,8 @@ public class CalendarScraper extends LRSScraper{
         }
         ArrayList<File> list = new ArrayList<File>();
         list.add(outfile);
-        return list;
+        return 1;
     }
 
-    @Override
-    public List<File> scrape(BaseBillId id) throws IOException {
-        return null;
-    }
 
 }

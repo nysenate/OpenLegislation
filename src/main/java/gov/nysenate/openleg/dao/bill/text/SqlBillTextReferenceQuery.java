@@ -13,66 +13,63 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
               "(bill_print_no, bill_session_year, reference_date_time, bill_amend_version, text, memo) " +
         "VALUES(:bill_print_no, :bill_session_year, :reference_date_time,:bill_amend_version, :text, :memo)"
     ),
+    SELECT_UNCHECKED_BTR (
+        "SELECT * FROM (\n" +
+        "   SELECT bill_print_no, bill_session_year, MAX(reference_date_time) AS reference_date_time\n" +
+        "       FROM ${schema}." + SqlTable.BILL_TEXT_REFERENCE + "\n" +
+        "   WHERE checked = FALSE\n" +
+        "   GROUP BY bill_print_no, bill_session_year" +
+        ") as mru JOIN ${schema}." + SqlTable.BILL_TEXT_REFERENCE + " btr\n" +
+        "   ON mru.bill_print_no = btr.bill_print_no AND mru.bill_session_year = btr.bill_session_year\n" +
+        "       AND mru.reference_date_time = btr.reference_date_time"
+    ),
+    SELECT_BTR_BY_PRINT_NO (
+        "SELECT * FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
+        "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year"
+    ),
     SELECT_BILL_TEXT_REFERENCE(
-            "SELECT * FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
-                    "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year\n" +
-                    "AND bill_amend_version = :bill_amend_version AND reference_date_time = :reference_date_time"
-    ),
-    SELECT_PK_BILL_TEXT_REFERENCE(
-            "SELECT * FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
-                    "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year\n" +
-                    "AND reference_date_time = :reference_date_time"
-    ),
-    SELECT_ALL_BILL_TEXT_REFERENCE(
-            "SELECT * FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
-                    "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year\n" +
-                    "AND bill_amend_version = :bill_amend_version"
-    ),
-    SELECT_BILL_TEXT_BY_PRINT_NO(
-            "SELECT * FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
-            "WHERE bill_print_no = :bill_print_no"
-    ),
-    SELECT_BILL_TEXT_BY_SESSION_YEAR(
-            "SELECT * FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
-            "WHERE bill_session_year = :bill_session_year"
+        SELECT_BTR_BY_PRINT_NO.sql + "\n" +
+        "AND reference_date_time = :reference_date_time"
     ),
     SELECT_BILL_TEXT_RANGE(
-            "Select * FROM ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
-                    " WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year\n" +
-                    " AND reference_date_time BETWEEN :startDateTime AND :endDateTime\n" +
-                    "ORDER BY reference_date_time DESC\n" +
-                    "LIMIT 1"
+        SELECT_BTR_BY_PRINT_NO.sql + "\n" +
+        "   AND reference_date_time BETWEEN :startDateTime AND :endDateTime"
     ),
     SELECT_ALL_BILL_TEXT_RANGE(
-            "Select * FROM ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
-                    " WHERE reference_date_time BETWEEN :startDateTime AND :endDateTime\n" +
-                    "ORDER BY reference_date_time DESC\n" +
-                    "LIMIT 1"
+        "SELECT * FROM ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
+        "WHERE reference_date_time BETWEEN :startDateTime AND :endDateTime"
     ),
     DELETE_BILL_REFERENCE(
-           "DELETE FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
-            "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year AND\n" +
-            "reference_date_time = :reference_date_time"
+        "DELETE FROM ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
+        "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year AND\n" +
+        "reference_date_time = :reference_date_time"
     ),
     UPDATE_BILL_REFERENCE(      //probably works, I assume
-            "UPDATE ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
-                    "SET text = :text, memo = :memo, bill_amend_version = :bill_amend_version\n" +
-                    "WHERE bill_print_no = :bill_print_no AND bill_session_year =:bill_session_year\n" +
-                    "AND reference_date_time = :reference_date_time"
+        "UPDATE ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
+        "SET text = :text, memo = :memo, bill_amend_version = :bill_amend_version\n" +
+        "WHERE bill_print_no = :bill_print_no AND bill_session_year =:bill_session_year\n" +
+        "AND reference_date_time = :reference_date_time"
     ),
+    SET_REF_CHECKED(
+        "UPDATE ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
+        "SET checked = TRUE\n" +
+        "WHERE bill_print_no = :bill_print_no AND bill_session_year = :bill_session_year"
+    ),
+
+    /** --- Scrape Queue --- */
+
     INSERT_SCRAPE_QUEUE(
-            "INSERT INTO ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
-                    "(bill_print_no, bill_session_year, added_time) " +
-                    "VALUES(:bill_print_no, :bill_session_year, :added_time)"
+        "INSERT INTO ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
+        "(print_no, session_year, priority) " +
+        "VALUES(:printNo, :sessionYear, :priority)"
     ),
     SELECT_SCRAPE_QUEUE(
-            "SELECT * FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
-                    "ORDER BY added_time asc"
+        "SELECT * FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE + "\n" +
+        "ORDER BY priority DESC, added_time ASC"
     ),
     DELETE_SCRAPE_QUEUE(
-            "DELETE FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
-                    "WHERE print_no =:print_no AND session_year = :session_year"
-
+        "DELETE FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +
+        "WHERE print_no =:printNo AND session_year = :sessionYear"
     )
 
 

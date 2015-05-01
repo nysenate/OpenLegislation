@@ -314,6 +314,15 @@ md-tabs.md-default-theme .md-paginator md-icon {
   text-transform: capitalize;
 }
 
+.preformatted {
+  white-space: pre;
+  font-family: 'Inconsolata', monospace;
+}
+
+.word-wrap {
+  word-wrap: break-word;
+}
+
 a.gray-2-blue {
   color: $gray10;
   @include transition(all .2s linear);
@@ -1017,6 +1026,8 @@ table.table-striped tbody tr:nth-child(odd) {
 .report-table-snippet {
   height:20px;
   overflow: hidden;
+  max-width:30vw;
+  word-wrap: break-word;
 }
 
 #report-detail-container {
@@ -1084,13 +1095,9 @@ table.report-detail-table tbody tr td {
   background-color: #ff8888;
 }
 
-.mismatch-dialog {
-  width: 46em;
-  height: 25em;
-}
-
 .mismatch-dialog-tabs md-content {
-  max-height: 13em;
+  width: 75vw;
+  height: 57vh;
 }
 
 .margin-top-5 {

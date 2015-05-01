@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by kyle on 11/12/14.
@@ -34,11 +33,16 @@ public class SenateAgnScraper extends LRSScraper{
     @PostConstruct
     public void init() throws IOException {
         senateURL = new URL(senateAgendas);
-        this.senateAgendaDirectory = environment.getSenateAgendaDirectory();
+        this.senateAgendaDirectory = new File(environment.getScrapedStagingDir(), "sen-agenda");
+        try {
+            FileUtils.forceMkdir(senateAgendaDirectory);
+        } catch (IOException ex) {
+            logger.error("could not create assembly agenda scraped staging dir " + senateAgendaDirectory.getPath());
+        }
     }
 
     @Override
-    public List<File> scrape() throws IOException {
+    public int scrape() throws IOException {
         logger.info("SCRETCHING landing page.");
         Document doc = Jsoup.connect(senateURL.toString()).timeout(10000).get();
 
@@ -72,13 +76,7 @@ public class SenateAgnScraper extends LRSScraper{
         }
         ArrayList<File> list = new ArrayList<File>();
         list.add(outfile);
-        return list;
+        return list.size();
 
     }
-
-    @Override
-    public List<File> scrape(BaseBillId id) throws IOException {
-        return null;
-    }
-
 }

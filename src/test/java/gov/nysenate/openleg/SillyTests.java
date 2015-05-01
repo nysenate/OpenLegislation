@@ -1,5 +1,6 @@
 package gov.nysenate.openleg;
 
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,4 +25,9 @@ public class SillyTests extends BaseTests {
                \__)        './/   .'
                              `'-'`
     */
+
+    @Test
+    public void testTest() {
+
+    }
 }

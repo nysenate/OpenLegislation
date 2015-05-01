@@ -148,6 +148,13 @@ public class BillId implements Serializable, Comparable<BillId>
     }
 
     /**
+     * Gets the number portion of the print number
+     */
+    @JsonIgnore
+    public int getNumber() {
+        return Integer.parseInt(basePrintNo.replaceAll("[^\\d]", ""));
+    }
+    /**
      * Indicates if this bill is currently set to the base version.
      *
      * @param version The bill version

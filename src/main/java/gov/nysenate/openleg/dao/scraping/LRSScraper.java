@@ -30,10 +30,7 @@ public abstract class LRSScraper {
     protected final Pattern linkPattern = Pattern.compile("<a href=\\\"(.*?)\\\">(.+?)</a>");
     protected final Pattern bottomPattern = Pattern.compile("src=\\\"(frmload\\.cgi\\?BOT-([0-9]+))\\\">");
 
-
-    public abstract List<File> scrape () throws IOException;
-    public abstract List<File> scrape(BaseBillId id) throws IOException;
-
+    public abstract int scrape() throws IOException;
 
     public URL resolveLink(URL url, String link) throws MalformedURLException
     {

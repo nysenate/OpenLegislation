@@ -128,7 +128,7 @@ public class SpotcheckRunService {
             SpotCheckReport report = reportService.generateReport(
                     DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange));
             logger.info("Saving report: {} {} {}", report.getReportDateTime(), report.getReferenceType(),
-                    report.getNotes() != null, report.getNotes(), "");
+                    report.getNotes() != null ? report.getNotes() : "");
             reportService.saveReport(report);
             spotCheckNotificationService.spotcheckCompleteNotification(report);
         } catch (ReferenceDataNotFoundEx ex) {

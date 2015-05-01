@@ -25,7 +25,13 @@ public class SpotCheckMismatch
     /** Any details about this mismatch. (Optional) */
     protected String notes;
 
-    /** --- Constructor --- */
+    /**
+     * --- Constructor ---
+     */
+
+    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, Object referenceData, Object observedData) {
+        this(mismatchType, String.valueOf(referenceData), String.valueOf(observedData));
+    }
 
     public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData) {
         this(mismatchType, referenceData, observedData, "");
@@ -33,8 +39,8 @@ public class SpotCheckMismatch
 
     public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData, String notes) {
         this.mismatchType = mismatchType;
-        this.referenceData = (referenceData == null) ? "" : referenceData;
-        this.observedData = (observedData == null) ? "" : observedData;
+        this.referenceData = referenceData == null ? "" : referenceData;
+        this.observedData = observedData == null ? "" : observedData;
         this.notes = notes;
     }
 
