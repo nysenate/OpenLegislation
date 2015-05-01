@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.scraping;
 
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by kyle on 11/10/14.
@@ -34,12 +32,17 @@ public class AssemblyAgnScraper extends LRSScraper {
     @PostConstruct
     public void init() throws IOException {
         agendaURL = new URL(assemblyAgendas);
-        this.assemblyAgendaDirectory = environment.getAssemblyAgendaDirectory();
+        this.assemblyAgendaDirectory = new File(environment.getScrapedStagingDir(), "ass-agenda");
+        try {
+            FileUtils.forceMkdir(assemblyAgendaDirectory);
+        } catch (IOException ex) {
+            logger.error("could not create assembly agenda scraped staging dir " + assemblyAgendaDirectory.getPath());
+        }
     }
 
     @Override
-    public List<File> scrape() throws IOException {
-        System.out.println("ASSEMBLY AGENDA DIRECTORY ::::::: " + environment.getAssemblyAgendaDirectory());
+    public int scrape() throws IOException {
+        System.out.println("ASSEMBLY AGENDA DIRECTORY ::::::: " + assemblyAgendaDirectory);
         logger.info("SCRETCHING landing page.");
         Document doc = Jsoup.connect(agendaURL.toString()).timeout(10000).get();
 
@@ -58,7 +61,7 @@ public class AssemblyAgnScraper extends LRSScraper {
         Elements links = agendaPage.select("a");
 
         for (Element link : links){
-            if (link.text().equalsIgnoreCase("All Committee Agendas")){ //possibility for error in generating filename
+            if ("All Committee Agendas".equalsIgnoreCase(link.text())){ //possibility for error in generating filename
                 String absHref = link.attr("abs:href");
                 System.out.println(absHref);
                 URL contentURL = new URL(absHref);
@@ -73,11 +76,7 @@ public class AssemblyAgnScraper extends LRSScraper {
         }
         ArrayList<File> list = new ArrayList<>();
         list.add(outfile);
-        return list;
+        return list.size();
     }
 
-    @Override
-    public List<File> scrape(BaseBillId id) throws IOException {
-        return null;
-    }
 }

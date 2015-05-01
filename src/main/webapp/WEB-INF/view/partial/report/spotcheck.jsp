@@ -9,13 +9,13 @@
   String daybreakInitArgs = refTypeMap + ", " + mismatchMap;
 %>
 
-<section ng-controller="DaybreakCtrl" id="daybreak-page" ng-init='init(<%=daybreakInitArgs%>)'>
+<section ng-controller="DaybreakCtrl" id="daybreak-page" ng-init='init(<%=daybreakInitArgs%>)' class="content-section">
   <md-tabs class='md-primary' md-selected="selectedIndex">
 
     <!-- Summary Tab -->
     <md-tab>
       <md-tab-label>Summaries</md-tab-label>
-      <md-card>
+      <md-card class="content-card">
         <md-card-content ng-controller="DaybreakSummaryCtrl" style="padding-left: 10px">
           <div>
             <form>
@@ -40,15 +40,15 @@
               <tr>
                 <th rowspan="2" st-sort="reportDateTime" style="max-width:11em">Report Date/Time</th>
                 <th rowspan="2" st-sort="referenceType" style="max-width:12.5em">Report Type</th>
-                <th rowspan="2" style="width:6em">Notes</th>
+                <th rowspan="2" st-sort="notes" style="width:6em">Notes</th>
                 <th class="th-section"  colspan="5">Mismatch Statuses</th>
               </tr>
               <tr>
-                <th style="border-left:1px solid #ccc; width: 3em">Total Open</th>
-                <th style="width:3.7em">New</th>
-                <th style="width:3.7em">Regress</th>
-                <th style="width:3.7em">Existing</th>
-                <th style="width:3.7em">Resolved</th>
+                <th st-sort="openMismatches" style="border-left:1px solid #ccc; width: 3em">Total Open</th>
+                <th st-sort="mismatchStatuses['NEW']" style="width:3.7em">New</th>
+                <th st-sort="mismatchStatuses['REGRESSION']" style="width:3.7em">Regress</th>
+                <th st-sort="mismatchStatuses['EXISTING']" style="width:3.7em">Existing</th>
+                <th st-sort="mismatchStatuses['RESOLVED']" style="width:3.7em">Resolved</th>
               </tr>
             </thead>
             <tbody>
@@ -92,7 +92,7 @@
       </md-tab-label>
       <section ng-controller="DaybreakDetailCtrl">
         <md-card>
-          <md-card-content>
+          <md-card-content ng-show="!loadingReport">
             <!--Title-->
             <h4>
               <span class="icon-graph blue-title-icon"></span>
@@ -185,13 +185,17 @@
                       {{row.firstOpened | moment:'lll'}}
                     </span>
                   </td>
-                  <td><div class="report-table-snippet"><mismatch-diff diff="row.diff"/></div></td>
+                  <td><div class="report-table-snippet"><mismatch-diff diff="row.diff"></mismatch-diff></div></td>
                   <td><a href='#' ng-click='openDetailWindow(row.mismatchId)'>Details</a></td>
                 </tr>
               </tbody>
               <tfoot>
               </tfoot>
             </table>
+          </md-card-content>
+          <md-card-content ng-show="loadingReport">
+            <h3>Loading Report...</h3>
+            <md-progress-linear md-mode="indeterminate"></md-progress-linear>
           </md-card-content>
         </md-card>
       </section>
@@ -217,8 +221,8 @@
 
 <!-- Detail Template -->
 <script type="text/ng-template" id="mismatchDetailWindow">
-  <md-dialog aria-label="">
-    <md-content class="md-padding mismatch-dialog">
+  <md-dialog aria-label="Mismatch Detail">
+    <md-content class="padding-20 mismatch-dialog">
       <div>
         <h5 style="display: inline-block">
           {{reportType | contentType}}: <a ng-href="{{contentUrl}}" target="_blank">{{contentId}}</a><br/>
@@ -231,26 +235,41 @@
           Current Reference: {{observation.refDateTime | moment:'lll'}}
         </h5>
       </div>
-      <md-tabs class="mismatch-dialog-tabs">
-        <md-tab label="DIFF">
+      <md-tabs md-dynamic-height="true" class="mismatch-dialog-tabs">
+        <md-tab label="Summary" ng-disabled="!multiLine">
           <md-content>
-            <mismatch-diff diff="currentMismatch.diff"></mismatch-diff>
+            <diff-summary diff="currentMismatch.diff"></diff-summary>
           </md-content>
         </md-tab>
-        <md-tab label="LBDC"><md-content ng-bind="currentMismatch.referenceData"></md-content></md-tab>
-        <md-tab label="Openleg"><md-content ng-bind="currentMismatch.observedData"></md-content></md-tab>
+        <md-tab label="Full Diff">
+          <md-content>
+            <mismatch-diff pre="{{multiLine}}" diff="currentMismatch.diff"></mismatch-diff>
+          </md-content>
+        </md-tab>
+        <md-tab label="LBDC">
+          <md-content>
+            <span ng-class="{preformatted: multiLine, 'word-wrap': !multiLine}" ng-bind="currentMismatch.referenceData"></span>
+          </md-content>
+        </md-tab>
+        <md-tab label="Openleg">
+          <md-content>
+            <span ng-class="{preformatted: multiLine, 'word-wrap': !multiLine}" ng-bind="currentMismatch.observedData"></span>
+          </md-content>
+        </md-tab>
         <md-tab label="Prior Occurrences">
-          <toggle-panel ng-repeat="priorMismatch in currentMismatch.prior.items"
-              label="{{priorMismatch.reportId.reportDateTime | moment:'lll'}}">
-            <div layout="row" layout-align="space-around">
-              <h5 class="no-margin">Reference Date: {{priorMismatch.reportId.referenceDateTime | moment:'lll'}}</h5>
-              <h5 class="no-margin">Status: {{priorMismatch.status | mismatchStatusLabel}}</h5>
-            </div>
-            <md-divider></md-divider>
-            <p>
-              <mismatch-diff diff="priorMismatch.diff"></mismatch-diff>
-            </p>
-          </toggle-panel>
+          <md-content>
+            <toggle-panel ng-repeat="priorMismatch in currentMismatch.prior.items"
+                label="{{priorMismatch.reportId.reportDateTime | moment:'lll'}}">
+              <div layout="row" layout-align="space-around">
+                <h5 class="no-margin">Reference Date: {{priorMismatch.reportId.referenceDateTime | moment:'lll'}}</h5>
+                <h5 class="no-margin">Status: {{priorMismatch.status | mismatchStatusLabel}}</h5>
+              </div>
+              <md-divider></md-divider>
+              <p>
+                <mismatch-diff diff="priorMismatch.diff"></mismatch-diff>
+              </p>
+            </toggle-panel>
+          <md-content>
         </md-tab>
         <md-tab label="Other Mismatches">
           <md-content>

@@ -46,11 +46,6 @@ env.staging = /data/openleg/staging
 # Omit any trailing slashes. (Default: /data/openleg/archive)
 
 env.archive = /data/openleg/archive
-env.scraped = /data/openleg/scraped
-
-env.scraped.calendar = /data/openleg/scraped/calendar
-env.scraped.assemblyagenda = /data/openleg/scraped/ASMAGEN
-env.scraped.senateagenda = /data/openleg/scraped/SENAGEN
 
 # The database schema where the legislative content is persisted.
 # (Default: master)

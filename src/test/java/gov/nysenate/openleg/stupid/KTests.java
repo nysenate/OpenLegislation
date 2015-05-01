@@ -44,8 +44,8 @@ public class KTests{
         System.out.println("Session Year:::: "+ bill.getSession());
         System.out.println("summary:::: "+ bill.getSummary());
 
-        //System.out.println("memo:::: "+ bill.getActiveAmendment().getMemo());
-        //System.out.println("text:::: "+ bill.getActiveAmendment().getFullText());
+        //System.out.println("memo:::: "+ bill.getActiveVersion().getMemo());
+        //System.out.println("text:::: "+ bill.getActiveVersion().getFullText());
 
     }
 

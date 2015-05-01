@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.service.spotcheck.billtext;
 
-import gov.nysenate.openleg.dao.bill.text.SqlBillTextReferenceDao;
+import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
+import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.ScrapedBillMemoParser;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,7 +28,7 @@ import java.util.List;
 public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService<BaseBillId> {
     // get queue , return first billID from queue
     @Autowired
-    SqlBillTextReferenceDao dao;
+    SqlFsBillTextReferenceDao dao;
     @Autowired
     BillTextScraper scraper;
     @Autowired
@@ -40,32 +42,26 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
 
     @Override
     public int doCollate() throws Exception {
-        List<BaseBillId> l = dao.getScrapeQueue();
-        if (!l.isEmpty()) {
-            BaseBillId id = l.get(0);
-            List<File> textFileList = scraper.scrape(id);
-
-            //bill and memo parsed from file they're scraped into, retrieves amendment from memo parser
-            String billText = scrapedBillTextParser.getBillText(textFileList.get(0), id.getBillType().toString());
-            String memoText = scrapedBillMemoParser.getBillMemoText(textFileList.get(1));
-            String amendment = scrapedBillMemoParser.getAmendment();
-            BillTextSpotcheckReference b =
-                    new BillTextSpotcheckReference(id.getPrintNo(), id.getSession(), LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
-                                                   billText, memoText, Version.of(amendment));
-            addToDatabase(b);
-            dao.deleteBillFromScrapeQueue(id);
-            return 1;
-        }
-        return 0;
+        return scraper.scrape();
     }
 
-    public void addToDatabase(BillTextSpotcheckReference ref) {
+    public void addToDatabase(BillTextReference ref) {
         dao.insertBillTextReference(ref);
     }
 
     @Override
     public int doIngest() throws Exception {
-        return 0;
+        Collection<File> incomingScrapedBills = dao.getIncomingScrapedBills();
+        List<BillTextReference> billTextReferences = new ArrayList<>();
+        for (File file : incomingScrapedBills) {
+            billTextReferences.add(scrapedBillTextParser.parseReference(file));
+        }
+        billTextReferences.forEach(dao::insertBillTextReference);
+        // This second file loop is intentional so that no files are archived in the event of an exception
+        for (File file : incomingScrapedBills) {
+            dao.archiveScrapedBill(file);
+        }
+        return billTextReferences.size();
     }
 
     @Override
@@ -75,7 +71,12 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
 
     @Override
     public String getCollateType() {
-        return "Scraped Bill Text";
+        return "Scraped Bill";
+    }
+
+    @Override
+    public String getIngestType() {
+        return "Bill Text spotcheck reference";
     }
 }
 

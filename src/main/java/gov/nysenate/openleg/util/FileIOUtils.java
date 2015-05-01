@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.util;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 import org.springframework.core.io.UrlResource;
 
@@ -38,8 +39,8 @@ public class FileIOUtils
      * @throws IOException
      */
     public static Collection<File> safeListFiles(File directory, String[] extensions, boolean recursive) throws IOException {
-        org.apache.commons.io.FileUtils.forceMkdir(directory);
-        return org.apache.commons.io.FileUtils.listFiles(directory, extensions, recursive);
+        FileUtils.forceMkdir(directory);
+        return FileUtils.listFiles(directory, extensions, recursive);
     }
 
     /**
@@ -54,7 +55,7 @@ public class FileIOUtils
      * @throws IOException
      */
     public static Collection<File> safeListFiles(File directory, boolean recursive, String[] excludeDirs) throws IOException {
-        org.apache.commons.io.FileUtils.forceMkdir(directory);
+        FileUtils.forceMkdir(directory);
         IOFileFilter dirFileFilter;
         if (excludeDirs != null && excludeDirs.length > 0) {
             List<IOFileFilter> excludeDirFilters = new ArrayList<>();
@@ -66,7 +67,7 @@ public class FileIOUtils
         else {
             dirFileFilter = (recursive) ? TrueFileFilter.TRUE : FalseFileFilter.FALSE;
         }
-        return org.apache.commons.io.FileUtils.listFiles(directory, TrueFileFilter.TRUE, dirFileFilter);
+        return FileUtils.listFiles(directory, TrueFileFilter.TRUE, dirFileFilter);
     }
 
     /**
@@ -79,7 +80,7 @@ public class FileIOUtils
      */
     public static File safeGetFolder(File parent, String folderName) throws IOException {
         File directory = new File(parent, folderName);
-        org.apache.commons.io.FileUtils.forceMkdir(directory);
+        FileUtils.forceMkdir(directory);
         return directory;
     }
 
@@ -96,7 +97,7 @@ public class FileIOUtils
         if (newFile.exists()) {
             newFile.delete();
         }
-        org.apache.commons.io.FileUtils.moveFileToDirectory(file, directory, true);
+        FileUtils.moveFileToDirectory(file, directory, true);
     }
 
     /**

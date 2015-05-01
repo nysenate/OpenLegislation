@@ -96,7 +96,7 @@ public class CacheConfigurationTests extends BaseTests
 //        });
 //        Bill S1234 = billDataService.getBill(new BaseBillId("S1234", 2013));
 //        cacheManager.getCache("testCache").put(new Element(new BaseBillId("S1234", 2013), S1234));
-//        S1234.getActiveAmendment().setFullText("MUWAHHAHA");
+//        S1234.getActiveVersion().setFullText("MUWAHHAHA");
 //        assertEquals(S1234.getFullText(),
 //                ((Bill) cacheManager.getCache("testCache").get(new BaseBillId("S1234", 2013)).getObjectValue()).getFullText());
 //        logger.info("Bill Cache {}", cacheManager.getCache("bills").getStatistics().getSize());

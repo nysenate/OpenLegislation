@@ -1,10 +1,13 @@
 package gov.nysenate.openleg.dao.bill.text;
 
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillTextSpotcheckReference;
+import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
+import org.springframework.dao.EmptyResultDataAccessException;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -12,15 +15,74 @@ import java.util.List;
  */
 public interface BillTextReferenceDao {
 
-    public BillTextSpotcheckReference getMostRecentBillTextReference(BaseBillId id, LocalDateTime start, LocalDateTime end);
-    public BillTextSpotcheckReference getMostRecentBillTextReference(LocalDateTime start, LocalDateTime end);
-    public BillTextSpotcheckReference getPKBillTextReference(BaseBillId id, LocalDateTime refDateTime);
-    public void addBillToScrapeQueue(BaseBillId baseBillId);
-    public List<BaseBillId> getScrapeQueue();
-    public List<BillTextSpotcheckReference> getBillTextReference(BaseBillId id);
-    public BillTextSpotcheckReference getBillTextReference(BaseBillId id, LocalDateTime refDateTime);
-    public void insertBillTextReference(BillTextSpotcheckReference ref);
-    public void deleteBillTextReference(BillTextSpotcheckReference ref);
-    public void deleteBillFromScrapeQueue(BaseBillId id);
+    /**
+     * @return A list of all incoming scraped bill files
+     */
+    Collection<File> getIncomingScrapedBills() throws IOException;
 
-    }
+    /**
+     * Moves a scraped bill file into the archive directory
+     * @param scrapedBill File
+     * @throws IOException if the file could not be archived
+     */
+    void archiveScrapedBill(File scrapedBill) throws IOException;
+
+    /**
+     * Gets a list of all unchecked bill text references
+     */
+    List<BillTextReference> getUncheckedBillTextReferences();
+
+    /**
+     * Gets the most recent bill text reference for the given bill within the given date time range
+     */
+    BillTextReference getMostRecentBillTextReference(BaseBillId id, LocalDateTime start, LocalDateTime end);
+
+    /**
+     * Gets the most recently scraped bill text reference within the given date time range
+     */
+    BillTextReference getMostRecentBillTextReference(LocalDateTime start, LocalDateTime end);
+
+    /**
+     * Gets a bill text reference for the given base bill id that was scraped at the given date time
+     */
+    BillTextReference getBillTextReference(BaseBillId id, LocalDateTime refDateTime);
+
+    /**
+     * Gets all bill text references for the given billid
+     */
+    List<BillTextReference> getBillTextReference(BaseBillId id);
+
+    /**
+     * Inserts a new bill text reference
+     */
+    void insertBillTextReference(BillTextReference ref);
+
+    /** Sets all references for the given bill id as checked */
+    void setChecked(BaseBillId billId);
+
+    /** Deletes a bill text reference */
+    void deleteBillTextReference(BillTextReference ref);
+
+    /**
+     * Gets the bill at the head of the scrape queue
+     * @return BaseBillId
+     * @throws EmptyResultDataAccessException if the scrape queue is empty
+     */
+    BaseBillId getScrapeQueueHead() throws EmptyResultDataAccessException;
+
+    /**
+     * Gets all bills in the scrape queue
+     */
+    List<BaseBillId> getScrapeQueue();
+
+    /**
+     * Adds a bill to the scrape queue
+     */
+    void addBillToScrapeQueue(BaseBillId baseBillId, int priority);
+
+    /**
+     * Removes all instances of a bill from the scrape queue
+     */
+    void deleteBillFromScrapeQueue(BaseBillId id);
+
+}

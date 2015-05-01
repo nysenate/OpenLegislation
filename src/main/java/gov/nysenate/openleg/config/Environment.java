@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
 import java.io.File;
 import java.time.Duration;
 
@@ -34,22 +32,12 @@ public class Environment
     /** The directory url where all archived data files are contained. */
     @Value("${env.archive}") private String archiveDirPath;
 
-    /** The directory url for scraped LBDC files. */
-    @Value("${env.scraped.calendar}") private String calendarDirPath;
-    @Value("${env.scraped.assemblyagenda}") private String assemblyAgendaDirPath;
-    @Value("${env.scraped.senateagenda}") private String senateAgendaDirPath;
-    @Value("${env.scraped.billtext}") private String billTextDirPath;
-    @Value("${env.scraped.billmemo}") private String billMemoDirPath;
-
     private File baseDir;
     private File stagingDir;
     private File archiveDir;
-    
-    private File calendarDirectory;
-    private File assemblyAgendaDirectory;
-    private File senateAgendaDirectory;
-    private File billTextDirectory;
-    private File billMemoDirectory;
+
+    private File scrapedStagingDir;
+
 
     /** --- Api Auth --- */
 
@@ -123,11 +111,9 @@ public class Environment
         this.baseDir = new File(envDirPath);
         this.stagingDir = new File(stagingDirPath);
         this.archiveDir = new File(archiveDirPath);
-        this.calendarDirectory = new File(calendarDirPath);
-        this.assemblyAgendaDirectory = new File(assemblyAgendaDirPath);
-        this.senateAgendaDirectory = new File(senateAgendaDirPath);
-        this.billTextDirectory = new File(billTextDirPath);
-        this.billMemoDirectory = new File(billMemoDirPath);
+
+        this.scrapedStagingDir = new File(stagingDir, "scraped");
+
         this.spotcheckAlertGracePeriod = Duration.ofMinutes(rawAlertGracePeriod);
     }
 
@@ -213,38 +199,6 @@ public class Environment
         this.spotcheckScheduled = spotcheckScheduled;
     }
 
-    public File getCalendarDirectory() {
-        return calendarDirectory;
-    }
-
-    public void setCalendarDirectory(File calendarDirectory) {
-        this.calendarDirectory = calendarDirectory;
-    }
-
-    public File getSenateAgendaDirectory() {
-        return senateAgendaDirectory;
-    }
-
-    public void setSenateAgendaDirectory(File senateAgendaDirectory) {
-        this.senateAgendaDirectory = senateAgendaDirectory;
-    }
-
-    public File getAssemblyAgendaDirectory() {
-        return assemblyAgendaDirectory;
-    }
-
-    public void setAssemblyAgendaDirectory(File assemblyAgendaDirectory) {
-        this.assemblyAgendaDirectory = assemblyAgendaDirectory;
-    }
-
-    public File getBillTextDirectory() {
-        return billTextDirectory;
-    }
-
-    public void setBillTextDirectory(File billTextDirectory) {
-        this.billTextDirectory = billTextDirectory;
-    }
-
     public boolean isNotificationsEnabled() {
         return notificationsEnabled;
     }
@@ -267,14 +221,6 @@ public class Environment
 
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
-    }
-
-    public File getBillMemoDirectory() {
-        return billMemoDirectory;
-    }
-
-    public void setBillMemoDirectory(File billMemoDirectory) {
-        this.billMemoDirectory = billMemoDirectory;
     }
 
     public void setBaseDir(File baseDir) {
@@ -347,5 +293,13 @@ public class Environment
 
     public void setOldProdUrl(String oldProdUrl) {
         this.oldProdUrl = oldProdUrl;
+    }
+
+    public File getScrapedStagingDir() {
+        return scrapedStagingDir;
+    }
+
+    public void setScrapedStagingDir(File scrapedStagingDir) {
+        this.scrapedStagingDir = scrapedStagingDir;
     }
 }

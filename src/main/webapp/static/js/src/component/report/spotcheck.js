@@ -172,6 +172,7 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
                 if ($scope.response.success) {
                     $scope.reportSummaries = $scope.response.reports.items;
                     console.log("summaries received");
+                    $scope.setSummarySearchParams();
                 }
             });
     };
@@ -181,7 +182,6 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
         $scope.endDate = moment($scope.params.inputEndDate);
         $scope.startDate = moment($scope.params.inputStartDate);
         $scope.getSummaries();
-        $scope.setSummarySearchParams();
     });
 
     $scope.setSummarySearchParams = function () {
@@ -249,26 +249,76 @@ daybreakModule.directive('mismatchDiff', function(){
             diff: '='
         },
         template:
-        "<span ng-repeat='segment in diff' ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
-        "       'mismatch-diff-insert': segment.operation=='INSERT', " +
-        "       'mismatch-diff-delete': segment.operation=='DELETE'}\" >" +
-        "   {{segment.text}}" +
-        //"   <span ng-if=\"segment.operation=='EQUAL'\" ng-bind='segment.text'></span>" +
-        //"   <span ng-if=\"segment.operation!='EQUAL'\" ng-repeat='subsegment in spaceSplit(segment.text) track by $index'" +
-        //"           ng-bind='subsegment'" +
-        //"           ng-class=\"{'mismatch-diff-insert-space': segment.operation=='INSERT' && containsSpace(subsegment)," +
-        //"                       'mismatch-diff-delete-space': segment.operation=='DELETE' && containsSpace(subsegment)}\">" +
-        //"   </span>" +
-        "</span>",
-        controller: function ($scope) {
-            $scope.spaceSplit = function(text) {
-                return text.split(/(\s+)/);
-            };
-            $scope.containsSpace = function(text) {
-                return /\s+/.test(text);
-            };
+        "<span ng-class='{preformatted: pre, \"word-wrap\": !pre}'>" +
+          "<span ng-repeat='segment in diff' ng-bind='segment.text'" +
+              "ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
+                          "'mismatch-diff-insert': segment.operation=='INSERT', " +
+                          "'mismatch-diff-delete': segment.operation=='DELETE'}\">" +
+        "</span></span>"
+        ,
+        link: function($scope, $element, $attrs) {
+            $scope.pre = $attrs.pre === "true";
         }
     };
+});
+
+daybreakModule.directive('diffSummary', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            diff: '='
+        },
+        template:
+        "<div ng-repeat='diff in selectedDiffs'>" +
+            "<span class='bold'>Lines {{diff.startLineNum}} to {{diff.endLineNum}}:<br></span>" +
+            "<span ng-bind='diff.startText'></span>" +
+            "<mismatch-diff pre='true' diff='diff.segments'></mismatch-diff>" +
+            "<span ng-bind='diff.endText'></span>" +
+            "<br ng-if='!$last'><br ng-if='!$last'>" +
+        "</div>",
+        link: function($scope, $element, $attrs) {
+            $scope.selectedDiffs = [];
+            var currentLineNum = 0;
+            var currentLineText = "";
+            var currentDiff = null;
+            // Isolate differences from full text
+            for (var iSeg in $scope.diff) {
+                var segment = $scope.diff[iSeg];
+                var segLines = segment.text.split(/\n/);
+                if (["DELETE", "INSERT"].indexOf(segment.operation) >= 0) {
+                    if (currentDiff == null) {
+                        currentDiff = {
+                            startText: currentLineText,
+                            startLineNum: currentLineNum,
+                            segments: []
+                        };
+                    }
+                    currentDiff.segments.push(segment);
+                } else {
+                    if (currentDiff != null) {
+                        if (segLines.length > 2) {
+                            currentDiff.endText = segLines[0];
+                            currentDiff.endLineNum = currentLineNum;
+                            $scope.selectedDiffs.push(currentDiff);
+                            currentDiff = null;
+                        } else {
+                            currentDiff.segments.push(segment);
+                        }
+                    }
+                    currentLineText = segLines.length > 1 ? segLines[segLines.length - 1] : currentLineText + segLines[0];
+                }
+                currentLineNum += segLines.length - 1
+            }
+            if (currentDiff != null) {
+                currentDiff.endText = "";
+                currentDiff.endLineNum = currentLineNum;
+                $scope.selectedDiffs.push(currentDiff);
+            }
+            $scope.singleLine = function(diff) {
+                return diff.startLineNum == diff.endLineNum;
+            };
+        }
+    }
 });
 
 daybreakModule.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'initialMismatchId', 'reportType',
@@ -293,6 +343,11 @@ function($scope, $mdDialog, initialMismatchId, reportType,
         $scope.contentUrl = getContentUrl(reportType, details.observation.key);
         $scope.observation = details.observation;
         $scope.currentMismatch = details.mismatch;
+        var fullText = "";
+        for (var i in $scope.currentMismatch.diff) {
+            fullText += $scope.currentMismatch.diff[i].text;
+        }
+        $scope.multiLine = fullText.split(/\n/).length > 1;
         $scope.allMismatches = details.observation.mismatches.items;
 
         $scope.firstOpened = $scope.findFirstOpenedDates($scope.currentMismatch);
@@ -320,6 +375,7 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
     $scope.errorFilter = null;
     $scope.displayData = [];
     $scope.filterWatchersInitialized = false;
+    $scope.loadingReport = false;
 
     // Initialization function
     $scope.init = function () {
@@ -345,8 +401,10 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
             $scope.extractTableData();
             $scope.filterInit();
             $scope.activateFilterWatchers();
+            $scope.loadingReport = false;
             console.log("report detail received:", $scope.report.details.referenceType, $scope.report.details.referenceDateTime);
         });
+        $scope.loadingReport = true;
         console.log("new report detail requested: ", $scope.reportType, $scope.reportDateTime);
     };
 
