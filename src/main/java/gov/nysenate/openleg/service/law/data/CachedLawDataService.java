@@ -157,7 +157,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
             }
             return lawTree;
         }
-        catch (DataAccessException ex) {
+        catch (EmptyResultDataAccessException ex) {
             throw new LawTreeNotFoundEx(lawId, endPublishedDate, ex.getMessage());
         }
     }
