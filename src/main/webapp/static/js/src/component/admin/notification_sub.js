@@ -36,6 +36,26 @@ function ($scope, $timeout, $q, getSubsApi, subscribeApi, unSubscribeApi) {
 
     $scope.selectedSubs = 0;
 
+    $scope.init = function (typeHierarchy, targets) {
+        $scope.notificationTypes = getNotificationTypes(typeHierarchy, 0);
+        console.log($scope.notificationTypes);
+        $scope.notificationTargets = targets;
+        $scope.getSubscriptions();
+    };
+
+    function getNotificationTypes(hierarchyMap, depth) {
+        var typeList = [];
+        var indent = "";
+        for (var i = 0; i<depth; i++) {indent += "  ";}
+        for(var type in hierarchyMap) {
+            if (hierarchyMap.hasOwnProperty(type)) {
+                typeList.push(indent + type);
+                typeList = typeList.concat(getNotificationTypes(hierarchyMap[type], depth + 1));
+            }
+        }
+        return typeList;
+    }
+
     // Retrieves current subscriptions for the authenticated user
     $scope.getSubscriptions = function() {
         var response = null;
@@ -130,6 +150,4 @@ function ($scope, $timeout, $q, getSubsApi, subscribeApi, unSubscribeApi) {
     $scope.searchForNotificationTarget = function (searchTerm) {
         return searchTerm ? $scope.notificationTargets.filter(startsWithFilter(searchTerm)) : [];
     };
-
-    $scope.getSubscriptions();
 }]);

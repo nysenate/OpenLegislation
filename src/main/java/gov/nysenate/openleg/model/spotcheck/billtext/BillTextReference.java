@@ -25,23 +25,26 @@ public class BillTextReference {
 
     private Version activeVersion;
 
+    /** If a scraped reference could not be found/parsed this is set to true */
+    private boolean notFound = false;
+
     public BillTextReference(){}
 
     /**
-     *
-     * @param billId
+     *  @param billId
      * @param referenceDate
      * @param text
      * @param memo
+     * @param notFound
      */
-    public BillTextReference(BillId billId, LocalDateTime referenceDate, String text, String memo){
+    public BillTextReference(BillId billId, LocalDateTime referenceDate, String text, String memo, boolean notFound){
         this.baseBillId = BillId.getBaseId(billId);
         this.activeVersion = billId.getVersion();
 
         this.referenceDate = referenceDate;
         this.text = text;
         this.memo = memo;
-
+        this.notFound = notFound;
     }
 
     /**
@@ -110,5 +113,13 @@ public class BillTextReference {
     }
     public void setActiveVersion(Version activeVersion) {
         this.activeVersion = activeVersion;
+    }
+
+    public boolean isNotFound() {
+        return notFound;
+    }
+
+    public void setNotFound(boolean notFound) {
+        this.notFound = notFound;
     }
 }

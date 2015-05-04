@@ -117,8 +117,11 @@ public class BillTextReportService implements SpotCheckReportService<BaseBillId>
             Bill bill = billDataService.getBill(new BaseBillId(btr.getPrintNo(), btr.getSessionYear()));
             return billTextCheckService.check(bill, btr);
         }catch(BillNotFoundEx e){
-            SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(btr.getReferenceId(),
-                    new BaseBillId(btr.getPrintNo(), btr.getSessionYear()));
+            SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(btr.getReferenceId(), btr.getBaseBillId());
+            if (btr.isNotFound()) {
+                ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING,
+                        btr.getBaseBillId() + "\n" + btr.getText(), "also missing"));
+            }
             ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, btr.getBaseBillId().toString(), ""));
             return ob;
         }

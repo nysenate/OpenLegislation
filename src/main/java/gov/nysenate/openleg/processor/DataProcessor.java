@@ -46,8 +46,6 @@ public class DataProcessor
     @Autowired private PublicHearingProcessService publicHearingProcessService;
     @Autowired private LawProcessService lawProcessService;
 
-    @Autowired private AgendaSpotcheckProcessService agendaSpotcheckProcessService;
-
     @Autowired private List<BaseSpotcheckProcessService> spotcheckProcessServices;
 
     private List<ProcessService> processServices;

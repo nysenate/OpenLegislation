@@ -10,8 +10,8 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
 
     INSERT_BILL_TEXT_REFERENCE(
         "INSERT INTO ${schema}."+SqlTable.BILL_TEXT_REFERENCE+"\n" +
-              "(bill_print_no, bill_session_year, reference_date_time, bill_amend_version, text, memo) " +
-        "VALUES(:bill_print_no, :bill_session_year, :reference_date_time,:bill_amend_version, :text, :memo)"
+              "(bill_print_no, bill_session_year, reference_date_time, bill_amend_version, text, memo, not_found) " +
+        "VALUES(:bill_print_no, :bill_session_year, :reference_date_time,:bill_amend_version, :text, :memo, :not_found)"
     ),
     SELECT_UNCHECKED_BTR (
         "SELECT * FROM (\n" +
@@ -46,7 +46,7 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
     ),
     UPDATE_BILL_REFERENCE(      //probably works, I assume
         "UPDATE ${schema}." +SqlTable.BILL_TEXT_REFERENCE+"\n" +
-        "SET text = :text, memo = :memo, bill_amend_version = :bill_amend_version\n" +
+        "SET text = :text, memo = :memo, bill_amend_version = :bill_amend_version, not_found = :not_found\n" +
         "WHERE bill_print_no = :bill_print_no AND bill_session_year =:bill_session_year\n" +
         "AND reference_date_time = :reference_date_time"
     ),
@@ -64,8 +64,7 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
         "VALUES(:printNo, :sessionYear, :priority)"
     ),
     SELECT_SCRAPE_QUEUE(
-        "SELECT * FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE + "\n" +
-        "ORDER BY priority DESC, added_time ASC"
+        "SELECT *, COUNT(*) OVER () AS total FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE
     ),
     DELETE_SCRAPE_QUEUE(
         "DELETE FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE+"\n" +

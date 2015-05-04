@@ -1,30 +1,35 @@
 package gov.nysenate.openleg.model.notification;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public enum NotificationType {
 
-    ALL                 (AllNotifications.class),
-    EXCEPTION           (ExceptionNotification.class),
-    REQUEST_EXCEPTION   (RequestExceptionNotification.class),
-    PROCESS_EXCEPTION   (ProcessExceptionNotification.class),
-    SPOTCHECK_EXCEPTION (SpotcheckExceptionNotification.class),
-    WARNING             (WarningNotification.class),
-    SPOTCHECK           (SpotcheckNotification.class),
-    NEW_API_KEY         (NewApiKeyNotification.class)
+    ALL                 (null),
+    EXCEPTION           (ALL),
+    REQUEST_EXCEPTION   (EXCEPTION),
+    PROCESS_EXCEPTION   (EXCEPTION),
+    SPOTCHECK_EXCEPTION (EXCEPTION),
+    WARNING             (ALL),
+    SPOTCHECK           (ALL),
+    NEW_API_KEY         (ALL),
     ;
 
-    private Class<? extends AllNotifications> notificationClass;
+    private NotificationType parent;
+
+    private Set<NotificationType> children = new HashSet<>();
 
     private static final ImmutableSet<NotificationType> ALL_NOTIFICATION_TYPES =
             ImmutableSet.copyOf(NotificationType.values());
 
-    private NotificationType(Class<? extends AllNotifications> notificationClass) {
-        this.notificationClass = notificationClass;
+    NotificationType(NotificationType parent) {
+        this.parent = parent;
+        if (parent != null) {
+            parent.children.add(this);
+        }
     }
 
     /**
@@ -34,7 +39,17 @@ public enum NotificationType {
      * @return boolean
      */
     public boolean covers(NotificationType other) {
-        return other != null && this.notificationClass.isAssignableFrom(other.notificationClass);
+        return other != null && (this.equals(other) || covers(other.parent));
+    }
+
+    public Set<NotificationType> getChildren() {
+        return children;
+    }
+
+    private Map<NotificationType, Object> getTypeHierarchy() {
+        Map<NotificationType, Object> hierarchyMap = new TreeMap<>();
+        children.forEach(child -> hierarchyMap.put(child, child.getTypeHierarchy()));
+        return hierarchyMap;
     }
 
     /**
@@ -43,12 +58,11 @@ public enum NotificationType {
      * @return Set<NotificationType>
      */
     public static Set<NotificationType> getCoverage(NotificationType type) {
-        Set<NotificationType> result = new HashSet<>();
-        if (type != null) {
-            ALL_NOTIFICATION_TYPES.stream()
-                    .filter(type::covers)
-                    .forEach(result::add);
-        }
+        if (type == null) return Collections.emptySet();
+        Set<NotificationType> result = new HashSet<>(type.children);
+        type.children.stream()
+                .map(NotificationType::getCoverage)
+                .forEach(result::addAll);
         return result;
     }
 
@@ -60,17 +74,7 @@ public enum NotificationType {
         return ALL_NOTIFICATION_TYPES;
     }
 
-    /** --- Notification Classes --- */
-    private static interface AllNotifications {}
-
-    private static interface ExceptionNotification extends AllNotifications {}
-    private static interface RequestExceptionNotification extends ExceptionNotification{}
-    private static interface ProcessExceptionNotification extends ExceptionNotification{}
-    private static interface SpotcheckExceptionNotification extends ExceptionNotification{}
-
-    private static interface WarningNotification extends AllNotifications {}
-
-    private static interface SpotcheckNotification extends AllNotifications {}
-    private static interface NewApiKeyNotification extends AllNotifications {}
-
+    public static Map<NotificationType, Object> getHierarchy() {
+        return ImmutableMap.of(ALL, ALL.getTypeHierarchy());
+    }
 }

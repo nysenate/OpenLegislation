@@ -1,24 +1,20 @@
 package gov.nysenate.openleg.service.scraping;
 
-import gov.nysenate.openleg.dao.bill.text.BillTextReferenceDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -51,28 +47,37 @@ public class ScrapedBillTextParser {
             LocalDateTime referenceDateTime = LocalDateTime.parse(filenameMatcher.group(3), DateUtils.BASIC_ISO_DATE_TIME);
 
             Document document = Jsoup.parse(file, "UTF-8");
-            BillId billId = getBillId(document, baseBillId.getSession());
-            String text = getText(document, baseBillId);
-            String memo = getMemo(document, baseBillId);
-
-            return new BillTextReference(billId, referenceDateTime, text, memo);
+            try {
+                BillId billId = getBillId(document, baseBillId.getSession());
+                String text = getText(document, baseBillId);
+                String memo = getMemo(document, baseBillId);
+                return new BillTextReference(billId, referenceDateTime, text, memo, false);
+            } catch (ParseError ex) {
+                return new BillTextReference(baseBillId, referenceDateTime, ExceptionUtils.getStackTrace(ex), "", true);
+            }
         }
         throw new ParseError("Could not parse scraped bill filename: " + file.getName());
     }
 
     private BillId getBillId(Document document, SessionYear sessionYear) throws ParseError {
         Element printNoEle = document.select("span.nv_bot_info > strong").first();
-        Matcher printNoMatcher = billIdPattern.matcher(printNoEle.text());
-        if (printNoMatcher.matches()) {
-            String basePrintNo = printNoMatcher.group(1);
-            String version = printNoMatcher.group(2);
-            return new BillId(basePrintNo + (version!=null ? version : ""), sessionYear);
+        if (printNoEle != null) {
+            Matcher printNoMatcher = billIdPattern.matcher(printNoEle.text());
+            if (printNoMatcher.matches()) {
+                String basePrintNo = printNoMatcher.group(1);
+                String version = printNoMatcher.group(2);
+                return new BillId(basePrintNo + (version != null ? version : ""), sessionYear);
+            }
+            throw new ParseError("could not parse scraped bill print no: " + printNoEle.text());
         }
-        throw new ParseError("could not parse scraped bill print no: " + printNoEle.text());
+        throw new ParseError("could not get scraped bill print no:");
     }
 
-    private String getText(Document document, BaseBillId baseBillId) {
+    private String getText(Document document, BaseBillId baseBillId) throws ParseError {
         Element contents = document.getElementById("nv_bot_contents");
+        if (contents == null) {
+            throw new ParseError("Could not locate scraped bill contents");
+        }
         Elements textEles = new Elements();
 
         for (Element element : contents.children()) {

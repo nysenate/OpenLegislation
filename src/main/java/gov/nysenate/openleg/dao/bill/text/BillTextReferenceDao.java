@@ -1,6 +1,10 @@
 package gov.nysenate.openleg.dao.bill.text;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -71,9 +75,12 @@ public interface BillTextReferenceDao {
     BaseBillId getScrapeQueueHead() throws EmptyResultDataAccessException;
 
     /**
-     * Gets all bills in the scrape queue
+     * Gets all bills in the scrape queue ordered by priority and added time
+     * @param limitOffset LimitOffset
+     * @param order SortOrder - results are ordered first by priority and then by added time with the opposite order
+     *              e.g. SortOrder.DESC will return results with descending priority and ascending added time
      */
-    List<BaseBillId> getScrapeQueue();
+    PaginatedList<BillScrapeQueueEntry> getScrapeQueue(LimitOffset limitOffset, SortOrder order);
 
     /**
      * Adds a bill to the scrape queue

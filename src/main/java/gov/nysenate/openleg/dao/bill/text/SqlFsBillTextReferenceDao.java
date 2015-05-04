@@ -2,13 +2,11 @@ package gov.nysenate.openleg.dao.bill.text;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
@@ -77,7 +75,6 @@ public class SqlFsBillTextReferenceDao extends SqlBaseDao implements BillTextRef
     @Override
     public void insertBillTextReference(BillTextReference ref) {
         MapSqlParameterSource params = getParams(ref);
-        KeyHolder key = new GeneratedKeyHolder();
         if (jdbcNamed.update(UPDATE_BILL_REFERENCE.getSql(schema()), params) == 0){
             jdbcNamed.update(INSERT_BILL_TEXT_REFERENCE.getSql(schema()), params);
         }
@@ -141,15 +138,21 @@ public class SqlFsBillTextReferenceDao extends SqlBaseDao implements BillTextRef
     }
 
     @Override
-    public List<BaseBillId> getScrapeQueue() {
-        return jdbcNamed.query(SELECT_SCRAPE_QUEUE.getSql(schema()),
-                (rs, rowNum) -> new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
+    public PaginatedList<BillScrapeQueueEntry> getScrapeQueue(LimitOffset limitOffset, SortOrder order) {
+        PaginatedRowHandler<BillScrapeQueueEntry> rowHandler =
+                new PaginatedRowHandler<>(limitOffset, "total", scrapeQueueEntryRowMapper);
+        jdbcNamed.query(SELECT_SCRAPE_QUEUE.getSql(schema(),
+                        new OrderBy("priority", order, "added_time", SortOrder.getOpposite(order)), limitOffset), rowHandler);
+        return rowHandler.getList();
     }
 
     @Override
     public BaseBillId getScrapeQueueHead() throws EmptyResultDataAccessException {
-        return jdbcNamed.queryForObject(SELECT_SCRAPE_QUEUE.getSql(schema(), LimitOffset.ONE), new MapSqlParameterSource(),
-                (rs, rowNum) -> new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")));
+        PaginatedList<BillScrapeQueueEntry> scrapeQueue = getScrapeQueue(LimitOffset.ONE, SortOrder.DESC);
+        if (scrapeQueue.getResults().isEmpty()) {
+            throw new EmptyResultDataAccessException("no bills in scrape queue", 1);
+        }
+        return scrapeQueue.getResults().get(0).getBaseBillId();
     }
 
     /**----------   Map Parameters   -------*/
@@ -161,7 +164,7 @@ public class SqlFsBillTextReferenceDao extends SqlBaseDao implements BillTextRef
         params.addValue("bill_amend_version", entry.getActiveVersion().getValue());
         params.addValue("text", entry.getText());
         params.addValue("memo", entry.getMemo());
-
+        params.addValue("not_found", entry.isNotFound());
         return params;
     }
     public MapSqlParameterSource getParams(BaseBillId id, LocalDateTime refDateTime) {
@@ -202,7 +205,14 @@ public class SqlFsBillTextReferenceDao extends SqlBaseDao implements BillTextRef
         ref.setMemo(rs.getString("memo"));
         ref.setReferenceDate(DateUtils.getLocalDateTime(rs.getTimestamp("reference_date_time")));
         ref.setActiveVersion(Version.of(rs.getString("bill_amend_version")));
+        ref.setNotFound(rs.getBoolean("not_found"));
         return ref;
     };
+
+    private static final RowMapper<BillScrapeQueueEntry> scrapeQueueEntryRowMapper = (rs, rowNum) ->
+            new BillScrapeQueueEntry(
+                    new BaseBillId(rs.getString("print_no"), rs.getInt("session_year")),
+                    rs.getInt("priority"), getLocalDateTimeFromRs(rs, "added_time")
+            );
 
 }

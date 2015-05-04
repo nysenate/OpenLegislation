@@ -33,10 +33,14 @@
 
 <!-- Notification Settings -->
 
+<%
+  String notifTypeHierarchy = OutputUtils.toJson(NotificationType.getHierarchy());
+  String notifTargets = OutputUtils.toJson(NotificationTarget.values());
+%>
+
 <md-tab label="Notification Settings">
-<md-card ng-controller="NotificationSubCtrl">
-  <span hidden='true' ng-init='notificationTypes = <%= OutputUtils.toJson(NotificationType.values()) %>'></span>
-  <span hidden='true' ng-init='notificationTargets = <%= OutputUtils.toJson(NotificationTarget.values()) %>'></span>
+<md-card ng-controller="NotificationSubCtrl"
+    ng-init='init(<%=notifTypeHierarchy%>, <%=notifTargets%>)'>
   <md-toolbar>
     <h5 class="md-toolbar-tools inline-block">Manage Notification Subscriptions</h5>
   </md-toolbar>
@@ -66,7 +70,7 @@
         <md-item-content layout="row">
           <div></div>
           <div>
-            <select ng-options="type for type in notificationTypes" ng-model="newSubscription.type"
+            <select ng-options="type.trim() as type for type in notificationTypes" ng-model="newSubscription.type"
                     class="margin-right-10"></select>
           </div>
           <div>

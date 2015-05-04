@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.billtext;
 
+import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
@@ -9,11 +10,12 @@ import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.util.OutputUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -34,14 +36,14 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
     }
 
     @Override
-    public SpotCheckObservation<BaseBillId> check(Bill content) throws ReferenceDataNotFoundEx, NotImplementedException {
-
-        return null;
+    public SpotCheckObservation<BaseBillId> check(Bill content) throws ReferenceDataNotFoundEx {
+        throw new NotImplementedException(":P");
     }
 
     @Override
-    public SpotCheckObservation<BaseBillId> check(Bill content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, NotImplementedException {
-        return null;
+    public SpotCheckObservation<BaseBillId> check(Bill content, LocalDateTime start, LocalDateTime end)
+            throws ReferenceDataNotFoundEx {
+        throw new NotImplementedException(":P");
     }
 
     @Override
@@ -54,13 +56,20 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         SpotCheckReferenceId referenceId = reference.getReferenceId();
 
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(referenceId, baseBillId);
+
         //Add mismatches to observation
-        checkAmendment(bill, reference, observation);
-        if (bill.hasAmendment(reference.getActiveVersion())) {
-            BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
-            checkBillText(amendment, reference, observation);
-            if (Chamber.SENATE.equals(baseBillId.getChamber()) && !baseBillId.getBillType().isResolution()) {
-                checkMemoText(amendment, reference, observation);
+        if (reference.isNotFound()) {
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING,
+                    reference.getBaseBillId() + "\n" + reference.getText(),
+                    OutputUtils.toJson(new BillInfoView(bill.getBillInfo()))));
+        } else {
+            checkAmendment(bill, reference, observation);
+            if (bill.hasAmendment(reference.getActiveVersion())) {
+                BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
+                checkBillText(amendment, reference, observation);
+                if (Chamber.SENATE.equals(baseBillId.getChamber()) && !baseBillId.getBillType().isResolution()) {
+                    checkMemoText(amendment, reference, observation);
+                }
             }
         }
         return observation;

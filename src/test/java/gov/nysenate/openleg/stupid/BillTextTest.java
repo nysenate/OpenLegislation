@@ -2,6 +2,8 @@ package gov.nysenate.openleg.stupid;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.client.view.spotcheck.ReportDetailView;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -82,7 +84,7 @@ public class BillTextTest extends BaseTests {
     public void queueTest() {
         BaseBillId bill = new BaseBillId("E1", 2015);
         dao.addBillToScrapeQueue(bill, 1);
-        logger.info("queue is now {}", dao.getScrapeQueue());
+        logger.info("queue is now {}", dao.getScrapeQueue(LimitOffset.ALL, SortOrder.DESC));
     }
 
 /////////////////////////////////////////////////////////////////////////////
