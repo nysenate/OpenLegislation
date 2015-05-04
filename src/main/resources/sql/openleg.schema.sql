@@ -2148,11 +2148,19 @@ CREATE TABLE bill_text_reference (
     bill_amend_version character(1),
     text text,
     memo text,
-    checked boolean DEFAULT false NOT NULL
+    checked boolean DEFAULT false NOT NULL,
+    not_found boolean NOT NULL
 );
 
 
 ALTER TABLE master.bill_text_reference OWNER TO postgres;
+
+--
+-- Name: COLUMN bill_text_reference.not_found; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill_text_reference.not_found IS 'If set to false, no reference with this bill id could be found.  ';
+
 
 --
 -- Name: bill_veto; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
