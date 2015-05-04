@@ -29,6 +29,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Process all the things.
+ */
 @Service
 public class DataProcessor
 {
@@ -57,11 +60,10 @@ public class DataProcessor
         eventBus.register(this);
         processServices = ImmutableList.<ProcessService>builder()
             .add(sobiProcessService)
-//            .add(transcriptProcessService)
-//            .add(publicHearingProcessService)
+            .add(transcriptProcessService)
+            .add(publicHearingProcessService)
             .add(lawProcessService)
-//            .add(agendaSpotcheckProcessService)
-//            .addAll(spotcheckProcessServices)
+            .addAll(spotcheckProcessServices)
             .build();
     }
 
