@@ -22,7 +22,7 @@ public class CalendarReportService extends BaseCalendarReportService {
 
     @Override
     protected List<Calendar> getReferences(LocalDateTime start, LocalDateTime end) {
-        return alertDao.getCalendarAlertsByDateRange(start, end);
+        return alertDao.getUnCheckedCalendarAlerts();
     }
 
     @Override

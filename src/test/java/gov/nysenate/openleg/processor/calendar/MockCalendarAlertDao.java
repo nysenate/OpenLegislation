@@ -39,7 +39,17 @@ public class MockCalendarAlertDao implements CalendarAlertDao {
     }
 
     @Override
-    public List<Calendar> getUnChecked() {
+    public void markProdAsChecked(CalendarId id) {
+
+    }
+
+    @Override
+    public List<Calendar> getUnCheckedCalendarAlerts() {
+        return null;
+    }
+
+    @Override
+    public List<Calendar> getProdUnCheckedCalendarAlerts() {
         return null;
     }
 }

@@ -39,13 +39,7 @@ public class ProdCalendarDataService {
         LocalDate endDay = end.toLocalDate();
         List<Calendar> calendars = new ArrayList<>();
         for (LocalDate date = startDay; date.isBefore(endDay.plusDays(1)); date = date.plusDays(1)) {
-            try {
-                calendars.add(getCalendar(date));
-            } catch (IOException e) {
-                logger.info("Error loading api call", e);
-            } catch (CalendarNotFoundException e) {
-                logger.debug("No Calendar found for date " + date.toString());
-            }
+            calendars.add(getCalendar(date));
         }
         return calendars;
     }
@@ -53,20 +47,28 @@ public class ProdCalendarDataService {
     /**
      * Creates a {@link Calendar} from Open Legislation v1.9 data.
      * Used in QA process to verify v1.9's data integrity.
+     *
      * @param calDate The date of the calendar to create.
-     * @return
-     * @throws IOException
-     * @throws gov.nysenate.openleg.service.calendar.data.ProdCalendarDataService.CalendarNotFoundException
-     * if no calendar exists for the given date.
+     *                if no calendar exists for the given date.
+     * @return A Calendar or null if an error occurred during retrieval
      */
-    private Calendar getCalendar(LocalDate calDate) throws IOException, CalendarNotFoundException {
-        final CalendarId calendarId = getCalendarId(calDate);
-        Calendar calendar = new Calendar(calendarId);
-        calendar.setSupplementalMap(getSupplementals(calDate, calendarId));
-        calendar.setActiveListMap(getActiveListMap(calDate, calendarId));
+    public Calendar getCalendar(LocalDate calDate) {
+        final CalendarId calendarId;
+        Calendar calendar = null;
+        try {
+            calendarId = getCalendarId(calDate);
+            calendar = new Calendar(calendarId);
+            calendar.setSupplementalMap(getSupplementals(calDate, calendarId));
+            calendar.setActiveListMap(getActiveListMap(calDate, calendarId));
 
-        // Calendar published date not exposed in api.
-        calendar.setPublishedDateTime(calDate.atTime(LocalTime.now()));
+            // Calendar published date not exposed in api.
+            calendar.setPublishedDateTime(calDate.atTime(LocalTime.now()));
+            return calendar;
+        } catch (IOException e) {
+            logger.info("Error loading api call", e);
+        } catch (CalendarNotFoundException e) {
+            logger.debug("No Calendar found for date " + calDate.toString());
+        }
         return calendar;
     }
 
