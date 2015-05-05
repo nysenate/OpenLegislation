@@ -81,6 +81,7 @@ public class DataProcessor
             }
             catch (Exception ex) {
                 eventBus.post(new DataProcessErrorEvent("Unexpected Processing Error", ex));
+                logger.error("Unexpected Processing Error:\n{}", ExceptionUtils.getStackTrace(ex));
             }
             processLogService.finishRun(currentRun);
             logger.info("Exiting data processor.");
