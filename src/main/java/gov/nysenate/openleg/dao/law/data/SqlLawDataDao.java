@@ -68,9 +68,8 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
         LawTree lawTree = lawTreeHandler.getLawTree();
         // Set all available published dates using a separate query
         lawTree.setPublishedDates(jdbcNamed.query(SqlLawDataQuery.SELECT_ALL_PUB_DATES.getSql(
-            schema(), new OrderBy("published_date", SortOrder.ASC), LimitOffset.ALL), treeParams, (rs, rowNum) -> {
-            return getLocalDateFromRs(rs, "published_date");
-        }));
+            schema(), new OrderBy("published_date", SortOrder.ASC), LimitOffset.ALL), treeParams,
+                (rs, rowNum) -> getLocalDateFromRs(rs, "published_date")));
         return lawTree;
     }
 
