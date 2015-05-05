@@ -76,10 +76,23 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
         jdbcNamed.update(SqlCalendarAlertQuery.MARK_CHECKED.getSql(schema()), params);
     }
 
-    public List<Calendar> getUnChecked() {
+    public void markProdAsChecked(CalendarId id) {
+        MapSqlParameterSource params  = getCalendarIdParams(id);
+        params.addValue("prodChecked", true);
+        jdbcNamed.update(SqlCalendarAlertQuery.MARK_PROD_CHECKED.getSql(schema()), params);
+    }
+
+    public List<Calendar> getUnCheckedCalendarAlerts() {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("checked", false);
         List<Calendar> calendars = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_UNCHECKED.getSql(schema()), params, new CalendarListRowMapper());
+        return populateCalendars(calendars);
+    }
+
+    public List<Calendar> getProdUnCheckedCalendarAlerts() {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("prodChecked", false);
+        List<Calendar> calendars = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_PROD_UNCHECKED.getSql(schema()), params, new CalendarListRowMapper());
         return populateCalendars(calendars);
     }
 

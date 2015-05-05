@@ -28,5 +28,9 @@ public interface CalendarAlertDao {
 
     void markAsChecked(CalendarId id);
 
-    List<Calendar> getUnChecked();
+    void markProdAsChecked(CalendarId id);
+
+    List<Calendar> getUnCheckedCalendarAlerts();
+
+    List<Calendar> getProdUnCheckedCalendarAlerts();
 }

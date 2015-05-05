@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.model.law.LawVersionId;
-import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.service.law.data.LawDataService;
@@ -19,13 +18,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Works with the {@link LawBuilder} class to process the initial law dumps and updates and perform any
+ * Works with the {@link LawBuilderImpl} class to process the initial law dumps and updates and perform any
  * necessary persistence.
  */
 @Service
@@ -42,6 +41,12 @@ public class LawProcessor extends AbstractDataProcessor
 
     /** Set of law ids to ignore during processing. */
     protected static Set<String> ignoreLaws = Sets.newHashSet("CNS");
+
+    /** Set of law ids to only allow processing of. Overrides 'ignoreLaws'. */
+    protected static Set<String> onlyLaws = Sets.newHashSet("CPL");
+
+    /** Set of law ids that break the usual document id convention for determining nesting. */
+    protected static Set<String> typeBased = Sets.newHashSet("CPL", "EDN");
 
     @Autowired private LawDataService lawDataService;
 
@@ -90,10 +95,10 @@ public class LawProcessor extends AbstractDataProcessor
     protected void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         for (LawBlock block : lawBlocks) {
-            if (ignoreLaws.contains(block.getLawId())) continue;
+            if (!shouldProcessLaw(block)) continue;
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                LawBuilder lawBuilder = new LawBuilder(new LawVersionId(block.getLawId(), block.getPublishedDate()));
+                LawBuilder lawBuilder = createLawBuilder(new LawVersionId(block.getLawId(), block.getPublishedDate()), null);
                 lawBuilders.put(block.getLawId(), lawBuilder);
                 unit.addMessage("Processing initial docs for " + block.getLawId());
             }
@@ -116,8 +121,9 @@ public class LawProcessor extends AbstractDataProcessor
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         Map<String, LawTree> lawTrees = new HashMap<>();
         for (LawBlock block : lawBlocks) {
-            if (ignoreLaws.contains(block.getLawId())) continue;
+            if (!shouldProcessLaw(block)) continue;
             LawVersionId lawVersionId = new LawVersionId(block.getLawId(), block.getPublishedDate());
+            logger.debug("Processing law version id: {}", lawVersionId);
             // Retrieve the existing law tree if it exists.
             if (!lawTrees.containsKey(block.getLawId())) {
                 try {
@@ -131,14 +137,13 @@ public class LawProcessor extends AbstractDataProcessor
             }
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                LawBuilder lawBuilder = new LawBuilder(lawVersionId, lawTrees.get(block.getLawId()));
+                LawBuilder lawBuilder = createLawBuilder(lawVersionId, lawTrees.get(block.getLawId()));
                 lawBuilders.put(block.getLawId(), lawBuilder);
             }
             // Process the update block
             lawBuilders.get(block.getLawId()).addUpdateBlock(block);
         }
         persist(lawFile, lawBuilders);
-
     }
 
     /**
@@ -199,5 +204,19 @@ public class LawProcessor extends AbstractDataProcessor
             rawDocList.add(block);
         }
         return rawDocList;
+    }
+
+    protected boolean shouldProcessLaw(LawBlock block) {
+        return (onlyLaws.contains(block.getLawId())) ||
+               (onlyLaws.isEmpty() && !ignoreLaws.contains(block.getLawId()));
+    }
+
+    protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
+        if (typeBased.contains(lawVersionId.getLawId())) {
+            return new TypeBasedLawBuilder(lawVersionId, previousTree);
+        }
+        else {
+            return new IdBasedLawBuilder(lawVersionId, previousTree);
+        }
     }
 }

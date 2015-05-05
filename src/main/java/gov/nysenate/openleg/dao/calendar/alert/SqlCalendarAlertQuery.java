@@ -19,9 +19,18 @@ public enum SqlCalendarAlertQuery implements BasicSqlQuery {
         "Set checked = :checked" + "\n" +
         "WHERE calendar_no = :calendarNo and calendar_year = :year"
     ),
+    MARK_PROD_CHECKED(
+        "UPDATE ${schema}." + SqlTable.ALERT_CALENDAR + "\n" +
+        "Set prod_checked = :prodChecked" + "\n" +
+        "WHERE calendar_no = :calendarNo and calendar_year = :year"
+    ),
     SELECT_UNCHECKED(
             "SELECT * FROM ${schema}." + SqlTable.ALERT_CALENDAR + "\n" +
             "WHERE checked = :checked"
+    ),
+    SELECT_PROD_UNCHECKED(
+            "SELECT * FROM ${schema}." + SqlTable.ALERT_CALENDAR + "\n" +
+            "WHERE prod_checked = :prodChecked"
     ),
     UPDATE_CALENDAR(
         "UPDATE ${schema}." + SqlTable.ALERT_CALENDAR + "\n" +
