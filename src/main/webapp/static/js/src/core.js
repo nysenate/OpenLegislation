@@ -260,6 +260,30 @@ coreModule.directive('errSrc', function() {
     }
 });
 
+coreModule.directive('lineNumbers', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            lineStart: '=?',
+            lineEnd: '='
+        },
+        replace: true,
+        transclude: true,
+        template:
+        "<span class='line-numbers'>" +
+            "<span ng-repeat='i in range(lineEnd-lineStart) track by $index'>{{$index + lineStart}}</span>" +
+        "</span>"
+        ,
+        link: function($scope) {
+            $scope.lineStart = $scope.lineStart || 1;
+            console.log($scope.lineStart, $scope.lineEnd);
+            $scope.range = function(num) {
+                return new Array(num);
+            };
+        }
+    }
+});
+
 /**
  * The toggle-panel directive wraps your content in expandable/collapsible container.
  *

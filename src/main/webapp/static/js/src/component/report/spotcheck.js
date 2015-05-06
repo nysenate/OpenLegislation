@@ -137,6 +137,8 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
     $scope.reportSummaries = [];
     $scope.dataProvider = [];
     $scope.response = null;
+    $scope.loadingSummaries = false;
+    $scope.summariesNotFound = false;
 
     $scope.params = {
         summaryType: "all",
@@ -165,6 +167,7 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
     $scope.getSummaries = function() {
         console.log("getting new summaries");
         var summaryType = $scope.params.summaryType !== "all" ? $filter('reportTypeLabel')($scope.params.summaryType) : [];
+        $scope.loadingSummaries = true;
         $scope.response = DaybreakSummaryAPI.get({startDate: $scope.startDate.format(),
                                                   endDate: $scope.endDate.endOf('day').format(),
                                                   reportType: summaryType},
@@ -173,7 +176,13 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
                     $scope.reportSummaries = $scope.response.reports.items;
                     console.log("summaries received");
                     $scope.setSummarySearchParams();
+                    $scope.loadingSummaries = false;
+                    $scope.summariesNotFound = false;
                 }
+            }, function (response) {
+                console.log(response);
+                $scope.loadingSummaries = false;
+                $scope.summariesNotFound = true;
             });
     };
 
@@ -250,6 +259,7 @@ daybreakModule.directive('mismatchDiff', function(){
         },
         template:
         "<span ng-class='{preformatted: pre, \"word-wrap\": !pre}'>" +
+          "<line-numbers ng-if='pre && showLines' line-end='lines + 1'></line-numbers>" +
           "<span ng-repeat='segment in diff' ng-bind='segment.text'" +
               "ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
                           "'mismatch-diff-insert': segment.operation=='INSERT', " +
@@ -258,6 +268,16 @@ daybreakModule.directive('mismatchDiff', function(){
         ,
         link: function($scope, $element, $attrs) {
             $scope.pre = $attrs.pre === "true";
+            $scope.showLines = $attrs.showLines !== "false";
+            $scope.lines = 0;
+            if ($scope.pre && $scope.showLines) {
+                for (var iSeg in $scope.diff) {
+                    $scope.lines += $scope.diff[iSeg].text.split(/\n/).length - 1;
+                }
+            }
+            $scope.range = function(num) {
+                return new Array(num);
+            };
         }
     };
 });
@@ -270,15 +290,21 @@ daybreakModule.directive('diffSummary', function () {
         },
         template:
         "<div ng-repeat='diff in selectedDiffs'>" +
-            "<span class='bold'>Lines {{diff.startLineNum}} to {{diff.endLineNum}}:<br></span>" +
-            "<span ng-bind='diff.startText'></span>" +
-            "<mismatch-diff pre='true' diff='diff.segments'></mismatch-diff>" +
-            "<span ng-bind='diff.endText'></span>" +
-            "<br ng-if='!$last'><br ng-if='!$last'>" +
+            "<span class='diff-summary-header'>Lines {{diff.startLineNum}} to {{diff.endLineNum}}:<br></span>" +
+            "<div class='preformatted'>" +
+                "<line-numbers line-start='diff.startLineNum' line-end='diff.endLineNum + 1'></line-numbers>" +
+                "<span ng-bind='diff.startText'></span>" +
+                "<mismatch-diff diff='diff.segments'></mismatch-diff>" +
+                "<span ng-bind='diff.endText'></span>" +
+            "</div>" +
+            "<br ng-if='!$last'><br ng-if='!$last'><md-divider ng-if='!$last'></md-divider>" +
         "</div>",
         link: function($scope, $element, $attrs) {
             $scope.selectedDiffs = [];
-            var currentLineNum = 0;
+            $scope.$watch('selectedDiffs', function () {
+                console.log($scope.selectedDiffs);
+            }, true);
+            var currentLineNum = 1;
             var currentLineText = "";
             var currentDiff = null;
             // Isolate differences from full text
@@ -311,7 +337,7 @@ daybreakModule.directive('diffSummary', function () {
             }
             if (currentDiff != null) {
                 currentDiff.endText = "";
-                currentDiff.endLineNum = currentLineNum;
+                currentDiff.endLineNum = currentLineNum - 1;
                 $scope.selectedDiffs.push(currentDiff);
             }
             $scope.singleLine = function(diff) {

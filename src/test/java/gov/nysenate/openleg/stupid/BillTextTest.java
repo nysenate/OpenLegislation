@@ -82,7 +82,7 @@ public class BillTextTest extends BaseTests {
 
     @Test
     public void queueTest() {
-        BaseBillId bill = new BaseBillId("E1", 2015);
+        BaseBillId bill = new BaseBillId("S41", 2015);
         dao.addBillToScrapeQueue(bill, 1);
         logger.info("queue is now {}", dao.getScrapeQueue(LimitOffset.ALL, SortOrder.DESC));
     }

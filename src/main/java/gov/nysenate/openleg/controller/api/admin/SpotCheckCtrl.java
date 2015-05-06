@@ -3,6 +3,7 @@ package gov.nysenate.openleg.controller.api.admin;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
+import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
@@ -20,6 +21,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,7 @@ public class SpotCheckCtrl extends BaseCtrl
 
     @Autowired private Environment env;
     @Autowired private List<SpotCheckReportService<?>> reportServices;
+    @Autowired private SpotcheckRunService spotcheckRunService;
 
     private ImmutableMap<SpotCheckRefType, SpotCheckReportService<?>> reportServiceMap;
 
@@ -52,8 +55,7 @@ public class SpotCheckCtrl extends BaseCtrl
     public void init() {
         reportServiceMap = ImmutableMap.copyOf(
                 reportServices.stream()
-                        .collect(Collectors.toMap(SpotCheckReportService::getSpotcheckRefType, Function.identity(),
-                                (a, b) -> b)));
+                        .collect(Collectors.toMap(SpotCheckReportService::getSpotcheckRefType, Function.identity(),(a, b) -> b)));
     }
 
     /**
@@ -155,6 +157,39 @@ public class SpotCheckCtrl extends BaseCtrl
         return new ReportDetailResponse<>(
                 reportServiceMap.get(refType)
                         .getReport(new SpotCheckReportId(refType, parseISODateTime(reportDateTime, "reportDateTime"))));
+    }
+
+    /**
+     * Spotcheck Report Run API
+     *
+     * Attempts to run spotcheck reports for the given report types
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/run
+     *
+     * Request Parameters: reportType - string[] or string (in path variable) - specifies which kinds of report summaries
+     *                                  are retrieved - defaults to all
+     *                                  @see SpotCheckRefType
+     */
+    @RequestMapping(value = "/run")
+    public BaseResponse runReports(@RequestParam String[] reportType) {
+        Set<SpotCheckRefType> refTypes = getSpotcheckRefTypes(reportType, "reportType");
+        refTypes.forEach(spotcheckRunService::runReports);
+        return new ViewObjectResponse<>(ListView.ofStringList(
+                refTypes.stream().map(SpotCheckRefType::toString).collect(Collectors.toList())),
+                "spotcheck reports run");
+    }
+
+    /**
+     * Spotcheck Weekly Report Run API
+     *
+     * Attempts to run all spotcheck reports designated as weekly reports
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/run/weekly
+     */
+    @RequestMapping(value = "/run/weekly")
+    public BaseResponse runWeeklyReports() {
+        spotcheckRunService.runWeeklyReports();
+        return new SimpleResponse(true, "weekly reports run", "report report");
     }
 
     /** --- Exception Handlers --- */

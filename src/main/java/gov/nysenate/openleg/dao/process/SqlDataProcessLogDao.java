@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static gov.nysenate.openleg.dao.process.SqlDataProcessLogQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.*;
@@ -112,6 +111,6 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
             .addValue("startDateTime", toDate(unit.getStartDateTime()))
             .addValue("endDateTime", toDate(unit.getEndDateTime()))
             .addValue("messages", unit.getMessages())
-            .addValue("errors", unit.getErrors());
+            .addValue("errors", unit.getErrorsBuilder());
     }
 }
