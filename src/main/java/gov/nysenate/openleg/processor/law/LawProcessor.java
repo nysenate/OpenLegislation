@@ -43,7 +43,7 @@ public class LawProcessor extends AbstractDataProcessor
     protected static Set<String> ignoreLaws = Sets.newHashSet("CNS");
 
     /** Set of law ids to only allow processing of. Overrides 'ignoreLaws'. */
-    protected static Set<String> onlyLaws = Sets.newHashSet("CPL");
+    protected static Set<String> onlyLaws = Sets.newHashSet();
 
     /** Set of law ids that break the usual document id convention for determining nesting. */
     protected static Set<String> typeBased = Sets.newHashSet("CPL", "EDN");
