@@ -182,11 +182,8 @@ public abstract class AbstractDataProcessor
     /**
      * Retrieves a member from the LBDC short name.  Creates a new unverified session member entry if no member can be retrieved.
      */
-    protected Member getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber) {
-        if (StringUtils.isNotBlank(shortName)) {
-            return memberService.getMemberByShortNameEnsured(shortName, sessionYear, chamber);
-        }
-        return null;
+    protected Member getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
+        return memberService.getMemberByShortNameEnsured(shortName, sessionYear, chamber);
     }
 
     /** --- Agenda Methods --- */

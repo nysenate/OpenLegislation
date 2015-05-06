@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.model.process.DataProcessErrorEvent;
-import gov.nysenate.openleg.model.process.DataProcessRun;
-import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
+import gov.nysenate.openleg.model.process.*;
 import gov.nysenate.openleg.processor.base.ProcessService;
 import gov.nysenate.openleg.processor.hearing.PublicHearingProcessService;
 import gov.nysenate.openleg.processor.law.LawProcessService;
@@ -28,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Process all the things.
@@ -71,7 +70,7 @@ public class DataProcessor
      * Simple entry point to process new data for all supported data types.
      * @throws Exception
      */
-    public synchronized void run(String invoker) throws Exception {
+    public synchronized DataProcessRun run(String invoker) throws Exception {
         if (env.isProcessingEnabled()) {
             logger.info("Starting data processor...");
             currentRun = processLogService.startNewRun(LocalDateTime.now(), invoker);
@@ -80,14 +79,18 @@ public class DataProcessor
                 ingest();
             }
             catch (Exception ex) {
-                eventBus.post(new DataProcessErrorEvent("Unexpected Processing Error", ex));
+                eventBus.post(new DataProcessErrorEvent("Unexpected Processing Error", ex, currentRun.getProcessId()));
                 logger.error("Unexpected Processing Error:\n{}", ExceptionUtils.getStackTrace(ex));
             }
             processLogService.finishRun(currentRun);
+            DataProcessRun finishedRun = currentRun;
+            currentRun = null;
             logger.info("Exiting data processor.");
+            return finishedRun;
         }
         else {
             logger.debug("Data processing is disabled!");
+            return null;
         }
     }
 
@@ -120,7 +123,11 @@ public class DataProcessor
     @Subscribe
     public void handleDataProcessUnitEvent(DataProcessUnitEvent ev) {
         if (currentRun != null) {
-            processLogService.addUnit(currentRun.getProcessId(), ev.getUnit());
+            DataProcessUnit unit = ev.getUnit();
+            processLogService.addUnit(currentRun.getProcessId(), unit);
+            if (!unit.getErrors().isEmpty()) {
+                eventBus.post(new DataProcessWarnEvent(currentRun.getProcessId(), unit));
+            }
         }
     }
 
@@ -165,6 +172,10 @@ public class DataProcessor
         else {
             logger.info("Nothing to ingest");
         }
+    }
+
+    public Optional<DataProcessRun> getCurrentRun() {
+        return Optional.of(currentRun);
     }
 
     private void logCounts(Map<String, Integer> counts) {

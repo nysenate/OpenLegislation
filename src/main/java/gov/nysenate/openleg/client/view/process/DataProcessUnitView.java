@@ -25,7 +25,7 @@ public class DataProcessUnitView implements ViewObject
             this.startDateTime = unit.getStartDateTime();
             this.endDateTime = unit.getEndDateTime();
             this.messages = unit.getMessages().toString();
-            this.exceptions = unit.getErrors().toString();
+            this.exceptions = unit.getErrorsBuilder().toString();
         }
     }
 
