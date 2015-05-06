@@ -398,7 +398,10 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         for (String coSponsor : data.replace("\n", " ").split(",")) {
             coSponsor = coSponsor.trim();
             if (!coSponsor.isEmpty()) {
-                coSponsors.add(getMemberFromShortName(coSponsor, session, chamber));
+                Member member = getMemberFromShortName(coSponsor, session, chamber);
+                if (member != null) {
+                    coSponsors.add(member);
+                }
             }
         }
         // The cosponsor info is always sent for the base bill version.
@@ -424,7 +427,10 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         for (String multiSponsor : data.replace("\n", " ").split(",")) {
             multiSponsor = multiSponsor.trim();
             if (!multiSponsor.isEmpty()) {
-                multiSponsors.add(getMemberFromShortName(multiSponsor, session, chamber));
+                Member member = getMemberFromShortName(multiSponsor, session, chamber);
+                if (member != null) {
+                    multiSponsors.add(member);
+                }
             }
         }
         activeAmendment.setMultiSponsors(Lists.newArrayList(multiSponsors));
