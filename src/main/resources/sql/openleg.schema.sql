@@ -3889,7 +3889,8 @@ CREATE TABLE spotcheck_report (
     report_date_time timestamp without time zone NOT NULL,
     reference_type text NOT NULL,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    reference_date_time timestamp without time zone
+    reference_date_time timestamp without time zone,
+    notes text DEFAULT ''::text
 );
 
 
