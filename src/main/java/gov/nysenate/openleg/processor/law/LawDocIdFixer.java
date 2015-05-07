@@ -26,6 +26,10 @@ public class LawDocIdFixer
         docIdReplacements.put("PARA43", Pair.of("PARTGA43", DateUtils.ALL_DATES));
         docIdReplacements.put("PENA470", Pair.of("PENP4TXA470", DateUtils.ALL_DATES));
         docIdReplacements.put("PENA480", Pair.of("PENP4TXA480", DateUtils.ALL_DATES));
+        docIdReplacements.put("VATA19-B", Pair.of("VATT5A19-B", DateUtils.ALL_DATES));
+        docIdReplacements.put("VATA34-C", Pair.of("VATT7A34-C", DateUtils.ALL_DATES));
+        docIdReplacements.put("VATA44-A", Pair.of("VATT8A44-A", DateUtils.ALL_DATES));
+        docIdReplacements.put("VATA48-C", Pair.of("VATT11A48-C", DateUtils.ALL_DATES));
     }
 
     public static String applyReplacement(String documentId, LocalDate publishedDate) {
