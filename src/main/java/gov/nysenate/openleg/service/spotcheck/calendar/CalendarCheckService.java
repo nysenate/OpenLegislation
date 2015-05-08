@@ -32,7 +32,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
     public SpotCheckObservation<CalendarId> check(Calendar content, Calendar reference) {
         SpotCheckReferenceId referenceId = new SpotCheckReferenceId(
                 SpotCheckRefType.LBDC_CALENDAR_ALERT, reference.getPublishedDateTime().truncatedTo(ChronoUnit.SECONDS));
-        SpotCheckObservation<CalendarId> observation = new SpotCheckObservation<>(referenceId, content.getId());
+        SpotCheckObservation<CalendarId> observation = new SpotCheckObservation<>(referenceId, reference.getId());
 
         if (calendarsEqual(content, reference)) {
             return observation;
