@@ -74,7 +74,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @param block LawBlock
      * @return String
      */
-    protected abstract String locateDocument(LawBlock block);
+    protected abstract String determineHierarchy(LawBlock block);
 
     protected abstract void addChildNode(LawTreeNode node);
 
@@ -123,7 +123,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 addChildNode(new LawTreeNode(lawDoc, ++sequenceNo));
             }
             else {
-                String specificLocId = locateDocument(block);
+                String specificLocId = determineHierarchy(block);
                 Matcher locMatcher = locationPattern.matcher(specificLocId);
                 if (locMatcher.matches()) {
                     lawDoc.setDocType(lawLevelCodes.get(locMatcher.group(1)));
@@ -203,26 +203,28 @@ public abstract class AbstractLawBuilder implements LawBuilder
         // Clear out any existing parents when rebuilding trees.
         clearParents();
         for (String docId : StringUtils.split(masterDoc, "\\n")) {
+            // Apply doc id replacements if necessary
+            final String resolvedDocId = LawDocIdFixer.applyReplacement(docId, this.lawVersionId.getPublishedDate());
             LawBlock block = new LawBlock();
-            block.setDocumentId(docId);
-            block.setLawId(docId.substring(0, 3));
-            block.setLocationId(docId.substring(3));
+            block.setDocumentId(resolvedDocId);
+            block.setLawId(resolvedDocId.substring(0, 3));
+            block.setLocationId(resolvedDocId.substring(3));
             // Use published date from existing law doc if present
-            if (lawDocMap.containsKey(docId)) {
-                block.setPublishedDate(lawDocMap.get(docId).getPublishedDate());
+            if (lawDocMap.containsKey(resolvedDocId)) {
+                block.setPublishedDate(lawDocMap.get(resolvedDocId).getPublishedDate());
                 addInitialBlock(block, false);
                 continue;
             }
             // Or from the previous tree node if set
             else if (priorRootNode != null) {
-                Optional<LawDocInfo> existingDocInfo = priorRootNode.find(docId);
+                Optional<LawDocInfo> existingDocInfo = priorRootNode.find(resolvedDocId);
                 if (existingDocInfo.isPresent()) {
                     block.setPublishedDate(existingDocInfo.get().getPublishedDate());
                     addInitialBlock(block, false);
                     continue;
                 }
             }
-            logger.info("New document id found in master document: {}", docId);
+            logger.info("New document id found in master document: {}", resolvedDocId);
             block.setPublishedDate(this.lawVersionId.getPublishedDate());
             addInitialBlock(block, true);
         }

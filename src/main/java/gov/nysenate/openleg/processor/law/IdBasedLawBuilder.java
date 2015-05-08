@@ -36,7 +36,7 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
      * @return String
      */
     @Override
-    protected String locateDocument(LawBlock block) {
+    protected String determineHierarchy(LawBlock block) {
         String docTypeId = block.getLocationId();
         while (!currParent().isRootNode()) {
             if (StringUtils.startsWith(block.getLocationId(), currParent().getLocationId())) {

@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -30,6 +32,16 @@ public class LawDocIdFixer
         docIdReplacements.put("VATA34-C", Pair.of("VATT7A34-C", DateUtils.ALL_DATES));
         docIdReplacements.put("VATA44-A", Pair.of("VATT8A44-A", DateUtils.ALL_DATES));
         docIdReplacements.put("VATA48-C", Pair.of("VATT11A48-C", DateUtils.ALL_DATES));
+        docIdReplacements.put("MHYA47", Pair.of("MHYTEA47", DateUtils.ALL_DATES));
+    }
+
+    /** Hacks to fix various document id inconsistencies. */
+    protected static Map<String, Range<LocalDate>> ignoreDocIds = new HashMap<>();
+    static {
+        ignoreDocIds.put("SOSA2-A*", DateUtils.ALL_DATES);
+        ignoreDocIds.put("SOS41*", DateUtils.ALL_DATES);
+        ignoreDocIds.put("SOS42*", DateUtils.ALL_DATES);
+        ignoreDocIds.put("SOS43*", DateUtils.ALL_DATES);
     }
 
     public static String applyReplacement(String documentId, LocalDate publishedDate) {
@@ -38,9 +50,14 @@ public class LawDocIdFixer
                     .filter(e -> e.getRight().contains(publishedDate))
                     .findFirst();
             if (match.isPresent()) {
+                logger.info("Doc Id Replacement made from {} to {}", documentId, match.get().getLeft());
                 return match.get().getLeft();
             }
         }
         return documentId;
+    }
+
+    public static boolean ignoreDocument(String documentId, LocalDate publishedDate) {
+        return ignoreDocIds.containsKey(documentId) && ignoreDocIds.get(documentId).contains(publishedDate);
     }
 }
