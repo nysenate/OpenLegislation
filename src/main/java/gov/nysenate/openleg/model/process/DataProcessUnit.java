@@ -4,6 +4,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Encapsulates the processing status of a single source file, typically associated with a process run.
@@ -28,8 +32,10 @@ public class DataProcessUnit
     /** Any useful non-fatal messages will be appended here. */
     private StringBuilder messages = new StringBuilder();
 
-    /** Any processing exceptions (fatal and/or non-fatal) should be appended here. */
-    private StringBuilder errors = new StringBuilder();
+    /**
+     * Any processing exceptions (fatal and/or non-fatal) should be appended here.
+     */
+    private List<String> errors = new ArrayList<>();
 
     /** --- Constructors --- */
 
@@ -48,22 +54,38 @@ public class DataProcessUnit
     }
 
     public void addException(String exception) {
-        this.errors.append(exception).append("\\n");
+        errors.add(exception);
     }
 
     public void addException(String prefixMessage, Exception ex) {
+        String message = "";
         if (prefixMessage != null) {
-            this.errors.append(prefixMessage);
+            message = prefixMessage;
         }
         if (ex != null) {
-            this.errors.append("\nException: ").append(ex.getMessage())
-                       .append("\nStack Trace: ").append(ExceptionUtils.getStackTrace(ex));
+            message = message + "\nException: " + ex.getMessage() + "\nStack Trace: " + ExceptionUtils.getStackTrace(ex);
         }
+        errors.add(message);
     }
 
     public void addException(String errorMessage, Logger logger) {
-        this.errors.append(errorMessage).append("\\n");
+        if (!errorMessage.endsWith("\n")) {
+            errorMessage = errorMessage + "\n";
+        }
+        errors.add(errorMessage);
         logger.error(errorMessage);
+    }
+    
+    /** --- Functional Getters / Setters --- */
+
+    public StringBuilder getErrorsBuilder() {
+        StringBuilder builder = new StringBuilder();
+        errors.forEach(builder::append);
+        return builder;
+    }
+
+    public void setErrors(StringBuilder errors) {
+        this.errors = Collections.singletonList(errors.toString());
     }
 
     /** --- Basic Getters/Setters --- */
@@ -116,11 +138,11 @@ public class DataProcessUnit
         this.messages = messages;
     }
 
-    public StringBuilder getErrors() {
+    public List<String> getErrors() {
         return errors;
     }
 
-    public void setErrors(StringBuilder errors) {
+    public void setErrors(List<String> errors) {
         this.errors = errors;
     }
 }

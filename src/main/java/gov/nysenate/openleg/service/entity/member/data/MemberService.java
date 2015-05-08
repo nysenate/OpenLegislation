@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.processor.base.ParseError;
 
 import java.util.List;
 
@@ -54,8 +55,9 @@ public interface MemberService
      * @param sessionYear SessionYear - The session year in which this member was active.
      * @param chamber Chamber
      * @return Member
+     * @throws ParseError - if the provided short name does not match specification
      */
-    public Member getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber);
+    public Member getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError;
 
     /**
      * Retrieves all members from all years and both chambers.

@@ -32,6 +32,16 @@ public class BillScrapeQueueCtrl extends BaseCtrl {
     @Autowired
     private BillTextReferenceDao btrDao;
 
+    /**
+     * Get Scrape Queue API
+     *
+     * Get a list of bills that are in the scrape queue
+     * Usage: (GET) /api/3/admin/scraping/billqueue
+     *
+     * Request Parameters: limit - Limit the number of entries in the response
+     *                     offset - offset the start of the response
+     *                     order - determines order of response (default DESC)
+     */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getBillScrapeQueue(WebRequest request) {
         LimitOffset limitOffset = getLimitOffset(request, 0);
@@ -45,6 +55,15 @@ public class BillScrapeQueueCtrl extends BaseCtrl {
         );
     }
 
+    /**
+     * Push to Scrape Queue API
+     *
+     * Add a bill to the scrape queue
+     * Usage: (PUT) /api/3/admin/scraping/billqueue/{sessionYear}/{printNo}
+     *
+     * Request Parameters: priority - an integer that determines the priority of the enqueued bill
+     *                                  @see ScrapeQueuePriority#MANUAL_ENTRY for default value
+     */
     @RequestMapping(value = "/{sessionYear:\\d+}/{printNo}", method = RequestMethod.PUT)
     public BaseResponse addBillToScrapeQueue(@PathVariable int sessionYear,
                                              @PathVariable String printNo,
@@ -57,6 +76,12 @@ public class BillScrapeQueueCtrl extends BaseCtrl {
         return new ViewObjectResponse<>(new BaseBillIdView(baseBillId), "added bill to scrape queue");
     }
 
+    /**
+     * Delete from Scrape Queue API
+     *
+     * Remove a bill from the scrape queue
+     * Usage: (DELETE) /api/3/admin/scraping/billqueue/{sessionYear}/{printNo}
+     */
     @RequestMapping(value = "/{sessionYear}/{printNo}", method = RequestMethod.DELETE)
     public BaseResponse removeBillfromScrapeQueue(@PathVariable int sessionYear,
                                                   @PathVariable String printNo) {

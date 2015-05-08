@@ -41,7 +41,7 @@ public abstract class BaseSpotcheckProcessService<ContentId> implements ProcessS
     public int ingest() {
         try {
             int ingestCount = doIngest();
-            registerReferenceEvent(ingestCount);
+            registerReferenceEvent();
             return ingestCount;
         } catch (Exception ex) {
             spotCheckNotificationService.handleSpotcheckException(ex, false);
@@ -59,8 +59,10 @@ public abstract class BaseSpotcheckProcessService<ContentId> implements ProcessS
      */
     protected abstract SpotCheckRefType getRefType();
 
-    private void registerReferenceEvent(int ingestCount) {
-        if (ingestCount > 0) {
+    protected abstract int getUncheckedRefCount();
+
+    private void registerReferenceEvent() {
+        if (getUncheckedRefCount() > 0) {
             eventBus.post(new SpotCheckReferenceEvent(getRefType()));
         }
     }

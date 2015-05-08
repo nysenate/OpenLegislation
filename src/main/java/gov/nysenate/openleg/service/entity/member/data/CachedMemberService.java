@@ -15,6 +15,7 @@ import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.base.data.CachingService;
+import gov.nysenate.openleg.service.entity.member.event.UnverifiedMemberEvent;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
@@ -169,20 +170,15 @@ public class CachedMemberService implements MemberService, CachingService<Intege
 
     /** {@inheritDoc} */
     @Override
-    public Member getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) {
+    public Member getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
         try {
             return getMemberByShortName(lbdcShortName, sessionYear, chamber);
         }
         catch (MemberNotFoundEx ex) {
-            try {
-                Member member = Member.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
-                memberDao.insertUnverifiedSessionMember(member);
-                return member;
-            }
-            catch (ParseError pe) {
-                logger.error(pe.getMessage());
-                return null;
-            }
+            Member member = Member.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
+            memberDao.insertUnverifiedSessionMember(member);
+            eventBus.post(new UnverifiedMemberEvent(member));
+            return member;
         }
     }
 

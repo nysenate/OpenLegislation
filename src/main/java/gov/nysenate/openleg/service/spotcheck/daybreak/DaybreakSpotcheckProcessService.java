@@ -10,6 +10,7 @@ import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,6 +49,15 @@ public class DaybreakSpotcheckProcessService extends BaseSpotcheckProcessService
     @Override
     protected SpotCheckRefType getRefType() {
         return SpotCheckRefType.LBDC_DAYBREAK;
+    }
+
+    @Override
+    protected int getUncheckedRefCount() {
+        try {
+            return daybreakDao.isChecked(daybreakDao.getCurrentReportDate()) ? 0 : 1;
+        } catch (DataAccessException ex) {
+            return 0;
+        }
     }
 
     @Override

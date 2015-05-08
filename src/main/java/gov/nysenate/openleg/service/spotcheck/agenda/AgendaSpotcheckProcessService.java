@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.agenda;
 
+import gov.nysenate.openleg.dao.agenda.reference.AgendaAlertDao;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.agenda.reference.AgendaAlertProcessor;
@@ -23,6 +24,9 @@ public class AgendaSpotcheckProcessService extends BaseSpotcheckProcessService<C
     @Autowired
     private AgendaAlertProcessor agendaAlertProcessor;
 
+    @Autowired
+    private AgendaAlertDao agendaAlertDao;
+
     /** --- Implemented Methods --- */
 
     @Override
@@ -38,6 +42,12 @@ public class AgendaSpotcheckProcessService extends BaseSpotcheckProcessService<C
     @Override
     protected SpotCheckRefType getRefType() {
         return SpotCheckRefType.LBDC_AGENDA_ALERT;
+    }
+
+    @Override
+    protected int getUncheckedRefCount() {
+        return agendaAlertDao.getProdUncheckedAgendaAlertReferences().size() +
+                agendaAlertDao.getUncheckedAgendaAlertReferences().size();
     }
 
     @Override

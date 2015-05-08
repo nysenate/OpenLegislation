@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
@@ -151,7 +152,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                 }
             }
         }
-        catch (SAXException | XPathExpressionException | IOException ex) {
+        catch (SAXException | XPathExpressionException | IOException | ParseError ex) {
             logger.error("Failed to parse Agenda Vote.", ex);
             unit.addException("Failed to parse Agenda Vote: " + ex.getMessage());
         }

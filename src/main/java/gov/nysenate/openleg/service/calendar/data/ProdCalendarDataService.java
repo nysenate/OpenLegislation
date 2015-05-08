@@ -56,6 +56,9 @@ public class ProdCalendarDataService {
         final CalendarId calendarId;
         Calendar calendar = null;
         try {
+            if (!calendarExists(calDate)) {
+                return null;
+            }
             calendarId = getCalendarId(calDate);
             calendar = new Calendar(calendarId);
             calendar.setSupplementalMap(getSupplementals(calDate, calendarId));
@@ -65,49 +68,61 @@ public class ProdCalendarDataService {
             calendar.setPublishedDateTime(calDate.atTime(LocalTime.now()));
             return calendar;
         } catch (IOException e) {
-            logger.info("Error loading api call", e);
-        } catch (CalendarNotFoundException e) {
-            logger.debug("No Calendar found for date " + calDate.toString());
+            logger.error("Error loading api call", e);
         }
         return calendar;
     }
 
-    private CalendarId getCalendarId(LocalDate calDate) throws IOException, CalendarNotFoundException {
+    /**
+     * If data for a calendar supplemental or active list exists, the calendar exists.
+     * Otherwise there is no calendar for that date.
+     */
+    private boolean calendarExists(LocalDate calDate) throws IOException {
+        JsonNode supResults = getFirstResult(createSupplementalUrl(calDate));
+        JsonNode alResults = getFirstResult(createActiveListUrl(calDate));
+        return supResults != null || alResults != null;
+    }
+
+    private CalendarId getCalendarId(LocalDate calDate) throws IOException {
         JsonNode calendarNode = traverseToCalendarData(createSupplementalUrl(calDate));
         int calNo = Integer.valueOf(calendarNode.get("no").asText());
         int year = Integer.valueOf(calendarNode.get("sessionYear").asText());
         return new CalendarId(calNo, year);
     }
 
-    private TreeMap<Integer, CalendarActiveList> getActiveListMap(LocalDate calDate, CalendarId calendarId) throws IOException, CalendarNotFoundException {
+    private TreeMap<Integer, CalendarActiveList> getActiveListMap(LocalDate calDate, CalendarId calendarId) throws IOException {
         TreeMap<Integer, CalendarActiveList> activeListMap = new TreeMap<>();
         JsonNode calendarNode = traverseToCalendarData(createActiveListUrl(calDate));
-        for (JsonNode activeListNode : calendarNode.get("supplementals").get(0).get("sequences")) {
-            int sequenceNo = activeListNode.get("no").asInt();
-            LocalDateTime releaseDate = getDateFromMilliSecs(activeListNode.get("releaseDateTime").asLong());
-            CalendarActiveList activeList = new CalendarActiveList(calendarId, sequenceNo, null, calDate, releaseDate);
+        if (calendarNode != null) {
+            for (JsonNode activeListNode : calendarNode.get("supplementals").get(0).get("sequences")) {
+                int sequenceNo = activeListNode.get("no").asInt();
+                LocalDateTime releaseDate = getDateFromMilliSecs(activeListNode.get("releaseDateTime").asLong());
+                CalendarActiveList activeList = new CalendarActiveList(calendarId, sequenceNo, null, calDate, releaseDate);
 
-            for (JsonNode listEntryNode : activeListNode.get("calendarEntries")) {
-                int billCalNo = listEntryNode.get("no").asInt();
-                BillId billId = getBillId(listEntryNode);
-                activeList.addEntry(new CalendarEntry(billCalNo, billId));
+                for (JsonNode listEntryNode : activeListNode.get("calendarEntries")) {
+                    int billCalNo = listEntryNode.get("no").asInt();
+                    BillId billId = getBillId(listEntryNode);
+                    activeList.addEntry(new CalendarEntry(billCalNo, billId));
+                }
+
+                activeListMap.put(sequenceNo, activeList);
             }
-
-            activeListMap.put(sequenceNo, activeList);
         }
         return activeListMap;
     }
 
-    private TreeMap<Version, CalendarSupplemental> getSupplementals(LocalDate calDate, CalendarId calendarId) throws IOException, CalendarNotFoundException {
+    private TreeMap<Version, CalendarSupplemental> getSupplementals(LocalDate calDate, CalendarId calendarId) throws IOException {
         TreeMap<Version, CalendarSupplemental> supplementals = new TreeMap<>();
         JsonNode calendarNode = traverseToCalendarData(createSupplementalUrl(calDate));
-        for (JsonNode supp : calendarNode.get("supplementals")) {
-            Version version = Version.of(supp.get("supplementalId").asText());
-            LocalDateTime releaseDateTime = getDateFromMilliSecs(supp.get("releaseDateTime").asLong());
+        if (calendarNode != null) {
+            for (JsonNode supp : calendarNode.get("supplementals")) {
+                Version version = Version.of(supp.get("supplementalId").asText());
+                LocalDateTime releaseDateTime = getDateFromMilliSecs(supp.get("releaseDateTime").asLong());
 
-            CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, version, calDate, releaseDateTime);
-            supplemental.setSectionEntries(getSupplementalEntryMap(supp));
-            supplementals.put(version, supplemental);
+                CalendarSupplemental supplemental = new CalendarSupplemental(calendarId, version, calDate, releaseDateTime);
+                supplemental.setSectionEntries(getSupplementalEntryMap(supp));
+                supplementals.put(version, supplemental);
+            }
         }
         return supplementals;
     }
@@ -147,14 +162,20 @@ public class ProdCalendarDataService {
     /**
      * @return the JsonNode where calendar data begins.
      */
-    private JsonNode traverseToCalendarData(URL url) throws IOException, CalendarNotFoundException {
-        String json = IOUtils.toString(url);
-        JsonNode root = mapper.readTree(json);
-        JsonNode firstResult = root.get("response").get("results").get(0);
-        if (firstResult == null) {
-            throw new CalendarNotFoundException();
+    private JsonNode traverseToCalendarData(URL url) throws IOException {
+        JsonNode root = getFirstResult(url);
+        if (root != null) {
+            return root.get("data").get("calendar");
         }
-        return firstResult.get("data").get("calendar");
+        return null;
+    }
+
+    /**
+     * Returns the JsonNode containing the first result. Or a null JsonNode if not result exists.
+     */
+    private JsonNode getFirstResult(URL url) throws IOException {
+        String json = IOUtils.toString(url);
+        return mapper.readTree(json).get("response").get("results").get(0);
     }
 
     private String formatCalDate(LocalDate calDate) {
@@ -164,11 +185,5 @@ public class ProdCalendarDataService {
     private BillId getBillId(JsonNode entryNode) {
         JsonNode billNode = entryNode.get("bill");
         return new BillId(billNode.get("senateBillNo").asText().split("-")[0], SessionYear.of(billNode.get("year").asInt()));
-    }
-
-    /** --- Exceptions --- */
-
-    private class CalendarNotFoundException extends Exception {
-
     }
 }

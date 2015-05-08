@@ -314,9 +314,23 @@ md-tabs.md-default-theme .md-paginator md-icon {
   text-transform: capitalize;
 }
 
-.preformatted {
+.preformatted, pre {
   white-space: pre;
   font-family: 'Inconsolata', monospace;
+  display: block;
+  .line-numbers {
+    float: left;
+    margin-right: 1em;
+    margin-left: -1em;
+    border-right: 1px solid;
+    text-align: right;
+    background: #fdd2a8;
+    span {
+      display: block;
+      padding-right: 0.5em;
+      padding-left: 0.5em;
+    }
+  }
 }
 
 .word-wrap {
@@ -1093,6 +1107,12 @@ table.report-detail-table tbody tr td {
 
 .mismatch-diff-delete {
   background-color: #ff8888;
+}
+
+.diff-summary-header {
+  background: black;
+  color: white;
+  font-weight: bold;
 }
 
 .mismatch-dialog-tabs md-content {

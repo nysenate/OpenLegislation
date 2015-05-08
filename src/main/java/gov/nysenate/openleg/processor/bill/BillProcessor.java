@@ -362,7 +362,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      *
      * A delete in these field removes all sponsor information.
      */
-    private void applySponsor(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date) {
+    private void applySponsor(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date) throws ParseError {
         // Apply the lines in order given as each represents its own "block"
         SessionYear sessionYear = baseBill.getSession();
 
@@ -391,22 +391,29 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Nothing      | 7
      * -------------------------------------------
      */
-    private void applyCosponsors(String data, BillAmendment activeAmendment) {
+    private void applyCosponsors(String data, BillAmendment activeAmendment) throws ParseError {
         LinkedHashSet<Member> coSponsors = new LinkedHashSet<>();
         SessionYear session = activeAmendment.getSession();
         Chamber chamber = activeAmendment.getBillType().getChamber();
+        List<String> badCoSponsors = new ArrayList<>();
         for (String coSponsor : data.replace("\n", " ").split(",")) {
             coSponsor = coSponsor.trim();
             if (!coSponsor.isEmpty()) {
                 Member member = getMemberFromShortName(coSponsor, session, chamber);
                 if (member != null) {
                     coSponsors.add(member);
+                } else {
+                    badCoSponsors.add(coSponsor);
                 }
             }
         }
         // The cosponsor info is always sent for the base bill version.
         // We can use the currently active amendment instead.
         activeAmendment.setCoSponsors(Lists.newArrayList(coSponsors));
+        if (!badCoSponsors.isEmpty()) {
+            throw new ParseError(String.format("Could not parse %s co sponsors: %s",
+                    activeAmendment.getBillId(), StringUtils.join(badCoSponsors, ", ")));
+        }
     }
 
     /**
@@ -420,20 +427,27 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Nothing        | 8
      * ----------------------------------------------
      */
-    private void applyMultisponsors(String data, BillAmendment activeAmendment) {
+    private void applyMultisponsors(String data, BillAmendment activeAmendment) throws ParseError {
         LinkedHashSet<Member> multiSponsors = new LinkedHashSet<>();
         SessionYear session = activeAmendment.getSession();
         Chamber chamber = activeAmendment.getBillType().getChamber();
+        List<String> badMultiSponsors = new ArrayList<>();
         for (String multiSponsor : data.replace("\n", " ").split(",")) {
             multiSponsor = multiSponsor.trim();
             if (!multiSponsor.isEmpty()) {
                 Member member = getMemberFromShortName(multiSponsor, session, chamber);
                 if (member != null) {
                     multiSponsors.add(member);
+                } else {
+                    badMultiSponsors.add(multiSponsor);
                 }
             }
         }
         activeAmendment.setMultiSponsors(Lists.newArrayList(multiSponsors));
+        if (!badMultiSponsors.isEmpty()) {
+            throw new ParseError(String.format("Could not parse %s multi sponsors: %s",
+                    activeAmendment.getBillId(), StringUtils.join(multiSponsors, ", ")));
+        }
     }
 
     /**
@@ -691,7 +705,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
     /**
      * Constructs a BillSponsor via the sponsorLine string and applies it to the bill.
      */
-    protected void setBillSponsorFromSponsorLine(Bill baseBill, String sponsorLine, SessionYear sessionYear) {
+    protected void setBillSponsorFromSponsorLine(Bill baseBill, String sponsorLine, SessionYear sessionYear) throws ParseError {
         // Get the chamber from the Bill
         Chamber chamber = baseBill.getBillType().getChamber();
         // New Sponsor instance
@@ -702,7 +716,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
         if (sponsorLine.startsWith("RULES")) {
             billSponsor.setRules(true);
             Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
-            if (!sponsorLine.equals("RULES COM") && rules.matches()) {
+            if (!"RULES COM".equals(sponsorLine) && rules.matches()) {
                 sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
                 billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
             }
@@ -720,8 +734,9 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                         Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsorLine));
                 if (!sponsors.isEmpty()) {
                     sponsorLine = sponsors.remove(0);
-                    sponsors.forEach(s ->
-                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(s, sessionYear, chamber)));
+                    for (String sponsor : sponsors) {
+                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(sponsor, sessionYear, chamber));
+                    }
                 }
             }
             // Set the member into the sponsor instance

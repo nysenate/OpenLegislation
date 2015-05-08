@@ -70,6 +70,11 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
     }
 
     @Override
+    protected int getUncheckedRefCount() {
+        return dao.getUncheckedBillTextReferences().size();
+    }
+
+    @Override
     public String getCollateType() {
         return "Scraped Bill";
     }

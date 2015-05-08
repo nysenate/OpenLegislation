@@ -71,6 +71,8 @@ public enum ErrorCode
 
     NOTIFICATION_NOT_FOUND(194, "The requested notification was not found"),
 
+    DATA_PROCESS_RUN_FAILED(195, "The data process did not run, due to processing being disabled or an error"),
+
     /** --- General --- */
 
     UNAUTHORIZED(401, "Not authorized to perform this request."),

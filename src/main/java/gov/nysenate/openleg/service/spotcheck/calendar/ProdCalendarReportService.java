@@ -7,8 +7,8 @@ import gov.nysenate.openleg.service.calendar.data.ProdCalendarDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,11 +32,12 @@ public class ProdCalendarReportService extends BaseCalendarReportService {
 
     @Override
     protected List<Calendar> getReferences(LocalDateTime start, LocalDateTime end) {
-        List<Calendar> uncheckedCals = alertDao.getProdUnCheckedCalendarAlerts();
-        List<Calendar> prodCalendars = new ArrayList<>();
-        for (Calendar cal : uncheckedCals) {
-            prodCalendars.add(dataService.getCalendar(cal.getCalDate()));
-        }
-        return prodCalendars;
+        return alertDao.getProdUnCheckedCalendarAlerts();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Calendar getActualCalendar(CalendarId id, LocalDate calDate) {
+            return dataService.getCalendar(calDate);
     }
 }

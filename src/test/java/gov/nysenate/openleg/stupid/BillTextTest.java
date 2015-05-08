@@ -9,7 +9,10 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
+import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
+import gov.nysenate.openleg.model.spotcheck.billtext.ScrapeQueuePriority;
+import gov.nysenate.openleg.service.source.LRSBillTextSobiMaker;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
 import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
 import gov.nysenate.openleg.service.spotcheck.billtext.BillTextSpotcheckProcessService;
@@ -26,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -33,8 +37,10 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  */
@@ -53,6 +59,9 @@ public class BillTextTest extends BaseTests {
 
     @Autowired
     SqlFsBillTextReferenceDao dao;
+
+    @Autowired
+    LRSBillTextSobiMaker sobiMaker;
 
 
     @Test
@@ -74,6 +83,14 @@ public class BillTextTest extends BaseTests {
     }
 
     @Test
+    public void makeSobiTest() {
+        List<BaseBillId> billIds = Arrays.asList(
+                new BaseBillId("S105", 2015),
+                new BaseBillId("A3233", 2015));
+        File resultDir = new File("/tmp");
+        sobiMaker.makeSobi(billIds, resultDir);
+    }
+    @Test
     public void getReportTest() {
         LocalDateTime reportDateTime = LocalDateTime.parse("2015-04-29T11:11:13");
         new ReportDetailView<>(
@@ -82,9 +99,13 @@ public class BillTextTest extends BaseTests {
 
     @Test
     public void queueTest() {
-        BaseBillId bill = new BaseBillId("E1", 2015);
-        dao.addBillToScrapeQueue(bill, 1);
-        logger.info("queue is now {}", dao.getScrapeQueue(LimitOffset.ALL, SortOrder.DESC));
+        List<BaseBillId> billIds = Arrays.asList(
+                new BaseBillId("S105", 2015),
+                new BaseBillId("A3233", 2015));
+        billIds.forEach(billId -> dao.addBillToScrapeQueue(billId, ScrapeQueuePriority.MANUAL_ENTRY.getPriority()));
+        logger.info("queue is now {}", dao.getScrapeQueue(LimitOffset.ALL, SortOrder.DESC).getResults().stream()
+                .map(BillScrapeQueueEntry::getBaseBillId)
+                .collect(Collectors.toList()));
     }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -6,6 +6,7 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.process.DataProcessRunDetailView;
 import gov.nysenate.openleg.client.view.process.DataProcessRunView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
@@ -14,8 +15,12 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.process.DataProcessRun;
+import gov.nysenate.openleg.processor.DataProcessor;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +38,35 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/process", method = RequestMethod.GET)
 public class DataProcessCtrl extends BaseCtrl
 {
+    private static final Logger logger = LoggerFactory.getLogger(DataProcessCtrl.class);
+
     @Autowired private Environment env;
     @Autowired private DataProcessLogService processLogs;
+    @Autowired private DataProcessor dataProcessor;
+
+
+    /**
+     * Data Process API
+     * ----------------
+     *
+     * Triggers a data processing run
+     * Usage: (GET) /api/3/admin/process/run
+     *
+     * Expected Output: DataProcessRunView if the run was successful, ErrorResponse otherwise
+     */
+    @RequestMapping(value = "/run")
+    public BaseResponse triggerDataProcess() {
+        try {
+            DataProcessRun run = dataProcessor.run("api");
+            if (run != null) {
+                return new ViewObjectResponse<>(new DataProcessRunView(run), "run was successful");
+            }
+            return new ErrorResponse(ErrorCode.DATA_PROCESS_RUN_FAILED);
+        } catch (Exception ex) {
+            logger.error("DataProcess exception: \n{}", ex);
+            return new ViewObjectErrorResponse(ErrorCode.DATA_PROCESS_RUN_FAILED, ExceptionUtils.getStackTrace(ex));
+        }
+    }
 
     /**
      * Data Process Runs API

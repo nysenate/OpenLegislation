@@ -122,10 +122,10 @@ public class SpotcheckRunService {
 
     /** --- Internal Methods --- */
 
-    private void runReport(SpotCheckReportService<?> reportService, Range<LocalDateTime> reportRange) {
+    private <T> void runReport(SpotCheckReportService<T> reportService, Range<LocalDateTime> reportRange) {
         logger.info("Attempting to run a {} report..", reportService.getSpotcheckRefType());
         try {
-            SpotCheckReport report = reportService.generateReport(
+            SpotCheckReport<T> report = reportService.generateReport(
                     DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange));
             logger.info("Saving report: {} {} {}", report.getReportDateTime(), report.getReferenceType(),
                     report.getNotes() != null ? report.getNotes() : "");

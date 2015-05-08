@@ -14,6 +14,8 @@ public enum NotificationType {
     PROCESS_EXCEPTION   (EXCEPTION),
     SPOTCHECK_EXCEPTION (EXCEPTION),
     WARNING             (ALL),
+    PROCESS_WARNING     (WARNING),
+    UNVERIFIED_MEMBER   (ALL),
     SPOTCHECK           (ALL),
     NEW_API_KEY         (ALL),
     ;

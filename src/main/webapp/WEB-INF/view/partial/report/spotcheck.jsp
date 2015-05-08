@@ -35,7 +35,8 @@
               </h4>
             </form>
           </div>
-          <table id='daybreak-summary-table' st-table="displaySummaries" st-safe-src="reportSummaries" class="table table-striped">
+          <table id='daybreak-summary-table' st-table="displaySummaries" st-safe-src="reportSummaries"
+                 ng-show="!loadingSummaries && !summariesNotFound && reportSummaries.length > 0" class="table table-striped">
             <thead>
               <tr>
                 <th rowspan="2" st-sort="reportDateTime" style="max-width:11em">Report Date/Time</th>
@@ -80,6 +81,19 @@
               </tr>
             </tbody>
           </table>
+          <div ng-show="loadingSummaries">
+            <md-divider></md-divider>
+            <h3>Loading Summaries...</h3>
+            <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+          </div>
+          <div ng-show="!loadingSummaries && summariesNotFound">
+            <md-divider></md-divider>
+            <h3 style="color:#ff00ff">Err0r: Could not load summaries</h3>
+          </div>
+          <div ng-show="!loadingSummaries && !summariesNotFound && reportSummaries.length < 1">
+            <md-divider></md-divider>
+            <h3>No reports found for type and date range</h3>
+          </div>
         </md-card-content>
       </md-card>
     </md-tab>

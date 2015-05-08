@@ -59,7 +59,7 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
     SET_MEETING_PROD_CHECKED(
         "UPDATE ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
         "SET prod_checked = :checked\n" +
-        "WHERE chamber = :chamber::chamber AND committee_name = :committeeName AND meeting_date_time = :meetingDateTime"
+        "WHERE chamber = :chamber::chamber AND committee_name = :committeeName AND meeting_date_time::date = :meetingDateTime::date"
     ),
     DELETE_INFO_COMMITTEE(
         "DELETE FROM ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
