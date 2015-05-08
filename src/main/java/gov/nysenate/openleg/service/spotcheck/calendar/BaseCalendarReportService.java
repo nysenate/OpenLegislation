@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.calendar;
 
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.CalendarAlertReportDao;
@@ -30,6 +31,9 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
 
     @Autowired
     private CalendarCheckService checkService;
+
+    @Autowired
+    private Environment environment;
 
     protected abstract String getReportNotes();
 
@@ -105,6 +109,11 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
             CalendarId id = reference.getId();
             Calendar actual = getActualCalendar(id, reference.getCalDate());
             if (actual == null) {
+                if (LocalDateTime.now()
+                        .minus(environment.getSpotcheckAlertGracePeriod())
+                        .isBefore(reference.getPublishedDateTime())) {
+                    continue; // Do not add a not found mismatch if reference publish date is within grace period
+                }
                 recordMismatch(observations, reference, id);
             } else {
                 observations.add(checkService.check(actual, reference));

@@ -57,29 +57,34 @@ public class BillTextScraper extends LRSScraper {
     public int scrape() throws IOException {
         try {
             BaseBillId billId = btrDao.getScrapeQueueHead();
-            String path = StrSubstitutor.replace(billUrlTemplate,
-                    ImmutableMap.of("printNo", billId.getPrintNo(),
-                            "sessionYear", Integer.toString(billId.getSession().getYear())));
 
-            logger.info("FETCHING landing page.");
-            logger.info(path);
-
-            URL billUrl = new URL(path);
-
-            String filename = StrSubstitutor.replace(billFileTemplate, ImmutableMap.<String, String>builder()
-                            .put("sessionYear", Integer.toString(billId.getSession().getYear()))
-                            .put("printNo", billId.getPrintNo())
-                            .put("scrapedTime", LocalDateTime.now().format(DateUtils.BASIC_ISO_DATE_TIME))
-                    .build());
-
-            File file = new File(billScrapedDir, filename);
-
-            FileUtils.copyURLToFile(billUrl, file, 2000, 10000);
+            scrapeBill(billId, billScrapedDir);
 
             btrDao.deleteBillFromScrapeQueue(billId);
         } catch (EmptyResultDataAccessException ex) {
             return 0;
         }
         return 1;
+    }
+
+    public void scrapeBill(BaseBillId billId, File destinationDir) throws IOException {
+        String path = StrSubstitutor.replace(billUrlTemplate,
+                ImmutableMap.of("printNo", billId.getPrintNo(),
+                        "sessionYear", Integer.toString(billId.getSession().getYear())));
+
+        logger.info("FETCHING landing page.");
+        logger.info(path);
+
+        URL billUrl = new URL(path);
+
+        String filename = StrSubstitutor.replace(billFileTemplate, ImmutableMap.<String, String>builder()
+                .put("sessionYear", Integer.toString(billId.getSession().getYear()))
+                .put("printNo", billId.getPrintNo())
+                .put("scrapedTime", LocalDateTime.now().format(DateUtils.BASIC_ISO_DATE_TIME))
+                .build());
+
+        File file = new File(destinationDir, filename);
+
+        FileUtils.copyURLToFile(billUrl, file, 2000, 10000);
     }
 }

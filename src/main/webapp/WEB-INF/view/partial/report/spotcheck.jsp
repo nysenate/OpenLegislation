@@ -86,11 +86,11 @@
             <h3>Loading Summaries...</h3>
             <md-progress-linear md-mode="indeterminate"></md-progress-linear>
           </div>
-          <div ng-show="summariesNotFound">
+          <div ng-show="!loadingSummaries && summariesNotFound">
             <md-divider></md-divider>
             <h3 style="color:#ff00ff">Err0r: Could not load summaries</h3>
           </div>
-          <div ng-show="!summariesNotFound && reportSummaries.length < 1">
+          <div ng-show="!loadingSummaries && !summariesNotFound && reportSummaries.length < 1">
             <md-divider></md-divider>
             <h3>No reports found for type and date range</h3>
           </div>

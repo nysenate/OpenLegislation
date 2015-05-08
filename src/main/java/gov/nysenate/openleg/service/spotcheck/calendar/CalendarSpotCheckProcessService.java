@@ -78,6 +78,12 @@ public class CalendarSpotCheckProcessService extends BaseSpotcheckProcessService
     }
 
     @Override
+    protected int getUncheckedRefCount() {
+        return calendarAlertDao.getUnCheckedCalendarAlerts().size() +
+                calendarAlertDao.getProdUnCheckedCalendarAlerts().size();
+    }
+
+    @Override
     public String getCollateType() {
         return "calendar alert";
     }

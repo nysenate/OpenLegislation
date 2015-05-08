@@ -19,6 +19,15 @@ public class BillScrapeQueueEntry implements Serializable {
         this.addedTime = addedTime;
     }
 
+    @Override
+    public String toString() {
+        return "BillScrapeQueueEntry{" +
+                "baseBillId=" + baseBillId +
+                ", priority=" + priority +
+                ", addedTime=" + addedTime +
+                '}';
+    }
+
     public BaseBillId getBaseBillId() {
         return baseBillId;
     }
