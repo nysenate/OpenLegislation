@@ -38,9 +38,7 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
 
     public Calendar getCalendar(CalendarId calendarId) throws DataAccessException {
         ImmutableParams calParams = ImmutableParams.from(getCalendarIdParams(calendarId));
-        Calendar calendar = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_CALENDAR.getSql(schema()), calParams, new CalendarRowMapper());
-        calendar.setSupplementalMap(getCalSupplementals(calParams));
-        calendar.setActiveListMap(getActiveListMap(calParams));
+        Calendar calendar = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_CALENDAR.getSql(schema()), calParams, CalendarRowMapper);
         return calendar;
     }
 
@@ -85,15 +83,13 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
     public List<Calendar> getUnCheckedCalendarAlerts() {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("checked", false);
-        List<Calendar> calendars = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_UNCHECKED.getSql(schema()), params, new CalendarListRowMapper());
-        return populateCalendars(calendars);
+        return jdbcNamed.query(SqlCalendarAlertQuery.SELECT_UNCHECKED.getSql(schema()), params, CalendarRowMapper);
     }
 
     public List<Calendar> getProdUnCheckedCalendarAlerts() {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("prodChecked", false);
-        List<Calendar> calendars = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_PROD_UNCHECKED.getSql(schema()), params, new CalendarListRowMapper());
-        return populateCalendars(calendars);
+        return jdbcNamed.query(SqlCalendarAlertQuery.SELECT_PROD_UNCHECKED.getSql(schema()), params, CalendarRowMapper);
     }
 
     /** --- Internal Methods --- */
@@ -187,15 +183,14 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
 
     /** --- Helper Classes --- */
 
-    private class CalendarRowMapper implements RowMapper<Calendar>
-    {
-        @Override
-        public Calendar mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Calendar calendar = setCalendarIdFromResultSet(rs);
-            setModPubDatesFromResultSet(calendar, rs);
-            return calendar;
-        }
-    }
+    private RowMapper<Calendar> CalendarRowMapper = (rs, rowNum) -> {
+        Calendar calendar = setCalendarIdFromResultSet(rs);
+        setModPubDatesFromResultSet(calendar, rs);
+        ImmutableParams calParams = ImmutableParams.from(getCalendarIdParams(calendar.getId()));
+        calendar.setSupplementalMap(getCalSupplementals(calParams));
+        calendar.setActiveListMap(getActiveListMap(calParams));
+        return calendar;
+    };
 
     private class CalendarListRowMapper implements RowMapper<List<Calendar>> {
 

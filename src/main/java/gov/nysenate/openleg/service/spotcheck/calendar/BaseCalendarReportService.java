@@ -2,7 +2,6 @@ package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.calendar.data.SqlCalendarDao;
 import gov.nysenate.openleg.dao.spotcheck.CalendarAlertReportDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
@@ -12,10 +11,10 @@ import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -30,9 +29,6 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     private CalendarAlertReportDao reportDao;
 
     @Autowired
-    private SqlCalendarDao actualDao;
-
-    @Autowired
     private CalendarCheckService checkService;
 
     protected abstract String getReportNotes();
@@ -40,6 +36,11 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     protected abstract void markAsChecked(CalendarId id);
 
     protected abstract List<Calendar> getReferences(LocalDateTime start, LocalDateTime end);
+
+    /**
+     * @return The actual calendar or null if it doesn't exist.
+     */
+    protected abstract Calendar getActualCalendar(CalendarId id, LocalDate calDate);
 
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
@@ -102,21 +103,25 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
         List<SpotCheckObservation<CalendarId>> observations = new ArrayList<>();
         for (Calendar reference : references) {
             CalendarId id = reference.getId();
-            try {
-                Calendar actual = actualDao.getCalendar(id);
+            Calendar actual = getActualCalendar(id, reference.getCalDate());
+            if (actual == null) {
+                recordMismatch(observations, reference, id);
+            } else {
                 observations.add(checkService.check(actual, reference));
-            } catch (DataAccessException e) {
-                SpotCheckReferenceId obsRefId = new SpotCheckReferenceId(
-                        getSpotcheckRefType(), reference.getPublishedDateTime().truncatedTo(ChronoUnit.SECONDS));
-
-                SpotCheckObservation<CalendarId> observation = new SpotCheckObservation<>(obsRefId, id);
-                observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
-                                                              id.toString(), ""));
-                observations.add(observation);
             }
             markAsChecked(id);
         }
         return observations;
+    }
+
+    private void recordMismatch(List<SpotCheckObservation<CalendarId>> observations, Calendar reference, CalendarId id) {
+        SpotCheckReferenceId obsRefId = new SpotCheckReferenceId(
+                getSpotcheckRefType(), reference.getPublishedDateTime().truncatedTo(ChronoUnit.SECONDS));
+
+        SpotCheckObservation<CalendarId> observation = new SpotCheckObservation<>(obsRefId, id);
+        observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
+                                                      id.toString(), ""));
+        observations.add(observation);
     }
 
     private LocalDateTime getMostRecentReference(List<Calendar> references) {
