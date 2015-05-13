@@ -53,6 +53,11 @@ public class BillTextScraper extends LRSScraper {
         }
     }
 
+    /**
+     * Attempts to get the LRS html for the first bill in the scrape queue
+     * @return the number of bills scraped
+     * @throws IOException If there is an error while downloading or saving the bill html file
+     */
     @Override
     public int scrape() throws IOException {
         try {
@@ -67,6 +72,12 @@ public class BillTextScraper extends LRSScraper {
         return 1;
     }
 
+    /**
+     * Attempts to scrape html bill data for the given base bill id, saves the html file to the given directory
+     * @param billId BaseBillId
+     * @param destinationDir File
+     * @throws IOException If there is an error while downloading or saving the bill html file
+     */
     public void scrapeBill(BaseBillId billId, File destinationDir) throws IOException {
         String path = StrSubstitutor.replace(billUrlTemplate,
                 ImmutableMap.of("printNo", billId.getPrintNo(),

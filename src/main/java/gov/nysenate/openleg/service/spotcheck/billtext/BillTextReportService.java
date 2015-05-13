@@ -49,11 +49,13 @@ public class BillTextReportService implements SpotCheckReportService<BaseBillId>
     public void init() throws IOException{
     }
 
+    /** {@inheritDoc} */
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_SCRAPED_BILL;
     }
 
+    /** {@inheritDoc} */
     @Override
     public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         List<BillTextReference> references = dao.getUncheckedBillTextReferences();
@@ -64,14 +66,17 @@ public class BillTextReportService implements SpotCheckReportService<BaseBillId>
         report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_SCRAPED_BILL,
                 references.get(0).getReferenceDate(), LocalDateTime.now()));
 
+        // Set checked billids as notes
         report.setNotes(references.stream()
                 .map(btr -> btr.getBaseBillId().toString())
                 .reduce("", (a, b) -> a + (StringUtils.isBlank(a) ? "" : ", ") + b));
 
+        // Get observations for each reference
         references.stream()
                 .map(this::generateObservation)
                 .forEach(report::addObservation);
 
+        // Set each reference as checked
         references.stream()
                 .map(BillTextReference::getBaseBillId)
                 .forEach(dao::setChecked);
@@ -79,11 +84,13 @@ public class BillTextReportService implements SpotCheckReportService<BaseBillId>
         return report;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void saveReport(SpotCheckReport<BaseBillId> report) {
         reportDao.saveReport(report);
     }
 
+    /** {@inheritDoc} */
     @Override
     public SpotCheckReport<BaseBillId> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx {
         if (reportId == null) {
@@ -97,11 +104,13 @@ public class BillTextReportService implements SpotCheckReportService<BaseBillId>
 
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
         return reportDao.getReportIds(SpotCheckRefType.LBDC_SCRAPED_BILL, start, end, dateOrder, limOff);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deleteReport(SpotCheckReportId reportId) {
         if (reportId == null) {
@@ -111,6 +120,8 @@ public class BillTextReportService implements SpotCheckReportService<BaseBillId>
         reportDao.deleteReport(reportId);
     }
 
+    /** --- Internal Methods --- */
+
     private SpotCheckObservation<BaseBillId> generateObservation(BillTextReference btr) {
         //Gets bill from openleg processed info
         try {
@@ -118,7 +129,7 @@ public class BillTextReportService implements SpotCheckReportService<BaseBillId>
             return billTextCheckService.check(bill, btr);
         }catch(BillNotFoundEx e){
             SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(btr.getReferenceId(), btr.getBaseBillId());
-            if (btr.isNotFound()) {
+            if (btr.isNotFound()) { // Bill text references are still generated if LRS data is not found
                 ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING,
                         btr.getBaseBillId() + "\n" + btr.getText(), "also missing"));
             }

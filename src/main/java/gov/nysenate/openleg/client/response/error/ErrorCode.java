@@ -73,6 +73,9 @@ public enum ErrorCode
 
     DATA_PROCESS_RUN_FAILED(195, "The data process did not run, due to processing being disabled or an error"),
 
+    IMMUTABLE_ENV_VARIABLE(196, "Attempt to change an immutable environment variable"),
+    NO_SUCH_ENV_VARIABLE(197, "The requested environment variable does not exist"),
+
     /** --- General --- */
 
     UNAUTHORIZED(401, "Not authorized to perform this request."),

@@ -4,14 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +18,15 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * A class that can be used to generate patch bill text sobis
+ */
 @Service
 public class LRSBillTextSobiMaker {
 
@@ -58,63 +58,80 @@ public class LRSBillTextSobiMaker {
 
     private File scrapedDir = new File("/tmp/scraped-bills");
 
+    /**
+     * Attempts to scrape bill text for the given bill ids
+     * Formats the scraped bill texts into a sobi file written to the result dir
+     * @param billIds Collection<BaseBillId> - bill ids to be scraped
+     * @param resultDir File - the directory to save the generated sobi
+     */
     public void makeSobi(Collection<BaseBillId> billIds, File resultDir) {
         try {
             scrapeBills(billIds);
+
             List<BillTextReference> btrs = parseBills();
+
             StringBuilder dataBuilder = new StringBuilder();
             for (BillTextReference btr : btrs) {
                 addBillText(btr, dataBuilder);
             }
+
             writeSobi(dataBuilder, resultDir);
         } catch (IOException ex) {
             logger.error("Error while generating sobis \n{}", ex);
         }
     }
 
+    /**
+     * Appends sobi formatted bill text from the given bill text reference to the given string builder
+     */
     private void addBillText(BillTextReference btr, StringBuilder dataBuilder) {
         logger.info("formatting {}", btr.getBillId());
         BillId billId = btr.getBillId();
+
+        // Format the print no portion of the header
         String headerPrintNo = String.format("%s %d%s", billId.getBillType(), billId.getNumber(), billId.getVersion());
         int length = headerPrintNo.length();
         for (int i = 0; i < 16 - length; i++) {
             headerPrintNo += " ";
         }
-        String yearString = Integer.toString(LocalDate.now().getYear());
+
+        // Format the header
+        String yearString = Integer.toString(btr.getSessionYear());
         String header = StrSubstitutor.replace(billTextHeaderTemplate,
                 ImmutableMap.of("printNo", headerPrintNo, "year", yearString));
+
+        // Format the line start for this bill
         String lineStart = String.format("%s%s%05d%sT", yearString, billId.getBillType(), billId.getNumber(),
                 billId.getVersion() != Version.DEFAULT ? billId.getVersion() : " ");
 
-        int textLine = 1;
-        int totalLine = 0;
+        int textLine = 1;   // Tracks text line numbers
+        int totalLine = 0;  // Tracks total lines that have been added including headers
 
         for (String line : btr.getText().split("\n")) {
             dataBuilder.append(lineStart);
-            if (totalLine % 100 == 0) {
+            if (totalLine % 100 == 0) {     // Add a header every 100 lines
                 dataBuilder.append(header)
                         .append("\n")
                         .append(lineStart);
                 totalLine++;
             }
-            if (textLine == 1) {
-                dataBuilder.append(String.format("%05d", textLine))
-                        .append("\n").append(lineStart);
-                textLine++;
-                totalLine++;
-            }
+            // Append line data
             dataBuilder.append(String.format("%05d", textLine));
             dataBuilder.append(line);
             dataBuilder.append("\n");
             textLine++;
             totalLine++;
         }
+        // Add a closing header
         dataBuilder.append(lineStart)
                 .append(StrSubstitutor.replace(billTextCloserTemplate,
                         ImmutableMap.of("printNo", headerPrintNo, "year", yearString)))
                 .append("\n");
     }
 
+    /**
+     * Downloads LRS html bill files for the given bill ids
+     */
     private void scrapeBills(Collection<BaseBillId> billIds) throws IOException {
         FileUtils.forceMkdir(scrapedDir);
         for (BaseBillId billId : billIds) {
@@ -123,6 +140,9 @@ public class LRSBillTextSobiMaker {
         }
     }
 
+    /**
+     * Parses all bill html files in the scraped directory into BillTextReferences
+     */
     private List<BillTextReference> parseBills() throws IOException {
         Collection<File> scrapedBills = FileIOUtils.safeListFiles(scrapedDir, false, new String[]{});
         List<BillTextReference> btrs = new ArrayList<>();
@@ -138,6 +158,9 @@ public class LRSBillTextSobiMaker {
         return btrs;
     }
 
+    /**
+     * Formats the given text data into a sobi file format and saves it to the destination dir
+     */
     private void writeSobi(StringBuilder data, File destinationDir) throws IOException {
         LocalDateTime pubDateTime = LocalDateTime.now();
         String fileContents = StrSubstitutor.replace(sobiDocTemplate,

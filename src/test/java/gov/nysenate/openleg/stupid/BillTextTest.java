@@ -85,8 +85,7 @@ public class BillTextTest extends BaseTests {
     @Test
     public void makeSobiTest() {
         List<BaseBillId> billIds = Arrays.asList(
-                new BaseBillId("S105", 2015),
-                new BaseBillId("A3233", 2015));
+                new BaseBillId("S105", 2015));
         File resultDir = new File("/tmp");
         sobiMaker.makeSobi(billIds, resultDir);
     }
