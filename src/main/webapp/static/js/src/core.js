@@ -345,7 +345,7 @@ coreModule.directive('togglePanel', [function(){
                 var panelElem = $element.children(".panel-content");
                 (newOpen) ? panelElem.slideDown(200) : panelElem.slideUp(200);
                 $scope.opened = newOpen || $scope.opened;
-                console.log("opened", $scope.opened);
+                //console.log("opened", $scope.opened);
             });
         }
     }

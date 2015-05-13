@@ -91,7 +91,7 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
         $scope.year = $scope.calendarView['year'];
 
         // Set the header text
-        $scope.setHeaderText("Senate Calendar #" + $scope.calendarView['calendarNumber'] + " " +
+        $scope.setHeaderText("Senate Calendar #" + $scope.calendarView['calendarNumber'] + " - " +
                 $filter('moment')($scope.calendarView.calDate, 'll'));
 
         // Alert child scopes of new calendar view

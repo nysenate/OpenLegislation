@@ -122,7 +122,8 @@ agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$
         $scope.years = [2015, 2014, 2013, 2012, 2011, 2010, 2009];
 
         // Create list of numbers between 1 and 20.
-        $scope.agendaNoList = Array.apply(0, Array(20)).map(function(x,i) { return i + 1; });
+        $scope.agendaNoList = Array.apply(0, Array(25)).map(function(x,i) { return i + 1; });
+
         var committees = CommitteeListingApi.get({sessionYear: $scope.searchParams.year}, function() {
             $scope.committeeListing = committees.result.items;
         });
@@ -467,10 +468,11 @@ agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams'
 
         $scope.updates = [];
 
-        // User Input
+        // Current state
         $scope.curr = {
             updateOrder: 'desc',
-            fetchedInitialUpdates: false
+            fetchedInitialUpdates: false,
+            loading: false
         };
 
         /**
@@ -480,6 +482,7 @@ agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams'
             if ($scope.commName) {
                 $scope.selectedComm[$scope.commName.toLowerCase()] = true;
             }
+            $scope.curr.loading = true;
             $scope.response = AgendaGetApi.get({year: $scope.year, agendaNo: $scope.no}, function() {
                 $scope.agenda = $scope.response.result;
                 $scope.setHeaderText('Agenda ' + $scope.agenda.id.number + ' - ' + $scope.agenda.id.year);
@@ -493,6 +496,11 @@ agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams'
                         })
                     }, 0);
                 }
+                $scope.curr.loading = false;
+            }, function(resp) {
+                $scope.setHeaderText(resp.status);
+                $scope.response.success = false;
+                $scope.curr.loading = false;
             });
         };
 

@@ -18,7 +18,6 @@ billModule.factory('BillSearchApi', ['$resource', function($resource) {
     });
 }]);
 
-
 billModule.factory('BillAggUpdatesApi', ['$resource', function($resource) {
     return $resource(apiPath + '/bills/updates/:from/:to?order=:order&type=:type&filter=:filter&limit=:limit&offset=:offset&summary=true', {
         from: '@from',
@@ -113,7 +112,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     $scope.curr.pagination.itemsPerPage = 6;
 
     var defaultRefine = {
-        sort: '',
+        sort: '_score:desc,session:desc',
         session: '',
         chamber: '',
         type: '',
@@ -128,7 +127,17 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     $scope.billSearch = {
         searched: false,
         term: $routeParams.search || '',
-        refine: angular.extend({}, defaultRefine, {sort: '_score:desc,session:desc'}),
+        refine: {
+            sort: $routeParams['sort'] || '_score:desc,session:desc',
+            session: $routeParams['session'],
+            chamber: $routeParams['chamber'],
+            type: $routeParams['type'],
+            sponsor: $routeParams['sponsor'],
+            status: $routeParams['status'],
+            hasVotes: $routeParams['hasVotes'],
+            isSigned: $routeParams['isSigned'],
+            isGovProg: $routeParams['isGovProg']
+        },
         refineQuery: '',
         sort: '',
         response: {},
@@ -142,8 +151,8 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     $scope.init = function() {
         if ($scope.selectedView == 0) {
             $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
-            $scope.simpleSearch(false);
             $scope.initMembers();
+            $scope.simpleSearch(false);
         }
     };
 
@@ -203,6 +212,9 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         var refineQuery = '(' + term + ')';
         var refine = $scope.billSearch.refine;
         $scope.billSearch.sort = refine.sort;
+
+        $scope.setRefineUrlParams(refine);
+
         if (refine.session) {
             refineQuery += ' AND session:' + refine.session;
         }
@@ -239,6 +251,16 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     /** Reset the refine filters. */
     $scope.resetRefine = function() {
         $scope.billSearch.refine = angular.extend({}, defaultRefine);
+        $scope.setRefineUrlParams($scope.billSearch.refine);
+    };
+
+    $scope.setRefineUrlParams = function(refine) {
+        // Set URL params
+        for (var p in refine) {
+            if (refine.hasOwnProperty(p)) {
+                $scope.setSearchParam(p, refine[p]);
+            }
+        }
     };
 
     // Mark highlighted search results as safe html.

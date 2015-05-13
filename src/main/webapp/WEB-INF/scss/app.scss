@@ -37,6 +37,11 @@ select {
   padding: 2px;
 }
 
+hr {
+  border: 1px none #ddd;
+  border-top-style: solid;
+}
+
 /** --- Angular Material --- */
 
 md-toolbar {
@@ -98,17 +103,8 @@ md-tab.active {
   }
 }
 
-.md-tabs-content {
-  .md-tab-content {
-    &.ng-animate {
-      transition: none !important;
-    }
-  }
-}
-
-/** Fixes the tab pagination color when default theme is applied. */
-md-tabs.md-default-theme .md-paginator md-icon {
-  color: white;
+md-tab-content {
+  overflow: visible !important;
 }
 
 /** --- Transitions --- */
@@ -461,7 +457,7 @@ $left-nav-width: 305px;
 
 .left-nav-menu {
   width:100%;
-  padding-top:20px;
+  padding-top:28px;
 }
 
 // Menu styles adapted from angular-material docs
@@ -905,12 +901,18 @@ a.slogan-link {
   }
 }
 
+.law-node-ctrls {
+  padding: 10px;
+  background: white;
+  border-left: 1px solid #ddd;
+}
+
 .law-text {
   &.no-margin {
     margin: 0;
   }
   padding:40px;
-  margin: 0 20px;
+  margin: 0;
   white-space: pre-line;
   font-size: 0.85rem;
   background: white;

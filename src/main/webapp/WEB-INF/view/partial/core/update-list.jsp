@@ -6,53 +6,49 @@
   </md-subheader>
   <div class="subheader" ng-if="pagination.totalItems > pagination.itemsPerPage">
     <div flex style="text-align: right;">
-      <dir-pagination-controls boundary-links="true"></dir-pagination-controls>
+      <dir-pagination-controls max-size="5" boundary-links="true"></dir-pagination-controls>
     </div>
   </div>
 </md-card>
-<md-list>
-  <md-item dir-paginate="update in updateResponse.result.items | itemsPerPage: updateResponse.limit"
-         current-page="pagination.currPage" total-items="updateResponse.total">
-    <md-item-content>
-      <div class="md-tile-content" style="padding:0;">
-        <md-card class="content-card">
-          <md-subheader>
-            <span class="capitalize">
-              <span ng-if="showDetails && update.action && update.scope">
-                {{update.action | lowercase}} - {{update.scope}}
-              </span>
-              <span ng-if="showDetails && showId">-</span>
-              <span ng-if="showId">{{update | updateId}}</span>
-            </span>
-          </md-subheader>
-          <md-content>
-            <h4>Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY h:mm:ss A'}}</h4>
-            <h4>Processed Date - {{update.processedDateTime | moment:'MMM DD, YYYY h:mm:ss A'}}</h4>
-            <h4>Source - <a>{{update.sourceId}}</a></h4>
-            <table class="bill-updates-table" ng-if="showDetails && update.fieldCount > 0">
-              <thead>
-              <tr>
-                <th style="width:150px;">Field Name</th>
-                <th>Data</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="(field, value) in update.fields">
-                <td class="blue4">{{field}}</td>
-                <td><pre style="max-height:300px;">{{value}}</pre></td>
-              </tr>
-              </tbody>
-            </table>
-          </md-content>
-        </md-card>
-      </div>
-    </md-item-content>
-  </md-item>
-</md-list>
+<section>
+  <div dir-paginate="update in updateResponse.result.items | itemsPerPage: updateResponse.limit"
+       current-page="pagination.currPage" total-items="updateResponse.total">
+    <md-card class="content-card">
+      <md-subheader>
+        <span class="capitalize">
+          <span ng-if="showDetails && update.action && update.scope">
+            {{update.action | lowercase}} - {{update.scope}}
+          </span>
+          <span ng-if="showDetails && showId">-</span>
+          <span ng-if="showId">{{update | updateId}}</span>
+        </span>
+      </md-subheader>
+      <md-content>
+        <p class="text-medium">Published Date - {{update.sourceDateTime | moment:'MMM DD, YYYY h:mm:ss A'}}</p>
+        <p class="text-medium">Processed Date - {{update.processedDateTime | moment:'MMM DD, YYYY h:mm:ss A'}}</p>
+        <p class="text-medium">Source - <a>{{update.sourceId}}</a></p>
+        <table class="bill-updates-table" ng-if="showDetails && update.fieldCount > 0">
+          <thead>
+          <tr>
+            <th style="width:150px;">Field Name</th>
+            <th>Data</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="(field, value) in update.fields">
+            <td class="blue4">{{field}}</td>
+            <td><pre style="max-height:300px;">{{value}}</pre></td>
+          </tr>
+          </tbody>
+        </table>
+      </md-content>
+    </md-card>
+  </div>
+</section>
 <md-card class="content-card" ng-if="pagination.totalItems > pagination.itemsPerPage">
   <div class="subheader">
     <div flex style="text-align: right;">
-      <dir-pagination-controls boundary-links="true"></dir-pagination-controls>
+      <dir-pagination-controls max-size="5" boundary-links="true"></dir-pagination-controls>
     </div>
   </div>
 </md-card>

@@ -24,8 +24,9 @@ openApp.config(function($mdThemingProvider) {
         });
     $mdThemingProvider.theme('success').primaryPalette('green');
     $mdThemingProvider.theme('failure').primaryPalette('red');
-
 })
+// Disable gestures for now.
+.constant('$mdGesture', {})
 .config(function($resourceProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
 })
