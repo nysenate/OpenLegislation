@@ -61,9 +61,8 @@ public enum SpotCheckMismatchType
     SUPPLEMENTAL_ENTRY("Supplemental Entry"),
 
     /** --- Active list mismatches --- */
-    ACTIVE_LIST_SEQUENCE_NO("Active List Sequence No"),
+    ACTIVE_LIST_SIZE("Active List Size"),
     ACTIVE_LIST_CAL_DATE("Active List Cal Date"),
-    ACTIVE_LIST_NOTES("Active List Notes"),
     ACTIVE_LIST_ENTRY("Active List Entry"),
 
     ;

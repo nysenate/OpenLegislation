@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -155,29 +156,29 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
     }
 
     private void compareActiveLists(SpotCheckObservation<CalendarId> observation, Calendar content, Calendar reference) {
-        Set<CalendarActiveList> contentActiveLists = Sets.newHashSet(content.getActiveListMap().values());
-        Set<CalendarActiveList> referenceActiveLists = Sets.newHashSet(reference.getActiveListMap().values());
+        if (content.getActiveListMap().size() > 0 && reference.getActiveListMap().size() > 0) {
+            CalendarActiveList contentMostRecent = getMostRecentActiveList(content);
+            CalendarActiveList referenceMostRecent = getMostRecentActiveList(reference);
 
-        Set<CalendarActiveList> activeListDiffs = Sets.symmetricDifference(contentActiveLists, referenceActiveLists).immutableCopy();
-        for (CalendarActiveList activeListDiff : activeListDiffs) {
-            CalendarActiveList contentDiff = getActiveListIfExists(content, activeListDiff.getSequenceNo());
-            CalendarActiveList referenceDiff = getActiveListIfExists(reference, activeListDiff.getSequenceNo());
-
-            if (contentDiff == null || referenceDiff == null) {
-                recordSequenceNoMismatch(observation, contentDiff, referenceDiff);
-            } else {
-                checkForActiveListCalDateMismatch(observation, contentDiff, referenceDiff);
-                checkForNotesMismatch(observation, contentDiff, referenceDiff);
-                checkForActiveListEntryMismatch(observation, contentDiff, referenceDiff);
-            }
+            checkForActiveListCalDateMismatch(observation, contentMostRecent, referenceMostRecent);
+            checkForActiveListEntryMismatch(observation, contentMostRecent, referenceMostRecent);
+        }
+        else if (content.getActiveListMap().size() > 0 || reference.getActiveListMap().size() > 0) {
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_SIZE,
+                                    reference.getActiveListMap().size(), content.getActiveListMap().size()));
         }
     }
 
-    private void recordSequenceNoMismatch(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff,
-                                          CalendarActiveList referenceDiff) {
-        observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_SEQUENCE_NO,
-                                                      referenceDiff == null ? "" : referenceDiff.getSequenceNo().toString(),
-                                                      contentDiff == null ? "" : contentDiff.getSequenceNo().toString()));
+    private CalendarActiveList getMostRecentActiveList(Calendar calendar) {
+        int seqNo = 0;
+        LocalDateTime releaseDateTime = DateUtils.LONG_AGO.atStartOfDay();
+        for (CalendarActiveList activeList : calendar.getActiveListMap().values()) {
+            if (activeList.getReleaseDateTime().isAfter(releaseDateTime)) {
+                seqNo = activeList.getSequenceNo();
+                releaseDateTime = activeList.getReleaseDateTime();
+            }
+        }
+        return calendar.getActiveList(seqNo);
     }
 
     private void checkForActiveListCalDateMismatch(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff,
@@ -186,14 +187,6 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
         String referenceCalDate = referenceDiff.getCalDate() == null ? "" : referenceDiff.getCalDate().toString();
         if (!StringUtils.equals(contentCalDate, referenceCalDate)) {
             observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE, referenceCalDate, contentCalDate));
-        }
-    }
-
-    private void checkForNotesMismatch(SpotCheckObservation<CalendarId> observation, CalendarActiveList contentDiff,
-                                       CalendarActiveList referenceDiff) {
-        if (!StringUtils.equals(contentDiff.getNotes(), referenceDiff.getNotes())) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_NOTES,
-                                                          referenceDiff.getNotes(), contentDiff.getNotes()));
         }
     }
 
@@ -208,10 +201,4 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
         }
     }
 
-    /**
-     * Get the active list with given sequence number from a calendar. return null if does not exist.
-     */
-    private CalendarActiveList getActiveListIfExists(Calendar calendar, int sequenceNo) {
-        return calendar.getActiveListMap().keySet().contains(sequenceNo) ? calendar.getActiveList(sequenceNo) : null;
-    }
 }
