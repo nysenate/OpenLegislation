@@ -67,6 +67,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
             if (bill.hasAmendment(reference.getActiveVersion())) {
                 BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
                 checkBillText(amendment, reference, observation);
+                // Only check senate, non-resolution bills for sponsor memos
                 if (Chamber.SENATE.equals(baseBillId.getChamber()) && !baseBillId.getBillType().isResolution()) {
                     checkMemoText(amendment, reference, observation);
                 }
@@ -82,6 +83,10 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         }
     }
 
+    /**
+     * Checks text with all whitespace removed, and generates several mismatches with different levels of text
+     * normalization if there was a mismatch in the no-whitespace text
+     */
     private void checkBillText(BillAmendment billAmendment, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv){
         String dataText = billAmendment.getFullText();
         String refText = reference.getText();
@@ -110,16 +115,25 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         }
     }
 
+    /**
+     * Removes duplicate spaces and trims leading/trailing spaces for each line
+     */
     private String normalizeText(String text) {
         text = text.replaceAll("[ ]+", " ");
         text = text.replaceAll("(?<=\n)[ ]+|[ ]+(?=\n)", "");
         return text;
     }
 
+    /**
+     * Removes all whitespace
+     */
     private String superNormalizeText(String text) {
         return text.replaceAll("[^\\w]+", "");
     }
 
+    /**
+     * Removes all whitespace, line numbers, and page numbers
+     */
     private String ultraNormalizeText(String text, BillId billId) {
         String pageMarkerRegex = String.format("(?<=\n)%s. %d%s \\d(?=\n)", billId.getBillType(), billId.getNumber(),
                 BillId.isBaseVersion(billId.getVersion()) ? "" : "--" + billId.getVersion());

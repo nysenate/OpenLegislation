@@ -43,11 +43,13 @@ public class ScrapedBillTextParser {
     public BillTextReference parseReference(File file) throws IOException, ParseError{
         Matcher filenameMatcher = scrapedBillFilePattern.matcher(file.getName());
         if (filenameMatcher.matches()) {
+            // Parse metadata from the file name
             BaseBillId baseBillId = new BaseBillId(filenameMatcher.group(2), Integer.parseInt(filenameMatcher.group(1)));
             LocalDateTime referenceDateTime = LocalDateTime.parse(filenameMatcher.group(3), DateUtils.BASIC_ISO_DATE_TIME);
 
             Document document = Jsoup.parse(file, "UTF-8");
             try {
+                // Get the active amendment id, full text and memo
                 BillId billId = getBillId(document, baseBillId.getSession());
                 String text = getText(document, baseBillId);
                 String memo = getMemo(document, baseBillId);
@@ -59,6 +61,9 @@ public class ScrapedBillTextParser {
         throw new ParseError("Could not parse scraped bill filename: " + file.getName());
     }
 
+    /**
+     * Parses the amendment bill id from one of the first header lines
+     */
     private BillId getBillId(Document document, SessionYear sessionYear) throws ParseError {
         Element printNoEle = document.select("span.nv_bot_info > strong").first();
         if (printNoEle != null) {
@@ -73,6 +78,9 @@ public class ScrapedBillTextParser {
         throw new ParseError("could not get scraped bill print no:");
     }
 
+    /**
+     * Parses the full bill text and formats it to account for standard differences between LRS and sobi data
+     */
     private String getText(Document document, BaseBillId baseBillId) throws ParseError {
         Element contents = document.getElementById("nv_bot_contents");
         if (contents == null) {
@@ -80,6 +88,7 @@ public class ScrapedBillTextParser {
         }
         Elements textEles = new Elements();
 
+        // Bill text is found in all pre tags contained in <div id="nv_bot_contents"> before the first <hr class="noprint">
         for (Element element : contents.children()) {
             if ("pre".equalsIgnoreCase(element.tagName())) {
                 textEles.add(element);
@@ -95,6 +104,9 @@ public class ScrapedBillTextParser {
         return formatBillText(textBuilder.toString(), baseBillId);
     }
 
+    /**
+     * Alters the raw bill text to match the standard formatting of sobi bill text
+     */
     private String formatBillText(String billText, BaseBillId billId) {
         billText = billText.replaceAll("[\r\\uFEFF-\\uFFFF]|(?<=\n) ", "");
         billText = billText.replaceAll("§", "S");
@@ -116,13 +128,17 @@ public class ScrapedBillTextParser {
             billText = billText.replaceFirst("(?<=\\n)[ ]{12}SENATE - ASSEMBLY(?=\\n)",
                     "                             S E N A T E - A S S E M B L Y");
         }
+        billText = "\n" + billText;
         return billText;
     }
 
+    /**
+     * Parses and returns the sponsor memo
+     */
     private String getMemo(Document document, BaseBillId baseBillId) {
         Element memoEle = document.select("pre:last-of-type").first(); // you are the first and last of your kind
         // Do not get memo if bill is a resolution
-        if (!baseBillId.getBillType().isResolution()) {
+        if (!baseBillId.getBillType().isResolution() && memoEle != null) {
             StringBuilder memoBuilder = new StringBuilder();
             processTextNode(memoEle, memoBuilder);
             // todo format text
@@ -131,10 +147,14 @@ public class ScrapedBillTextParser {
         return "";
     }
 
+    /**
+     * Extracts bill/memo text from an element recursively
+     */
     private void processTextNode(Element ele, StringBuilder stringBuilder) {
         for (Node t : ele.childNodes()) {
             if (t instanceof Element) {
                 Element e = (Element) t;
+                // TEXT IN <U> TAGS IS REPRESENTED IN CAPS FOR SOBI BILL TEXT
                 if ("u".equals(e.tag().getName())) {
                     stringBuilder.append(e.text().toUpperCase());
                 } else {
