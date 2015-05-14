@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="open" tagdir="/WEB-INF/tags/component" %>
+
+
 <%@ page import="gov.nysenate.openleg.model.bill.BillStatusType" %>
 <!-- We set the statusTypes here to make it easy to create a select menu out of the status types. -->
 <c:set var="statusTypes" value="<%=BillStatusType.values()%>"/>
@@ -77,14 +80,7 @@
                       </select>
                       <label for="refine_sponsor">Primary Sponsor (2015-2016)</label>
                       <select id="refine_sponsor" ng-model="billSearch.refine.sponsor">
-                        <option value="">Any</option>
-                        <%--<optgroup ng-show="billSearch.refine.chamber !== 'ASSEMBLY'" label="Senators">--%>
-                          <option ng-repeat="senator in senators" value="{{senator.memberId}}">{{senator.shortName}}</option>
-                        <%--</optgroup>--%>
-                        <!-- WIP 05/13/2015 -->
-                        <%--<optgroup ng-show="billSearch.refine.chamber !== 'SENATE'" label="Assembly Members">--%>
-                          <option ng-repeat="assm in assemblyMembers" value="{{assm.memberId}}">{{assm.shortName}}</option>
-                        <%--</optgroup>--%>
+                        <open:member-select-menu showSenators="true" showAssembly="true"/>
                       </select>
                       <label for="refine_status">Current Status</label>
                       <select id="refine_status" ng-model="billSearch.refine.status">
@@ -102,7 +98,6 @@
                   <div class="padding-20" ng-if="billSearch.refine.isRefined === true && billSearch.response.total === 0">
                     <p class="red1 text-medium bold">No results were found after applying your filters.</p>
                   </div>
-                  {{billSearch.refine.sponsor}}
                   <div flex class="padding-20">
                     <md-list>
                       <a class="result-link"
