@@ -60,8 +60,8 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
 
         // The report date/time should be truncated to the second to make it easier to query
         report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_AGENDA_ALERT,
-                refId.getRefActiveDateTime().truncatedTo(ChronoUnit.SECONDS),
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
+                refId.getRefActiveDateTime(),
+                LocalDateTime.now()));
 
         logger.info("Checking references...");
         // Check the references to generate observations, which are added to the report

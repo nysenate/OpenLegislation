@@ -375,6 +375,11 @@ a.result-link {
   }
 }
 
+a.inactive-link {
+  text-decoration: inherit;
+  color: inherit;
+}
+
 .inline-block {
   display: inline-block;
 }
@@ -973,9 +978,7 @@ a.slogan-link {
     background: #ededed;
   }
   .delta-column {
-    padding: 0 5px 0 0;
-    border-right: 1px solid #ccc;
-    font-size: .7em;
+    width: 3.7em;
   }
 }
 
@@ -1039,8 +1042,16 @@ table.table-striped tbody tr:nth-child(odd) {
   padding: 10px !important;
 }
 
-.report-detail-table .rpp-selector {
-  float: right;
+.report-detail-table {
+  .rpp-selector {
+    float: right;
+    a {
+      margin-left: 1em;
+    }
+  }
+  span[st-pagination] nav,ul {
+    display: inline;
+  }
 }
 
 #daybreak-page button.ng-scope,
@@ -1179,5 +1190,9 @@ md-list.notification-sub-list md-item md-item-content > div:nth-child(3) {
 
 .fc-state-default {
   background-image: none !important;
+}
+
+.cal-search-options {
+  height: 125px;
 }
 

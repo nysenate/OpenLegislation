@@ -175,7 +175,7 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
         }
         $timeout(function () {
             var containerSelector = "section." + openSection;
-            var entrySelector = "md-item[" + attrName + "='" + identifier + "']";
+            var entrySelector = "md-list-item[" + attrName + "='" + identifier + "']";
             console.log(containerSelector, entrySelector);
             $(containerSelector).animate({
                 scrollTop : $(entrySelector).parent().scrollTop() + $(entrySelector).offset().top - $(entrySelector).parent().offset().top

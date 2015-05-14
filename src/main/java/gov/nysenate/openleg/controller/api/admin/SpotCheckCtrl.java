@@ -149,7 +149,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Expected Output: ReportDetailResponse
      */
-    @RequestMapping(value = "/{reportType}/{reportDateTime}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{reportType}/{reportDateTime:.+}", method = RequestMethod.GET)
     public BaseResponse getReport(@PathVariable String reportType,
                                   @PathVariable String reportDateTime) {
         logger.debug("Retrieving {} report {}", reportType, reportDateTime);

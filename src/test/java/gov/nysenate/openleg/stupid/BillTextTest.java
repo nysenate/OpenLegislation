@@ -75,6 +75,7 @@ public class BillTextTest extends BaseTests {
     public void queueThenProcessTest() throws Exception {
         queueTest();
         processTest();
+        processTest();
     }
 
     @Test
