@@ -113,17 +113,17 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.setHeaderText('Home');
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'Discover current and prior legislation that impacts New York State.',
-          icon: 'icon-documents', url: ctxPath + '/bills'},
+          icon: 'icon-documents', bgclass: 'blue3-bg', url: ctxPath + '/bills'},
         { type: 'New York State Laws', blurb: 'Search through the current laws of NYS.',
-          icon: 'icon-bookmarks', url: ctxPath + '/laws'},
+          icon: 'icon-bookmarks', bgclass: 'green3-bg', url: ctxPath + '/laws'},
         { type: 'Senate Session/Hearing Transcripts', blurb: 'Records of Senate session floor discussion since 1993.',
-          icon: 'icon-text', url: ctxPath + '/transcripts'},
+          icon: 'icon-text', bgclass: 'blue4-bg', url: ctxPath + '/transcripts'},
         { type: 'Senate Committee Agendas', blurb: 'Committee meetings to discuss bills and the votes to move them to the floor.',
-          icon: 'icon-megaphone', url: ctxPath + '/agendas'},
+          icon: 'icon-megaphone', bgclass: 'green2-bg', url: ctxPath + '/agendas'},
         { type: 'Senate Floor Calendars', blurb: 'Listings of bills that are scheduled for discussion and voting on the senate floor.',
-          icon: 'icon-calendar', url: ctxPath + '/calendars'},
+          icon: 'icon-calendar', bgclass: 'blue5-bg', url: ctxPath + '/calendars'},
         { type: 'Senate/Assembly Membership', blurb: 'Senators and assemblymembers for the current session.',
-          icon: 'icon-users', url: ctxPath + '/members'}
+          icon: 'icon-users', bgclass: 'green1-bg', url: ctxPath + '/members'}
     ];
 
     /** Api Key Registration */

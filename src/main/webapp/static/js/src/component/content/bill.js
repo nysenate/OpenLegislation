@@ -136,7 +136,8 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
             status: $routeParams['status'],
             hasVotes: $routeParams['hasVotes'],
             isSigned: $routeParams['isSigned'],
-            isGovProg: $routeParams['isGovProg']
+            isGovProg: $routeParams['isGovProg'],
+            isRefined: false
         },
         refineQuery: '',
         sort: '',

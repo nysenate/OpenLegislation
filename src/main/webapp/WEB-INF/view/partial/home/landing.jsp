@@ -12,41 +12,37 @@
     </h1>
     <md-divider/>
     <md-list layout-gt-sm="row" layout-wrap>
-      <md-item flex="50" class="provide-data-container" ng-repeat="provideData in dataWeProvide">
-        <md-item-content ng-click="go(provideData.url)">
-          <div class="md-tile-left">
-            <div class="provide-data-icon">
-              <i ng-class="provideData.icon" class="blue-gray1"></i>
-            </div>
-          </div>
-          <div class="md-tile-content margin-left-20">
-            <h3 class="no-margin bold provide-data-type">{{provideData.type}}</h3>
-            <h4>{{provideData.blurb}}</h4>
-          </div>
-        </md-item-content>
-      </md-item>
+      <md-list-item flex="50" class="provide-data-container md-3-line" ng-repeat="provideData in dataWeProvide" ng-click="go(provideData.url)">
+        <div class="provide-data-icon" ng-class="provideData.bgclass">
+          <i ng-class="provideData.icon" class="white"></i>
+        </div>
+        <div class="margin-left-20 md-list-item-text">
+          <h3 class="no-margin bold provide-data-type">{{provideData.type}}</h3>
+          <p style="color:#444">{{provideData.blurb}}</p>
+        </div>
+      </md-list-item>
     </md-list>
     <md-divider></md-divider>
     <h4 class="thin-300">*The canonical data provider is the Legislative Bill Drafting Commission. Raw data feeds are processed by
     OpenLegislation continuously to collate and re-distribute the data using a REST API to various end-points including
     the <a href="http://www.nysenate.gov" class="slogan-link">nysenate.gov site.</a> </h4>
   </section>
-  <section class="padding-20 margin-20 white blue4-bg">
+  <section class="padding-20 margin-20 white-bg">
     <h2>Access NYS legislative data through a JSON API</h2>
       <section ng-hide="signedup">
-          <h3><i class="icon-key prefix-icon2"></i>Sign up for a free API Key</h3>
+          <h3 class="green1"><i class="icon-key prefix-icon2"></i>Sign up for a free API Key</h3>
           <hr/>
           <form method="post">
               <div layout="row" layout-sm="column" layout-align="center center">
                   <md-input-container class="margin-right-20">
-                      <label ng-required ng-trim style="color:white;">Name</label>
-                      <input type="text" name="name" ng-model="name" style="color:white;border-color:white;"/>
+                      <label ng-required ng-trim>Name</label>
+                      <input type="text" name="name" ng-model="name"/>
                   </md-input-container>
                   <md-input-container class="margin-right-20">
-                      <label style="color:white">Email</label>
-                      <input ng-required ng-trim type="email" name="email" ng-model="email" style="color:white;border-color:white;"/>
+                      <label>Email</label>
+                      <input ng-required ng-trim type="email" name="email" ng-model="email"/>
                   </md-input-container>
-                  <md-button ng-click="signup()" style="width: 160px;color:white;" class="bold md-accent md-raised md-hue-3">Signup</md-button>
+                  <md-button ng-click="signup()" style="width: 160px;" class="bold md-accent md-raised md-hue-3">Signup</md-button>
               </div>
               <div class="signup-err" layout="row" ng-if="errmsg">
                   <h4>{{errmsg}}</h4>
@@ -61,7 +57,7 @@
       </section>
     <hr/>
     <h3>
-      <a class="white" target="_blank" href="${ctxPath}/docs">View the JSON API Documentation</a>
+      <a class="blue3" target="_blank" href="${ctxPath}/docs">View the JSON API Documentation</a>
     </h3>
   </section>
   <section class="padding-20 margin-20 gray3-bg">

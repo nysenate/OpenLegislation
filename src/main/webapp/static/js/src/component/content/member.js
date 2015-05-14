@@ -108,8 +108,7 @@ memberModule.controller('MemberBrowseCtrl', ['$scope', '$routeParams', 'MemberSe
             response: {},
             results: [],
             filter: "",
-            senateSelected: true,
-            assemblySelected: false,
+            chamberSelected: 'SENATE',
             sessionYear: 2015
         };
 
@@ -128,21 +127,7 @@ memberModule.controller('MemberBrowseCtrl', ['$scope', '$routeParams', 'MemberSe
         };
 
         $scope.buildQuery = function() {
-            var query = $scope.memberBrowse.filter;
-            if ($scope.memberBrowse.filter) {
-               query += " AND ";
-            }
-            if ($scope.memberBrowse.senateSelected && $scope.memberBrowse.assemblySelected) {
-                query += "chamber:senate OR chamber:assembly";
-            }
-            else if ($scope.memberBrowse.senateSelected) {
-               query += "chamber:senate";
-            }
-            else if ($scope.memberBrowse.assemblySelected) {
-                query += "chamber:assembly";
-            }
-            query += " AND sessionYear:" + $scope.memberBrowse.sessionYear;
-            return query;
+            return "chamber:" + $scope.memberBrowse.chamberSelected + " AND sessionYear:" + $scope.memberBrowse.sessionYear;
         };
 
         $scope.$watch('memberBrowse.sessionYear', function() {

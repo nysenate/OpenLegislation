@@ -732,9 +732,6 @@ a.slogan-link {
   padding: 5px;
   cursor: pointer;
   &:hover {
-    .provide-data-icon {
-      border-color: $blue2;
-    }
     .provide-data-type {
       color: $blue2;
     }
@@ -747,12 +744,11 @@ a.slogan-link {
 
 .provide-data-icon {
   text-align:center;
-  height:60px;
-  width:60px;
-  border:2px solid #999;
+  height:75px;
+  width:75px;
   i {
     font-size: 2rem;
-    line-height:56px;
+    line-height:75px;
   }
 }
 
@@ -960,13 +956,6 @@ a.slogan-link {
 
 .transcript-result-link {
   cursor: pointer;
-}
-
-.transcript-result-left {
-  width:180px;
-  .h3 {
-    margin:0;
-  }
 }
 
 /** --- Styles for Report page --- */

@@ -8,7 +8,7 @@
     </div>
 
   </md-toolbar>
-  <md-tabs md-selected="1">
+  <md-tabs md-selected="1" md-dynamic-height="false">
     <md-tab label="Back" md-on-select="back()">
       <md-divider></md-divider>
     </md-tab>
