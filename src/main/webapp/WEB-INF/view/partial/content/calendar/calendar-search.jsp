@@ -30,7 +30,7 @@
             <md-tabs md-selected="searchActiveIndex" md-no-bar md-dynamic-height="false">
               <md-tab label="field search">
                 <md-tab-body>
-                  <md-content layout="row" layout-sm="column" class="padding-20">
+                  <md-content layout="row" layout-sm="column" class="cal-search-options padding-20">
                     <select name="year-select" ng-model="searchFields.year" class="margin-right-20"
                             style="margin-bottom: 30px; margin-top: 20px"
                             ng-options="year for year in activeYears">
@@ -41,7 +41,7 @@
                               style="margin-bottom: 30px; margin-top: 20px"
                               ng-options="value as label for (value, label) in fieldOptions">
                       </select>
-                      <md-input-container style="height: 78px" class="margin-right-10">
+                      <md-input-container style="height: 53px" class="margin-right-10">
                         <label>Field Value</label>
                         <input type="text" ng-model="searchFields.fieldValue" ng-model-options="{debounce: 300}">
                       </md-input-container>
@@ -51,7 +51,7 @@
                       <option value="">-- Sort Order --</option>
                     </select>
                     <md-checkbox ng-model="searchFields.activeList" ng-disabled="searchFields.fieldName === 'calendarNumber'"
-                                 class="margin-top-20 md-hue-2">
+                                 class="margin-top-20 md-hue-2" style="height: 33px">
                       Active List Only
                     </md-checkbox>
                   </md-content>
@@ -59,7 +59,7 @@
               </md-tab>
               <md-tab label="query search">
                 <md-tab-body>
-                  <md-content class="padding-20" layout="row" layout-sm="column">
+                  <md-content class="cal-search-options padding-20" layout="row" layout-sm="column">
                     <md-input-container class="md-primary" flex="60">
                       <label><i class="prefix-icon2 icon-magnifying-glass"></i>Search for calendars</label>
                       <input tabindex="1" style="font-size:1.4rem;" name="quick-term"

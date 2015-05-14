@@ -251,149 +251,6 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
 
 /** --- Report Detail Controller --- */
 
-daybreakModule.directive('mismatchDiff', function(){
-    return {
-        restrict: 'E',
-        scope: {
-            diff: '='
-        },
-        template:
-        "<span ng-class='{preformatted: pre, \"word-wrap\": !pre}'>" +
-          "<line-numbers ng-if='pre && showLines' line-end='lines + 1'></line-numbers>" +
-          "<span ng-repeat='segment in diff' ng-bind='segment.text'" +
-              "ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
-                          "'mismatch-diff-insert': segment.operation=='INSERT', " +
-                          "'mismatch-diff-delete': segment.operation=='DELETE'}\">" +
-        "</span></span>"
-        ,
-        link: function($scope, $element, $attrs) {
-            $scope.pre = $attrs.pre === "true";
-            $scope.showLines = $attrs.showLines !== "false";
-            $scope.lines = 0;
-            if ($scope.pre && $scope.showLines) {
-                for (var iSeg in $scope.diff) {
-                    $scope.lines += $scope.diff[iSeg].text.split(/\n/).length - 1;
-                }
-            }
-            $scope.range = function(num) {
-                return new Array(num);
-            };
-        }
-    };
-});
-
-daybreakModule.directive('diffSummary', function () {
-    return {
-        restrict: 'E',
-        scope: {
-            diff: '='
-        },
-        template:
-        "<div ng-repeat='diff in selectedDiffs'>" +
-            "<span class='diff-summary-header'>Lines {{diff.startLineNum}} to {{diff.endLineNum}}:<br></span>" +
-            "<div class='preformatted'>" +
-                "<line-numbers line-start='diff.startLineNum' line-end='diff.endLineNum + 1'></line-numbers>" +
-                "<span ng-bind='diff.startText'></span>" +
-                "<mismatch-diff diff='diff.segments'></mismatch-diff>" +
-                "<span ng-bind='diff.endText'></span>" +
-            "</div>" +
-            "<br ng-if='!$last'><br ng-if='!$last'><md-divider ng-if='!$last'></md-divider>" +
-        "</div>",
-        link: function($scope, $element, $attrs) {
-            $scope.selectedDiffs = [];
-            $scope.$watch('selectedDiffs', function () {
-                console.log($scope.selectedDiffs);
-            }, true);
-            var currentLineNum = 1;
-            var currentLineText = "";
-            var currentDiff = null;
-            // Isolate differences from full text
-            for (var iSeg in $scope.diff) {
-                var segment = $scope.diff[iSeg];
-                var segLines = segment.text.split(/\n/);
-                if (["DELETE", "INSERT"].indexOf(segment.operation) >= 0) {
-                    if (currentDiff == null) {
-                        currentDiff = {
-                            startText: currentLineText,
-                            startLineNum: currentLineNum,
-                            segments: []
-                        };
-                    }
-                    currentDiff.segments.push(segment);
-                } else {
-                    if (currentDiff != null) {
-                        if (segLines.length > 2) {
-                            currentDiff.endText = segLines[0];
-                            currentDiff.endLineNum = currentLineNum;
-                            $scope.selectedDiffs.push(currentDiff);
-                            currentDiff = null;
-                        } else {
-                            currentDiff.segments.push(segment);
-                        }
-                    }
-                    currentLineText = segLines.length > 1 ? segLines[segLines.length - 1] : currentLineText + segLines[0];
-                }
-                currentLineNum += segLines.length - 1
-            }
-            if (currentDiff != null) {
-                currentDiff.endText = "";
-                currentDiff.endLineNum = currentLineNum - 1;
-                $scope.selectedDiffs.push(currentDiff);
-            }
-            $scope.singleLine = function(diff) {
-                return diff.startLineNum == diff.endLineNum;
-            };
-        }
-    }
-});
-
-daybreakModule.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'initialMismatchId', 'reportType',
-    'getDetails', 'findFirstOpenedDates', 'getMismatchId', 'getContentId', 'getContentUrl',
-function($scope, $mdDialog, initialMismatchId, reportType,
-         getDetails, findFirstOpenedDates, getMismatchId, getContentId, getContentUrl) {
-
-    $scope.selectedIndex = 0;
-
-    $scope.getMismatchId = getMismatchId;
-
-    $scope.getDetails = getDetails;
-
-    $scope.findFirstOpenedDates = findFirstOpenedDates;
-
-    $scope.reportType = reportType;
-
-    $scope.newDetails = function (details) {
-        $scope.details = details;
-
-        $scope.contentId = getContentId(reportType, details.observation.key);
-        $scope.contentUrl = getContentUrl(reportType, details.observation.key);
-        $scope.observation = details.observation;
-        $scope.currentMismatch = details.mismatch;
-        var fullText = "";
-        for (var i in $scope.currentMismatch.diff) {
-            fullText += $scope.currentMismatch.diff[i].text;
-        }
-        $scope.multiLine = fullText.split(/\n/).length > 1;
-        $scope.allMismatches = details.observation.mismatches.items;
-
-        $scope.firstOpened = $scope.findFirstOpenedDates($scope.currentMismatch);
-    };
-
-    $scope.openNewDetail = function(mismatchId) {
-        $scope.newDetails($scope.getDetails(mismatchId));
-    };
-
-    $scope.cancel = function () {
-        $mdDialog.hide();
-    };
-
-    function init() {
-        $scope.openNewDetail(initialMismatchId);
-    }
-
-    init();
-}]);
-
 daybreakModule.controller('DaybreakDetailCtrl', ['$scope', '$element', '$filter', '$location', '$timeout', '$mdDialog', 'DaybreakDetailAPI',
 function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDetailAPI) {
     $scope.resultsPerPage = 10;
@@ -740,3 +597,146 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
     };
 
 }]);
+
+daybreakModule.directive('mismatchDiff', function(){
+    return {
+        restrict: 'E',
+        scope: {
+            diff: '='
+        },
+        template:
+        "<span ng-class='{preformatted: pre, \"word-wrap\": !pre}'>" +
+        "<line-numbers ng-if='pre && showLines' line-end='lines + 1'></line-numbers>" +
+        "<span ng-repeat='segment in diff' ng-bind='segment.text'" +
+        "ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
+        "'mismatch-diff-insert': segment.operation=='INSERT', " +
+        "'mismatch-diff-delete': segment.operation=='DELETE'}\">" +
+        "</span></span>"
+        ,
+        link: function($scope, $element, $attrs) {
+            $scope.pre = $attrs.pre === "true";
+            $scope.showLines = $attrs.showLines !== "false";
+            $scope.lines = 0;
+            if ($scope.pre && $scope.showLines) {
+                for (var iSeg in $scope.diff) {
+                    $scope.lines += $scope.diff[iSeg].text.split(/\n/).length - 1;
+                }
+            }
+            $scope.range = function(num) {
+                return new Array(num);
+            };
+        }
+    };
+});
+
+daybreakModule.directive('diffSummary', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            diff: '='
+        },
+        template:
+        "<div ng-repeat='diff in selectedDiffs'>" +
+        "<span class='diff-summary-header'>Lines {{diff.startLineNum}} to {{diff.endLineNum}}:<br></span>" +
+        "<div class='preformatted'>" +
+        "<line-numbers line-start='diff.startLineNum' line-end='diff.endLineNum + 1'></line-numbers>" +
+        "<span ng-bind='diff.startText'></span>" +
+        "<mismatch-diff diff='diff.segments'></mismatch-diff>" +
+        "<span ng-bind='diff.endText'></span>" +
+        "</div>" +
+        "<br ng-if='!$last'><br ng-if='!$last'><md-divider ng-if='!$last'></md-divider>" +
+        "</div>",
+        link: function($scope, $element, $attrs) {
+            $scope.selectedDiffs = [];
+            $scope.$watch('selectedDiffs', function () {
+                console.log($scope.selectedDiffs);
+            }, true);
+            var currentLineNum = 1;
+            var currentLineText = "";
+            var currentDiff = null;
+            // Isolate differences from full text
+            for (var iSeg in $scope.diff) {
+                var segment = $scope.diff[iSeg];
+                var segLines = segment.text.split(/\n/);
+                if (["DELETE", "INSERT"].indexOf(segment.operation) >= 0) {
+                    if (currentDiff == null) {
+                        currentDiff = {
+                            startText: currentLineText,
+                            startLineNum: currentLineNum,
+                            segments: []
+                        };
+                    }
+                    currentDiff.segments.push(segment);
+                } else {
+                    if (currentDiff != null) {
+                        if (segLines.length > 2) {
+                            currentDiff.endText = segLines[0];
+                            currentDiff.endLineNum = currentLineNum;
+                            $scope.selectedDiffs.push(currentDiff);
+                            currentDiff = null;
+                        } else {
+                            currentDiff.segments.push(segment);
+                        }
+                    }
+                    currentLineText = segLines.length > 1 ? segLines[segLines.length - 1] : currentLineText + segLines[0];
+                }
+                currentLineNum += segLines.length - 1
+            }
+            if (currentDiff != null) {
+                currentDiff.endText = "";
+                currentDiff.endLineNum = currentLineNum - 1;
+                $scope.selectedDiffs.push(currentDiff);
+            }
+            $scope.singleLine = function(diff) {
+                return diff.startLineNum == diff.endLineNum;
+            };
+        }
+    }
+});
+
+daybreakModule.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'initialMismatchId', 'reportType',
+    'getDetails', 'findFirstOpenedDates', 'getMismatchId', 'getContentId', 'getContentUrl',
+    function($scope, $mdDialog, initialMismatchId, reportType,
+             getDetails, findFirstOpenedDates, getMismatchId, getContentId, getContentUrl) {
+
+        $scope.selectedIndex = 0;
+
+        $scope.getMismatchId = getMismatchId;
+
+        $scope.getDetails = getDetails;
+
+        $scope.findFirstOpenedDates = findFirstOpenedDates;
+
+        $scope.reportType = reportType;
+
+        $scope.newDetails = function (details) {
+            $scope.details = details;
+
+            $scope.contentId = getContentId(reportType, details.observation.key);
+            $scope.contentUrl = getContentUrl(reportType, details.observation.key);
+            $scope.observation = details.observation;
+            $scope.currentMismatch = details.mismatch;
+            var fullText = "";
+            for (var i in $scope.currentMismatch.diff) {
+                fullText += $scope.currentMismatch.diff[i].text;
+            }
+            $scope.multiLine = fullText.split(/\n/).length > 1;
+            $scope.allMismatches = details.observation.mismatches.items;
+
+            $scope.firstOpened = $scope.findFirstOpenedDates($scope.currentMismatch);
+        };
+
+        $scope.openNewDetail = function(mismatchId) {
+            $scope.newDetails($scope.getDetails(mismatchId));
+        };
+
+        $scope.cancel = function () {
+            $mdDialog.hide();
+        };
+
+        function init() {
+            $scope.openNewDetail(initialMismatchId);
+        }
+
+        init();
+    }]);

@@ -20,12 +20,12 @@ public class SpotCheckReportId implements Comparable<SpotCheckReportId>
 
     public SpotCheckReportId(SpotCheckRefType referenceType, LocalDateTime reportDateTime) {
         this.referenceType = referenceType;
-        this.reportDateTime = reportDateTime.truncatedTo(ChronoUnit.SECONDS);
+        this.reportDateTime = reportDateTime;
     }
 
     public SpotCheckReportId(SpotCheckRefType referenceType, LocalDateTime referenceDateTime, LocalDateTime reportDateTime) {
         this(referenceType, reportDateTime);
-        this.referenceDateTime = referenceDateTime.truncatedTo(ChronoUnit.SECONDS);
+        this.referenceDateTime = referenceDateTime;
     }
 
     /** --- Overrides --- */
