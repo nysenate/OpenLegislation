@@ -78,6 +78,9 @@
         </md-sidenav>
       </section>
       <%-- Main Content Area --%>
+        <c:forEach var="m" items="${membersList}">
+          ${m}
+        </c:forEach>
       <section id="content-wrapper" flex="1">
         <%-- Content Header --%>
         <md-toolbar id="content-header" class="md-primary" ng-class="{'header-visible': header.visible }">

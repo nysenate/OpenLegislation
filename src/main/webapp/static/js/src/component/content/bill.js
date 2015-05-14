@@ -103,8 +103,8 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
 /** --- Bill Search Controller --- */
 
 billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location', '$sce',
-                                        'MemberApi', 'BillListingApi', 'BillSearchApi', 'PaginationModel',
-                      function($scope, $filter, $routeParams, $location, $sce, MemberApi, BillListing, BillSearch, PaginationModel) {
+                                         'BillListingApi', 'BillSearchApi', 'PaginationModel',
+                      function($scope, $filter, $routeParams, $location, $sce, BillListing, BillSearch, PaginationModel) {
     $scope.curr = {
         searching: false,
         pagination: angular.extend({}, PaginationModel)
@@ -144,31 +144,13 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         results: [],
         error: false
     };
-    $scope.senators = [];
-    $scope.assemblyMembers = [];
 
     /** Initialize the bill search page. */
     $scope.init = function() {
         if ($scope.selectedView == 0) {
             $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
-            $scope.initMembers();
             $scope.simpleSearch(false);
         }
-    };
-
-    /** Initialize the members listing for the refine panel. */
-    $scope.initMembers = function() {
-        var membersResponse = MemberApi.get({sessionYear: 2015, chamber: ''}, function() {
-            var members = membersResponse.result.items;
-            angular.forEach(members, function(m){
-                if (m.chamber === 'SENATE') {
-                    $scope.senators.push(m);
-                }
-                else {
-                    $scope.assemblyMembers.push(m);
-                }
-            });
-        });
     };
 
     $scope.simpleSearch = function(resetPagination) {
