@@ -41,7 +41,17 @@ public class OldApiAgendaReportService extends BaseAgendaCheckReportService {
 
     @Override
     protected Agenda getAgenda(AgendaAlertInfoCommittee aaic) throws AgendaNotFoundEx {
-        AgendaId agendaId = new AgendaId(aaic.getMeetingDateTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(), -1);
+        AgendaId agendaId = new AgendaId(  // make a phony agenda id that encodes the meeting time as a unix timestamp for the agenda no.
+                aaic.getMeetingDateTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(), -1);
+        // Throw a not found exception if the reference grace period has not passed
+        // This is to prevent out of sync addenda because 1.9.2 agenda addenda versions are not exposed
+        // e.g. an alert for Cities addendum A 5/15/2015 comes in, but has not yet been processed on 1.9.2
+        //      a query for Cities at 5/15/2015 has only the initial addendum, which would cause false positives
+        if (LocalDateTime.now()
+                .minus(environment.getSpotcheckAlertGracePeriod()).minusMinutes(5)
+                .isBefore(aaic.getReferenceId().getRefActiveDateTime())) {
+            throw new AgendaNotFoundEx(new AgendaId(agendaId.getNumber(), 0));
+        }
         try {
             OldMeetingView meetingView = meetingDao.getMeeting(aaic.getCommitteeId(), aaic.getMeetingDateTime().toLocalDate());
             AgendaInfoCommittee meetingInfo = getAgendaInfoCommittee(meetingView, agendaId, aaic.getAddendum());
