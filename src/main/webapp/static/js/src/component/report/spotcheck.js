@@ -606,7 +606,7 @@ daybreakModule.directive('mismatchDiff', function(){
         },
         template:
         "<span ng-class='{preformatted: pre, \"word-wrap\": !pre}'>" +
-        "<line-numbers ng-if='pre && showLines' line-end='lines + 1'></line-numbers>" +
+        "<line-numbers ng-if='pre && showLines' line-end='lines'></line-numbers>" +
         "<span ng-repeat='segment in diff' ng-bind='segment.text'" +
         "ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
         "'mismatch-diff-insert': segment.operation=='INSERT', " +
@@ -616,7 +616,7 @@ daybreakModule.directive('mismatchDiff', function(){
         link: function($scope, $element, $attrs) {
             $scope.pre = $attrs.pre === "true";
             $scope.showLines = $attrs.showLines !== "false";
-            $scope.lines = 0;
+            $scope.lines = 1;
             if ($scope.pre && $scope.showLines) {
                 for (var iSeg in $scope.diff) {
                     $scope.lines += $scope.diff[iSeg].text.split(/\n/).length - 1;
@@ -639,7 +639,7 @@ daybreakModule.directive('diffSummary', function () {
         "<div ng-repeat='diff in selectedDiffs'>" +
         "<span class='diff-summary-header'>Lines {{diff.startLineNum}} to {{diff.endLineNum}}:<br></span>" +
         "<div class='preformatted'>" +
-        "<line-numbers line-start='diff.startLineNum' line-end='diff.endLineNum + 1'></line-numbers>" +
+        "<line-numbers line-start='diff.startLineNum' line-end='diff.endLineNum'></line-numbers>" +
         "<span ng-bind='diff.startText'></span>" +
         "<mismatch-diff diff='diff.segments'></mismatch-diff>" +
         "<span ng-bind='diff.endText'></span>" +
@@ -684,7 +684,7 @@ daybreakModule.directive('diffSummary', function () {
             }
             if (currentDiff != null) {
                 currentDiff.endText = "";
-                currentDiff.endLineNum = currentLineNum - 1;
+                currentDiff.endLineNum = currentLineNum;
                 $scope.selectedDiffs.push(currentDiff);
             }
             $scope.singleLine = function(diff) {

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<section class="content-section" ng-controller="CalendarSearchPageCtrl" ng-init="setHeaderVisible(true)">
+<section class="content-section" ng-controller="CalendarSearchPageCtrl" ng-init="setHeaderVisible(true); setCalendarHeaderText()">
   <md-tabs md-selected="activeIndex" md-dynamic-height="false">
 
     <!-- Browse Calendars -->

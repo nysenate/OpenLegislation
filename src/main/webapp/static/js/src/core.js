@@ -271,7 +271,7 @@ coreModule.directive('lineNumbers', function() {
         transclude: true,
         template:
         "<span class='line-numbers'>" +
-            "<span ng-repeat='i in range(lineEnd-lineStart) track by $index'>{{$index + lineStart}}</span>" +
+            "<span ng-repeat='i in range(lineEnd-lineStart + 1) track by $index'>{{$index + lineStart}}</span>" +
         "</span>"
         ,
         link: function($scope) {

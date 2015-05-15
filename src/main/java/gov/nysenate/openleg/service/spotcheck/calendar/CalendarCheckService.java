@@ -8,12 +8,11 @@ import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -21,12 +20,12 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
 
     @Override
     public SpotCheckObservation<CalendarId> check(Calendar content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException();
+        throw new NotImplementedException(":P");
     }
 
     @Override
     public SpotCheckObservation<CalendarId> check(Calendar content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException();
+        throw new NotImplementedException(":P");
     }
 
     @Override
