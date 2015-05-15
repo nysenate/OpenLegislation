@@ -56,8 +56,8 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
         List<Calendar> references = retrieveReferences(start, end);
         LocalDateTime referenceDateTime = getMostRecentReference(references);
         SpotCheckReportId reportId = new SpotCheckReportId(getSpotcheckRefType(),
-                                                           referenceDateTime.truncatedTo(ChronoUnit.SECONDS),
-                                                           LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+                                                           referenceDateTime,
+                                                           LocalDateTime.now());
         SpotCheckReport<CalendarId> report = new SpotCheckReport<>(reportId);
         report.setNotes(getReportNotes());
         report.addObservations(createObservations(references));
@@ -125,7 +125,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
 
     private void recordMismatch(List<SpotCheckObservation<CalendarId>> observations, Calendar reference, CalendarId id) {
         SpotCheckReferenceId obsRefId = new SpotCheckReferenceId(
-                getSpotcheckRefType(), reference.getPublishedDateTime().truncatedTo(ChronoUnit.SECONDS));
+                getSpotcheckRefType(), reference.getPublishedDateTime());
 
         SpotCheckObservation<CalendarId> observation = new SpotCheckObservation<>(obsRefId, id);
         observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
