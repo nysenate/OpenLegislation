@@ -80,8 +80,8 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
 
         // The report date/time should be truncated to the second to make it easier to query
         report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK,
-                refId.getRefActiveDateTime().truncatedTo(ChronoUnit.SECONDS),
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
+                refId.getRefActiveDateTime(),
+                LocalDateTime.now()));
 
         logger.info("Using Daybreak {} to generate report", refId);
         // Create a set of the base bill ids from the daybreak bills
