@@ -17,17 +17,17 @@
         <md-tab-body>
           <md-divider></md-divider>
           <section ng-if="pageNames[curr.activeIndex] === 'active-list'" ng-controller="CalendarActiveListCtrl">
-            <md-toolbar class="md-toolbar-tools supplemental-toolbar" ng-if="activeLists.length > 1">
-              <label ng-show="activeLists.length > 0" class="margin-right-20">Supplementals</label>
+            <md-toolbar class="md-toolbar-tools md-tall md-hue-2 supplemental-toolbar" ng-if="activeLists.length > 1">
+            <span ng-show="activeLists.length > 0" class="text-medium bold margin-right-20">Supplementals</span>
             <span layout="row" layout-sm="column">
               <md-checkbox ng-repeat="activeList in activeLists" class="md-accent md-hue-1"
                            ng-init="seqNo = activeList['sequenceNumber']; selected = activeListFilter[seqNo]"
                            ng-model="selected" ng-change="activeListFilter[seqNo] = selected"
                            ng-disabled="activeLists.length<2">
-                <span ng-if="$first">Original</span>
-                <span ng-if="!$first">Supplemental {{seqNo}}</span>
+                <span class="text-medium bold" ng-if="$first">Original</span>
+                <span class="text-medium bold" ng-if="!$first">Supplemental {{seqNo}}</span>
                 <br/>
-                <small>{{activeLists[seqNo].releaseDateTime | moment:'MMM D h:mm A'}}</small>
+                <span class="text-small">{{activeLists[seqNo].releaseDateTime | moment:'MMM D h:mm A'}}</span>
               </md-checkbox>
             </span>
             </md-toolbar>
