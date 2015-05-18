@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +45,8 @@ public class LawProcessor extends AbstractDataProcessor
     protected static Set<String> onlyLaws = Sets.newHashSet();
 
     /** Set of law ids that break the usual document id convention for determining nesting. */
-    protected static Set<String> typeBased = Sets.newHashSet("CPL", "EDN");
+//    protected static Set<String> typeBased = Sets.newHashSet("CPL", "EDN");
+    protected static Set<String> typeBased = Sets.newHashSet();
 
     @Autowired private LawDataService lawDataService;
 
@@ -183,24 +183,25 @@ public class LawProcessor extends AbstractDataProcessor
             String line = fileItr.next();
             headerMatcher = lawHeader.matcher(line);
             if (headerMatcher.matches()) {
-                if (block != null) {
+                if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId(), block.getPublishedDate())) {
                     rawDocList.add(block);
                 }
                 block = new LawBlock();
                 block.setHeader(line);
-                block.setDocumentId(headerMatcher.group(1).trim());
                 block.setLawId(headerMatcher.group(2).trim());
-                block.setLocationId(headerMatcher.group(3).trim());
+                block.setPublishedDate(lawFile.getPublishedDate());
+                block.setDocumentId(
+                    LawDocIdFixer.applyReplacement(headerMatcher.group(1).trim(), lawFile.getPublishedDate()));
+                block.setLocationId(block.getDocumentId().substring(3));
                 block.setMethod(headerMatcher.group(4).trim());
                 block.setConsolidated(headerMatcher.group(6).equals("CONSOLIDATED"));
-                block.setPublishedDate(lawFile.getPublishedDate());
             }
             else {
                 if (block == null) throw new LawParseException("No doc header received prior to line: " + line);
                 block.getText().append(line).append("\\n");
             }
         }
-        if (block != null) {
+        if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId(), block.getPublishedDate())) {
             rawDocList.add(block);
         }
         return rawDocList;
