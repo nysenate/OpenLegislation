@@ -42,6 +42,8 @@ public class ManagedSobiProcessService implements SobiProcessService
 {
     private static final Logger logger = LoggerFactory.getLogger(ManagedSobiProcessService.class);
 
+    private static final Pattern patchTagPattern = Pattern.compile("^\\s*</?PATCH>\\s*$");
+
     @Autowired private SobiDao sobiDao;
     @Autowired private EventBus eventBus;
     @Autowired private Environment env;
@@ -210,6 +212,9 @@ public class ManagedSobiProcessService implements SobiProcessService
         List<SobiFragment> sobiFragments = new ArrayList<>();
         StringBuilder billBuffer = new StringBuilder();
 
+        boolean isPatch = false;
+        StringBuilder patchMessage = new StringBuilder();
+
         // Incrementing sequenceNo maintains the order in which the sobi fragments were
         // found in the source sobiFile. However the sequence number for the bill fragment
         // is always set to 0 to ensure that they are always processed first.
@@ -220,6 +225,11 @@ public class ManagedSobiProcessService implements SobiProcessService
         Iterator<String> lineIterator = lines.iterator();
         while (lineIterator.hasNext()) {
             String line = lineIterator.next();
+            // Check for a patch tag indicating a manual fix
+            if (patchTagPattern.matcher(line).matches()) {
+                isPatch = true;
+                extractPatchMessage(lineIterator, patchMessage);
+            }
             SobiFragmentType fragmentType = getFragmentTypeFromLine(line);
             if (fragmentType != null) {
                 // Bill fragments are in the sobi format and appended into a single buffer
@@ -245,6 +255,14 @@ public class ManagedSobiProcessService implements SobiProcessService
             SobiFragment billFragment = new SobiFragment(sobiFile, SobiFragmentType.BILL, billBuffer.toString(), 0);
             sobiFragments.add(billFragment);
         }
+        // Set manual fix flag and add notes if this file was a patch
+        if (isPatch) {
+            String notes = patchMessage.toString();
+            sobiFragments.forEach(fragment -> {
+                fragment.setManualFix(true);
+                fragment.setManualFixNotes(notes);
+            });
+        }
         return sobiFragments;
     }
 
@@ -261,6 +279,24 @@ public class ManagedSobiProcessService implements SobiProcessService
             }
         }
         return null;
+    }
+
+    /**
+     * Gets a patch sobi message from within a set of patch tags, appending it to the given string builder
+     * @param lineIterator Iterator<String>
+     * @param patchMessage StringBuilder
+     */
+    private void extractPatchMessage(Iterator<String> lineIterator, StringBuilder patchMessage) {
+        while(lineIterator.hasNext()) {
+            String line = lineIterator.next();
+            if (patchTagPattern.matcher(line).matches()) {
+                return;
+            }
+            if (patchMessage.length() > 0) {
+                patchMessage.append("\n");
+            }
+            patchMessage.append(line.trim());
+        }
     }
 
     /**

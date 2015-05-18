@@ -10,6 +10,7 @@ import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A class that can be used to generate patch bill text sobis
@@ -34,6 +36,9 @@ public class LRSBillTextSobiMaker {
 
     private static final String sobiDocTemplate =
             "<?xml version='1.0' encoding='UTF-8'?>\n" +
+            "<PATCH>\n" +
+            "Copied LRS bill text for ${billIds}\n" +
+            "</PATCH>\n" +
             "<DATAPROCESS TIME=\"${pubDateTime}\">\n" +
             "${data}" +
             "</DATAPROCESS>\n" +
@@ -75,7 +80,7 @@ public class LRSBillTextSobiMaker {
                 addBillText(btr, dataBuilder);
             }
 
-            writeSobi(dataBuilder, resultDir);
+            writeSobi(dataBuilder, resultDir, btrs.stream().map(BillTextReference::getBillId).collect(Collectors.toList()));
         } catch (IOException ex) {
             logger.error("Error while generating sobis \n{}", ex);
         }
@@ -161,11 +166,12 @@ public class LRSBillTextSobiMaker {
     /**
      * Formats the given text data into a sobi file format and saves it to the destination dir
      */
-    private void writeSobi(StringBuilder data, File destinationDir) throws IOException {
+    private void writeSobi(StringBuilder data, File destinationDir, Collection<BillId> billIds) throws IOException {
         LocalDateTime pubDateTime = LocalDateTime.now();
         String fileContents = StrSubstitutor.replace(sobiDocTemplate,
                 ImmutableMap.of("data", data.toString(), "pubDateTime", pubDateTime.format(pubDateTimeFormat),
-                        "pubDate", pubDateTime.format(pubDateFormat), "pubTime", pubDateTime.format(pubTimeFormat)));
+                        "pubDate", pubDateTime.format(pubDateFormat), "pubTime", pubDateTime.format(pubTimeFormat),
+                        "billIds", StringUtils.join(billIds, ", ")));
         FileUtils.forceMkdir(destinationDir);
         File sobiFile = new File(destinationDir, pubDateTime.format(sobiFileNameFormat));
         logger.info("writing {}", sobiFile);

@@ -20,6 +20,12 @@ public abstract class BaseSourceData
     /** The datetime when the source data was last processed. */
     private LocalDateTime processedDateTime;
 
+    /** True if this source is a non-canonical patch */
+    private boolean manualFix = false;
+
+    /** A message documenting a manual fix */
+    private String manualFixNotes;
+
     /** --- Basic Getters/Setters --- */
 
     public LocalDateTime getStagedDateTime() {
@@ -52,5 +58,21 @@ public abstract class BaseSourceData
 
     public void setProcessedDateTime(LocalDateTime processedDateTime) {
         this.processedDateTime = processedDateTime;
+    }
+
+    public boolean isManualFix() {
+        return manualFix;
+    }
+
+    public void setManualFix(boolean manualFix) {
+        this.manualFix = manualFix;
+    }
+
+    public String getManualFixNotes() {
+        return manualFixNotes;
+    }
+
+    public void setManualFixNotes(String manualFixNotes) {
+        this.manualFixNotes = manualFixNotes;
     }
 }

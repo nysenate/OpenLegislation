@@ -264,6 +264,8 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
             fragment.setPendingProcessing(rs.getBoolean("pending_processing"));
             fragment.setProcessedCount(rs.getInt("processed_count"));
             fragment.setProcessedDateTime(getLocalDateTimeFromRs(rs, "processed_date_time"));
+            fragment.setManualFix(rs.getBoolean("manual_fix"));
+            fragment.setManualFixNotes(rs.getString("manual_fix_notes"));
             return fragment;
         }
     }
@@ -316,6 +318,8 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
         params.addValue("processedCount", fragment.getProcessedCount());
         params.addValue("processedDateTime", toDate(fragment.getProcessedDateTime()));
         params.addValue("pendingProcessing", fragment.isPendingProcessing());
+        params.addValue("manualFix", fragment.isManualFix());
+        params.addValue("manualFixNotes", fragment.getManualFixNotes());
         return params;
     }
 }
