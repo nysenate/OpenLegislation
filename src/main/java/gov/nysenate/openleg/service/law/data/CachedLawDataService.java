@@ -88,6 +88,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
         if (evictEvent.affects(ContentCache.LAW)) {
             evictCaches();
+            maxPubDates.clear();
         }
     }
 
@@ -104,6 +105,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     @Override
     public void evictContent(LawVersionId lawVersionId) {
         lawTreeCache.evict(lawVersionId);
+        maxPubDates.clear();
     }
 
     /** {@inheritDoc} */
@@ -121,6 +123,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
 
     /** {@inheritDoc} */
     @Override
+    @Subscribe
     public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
         if (warmEvent.affects(ContentCache.LAW)) {
             warmCaches();

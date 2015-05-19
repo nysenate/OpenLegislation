@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.regex.Matcher;
 
 public class TypeBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
@@ -29,6 +30,14 @@ public class TypeBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
     @Override
     protected String determineHierarchy(LawBlock block) {
         String locationId = block.getLocationId();
+        final String originalLocationId = locationId;
+        Optional<LawTreeNode> possibleParentNode =
+            parentNodes.stream().filter(pn -> originalLocationId.startsWith(pn.getLocationId())).findFirst();
+        if (possibleParentNode.isPresent()) {
+            int index = parentNodes.search(possibleParentNode.get());
+            logger.info("Found possible parent for {} at index {}", locationId, index);
+        }
+
         // Sometimes the location ids are prefixed so try to remove that portion.
         if (!currParent().isRootNode() && locationId.startsWith(currParent().getLocationId())) {
             locationId = StringUtils.removeStart(block.getLocationId(), currParent().getLocationId());

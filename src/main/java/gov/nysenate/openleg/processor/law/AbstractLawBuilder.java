@@ -212,6 +212,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             // Use published date from existing law doc if present
             if (lawDocMap.containsKey(resolvedDocId)) {
                 block.setPublishedDate(lawDocMap.get(resolvedDocId).getPublishedDate());
+                logger.debug("Processed law doc id found for {} with published date {}", resolvedDocId, block.getPublishedDate());
                 addInitialBlock(block, false);
                 continue;
             }
@@ -221,6 +222,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 if (existingDocInfo.isPresent()) {
                     block.setPublishedDate(existingDocInfo.get().getPublishedDate());
                     addInitialBlock(block, false);
+                    logger.debug("Found existing law with doc id {} with published date {}",
+                        block.getDocumentId(), block.getPublishedDate());
                     continue;
                 }
             }
