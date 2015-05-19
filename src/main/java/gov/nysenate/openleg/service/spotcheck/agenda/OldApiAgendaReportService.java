@@ -47,7 +47,7 @@ public class OldApiAgendaReportService extends BaseAgendaCheckReportService {
         // This is to prevent out of sync addenda because 1.9.2 agenda addenda versions are not exposed
         // e.g. an alert for Cities addendum A 5/15/2015 comes in, but has not yet been processed on 1.9.2
         //      a query for Cities at 5/15/2015 has only the initial addendum, which would cause false positives
-        if (LocalDateTime.now()
+        if (aaic.getAddendum() != Version.DEFAULT && LocalDateTime.now()
                 .minus(environment.getSpotcheckAlertGracePeriod()).minusMinutes(5)
                 .isBefore(aaic.getReferenceId().getRefActiveDateTime())) {
             throw new AgendaNotFoundEx(new AgendaId(agendaId.getNumber(), 0));

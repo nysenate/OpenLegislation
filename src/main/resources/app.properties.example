@@ -174,7 +174,7 @@ scheduler.spotcheck.weekly.cron = 0 0 0 * * SAT
 # The amount of time (in minutes) allowed after an alert arrival for data to come in
 # Spotcheck reports in which content was not found corresponding to a reference that
 #   is younger than this grace period will be aborted
-spotcheck.alert.grace.period = 60
+spotcheck.alert.grace.period = 30
 
 # --- Mail Configuration ------------------------------------------------------
 
