@@ -55,9 +55,9 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$http', '$i
      */
     $interval(function() {
         $http.get(apiPath + '/ping')
-            .success(function(){})
-            .error(function(data){console.log("Warning: Server may be offline.")});
-    }, 60000);
+            .success(function(data){})
+            .error(function(data){console.log("Warning: Server may be offline."); location.reload(true); });
+    }, 30000);
 
     /**
      * Toggle the left navigation menu (only works on mobile, left nav is locked on larger screens).
