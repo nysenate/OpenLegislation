@@ -59,7 +59,7 @@ public class DaybreakFragmentParser {
         parseSponsors(daybreakBill, fragmentParts[1]);
         daybreakBill.setTitle(fragmentParts[2]);
         daybreakBill.setLawSection(fragmentParts[3]);
-        daybreakBill.setLawCodeAndSummary(fragmentParts[4]);
+        daybreakBill.setLawCodeAndSummary(fragmentParts[4].replaceAll("BILL SUMMARY NOT FOUND", ""));
         parseActions(daybreakBill, Arrays.copyOfRange(fragmentParts, 5, fragmentParts.length));
 
         // Convert the page file entries into amendments
