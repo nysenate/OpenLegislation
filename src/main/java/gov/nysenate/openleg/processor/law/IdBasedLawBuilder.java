@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
+/**
+ * Constructs document hierarchies using document id prefixes.
+ */
 public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
 {
     private static final Logger logger = LoggerFactory.getLogger(IdBasedLawBuilder.class);

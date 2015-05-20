@@ -11,6 +11,7 @@ public enum LawDocumentType
     // group titles into articles.
 
     ARTICLE,
+    SUBARTICLE,
     TITLE,
     SUBTITLE,
     PART,

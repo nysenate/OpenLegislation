@@ -63,13 +63,15 @@
                   </h4>
                 </div>
                 <div class="md-list-item-text">
-                  <h4 class="bold" ng-hide="doc.docType === 'SECTION'">Sections (&sect;{{doc.fromSection}} - &sect;{{doc.toSection}})</h4>
+                  <h4>
+                    <span class="bold" ng-hide="doc.docType === 'SECTION'">Sections (&sect;{{doc.fromSection}} - &sect;{{doc.toSection}}) - </span>
+                    <span hide-sm>Location Id: {{doc.locationId}}</span>
+                  </h4>
                   <p ng-if="doc.title">{{doc.title}}</p>
                   <p class="red1" ng-if="!doc.title">Title not available</p>
                   <p style="color:#43ac6a" ng-show="doc.docType === 'SECTION' && doc.activeDate !== '2014-09-22'">
                     Updated on {{doc.activeDate | moment:'MM/DD/YYYY'}}
                   </p>
-                  <small>Location Id: {{doc.locationId}}</small>
                 </div>
                 <md-divider></md-divider>
               </md-list-item>
@@ -100,7 +102,7 @@
                 <div class="law-text" ng-if="curr.showDoc[doc.locationId]" ng-bind-html="curr.lawText[doc.locationId]"></div>
               </md-list-item>
               <md-list-item ng-if="curr.showNested[doc.locationId]" style="background: #f5f5f5">
-                <md-list style="width:100%;margin-left:20px;" class="no-padding" ng-if="doc.docType !== 'SECTION'">
+                <md-list style="width:100%;margin-left:0px;" class="no-padding" ng-if="doc.docType !== 'SECTION'">
                   <div ng-repeat="doc in doc.documents.items" ng-include="'law-tree-snippet.html'"></div>
                 </md-list>
                 <div class="law-text" ng-if="doc.docType === 'SECTION'" ng-bind-html="curr.lawText[doc.locationId]"></div>
