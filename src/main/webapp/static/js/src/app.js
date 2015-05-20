@@ -45,9 +45,19 @@ openApp.config(function($mdThemingProvider) {
  * Since AppCtrl is the top-most parent controller, some useful utility methods are included here to be used
  * by the children controller.
  */
-openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', function($scope, $location, $mdSidenav) {
+openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$http', '$interval',
+                               function($scope, $location, $mdSidenav, $http, $interval) {
     $scope.header = {text: '', visible: false};
     $scope.activeSession = 2015;
+
+    /**
+     * Ping the server periodically for session keep-alive.
+     */
+    $interval(function() {
+        $http.get(apiPath + '/ping')
+            .success(function(){})
+            .error(function(data){console.log("Warning: Server may be offline.")});
+    }, 60000);
 
     /**
      * Toggle the left navigation menu (only works on mobile, left nav is locked on larger screens).
