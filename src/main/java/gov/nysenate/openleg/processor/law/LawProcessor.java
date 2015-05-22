@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor.law;
 
 import com.google.common.collect.Sets;
+import gov.nysenate.openleg.model.law.LawDocumentType;
 import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.model.law.LawVersionId;
@@ -22,6 +23,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gov.nysenate.openleg.model.law.LawDocumentType.*;
+
 /**
  * Works with the {@link LawBuilderImpl} class to process the initial law dumps and updates and perform any
  * necessary persistence.
@@ -38,15 +41,18 @@ public class LawProcessor extends AbstractDataProcessor
     protected static Pattern lawHeader =
         Pattern.compile("\\.\\.SO DOC ((\\w{3})(.{13}))(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
 
+    /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
+    protected static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
+    static {
+        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUB_PART));
+        expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
+    }
+
     /** Set of law ids to ignore during processing. */
-    protected static Set<String> ignoreLaws = Sets.newHashSet("CNS");
+    protected Set<String> ignoreLaws = Sets.newHashSet("CNS");
 
     /** Set of law ids to only allow processing of. Overrides 'ignoreLaws'. */
-    protected static Set<String> onlyLaws = Sets.newHashSet();
-
-    /** Set of law ids that break the usual document id convention for determining nesting. */
-//    protected static Set<String> typeBased = Sets.newHashSet("CPL", "EDN");
-    protected static Set<String> typeBased = Sets.newHashSet();
+    protected Set<String> onlyLaws = Sets.newHashSet();
 
     @Autowired private LawDataService lawDataService;
 
@@ -81,6 +87,24 @@ public class LawProcessor extends AbstractDataProcessor
             unit.addException("Fatal law parsing error, processing has been halted! " + ex.getMessage(), logger);
         }
         postDataUnitEvent(unit);
+    }
+
+    /** --- Basic Getters/Setters --- */
+
+    public Set<String> getIgnoreLaws() {
+        return ignoreLaws;
+    }
+
+    public void setIgnoreLaws(String... ignoreLaws) {
+        this.ignoreLaws = Sets.newHashSet(ignoreLaws);
+    }
+
+    public Set<String> getOnlyLaws() {
+        return onlyLaws;
+    }
+
+    public void setOnlyLaws(String... lawIds) {
+        this.onlyLaws = Sets.newHashSet(lawIds);
     }
 
     /** --- Internal Methods --- */
@@ -213,8 +237,8 @@ public class LawProcessor extends AbstractDataProcessor
     }
 
     protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
-        if (typeBased.contains(lawVersionId.getLawId())) {
-            return new TypeBasedLawBuilder(lawVersionId, previousTree);
+        if (expectedLawOrdering.containsKey(lawVersionId.getLawId())) {
+            return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawVersionId.getLawId()));
         }
         else {
             return new IdBasedLawBuilder(lawVersionId, previousTree);
