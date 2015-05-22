@@ -42,6 +42,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         .when(ctxPath + '/admin', { template: 'Manage Page' })
         .when(ctxPath + '/admin/account', { templateUrl: ctxPath + '/partial/admin/account', reloadOnSearch: false })
+        .when(ctxPath + '/admin/environment', {templateUrl: ctxPath + '/partial/admin/environment', reloadOnSearch: false})
 
         /** --- Docs --- */
 
