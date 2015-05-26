@@ -4,6 +4,7 @@ import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.util.OutputUtils;
+import gov.nysenate.openleg.util.UIKeyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,10 @@ public class ApiAuthFilter implements Filter
     @Autowired
     protected ApiUserService apiUserService;
 
+    @Value("${api.secret}") private String apiSecret;
     @Value("${api.auth.ip.whitelist}") private String filterAddress;
     @Value("${api.auth.enable}") private boolean enabled;
+
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -41,9 +44,7 @@ public class ApiAuthFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         if (enabled) {
-            String uiKey = (String) request.getSession().getAttribute("uiKey");
-            boolean isUiUser = uiKey != null && uiKey.equals(request.getHeader("UIKey"));
-
+            boolean isUiUser = UIKeyUtil.validateUIKey(request, apiSecret, "UIKey");
             if (isUiUser || ipAddress.matches(filterAddress) || apiUserService.validateKey(key)) {
                 filterChain.doFilter(servletRequest, servletResponse);
             }

@@ -97,6 +97,10 @@ md-input-container {
   }
 }
 
+md-tabs {
+  padding: 10px;
+}
+
 md-tab.active {
   md-tab-label {
     font-weight: bold;
@@ -154,7 +158,6 @@ md-tab-content {
     font-size: 1.5rem;
     box-shadow: none;
     display: none;
-    margin-bottom: 20px;
     @media (max-width: 768px) {
       font-size: 1.1rem;
     }
@@ -177,7 +180,6 @@ md-tab-content {
   #content {
     min-height: 100vh;
     .content-section {
-      padding: 0 10px 20px 10px;
       max-width: 1100px;
       margin: auto;
     }
@@ -462,7 +464,7 @@ $left-nav-width: 305px;
 
 .left-nav-menu {
   width:100%;
-  padding-top:28px;
+  padding-top:18px;
 }
 
 // Menu styles adapted from angular-material docs

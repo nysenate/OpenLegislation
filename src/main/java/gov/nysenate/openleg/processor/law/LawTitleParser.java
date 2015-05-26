@@ -102,7 +102,7 @@ public class LawTitleParser
     protected static String capitalizeTitle(String title) {
         if (title != null && !title.isEmpty()) {
             String capStr = WordUtils.capitalizeFully(title);
-            return Stream.of(capStr.split(" "))
+            return capStr.substring(0, 1) + Stream.of(capStr.substring(1).split(" "))
                     .map(s -> (s.matches("(Of|Or|The|For|A|And|An)")) ? s.toLowerCase() : s)
                     .collect(Collectors.joining(" "));
         }
