@@ -102,7 +102,7 @@
                    total-items="hearing.paginate.totalItems"
                    current-page="hearing.paginate.currPage"
                    pagination-id="hearing2"
-                   ng-click="go('${ctxPath}/transcripts/session/' + hearing.filename)"
+                   ng-click="go('${ctxPath}/transcripts/hearing/' + hearing.filename)"
                    class="result-link transcript-result-link">
                   <md-list-item class="md-2-line">
                     <div class="md-list-item-text">

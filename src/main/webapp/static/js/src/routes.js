@@ -28,7 +28,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         .when(ctxPath + '/members', { templateUrl: ctxPath + '/partial/content/member/member-search', reloadOnSearch: false})
         .when(ctxPath + '/members/:sessionYear/:memberId', { templateUrl: ctxPath + '/partial/content/member/member-view', reloadOnSearch: false})
 
-    /** --- Transcripts --- */
+        /** --- Transcripts --- */
 
         .when(ctxPath + '/transcripts', { templateUrl: ctxPath + '/partial/content/transcript/transcript-list', reloadOnSearch: false})
         .when(ctxPath + '/transcripts/session/:filename', { templateUrl: ctxPath + '/partial/content/transcript/session-transcript-view', reloadOnSearch: false})
