@@ -1,16 +1,13 @@
 package gov.nysenate.openleg.client.view.environment;
 
-import gov.nysenate.openleg.client.view.base.ViewObject;
+public class EnvironmentVariableView extends SimpleEnvironmentVariableView {
 
-public class EnvironmentVariableView implements ViewObject {
-
-    private String name;
-    private Object value;
+    private String type;
     private boolean mutable;
 
-    public EnvironmentVariableView(String name, Object value, boolean mutable) {
-        this.name = name;
-        this.value = value;
+    public EnvironmentVariableView(String name, Object value, Class<?> type, boolean mutable) {
+        super(name, value);
+        this.type = type != null ? type.getSimpleName() : null;
         this.mutable = mutable;
     }
 
@@ -24,6 +21,10 @@ public class EnvironmentVariableView implements ViewObject {
 
     public boolean isMutable() {
         return mutable;
+    }
+
+    public String getType() {
+        return type;
     }
 
     @Override

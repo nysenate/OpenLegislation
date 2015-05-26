@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.controller.api.admin;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
@@ -59,20 +60,15 @@ public class EnvironmentCtrl extends BaseCtrl
      *                 value - String - a string representation of the value to set
      *
      */
-    @RequestMapping("/set")
+    @RequestMapping(value = "/set")
     public BaseResponse setVariable(@RequestParam String varName,
                                     @RequestParam String value) {
         if (mutableProperties.containsKey(varName)) {
+            logger.info("Setting environment variable '{}' to '{}'", varName, value);
             mutableProperties.get(varName).accept(value);
-            return new ViewObjectResponse<>(new EnvironmentVariableView(varName, value, true),
-                    "Environment variable value successfully changed");
-        }
-        // Throw an appropriate exception based on whether or not the field exists
-        try {
-            Environment.class.getDeclaredField(varName);
-            throw new ImmutableEnvVarException(varName);
-        } catch (NoSuchFieldException ex) {
-            throw new EnvVarNotFoundException(varName);
+            return new ViewObjectResponse<>(getVariable(varName), "Environment variable value successfully changed");
+        } else {
+            throw new ImmutableEnvVarException(getVariable(varName));
         }
     }
 
@@ -85,33 +81,29 @@ public class EnvironmentCtrl extends BaseCtrl
      * Request Params: varName - String[] - names of variables to retrieve, gets all if empty
      *                 mutableOnly - boolean - default false - gets only mutable variables when set to true
      */
-    @RequestMapping("")
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getVariables(@RequestParam(defaultValue = "") String[] varName,
                                      @RequestParam(defaultValue = "false") boolean mutableOnly) {
-        Map<Field, Method> variables = new HashMap<>();
+        List<EnvironmentVariableView> variables = new ArrayList<>();
         if (varName.length > 0) {
-            for (String var : varName) {
-                try {
-                    Field field = Environment.class.getDeclaredField(var);
-                    variables.put(field, getGetter(field));
-                } catch (NoSuchFieldException | NoSuchMethodException ex) {
-                    throw new EnvVarNotFoundException(var);
-                }
-            }
+            Arrays.asList(varName).stream()
+                    .map(this::getVariable)
+                    .forEach(variables::add);
         } else {
             for (Field field : Environment.class.getDeclaredFields()) {
                 try {
-                    variables.put(field, getGetter(field));
+                    variables.add(getVariable(field));
                 } catch (NoSuchMethodException ignored) {}
             }
         }
         return new ViewObjectResponse<>(ListView.of(
-                variables.entrySet().stream()
-                        .filter(entry -> !mutableOnly || mutableProperties.containsKey(entry.getKey().getName()))
-                        .map(entry -> new EnvironmentVariableView(entry.getKey().getName(), getVarValue(entry.getValue()),
-                                mutableProperties.containsKey(entry.getKey().getName())))
-                        .collect(Collectors.toList())
-        ));
+                variables.stream()
+                        .filter(var -> !mutableOnly || var.isMutable())
+                        .sorted((a, b) -> ComparisonChain.start()
+                                .compare(a.isMutable(), b.isMutable())
+                                .compare(a.getName(), b.getName())
+                                .result())
+                        .collect(Collectors.toList())));
     }
 
     @ExceptionHandler(EnvVarNotFoundException.class)
@@ -123,10 +115,26 @@ public class EnvironmentCtrl extends BaseCtrl
     @ExceptionHandler(ImmutableEnvVarException.class)
     @ResponseStatus(value = HttpStatus.FORBIDDEN)
     public BaseResponse handleImmutableEnvVarEx(ImmutableEnvVarException ex) {
-        return new ViewObjectErrorResponse(ErrorCode.IMMUTABLE_ENV_VARIABLE, ex.getVarName());
+        return new ViewObjectErrorResponse(ErrorCode.IMMUTABLE_ENV_VARIABLE, ex.getVar());
     }
 
-    /** --- Internal Methods --- */
+    /**
+     * --- Internal Methods ---
+     */
+
+    private EnvironmentVariableView getVariable(String name) throws EnvVarNotFoundException {
+        try {
+            return getVariable(Environment.class.getDeclaredField(name));
+        } catch (NoSuchFieldException | NoSuchMethodException ex) {
+            throw new EnvVarNotFoundException(name);
+        }
+    }
+
+    private EnvironmentVariableView getVariable(Field field) throws NoSuchMethodException {
+        Method getter = getGetter(field);
+        return new EnvironmentVariableView(field.getName(), getVarValue(getter), getter.getReturnType(),
+                mutableProperties.containsKey(field.getName()));
+    }
 
     private Consumer<String> setBoolean(Consumer<Boolean> setter) {
         return val -> setter.accept(Boolean.parseBoolean(val));
@@ -136,7 +144,7 @@ public class EnvironmentCtrl extends BaseCtrl
         try {
             return getter.invoke(env);
         } catch (InvocationTargetException | IllegalAccessException ex) {
-            logger.error("Get Environment variable ex", ex);
+            logger.error("Get Environment variable ex\n", ex);
             return null;
         }
     }

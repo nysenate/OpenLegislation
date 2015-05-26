@@ -34,7 +34,7 @@ public class DataProcessNotificationService {
     @Autowired
     DataProcessor dataProcessor;
 
-    private static final String dataProcessRunPath = "/api/3/admin/process/runs";
+    private static final String dataProcessRunPath = "/api/3/admin/process/runs/id";
 
     @PostConstruct
     public void init() {
