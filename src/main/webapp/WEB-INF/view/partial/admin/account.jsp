@@ -3,8 +3,8 @@
 <%@ page import="gov.nysenate.openleg.model.notification.NotificationTarget" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<section ng-controller="AccountSettingsCtrl" ng-init="setHeaderVisible(true)">
-<md-tabs class="md-primary" md-selected="selectedIndex" ng-init="setHeaderText('Admin Account Settings')">
+<section ng-controller="AccountSettingsCtrl" ng-init="setHeaderVisible(true)" class="content-section">
+<md-tabs md-selected="selectedIndex" md-dynamic-height="false" ng-init="setHeaderText('Admin Account Settings')">
 
 <!-- Change Password -->
 
@@ -53,27 +53,24 @@
                aria-label="Remove selected subscriptions">
       Unsubscribe
     </md-button>
-    <md-list class="notification-sub-list">
-      <md-item>
-        <md-item-content layout="row">
-          <div>
+    <md-list>
+      <md-list-item layout="row">
+          <div class="notsub-check-column">
             <md-checkbox  class="md-primary" ng-model="selectAll" ng-click="applySelectAll()" aria-label=":P"></md-checkbox>
           </div>
-          <div><h4>Notification Type</h4></div>
-          <div><h4>Target Type</h4></div>
+          <div class="notsub-type-column"><h4>Notification Type</h4></div>
+          <div class="notsub-target-column"><h4>Target Type</h4></div>
           <div><h4>Target Address</h4></div>
-        </md-item-content>
         <md-divider class="md-defualt-theme"></md-divider>
-      </md-item>
-      <md-item ng-show="newSubscriptionShown">
-        <form>
-        <md-item-content layout="row">
-          <div></div>
-          <div>
+      </md-list-item>
+      <md-list-item ng-show="newSubscriptionShown">
+        <form layout="row" class="notification-list-row">
+          <div class="notsub-check-column"></div>
+          <div class="notsub-type-column" layout="row" layout-align="start center">
             <select ng-options="type.trim() as type for type in notificationTypes" ng-model="newSubscription.type"
                     class="margin-right-10"></select>
           </div>
-          <div>
+          <div class="notsub-target-column" layout="row" layout-align="start center">
             <select ng-options="target for target in notificationTargets" ng-model="newSubscription.target"
                     class="margin-right-10"></select>
           </div>
@@ -90,22 +87,19 @@
           <div>
             <md-button class="md-primary md-raised" ng-click="registerNewSubscription()" aria-label="o_o">Subscribe</md-button>
           </div>
-        </md-item-content>
         </form>
         <md-divider md-inset class="md-defualt-theme"></md-divider>
-      </md-item>
-      <md-item ng-repeat="subscription in subscriptions">
-        <md-item-content layout="row">
-          <div>
+      </md-list-item>
+      <md-list-item ng-repeat-start="subscription in subscriptions" layout="row" class="notification-list-row">
+          <div class="notsub-check-column">
             <md-checkbox ng-click="tallySelectedSubs()" ng-model="subscription.selected" aria-label=":P"
                          class="md-primary""></md-checkbox>
           </div>
-          <div><span ng-bind="subscription.type"></span></div>
-          <div><span ng-bind="subscription.target"></span></div>
+          <div class="notsub-type-column"><span ng-bind="subscription.type"></span></div>
+          <div class="notsub-target-column"><span ng-bind="subscription.target"></span></div>
           <div><span ng-bind="subscription.address"></span></div>
-        </md-item-content>
-        <md-divider class="md-defualt-theme"></md-divider>
-      </md-item>
+      </md-list-item>
+      <md-divider ng-repeat-end ng-if="!$last" class="md-default-theme"></md-divider>
     </md-list>
   </md-card-content>
 </md-card>
