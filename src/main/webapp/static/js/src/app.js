@@ -51,15 +51,6 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$http', '$i
     $scope.activeSession = 2015;
 
     /**
-     * Ping the server periodically for session keep-alive.
-     */
-    $interval(function() {
-        $http.get(apiPath + '/ping')
-            .success(function(data){})
-            .error(function(data){console.log("Warning: Server may be offline."); location.reload(true); });
-    }, 30000);
-
-    /**
      * Toggle the left navigation menu (only works on mobile, left nav is locked on larger screens).
      */
     $scope.toggleLeftNav = function() {
