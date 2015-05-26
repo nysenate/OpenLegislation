@@ -79,14 +79,17 @@
         <md-tab-body>
           <md-divider></md-divider>
           <section ng-if="pageNames[curr.activeIndex] === 'updates'" ng-controller="CalendarUpdatesCtrl">
-            <md-toolbar class="md-toolbar-tools md-hue-2 supplemental-toolbar">
-              <span class="margin-right-10">Update Order:&nbsp;</span>
-              <md-select ng-model="updatesOrder" class="no-margin">
-                <md-select-label>{{ updatesOrder == 'ASC' ? 'Oldest First' : 'Newest First' }}</md-select-label>
-                <md-option value="ASC">Oldest First</md-option>
-                <md-option value="DESC">Newest First</md-option>
-              </md-select>
-            </md-toolbar>
+            <md-card class="content-card">
+              <md-content layout="row" layout-sm="column">
+                <div flex>
+                  <label>Sort By: </label>
+                  <select ng-model="updatesOrder" class="margin-left-10">
+                    <option value="DESC">Newest First</option>
+                    <option value="ASC">Oldest First</option>
+                  </select>
+                </div>
+              </md-content>
+            </md-card>
             <md-progress-linear md-mode="indeterminate" ng-if="loadingUpdates"></md-progress-linear>
             <update-list ng-if="!loadingUpdates" update-response="updateResponse" ng-init="showId=false" show-id="showId"></update-list>
           </section>
