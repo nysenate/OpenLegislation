@@ -57,9 +57,4 @@ public class AngularAppCtrl
         request.getSession().setAttribute("uiKey", randomUiKey);
         request.setAttribute("uiKey", randomUiKey);
     }
-
-    @RequestMapping("/admin")
-    public String adminLogin() {
-        return "redirect:/";
-    }
 }

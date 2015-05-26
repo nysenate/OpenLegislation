@@ -19,6 +19,7 @@
   <script src="${ctxPath}/static/js/src/component/report/spotcheck.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/account.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/notification_sub.js"></script>
+  <script src="${ctxPath}/static/js/src/component/admin/dashboard.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/environment.js"></script>
 </open-layout:head>
 <!--
@@ -67,8 +68,8 @@
               </menu-section>
               <shiro:user>
                 <menu-section title="Admin">
+                  <menu-item url="${ctxPath}/admin">Dashboard</menu-item>
                   <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
-                  <menu-item url="${ctxPath}/admin/environment">Environment Variables</menu-item>
                 </menu-section>
                 <menu-section title="Reports">
                   <menu-item url="${ctxPath}/admin/report/spotcheck">Spotcheck Reports</menu-item>

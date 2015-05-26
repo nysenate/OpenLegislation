@@ -44,7 +44,7 @@ coreModule.filter('label', function() {
         }
         return item;
     };
-})
+});
 
 /**
  * Appends an appropriate ordinal suffix to the input number
@@ -75,6 +75,22 @@ coreModule.filter('toDictionaryArray', function () {
             arr.push({ key: key, value: obj[key] });
         }
         return arr;
+    }
+});
+
+coreModule.filter('unCamelCase', function () {
+    return function(str) {
+        return str.split(/(?=[A-Z])/)
+            .map(function (word) {return word.toLowerCase()})
+            .join(" ");
+    }
+});
+
+coreModule.filter('titleCaps', function () {
+    return function(str) {
+        return str.replace(/\w\S*/g, function (word) {
+            return word.charAt(0).toUpperCase() + word.substring(1).toLowerCase();
+        });
     }
 });
 

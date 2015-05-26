@@ -16,8 +16,6 @@ function ($scope, EnvApi, SetEnvApi) {
     $scope.requestedVars = [];
 
     $scope.init = function() {
-        $scope.setHeaderVisible(true);
-        $scope.setHeaderText("View and Set Environment Variables");
         $scope.getVariables();
     };
 

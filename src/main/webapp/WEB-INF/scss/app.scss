@@ -1149,16 +1149,25 @@ table.report-detail-table tbody tr td {
 
 /** --- Admin Account Settings --- */
 
-md-list.notification-sub-list md-item md-item-content > div:first-child {
+.notsub-check-column {
   width: 4em;
 }
 
-md-list.notification-sub-list md-item md-item-content > div:nth-child(2) {
-  width: 13em;
+.notsub-type-column {
+  width: 15em;
 }
 
-md-list.notification-sub-list md-item md-item-content > div:nth-child(3) {
+.notsub-target-column {
   width: 11em;
+}
+
+/** --- Environment Variable View --- */
+
+md-list.env-list {
+  md-list-item:nth-child(odd) {
+    background: #e2eaff;
+  }
+  max-width: 40em;
 }
 
 /** --- Calendar View --- */
