@@ -41,4 +41,9 @@ public class IntervalAgendaReportService extends BaseAgendaCheckReportService{
     protected void setReferenceChecked(AgendaAlertInfoCommittee reference) {
         // Do nothing
     }
+
+    @Override
+    protected String getNotes() {
+        return "digest";
+    }
 }
