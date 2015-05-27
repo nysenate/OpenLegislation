@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     @Autowired
     private Environment environment;
 
-    protected abstract String getReportNotes();
+    protected abstract String getNotes();
 
     protected abstract void markAsChecked(CalendarId id);
 
@@ -59,7 +58,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
                                                            referenceDateTime,
                                                            LocalDateTime.now());
         SpotCheckReport<CalendarId> report = new SpotCheckReport<>(reportId);
-        report.setNotes(getReportNotes());
+        report.setNotes(getNotes());
         report.addObservations(createObservations(references));
         return report;
     }
