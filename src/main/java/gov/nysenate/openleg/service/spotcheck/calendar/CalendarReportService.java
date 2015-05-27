@@ -22,7 +22,7 @@ public class CalendarReportService extends BaseCalendarReportService {
     private CalendarDataService calendarDataService;
 
     @Override
-    protected String getReportNotes() {
+    protected String getNotes() {
         return "";
     }
 

@@ -21,7 +21,7 @@ public class ProdCalendarReportService extends BaseCalendarReportService {
     private SqlCalendarAlertDao alertDao;
 
     @Override
-    protected String getReportNotes() {
+    protected String getNotes() {
         return "1.9.2";
     }
 

@@ -28,6 +28,9 @@ public class CalendarAlertActiveListParser extends BaseCalendarAlertParser{
 
     /**
      * Parses a Calendar Active List from an LBDC Alert email file.
+     * We increment the sequence num for every file so that version is saved.
+     * The sequence num does NOT match the sequence number of the reference data since they don't include
+     * it in the alert emails.
      * @param file
      * @return
      * @throws IOException
