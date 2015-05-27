@@ -30,11 +30,8 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
 
     @Override
     public SpotCheckObservation<CalendarId> check(Calendar content, Calendar reference) {
-        SpotCheckReferenceId referenceId = new SpotCheckReferenceId(
-                SpotCheckRefType.LBDC_CALENDAR_ALERT, reference.getPublishedDateTime());
-        SpotCheckObservation<CalendarId> observation = new SpotCheckObservation<>(referenceId, reference.getId());
-
-        if (calendarsEqual(content, reference)) {
+        SpotCheckObservation<CalendarId> observation = initializeObservation(reference);
+        if (calendarsAreEqual(content, reference)) {
             return observation;
         } else {
             compareSupplementals(observation, content, reference);
@@ -43,10 +40,17 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
         }
     }
 
+    private SpotCheckObservation<CalendarId> initializeObservation(Calendar reference) {
+        SpotCheckReferenceId referenceId = new SpotCheckReferenceId(
+                SpotCheckRefType.LBDC_CALENDAR_ALERT, reference.getPublishedDateTime());
+        return new SpotCheckObservation<>(referenceId, reference.getId());
+    }
+
     /**
-     * Compare Calendar equality without checking published date.
+     * Compare Calendar equality, ignoring published date.
+     * @return <code>true</code> if calendar's id's, supplemental's, and active list's are equal. <code>false</code> otherwise.
      */
-    private boolean calendarsEqual(Calendar content, Calendar other) {
+    private boolean calendarsAreEqual(Calendar content, Calendar other) {
         return Objects.equals(content.getId(), other.getId()) &&
                Objects.equals(content.getSupplementalMap(), other.getSupplementalMap()) &&
                Objects.equals(content.getActiveListMap(), other.getActiveListMap());
@@ -66,9 +70,18 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
         CalendarSupplemental contentSuppDiff = getMatchingSupplementalIfExists(content, diff);
         CalendarSupplemental referenceSuppDiff = getMatchingSupplementalIfExists(reference, diff);
 
-        if (contentSuppDiff == null || referenceSuppDiff == null) {
-            recordVersionMismatch(observation, contentSuppDiff, referenceSuppDiff);
-        } else {
+        // They should never both be null, if they are, no mismatch to record.
+        if (contentSuppDiff == null && referenceSuppDiff == null) {
+            return;
+        }
+
+        if (contentSuppDiff == null) {
+            recordObservationDataMismatch(observation, referenceSuppDiff);
+        }
+        else if (referenceSuppDiff == null) {
+            recordReferenceDataMismatch(observation, contentSuppDiff);
+        }
+        else {
             checkForSupplementalCalDateMismatch(observation, contentSuppDiff, referenceSuppDiff);
 
             Set<CalendarSectionType> contentSectionTypes = contentSuppDiff.getSectionEntries().keySet();
@@ -79,11 +92,14 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
         }
     }
 
-    private void recordVersionMismatch(SpotCheckObservation<CalendarId> observation, CalendarSupplemental contentSuppDiff,
-                                       CalendarSupplemental referenceSuppDiff) {
-        String contentTypeString = getVersionString(contentSuppDiff);
-        String referenceTypeString = getVersionString(referenceSuppDiff);
-        observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.SUPPLEMENTAL_VERSION, referenceTypeString, contentTypeString));
+    private void recordObservationDataMismatch(SpotCheckObservation<CalendarId> observation, CalendarSupplemental reference) {
+        observation.addMismatch(new SpotCheckMismatch(
+                SpotCheckMismatchType.OBSERVE_DATA_MISSING, getVersionString(reference), ""));
+    }
+
+    private void recordReferenceDataMismatch(SpotCheckObservation<CalendarId> observation, CalendarSupplemental content) {
+        observation.addMismatch(new SpotCheckMismatch(
+                SpotCheckMismatchType.REFERENCE_DATA_MISSING, "", getVersionString(content)));
     }
 
     /**
@@ -91,15 +107,15 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
      * <p>Returns:</p>
      * <ul>
      * <li>Empty string if the supplemental is null</li>
-     * <li>"DEFAULT" if the Version = Version.DEFAULT</li>
+     * <li>"BASE" if the Version = Version.BASE</li>
      * </ul>
-     * This is different from the Version.toString() behavior of returning an empty string for the Default version.
+     * This is different from the Version.toString() behavior of returning an empty string for the Default/Base version.
      */
     private String getVersionString(CalendarSupplemental contentSuppDiff) {
         String versionString = "";
         if (contentSuppDiff != null) {
             Version v = contentSuppDiff.getVersion();
-            versionString = v.equals(Version.DEFAULT) ? "DEFAULT" : v.toString();
+            versionString = v.equals(Version.DEFAULT) ? "BASE" : v.toString();
         }
         return versionString;
     }
@@ -154,17 +170,39 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
         return calendar.getSupplementalMap().keySet().contains(diff.getVersion()) ? calendar.getSupplemental(diff.getVersion()) : null;
     }
 
+    /**
+     * Does NOT do a full comparison of active lists.
+     * We only compare the most recent (by release date time) versions against each other.
+     * This is done because we don't get sequence num info in alert emails. Active lists in alert emails
+     * can either be new supplementals(with an incremented sequence num) or an update to a previous supplemental,
+     * but we can't tell which.
+     *
+     * @param observation
+     * @param content
+     * @param reference
+     */
     private void compareActiveLists(SpotCheckObservation<CalendarId> observation, Calendar content, Calendar reference) {
-        if (content.getActiveListMap().size() > 0 && reference.getActiveListMap().size() > 0) {
+        TreeMap<Integer, CalendarActiveList> contentActiveListMap = content.getActiveListMap();
+        TreeMap<Integer, CalendarActiveList> referenceActiveListMap = reference.getActiveListMap();
+
+        if (contentActiveListMap.size() == 0 && referenceActiveListMap.size() == 0) {
+            return; // No mismatches.
+        }
+
+        if (contentActiveListMap.size() == 0) {
+            observation.addMismatch(new SpotCheckMismatch(
+                    SpotCheckMismatchType.OBSERVE_DATA_MISSING, referenceActiveListMap.get(referenceActiveListMap.size() - 1).getSequenceNo(), ""));
+        }
+        else if (referenceActiveListMap.size() == 0) {
+             observation.addMismatch(new SpotCheckMismatch(
+                    SpotCheckMismatchType.REFERENCE_DATA_MISSING, "", contentActiveListMap.get(contentActiveListMap.size() - 1).getSequenceNo()));
+        }
+        else {
             CalendarActiveList contentMostRecent = getMostRecentActiveList(content);
             CalendarActiveList referenceMostRecent = getMostRecentActiveList(reference);
 
             checkForActiveListCalDateMismatch(observation, contentMostRecent, referenceMostRecent);
             checkForActiveListEntryMismatch(observation, contentMostRecent, referenceMostRecent);
-        }
-        else if (content.getActiveListMap().size() > 0 || reference.getActiveListMap().size() > 0) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_SIZE,
-                                    reference.getActiveListMap().size(), content.getActiveListMap().size()));
         }
     }
 
