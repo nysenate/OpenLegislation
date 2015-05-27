@@ -10,7 +10,7 @@
         <%--<md-input-container ng-if="variable.type !== 'boolean'" md-no-float>--%>
           <%--<md-input ng-model="variable.newValue" placeholder="{{variable.value}}"></md-input>--%>
         <%--</md-input-container>--%>
-        <md-progress-circular ng-show="variable.setting" md-mode="indeterminate"></md-progress-circular>
+        <md-progress-circular ng-show="variable.setting" md-mode="indeterminate" md-diameter="20"></md-progress-circular>
       </md-list-item>
     </md-list>
     <md-subheader class="md-primary">Other Variables</md-subheader>

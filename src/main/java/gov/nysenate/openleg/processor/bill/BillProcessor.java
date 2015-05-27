@@ -17,6 +17,7 @@ import gov.nysenate.openleg.model.sobi.SobiLineType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -531,6 +532,8 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 if (billAmendment.isUniBill()) {
                     syncUniBillText(billAmendment, fragment);
                 }
+                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
+                        billAmendment.getBaseBillId(), BillUpdateField.FULLTEXT));
             }
         }
     }

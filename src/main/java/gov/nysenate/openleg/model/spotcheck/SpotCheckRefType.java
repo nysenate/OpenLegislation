@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.spotcheck;
 
 import com.google.common.collect.ImmutableMap;
+import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.util.OutputUtils;
 
 import java.util.Arrays;
@@ -13,25 +14,32 @@ import java.util.stream.Collectors;
  */
 public enum SpotCheckRefType
 {
-    LBDC_DAYBREAK("daybreak"),             // DayBreaks consist of a set of files sent by LBDC weekly
-                               // which consist of a dump of basic information for all bills
-                               // that are active in the current session.
-    LBDC_SCRAPED_BILL("scraped-bill"),
+    LBDC_DAYBREAK("daybreak", NotificationType.DAYBREAK_SPOTCHECK),
 
-    LBDC_CALENDAR_ALERT("floor-alert"),
+    LBDC_SCRAPED_BILL("scraped-bill", NotificationType.BILL_TEXT_SPOTCHECK),
 
-    LBDC_AGENDA_ALERT("agenda-alert"),
+    LBDC_CALENDAR_ALERT("floor-alert", NotificationType.CALENDAR_SPOTCHECK),
+
+    LBDC_AGENDA_ALERT("agenda-alert", NotificationType.AGENDA_SPOTCHECK),
 
     ;
 
     private String refName;
 
-    private SpotCheckRefType(String refName) {
+    /** A notification type that is used to send notifications for this type of report */
+    private NotificationType notificationType;
+
+    private SpotCheckRefType(String refName, NotificationType type) {
         this.refName = refName;
+        this.notificationType = type;
     }
 
     public String getRefName() {
         return refName;
+    }
+
+    public NotificationType getNotificationType() {
+        return notificationType;
     }
 
     private static final ImmutableMap<String, SpotCheckRefType> refNameMap = ImmutableMap.copyOf(

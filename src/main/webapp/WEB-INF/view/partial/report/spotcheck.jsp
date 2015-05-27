@@ -113,7 +113,7 @@
               <!--Title-->
               <h4>
                 <span class="icon-graph blue-title-icon"></span>
-                {{openReportType | reportType}} {{referenceDateTime | moment:'ll'}} | Report Date: {{reportDateTime | moment:'lll'}}
+                {{openReportType | reportType}} {{referenceDateTime | moment:'lll'}} | Report Run: {{reportDateTime | moment:'lll'}}
               </h4>
               <p ng-if="report.details.notes">Notes: {{report.details.notes}}</p>
 
@@ -122,8 +122,7 @@
               <!--Error summary/filter-->
               <form style="margin-bottom: 5px">
                 <md-button ng-init="showMismatchFilter=false" ng-click="showMismatchFilter=!showMismatchFilter"
-                           aria-label="show mismatch filter"
-                           ng-switch on="showMismatchFilter" class="md-raised">
+                           aria-label="show mismatch filter" ng-switch on="showMismatchFilter" class="md-raised">
                   <span ng-switch-when="false"><span class="icon-arrow-right prefix-icon"/>Filter mismatches</span>
                   <span ng-switch-when="true"><span class="icon-arrow-up prefix-icon"/>Hide filter</span>
                 </md-button>

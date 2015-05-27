@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.daybreak;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -15,6 +16,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotcheckMismatchEvent;
 import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -40,6 +43,14 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
 
     @Autowired
     protected DaybreakDao daybreakDao;
+
+    @Autowired
+    protected EventBus eventBus;
+
+    @PostConstruct
+    public void init() {
+        eventBus.register(this);
+    }
 
     /** --- Implemented Methods --- */
 
@@ -128,8 +139,10 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
             }
         });
         if (!daybreakPageCounts.equals(billPageCounts)) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULLTEXT_PAGE_COUNT, daybreakPageCounts.toString(),
-                                                                              billPageCounts.toString()));
+            SpotCheckMismatch pageCountMismatch = new SpotCheckMismatch(BILL_FULLTEXT_PAGE_COUNT, daybreakPageCounts.toString(),
+                                                                               billPageCounts.toString());
+            obsrv.addMismatch(pageCountMismatch);
+            eventBus.post(new SpotcheckMismatchEvent<>(LocalDateTime.now(), bill.getBaseBillId(), pageCountMismatch));
         }
     }
 

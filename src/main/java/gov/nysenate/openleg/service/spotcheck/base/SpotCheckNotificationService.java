@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
+import com.google.common.collect.MapMaker;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckAbortException;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 public class SpotCheckNotificationService {
@@ -75,8 +78,8 @@ public class SpotCheckNotificationService {
                     messageBuilder.append("\t").append(type).append(": ").append(count).append("\n"));
         });
 
-        Notification notification = new Notification(NotificationType.SPOTCHECK, daybreakReport.getReportDateTime(),
-                summary, messageBuilder.toString());
+        Notification notification = new Notification(daybreakReport.getReferenceType().getNotificationType(),
+                daybreakReport.getReportDateTime(), summary, messageBuilder.toString());
 
         eventBus.post(notification);
     }
