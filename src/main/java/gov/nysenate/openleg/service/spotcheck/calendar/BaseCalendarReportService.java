@@ -119,6 +119,10 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
             }
             markAsChecked(id);
         }
+        // Cancel the report if there are no observations
+        if (observations.size() == 0) {
+            throw new SpotCheckAbortException();
+        }
         return observations;
     }
 
