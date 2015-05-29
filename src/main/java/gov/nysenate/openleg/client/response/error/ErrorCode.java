@@ -47,9 +47,15 @@ public enum ErrorCode
 
     SEARCH_ERROR(100, "There was error retrieving your search results. Make sure that the query is valid."),
 
+    /** --- Environment Variables --- */
+
+    IMMUTABLE_ENV_VARIABLE(110, "Attempt to change an immutable environment variable"),
+    NO_SUCH_ENV_VARIABLE(111, "The requested environment variable does not exist"),
+
     /** -- Data Process -- */
 
     PROCESS_RUN_NOT_FOUND(121, "The given data process run was not found"),
+    DATA_PROCESS_RUN_FAILED(122, "The data process did not run, due to processing being disabled or an error"),
 
     /** --- Source File --- */
 
@@ -63,18 +69,17 @@ public enum ErrorCode
 
     MEMBER_NOT_FOUND(151, "The member was not found"),
 
+    /** --- Notification --- */
+
+    NOTIFICATION_NOT_FOUND(161, "The requested notification was not found"),
+
     /** --- Admin --- */
 
     USER_ALREADY_EXISTS(191, "The entered username already exists"),
     USER_DOES_NOT_EXIST(192, "The entered username is not currently registered as a user"),
     SAME_PASSWORD(193, "The new password cannot match the existing password"),
+    CANNOT_DELETE_ADMIN(194, "The default administrator cannot be deleted"),
 
-    NOTIFICATION_NOT_FOUND(194, "The requested notification was not found"),
-
-    DATA_PROCESS_RUN_FAILED(195, "The data process did not run, due to processing being disabled or an error"),
-
-    IMMUTABLE_ENV_VARIABLE(196, "Attempt to change an immutable environment variable"),
-    NO_SUCH_ENV_VARIABLE(197, "The requested environment variable does not exist"),
 
     /** --- General --- */
 

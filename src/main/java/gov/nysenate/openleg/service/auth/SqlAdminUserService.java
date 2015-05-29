@@ -14,6 +14,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
@@ -47,6 +48,11 @@ public class SqlAdminUserService implements AdminUserService
         } catch (EmptyResultDataAccessException ex) {
             throw new UnknownAccountException("Username: " + username + " does not exist.");
         }
+    }
+
+    @Override
+    public List<AdminUser> getAdminUsers() {
+        return adminDao.getAdminUsers();
     }
 
     /**

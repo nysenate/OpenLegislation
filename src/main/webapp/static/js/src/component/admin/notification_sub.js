@@ -85,23 +85,6 @@ function ($scope, $timeout, $q, getSubsApi, subscribeApi, unSubscribeApi) {
             .then($scope.getSubscriptions);
     };
 
-    $scope.toggleNewSubscription = function() {
-        if ($scope.newSubscriptionShown) {
-            $scope.hideNewSubscription();
-        } else {
-            $scope.showNewSubscription();
-        }
-    };
-
-    $scope.showNewSubscription = function() {
-        $scope.newSubscriptionShown = true;
-    };
-
-    $scope.hideNewSubscription = function() {
-        $scope.newSubscriptionShown = false;
-        $scope.newSubscription = Object.create(cleanSubscription);
-    };
-
     var getSelectedSubs = function() {
         return $scope.subscriptions.filter(function(sub) {
             return sub.selected;

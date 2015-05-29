@@ -3,6 +3,8 @@ package gov.nysenate.openleg.service.auth;
 import gov.nysenate.openleg.model.auth.AdminUser;
 import org.apache.shiro.authc.AuthenticationException;
 
+import java.util.List;
+
 public interface AdminUserService
 {
 
@@ -26,6 +28,11 @@ public interface AdminUserService
      * @param username The username of the user to delete
      */
     public void deleteUser(String username);
+
+    /**
+     * @return a list of all admin users
+     */
+    public List<AdminUser> getAdminUsers();
 
     /**
      * Log the user in if they have proper account credentials.

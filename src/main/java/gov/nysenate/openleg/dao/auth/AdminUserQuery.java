@@ -10,6 +10,9 @@ public enum AdminUserQuery implements BasicSqlQuery
             "        ( username,  password,  master,  active)\n" +
             " VALUES (:username, :password, :master, :active)"
     ),
+    SELECT_ALL(
+            "SELECT * FROM PUBLIC." + SqlTable.ADMIN
+    ),
     SELECT_BY_NAME(
             "SELECT * FROM public." + SqlTable.ADMIN + " WHERE username = :username"
     ),

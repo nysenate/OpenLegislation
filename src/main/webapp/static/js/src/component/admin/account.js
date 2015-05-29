@@ -2,14 +2,9 @@ var accountModule = angular.module('open.account', ['open.core']);
 
 /** --- REST resources for getting and setting admin account data --- */
 
-// Creates a new admin user with the specified username
-accountModule.factory('CreateAccountAPI', ['$resource', function($resource) {
-    return $resource(adminApiPath + '/accounts/create', {username: '@username', master: '@master'});
-}]);
-
-// Removes the admin user with the specified username
-accountModule.factory('RemoveAccountAPI', ['$resource', function ($resource){
-    return $resource(adminApiPath + '/accounts/remove', {username: '@username'});
+// Allows for retrieval, creation, and deletion of admin accounts
+accountModule.factory('AccountsAPI', ['$resource', function($resource) {
+    return $resource(adminApiPath + '/accounts/:username', {username: '@username', master: '@master'});
 }]);
 
 // Changes the password of the currently authenticated user
@@ -22,7 +17,7 @@ accountModule.factory('PassChangeAPI', ['$resource', function ($resource) {
 accountModule.controller('AccountSettingsCtrl', ['$scope', '$routeParams', '$location',
 function($scope, $routeParams, $location) {
 
-    var pageNames = ['passchange', 'notification_subscriptions'];
+    var pageNames = ['passchange', 'notification_subscriptions', 'manage_users'];
 
     $scope.init = function() {
         if ($routeParams.hasOwnProperty('view')) {
@@ -58,20 +53,89 @@ function($scope, $element, $mdToast, PassChangeAPI) {
     $scope.submitNewPass = function() {
         if ($scope.newPass.length >= $scope.minPassLength) {
             $scope.response = PassChangeAPI.save({password: $scope.newPass}, function() {
-                if ($scope.response.success) {
-                    $scope.showToast('Password Changed');
-                    $scope.newPass="";
-                } else if (!$scope.response.success && $scope.response.hasOwnProperty('errorCode')
-                            && $scope.response['errorCode'] === 193) {
-                    $scope.showToast('Error: the entered password matches the existing password');
+                $scope.showToast('Password Changed');
+                $scope.newPass="";
+            }, function(errorResponse) {
+                if (errorResponse.data.errorCode === 1) {
+                    $scope.showToast(errorResponse.data.errorData.parameterConstraint);
+                } else {
+                    $scope.showToast(errorResponse.data.message);
                 }
-            })
-        } else {
-            $scope.showToast('Error: The password must be at least 5 characters');
+            });
         }
     };
 
     $scope.showToast = function(content) {
         return $mdToast.show($mdToast.simple().position('right').content(content));
     }
+}]);
+
+/** -- Manage Admin Users controller -- */
+
+accountModule.controller('ManageAdminUsersCtrl', ['$scope', '$mdToast', '$mdDialog', 'AccountsAPI',
+function ($scope, $mdToast, $mdDialog, AccountsApi) {
+    $scope.accounts = [];
+    var blankAccount = {username: '', master: false};
+    $scope.newAccount = blankAccount;
+    $scope.newAccountShown = false;
+
+    $scope.init = function() {
+        $scope.getAccounts();
+    };
+
+    $scope.getAccounts = function() {
+        $scope.loadingAccounts = true;
+        AccountsApi.get({username: ""}, function(response) {
+            $scope.accounts = response.result.items;
+            $scope.loadingAccounts = false;
+        });
+    };
+
+    $scope.createAccount = function() {
+        $scope.creatingAccount = true;
+        AccountsApi.save($scope.newAccount, function() {
+            $scope.creatingAccount = false;
+            $scope.getAccounts();
+            $scope.newAccount = blankAccount;
+            $scope.newAccountShown = false;
+        }, function(errorResponse) {
+            $scope.creatingAccount = false;
+            if (errorResponse.data.errorCode === 1 || !errorResponse.data.errorCode) {
+                $scope.errorToast('Invalid username: must be @nysenate.gov email address');
+            } else {
+                $scope.errorToast(errorResponse.data.message);
+            }
+        })
+    };
+
+    $scope.removeAccount = function(username) {
+        $scope.removingAccount = true;
+        AccountsApi.delete({username: username}, function(response) {
+            $scope.removingAccount = false;
+            $scope.getAccounts();
+        }, function (errorResponse) {
+            $scope.removingAccount = false;
+            console.log("err0r removing", username);
+            $scope.errorToast(errorResponse.data.message);
+        });
+    };
+
+    $scope.errorToast = function(text) {
+        $mdToast.show({
+            template: '<md-toast>' + text + '</md-toast>',
+            parent: angular.element('#admin-management'),
+            position: 'fit left'
+        })
+    };
+
+    $scope.deletePrompt = function(username) {
+        $mdDialog.show($mdDialog.confirm()
+                .title("Confirm Admin Removal")
+                .content("Delete admin account " + username + "?")
+                .ok("Yes!").cancel("Never Mind")
+        ).then(function () {
+                $scope.removeAccount(username)
+            });
+    }
+
 }]);

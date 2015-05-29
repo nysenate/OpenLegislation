@@ -2,10 +2,15 @@ package gov.nysenate.openleg.controller.api.admin;
 
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
+import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.entity.AdminUserView;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.model.auth.AdminUser;
@@ -25,8 +30,12 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
@@ -41,6 +50,9 @@ public class AdminAccountCtrl extends BaseCtrl {
     @Autowired
     private SendMailService sendMailService;
 
+    @Autowired
+    Environment environment;
+
     private static final String registrationEmailSubject = "OpenLegislation admin registration";
 
     private static final String registrationEmailTemplate =
@@ -50,6 +62,27 @@ public class AdminAccountCtrl extends BaseCtrl {
 
     private static final int newPassLength = 8;
     private static final int minPassLength = 5;
+
+    @RequiresAuthentication
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public BaseResponse getAdminUsers() {
+        return new ViewObjectResponse<>(ListView.of(
+                adminUserService.getAdminUsers().stream()
+                        .map(AdminUserView::new)
+                        .collect(Collectors.toList())));
+    }
+
+    @RequiresAuthentication
+    @RequestMapping(value = "/{username:.+}", method = RequestMethod.GET)
+    public BaseResponse getAdminUser(@PathVariable String username) {
+        if (StringUtils.isBlank(username)) {
+            return getAdminUsers();
+        }
+        if (!adminUserService.adminInDb(username)) {
+            throw new UserNotFoundException(username);
+        }
+        return new ViewObjectResponse<>(new AdminUserView(adminUserService.getAdminUser(username)));
+    }
 
     /**
      *  Create New Admin User API
@@ -65,12 +98,13 @@ public class AdminAccountCtrl extends BaseCtrl {
      *  Expected Output: successful admin-registered response if the user was created, ErrorResponse otherwise
      */
     @RequiresRoles("masterAdmin")
-    @RequestMapping("/create")
-    public BaseResponse createNewUser(@RequestParam(required = true) String username,
-                                      @RequestParam(defaultValue = "false") boolean master) {
+    @RequestMapping(value = "/{username:.+}", method = RequestMethod.POST)
+    public Object createNewUser(@PathVariable String username,
+                                @RequestParam(defaultValue = "false") boolean master) {
 
         if (adminUserService.adminInDb(username)) {
-            return new ViewObjectErrorResponse(ErrorCode.USER_ALREADY_EXISTS, username);
+            return new ResponseEntity<>(
+                    new ViewObjectErrorResponse(ErrorCode.USER_ALREADY_EXISTS, username), HttpStatus.CONFLICT);
         }
 
         String password = RandomUtils.getRandomString(newPassLength);
@@ -97,11 +131,16 @@ public class AdminAccountCtrl extends BaseCtrl {
      *  Expected Output: successful admin-deleted if a user was removed, ErrorResponse otherwise
      */
     @RequiresRoles("masterAdmin")
-    @RequestMapping("/remove")
-    public BaseResponse removeUser(@RequestParam(required = true) String username) {
+    @RequestMapping(value = "/{username:.+}", method = RequestMethod.DELETE)
+    public Object removeUser(@PathVariable String username) {
 
         if (!adminUserService.adminInDb(username)) {
-            return new ViewObjectErrorResponse(ErrorCode.USER_DOES_NOT_EXIST, username);
+            throw new UserNotFoundException(username);
+        }
+
+        if (environment.getDefaultAdminName().equals(username)) {
+            return new ResponseEntity<>(
+                    new ViewObjectErrorResponse(ErrorCode.CANNOT_DELETE_ADMIN, username), HttpStatus.FORBIDDEN);
         }
 
         adminUserService.deleteUser(username);
@@ -122,14 +161,15 @@ public class AdminAccountCtrl extends BaseCtrl {
      */
     @RequiresAuthentication
     @RequestMapping(value = "/passchange", method = RequestMethod.POST)
-    public BaseResponse changePassword(@RequestParam(required = true) String password) {
+    public Object changePassword(@RequestParam(required = true) String password) {
 
         String username = getSubjectUsername();
 
         AdminUser user = adminUserService.getAdminUser(username);
 
         if (BCrypt.checkpw(password, user.getPassword())) {
-            return new ErrorResponse(ErrorCode.SAME_PASSWORD);
+            return new ResponseEntity<>(
+                    new ErrorResponse(ErrorCode.SAME_PASSWORD), HttpStatus.BAD_REQUEST);
         }
 
         if (password.length() < minPassLength) {
@@ -143,7 +183,17 @@ public class AdminAccountCtrl extends BaseCtrl {
         return new SimpleResponse(true, "Password has been successfully changed", "pass-changed");
     }
 
-    /** --- Internal Methods --- */
+    /** --- Exception Handlers --- */
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public BaseResponse handleUserNotFoundException(UserNotFoundException ex) {
+        return new ViewObjectErrorResponse(ErrorCode.USER_DOES_NOT_EXIST, ex.getUsername());
+    }
+
+    /**
+     * --- Internal Methods ---
+     */
 
     /**
      * @return The username of the current subject
@@ -162,5 +212,26 @@ public class AdminAccountCtrl extends BaseCtrl {
         String message = StrSubstitutor.replace(registrationEmailTemplate,
                                                 ImmutableMap.of("username", username, "password", password));
         sendMailService.sendMessage(username, registrationEmailSubject, message);
+    }
+
+    private class UserException extends RuntimeException {
+        private static final long serialVersionUID = -6422565299854256546L;
+        private String username;
+
+        public UserException(String message, String username) {
+            super(message);
+            this.username = username;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+    }
+
+    private class UserNotFoundException extends UserException {
+        private static final long serialVersionUID = 3276041543957882445L;
+        public UserNotFoundException(String username) {
+            super("User " + username + " was not found!", username);
+        }
     }
 }

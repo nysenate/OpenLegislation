@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckAbortException;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,22 +61,31 @@ public class SpotCheckNotificationService {
         StringBuilder messageBuilder = new StringBuilder();
 
         messageBuilder.append(summary)
-                .append("\n\n");
-
-        messageBuilder.append(env.getUrl())
+                .append("\n")
+                .append(env.getUrl())
                 .append("/admin/report/spotcheck?type=")
                 .append(daybreakReport.getReferenceType().getRefName())
                 .append("&runTime=")
                 .append(daybreakReport.getReportDateTime())
-                .append("\n\n");
-
-        messageBuilder.append("Total open errors: ").append(daybreakReport.getOpenMismatchCount()).append("\n");
+                .append("\n")
+                .append(StringUtils.isNotBlank(daybreakReport.getNotes()) ? "Notes: " + daybreakReport.getNotes() : "")
+                .append("\n\n")
+                .append("Total open errors: ")
+                .append(daybreakReport.getOpenMismatchCount())
+                .append("\n");
 
         daybreakReport.getMismatchStatusTypeCounts().forEach((status, typeCounts) -> {
             long totalTypeCounts = typeCounts.values().stream().reduce(0L, (a, b) -> a + b);
-            messageBuilder.append(status).append(": ").append(totalTypeCounts).append("\n");
+            messageBuilder.append(status)
+                    .append(": ")
+                    .append(totalTypeCounts)
+                    .append("\n");
             typeCounts.forEach((type, count) ->
-                    messageBuilder.append("\t").append(type).append(": ").append(count).append("\n"));
+                    messageBuilder.append("\t")
+                            .append(type)
+                            .append(": ")
+                            .append(count)
+                            .append("\n"));
         });
 
         Notification notification = new Notification(daybreakReport.getReferenceType().getNotificationType(),

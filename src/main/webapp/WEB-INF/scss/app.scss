@@ -1163,6 +1163,13 @@ table.report-detail-table tbody tr td {
   width: 11em;
 }
 
+.master-admin {
+  background: #fefcea; /* Old browsers */
+  background: -moz-linear-gradient(bottom, #fefcea 0%, #f1da36 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,#fefcea), color-stop(100%,#f1da36)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(bottom, #fefcea 0%,#f1da36 100%); /* Chrome10+,Safari5.1+ */
+}
+
 /** --- Environment Variable View --- */
 
 md-list.env-list {

@@ -44,6 +44,11 @@ public class Environment
     /** A secret key used to allow access to the API through the front-end. */
     @Value("${api.secret}") private String apiSecret;
 
+    /** --- Admin Auth --- */
+
+    @Value("${default.admin.user}") private String defaultAdminName;
+    @Value("${default.admin.password}") private String defaultAdminPass;
+
     /** --- Search Index settings --- */
 
     /** Allow elastic search to index documents. */
@@ -301,5 +306,21 @@ public class Environment
 
     public void setScrapedStagingDir(File scrapedStagingDir) {
         this.scrapedStagingDir = scrapedStagingDir;
+    }
+
+    public String getDefaultAdminName() {
+        return defaultAdminName;
+    }
+
+    public void setDefaultAdminName(String defaultAdminName) {
+        this.defaultAdminName = defaultAdminName;
+    }
+
+    public String getDefaultAdminPass() {
+        return defaultAdminPass;
+    }
+
+    public void setDefaultAdminPass(String defaultAdminPass) {
+        this.defaultAdminPass = defaultAdminPass;
     }
 }

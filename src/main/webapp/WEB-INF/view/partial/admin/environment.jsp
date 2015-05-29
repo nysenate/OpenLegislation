@@ -5,7 +5,7 @@
     <md-subheader class="md-primary">Mutable Variables</md-subheader>
     <md-list class="env-list">
       <md-list-item ng-repeat="variable in vars | filter:{mutable:true}" ng-init="variable.newValue = variable.value">
-        <p ng-bind="variable.name | unCamelCase | titleCaps"></p>
+        <p ng-bind="variable.name | unCamelCase" class="capitalize"></p>
         <md-switch class="md-secondary" ng-model="variable.newValue" ng-change="setVariable(variable.name)"></md-switch>
         <%--<md-input-container ng-if="variable.type !== 'boolean'" md-no-float>--%>
           <%--<md-input ng-model="variable.newValue" placeholder="{{variable.value}}"></md-input>--%>

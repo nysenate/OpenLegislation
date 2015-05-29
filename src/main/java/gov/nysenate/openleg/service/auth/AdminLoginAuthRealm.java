@@ -101,7 +101,7 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
         logger.info("{}", principals.getPrimaryPrincipal());
         if (adminUserService.isMasterAdmin(principals.getPrimaryPrincipal().toString())) {
             logger.info("itwerked");
-            info.setRoles(Sets.newHashSet("masteradmin"));
+            info.setRoles(Sets.newHashSet("masterAdmin"));
         }
         return info;
     }

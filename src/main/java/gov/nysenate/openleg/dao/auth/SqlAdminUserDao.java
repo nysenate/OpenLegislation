@@ -7,8 +7,11 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
@@ -55,6 +58,11 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
                 .addValue("master", admin.isMaster());
     }
 
+    @Override
+    public List<AdminUser> getAdminUsers() throws DataAccessException {
+        return jdbcNamed.query(AdminUserQuery.SELECT_ALL.getSql(schema()), adminUserRowMapper);
+    }
+
     /**
      * From a given username, check the database to find their password.
      * @param user The username
@@ -63,9 +71,10 @@ public class SqlAdminUserDao extends SqlBaseDao implements AdminUserDao
      */
     public AdminUser getAdminUser(String user) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource().addValue("username", user));
-        return jdbcNamed.queryForObject(AdminUserQuery.SELECT_BY_NAME.getSql(schema()), params,
-                (rs,row) -> new AdminUser(rs.getString("username"), rs.getString("password"),
-                                          rs.getBoolean("active"), rs.getBoolean("master")));
-
+        return jdbcNamed.queryForObject(AdminUserQuery.SELECT_BY_NAME.getSql(schema()), params, adminUserRowMapper);
     }
+
+    private static RowMapper<AdminUser> adminUserRowMapper = (rs,row) ->
+            new AdminUser(rs.getString("username"), rs.getString("password"),
+                    rs.getBoolean("active"), rs.getBoolean("master"));
 }
