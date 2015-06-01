@@ -132,6 +132,50 @@ public class LawTreeNode implements Comparable<LawTreeNode>
     }
 
     /**
+     * Returns an optional containing the previous law tree node within the same level as this node.
+     * @return Optional<LawTreeNode>
+     */
+    public Optional<LawTreeNode> getPrevSibling() {
+        if (getParent() != null) {
+            List<LawTreeNode> childNodeList = getParent().getChildNodeList();
+            int index = childNodeList.indexOf(this);
+            if (index > 0) {
+                return Optional.of(childNodeList.get(index - 1));
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Returns an optional containing the next law tree node within the same level as this node.
+     * @return Optional<LawTreeNode>
+     */
+    public Optional<LawTreeNode> getNextSibling() {
+        if (getParent() != null) {
+            List<LawTreeNode> childNodeList = getParent().getChildNodeList();
+            int index = childNodeList.indexOf(this);
+            if (index < childNodeList.size() - 1) {
+                return Optional.of(childNodeList.get(index + 1));
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Return a list of all the parent nodes for this particular node.
+     * @return LinkedList<LawTreeNode>
+     */
+    public LinkedList<LawTreeNode> getAllParents() {
+        LinkedList<LawTreeNode> parents = new LinkedList<>();
+        LawTreeNode lawTreeNode = this;
+        while (lawTreeNode.getParent() != null) {
+            lawTreeNode = lawTreeNode.getParent();
+            parents.addFirst(lawTreeNode);
+        }
+        return parents;
+    }
+
+    /**
      * Recursively searches for a node that matches the given documentId and returns the law doc info.
      *
      * @param documentId String - Document id of the law document.

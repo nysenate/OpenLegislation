@@ -117,6 +117,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     /** {@inheritDoc} */
     @Override
     public void rebuildIndex() {
+        logger.info("Handling law search re-indexing");
         clearIndex();
         lawDataDao.getLawInfos().stream().forEach(lawInfo ->
             updateIndex(lawDataDao.getLawDocuments(lawInfo.getLawId(), LocalDate.now()).entrySet().stream()

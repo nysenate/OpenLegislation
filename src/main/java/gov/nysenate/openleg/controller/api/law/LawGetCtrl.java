@@ -121,17 +121,8 @@ public class LawGetCtrl extends BaseCtrl
         String documentId = lawId + locationId;
         LawDocument doc = lawDataService.getLawDocument(documentId, activeDate);
         LocalDate refTreeLocalDate = (refTreeDate != null) ? parseISODate(refTreeDate, "refTreeDate") : LocalDate.now();
-        // Build out the parent location id list.
-        LinkedList<LawTreeNode> parents = new LinkedList<>();
         Optional<LawTreeNode> lawTreeNodeOpt = lawDataService.getLawTree(lawId, refTreeLocalDate).find(documentId);
-        if (lawTreeNodeOpt.isPresent()) {
-            LawTreeNode lawTreeNode = lawTreeNodeOpt.get();
-            while (lawTreeNode.getParent() != null) {
-                lawTreeNode = lawTreeNode.getParent();
-                parents.addFirst(lawTreeNode);
-            }
-        }
-        ViewObjectResponse<LawDocWithRefsView> response = new ViewObjectResponse<>(new LawDocWithRefsView(doc, parents));
+        ViewObjectResponse<LawDocWithRefsView> response = new ViewObjectResponse<>(new LawDocWithRefsView(doc, lawTreeNodeOpt));
         response.setMessage("Law document for location " + locationId + " in " + lawId + " law ");
         return response;
     }
