@@ -21,12 +21,18 @@
         </md-toolbar>
         <md-card-content>
           <div >
-            <form name="passwordForm" layout layout-sm="column">
-              <md-input-container flex>
-                <label>New Password</label>
-                <input name=newPassInput minlength="5" type="password" ng-model="newPass">
-              </md-input-container>
-              <div flex>
+            <form name="passwordForm" layout="column">
+              <div>
+                <md-input-container>
+                  <label>New Password</label>
+                  <input name=newPassInput minlength="5" type="password" ng-model="newPass">
+                </md-input-container>
+                <md-input-container md-is-error="newPassRepeat && newPassRepeat !== newPass">
+                  <label>Repeat Password</label>
+                  <input name=newPassInput type="password" ng-model="newPassRepeat">
+                </md-input-container>
+              </div>
+              <div>
                 <md-button ng-click="submitNewPass()"
                            class="md-primary md-raised flex-center-vertically" aria-label="change password">
                   Change Pass
