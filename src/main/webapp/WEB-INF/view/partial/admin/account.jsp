@@ -8,7 +8,6 @@
 
   <shiro:hasRole name="masterAdmin">
     <span ng-init="isMaster = true"></span>
-    <h1>Masssster</h1>
   </shiro:hasRole>
 
   <md-tabs md-selected="selectedIndex" md-dynamic-height="false" ng-init="setHeaderText('Admin Account Settings')">

@@ -1170,6 +1170,19 @@ table.report-detail-table tbody tr td {
   background: -webkit-linear-gradient(bottom, #fefcea 0%,#f1da36 100%); /* Chrome10+,Safari5.1+ */
 }
 
+.logout-circle {
+  background: red;
+  -moz-border-radius: 100px;
+  -webkit-border-radius: 100px;
+  border-radius: 100px;
+}
+
+.logout-rect {
+  background: #008CBA;
+  width: 20vw;
+  height: 25px;
+}
+
 /** --- Environment Variable View --- */
 
 md-list.env-list {
