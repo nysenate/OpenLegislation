@@ -34,6 +34,7 @@ public class LawDocIdFixer
         docIdReplacements.put("VATA48-C", Pair.of("VATT11A48-C", DateUtils.ALL_DATES));
         docIdReplacements.put("MHYA47", Pair.of("MHYTEA47", DateUtils.ALL_DATES));
         docIdReplacements.put("LEH1", Pair.of("LEH-CH21-1962", DateUtils.ALL_DATES));
+        docIdReplacements.put("NNY1", Pair.of("NNY-CH649-1992", DateUtils.ALL_DATES));
     }
 
     /** Ignore these document ids since they cause issues with constructing the trees properly. */
