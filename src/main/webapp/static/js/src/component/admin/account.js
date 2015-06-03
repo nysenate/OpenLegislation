@@ -48,6 +48,7 @@ accountModule.controller('PassChangeCtrl', ['$scope', '$element', '$mdToast', 'P
 function($scope, $element, $mdToast, PassChangeAPI) {
     $scope.minPassLength = 5;
     $scope.newPass = "";
+    $scope.newPassRepeat = "";
     $scope.response = null;
 
     $scope.submitNewPass = function() {
@@ -55,6 +56,7 @@ function($scope, $element, $mdToast, PassChangeAPI) {
             $scope.response = PassChangeAPI.save({password: $scope.newPass}, function() {
                 $scope.showToast('Password Changed');
                 $scope.newPass="";
+                $scope.newPassRepeat = "";
             }, function(errorResponse) {
                 if (errorResponse.data.errorCode === 1) {
                     $scope.showToast(errorResponse.data.errorData.parameterConstraint);
@@ -62,6 +64,10 @@ function($scope, $element, $mdToast, PassChangeAPI) {
                     $scope.showToast(errorResponse.data.message);
                 }
             });
+        } else if ($scope.newPass === $scope.newPassRepeat) {
+            $scope.showToast("Password too short!");
+        } else {
+            $scope.showToast("Passwords must match!");
         }
     };
 
