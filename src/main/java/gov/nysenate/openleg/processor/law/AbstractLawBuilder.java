@@ -77,6 +77,10 @@ public abstract class AbstractLawBuilder implements LawBuilder
      */
     protected abstract String determineHierarchy(LawBlock block);
 
+    /**
+     * Handles any behaviors relating to adding a new child to the hierarchy.
+     * @param node LawTreeNode
+     */
     protected abstract void addChildNode(LawTreeNode node);
 
     protected abstract boolean isNodeListEmpty();
