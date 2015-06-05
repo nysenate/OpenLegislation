@@ -2123,8 +2123,7 @@ CREATE TABLE bill_sponsor_additional (
     bill_session_year smallint NOT NULL,
     session_member_id integer NOT NULL,
     sequence_no smallint,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    last_fragment_id text
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -2149,7 +2148,7 @@ CREATE TABLE bill_text_reference (
     text text,
     memo text,
     checked boolean DEFAULT false NOT NULL,
-    not_found boolean NOT NULL
+    not_found boolean DEFAULT false NOT NULL
 );
 
 
@@ -3305,6 +3304,109 @@ COMMENT ON COLUMN notification.message IS 'The full message of the notification'
 
 
 --
+-- Name: notification_digest_subscription; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notification_digest_subscription (
+    id integer NOT NULL,
+    user_name text NOT NULL,
+    type text NOT NULL,
+    target text NOT NULL,
+    address text NOT NULL,
+    period interval NOT NULL,
+    next_digest timestamp without time zone NOT NULL,
+    send_empty_digest boolean DEFAULT false NOT NULL,
+    "full" boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE master.notification_digest_subscription OWNER TO postgres;
+
+--
+-- Name: TABLE notification_digest_subscription; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE notification_digest_subscription IS 'Contains subscriptions to notification digests';
+
+
+--
+-- Name: COLUMN notification_digest_subscription.user_name; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_digest_subscription.user_name IS 'The subcriber''s admin username';
+
+
+--
+-- Name: COLUMN notification_digest_subscription.type; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_digest_subscription.type IS 'The type of notification subscribed to';
+
+
+--
+-- Name: COLUMN notification_digest_subscription.target; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_digest_subscription.target IS 'The medium through which the notification digest will be sent';
+
+
+--
+-- Name: COLUMN notification_digest_subscription.address; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_digest_subscription.address IS 'The target address that the notification will be sent to';
+
+
+--
+-- Name: COLUMN notification_digest_subscription.period; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_digest_subscription.period IS 'Specifies how frequently the digest should be sent';
+
+
+--
+-- Name: COLUMN notification_digest_subscription.next_digest; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_digest_subscription.next_digest IS 'The date/time of the next digest send';
+
+
+--
+-- Name: COLUMN notification_digest_subscription.send_empty_digest; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_digest_subscription.send_empty_digest IS 'Will send empty digests if set to true';
+
+
+--
+-- Name: COLUMN notification_digest_subscription."full"; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN notification_digest_subscription."full" IS 'Determines whether or not full digests will be sent';
+
+
+--
+-- Name: notification_digest_subscription_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE notification_digest_subscription_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE master.notification_digest_subscription_id_seq OWNER TO postgres;
+
+--
+-- Name: notification_digest_subscription_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+--
+
+ALTER SEQUENCE notification_digest_subscription_id_seq OWNED BY notification_digest_subscription.id;
+
+
+--
 -- Name: notification_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
 --
 
@@ -3901,6 +4003,13 @@ ALTER TABLE master.spotcheck_report OWNER TO postgres;
 --
 
 COMMENT ON TABLE spotcheck_report IS 'Listing of all spot check reports that have been run';
+
+
+--
+-- Name: COLUMN spotcheck_report.notes; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN spotcheck_report.notes IS 'miscellaneous notes pertaining to this report';
 
 
 --
@@ -4582,6 +4691,13 @@ ALTER TABLE ONLY notification ALTER COLUMN id SET DEFAULT nextval('notification_
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
+ALTER TABLE ONLY notification_digest_subscription ALTER COLUMN id SET DEFAULT nextval('notification_digest_subscription_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
 ALTER TABLE ONLY notification_subscription ALTER COLUMN id SET DEFAULT nextval('notification_subscription_id_seq'::regclass);
 
 
@@ -5231,6 +5347,22 @@ ALTER TABLE ONLY law_tree
 
 
 --
+-- Name: notification_digest_subscript_user_name_type_target_address_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notification_digest_subscription
+    ADD CONSTRAINT notification_digest_subscript_user_name_type_target_address_key UNIQUE (user_name, type, target, address, period, next_digest);
+
+
+--
+-- Name: notification_digest_subscription_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notification_digest_subscription
+    ADD CONSTRAINT notification_digest_subscription_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: notification_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
 --
 
@@ -5596,10 +5728,24 @@ CREATE INDEX law_tree_published_date_idx ON law_tree USING btree (published_date
 
 
 --
+-- Name: notification_digest_subscription_next_digest_index; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notification_digest_subscription_next_digest_index ON notification_digest_subscription USING btree (next_digest);
+
+
+--
 -- Name: sobi_fragment_published_date_time_idx; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX sobi_fragment_published_date_time_idx ON sobi_fragment USING btree (published_date_time);
+
+
+--
+-- Name: week_of_index; Type: INDEX; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX week_of_index ON agenda_info_addendum USING btree (week_of);
 
 
 --
@@ -6220,6 +6366,14 @@ ALTER TABLE ONLY bill_previous_version
 
 
 --
+-- Name: bill_sponsor_additional_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY bill_sponsor_additional
+    ADD CONSTRAINT bill_sponsor_additional_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: bill_sponsor_additional_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -6460,6 +6614,14 @@ ALTER TABLE ONLY law_tree
 
 
 --
+-- Name: notification_digest_subscription_user_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY notification_digest_subscription
+    ADD CONSTRAINT notification_digest_subscription_user_name_fkey FOREIGN KEY (user_name) REFERENCES public.adminuser(username) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: notification_subscription_user_name_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -6540,6 +6702,7 @@ ALTER TABLE ONLY session_member
 REVOKE ALL ON SCHEMA master FROM PUBLIC;
 REVOKE ALL ON SCHEMA master FROM postgres;
 GRANT ALL ON SCHEMA master TO postgres;
+GRANT ALL ON SCHEMA master TO sam;
 
 
 --
@@ -6549,7 +6712,1012 @@ GRANT ALL ON SCHEMA master TO postgres;
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO sam;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+SET search_path = master, pg_catalog;
+
+--
+-- Name: active_list_reference; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE active_list_reference FROM PUBLIC;
+REVOKE ALL ON TABLE active_list_reference FROM postgres;
+GRANT ALL ON TABLE active_list_reference TO postgres;
+GRANT ALL ON TABLE active_list_reference TO sam;
+
+
+--
+-- Name: active_list_reference_entry; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE active_list_reference_entry FROM PUBLIC;
+REVOKE ALL ON TABLE active_list_reference_entry FROM postgres;
+GRANT ALL ON TABLE active_list_reference_entry TO postgres;
+GRANT ALL ON TABLE active_list_reference_entry TO sam;
+
+
+--
+-- Name: active_list_reference_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE active_list_reference_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE active_list_reference_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE active_list_reference_id_seq TO postgres;
+GRANT ALL ON SEQUENCE active_list_reference_id_seq TO sam;
+
+
+--
+-- Name: agenda; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE agenda FROM PUBLIC;
+REVOKE ALL ON TABLE agenda FROM postgres;
+GRANT ALL ON TABLE agenda TO postgres;
+GRANT ALL ON TABLE agenda TO sam;
+
+
+--
+-- Name: agenda_change_log_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE agenda_change_log_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE agenda_change_log_seq FROM postgres;
+GRANT ALL ON SEQUENCE agenda_change_log_seq TO postgres;
+GRANT ALL ON SEQUENCE agenda_change_log_seq TO sam;
+
+
+--
+-- Name: agenda_change_log; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE agenda_change_log FROM PUBLIC;
+REVOKE ALL ON TABLE agenda_change_log FROM postgres;
+GRANT ALL ON TABLE agenda_change_log TO postgres;
+GRANT ALL ON TABLE agenda_change_log TO sam;
+
+
+--
+-- Name: agenda_info_addendum; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE agenda_info_addendum FROM PUBLIC;
+REVOKE ALL ON TABLE agenda_info_addendum FROM postgres;
+GRANT ALL ON TABLE agenda_info_addendum TO postgres;
+GRANT ALL ON TABLE agenda_info_addendum TO sam;
+
+
+--
+-- Name: agenda_info_committee; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE agenda_info_committee FROM PUBLIC;
+REVOKE ALL ON TABLE agenda_info_committee FROM postgres;
+GRANT ALL ON TABLE agenda_info_committee TO postgres;
+GRANT ALL ON TABLE agenda_info_committee TO sam;
+
+
+--
+-- Name: agenda_info_committee_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE agenda_info_committee_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE agenda_info_committee_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE agenda_info_committee_id_seq TO postgres;
+GRANT ALL ON SEQUENCE agenda_info_committee_id_seq TO sam;
+
+
+--
+-- Name: agenda_info_committee_item; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE agenda_info_committee_item FROM PUBLIC;
+REVOKE ALL ON TABLE agenda_info_committee_item FROM postgres;
+GRANT ALL ON TABLE agenda_info_committee_item TO postgres;
+GRANT ALL ON TABLE agenda_info_committee_item TO sam;
+
+
+--
+-- Name: agenda_info_committee_item_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE agenda_info_committee_item_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE agenda_info_committee_item_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE agenda_info_committee_item_id_seq TO postgres;
+GRANT ALL ON SEQUENCE agenda_info_committee_item_id_seq TO sam;
+
+
+--
+-- Name: agenda_vote_addendum; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE agenda_vote_addendum FROM PUBLIC;
+REVOKE ALL ON TABLE agenda_vote_addendum FROM postgres;
+GRANT ALL ON TABLE agenda_vote_addendum TO postgres;
+GRANT ALL ON TABLE agenda_vote_addendum TO sam;
+
+
+--
+-- Name: agenda_vote_commitee_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE agenda_vote_commitee_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE agenda_vote_commitee_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE agenda_vote_commitee_id_seq TO postgres;
+GRANT ALL ON SEQUENCE agenda_vote_commitee_id_seq TO sam;
+
+
+--
+-- Name: agenda_vote_committee; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE agenda_vote_committee FROM PUBLIC;
+REVOKE ALL ON TABLE agenda_vote_committee FROM postgres;
+GRANT ALL ON TABLE agenda_vote_committee TO postgres;
+GRANT ALL ON TABLE agenda_vote_committee TO sam;
+
+
+--
+-- Name: agenda_vote_committee_attend; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE agenda_vote_committee_attend FROM PUBLIC;
+REVOKE ALL ON TABLE agenda_vote_committee_attend FROM postgres;
+GRANT ALL ON TABLE agenda_vote_committee_attend TO postgres;
+GRANT ALL ON TABLE agenda_vote_committee_attend TO sam;
+
+
+--
+-- Name: agenda_vote_committee_attend_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE agenda_vote_committee_attend_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE agenda_vote_committee_attend_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE agenda_vote_committee_attend_id_seq TO postgres;
+GRANT ALL ON SEQUENCE agenda_vote_committee_attend_id_seq TO sam;
+
+
+--
+-- Name: agenda_vote_committee_vote; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE agenda_vote_committee_vote FROM PUBLIC;
+REVOKE ALL ON TABLE agenda_vote_committee_vote FROM postgres;
+GRANT ALL ON TABLE agenda_vote_committee_vote TO postgres;
+GRANT ALL ON TABLE agenda_vote_committee_vote TO sam;
+
+
+--
+-- Name: agenda_vote_committee_vote_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE agenda_vote_committee_vote_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE agenda_vote_committee_vote_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE agenda_vote_committee_vote_id_seq TO postgres;
+GRANT ALL ON SEQUENCE agenda_vote_committee_vote_id_seq TO sam;
+
+
+--
+-- Name: calendar_supplemental; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE calendar_supplemental FROM PUBLIC;
+REVOKE ALL ON TABLE calendar_supplemental FROM postgres;
+GRANT ALL ON TABLE calendar_supplemental TO postgres;
+GRANT ALL ON TABLE calendar_supplemental TO sam;
+
+
+--
+-- Name: bill; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill FROM PUBLIC;
+REVOKE ALL ON TABLE bill FROM postgres;
+GRANT ALL ON TABLE bill TO postgres;
+GRANT ALL ON TABLE bill TO sam;
+
+
+--
+-- Name: bill_amendment; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_amendment FROM PUBLIC;
+REVOKE ALL ON TABLE bill_amendment FROM postgres;
+GRANT ALL ON TABLE bill_amendment TO postgres;
+GRANT ALL ON TABLE bill_amendment TO sam;
+
+
+--
+-- Name: bill_amendment_action; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_amendment_action FROM PUBLIC;
+REVOKE ALL ON TABLE bill_amendment_action FROM postgres;
+GRANT ALL ON TABLE bill_amendment_action TO postgres;
+GRANT ALL ON TABLE bill_amendment_action TO sam;
+
+
+--
+-- Name: bill_amendment_cosponsor; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_amendment_cosponsor FROM PUBLIC;
+REVOKE ALL ON TABLE bill_amendment_cosponsor FROM postgres;
+GRANT ALL ON TABLE bill_amendment_cosponsor TO postgres;
+GRANT ALL ON TABLE bill_amendment_cosponsor TO sam;
+
+
+--
+-- Name: bill_amendment_multi_sponsor; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_amendment_multi_sponsor FROM PUBLIC;
+REVOKE ALL ON TABLE bill_amendment_multi_sponsor FROM postgres;
+GRANT ALL ON TABLE bill_amendment_multi_sponsor TO postgres;
+GRANT ALL ON TABLE bill_amendment_multi_sponsor TO sam;
+
+
+--
+-- Name: bill_amendment_publish_status; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_amendment_publish_status FROM PUBLIC;
+REVOKE ALL ON TABLE bill_amendment_publish_status FROM postgres;
+GRANT ALL ON TABLE bill_amendment_publish_status TO postgres;
+GRANT ALL ON TABLE bill_amendment_publish_status TO sam;
+
+
+--
+-- Name: bill_amendment_same_as; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_amendment_same_as FROM PUBLIC;
+REVOKE ALL ON TABLE bill_amendment_same_as FROM postgres;
+GRANT ALL ON TABLE bill_amendment_same_as TO postgres;
+GRANT ALL ON TABLE bill_amendment_same_as TO sam;
+
+
+--
+-- Name: bill_amendment_vote_info; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_amendment_vote_info FROM PUBLIC;
+REVOKE ALL ON TABLE bill_amendment_vote_info FROM postgres;
+GRANT ALL ON TABLE bill_amendment_vote_info TO postgres;
+GRANT ALL ON TABLE bill_amendment_vote_info TO sam;
+
+
+--
+-- Name: bill_amendment_vote_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE bill_amendment_vote_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE bill_amendment_vote_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE bill_amendment_vote_id_seq TO postgres;
+GRANT ALL ON SEQUENCE bill_amendment_vote_id_seq TO sam;
+
+
+--
+-- Name: bill_amendment_vote_roll; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_amendment_vote_roll FROM PUBLIC;
+REVOKE ALL ON TABLE bill_amendment_vote_roll FROM postgres;
+GRANT ALL ON TABLE bill_amendment_vote_roll TO postgres;
+GRANT ALL ON TABLE bill_amendment_vote_roll TO sam;
+
+
+--
+-- Name: bill_approval; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_approval FROM PUBLIC;
+REVOKE ALL ON TABLE bill_approval FROM postgres;
+GRANT ALL ON TABLE bill_approval TO postgres;
+GRANT ALL ON TABLE bill_approval TO sam;
+
+
+--
+-- Name: bill_change_log_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE bill_change_log_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE bill_change_log_seq FROM postgres;
+GRANT ALL ON SEQUENCE bill_change_log_seq TO postgres;
+GRANT ALL ON SEQUENCE bill_change_log_seq TO sam;
+
+
+--
+-- Name: bill_change_log; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_change_log FROM PUBLIC;
+REVOKE ALL ON TABLE bill_change_log FROM postgres;
+GRANT ALL ON TABLE bill_change_log TO postgres;
+GRANT ALL ON TABLE bill_change_log TO sam;
+
+
+--
+-- Name: bill_committee; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_committee FROM PUBLIC;
+REVOKE ALL ON TABLE bill_committee FROM postgres;
+GRANT ALL ON TABLE bill_committee TO postgres;
+GRANT ALL ON TABLE bill_committee TO sam;
+
+
+--
+-- Name: bill_milestone; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_milestone FROM PUBLIC;
+REVOKE ALL ON TABLE bill_milestone FROM postgres;
+GRANT ALL ON TABLE bill_milestone TO postgres;
+GRANT ALL ON TABLE bill_milestone TO sam;
+
+
+--
+-- Name: bill_previous_version; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_previous_version FROM PUBLIC;
+REVOKE ALL ON TABLE bill_previous_version FROM postgres;
+GRANT ALL ON TABLE bill_previous_version TO postgres;
+GRANT ALL ON TABLE bill_previous_version TO sam;
+
+
+--
+-- Name: bill_sponsor; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_sponsor FROM PUBLIC;
+REVOKE ALL ON TABLE bill_sponsor FROM postgres;
+GRANT ALL ON TABLE bill_sponsor TO postgres;
+GRANT ALL ON TABLE bill_sponsor TO sam;
+
+
+--
+-- Name: bill_sponsor_additional; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_sponsor_additional FROM PUBLIC;
+REVOKE ALL ON TABLE bill_sponsor_additional FROM postgres;
+GRANT ALL ON TABLE bill_sponsor_additional TO postgres;
+GRANT ALL ON TABLE bill_sponsor_additional TO sam;
+
+
+--
+-- Name: bill_veto; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE bill_veto FROM PUBLIC;
+REVOKE ALL ON TABLE bill_veto FROM postgres;
+GRANT ALL ON TABLE bill_veto TO postgres;
+GRANT ALL ON TABLE bill_veto TO sam;
+
+
+--
+-- Name: bill_veto_year_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE bill_veto_year_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE bill_veto_year_seq FROM postgres;
+GRANT ALL ON SEQUENCE bill_veto_year_seq TO postgres;
+GRANT ALL ON SEQUENCE bill_veto_year_seq TO sam;
+
+
+--
+-- Name: calendar; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE calendar FROM PUBLIC;
+REVOKE ALL ON TABLE calendar FROM postgres;
+GRANT ALL ON TABLE calendar TO postgres;
+GRANT ALL ON TABLE calendar TO sam;
+
+
+--
+-- Name: calendar_active_list; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE calendar_active_list FROM PUBLIC;
+REVOKE ALL ON TABLE calendar_active_list FROM postgres;
+GRANT ALL ON TABLE calendar_active_list TO postgres;
+GRANT ALL ON TABLE calendar_active_list TO sam;
+
+
+--
+-- Name: calendar_active_list_entry; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE calendar_active_list_entry FROM PUBLIC;
+REVOKE ALL ON TABLE calendar_active_list_entry FROM postgres;
+GRANT ALL ON TABLE calendar_active_list_entry TO postgres;
+GRANT ALL ON TABLE calendar_active_list_entry TO sam;
+
+
+--
+-- Name: calendar_active_list_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE calendar_active_list_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE calendar_active_list_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE calendar_active_list_id_seq TO postgres;
+GRANT ALL ON SEQUENCE calendar_active_list_id_seq TO sam;
+
+
+--
+-- Name: calendar_change_log_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE calendar_change_log_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE calendar_change_log_seq FROM postgres;
+GRANT ALL ON SEQUENCE calendar_change_log_seq TO postgres;
+GRANT ALL ON SEQUENCE calendar_change_log_seq TO sam;
+
+
+--
+-- Name: calendar_change_log; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE calendar_change_log FROM PUBLIC;
+REVOKE ALL ON TABLE calendar_change_log FROM postgres;
+GRANT ALL ON TABLE calendar_change_log TO postgres;
+GRANT ALL ON TABLE calendar_change_log TO sam;
+
+
+--
+-- Name: calendar_supplemental_entry; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE calendar_supplemental_entry FROM PUBLIC;
+REVOKE ALL ON TABLE calendar_supplemental_entry FROM postgres;
+GRANT ALL ON TABLE calendar_supplemental_entry TO postgres;
+GRANT ALL ON TABLE calendar_supplemental_entry TO sam;
+
+
+--
+-- Name: calendar_supplemental_entry_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE calendar_supplemental_entry_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE calendar_supplemental_entry_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE calendar_supplemental_entry_id_seq TO postgres;
+GRANT ALL ON SEQUENCE calendar_supplemental_entry_id_seq TO sam;
+
+
+--
+-- Name: calendar_supplemental_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE calendar_supplemental_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE calendar_supplemental_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE calendar_supplemental_id_seq TO postgres;
+GRANT ALL ON SEQUENCE calendar_supplemental_id_seq TO sam;
+
+
+--
+-- Name: committee; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE committee FROM PUBLIC;
+REVOKE ALL ON TABLE committee FROM postgres;
+GRANT ALL ON TABLE committee TO postgres;
+GRANT ALL ON TABLE committee TO sam;
+
+
+--
+-- Name: committee_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE committee_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE committee_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE committee_id_seq TO postgres;
+GRANT ALL ON SEQUENCE committee_id_seq TO sam;
+
+
+--
+-- Name: committee_member; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE committee_member FROM PUBLIC;
+REVOKE ALL ON TABLE committee_member FROM postgres;
+GRANT ALL ON TABLE committee_member TO postgres;
+GRANT ALL ON TABLE committee_member TO sam;
+
+
+--
+-- Name: committee_member_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE committee_member_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE committee_member_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE committee_member_id_seq TO postgres;
+GRANT ALL ON SEQUENCE committee_member_id_seq TO sam;
+
+
+--
+-- Name: committee_version; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE committee_version FROM PUBLIC;
+REVOKE ALL ON TABLE committee_version FROM postgres;
+GRANT ALL ON TABLE committee_version TO postgres;
+GRANT ALL ON TABLE committee_version TO sam;
+
+
+--
+-- Name: committee_version_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE committee_version_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE committee_version_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE committee_version_id_seq TO postgres;
+GRANT ALL ON SEQUENCE committee_version_id_seq TO sam;
+
+
+--
+-- Name: data_process_run_unit; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE data_process_run_unit FROM PUBLIC;
+REVOKE ALL ON TABLE data_process_run_unit FROM postgres;
+GRANT ALL ON TABLE data_process_run_unit TO postgres;
+GRANT ALL ON TABLE data_process_run_unit TO sam;
+
+
+--
+-- Name: data_process_log_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE data_process_log_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE data_process_log_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE data_process_log_id_seq TO postgres;
+GRANT ALL ON SEQUENCE data_process_log_id_seq TO sam;
+
+
+--
+-- Name: data_process_run; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE data_process_run FROM PUBLIC;
+REVOKE ALL ON TABLE data_process_run FROM postgres;
+GRANT ALL ON TABLE data_process_run TO postgres;
+GRANT ALL ON TABLE data_process_run TO sam;
+
+
+--
+-- Name: daybreak_bill; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE daybreak_bill FROM PUBLIC;
+REVOKE ALL ON TABLE daybreak_bill FROM postgres;
+GRANT ALL ON TABLE daybreak_bill TO postgres;
+GRANT ALL ON TABLE daybreak_bill TO sam;
+
+
+--
+-- Name: daybreak_bill_action; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE daybreak_bill_action FROM PUBLIC;
+REVOKE ALL ON TABLE daybreak_bill_action FROM postgres;
+GRANT ALL ON TABLE daybreak_bill_action TO postgres;
+GRANT ALL ON TABLE daybreak_bill_action TO sam;
+
+
+--
+-- Name: daybreak_bill_action_sequence_no_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq FROM postgres;
+GRANT ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq TO postgres;
+GRANT ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq TO sam;
+
+
+--
+-- Name: daybreak_bill_amendment; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE daybreak_bill_amendment FROM PUBLIC;
+REVOKE ALL ON TABLE daybreak_bill_amendment FROM postgres;
+GRANT ALL ON TABLE daybreak_bill_amendment TO postgres;
+GRANT ALL ON TABLE daybreak_bill_amendment TO sam;
+
+
+--
+-- Name: daybreak_bill_sponsor; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE daybreak_bill_sponsor FROM PUBLIC;
+REVOKE ALL ON TABLE daybreak_bill_sponsor FROM postgres;
+GRANT ALL ON TABLE daybreak_bill_sponsor TO postgres;
+GRANT ALL ON TABLE daybreak_bill_sponsor TO sam;
+
+
+--
+-- Name: daybreak_file; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE daybreak_file FROM PUBLIC;
+REVOKE ALL ON TABLE daybreak_file FROM postgres;
+GRANT ALL ON TABLE daybreak_file TO postgres;
+GRANT ALL ON TABLE daybreak_file TO sam;
+
+
+--
+-- Name: daybreak_fragment; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE daybreak_fragment FROM PUBLIC;
+REVOKE ALL ON TABLE daybreak_fragment FROM postgres;
+GRANT ALL ON TABLE daybreak_fragment TO postgres;
+GRANT ALL ON TABLE daybreak_fragment TO sam;
+
+
+--
+-- Name: daybreak_page_file_entry; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE daybreak_page_file_entry FROM PUBLIC;
+REVOKE ALL ON TABLE daybreak_page_file_entry FROM postgres;
+GRANT ALL ON TABLE daybreak_page_file_entry TO postgres;
+GRANT ALL ON TABLE daybreak_page_file_entry TO sam;
+
+
+--
+-- Name: daybreak_report; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE daybreak_report FROM PUBLIC;
+REVOKE ALL ON TABLE daybreak_report FROM postgres;
+GRANT ALL ON TABLE daybreak_report TO postgres;
+GRANT ALL ON TABLE daybreak_report TO sam;
+
+
+--
+-- Name: law_change_log; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE law_change_log FROM PUBLIC;
+REVOKE ALL ON TABLE law_change_log FROM postgres;
+GRANT ALL ON TABLE law_change_log TO postgres;
+GRANT ALL ON TABLE law_change_log TO sam;
+
+
+--
+-- Name: law_change_log_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE law_change_log_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE law_change_log_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE law_change_log_id_seq TO postgres;
+GRANT ALL ON SEQUENCE law_change_log_id_seq TO sam;
+
+
+--
+-- Name: law_document; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE law_document FROM PUBLIC;
+REVOKE ALL ON TABLE law_document FROM postgres;
+GRANT ALL ON TABLE law_document TO postgres;
+GRANT ALL ON TABLE law_document TO sam;
+
+
+--
+-- Name: law_file; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE law_file FROM PUBLIC;
+REVOKE ALL ON TABLE law_file FROM postgres;
+GRANT ALL ON TABLE law_file TO postgres;
+GRANT ALL ON TABLE law_file TO sam;
+
+
+--
+-- Name: law_info; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE law_info FROM PUBLIC;
+REVOKE ALL ON TABLE law_info FROM postgres;
+GRANT ALL ON TABLE law_info TO postgres;
+GRANT ALL ON TABLE law_info TO sam;
+
+
+--
+-- Name: law_tree; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE law_tree FROM PUBLIC;
+REVOKE ALL ON TABLE law_tree FROM postgres;
+GRANT ALL ON TABLE law_tree TO postgres;
+GRANT ALL ON TABLE law_tree TO sam;
+
+
+--
+-- Name: notification; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE notification FROM PUBLIC;
+REVOKE ALL ON TABLE notification FROM postgres;
+GRANT ALL ON TABLE notification TO postgres;
+GRANT ALL ON TABLE notification TO sam;
+
+
+--
+-- Name: notification_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE notification_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE notification_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE notification_id_seq TO postgres;
+GRANT ALL ON SEQUENCE notification_id_seq TO sam;
+
+
+--
+-- Name: notification_subscription; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE notification_subscription FROM PUBLIC;
+REVOKE ALL ON TABLE notification_subscription FROM postgres;
+GRANT ALL ON TABLE notification_subscription TO postgres;
+GRANT ALL ON TABLE notification_subscription TO sam;
+
+
+--
+-- Name: notification_subscription_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE notification_subscription_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE notification_subscription_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE notification_subscription_id_seq TO postgres;
+GRANT ALL ON SEQUENCE notification_subscription_id_seq TO sam;
+
+
+--
+-- Name: sobi_fragment; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE sobi_fragment FROM PUBLIC;
+REVOKE ALL ON TABLE sobi_fragment FROM postgres;
+GRANT ALL ON TABLE sobi_fragment TO postgres;
+GRANT ALL ON TABLE sobi_fragment TO sam;
+
+
+--
+-- Name: psf; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE psf FROM PUBLIC;
+REVOKE ALL ON TABLE psf FROM postgres;
+GRANT ALL ON TABLE psf TO postgres;
+GRANT ALL ON TABLE psf TO sam;
+
+
+--
+-- Name: public_hearing; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public_hearing FROM PUBLIC;
+REVOKE ALL ON TABLE public_hearing FROM postgres;
+GRANT ALL ON TABLE public_hearing TO postgres;
+GRANT ALL ON TABLE public_hearing TO sam;
+
+
+--
+-- Name: public_hearing_committee; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public_hearing_committee FROM PUBLIC;
+REVOKE ALL ON TABLE public_hearing_committee FROM postgres;
+GRANT ALL ON TABLE public_hearing_committee TO postgres;
+GRANT ALL ON TABLE public_hearing_committee TO sam;
+
+
+--
+-- Name: public_hearing_file; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public_hearing_file FROM PUBLIC;
+REVOKE ALL ON TABLE public_hearing_file FROM postgres;
+GRANT ALL ON TABLE public_hearing_file TO postgres;
+GRANT ALL ON TABLE public_hearing_file TO sam;
+
+
+--
+-- Name: sobi_file; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE sobi_file FROM PUBLIC;
+REVOKE ALL ON TABLE sobi_file FROM postgres;
+GRANT ALL ON TABLE sobi_file TO postgres;
+GRANT ALL ON TABLE sobi_file TO sam;
+
+
+--
+-- Name: sobi_fragment_process_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE sobi_fragment_process_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE sobi_fragment_process_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE sobi_fragment_process_id_seq TO postgres;
+GRANT ALL ON SEQUENCE sobi_fragment_process_id_seq TO sam;
+
+
+--
+-- Name: spotcheck_mismatch; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE spotcheck_mismatch FROM PUBLIC;
+REVOKE ALL ON TABLE spotcheck_mismatch FROM postgres;
+GRANT ALL ON TABLE spotcheck_mismatch TO postgres;
+GRANT ALL ON TABLE spotcheck_mismatch TO sam;
+
+
+--
+-- Name: spotcheck_mismatch_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE spotcheck_mismatch_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE spotcheck_mismatch_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE spotcheck_mismatch_id_seq TO postgres;
+GRANT ALL ON SEQUENCE spotcheck_mismatch_id_seq TO sam;
+
+
+--
+-- Name: spotcheck_observation; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE spotcheck_observation FROM PUBLIC;
+REVOKE ALL ON TABLE spotcheck_observation FROM postgres;
+GRANT ALL ON TABLE spotcheck_observation TO postgres;
+GRANT ALL ON TABLE spotcheck_observation TO sam;
+
+
+--
+-- Name: spotcheck_observation_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE spotcheck_observation_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE spotcheck_observation_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE spotcheck_observation_id_seq TO postgres;
+GRANT ALL ON SEQUENCE spotcheck_observation_id_seq TO sam;
+
+
+--
+-- Name: spotcheck_report; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE spotcheck_report FROM PUBLIC;
+REVOKE ALL ON TABLE spotcheck_report FROM postgres;
+GRANT ALL ON TABLE spotcheck_report TO postgres;
+GRANT ALL ON TABLE spotcheck_report TO sam;
+
+
+--
+-- Name: spotcheck_report_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE spotcheck_report_id_seq TO postgres;
+GRANT ALL ON SEQUENCE spotcheck_report_id_seq TO sam;
+
+
+--
+-- Name: transcript; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE transcript FROM PUBLIC;
+REVOKE ALL ON TABLE transcript FROM postgres;
+GRANT ALL ON TABLE transcript TO postgres;
+GRANT ALL ON TABLE transcript TO sam;
+
+
+--
+-- Name: transcript_file; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE transcript_file FROM PUBLIC;
+REVOKE ALL ON TABLE transcript_file FROM postgres;
+GRANT ALL ON TABLE transcript_file TO postgres;
+GRANT ALL ON TABLE transcript_file TO sam;
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- Name: adminuser; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE adminuser FROM PUBLIC;
+REVOKE ALL ON TABLE adminuser FROM postgres;
+GRANT ALL ON TABLE adminuser TO postgres;
+GRANT ALL ON TABLE adminuser TO sam;
+
+
+--
+-- Name: apiuser; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE apiuser FROM PUBLIC;
+REVOKE ALL ON TABLE apiuser FROM postgres;
+GRANT ALL ON TABLE apiuser TO postgres;
+GRANT ALL ON TABLE apiuser TO sam;
+
+
+--
+-- Name: member; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE member FROM PUBLIC;
+REVOKE ALL ON TABLE member FROM postgres;
+GRANT ALL ON TABLE member TO postgres;
+GRANT ALL ON TABLE member TO sam;
+
+
+--
+-- Name: member_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE member_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE member_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE member_id_seq TO postgres;
+GRANT ALL ON SEQUENCE member_id_seq TO sam;
+
+
+--
+-- Name: member_person_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE member_person_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE member_person_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE member_person_id_seq TO postgres;
+GRANT ALL ON SEQUENCE member_person_id_seq TO sam;
+
+
+--
+-- Name: person; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE person FROM PUBLIC;
+REVOKE ALL ON TABLE person FROM postgres;
+GRANT ALL ON TABLE person TO postgres;
+GRANT ALL ON TABLE person TO sam;
+
+
+--
+-- Name: person_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE person_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE person_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE person_id_seq TO postgres;
+GRANT ALL ON SEQUENCE person_id_seq TO sam;
+
+
+--
+-- Name: session_member; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE session_member FROM PUBLIC;
+REVOKE ALL ON TABLE session_member FROM postgres;
+GRANT ALL ON TABLE session_member TO postgres;
+GRANT ALL ON TABLE session_member TO sam;
+
+
+--
+-- Name: session_member_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE session_member_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE session_member_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE session_member_id_seq TO postgres;
+GRANT ALL ON SEQUENCE session_member_id_seq TO sam;
 
 
 --
