@@ -2,9 +2,10 @@
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 
 <section class="content-section" ng-controller="LandingCtrl">
-  <div class="padding-20 hero-img" style="background-image:url('${ctxPath}/static/img/capitol_square_cropped.png');">
-    &nbsp;
-  </div>
+  <%--<div class="padding-20 hero-img" style="background-image:url('${ctxPath}/static/img/capitol_square_cropped.png');">--%>
+    <%--&nbsp;--%>
+  <%--</div>--%>
+
   <section class="slogan-container">
     <h1 class="slogan">Search, explore, and
       <a target="_blank" href="${ctxPath}/docs" class="slogan-link">integrate</a> legislative information from the
@@ -28,39 +29,40 @@
     the <a href="http://www.nysenate.gov" class="slogan-link">nysenate.gov site.</a> </h4>
   </section>
   <section class="padding-20 margin-20 white-bg">
-    <h2>Access NYS legislative data through a JSON API</h2>
-      <section ng-hide="signedup">
-          <h3 class="green1"><i class="icon-key prefix-icon2"></i>Sign up for a free API Key</h3>
-          <hr/>
-          <form method="post">
-              <div layout="row" layout-sm="column" layout-align="center center">
-                  <md-input-container class="margin-right-20">
-                      <label ng-required ng-trim>Name</label>
-                      <input type="text" name="name" ng-model="name"/>
-                  </md-input-container>
-                  <md-input-container class="margin-right-20">
-                      <label>Email</label>
-                      <input ng-required ng-trim type="email" name="email" ng-model="email"/>
-                  </md-input-container>
-                  <md-button ng-click="signup()" style="width: 160px;" class="bold md-accent md-raised md-hue-3">Signup</md-button>
-              </div>
-              <div class="signup-err" layout="row" ng-if="errmsg">
-                  <h4>{{errmsg}}</h4>
-              </div>
-          </form>
-      </section>
-      <section ng-show="signedup">
-          <h3>Thanks for signing up, please check your email to receive your API key.</h3>
-      </section>
-      <section ng-show="processing">
-          <h3>Your API key is being created, one sec.</h3>
-      </section>
+    <h2 class="thin-300"><i class="icon-key prefix-icon2"></i>Access NYS legislative data through a JSON API</h2>
+    <hr/>
+    <section ng-hide="signedup">
+        <p>Sign up for a free API Key</p>
+        <hr/>
+        <form method="post">
+            <div layout="row" layout-sm="column" layout-align="center center">
+                <md-input-container class="margin-right-20">
+                    <label ng-required ng-trim>Name</label>
+                    <input type="text" name="name" ng-model="name"/>
+                </md-input-container>
+                <md-input-container class="margin-right-20">
+                    <label>Email</label>
+                    <input ng-required ng-trim type="email" name="email" ng-model="email"/>
+                </md-input-container>
+                <md-button ng-click="signup()" style="width: 160px;" class="bold md-primary md-raised">Signup</md-button>
+            </div>
+            <div class="signup-err" layout="row" ng-if="errmsg">
+                <h4>{{errmsg}}</h4>
+            </div>
+        </form>
+    </section>
+    <section ng-show="signedup">
+        <h3>Thanks for signing up, please check your email to receive your API key.</h3>
+    </section>
+    <section ng-show="processing">
+        <h3>Your API key is being created, one sec.</h3>
+    </section>
     <hr/>
     <h3>
       <a class="blue3" target="_blank" href="${ctxPath}/docs">View the JSON API Documentation</a>
     </h3>
   </section>
-  <section class="padding-20 margin-20 gray3-bg">
+  <section class="padding-20 margin-20 white-bg">
     <h2 class="thin-300"><i class="icon-shareable prefix-icon2"></i>Built on Open Source</h2>
     <h3 class="thin-300">OpenLegislation is developed using several open-source packages and frameworks.
      Source code is <a class="slogan-link" href="http://www.github.com/nysenate/OpenLegislation">published on GitHub</a>.
