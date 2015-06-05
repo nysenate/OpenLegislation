@@ -13,14 +13,14 @@ public interface LawBuilder
      * @param block LawBlock - The LawBlock to convert into a document and store within the tree
      * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
      */
-    public void addInitialBlock(LawBlock block, boolean isNewDoc);
+    void addInitialBlock(LawBlock block, boolean isNewDoc);
 
     /**
      * Updates a LawDocument within an existing tree or creates a new one if a master doc is received.
      *
      * @param block LawBlock - The LawBlock to convert into a document and store within the tree
      */
-    public void addUpdateBlock(LawBlock block);
+    void addUpdateBlock(LawBlock block);
 
     /**
      * The master document has a line for each document id and indicates that the law tree needs to be restructured
@@ -29,19 +29,19 @@ public interface LawBuilder
      *
      * @param masterDoc String
      */
-    public void rebuildTree(String masterDoc);
+    void rebuildTree(String masterDoc);
 
     /**
      * Constructs a new LawTree with the documents processed for this law.
      *
      * @return LawTree
      */
-    public LawTree getProcessedLawTree();
+    LawTree getProcessedLawTree();
 
     /**
      * Return all the processed law documents as a list in NO particular order.
      *
      * @return List<LawDocument>
      */
-    public List<LawDocument> getProcessedLawDocuments();
+    List<LawDocument> getProcessedLawDocuments();
 }

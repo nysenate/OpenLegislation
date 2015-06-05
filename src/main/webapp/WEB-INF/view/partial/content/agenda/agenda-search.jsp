@@ -41,7 +41,7 @@
                 </div>
               </md-content>
             </md-card>
-            <span ng-show="loading"><i class="icon-hourglass prefix-icon2"></i>Loading Meetings...</span>
+            <md-progress-linear ng-if="loading" md-mode="indeterminate"></md-progress-linear>
             <md-card class="content-card">
               <md-card-content id="agenda-date-picker" ui-calendar="calendarConfig" ng-model="meetingEventSources"></md-card-content>
             </md-card>

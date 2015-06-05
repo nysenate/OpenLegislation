@@ -21,12 +21,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -87,20 +87,36 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
         // Create a set of the base bill ids from the daybreak bills
         Set<BaseBillId> daybreakBillIds = daybreakBills.stream()
             .map(DaybreakBill::getBaseBillId).collect(Collectors.toSet());
+
         // And a set of all of our bill ids (excluding resolutions) present in the backing store
         Set<BaseBillId> openlegBillIds =
             billDataService.getBillIds(SessionYear.current(), LimitOffset.ALL).stream()
                 .filter(id -> !id.getBillType().isResolution())
                 .collect(toSet());
-        // Check for base bill ids that the daybreak has but openleg does not and add 'data missing' mismatches.
-        Sets.difference(daybreakBillIds, openlegBillIds).stream()
-            .forEach(id -> {
-                logger.info("Missing OpenLeg bill {}", id);
-                SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(refId, id);
-                SpotCheckMismatch mismatch = new SpotCheckMismatch(OBSERVE_DATA_MISSING, id.toString(), "");
-                sourceMissingObs.addMismatch(mismatch);
-                report.addObservation(sourceMissingObs);
-            });
+
+        // Check for differences between the set of daybreak and openleg base bill ids.
+        Sets.symmetricDifference(daybreakBillIds, openlegBillIds).stream()
+                .forEach(id -> {
+                    // id exists in daybreak or openleg sets, never both.
+                    SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(refId, id);
+                    SpotCheckMismatch mismatch = null;
+                    if (openlegBillIds.contains(id)) {
+                        // openleg has the bill but daybreak does not, add reference missing mismatch if bill is published.
+                        Bill bill = billDataService.getBill(id);
+                        if (bill.getPublishStatus(bill.getActiveVersion()).get().isPublished()) {
+                            logger.info("Missing Daybreak bill {}", id);
+                            mismatch = new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", id.toString());
+                            recordMismatch(report, sourceMissingObs, mismatch);
+                        }
+                    }
+                    else {
+                        // daybreak has the bill but openleg does not, add observe missing mismatch.
+                        logger.info("Missing OpenLeg bill {}", id);
+                        mismatch = new SpotCheckMismatch(OBSERVE_DATA_MISSING, id.toString(), "");
+                        recordMismatch(report, sourceMissingObs, mismatch);
+                    }
+                });
+
         // Perform actual spot checks for the bills common to both sets
         daybreakBills.stream()
             .filter(daybreakBill -> openlegBillIds.contains(daybreakBill.getBaseBillId()))
@@ -110,6 +126,11 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
             });
         // Done with this report!
         return report;
+    }
+
+    private void recordMismatch(SpotCheckReport<BaseBillId> report, SpotCheckObservation<BaseBillId> sourceMissingObs, SpotCheckMismatch mismatch) {
+        sourceMissingObs.addMismatch(mismatch);
+        report.addObservation(sourceMissingObs);
     }
 
     /** {@inheritDoc} */

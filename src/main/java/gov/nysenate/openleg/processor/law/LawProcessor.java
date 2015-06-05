@@ -26,8 +26,7 @@ import java.util.regex.Pattern;
 import static gov.nysenate.openleg.model.law.LawDocumentType.*;
 
 /**
- * Works with the {@link LawBuilderImpl} class to process the initial law dumps and updates and perform any
- * necessary persistence.
+ * Processes the initial/update law dumps and persists the data.
  */
 @Service
 public class LawProcessor extends AbstractDataProcessor

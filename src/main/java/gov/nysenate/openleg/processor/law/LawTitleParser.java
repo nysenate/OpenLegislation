@@ -17,7 +17,10 @@ public class LawTitleParser
     private static final Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
 
     protected static String sectionTitlePattern = "(?i)((?:Section|§)\\s*%s).?\\s(.+?)\\.(.*)";
-    protected static Pattern articleTitlePattern = Pattern.compile("((ARTICLE|TITLE).+?\\\\n)(.+?)\\\\n(Section)?");
+    protected static Pattern tocStartPattern = Pattern.compile("(Section|Article)\\s+\\n?[0-9a-zA-Z-.]+");
+    protected static Pattern nonSectionPrefixPattern = Pattern.compile("((\\*\\s*)?(SUB)?(ARTICLE|TITLE|PART)(.+?)(\\\\n|--))");
+    protected static Pattern contiguousUppercasePattern = Pattern.compile("([^a-z]+(\\b))");
+    protected static Pattern contiguousUppercaseExcludeTocPattern = Pattern.compile("(~\\s+\\d+\\.\\s*)$");
 
     /** --- Methods --- */
 
@@ -28,13 +31,12 @@ public class LawTitleParser
                 case CHAPTER:
                     title = extractTitleFromChapter(lawDocInfo);
                     break;
-                case ARTICLE:
-                case TITLE:
-                    title = extractTitleFromArticle(lawDocInfo, bodyText);
-                    break;
                 case SUBTITLE:
                 case PART:
                 case SUB_PART:
+                case ARTICLE:
+                case TITLE:
+                    title = extractTitleFromNonSection(lawDocInfo, bodyText);
                     break;
                 case SECTION:
                     title = extractTitleFromSection(lawDocInfo, bodyText);
@@ -65,13 +67,37 @@ public class LawTitleParser
     /**
      * Parses the title for an article by assuming that most article titles are presented in all caps.
      */
-    protected static String extractTitleFromArticle(LawDocInfo lawDocInfo, String bodyText) {
-        Matcher articleTitleMatcher = articleTitlePattern.matcher(bodyText);
-        if (articleTitleMatcher.find()) {
-            String title = articleTitleMatcher.group(3).replaceAll("\\\\n", "").replaceAll("\\s{2,}", " ");
-            return capitalizeTitle(title.trim());
+    protected static String extractTitleFromNonSection(LawDocInfo lawDocInfo, String bodyText) {
+        String title = bodyText;
+        // Remove the location designator
+        Matcher prefixMatcher = nonSectionPrefixPattern.matcher(bodyText);
+        if (prefixMatcher.find()) {
+            title = title.substring(prefixMatcher.end());
         }
-        return "";
+        // Check if there is a 'Section X' in the body, it is usually a good indicator of where the title ends.
+        Matcher sectionStartMatcher = tocStartPattern.matcher(title);
+        if (sectionStartMatcher.find()) {
+            title = title.substring(0, sectionStartMatcher.start());
+        }
+        // Otherwise try to find the first contiguous sequence of uppercase characters.
+        else {
+            // Replace new lines with an easier to detect symbol that doesn't break the uppercase.
+            title = title.replaceAll("\\\\n", "~");
+            Matcher uppercaseMatcher = contiguousUppercasePattern.matcher(title);
+            if (uppercaseMatcher.find()) {
+                title = title.substring(0, uppercaseMatcher.end());
+                Matcher removeLastNumberMatcher = contiguousUppercaseExcludeTocPattern.matcher(title);
+                if (removeLastNumberMatcher.find()) {
+                    title = title.substring(0, removeLastNumberMatcher.start());
+                }
+                title = title.replaceAll("~", " ");
+            }
+            // Otherwise just grab the whole thing (truncate it to say 240 characters) and call it a day.
+            else {
+                title = title.substring(0, Integer.min(240, title.length()));
+            }
+        }
+        return capitalizeTitle(title.replaceAll("(\\\\n|\\s{2,})", " ").trim());
     }
 
     /**
@@ -108,6 +134,4 @@ public class LawTitleParser
         }
         return title;
     }
-
-
 }

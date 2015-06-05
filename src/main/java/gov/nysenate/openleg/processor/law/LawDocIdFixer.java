@@ -33,9 +33,11 @@ public class LawDocIdFixer
         docIdReplacements.put("VATA44-A", Pair.of("VATT8A44-A", DateUtils.ALL_DATES));
         docIdReplacements.put("VATA48-C", Pair.of("VATT11A48-C", DateUtils.ALL_DATES));
         docIdReplacements.put("MHYA47", Pair.of("MHYTEA47", DateUtils.ALL_DATES));
+        docIdReplacements.put("LEH1", Pair.of("LEH-CH21-1962", DateUtils.ALL_DATES));
+        docIdReplacements.put("NNY1", Pair.of("NNY-CH649-1992", DateUtils.ALL_DATES));
     }
 
-    /** Hacks to fix various document id inconsistencies. */
+    /** Ignore these document ids since they cause issues with constructing the trees properly. */
     protected static Map<String, Range<LocalDate>> ignoreDocIds = new HashMap<>();
     static {
         ignoreDocIds.put("SOSA2-A*", DateUtils.ALL_DATES);
