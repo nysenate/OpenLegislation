@@ -20,6 +20,8 @@ import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.notification.data.NotificationNotFoundException;
 import gov.nysenate.openleg.service.notification.data.NotificationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/notifications", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class NotificationCtrl extends BaseCtrl
 {
+    private static final Logger logger = LoggerFactory.getLogger(NotificationCtrl.class);
+
     @Autowired
     private NotificationService notificationService;
 
@@ -141,14 +145,14 @@ public class NotificationCtrl extends BaseCtrl
     /** --- Internal --- */
 
     private BaseResponse getNotificationsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
-        Range<LocalDateTime> dateRange = getClosedOpenRange(from, to, "from", "to");
+        Range<LocalDateTime> dateRange = getClosedRange(from, to, "from", "to");
         LimitOffset limOff = getLimitOffset(request, 25);
         SortOrder order = getSortOrder(request, SortOrder.DESC);
         boolean full = getBooleanParam(request, "full", false);
         PaginatedList<RegisteredNotification> results =
                 notificationService.getNotificationList(getNotificationTypes(request), dateRange, order, limOff);
-        return DateRangeListViewResponse.of(results.getResults().stream().map(
-                (full) ? NotificationView::new : NotificationSummaryView::new)
+        return DateRangeListViewResponse.of(results.getResults().stream()
+                .map(full ? NotificationView::new : NotificationSummaryView::new)
                 .collect(Collectors.toList()), dateRange, results.getTotal(), limOff);
     }
 
@@ -162,6 +166,7 @@ public class NotificationCtrl extends BaseCtrl
         for (String type : types) {
             typeSet.addAll(NotificationType.getCoverage(getEnumParameter("type", type, NotificationType.class)));
         }
+        logger.info("{}", typeSet);
         return typeSet;
     }
 }

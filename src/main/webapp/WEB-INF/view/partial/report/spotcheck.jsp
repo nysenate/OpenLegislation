@@ -113,7 +113,7 @@
               <!--Title-->
               <h4>
                 <span class="icon-graph blue-title-icon"></span>
-                {{openReportType | reportType}} {{referenceDateTime | moment:'ll'}} | Report Date: {{reportDateTime | moment:'lll'}}
+                {{openReportType | reportType}} {{referenceDateTime | moment:'lll'}} | Report Run: {{reportDateTime | moment:'lll'}}
               </h4>
               <p ng-if="report.details.notes">Notes: {{report.details.notes}}</p>
 

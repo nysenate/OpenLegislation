@@ -14,17 +14,20 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Filter;
+import java.util.stream.Collectors;
 
 @Service
 public class ElasticNotificationService implements NotificationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ElasticNotificationService.class);
 
     @Autowired protected NotificationSearchDao notificationDao;
 
@@ -42,26 +45,61 @@ public class ElasticNotificationService implements NotificationService {
     @Override
     public PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types, Range<LocalDateTime> dateTimeRange,
                                                                      SortOrder order, LimitOffset limitOffset) {
-        ArrayList<FilterBuilder> filters = new ArrayList<>();
-        if (dateTimeRange != null && !dateTimeRange.encloses(DateUtils.ALL_DATE_TIMES)) {
-            filters.add(FilterBuilders.rangeFilter("occurred")
-                        .from(DateUtils.startOfDateTimeRange(dateTimeRange))
-                        .to(DateUtils.endOfDateTimeRange(dateTimeRange)));
+        //Todo figure out why the notificationType term filter doesn't work
+//        FilterBuilder rangeFilter = FilterBuilders.matchAllFilter();
+//        FilterBuilder typesFilter = FilterBuilders.matchAllFilter();
+//        if (dateTimeRange != null && !dateTimeRange.encloses(DateUtils.ALL_DATE_TIMES)) {
+//            rangeFilter = FilterBuilders.rangeFilter("occurred")
+//                        .from(DateUtils.startOfDateTimeRange(dateTimeRange))
+//                        .to(DateUtils.endOfDateTimeRange(dateTimeRange));
+//        }
+//        if (types != null && !types.isEmpty() && !types.contains(NotificationType.ALL)) {
+//            List<String> coveredTypes = types.stream()
+//                    .map(NotificationType::getCoverage)
+//                    .flatMap(Set::stream)
+//                    .map(NotificationType::toString)
+//                    .collect(Collectors.toList());
+//            logger.info("{}", coveredTypes);
+//            typesFilter = FilterBuilders.termsFilter("notificationType", coveredTypes);
+//        }
+//        FilterBuilder filter = FilterBuilders.andFilter(rangeFilter, typesFilter);
+//
+//        String sort = String.format("occurred:%s", order != null ? order.toString() : "DESC");
+//
+//        return notificationDao.searchNotifications(QueryBuilders.matchAllQuery(), filter, sort, limitOffset)
+//                .toPaginatedList();
+        StringBuilder queryStringBuilder = new StringBuilder();
+        List<String> coveredTypes = types.stream()
+                .map(NotificationType::getCoverage)
+                .flatMap(Set::stream)
+                .map(NotificationType::toString)
+                .collect(Collectors.toList());
+        if (!coveredTypes.isEmpty()) {
+            queryStringBuilder.append("notificationType:");
+            if (coveredTypes.size() > 1) {
+                queryStringBuilder.append("(");
+            }
+            boolean firstType = true;
+            for (String type : coveredTypes) {
+                if (firstType) {
+                    firstType = false;
+                } else {
+                    queryStringBuilder.append(" ");
+                }
+                queryStringBuilder.append(type);
+            }
+            if (coveredTypes.size() > 1) {
+                queryStringBuilder.append(")");
+            }
+            queryStringBuilder.append(" AND ");
         }
-        if (types != null && !types.contains(NotificationType.ALL)) {
-            Set<NotificationType> coveredTypes = types.stream()
-                    .map(NotificationType::getCoverage)
-                    .reduce(new HashSet<>(), (a, b) -> {a.addAll(b); return a;});
-            filters.add(FilterBuilders.termsFilter("type", coveredTypes));
-        }
-        FilterBuilder filter = filters.size() > 0
-                ? FilterBuilders.andFilter(filters.toArray(new FilterBuilder[filters.size()]))
-                : FilterBuilders.matchAllFilter();
-
-        String sort = String.format("occurred:%s", order != null ? order.toString() : "DESC");
-
-        return notificationDao.searchNotifications(QueryBuilders.matchAllQuery(), filter, sort, limitOffset)
-                .toPaginatedList();
+        queryStringBuilder.append("occurred:[")
+                .append(DateUtils.startOfDateTimeRange(dateTimeRange))
+                .append(" TO ")
+                .append(DateUtils.endOfDateTimeRange(dateTimeRange))
+                .append("]");
+        String sortString = "occurred:" + order;
+        return notificationSearch(queryStringBuilder.toString(), sortString, limitOffset).toPaginatedList();
     }
 
     /** {@inheritDoc} */

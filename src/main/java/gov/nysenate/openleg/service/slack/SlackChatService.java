@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.service.slack;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
-import gov.nysenate.openleg.util.OutputUtils;
-import jdk.nashorn.internal.parser.JSONParser;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,15 +9,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class SlackChatService {
 
     private static final Logger logger = LoggerFactory.getLogger(SlackChatService.class);
+
+    private static final Pattern slackAddressPattern = Pattern.compile("^#([a-z]+)(?:@([a-z]*))?$");
 
     @Value("${slack.webhook.url}")
     private String webhookUrl;
@@ -63,5 +61,43 @@ public class SlackChatService {
         if (slackApi != null) {
             slackApi.call(message);
         }
+    }
+
+    /**
+     * Sends the given slack message to the given addresses that specify a channel and username
+     * Will send one message per channel with all usernames addressed to that channel mentioned
+     * @param messageContent SlackMessage
+     * @param addresses Collection<String> - a collection of string addresses in the format #(channel name)@(username)
+     */
+    public void sendMessage(SlackMessage messageContent, Collection<String> addresses) {
+        ListMultimap<String, String> channelMentionsMap = getChannelMentionsMap(addresses);
+        // Send to default channel with no mentions if there are no valid addresses
+        if (channelMentionsMap.isEmpty()) {
+            sendMessage(messageContent);
+        } else {
+            channelMentionsMap.asMap().forEach((channel, mentions) -> {
+                SlackMessage message = new SlackMessage(messageContent);
+                mentions.stream()
+                        .filter(StringUtils::isNotBlank)
+                        .forEach(message::addMention);
+                sendMessage(message);
+            });
+        }
+    }
+
+    /** --- Internal Methods --- */
+
+    /** Takes a collection of addresses and transforms it into
+     * a multimap of channels with all usernames attached to that channel */
+    protected ListMultimap<String, String> getChannelMentionsMap(Collection<String> addresses) {
+        ListMultimap<String, String> channelMentionsMap = ArrayListMultimap.create();
+        addresses.forEach(address -> {
+            Matcher addressMatcher = slackAddressPattern.matcher(address);
+            if (addressMatcher.matches()) {
+                channelMentionsMap.put(addressMatcher.group(1),
+                        addressMatcher.groupCount() > 1 ? addressMatcher.group(2) : "");
+            }
+        });
+        return channelMentionsMap;
     }
 }

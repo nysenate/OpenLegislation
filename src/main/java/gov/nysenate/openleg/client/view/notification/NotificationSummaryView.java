@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 public class NotificationSummaryView implements ViewObject{
 
     protected long id;
-    protected NotificationType type;
+    protected NotificationType notificationType;
     protected LocalDateTime occurred;
     protected String summary;
 
     public NotificationSummaryView(RegisteredNotification notification) {
         this.id = notification.getId();
-        this.type = notification.getType();
+        this.notificationType = notification.getType();
         this.occurred = notification.getOccurred();
         this.summary = notification.getSummary();
     }
@@ -28,12 +28,12 @@ public class NotificationSummaryView implements ViewObject{
         this.id = id;
     }
 
-    public NotificationType getType() {
-        return type;
+    public NotificationType getNotificationType() {
+        return notificationType;
     }
 
-    public void setType(NotificationType type) {
-        this.type = type;
+    public void setNotificationType(NotificationType notificationType) {
+        this.notificationType = notificationType;
     }
 
     public LocalDateTime getOccurred() {

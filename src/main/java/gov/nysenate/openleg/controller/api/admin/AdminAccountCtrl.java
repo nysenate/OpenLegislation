@@ -64,6 +64,14 @@ public class AdminAccountCtrl extends BaseCtrl {
     private static final int minPassLength = 5;
 
     @RequiresAuthentication
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public BaseResponse logout() {
+        SecurityUtils.getSubject().logout();
+        return new SimpleResponse(true, "you have been logged out", "logout");
+    }
+
+    @RequiresAuthentication
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getAdminUsers() {
         return new ViewObjectResponse<>(ListView.of(

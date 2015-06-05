@@ -40,7 +40,7 @@ public class SearchIndexCtrl extends BaseCtrl
     /**
      * Search Index Rebuild API
      *
-     * Rebuild the specified search indices: (PUT) /api/3/index/{indexType}
+     * Rebuild the specified search indices: (PUT) /api/3/admin/index/{indexType}
      * 'indexType' can be set to 'all' to reindex everything, or to one of the values in the
      * {@link gov.nysenate.openleg.dao.base.SearchIndex} enumeration.
      *

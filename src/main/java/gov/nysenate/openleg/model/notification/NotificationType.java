@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.notification;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -67,7 +68,7 @@ public enum NotificationType {
      */
     public static Set<NotificationType> getCoverage(NotificationType type) {
         if (type == null) return Collections.emptySet();
-        Set<NotificationType> result = new HashSet<>(type.children);
+        Set<NotificationType> result = Sets.newHashSet(type);
         type.children.stream()
                 .map(NotificationType::getCoverage)
                 .forEach(result::addAll);
