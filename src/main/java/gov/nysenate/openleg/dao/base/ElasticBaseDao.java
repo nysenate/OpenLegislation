@@ -110,7 +110,7 @@ public abstract class ElasticBaseDao
                 .setMinScore(0.05f)
                 .setFetchSource(fetchSource);
         if (highlightedFields != null) {
-            highlightedFields.stream().forEach(field -> searchBuilder.addHighlightedField(field));
+            highlightedFields.stream().forEach(searchBuilder::addHighlightedField);
         }
 //        if (rescorer != null) {
 //            searchBuilder.addRescorer(rescorer);
@@ -121,6 +121,7 @@ public abstract class ElasticBaseDao
         }
         // Add the sort by fields
         extractSortFilters(sort).forEach(searchBuilder::addSort);
+        logger.debug("{}", searchBuilder);
         return searchBuilder;
     }
 
@@ -214,6 +215,7 @@ public abstract class ElasticBaseDao
 
     protected void deleteIndex(String index) {
         try {
+            logger.info("deleting search index {}", index);
             searchClient.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
         }
         catch (IndexMissingException ex) {

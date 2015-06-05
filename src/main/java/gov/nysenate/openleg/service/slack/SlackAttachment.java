@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.slack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -17,6 +18,21 @@ public class SlackAttachment {
     private String titleLink;
 
     private List<SlackField> fields;
+
+    public SlackAttachment() {}
+
+    public SlackAttachment(SlackAttachment other) {
+        this.fallback = other.fallback;
+        this.text = other.text;
+        this.pretext = other.pretext;
+        this.color = other.color;
+        this.title = other.title;
+        this.titleLink = other.titleLink;
+        this.fields = other.fields != null ? other.fields.stream()
+                .map(SlackField::new)
+                .collect(Collectors.toList())
+                : null;
+    }
 
 
     public SlackAttachment addFields(SlackField field) {

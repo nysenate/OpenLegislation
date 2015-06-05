@@ -52,6 +52,12 @@ public class SearchResults<ResultType>
                 results.stream().map(SearchResult::getResult).collect(Collectors.toList()));
     }
 
+    public List<ResultType> getRawResults() {
+        return results.stream()
+                .map(SearchResult::getResult)
+                .collect(Collectors.toList());
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public int getTotalResults() {

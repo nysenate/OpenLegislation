@@ -97,6 +97,7 @@ public enum SqlTable
 
     NOTIFICATION                 ("notification"),
     NOTIFICATION_SUBSCRIPTION    ("notification_subscription"),
+    NOTIFICATION_DIGEST_SUBSCRIPTION("notification_digest_subscription"),
 
     MEMBER                       ("member"),
     PERSON                       ("person"),

@@ -5,11 +5,8 @@ import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationTarget;
 import gov.nysenate.openleg.service.slack.SlackAttachment;
-import gov.nysenate.openleg.service.slack.SlackChatService;
 import gov.nysenate.openleg.service.slack.SlackField;
 import gov.nysenate.openleg.service.slack.SlackMessage;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -17,13 +14,11 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class SlackNotificationSender extends BaseNotificationSender {
-
-    @Autowired
-    private SlackChatService slackChatService;
+public class SlackNotificationSender extends BaseSlackNotificationSender implements NotificationSender {
 
     /**
      * {@inheritDoc}
@@ -37,33 +32,22 @@ public class SlackNotificationSender extends BaseNotificationSender {
      * {@inheritDoc}
      */
     @Override
-    public void sendNotification(RegisteredNotification notification, Collection<NotificationSubscription> addresses) {
+    public void sendNotification(RegisteredNotification notification, Collection<NotificationSubscription> subscriptions) {
         SlackMessage message = new SlackMessage()
                 .addAttachments(new SlackAttachment()
                         .setTitle("Notification #" + notification.getId())
                         .setTitleLink(getDisplayUrl(notification))
                         .setPretext(notification.getSummary())
                         .setText(notification.getMessage())
-                        .setFallback(truncateMessage(notification))
+                        .setFallback(truncateNotification(notification))
                         .setFields(getFields(notification))
                         .setColor(getColor(notification)))
-                .setMentions(addresses.stream()
-                        .map(NotificationSubscription::getTargetAddress)
-                        .collect(Collectors.toList()))
                 .setText("")
-                .setUsername("openleg-bot")
                 .setIcon(getIcon(notification));
-        slackChatService.sendMessage(message);
-    }
-
-    /**
-     * Truncates the notification message for slack consumption
-     * @param notification RegisteredNotification
-     * @return String
-     */
-    private String truncateMessage(RegisteredNotification notification) {
-        return trimLines(notification.getMessage(), environment.getSlackLineLimit()) +
-            "\nSee full notification at: " + getDisplayUrl(notification);
+        List<String> addresses = subscriptions.stream()
+                        .map(NotificationSubscription::getTargetAddress)
+                        .collect(Collectors.toList());
+        slackChatService.sendMessage(message, addresses);
     }
 
     private ArrayList<SlackField> getFields(RegisteredNotification notification) {
@@ -77,7 +61,8 @@ public class SlackNotificationSender extends BaseNotificationSender {
     private String getColor(RegisteredNotification notification) {
         if (NotificationType.EXCEPTION.covers(notification.getType())) {
             return "danger";
-        } else if (NotificationType.WARNING.covers(notification.getType())) {
+        } else if (NotificationType.WARNING.covers(notification.getType()) ||
+                   NotificationType.SPOTCHECK_MISMATCH.covers(notification.getType())) {
             return "warning";
         }
         return "good";
@@ -86,24 +71,11 @@ public class SlackNotificationSender extends BaseNotificationSender {
     private String getIcon(RegisteredNotification notification) {
         if (NotificationType.EXCEPTION.covers(notification.getType())) {
             return ":scream_cat:";
-        }
-        if (NotificationType.WARNING.covers(notification.getType())) {
-            return ":crying_cat_face:";
+        } else if (NotificationType.WARNING.covers(notification.getType())) {
+            return ":pouting_cat:";
+        } else if (NotificationType.SPOTCHECK_MISMATCH.covers(notification.getType())) {
+            return ":bill:";
         }
         return ":smile_cat:";
-    }
-
-    private String trimLines(String str, int maxLength) {
-        String[] lines = StringUtils.split(str, "\n");
-        if (lines.length <= maxLength) {
-            return str;
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append(lines[0]);
-        for (int i = 1; i < maxLength; i++) {
-            builder.append("\n").append(lines[i]);
-        }
-        builder.append("...");
-        return builder.toString();
     }
 }

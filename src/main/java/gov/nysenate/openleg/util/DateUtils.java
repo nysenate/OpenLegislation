@@ -2,6 +2,7 @@ package gov.nysenate.openleg.util;
 
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
+import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +10,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.util.Date;
 
 public abstract class DateUtils
@@ -133,6 +135,24 @@ public abstract class DateUtils
     public static Time toTime(LocalTime localTime) {
         if (localTime == null) return null;
         return Time.valueOf(localTime);
+    }
+
+    public static PGInterval toInterval(Period period, Duration duration) {
+        if (duration == null || period == null) return null;
+        return new PGInterval(period.getYears(), period.getMonths(), period.getDays(),
+                (int) duration.toHours(), (int) duration.toMinutes() % 60,
+                (double) (duration.toMillis() % (1000 * 60)) / 1000);
+    }
+
+    public static Period getPeriod(PGInterval interval) {
+        if (interval == null) return null;
+        return Period.of(interval.getYears(), interval.getMonths(), interval.getDays());
+    }
+
+    public static Duration getDuration(PGInterval interval) {
+        if (interval == null) return null;
+        return Duration.ofMillis(
+                (long) (interval.getSeconds() * 1000) + interval.getMinutes() * 60000 + interval.getHours() * 3600000);
     }
 
     /** --- Date Range methods --- */

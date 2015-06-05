@@ -21,6 +21,13 @@ public class SlackField {
         this.value = value;
     }
 
+    public SlackField(SlackField other) {
+        this.title = other.title;
+        this.value = other.value;
+        this.shorten = other.shorten;
+        this.allowMarkdown = other.allowMarkdown != null ? new ArrayList<>(other.allowMarkdown) : null;
+    }
+
     public void addAllowedMarkdown(String field) {
         if(this.allowMarkdown == null) {
             this.allowMarkdown = new ArrayList<String>();

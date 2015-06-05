@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -242,6 +241,30 @@ public abstract class SqlBaseDao
     public static LocalTime getLocalTimeFromRs(ResultSet rs, String column) throws SQLException {
         if (rs.getTime(column) == null) return null;
         return rs.getTime(column).toLocalTime();
+    }
+
+    /**
+     * Read the 'column' interval value from the result set and cast it to a Period.
+     * Return null if the column value is null.
+     */
+    public static Period getPeriodFromRs(ResultSet rs, String column) throws SQLException {
+        PGInterval interval = (PGInterval) rs.getObject(column);
+        return interval != null ? Period.of(interval.getYears(), interval.getMonths(), interval.getDays()) : null;
+    }
+
+    /**
+     * Read the 'column' interval value from the result set and cast it to a Duration.
+     * Values beyond a day are ignored due to variable length of months/years
+     * Return null if the column value is null.
+     */
+    public static Duration getDurationFromRs(ResultSet rs, String column) throws SQLException {
+        PGInterval interval = (PGInterval) rs.getObject(column);
+        return interval != null
+                ? Duration.ofMillis((long) (interval.getSeconds() * 1000) +
+                        interval.getMinutes() * 1000 * 60 +
+                        interval.getHours() * 1000 * 60 * 60 +
+                        interval.getDays() * 1000 * 60 * 60 * 24)
+                : null;
     }
 
     /**

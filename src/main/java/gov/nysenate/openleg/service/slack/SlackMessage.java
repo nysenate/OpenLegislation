@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.slack;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -38,6 +39,18 @@ public class SlackMessage {
             this.username = username;
         }
         this.text = text;
+    }
+
+    public SlackMessage(SlackMessage other) {
+        this.channel = other.channel;
+        this.icon = other.icon;
+        this.text = other.text;
+        this.username = other.username;
+        this.mentions = other.mentions != null ? new ArrayList<>(other.mentions) : null;
+        this.attach = other.attach != null ? other.attach.stream()
+                .map(SlackAttachment::new)
+                .collect(Collectors.toList())
+            : null;
     }
 
     public SlackMessage addAttachments(SlackAttachment attach) {

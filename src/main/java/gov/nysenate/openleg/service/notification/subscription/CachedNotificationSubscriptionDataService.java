@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
+import gov.nysenate.openleg.model.notification.NotificationDigestSubscription;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.service.base.data.CachingService;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -94,6 +96,36 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     public void removeSubscription(NotificationSubscription subscription) {
         subscriptionDao.removeSubscription(subscription);
         evictCaches();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<NotificationDigestSubscription> getPendingDigests() {
+        return subscriptionDao.getPendingDigests();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<NotificationDigestSubscription> getDigestSubsForUser(String username) {
+        return subscriptionDao.getDigestSubsForUser(username);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void insertDigestSubscription(NotificationDigestSubscription subscription) {
+        subscriptionDao.insertDigestSubscription(subscription);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateNextDigest(int digestSubscriptionId, LocalDateTime nextDigest) {
+        subscriptionDao.updateNextDigest(digestSubscriptionId, nextDigest);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void removeDigestSubscription(int digestSubscriptionId) {
+        subscriptionDao.removeDigestSubscription(digestSubscriptionId);
     }
 
     /** --- CachingService Implementations --- */
