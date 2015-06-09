@@ -4,7 +4,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.calendar.alert.SqlCalendarAlertDao;
 import gov.nysenate.openleg.dao.calendar.alert.SqlFsCalendarAlertFileDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class CalendarSpotCheckProcessService extends BaseSpotcheckProcessService<CalendarId> {
+public class CalendarSpotCheckProcessService extends BaseSpotcheckProcessService {
 
     private Logger logger = LoggerFactory.getLogger(CalendarSpotCheckProcessService.class);
 

@@ -3,7 +3,6 @@ package gov.nysenate.openleg.service.spotcheck.daybreak;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
@@ -14,7 +13,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DaybreakSpotcheckProcessService extends BaseSpotcheckProcessService<BaseBillId> {
+public class DaybreakSpotcheckProcessService extends BaseSpotcheckProcessService {
 
     private static final Logger logger = LoggerFactory.getLogger(DaybreakSpotcheckProcessService.class);
 

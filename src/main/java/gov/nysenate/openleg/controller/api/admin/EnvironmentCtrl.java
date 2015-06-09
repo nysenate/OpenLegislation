@@ -2,6 +2,7 @@ package gov.nysenate.openleg.controller.api.admin;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
@@ -35,8 +36,16 @@ public class EnvironmentCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(EnvironmentCtrl.class);
 
-    /** A set of variables that are allowed to be modified mapped to their respective setter functions */
+    /** A set of variables that are allowed to be modified, mapped to their respective setter functions */
     private ImmutableMap<String, Consumer<String>> mutableProperties;
+
+    /** A set of variables whose values are not allowed to be shown through this api */
+    private static final ImmutableSet<String> hiddenProperties = ImmutableSet.<String>builder()
+            .add("emailPass")
+            .add("apiSecret")
+            .add("defaultAdminPass")
+            .build();
+
 
     @Autowired Environment env;
 
@@ -132,7 +141,7 @@ public class EnvironmentCtrl extends BaseCtrl
 
     private EnvironmentVariableView getVariable(Field field) throws NoSuchMethodException {
         Method getter = getGetter(field);
-        return new EnvironmentVariableView(field.getName(), getVarValue(getter), getter.getReturnType(),
+        return new EnvironmentVariableView(field.getName(), getVarValue(field, getter), getter.getReturnType(),
                 mutableProperties.containsKey(field.getName()));
     }
 
@@ -140,7 +149,10 @@ public class EnvironmentCtrl extends BaseCtrl
         return val -> setter.accept(Boolean.parseBoolean(val));
     }
 
-    private Object getVarValue(Method getter) {
+    private Object getVarValue(Field field, Method getter) {
+        if (hiddenProperties.contains(field.getName())) {
+            return "* HIDDEN *";
+        }
         try {
             return getter.invoke(env);
         } catch (InvocationTargetException | IllegalAccessException ex) {

@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.agenda;
 
 import gov.nysenate.openleg.dao.agenda.reference.AgendaAlertDao;
-import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.agenda.reference.AgendaAlertProcessor;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
@@ -11,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AgendaSpotcheckProcessService extends BaseSpotcheckProcessService<CommitteeAgendaAddendumId>
-{
+public class AgendaSpotcheckProcessService extends BaseSpotcheckProcessService {
     private static final Logger logger = LoggerFactory.getLogger(AgendaSpotcheckProcessService.class);
 
     @Autowired

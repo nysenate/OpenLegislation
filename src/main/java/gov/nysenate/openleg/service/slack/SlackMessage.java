@@ -174,6 +174,9 @@ public class SlackMessage {
      * @return String - the message with mentions added
      */
     private String addMentions(String message, Collection<String> mentions) {
+        if (mentions == null) {
+            return message;
+        }
         String mentionString = mentions.stream()
                 .filter(StringUtils::isNotBlank)
                 .reduce("", (a, b) -> a + "<@" + b + "> ");

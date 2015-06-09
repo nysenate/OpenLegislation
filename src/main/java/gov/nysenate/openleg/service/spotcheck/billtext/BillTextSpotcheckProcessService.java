@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.billtext;
 
 import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
-import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
@@ -15,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +21,7 @@ import java.util.List;
  * Created by kyle on 4/21/15.
  */
 @Service
-public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService<BaseBillId> {
+public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService {
     // get queue , return first billID from queue
     @Autowired
     SqlFsBillTextReferenceDao dao;

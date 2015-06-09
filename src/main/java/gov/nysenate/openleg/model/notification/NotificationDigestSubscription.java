@@ -15,13 +15,13 @@ public class NotificationDigestSubscription extends NotificationSubscription {
     /** The digest subscription's unique id */
     private int id;
 
-    /** Hours in the digest perio*/
+    /** Hours/minutes/seconds in the digest period*/
     private Duration periodHours;
 
     /** Days in the digest period (accounts for DST) */
     private Period periodDays;
 
-    /** The date and time that the next digest will be send */
+    /** The date and time that the next digest will be sent */
     private LocalDateTime nextDigest;
 
     /** If set to true, the subscriber will receive an empty digest if no relevant notifications occurred during a period */

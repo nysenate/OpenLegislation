@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
 import com.google.common.eventbus.EventBus;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceEvent;
 import gov.nysenate.openleg.processor.base.ProcessService;
@@ -8,13 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class BaseSpotcheckProcessService<ContentId> implements ProcessService
+public abstract class BaseSpotcheckProcessService implements ProcessService
 {
     private static final Logger logger = LoggerFactory.getLogger(BaseSpotcheckProcessService.class);
 
     @Autowired SpotCheckNotificationService spotCheckNotificationService;
 
     @Autowired EventBus eventBus;
+
+    @Autowired Environment environment;
 
     /**
      * {@inheritDoc}
