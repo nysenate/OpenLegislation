@@ -977,7 +977,7 @@ a.slogan-link {
     background: #ededed;
   }
   .delta-column {
-    width: 3.7em;
+    width: 4.2em;
   }
 }
 
@@ -1048,8 +1048,13 @@ table.table-striped tbody tr:nth-child(odd) {
       margin-left: 1em;
     }
   }
-  span[st-pagination] nav,ul {
-    display: inline;
+  span[st-pagination] {
+    nav,ul {
+      display: inline;
+    }
+    a {
+      margin-left: 1em;
+    }
   }
 }
 

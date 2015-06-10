@@ -97,37 +97,12 @@ function ($scope, $routeParams, $location, $timeout, $filter) {
 
         $scope.setHeaderVisible(true);
         $scope.setHeaderText("View Spotcheck Reports");
-
-        if ($routeParams.hasOwnProperty('runTime') && $routeParams.hasOwnProperty('type')) {
-            $scope.openReportDetail($routeParams['type'], $routeParams['runTime']);
-        }
     };
 
-    // Loads a new report in the detail tab
-    $scope.openReportDetail = function(reportType, reportDateTime) {
-        $scope.selectedIndex = 1;
-        if ($scope.openReportDateTime != reportDateTime || $scope.openReportType != reportType) {
-            $scope.openReportType = reportType;
-            $scope.openReportDateTime = reportDateTime;
-            console.log("new report: ", $scope.openReportType, $scope.openReportDateTime);
-            $timeout(function () {$scope.$broadcast('newReportDetail')});
-            $scope.setReportSearchParams();
-        }
+    $scope.getReportURL = function (reportType, reportRunTime) {
+        return ctxPath + "/admin/report/spotcheck/" +
+            $filter('reportTypeLabel')(reportType) + "/" + $filter('moment')(reportRunTime, "YYYY-MM-DD[T]HH:mm:ss.SSS");
     };
-
-    $scope.setReportSearchParams = function() {
-        if ($scope.tabNames[$scope.selectedIndex] === 'report') {
-            $scope.clearSearchParams();
-            $scope.setSearchParam('type', $filter('reportTypeLabel')($scope.openReportType));
-            $scope.setSearchParam('runTime', $scope.openReportDateTime);
-        }
-    };
-
-    $scope.$watch('selectedIndex', function() {
-        $scope.$broadcast('tabChangeEvent', $scope.selectedIndex);
-        $scope.setReportSearchParams();
-    });
-
 }]);
 
 /** --- Report Summary Controller --- */
@@ -135,16 +110,23 @@ function ($scope, $routeParams, $location, $timeout, $filter) {
 daybreakModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routeParams', '$location', 'DaybreakSummaryAPI',
 function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
     $scope.reportSummaries = [];
+    $scope.filteredReportSummaries = [];
     $scope.dataProvider = [];
     $scope.response = null;
     $scope.loadingSummaries = false;
     $scope.summariesNotFound = false;
+    $scope.hideErrorlessReports = true;
 
     $scope.params = {
         summaryType: "all",
         inputStartDate: null,
         inputEndDate: null
     };
+
+    // Results per page variables
+    $scope.resultsPerPage = 20;
+    $scope.rppOptions = [10, 20, 30, 50, 100];
+    $scope.setRpp = function(number) {$scope.resultsPerPage = number;};
 
     $scope.init = function() {
         if ('type' in $routeParams) {
@@ -178,6 +160,7 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
                     $scope.setSummarySearchParams();
                     $scope.loadingSummaries = false;
                     $scope.summariesNotFound = false;
+                    $scope.filterSummaries();
                 }
             }, function (response) {
                 console.log(response);
@@ -245,14 +228,25 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
         return "postfix-icon icon-minus3 existing-error";
     };
 
+    $scope.noErrorFilter = function(row) {
+        return !$scope.hideErrorlessReports || row.openMismatches > 0;
+    };
+
+    $scope.filterSummaries = function() {
+        $scope.filteredReportSummaries = $scope.reportSummaries.filter($scope.noErrorFilter);
+    };
+
+    $scope.$watch('hideErrorlessReports', $scope.filterSummaries);
+
     $scope.init();
 
 }]);
 
 /** --- Report Detail Controller --- */
 
-daybreakModule.controller('DaybreakDetailCtrl', ['$scope', '$element', '$filter', '$location', '$timeout', '$mdDialog', 'DaybreakDetailAPI',
-function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDetailAPI) {
+daybreakModule.controller('DaybreakDetailCtrl', ['$scope', '$element', '$filter', '$location', '$timeout', '$mdDialog',
+    '$routeParams', 'DaybreakDetailAPI',
+function ($scope, $element, $filter, $location, $timeout, $mdDialog, $routeParams, DaybreakDetailAPI) {
     $scope.resultsPerPage = 10;
     $scope.rppOptions = [10, 20, 30, 50, 100];
     $scope.errorFilter = null;
@@ -268,9 +262,11 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, DaybreakDet
         $scope.dataDetails = {};
         $scope.tableData = [];
         $scope.filteredTableData = [];
-        $scope.reportType = $scope.openReportType;
-        $scope.reportDateTime = $scope.openReportDateTime;
-        $scope.getReportDetails();
+        if ($routeParams.hasOwnProperty('runTime') && $routeParams.hasOwnProperty('type')) {
+            $scope.reportType = $routeParams['type'];
+            $scope.reportDateTime = $routeParams['runTime'];
+            $scope.getReportDetails();
+        }
     };
 
     $scope.$on('newReportDetail', function () {
