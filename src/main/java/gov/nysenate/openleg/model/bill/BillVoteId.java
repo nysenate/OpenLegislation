@@ -53,7 +53,6 @@ public class BillVoteId implements Serializable, Comparable<BillVoteId>
             .compare(this.voteDate, o.voteDate)
             .compare(this.voteType, o.voteType)
             .compare(this.sequenceNo, o.sequenceNo)
-            .compare(this.committeeId, o.committeeId)
             .result();
     }
 
