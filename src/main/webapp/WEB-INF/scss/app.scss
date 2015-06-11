@@ -977,7 +977,7 @@ a.slogan-link {
     background: #ededed;
   }
   .delta-column {
-    width: 3.7em;
+    width: 4.2em;
   }
 }
 
@@ -1041,15 +1041,9 @@ table.table-striped tbody tr:nth-child(odd) {
   padding: 10px !important;
 }
 
-.report-detail-table {
-  .rpp-selector {
-    float: right;
-    a {
-      margin-left: 1em;
-    }
-  }
-  span[st-pagination] nav,ul {
-    display: inline;
+.st-pagination {
+  a {
+    margin-left: 1em;
   }
 }
 

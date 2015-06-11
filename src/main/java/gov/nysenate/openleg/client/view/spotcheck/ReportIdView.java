@@ -10,9 +10,11 @@ public class ReportIdView implements ViewObject{
     protected String reportDateTime;
 
     public ReportIdView(SpotCheckReportId reportId) {
-        this.referenceType = reportId.getReferenceType().name();
-        this.referenceDateTime = reportId.getReferenceDateTime().toString();
-        this.reportDateTime = reportId.getReportDateTime().toString();
+        if (reportId != null) {
+            this.referenceType = reportId.getReferenceType() != null ? reportId.getReferenceType().name() : null;
+            this.referenceDateTime = reportId.getReferenceDateTime() != null ? reportId.getReferenceDateTime().toString() : null;
+            this.reportDateTime = reportId.getReportDateTime() != null ? reportId.getReportDateTime().toString() : null;
+        }
     }
 
     @Override

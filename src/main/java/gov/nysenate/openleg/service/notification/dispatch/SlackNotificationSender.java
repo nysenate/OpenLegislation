@@ -74,7 +74,7 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
         } else if (NotificationType.WARNING.covers(notification.getType())) {
             return ":pouting_cat:";
         } else if (NotificationType.SPOTCHECK_MISMATCH.covers(notification.getType())) {
-            return ":bill:";
+            return ":see_no_evil:";
         }
         return ":smile_cat:";
     }

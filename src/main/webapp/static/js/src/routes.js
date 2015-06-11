@@ -36,12 +36,15 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         /** --- Reports --- */
 
-        .when(ctxPath + '/admin/report/spotcheck', { templateUrl: ctxPath + '/partial/report/spotcheck', reloadOnSearch: false })
+        .when(ctxPath + '/admin/report/spotcheck', { templateUrl: ctxPath + '/partial/report/spotcheck-summary', reloadOnSearch: false })
+        .when(ctxPath + '/admin/report/spotcheck/:type/:runTime',
+                { templateUrl: ctxPath + '/partial/report/spotcheck-report', reloadOnSearch: false })
 
         /** --- Admin --- */
 
         .when(ctxPath + '/admin', { templateUrl: ctxPath + '/partial/admin/dashboard', reloadOnSearch: false })
         .when(ctxPath + '/admin/account', { templateUrl: ctxPath + '/partial/admin/account', reloadOnSearch: false })
+        .when(ctxPath + '/admin/logout', {templateUrl: ctxPath + '/partial/admin/logout'})
 
         /** --- Docs --- */
 
