@@ -1041,20 +1041,9 @@ table.table-striped tbody tr:nth-child(odd) {
   padding: 10px !important;
 }
 
-.report-detail-table {
-  .rpp-selector {
-    float: right;
-    a {
-      margin-left: 1em;
-    }
-  }
-  span[st-pagination] {
-    nav,ul {
-      display: inline;
-    }
-    a {
-      margin-left: 1em;
-    }
+.st-pagination {
+  a {
+    margin-left: 1em;
   }
 }
 

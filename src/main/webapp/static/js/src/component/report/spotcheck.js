@@ -116,17 +116,13 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
     $scope.loadingSummaries = false;
     $scope.summariesNotFound = false;
     $scope.hideErrorlessReports = true;
+    $scope.resultsPerPage = 20;
 
     $scope.params = {
         summaryType: "all",
         inputStartDate: null,
         inputEndDate: null
     };
-
-    // Results per page variables
-    $scope.resultsPerPage = 20;
-    $scope.rppOptions = [10, 20, 30, 50, 100];
-    $scope.setRpp = function(number) {$scope.resultsPerPage = number;};
 
     $scope.init = function() {
         if ('type' in $routeParams) {
@@ -248,7 +244,6 @@ daybreakModule.controller('DaybreakDetailCtrl', ['$scope', '$element', '$filter'
     '$routeParams', 'DaybreakDetailAPI',
 function ($scope, $element, $filter, $location, $timeout, $mdDialog, $routeParams, DaybreakDetailAPI) {
     $scope.resultsPerPage = 10;
-    $scope.rppOptions = [10, 20, 30, 50, 100];
     $scope.errorFilter = null;
     $scope.displayData = [];
     $scope.filterWatchersInitialized = false;
@@ -419,8 +414,6 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, $routeParam
             }
         });
     };
-
-    $scope.setRpp = function(number) {$scope.resultsPerPage = number;};
 
     /** --- Filter functions --- */
 

@@ -69,23 +69,25 @@
         <table st-table="displayData" st-safe-src="filteredTableData" class="table table-striped report-detail-table">
           <thead>
           <tr ng-if="filteredTableData.length > resultsPerPage">
-            <td colspan="6">
-              Page
-              <span st-pagination="" st-items-by-page="resultsPerPage"
-                    st-displayed-pages="5" st-template="st-pagination-template"></span>
-              <span class="rpp-selector">
-                Displayed:
-                <a href="#" ng-repeat="number in rppOptions" ng-bind="number" ng-click="setRpp(number)"
-                   aria-label="Display {{number}} mismatches per page"
-                   ng-class='{"inactive-link": resultsPerPage === number}'></a>
-              </span>
+            <td colspan="6" style="border-bottom:1px solid #ccc">
+              <div layout="row" layout-align="space-between center">
+                <label>
+                  Page:
+                    <span st-pagination="" st-items-by-page="resultsPerPage" st-displayed-pages="5"
+                          st-template="st-pagination-template"></span>
+                </label>
+                <label>
+                  Displayed:
+                  <input type="number" ng-model="resultsPerPage" placeholder="20">
+                </label>
+              </div>
             </td>
           </tr>
           <tr>
             <th st-sort="printNo">{{reportType | reportType | contentType}} Id</th>
             <th st-sort="type">Mismatch Type</th>
             <th st-sort="status">Status</th>
-            <th st-sort="firstOpened">Opened At</th>
+            <th st-sort="firstOpened" style="min-width: 8em">Opened At</th>
             <th>Snippet</th>
             <th>Details</th>
           </tr>

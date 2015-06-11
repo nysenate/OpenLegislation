@@ -37,19 +37,21 @@
       </div>
       <div ng-show="!loadingSummaries && !summariesNotFound && reportSummaries.length > 0">
         <table id='daybreak-summary-table' st-table="displaySummaries" st-safe-src="filteredReportSummaries"
-                class="table table-striped report-detail-table">
+                class="table table-striped">
           <thead>
             <tr ng-if="filteredReportSummaries.length > resultsPerPage">
               <td colspan="8" style="border-bottom:1px solid #ccc">
-                Page:
-                <span st-pagination="" st-items-by-page="resultsPerPage" st-displayed-pages="5"
-                    st-template="st-pagination-template"></span>
-                <span class="rpp-selector">
-                  Displayed:
-                  <a href="#" ng-repeat="number in rppOptions" ng-bind="number" ng-click="setRpp(number)"
-                     aria-label="Display {{number}} mismatches per page"
-                     ng-class='{"inactive-link": resultsPerPage === number}'></a>
-                </span>
+                <div layout="row" layout-align="space-between center">
+                  <label>
+                    Page:
+                    <span st-pagination="" st-items-by-page="resultsPerPage" st-displayed-pages="5"
+                        st-template="st-pagination-template"></span>
+                  </label>
+                  <label>
+                    Displayed:
+                    <input type="number" ng-model="resultsPerPage" placeholder="20">
+                  </label>
+                </div>
               </td>
             </tr>
             <tr>
