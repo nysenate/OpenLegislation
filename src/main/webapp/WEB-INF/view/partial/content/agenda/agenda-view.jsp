@@ -83,7 +83,7 @@
                              ng-repeat="bill in addn.bills.items"
                              ng-href="${ctxPath}/bills/{{bill.billId.session}}/{{bill.billId.basePrintNo}}">
                             <md-list-item class="md-3-line" style="cursor: pointer;">
-                              <div class="md-list-item-text" ng-init="billVote = votes[bill.billId.basePrintNo]">
+                              <div class="md-list-item-text" ng-init="billVote = votes[bill.billId.basePrintNo][comm.committeeId.name]">
                                 <h3>
                                   <span class="blue3 no-margin bold">{{bill.billId.printNo}} - {{bill.billId.session}}</span>
                                   <span class="margin-left-20">{{bill.billInfo.sponsor.member.fullName}}</span>

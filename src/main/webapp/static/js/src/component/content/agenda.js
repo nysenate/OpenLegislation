@@ -536,7 +536,10 @@ agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams'
                 angular.forEach(commAgenda.addenda.items, function(commAddendum) {
                     if (commAddendum.hasVotes === true) {
                         angular.forEach(commAddendum.voteInfo.votesList.items, function(billVote) {
-                            $scope.votes[billVote.bill.basePrintNo] = billVote;
+                            if (!$scope.votes[billVote.bill.basePrintNo]) {
+                                $scope.votes[billVote.bill.basePrintNo] = {};
+                            }
+                            $scope.votes[billVote.bill.basePrintNo][commAgenda.committeeId.name] = billVote;
                         });
                     }
                 })

@@ -192,12 +192,14 @@ public enum SqlBillQuery implements BasicSqlQuery
         "SELECT id, :voteCode::${schema}.vote_code, :sessionMemberId, :memberShortName, :sessionYear, :lastFragmentId " +
         "FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
-        "AND vote_date = :voteDate AND vote_type = :voteType::${schema}.vote_type AND sequence_no = :sequenceNo"
+        "AND vote_date = :voteDate AND vote_type = :voteType::${schema}.vote_type AND sequence_no = :sequenceNo\n" +
+        "AND committee_name = :committeeName"
     ),
     DELETE_BILL_VOTES_INFO(
         "DELETE FROM ${schema}." + SqlTable.BILL_AMENDMENT_VOTE_INFO + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
-        "AND vote_date = :voteDate AND vote_type = :voteType::${schema}.vote_type AND sequence_no = :sequenceNo"
+        "AND vote_date = :voteDate AND vote_type = :voteType::${schema}.vote_type AND sequence_no = :sequenceNo \n" +
+        "AND committee_name = :committeeName"
     ),
 
     /** --- Bill Actions --- */

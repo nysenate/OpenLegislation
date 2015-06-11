@@ -69,6 +69,11 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
         this.sequenceNo = sequenceNo;
     }
 
+    public BillVote(BillId billId, LocalDate voteDate, BillVoteType type, int sequenceNo, CommitteeId committeeId) {
+        this(billId, voteDate, type, sequenceNo);
+        this.committeeId = committeeId;
+    }
+
     /** --- Functional Getters/Setters --- */
 
     /**

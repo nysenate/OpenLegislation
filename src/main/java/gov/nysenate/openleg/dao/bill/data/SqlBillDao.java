@@ -606,8 +606,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         List<BillVote> existingBillVotes = getBillVotes(amendParams);
         List<BillVote> newBillVotes = new ArrayList<>(billAmendment.getVotesList());
         newBillVotes.removeAll(existingBillVotes);                 // New votes to insert/update
-        existingBillVotes.removeAll(billAmendment.getVotesList()); // Old votes to remove
-        // Delete all votes that have been updated
+        existingBillVotes.removeAll(billAmendment.getVotesList()); // Existing votes to remove
+        // Delete all outdated votes
         for (BillVote billVote : existingBillVotes) {
             MapSqlParameterSource voteInfoParams = getBillVoteInfoParams(billAmendment, billVote, sobiFragment);
             jdbcNamed.update(SqlBillQuery.DELETE_BILL_VOTES_INFO.getSql(schema()), voteInfoParams);
