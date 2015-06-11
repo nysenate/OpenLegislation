@@ -56,6 +56,7 @@ public class EnvironmentCtrl extends BaseCtrl
                 .put("processingScheduled", setBoolean(env::setProcessingScheduled))
                 .put("spotcheckScheduled", setBoolean(env::setSpotcheckScheduled))
                 .put("notificationsEnabled", setBoolean(env::setNotificationsEnabled))
+                .put("billScrapeQueueEnabled", setBoolean(env::setBillScrapeQueueEnabled))
                 .build();
     }
 

@@ -81,6 +81,9 @@ public class Environment
     @Value("${spotcheck.alert.grace.period}") private int rawAlertGracePeriod;
     private Duration spotcheckAlertGracePeriod;
 
+    /** Allows bills to be automatically added to the scrape queue if true */
+    @Value("${bill.scrape.queue.enabled}") private boolean billScrapeQueueEnabled;
+
     /** --- Email Settings --- */
 
     /** Imaps host, username, and password for the application's email account*/
@@ -322,5 +325,13 @@ public class Environment
 
     public void setDefaultAdminPass(String defaultAdminPass) {
         this.defaultAdminPass = defaultAdminPass;
+    }
+
+    public boolean isBillScrapeQueueEnabled() {
+        return billScrapeQueueEnabled;
+    }
+
+    public void setBillScrapeQueueEnabled(boolean billScrapeQueueEnabled) {
+        this.billScrapeQueueEnabled = billScrapeQueueEnabled;
     }
 }

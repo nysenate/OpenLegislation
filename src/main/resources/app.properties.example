@@ -176,6 +176,10 @@ scheduler.spotcheck.weekly.cron = 0 0 0 * * SAT
 #   is younger than this grace period will be aborted
 spotcheck.alert.grace.period = 30
 
+# Allows bills to be automatically added to the bill scrape queue in response to
+# text updates and spotcheck mismatches (Default: true)
+bill.scrape.queue.enabled = true
+
 # --- Mail Configuration ------------------------------------------------------
 
 # Connection information for the mail account that receives daybreak emails

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.billtext;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.bill.text.BillTextReferenceDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillUpdateField;
@@ -27,6 +28,9 @@ public class BillTextScrapeQueueService {
     @Autowired
     EventBus eventBus;
 
+    @Autowired
+    Environment env;
+
     @PostConstruct
     public void init() {
         eventBus.register(this);
@@ -38,7 +42,8 @@ public class BillTextScrapeQueueService {
      */
     @Subscribe
     public void handleBillFullTextUpdate(BillFieldUpdateEvent updateEvent) {
-        if (BillUpdateField.FULLTEXT.equals(updateEvent.getUpdateField())) {
+        if (BillUpdateField.FULLTEXT.equals(updateEvent.getUpdateField()) &&
+                env.isBillScrapeQueueEnabled()) {
             logger.info("adding {} to bill scrape queue after full text update", updateEvent.getBillId());
             btrDao.addBillToScrapeQueue(updateEvent.getBillId(), ScrapeQueuePriority.UPDATE_TRIGGERED.getPriority());
         }
@@ -50,7 +55,8 @@ public class BillTextScrapeQueueService {
      */
     @Subscribe
     public void handlePageCountSpotcheckMismatch(SpotcheckMismatchEvent<BaseBillId> mismatchEvent) {
-        if (SpotCheckMismatchType.BILL_FULLTEXT_PAGE_COUNT.equals(mismatchEvent.getMismatch().getMismatchType())) {
+        if (SpotCheckMismatchType.BILL_FULLTEXT_PAGE_COUNT.equals(mismatchEvent.getMismatch().getMismatchType()) &&
+                env.isBillScrapeQueueEnabled()) {
             logger.info("adding {} to bill scrape queue after spotcheck", mismatchEvent.getContentId());
             btrDao.addBillToScrapeQueue(mismatchEvent.getContentId(),
                     ScrapeQueuePriority.SPOTCHECK_TRIGGERED.getPriority());
