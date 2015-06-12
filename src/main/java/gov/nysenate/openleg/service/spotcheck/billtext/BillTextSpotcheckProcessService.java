@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.spotcheck.billtext;
 import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
+import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.ScrapedBillMemoParser;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
@@ -50,7 +51,12 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
         Collection<File> incomingScrapedBills = dao.getIncomingScrapedBills();
         List<BillTextReference> billTextReferences = new ArrayList<>();
         for (File file : incomingScrapedBills) {
-            billTextReferences.add(scrapedBillTextParser.parseReference(file));
+            try {
+                billTextReferences.add(scrapedBillTextParser.parseReference(file));
+            } catch (ParseError ex) {  // Archive and rethrow to ensure the error doesn't come up again next process
+                dao.archiveScrapedBill(file);
+                throw ex;
+            }
         }
         billTextReferences.forEach(dao::insertBillTextReference);
         // This second file loop is intentional so that no files are archived in the event of an exception
