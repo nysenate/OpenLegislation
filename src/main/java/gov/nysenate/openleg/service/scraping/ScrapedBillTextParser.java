@@ -31,7 +31,7 @@ public class ScrapedBillTextParser {
 
     private static final Pattern billIdPattern = Pattern.compile("^([A-z]\\d+)(?:-([A-z]))?$");
 
-    private static final Pattern resolutionStartPattern = Pattern.compile("^\n[ ]+([A-Z]{2,})");
+    private static final Pattern resolutionStartPattern = Pattern.compile("^\\s+([A-Z]{2,})");
 
     /**
      * Parses a scraped bill file into a bill text reference containing an active amendment, full text, and a sponsor memo
@@ -118,12 +118,12 @@ public class ScrapedBillTextParser {
         billText = billText.replaceAll("§", "S");
         if (billId.getBillType().isResolution()) {
             billText = billText.replaceFirst("^\n\n[\\w \\.-]+\n\n[\\w \\.-:]+\n", "");
+            billText = billText.replaceFirst("^\\s+PROVIDING", String.format("\n%s RESOLUTION providing", billId.getChamber()));
             Matcher resoStartMatcher = resolutionStartPattern.matcher(billText);
-            if (resoStartMatcher.matches()) {
+            if (resoStartMatcher.find()) {
                 billText = billText.replaceFirst(resolutionStartPattern.pattern(),
                         "\nLEGISLATIVE RESOLUTION " + resoStartMatcher.group(1).toLowerCase());
             }
-            billText = billText.replaceFirst("^\n[ ]+PROVIDING", String.format("\n%s RESOLUTION providing", billId.getChamber()));
         } else {
             billText = billText.replaceFirst("^\n\n[ ]{12}STATE OF NEW YORK(?=\n)",
                     "\n                           S T A T E   O F   N E W   Y O R K");

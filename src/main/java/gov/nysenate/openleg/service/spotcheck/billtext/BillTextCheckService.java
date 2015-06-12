@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
+
 /**
  * Created by kyle on 2/19/15.
  */
@@ -59,7 +61,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
 
         //Add mismatches to observation
         if (reference.isNotFound()) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING,
+            observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING,
                     reference.getBaseBillId() + "\n" + reference.getText(),
                     OutputUtils.toJson(new BillInfoView(bill.getBillInfo()))));
         } else {
@@ -78,7 +80,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
 
     private void checkAmendment(Bill bill, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv) {
         if (bill.getActiveVersion() == null || !bill.getActiveVersion().equals(reference.getActiveVersion())) {
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT,
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT,
                     reference.getActiveVersion(), bill.getActiveAmendment()));
         }
     }
@@ -96,14 +98,17 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         String superNormalizedRefText = superNormalizeText(refText);
         // Check normalized text and report on non-normalized text as well if there is a mismatch
         if (!StringUtils.equalsIgnoreCase(superNormalizedRefText, superNormalizedDataText)) {
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT, refText, dataText));
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT_NORMALIZED,
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT, refText, dataText));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT_NORMALIZED,
                     normalizedRefText, normalizedDataText));
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT_SUPER_NORMALIZED,
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT_SUPER_NORMALIZED,
                     superNormalizedRefText, superNormalizedDataText));
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT_ULTRA_NORMALIZED,
-                    ultraNormalizeText(refText, billAmendment.getBillId()),
-                    ultraNormalizeText(dataText, reference.getBillId())));
+            String ultraNormRefText = ultraNormalizeText(refText, reference.getBillId());
+            String ultraNormDataText = ultraNormalizeText(dataText, billAmendment.getBillId());
+            if (!StringUtils.equalsIgnoreCase(ultraNormRefText, ultraNormDataText)) {
+                obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT_ULTRA_NORMALIZED,
+                        ultraNormRefText, ultraNormDataText));
+            }
         }
     }
 
@@ -111,7 +116,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         String dataMemo = billAmendment.getMemo();
         String refMemo = reference.getMemo();
         if (!StringUtils.equalsIgnoreCase(dataMemo, refMemo)) {
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_MEMO, refMemo, dataMemo));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_MEMO, refMemo, dataMemo));
         }
     }
 
