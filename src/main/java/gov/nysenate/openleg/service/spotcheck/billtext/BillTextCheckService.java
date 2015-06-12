@@ -70,9 +70,12 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
                 BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
                 checkBillText(amendment, reference, observation);
                 // Only check senate, non-resolution bills for sponsor memos
-                if (Chamber.SENATE.equals(baseBillId.getChamber()) && !baseBillId.getBillType().isResolution()) {
-                    checkMemoText(amendment, reference, observation);
-                }
+                // Todo find a better way of checking memo text
+                //  currently, memos are sent in batches and are not guaranteed to be present in sobi data if on lrs
+                //  also, memos are formatted a bit differently
+//                if (Chamber.SENATE.equals(baseBillId.getChamber()) && !baseBillId.getBillType().isResolution()) {
+//                    checkMemoText(amendment, reference, observation);
+//                }
             }
         }
         return observation;
