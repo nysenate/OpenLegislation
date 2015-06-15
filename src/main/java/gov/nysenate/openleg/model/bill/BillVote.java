@@ -140,6 +140,17 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
         return Objects.hash(billId, voteType, voteDate, memberVotes, sequenceNo);
     }
 
+    @Override
+    public String toString() {
+        return "BillVote{" +
+                "sequenceNo=" + sequenceNo +
+                ", billId=" + billId +
+                ", voteType=" + voteType +
+                ", voteDate=" + voteDate +
+                ", committeeId=" + committeeId +
+                '}';
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public static long getSerialVersionUID() {

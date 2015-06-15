@@ -53,7 +53,21 @@ public class BillVoteId implements Serializable, Comparable<BillVoteId>
             .compare(this.voteDate, o.voteDate)
             .compare(this.voteType, o.voteType)
             .compare(this.sequenceNo, o.sequenceNo)
+            // Properly handle case when committee is not present, which would be the case of a floor vote.
+            // The floor vote should come after a same-day committee vote.
+            .compare(this.committeeId != null ? this.committeeId.toString() : "Z", o.committeeId != null ? o.committeeId.toString() : "Z")
             .result();
+    }
+
+    @Override
+    public String toString() {
+        return "BillVoteId{" +
+                "billId=" + billId +
+                ", voteDate=" + voteDate +
+                ", voteType=" + voteType +
+                ", sequenceNo=" + sequenceNo +
+                ", committeeId=" + committeeId +
+                '}';
     }
 
     public BillId getBillId() {

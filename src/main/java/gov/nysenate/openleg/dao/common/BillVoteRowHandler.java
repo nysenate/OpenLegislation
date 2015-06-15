@@ -44,6 +44,7 @@ public class BillVoteRowHandler extends SqlBaseDao implements RowCallbackHandler
     public void processRow(ResultSet rs) throws SQLException {
         BillVoteId billVoteId = voteIdRowMapper.mapRow(rs, 1);
         if (!billVoteMap.containsKey(billVoteId)) {
+            logger.trace("Encountered bill vote id {}", billVoteId);
             BillVote billVote = new BillVote(billVoteId);
             SqlBaseDao.setModPubDatesFromResultSet(billVote, rs);
             billVoteMap.put(billVote.getVoteId(), billVote);
