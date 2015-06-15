@@ -71,7 +71,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
                 checkBillText(amendment, reference, observation);
                 // Only check senate, non-resolution bills for sponsor memos
                 // Todo find a better way of checking memo text
-                //  currently, memos are sent in batches and are not guaranteed to be present in sobi data if on lrs
+                //  currently, memos are sent daily in batches and are not guaranteed to be present in sobi data if on lrs
                 //  also, memos are formatted a bit differently
 //                if (Chamber.SENATE.equals(baseBillId.getChamber()) && !baseBillId.getBillType().isResolution()) {
 //                    checkMemoText(amendment, reference, observation);
@@ -143,8 +143,8 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Removes all whitespace, line numbers, and page numbers
      */
     private String ultraNormalizeText(String text, BillId billId) {
-        String pageMarkerRegex = String.format("(?<=\n)%s. %d%s \\d(?=\n)", billId.getBillType(), billId.getNumber(),
-                BillId.isBaseVersion(billId.getVersion()) ? "" : "--" + billId.getVersion());
+        String pageMarkerRegex = String.format("(?<=\n)%s. %d%s \\d+(?=\n)", billId.getBillType(), billId.getNumber(),
+                (BillId.isBaseVersion(billId.getVersion()) ? "" : "--") + billId.getVersion());
         return superNormalizeText(
                 normalizeText(text)
                         .replaceAll("(?<=\n)\\d{1,2} ", "")
