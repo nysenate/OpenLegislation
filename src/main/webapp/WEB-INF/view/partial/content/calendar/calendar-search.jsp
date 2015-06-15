@@ -37,7 +37,7 @@
                       <option value="">All Years</option>
                     </select>
                     <div layout="row" style="height: 85px">
-                      <select ng-model="searchFields.fieldName"
+                      <select ng-model="searchFields.fieldName" class="margin-right-10"
                               style="margin-bottom: 30px; margin-top: 20px"
                               ng-options="value as label for (value, label) in fieldOptions">
                       </select>

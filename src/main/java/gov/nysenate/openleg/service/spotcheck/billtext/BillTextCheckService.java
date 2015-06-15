@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
+
 /**
  * Created by kyle on 2/19/15.
  */
@@ -59,7 +61,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
 
         //Add mismatches to observation
         if (reference.isNotFound()) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING,
+            observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING,
                     reference.getBaseBillId() + "\n" + reference.getText(),
                     OutputUtils.toJson(new BillInfoView(bill.getBillInfo()))));
         } else {
@@ -68,9 +70,12 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
                 BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
                 checkBillText(amendment, reference, observation);
                 // Only check senate, non-resolution bills for sponsor memos
-                if (Chamber.SENATE.equals(baseBillId.getChamber()) && !baseBillId.getBillType().isResolution()) {
-                    checkMemoText(amendment, reference, observation);
-                }
+                // Todo find a better way of checking memo text
+                //  currently, memos are sent daily in batches and are not guaranteed to be present in sobi data if on lrs
+                //  also, memos are formatted a bit differently
+//                if (Chamber.SENATE.equals(baseBillId.getChamber()) && !baseBillId.getBillType().isResolution()) {
+//                    checkMemoText(amendment, reference, observation);
+//                }
             }
         }
         return observation;
@@ -78,7 +83,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
 
     private void checkAmendment(Bill bill, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv) {
         if (bill.getActiveVersion() == null || !bill.getActiveVersion().equals(reference.getActiveVersion())) {
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT,
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT,
                     reference.getActiveVersion(), bill.getActiveAmendment()));
         }
     }
@@ -96,14 +101,17 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         String superNormalizedRefText = superNormalizeText(refText);
         // Check normalized text and report on non-normalized text as well if there is a mismatch
         if (!StringUtils.equalsIgnoreCase(superNormalizedRefText, superNormalizedDataText)) {
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT, refText, dataText));
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT_NORMALIZED,
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT, refText, dataText));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT_NORMALIZED,
                     normalizedRefText, normalizedDataText));
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT_SUPER_NORMALIZED,
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT_SUPER_NORMALIZED,
                     superNormalizedRefText, superNormalizedDataText));
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_FULL_TEXT_ULTRA_NORMALIZED,
-                    ultraNormalizeText(refText, billAmendment.getBillId()),
-                    ultraNormalizeText(dataText, reference.getBillId())));
+            String ultraNormRefText = ultraNormalizeText(refText, reference.getBillId());
+            String ultraNormDataText = ultraNormalizeText(dataText, billAmendment.getBillId());
+            if (!StringUtils.equalsIgnoreCase(ultraNormRefText, ultraNormDataText)) {
+                obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT_ULTRA_NORMALIZED,
+                        ultraNormRefText, ultraNormDataText));
+            }
         }
     }
 
@@ -111,7 +119,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         String dataMemo = billAmendment.getMemo();
         String refMemo = reference.getMemo();
         if (!StringUtils.equalsIgnoreCase(dataMemo, refMemo)) {
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_MEMO, refMemo, dataMemo));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_MEMO, refMemo, dataMemo));
         }
     }
 
@@ -135,8 +143,8 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Removes all whitespace, line numbers, and page numbers
      */
     private String ultraNormalizeText(String text, BillId billId) {
-        String pageMarkerRegex = String.format("(?<=\n)%s. %d%s \\d(?=\n)", billId.getBillType(), billId.getNumber(),
-                BillId.isBaseVersion(billId.getVersion()) ? "" : "--" + billId.getVersion());
+        String pageMarkerRegex = String.format("(?<=\n)%s. %d%s \\d+(?=\n)", billId.getBillType(), billId.getNumber(),
+                (BillId.isBaseVersion(billId.getVersion()) ? "" : "--") + billId.getVersion());
         return superNormalizeText(
                 normalizeText(text)
                         .replaceAll("(?<=\n)\\d{1,2} ", "")

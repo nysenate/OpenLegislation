@@ -6,7 +6,9 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
+import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.daybreak.DaybreakBill;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -103,7 +106,7 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
                     if (openlegBillIds.contains(id)) {
                         // openleg has the bill but daybreak does not, add reference missing mismatch if bill is published.
                         Bill bill = billDataService.getBill(id);
-                        if (bill.getPublishStatus(bill.getActiveVersion()).get().isPublished()) {
+                        if (billIsPublished(bill)) {
                             logger.info("Missing Daybreak bill {}", id);
                             mismatch = new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", id.toString());
                             recordMismatch(report, sourceMissingObs, mismatch);
@@ -126,6 +129,12 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
             });
         // Done with this report!
         return report;
+    }
+
+    private boolean billIsPublished(Bill bill) {
+        Version activeVersion = bill.getActiveVersion();
+        Optional<PublishStatus> pubStatus = bill.getPublishStatus(activeVersion);
+        return pubStatus.isPresent() && pubStatus.get().isPublished();
     }
 
     private void recordMismatch(SpotCheckReport<BaseBillId> report, SpotCheckObservation<BaseBillId> sourceMissingObs, SpotCheckMismatch mismatch) {

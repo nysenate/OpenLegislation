@@ -12,7 +12,7 @@
           <a class="cal-entry-cal-no bold blue4 text-medium margin-left-20"
              ng-href="{{getCalBillNumUrl(year, calEntry.billCalNo)}}">
             Bill Calendar No. {{calEntry.billCalNo}}
-            <md-tooltip>Search for calendars <br>that contain this bill</md-tooltip>
+            <md-tooltip>Search for calendars that contain this bill</md-tooltip>
           </a>
         </h3>
         <p class="margin-bottom-10 text-medium" ng-bind="calEntry.title"></p>
