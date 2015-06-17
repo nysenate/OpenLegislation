@@ -117,7 +117,7 @@ public class ScrapedBillTextParser {
         billText = billText.replaceAll("[\r\\uFEFF-\\uFFFF]|(?<=\n) ", "");
         billText = billText.replaceAll("§", "S");
         if (billId.getBillType().isResolution()) {
-            billText = billText.replaceFirst("^\n\n[\\w \\.-]+\n\n[\\w '\\.-:]+\n", "");
+            billText = billText.replaceFirst("^\n\n[\\w \\.-]+\n\n[\\w '\\.\\-:]+\n", "");
             billText = billText.replaceFirst("^\\s+PROVIDING", String.format("\n%s RESOLUTION providing", billId.getChamber()));
             Matcher resoStartMatcher = resolutionStartPattern.matcher(billText);
             if (resoStartMatcher.find()) {
@@ -134,7 +134,6 @@ public class ScrapedBillTextParser {
             billText = billText.replaceFirst("(?<=\\n)[ ]{12}SENATE - ASSEMBLY(?=\\n)",
                     "                             S E N A T E - A S S E M B L Y");
         }
-        billText = "\n" + billText;
         return billText;
     }
 
