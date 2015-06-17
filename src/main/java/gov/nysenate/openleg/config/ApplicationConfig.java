@@ -14,6 +14,7 @@ import gov.nysenate.openleg.util.AsciiArt;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -33,6 +34,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 @Configuration
@@ -43,7 +46,7 @@ public class ApplicationConfig implements CachingConfigurer
 
     @PostConstruct
     public void init() {
-        logger.info("{}", AsciiArt.OPENLEG_2_LOGO.getText());
+        logger.info("{}", AsciiArt.OPENLEG_2_LOGO.getText().replace("DATE", LocalDateTime.now().toString()));
     }
 
     /** --- Eh Cache Spring Configuration --- */

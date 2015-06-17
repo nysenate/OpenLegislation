@@ -12,7 +12,7 @@ public enum AsciiArt
         "`88b    d88'  888   888 888    .o  888   888      .oP     .o .o. `88b  d88' \n" +
         " `Y8bood8P'   888bod8P' `Y8bod8P' o888o o888o     8888888888 Y8P  `Y8bd8P'  \n" +
         "              888                                                           \n" +
-        "             o888o                                                          \n" +
+        "             o888o   Deployed on DATE                                       \n" +
         "=============================================================================\n"),
 
     START_ELASTIC_SEARCH("\n" +
