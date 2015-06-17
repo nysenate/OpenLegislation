@@ -9,13 +9,13 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
-SET search_path = master, pg_catalog;
+SET search_path = master, public, pg_catalog;
 
 --
 -- Data for Name: committee; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY committee (name, id, current_version, chamber, current_session, full_name) FROM stdin;
+COPY master.committee (name, id, current_version, chamber, current_session, full_name) FROM stdin;
 Aging	24	2015-01-22 16:58:51	senate	2015	\N
 Agriculture	14	2015-01-22 16:58:51	senate	2015	\N
 Alcoholism and Drug Abuse	12	2015-01-22 16:58:51	senate	2015	\N
@@ -65,7 +65,7 @@ SELECT pg_catalog.setval('committee_id_seq', 699, true);
 -- Data for Name: committee_version; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, meettime, session_year, created, reformed, committee_name, chamber, last_fragment_id) FROM stdin;
+COPY master.committee_version (id, location, meetday, meetaltweek, meetaltweektext, meettime, session_year, created, reformed, committee_name, chamber, last_fragment_id) FROM stdin;
 2	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Investigations and Government Operations	senate	\N
 3	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Corporations, Authorities and Commissions	senate	\N
 4	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Ethics	senate	\N
@@ -229,7 +229,7 @@ COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, mee
 185	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-17 18:43:42	infinity	Commerce, Economic Development and Small Business	senate	SOBI.D140317.T184342.TXT-1-COMMITTEE
 \.
 
-COPY bill_sponsor_additional (bill_print_no, bill_session_year, session_member_id, sequence_no, created_date_time, last_fragment_id) FROM stdin;
+COPY master.bill_sponsor_additional (bill_print_no, bill_session_year, session_member_id, sequence_no, created_date_time, last_fragment_id) FROM stdin;
 R314	2013	145	1	2015-03-03 16:30:28.199822	\N
 J375	2013	184	1	2015-03-03 16:30:28.210309	\N
 J375	2013	145	2	2015-03-03 16:30:28.21162	\N

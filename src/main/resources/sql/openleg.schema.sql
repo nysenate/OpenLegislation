@@ -25,48 +25,6 @@ ALTER SCHEMA master OWNER TO postgres;
 COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
--- Name: citext; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
-
-
---
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
-
-
---
--- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
-
-
---
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
-
-
 SET search_path = master, pg_catalog;
 
 --
@@ -2123,7 +2081,8 @@ CREATE TABLE bill_sponsor_additional (
     bill_session_year smallint NOT NULL,
     session_member_id integer NOT NULL,
     sequence_no smallint,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL,
+    last_fragment_id	text
 );
 
 
@@ -4999,7 +4958,7 @@ ALTER TABLE ONLY bill_amendment_same_as
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
-    ADD CONSTRAINT bill_amendment_vote_info_bill_print_no_bill_session_year_bi_key UNIQUE (bill_print_no, bill_session_year, bill_amend_version, vote_date, vote_type, sequence_no);
+    ADD CONSTRAINT bill_amendment_vote_info_bill_print_no_bill_session_year_bi_key UNIQUE (bill_print_no, bill_session_year, bill_amend_version, vote_date, vote_type, sequence_no, committee_name);
 
 
 --
@@ -6364,23 +6323,6 @@ ALTER TABLE ONLY bill_previous_version
 ALTER TABLE ONLY bill_previous_version
     ADD CONSTRAINT bill_previous_version_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
---
--- Name: bill_sponsor_additional_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY bill_sponsor_additional
-    ADD CONSTRAINT bill_sponsor_additional_bill_print_no_fkey FOREIGN KEY (bill_print_no, bill_session_year) REFERENCES bill(bill_print_no, bill_session_year) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: bill_sponsor_additional_session_member_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY bill_sponsor_additional
-    ADD CONSTRAINT bill_sponsor_additional_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
 --
 -- Name: bill_sponsor_bill_print_no_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
@@ -6702,7 +6644,7 @@ ALTER TABLE ONLY session_member
 REVOKE ALL ON SCHEMA master FROM PUBLIC;
 REVOKE ALL ON SCHEMA master FROM postgres;
 GRANT ALL ON SCHEMA master TO postgres;
-GRANT ALL ON SCHEMA master TO sam;
+
 
 
 --
@@ -6712,7 +6654,7 @@ GRANT ALL ON SCHEMA master TO sam;
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO sam;
+
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
@@ -6725,7 +6667,7 @@ SET search_path = master, pg_catalog;
 REVOKE ALL ON TABLE active_list_reference FROM PUBLIC;
 REVOKE ALL ON TABLE active_list_reference FROM postgres;
 GRANT ALL ON TABLE active_list_reference TO postgres;
-GRANT ALL ON TABLE active_list_reference TO sam;
+
 
 
 --
@@ -6735,7 +6677,7 @@ GRANT ALL ON TABLE active_list_reference TO sam;
 REVOKE ALL ON TABLE active_list_reference_entry FROM PUBLIC;
 REVOKE ALL ON TABLE active_list_reference_entry FROM postgres;
 GRANT ALL ON TABLE active_list_reference_entry TO postgres;
-GRANT ALL ON TABLE active_list_reference_entry TO sam;
+
 
 
 --
@@ -6745,7 +6687,7 @@ GRANT ALL ON TABLE active_list_reference_entry TO sam;
 REVOKE ALL ON SEQUENCE active_list_reference_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE active_list_reference_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE active_list_reference_id_seq TO postgres;
-GRANT ALL ON SEQUENCE active_list_reference_id_seq TO sam;
+
 
 
 --
@@ -6755,7 +6697,7 @@ GRANT ALL ON SEQUENCE active_list_reference_id_seq TO sam;
 REVOKE ALL ON TABLE agenda FROM PUBLIC;
 REVOKE ALL ON TABLE agenda FROM postgres;
 GRANT ALL ON TABLE agenda TO postgres;
-GRANT ALL ON TABLE agenda TO sam;
+
 
 
 --
@@ -6765,7 +6707,7 @@ GRANT ALL ON TABLE agenda TO sam;
 REVOKE ALL ON SEQUENCE agenda_change_log_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE agenda_change_log_seq FROM postgres;
 GRANT ALL ON SEQUENCE agenda_change_log_seq TO postgres;
-GRANT ALL ON SEQUENCE agenda_change_log_seq TO sam;
+
 
 
 --
@@ -6775,7 +6717,7 @@ GRANT ALL ON SEQUENCE agenda_change_log_seq TO sam;
 REVOKE ALL ON TABLE agenda_change_log FROM PUBLIC;
 REVOKE ALL ON TABLE agenda_change_log FROM postgres;
 GRANT ALL ON TABLE agenda_change_log TO postgres;
-GRANT ALL ON TABLE agenda_change_log TO sam;
+
 
 
 --
@@ -6785,7 +6727,7 @@ GRANT ALL ON TABLE agenda_change_log TO sam;
 REVOKE ALL ON TABLE agenda_info_addendum FROM PUBLIC;
 REVOKE ALL ON TABLE agenda_info_addendum FROM postgres;
 GRANT ALL ON TABLE agenda_info_addendum TO postgres;
-GRANT ALL ON TABLE agenda_info_addendum TO sam;
+
 
 
 --
@@ -6795,7 +6737,7 @@ GRANT ALL ON TABLE agenda_info_addendum TO sam;
 REVOKE ALL ON TABLE agenda_info_committee FROM PUBLIC;
 REVOKE ALL ON TABLE agenda_info_committee FROM postgres;
 GRANT ALL ON TABLE agenda_info_committee TO postgres;
-GRANT ALL ON TABLE agenda_info_committee TO sam;
+
 
 
 --
@@ -6805,7 +6747,7 @@ GRANT ALL ON TABLE agenda_info_committee TO sam;
 REVOKE ALL ON SEQUENCE agenda_info_committee_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE agenda_info_committee_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE agenda_info_committee_id_seq TO postgres;
-GRANT ALL ON SEQUENCE agenda_info_committee_id_seq TO sam;
+
 
 
 --
@@ -6815,7 +6757,7 @@ GRANT ALL ON SEQUENCE agenda_info_committee_id_seq TO sam;
 REVOKE ALL ON TABLE agenda_info_committee_item FROM PUBLIC;
 REVOKE ALL ON TABLE agenda_info_committee_item FROM postgres;
 GRANT ALL ON TABLE agenda_info_committee_item TO postgres;
-GRANT ALL ON TABLE agenda_info_committee_item TO sam;
+
 
 
 --
@@ -6825,7 +6767,7 @@ GRANT ALL ON TABLE agenda_info_committee_item TO sam;
 REVOKE ALL ON SEQUENCE agenda_info_committee_item_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE agenda_info_committee_item_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE agenda_info_committee_item_id_seq TO postgres;
-GRANT ALL ON SEQUENCE agenda_info_committee_item_id_seq TO sam;
+
 
 
 --
@@ -6835,7 +6777,7 @@ GRANT ALL ON SEQUENCE agenda_info_committee_item_id_seq TO sam;
 REVOKE ALL ON TABLE agenda_vote_addendum FROM PUBLIC;
 REVOKE ALL ON TABLE agenda_vote_addendum FROM postgres;
 GRANT ALL ON TABLE agenda_vote_addendum TO postgres;
-GRANT ALL ON TABLE agenda_vote_addendum TO sam;
+
 
 
 --
@@ -6845,7 +6787,7 @@ GRANT ALL ON TABLE agenda_vote_addendum TO sam;
 REVOKE ALL ON SEQUENCE agenda_vote_commitee_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE agenda_vote_commitee_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE agenda_vote_commitee_id_seq TO postgres;
-GRANT ALL ON SEQUENCE agenda_vote_commitee_id_seq TO sam;
+
 
 
 --
@@ -6855,7 +6797,7 @@ GRANT ALL ON SEQUENCE agenda_vote_commitee_id_seq TO sam;
 REVOKE ALL ON TABLE agenda_vote_committee FROM PUBLIC;
 REVOKE ALL ON TABLE agenda_vote_committee FROM postgres;
 GRANT ALL ON TABLE agenda_vote_committee TO postgres;
-GRANT ALL ON TABLE agenda_vote_committee TO sam;
+
 
 
 --
@@ -6865,7 +6807,7 @@ GRANT ALL ON TABLE agenda_vote_committee TO sam;
 REVOKE ALL ON TABLE agenda_vote_committee_attend FROM PUBLIC;
 REVOKE ALL ON TABLE agenda_vote_committee_attend FROM postgres;
 GRANT ALL ON TABLE agenda_vote_committee_attend TO postgres;
-GRANT ALL ON TABLE agenda_vote_committee_attend TO sam;
+
 
 
 --
@@ -6875,7 +6817,7 @@ GRANT ALL ON TABLE agenda_vote_committee_attend TO sam;
 REVOKE ALL ON SEQUENCE agenda_vote_committee_attend_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE agenda_vote_committee_attend_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE agenda_vote_committee_attend_id_seq TO postgres;
-GRANT ALL ON SEQUENCE agenda_vote_committee_attend_id_seq TO sam;
+
 
 
 --
@@ -6885,7 +6827,7 @@ GRANT ALL ON SEQUENCE agenda_vote_committee_attend_id_seq TO sam;
 REVOKE ALL ON TABLE agenda_vote_committee_vote FROM PUBLIC;
 REVOKE ALL ON TABLE agenda_vote_committee_vote FROM postgres;
 GRANT ALL ON TABLE agenda_vote_committee_vote TO postgres;
-GRANT ALL ON TABLE agenda_vote_committee_vote TO sam;
+
 
 
 --
@@ -6895,7 +6837,7 @@ GRANT ALL ON TABLE agenda_vote_committee_vote TO sam;
 REVOKE ALL ON SEQUENCE agenda_vote_committee_vote_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE agenda_vote_committee_vote_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE agenda_vote_committee_vote_id_seq TO postgres;
-GRANT ALL ON SEQUENCE agenda_vote_committee_vote_id_seq TO sam;
+
 
 
 --
@@ -6905,7 +6847,7 @@ GRANT ALL ON SEQUENCE agenda_vote_committee_vote_id_seq TO sam;
 REVOKE ALL ON TABLE calendar_supplemental FROM PUBLIC;
 REVOKE ALL ON TABLE calendar_supplemental FROM postgres;
 GRANT ALL ON TABLE calendar_supplemental TO postgres;
-GRANT ALL ON TABLE calendar_supplemental TO sam;
+
 
 
 --
@@ -6915,7 +6857,7 @@ GRANT ALL ON TABLE calendar_supplemental TO sam;
 REVOKE ALL ON TABLE bill FROM PUBLIC;
 REVOKE ALL ON TABLE bill FROM postgres;
 GRANT ALL ON TABLE bill TO postgres;
-GRANT ALL ON TABLE bill TO sam;
+
 
 
 --
@@ -6925,7 +6867,7 @@ GRANT ALL ON TABLE bill TO sam;
 REVOKE ALL ON TABLE bill_amendment FROM PUBLIC;
 REVOKE ALL ON TABLE bill_amendment FROM postgres;
 GRANT ALL ON TABLE bill_amendment TO postgres;
-GRANT ALL ON TABLE bill_amendment TO sam;
+
 
 
 --
@@ -6935,7 +6877,7 @@ GRANT ALL ON TABLE bill_amendment TO sam;
 REVOKE ALL ON TABLE bill_amendment_action FROM PUBLIC;
 REVOKE ALL ON TABLE bill_amendment_action FROM postgres;
 GRANT ALL ON TABLE bill_amendment_action TO postgres;
-GRANT ALL ON TABLE bill_amendment_action TO sam;
+
 
 
 --
@@ -6945,7 +6887,7 @@ GRANT ALL ON TABLE bill_amendment_action TO sam;
 REVOKE ALL ON TABLE bill_amendment_cosponsor FROM PUBLIC;
 REVOKE ALL ON TABLE bill_amendment_cosponsor FROM postgres;
 GRANT ALL ON TABLE bill_amendment_cosponsor TO postgres;
-GRANT ALL ON TABLE bill_amendment_cosponsor TO sam;
+
 
 
 --
@@ -6955,7 +6897,7 @@ GRANT ALL ON TABLE bill_amendment_cosponsor TO sam;
 REVOKE ALL ON TABLE bill_amendment_multi_sponsor FROM PUBLIC;
 REVOKE ALL ON TABLE bill_amendment_multi_sponsor FROM postgres;
 GRANT ALL ON TABLE bill_amendment_multi_sponsor TO postgres;
-GRANT ALL ON TABLE bill_amendment_multi_sponsor TO sam;
+
 
 
 --
@@ -6965,7 +6907,7 @@ GRANT ALL ON TABLE bill_amendment_multi_sponsor TO sam;
 REVOKE ALL ON TABLE bill_amendment_publish_status FROM PUBLIC;
 REVOKE ALL ON TABLE bill_amendment_publish_status FROM postgres;
 GRANT ALL ON TABLE bill_amendment_publish_status TO postgres;
-GRANT ALL ON TABLE bill_amendment_publish_status TO sam;
+
 
 
 --
@@ -6975,7 +6917,7 @@ GRANT ALL ON TABLE bill_amendment_publish_status TO sam;
 REVOKE ALL ON TABLE bill_amendment_same_as FROM PUBLIC;
 REVOKE ALL ON TABLE bill_amendment_same_as FROM postgres;
 GRANT ALL ON TABLE bill_amendment_same_as TO postgres;
-GRANT ALL ON TABLE bill_amendment_same_as TO sam;
+
 
 
 --
@@ -6985,7 +6927,7 @@ GRANT ALL ON TABLE bill_amendment_same_as TO sam;
 REVOKE ALL ON TABLE bill_amendment_vote_info FROM PUBLIC;
 REVOKE ALL ON TABLE bill_amendment_vote_info FROM postgres;
 GRANT ALL ON TABLE bill_amendment_vote_info TO postgres;
-GRANT ALL ON TABLE bill_amendment_vote_info TO sam;
+
 
 
 --
@@ -6995,7 +6937,7 @@ GRANT ALL ON TABLE bill_amendment_vote_info TO sam;
 REVOKE ALL ON SEQUENCE bill_amendment_vote_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE bill_amendment_vote_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE bill_amendment_vote_id_seq TO postgres;
-GRANT ALL ON SEQUENCE bill_amendment_vote_id_seq TO sam;
+
 
 
 --
@@ -7005,7 +6947,7 @@ GRANT ALL ON SEQUENCE bill_amendment_vote_id_seq TO sam;
 REVOKE ALL ON TABLE bill_amendment_vote_roll FROM PUBLIC;
 REVOKE ALL ON TABLE bill_amendment_vote_roll FROM postgres;
 GRANT ALL ON TABLE bill_amendment_vote_roll TO postgres;
-GRANT ALL ON TABLE bill_amendment_vote_roll TO sam;
+
 
 
 --
@@ -7015,7 +6957,7 @@ GRANT ALL ON TABLE bill_amendment_vote_roll TO sam;
 REVOKE ALL ON TABLE bill_approval FROM PUBLIC;
 REVOKE ALL ON TABLE bill_approval FROM postgres;
 GRANT ALL ON TABLE bill_approval TO postgres;
-GRANT ALL ON TABLE bill_approval TO sam;
+
 
 
 --
@@ -7025,7 +6967,7 @@ GRANT ALL ON TABLE bill_approval TO sam;
 REVOKE ALL ON SEQUENCE bill_change_log_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE bill_change_log_seq FROM postgres;
 GRANT ALL ON SEQUENCE bill_change_log_seq TO postgres;
-GRANT ALL ON SEQUENCE bill_change_log_seq TO sam;
+
 
 
 --
@@ -7035,7 +6977,7 @@ GRANT ALL ON SEQUENCE bill_change_log_seq TO sam;
 REVOKE ALL ON TABLE bill_change_log FROM PUBLIC;
 REVOKE ALL ON TABLE bill_change_log FROM postgres;
 GRANT ALL ON TABLE bill_change_log TO postgres;
-GRANT ALL ON TABLE bill_change_log TO sam;
+
 
 
 --
@@ -7045,7 +6987,7 @@ GRANT ALL ON TABLE bill_change_log TO sam;
 REVOKE ALL ON TABLE bill_committee FROM PUBLIC;
 REVOKE ALL ON TABLE bill_committee FROM postgres;
 GRANT ALL ON TABLE bill_committee TO postgres;
-GRANT ALL ON TABLE bill_committee TO sam;
+
 
 
 --
@@ -7055,7 +6997,7 @@ GRANT ALL ON TABLE bill_committee TO sam;
 REVOKE ALL ON TABLE bill_milestone FROM PUBLIC;
 REVOKE ALL ON TABLE bill_milestone FROM postgres;
 GRANT ALL ON TABLE bill_milestone TO postgres;
-GRANT ALL ON TABLE bill_milestone TO sam;
+
 
 
 --
@@ -7065,7 +7007,7 @@ GRANT ALL ON TABLE bill_milestone TO sam;
 REVOKE ALL ON TABLE bill_previous_version FROM PUBLIC;
 REVOKE ALL ON TABLE bill_previous_version FROM postgres;
 GRANT ALL ON TABLE bill_previous_version TO postgres;
-GRANT ALL ON TABLE bill_previous_version TO sam;
+
 
 
 --
@@ -7075,7 +7017,7 @@ GRANT ALL ON TABLE bill_previous_version TO sam;
 REVOKE ALL ON TABLE bill_sponsor FROM PUBLIC;
 REVOKE ALL ON TABLE bill_sponsor FROM postgres;
 GRANT ALL ON TABLE bill_sponsor TO postgres;
-GRANT ALL ON TABLE bill_sponsor TO sam;
+
 
 
 --
@@ -7085,7 +7027,7 @@ GRANT ALL ON TABLE bill_sponsor TO sam;
 REVOKE ALL ON TABLE bill_sponsor_additional FROM PUBLIC;
 REVOKE ALL ON TABLE bill_sponsor_additional FROM postgres;
 GRANT ALL ON TABLE bill_sponsor_additional TO postgres;
-GRANT ALL ON TABLE bill_sponsor_additional TO sam;
+
 
 
 --
@@ -7095,7 +7037,7 @@ GRANT ALL ON TABLE bill_sponsor_additional TO sam;
 REVOKE ALL ON TABLE bill_veto FROM PUBLIC;
 REVOKE ALL ON TABLE bill_veto FROM postgres;
 GRANT ALL ON TABLE bill_veto TO postgres;
-GRANT ALL ON TABLE bill_veto TO sam;
+
 
 
 --
@@ -7105,7 +7047,7 @@ GRANT ALL ON TABLE bill_veto TO sam;
 REVOKE ALL ON SEQUENCE bill_veto_year_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE bill_veto_year_seq FROM postgres;
 GRANT ALL ON SEQUENCE bill_veto_year_seq TO postgres;
-GRANT ALL ON SEQUENCE bill_veto_year_seq TO sam;
+
 
 
 --
@@ -7115,7 +7057,7 @@ GRANT ALL ON SEQUENCE bill_veto_year_seq TO sam;
 REVOKE ALL ON TABLE calendar FROM PUBLIC;
 REVOKE ALL ON TABLE calendar FROM postgres;
 GRANT ALL ON TABLE calendar TO postgres;
-GRANT ALL ON TABLE calendar TO sam;
+
 
 
 --
@@ -7125,7 +7067,7 @@ GRANT ALL ON TABLE calendar TO sam;
 REVOKE ALL ON TABLE calendar_active_list FROM PUBLIC;
 REVOKE ALL ON TABLE calendar_active_list FROM postgres;
 GRANT ALL ON TABLE calendar_active_list TO postgres;
-GRANT ALL ON TABLE calendar_active_list TO sam;
+
 
 
 --
@@ -7135,7 +7077,7 @@ GRANT ALL ON TABLE calendar_active_list TO sam;
 REVOKE ALL ON TABLE calendar_active_list_entry FROM PUBLIC;
 REVOKE ALL ON TABLE calendar_active_list_entry FROM postgres;
 GRANT ALL ON TABLE calendar_active_list_entry TO postgres;
-GRANT ALL ON TABLE calendar_active_list_entry TO sam;
+
 
 
 --
@@ -7145,7 +7087,7 @@ GRANT ALL ON TABLE calendar_active_list_entry TO sam;
 REVOKE ALL ON SEQUENCE calendar_active_list_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE calendar_active_list_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE calendar_active_list_id_seq TO postgres;
-GRANT ALL ON SEQUENCE calendar_active_list_id_seq TO sam;
+
 
 
 --
@@ -7155,7 +7097,7 @@ GRANT ALL ON SEQUENCE calendar_active_list_id_seq TO sam;
 REVOKE ALL ON SEQUENCE calendar_change_log_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE calendar_change_log_seq FROM postgres;
 GRANT ALL ON SEQUENCE calendar_change_log_seq TO postgres;
-GRANT ALL ON SEQUENCE calendar_change_log_seq TO sam;
+
 
 
 --
@@ -7165,7 +7107,7 @@ GRANT ALL ON SEQUENCE calendar_change_log_seq TO sam;
 REVOKE ALL ON TABLE calendar_change_log FROM PUBLIC;
 REVOKE ALL ON TABLE calendar_change_log FROM postgres;
 GRANT ALL ON TABLE calendar_change_log TO postgres;
-GRANT ALL ON TABLE calendar_change_log TO sam;
+
 
 
 --
@@ -7175,7 +7117,7 @@ GRANT ALL ON TABLE calendar_change_log TO sam;
 REVOKE ALL ON TABLE calendar_supplemental_entry FROM PUBLIC;
 REVOKE ALL ON TABLE calendar_supplemental_entry FROM postgres;
 GRANT ALL ON TABLE calendar_supplemental_entry TO postgres;
-GRANT ALL ON TABLE calendar_supplemental_entry TO sam;
+
 
 
 --
@@ -7185,7 +7127,7 @@ GRANT ALL ON TABLE calendar_supplemental_entry TO sam;
 REVOKE ALL ON SEQUENCE calendar_supplemental_entry_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE calendar_supplemental_entry_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE calendar_supplemental_entry_id_seq TO postgres;
-GRANT ALL ON SEQUENCE calendar_supplemental_entry_id_seq TO sam;
+
 
 
 --
@@ -7195,7 +7137,7 @@ GRANT ALL ON SEQUENCE calendar_supplemental_entry_id_seq TO sam;
 REVOKE ALL ON SEQUENCE calendar_supplemental_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE calendar_supplemental_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE calendar_supplemental_id_seq TO postgres;
-GRANT ALL ON SEQUENCE calendar_supplemental_id_seq TO sam;
+
 
 
 --
@@ -7205,7 +7147,7 @@ GRANT ALL ON SEQUENCE calendar_supplemental_id_seq TO sam;
 REVOKE ALL ON TABLE committee FROM PUBLIC;
 REVOKE ALL ON TABLE committee FROM postgres;
 GRANT ALL ON TABLE committee TO postgres;
-GRANT ALL ON TABLE committee TO sam;
+
 
 
 --
@@ -7215,7 +7157,7 @@ GRANT ALL ON TABLE committee TO sam;
 REVOKE ALL ON SEQUENCE committee_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE committee_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE committee_id_seq TO postgres;
-GRANT ALL ON SEQUENCE committee_id_seq TO sam;
+
 
 
 --
@@ -7225,7 +7167,7 @@ GRANT ALL ON SEQUENCE committee_id_seq TO sam;
 REVOKE ALL ON TABLE committee_member FROM PUBLIC;
 REVOKE ALL ON TABLE committee_member FROM postgres;
 GRANT ALL ON TABLE committee_member TO postgres;
-GRANT ALL ON TABLE committee_member TO sam;
+
 
 
 --
@@ -7235,7 +7177,7 @@ GRANT ALL ON TABLE committee_member TO sam;
 REVOKE ALL ON SEQUENCE committee_member_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE committee_member_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE committee_member_id_seq TO postgres;
-GRANT ALL ON SEQUENCE committee_member_id_seq TO sam;
+
 
 
 --
@@ -7245,7 +7187,7 @@ GRANT ALL ON SEQUENCE committee_member_id_seq TO sam;
 REVOKE ALL ON TABLE committee_version FROM PUBLIC;
 REVOKE ALL ON TABLE committee_version FROM postgres;
 GRANT ALL ON TABLE committee_version TO postgres;
-GRANT ALL ON TABLE committee_version TO sam;
+
 
 
 --
@@ -7255,7 +7197,7 @@ GRANT ALL ON TABLE committee_version TO sam;
 REVOKE ALL ON SEQUENCE committee_version_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE committee_version_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE committee_version_id_seq TO postgres;
-GRANT ALL ON SEQUENCE committee_version_id_seq TO sam;
+
 
 
 --
@@ -7265,7 +7207,7 @@ GRANT ALL ON SEQUENCE committee_version_id_seq TO sam;
 REVOKE ALL ON TABLE data_process_run_unit FROM PUBLIC;
 REVOKE ALL ON TABLE data_process_run_unit FROM postgres;
 GRANT ALL ON TABLE data_process_run_unit TO postgres;
-GRANT ALL ON TABLE data_process_run_unit TO sam;
+
 
 
 --
@@ -7275,7 +7217,7 @@ GRANT ALL ON TABLE data_process_run_unit TO sam;
 REVOKE ALL ON SEQUENCE data_process_log_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE data_process_log_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE data_process_log_id_seq TO postgres;
-GRANT ALL ON SEQUENCE data_process_log_id_seq TO sam;
+
 
 
 --
@@ -7285,7 +7227,7 @@ GRANT ALL ON SEQUENCE data_process_log_id_seq TO sam;
 REVOKE ALL ON TABLE data_process_run FROM PUBLIC;
 REVOKE ALL ON TABLE data_process_run FROM postgres;
 GRANT ALL ON TABLE data_process_run TO postgres;
-GRANT ALL ON TABLE data_process_run TO sam;
+
 
 
 --
@@ -7295,7 +7237,7 @@ GRANT ALL ON TABLE data_process_run TO sam;
 REVOKE ALL ON TABLE daybreak_bill FROM PUBLIC;
 REVOKE ALL ON TABLE daybreak_bill FROM postgres;
 GRANT ALL ON TABLE daybreak_bill TO postgres;
-GRANT ALL ON TABLE daybreak_bill TO sam;
+
 
 
 --
@@ -7305,7 +7247,7 @@ GRANT ALL ON TABLE daybreak_bill TO sam;
 REVOKE ALL ON TABLE daybreak_bill_action FROM PUBLIC;
 REVOKE ALL ON TABLE daybreak_bill_action FROM postgres;
 GRANT ALL ON TABLE daybreak_bill_action TO postgres;
-GRANT ALL ON TABLE daybreak_bill_action TO sam;
+
 
 
 --
@@ -7315,7 +7257,7 @@ GRANT ALL ON TABLE daybreak_bill_action TO sam;
 REVOKE ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq FROM postgres;
 GRANT ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq TO postgres;
-GRANT ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq TO sam;
+
 
 
 --
@@ -7325,7 +7267,7 @@ GRANT ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq TO sam;
 REVOKE ALL ON TABLE daybreak_bill_amendment FROM PUBLIC;
 REVOKE ALL ON TABLE daybreak_bill_amendment FROM postgres;
 GRANT ALL ON TABLE daybreak_bill_amendment TO postgres;
-GRANT ALL ON TABLE daybreak_bill_amendment TO sam;
+
 
 
 --
@@ -7335,7 +7277,7 @@ GRANT ALL ON TABLE daybreak_bill_amendment TO sam;
 REVOKE ALL ON TABLE daybreak_bill_sponsor FROM PUBLIC;
 REVOKE ALL ON TABLE daybreak_bill_sponsor FROM postgres;
 GRANT ALL ON TABLE daybreak_bill_sponsor TO postgres;
-GRANT ALL ON TABLE daybreak_bill_sponsor TO sam;
+
 
 
 --
@@ -7345,7 +7287,7 @@ GRANT ALL ON TABLE daybreak_bill_sponsor TO sam;
 REVOKE ALL ON TABLE daybreak_file FROM PUBLIC;
 REVOKE ALL ON TABLE daybreak_file FROM postgres;
 GRANT ALL ON TABLE daybreak_file TO postgres;
-GRANT ALL ON TABLE daybreak_file TO sam;
+
 
 
 --
@@ -7355,7 +7297,7 @@ GRANT ALL ON TABLE daybreak_file TO sam;
 REVOKE ALL ON TABLE daybreak_fragment FROM PUBLIC;
 REVOKE ALL ON TABLE daybreak_fragment FROM postgres;
 GRANT ALL ON TABLE daybreak_fragment TO postgres;
-GRANT ALL ON TABLE daybreak_fragment TO sam;
+
 
 
 --
@@ -7365,7 +7307,7 @@ GRANT ALL ON TABLE daybreak_fragment TO sam;
 REVOKE ALL ON TABLE daybreak_page_file_entry FROM PUBLIC;
 REVOKE ALL ON TABLE daybreak_page_file_entry FROM postgres;
 GRANT ALL ON TABLE daybreak_page_file_entry TO postgres;
-GRANT ALL ON TABLE daybreak_page_file_entry TO sam;
+
 
 
 --
@@ -7375,7 +7317,7 @@ GRANT ALL ON TABLE daybreak_page_file_entry TO sam;
 REVOKE ALL ON TABLE daybreak_report FROM PUBLIC;
 REVOKE ALL ON TABLE daybreak_report FROM postgres;
 GRANT ALL ON TABLE daybreak_report TO postgres;
-GRANT ALL ON TABLE daybreak_report TO sam;
+
 
 
 --
@@ -7385,7 +7327,7 @@ GRANT ALL ON TABLE daybreak_report TO sam;
 REVOKE ALL ON TABLE law_change_log FROM PUBLIC;
 REVOKE ALL ON TABLE law_change_log FROM postgres;
 GRANT ALL ON TABLE law_change_log TO postgres;
-GRANT ALL ON TABLE law_change_log TO sam;
+
 
 
 --
@@ -7395,7 +7337,7 @@ GRANT ALL ON TABLE law_change_log TO sam;
 REVOKE ALL ON SEQUENCE law_change_log_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE law_change_log_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE law_change_log_id_seq TO postgres;
-GRANT ALL ON SEQUENCE law_change_log_id_seq TO sam;
+
 
 
 --
@@ -7405,7 +7347,7 @@ GRANT ALL ON SEQUENCE law_change_log_id_seq TO sam;
 REVOKE ALL ON TABLE law_document FROM PUBLIC;
 REVOKE ALL ON TABLE law_document FROM postgres;
 GRANT ALL ON TABLE law_document TO postgres;
-GRANT ALL ON TABLE law_document TO sam;
+
 
 
 --
@@ -7415,7 +7357,7 @@ GRANT ALL ON TABLE law_document TO sam;
 REVOKE ALL ON TABLE law_file FROM PUBLIC;
 REVOKE ALL ON TABLE law_file FROM postgres;
 GRANT ALL ON TABLE law_file TO postgres;
-GRANT ALL ON TABLE law_file TO sam;
+
 
 
 --
@@ -7425,7 +7367,7 @@ GRANT ALL ON TABLE law_file TO sam;
 REVOKE ALL ON TABLE law_info FROM PUBLIC;
 REVOKE ALL ON TABLE law_info FROM postgres;
 GRANT ALL ON TABLE law_info TO postgres;
-GRANT ALL ON TABLE law_info TO sam;
+
 
 
 --
@@ -7435,7 +7377,7 @@ GRANT ALL ON TABLE law_info TO sam;
 REVOKE ALL ON TABLE law_tree FROM PUBLIC;
 REVOKE ALL ON TABLE law_tree FROM postgres;
 GRANT ALL ON TABLE law_tree TO postgres;
-GRANT ALL ON TABLE law_tree TO sam;
+
 
 
 --
@@ -7445,7 +7387,7 @@ GRANT ALL ON TABLE law_tree TO sam;
 REVOKE ALL ON TABLE notification FROM PUBLIC;
 REVOKE ALL ON TABLE notification FROM postgres;
 GRANT ALL ON TABLE notification TO postgres;
-GRANT ALL ON TABLE notification TO sam;
+
 
 
 --
@@ -7455,7 +7397,7 @@ GRANT ALL ON TABLE notification TO sam;
 REVOKE ALL ON SEQUENCE notification_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE notification_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE notification_id_seq TO postgres;
-GRANT ALL ON SEQUENCE notification_id_seq TO sam;
+
 
 
 --
@@ -7465,7 +7407,7 @@ GRANT ALL ON SEQUENCE notification_id_seq TO sam;
 REVOKE ALL ON TABLE notification_subscription FROM PUBLIC;
 REVOKE ALL ON TABLE notification_subscription FROM postgres;
 GRANT ALL ON TABLE notification_subscription TO postgres;
-GRANT ALL ON TABLE notification_subscription TO sam;
+
 
 
 --
@@ -7475,7 +7417,7 @@ GRANT ALL ON TABLE notification_subscription TO sam;
 REVOKE ALL ON SEQUENCE notification_subscription_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE notification_subscription_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE notification_subscription_id_seq TO postgres;
-GRANT ALL ON SEQUENCE notification_subscription_id_seq TO sam;
+
 
 
 --
@@ -7485,7 +7427,7 @@ GRANT ALL ON SEQUENCE notification_subscription_id_seq TO sam;
 REVOKE ALL ON TABLE sobi_fragment FROM PUBLIC;
 REVOKE ALL ON TABLE sobi_fragment FROM postgres;
 GRANT ALL ON TABLE sobi_fragment TO postgres;
-GRANT ALL ON TABLE sobi_fragment TO sam;
+
 
 
 --
@@ -7495,7 +7437,7 @@ GRANT ALL ON TABLE sobi_fragment TO sam;
 REVOKE ALL ON TABLE psf FROM PUBLIC;
 REVOKE ALL ON TABLE psf FROM postgres;
 GRANT ALL ON TABLE psf TO postgres;
-GRANT ALL ON TABLE psf TO sam;
+
 
 
 --
@@ -7505,7 +7447,7 @@ GRANT ALL ON TABLE psf TO sam;
 REVOKE ALL ON TABLE public_hearing FROM PUBLIC;
 REVOKE ALL ON TABLE public_hearing FROM postgres;
 GRANT ALL ON TABLE public_hearing TO postgres;
-GRANT ALL ON TABLE public_hearing TO sam;
+
 
 
 --
@@ -7515,7 +7457,7 @@ GRANT ALL ON TABLE public_hearing TO sam;
 REVOKE ALL ON TABLE public_hearing_committee FROM PUBLIC;
 REVOKE ALL ON TABLE public_hearing_committee FROM postgres;
 GRANT ALL ON TABLE public_hearing_committee TO postgres;
-GRANT ALL ON TABLE public_hearing_committee TO sam;
+
 
 
 --
@@ -7525,7 +7467,7 @@ GRANT ALL ON TABLE public_hearing_committee TO sam;
 REVOKE ALL ON TABLE public_hearing_file FROM PUBLIC;
 REVOKE ALL ON TABLE public_hearing_file FROM postgres;
 GRANT ALL ON TABLE public_hearing_file TO postgres;
-GRANT ALL ON TABLE public_hearing_file TO sam;
+
 
 
 --
@@ -7535,7 +7477,7 @@ GRANT ALL ON TABLE public_hearing_file TO sam;
 REVOKE ALL ON TABLE sobi_file FROM PUBLIC;
 REVOKE ALL ON TABLE sobi_file FROM postgres;
 GRANT ALL ON TABLE sobi_file TO postgres;
-GRANT ALL ON TABLE sobi_file TO sam;
+
 
 
 --
@@ -7545,7 +7487,7 @@ GRANT ALL ON TABLE sobi_file TO sam;
 REVOKE ALL ON SEQUENCE sobi_fragment_process_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE sobi_fragment_process_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE sobi_fragment_process_id_seq TO postgres;
-GRANT ALL ON SEQUENCE sobi_fragment_process_id_seq TO sam;
+
 
 
 --
@@ -7555,7 +7497,7 @@ GRANT ALL ON SEQUENCE sobi_fragment_process_id_seq TO sam;
 REVOKE ALL ON TABLE spotcheck_mismatch FROM PUBLIC;
 REVOKE ALL ON TABLE spotcheck_mismatch FROM postgres;
 GRANT ALL ON TABLE spotcheck_mismatch TO postgres;
-GRANT ALL ON TABLE spotcheck_mismatch TO sam;
+
 
 
 --
@@ -7565,7 +7507,7 @@ GRANT ALL ON TABLE spotcheck_mismatch TO sam;
 REVOKE ALL ON SEQUENCE spotcheck_mismatch_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE spotcheck_mismatch_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE spotcheck_mismatch_id_seq TO postgres;
-GRANT ALL ON SEQUENCE spotcheck_mismatch_id_seq TO sam;
+
 
 
 --
@@ -7575,7 +7517,7 @@ GRANT ALL ON SEQUENCE spotcheck_mismatch_id_seq TO sam;
 REVOKE ALL ON TABLE spotcheck_observation FROM PUBLIC;
 REVOKE ALL ON TABLE spotcheck_observation FROM postgres;
 GRANT ALL ON TABLE spotcheck_observation TO postgres;
-GRANT ALL ON TABLE spotcheck_observation TO sam;
+
 
 
 --
@@ -7585,7 +7527,7 @@ GRANT ALL ON TABLE spotcheck_observation TO sam;
 REVOKE ALL ON SEQUENCE spotcheck_observation_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE spotcheck_observation_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE spotcheck_observation_id_seq TO postgres;
-GRANT ALL ON SEQUENCE spotcheck_observation_id_seq TO sam;
+
 
 
 --
@@ -7595,7 +7537,7 @@ GRANT ALL ON SEQUENCE spotcheck_observation_id_seq TO sam;
 REVOKE ALL ON TABLE spotcheck_report FROM PUBLIC;
 REVOKE ALL ON TABLE spotcheck_report FROM postgres;
 GRANT ALL ON TABLE spotcheck_report TO postgres;
-GRANT ALL ON TABLE spotcheck_report TO sam;
+
 
 
 --
@@ -7605,7 +7547,7 @@ GRANT ALL ON TABLE spotcheck_report TO sam;
 REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE spotcheck_report_id_seq TO postgres;
-GRANT ALL ON SEQUENCE spotcheck_report_id_seq TO sam;
+
 
 
 --
@@ -7615,7 +7557,7 @@ GRANT ALL ON SEQUENCE spotcheck_report_id_seq TO sam;
 REVOKE ALL ON TABLE transcript FROM PUBLIC;
 REVOKE ALL ON TABLE transcript FROM postgres;
 GRANT ALL ON TABLE transcript TO postgres;
-GRANT ALL ON TABLE transcript TO sam;
+
 
 
 --
@@ -7625,7 +7567,7 @@ GRANT ALL ON TABLE transcript TO sam;
 REVOKE ALL ON TABLE transcript_file FROM PUBLIC;
 REVOKE ALL ON TABLE transcript_file FROM postgres;
 GRANT ALL ON TABLE transcript_file TO postgres;
-GRANT ALL ON TABLE transcript_file TO sam;
+
 
 
 SET search_path = public, pg_catalog;
@@ -7637,7 +7579,7 @@ SET search_path = public, pg_catalog;
 REVOKE ALL ON TABLE adminuser FROM PUBLIC;
 REVOKE ALL ON TABLE adminuser FROM postgres;
 GRANT ALL ON TABLE adminuser TO postgres;
-GRANT ALL ON TABLE adminuser TO sam;
+
 
 
 --
@@ -7647,7 +7589,7 @@ GRANT ALL ON TABLE adminuser TO sam;
 REVOKE ALL ON TABLE apiuser FROM PUBLIC;
 REVOKE ALL ON TABLE apiuser FROM postgres;
 GRANT ALL ON TABLE apiuser TO postgres;
-GRANT ALL ON TABLE apiuser TO sam;
+
 
 
 --
@@ -7657,7 +7599,7 @@ GRANT ALL ON TABLE apiuser TO sam;
 REVOKE ALL ON TABLE member FROM PUBLIC;
 REVOKE ALL ON TABLE member FROM postgres;
 GRANT ALL ON TABLE member TO postgres;
-GRANT ALL ON TABLE member TO sam;
+
 
 
 --
@@ -7667,7 +7609,7 @@ GRANT ALL ON TABLE member TO sam;
 REVOKE ALL ON SEQUENCE member_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE member_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE member_id_seq TO postgres;
-GRANT ALL ON SEQUENCE member_id_seq TO sam;
+
 
 
 --
@@ -7677,7 +7619,7 @@ GRANT ALL ON SEQUENCE member_id_seq TO sam;
 REVOKE ALL ON SEQUENCE member_person_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE member_person_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE member_person_id_seq TO postgres;
-GRANT ALL ON SEQUENCE member_person_id_seq TO sam;
+
 
 
 --
@@ -7687,7 +7629,7 @@ GRANT ALL ON SEQUENCE member_person_id_seq TO sam;
 REVOKE ALL ON TABLE person FROM PUBLIC;
 REVOKE ALL ON TABLE person FROM postgres;
 GRANT ALL ON TABLE person TO postgres;
-GRANT ALL ON TABLE person TO sam;
+
 
 
 --
@@ -7697,7 +7639,7 @@ GRANT ALL ON TABLE person TO sam;
 REVOKE ALL ON SEQUENCE person_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE person_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE person_id_seq TO postgres;
-GRANT ALL ON SEQUENCE person_id_seq TO sam;
+
 
 
 --
@@ -7707,7 +7649,7 @@ GRANT ALL ON SEQUENCE person_id_seq TO sam;
 REVOKE ALL ON TABLE session_member FROM PUBLIC;
 REVOKE ALL ON TABLE session_member FROM postgres;
 GRANT ALL ON TABLE session_member TO postgres;
-GRANT ALL ON TABLE session_member TO sam;
+
 
 
 --
@@ -7717,7 +7659,7 @@ GRANT ALL ON TABLE session_member TO sam;
 REVOKE ALL ON SEQUENCE session_member_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE session_member_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE session_member_id_seq TO postgres;
-GRANT ALL ON SEQUENCE session_member_id_seq TO sam;
+
 
 
 --
