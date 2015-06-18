@@ -4476,7 +4476,7 @@ CREATE TABLE request (
   url text NOT NULL,
   ipaddress inet NOT NULL,
   method text NOT NULL,
-  agent text NOT NULL,
+  agent text,
   apikey text,
   request_id integer NOT NULL
 );
