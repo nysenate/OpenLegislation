@@ -8,6 +8,7 @@ import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.ScrapedBillMemoParser;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 @Service
 public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService {
-    // get queue , return first billID from queue
+
     @Autowired
     SqlFsBillTextReferenceDao dao;
     @Autowired
@@ -34,6 +35,8 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
     ScrapedBillTextParser scrapedBillTextParser;
     @Autowired
     BillTextReportService reportService;
+    @Autowired
+    SpotCheckNotificationService notificationService;
 
     private static final Logger logger = LoggerFactory.getLogger(BillTextSpotcheckProcessService.class);
 
@@ -53,9 +56,10 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
         for (File file : incomingScrapedBills) {
             try {
                 billTextReferences.add(scrapedBillTextParser.parseReference(file));
-            } catch (ParseError ex) {  // Archive and rethrow to ensure the error doesn't come up again next process
+            } catch (Exception ex) {
+                notificationService.handleSpotcheckException(ex, false);
+            } finally {
                 dao.archiveScrapedBill(file);
-                throw ex;
             }
         }
         billTextReferences.forEach(dao::insertBillTextReference);

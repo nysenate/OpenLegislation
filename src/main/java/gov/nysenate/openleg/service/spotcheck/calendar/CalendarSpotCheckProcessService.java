@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class CalendarSpotCheckProcessService extends BaseSpotcheckProcessService
     @Autowired
     private CalendarAlertProcessor processor;
 
+    @Autowired
+    SpotCheckNotificationService notificationService;
+
     @Override
     protected int doCollate() throws Exception {
         int newAlerts = activeListMailService.checkMail() + supplementalMailService.checkMail();
@@ -55,11 +59,16 @@ public class CalendarSpotCheckProcessService extends BaseSpotcheckProcessService
         List<CalendarAlertFile> files = fileDao.getPendingCalendarAlertFiles(LimitOffset.THOUSAND);
         logger.info("Processing " + files.size() + " files.");
         for (CalendarAlertFile file : files) {
-            logger.info("Processing calendar from file: " + file.getFile().getName());
-            Calendar calendar = processor.process(file.getFile());
-            updateCalendarFile(file);
-            calendarAlertDao.updateCalendar(calendar, file);
-            processedCount++;
+            try {
+                logger.info("Processing calendar from file: " + file.getFile().getName());
+                Calendar calendar = processor.process(file.getFile());
+                calendarAlertDao.updateCalendar(calendar, file);
+                processedCount++;
+            } catch (Exception ex) {
+                notificationService.handleSpotcheckException(ex, false);
+            } finally {
+                updateCalendarFile(file);
+            }
         }
         return processedCount;
     }
