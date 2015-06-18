@@ -1,12 +1,14 @@
 package gov.nysenate.openleg.model.auth;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
 public class ApiRequest
 {
     /** The time at which an ApiRequest is made */
-    private String requestTime;
+    private LocalDateTime requestTime;
 
     /** The requested URL */
     private String url;
@@ -24,34 +26,84 @@ public class ApiRequest
     private String apikey;
 
     /** A unique identifier used to specify each request made */
-    private int request_id;
+    private int requestId;
 
-    /**
-     * Constructor
-     */
-    public ApiRequest () {
+    /** --- Constructors --- */
+
+    public ApiRequest() {
 
     }
 
-    /** Getters and Setters */
-    public String getRequestTime() { return requestTime; }
-    public void setRequestTime(String requestTime) { this.requestTime = requestTime; }
+    public ApiRequest (HttpServletRequest request, LocalDateTime requestDateTime) {
+        if (request != null) {
+            this.apikey = request.getParameter("key");
+            this.userAgent = request.getHeader("User-Agent");
+            try {
+                this.ipAddress = InetAddress.getByName(request.getRemoteAddr());
+            } catch (UnknownHostException e) {
+                // Ignore
+            }
+            this.requestMethod = request.getMethod();
+            this.url = request.getRequestURI();
+            this.requestTime = requestDateTime;
+        }
+    }
 
-    public String getUrl() { return url; }
-    public void setUrl(String url) { this.url = url; }
+    /** --- Basic Getters/Setters --- */
 
-    public InetAddress getIpAddress() { return ipAddress; }
-    public void setIpAddress(InetAddress ipAddress) { this.ipAddress = ipAddress; }
+    public LocalDateTime getRequestTime() {
+        return requestTime;
+    }
 
-    public String getRequestMethod() { return requestMethod; }
-    public void setRequestMethod(String requestMethod) { this.requestMethod = requestMethod; }
+    public void setRequestTime(LocalDateTime requestTime) {
+        this.requestTime = requestTime;
+    }
 
-    public String getUserAgent() { return userAgent; }
-    public void setUserAgent(String userAgent) { this.userAgent = userAgent; }
+    public String getUrl() {
+        return url;
+    }
 
-    public String getApikey() { return apikey; }
-    public void setApikey(String apikey) { this.apikey = apikey; }
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-    public int getRequest_id() { return request_id; }
-    public void setRequest_id(int request_id) { this.request_id = request_id; }
+    public InetAddress getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(InetAddress ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getRequestMethod() {
+        return requestMethod;
+    }
+
+    public void setRequestMethod(String requestMethod) {
+        this.requestMethod = requestMethod;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
+    }
+
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
+    }
 }

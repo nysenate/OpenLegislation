@@ -29,7 +29,6 @@ public class ApiAuthFilter implements Filter
     @Value("${api.auth.ip.whitelist}") private String filterAddress;
     @Value("${api.auth.enable}") private boolean enabled;
 
-
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -42,7 +41,6 @@ public class ApiAuthFilter implements Filter
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-
         if (enabled) {
             boolean isUiUser = UIKeyUtil.validateUIKey(request, apiSecret, "UIKey");
             if (isUiUser || ipAddress.matches(filterAddress) || apiUserService.validateKey(key)) {

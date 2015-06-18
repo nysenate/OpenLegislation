@@ -1,35 +1,65 @@
 package gov.nysenate.openleg.model.auth;
 
+import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+
 public class ApiResponse
 {
     private ApiRequest baseRequest;
-
-    private String responseTime;
-
+    private LocalDateTime responseDateTime;
     private int statusCode;
-
     private String contentType;
-
     private double processTime;
 
-    public ApiResponse(ApiRequest baseRequest) {
+    /** --- Constructors --- */
+
+    public ApiResponse(ApiRequest baseRequest, HttpServletResponse response, LocalDateTime responseDateTime) {
+        this.baseRequest = baseRequest;
+        this.responseDateTime = responseDateTime;
+        this.processTime = (responseDateTime.getNano() - baseRequest.getRequestTime().getNano()) / 1000000;
+        this.statusCode = response.getStatus();
+        this.contentType = response.getContentType();
+    }
+
+    /** --- Basic Getters/Setters --- */
+
+    public ApiRequest getBaseRequest() {
+        return baseRequest;
+    }
+
+    public void setBaseRequest(ApiRequest baseRequest) {
         this.baseRequest = baseRequest;
     }
 
+    public LocalDateTime getResponseDateTime() {
+        return responseDateTime;
+    }
 
-    /** Getters and Setters */
-    public ApiRequest getBaseRequest() { return baseRequest; }
-    public void setBaseRequest(ApiRequest baseRequest) { this.baseRequest = baseRequest; }
+    public void setResponseDateTime(LocalDateTime responseDateTime) {
+        this.responseDateTime = responseDateTime;
+    }
 
-    public String getResponseTime() { return responseTime; }
-    public void setResponseTime(String responseTime) { this.responseTime = responseTime; }
+    public int getStatusCode() {
+        return statusCode;
+    }
 
-    public int getStatusCode() { return statusCode; }
-    public void setStatusCode(int statusCode) { this.statusCode = statusCode; }
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
 
-    public String getContentType() { return contentType; }
-    public void setContentType(String contentType) { this.contentType = contentType; }
+    public String getContentType() {
+        return contentType;
+    }
 
-    public double getProcessTime() { return processTime; }
-    public void setProcessTime(double processTime) { this.processTime = processTime; }
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public double getProcessTime() {
+        return processTime;
+    }
+
+    public void setProcessTime(double processTime) {
+        this.processTime = processTime;
+    }
 }
