@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processor.spotcheck.calendar;
 import gov.nysenate.openleg.dao.calendar.alert.CalendarAlertDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.processor.base.ParseError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,31 +34,27 @@ public class CalendarAlertProcessor extends BaseCalendarAlertParser {
      * @param file
      * @return
      */
-    public Calendar process(File file) {
-        CalendarId calendarId = parseCalendarId(file);
-        Calendar calendar;
+    public Calendar process(File file) throws ParseError {
         try {
-            calendar = calendarAlertDao.getCalendar(calendarId);
-        } catch (EmptyResultDataAccessException e) {
-            calendar = new Calendar(calendarId);
-        }
-        calendar.setPublishedDateTime(parseReleaseDateTime(file));
-        calendar.setModifiedDateTime(LocalDateTime.now());
+            CalendarId calendarId = parseCalendarId(file);
+            Calendar calendar;
+            try {
+                calendar = calendarAlertDao.getCalendar(calendarId);
+            } catch (EmptyResultDataAccessException e) {
+                calendar = new Calendar(calendarId);
+            }
+            calendar.setPublishedDateTime(parseReleaseDateTime(file));
+            calendar.setModifiedDateTime(LocalDateTime.now());
 
-        if (isSupplemental(file)) {
-            try {
+            if (isSupplemental(file)) {
                 calendar.putSupplemental(supplementalParser.parseSupplemental(calendarId, file));
-            } catch (IOException e) {
-                logger.error("Error parsing calendar alert supplemental file: " + file.getName(), e);
-            }
-        } else if (isActiveList(file)) {
-            try {
+            } else if (isActiveList(file)) {
                 calendar.putActiveList(activeListParser.parseActiveList(calendar, file));
-            } catch (IOException e) {
-                logger.error("Error parsing calendar alert active list file: " + file.getName(), e);
             }
+            return calendar;
+        } catch (Exception ex) {
+            throw new ParseError("Error while parsing calendar alert file " + file.getName(), ex);
         }
-        return calendar;
     }
 
     private CalendarId parseCalendarId(File file) {

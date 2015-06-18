@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
+import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,21 +30,21 @@ public class CalendarAlertProcessorTest extends BaseTests {
     private final File simpleActiveListFile = new File(getClass().getClassLoader().getResource("calendarAlerts/active_list_alert-2015-10-20150224T193238.html").getFile());
 
     @Test
-    public void parsesSimpleCalendarIdInfo() {
+    public void parsesSimpleCalendarIdInfo() throws ParseError {
         Calendar actualCalendar = process.process(simpleAlertFile);
         CalendarId expectedCalendarId = simpleCalendarId();
         assertThat(actualCalendar.getId(), is(expectedCalendarId));
     }
 
     @Test
-    public void parsesCalendarIdInfoWhenVersionPresent() {
+    public void parsesCalendarIdInfoWhenVersionPresent() throws ParseError {
         Calendar actualCalendar = process.process(alertFile);
         CalendarId expectedId = new CalendarId(28, 2015);
         assertThat(actualCalendar.getId(), is(expectedId));
     }
 
     @Test
-    public void parsesSupplementalVersion() {
+    public void parsesSupplementalVersion() throws ParseError {
         Calendar actualCalendar = process.process(simpleAlertFile);
         assertThat(actualCalendar.getSupplementalMap().keySet().size(), is(1));
         assertThat(actualCalendar.getSupplemental(Version.DEFAULT), is(not(nullValue())));
@@ -54,7 +55,7 @@ public class CalendarAlertProcessorTest extends BaseTests {
     }
 
     @Test
-    public void parsesSupplementalInfo() {
+    public void parsesSupplementalInfo() throws ParseError {
         CalendarId calendarId = simpleCalendarId();
         LocalDateTime releaseDateTime = LocalDateTime.of(2015, 2, 19, 14, 30, 33);
         LocalDate calendarDate = LocalDate.of(2015, 2, 25);
@@ -71,7 +72,7 @@ public class CalendarAlertProcessorTest extends BaseTests {
     }
 
     @Test
-    public void parsesOrderOfFirstReportEntries() {
+    public void parsesOrderOfFirstReportEntries() throws ParseError {
         SessionYear sessionYear = SessionYear.of(2015);
         CalendarSectionType sectionType = CalendarSectionType.ORDER_OF_THE_FIRST_REPORT;
         CalendarSupplementalEntry entry = new CalendarSupplementalEntry(
@@ -82,7 +83,7 @@ public class CalendarAlertProcessorTest extends BaseTests {
     }
 
     @Test
-    public void parsesOrderOfSecondReportEntries() {
+    public void parsesOrderOfSecondReportEntries() throws ParseError {
         SessionYear sessionYear = SessionYear.of(2015);
         CalendarSectionType sectionType = CalendarSectionType.ORDER_OF_THE_SECOND_REPORT;
         CalendarSupplementalEntry entry = new CalendarSupplementalEntry(
@@ -93,7 +94,7 @@ public class CalendarAlertProcessorTest extends BaseTests {
     }
 
     @Test
-    public void parsesOnThirdReadingEntries() {
+    public void parsesOnThirdReadingEntries() throws ParseError {
         SessionYear sessionYear = SessionYear.of(2015);
         CalendarSectionType sectionType = CalendarSectionType.THIRD_READING;
         CalendarSupplementalEntry entry = new CalendarSupplementalEntry(
@@ -112,7 +113,7 @@ public class CalendarAlertProcessorTest extends BaseTests {
     }
 
     @Test
-    public void parsesActiveListInfo() {
+    public void parsesActiveListInfo() throws ParseError {
         CalendarId calendarId = simpleCalendarId();
         int sequenceNo = 0;
         String notes = "";
@@ -132,7 +133,7 @@ public class CalendarAlertProcessorTest extends BaseTests {
     // TODO: test sequence number generation
 
     @Test
-    public void parsesActiveListEntries() {
+    public void parsesActiveListEntries() throws ParseError {
         CalendarId id = simpleCalendarId();
         SessionYear sessionYear = SessionYear.of(id.getYear());
         CalendarEntry entry = new CalendarEntry(46, new BillId("S2405", sessionYear ));

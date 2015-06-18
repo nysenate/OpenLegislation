@@ -47,7 +47,7 @@ public class AgendaAlertParser {
     private static final Pattern chairPattern = Pattern.compile("^\\s*Senator\\s+([A-z\\.' ]*),\\s+Chair\\s*$");
 
     private static final Pattern meetingTimePattern =
-            Pattern.compile("^\\s*(?:(\\d{1,2}:\\d{2} (?:AM|PM)|12 Noon)\\s*,\\s+)?[A-z]+day\\s*,\\s+([A-z]+ \\d+, \\d{4})\\s*$");
+            Pattern.compile("^\\s*(?:(\\d{1,2}:\\d{2} (?:AM|PM)|12 Noon)\\s*,\\s+)?(?:[A-z]+day\\s*,\\s+)?([A-z]+ \\d+, \\d{4})\\s*$");
 
     /**
      * Parses an agenda alert html file, yielding a list of committee meeting references
