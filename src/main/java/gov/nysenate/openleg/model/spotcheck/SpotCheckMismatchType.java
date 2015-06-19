@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.model.spotcheck;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.util.OutputUtils;
 

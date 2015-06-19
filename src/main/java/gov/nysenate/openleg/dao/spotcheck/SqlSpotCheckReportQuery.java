@@ -66,13 +66,13 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "SELECT q.*, hstore_to_array(q.key) AS key_arr FROM (\n" +
             // Select a specific report
             "WITH report_obs AS (\n" +
-                OBS_MISMATCHES_SELECT_CLAUSE.sql + OBS_MISMATCHES_FROM_CLAUSE.sql +
+                OBS_MISMATCHES_SELECT_CLAUSE.sql + ", COUNT(*) OVER () AS mismatch_count " + OBS_MISMATCHES_FROM_CLAUSE.sql +
                 "WHERE r.report_date_time = :reportDateTime AND r.reference_type = :referenceType\n" +
             ")\n" +
             "SELECT report_obs.*, true AS current FROM report_obs\n" +
             // ..and also fetch mismatch records that have the same type but occurred on an earlier report
             "UNION\n" +
-            OBS_MISMATCHES_SELECT_CLAUSE.sql + ", false AS current\n" +
+            OBS_MISMATCHES_SELECT_CLAUSE.sql + ", -1 AS mismatch_count, false AS current\n" +
             "FROM report_obs\n" +
             "JOIN ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o ON report_obs.key = o.key " +
             "   AND report_obs.reference_type = o.reference_type\n" +
