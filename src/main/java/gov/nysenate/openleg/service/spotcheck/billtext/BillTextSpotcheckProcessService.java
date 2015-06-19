@@ -55,17 +55,14 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
         List<BillTextReference> billTextReferences = new ArrayList<>();
         for (File file : incomingScrapedBills) {
             try {
-                billTextReferences.add(scrapedBillTextParser.parseReference(file));
+                BillTextReference btr = scrapedBillTextParser.parseReference(file);
+                dao.insertBillTextReference(btr);
+                billTextReferences.add(btr);
             } catch (Exception ex) {
                 notificationService.handleSpotcheckException(ex, false);
             } finally {
                 dao.archiveScrapedBill(file);
             }
-        }
-        billTextReferences.forEach(dao::insertBillTextReference);
-        // This second file loop is intentional so that no files are archived in the event of an exception
-        for (File file : incomingScrapedBills) {
-            dao.archiveScrapedBill(file);
         }
         return billTextReferences.size();
     }
