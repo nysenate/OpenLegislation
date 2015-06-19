@@ -44,7 +44,7 @@ public class ApiRequest
                 // Ignore
             }
             this.requestMethod = request.getMethod();
-            this.url = request.getRequestURI();
+            this.url = request.getRequestURI() + ((request.getQueryString() != null) ? ("?" + request.getQueryString()) : "");
             this.requestTime = requestDateTime;
         }
     }
