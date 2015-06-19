@@ -73,7 +73,9 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/fullcalendar/fullcalendar.js',
                         '<%= bowerRoot %>/amcharts/dist/amcharts/amcharts.js',
                         '<%= bowerRoot %>/amcharts/dist/amcharts/serial.js',
-                        '<%= bowerRoot %>/angular-utils-pagination/dirPagination.js'
+                        '<%= bowerRoot %>/angular-utils-pagination/dirPagination.js',
+                        '<%= bowerRoot %>/google-diff-match-patch/diff_match_patch.js',
+                        '<%= bowerRoot %>/angular-diff-match-patch/angular-diff-match-patch.js'
                     ]//'<%= jsDest %>/main.min.js': ['<%= jsSource %>/**/*.js']
                 }
             }

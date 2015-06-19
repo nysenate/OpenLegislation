@@ -86,6 +86,11 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     }
 
     @Override
+    public SpotCheckOpenMismatches<CalendarId> getOpenObservations(OpenMismatchQuery query) {
+        return reportDao.getOpenObservations(query);
+    }
+
+    @Override
     public void deleteReport(SpotCheckReportId reportId) {
         if (reportId == null) {
             throw new IllegalArgumentException("Cannot delete a null reportId.");

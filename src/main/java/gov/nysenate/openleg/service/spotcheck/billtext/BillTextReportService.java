@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -108,6 +107,11 @@ public class BillTextReportService implements SpotCheckReportService<BaseBillId>
     @Override
     public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
         return reportDao.getReportIds(SpotCheckRefType.LBDC_SCRAPED_BILL, start, end, dateOrder, limOff);
+    }
+
+    @Override
+    public SpotCheckOpenMismatches<BaseBillId> getOpenObservations(OpenMismatchQuery query) {
+        return reportDao.getOpenObservations(query);
     }
 
     /** {@inheritDoc} */

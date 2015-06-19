@@ -4,9 +4,10 @@
 var openApp = angular.module('open',
 // External modules
     ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar', 'angularUtils.directives.dirPagination',
+        'diff-match-patch',
 // Internal modules
     'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.daybreak', 'open.transcript', 'open.account',
-    'open.dashboard', 'open.environment', 'open.notification.subscription', 'open.member']);
+    'open.dashboard', 'open.environment', 'open.logout', 'open.notification.subscription', 'open.member']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {

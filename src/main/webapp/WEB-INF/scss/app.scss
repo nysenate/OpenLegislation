@@ -1092,16 +1092,15 @@ table.report-detail-table tbody tr td {
   color: #006b80;
 }
 
-.mismatch-diff-equal {
-
-}
-
-.mismatch-diff-insert {
-  background-color: #99ff99;
-}
-
-.mismatch-diff-delete {
-  background-color: #ff8888;
+diff-summary, mismatch-diff {
+  ins {
+    background-color: #99ff99;
+    text-decoration: none;
+  }
+  del {
+    background-color: #ff8888;
+    text-decoration: none;
+  }
 }
 
 .diff-summary-header {

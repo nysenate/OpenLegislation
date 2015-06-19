@@ -21,6 +21,7 @@
   <script src="${ctxPath}/static/js/src/component/admin/notification_sub.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/dashboard.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/environment.js"></script>
+  <script src="${ctxPath}/static/js/src/component/admin/logout.js"></script>
 </open-layout:head>
 <!--
                       __     __,
@@ -70,6 +71,7 @@
                 <menu-section title="Admin">
                   <menu-item url="${ctxPath}/admin">Dashboard</menu-item>
                   <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
+                  <menu-item url="${ctxPath}/admin/logout">Logout</menu-item>
                 </menu-section>
                 <menu-section title="Reports">
                   <menu-item url="${ctxPath}/admin/report/spotcheck">Spotcheck Reports</menu-item>

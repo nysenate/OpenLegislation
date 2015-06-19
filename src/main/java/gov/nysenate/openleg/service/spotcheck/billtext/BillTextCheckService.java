@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
@@ -95,22 +95,16 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
     private void checkBillText(BillAmendment billAmendment, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv){
         String dataText = billAmendment.getFullText();
         String refText = reference.getText();
-        String normalizedDataText = normalizeText(dataText);
-        String normalizedRefText = normalizeText(refText);
-        String superNormalizedDataText = superNormalizeText(dataText);
-        String superNormalizedRefText = superNormalizeText(refText);
+        String strippedDataText = stripWhiteSpace(dataText);
+        String strippedRefText = stripWhiteSpace(refText);
         // Check normalized text and report on non-normalized text as well if there is a mismatch
-        if (!StringUtils.equalsIgnoreCase(superNormalizedRefText, superNormalizedDataText)) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT, refText, dataText));
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT_NORMALIZED,
-                    normalizedRefText, normalizedDataText));
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT_SUPER_NORMALIZED,
-                    superNormalizedRefText, superNormalizedDataText));
-            String ultraNormRefText = ultraNormalizeText(refText, reference.getBillId());
-            String ultraNormDataText = ultraNormalizeText(dataText, billAmendment.getBillId());
-            if (!StringUtils.equalsIgnoreCase(ultraNormRefText, ultraNormDataText)) {
-                obsrv.addMismatch(new SpotCheckMismatch(BILL_FULL_TEXT_ULTRA_NORMALIZED,
-                        ultraNormRefText, ultraNormDataText));
+        if (!StringUtils.equalsIgnoreCase(strippedRefText, strippedDataText)) {
+            String pureContentRefText = stripNonContent(refText, reference.getBillId());
+            String pureContentDataText = stripNonContent(dataText, billAmendment.getBillId());
+            if (!StringUtils.equalsIgnoreCase(pureContentRefText, pureContentDataText)) {
+                obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_CONTENT, refText, dataText));
+            } else {
+                obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_LINE_OFFSET, refText, dataText));
             }
         }
     }
@@ -124,31 +118,24 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
     }
 
     /**
-     * Removes duplicate spaces and trims leading/trailing spaces for each line
-     */
-    private String normalizeText(String text) {
-        text = text.replaceAll("[ ]+", " ");
-        text = text.replaceAll("(?<=\n)[ ]+|[ ]+(?=\n)", "");
-        return text;
-    }
-
-    /**
      * Removes all whitespace
      */
-    private String superNormalizeText(String text) {
+    private String stripWhiteSpace(String text) {
         return text.replaceAll("[^\\w]+", "");
     }
 
     /**
      * Removes all whitespace, line numbers, and page numbers
      */
-    private String ultraNormalizeText(String text, BillId billId) {
-        String pageMarkerRegex = String.format("(?<=\n)%s. %d%s \\d+(?=\n)", billId.getBillType(), billId.getNumber(),
-                (BillId.isBaseVersion(billId.getVersion()) ? "" : "--") + billId.getVersion());
-        return superNormalizeText(
-                normalizeText(text)
-                        .replaceAll("(?<=\n)\\d{1,2} ", "")
-                        .replaceAll(pageMarkerRegex, ""));
+    private String stripNonContent(String text, BillId billId) {
+        String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
+        String pageMarkerRegex = "^ {7}[A|S]\\. \\d+(--[A-Z])?[ ]+\\d+([ ]+[A|S]\\. \\d+(--[A-Z])?)?$";
+        String budgetPageMargerRegex = "^[ ]{42,43}\\d+[ ]+\\d+-\\d+-\\d+$";
+        String explanationRegex = "^[ ]+EXPLANATION--Matter in ITALICS \\(underscored\\) is new; matter in brackets\\n";
+        String explanationRegex2 = "^[ ]+\\[ ] is old law to be omitted.\\n[ ]+LBD\\d+-\\d+-\\d+$";
+        String ultraNormalizeRegex = String.join("|", Arrays.asList(lineNumberRegex, pageMarkerRegex,
+                budgetPageMargerRegex, explanationRegex, explanationRegex2));
+        return stripWhiteSpace(text.replaceAll(ultraNormalizeRegex, ""));
     }
 
 }

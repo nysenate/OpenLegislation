@@ -131,9 +131,25 @@ public abstract class BaseCtrl
         try {
             return LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateTimeString));
         }
-        catch (DateTimeParseException ex) {
+        catch (DateTimeParseException | NullPointerException ex) {
             throw new InvalidRequestParamEx(dateTimeString, parameterName,
                 "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55 for October 27, 2014 9:44:55 AM");
+        }
+    }
+
+    /**
+     * Attempts to parse a date time request parameter
+     * Returns a default value if the parsing went wrong
+     *
+     * @param dateTimeString The parameter value to be parsed
+     * @param defaultValue The default LocalDateTime
+     * @return LocalDateTime
+     */
+    protected LocalDateTime parseISODateTime(String dateTimeString, LocalDateTime defaultValue) {
+        try {
+            return parseISODateTime(dateTimeString, "dont matter");
+        } catch (InvalidRequestParamEx ex) {
+            return defaultValue;
         }
     }
 
