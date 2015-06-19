@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.auth;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class ApiResponse
 {
@@ -16,7 +17,7 @@ public class ApiResponse
     public ApiResponse(ApiRequest baseRequest, HttpServletResponse response, LocalDateTime responseDateTime) {
         this.baseRequest = baseRequest;
         this.responseDateTime = responseDateTime;
-        this.processTime = (responseDateTime.getNano() - baseRequest.getRequestTime().getNano()) / 1000000;
+        this.processTime = ChronoUnit.MILLIS.between(baseRequest.getRequestTime(), responseDateTime);
         this.statusCode = response.getStatus();
         this.contentType = response.getContentType();
     }
