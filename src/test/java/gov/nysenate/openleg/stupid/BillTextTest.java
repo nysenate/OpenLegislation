@@ -100,7 +100,7 @@ public class BillTextTest extends BaseTests {
     @Test
     public void queueTest() {
         List<BaseBillId> billIds = Arrays.asList(
-                new BaseBillId("J2823", 2015));
+                new BaseBillId("S5513", 2015));
         billIds.forEach(billId -> dao.addBillToScrapeQueue(billId, ScrapeQueuePriority.MANUAL_ENTRY.getPriority()));
         logger.info("queue is now {}", dao.getScrapeQueue(LimitOffset.ALL, SortOrder.DESC).getResults().stream()
                 .map(BillScrapeQueueEntry::getBaseBillId)

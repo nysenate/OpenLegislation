@@ -4,7 +4,6 @@ import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
@@ -95,13 +94,13 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
     private void checkBillText(BillAmendment billAmendment, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv){
         String dataText = billAmendment.getFullText();
         String refText = reference.getText();
-        String strippedDataText = stripWhiteSpace(dataText);
-        String strippedRefText = stripWhiteSpace(refText);
+        String strippedDataText = stripNonAlpha(dataText);
+        String strippedRefText = stripNonAlpha(refText);
         // Check normalized text and report on non-normalized text as well if there is a mismatch
-        if (!StringUtils.equalsIgnoreCase(strippedRefText, strippedDataText)) {
-            String pureContentRefText = stripNonContent(refText, reference.getBillId());
-            String pureContentDataText = stripNonContent(dataText, billAmendment.getBillId());
-            if (!StringUtils.equalsIgnoreCase(pureContentRefText, pureContentDataText)) {
+        if (!StringUtils.equals(strippedRefText, strippedDataText)) {
+            String pureContentRefText = stripNonContent(refText);
+            String pureContentDataText = stripNonContent(dataText);
+            if (!StringUtils.equals(pureContentRefText, pureContentDataText)) {
                 obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_CONTENT, refText, dataText));
             } else {
                 obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_LINE_OFFSET, refText, dataText));
@@ -118,24 +117,25 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
     }
 
     /**
-     * Removes all whitespace
+     * Removes all non alpha characters
      */
-    private String stripWhiteSpace(String text) {
-        return text.replaceAll("[^\\w]+", "");
+    private String stripNonAlpha(String text) {
+        return text.replaceAll("(?:[^\\w]|_)+", "");
     }
 
+    static String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
+    static String pageMarkerRegex = "^ {7}[A|S]\\. \\d+(--[A-Z])?[ ]+\\d+([ ]+[A|S]\\. \\d+(--[A-Z])?)?$";
+    static String budgetPageMargerRegex = "^[ ]{42,43}\\d+[ ]+\\d+-\\d+-\\d+$";
+    static String explanationRegex = "^[ ]+EXPLANATION--Matter in ITALICS \\(underscored\\) is new; matter in brackets\\n";
+    static String explanationRegex2 = "^[ ]+\\[ ] is old law to be omitted.\\n[ ]+LBD\\d+-\\d+-\\d+$";
+    static String ultraNormalizeRegex = "(?m)" + String.join("|", Arrays.asList(
+            lineNumberRegex, pageMarkerRegex, budgetPageMargerRegex, explanationRegex, explanationRegex2));
     /**
      * Removes all whitespace, line numbers, and page numbers
      */
-    private String stripNonContent(String text, BillId billId) {
-        String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
-        String pageMarkerRegex = "^ {7}[A|S]\\. \\d+(--[A-Z])?[ ]+\\d+([ ]+[A|S]\\. \\d+(--[A-Z])?)?$";
-        String budgetPageMargerRegex = "^[ ]{42,43}\\d+[ ]+\\d+-\\d+-\\d+$";
-        String explanationRegex = "^[ ]+EXPLANATION--Matter in ITALICS \\(underscored\\) is new; matter in brackets\\n";
-        String explanationRegex2 = "^[ ]+\\[ ] is old law to be omitted.\\n[ ]+LBD\\d+-\\d+-\\d+$";
-        String ultraNormalizeRegex = String.join("|", Arrays.asList(lineNumberRegex, pageMarkerRegex,
-                budgetPageMargerRegex, explanationRegex, explanationRegex2));
-        return stripWhiteSpace(text.replaceAll(ultraNormalizeRegex, ""));
+    private String stripNonContent(String text) {
+        String stripped = text.replaceAll(ultraNormalizeRegex, "");
+        return stripNonAlpha(stripped);
     }
 
 }

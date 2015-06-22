@@ -1,17 +1,17 @@
-var daybreakModule = angular.module('open.daybreak', ['open.core', 'smart-table', 'diff-match-patch']);
+var spotcheckModule = angular.module('open.spotcheck', ['open.core', 'smart-table', 'diff-match-patch']);
 
 
 /** --- REST resources for retrieving daybreak summaries and reports --- */
 
 // Gets summaries for reports that were generated within the specified range
-daybreakModule.factory('DaybreakSummaryAPI', ['$resource', function($resource) {
+spotcheckModule.factory('SpotcheckSummaryAPI', ['$resource', function($resource) {
     return $resource(adminApiPath + "/spotcheck/summaries/:startDate/:endDate", {
         startDate: '@startDate', endDate: '@endDate'
     });
 }]);
 
 // Gets a full detailed report corresponding to the given date time
-daybreakModule.factory('DaybreakDetailAPI', ['$resource', function($resource) {
+spotcheckModule.factory('SpotcheckDetailAPI', ['$resource', function($resource) {
     return $resource(adminApiPath + "/spotcheck/:reportType/:reportDateTime", {
         reportType: '@reportType',
         reportDateTime: '@reportDateTime'
@@ -21,7 +21,7 @@ daybreakModule.factory('DaybreakDetailAPI', ['$resource', function($resource) {
 var reportTypeMap = {};
 var mismatchTypeMap = {};
 
-daybreakModule.filter('mismatchStatusLabel', ['$filter', function ($filter) {
+spotcheckModule.filter('mismatchStatusLabel', ['$filter', function ($filter) {
     var statusLabelMap = {
         RESOLVED: "Closed",
         NEW: "Opened",
@@ -34,19 +34,19 @@ daybreakModule.filter('mismatchStatusLabel', ['$filter', function ($filter) {
     };
 }]);
 
-daybreakModule.filter('mismatchTypeLabel', ['$filter', function ($filter) {
+spotcheckModule.filter('mismatchTypeLabel', ['$filter', function ($filter) {
     return function(type) {
         return $filter('label')(type, mismatchTypeMap);
     };
 }]);
 
-daybreakModule.filter('reportTypeLabel', ['$filter', function ($filter) {
+spotcheckModule.filter('reportTypeLabel', ['$filter', function ($filter) {
     return function(type) {
         return $filter('label')(type, reportTypeMap);
     }
 }]);
 
-daybreakModule.filter('reportType', function(){
+spotcheckModule.filter('reportType', function(){
     return function(type) {
         for (var key in reportTypeMap) {
             if (reportTypeMap.hasOwnProperty(key) && (type === key || type === reportTypeMap[key])) {
@@ -57,7 +57,7 @@ daybreakModule.filter('reportType', function(){
     }
 });
 
-daybreakModule.filter('contentType', function() {
+spotcheckModule.filter('contentType', function() {
     var contentTypeMap = {
         LBDC_ACTIVE_LIST: "Active List",
         LBDC_AGENDA_ALERT: "Agenda",
@@ -75,7 +75,7 @@ daybreakModule.filter('contentType', function() {
 
 /** --- Parent Daybreak Controller --- */
 
-daybreakModule.controller('DaybreakCtrl', ['$scope', '$routeParams', '$location', '$timeout', '$filter',
+spotcheckModule.controller('SpotcheckCtrl', ['$scope', '$routeParams', '$location', '$timeout', '$filter',
 function ($scope, $routeParams, $location, $timeout, $filter) {
 
     // The date of the currently open report, null if no open reports
@@ -107,8 +107,8 @@ function ($scope, $routeParams, $location, $timeout, $filter) {
 
 /** --- Report Summary Controller --- */
 
-daybreakModule.controller('DaybreakSummaryCtrl', ['$scope', '$filter', '$routeParams', '$location', 'DaybreakSummaryAPI',
-function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
+spotcheckModule.controller('SpotcheckSummaryCtrl', ['$scope', '$filter', '$routeParams', '$location', 'SpotcheckSummaryAPI',
+function ($scope, $filter, $routeParams, $location, SpotcheckSummaryAPI) {
     $scope.reportSummaries = [];
     $scope.filteredReportSummaries = [];
     $scope.dataProvider = [];
@@ -146,7 +146,7 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
         console.log("getting new summaries");
         var summaryType = $scope.params.summaryType !== "all" ? $filter('reportTypeLabel')($scope.params.summaryType) : [];
         $scope.loadingSummaries = true;
-        $scope.response = DaybreakSummaryAPI.get({startDate: $scope.startDate.format(),
+        $scope.response = SpotcheckSummaryAPI.get({startDate: $scope.startDate.format(),
                                                   endDate: $scope.endDate.endOf('day').format(),
                                                   reportType: summaryType},
             function() {
@@ -240,9 +240,9 @@ function ($scope, $filter, $routeParams, $location, DaybreakSummaryAPI) {
 
 /** --- Report Detail Controller --- */
 
-daybreakModule.controller('DaybreakDetailCtrl', ['$scope', '$element', '$filter', '$location', '$timeout', '$mdDialog',
-    '$routeParams', 'DaybreakDetailAPI',
-function ($scope, $element, $filter, $location, $timeout, $mdDialog, $routeParams, DaybreakDetailAPI) {
+spotcheckModule.controller('SpotcheckDetailCtrl', ['$scope', '$element', '$filter', '$location', '$timeout', '$mdDialog',
+    '$routeParams', 'SpotcheckDetailAPI',
+function ($scope, $element, $filter, $location, $timeout, $mdDialog, $routeParams, SpotcheckDetailAPI) {
     $scope.resultsPerPage = 10;
     $scope.errorFilter = null;
     $scope.displayData = [];
@@ -270,7 +270,7 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, $routeParam
 
     // Fetch the report by parsing the url for the report date/time
     $scope.getReportDetails = function() {
-        $scope.report = DaybreakDetailAPI.get({reportType: $scope.reportType, reportDateTime: $scope.reportDateTime}, function() {
+        $scope.report = SpotcheckDetailAPI.get({reportType: $scope.reportType, reportDateTime: $scope.reportDateTime}, function() {
             $scope.referenceDateTime = $scope.report.details.referenceDateTime;
             $scope.extractTableData();
             $scope.filterInit();
@@ -588,7 +588,7 @@ function ($scope, $element, $filter, $location, $timeout, $mdDialog, $routeParam
 
 }]);
 
-daybreakModule.directive('mismatchDiff', ['$timeout', function($timeout){
+spotcheckModule.directive('mismatchDiff', ['$timeout', function($timeout){
     return {
         restrict: 'E',
         scope: {
@@ -624,7 +624,7 @@ daybreakModule.directive('mismatchDiff', ['$timeout', function($timeout){
     };
 }]);
 
-daybreakModule.directive('diffSummary', function () {
+spotcheckModule.directive('diffSummary', function () {
     return {
         restrict: 'E',
         scope: {
@@ -693,7 +693,7 @@ daybreakModule.directive('diffSummary', function () {
     }
 });
 
-daybreakModule.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'initialMismatchId', 'reportType',
+spotcheckModule.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'initialMismatchId', 'reportType',
     'getDetails', 'findFirstOpenedDates', 'getMismatchId', 'getContentId', 'getContentUrl',
     function($scope, $mdDialog, initialMismatchId, reportType,
              getDetails, findFirstOpenedDates, getMismatchId, getContentId, getContentUrl) {
@@ -762,7 +762,7 @@ daybreakModule.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'initialMi
                 texts = texts.map(removeLinePageNumbers);
             }
             if ($scope.billTextCtrls.removeNonAlphaNum) {
-                texts = texts.map(function (text) {return text.replace(/[^\w]+/g, '')});
+                texts = texts.map(function (text) {return text.replace(/(?:[^\w]|_)+/g, '')});
             } else if ($scope.billTextCtrls.normalizeSpaces) {
                 texts = texts.map(function (text) {return text.replace(/[ ]+/g, ' ')});
                 texts = texts.map(function (text) {return text.replace(/^[ ]+|[ ]+$/gm, '')});
