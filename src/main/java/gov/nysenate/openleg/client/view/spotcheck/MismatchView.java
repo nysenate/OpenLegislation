@@ -17,7 +17,6 @@ public class MismatchView implements ViewObject
     protected String referenceData;
     protected String observedData;
     protected String notes;
-    protected LinkedList<StringDiffer.Diff> diff;
     protected ListView<PriorMismatchView> prior;
 
     public MismatchView(SpotCheckMismatch mismatch, List<SpotCheckPriorMismatch> priorMismatches) {
@@ -27,9 +26,8 @@ public class MismatchView implements ViewObject
             this.referenceData = mismatch.getReferenceData();
             this.observedData = mismatch.getObservedData();
             this.notes = mismatch.getNotes();
-            this.diff = mismatch.getDiff(true);
             this.prior = ListView.of(
-                    priorMismatches.stream().map(pm -> new PriorMismatchView(pm))
+                    priorMismatches.stream().map(PriorMismatchView::new)
                             .sorted((a, b) -> b.getReportId().compareTo(a.getReportId()))
                             .collect(Collectors.toList()));
         }
@@ -49,10 +47,6 @@ public class MismatchView implements ViewObject
 
     public String getObservedData() {
         return observedData;
-    }
-
-    public LinkedList<StringDiffer.Diff> getDiff() {
-        return diff;
     }
 
     public String getNotes() {

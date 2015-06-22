@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
@@ -96,6 +97,17 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         );
     }
 
+    /** {@inheritDoc}
+     * @param query*/
+    @Override
+    public SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query) {
+        ImmutableParams params = ImmutableParams.from(getOpenObsParams(query));
+        ReportObservationsHandler handler = new ReportObservationsHandler();
+        jdbcNamed.query(getLatestOpenObsMismatchesQuery(schema(), query),
+                params, handler);
+        return new SpotCheckOpenMismatches<>(query.getRefType(), handler.getObsMap(), handler.getMismatchTotal());
+    }
+
     /** {@inheritDoc} */
     @Override
     public void saveReport(SpotCheckReport<ContentKey> report) {
@@ -112,24 +124,18 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             logger.warn("The observations have not been set on this report.");
             return;
         }
-        // Add resolved mismatches to the report
-        setResolvedMismatchesFromPrior(report);
-        // Insert only the observations that have mismatches associated with them
+        // Set mismatch statuses for the report based on previous reports
+        setMismatchStatuses(report);
+        // Insert all observations
         report.getObservations().forEach((k,v) -> {
-            if (v.hasMismatches()) {
-                ImmutableParams observationParams = ImmutableParams.from(getObservationParams(reportParams, v));
-                int observationId = jdbcNamed.queryForObject(INSERT_OBSERVATION_AND_RETURN_ID.getSql(schema()), observationParams,
-                        (rs, row) -> rs.getInt(1));
-                // Insert the mismatches for the observation
-                v.getMismatches().values().forEach(m -> {
-                    // Figure out the status for this mismatch, as long as it's not marked as resolved
-                    if (!m.getStatus().equals(SpotCheckMismatchStatus.RESOLVED)) {
-                        m.setStatus(determineMismatchStatus(observationParams, m));
-                    }
-                    ImmutableParams mismatchParams = ImmutableParams.from(getMismatchParams(observationId, m));
-                    jdbcNamed.update(INSERT_MISMATCH.getSql(schema()), mismatchParams);
-                });
-            }
+            ImmutableParams observationParams = ImmutableParams.from(getObservationParams(reportParams, v));
+            int observationId = jdbcNamed.queryForObject(INSERT_OBSERVATION_AND_RETURN_ID.getSql(schema()), observationParams,
+                    (rs, row) -> rs.getInt(1));
+            // Insert the mismatches for the observation
+            v.getMismatches().values().forEach(m -> {
+                ImmutableParams mismatchParams = ImmutableParams.from(getMismatchParams(observationId, m));
+                jdbcNamed.update(INSERT_MISMATCH.getSql(schema()), mismatchParams);
+            });
         });
     }
 
@@ -185,11 +191,11 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             // For each observation on a content key, if the observation exists in the current report
             // then we want to find all the mismatches that exist in the prior report but do not exist
             // in the current report. We can assume those are resolved.
-            priorReport.getObservations().forEach((contentKey,observation) -> {
+            priorReport.getObservations().forEach((contentKey, observation) -> {
                 if (obsMap.containsKey(contentKey)) {
                     MapDifference<SpotCheckMismatchType, SpotCheckMismatch> diff =
-                        Maps.difference(observation.getMismatches(), obsMap.get(contentKey).getMismatches());
-                    diff.entriesOnlyOnLeft().forEach((mismatchType,mismatch) -> {
+                            Maps.difference(observation.getMismatches(), obsMap.get(contentKey).getMismatches());
+                    diff.entriesOnlyOnLeft().forEach((mismatchType, mismatch) -> {
                         if (!mismatch.getStatus().equals(SpotCheckMismatchStatus.RESOLVED)) {
                             mismatch.setStatus(SpotCheckMismatchStatus.RESOLVED);
                             // Set the resolved mismatch to the current report so it can be saved
@@ -201,11 +207,45 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         }
     }
 
+    /**
+     * Looks at past observations for each checked content key and sets mismatch statuses in the current report
+     * according to their presence in previous reports
+     */
+    private void setMismatchStatuses(SpotCheckReport<ContentKey> report) {
+        // Get latest observation for each content key of this report's reference type
+        ReportObservationsHandler obsHandler = new ReportObservationsHandler();
+        MapSqlParameterSource params = new MapSqlParameterSource("referenceType", String.valueOf(report.getReferenceType()));
+        jdbcNamed.query(SELECT_LATEST_OBS_MISMATCHES_PARTIAL.getSql(schema()), params, obsHandler);
+        Map<ContentKey, SpotCheckObservation<ContentKey>> latestObs = obsHandler.getObsMap();
+
+        report.getObservations().forEach((contentKey, reportObs) -> {
+            if (latestObs.containsKey(contentKey)) { // Leave mismatch statuses as NEW if no prior occurrence
+                latestObs.get(contentKey).getMismatches().forEach((type, lastMismatch) -> {
+                    if (reportObs.getMismatches().containsKey(type)) { // if a past mismatch has occurred in this report
+                        SpotCheckMismatch currentMismatch = reportObs.getMismatches().get(type);
+                        switch (lastMismatch.getStatus()) {
+                            case RESOLVED: currentMismatch.setStatus(SpotCheckMismatchStatus.REGRESSION); break;
+                            case IGNORE: currentMismatch.setStatus(SpotCheckMismatchStatus.IGNORE); break;
+                            default: currentMismatch.setStatus(SpotCheckMismatchStatus.EXISTING);
+                        }
+                    } else if (!SpotCheckMismatchStatus.RESOLVED.equals(lastMismatch.getStatus())){
+                        // If a past mismatch is not represented for this content in this report, it is resolved
+                        lastMismatch.setStatus(SpotCheckMismatchStatus.RESOLVED);
+                        reportObs.addMismatch(lastMismatch);
+                    }
+                });
+            }
+        });
+    }
+
     /** --- Helper Classes --- */
 
     protected class ReportObservationsHandler implements RowCallbackHandler
     {
         private Map<ContentKey, SpotCheckObservation<ContentKey>> obsMap = new HashMap<>();
+
+        // The total number of current mismatch rows before pagination
+        int mismatchTotal = 0;
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {
@@ -214,45 +254,53 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 // Set the observation
                 SpotCheckObservation<ContentKey> obs = new SpotCheckObservation<>();
                 obs.setKey(key);
+                SpotCheckReferenceId refId = new SpotCheckReferenceId(
+                        SpotCheckRefType.valueOf(rs.getString("reference_type")),
+                        getLocalDateTimeFromRs(rs, "reference_active_date"));
+                obs.setReferenceId(refId);
+                obs.setObservedDateTime(getLocalDateTimeFromRs(rs, "observed_date_time"));
                 obsMap.put(key, obs);
             }
             SpotCheckObservation<ContentKey> obs = obsMap.get(key);
-            boolean current = rs.getBoolean("current");
-            SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("type"));
-            SpotCheckMismatchStatus status = SpotCheckMismatchStatus.valueOf(rs.getString("status"));
-            String refData = rs.getString("reference_data");
-            String obsData = rs.getString("observed_data");
-            String notes = rs.getString("notes");
-            // Add the current mismatch
-            if (current) {
-                // Set observation details if not already set
-                if (obs.getReferenceId() == null) {
-                    SpotCheckReferenceId refId = new SpotCheckReferenceId(
-                            SpotCheckRefType.valueOf(rs.getString("reference_type")),
-                            getLocalDateTimeFromRs(rs, "reference_active_date"));
-                    obs.setReferenceId(refId);
-                    obs.setObservedDateTime(getLocalDateTimeFromRs(rs, "observed_date_time"));
+            rs.getInt("mismatch_id");
+            if (!rs.wasNull()) {
+                int mismatchCount = rs.getInt("mismatch_count");
+                if (mismatchCount > mismatchTotal) {
+                    mismatchTotal = mismatchCount;
                 }
-                SpotCheckMismatch mismatch = new SpotCheckMismatch(type, refData, obsData, notes);
-                mismatch.setStatus(status);
-                obs.addMismatch(mismatch);
-            }
-            // Otherwise add the prior mismatch
-            else {
-                SpotCheckReportId reportId = new SpotCheckReportId(
-                    SpotCheckRefType.valueOf(rs.getString("report_reference_type")),
-                    getLocalDateTimeFromRs(rs, "reference_active_date"),
-                    getLocalDateTimeFromRs(rs, "report_date_time")
-                );
-                SpotCheckPriorMismatch priorMismatch = new SpotCheckPriorMismatch(type, refData, obsData, notes);
-                priorMismatch.setReportId(reportId);
-                priorMismatch.setStatus(status);
-                obs.addPriorMismatch(priorMismatch);
+                boolean current = rs.getBoolean("current");
+                SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("type"));
+                SpotCheckMismatchStatus status = SpotCheckMismatchStatus.valueOf(rs.getString("status"));
+                String refData = rs.getString("reference_data");
+                String obsData = rs.getString("observed_data");
+                String notes = rs.getString("notes");
+                // Add the current mismatch
+                if (current) {
+                    SpotCheckMismatch mismatch = new SpotCheckMismatch(type, refData, obsData, notes);
+                    mismatch.setStatus(status);
+                    obs.addMismatch(mismatch);
+                }
+                // Otherwise add the prior mismatch
+                else {
+                    SpotCheckReportId reportId = new SpotCheckReportId(
+                            SpotCheckRefType.valueOf(rs.getString("report_reference_type")),
+                            getLocalDateTimeFromRs(rs, "reference_active_date"),
+                            getLocalDateTimeFromRs(rs, "report_date_time")
+                    );
+                    SpotCheckPriorMismatch priorMismatch = new SpotCheckPriorMismatch(type, refData, obsData, notes);
+                    priorMismatch.setReportId(reportId);
+                    priorMismatch.setStatus(status);
+                    obs.addPriorMismatch(priorMismatch);
+                }
             }
         }
 
         public Map<ContentKey, SpotCheckObservation<ContentKey>> getObsMap() {
             return obsMap;
+        }
+
+        public int getMismatchTotal() {
+            return mismatchTotal;
         }
     }
 
@@ -283,5 +331,14 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             .addValue("referenceData", mismatch.getReferenceData())
             .addValue("observedData", mismatch.getObservedData())
             .addValue("notes", mismatch.getNotes());
+    }
+
+    private MapSqlParameterSource getOpenObsParams(OpenMismatchQuery query) {
+        return new MapSqlParameterSource()
+                .addValue("referenceType", query.getRefType().name())
+                .addValue("earliest", toDate(query.getEarliestObserved()))
+                .addValue("mismatchTypes", query.getMismatchTypes().stream()
+                        .map(SpotCheckMismatchType::name)
+                        .collect(Collectors.toList()));
     }
 }

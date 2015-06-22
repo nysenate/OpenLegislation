@@ -7,21 +7,22 @@ import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
+import gov.nysenate.openleg.client.response.spotcheck.OpenMismatchesResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportDetailResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportSummaryResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.spotcheck.OpenMismatchesView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportNotFoundEx;
+import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
+import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
+import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,19 +58,6 @@ public class SpotCheckCtrl extends BaseCtrl
                 reportServices.stream()
                         .collect(Collectors.toMap(SpotCheckReportService::getSpotcheckRefType, Function.identity(),(a, b) -> b)));
     }
-
-    /**
-     * Toggle Scheduled SpotChecks API
-     *
-     * TODO move to environment api
-     */
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public BaseResponse toggleScheduling(@RequestParam(required = true) boolean scheduledReports) {
-        env.setSpotcheckScheduled(scheduledReports);
-        return new SimpleResponse(true,
-            "Scheduled reports: " + env.isSpotcheckScheduled(), "spotcheck-enable-response");
-    }
-
 
     /**
      * SpotCheck Report Summary Retrieval API
@@ -160,6 +148,31 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     /**
+     * Spotcheck Open Observations API
+     */
+    @RequestMapping(value = "/open-mismatches/{reportType}", method = RequestMethod.GET)
+    public BaseResponse getOpenMismatches(@PathVariable String reportType,
+                                        @RequestParam(required = false) String[] mismatchType,
+                                        @RequestParam(required = false) String orderBy,
+                                        @RequestParam(required = false) String earliest,
+                                        @RequestParam(defaultValue = "false") boolean resolvedShown,
+                                        @RequestParam(defaultValue = "false") boolean ignoredShown,
+                                        WebRequest request) {
+        SpotCheckRefType refType = getSpotcheckRefType(reportType, "reportType");
+        LimitOffset limOff = getLimitOffset(request, 0);
+        MismatchOrderBy mismatchOrderBy = getEnumParameter(orderBy, MismatchOrderBy.class, MismatchOrderBy.OBSERVED);
+        SortOrder order = getSortOrder(request, SortOrder.DESC);
+        Set<SpotCheckMismatchType> mismatchTypes = getSpotcheckMismatchTypes(mismatchType, "mismatchType", refType);
+        LocalDateTime earliestDateTime = parseISODateTime(earliest, DateUtils.LONG_AGO.atStartOfDay());
+        OpenMismatchQuery query = new OpenMismatchQuery(refType, mismatchTypes, earliestDateTime,
+                mismatchOrderBy, order, limOff, resolvedShown, ignoredShown);
+        SpotCheckOpenMismatches<?> observations = reportServiceMap.get(refType)
+                .getOpenObservations(query);
+        return new OpenMismatchesResponse<>(new OpenMismatchesView<>(observations),
+                query, observations.getTotalCurrentMismatches());
+    }
+
+    /**
      * Spotcheck Report Run API
      *
      * Attempts to run spotcheck reports for the given report types
@@ -219,6 +232,15 @@ public class SpotCheckCtrl extends BaseCtrl
                 ? EnumSet.allOf(SpotCheckRefType.class)
                 : Arrays.asList(parameters).stream()
                         .map(param -> getSpotcheckRefType(param, paramName))
+                        .collect(Collectors.toSet());
+    }
+
+    private Set<SpotCheckMismatchType> getSpotcheckMismatchTypes(String[] parameters, String paramName,
+                                                                 SpotCheckRefType refType) {
+        return parameters == null
+                ? SpotCheckMismatchType.getMismatchTypes(refType)
+                : Arrays.asList(parameters).stream()
+                        .map(paramValue -> getEnumParameter(paramName, paramValue, SpotCheckMismatchType.class))
                         .collect(Collectors.toSet());
     }
 }

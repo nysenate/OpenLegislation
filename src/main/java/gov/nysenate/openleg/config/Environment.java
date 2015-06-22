@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * The Environment class contains various configuration options to be used throughout the application.
@@ -38,6 +39,8 @@ public class Environment
 
     private File scrapedStagingDir;
 
+
+    private LocalDateTime deployedDateTime;
 
     /** --- Api Auth --- */
 
@@ -116,6 +119,7 @@ public class Environment
 
     @PostConstruct
     private void init() {
+        deployedDateTime = LocalDateTime.now();
         this.baseDir = new File(envDirPath);
         this.stagingDir = new File(stagingDirPath);
         this.archiveDir = new File(archiveDirPath);
@@ -333,5 +337,9 @@ public class Environment
 
     public void setBillScrapeQueueEnabled(boolean billScrapeQueueEnabled) {
         this.billScrapeQueueEnabled = billScrapeQueueEnabled;
+    }
+
+    public LocalDateTime getDeployedDateTime() {
+        return deployedDateTime;
     }
 }

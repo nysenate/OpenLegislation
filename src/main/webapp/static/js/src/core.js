@@ -292,7 +292,6 @@ coreModule.directive('lineNumbers', function() {
         ,
         link: function($scope) {
             $scope.lineStart = $scope.lineStart || 1;
-            console.log($scope.lineStart, $scope.lineEnd);
             $scope.range = function(num) {
                 return new Array(num);
             };

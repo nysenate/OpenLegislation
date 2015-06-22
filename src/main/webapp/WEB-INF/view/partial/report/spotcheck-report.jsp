@@ -9,8 +9,8 @@
   String daybreakInitArgs = refTypeMap + ", " + mismatchMap;
 %>
 
-<section ng-controller="DaybreakCtrl" id="daybreak-page" ng-init='init(<%=daybreakInitArgs%>)' class="content-section">
-  <section ng-controller="DaybreakDetailCtrl" ng-init="init()">
+<section ng-controller="SpotcheckCtrl" id="daybreak-page" ng-init='init(<%=daybreakInitArgs%>)' class="content-section">
+  <section ng-controller="SpotcheckDetailCtrl" ng-init="init()">
     <md-card>
       <md-card-content ng-show="!loadingReport">
         <!--Title-->
@@ -47,7 +47,7 @@
               </md-checkbox>
             </div>
 
-            <div layout="row" class="row button-group panel minimal">
+            <div layout="row" layout-wrap>
               <md-checkbox ng-model="errorFilter.allTypes" aria-label="Show all mismatch types">
                 All<br/>Types
               </md-checkbox>
@@ -108,7 +108,11 @@
                   {{row.firstOpened | moment:'lll'}}
                 </span>
             </td>
-            <td><div class="report-table-snippet"><mismatch-diff diff="row.diff"></mismatch-diff></div></td>
+            <td>
+              <div class="report-table-snippet">
+                <mismatch-diff no-pre left="row.refData" right="row.obsData"></mismatch-diff>
+              </div>
+            </td>
             <td><a href='#' ng-click='openDetailWindow(row.mismatchId)'>Details</a></td>
           </tr>
           </tbody>
@@ -128,37 +132,45 @@
 <script type="text/ng-template" id="mismatchDetailWindow">
   <md-dialog aria-label="Mismatch Detail">
     <md-content class="padding-20 mismatch-dialog">
-      <div>
-        <h5 style="display: inline-block">
+      <div layout="row" layout-align="space-around center" layout-wrap>
+        <h5>
           {{reportType | contentType}}: <a ng-href="{{contentUrl}}" target="_blank">{{contentId}}</a><br/>
           Mismatch: {{currentMismatch.mismatchType | mismatchTypeLabel}}<br/>
           Status: {{currentMismatch.status | mismatchStatusLabel}}
         </h5>
-        <h5 style="display: inline-block; text-align: right">
+        <h5>
           Opened on: {{firstOpened.reportDateTime | moment:'lll'}}<br/>
           First Reference: {{firstOpened.referenceDateTime | moment:'lll'}}<br/>
           Current Reference: {{observation.refDateTime | moment:'lll'}}
         </h5>
+        <div ng-if="isBillTextMismatch()" layout="row" layout-align="space-around center">
+          <div layout="column" layout-align="center start">
+            <md-checkbox ng-model="billTextCtrls.normalizeSpaces" ng-disabled="billTextCtrls.removeNonAlphaNum"
+                ng-change="formatDisplayData()">
+              Normalize Spaces
+            </md-checkbox>
+            <md-checkbox ng-model="billTextCtrls.removeNonAlphaNum" ng-change="formatDisplayData()">
+              Strip Non-Alphanumeric
+            </md-checkbox>
+          </div>
+          <md-checkbox ng-model="billTextCtrls.removeLinePageNums" ng-change="formatDisplayData()"
+              >Remove Line/Page Numbers</md-checkbox>
+        </div>
       </div>
       <md-tabs md-dynamic-height="true" class="mismatch-dialog-tabs">
-        <md-tab label="Summary" ng-disabled="!multiLine">
+        <md-tab label="Diff">
           <md-content>
-            <diff-summary diff="currentMismatch.diff"></diff-summary>
-          </md-content>
-        </md-tab>
-        <md-tab label="Full Diff">
-          <md-content>
-            <mismatch-diff pre="{{multiLine}}" diff="currentMismatch.diff"></mismatch-diff>
+            <mismatch-diff left="lbdcData" right="openlegData"></mismatch-diff>
           </md-content>
         </md-tab>
         <md-tab label="LBDC">
           <md-content>
-            <span ng-class="{preformatted: multiLine, 'word-wrap': !multiLine}" ng-bind="currentMismatch.referenceData"></span>
+            <span ng-class="{preformatted: multiLine, 'word-wrap': !multiLine}" ng-bind="lbdcData"></span>
           </md-content>
         </md-tab>
         <md-tab label="Openleg">
           <md-content>
-            <span ng-class="{preformatted: multiLine, 'word-wrap': !multiLine}" ng-bind="currentMismatch.observedData"></span>
+            <span ng-class="{preformatted: multiLine, 'word-wrap': !multiLine}" ng-bind="openlegData"></span>
           </md-content>
         </md-tab>
         <md-tab label="Prior Occurrences">
@@ -171,7 +183,7 @@
               </div>
               <md-divider></md-divider>
               <p>
-                <mismatch-diff diff="priorMismatch.diff"></mismatch-diff>
+                <diff-summary full-diff="priorMismatch.diff"></diff-summary>
               </p>
             </toggle-panel>
             <md-content>

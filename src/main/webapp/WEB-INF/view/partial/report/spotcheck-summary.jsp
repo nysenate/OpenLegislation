@@ -9,9 +9,9 @@
   String daybreakInitArgs = refTypeMap + ", " + mismatchMap;
 %>
 
-<section ng-controller="DaybreakCtrl" id="daybreak-page" ng-init='init(<%=daybreakInitArgs%>)' class="content-section">
+<section ng-controller="SpotcheckCtrl" id="daybreak-page" ng-init='init(<%=daybreakInitArgs%>)' class="content-section">
   <md-card class="content-card">
-    <md-card-content ng-controller="DaybreakSummaryCtrl" style="padding-left: 10px">
+    <md-card-content ng-controller="SpotcheckSummaryCtrl" style="padding-left: 10px">
       <div class="margin-bottom-10">
         <form>
           <h4 class="no-margin">

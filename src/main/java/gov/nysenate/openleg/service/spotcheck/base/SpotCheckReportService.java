@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,7 +23,7 @@ public interface SpotCheckReportService<ContentKey>
     /**
      * @return The SpotCheckRefType that is used for this report
      */
-    public SpotCheckRefType getSpotcheckRefType();
+    SpotCheckRefType getSpotcheckRefType();
 
     /**
      * Generate a SpotCheckReport across all available data. The reference data used for
@@ -32,7 +34,7 @@ public interface SpotCheckReportService<ContentKey>
      * @return SpotCheckReport<ContentKey>
      * @throws ReferenceDataNotFoundEx - If there is no reference data that can be used for this report.
      */
-    public SpotCheckReport<ContentKey> generateReport(LocalDateTime start, LocalDateTime end)
+    SpotCheckReport<ContentKey> generateReport(LocalDateTime start, LocalDateTime end)
                                                       throws ReferenceDataNotFoundEx;
 
     /**
@@ -42,7 +44,7 @@ public interface SpotCheckReportService<ContentKey>
      *
      * @param report SpotCheckReport<ContentKey> - The report to save in the backing store.
      */
-    public void saveReport(SpotCheckReport<ContentKey> report);
+    void saveReport(SpotCheckReport<ContentKey> report);
 
     /**
      * Obtain a SpotCheckReport from the backing store using the report id. The report obtained
@@ -53,7 +55,7 @@ public interface SpotCheckReportService<ContentKey>
      *
      * @param reportId
      */
-    public SpotCheckReport<ContentKey> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx;
+    SpotCheckReport<ContentKey> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx;
 
     /**
      * Return a list of saved report ids with options to filter the result set.
@@ -64,13 +66,20 @@ public interface SpotCheckReportService<ContentKey>
      * @param limOff LimitOffset - Limit/Offset the result set
      * @return List<SpotCheckReportId> - List of report ids
      */
-    public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end,
+    List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end,
                                                 SortOrder dateOrder, LimitOffset limOff);
+
+    /**
+     * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType
+     * @param query OpenMismatchQuery
+     * @return Map<ContentKey, SpotCheckObservation<ContentKey>>
+     */
+    SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query);
 
     /**
      * Wipe a report as well as all of its associated observations and mismatches from the backing store.
      *
      * @param reportId
      */
-    public void deleteReport(SpotCheckReportId reportId);
+    void deleteReport(SpotCheckReportId reportId);
 }

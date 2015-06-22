@@ -17,7 +17,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,6 +93,15 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
     @Override
     public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
         return reportDao.getReportIds(SpotCheckRefType.LBDC_AGENDA_ALERT, start, end, dateOrder, limOff);
+    }
+
+    /** {@inheritDoc}
+     * @param mismatchTypes
+     * @param limitOffset
+     * @param query */
+    @Override
+    public SpotCheckOpenMismatches<CommitteeAgendaAddendumId> getOpenObservations(OpenMismatchQuery query) {
+        return reportDao.getOpenObservations(query);
     }
 
     /** {@inheritDoc} */

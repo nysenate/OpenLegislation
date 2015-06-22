@@ -19,13 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
@@ -162,7 +161,7 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
         try {
             return reportDao.getReport(reportId);
         }
-        catch (DataAccessException ex) {
+        catch (EmptyResultDataAccessException ex) {
             throw new SpotCheckReportNotFoundEx(reportId);
         }
     }
@@ -174,6 +173,11 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
         if (limOff == null) { limOff = LimitOffset.ALL; }
         if (dateOrder == null) { dateOrder = SortOrder.ASC; }
         return reportDao.getReportIds(SpotCheckRefType.LBDC_DAYBREAK, start, end, dateOrder, limOff);
+    }
+
+    @Override
+    public SpotCheckOpenMismatches<BaseBillId> getOpenObservations(OpenMismatchQuery query) {
+        return reportDao.getOpenObservations(query);
     }
 
     /** {@inheritDoc}

@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
+import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,7 +25,7 @@ public interface SpotCheckReportDao<ContentKey>
      * @param id SpotCheckReportId
      * @return SpotCheckReport<ContentKey> or DataAccessException if no matching report was found
      */
-    public SpotCheckReport<ContentKey> getReport(SpotCheckReportId id) throws DataAccessException;
+    SpotCheckReport<ContentKey> getReport(SpotCheckReportId id) throws DataAccessException;
 
     /**
      * Get a list of the report ids that have been saved with options to filter the result set.
@@ -37,8 +37,14 @@ public interface SpotCheckReportDao<ContentKey>
      * @param limOff LimitOffset - Restrict the result set.s
      * @return List<SpotCheckReportId>
      */
-    public List<SpotCheckReportId> getReportIds(SpotCheckRefType refType, LocalDateTime start,
+    List<SpotCheckReportId> getReportIds(SpotCheckRefType refType, LocalDateTime start,
                                                 LocalDateTime end, SortOrder dateOrder, LimitOffset limOff);
+
+    /**
+     * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType
+     * @param query OpenMismatchQuery
+     * */
+    SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query);
 
     /**
      * Save the report to the backing store. This process may add additional observations to the
@@ -47,12 +53,12 @@ public interface SpotCheckReportDao<ContentKey>
      *
      * @param report SpotCheckReport<ContentKey> - The report to save into the backing store
      */
-    public void saveReport(SpotCheckReport<ContentKey> report) throws DataAccessException;
+    void saveReport(SpotCheckReport<ContentKey> report) throws DataAccessException;
 
     /**
      * Delete a report via the report id
      *
      * @param reportId SpotCheckReportId
      */
-    public void deleteReport(SpotCheckReportId reportId);
+    void deleteReport(SpotCheckReportId reportId);
 }

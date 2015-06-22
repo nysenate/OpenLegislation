@@ -4,6 +4,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public class DaybreakSpotCheckReportDaoTests extends BaseTests
 {
@@ -32,6 +34,12 @@ public class DaybreakSpotCheckReportDaoTests extends BaseTests
         SpotCheckReport<BaseBillId> report = reportDao.getReport(
             new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, reportDateTime));
         logger.info("{}", OutputUtils.toJson(report));
+    }
+
+    @Test
+    public void getOpenObsTest() {
+        //Map<BaseBillId, SpotCheckObservation<BaseBillId>> obs = reportDao.getOpenObservations(SpotCheckRefType.LBDC_SCRAPED_BILL);
+        logger.info("hi");
     }
 
     @Test
