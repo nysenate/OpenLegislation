@@ -35,7 +35,7 @@ openApp.config(function($mdThemingProvider) {
 })
 .config(function($httpProvider){
     // We set a ui key in the http header to allow front end users to bypass api key restrictions
-    $httpProvider.defaults.headers.common['UIKey'] = $("#uikey").val();
+    $httpProvider.defaults.headers.common['X-UI-Key'] = $("#uikey").val();
 });
 
 /**
