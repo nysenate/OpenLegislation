@@ -25,7 +25,10 @@ public abstract class BaseSpotcheckProcessService implements ProcessService
     @Override
     public int collate() {
         try {
-            return doCollate();
+            if (environment.isSpotcheckScheduled()) {
+                return doCollate();
+            }
+            return 0;
         } catch (Exception ex) {
             spotCheckNotificationService.handleSpotcheckException(ex, false);
             return 0;
@@ -43,9 +46,12 @@ public abstract class BaseSpotcheckProcessService implements ProcessService
     @Override
     public int ingest() {
         try {
-            int ingestCount = doIngest();
-            registerReferenceEvent();
-            return ingestCount;
+            if (environment.isSpotcheckScheduled()) {
+                int ingestCount = doIngest();
+                registerReferenceEvent();
+                return ingestCount;
+            }
+            return 0;
         } catch (Exception ex) {
             spotCheckNotificationService.handleSpotcheckException(ex, false);
             return 0;
