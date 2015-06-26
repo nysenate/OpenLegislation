@@ -11,11 +11,11 @@ import gov.nysenate.openleg.client.response.spotcheck.OpenMismatchesResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportDetailResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportSummaryResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
-import gov.nysenate.openleg.client.view.spotcheck.OpenMismatchesView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
@@ -84,27 +84,31 @@ public class SpotCheckCtrl extends BaseCtrl
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
         SortOrder order = getSortOrder(webRequest, SortOrder.DESC);
+        LimitOffset limitOffset = getLimitOffset(webRequest, 0);
         Set<SpotCheckRefType> refTypes = getSpotcheckRefTypes(reportType, "reportType");
 
-        List<SpotCheckReport<?>> reports = new ArrayList<>();
-        refTypes.forEach(refType -> {
+        List<SpotCheckReportId> reportIds = new ArrayList<>();
+        for(SpotCheckRefType refType : refTypes) {
             SpotCheckReportService<?> reportService = reportServiceMap.get(refType);
             if (reportService != null) {
-                reportService.getReportIds(fromDateTime, toDateTime, order, LimitOffset.ALL)
-                        .parallelStream()
-                        .map(reportService::getReport)
-                        .forEach(reports::add);
+                PaginatedList<SpotCheckReportId> singleReportIds =
+                        reportService.getReportIds(fromDateTime, toDateTime, order, LimitOffset.ALL);
+                singleReportIds.getResults().forEach(reportIds::add);
             }
-        });
-        reports.sort((a, b) -> SortOrder.ASC.equals(order)
+        }
+        reportIds.sort((a, b) -> SortOrder.ASC.equals(order)
                 ? a.getReportDateTime().compareTo(b.getReportDateTime())
                 : b.getReportDateTime().compareTo(a.getReportDateTime()));
+
+        List<SpotCheckReport<?>> reports = LimitOffset.limitList(reportIds, limitOffset).stream()
+                .map(reportId -> reportServiceMap.get(reportId.getReferenceType()).getReport(reportId))
+                .collect(Collectors.toList());
 
         // Construct the client response
         return new ReportSummaryResponse<>(
                 ListView.of(reports.stream()
                         .map(ReportInfoView::new)
-                        .collect(Collectors.toList())), fromDateTime, toDateTime);
+                        .collect(Collectors.toList())), fromDateTime, toDateTime, reportIds.size(), limitOffset);
     }
     @RequestMapping(value = "/summaries")
     public BaseResponse getReportSummaries(@RequestParam(required = false) String[] reportType, WebRequest request) {
@@ -154,22 +158,21 @@ public class SpotCheckCtrl extends BaseCtrl
     public BaseResponse getOpenMismatches(@PathVariable String reportType,
                                         @RequestParam(required = false) String[] mismatchType,
                                         @RequestParam(required = false) String orderBy,
-                                        @RequestParam(required = false) String earliest,
+                                        @RequestParam(required = false) String observedAfter,
                                         @RequestParam(defaultValue = "false") boolean resolvedShown,
                                         @RequestParam(defaultValue = "false") boolean ignoredShown,
                                         WebRequest request) {
         SpotCheckRefType refType = getSpotcheckRefType(reportType, "reportType");
         LimitOffset limOff = getLimitOffset(request, 0);
-        MismatchOrderBy mismatchOrderBy = getEnumParameter(orderBy, MismatchOrderBy.class, MismatchOrderBy.OBSERVED);
+        MismatchOrderBy mismatchOrderBy = getEnumParameter(orderBy, MismatchOrderBy.class, MismatchOrderBy.OBSERVED_DATE);
         SortOrder order = getSortOrder(request, SortOrder.DESC);
         Set<SpotCheckMismatchType> mismatchTypes = getSpotcheckMismatchTypes(mismatchType, "mismatchType", refType);
-        LocalDateTime earliestDateTime = parseISODateTime(earliest, DateUtils.LONG_AGO.atStartOfDay());
+        LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
         OpenMismatchQuery query = new OpenMismatchQuery(refType, mismatchTypes, earliestDateTime,
                 mismatchOrderBy, order, limOff, resolvedShown, ignoredShown);
         SpotCheckOpenMismatches<?> observations = reportServiceMap.get(refType)
                 .getOpenObservations(query);
-        return new OpenMismatchesResponse<>(new OpenMismatchesView<>(observations),
-                query, observations.getTotalCurrentMismatches());
+        return new OpenMismatchesResponse<>(observations, query);
     }
 
     /**

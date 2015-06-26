@@ -32,7 +32,7 @@ public class DaybreakSpotCheckReportServiceTests extends BaseTests
     @Test
     public void testGetReport() throws Exception {
         SpotCheckReportId reportId = daybreakReportService.getReportIds(DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now(),
-                                                                        SortOrder.DESC, LimitOffset.ALL).get(0);
+                                                                        SortOrder.DESC, LimitOffset.ALL).getResults().get(0);
         SpotCheckReport<BaseBillId> report = daybreakReportService.getReport(reportId);
         logger.info("{}", report.getMismatchStatusCounts());
         logger.info("{}", report.getMismatchTypeCounts());

@@ -1,19 +1,23 @@
 package gov.nysenate.openleg.client.response.spotcheck;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.PaginationResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
+import gov.nysenate.openleg.dao.base.LimitOffset;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class ReportSummaryResponse<ContentKey> extends BaseResponse
+public class ReportSummaryResponse<ContentKey> extends PaginationResponse
 {
     protected ListView<ReportInfoView<ContentKey>> reports;
     protected LocalDateTime fromDate;
     protected LocalDateTime toDate;
 
-    public ReportSummaryResponse(ListView<ReportInfoView<ContentKey>> reports, LocalDateTime fromDate, LocalDateTime toDate) {
+    public ReportSummaryResponse(ListView<ReportInfoView<ContentKey>> reports, LocalDateTime fromDate, LocalDateTime toDate,
+                                 int total, LimitOffset limitOffset) {
+        super(total, limitOffset);
         this.reports = reports;
         this.fromDate = fromDate;
         this.toDate = toDate;

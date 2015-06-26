@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.spotcheck;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.dao.DataAccessException;
@@ -37,8 +38,8 @@ public interface SpotCheckReportDao<ContentKey>
      * @param limOff LimitOffset - Restrict the result set.s
      * @return List<SpotCheckReportId>
      */
-    List<SpotCheckReportId> getReportIds(SpotCheckRefType refType, LocalDateTime start,
-                                                LocalDateTime end, SortOrder dateOrder, LimitOffset limOff);
+    PaginatedList<SpotCheckReportId> getReportIds(SpotCheckRefType refType, LocalDateTime start,
+                                                  LocalDateTime end, SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType

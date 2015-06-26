@@ -5,11 +5,10 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 
 public enum MismatchOrderBy {
 
-    OBSERVED("o.observed_date_time"),
-    KEY("o.key"),
-    REFERENCE("r.reference_date_time"),
-    REPORT("r.report_date_time"),
-    TYPE("m.type"),
+    OBSERVED_DATE("o.observed_date_time"),
+    CONTENT_KEY("o.key"),
+    REFERENCE_DATE("r.reference_date_time"),
+    MISMATCH_TYPE("m.type"),
     STATUS("m.status")
     ;
 
@@ -20,7 +19,11 @@ public enum MismatchOrderBy {
     }
 
     public OrderBy toOrderBy(SortOrder order) {
-        return new OrderBy(colName, order);
+        // Always use content key as a secondary order
+        if (CONTENT_KEY.equals(this)) {
+            return new OrderBy(CONTENT_KEY.colName, order);
+        }
+        return new OrderBy(colName, order, CONTENT_KEY.colName, order);
     }
 
     public String getColName() {

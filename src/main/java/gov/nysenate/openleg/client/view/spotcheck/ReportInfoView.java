@@ -8,36 +8,19 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-public class ReportInfoView<ContentKey> implements ViewObject
+public class ReportInfoView<ContentKey> extends ReportIdView
 {
-    protected String referenceType;
-    protected LocalDateTime referenceDateTime;
-    protected LocalDateTime reportDateTime;
     protected String notes;
     protected Map<SpotCheckMismatchStatus, Long> mismatchStatuses;
     protected Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> mismatchTypes;
 
     public ReportInfoView(SpotCheckReport<ContentKey> report) {
+        super(report != null ? report.getReportId() : null);
         if (report != null) {
-            this.referenceType = report.getReferenceType().name();
-            this.referenceDateTime = report.getReferenceDateTime();
-            this.reportDateTime = report.getReportDateTime();
             this.notes = report.getNotes();
             this.mismatchStatuses = report.getMismatchStatusCounts();
             this.mismatchTypes = report.getMismatchTypeStatusCounts();
         }
-    }
-
-    public String getReferenceType() {
-        return referenceType;
-    }
-
-    public LocalDateTime getReferenceDateTime() {
-        return referenceDateTime;
-    }
-
-    public LocalDateTime getReportDateTime() {
-        return reportDateTime;
     }
 
     public String getNotes() {

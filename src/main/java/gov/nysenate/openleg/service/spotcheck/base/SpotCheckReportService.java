@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.base;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 
@@ -66,8 +67,8 @@ public interface SpotCheckReportService<ContentKey>
      * @param limOff LimitOffset - Limit/Offset the result set
      * @return List<SpotCheckReportId> - List of report ids
      */
-    List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end,
-                                                SortOrder dateOrder, LimitOffset limOff);
+    PaginatedList<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end,
+                                                  SortOrder dateOrder, LimitOffset limOff);
 
     /**
      * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType

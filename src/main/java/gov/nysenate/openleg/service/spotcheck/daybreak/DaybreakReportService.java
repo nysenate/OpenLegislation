@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.spotcheck.daybreak;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
@@ -168,8 +169,8 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
 
     /** {@inheritDoc} */
     @Override
-    public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end,
-                                                SortOrder dateOrder, LimitOffset limOff) {
+    public PaginatedList<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end,
+                                                         SortOrder dateOrder, LimitOffset limOff) {
         if (limOff == null) { limOff = LimitOffset.ALL; }
         if (dateOrder == null) { dateOrder = SortOrder.ASC; }
         return reportDao.getReportIds(SpotCheckRefType.LBDC_DAYBREAK, start, end, dateOrder, limOff);

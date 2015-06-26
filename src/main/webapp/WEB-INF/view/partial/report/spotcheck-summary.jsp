@@ -9,7 +9,7 @@
   String daybreakInitArgs = refTypeMap + ", " + mismatchMap;
 %>
 
-<section ng-controller="SpotcheckCtrl" id="daybreak-page" ng-init='init(<%=daybreakInitArgs%>)' class="content-section">
+<section ng-controller="SpotcheckCtrl" ng-init='init(<%=daybreakInitArgs%>)' class="content-section">
   <md-card class="content-card">
     <md-card-content ng-controller="SpotcheckSummaryCtrl" style="padding-left: 10px">
       <div class="margin-bottom-10">
@@ -43,13 +43,12 @@
               <td colspan="8" style="border-bottom:1px solid #ccc">
                 <div layout="row" layout-align="space-between center">
                   <label>
-                    Page:
                     <span st-pagination="" st-items-by-page="resultsPerPage" st-displayed-pages="5"
                         st-template="st-pagination-template"></span>
                   </label>
                   <label>
                     Displayed:
-                    <input type="number" ng-model="resultsPerPage" placeholder="20">
+                    <input type="number" ng-model="resultsPerPage" min="1" placeholder="20">
                   </label>
                 </div>
               </td>

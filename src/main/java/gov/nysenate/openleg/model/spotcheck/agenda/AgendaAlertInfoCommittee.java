@@ -3,18 +3,13 @@ package gov.nysenate.openleg.model.spotcheck.agenda;
 import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommitteeItem;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
-import gov.nysenate.openleg.service.spotcheck.agenda.BaseAgendaCheckReportService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /** Represents committee meeting data as collected from an LRS Alert */
 public class AgendaAlertInfoCommittee

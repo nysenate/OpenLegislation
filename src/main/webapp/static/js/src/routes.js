@@ -37,6 +37,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         /** --- Reports --- */
 
         .when(ctxPath + '/admin/report/spotcheck', { templateUrl: ctxPath + '/partial/report/spotcheck-summary', reloadOnSearch: false })
+        .when(ctxPath + '/admin/report/spotcheck/open', { templateUrl: ctxPath + '/partial/report/spotcheck-mismatch', reloadOnSearch: false})
         .when(ctxPath + '/admin/report/spotcheck/:type/:runTime',
                 { templateUrl: ctxPath + '/partial/report/spotcheck-report', reloadOnSearch: false })
 

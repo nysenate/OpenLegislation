@@ -16,7 +16,11 @@
   <script src="${ctxPath}/static/js/src/component/content/agenda.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/member.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/transcript.js"></script>
-  <script src="${ctxPath}/static/js/src/component/report/spotcheck.js"></script>
+  <script src="${ctxPath}/static/js/src/component/report/spotcheck-base.js"></script>
+  <script src="${ctxPath}/static/js/src/component/report/spotcheck-detail.js"></script>
+  <script src="${ctxPath}/static/js/src/component/report/spotcheck-summary.js"></script>
+  <script src="${ctxPath}/static/js/src/component/report/spotcheck-report.js"></script>
+  <script src="${ctxPath}/static/js/src/component/report/spotcheck-mismatch.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/account.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/notification_sub.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/dashboard.js"></script>
@@ -75,6 +79,7 @@
                 </menu-section>
                 <menu-section title="Reports">
                   <menu-item url="${ctxPath}/admin/report/spotcheck">Spotcheck Reports</menu-item>
+                  <menu-item url="${ctxPath}/admin/report/spotcheck/open">Open Mismatches</menu-item>
                   <%-- --%>
                 </menu-section>
               </shiro:user>
