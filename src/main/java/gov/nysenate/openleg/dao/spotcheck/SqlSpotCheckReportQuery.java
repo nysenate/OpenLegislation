@@ -11,10 +11,23 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
 {
     /** --- Reports --- */
 
-    SELECT_REPORT_IDS(
-        "SELECT *, COUNT(*) OVER () AS total FROM ${schema}." + SqlTable.SPOTCHECK_REPORT + "\n" +
+    SELECT_REPORT_SUMMARY_IDS(
+        "SELECT *, (SELECT COUNT(*) FROM ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " obs\n" +
+        "       WHERE rep.id = obs.report_id) AS observation_count\n" +
+        "FROM ${schema}." + SqlTable.SPOTCHECK_REPORT + " rep\n" +
         "WHERE report_date_time BETWEEN :startDateTime AND :endDateTime\n" +
-        "   AND reference_type = :referenceType"
+        "   AND (:getAllRefTypes OR reference_type = :referenceType)"
+    ),
+    SELECT_REPORT_SUMMARIES(
+        "SELECT r.*, tsc.* FROM (" + SELECT_REPORT_SUMMARY_IDS.sql + ") as r\n" +
+        "LEFT JOIN (\n" +
+        "   SELECT report_id, type, status, COUNT(m.id) AS mismatch_count\n" +
+        "   FROM ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o\n" +
+        "   JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m\n" +
+        "       ON o.id = m.observation_id\n" +
+        "   GROUP BY report_id, type, status\n" +
+        ") AS tsc\n" +
+        "   ON r.id = tsc.report_id"
     ),
     WHERE_REPORT_CLAUSE(
         "WHERE report_date_time = :reportDateTime AND reference_type = :referenceType"

@@ -12,8 +12,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.*;
@@ -80,16 +79,16 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<SpotCheckReportId> getReportIds(SpotCheckRefType refType, LocalDateTime start, LocalDateTime end,
-                                                         SortOrder dateOrder, LimitOffset limOff) {
+    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType refType, LocalDateTime start, LocalDateTime end,
+                                                           SortOrder dateOrder) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
-            .addValue("startDateTime", toDate(start))
-            .addValue("endDateTime", toDate(end))
-            .addValue("referenceType", refType.toString()));
-        OrderBy orderBy = new OrderBy("report_date_time", dateOrder);
-        ReportIdHandler handler = new ReportIdHandler(limOff);
-        jdbcNamed.query(SELECT_REPORT_IDS.getSql(schema(), orderBy, limOff), params, handler);
-        return handler.getList();
+                .addValue("startDateTime", toDate(start))
+                .addValue("endDateTime", toDate(end))
+                .addValue("getAllRefTypes", refType == null)
+                .addValue("referenceType", refType != null ? refType.toString() : ""));
+        ReportSummaryHandler handler = new ReportSummaryHandler(dateOrder);
+        jdbcNamed.query(SELECT_REPORT_SUMMARIES.getSql(schema()), params, handler);
+        return handler.getSummaries();
     }
 
     /** {@inheritDoc}
@@ -187,6 +186,33 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     {
         public ReportIdHandler(LimitOffset limOff) {
             super(limOff, "total", reportIdRowMapper);
+        }
+    }
+
+    protected class ReportSummaryHandler implements RowCallbackHandler
+    {
+        private Map<SpotCheckReportId, SpotCheckReportSummary> summaryMap;
+
+        public ReportSummaryHandler(SortOrder order) {
+            summaryMap = new TreeMap<>((a, b) -> a.compareTo(b) * (SortOrder.ASC.equals(order) ? 1 : -1));
+        }
+
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            SpotCheckReportId id = reportIdRowMapper.mapRow(rs, rs.getRow());
+            if (!summaryMap.containsKey(id)) {
+                summaryMap.put(id, new SpotCheckReportSummary(id, rs.getString("notes"), rs.getInt("observation_count")));
+            }
+            try {
+                SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("type"));
+                SpotCheckMismatchStatus status = SpotCheckMismatchStatus.valueOf(rs.getString("status"));
+                int count = rs.getInt("mismatch_count");
+                summaryMap.get(id).addMismatchTypeCount(type, status, count);
+            } catch (NullPointerException ignored) {}
+        }
+
+        public List<SpotCheckReportSummary> getSummaries() {
+            return new ArrayList<>(summaryMap.values());
         }
     }
 

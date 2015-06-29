@@ -15,7 +15,6 @@ import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
@@ -76,7 +75,7 @@ public class SpotCheckCtrl extends BaseCtrl
      * Expected Output: ReportSummaryResponse
      */
     @RequestMapping(value = "/summaries/{from}/{to}")
-    public BaseResponse getReportSummaries(@RequestParam(required = false) String[] reportType,
+    public BaseResponse getReportSummaries(@RequestParam(required = false) String reportType,
                                            @PathVariable String from,
                                            @PathVariable String to,
                                            WebRequest webRequest) {
@@ -84,47 +83,21 @@ public class SpotCheckCtrl extends BaseCtrl
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
         SortOrder order = getSortOrder(webRequest, SortOrder.DESC);
-        LimitOffset limitOffset = getLimitOffset(webRequest, 0);
-        Set<SpotCheckRefType> refTypes = getSpotcheckRefTypes(reportType, "reportType");
+        SpotCheckRefType refType = reportType != null ? getSpotcheckRefType(reportType, "reportType") : null;
 
-        List<SpotCheckReportId> reportIds = new ArrayList<>();
-        for(SpotCheckRefType refType : refTypes) {
-            SpotCheckReportService<?> reportService = reportServiceMap.get(refType);
-            if (reportService != null) {
-                PaginatedList<SpotCheckReportId> singleReportIds =
-                        reportService.getReportIds(fromDateTime, toDateTime, order, LimitOffset.ALL);
-                singleReportIds.getResults().forEach(reportIds::add);
-            }
-        }
-        reportIds.sort((a, b) -> SortOrder.ASC.equals(order)
-                ? a.getReportDateTime().compareTo(b.getReportDateTime())
-                : b.getReportDateTime().compareTo(a.getReportDateTime()));
+        SpotCheckReportService<?> reportService = reportServiceMap.values().asList().get(0);
 
-        List<SpotCheckReport<?>> reports = LimitOffset.limitList(reportIds, limitOffset).stream()
-                .map(reportId -> reportServiceMap.get(reportId.getReferenceType()).getReport(reportId))
-                .collect(Collectors.toList());
+        List<SpotCheckReportSummary> summaries =
+                reportService.getReportSummaries(refType, fromDateTime, toDateTime, order);
 
         // Construct the client response
         return new ReportSummaryResponse<>(
-                ListView.of(reports.stream()
+                ListView.of(summaries.stream()
                         .map(ReportInfoView::new)
-                        .collect(Collectors.toList())), fromDateTime, toDateTime, reportIds.size(), limitOffset);
+                        .collect(Collectors.toList())), fromDateTime, toDateTime, summaries.size(), LimitOffset.ALL);
     }
     @RequestMapping(value = "/summaries")
-    public BaseResponse getReportSummaries(@RequestParam(required = false) String[] reportType, WebRequest request) {
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime sixMonthsAgo = today.minusMonths(6);
-        return getReportSummaries(reportType, sixMonthsAgo.toString(), today.toString(), request);
-    }
-    @RequestMapping(value = "/{reportType}/{from}/{to}",method = RequestMethod.GET)
-    public BaseResponse getReportSummaries(
-            @PathVariable String reportType,
-            @PathVariable String from,
-            @PathVariable String to, WebRequest request) {
-        return getReportSummaries(new String[]{reportType}, from, to, request);
-    }
-    @RequestMapping(value = "/{reportType}", method = RequestMethod.GET)
-    public BaseResponse getReportSummaries(@PathVariable String reportType, WebRequest request) {
+    public BaseResponse getReportSummaries(@RequestParam(required = false) String reportType, WebRequest request) {
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime sixMonthsAgo = today.minusMonths(6);
         return getReportSummaries(reportType, sixMonthsAgo.toString(), today.toString(), request);
@@ -228,6 +201,10 @@ public class SpotCheckCtrl extends BaseCtrl
                     SpotCheckRefType::getRefName, paramName, parameter);
         }
         return result;
+    }
+
+    private SpotCheckRefType getSpotcheckRefType(String parameter) {
+        return getEnumParameter(parameter, SpotCheckRefType.class, null);
     }
 
     private Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {

@@ -61,14 +61,14 @@ public interface SpotCheckReportService<ContentKey>
     /**
      * Return a list of saved report ids with options to filter the result set.
      *
+     * @param reportType
      * @param start LocalDateTime - The earliest report date (inclusive)
      * @param end LocalDateTime - The latest report date (inclusive)
      * @param dateOrder SortOrder - Order the reports by report date
-     * @param limOff LimitOffset - Limit/Offset the result set
      * @return List<SpotCheckReportId> - List of report ids
      */
-    PaginatedList<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end,
-                                                  SortOrder dateOrder, LimitOffset limOff);
+    List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end,
+                                                    SortOrder dateOrder);
 
     /**
      * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType

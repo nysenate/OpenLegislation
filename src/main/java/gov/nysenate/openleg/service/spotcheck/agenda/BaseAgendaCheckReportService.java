@@ -2,8 +2,6 @@ package gov.nysenate.openleg.service.spotcheck.agenda;
 
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.agenda.reference.AgendaAlertDao;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.CommitteeAgendaReportDao;
 import gov.nysenate.openleg.model.agenda.*;
@@ -92,8 +90,8 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
-        return reportDao.getReportIds(SpotCheckRefType.LBDC_AGENDA_ALERT, start, end, dateOrder, limOff);
+    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end, SortOrder dateOrder) {
+        return reportDao.getReportSummaries(reportType, start, end, dateOrder);
     }
 
     /** {@inheritDoc}
