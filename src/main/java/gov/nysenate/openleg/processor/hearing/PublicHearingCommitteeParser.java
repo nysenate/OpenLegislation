@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 @Service
 public class PublicHearingCommitteeParser
 {
-    /* matches lines only containing "-" character which divide up content. */
+    /* matches lines only containing "-" characters which divide up content. */
     private static final Pattern SEPARATOR = Pattern.compile("^\\s*(\\d+)?\\s*-+$");
 
     private static final Pattern CHECK_FOR_COMMITTEES = Pattern.compile("BEFORE THE NEW YORK STATE (SENATE|ASSEMBLY)");
@@ -84,7 +84,7 @@ public class PublicHearingCommitteeParser
 
         // Parse the additional committees.
         for (int i = 1; i < committeeStrings.length; i++) {
-            if (!committeeStrings[i].isEmpty()) { // Ignore matches to (, )?
+            if (!committeeStrings[i].isEmpty()) {
                 committees.add(parseAdditionalCommittee(committeeStrings[i]));
             }
         }

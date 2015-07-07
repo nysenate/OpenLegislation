@@ -55,6 +55,7 @@ public class TranscriptParser
                         continue;
                     }
                 }
+                // Continue skipping lines 2 and 3 if first 3 lines are incorrect.
                 if (skipFirstThreeLines && numSkipped <= 3) {
                     numSkipped++;
                     continue;
