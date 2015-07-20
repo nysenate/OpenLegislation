@@ -153,6 +153,22 @@ coreModule.factory('PaginationModel', function() {
 });
 
 /**
+ * A page number input designed to work for an angular smart tables pagination template
+ */
+coreModule.directive('stPaginationInput', function() {
+    return {
+        restrict: 'E',
+        template: '<input type="number" class="select-page" min="1" max="{{numPages}}"' +
+        'ng-model="inputPage" ng-change="selectPage(inputPage)" ng-model-options="{debounce:100}">',
+        link: function(scope, element, attrs) {
+            scope.$watch('currentPage', function(c) {
+                scope.inputPage = c;
+            });
+        }
+    }
+});
+
+/**
  * Safe Highlights Directive
  * -------------------------
  */

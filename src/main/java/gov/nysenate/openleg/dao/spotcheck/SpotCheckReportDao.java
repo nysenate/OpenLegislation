@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.spotcheck;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.dao.DataAccessException;
@@ -30,15 +31,15 @@ public interface SpotCheckReportDao<ContentKey>
     /**
      * Get a list of the report ids that have been saved with options to filter the result set.
      *
-     * @param refType SpotCheckRefType - The type of reference data used for the report
+     *
+     * @param refType
      * @param start LocalDateTime - Retrieved reports will have been run after/on this date/time.
      * @param end LocalDateTime - Retrieved reports will have been run before/on this date/time.
      * @param dateOrder SortOrder - Order the results by the report date/time.
-     * @param limOff LimitOffset - Restrict the result set.s
      * @return List<SpotCheckReportId>
      */
-    List<SpotCheckReportId> getReportIds(SpotCheckRefType refType, LocalDateTime start,
-                                                LocalDateTime end, SortOrder dateOrder, LimitOffset limOff);
+    List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType refType, LocalDateTime start,
+                                                    LocalDateTime end, SortOrder dateOrder);
 
     /**
      * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType

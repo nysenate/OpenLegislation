@@ -46,8 +46,8 @@ openApp.config(function($mdThemingProvider) {
  * Since AppCtrl is the top-most parent controller, some useful utility methods are included here to be used
  * by the children controller.
  */
-openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$http', '$interval',
-                               function($scope, $location, $mdSidenav, $http, $interval) {
+openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$mdDialog', '$http', '$interval',
+function($scope, $location, $mdSidenav, $mdDialog, $http, $interval) {
     $scope.header = {text: '', visible: false};
     $scope.activeSession = 2015;
 
@@ -96,12 +96,27 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$http', '$i
      * effectively removing it from the url.  Replaces last url in history
      */
     $scope.setSearchParam = function(paramName, paramValue, condition) {
-        $location.search(paramName, (condition !== false && paramValue) ? paramValue : null).replace();
+        $location.search(paramName, (condition !== false) ? paramValue : null).replace();
     };
 
     $scope.clearSearchParams = function() {
         $location.search({});
     };
+
+    /**
+     * Handles cases where an invalid api parameter was given by constructing a dialog from the error response
+     */
+    $scope.invalidParamDialog = function(response) {
+        if (response.status === 400 && response.data.errorCode === 1) {
+            var errorData = response.data.errorData;
+            var paramName = errorData.parameterConstraint.name;
+            $mdDialog.show($mdDialog.alert()
+                                .title("Invalid Parameter: " + paramName)
+                                .content("Value '" + errorData.receivedValue +
+                                            "' is not a valid for request parameter " + paramName)
+                                .ok('OK'));
+        }
+    }
 }]);
 
 /**

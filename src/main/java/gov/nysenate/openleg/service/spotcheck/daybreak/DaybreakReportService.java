@@ -168,11 +168,10 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
 
     /** {@inheritDoc} */
     @Override
-    public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end,
-                                                SortOrder dateOrder, LimitOffset limOff) {
-        if (limOff == null) { limOff = LimitOffset.ALL; }
+    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end,
+                                                           SortOrder dateOrder) {
         if (dateOrder == null) { dateOrder = SortOrder.ASC; }
-        return reportDao.getReportIds(SpotCheckRefType.LBDC_DAYBREAK, start, end, dateOrder, limOff);
+        return reportDao.getReportSummaries(reportType, start, end, dateOrder);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.CalendarAlertReportDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -81,8 +80,8 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
     }
 
     @Override
-    public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
-        return reportDao.getReportIds(getSpotcheckRefType(), start, end, dateOrder, limOff);
+    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end, SortOrder dateOrder) {
+        return reportDao.getReportSummaries(reportType, start, end, dateOrder);
     }
 
     @Override

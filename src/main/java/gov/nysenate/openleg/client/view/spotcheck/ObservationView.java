@@ -20,9 +20,9 @@ public class ObservationView<ContentKey> implements ViewObject
             this.key = observation.getKey();
             this.observedDateTime = observation.getObservedDateTime();
             this.mismatches = ListView.of(
-                observation.getMismatches().values().stream()
-                    .map(m -> new MismatchView(m, observation.getPriorMismatches().get(m.getMismatchType())))
-                    .collect(Collectors.toList()));
+                    observation.getMismatches().values().stream()
+                            .map(m -> new MismatchView(m, observation.getPriorMismatches().get(m.getMismatchType())))
+                            .collect(Collectors.toList()));
         }
     }
 

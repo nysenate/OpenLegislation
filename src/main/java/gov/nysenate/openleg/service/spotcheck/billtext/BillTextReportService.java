@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.spotcheck.billtext;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
 import gov.nysenate.openleg.dao.spotcheck.BaseBillIdSpotCheckReportDao;
@@ -105,8 +104,8 @@ public class BillTextReportService implements SpotCheckReportService<BaseBillId>
 
     /** {@inheritDoc} */
     @Override
-    public List<SpotCheckReportId> getReportIds(LocalDateTime start, LocalDateTime end, SortOrder dateOrder, LimitOffset limOff) {
-        return reportDao.getReportIds(SpotCheckRefType.LBDC_SCRAPED_BILL, start, end, dateOrder, limOff);
+    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end, SortOrder dateOrder) {
+        return reportDao.getReportSummaries(reportType, start, end, dateOrder);
     }
 
     @Override

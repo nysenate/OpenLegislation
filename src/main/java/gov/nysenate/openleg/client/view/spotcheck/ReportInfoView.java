@@ -1,43 +1,37 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
-import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchStatus;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReportSummary;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
-public class ReportInfoView<ContentKey> implements ViewObject
+public class ReportInfoView extends ReportIdView
 {
-    protected String referenceType;
-    protected LocalDateTime referenceDateTime;
-    protected LocalDateTime reportDateTime;
     protected String notes;
+    protected int observedCount;
     protected Map<SpotCheckMismatchStatus, Long> mismatchStatuses;
     protected Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> mismatchTypes;
 
-    public ReportInfoView(SpotCheckReport<ContentKey> report) {
-        if (report != null) {
-            this.referenceType = report.getReferenceType().name();
-            this.referenceDateTime = report.getReferenceDateTime();
-            this.reportDateTime = report.getReportDateTime();
-            this.notes = report.getNotes();
-            this.mismatchStatuses = report.getMismatchStatusCounts();
-            this.mismatchTypes = report.getMismatchTypeStatusCounts();
+    public ReportInfoView(SpotCheckReportSummary summary) {
+        super(summary != null ? summary.getReportId() : null);
+        if (summary != null) {
+            this.notes = summary.getNotes();
+            this.mismatchStatuses = summary.getMismatchStatuses();
+            this.mismatchTypes = summary.getMismatchTypes().rowMap();
+            this.observedCount = summary.getObservedCount();
         }
     }
 
-    public String getReferenceType() {
-        return referenceType;
-    }
-
-    public LocalDateTime getReferenceDateTime() {
-        return referenceDateTime;
-    }
-
-    public LocalDateTime getReportDateTime() {
-        return reportDateTime;
+    public ReportInfoView(SpotCheckReport<?> report) {
+        super(report != null ? report.getReportId() : null);
+        if (report != null) {
+            this.notes = report.getNotes();
+            this.mismatchStatuses = report.getMismatchStatusCounts();
+            this.mismatchTypes = report.getMismatchTypeStatusCounts();
+            this.observedCount = report.getObservations().size();
+        }
     }
 
     public String getNotes() {
@@ -55,7 +49,11 @@ public class ReportInfoView<ContentKey> implements ViewObject
     public Long getOpenMismatches() {
         return mismatchStatuses.entrySet().stream()
             .filter(e -> !e.getKey().equals(SpotCheckMismatchStatus.RESOLVED))
-            .map(e -> e.getValue()).reduce(Long::sum).orElse(0L);
+            .map(Map.Entry::getValue).reduce(Long::sum).orElse(0L);
+    }
+
+    public int getObservedCount() {
+        return observedCount;
     }
 
     @Override

@@ -4,8 +4,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 
 import java.util.TreeMap;
 
-public class ReportDetailView<ContentKey> extends ReportInfoView<ContentKey>
-{
+public class ReportDetailView<ContentKey> extends ReportInfoView {
     protected TreeMap<ContentKey, ObservationView<ContentKey>> observations;
 
     public ReportDetailView(SpotCheckReport<ContentKey> report) {

@@ -1,11 +1,12 @@
 package gov.nysenate.openleg.service.spotcheck;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReportSummary;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
@@ -31,11 +32,10 @@ public class DaybreakSpotCheckReportServiceTests extends BaseTests
 
     @Test
     public void testGetReport() throws Exception {
-        SpotCheckReportId reportId = daybreakReportService.getReportIds(DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now(),
-                                                                        SortOrder.DESC, LimitOffset.ALL).get(0);
-        SpotCheckReport<BaseBillId> report = daybreakReportService.getReport(reportId);
-        logger.info("{}", report.getMismatchStatusCounts());
-        logger.info("{}", report.getMismatchTypeCounts());
+        SpotCheckReportSummary reportSummary = daybreakReportService.getReportSummaries(SpotCheckRefType.LBDC_DAYBREAK, DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now(),
+                SortOrder.DESC).get(0);
+        logger.info("{}", reportSummary.getMismatchStatuses());
+        logger.info("{}", reportSummary.getMismatchTypes());
 //        report.getObservations().forEach((k,v) -> logger.info("{}", v.getPriorMismatches()));
     }
 }

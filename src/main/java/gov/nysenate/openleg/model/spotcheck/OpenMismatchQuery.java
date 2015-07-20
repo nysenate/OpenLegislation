@@ -17,9 +17,9 @@ public class OpenMismatchQuery {
     /** A set of mismatch types to filter by */
     Collection<SpotCheckMismatchType> mismatchTypes;
     /** Get mismatches observed on or after this date */
-    LocalDateTime earliestObserved;
+    LocalDateTime observedAfter;
     /** Order mismatches by this mismatch parameter */
-    MismatchOrderBy mismatchOrderBy;
+    MismatchOrderBy orderBy;
     /** in ascending or descending sort order */
     SortOrder order;
     /** Limit offset */
@@ -31,12 +31,12 @@ public class OpenMismatchQuery {
     /** --- Constructors --- */
 
     public OpenMismatchQuery(SpotCheckRefType refType, Collection<SpotCheckMismatchType> mismatchTypes,
-                             LocalDateTime earliestObserved, MismatchOrderBy mismatchOrderBy, SortOrder order,
+                             LocalDateTime observedAfter, MismatchOrderBy orderBy, SortOrder order,
                              LimitOffset limitOffset, boolean resolvedShown, boolean ignoredShown) {
         this.refType = refType;
         this.mismatchTypes = mismatchTypes;
-        this.earliestObserved = earliestObserved;
-        this.mismatchOrderBy = mismatchOrderBy;
+        this.observedAfter = observedAfter;
+        this.orderBy = orderBy;
         this.order = order;
         this.limitOffset = limitOffset;
         this.resolvedShown = resolvedShown;
@@ -46,8 +46,8 @@ public class OpenMismatchQuery {
     /** --- Functional Getters --- */
 
     @JsonIgnore
-    public OrderBy getOrderBy() {
-        return mismatchOrderBy != null ? mismatchOrderBy.toOrderBy(order) : new OrderBy();
+    public OrderBy getFullOrderBy() {
+        return orderBy != null ? orderBy.toOrderBy(order) : new OrderBy();
     }
 
     /** --- Getters --- */
@@ -60,12 +60,12 @@ public class OpenMismatchQuery {
         return mismatchTypes;
     }
 
-    public LocalDateTime getEarliestObserved() {
-        return earliestObserved;
+    public LocalDateTime getObservedAfter() {
+        return observedAfter;
     }
 
-    public MismatchOrderBy getMismatchOrderBy() {
-        return mismatchOrderBy;
+    public MismatchOrderBy getOrderBy() {
+        return orderBy;
     }
 
     public SortOrder getOrder() {

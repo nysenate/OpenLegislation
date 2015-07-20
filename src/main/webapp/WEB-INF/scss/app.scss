@@ -288,6 +288,10 @@ md-tab-content {
   padding: 20px;
 }
 
+.padding-right-10 {
+  padding-right: 10px;
+}
+
 .no-margin {
   margin: 0;
 }
@@ -349,6 +353,10 @@ a.white-2-blue {
   &:hover {
     background: transparentize(#fff, 0.9);
   }
+}
+
+.vis-hidden {
+  visibility: hidden;
 }
 
 .no-height {
@@ -1030,10 +1038,26 @@ table.table-striped tbody tr:nth-child(odd) {
   content: '\25BC';
 }
 
+.spotcheck-column {
+
+}
+
+.mismatch-type-column {
+  min-width: 10em;
+}
+
+.mismatch-status-column {
+  min-width: 3em;
+}
+
+.mismatch-date-column {
+  min-width: 8em;
+}
+
 .report-table-snippet {
   height:20px;
   overflow: hidden;
-  max-width:30vw;
+  max-width:20vw;
   word-wrap: break-word;
 }
 
@@ -1107,6 +1131,10 @@ diff-summary, mismatch-diff {
   background: black;
   color: white;
   font-weight: bold;
+}
+
+.mismatch-dialog {
+  padding: 0 20px 20px 20pxu
 }
 
 .mismatch-dialog-tabs md-content {
