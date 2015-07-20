@@ -3,7 +3,7 @@ OpenLegislation
 
 `From the New York State Senate`
 
-Dual BSD/GPL License. See the NYSenate `licensing page`_.
+Dual BSD/GPL License. See the NYSenate licensing page http://www.nysenate.gov/Open-Source-Software-Licenses.
 
 Open Legislation is an open source web service developed in-house by the New York State Senate to provide access to NYS legislative data including bills, resolutions, and laws. Developers can request a free key for the JSON API at http://openleg-dev.nysenate.gov/. The JSON API is documented at http://openleg-dev.nysenate.gov/static/docs/html/.
 
@@ -32,7 +32,3 @@ Past Developers
 * Jared Williams <jared.mi.williams@gmail.com>
 * Graylin Kim <kim@nysenate.gov>
 * Kevin Caseiras <caseiras@nysenate.gov>
-
-.. _API Documentation: http://openleg-dev.nysenate.gov/static/docs/html/
-.. _legislation page: http://openleg-dev.nysenate.gov/
-.. _licensing page: http://www.nysenate.gov/Open-Source-Software-Licenses
