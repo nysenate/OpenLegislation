@@ -176,7 +176,7 @@ public class CacheCtrl extends BaseCtrl
 
     private BaseBillId getBaseBillId(WebRequest request) throws MissingServletRequestParameterException {
         requireParameters(request, "printNo", "string", "session", "integer");
-        return new BaseBillId(request.getParameter("printNo"), getIntegerParam(request, "session"));
+        return getBaseBillId(request.getParameter("printNo"), getIntegerParam(request, "session"), "printNo");
     }
 
     private AgendaId getAgendaId(WebRequest request) throws MissingServletRequestParameterException {

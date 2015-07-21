@@ -121,7 +121,7 @@ public class BillGetCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
     public BaseResponse getBill(@PathVariable int sessionYear, @PathVariable String printNo, WebRequest request) {
-        BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
+        BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         BillViewLevel level = BillViewLevel.getValue(request.getParameter("view"));
         ViewObject viewObject;
         switch (level) {
@@ -168,7 +168,7 @@ public class BillGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}.pdf")
     public void getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo, HttpServletResponse response)
                            throws Exception {
-        BillId billId = new BillId(printNo, sessionYear);
+        BillId billId = getBillId(printNo, sessionYear, "printNo");
         Bill bill = billData.getBill(BaseBillId.of(billId));
         new BillPdfView(bill, billId.getVersion(), response.getOutputStream());
         response.setContentType("application/pdf");
@@ -186,7 +186,7 @@ public class BillGetCtrl extends BaseCtrl
     public BaseResponse getBillDiff(@PathVariable int sessionYear, @PathVariable String printNo, @PathVariable String version1,
                             @PathVariable String version2) {
         StringDiffer stringDiffer = new StringDiffer();
-        BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
+        BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         Bill bill = billData.getBill(baseBillId);
         BillAmendment amend1 = bill.getAmendment(Version.of(version1));
         BillAmendment amend2 = bill.getAmendment(Version.of(version2));

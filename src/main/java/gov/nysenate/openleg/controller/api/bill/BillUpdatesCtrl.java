@@ -176,7 +176,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
         UpdateType updateType = getUpdateTypeFromParam(request);
         PaginatedList<UpdateDigest<BaseBillId>> digests = billUpdatesDao.getDetailedUpdatesForBill(
-            new BaseBillId(printNo, sessionYear), updateRange, updateType, filterField, sortOrder, limOff);
+            getBaseBillId(printNo, sessionYear, "printNo"), updateRange, updateType, filterField, sortOrder, limOff);
         return DateRangeListViewResponse.of(digests.getResults().stream()
             .map(digest -> new UpdateDigestView(digest, new BaseBillIdView(digest.getId())))
             .collect(toList()), updateRange, digests.getTotal(), limOff);
