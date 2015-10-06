@@ -33,7 +33,7 @@ Request bill S2180 of session year 2013
 
 Request summary of bill A450 of session year 2013
 ::
-   /api/3/bills/2013/A450?summary=true
+   /api/3/bills/2013/A450?view=info
 
 .. _bill-response:
 
