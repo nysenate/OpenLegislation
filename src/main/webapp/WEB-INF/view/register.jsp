@@ -2,7 +2,7 @@
 <HTML>
     <body>
         <p>
-            Thank you for registering, your API key has been emailed to you.
+            Thank you for registering! Your API key has been emailed to you.
         </p>
     </body>
 </HTML>
