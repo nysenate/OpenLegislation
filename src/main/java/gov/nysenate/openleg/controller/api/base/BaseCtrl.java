@@ -10,6 +10,8 @@ import gov.nysenate.openleg.client.view.error.InvalidParameterView;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
@@ -150,6 +152,39 @@ public abstract class BaseCtrl
             return parseISODateTime(dateTimeString, "dont matter");
         } catch (InvalidRequestParamEx ex) {
             return defaultValue;
+        }
+    }
+
+    /**
+     * Attempts to return a base bill id from the given print number and session
+     * @param printNo String
+     * @param session int
+     * @param printNoParamName String
+     * @return BaseBillId
+     * @throws InvalidRequestParamEx if the print no is malformed
+     */
+    protected BaseBillId getBaseBillId(String printNo, int session, String printNoParamName)
+            throws InvalidRequestParamEx {
+        try {
+            return new BaseBillId(printNo, session);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidRequestParamEx(printNo, printNoParamName, "String", BaseBillId.basePrintNumberRegex);
+        }
+    }
+
+    /**
+     * Attempts to return a bill id from the given print number and session year
+     * @param printNo String
+     * @param session int
+     * @param printNoParamName String
+     * @return BillId
+     * @throws InvalidRequestParamEx if the print no is malformed
+     */
+    protected BillId getBillId(String printNo, int session, String printNoParamName) throws InvalidRequestParamEx {
+        try {
+            return new BillId(printNo, session);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidRequestParamEx(printNo, printNoParamName, "String", BillId.printNumberRegex);
         }
     }
 

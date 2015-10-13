@@ -68,7 +68,7 @@ public class BillScrapeQueueCtrl extends BaseCtrl {
     public BaseResponse addBillToScrapeQueue(@PathVariable int sessionYear,
                                              @PathVariable String printNo,
                                              @RequestParam(required = false) Integer priority) {
-        BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
+        BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         if (priority == null) {
             priority = ScrapeQueuePriority.MANUAL_ENTRY.getPriority();
         }
@@ -85,7 +85,7 @@ public class BillScrapeQueueCtrl extends BaseCtrl {
     @RequestMapping(value = "/{sessionYear}/{printNo}", method = RequestMethod.DELETE)
     public BaseResponse removeBillfromScrapeQueue(@PathVariable int sessionYear,
                                                   @PathVariable String printNo) {
-        BaseBillId baseBillId = new BaseBillId(printNo, sessionYear);
+        BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         btrDao.deleteBillFromScrapeQueue(baseBillId);
         return new ViewObjectResponse<>(new BaseBillIdView(baseBillId), "removed bill from scrape queue");
     }

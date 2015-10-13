@@ -15,6 +15,8 @@ public class BaseBillId extends BillId implements Serializable
 {
     private static final long serialVersionUID = -7708296547127325102L;
 
+    public static String basePrintNumberRegex = "([ASLREJKBC])([0-9]{1,5})";
+
     public BaseBillId(String printNo, int session) {
         this(printNo, SessionYear.of(session));
     }

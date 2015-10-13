@@ -21,7 +21,7 @@ public class BillId implements Serializable, Comparable<BillId>
 {
     private static final long serialVersionUID = 6494036869654732240L;
 
-    private static String printNumberRegex = "([ASLREJKBC])([0-9]{1,5})([A-Z]?)";
+    public static String printNumberRegex = "([ASLREJKBC])([0-9]{1,5})([A-Z]?)";
 
     public static Pattern printNumberPattern = Pattern.compile(printNumberRegex);
     public static Pattern billIdPattern = Pattern.compile("(?<printNo>" + printNumberRegex + ")-?(?<year>[0-9]{4})");

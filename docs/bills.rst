@@ -16,13 +16,11 @@ Retrieve bill by session year and print no
 
 **Optional Params**
 
-+-----------+--------------------+--------------------------------------------------------+
-| Parameter | Values             | Description                                            |
-+===========+====================+========================================================+
-| summary   | boolean            | Show a summary of the bill instead of the full content |
-+-----------+--------------------+--------------------------------------------------------+
-| detail    | boolean            | Show extra details (overrides 'summary')               |
-+-----------+--------------------+--------------------------------------------------------+
++-----------+-----------------------------------------------------------------------------------------+
+| Parameter | Values                                                                                  |
++===========+=========================================================================================+
+| view      | 'default', 'info', 'no_fulltext', 'only_fulltext', 'with_refs', 'with_refs_no_fulltext' |
++-----------+-----------------------------------------------------------------------------------------+
 
 .. note:: Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B). The bill API returns bill responses that contain every amendment version so you should just provide
           the base print no (e.g. S1234).
@@ -35,7 +33,7 @@ Request bill S2180 of session year 2013
 
 Request summary of bill A450 of session year 2013
 ::
-   /api/3/bills/2013/A450?summary=true
+   /api/3/bills/2013/A450?view=info
 
 .. _bill-response:
 
