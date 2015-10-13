@@ -42,7 +42,7 @@ hr {
   border-top-style: solid;
 }
 
-/** --- Angular Material --- */
+/** --- Angular Material Overrides --- */
 
 md-toolbar {
   min-height: 65px;
@@ -109,6 +109,11 @@ md-tab.active {
 
 md-tab-content {
   overflow: visible !important;
+}
+
+// Prevent list headers from getting compressed when the line wraps
+md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-style .md-list-item-text h3, md-list-item.md-3-line .md-list-item-text h3, md-list-item.md-3-line>.md-no-style .md-list-item-text h3 {
+  line-height: 1.2em !important;
 }
 
 /** --- Transitions --- */
@@ -706,15 +711,106 @@ ul.pagination {
 
 /** --- Landing Page Styles --- */
 
-.hero-img {
+.public-home-page {
+  background: #235674;
+  min-height: 100vh;
+  overflow: auto;
+}
+
+.hero-container-public {
   margin-bottom:0;
-  height:600px;
-  background-size:cover;
-  background-repeat: no-repeat;
-  @media (max-width: 599px) {
-    background-size: contain;
+  height:300px;
+
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2a4f8e+0,2b6a90+100 */
+  background: #2a4f8e; /* Old browsers */
+  background: -moz-linear-gradient(top,  #2a4f8e 0%, #2b6a90 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2a4f8e), color-stop(100%,#2b6a90)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #2a4f8e 0%,#2b6a90 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #2a4f8e 0%,#2b6a90 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #2a4f8e 0%,#2b6a90 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #2a4f8e 0%,#2b6a90 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2a4f8e', endColorstr='#2b6a90',GradientType=0 ); /* IE6-9 */
+
+  h1 {
+    margin: 0;
+    font-family: 'Roboto Slab', sans-serif;
+    font-weight: 700;
+    color: #fff;
+    line-height: 200px;
+    font-size: 5vw;
+    text-align: center;
+    text-shadow: 1px 1px 3px #235674;
+    img {
+      height: 7vw;
+      vertical-align: text-top;
+      margin-right: 14px;
+    }
+  }
+  h3 {
+    font-family: 'Roboto Slab',serif;
+    color: #eee;
+    margin: 0;
   }
 }
+
+.pop-out-container {
+  max-width: 960px;
+  margin: -110px auto 10px auto;
+  .project-desc {
+    color: white;
+    font-weight: 400;
+    a {
+      color: white;
+    }
+  }
+}
+
+.regular-container {
+  background: white;
+  max-width: 960px;
+  margin: 0 auto;
+  box-shadow: 0 0 3px #333;
+}
+
+.copyright-footer-container {
+  max-width: 960px;
+  margin: auto;
+  .project-desc {
+    color: white;
+  }
+}
+
+.project-desc {
+  padding: 20px;
+  font-size: 1.2em;
+  text-align: center;
+  font-family: 'Roboto Slab', 'Open Sans', sans-serif;
+  color: #444;
+  font-weight: 300;
+}
+
+.project-desc-label {
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-family: 'Roboto Slab', 'Open Sans', sans-serif;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 599px) {
+  .hero-container-public {
+    height: 150px;
+    h1 {
+      line-height: 150px;
+    }
+  }
+  .pop-out-container {
+    max-width: 90%;
+    margin: 10px auto 20px auto;
+  }
+}
+
 
 .slogan-container {
   margin: 20px;
@@ -766,7 +862,7 @@ a.slogan-link {
 
 .signup-err {
   color: $red1;
-  background: #ddd;
+  text-align: center;
   padding: 10px;
 }
 

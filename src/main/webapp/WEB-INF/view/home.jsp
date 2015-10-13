@@ -9,6 +9,11 @@
 <% request.setAttribute("today", LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH)); %>
 
 <open-layout:head title="Open 2.0">
+  <!-- Application Scripts -->
+  <script type="application/javascript" src="${ctxPath}/static/js/src/app.js"></script>
+  <script type="application/javascript" src="${ctxPath}/static/js/src/core.js"></script>
+  <script type="application/javascript" src="${ctxPath}/static/js/src/routes.js"></script>
+
   <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/law.js"></script>
   <script src="${ctxPath}/static/js/src/component/content/agenda.js"></script>

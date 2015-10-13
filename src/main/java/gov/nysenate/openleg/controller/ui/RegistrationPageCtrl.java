@@ -6,6 +6,7 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.service.auth.UsernameExistsException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,11 @@ public class RegistrationPageCtrl extends BaseCtrl
         String email = body.get("email");
         String name =  body.get("name");
         logger.info("{} with email {} is registering for an API key.", name, email);
-        if (email == null) {
+        if (StringUtils.isBlank(email)) {
             return new SimpleResponse(false, "Email must be valid.", "api-signup");
+        }
+        if (StringUtils.isBlank(name)) {
+            return new SimpleResponse(false, "Name must not be empty.", "api-signup");
         }
         try {
             ApiUser apiUser = apiUserService.registerNewUser(email, name, "");

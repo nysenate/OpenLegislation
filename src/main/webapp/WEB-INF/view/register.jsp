@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<HTML>
+<html>
     <body>
-        <p>
-            Thank you for registering, your API key has been emailed to you.
-        </p>
+        <h2 style="text-align: center;font-family:Helvetica, Arial, 'Lucida Grande', sans-serif;">
+            Thank you for registering! Your API key has been emailed to you.
+        </h2>
     </body>
-</HTML>
+</html>

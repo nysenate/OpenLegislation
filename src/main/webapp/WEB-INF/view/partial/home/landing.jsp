@@ -2,10 +2,6 @@
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
 
 <section class="content-section" ng-controller="LandingCtrl">
-  <%--<div class="padding-20 hero-img" style="background-image:url('${ctxPath}/static/img/capitol_square_cropped.png');">--%>
-    <%--&nbsp;--%>
-  <%--</div>--%>
-
   <section class="slogan-container">
     <h1 class="slogan">Search, explore, and
       <a target="_blank" href="${ctxPath}/docs" class="slogan-link">integrate</a> legislative information from the
