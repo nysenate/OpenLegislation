@@ -153,7 +153,8 @@ public class AdminAccountCtrl extends BaseCtrl {
 
         adminUserService.deleteUser(username);
 
-        return new SimpleResponse(true, "The admin user " + username + " has been successfully removed", "admin-deleted");
+        return new SimpleResponse(true, "The admin user " + us
+                ername + " has been successfully removed", "admin-deleted");
     }
 
     /**

@@ -71,11 +71,7 @@ public class SqlAdminUserService implements AdminUserService
         if (!emailRegexPattern.matcher(user.getUsername()).matches()) {
             throw new InvalidUsernameException(user.getUsername(), emailRegex);
         }
-        try {
-            adminDao.addAdmin(user);
-        } catch (DataAccessException ex) {
-            logger.warn(ExceptionUtils.getStackTrace(ex));
-        }
+        adminDao.addAdmin(user);
     }
 
     /**
@@ -83,11 +79,7 @@ public class SqlAdminUserService implements AdminUserService
      */
     @Override
     public void deleteUser(String username) {
-        try {
-            adminDao.deleteAdmin(username);
-        } catch (DataAccessException ex) {
-            logger.warn(ExceptionUtils.getStackTrace(ex));
-        }
+        adminDao.deleteAdmin(username);
     }
 
     /**
@@ -97,7 +89,7 @@ public class SqlAdminUserService implements AdminUserService
     public boolean adminInDb(String username) {
         try {
             return adminDao.getAdminUser(username) != null;
-        } catch (DataAccessException dae) {
+        } catch (EmptyResultDataAccessException dae) {
             return false;
         }
     }
@@ -109,7 +101,7 @@ public class SqlAdminUserService implements AdminUserService
     public boolean isMasterAdmin(String username) {
         try {
             return adminDao.getAdminUser(username).isMaster();
-        } catch (DataAccessException ex) {
+        } catch (EmptyResultDataAccessException ex) {
             return false;
         }
     }
