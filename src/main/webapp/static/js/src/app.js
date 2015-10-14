@@ -139,7 +139,7 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
           icon: 'icon-users', bgclass: 'green1-bg', url: ctxPath + '/members'}
     ];
 
-    /** Api Key Registration */
+    /** Api Key Registration TODO: Remove this, api signup will be on the public home page. */
     $scope.signedup = false;
     $scope.email = '';
     $scope.signup = function() {

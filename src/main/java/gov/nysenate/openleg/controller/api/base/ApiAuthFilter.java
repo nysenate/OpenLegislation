@@ -42,8 +42,7 @@ public class ApiAuthFilter implements Filter
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         if (enabled) {
-            boolean isUiUser = UIKeyUtil.validateUIKey(request, apiSecret, "X-UI-Key");
-            if (isUiUser || ipAddress.matches(filterAddress) || apiUserService.validateKey(key)) {
+            if (ipAddress.matches(filterAddress) || apiUserService.validateKey(key)) {
                 filterChain.doFilter(servletRequest, servletResponse);
             }
             else {
