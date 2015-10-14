@@ -17,7 +17,7 @@ public enum ApiUserQuery implements BasicSqlQuery
             "WHERE email_addr = :email"
     ),
     SELECT_BY_EMAIL(
-        "SELECT * FROM public." +SqlTable.API_USER+ " WHERE email_addr = :email"
+        "SELECT * FROM public." +SqlTable.API_USER+ " WHERE email_addr ILIKE :email"
     ),
     SELECT_BY_KEY(
         "SELECT * FROM public." +SqlTable.API_USER+ " WHERE apikey = :apikey"

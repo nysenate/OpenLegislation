@@ -33,10 +33,6 @@ openApp.config(function($mdThemingProvider) {
 })
 .config(function(paginationTemplateProvider) {
     paginationTemplateProvider.setPath(ctxPath +'/static/tpl/dirPagination.tpl.html');
-})
-.config(function($httpProvider){
-    // We set a ui key in the http header to allow front end users to bypass api key restrictions
-    $httpProvider.defaults.headers.common['X-UI-Key'] = $("#uikey").val();
 });
 
 /**
@@ -143,7 +139,7 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
           icon: 'icon-users', bgclass: 'green1-bg', url: ctxPath + '/members'}
     ];
 
-    /** Api Key Registration */
+    /** Api Key Registration TODO: Remove this, api signup will be on the public home page. */
     $scope.signedup = false;
     $scope.email = '';
     $scope.signup = function() {

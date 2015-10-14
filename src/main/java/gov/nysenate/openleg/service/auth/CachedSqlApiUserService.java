@@ -245,8 +245,8 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
      * @param user The user to send the API Key to.
      */
     public void sendApikeyEmail(ApiUser user) {
-        String message = String.format("Hello %s,\n\n\tThank you for your interest in Open Legislation." +
-                "Your API Key is the following:\n%s\n\n-- NY Senate Development Team", user.getName(), user.getApikey());
+        String message = String.format("Hello %s,\n\n\tThank you for your interest in Open Legislation.\n\n\t" +
+                "Here's your API Key:\n%s\n\n-- NY Senate Development Team", user.getName(), user.getApikey());
 
         sendMailService.sendMessage(user.getEmail(), "Your Open Legislation API Key", message);
     }

@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -25,8 +25,6 @@
   
   
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
   
 
   
@@ -46,12 +44,9 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        
-          <a href="reference.html" class="fa fa-home"> Open Legislation</a>
-        
-        
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -61,9 +56,8 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-          
-          
-              <ul class="current">
+        
+            <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
@@ -98,7 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-list-of-law-ids">Get a list of law ids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-the-law-structure">Get the law structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-law-sub-document">Get a law sub document</a></li>
-<li class="toctree-l2"><a class="reference internal" href="laws.html#more-coming-soon">More coming soon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#search-for-law-documents">Search for law documents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
@@ -131,7 +125,6 @@
 </li>
 </ul>
 
-          
         
       </div>
       &nbsp;
@@ -162,7 +155,7 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main">
             
   <div class="section" id="bills-and-resolutions-api">
 <h1><strong>Bills and Resolutions API</strong><a class="headerlink" href="#bills-and-resolutions-api" title="Permalink to this headline">¶</a></h1>
@@ -181,24 +174,17 @@
 <p><strong>Optional Params</strong></p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="13%" />
-<col width="23%" />
-<col width="64%" />
+<col width="11%" />
+<col width="89%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Parameter</th>
 <th class="head">Values</th>
-<th class="head">Description</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>summary</td>
-<td>boolean</td>
-<td>Show a summary of the bill instead of the full content</td>
-</tr>
-<tr class="row-odd"><td>detail</td>
-<td>boolean</td>
-<td>Show extra details (overrides &#8216;summary&#8217;)</td>
+<tr class="row-even"><td>view</td>
+<td>&#8216;default&#8217;, &#8216;info&#8217;, &#8216;no_fulltext&#8217;, &#8216;only_fulltext&#8217;, &#8216;with_refs&#8217;, &#8216;with_refs_no_fulltext&#8217;</td>
 </tr>
 </tbody>
 </table>
@@ -209,12 +195,10 @@ the base print no (e.g. S1234).</p>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request bill S2180 of session year 2013</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/S2180
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/S2180</pre>
 </div>
 <p>Request summary of bill A450 of session year 2013</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/A450?summary=true
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/A450?view=info</pre>
 </div>
 <p id="bill-response"><strong>Response</strong></p>
 <p>Full Bill Response</p>
@@ -521,20 +505,16 @@ the base print no (e.g. S1234).</p>
 <p>By default, (i.e. no sort param was included in the request) the results will be ordered by most recent status date (sort=status.actionDate:DESC)</p>
 <p><strong>Examples</strong></p>
 <p>List 100 bills from 2013</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013?limit=100
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013?limit=100</pre>
 </div>
 <p>List 100 complete bills starting from 101</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013?limit=100&amp;offset=101&amp;full=true
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013?limit=100&amp;offset=101&amp;full=true</pre>
 </div>
 <p>Sort by increasing published date</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013?sort=publishedDateTime:ASC
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013?sort=publishedDateTime:ASC</pre>
 </div>
 <p>Sort by increasing status action date, (default)</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013?sort=status.actionDate:ASC
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013?sort=status.actionDate:ASC</pre>
 </div>
 <p><strong>Response</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
@@ -561,12 +541,10 @@ the base print no (e.g. S1234).</p>
 structure.</p>
 <p><strong>Usage</strong></p>
 <p>Search across all session years</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/search?term=YOUR_TERM
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/search?term=YOUR_TERM</pre>
 </div>
 <p>Search within a session year</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/{sessionYear}/search?term=YOUR_TERM</pre>
 </div>
 <p><strong>Required Params</strong></p>
 <table border="1" class="docutils">
@@ -596,24 +574,19 @@ structure.</p>
 <p class="last">If you are querying a field that is heavily nested (like the amendment specific fields), prefix the field with a \*. This is a wildcard expression. E.g   ?term=\*memo:&#8217;Some phrase&#8217;</p>
 </div>
 <p>Search for a general term (matches against any data field)</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/search?term=Gun Control
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/search?term=Gun Control</pre>
 </div>
 <p>Search for 2013 &#8216;resolutions&#8217;</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/2013/search?term=billType.resolution:true
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/2013/search?term=billType.resolution:true</pre>
 </div>
 <p>Search for all bills and resolutions sponsored by a Senator, ordered by most recent status update</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&amp;sort=status.actionDate:DESC
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/search?term=sponsor.member.shortName:BRESLIN&amp;sort=status.actionDate:DESC</pre>
 </div>
 <p>Search for full text containing the phrase &#8216;Marriage Equality&#8217;. Note the use of the \* prefix to match full texts regardless of amendment version</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/search?term=\*.fullText:&quot;Marriage Equality&quot;
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/search?term=\*.fullText:"Marriage Equality"</pre>
 </div>
 <p>Search for bills that were published between a certain date range, ordered by increasing published date</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&amp;sort=publishedDateTime:ASC
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/2013/search?term=publishedDateTime:[2014-01-01 TO 2014-01-02]&amp;sort=publishedDateTime:ASC</pre>
 </div>
 </div>
 <hr class="docutils" />
@@ -622,8 +595,7 @@ structure.</p>
 <p>To identify which bills have received updates within a given time period you can use the bill updates api.</p>
 <p><strong>Usage</strong></p>
 <p>List of bills updated during the given date/time range</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/updates/{fromDateTime}/{toDateTime}
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/updates/{fromDateTime}/{toDateTime}</pre>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -667,8 +639,7 @@ which data was intended to be published. This can differ from the processed date
 reprocess it&#8217;s data to fix issues. By default the type is set to published.</p>
 <p><strong>Examples</strong></p>
 <p>Bills that were updated between November 1, 2014 and November 5, 2014</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/updates/2014-11-01T00:00:00/2014-11-05T00:00:00
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/updates/2014-11-01T00:00:00/2014-11-05T00:00:00</pre>
 </div>
 <p id="bill-update-token-response"><strong>Response (detail = false)</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
@@ -760,27 +731,22 @@ may only want to know which bills have had status updates, or which bills had fu
 </table>
 <p><strong>Examples</strong></p>
 <p>Get a list of bills that have had status changes between January 1, 2014 12 AM and January 5, 2014 2 PM</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&amp;order=desc
-</pre></div>
+<div class="highlight-python"><pre>(GET) /api/3/bills/updates/2014-01-01T00:00:00/2014-01-05T14:00:00?filter=status&amp;order=desc</pre>
 </div>
 <p id="detailed-update-digests">To view the actual updates that have occurred on a bill use the following API</p>
 <p><strong>Usage</strong></p>
 <p>All updates on a specific bill</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/</pre>
 </div>
 <p>Updates on a specific bill from a given date/time.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/</pre>
 </div>
 <p>Updates on a specific bil during a given date/time range.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}</pre>
 </div>
 <p><strong>Example</strong></p>
 <p>Updates for S1234-2013 between December 1, 2014 and December 2, 2014</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/S1234/updates/2014-12-01T00:00:00/2014-12-02T00:00:00</pre>
 </div>
 <p id="bill-update-digest-response"><strong>Response</strong></p>
 <p>Sample response:</p>
@@ -833,7 +799,7 @@ may only want to know which bills have had status updates, or which bills had fu
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="calendars.html" class="btn btn-neutral float-right" title="Senate Calendar API">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="calendars.html" class="btn btn-neutral float-right" title="Senate Calendar API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Open Legislation v2.0 API Docs"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -849,8 +815,7 @@ may only want to know which bills have had status updates, or which bills had fu
     </p>
   </div>
 
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-  
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>

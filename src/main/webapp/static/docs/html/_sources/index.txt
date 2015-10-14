@@ -11,12 +11,11 @@ Legislative data is sent via the Legislative Bill Drafting Commission (LBDC) in 
 ingested and cleaned up internally by Open Leg and made available for consumption through a REST API.
 
 This documentation explains how to utilize the REST API to retrieve bills, resolutions, laws, committee agendas, and more.
-You will need to sign up for a `free API key`_ in order to use this service.
+You will need to sign up for a free API key from the OpenLegislation homepage in order to use this service.
 
 The code is open source and available on `Github`_.
 
-.. _Open Legislation: http://openleg-dev.nysenate.gov
-.. _free API key: http://openleg-dev.nysenate.gov
+.. _Open Legislation: http://legislation.nysenate.gov
 .. _nysenate.gov:    http://www.nysenate.gov
 .. _Github: http://github.com/nysenate/OpenLegislation
 

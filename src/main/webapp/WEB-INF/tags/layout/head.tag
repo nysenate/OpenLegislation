@@ -22,11 +22,6 @@
     <!-- Third Party JS -->
     <script type="application/javascript" src="<%= request.getContextPath()%>/static/js/dest/vendor.min.js"></script>
 
-    <!-- Application Scripts -->
-    <script type="application/javascript" src="${ctxPath}/static/js/src/core.js"></script>
-    <script type="application/javascript" src="${ctxPath}/static/js/src/app.js"></script>
-    <script type="application/javascript" src="${ctxPath}/static/js/src/routes.js"></script>
-
     <!-- GA -->
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

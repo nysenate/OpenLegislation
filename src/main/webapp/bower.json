@@ -13,6 +13,8 @@
     "moment": "~2.8.2",
     "angular-ui-calendar": "0.8.1",
     "ngInfiniteScroll": "1.0.0",
-    "angular-utils-pagination": "0.5.0"
+    "angular-utils-pagination": "0.5.0",
+    "google-diff-match-patch": "0.1.0",
+    "angular-diff-match-patch": "0.1.11"
   }
 }

@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -25,8 +25,6 @@
   
   
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
   
 
   
@@ -45,12 +43,9 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        
-          <a href="reference.html" class="fa fa-home"> Open Legislation</a>
-        
-        
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -60,9 +55,8 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-          
-          
-              <ul class="current">
+        
+            <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
@@ -97,7 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-list-of-law-ids">Get a list of law ids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-the-law-structure">Get the law structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-law-sub-document">Get a law sub document</a></li>
-<li class="toctree-l2"><a class="reference internal" href="laws.html#more-coming-soon">More coming soon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#search-for-law-documents">Search for law documents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
@@ -130,7 +124,6 @@
 </li>
 </ul>
 
-          
         
       </div>
       &nbsp;
@@ -161,7 +154,7 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main">
             
   <div class="section" id="search-apis">
 <h1><strong>Search APIs</strong><a class="headerlink" href="#search-apis" title="Permalink to this headline">¶</a></h1>
@@ -173,16 +166,14 @@ and we aim to provide as much elasticsearch functionality as possible through th
 <p>The term parameter takes in an <a class="reference external" href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax">elasticsearch query string</a>.</p>
 <p>The simplest way to search is to send a general search term.
 For example, to search for legislation pertaining to apples, the following query will do the job.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/search?term=apples
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/search?term=apples</pre>
 </div>
 <p>In addition to a simple search term, there are a number of advanced features available.  Our search index is generated
 with data in the same JSON format as the API responses, so any response field that is nested under &#8220;result&#8221; is fair game
 for search.  Going back to the previous example, a number of resolutions appear in the results for the apples search query.
 Looking back at the <a class="reference internal" href="bills.html#bill-response"><em>bill response</em></a>, we see that resolutions are designated by the &#8220;resolution&#8221; boolean under &#8220;billType&#8221;.
 In order to filter resolutions out of the search results, a field query can be chained to the original query using &#8220;AND&#8221;.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/search?term=apples%20AND%20billType.resolution:false
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/search?term=apples%20AND%20billType.resolution:false</pre>
 </div>
 <p>For a full enumeration of query features see the <a class="reference external" href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax">elasticsearch query string</a> syntax.</p>
 </div>
@@ -192,14 +183,12 @@ In order to filter resolutions out of the search results, a field query can be c
 which takes a comma separated string of response fields, each designated with a sort order (&#8220;ASC&#8221; or &#8220;DESC&#8221;) separated
 from the field with a colon.</p>
 <p>For example, to get the 2013 governor&#8217;s program bills in canonical order:</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
-                        &amp;sort=programInfo.sequenceNo:ASC
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+                        &amp;sort=programInfo.sequenceNo:ASC</pre>
 </div>
 <p>Or, you may want to order them by their status and action date:</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
-                        &amp;sort=status.statusType:ASC,status.actionDate:DESC
-</pre></div>
+<div class="highlight-python"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+                        &amp;sort=status.statusType:ASC,status.actionDate:DESC</pre>
 </div>
 </div>
 <div class="section" id="search-response">
@@ -248,8 +237,7 @@ from the field with a colon.</p>
     </p>
   </div>
 
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-  
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>

@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -25,8 +25,6 @@
   
   
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
   
 
   
@@ -46,12 +44,9 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        
-          <a href="reference.html" class="fa fa-home"> Open Legislation</a>
-        
-        
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -61,9 +56,8 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-          
-          
-              <ul class="current">
+        
+            <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
@@ -98,7 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-list-of-law-ids">Get a list of law ids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-the-law-structure">Get the law structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-law-sub-document">Get a law sub document</a></li>
-<li class="toctree-l2"><a class="reference internal" href="laws.html#more-coming-soon">More coming soon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laws.html#search-for-law-documents">Search for law documents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
@@ -131,7 +125,6 @@
 </li>
 </ul>
 
-          
         
       </div>
       &nbsp;
@@ -162,7 +155,7 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main">
             
   <div class="section" id="aggregate-updates-api">
 <h1><strong>Aggregate Updates API</strong><a class="headerlink" href="#aggregate-updates-api" title="Permalink to this headline">¶</a></h1>
@@ -171,9 +164,8 @@
 <h2>Get aggregate updates<a class="headerlink" href="#get-aggregate-updates" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>List of content that was updated during the given date/time range</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/updates/{fromDateTime}
-/api/3/updates/{fromDateTime}/{toDateTime}
-</pre></div>
+<div class="highlight-python"><pre>/api/3/updates/{fromDateTime}
+/api/3/updates/{fromDateTime}/{toDateTime}</pre>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -229,10 +221,9 @@ which data was intended to be published. This can differ from the processed date
 reprocess it&#8217;s data to fix issues. By default the type is set to published.</p>
 <p><strong>Example</strong></p>
 <p>Get a detailed view of the first 50 agenda, bill, and calendar updates processed on March 17 2015</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/updates/2015-03-17T00:00:00/2015-03-18T00:00:00?type=processed
+<div class="highlight-python"><pre>/api/3/updates/2015-03-17T00:00:00/2015-03-18T00:00:00?type=processed
                 &amp;content-type=AGENDA&amp;content-type=BILL&amp;content-type=CALENDAR
-                &amp;detail=true&amp;fields=true&amp;limit=50
-</pre></div>
+                &amp;detail=true&amp;fields=true&amp;limit=50</pre>
 </div>
 <p><strong>Response</strong></p>
 <p>See the following pages for info on the unique updates responses for each content type:</p>
@@ -287,7 +278,7 @@ reprocess it&#8217;s data to fix issues. By default the type is set to published
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="search_api.html" class="btn btn-neutral float-right" title="Search APIs">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="search_api.html" class="btn btn-neutral float-right" title="Search APIs"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="members.html" class="btn btn-neutral" title="Senate Members API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -303,8 +294,7 @@ reprocess it&#8217;s data to fix issues. By default the type is set to published
     </p>
   </div>
 
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-  
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>

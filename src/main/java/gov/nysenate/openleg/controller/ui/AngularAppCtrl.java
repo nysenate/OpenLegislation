@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.controller.ui;
 
-import gov.nysenate.openleg.util.UIKeyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +19,7 @@ public class AngularAppCtrl
 
     @Value("${ga.tracking.id}") private String gaTrackingId;
     @Value("${api.secret}") private String apiSecret;
+    @Value("${api.auth.ip.whitelist}") private String whitelist;
 
     @RequestMapping({"/",
                      "/data/**",
@@ -36,9 +36,18 @@ public class AngularAppCtrl
     public String home(HttpServletRequest request) {
         // Google Analytics
         request.setAttribute("gaTrackingId", gaTrackingId);
-        // A UI key is set in order to allow front end api calls without an API key
-        UIKeyUtil.setUIKey(request, apiSecret, "uiKey");
-        // Render the main angular app
-        return "home";
+
+        String ipAddr = request.getLocalAddr();
+        if (ipAddr.matches(whitelist)) {
+            // Render the main angular app for internal senate users.
+            return "home";
+        }
+        // Render a simple landing page for public visitors.
+        return "publichome";
+    }
+
+    @RequestMapping("/public")
+    public String publicHome() {
+        return "publichome";
     }
 }
