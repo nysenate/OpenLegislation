@@ -10,8 +10,8 @@
 
 <open-layout:head title="Open 2.0">
   <!-- Application Scripts -->
-  <script type="application/javascript" src="${ctxPath}/static/js/src/app.js"></script>
   <script type="application/javascript" src="${ctxPath}/static/js/src/core.js"></script>
+  <script type="application/javascript" src="${ctxPath}/static/js/src/app.js"></script>
   <script type="application/javascript" src="${ctxPath}/static/js/src/routes.js"></script>
 
   <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
@@ -48,7 +48,7 @@
                \__)        './/   .'
                              `'-'`
 -->
-<body ng-app="open">
+<open-layout:body appName="open">
   <section id="app-wrapper" layout="column" ng-controller="AppCtrl" layout-fill>
     <section layout="row">
       <%-- Left Nav --%>
@@ -109,6 +109,6 @@
       </section>
     </section>
   </section>
-  <input type="hidden" id="uikey" value="${uiKey}"/>
-</body>
-</html>
+</open-layout:body>
+<open-layout:footer>
+</open-layout:footer>

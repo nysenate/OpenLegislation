@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -25,8 +25,6 @@
   
   
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
   
 
   
@@ -46,12 +44,9 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        
-          <a href="reference.html" class="fa fa-home"> Open Legislation</a>
-        
-        
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -61,9 +56,8 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-          
-          
-              <ul class="current">
+        
+            <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
@@ -98,7 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#get-a-list-of-law-ids">Get a list of law ids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-the-law-structure">Get the law structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-law-sub-document">Get a law sub document</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#more-coming-soon">More coming soon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search-for-law-documents">Search for law documents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
@@ -131,7 +125,6 @@
 </li>
 </ul>
 
-          
         
       </div>
       &nbsp;
@@ -162,7 +155,7 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main">
             
   <div class="section" id="nys-laws-api">
 <h1><strong>NYS Laws Api</strong><a class="headerlink" href="#nys-laws-api" title="Permalink to this headline">¶</a></h1>
@@ -275,10 +268,9 @@ The following call will provide the structure of the law.</p>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/ABC                  // Get latest law structure for ABC law
+<div class="highlight-python"><pre>/api/3/laws/ABC                  // Get latest law structure for ABC law
 /api/3/laws/TAX?date=2015-01-01  // Get law structure for TAX law as it appeared on or before 01/01/2015
-/api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law
-</pre></div>
+/api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law</pre>
 </div>
 <p><strong>Response</strong></p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// /api/3/laws/RPT</span>
@@ -359,9 +351,8 @@ the text body. Note that response can be rather large (several MB) for certain l
 You can discover the locationId when you make an API request for the law structure (see above section). See the
 &#8216;locationId&#8217; field for that response.</p>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/TAX/8/     // Get section 8 of Tax law
-/api/3/laws/EDN/A2/    // Get article 2 of Education law
-</pre></div>
+<div class="highlight-python"><pre>/api/3/laws/TAX/8/     // Get section 8 of Tax law
+/api/3/laws/EDN/A2/    // Get article 2 of Education law</pre>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -400,8 +391,92 @@ You can discover the locationId when you make an API request for the law structu
 </pre></div>
 </div>
 </div>
-<div class="section" id="more-coming-soon">
-<h2>More coming soon<a class="headerlink" href="#more-coming-soon" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="search-for-law-documents">
+<h2>Search for law documents<a class="headerlink" href="#search-for-law-documents" title="Permalink to this headline">¶</a></h2>
+<p><strong>Usage</strong></p>
+<div class="highlight-python"><pre>(GET) /api/3/laws/search           // Search across all law volumes
+(GET) /api/3/laws/{lawId}/search   // Search within a specific law volume</pre>
+</div>
+<p><strong>Required Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="22%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>term</td>
+<td>string</td>
+<td>The full text search term.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="22%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>sort</td>
+<td>string</td>
+<td>Sort using any field from the result object, e.g. lawId:ASC</td>
+</tr>
+<tr class="row-odd"><td>limit</td>
+<td>1 - 1000</td>
+<td>Number of results to return (high limits take longer)</td>
+</tr>
+<tr class="row-even"><td>offset</td>
+<td>&gt;= 1</td>
+<td>Result number to start from</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><pre>/api/3/laws/search?term=chickens                            // Search all law volumes for the word 'chickens'
+/api/3/laws/EDN/search?term=teacher&amp;sort=activeDate:desc    // Search education law for documents containing 'teacher'
+                                                            // sorted by the activeDate in descending order.</pre>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;search-results list&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;total&quot;</span> <span class="o">:</span> <span class="mi">178</span><span class="p">,</span>                              <span class="c1">// Total number of results</span>
+  <span class="s2">&quot;offsetStart&quot;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>                          <span class="c1">// Pagination</span>
+  <span class="s2">&quot;offsetEnd&quot;</span> <span class="o">:</span> <span class="mi">25</span><span class="p">,</span>
+  <span class="s2">&quot;limit&quot;</span> <span class="o">:</span> <span class="mi">25</span><span class="p">,</span>
+  <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
+      <span class="s2">&quot;result&quot;</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;lawId&quot;</span> <span class="o">:</span> <span class="s2">&quot;EDN&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lawName&quot;</span> <span class="o">:</span> <span class="s2">&quot;Education&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;locationId&quot;</span> <span class="o">:</span> <span class="s2">&quot;3602&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;Apportionment of public moneys to school districts employing eight or more teachers&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;docType&quot;</span> <span class="o">:</span> <span class="s2">&quot;SECTION&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;docLevelId&quot;</span> <span class="o">:</span> <span class="s2">&quot;3602&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;activeDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-12-26&quot;</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;rank&quot;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>                             <span class="c1">// Document score</span>
+      <span class="s2">&quot;highlights&quot;</span> <span class="o">:</span> <span class="p">{</span>                        <span class="c1">// Highlights contain the snippets where the match occurred.</span>
+        <span class="s2">&quot;text&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="s2">&quot; assistance of &lt;em&gt;teacher&lt;/em&gt; aides or consultation\\nwith appropriate personnel. When a committee on special&quot;</span><span class="p">,</span> <span class="s2">&quot; consultant &lt;em&gt;teacher&lt;/em&gt;\\nservices, in accordance with regulations of the commissioner adopted for\\nsuch&quot;</span><span class="p">,</span> <span class="s2">&quot; or indirect consultant &lt;em&gt;teacher&lt;/em&gt;\\nservices, in accordance with regulations of the commissioner adopted&quot;</span><span class="p">,</span> <span class="s2">&quot; under paragraph five of\\nsubdivision nineteen of this section;\\n  (11) &lt;em&gt;teacher&lt;/em&gt; support payments made&quot;</span><span class="p">,</span> <span class="s2">&quot;. Parent-&lt;em&gt;teacher&lt;/em&gt; conferences or workshops. Notwithstanding any other\\nprovision of this section to&quot;</span> <span class="p">]</span>
+      <span class="p">}</span>
+    <span class="p">},</span> <span class="p">....</span> <span class="p">(</span><span class="nx">more</span> <span class="nx">results</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -411,7 +486,7 @@ You can discover the locationId when you make an API request for the law structu
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="transcripts_floor.html" class="btn btn-neutral float-right" title="Senate Floor Transcripts API">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="transcripts_floor.html" class="btn btn-neutral float-right" title="Senate Floor Transcripts API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="committees.html" class="btn btn-neutral" title="Committee API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -427,8 +502,7 @@ You can discover the locationId when you make an API request for the law structu
     </p>
   </div>
 
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-  
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>

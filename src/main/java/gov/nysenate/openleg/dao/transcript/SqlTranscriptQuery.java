@@ -23,9 +23,9 @@ public enum SqlTranscriptQuery implements BasicSqlQuery
         "VALUES (:transcriptFilename, :sessionType, :dateTime, :location, :text)"
     ),
     SELECT_TRANSCRIPTS_UPDATED_DURING(
-            "SELECT transcript_filename, modified_date_time, COUNT(*) OVER() as total_updated " +
-            "FROM ${schema}." + SqlTable.TRANSCRIPT + "\n" +
-            "WHERE modified_date_time BETWEEN :startDateTime AND :endDateTime"
+        "SELECT transcript_filename, modified_date_time, COUNT(*) OVER() as total_updated " +
+        "FROM ${schema}." + SqlTable.TRANSCRIPT + "\n" +
+        "WHERE modified_date_time BETWEEN :startDateTime AND :endDateTime"
     );
 
     private String sql;

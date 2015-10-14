@@ -216,6 +216,68 @@ If the law document was not found you will receive an error response
         "errorDataType": "law-doc-query"
     }
 
+Search for law documents
+------------------------
 
-More coming soon
-----------------
+**Usage**
+::
+    (GET) /api/3/laws/search           // Search across all law volumes
+    (GET) /api/3/laws/{lawId}/search   // Search within a specific law volume
+
+**Required Params**
+
++-----------+--------------------+--------------------------------------------------------------+
+| Parameter | Values             | Description                                                  |
++===========+====================+==============================================================+
+| term      | string             | The full text search term.                                   |
++-----------+--------------------+--------------------------------------------------------------+
+
+**Optional Params**
+
++-----------+--------------------+--------------------------------------------------------------+
+| Parameter | Values             | Description                                                  |
++===========+====================+==============================================================+
+| sort      | string             | Sort using any field from the result object, e.g. lawId:ASC  |
++-----------+--------------------+--------------------------------------------------------------+
+| limit     | 1 - 1000           | Number of results to return (high limits take longer)        |
++-----------+--------------------+--------------------------------------------------------------+
+| offset    | >= 1               | Result number to start from                                  |
++-----------+--------------------+--------------------------------------------------------------+
+
+**Examples**
+::
+    /api/3/laws/search?term=chickens                            // Search all law volumes for the word 'chickens'
+    /api/3/laws/EDN/search?term=teacher&sort=activeDate:desc    // Search education law for documents containing 'teacher'
+                                                                // sorted by the activeDate in descending order.
+
+**Response**
+
+.. code-block:: javascript
+
+    {
+      "success" : true,
+      "message" : "",
+      "responseType" : "search-results list",
+      "total" : 178,                              // Total number of results
+      "offsetStart" : 1,                          // Pagination
+      "offsetEnd" : 25,
+      "limit" : 25,
+      "result" : {
+        "items" : [ {
+          "result" : {
+            "lawId" : "EDN",
+            "lawName" : "Education",
+            "locationId" : "3602",
+            "title" : "Apportionment of public moneys to school districts employing eight or more teachers",
+            "docType" : "SECTION",
+            "docLevelId" : "3602",
+            "activeDate" : "2014-12-26"
+          },
+          "rank" : 1,                             // Document score
+          "highlights" : {                        // Highlights contain the snippets where the match occurred.
+            "text" : [ " assistance of <em>teacher</em> aides or consultation\\nwith appropriate personnel. When a committee on special", " consultant <em>teacher</em>\\nservices, in accordance with regulations of the commissioner adopted for\\nsuch", " or indirect consultant <em>teacher</em>\\nservices, in accordance with regulations of the commissioner adopted", " under paragraph five of\\nsubdivision nineteen of this section;\\n  (11) <em>teacher</em> support payments made", ". Parent-<em>teacher</em> conferences or workshops. Notwithstanding any other\\nprovision of this section to" ]
+          }
+        }, .... (more results)
+
+
+
