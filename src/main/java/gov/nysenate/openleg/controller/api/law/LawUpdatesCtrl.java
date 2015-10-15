@@ -62,12 +62,12 @@ public class LawUpdatesCtrl extends BaseCtrl
         return getAllUpdates(LocalDateTime.now().minusDays(7), LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/updates/{from}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getAllUpdates(@PathVariable String from, WebRequest request) {
         return getAllUpdates(parseISODateTime(from, "from"), LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getAllUpdates(@PathVariable String from, @PathVariable String to, WebRequest request) {
         return getAllUpdates(parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
     }
@@ -89,12 +89,12 @@ public class LawUpdatesCtrl extends BaseCtrl
         return getUpdatesForLaw(lawId, DateUtils.LONG_AGO.atStartOfDay(), DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
-    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from}")
+    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, WebRequest request) {
         return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
-    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{lawId:[\\w]{3}}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForLaw(@PathVariable String lawId, @PathVariable String from, @PathVariable String to,
                                          WebRequest request) {
         return getUpdatesForLaw(lawId, parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
@@ -118,14 +118,14 @@ public class LawUpdatesCtrl extends BaseCtrl
                                    DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
-    @RequestMapping(value = "/{lawId}/{locationId}/updates/{from}")
+    @RequestMapping(value = "/{lawId}/{locationId}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForLawDoc(@PathVariable String lawId, @PathVariable String locationId,
                                             @PathVariable String from, WebRequest request) {
         return getUpdatesForLawDoc(lawId, locationId, parseISODateTime(from, "from"),
                                    DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
-    @RequestMapping(value = "/{lawId}/{locationId}/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{lawId}/{locationId}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForLawDoc(@PathVariable String lawId, @PathVariable String locationId,
                                             @PathVariable String from, @PathVariable String to, WebRequest request) {
         return getUpdatesForLawDoc(lawId, locationId, parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);

@@ -64,14 +64,14 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
         return getUpdatesDuring(LocalDateTime.now().minusDays(7).toString(), LocalDateTime.now().toString(), detail, webRequest);
     }
 
-    @RequestMapping(value = "/updates/{from}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesDuring(@PathVariable String from,
                                          @RequestParam(defaultValue = "false") boolean detail,
                                          WebRequest webRequest) {
         return getUpdatesDuring(from, LocalDateTime.now().toString(), detail, webRequest);
     }
 
-    @RequestMapping(value = "/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesDuring(@PathVariable String from, @PathVariable String to,
                                          @RequestParam(defaultValue = "false") boolean detail,
                                          WebRequest webRequest) {
@@ -126,13 +126,13 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
                 DateUtils.LONG_AGO.atStartOfDay().toString(), LocalDateTime.now().toString(), webRequest);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from}")
+    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForCalendar(@PathVariable int year, @PathVariable int calendarNo, @PathVariable String from,
                                               WebRequest webRequest) {
         return getUpdatesForCalendarDuring(year, calendarNo, from, LocalDateTime.now().toString(), webRequest);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{year:[\\d]{4}}/{calendarNo:\\d+}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForCalendarDuring(@PathVariable int year, @PathVariable int calendarNo,
                                                     @PathVariable String from, @PathVariable String to,
                                                     WebRequest webRequest) {
