@@ -80,7 +80,7 @@ CREATE TYPE cmt AS ENUM (
 );
 
 
-ALTER TYPE master.cmt OWNER TO postgres;
+ALTER TYPE cmt OWNER TO postgres;
 
 --
 -- Name: committee_member_title; Type: TYPE; Schema: master; Owner: postgres
@@ -93,7 +93,7 @@ CREATE TYPE committee_member_title AS ENUM (
 );
 
 
-ALTER TYPE master.committee_member_title OWNER TO postgres;
+ALTER TYPE committee_member_title OWNER TO postgres;
 
 --
 -- Name: daybreak_file_type; Type: TYPE; Schema: master; Owner: postgres
@@ -108,7 +108,7 @@ CREATE TYPE daybreak_file_type AS ENUM (
 );
 
 
-ALTER TYPE master.daybreak_file_type OWNER TO postgres;
+ALTER TYPE daybreak_file_type OWNER TO postgres;
 
 --
 -- Name: sobi_fragment_type; Type: TYPE; Schema: master; Owner: postgres
@@ -125,7 +125,7 @@ CREATE TYPE sobi_fragment_type AS ENUM (
 );
 
 
-ALTER TYPE master.sobi_fragment_type OWNER TO postgres;
+ALTER TYPE sobi_fragment_type OWNER TO postgres;
 
 --
 -- Name: sponsor_type; Type: TYPE; Schema: master; Owner: postgres
@@ -137,7 +137,7 @@ CREATE TYPE sponsor_type AS ENUM (
 );
 
 
-ALTER TYPE master.sponsor_type OWNER TO postgres;
+ALTER TYPE sponsor_type OWNER TO postgres;
 
 --
 -- Name: veto_type; Type: TYPE; Schema: master; Owner: postgres
@@ -149,7 +149,7 @@ CREATE TYPE veto_type AS ENUM (
 );
 
 
-ALTER TYPE master.veto_type OWNER TO postgres;
+ALTER TYPE veto_type OWNER TO postgres;
 
 --
 -- Name: vote_code; Type: TYPE; Schema: master; Owner: postgres
@@ -165,7 +165,7 @@ CREATE TYPE vote_code AS ENUM (
 );
 
 
-ALTER TYPE master.vote_code OWNER TO postgres;
+ALTER TYPE vote_code OWNER TO postgres;
 
 --
 -- Name: vote_type; Type: TYPE; Schema: master; Owner: postgres
@@ -177,7 +177,7 @@ CREATE TYPE vote_type AS ENUM (
 );
 
 
-ALTER TYPE master.vote_type OWNER TO postgres;
+ALTER TYPE vote_type OWNER TO postgres;
 
 SET search_path = public, pg_catalog;
 
@@ -191,7 +191,7 @@ CREATE TYPE chamber AS ENUM (
 );
 
 
-ALTER TYPE public.chamber OWNER TO postgres;
+ALTER TYPE chamber OWNER TO postgres;
 
 --
 -- Name: committee_member_title; Type: TYPE; Schema: public; Owner: postgres
@@ -204,7 +204,7 @@ CREATE TYPE committee_member_title AS ENUM (
 );
 
 
-ALTER TYPE public.committee_member_title OWNER TO postgres;
+ALTER TYPE committee_member_title OWNER TO postgres;
 
 SET search_path = master, pg_catalog;
 
@@ -539,7 +539,7 @@ ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
     ADD MAPPING FOR uint WITH simple;
 
 
-ALTER TEXT SEARCH CONFIGURATION master.openleg_fts_config OWNER TO postgres;
+ALTER TEXT SEARCH CONFIGURATION openleg_fts_config OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -560,7 +560,7 @@ CREATE TABLE active_list_reference (
 );
 
 
-ALTER TABLE master.active_list_reference OWNER TO postgres;
+ALTER TABLE active_list_reference OWNER TO postgres;
 
 --
 -- Name: TABLE active_list_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -583,7 +583,7 @@ CREATE TABLE active_list_reference_entry (
 );
 
 
-ALTER TABLE master.active_list_reference_entry OWNER TO postgres;
+ALTER TABLE active_list_reference_entry OWNER TO postgres;
 
 --
 -- Name: TABLE active_list_reference_entry; Type: COMMENT; Schema: master; Owner: postgres
@@ -604,7 +604,7 @@ CREATE SEQUENCE active_list_reference_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.active_list_reference_id_seq OWNER TO postgres;
+ALTER TABLE active_list_reference_id_seq OWNER TO postgres;
 
 --
 -- Name: active_list_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -627,7 +627,7 @@ CREATE TABLE agenda (
 );
 
 
-ALTER TABLE master.agenda OWNER TO postgres;
+ALTER TABLE agenda OWNER TO postgres;
 
 --
 -- Name: TABLE agenda; Type: COMMENT; Schema: master; Owner: postgres
@@ -656,7 +656,7 @@ CREATE TABLE agenda_alert_info_committee (
 );
 
 
-ALTER TABLE master.agenda_alert_info_committee OWNER TO postgres;
+ALTER TABLE agenda_alert_info_committee OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_alert_info_committee; Type: COMMENT; Schema: master; Owner: postgres
@@ -754,7 +754,7 @@ CREATE SEQUENCE agenda_alert_info_committee_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_alert_info_committee_id_seq OWNER TO postgres;
+ALTER TABLE agenda_alert_info_committee_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_alert_info_committee_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -776,7 +776,7 @@ CREATE TABLE agenda_alert_info_committee_item (
 );
 
 
-ALTER TABLE master.agenda_alert_info_committee_item OWNER TO postgres;
+ALTER TABLE agenda_alert_info_committee_item OWNER TO postgres;
 
 --
 -- Name: COLUMN agenda_alert_info_committee_item.alert_info_committee_id; Type: COMMENT; Schema: master; Owner: postgres
@@ -797,7 +797,7 @@ CREATE SEQUENCE agenda_change_log_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_change_log_seq OWNER TO postgres;
+ALTER TABLE agenda_change_log_seq OWNER TO postgres;
 
 --
 -- Name: agenda_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -816,7 +816,7 @@ CREATE TABLE agenda_change_log (
 );
 
 
-ALTER TABLE master.agenda_change_log OWNER TO postgres;
+ALTER TABLE agenda_change_log OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_change_log; Type: COMMENT; Schema: master; Owner: postgres
@@ -841,7 +841,7 @@ CREATE TABLE agenda_info_addendum (
 );
 
 
-ALTER TABLE master.agenda_info_addendum OWNER TO postgres;
+ALTER TABLE agenda_info_addendum OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_info_addendum; Type: COMMENT; Schema: master; Owner: postgres
@@ -870,7 +870,7 @@ CREATE TABLE agenda_info_committee (
 );
 
 
-ALTER TABLE master.agenda_info_committee OWNER TO postgres;
+ALTER TABLE agenda_info_committee OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_info_committee; Type: COMMENT; Schema: master; Owner: postgres
@@ -891,7 +891,7 @@ CREATE SEQUENCE agenda_info_committee_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_info_committee_id_seq OWNER TO postgres;
+ALTER TABLE agenda_info_committee_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_info_committee_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -916,7 +916,7 @@ CREATE TABLE agenda_info_committee_item (
 );
 
 
-ALTER TABLE master.agenda_info_committee_item OWNER TO postgres;
+ALTER TABLE agenda_info_committee_item OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_info_committee_item; Type: COMMENT; Schema: master; Owner: postgres
@@ -937,7 +937,7 @@ CREATE SEQUENCE agenda_info_committee_item_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_info_committee_item_id_seq OWNER TO postgres;
+ALTER TABLE agenda_info_committee_item_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_info_committee_item_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -961,7 +961,7 @@ CREATE TABLE agenda_vote_addendum (
 );
 
 
-ALTER TABLE master.agenda_vote_addendum OWNER TO postgres;
+ALTER TABLE agenda_vote_addendum OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_vote_addendum; Type: COMMENT; Schema: master; Owner: postgres
@@ -982,7 +982,7 @@ CREATE SEQUENCE agenda_vote_commitee_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_vote_commitee_id_seq OWNER TO postgres;
+ALTER TABLE agenda_vote_commitee_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_vote_committee; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -1002,7 +1002,7 @@ CREATE TABLE agenda_vote_committee (
 );
 
 
-ALTER TABLE master.agenda_vote_committee OWNER TO postgres;
+ALTER TABLE agenda_vote_committee OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_vote_committee; Type: COMMENT; Schema: master; Owner: postgres
@@ -1029,7 +1029,7 @@ CREATE TABLE agenda_vote_committee_attend (
 );
 
 
-ALTER TABLE master.agenda_vote_committee_attend OWNER TO postgres;
+ALTER TABLE agenda_vote_committee_attend OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_vote_committee_attend; Type: COMMENT; Schema: master; Owner: postgres
@@ -1050,7 +1050,7 @@ CREATE SEQUENCE agenda_vote_committee_attend_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_vote_committee_attend_id_seq OWNER TO postgres;
+ALTER TABLE agenda_vote_committee_attend_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_vote_committee_attend_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1076,7 +1076,7 @@ CREATE TABLE agenda_vote_committee_vote (
 );
 
 
-ALTER TABLE master.agenda_vote_committee_vote OWNER TO postgres;
+ALTER TABLE agenda_vote_committee_vote OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_vote_committee_vote; Type: COMMENT; Schema: master; Owner: postgres
@@ -1097,7 +1097,7 @@ CREATE SEQUENCE agenda_vote_committee_vote_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.agenda_vote_committee_vote_id_seq OWNER TO postgres;
+ALTER TABLE agenda_vote_committee_vote_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_vote_committee_vote_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1121,7 +1121,7 @@ CREATE TABLE alert_active_list_entry_reference (
 );
 
 
-ALTER TABLE master.alert_active_list_entry_reference OWNER TO postgres;
+ALTER TABLE alert_active_list_entry_reference OWNER TO postgres;
 
 --
 -- Name: TABLE alert_active_list_entry_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -1149,7 +1149,7 @@ CREATE TABLE alert_active_list_reference (
 );
 
 
-ALTER TABLE master.alert_active_list_reference OWNER TO postgres;
+ALTER TABLE alert_active_list_reference OWNER TO postgres;
 
 --
 -- Name: TABLE alert_active_list_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -1170,7 +1170,7 @@ CREATE SEQUENCE alert_active_list_reference_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.alert_active_list_reference_id_seq OWNER TO postgres;
+ALTER TABLE alert_active_list_reference_id_seq OWNER TO postgres;
 
 --
 -- Name: alert_active_list_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1193,7 +1193,7 @@ CREATE TABLE alert_calendar_file (
 );
 
 
-ALTER TABLE master.alert_calendar_file OWNER TO postgres;
+ALTER TABLE alert_calendar_file OWNER TO postgres;
 
 --
 -- Name: COLUMN alert_calendar_file.processed_date_time; Type: COMMENT; Schema: master; Owner: postgres
@@ -1246,7 +1246,7 @@ CREATE TABLE alert_calendar_reference (
 );
 
 
-ALTER TABLE master.alert_calendar_reference OWNER TO postgres;
+ALTER TABLE alert_calendar_reference OWNER TO postgres;
 
 --
 -- Name: TABLE alert_calendar_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -1290,7 +1290,7 @@ CREATE TABLE alert_supplemental_entry_reference (
 );
 
 
-ALTER TABLE master.alert_supplemental_entry_reference OWNER TO postgres;
+ALTER TABLE alert_supplemental_entry_reference OWNER TO postgres;
 
 --
 -- Name: TABLE alert_supplemental_entry_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -1339,7 +1339,7 @@ CREATE SEQUENCE alert_supplemental_entry_reference_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.alert_supplemental_entry_reference_id_seq OWNER TO postgres;
+ALTER TABLE alert_supplemental_entry_reference_id_seq OWNER TO postgres;
 
 --
 -- Name: alert_supplemental_entry_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1366,7 +1366,7 @@ CREATE TABLE calendar_supplemental (
 );
 
 
-ALTER TABLE master.calendar_supplemental OWNER TO postgres;
+ALTER TABLE calendar_supplemental OWNER TO postgres;
 
 --
 -- Name: TABLE calendar_supplemental; Type: COMMENT; Schema: master; Owner: postgres
@@ -1387,7 +1387,7 @@ CREATE SEQUENCE alert_supplemental_reference_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.alert_supplemental_reference_id_seq OWNER TO postgres;
+ALTER TABLE alert_supplemental_reference_id_seq OWNER TO postgres;
 
 --
 -- Name: alert_supplemental_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1414,7 +1414,7 @@ CREATE TABLE alert_supplemental_reference (
 );
 
 
-ALTER TABLE master.alert_supplemental_reference OWNER TO postgres;
+ALTER TABLE alert_supplemental_reference OWNER TO postgres;
 
 --
 -- Name: TABLE alert_supplemental_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -1449,7 +1449,7 @@ CREATE TABLE bill (
 );
 
 
-ALTER TABLE master.bill OWNER TO postgres;
+ALTER TABLE bill OWNER TO postgres;
 
 --
 -- Name: TABLE bill; Type: COMMENT; Schema: master; Owner: postgres
@@ -1604,7 +1604,7 @@ CREATE TABLE bill_amendment (
 );
 
 
-ALTER TABLE master.bill_amendment OWNER TO postgres;
+ALTER TABLE bill_amendment OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment; Type: COMMENT; Schema: master; Owner: postgres
@@ -1644,7 +1644,7 @@ CREATE TABLE bill_amendment_action (
 );
 
 
-ALTER TABLE master.bill_amendment_action OWNER TO postgres;
+ALTER TABLE bill_amendment_action OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_action; Type: COMMENT; Schema: master; Owner: postgres
@@ -1668,7 +1668,7 @@ CREATE TABLE bill_amendment_cosponsor (
 );
 
 
-ALTER TABLE master.bill_amendment_cosponsor OWNER TO postgres;
+ALTER TABLE bill_amendment_cosponsor OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_cosponsor; Type: COMMENT; Schema: master; Owner: postgres
@@ -1692,7 +1692,7 @@ CREATE TABLE bill_amendment_multi_sponsor (
 );
 
 
-ALTER TABLE master.bill_amendment_multi_sponsor OWNER TO postgres;
+ALTER TABLE bill_amendment_multi_sponsor OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_multi_sponsor; Type: COMMENT; Schema: master; Owner: postgres
@@ -1718,7 +1718,7 @@ CREATE TABLE bill_amendment_publish_status (
 );
 
 
-ALTER TABLE master.bill_amendment_publish_status OWNER TO postgres;
+ALTER TABLE bill_amendment_publish_status OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_publish_status; Type: COMMENT; Schema: master; Owner: postgres
@@ -1806,7 +1806,7 @@ CREATE TABLE bill_amendment_same_as (
 );
 
 
-ALTER TABLE master.bill_amendment_same_as OWNER TO postgres;
+ALTER TABLE bill_amendment_same_as OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_same_as; Type: COMMENT; Schema: master; Owner: postgres
@@ -1836,7 +1836,7 @@ CREATE TABLE bill_amendment_vote_info (
 );
 
 
-ALTER TABLE master.bill_amendment_vote_info OWNER TO postgres;
+ALTER TABLE bill_amendment_vote_info OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_vote_info; Type: COMMENT; Schema: master; Owner: postgres
@@ -1892,7 +1892,7 @@ CREATE SEQUENCE bill_amendment_vote_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.bill_amendment_vote_id_seq OWNER TO postgres;
+ALTER TABLE bill_amendment_vote_id_seq OWNER TO postgres;
 
 --
 -- Name: bill_amendment_vote_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1916,7 +1916,7 @@ CREATE TABLE bill_amendment_vote_roll (
 );
 
 
-ALTER TABLE master.bill_amendment_vote_roll OWNER TO postgres;
+ALTER TABLE bill_amendment_vote_roll OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_vote_roll; Type: COMMENT; Schema: master; Owner: postgres
@@ -1944,7 +1944,7 @@ CREATE TABLE bill_approval (
 );
 
 
-ALTER TABLE master.bill_approval OWNER TO postgres;
+ALTER TABLE bill_approval OWNER TO postgres;
 
 --
 -- Name: TABLE bill_approval; Type: COMMENT; Schema: master; Owner: postgres
@@ -1965,7 +1965,7 @@ CREATE SEQUENCE bill_change_log_seq
     CACHE 1;
 
 
-ALTER TABLE master.bill_change_log_seq OWNER TO postgres;
+ALTER TABLE bill_change_log_seq OWNER TO postgres;
 
 --
 -- Name: bill_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -1984,7 +1984,7 @@ CREATE TABLE bill_change_log (
 );
 
 
-ALTER TABLE master.bill_change_log OWNER TO postgres;
+ALTER TABLE bill_change_log OWNER TO postgres;
 
 --
 -- Name: TABLE bill_change_log; Type: COMMENT; Schema: master; Owner: postgres
@@ -2008,7 +2008,7 @@ CREATE TABLE bill_committee (
 );
 
 
-ALTER TABLE master.bill_committee OWNER TO postgres;
+ALTER TABLE bill_committee OWNER TO postgres;
 
 --
 -- Name: TABLE bill_committee; Type: COMMENT; Schema: master; Owner: postgres
@@ -2043,7 +2043,7 @@ CREATE TABLE bill_milestone (
 );
 
 
-ALTER TABLE master.bill_milestone OWNER TO postgres;
+ALTER TABLE bill_milestone OWNER TO postgres;
 
 --
 -- Name: TABLE bill_milestone; Type: COMMENT; Schema: master; Owner: postgres
@@ -2067,7 +2067,7 @@ CREATE TABLE bill_previous_version (
 );
 
 
-ALTER TABLE master.bill_previous_version OWNER TO postgres;
+ALTER TABLE bill_previous_version OWNER TO postgres;
 
 --
 -- Name: TABLE bill_previous_version; Type: COMMENT; Schema: master; Owner: postgres
@@ -2088,7 +2088,7 @@ CREATE TABLE bill_scrape_queue (
 );
 
 
-ALTER TABLE master.bill_scrape_queue OWNER TO postgres;
+ALTER TABLE bill_scrape_queue OWNER TO postgres;
 
 --
 -- Name: bill_sponsor; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -2105,7 +2105,7 @@ CREATE TABLE bill_sponsor (
 );
 
 
-ALTER TABLE master.bill_sponsor OWNER TO postgres;
+ALTER TABLE bill_sponsor OWNER TO postgres;
 
 --
 -- Name: TABLE bill_sponsor; Type: COMMENT; Schema: master; Owner: postgres
@@ -2128,7 +2128,7 @@ CREATE TABLE bill_sponsor_additional (
 );
 
 
-ALTER TABLE master.bill_sponsor_additional OWNER TO postgres;
+ALTER TABLE bill_sponsor_additional OWNER TO postgres;
 
 --
 -- Name: TABLE bill_sponsor_additional; Type: COMMENT; Schema: master; Owner: postgres
@@ -2153,7 +2153,7 @@ CREATE TABLE bill_text_reference (
 );
 
 
-ALTER TABLE master.bill_text_reference OWNER TO postgres;
+ALTER TABLE bill_text_reference OWNER TO postgres;
 
 --
 -- Name: COLUMN bill_text_reference.not_found; Type: COMMENT; Schema: master; Owner: postgres
@@ -2186,7 +2186,7 @@ CREATE TABLE bill_veto (
 );
 
 
-ALTER TABLE master.bill_veto OWNER TO postgres;
+ALTER TABLE bill_veto OWNER TO postgres;
 
 --
 -- Name: TABLE bill_veto; Type: COMMENT; Schema: master; Owner: postgres
@@ -2207,7 +2207,7 @@ CREATE SEQUENCE bill_veto_year_seq
     CACHE 1;
 
 
-ALTER TABLE master.bill_veto_year_seq OWNER TO postgres;
+ALTER TABLE bill_veto_year_seq OWNER TO postgres;
 
 --
 -- Name: calendar; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -2223,7 +2223,7 @@ CREATE TABLE calendar (
 );
 
 
-ALTER TABLE master.calendar OWNER TO postgres;
+ALTER TABLE calendar OWNER TO postgres;
 
 --
 -- Name: TABLE calendar; Type: COMMENT; Schema: master; Owner: postgres
@@ -2265,7 +2265,7 @@ CREATE TABLE calendar_active_list (
 );
 
 
-ALTER TABLE master.calendar_active_list OWNER TO postgres;
+ALTER TABLE calendar_active_list OWNER TO postgres;
 
 --
 -- Name: TABLE calendar_active_list; Type: COMMENT; Schema: master; Owner: postgres
@@ -2289,7 +2289,7 @@ CREATE TABLE calendar_active_list_entry (
 );
 
 
-ALTER TABLE master.calendar_active_list_entry OWNER TO postgres;
+ALTER TABLE calendar_active_list_entry OWNER TO postgres;
 
 --
 -- Name: TABLE calendar_active_list_entry; Type: COMMENT; Schema: master; Owner: postgres
@@ -2310,7 +2310,7 @@ CREATE SEQUENCE calendar_active_list_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.calendar_active_list_id_seq OWNER TO postgres;
+ALTER TABLE calendar_active_list_id_seq OWNER TO postgres;
 
 --
 -- Name: calendar_active_list_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2331,7 +2331,7 @@ CREATE SEQUENCE calendar_change_log_seq
     CACHE 1;
 
 
-ALTER TABLE master.calendar_change_log_seq OWNER TO postgres;
+ALTER TABLE calendar_change_log_seq OWNER TO postgres;
 
 --
 -- Name: calendar_change_log; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -2350,7 +2350,7 @@ CREATE TABLE calendar_change_log (
 );
 
 
-ALTER TABLE master.calendar_change_log OWNER TO postgres;
+ALTER TABLE calendar_change_log OWNER TO postgres;
 
 --
 -- Name: TABLE calendar_change_log; Type: COMMENT; Schema: master; Owner: postgres
@@ -2380,7 +2380,7 @@ CREATE TABLE calendar_supplemental_entry (
 );
 
 
-ALTER TABLE master.calendar_supplemental_entry OWNER TO postgres;
+ALTER TABLE calendar_supplemental_entry OWNER TO postgres;
 
 --
 -- Name: TABLE calendar_supplemental_entry; Type: COMMENT; Schema: master; Owner: postgres
@@ -2429,7 +2429,7 @@ CREATE SEQUENCE calendar_supplemental_entry_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.calendar_supplemental_entry_id_seq OWNER TO postgres;
+ALTER TABLE calendar_supplemental_entry_id_seq OWNER TO postgres;
 
 --
 -- Name: calendar_supplemental_entry_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2450,7 +2450,7 @@ CREATE SEQUENCE calendar_supplemental_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.calendar_supplemental_id_seq OWNER TO postgres;
+ALTER TABLE calendar_supplemental_id_seq OWNER TO postgres;
 
 --
 -- Name: calendar_supplemental_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2473,7 +2473,7 @@ CREATE TABLE committee (
 );
 
 
-ALTER TABLE master.committee OWNER TO postgres;
+ALTER TABLE committee OWNER TO postgres;
 
 --
 -- Name: TABLE committee; Type: COMMENT; Schema: master; Owner: postgres
@@ -2501,7 +2501,7 @@ CREATE SEQUENCE committee_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.committee_id_seq OWNER TO postgres;
+ALTER TABLE committee_id_seq OWNER TO postgres;
 
 --
 -- Name: committee_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2527,7 +2527,7 @@ CREATE TABLE committee_member (
 );
 
 
-ALTER TABLE master.committee_member OWNER TO postgres;
+ALTER TABLE committee_member OWNER TO postgres;
 
 --
 -- Name: TABLE committee_member; Type: COMMENT; Schema: master; Owner: postgres
@@ -2555,7 +2555,7 @@ CREATE SEQUENCE committee_member_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.committee_member_id_seq OWNER TO postgres;
+ALTER TABLE committee_member_id_seq OWNER TO postgres;
 
 --
 -- Name: committee_member_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2584,7 +2584,7 @@ CREATE TABLE committee_version (
 );
 
 
-ALTER TABLE master.committee_version OWNER TO postgres;
+ALTER TABLE committee_version OWNER TO postgres;
 
 --
 -- Name: TABLE committee_version; Type: COMMENT; Schema: master; Owner: postgres
@@ -2626,7 +2626,7 @@ CREATE SEQUENCE committee_version_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.committee_version_id_seq OWNER TO postgres;
+ALTER TABLE committee_version_id_seq OWNER TO postgres;
 
 --
 -- Name: committee_version_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2652,7 +2652,7 @@ CREATE TABLE data_process_run_unit (
 );
 
 
-ALTER TABLE master.data_process_run_unit OWNER TO postgres;
+ALTER TABLE data_process_run_unit OWNER TO postgres;
 
 --
 -- Name: TABLE data_process_run_unit; Type: COMMENT; Schema: master; Owner: postgres
@@ -2673,7 +2673,7 @@ CREATE SEQUENCE data_process_log_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.data_process_log_id_seq OWNER TO postgres;
+ALTER TABLE data_process_log_id_seq OWNER TO postgres;
 
 --
 -- Name: data_process_log_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2695,7 +2695,7 @@ CREATE TABLE data_process_run (
 );
 
 
-ALTER TABLE master.data_process_run OWNER TO postgres;
+ALTER TABLE data_process_run OWNER TO postgres;
 
 --
 -- Name: TABLE data_process_run; Type: COMMENT; Schema: master; Owner: postgres
@@ -2721,7 +2721,7 @@ CREATE TABLE daybreak_bill (
 );
 
 
-ALTER TABLE master.daybreak_bill OWNER TO postgres;
+ALTER TABLE daybreak_bill OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_bill; Type: COMMENT; Schema: master; Owner: postgres
@@ -2745,7 +2745,7 @@ CREATE TABLE daybreak_bill_action (
 );
 
 
-ALTER TABLE master.daybreak_bill_action OWNER TO postgres;
+ALTER TABLE daybreak_bill_action OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_bill_action; Type: COMMENT; Schema: master; Owner: postgres
@@ -2766,7 +2766,7 @@ CREATE SEQUENCE daybreak_bill_action_sequence_no_seq
     CACHE 1;
 
 
-ALTER TABLE master.daybreak_bill_action_sequence_no_seq OWNER TO postgres;
+ALTER TABLE daybreak_bill_action_sequence_no_seq OWNER TO postgres;
 
 --
 -- Name: daybreak_bill_action_sequence_no_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2790,7 +2790,7 @@ CREATE TABLE daybreak_bill_amendment (
 );
 
 
-ALTER TABLE master.daybreak_bill_amendment OWNER TO postgres;
+ALTER TABLE daybreak_bill_amendment OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_bill_amendment; Type: COMMENT; Schema: master; Owner: postgres
@@ -2812,7 +2812,7 @@ CREATE TABLE daybreak_bill_sponsor (
 );
 
 
-ALTER TABLE master.daybreak_bill_sponsor OWNER TO postgres;
+ALTER TABLE daybreak_bill_sponsor OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_bill_sponsor; Type: COMMENT; Schema: master; Owner: postgres
@@ -2834,7 +2834,7 @@ CREATE TABLE daybreak_file (
 );
 
 
-ALTER TABLE master.daybreak_file OWNER TO postgres;
+ALTER TABLE daybreak_file OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_file; Type: COMMENT; Schema: master; Owner: postgres
@@ -2862,7 +2862,7 @@ CREATE TABLE daybreak_fragment (
 );
 
 
-ALTER TABLE master.daybreak_fragment OWNER TO postgres;
+ALTER TABLE daybreak_fragment OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_fragment; Type: COMMENT; Schema: master; Owner: postgres
@@ -2889,7 +2889,7 @@ CREATE TABLE daybreak_page_file_entry (
 );
 
 
-ALTER TABLE master.daybreak_page_file_entry OWNER TO postgres;
+ALTER TABLE daybreak_page_file_entry OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_page_file_entry; Type: COMMENT; Schema: master; Owner: postgres
@@ -2909,7 +2909,7 @@ CREATE TABLE daybreak_report (
 );
 
 
-ALTER TABLE master.daybreak_report OWNER TO postgres;
+ALTER TABLE daybreak_report OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_report; Type: COMMENT; Schema: master; Owner: postgres
@@ -2934,7 +2934,7 @@ CREATE TABLE law_change_log (
 );
 
 
-ALTER TABLE master.law_change_log OWNER TO postgres;
+ALTER TABLE law_change_log OWNER TO postgres;
 
 --
 -- Name: TABLE law_change_log; Type: COMMENT; Schema: master; Owner: postgres
@@ -2955,7 +2955,7 @@ CREATE SEQUENCE law_change_log_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.law_change_log_id_seq OWNER TO postgres;
+ALTER TABLE law_change_log_id_seq OWNER TO postgres;
 
 --
 -- Name: law_change_log_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2982,7 +2982,7 @@ CREATE TABLE law_document (
 );
 
 
-ALTER TABLE master.law_document OWNER TO postgres;
+ALTER TABLE law_document OWNER TO postgres;
 
 --
 -- Name: TABLE law_document; Type: COMMENT; Schema: master; Owner: postgres
@@ -3076,7 +3076,7 @@ CREATE TABLE law_file (
 );
 
 
-ALTER TABLE master.law_file OWNER TO postgres;
+ALTER TABLE law_file OWNER TO postgres;
 
 --
 -- Name: TABLE law_file; Type: COMMENT; Schema: master; Owner: postgres
@@ -3147,7 +3147,7 @@ CREATE TABLE law_info (
 );
 
 
-ALTER TABLE master.law_info OWNER TO postgres;
+ALTER TABLE law_info OWNER TO postgres;
 
 --
 -- Name: TABLE law_info; Type: COMMENT; Schema: master; Owner: postgres
@@ -3175,7 +3175,7 @@ CREATE TABLE law_tree (
 );
 
 
-ALTER TABLE master.law_tree OWNER TO postgres;
+ALTER TABLE law_tree OWNER TO postgres;
 
 --
 -- Name: TABLE law_tree; Type: COMMENT; Schema: master; Owner: postgres
@@ -3267,7 +3267,7 @@ CREATE TABLE notification (
 );
 
 
-ALTER TABLE master.notification OWNER TO postgres;
+ALTER TABLE notification OWNER TO postgres;
 
 --
 -- Name: TABLE notification; Type: COMMENT; Schema: master; Owner: postgres
@@ -3321,7 +3321,7 @@ CREATE TABLE notification_digest_subscription (
 );
 
 
-ALTER TABLE master.notification_digest_subscription OWNER TO postgres;
+ALTER TABLE notification_digest_subscription OWNER TO postgres;
 
 --
 -- Name: TABLE notification_digest_subscription; Type: COMMENT; Schema: master; Owner: postgres
@@ -3398,7 +3398,7 @@ CREATE SEQUENCE notification_digest_subscription_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.notification_digest_subscription_id_seq OWNER TO postgres;
+ALTER TABLE notification_digest_subscription_id_seq OWNER TO postgres;
 
 --
 -- Name: notification_digest_subscription_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -3419,7 +3419,7 @@ CREATE SEQUENCE notification_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.notification_id_seq OWNER TO postgres;
+ALTER TABLE notification_id_seq OWNER TO postgres;
 
 --
 -- Name: notification_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -3441,7 +3441,7 @@ CREATE TABLE notification_subscription (
 );
 
 
-ALTER TABLE master.notification_subscription OWNER TO postgres;
+ALTER TABLE notification_subscription OWNER TO postgres;
 
 --
 -- Name: TABLE notification_subscription; Type: COMMENT; Schema: master; Owner: postgres
@@ -3490,7 +3490,7 @@ CREATE SEQUENCE notification_subscription_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.notification_subscription_id_seq OWNER TO postgres;
+ALTER TABLE notification_subscription_id_seq OWNER TO postgres;
 
 --
 -- Name: notification_subscription_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -3519,7 +3519,7 @@ CREATE TABLE sobi_fragment (
 );
 
 
-ALTER TABLE master.sobi_fragment OWNER TO postgres;
+ALTER TABLE sobi_fragment OWNER TO postgres;
 
 --
 -- Name: TABLE sobi_fragment; Type: COMMENT; Schema: master; Owner: postgres
@@ -3631,7 +3631,7 @@ CREATE VIEW psf AS
   WHERE (sobi_fragment.pending_processing = true);
 
 
-ALTER TABLE master.psf OWNER TO postgres;
+ALTER TABLE psf OWNER TO postgres;
 
 --
 -- Name: VIEW psf; Type: COMMENT; Schema: master; Owner: postgres
@@ -3658,7 +3658,7 @@ CREATE TABLE public_hearing (
 );
 
 
-ALTER TABLE master.public_hearing OWNER TO postgres;
+ALTER TABLE public_hearing OWNER TO postgres;
 
 --
 -- Name: TABLE public_hearing; Type: COMMENT; Schema: master; Owner: postgres
@@ -3727,7 +3727,7 @@ CREATE TABLE public_hearing_committee (
 );
 
 
-ALTER TABLE master.public_hearing_committee OWNER TO postgres;
+ALTER TABLE public_hearing_committee OWNER TO postgres;
 
 --
 -- Name: COLUMN public_hearing_committee.committee_name; Type: COMMENT; Schema: master; Owner: postgres
@@ -3764,7 +3764,7 @@ CREATE TABLE public_hearing_file (
 );
 
 
-ALTER TABLE master.public_hearing_file OWNER TO postgres;
+ALTER TABLE public_hearing_file OWNER TO postgres;
 
 --
 -- Name: TABLE public_hearing_file; Type: COMMENT; Schema: master; Owner: postgres
@@ -3828,7 +3828,7 @@ CREATE TABLE sobi_file (
 );
 
 
-ALTER TABLE master.sobi_file OWNER TO postgres;
+ALTER TABLE sobi_file OWNER TO postgres;
 
 --
 -- Name: TABLE sobi_file; Type: COMMENT; Schema: master; Owner: postgres
@@ -3884,7 +3884,7 @@ CREATE SEQUENCE sobi_fragment_process_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.sobi_fragment_process_id_seq OWNER TO postgres;
+ALTER TABLE sobi_fragment_process_id_seq OWNER TO postgres;
 
 --
 -- Name: sobi_fragment_process_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -3908,7 +3908,7 @@ CREATE TABLE spotcheck_mismatch (
 );
 
 
-ALTER TABLE master.spotcheck_mismatch OWNER TO postgres;
+ALTER TABLE spotcheck_mismatch OWNER TO postgres;
 
 --
 -- Name: TABLE spotcheck_mismatch; Type: COMMENT; Schema: master; Owner: postgres
@@ -3929,7 +3929,7 @@ CREATE SEQUENCE spotcheck_mismatch_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.spotcheck_mismatch_id_seq OWNER TO postgres;
+ALTER TABLE spotcheck_mismatch_id_seq OWNER TO postgres;
 
 --
 -- Name: spotcheck_mismatch_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -3953,7 +3953,7 @@ CREATE TABLE spotcheck_observation (
 );
 
 
-ALTER TABLE master.spotcheck_observation OWNER TO postgres;
+ALTER TABLE spotcheck_observation OWNER TO postgres;
 
 --
 -- Name: TABLE spotcheck_observation; Type: COMMENT; Schema: master; Owner: postgres
@@ -3974,7 +3974,7 @@ CREATE SEQUENCE spotcheck_observation_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.spotcheck_observation_id_seq OWNER TO postgres;
+ALTER TABLE spotcheck_observation_id_seq OWNER TO postgres;
 
 --
 -- Name: spotcheck_observation_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -3997,7 +3997,7 @@ CREATE TABLE spotcheck_report (
 );
 
 
-ALTER TABLE master.spotcheck_report OWNER TO postgres;
+ALTER TABLE spotcheck_report OWNER TO postgres;
 
 --
 -- Name: TABLE spotcheck_report; Type: COMMENT; Schema: master; Owner: postgres
@@ -4025,7 +4025,7 @@ CREATE SEQUENCE spotcheck_report_id_seq
     CACHE 1;
 
 
-ALTER TABLE master.spotcheck_report_id_seq OWNER TO postgres;
+ALTER TABLE spotcheck_report_id_seq OWNER TO postgres;
 
 --
 -- Name: spotcheck_report_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -4050,7 +4050,7 @@ CREATE TABLE transcript (
 );
 
 
-ALTER TABLE master.transcript OWNER TO postgres;
+ALTER TABLE transcript OWNER TO postgres;
 
 --
 -- Name: TABLE transcript; Type: COMMENT; Schema: master; Owner: postgres
@@ -4115,7 +4115,7 @@ CREATE TABLE transcript_file (
 );
 
 
-ALTER TABLE master.transcript_file OWNER TO postgres;
+ALTER TABLE transcript_file OWNER TO postgres;
 
 --
 -- Name: TABLE transcript_file; Type: COMMENT; Schema: master; Owner: postgres
@@ -4182,7 +4182,7 @@ CREATE TABLE adminuser (
 );
 
 
-ALTER TABLE public.adminuser OWNER TO postgres;
+ALTER TABLE adminuser OWNER TO postgres;
 
 --
 -- Name: TABLE adminuser; Type: COMMENT; Schema: public; Owner: postgres
@@ -4248,7 +4248,7 @@ CREATE TABLE apiuser (
 );
 
 
-ALTER TABLE public.apiuser OWNER TO postgres;
+ALTER TABLE apiuser OWNER TO postgres;
 
 --
 -- Name: TABLE apiuser; Type: COMMENT; Schema: public; Owner: postgres
@@ -4319,7 +4319,7 @@ CREATE TABLE member (
 );
 
 
-ALTER TABLE public.member OWNER TO postgres;
+ALTER TABLE member OWNER TO postgres;
 
 --
 -- Name: TABLE member; Type: COMMENT; Schema: public; Owner: postgres
@@ -4375,7 +4375,7 @@ CREATE SEQUENCE member_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.member_id_seq OWNER TO postgres;
+ALTER TABLE member_id_seq OWNER TO postgres;
 
 --
 -- Name: member_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -4396,7 +4396,7 @@ CREATE SEQUENCE member_person_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.member_person_id_seq OWNER TO postgres;
+ALTER TABLE member_person_id_seq OWNER TO postgres;
 
 --
 -- Name: member_person_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -4423,7 +4423,7 @@ CREATE TABLE person (
 );
 
 
-ALTER TABLE public.person OWNER TO postgres;
+ALTER TABLE person OWNER TO postgres;
 
 --
 -- Name: TABLE person; Type: COMMENT; Schema: public; Owner: postgres
@@ -4500,7 +4500,7 @@ CREATE SEQUENCE person_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.person_id_seq OWNER TO postgres;
+ALTER TABLE person_id_seq OWNER TO postgres;
 
 --
 -- Name: person_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -4524,7 +4524,7 @@ CREATE TABLE request (
 );
 
 
-ALTER TABLE public.request OWNER TO postgres;
+ALTER TABLE request OWNER TO postgres;
 
 --
 -- Name: TABLE request; Type: COMMENT; Schema: public; Owner: postgres
@@ -4587,7 +4587,7 @@ CREATE SEQUENCE request_request_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.request_request_id_seq OWNER TO postgres;
+ALTER TABLE request_request_id_seq OWNER TO postgres;
 
 --
 -- Name: request_request_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -4609,7 +4609,7 @@ CREATE TABLE response (
 );
 
 
-ALTER TABLE public.response OWNER TO postgres;
+ALTER TABLE response OWNER TO postgres;
 
 --
 -- Name: TABLE response; Type: COMMENT; Schema: public; Owner: postgres
@@ -4633,7 +4633,7 @@ CREATE TABLE session_member (
 );
 
 
-ALTER TABLE public.session_member OWNER TO postgres;
+ALTER TABLE session_member OWNER TO postgres;
 
 --
 -- Name: TABLE session_member; Type: COMMENT; Schema: public; Owner: postgres
@@ -4654,7 +4654,7 @@ CREATE SEQUENCE session_member_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.session_member_id_seq OWNER TO postgres;
+ALTER TABLE session_member_id_seq OWNER TO postgres;
 
 --
 -- Name: session_member_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -6786,7 +6786,7 @@ ALTER TABLE ONLY notification_digest_subscription
 --
 
 ALTER TABLE ONLY notification_subscription
-    ADD CONSTRAINT notification_subscription_user_name_fkey FOREIGN KEY (user_name) REFERENCES public.adminuser(username);
+    ADD CONSTRAINT notification_subscription_user_name_fkey FOREIGN KEY (user_name) REFERENCES public.adminuser(username) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
