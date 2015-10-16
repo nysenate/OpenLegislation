@@ -13,18 +13,15 @@
       </h1>
     </section>
     <div class="pop-out-container">
-      <div class="project-desc">Developed in-house at the <a href="http://www.nysenate.gov">New York State Senate</a>, Open Legislation is a public web service
-      that provides access to NYS legislative data through a JSON API.
+      <div class="project-desc">
+        Developed in-house at the <a href="http://www.nysenate.gov">New York State Senate</a>, Open Legislation is a public web service that provides access
+        to NYS legislative data from the Legislative Bill Drafting Commission system through a JSON API.
       </div>
     </div>
     <div class="padding-20">
       <h2 class="project-desc-label" id="dataweprovide"><i class="icon-text prefix-icon"></i>Data We Provide</h2>
       <div class="regular-container">
         <div class="project-desc">
-          <p>The canonical data provider is the <a class="slogan-link" href="http://public.leginfo.state.ny.us">NY Legislative Bill Drafting Commission.</a>
-          The Senate receives raw data streams from LBDC and re-formats the data to allow other applications, such as the
-            <a class="slogan-link" href="http://www.nysenate.gov">NYSenate.gov</a> site, to easily consume and integrate the data.
-          </p>
           <md-list layout-gt-sm="row" layout-wrap>
             <md-list-item flex="50" class="provide-data-container md-3-line" ng-repeat="provideData in dataWeProvide"
                           ng-click="goToDocsPage(provideData.docsPage)">
