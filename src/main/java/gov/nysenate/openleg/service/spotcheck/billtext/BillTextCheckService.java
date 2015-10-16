@@ -83,7 +83,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
     private void checkAmendment(Bill bill, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv) {
         if (bill.getActiveVersion() == null || !bill.getActiveVersion().equals(reference.getActiveVersion())) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT,
-                    reference.getActiveVersion(), bill.getActiveAmendment()));
+                    reference.getActiveVersion(), bill.getActiveVersion()));
         }
     }
 
