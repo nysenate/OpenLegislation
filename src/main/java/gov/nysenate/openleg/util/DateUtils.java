@@ -233,7 +233,7 @@ public abstract class DateUtils
 
     /**
      * Given the LocalDateTime range, extract the lower bound LocalDateTime. If the lower bound is not set,
-     * a really early date will be returned. If the bound is open, a single nanosecond will be added to the
+     * a really early date will be returned. If the bound is open, a single microsecond will be added to the
      * LocalDateTime. If its closed, the dateTime will remain as is.
      *
      * @param dateTimeRange Range<LocalDateTime>
@@ -244,7 +244,7 @@ public abstract class DateUtils
             LocalDateTime lower;
             if (dateTimeRange.hasLowerBound()) {
                 lower = (dateTimeRange.lowerBoundType().equals(BoundType.CLOSED))
-                        ? dateTimeRange.lowerEndpoint() : dateTimeRange.lowerEndpoint().plusNanos(1);
+                        ? dateTimeRange.lowerEndpoint() : dateTimeRange.lowerEndpoint().plusNanos(1000);
             }
             else {
                 lower = LONG_AGO.atStartOfDay();
@@ -256,7 +256,7 @@ public abstract class DateUtils
 
     /**
      * Given the LocalDateTime range, extract the upper bound LocalDateTime. If the upper bound is not set, a
-     * date far in the future will be returned. If the bound is open, a single nanosecond will be subtracted
+     * date far in the future will be returned. If the bound is open, a single microsecond will be subtracted
      * from the LocalDateTime. If its closed, the date will remain as is.
      *
      * @param dateTimeRange Range<LocalDateTime>
@@ -267,7 +267,7 @@ public abstract class DateUtils
             LocalDateTime upper;
             if (dateTimeRange.hasUpperBound()) {
                 upper = (dateTimeRange.upperBoundType().equals(BoundType.CLOSED))
-                        ? dateTimeRange.upperEndpoint() : dateTimeRange.upperEndpoint().minusNanos(1);
+                        ? dateTimeRange.upperEndpoint() : dateTimeRange.upperEndpoint().minusNanos(1000);
             }
             else {
                 upper = atEndOfDay(THE_FUTURE);

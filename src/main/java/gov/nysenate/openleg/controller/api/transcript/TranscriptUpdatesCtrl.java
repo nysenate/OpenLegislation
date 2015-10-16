@@ -69,7 +69,7 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
                                                 @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime to,
                                                 WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 25);
-        Range<LocalDateTime> range = getClosedOpenRange(from, to, "from", "to");
+        Range<LocalDateTime> range = getOpenRange(from, to, "from", "to");
         PaginatedList<TranscriptUpdateToken> updates = transcriptDao.transcriptsUpdatedDuring(range, SortOrder.ASC, limOff);
         return ListViewResponse.of(updates.getResults().stream().map(token ->
                 new TranscriptUpdateTokenView(token)).collect(Collectors.toList()), updates.getTotal(), limOff);

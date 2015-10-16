@@ -80,8 +80,8 @@ public class AggregateUpdatesCtrl extends BaseCtrl {
      * Parses request parameters and fetches a response for the getAggregateUpdates functions
      * @see #getAggregateUpdates
      */
-    private BaseResponse getAggregateUpdatesResponse(LocalDateTime to, LocalDateTime from, WebRequest webRequest) {
-        Range<LocalDateTime> dateTimeRange = getClosedOpenRange(to, from, "to", "from");
+    private BaseResponse getAggregateUpdatesResponse(LocalDateTime from, LocalDateTime to, WebRequest webRequest) {
+        Range<LocalDateTime> dateTimeRange = getOpenRange(from, to, "from", "to");
         UpdateType updateType = getUpdateTypeFromParam(webRequest);
         boolean detail = getBooleanParam(webRequest, "detail", false);
         boolean fields = getBooleanParam(webRequest, "fields", false);

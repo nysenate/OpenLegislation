@@ -137,7 +137,7 @@ public class BillUpdatesCtrl extends BaseCtrl
     private BaseResponse getUpdatesDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
         // Fetch params
         LimitOffset limOff = getLimitOffset(request, 50);
-        Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
+        Range<LocalDateTime> updateRange = getOpenRange(from, to, "from", "to");
         boolean detail = getBooleanParam(request, "detail", false);
         boolean summary = getBooleanParam(request, "summary", false);
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
@@ -173,7 +173,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         BillUpdateField filterField = getUpdateFieldFromParam(request.getParameter("filter"));
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         LimitOffset limOff = getLimitOffset(request, 50);
-        Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
+        Range<LocalDateTime> updateRange = getOpenRange(from, to, "from", "to");
         UpdateType updateType = getUpdateTypeFromParam(request);
         PaginatedList<UpdateDigest<BaseBillId>> digests = billUpdatesDao.getDetailedUpdatesForBill(
             getBaseBillId(printNo, sessionYear, "printNo"), updateRange, updateType, filterField, sortOrder, limOff);
