@@ -66,12 +66,12 @@ public class AggregateUpdatesCtrl extends BaseCtrl {
      *
      * Expected Response: List of UpdateTokenView or UpdateDigestTokenView if detail = true
      */
-    @RequestMapping(value = "/{from:.+}")
+    @RequestMapping(value = "/{from:.*\\.?.*}")
     public BaseResponse getAggregateUpdates(@PathVariable String from, WebRequest webRequest) {
         return getAggregateUpdatesResponse(parseISODateTime(from, "from"), LocalDateTime.now(), webRequest);
     }
 
-    @RequestMapping(value = "/{from}/{to:.+}")
+    @RequestMapping(value = "/{from}/{to:.*\\.?.*}")
     public BaseResponse getAggregateUpdates(@PathVariable String from, @PathVariable String to, WebRequest webRequest) {
         return getAggregateUpdatesResponse(parseISODateTime(from, "from"), parseISODateTime(to, "to"), webRequest);
     }

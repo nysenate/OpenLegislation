@@ -58,13 +58,13 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
         return getNewTranscriptsDuring(LocalDateTime.now().minusDays(7), DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
-    @RequestMapping(value = "/updates/{from}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getNewTranscriptsSince(@PathVariable String from, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         return getNewTranscriptsDuring(fromDateTime, DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
-    @RequestMapping(value = "/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getNewTranscriptsDuring(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
                                                 @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime to,
                                                 WebRequest request) {

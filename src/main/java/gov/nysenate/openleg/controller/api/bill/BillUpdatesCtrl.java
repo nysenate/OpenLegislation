@@ -78,14 +78,14 @@ public class BillUpdatesCtrl extends BaseCtrl
         return getUpdatesDuring(LocalDateTime.now().minusDays(7), LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/updates/{from}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesFrom(@PathVariable String from, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = LocalDateTime.now();
         return getUpdatesDuring(fromDateTime, toDateTime, request);
     }
 
-    @RequestMapping(value = "/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesDuring(@PathVariable String from, @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         LocalDateTime toDateTime = parseISODateTime(to, "to");
@@ -116,7 +116,7 @@ public class BillUpdatesCtrl extends BaseCtrl
                 LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from}")
+    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForBill(@PathVariable int sessionYear, @PathVariable String printNo,
                                           @PathVariable String from,
                                           WebRequest request) {
@@ -124,7 +124,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         return getUpdatesForBillDuring(sessionYear, printNo, fromDateTime, LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getUpdatesForBillDuring(@PathVariable int sessionYear, @PathVariable String printNo,
                                                 @PathVariable String from, @PathVariable String to, WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");

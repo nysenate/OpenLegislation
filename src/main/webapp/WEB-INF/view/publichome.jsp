@@ -6,7 +6,7 @@
   <script type="application/javascript" src="${ctxPath}/static/js/src/public_app.js"></script>
 </open-layout:head>
 <open-layout:body appName="open-public">
-  <main class="public-home-page" ng-controller="PublicHomeCtrl">
+  <div class="public-home-page" ng-controller="PublicHomeCtrl">
     <section class="hero-container-public">
       <h1>
         <img src="${ctxPath}/static/img/NYSS_seal.png"/>Open Legislation
@@ -93,7 +93,7 @@
           The software and services provided under this site are offered under the BSD License and the GPL v3 License.</p>
       </div>
     </div>
-  </main>
+  </div>
 </open-layout:body>
 <open-layout:footer>
 

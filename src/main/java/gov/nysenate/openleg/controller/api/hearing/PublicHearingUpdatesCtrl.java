@@ -46,7 +46,7 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
      *
      * Expected Output: List of PublicHearingUpdateTokenView
      */
-    @RequestMapping(value = "/updates/{from}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getNewPublicHearingsSince(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
                                                   WebRequest request) {
         return getNewPublicHearingsDuring(from, DateUtils.THE_FUTURE.atStartOfDay(), request);
@@ -64,7 +64,7 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
      *
      * Expected Output: List of PublicHearingUpdateTokenView
      */
-    @RequestMapping(value = "/updates/{from}/{to:.*\\.?.*}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getNewPublicHearingsDuring(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
                                                    @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime to,
                                                    WebRequest request) {
