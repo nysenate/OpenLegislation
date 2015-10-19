@@ -58,7 +58,8 @@ public class AdminAccountCtrl extends BaseCtrl {
     private static final String registrationEmailTemplate =
             "Hello,\n\n" +
             "\tYou are receiving this email because you have been registered as an administrative user of OpenLegislation.  " +
-            "Your login credentials are as follows:\n\n\tusername: ${username}\n\tpassword: ${password}";
+            "Your login credentials are as follows:\n\n\tusername: ${username}\n\tpassword: ${password}\n\n" +
+            "Log in at ${base_url}/admin/account to access your account";
 
     private static final int newPassLength = 8;
     private static final int minPassLength = 5;
@@ -218,7 +219,7 @@ public class AdminAccountCtrl extends BaseCtrl {
     @Async
     private void sendNewUserEmail(String username, String password) {
         String message = StrSubstitutor.replace(registrationEmailTemplate,
-                                                ImmutableMap.of("username", username, "password", password));
+                ImmutableMap.of("username", username, "password", password, "base_url", environment.getUrl()));
         sendMailService.sendMessage(username, registrationEmailSubject, message);
     }
 
