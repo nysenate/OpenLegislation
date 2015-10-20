@@ -457,6 +457,8 @@ List of bills updated during the given date/time range
 +-----------+----------------------+--------------------------------------------------------+
 | order     | string (asc|desc)    | Order the results by update date/time                  |
 +-----------+----------------------+--------------------------------------------------------+
+| summary   | boolean              | Include a bill info response per item                  |
++-----------+----------------------+--------------------------------------------------------+
 
 There are two types of updates, 'processed' and 'published'. Processed refers to the date that OpenLeg processed
 the data which is useful if you are trying to stay synchronized with OpenLeg. Published refers to the date during
