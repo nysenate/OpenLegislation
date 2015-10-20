@@ -78,6 +78,7 @@
         </p>
       </div>
       <h2 class="project-desc-label" id="docs"><i class="icon-info prefix-icon"></i>How to use the API</h2>
+      <a class="project-doc-link" target="_blank" href="${ctxPath}/docs">View docs in new window</a>
       <div class="regular-container">
         <iframe width="100%" style="height:90vh;border: 0;overflow: visible" ng-src="{{currDocsPath}}">
         </iframe>

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.controller.api.bill;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.SearchResultView;
+import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
@@ -50,10 +51,11 @@ public class BillSearchCtrl extends BaseCtrl
     public BaseResponse globalSearch(@RequestParam(required = true) String term,
                                      @RequestParam(defaultValue = "") String sort,
                                      @RequestParam(defaultValue = "false") boolean full,
+                                     @RequestParam(defaultValue = "false") boolean idOnly,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, sort, limOff);
-        return getBillSearchResponse(results, full, limOff);
+        return getBillSearchResponse(results, full, idOnly, limOff);
     }
 
     /**
@@ -68,20 +70,23 @@ public class BillSearchCtrl extends BaseCtrl
                                       @RequestParam(required = true) String term,
                                       @RequestParam(defaultValue = "") String sort,
                                       @RequestParam(defaultValue = "false") boolean full,
+                                      @RequestParam(defaultValue = "false") boolean idOnly,
                                       WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, SessionYear.of(sessionYear), sort, limOff);
-        return getBillSearchResponse(results, full, limOff);
+        return getBillSearchResponse(results, full, idOnly, limOff);
     }
 
     /** --- Internal --- */
 
-    private BaseResponse getBillSearchResponse(SearchResults<BaseBillId> results, boolean full, LimitOffset limOff) {
+    private BaseResponse getBillSearchResponse(SearchResults<BaseBillId> results, boolean full, boolean idOnly, LimitOffset limOff) {
         return ListViewResponse.of(
             results.getResults().stream()
                 .map(r -> new SearchResultView((full)
                         ? new BillView(billData.getBill(r.getResult()))
-                        : new BillInfoView(billData.getBillInfo(r.getResult())), r.getRank(), r.getHighlights()))
+                        : (idOnly)
+                            ? new BillIdView(r.getResult())
+                            : new BillInfoView(billData.getBillInfo(r.getResult())), r.getRank(), r.getHighlights()))
                 .collect(toList()), results.getTotalResults(), limOff);
     }
 }

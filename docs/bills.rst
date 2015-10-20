@@ -461,7 +461,7 @@ List of bills updated during the given date/time range
 There are two types of updates, 'processed' and 'published'. Processed refers to the date that OpenLeg processed
 the data which is useful if you are trying to stay synchronized with OpenLeg. Published refers to the date during
 which data was intended to be published. This can differ from the processed date because OpenLeg can periodically
-reprocess it's data to fix issues. By default the type is set to published.
+reprocess it's data to fix issues. By default the type is set to 'processed'.
 
 **Examples**
 
