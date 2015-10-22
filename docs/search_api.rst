@@ -11,7 +11,7 @@ Every search layer API will have a required request parameter "term" and an opti
 term
 ----
 
-.. _`elasticsearch query string`: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
+.. _`elasticsearch query string`: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_field_names
 
 The term parameter takes in an `elasticsearch query string`_.
 

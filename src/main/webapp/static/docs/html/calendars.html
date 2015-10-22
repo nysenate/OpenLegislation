@@ -29,7 +29,7 @@
 
   
     <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
-        <link rel="next" title="Committee API" href="committees.html"/>
+        <link rel="next" title="Senate Committee API" href="committees.html"/>
         <link rel="prev" title="Bills and Resolutions API" href="bills.html"/> 
 
   
@@ -80,7 +80,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#get-specific-calendar-updates">Get specific calendar updates</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Committee API</strong></a><ul>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-current-committee-version">Get a current committee version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
@@ -88,7 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws Api</strong></a><ul>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-list-of-law-ids">Get a list of law ids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-the-law-structure">Get the law structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-law-sub-document">Get a law sub document</a></li>
@@ -159,6 +159,10 @@
             
   <div class="section" id="senate-calendar-api">
 <h1><strong>Senate Calendar API</strong><a class="headerlink" href="#senate-calendar-api" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Assembly calendar data is currently not sent to us at this time. chamber must be &#8216;senate&#8217;.</p>
+</div>
 <div class="section" id="get-a-single-calendar">
 <h2>Get a single calendar<a class="headerlink" href="#get-a-single-calendar" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
@@ -491,7 +495,7 @@ structure.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format.  For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02</p>
+<p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format.  For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.</p>
 </div>
 <p><strong>Optional Params</strong></p>
 <table border="1" class="docutils">
@@ -642,7 +646,7 @@ structure.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="committees.html" class="btn btn-neutral float-right" title="Committee API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="committees.html" class="btn btn-neutral float-right" title="Senate Committee API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="bills.html" class="btn btn-neutral" title="Bills and Resolutions API"><span class="fa fa-arrow-circle-left"></span> Previous</a>

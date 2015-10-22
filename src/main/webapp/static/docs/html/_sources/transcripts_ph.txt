@@ -1,6 +1,8 @@
 **Public Hearing Transcripts API**
 ==================================
 
+.. note:: Assembly public hearings are not available at this time.
+
 Get a single Public Hearing
 ---------------------------
 

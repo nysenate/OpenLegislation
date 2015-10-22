@@ -5,6 +5,7 @@
     index
     bills
     calendars
+    agendas
     committees
     laws
     transcripts_floor

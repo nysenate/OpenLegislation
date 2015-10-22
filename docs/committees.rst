@@ -1,4 +1,4 @@
-**Committee API**
+**Senate Committee API**
 =================
 
 In OpenLegislation, committee data is processed in a way that tracks the membership of each committee over time.
@@ -8,6 +8,8 @@ information on where and when the committee meets, and the dates when the commit
 
 Get a current committee version
 -------------------------------
+
+.. note:: Assembly committee data is currently not sent to us at this time. chamber must be 'senate'.
 
 **Usage**
 ::

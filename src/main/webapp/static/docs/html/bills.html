@@ -80,7 +80,7 @@
 <li class="toctree-l2"><a class="reference internal" href="calendars.html#get-specific-calendar-updates">Get specific calendar updates</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Committee API</strong></a><ul>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-current-committee-version">Get a current committee version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
@@ -88,7 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws Api</strong></a><ul>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-list-of-law-ids">Get a list of law ids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-the-law-structure">Get the law structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-law-sub-document">Get a law sub document</a></li>
@@ -186,6 +186,41 @@
 <tr class="row-even"><td>view</td>
 <td>&#8216;default&#8217;, &#8216;info&#8217;, &#8216;no_fulltext&#8217;, &#8216;only_fulltext&#8217;, &#8216;with_refs&#8217;, &#8216;with_refs_no_fulltext&#8217;</td>
 </tr>
+<tr class="row-odd"><td>version</td>
+<td>If view=only_fulltext, use the version to specify the amendment letter, e.g. version=A</td>
+</tr>
+</tbody>
+</table>
+<p>View options</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">View type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>default</td>
+<td>If the view param is omitted, the default response will be as documented below.</td>
+</tr>
+<tr class="row-odd"><td>info</td>
+<td>If you only need a bill summary, i.e. no full text, memo, or vote data.</td>
+</tr>
+<tr class="row-even"><td>no_fulltext</td>
+<td>Identical to the default response except the full text will be omitted.</td>
+</tr>
+<tr class="row-odd"><td>only_fulltext</td>
+<td>If you only need the full text for a bill. Use the version param if needed.</td>
+</tr>
+<tr class="row-even"><td>with_refs</td>
+<td>If you need basic info views included for any related bills (e.g. same as bills).</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>with_refs_no_fulltext is the same as above, just without any full text.</td>
+</tr>
 </tbody>
 </table>
 <div class="admonition note">
@@ -201,7 +236,7 @@ the base print no (e.g. S1234).</p>
 <div class="highlight-python"><pre>/api/3/bills/2013/A450?view=info</pre>
 </div>
 <p id="bill-response"><strong>Response</strong></p>
-<p>Full Bill Response</p>
+<p>Default Bill Response</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
    <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                            <span class="c1">// Indicates if bill was found</span>
    <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Data for bill S2180-2013&quot;</span><span class="p">,</span>      <span class="c1">// Response description</span>
@@ -438,8 +473,8 @@ the base print no (e.g. S1234).</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>If <strong>summary</strong> is set to true, the above response would be truncated after the &#8216;programInfo&#8217; block.</p>
-<p>If <strong>detail</strong> is set to true, the following content will also be present in the response:</p>
+<p>If <strong>view</strong> is set to &#8216;info&#8217;, the above response would be truncated after the &#8216;programInfo&#8217; block.</p>
+<p>If <strong>view</strong> is set to &#8216;with_refs&#8217;, the default response will be returned with the following data appended:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="s2">&quot;billInfoRefs&quot;</span><span class="o">:</span> <span class="p">{</span>                               <span class="c1">// Any bills that were referenced (e.g. same as, previous versions)</span>
   <span class="s2">&quot;items&quot;</span><span class="o">:</span> <span class="p">{</span>                                    <span class="c1">// will be mapped here using the basePrintNo-sessionYear as the key.</span>
     <span class="s2">&quot;A2098-2013&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -599,7 +634,7 @@ structure.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02</p>
+<p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.</p>
 </div>
 <p><strong>Optional Params</strong></p>
 <table border="1" class="docutils">
@@ -630,6 +665,10 @@ structure.</p>
 <tr class="row-odd"><td>order</td>
 <td>string (asc|desc)</td>
 <td>Order the results by update date/time</td>
+</tr>
+<tr class="row-even"><td>summary</td>
+<td>boolean</td>
+<td>Include a bill info response per item</td>
 </tr>
 </tbody>
 </table>
@@ -741,7 +780,7 @@ may only want to know which bills have had status updates, or which bills had fu
 <p>Updates on a specific bill from a given date/time.</p>
 <div class="highlight-python"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/</pre>
 </div>
-<p>Updates on a specific bil during a given date/time range.</p>
+<p>Updates on a specific bill during a given date/time range.</p>
 <div class="highlight-python"><pre>/api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}</pre>
 </div>
 <p><strong>Example</strong></p>

@@ -1,4 +1,4 @@
-**NYS Laws Api**
+**NYS Laws API**
 ================
 
 In order to utilize the Laws API we'll go over some quick terminology:
@@ -278,6 +278,119 @@ Search for law documents
             "text" : [ " assistance of <em>teacher</em> aides or consultation\\nwith appropriate personnel. When a committee on special", " consultant <em>teacher</em>\\nservices, in accordance with regulations of the commissioner adopted for\\nsuch", " or indirect consultant <em>teacher</em>\\nservices, in accordance with regulations of the commissioner adopted", " under paragraph five of\\nsubdivision nineteen of this section;\\n  (11) <em>teacher</em> support payments made", ". Parent-<em>teacher</em> conferences or workshops. Notwithstanding any other\\nprovision of this section to" ]
           }
         }, .... (more results)
+
+Get law updates
+---------------
+
+To identify which documents have been modified or added to a body of law, use the law updates API.
+
+.. note:: Currently only updates and modifications to law documents are tracked. Structural modifications to a body
+          of law are not reported yet (such as repeals, removal of an article), but may be implemented in the future.
+
+.. note:: Law updates are received in a batch update on a weekly basis, so updates that occur during the week will only be visible at the end of that week.
+
+**Usage**
+
+List of laws updated during the given date/time range
+::
+    /api/3/bills/updates/{fromDateTime}/{toDateTime}
+
+.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
+
+All updates made on a specific body of law
+::
+    /api/3/laws/{lawId}/updates/
+
+    e.g. /api/3/laws/ABC/updates/
+         /api/3/laws/VAT/updates/
+
+All updates made on a specific body of law during a date/time range
+::
+    /api/3/laws/{lawId}/updates/{fromDateTime}/{toDateTime}
+
+
+**Optional Params**
+
++-----------+----------------------+--------------------------------------------------------+
+| Parameter | Values               | Description                                            |
++===========+======================+========================================================+
+| type      | (processed|published)| The type of law update                                 |
++-----------+----------------------+--------------------------------------------------------+
+| detail    | boolean              | Set to true for updates to individual law documents.   |
++-----------+----------------------+--------------------------------------------------------+
+| order     | string (asc|desc)    | Order the results by update date/time                  |
++-----------+----------------------+--------------------------------------------------------+
+| limit     | 1 - 1000             | Number of results to return (high limits take longer)  |
++-----------+----------------------+--------------------------------------------------------+
+| offset    | >= 1                 | Result number to start from                            |
++-----------+----------------------+--------------------------------------------------------+
+
+**Response**
+
+Global law updates
+::
+    e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00
+
+.. code-block:: javascript
+
+    {
+        success: true,
+        message: "",
+        responseType: "update-token list",
+        total: 33,
+        offsetStart: 1,
+        offsetEnd: 33,
+        limit: 50,
+        result: {
+        items: [
+            {
+                id: {
+                    lawId: "RSS",                // Which body of law was updated
+                    activeDate: "2015-08-07"     // The active published date
+                },
+                contentType: "LAW",
+                sourceId: "20150807.UPDATE",
+                sourceDateTime: "2015-08-07T00:00",   // Date of the source data
+                processedDateTime: "2015-09-10T15:00:14.551822"  // Date we processed this update
+            },  (truncated..)
+
+Detailed law doc updates
+::
+    e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true
+         /api/3/laws/ABC/updates/
+
+.. code-block:: javascript
+
+    {
+        success: true,
+        message: "",
+        responseType: "update-digest list",
+        total: 431,
+        offsetStart: 1,
+        offsetEnd: 50,
+        limit: 50,
+        result: {
+        items: [
+            {
+                id: {
+                    lawId: "ABC",
+                    locationId: "120",                        // Location id of doc that was updated
+                    publishedDate: "2014-09-22"               // Published date of this doc
+                },
+                contentType: "LAW",
+                sourceId: "DATABASE.LAW3",
+                sourceDateTime: "2014-09-22T00:00",
+                processedDateTime: "2015-06-04T14:36:01.426676",
+                action: "Insert",
+                scope: "Law Document",
+                fields: { },
+                fieldCount: 0
+            },
+
+
+
+
+
 
 
 

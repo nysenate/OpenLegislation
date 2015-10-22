@@ -21,6 +21,26 @@ Retrieve bill by session year and print no
 +===========+=========================================================================================+
 | view      | 'default', 'info', 'no_fulltext', 'only_fulltext', 'with_refs', 'with_refs_no_fulltext' |
 +-----------+-----------------------------------------------------------------------------------------+
+| version   | If view=only_fulltext, use the version to specify the amendment letter, e.g. version=A  |
++-----------+-----------------------------------------------------------------------------------------+
+
+View options
+
++------------------+----------------------------------------------------------------------------------+
+| View type        | Description                                                                      |
++==================+==================================================================================+
+| default          | If the view param is omitted, the default response will be as documented below.  |
++------------------+----------------------------------------------------------------------------------+
+| info             | If you only need a bill summary, i.e. no full text, memo, or vote data.          |
++------------------+----------------------------------------------------------------------------------+
+| no_fulltext      | Identical to the default response except the full text will be omitted.          |
++------------------+----------------------------------------------------------------------------------+
+| only_fulltext    | If you only need the full text for a bill. Use the version param if needed.      |
++------------------+----------------------------------------------------------------------------------+
+| with_refs        | If you need basic info views included for any related bills (e.g. same as bills).|
++------------------+----------------------------------------------------------------------------------+
+|                  | with_refs_no_fulltext is the same as above, just without any full text.          |
++------------------+----------------------------------------------------------------------------------+
 
 .. note:: Bills typically get amended and their print no gets suffixed with an amendment letter (e.g. S1234B). The bill API returns bill responses that contain every amendment version so you should just provide
           the base print no (e.g. S1234).
@@ -39,7 +59,7 @@ Request summary of bill A450 of session year 2013
 
 **Response**
 
-Full Bill Response
+Default Bill Response
 
 .. code-block:: javascript
 
@@ -278,9 +298,9 @@ Full Bill Response
       }
    }
 
-If **summary** is set to true, the above response would be truncated after the 'programInfo' block.
+If **view** is set to 'info', the above response would be truncated after the 'programInfo' block.
 
-If **detail** is set to true, the following content will also be present in the response:
+If **view** is set to 'with_refs', the default response will be returned with the following data appended:
 
 .. code-block:: javascript
 
@@ -442,7 +462,7 @@ List of bills updated during the given date/time range
 ::
     /api/3/bills/updates/{fromDateTime}/{toDateTime}
 
-.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02
+.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
 
 **Optional Params**
 
@@ -562,7 +582,7 @@ Updates on a specific bill from a given date/time.
 ::
     /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/
 
-Updates on a specific bil during a given date/time range.
+Updates on a specific bill during a given date/time range.
 ::
     /api/3/bills/{sessionYear}/{printNo}/updates/{fromDateTime}/{toDateTime}
 

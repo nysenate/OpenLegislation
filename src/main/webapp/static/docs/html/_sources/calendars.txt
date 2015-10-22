@@ -1,6 +1,8 @@
 **Senate Calendar API**
 =======================
 
+.. note:: Assembly calendar data is currently not sent to us at this time. chamber must be 'senate'.
+
 Get a single calendar
 ---------------------
 
@@ -299,7 +301,7 @@ List of calendars updated during the given date/time range
 ::
     (GET) /api/3/calendars/updates/{fromDateTime}/{toDateTime}
 
-.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format.  For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02
+.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format.  For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
 
 **Optional Params**
 

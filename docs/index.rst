@@ -11,7 +11,7 @@ Legislative data is sent via the Legislative Bill Drafting Commission (LBDC) in 
 ingested and cleaned up internally by Open Leg and made available for consumption through a REST API.
 
 This documentation explains how to utilize the REST API to retrieve bills, resolutions, laws, committee agendas, and more.
-You will need to sign up for a free API key from the OpenLegislation homepage in order to use this service.
+You will need to sign up for a free API key from the Open Legislation homepage in order to use this service.
 
 The code is open source and available on `Github`_.
 

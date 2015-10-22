@@ -1,6 +1,8 @@
 **Senate Floor Transcripts API**
 ================================
 
+.. note:: Assembly transcripts are not available at this time.
+
 Get a single Transcript
 -----------------------
 
