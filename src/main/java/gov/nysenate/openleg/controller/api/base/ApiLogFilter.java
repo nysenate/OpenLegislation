@@ -54,6 +54,8 @@ public class ApiLogFilter implements Filter
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
         throws IOException, ServletException {
+        logger.info("API request: [{} -> {}]",
+                servletRequest.getRemoteAddr(), ((HttpServletRequest) servletRequest).getRequestURI());
         LocalDateTime requestStart = LocalDateTime.now();
         filterChain.doFilter(servletRequest, servletResponse);
         LocalDateTime requestEnd = LocalDateTime.now();

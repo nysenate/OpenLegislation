@@ -37,7 +37,7 @@ public class AngularAppCtrl
         // Google Analytics
         request.setAttribute("gaTrackingId", gaTrackingId);
 
-        String ipAddr = request.getLocalAddr();
+        String ipAddr = request.getRemoteAddr();
         if (ipAddr.matches(whitelist)) {
             // Render the main angular app for internal senate users.
             return "home";

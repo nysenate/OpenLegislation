@@ -37,7 +37,7 @@ public class ApiAuthFilter implements Filter
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String key = servletRequest.getParameter("key");
-        String ipAddress = servletRequest.getLocalAddr();
+        String ipAddress = servletRequest.getRemoteAddr();
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
