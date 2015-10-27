@@ -123,7 +123,7 @@ function($scope, $location, $mdSidenav, $mdDialog, $http, $interval) {
  */
 openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.setHeaderVisible(true);
-    $scope.setHeaderText('Home');
+    $scope.setHeaderText('Search, explore, and integrate legislative information from the NYS Senate.');
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'Discover current and prior legislation that impacts New York State.',
           icon: 'icon-documents', bgclass: 'blue3-bg', url: ctxPath + '/bills'},
@@ -138,32 +138,6 @@ openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
         { type: 'Senate/Assembly Membership', blurb: 'Senators and assemblymembers for the current session.',
           icon: 'icon-users', bgclass: 'green1-bg', url: ctxPath + '/members'}
     ];
-
-    /** Api Key Registration TODO: Remove this, api signup will be on the public home page. */
-    $scope.signedup = false;
-    $scope.email = '';
-    $scope.signup = function() {
-        $scope.errmsg = '';
-        if ($scope.email && $scope.email.indexOf('@') > -1) {
-            $scope.processing = true;
-            $http.post(ctxPath + "/register/signup", {name:$scope.name, email:$scope.email})
-            .success(function(data, status, headers, config) {
-                if (data.success == false) {
-                    $scope.errmsg = data.message;
-                }
-                else {
-                    $scope.signedup = true;
-                }
-                $scope.processing = false;
-            })
-            .error(function(data, status, headers, config) {
-                $scope.processing = false;
-            });
-        }
-        else {
-            $scope.errmsg = 'Please enter a valid email!';
-        }
-    };
 }]);
 
 /**
