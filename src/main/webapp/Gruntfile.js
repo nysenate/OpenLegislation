@@ -13,7 +13,7 @@ module.exports = function(grunt) {
         jsDest: '<%= jsRoot %>/dest',
         jspSource: 'WEB-INF/view',
         tagSource: 'WEB-INF/tags',
-        tomcatWeb: '/usr/share/tomcat7/webapps/legislation',  // <-- CHANGE THIS AS NEEDED
+        tomcatWeb: '/usr/share/tomcat/webapps/legislation',  // <-- CHANGE THIS AS NEEDED
         docsSourceRoot: '../../../docs',
         docsDestRoot: 'static/docs',
 
@@ -149,5 +149,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-shell');
 
-    grunt.registerTask('default', ['compass', 'concat', 'cssmin', 'uglify', 'copy']);
+    grunt.registerTask('default', ['compass', 'concat', 'cssmin', 'uglify', 'shell:docs', 'copy']);
 };

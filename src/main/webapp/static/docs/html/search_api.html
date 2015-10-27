@@ -5,6 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Search APIs &mdash; Open Legislation 2.0-alpha documentation</title>
@@ -14,7 +15,6 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,11 +28,13 @@
   
 
   
+
+  
     <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
         <link rel="prev" title="Aggregate Updates API" href="agg_updates.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -42,80 +44,53 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        <a href="reference.html" class="fa fa-home"> Open Legislation</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="reference.html" class="icon icon-home"> Open Legislation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="index.html#what-is-this">What is this?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#legislative-content-types">Legislative Content Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#terminology">Terminology</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bills.html#get-a-single-bill">Get a single bill</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bills.html#get-pdf-of-bill-text">Get PDF of bill text</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bills.html#get-a-list-of-bills">Get a list of bills</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bills.html#search-for-bills">Search for bills</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bills.html#get-bill-updates">Get bill updates</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-single-calendar">Get a single calendar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-a-listing-of-calendars">Get a listing of calendars</a></li>
-<li class="toctree-l2"><a class="reference internal" href="calendars.html#search-for-calendars">Search for calendars</a></li>
-<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-calendar-updates">Get calendar updates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="calendars.html#get-specific-calendar-updates">Get specific calendar updates</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-current-committee-version">Get a current committee version</a></li>
-<li class="toctree-l2"><a class="reference internal" href="committees.html#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="committees.html#get-committee-history">Get committee history</a></li>
-<li class="toctree-l2"><a class="reference internal" href="committees.html#get-all-current-committees">Get all current committees</a></li>
-<li class="toctree-l2"><a class="reference internal" href="committees.html#search-for-committees">Search for committees</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws API</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-list-of-law-ids">Get a list of law ids</a></li>
-<li class="toctree-l2"><a class="reference internal" href="laws.html#get-the-law-structure">Get the law structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="laws.html#get-a-law-sub-document">Get a law sub document</a></li>
-<li class="toctree-l2"><a class="reference internal" href="laws.html#search-for-law-documents">Search for law documents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-single-transcript">Get a single Transcript</a></li>
-<li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-transcript-pdf">Get a transcript pdf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="transcripts_floor.html#get-a-list-of-transcripts">Get a list of transcripts</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Public Hearing Transcripts API</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-single-public-hearing">Get a single Public Hearing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-public-hearing-pdf">Get a public hearing pdf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="transcripts_ph.html#get-a-list-of-public-hearings">Get a list of public hearings</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-single-member">Get a single Member</a></li>
-<li class="toctree-l2"><a class="reference internal" href="members.html#get-a-list-of-members">Get a list of members</a></li>
-<li class="toctree-l2"><a class="reference internal" href="members.html#search-for-members">Search for members</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agg_updates.html#get-aggregate-updates">Get aggregate updates</a></li>
-</ul>
-</li>
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="laws.html"><strong>NYS Laws API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Public Hearing Transcripts API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Search APIs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#term">term</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sort">sort</a></li>
@@ -124,9 +99,10 @@
 </li>
 </ul>
 
-        
+            
+          
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -141,20 +117,29 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="reference.html">Docs</a> &raquo;</li>
       
     <li><strong>Search APIs</strong></li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/search_api.txt" rel="nofollow"> View page source</a>
+          
+            <a href="_sources/search_api.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="search-apis">
 <h1><strong>Search APIs</strong><a class="headerlink" href="#search-apis" title="Permalink to this headline">¶</a></h1>
@@ -166,14 +151,16 @@ and we aim to provide as much elasticsearch functionality as possible through th
 <p>The term parameter takes in an <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_field_names">elasticsearch query string</a>.</p>
 <p>The simplest way to search is to send a general search term.
 For example, to search for legislation pertaining to apples, the following query will do the job.</p>
-<div class="highlight-python"><pre>/api/3/bills/search?term=apples</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/search?term=apples
+</pre></div>
 </div>
 <p>In addition to a simple search term, there are a number of advanced features available.  Our search index is generated
 with data in the same JSON format as the API responses, so any response field that is nested under &#8220;result&#8221; is fair game
 for search.  Going back to the previous example, a number of resolutions appear in the results for the apples search query.
-Looking back at the <a class="reference internal" href="bills.html#bill-response"><em>bill response</em></a>, we see that resolutions are designated by the &#8220;resolution&#8221; boolean under &#8220;billType&#8221;.
+Looking back at the <a class="reference internal" href="bills.html#bill-response"><span>bill response</span></a>, we see that resolutions are designated by the &#8220;resolution&#8221; boolean under &#8220;billType&#8221;.
 In order to filter resolutions out of the search results, a field query can be chained to the original query using &#8220;AND&#8221;.</p>
-<div class="highlight-python"><pre>/api/3/bills/search?term=apples%20AND%20billType.resolution:false</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/search?term=apples%20AND%20billType.resolution:false
+</pre></div>
 </div>
 <p>For a full enumeration of query features see the <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_field_names">elasticsearch query string</a> syntax.</p>
 </div>
@@ -183,12 +170,14 @@ In order to filter resolutions out of the search results, a field query can be c
 which takes a comma separated string of response fields, each designated with a sort order (&#8220;ASC&#8221; or &#8220;DESC&#8221;) separated
 from the field with a colon.</p>
 <p>For example, to get the 2013 governor&#8217;s program bills in canonical order:</p>
-<div class="highlight-python"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
-                        &amp;sort=programInfo.sequenceNo:ASC</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+                        &amp;sort=programInfo.sequenceNo:ASC
+</pre></div>
 </div>
 <p>Or, you may want to order them by their status and action date:</p>
-<div class="highlight-python"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
-                        &amp;sort=status.statusType:ASC,status.actionDate:DESC</pre>
+<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+                        &amp;sort=status.statusType:ASC,status.actionDate:DESC
+</pre></div>
 </div>
 </div>
 <div class="section" id="search-response">
@@ -218,13 +207,14 @@ from the field with a colon.</p>
 </div>
 
 
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="agg_updates.html" class="btn btn-neutral" title="Aggregate Updates API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="agg_updates.html" class="btn btn-neutral" title="Aggregate Updates API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -234,11 +224,13 @@ from the field with a colon.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, NY State Senate Technology Services.
+
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
