@@ -132,7 +132,7 @@ public class BillGetCtrl extends BaseCtrl
             case ONLY_FULLTEXT: {
                 Version amdVersion = Version.DEFAULT;
                 if (request.getParameter("version") != null) {
-                    amdVersion = Version.of(request.getParameter("version"));
+                    amdVersion = parseVersion(request.getParameter("version"), "version");
                 }
                 Bill bill = billData.getBill(baseBillId);
                 viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.getValue(), bill.getAmendment(amdVersion).getFullText());
@@ -188,8 +188,8 @@ public class BillGetCtrl extends BaseCtrl
         StringDiffer stringDiffer = new StringDiffer();
         BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         Bill bill = billData.getBill(baseBillId);
-        BillAmendment amend1 = bill.getAmendment(Version.of(version1));
-        BillAmendment amend2 = bill.getAmendment(Version.of(version2));
+        BillAmendment amend1 = bill.getAmendment(parseVersion(version1, "version1"));
+        BillAmendment amend2 = bill.getAmendment(parseVersion(version2, "version2"));
         String fullText1 = BillTextUtils.formatBillText(bill.isResolution(), amend1.getFullText());
         String fullText2 = BillTextUtils.formatBillText(bill.isResolution(), amend2.getFullText());
         LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(fullText1, fullText2);

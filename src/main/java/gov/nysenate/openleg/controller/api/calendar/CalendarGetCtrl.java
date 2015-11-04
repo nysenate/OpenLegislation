@@ -162,7 +162,7 @@ public class CalendarGetCtrl extends BaseCtrl
             version = Version.DEFAULT.getValue();
         }
         CalendarSupplemental calSup = calendarDataService.getCalendarSupplemental(
-                                            new CalendarSupplementalId(calNo, year, Version.of(version)));
+                                            new CalendarSupplementalId(calNo, year, parseVersion(version, "version")));
         return new ViewObjectResponse<>(full ? calendarViewFactory.getCalendarSupView(calSup)
                                              : new SimpleCalendarSupView(calSup));
     }

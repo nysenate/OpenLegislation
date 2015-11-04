@@ -10,6 +10,7 @@ import gov.nysenate.openleg.client.view.error.InvalidParameterView;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.notification.Notification;
@@ -186,6 +187,35 @@ public abstract class BaseCtrl
         } catch (IllegalArgumentException ex) {
             throw new InvalidRequestParamEx(printNo, printNoParamName, "String", BillId.printNumberRegex);
         }
+    }
+
+    /**
+     * Attempts to parse a version string, returning an empty optional if it does not parse
+     * @param version String - version input string
+     * @return Optional<Version>
+     */
+    protected Optional<Version> parseVersion(String version) {
+        try {
+            return Optional.of(Version.of(version));
+        } catch (IllegalArgumentException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Attempts to parse a version request parameter, throwing an InvalidRequestParamEx if parsing fails
+     * @param version String - version parameter value
+     * @param versionParamName String - version parameter name
+     * @return Version
+     * @throws InvalidRequestParamEx if the version input string cannot be parsed into a version
+     */
+    protected Version parseVersion(String version, String versionParamName) throws InvalidRequestParamEx {
+        Optional<Version> optVersion = parseVersion(version);
+        if (!optVersion.isPresent()) {
+            throw new InvalidRequestParamEx(version, versionParamName, "String",
+                    Version.DEFAULT.name() + "|[A-Z]");
+        }
+        return optVersion.get();
     }
 
     /**
