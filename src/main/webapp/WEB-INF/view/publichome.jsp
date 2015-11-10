@@ -8,6 +8,9 @@
 <open-layout:body appName="open-public">
   <div class="public-home-page" ng-controller="PublicHomeCtrl">
     <section class="hero-container-public">
+      <div class="login-section">
+        <p><a href="${ctxPath}/login">Login</a></p>
+      </div>
       <h1>
         <img src="${ctxPath}/static/img/NYSS_seal.png"/>Open Legislation
       </h1>
@@ -80,7 +83,7 @@
       <h2 class="project-desc-label" id="docs"><i class="icon-info prefix-icon"></i>How to use the API</h2>
       <a class="project-doc-link" target="_blank" href="${ctxPath}/docs">View docs in new window</a>
       <div class="regular-container">
-        <iframe width="100%" style="height:90vh;border: 0;overflow: visible" ng-src="{{currDocsPath}}">
+        <iframe width="100%" class="docs-iframe" ng-src="{{currDocsPath}}">
         </iframe>
       </div>
     </div>
