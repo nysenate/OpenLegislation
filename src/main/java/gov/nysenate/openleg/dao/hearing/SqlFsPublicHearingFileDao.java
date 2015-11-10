@@ -35,8 +35,8 @@ public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHeari
 
     @PostConstruct
     private void init() {
-        incomingPublicHearingDir = new File(environment.getStagingDir(), "hearings");
-        archivePublicHearingDir = new File(environment.getArchiveDir(), "hearings");
+        incomingPublicHearingDir = new File(environment.getStagingDir(), "hearing_transcripts");
+        archivePublicHearingDir = new File(environment.getArchiveDir(), "hearing_transcripts");
     }
 
     /** --- Implemented Methods --- */
