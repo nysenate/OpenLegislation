@@ -65,6 +65,9 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     @Override
     public void updateCommitteeIndexBulk(Collection<CommitteeSessionId> sessionIds) {
+        if (sessionIds.isEmpty()) {
+            return;
+        }
         BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
         sessionIds.stream()
                 .peek(this::deleteCommitteeFromIndex)

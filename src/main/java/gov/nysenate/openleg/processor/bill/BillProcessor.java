@@ -116,8 +116,8 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                     case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment); break;
                     case SAME_AS: applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
                     case SPONSOR: applySponsor(data, baseBill, specifiedAmendment, date); break;
-                    case CO_SPONSOR: applyCosponsors(data, activeAmendment); break;
-                    case MULTI_SPONSOR: applyMultisponsors(data, activeAmendment); break;
+                    case CO_SPONSOR: applyCosponsors(data, baseBill); break;
+                    case MULTI_SPONSOR: applyMultisponsors(data, baseBill); break;
                     case PROGRAM_INFO: applyProgramInfo(data, baseBill, date); break;
                     case ACT_CLAUSE: applyActClause(data, specifiedAmendment); break;
                     case LAW: applyLaw(data, baseBill, specifiedAmendment, date); break;
@@ -392,10 +392,10 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Nothing      | 7
      * -------------------------------------------
      */
-    private void applyCosponsors(String data, BillAmendment activeAmendment) throws ParseError {
-        LinkedHashSet<Member> coSponsors = new LinkedHashSet<>();
-        SessionYear session = activeAmendment.getSession();
-        Chamber chamber = activeAmendment.getBillType().getChamber();
+    private void applyCosponsors(String data, Bill baseBill) throws ParseError {
+        List<Member> coSponsors = new ArrayList<>();
+        SessionYear session = baseBill.getSession();
+        Chamber chamber = baseBill.getBillType().getChamber();
         List<String> badCoSponsors = new ArrayList<>();
         for (String coSponsor : data.replace("\n", " ").split(",")) {
             coSponsor = coSponsor.trim();
@@ -409,11 +409,17 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
             }
         }
         // The cosponsor info is always sent for the base bill version.
-        // We can use the currently active amendment instead.
-        activeAmendment.setCoSponsors(Lists.newArrayList(coSponsors));
+        // We can use the currently active amendment instead, plus any as yet unpublished amendments that follow.
+        BillAmendment activeAmendment = baseBill.getActiveAmendment();
+        activeAmendment.setCoSponsors(coSponsors);
+        Version.after(activeAmendment.getVersion()).stream()
+                .filter(baseBill::hasAmendment)
+                .map(baseBill::getAmendment)
+                .forEach(amend -> amend.setCoSponsors(coSponsors));
+
         if (!badCoSponsors.isEmpty()) {
             throw new ParseError(String.format("Could not parse %s co sponsors: %s",
-                    activeAmendment.getBillId(), StringUtils.join(badCoSponsors, ", ")));
+                    baseBill.getBaseBillId(), StringUtils.join(badCoSponsors, ", ")));
         }
     }
 
@@ -428,10 +434,10 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
      * Nothing        | 8
      * ----------------------------------------------
      */
-    private void applyMultisponsors(String data, BillAmendment activeAmendment) throws ParseError {
-        LinkedHashSet<Member> multiSponsors = new LinkedHashSet<>();
-        SessionYear session = activeAmendment.getSession();
-        Chamber chamber = activeAmendment.getBillType().getChamber();
+    private void applyMultisponsors(String data, Bill baseBill) throws ParseError {
+        List<Member> multiSponsors = new ArrayList<>();
+        SessionYear session = baseBill.getSession();
+        Chamber chamber = baseBill.getBillType().getChamber();
         List<String> badMultiSponsors = new ArrayList<>();
         for (String multiSponsor : data.replace("\n", " ").split(",")) {
             multiSponsor = multiSponsor.trim();
@@ -444,10 +450,19 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
                 }
             }
         }
-        activeAmendment.setMultiSponsors(Lists.newArrayList(multiSponsors));
+
+        // The multisponsor info is always set for the base amendment
+        // We can use the currently active amendment instead, plus any as yet unpublished amendments that follow.
+        BillAmendment activeAmendment = baseBill.getActiveAmendment();
+        activeAmendment.setMultiSponsors(multiSponsors);
+        Version.after(activeAmendment.getVersion()).stream()
+                .filter(baseBill::hasAmendment)
+                .map(baseBill::getAmendment)
+                .forEach(amend -> amend.setMultiSponsors(multiSponsors));
+
         if (!badMultiSponsors.isEmpty()) {
             throw new ParseError(String.format("Could not parse %s multi sponsors: %s",
-                    activeAmendment.getBillId(), StringUtils.join(multiSponsors, ", ")));
+                    baseBill.getBaseBillId(), StringUtils.join(multiSponsors, ", ")));
         }
     }
 
