@@ -4,9 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import gov.nysenate.openleg.util.AsciiArt;
 import gov.nysenate.openleg.util.OpenlegThreadFactory;
+import org.apache.shiro.realm.Realm;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -29,11 +33,11 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.annotation.PostConstruct;
 import javax.xml.transform.Source;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -55,7 +59,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter implements Sch
 
     @PostConstruct
     public void init() {
-        logger.info("Initialized WebApplication Config");
+        logger.info("{}", AsciiArt.OPENLEG_2_LOGO.getText().replace("DATE", LocalDateTime.now().toString()));
     }
 
     /** Sets paths that should not be intercepted by a controller (e.g css/ js/). */

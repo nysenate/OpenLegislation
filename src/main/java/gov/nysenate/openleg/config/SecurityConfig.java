@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.config;
 
 import org.apache.shiro.config.Ini;
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -9,16 +10,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
+import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig
 {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
+    @Autowired protected List<Realm> realms;
 
     /**
      * Shiro Filter factory that sets up the url authentication mechanism and applies the security
@@ -73,5 +81,4 @@ public class SecurityConfig
     public Ini shiroIniConfig() {
         return Ini.fromResourcePath("classpath:shiro.ini");
     }
-
 }

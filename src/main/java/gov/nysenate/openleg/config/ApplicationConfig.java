@@ -44,11 +44,6 @@ public class ApplicationConfig implements CachingConfigurer
 {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
-    @PostConstruct
-    public void init() {
-        logger.info("{}", AsciiArt.OPENLEG_2_LOGO.getText().replace("DATE", LocalDateTime.now().toString()));
-    }
-
     /** --- Eh Cache Spring Configuration --- */
 
     @Value("${cache.max.size}") private String cacheMaxHeapSize;
