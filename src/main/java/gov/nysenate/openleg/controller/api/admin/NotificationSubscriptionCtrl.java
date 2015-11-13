@@ -12,6 +12,7 @@ import gov.nysenate.openleg.model.notification.NotificationTarget;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.service.notification.subscription.NotificationSubscriptionDataService;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
+@RequiresPermissions("admin:view")
 @RequestMapping(value = BaseCtrl.BASE_ADMIN_API_PATH + "/notifications", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class NotificationSubscriptionCtrl extends BaseCtrl
 {

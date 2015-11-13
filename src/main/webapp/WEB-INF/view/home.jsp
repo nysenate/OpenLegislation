@@ -30,7 +30,6 @@
   <script src="${ctxPath}/static/js/src/component/admin/notification_sub.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/dashboard.js"></script>
   <script src="${ctxPath}/static/js/src/component/admin/environment.js"></script>
-  <script src="${ctxPath}/static/js/src/component/admin/logout.js"></script>
 </open-layout:head>
 <!--
                       __     __,
@@ -61,7 +60,6 @@
                 <img src="${ctxPath}/static/img/NYSS_seal.png"/>
                 <span>Open</span> Legislation
               </a>
-              <span class="beta-tag">2.0 BETA</span>
             </div>
           </div>
           <%-- Left Nav Menu Items --%>
@@ -76,18 +74,18 @@
                 <menu-item url="${ctxPath}/members" icon="icon-users">Senate / Assembly Membership</menu-item>
                 <menu-item url="${ctxPath}/transcripts" icon="icon-text">Floor/Hearing Transcripts</menu-item>
               </menu-section>
-              <shiro:user>
+              <shiro:hasPermission name="admin:view">
                 <menu-section title="Admin">
                   <menu-item url="${ctxPath}/admin">Dashboard</menu-item>
                   <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
-                  <menu-item url="${ctxPath}/admin/logout">Logout</menu-item>
+                  <menu-item url="${ctxPath}/logout" target="_self">Logout</menu-item>
                 </menu-section>
                 <menu-section title="Reports">
                   <menu-item url="${ctxPath}/admin/report/spotcheck">Spotcheck Reports</menu-item>
                   <menu-item url="${ctxPath}/admin/report/spotcheck/open">Open Mismatches</menu-item>
                   <%-- --%>
                 </menu-section>
-              </shiro:user>
+              </shiro:hasPermission>
             </material-menu>
           </div>
         </md-sidenav>

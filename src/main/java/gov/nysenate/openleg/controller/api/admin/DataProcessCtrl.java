@@ -19,6 +19,7 @@ import gov.nysenate.openleg.processor.DataProcessor;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_P
 import static java.util.stream.Collectors.toList;
 
 @RestController
+@RequiresPermissions("admin:dataProcess")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/process", method = RequestMethod.GET)
 public class DataProcessCtrl extends BaseCtrl
 {

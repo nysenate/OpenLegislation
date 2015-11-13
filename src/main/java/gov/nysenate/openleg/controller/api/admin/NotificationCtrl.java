@@ -20,6 +20,7 @@ import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.notification.data.NotificationNotFoundException;
 import gov.nysenate.openleg.service.notification.data.NotificationService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_P
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
+@RequiresPermissions("admin:view")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/notifications", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class NotificationCtrl extends BaseCtrl
 {

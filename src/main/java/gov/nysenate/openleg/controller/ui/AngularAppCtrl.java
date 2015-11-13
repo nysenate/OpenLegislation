@@ -1,12 +1,23 @@
 package gov.nysenate.openleg.controller.ui;
 
+import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.SimpleResponse;
+import gov.nysenate.openleg.client.response.error.ErrorCode;
+import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.model.auth.ApiKeyLoginToken;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresGuest;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * Simple entry point to the front-end. Returns the main angular-js driven web page which will handle
@@ -36,14 +47,27 @@ public class AngularAppCtrl
     public String home(HttpServletRequest request) {
         // Google Analytics
         request.setAttribute("gaTrackingId", gaTrackingId);
-
-        String ipAddr = request.getRemoteAddr();
-        if (ipAddr.matches(whitelist)) {
-            // Render the main angular app for internal senate users.
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isPermitted("ui:view")) {
             return "home";
         }
-        // Render a simple landing page for public visitors.
+        // Unauthorized users will see the public page.
         return "publichome";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/loginapikey", method = RequestMethod.POST)
+    public BaseResponse login(@RequestBody Map<String, String> body, HttpServletRequest request) {
+        String ipAddr = request.getRemoteAddr();
+        String apiKey = body.get("apiKey");
+        try {
+            SecurityUtils.getSubject().login(new ApiKeyLoginToken(apiKey, ipAddr));
+            return new SimpleResponse(true, "Login successful", "apikey-login");
+        }
+        catch (AuthenticationException ex) {
+            logger.info("Invalid API Key attempt with key: {}", apiKey);
+        }
+        return new ErrorResponse(ErrorCode.API_KEY_INVALID);
     }
 
     @RequestMapping("/public")

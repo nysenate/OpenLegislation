@@ -13,6 +13,7 @@ import gov.nysenate.openleg.dao.bill.text.BillTextReferenceDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
 import gov.nysenate.openleg.model.spotcheck.billtext.ScrapeQueuePriority;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.*;
 
 @RestController
+@RequiresPermissions("admin:view")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/scraping/billqueue")
 public class BillScrapeQueueCtrl extends BaseCtrl {
 

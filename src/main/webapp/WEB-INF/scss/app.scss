@@ -712,7 +712,7 @@ ul.pagination {
 /** --- Landing Page Styles --- */
 
 .public-home-page {
-  background: #fafafa;
+  background: #f1f1f1;
   min-height: 100vh;
   overflow: auto;
 }
@@ -738,23 +738,20 @@ ul.pagination {
       margin-right: 14px;
     }
   }
+}
 
-  .login-section {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 100px;
-    background: #00b0ef;
-    box-shadow: 0 2px 3px #005474;
-    border-radius: 2px;
-    p {
-      margin: 5px;
-      text-align: center;
-      cursor: pointer;
-      a {
-        text-decoration: none;
-        color: white;
-      }
+.login-button {
+  padding: 5px 10px;
+  background: #00b0ef;
+  box-shadow: 0 2px 3px #005474;
+  border-radius: 2px;
+  p {
+    margin: 5px;
+    text-align: center;
+    cursor: pointer;
+    a {
+      text-decoration: none;
+      color: white;
     }
   }
 }

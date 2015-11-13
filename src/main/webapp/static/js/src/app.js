@@ -7,7 +7,7 @@ var openApp = angular.module('open',
         'diff-match-patch',
 // Internal modules
     'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.spotcheck', 'open.transcript', 'open.account',
-    'open.dashboard', 'open.environment', 'open.logout', 'open.notification.subscription', 'open.member']);
+    'open.dashboard', 'open.environment', 'open.notification.subscription', 'open.member']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
@@ -164,7 +164,7 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
         '    </a>' +
         '    <md-divider></md-divider> '  +
         '    <div ng-if="section.items" ng-repeat="item in section.items">' +
-        '      <a ng-class="{active: isItemSelected(item)}"' +
+        '      <a ng-class="{active: isItemSelected(item)}" target="{{item.target}}"' +
         '         class="menu-item menu-sub-item md-menu-item" md-ink-ripple="#bbb" ' +
         '         ng-show="isSectionSelected(section)" tab-index="-1"' +
         '         ng-href="{{item.url}}">' +
@@ -223,7 +223,12 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
                     angular.forEach($sections, function(_s) {
                         var section = {title: _s.title, items: []};
                         angular.forEach($(_s).children('menu-item'), function(_i) {
-                            var item = {url: $(_i).attr('url'), title: $(_i).text(), icon: $(_i).attr('icon')};
+                            var item = {
+                                url: $(_i).attr('url'),
+                                title: $(_i).text(),
+                                icon: $(_i).attr('icon'),
+                                target: $(_i).attr('target')
+                            };
                             section.items.push(item);
                         });
                         scope.menu.sections.push(section);

@@ -56,7 +56,6 @@ public class ApiAuthFilter implements Filter
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
-
     }
 
     @Override

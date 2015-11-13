@@ -22,6 +22,7 @@ import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
+@RequiresPermissions("admin:view")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/spotcheck", produces = APPLICATION_JSON_VALUE)
 public class SpotCheckCtrl extends BaseCtrl
 {

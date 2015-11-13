@@ -1,6 +1,7 @@
 var openPublicApp = angular.module('open-public', ['ngMaterial']);
 
-openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$location', '$sce', function($scope, $http, $location, $sce) {
+openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$window', '$location', '$sce',
+                                    function($scope, $http, $window, $location, $sce) {
     var docsPath = ctxPath + '/docs';
 
     $scope.getDocsPath = function(page) {
@@ -8,6 +9,7 @@ openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$location', '$sc
     };
 
     $scope.currDocsPath = $scope.getDocsPath("index.html");
+    $scope.showLogin = false;
 
     $scope.dataWeProvide = [
         { type: 'New York State Bills and Resolutions', blurb: 'Discover current and prior legislation that impacts New York State.',
@@ -54,6 +56,31 @@ openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$location', '$sc
             })
             .error(function(data, status, headers, config) {
                 $scope.processing = false;
+            });
+        }
+    };
+
+    /** Api Key Login */
+    $scope.apiKey = null;
+    $scope.loginErrMsg = null;
+    $scope.loginWithAPIKey = function() {
+        $scope.loginErrMsg = null;
+        if (!$scope.apiKey) {
+            $scope.loginErrMsg = 'Please enter a valid api key!';
+        }
+        else {
+            $scope.apiKey = $scope.apiKey.trim();
+            $http.post(ctxPath + "/loginapikey", {apiKey : $scope.apiKey})
+            .success(function(data, status, headers, config) {
+                if (data.success == false) {
+                    $scope.loginErrMsg = data.message;
+                }
+                else {
+                    $window.location.href = ctxPath + '/';
+                }
+            })
+            .error(function(data, status, headers, config) {
+                $scope.loginErrMsg = 'There was a problem logging. Please try again later.';
             });
         }
     };

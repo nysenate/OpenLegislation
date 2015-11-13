@@ -85,7 +85,8 @@ public enum ErrorCode
 
     UNAUTHORIZED(401, "Not authorized to perform this request."),
     INVALID_DATE_RANGE(601, "The supplied date range is not valid."),
-    API_KEY_REQUIRED(701, "A valid API key is needed to fulfill this request.")
+    API_KEY_REQUIRED(701, "A valid API key is needed to fulfill this request."),
+    API_KEY_INVALID(702, "Sorry, the API key you provided is not valid.")
     ;
 
 

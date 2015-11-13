@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.auth;
 
-import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.auth.AdminUser;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -8,7 +7,6 @@ import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 
-import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.mindrot.jbcrypt.BCrypt;
@@ -21,7 +19,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class AdminLoginAuthRealm extends AuthorizingRealm
+public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
 {
     private static final Logger logger = LoggerFactory.getLogger(AdminLoginAuthRealm.class);
 
@@ -54,7 +52,6 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
 
     @PostConstruct
     public void setup() {
-        defaultWebSecurityManager.setRealm(this);
         if (!adminUserService.adminInDb(defaultAdminName))
             adminUserService.createUser(defaultAdminName, defaultAdminPass, true, true);
     }
@@ -72,6 +69,7 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         if (token != null && token instanceof UsernamePasswordToken) {
+            logger.info("{}", "Attempting login with Admin Realm");
             return queryForAuthenticationInfo((UsernamePasswordToken) (token));
         }
         throw new UnsupportedTokenException("OpenLeg 2.0 only supports UsernamePasswordToken");
@@ -85,7 +83,6 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
      */
     protected AuthenticationInfo queryForAuthenticationInfo(UsernamePasswordToken info) {
         String username = info.getUsername();
-
         AdminUser admin = adminUserService.getAdminUser(username);
         return new SimpleAuthenticationInfo(admin.getUsername(), admin.getPassword(), getName());
     }
@@ -98,10 +95,9 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        logger.info("{}", principals.getPrimaryPrincipal());
+        logger.info("Determining admin roles for {}", principals.getPrimaryPrincipal());
         if (adminUserService.isMasterAdmin(principals.getPrimaryPrincipal().toString())) {
-            logger.info("itwerked");
-            info.setRoles(Sets.newHashSet("masterAdmin"));
+            info.addRole(OpenLegRole.MASTER_ADMIN.name());
         }
         return info;
     }
@@ -114,6 +110,4 @@ public class AdminLoginAuthRealm extends AuthorizingRealm
     public CredentialsMatcher getCredentialsMatcher() {
         return credentialsMatcher;
     }
-
-
 }

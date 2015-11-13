@@ -35,13 +35,12 @@ public interface AdminUserService
     public List<AdminUser> getAdminUsers();
 
     /**
-     * Log the user in if they have proper account credentials.
+     * Retrieve the user with the matching username.
      *
      * @param username The given username
      * @return A Login Code representing the outcome of the login attempt
      */
     public AdminUser getAdminUser(String username) throws AuthenticationException;
-
 
     /**
      * This method will return true if the given admin username is located within

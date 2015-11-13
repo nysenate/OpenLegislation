@@ -14,6 +14,7 @@ import gov.nysenate.openleg.client.view.environment.ImmutableEnvVarException;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
+@RequiresPermissions("admin:envEdit")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/environment")
 public class EnvironmentCtrl extends BaseCtrl
 {

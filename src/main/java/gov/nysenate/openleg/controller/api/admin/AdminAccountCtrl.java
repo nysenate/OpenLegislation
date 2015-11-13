@@ -16,6 +16,7 @@ import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.model.auth.AdminUser;
 import gov.nysenate.openleg.service.auth.AdminUserService;
 import gov.nysenate.openleg.service.auth.InvalidUsernameException;
+import gov.nysenate.openleg.service.auth.OpenLegRole;
 import gov.nysenate.openleg.service.mail.SendMailService;
 import gov.nysenate.openleg.util.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,8 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_P
 
 @RestController
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/accounts")
-public class AdminAccountCtrl extends BaseCtrl {
+public class AdminAccountCtrl extends BaseCtrl
+{
     private static final Logger logger = LoggerFactory.getLogger(AdminAccountCtrl.class);
 
     @Autowired
@@ -64,7 +67,7 @@ public class AdminAccountCtrl extends BaseCtrl {
     private static final int newPassLength = 8;
     private static final int minPassLength = 5;
 
-    @RequiresAuthentication
+    @RequiresUser
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public BaseResponse logout() {
@@ -72,7 +75,7 @@ public class AdminAccountCtrl extends BaseCtrl {
         return new SimpleResponse(true, "you have been logged out", "logout");
     }
 
-    @RequiresAuthentication
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getAdminUsers() {
         return new ViewObjectResponse<>(ListView.of(
@@ -81,7 +84,7 @@ public class AdminAccountCtrl extends BaseCtrl {
                         .collect(Collectors.toList())));
     }
 
-    @RequiresAuthentication
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.GET)
     public BaseResponse getAdminUser(@PathVariable String username) {
         if (StringUtils.isBlank(username)) {
@@ -94,9 +97,10 @@ public class AdminAccountCtrl extends BaseCtrl {
     }
 
     /**
-     *  Create New Admin User API
+     * Create New Admin User API
+     * -------------------------
      *
-     * Registers a new user as an admin.  Sends an email message confirming the registration along with a new,
+     *  Registers a new user as an admin.  Sends an email message confirming the registration along with a new,
      *  randomly generated password.  Must be called by a master admin.
      *
      *  (GET) /api/3/admin/accounts/new
@@ -106,7 +110,7 @@ public class AdminAccountCtrl extends BaseCtrl {
      *
      *  Expected Output: successful admin-registered response if the user was created, ErrorResponse otherwise
      */
-    @RequiresRoles("masterAdmin")
+    @RequiresPermissions("admin:createAdmin")
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.POST)
     public Object createNewUser(@PathVariable String username,
                                 @RequestParam(defaultValue = "false") boolean master) {
@@ -130,6 +134,7 @@ public class AdminAccountCtrl extends BaseCtrl {
 
     /**
      *  Remove Admin User API
+     *  ---------------------
      *
      *  Deletes the account of an admin user.  Must be called by a master admin.
      *
@@ -139,10 +144,9 @@ public class AdminAccountCtrl extends BaseCtrl {
      *
      *  Expected Output: successful admin-deleted if a user was removed, ErrorResponse otherwise
      */
-    @RequiresRoles("masterAdmin")
+    @RequiresPermissions("admin:deleteAdmin")
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.DELETE)
     public Object removeUser(@PathVariable String username) {
-
         if (!adminUserService.adminInDb(username)) {
             throw new UserNotFoundException(username);
         }
@@ -159,6 +163,7 @@ public class AdminAccountCtrl extends BaseCtrl {
 
     /**
      *  Change Password API
+     *  -------------------
      *
      *  Changes the password for the calling user.
      *
@@ -168,27 +173,21 @@ public class AdminAccountCtrl extends BaseCtrl {
      *
      *  Expected Output: successful pass-changed response if the password was changed, ErrorResponse otherwise
      */
-    @RequiresAuthentication
+    @RequiresPermissions("admin:passChange")
     @RequestMapping(value = "/passchange", method = RequestMethod.POST)
     public Object changePassword(@RequestParam(required = true) String password) {
-
         String username = getSubjectUsername();
-
         AdminUser user = adminUserService.getAdminUser(username);
-
         if (BCrypt.checkpw(password, user.getPassword())) {
             return new ResponseEntity<>(
                     new ErrorResponse(ErrorCode.SAME_PASSWORD), HttpStatus.BAD_REQUEST);
         }
-
         if (password.length() < minPassLength) {
             throw new InvalidRequestParamEx(password.replaceAll(".", "*"), "password", "String",
                     "Password must contain at least " + minPassLength + " characters");
         }
-
         user.setPassword(password);
         adminUserService.createUser(user);
-
         return new SimpleResponse(true, "Password has been successfully changed", "pass-changed");
     }
 

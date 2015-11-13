@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.controller.ui;
+package gov.nysenate.openleg.controller.pdf;
 
 import gov.nysenate.openleg.client.view.bill.BillPdfView;
 import gov.nysenate.openleg.model.bill.BaseBillId;

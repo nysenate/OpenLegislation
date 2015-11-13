@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.controller.ui;
+package gov.nysenate.openleg.controller.pdf;
 
 import gov.nysenate.openleg.client.view.transcript.TranscriptPdfView;
 import gov.nysenate.openleg.model.transcript.Transcript;

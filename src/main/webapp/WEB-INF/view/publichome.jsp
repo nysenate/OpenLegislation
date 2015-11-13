@@ -8,9 +8,6 @@
 <open-layout:body appName="open-public">
   <div class="public-home-page" ng-controller="PublicHomeCtrl">
     <section class="hero-container-public">
-      <div class="login-section">
-        <p><a href="${ctxPath}/login">Login</a></p>
-      </div>
       <h1>
         <img src="${ctxPath}/static/img/NYSS_seal.png"/>Open Legislation
       </h1>
@@ -20,6 +17,20 @@
         Developed in-house at the <a href="http://www.nysenate.gov">New York State Senate</a>, Open Legislation is a public web service that provides access
         to NYS legislative data from the Legislative Bill Drafting Commission system through a JSON API.
       </div>
+      <form ng-submit="loginWithAPIKey()">
+        <div layout="row" layout-sm="column" layout-align="center center">
+          <md-input-container style="min-width: 75%" class="margin-right-20">
+            <label>Enter your API Key here to browse the data</label>
+            <input type="text" name="apikey" ng-required ng-trim ng-model="apiKey"/>
+          </md-input-container>
+          <md-button style="width: 160px;" class="bold md-primary md-raised">
+            Browse API data
+          </md-button>
+        </div>
+        <div class="signup-err" ng-if="loginErrMsg">
+          <h4><i class="icon-warning prefix-icon"></i> {{loginErrMsg}}</h4>
+        </div>
+      </form>
     </div>
     <div class="padding-20">
       <h2 class="project-desc-label" id="dataweprovide"><i class="icon-text prefix-icon"></i>Data We Provide</h2>

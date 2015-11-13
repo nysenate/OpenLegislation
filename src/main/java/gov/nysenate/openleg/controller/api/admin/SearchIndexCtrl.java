@@ -11,6 +11,7 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.util.Set;
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
+@RequiresPermissions("admin:searchIndexEdit")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/index")
 public class SearchIndexCtrl extends BaseCtrl
 {

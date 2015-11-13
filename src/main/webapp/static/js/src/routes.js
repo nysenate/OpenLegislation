@@ -51,6 +51,10 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         .when(ctxPath + '/docs', { redirectTo: ctxPath + '/docs'})
 
+        /** --- Logout --- */
+
+        .when(ctxPath + '/logout', { redirectTo: ctxPath + '/logout', reloadOnSearch: true})
+
         /** --- Home Page --- */
 
         .otherwise({

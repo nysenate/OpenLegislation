@@ -21,6 +21,7 @@ import gov.nysenate.openleg.model.entity.CommitteeSessionId;
 import gov.nysenate.openleg.model.law.LawVersionId;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
+@RequiresPermissions("admin:cacheEdit")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/cache")
 public class CacheCtrl extends BaseCtrl
 {
