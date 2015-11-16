@@ -47,9 +47,9 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
      * Expected Output: List of PublicHearingUpdateTokenView
      */
     @RequestMapping(value = "/updates/{from:.*\\.?.*}")
-    public BaseResponse getNewPublicHearingsSince(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
+    public BaseResponse getNewPublicHearingsSince(@PathVariable String from,
                                                   WebRequest request) {
-        return getNewPublicHearingsDuring(from, DateUtils.THE_FUTURE.atStartOfDay(), request);
+        return getNewPublicHearingsDuring(parseISODateTime(from, "from"), DateUtils.THE_FUTURE.atStartOfDay(), request);
     }
 
     /**
@@ -65,13 +65,20 @@ public class PublicHearingUpdatesCtrl extends BaseCtrl
      * Expected Output: List of PublicHearingUpdateTokenView
      */
     @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
-    public BaseResponse getNewPublicHearingsDuring(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
-                                                   @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime to,
+    public BaseResponse getNewPublicHearingsDuring(@PathVariable String from,
+                                                   @PathVariable String to,
                                                    WebRequest request) {
+        return getNewPublicHearingsDuring(parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
+    }
+
+    /** --- Internal Methods --- */
+
+    private BaseResponse getNewPublicHearingsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 25);
         Range<LocalDateTime> dateRange = getOpenRange(from, to, "from", "to");
         PaginatedList<PublicHearingUpdateToken> updates = publicHearingDao.publicHearingsUpdatedDuring(dateRange, SortOrder.ASC, limOff);
-        return ListViewResponse.of(updates.getResults().stream().map(token ->
-                new PublicHearingUpdateTokenView(token)).collect(Collectors.toList()), updates.getTotal(), limOff);
+        return ListViewResponse.of(updates.getResults().stream()
+                .map(PublicHearingUpdateTokenView::new)
+                .collect(Collectors.toList()), updates.getTotal(), limOff);
     }
 }

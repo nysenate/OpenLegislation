@@ -65,13 +65,20 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
     }
 
     @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
-    public BaseResponse getNewTranscriptsDuring(@PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime from,
-                                                @PathVariable @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime to,
+    public BaseResponse getNewTranscriptsDuring(@PathVariable String from,
+                                                @PathVariable String to,
                                                 WebRequest request) {
+        return getNewTranscriptsDuring(parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
+    }
+
+    /** --- Internal Methods --- */
+
+    private BaseResponse getNewTranscriptsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 25);
-        Range<LocalDateTime> range = getOpenRange(from, to, "from", "to");
+        Range<LocalDateTime> range = getOpenRange(to, from, "from", "to");
         PaginatedList<TranscriptUpdateToken> updates = transcriptDao.transcriptsUpdatedDuring(range, SortOrder.ASC, limOff);
-        return ListViewResponse.of(updates.getResults().stream().map(token ->
-                new TranscriptUpdateTokenView(token)).collect(Collectors.toList()), updates.getTotal(), limOff);
+        return ListViewResponse.of(updates.getResults().stream()
+                .map(TranscriptUpdateTokenView::new)
+                .collect(Collectors.toList()), updates.getTotal(), limOff);
     }
 }
