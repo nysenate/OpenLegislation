@@ -17,11 +17,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 
 @Component
 public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
 {
     private static final Logger logger = LoggerFactory.getLogger(AdminLoginAuthRealm.class);
+
+    /** The IP whitelist is used here to restrict access to admin login to internal IPs only. */
+    @Value("${api.auth.ip.whitelist}") private String ipWhitelist;
 
     private static class BCryptCredentialsMatcher implements CredentialsMatcher {
 
@@ -44,9 +48,6 @@ public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
     @Autowired
     private AdminUserService adminUserService;
 
-    @Autowired
-    private DefaultWebSecurityManager defaultWebSecurityManager;
-
     @Value("${default.admin.user}") private String defaultAdminName;
     @Value("${default.admin.password}") private String defaultAdminPass;
 
@@ -55,7 +56,6 @@ public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
         if (!adminUserService.adminInDb(defaultAdminName))
             adminUserService.createUser(defaultAdminName, defaultAdminPass, true, true);
     }
-
 
     /**
      * This method will call the queryForAuthenticationInfo method in order to retrieve
@@ -69,17 +69,24 @@ public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         if (token != null && token instanceof UsernamePasswordToken) {
-            logger.info("{}", "Attempting login with Admin Realm");
-            return queryForAuthenticationInfo((UsernamePasswordToken) (token));
+            UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
+            logger.info("Attempting login with Admin Realm from IP {}", usernamePasswordToken.getHost());
+            if (usernamePasswordToken.getHost().matches(ipWhitelist)) {
+                return queryForAuthenticationInfo(usernamePasswordToken);
+            }
+            else {
+                logger.warn("Blocking admin login from unauthorized IP {}", usernamePasswordToken.getHost());
+                throw new AuthenticationException("Admin login from unauthorized IP address.");
+            }
         }
-        throw new UnsupportedTokenException("OpenLeg 2.0 only supports UsernamePasswordToken");
+        throw new UnsupportedTokenException(getName() + " only supports UsernamePasswordToken");
     }
 
     /**
      * This method uses the AdminUser service to query the database and see if
-     * the given username and password combination
+     * the given username.
      * @param info The given UsernamePasswordToken
-     * @return A new SimpleAuthenticationInfo object if the user is a valid Admin or null otherwise
+     * @return A new SimpleAuthenticationInfo object if the user is a valid Admin, or AuthenticationException
      */
     protected AuthenticationInfo queryForAuthenticationInfo(UsernamePasswordToken info) {
         String username = info.getUsername();
@@ -94,12 +101,17 @@ public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        logger.info("Determining admin roles for {}", principals.getPrimaryPrincipal());
-        if (adminUserService.isMasterAdmin(principals.getPrimaryPrincipal().toString())) {
-            info.addRole(OpenLegRole.MASTER_ADMIN.name());
+        Collection collection = principals.fromRealm(getName());
+        if (!collection.isEmpty()) {
+            SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+            String principal = collection.iterator().next().toString();
+            logger.info("Determining admin roles for {}", principal);
+            if (adminUserService.isMasterAdmin(principal)) {
+                info.addRole(OpenLegRole.MASTER_ADMIN.name());
+            }
+            return info;
         }
-        return info;
+        return null;
     }
 
     /**

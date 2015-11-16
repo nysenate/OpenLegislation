@@ -26,7 +26,6 @@ import java.util.Set;
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
-@RequiresPermissions("admin:searchIndexEdit")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/index")
 public class SearchIndexCtrl extends BaseCtrl
 {
@@ -50,7 +49,7 @@ public class SearchIndexCtrl extends BaseCtrl
      * using data pulled from the backing store. Probably don't want to do this while a data processing
      * job is running.
      */
-    @RequiresAuthentication
+    @RequiresPermissions("admin:searchIndexEdit")
     @RequestMapping(value = "/{indexType}", method = RequestMethod.PUT)
     public BaseResponse rebuildIndex(@PathVariable String indexType) {
         BaseResponse response;
@@ -66,7 +65,7 @@ public class SearchIndexCtrl extends BaseCtrl
         return response;
     }
 
-    @RequiresAuthentication
+    @RequiresPermissions("admin:searchIndexEdit")
     @RequestMapping(value = "/{indexType}", method = RequestMethod.DELETE)
     public BaseResponse clearIndex(@PathVariable String indexType) {
         BaseResponse response;

@@ -4,7 +4,8 @@ import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.util.OutputUtils;
-import gov.nysenate.openleg.util.UIKeyUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Component("apiAuthFilter")
 public class ApiAuthFilter implements Filter
@@ -41,8 +41,9 @@ public class ApiAuthFilter implements Filter
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+        Subject subject = SecurityUtils.getSubject();
         if (enabled) {
-            if (ipAddress.matches(filterAddress) || apiUserService.validateKey(key)) {
+            if (ipAddress.matches(filterAddress) || subject.isPermitted("ui:view") || apiUserService.validateKey(key)) {
                 filterChain.doFilter(servletRequest, servletResponse);
             }
             else {

@@ -38,7 +38,6 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_P
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequiresPermissions("admin:view")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/notifications", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class NotificationCtrl extends BaseCtrl
 {
@@ -57,6 +56,7 @@ public class NotificationCtrl extends BaseCtrl
      *
      * Expected Output: NotificationView
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/{id:\\d+}")
     public BaseResponse getNotification(@PathVariable int id) {
         return new ViewObjectResponse<>(new NotificationView(notificationService.getNotification(id)));
@@ -74,6 +74,7 @@ public class NotificationCtrl extends BaseCtrl
      *
      * Expected Output: List of NotificationSummaryView or NotificationView
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "")
     public BaseResponse getNotifications(WebRequest request) {
         LocalDateTime fromDate = LocalDate.now().minusDays(7).atStartOfDay();
@@ -88,6 +89,7 @@ public class NotificationCtrl extends BaseCtrl
      * Return notifications from a given date to now (GET) /api/3/admin/notifications/{from}
      * @see #getNotifications(WebRequest)
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/{from:\\d{4}-.*}")
     public BaseResponse getNotifications(@PathVariable String from, WebRequest request) {
         LocalDateTime fromDate = parseISODateTime(from, "from");
@@ -102,6 +104,7 @@ public class NotificationCtrl extends BaseCtrl
      * Return notifications for a given date/time range (GET) /api/3/admin/notifications/{from}/{to}
      * @see #getNotifications(WebRequest)
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/{from}/{to:.*\\.?.*}")
     public BaseResponse getNotifications(@PathVariable String from,
                                          @PathVariable String to,
@@ -128,6 +131,7 @@ public class NotificationCtrl extends BaseCtrl
      *                      limit - Limit the number of results (default 25)
      *                      offset - Start results from offset
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/search")
     public BaseResponse searchForNotifications(@RequestParam(required = true) String term,
                                                @RequestParam(defaultValue = "") String sort,

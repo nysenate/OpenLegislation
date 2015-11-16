@@ -17,23 +17,32 @@
         Developed in-house at the <a href="http://www.nysenate.gov">New York State Senate</a>, Open Legislation is a public web service that provides access
         to NYS legislative data from the Legislative Bill Drafting Commission system through a JSON API.
       </div>
-      <form ng-submit="loginWithAPIKey()">
-        <div layout="row" layout-sm="column" layout-align="center center">
-          <md-input-container style="min-width: 75%" class="margin-right-20">
-            <label>Enter your API Key here to browse the data</label>
-            <input type="text" name="apikey" ng-required ng-trim ng-model="apiKey"/>
-          </md-input-container>
-          <md-button style="width: 160px;" class="bold md-primary md-raised">
-            Browse API data
-          </md-button>
-        </div>
-        <div class="signup-err" ng-if="loginErrMsg">
-          <h4><i class="icon-warning prefix-icon"></i> {{loginErrMsg}}</h4>
-        </div>
-      </form>
     </div>
     <div class="padding-20">
-      <h2 class="project-desc-label" id="dataweprovide"><i class="icon-text prefix-icon"></i>Data We Provide</h2>
+      <h2 class="project-desc-label" id="viewinteral">Browse Legislation</h2>
+      <div class="regular-container">
+        <div class="project-desc">
+          <p>
+            We have an Open Legislation interface that we use to assist in our development.<br/>
+            Feel free to access it by using your API Key.
+          </p>
+          <form ng-submit="loginWithAPIKey()">
+            <div layout="row" layout-sm="column" layout-align="center center">
+              <md-input-container style="min-width: 75%" class="margin-right-20">
+                <label>Enter your API Key here to browse the data</label>
+                <input type="text" name="apikey" ng-required ng-trim ng-model="apiKey"/>
+              </md-input-container>
+              <md-button style="width: 160px;" class="bold md-primary md-raised">
+                View Legislation
+              </md-button>
+            </div>
+            <div class="signup-err" ng-if="loginErrMsg">
+              <h4><i class="icon-warning prefix-icon"></i> {{loginErrMsg}}</h4>
+            </div>
+          </form>
+        </div>
+      </div>
+      <h2 class="project-desc-label" id="dataweprovide">Data We Provide</h2>
       <div class="regular-container">
         <div class="project-desc">
           <md-list layout-gt-sm="row" layout-wrap>
@@ -50,7 +59,7 @@
           </md-list>
         </div>
       </div>
-      <h2 class="project-desc-label" id="signup"><i class="icon-key prefix-icon"></i>Sign up for an API Key</h2>
+      <h2 class="project-desc-label" id="signup">Sign up for an API Key</h2>
       <div class="regular-container">
         <div class="project-desc">
           <p>By signing up for a key you can access the API to power your own legislative apps.<br/>Simply provide
@@ -82,16 +91,18 @@
         </div>
         <hr/>
       </div>
-      <h2 class="project-desc-label" id="opensource"><i class="icon-code prefix-icon"></i>Open Source</h2>
+      <h2 class="project-desc-label" id="opensource">Open Source</h2>
       <div class="regular-container">
-        <p class="project-desc">
-          OpenLegislation is developed using several open-source packages and frameworks.<br/><br/>
-          Source code is <a class="slogan-link" href="http://www.github.com/nysenate/OpenLegislation">published on GitHub</a>.
-          Feel free to open any tickets with issues you are having or contact the development team at
-          <a class="slogan-link" href="mailto:senatedev@nysenate.gov">senatedev@nysenate.gov.</a>
-        </p>
+        <div class="project-desc">
+          <p>
+            OpenLegislation is developed using several open-source packages and frameworks.<br/><br/>
+            Source code is <a class="slogan-link" href="http://www.github.com/nysenate/OpenLegislation">published on GitHub</a>.
+            Feel free to open any tickets with issues you are having or contact the development team at
+            <a class="slogan-link" href="mailto:senatedev@nysenate.gov">senatedev@nysenate.gov.</a>
+          </p>
+        </div>
       </div>
-      <h2 class="project-desc-label" id="docs"><i class="icon-info prefix-icon"></i>How to use the API</h2>
+      <h2 class="project-desc-label" id="docs">How to use the API</h2>
       <a class="project-doc-link" target="_blank" href="${ctxPath}/docs">View docs in new window</a>
       <div class="regular-container">
         <iframe width="100%" class="docs-iframe" ng-src="{{currDocsPath}}">

@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
 @Component
 public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
 {
@@ -67,11 +69,6 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
         return null;
     }
 
-    @Override
-    public boolean isCachingEnabled() {
-        return false;
-    }
-
     /**
      * This method assigns the API User role.
      *
@@ -80,9 +77,14 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        info.addRole(OpenLegRole.API_USER.name());
-        return info;
+        Collection principalCollection = principals.fromRealm(getName());
+        if (!principalCollection.isEmpty()) {
+            SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+            logger.info("Assigning API USER role to {}", principalCollection.iterator().next().toString());
+            info.addRole(OpenLegRole.API_USER.name());
+            return info;
+        }
+        return null;
     }
 
     @Override

@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
-@RequiresPermissions("admin:cacheEdit")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/cache")
 public class CacheCtrl extends BaseCtrl
 {
@@ -56,10 +55,11 @@ public class CacheCtrl extends BaseCtrl
 
     /**
      * Cache Stats API
+     * ---------------
      *
      * Gets stats for all memory caches: (GET) /api/3/cache/
      */
-    @RequiresAuthentication
+    @RequiresPermissions("admin:cacheEdit")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getCacheStats() {
         return ListViewResponse.of(Arrays.asList(cacheManager.getCacheNames()).stream()
@@ -69,6 +69,7 @@ public class CacheCtrl extends BaseCtrl
 
     /**
      * Cache Warming API
+     * -----------------
      *
      * This api can be used to clear out and pre-load a pre-determined subset of data into the cache
      * to boost performance of commonly used api calls.
@@ -77,7 +78,7 @@ public class CacheCtrl extends BaseCtrl
      * The cacheType can be either 'all' for all caches, or one of the values in the
      * {@link gov.nysenate.openleg.model.cache.ContentCache} enumeration.
      */
-    @RequiresAuthentication
+    @RequiresPermissions("admin:cacheEdit")
     @RequestMapping(value = "/{cacheType}", method = RequestMethod.PUT)
     public BaseResponse warmCache(@PathVariable String cacheType) {
         Set<ContentCache> targetCaches = getTargetCaches(cacheType);
@@ -87,11 +88,12 @@ public class CacheCtrl extends BaseCtrl
 
     /**
      * Cache Evict API
+     * ---------------
      *
      * Delete all entries in the specified cache(s): (DELETE) /api/3/cache/{cacheType}
      * @see #warmCache(String) for details about 'cacheType'
      */
-    @RequiresAuthentication
+    @RequiresPermissions("admin:cacheEdit")
     @RequestMapping(value = "/{cacheType}", method = RequestMethod.DELETE)
     public BaseResponse deleteCache(@PathVariable String cacheType) {
         Set<ContentCache> targetCaches = getTargetCaches(cacheType);
@@ -101,9 +103,10 @@ public class CacheCtrl extends BaseCtrl
 
     /**
      * Cache Evict by Id API
+     * ---------------------
      *
      * Delete the entry in the specified cache designated by the given id:
-     *      (DELETE) /api/3/cache/{cacheType}/id
+     * (DELETE) /api/3/cache/{cacheType}/id
      *
      * The id is specified through required request parameters, which depend on the cacheType
      *
@@ -127,7 +130,7 @@ public class CacheCtrl extends BaseCtrl
      *
      * Request params for APIUSER: key (string) - api user's key
      */
-    @RequiresAuthentication
+    @RequiresPermissions("admin:cacheEdit")
     @RequestMapping(value = "/{cacheType}/id", method = RequestMethod.DELETE)
     public BaseResponse evictContentId(@PathVariable String cacheType, WebRequest webRequest)
             throws MissingServletRequestParameterException {

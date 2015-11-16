@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
 @RestController
-@RequiresPermissions("admin:envEdit")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/environment")
 public class EnvironmentCtrl extends BaseCtrl
 {
@@ -64,14 +63,16 @@ public class EnvironmentCtrl extends BaseCtrl
 
     /**
      * Set Environment Variable API
+     * ----------------------------
      *
      * Set the value of an environment variable:
-     *          (GET) /api/3/admin/environment/set
+     * (GET) /api/3/admin/environment/set
      *
      * Request Params: varName - String - the name of the environment variable to set
      *                 value - String - a string representation of the value to set
      *
      */
+    @RequiresPermissions("admin:envEdit")
     @RequestMapping(value = "/set")
     public BaseResponse setVariable(@RequestParam String varName,
                                     @RequestParam String value) {
@@ -86,13 +87,15 @@ public class EnvironmentCtrl extends BaseCtrl
 
     /**
      * Get Environment Variable API
+     * ----------------------------
      *
      * Get the value of one or more environment variables
-     *          (GET) /api/3/admin/environment
+     * (GET) /api/3/admin/environment
      *
      * Request Params: varName - String[] - names of variables to retrieve, gets all if empty
      *                 mutableOnly - boolean - default false - gets only mutable variables when set to true
      */
+    @RequiresPermissions("admin:envEdit")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getVariables(@RequestParam(defaultValue = "") String[] varName,
                                      @RequestParam(defaultValue = "false") boolean mutableOnly) {

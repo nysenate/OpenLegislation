@@ -41,7 +41,6 @@ import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequiresPermissions("admin:view")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/spotcheck", produces = APPLICATION_JSON_VALUE)
 public class SpotCheckCtrl extends BaseCtrl
 {
@@ -76,6 +75,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Expected Output: ReportSummaryResponse
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/summaries/{from}/{to}")
     public BaseResponse getReportSummaries(@RequestParam(required = false) String reportType,
                                            @PathVariable String from,
@@ -98,6 +98,8 @@ public class SpotCheckCtrl extends BaseCtrl
                         .map(ReportInfoView::new)
                         .collect(Collectors.toList())), fromDateTime, toDateTime, summaries.size(), LimitOffset.ALL);
     }
+
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/summaries")
     public BaseResponse getReportSummaries(@RequestParam(required = false) String reportType, WebRequest request) {
         LocalDateTime today = LocalDateTime.now();
@@ -116,6 +118,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Expected Output: ReportDetailResponse
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/{reportType}/{reportDateTime:.+}", method = RequestMethod.GET)
     public BaseResponse getReport(@PathVariable String reportType,
                                   @PathVariable String reportDateTime) {
@@ -129,6 +132,7 @@ public class SpotCheckCtrl extends BaseCtrl
     /**
      * Spotcheck Open Observations API
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/open-mismatches/{reportType}", method = RequestMethod.GET)
     public BaseResponse getOpenMismatches(@PathVariable String reportType,
                                         @RequestParam(required = false) String[] mismatchType,
@@ -161,6 +165,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *                                  are retrieved - defaults to all
      *                                  @see SpotCheckRefType
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/run")
     public BaseResponse runReports(@RequestParam String[] reportType) {
         Set<SpotCheckRefType> refTypes = getSpotcheckRefTypes(reportType, "reportType");
@@ -177,6 +182,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Usage: (GET) /api/3/admin/spotcheck/run/weekly
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/run/weekly")
     public BaseResponse runWeeklyReports() {
         spotcheckRunService.runWeeklyReports();

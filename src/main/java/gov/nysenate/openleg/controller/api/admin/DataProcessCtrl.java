@@ -36,7 +36,6 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_P
 import static java.util.stream.Collectors.toList;
 
 @RestController
-@RequiresPermissions("admin:dataProcess")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/process", method = RequestMethod.GET)
 public class DataProcessCtrl extends BaseCtrl
 {
@@ -45,7 +44,6 @@ public class DataProcessCtrl extends BaseCtrl
     @Autowired private Environment env;
     @Autowired private DataProcessLogService processLogs;
     @Autowired private DataProcessor dataProcessor;
-
 
     /**
      * Data Process API
@@ -56,6 +54,7 @@ public class DataProcessCtrl extends BaseCtrl
      *
      * Expected Output: DataProcessRunView if the run was successful, ErrorResponse otherwise
      */
+    @RequiresPermissions("admin:dataProcess")
     @RequestMapping(value = "/run")
     public BaseResponse triggerDataProcess() {
         try {
@@ -93,6 +92,7 @@ public class DataProcessCtrl extends BaseCtrl
      * Gets the process runs from the past week.
      * @see #getRunsDuring(String, String, WebRequest)
      */
+    @RequiresPermissions("admin:dataProcess")
     @RequestMapping("/runs")
     public BaseResponse getRecentRuns(WebRequest request) throws InvalidRequestParamEx {
         return getRunsDuring(LocalDateTime.now().minusDays(7), LocalDateTime.now(), request);
@@ -102,12 +102,14 @@ public class DataProcessCtrl extends BaseCtrl
      * Gets the process runs from a given date time.
      * @see #getRunsDuring(String, String, WebRequest)
      */
+    @RequiresPermissions("admin:dataProcess")
     @RequestMapping("/runs/{from}")
     public BaseResponse getRunsFrom(@PathVariable String from, WebRequest request) throws InvalidRequestParamEx {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
         return getRunsDuring(fromDateTime, LocalDateTime.now(), request);
     }
 
+    @RequiresPermissions("admin:dataProcess")
     @RequestMapping("/runs/{from}/{to}")
     public BaseResponse getRunsDuring(@PathVariable String from, @PathVariable String to, WebRequest request)
                                       throws InvalidRequestParamEx {
@@ -141,6 +143,7 @@ public class DataProcessCtrl extends BaseCtrl
      *
      * Expected Output: DataProcessRunDetailView
      */
+    @RequiresPermissions("admin:dataProcess")
     @RequestMapping("/runs/id/{id:[0-9]+}")
     public BaseResponse getRuns(@PathVariable int id, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, 100);

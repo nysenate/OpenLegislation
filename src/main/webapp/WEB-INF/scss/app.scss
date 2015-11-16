@@ -789,6 +789,9 @@ ul.pagination {
   font-size: 1.2em;
   text-align: center;
   font-family: 'Roboto Slab', 'Open Sans', sans-serif;
+  .md-button {
+    font-family: 'Open Sans', sans-serif;
+  }
   color: #444;
   font-weight: 300;
 }

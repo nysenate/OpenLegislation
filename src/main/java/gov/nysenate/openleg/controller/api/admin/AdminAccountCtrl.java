@@ -222,7 +222,8 @@ public class AdminAccountCtrl extends BaseCtrl
         sendMailService.sendMessage(username, registrationEmailSubject, message);
     }
 
-    private class UserException extends RuntimeException {
+    private class UserException extends RuntimeException
+    {
         private static final long serialVersionUID = -6422565299854256546L;
         private String username;
 

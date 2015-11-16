@@ -73,12 +73,16 @@
                 <menu-item url="${ctxPath}/laws" icon="icon-bookmarks">New York State Laws</menu-item>
                 <menu-item url="${ctxPath}/members" icon="icon-users">Senate / Assembly Membership</menu-item>
                 <menu-item url="${ctxPath}/transcripts" icon="icon-text">Floor/Hearing Transcripts</menu-item>
+                <menu-item url="${ctxPath}/docs" target="_self" icon="icon-code">JSON API Docs</menu-item>
+                <shiro:user>
+                  <menu-item url="${ctxPath}/logout" target="_self" icon="icon-log-out">Logout</menu-item>
+                </shiro:user>
               </menu-section>
+
               <shiro:hasPermission name="admin:view">
                 <menu-section title="Admin">
                   <menu-item url="${ctxPath}/admin">Dashboard</menu-item>
                   <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
-                  <menu-item url="${ctxPath}/logout" target="_self">Logout</menu-item>
                 </menu-section>
                 <menu-section title="Reports">
                   <menu-item url="${ctxPath}/admin/report/spotcheck">Spotcheck Reports</menu-item>

@@ -66,7 +66,7 @@ openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$window', '$loca
     $scope.loginWithAPIKey = function() {
         $scope.loginErrMsg = null;
         if (!$scope.apiKey) {
-            $scope.loginErrMsg = 'Please enter a valid api key!';
+            $scope.loginErrMsg = 'Please enter a valid api key, or sign up for one below.';
         }
         else {
             $scope.apiKey = $scope.apiKey.trim();

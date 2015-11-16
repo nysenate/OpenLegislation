@@ -25,10 +25,9 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.*;
 
 @RestController
-@RequiresPermissions("admin:view")
 @RequestMapping(value = BASE_ADMIN_API_PATH + "/scraping/billqueue")
-public class BillScrapeQueueCtrl extends BaseCtrl {
-
+public class BillScrapeQueueCtrl extends BaseCtrl
+{
     private static final Logger logger = LoggerFactory.getLogger(BillScrapeQueueCtrl.class);
 
     @Autowired
@@ -44,6 +43,7 @@ public class BillScrapeQueueCtrl extends BaseCtrl {
      *                     offset - offset the start of the response
      *                     order - determines order of response (default DESC)
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getBillScrapeQueue(WebRequest request) {
         LimitOffset limitOffset = getLimitOffset(request, 0);
@@ -66,6 +66,7 @@ public class BillScrapeQueueCtrl extends BaseCtrl {
      * Request Parameters: priority - an integer that determines the priority of the enqueued bill
      *                                  @see ScrapeQueuePriority#MANUAL_ENTRY for default value
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/{sessionYear:\\d+}/{printNo}", method = RequestMethod.PUT)
     public BaseResponse addBillToScrapeQueue(@PathVariable int sessionYear,
                                              @PathVariable String printNo,
@@ -84,6 +85,7 @@ public class BillScrapeQueueCtrl extends BaseCtrl {
      * Remove a bill from the scrape queue
      * Usage: (DELETE) /api/3/admin/scraping/billqueue/{sessionYear}/{printNo}
      */
+    @RequiresPermissions("admin:view")
     @RequestMapping(value = "/{sessionYear}/{printNo}", method = RequestMethod.DELETE)
     public BaseResponse removeBillfromScrapeQueue(@PathVariable int sessionYear,
                                                   @PathVariable String printNo) {

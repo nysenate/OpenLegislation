@@ -7,8 +7,6 @@ import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.model.auth.ApiKeyLoginToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +27,7 @@ public class AngularAppCtrl
     private static final Logger logger = LoggerFactory.getLogger(AngularAppCtrl.class);
 
     @Value("${ga.tracking.id}") private String gaTrackingId;
-    @Value("${api.secret}") private String apiSecret;
-    @Value("${api.auth.ip.whitelist}") private String whitelist;
+    @Value("${api.auth.ip.whitelist}") private String ipWhitelist;
 
     @RequestMapping({"/",
                      "/data/**",
@@ -42,17 +39,28 @@ public class AngularAppCtrl
                      "/laws/**",
                      "/sources/**",
                      "/reports/**",
-                     "/manage/**",
-                     "/admin/**"})
+                     "/manage/**"
+                     })
     public String home(HttpServletRequest request) {
+        String ipAddr = request.getRemoteAddr();
         // Google Analytics
         request.setAttribute("gaTrackingId", gaTrackingId);
         Subject subject = SecurityUtils.getSubject();
-        if (subject.isPermitted("ui:view")) {
+        // Senate staff and API users will be routed to the internal dev interface.
+        if (subject.isPermitted("ui:view") || ipAddr.matches(ipWhitelist)) {
             return "home";
         }
-        // Unauthorized users will see the public page.
+        // Non-senate staff and un-authenticated users will see the public page.
         return "publichome";
+    }
+
+    @RequestMapping("/admin/**")
+    public String admin(HttpServletRequest request) {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isPermitted("admin:view")) {
+            return "home";
+        }
+        return "404";
     }
 
     @ResponseBody

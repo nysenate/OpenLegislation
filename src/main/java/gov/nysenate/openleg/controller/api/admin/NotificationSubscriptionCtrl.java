@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequiresPermissions("admin:view")
 @RequestMapping(value = BaseCtrl.BASE_ADMIN_API_PATH + "/notifications", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class NotificationSubscriptionCtrl extends BaseCtrl
 {
@@ -42,6 +41,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
      *                      address (string) - The address for the specified target medium.
      *
      */
+    @RequiresPermissions("admin:notification-subscribe")
     @RequestMapping(value = "/subscribe")
     public BaseResponse subscribeToNotification(@RequestParam String type,
                                                 @RequestParam String target,
@@ -59,6 +59,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
      * Unsubscribe from a notification (GET) /api/3/admin/notifications/unsubscribe
      * @see #subscribeToNotification
      */
+    @RequiresPermissions("admin:notification-subscribe")
     @RequestMapping(value = "/unsubscribe")
     public BaseResponse unsubscribeFromNotification(@RequestParam String type,
                                                     @RequestParam String target,
@@ -78,6 +79,7 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
      *
      * Expected Output: List of NotificationSubscriptionView
      */
+    @RequiresPermissions("admin:notification-subscribe")
     @RequestMapping(value = "/subscriptions")
     public BaseResponse viewSubscriptions(WebRequest request) {
         String user = (String) SecurityUtils.getSubject().getPrincipal();
@@ -86,7 +88,6 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
                                .map(NotificationSubscriptionView::new).collect(Collectors.toList()),
                 0, limOff);
     }
-
 
     /** --- Internal --- */
 
