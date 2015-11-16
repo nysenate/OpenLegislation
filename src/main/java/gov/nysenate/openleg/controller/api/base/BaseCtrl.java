@@ -132,11 +132,16 @@ public abstract class BaseCtrl
      */
     protected LocalDateTime parseISODateTime(String dateTimeString, String parameterName) {
         try {
-            return LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateTimeString));
+            try {
+                return LocalDateTime.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateTimeString));
+            } catch (DateTimeParseException ex) {
+                // Try to parse the parameter as a date instead of a timestamp if parsing failed
+                return parseISODate(dateTimeString, parameterName).atStartOfDay();
+            }
         }
-        catch (DateTimeParseException | NullPointerException ex) {
+        catch (InvalidRequestParamEx | NullPointerException ex) {
             throw new InvalidRequestParamEx(dateTimeString, parameterName,
-                "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55 for October 27, 2014 9:44:55 AM");
+                    "date-time", "ISO 8601 date and time formatted string e.g. 2014-10-27T09:44:55 for October 27, 2014 9:44:55 AM");
         }
     }
 
