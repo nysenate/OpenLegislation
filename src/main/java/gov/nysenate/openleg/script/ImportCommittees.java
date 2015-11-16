@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;

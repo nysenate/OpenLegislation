@@ -5,6 +5,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
+import gov.nysenate.openleg.model.transcript.TranscriptNotFoundEx;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface TranscriptDataService
      * @param transcriptId TranscriptId
      * @return Transcript
      */
-    public Transcript getTranscript(TranscriptId transcriptId);
+    public Transcript getTranscript(TranscriptId transcriptId) throws TranscriptNotFoundEx;
 
     /**
      * Get a list of transcript ids for a given session year.

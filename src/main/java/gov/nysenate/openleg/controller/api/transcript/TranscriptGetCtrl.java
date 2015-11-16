@@ -5,6 +5,7 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.transcript.TranscriptIdView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptInfoView;
 import gov.nysenate.openleg.client.view.transcript.TranscriptPdfView;
@@ -139,7 +140,7 @@ public class TranscriptGetCtrl extends BaseCtrl
 
     @ExceptionHandler(TranscriptNotFoundEx.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    protected ErrorResponse handleTranscriptNotFoundEx(TranscriptNotFoundEx ex) {
-        return new ErrorResponse(ErrorCode.TRANSCRIPT_NOT_FOUND);
+    public ErrorResponse handleTranscriptNotFoundEx(TranscriptNotFoundEx ex) {
+        return new ViewObjectErrorResponse(ErrorCode.TRANSCRIPT_NOT_FOUND, new TranscriptIdView(ex.getTranscriptId()));
     }
 }

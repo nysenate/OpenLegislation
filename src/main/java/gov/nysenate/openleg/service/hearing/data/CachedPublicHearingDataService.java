@@ -9,7 +9,7 @@ import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.service.hearing.event.PublicHearingUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -34,12 +34,16 @@ public class CachedPublicHearingDataService implements PublicHearingDataService
 
     /** {@inheritDoc */
     @Override
-    public PublicHearing getPublicHearing(PublicHearingId publicHearingId) {
+    public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws PublicHearingNotFoundEx {
         if (publicHearingId == null) {
             throw new IllegalArgumentException("PublicHearingId cannot be null");
         }
 
-        return publicHearingDao.getPublicHearing(publicHearingId);
+        try {
+            return publicHearingDao.getPublicHearing(publicHearingId);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new PublicHearingNotFoundEx(publicHearingId, ex);
+        }
     }
 
     /** {@inheritDoc */

@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.hearing.PublicHearingUpdateToken;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +27,7 @@ public interface PublicHearingDao
      * @param publicHearingId
      * @return
      */
-    public PublicHearing getPublicHearing(PublicHearingId publicHearingId);
+    public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException;
 
     /**
      * Updates the backing store with the given instance or inserts

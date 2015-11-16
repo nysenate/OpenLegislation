@@ -16,7 +16,7 @@ public interface PublicHearingDataService
      * @param publicHearingId
      * @return
      */
-    public PublicHearing getPublicHearing(PublicHearingId publicHearingId);
+    public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws PublicHearingNotFoundEx;
 
     /**
      * Retrieves a List of {@link PublicHearingId}.

@@ -2,6 +2,10 @@ package gov.nysenate.openleg.model.entity;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.CommitteeSessionId;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.util.DateUtils;
 
 import java.time.LocalDateTime;

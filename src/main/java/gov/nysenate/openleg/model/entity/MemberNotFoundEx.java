@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.entity;
 
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.Chamber;
 
 public class MemberNotFoundEx extends Exception
 {

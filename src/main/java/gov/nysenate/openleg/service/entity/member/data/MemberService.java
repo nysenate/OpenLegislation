@@ -18,7 +18,7 @@ public interface MemberService
      * @param memberId int
      * @param sessionYear SessionYear
      * @return Member
-     * @throws gov.nysenate.openleg.model.entity.MemberNotFoundEx If no matching member was found.
+     * @throws MemberNotFoundEx If no matching member was found.
      */
     public Member getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx;
 

@@ -73,6 +73,10 @@ public enum ErrorCode
 
     NOTIFICATION_NOT_FOUND(161, "The requested notification was not found"),
 
+    /** --- Hearing --- */
+
+    PUBLIC_HEARING_NOT_FOUND(171, "The requested public hearing was not found"),
+
     /** --- Admin --- */
 
     USER_ALREADY_EXISTS(191, "The entered username already exists"),

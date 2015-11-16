@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.hearing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -35,7 +36,7 @@ public class SqlPublicHearingDao extends SqlBaseDao implements PublicHearingDao
 
     /** {@inheritDoc} */
     @Override
-    public PublicHearing getPublicHearing(PublicHearingId publicHearingId) {
+    public PublicHearing getPublicHearing(PublicHearingId publicHearingId) throws EmptyResultDataAccessException {
         MapSqlParameterSource params = getPublicHearingIdParams(publicHearingId);
         PublicHearing publicHearing = jdbcNamed.queryForObject(
                 SELECT_PUBLIC_HEARING_BY_ID.getSql(schema()), params, publicHearingRowMapper);

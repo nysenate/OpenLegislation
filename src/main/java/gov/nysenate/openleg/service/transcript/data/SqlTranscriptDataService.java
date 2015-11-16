@@ -33,7 +33,7 @@ public class SqlTranscriptDataService implements TranscriptDataService
 
     /** {@inheritDoc} */
     @Override
-    public Transcript getTranscript(TranscriptId transcriptId) {
+    public Transcript getTranscript(TranscriptId transcriptId) throws TranscriptNotFoundEx {
         if (transcriptId == null) {
             throw new IllegalArgumentException("TranscriptId cannot be null");
         }

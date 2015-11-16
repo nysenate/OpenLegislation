@@ -10,4 +10,8 @@ public class TranscriptNotFoundEx extends RuntimeException
         super((transcriptId != null) ?"Transcript " + transcriptId.toString() + " could not be retrieved."
                         : "Transcript could not be retrieved since the given TranscriptId was null", ex);
     }
+
+    public TranscriptId getTranscriptId() {
+        return transcriptId;
+    }
 }

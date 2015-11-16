@@ -18,6 +18,7 @@ import gov.nysenate.openleg.service.bill.data.ApprovalDataService;
 import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.bill.data.VetoNotFoundException;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
