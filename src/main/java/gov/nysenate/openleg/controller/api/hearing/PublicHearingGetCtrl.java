@@ -43,6 +43,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
 
     /**
      * Public Hearing Listing API
+     * --------------------------
      *
      * Retrieve all public hearings: (GET) /api/3/hearings/
      * Request Parameters : sort - Lucene syntax for sorting by any field of a public hearing response.
@@ -66,6 +67,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
 
     /**
      * Public Hearing Listing API.
+     * --------------------------
      *
      * Retrieve public hearings for a year: (GET) /api/3/hearings/{year}
      * Request Parameters : sort - Lucene syntax for sorting by any field of a public hearing response.
@@ -91,6 +93,7 @@ public class PublicHearingGetCtrl extends BaseCtrl
 
     /**
      * Single Public Hearing Retrieval API.
+     * ------------------------------------
      *
      * Retrieve a singe public hearing by its filename.
      * (GET) /api/3/hearings/{filename}
@@ -108,7 +111,8 @@ public class PublicHearingGetCtrl extends BaseCtrl
     }
 
     /**
-     *  Single Public Hearing PDF retrieval API.
+     * Single Public Hearing PDF retrieval API.
+     * ----------------------------------------
      *
      * Retrieve a single public hearing text pdf: (GET) /api/3/hearings/{filename}.pdf
      *

@@ -21,10 +21,10 @@ public class TranscriptPdfCtrl
     private TranscriptDataService transcriptData;
 
     /**
-     * Single Transcript PDF retrieval API
-     * -----------------------------------
+     * Single Transcript PDF retrieval
+     * -------------------------------
      *
-     * Retrieve a single transcript text pdf: (GET) /api/3/transcripts/{filename}.pdf
+     * Retrieve a single transcript text pdf: (GET) /pdf/transcripts/{filename}/
      *
      * Request Parameters: None.
      *
