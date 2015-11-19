@@ -14,6 +14,10 @@ public class ApiResponse
 
     /** --- Constructors --- */
 
+    public ApiResponse(ApiRequest baseRequest) {
+        this.baseRequest = baseRequest;
+    }
+
     public ApiResponse(ApiRequest baseRequest, HttpServletResponse response, LocalDateTime responseDateTime) {
         this.baseRequest = baseRequest;
         this.responseDateTime = responseDateTime;

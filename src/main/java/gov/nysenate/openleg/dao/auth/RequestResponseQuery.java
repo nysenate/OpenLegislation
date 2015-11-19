@@ -11,6 +11,18 @@ public enum RequestResponseQuery implements BasicSqlQuery
     GET_ALL_REQUESTS(
         "SELECT * FROM public." + SqlTable.API_REQUEST
     ),
+    GET_ALL_REQUESTS_BY_DATETIME(
+        GET_ALL_REQUESTS.sql + " WHERE request_time BETWEEN :startDateTime AND :endDateTime"
+    ),
+
+    GET_ALL_RESPONSES(
+        "SELECT * FROM public." + SqlTable.API_RESPONSE + " res\n" +
+        "JOIN public." + SqlTable.API_REQUEST + " req ON res.req_id = req.request_id"
+    ),
+    GET_ALL_RESPONSES_BY_DATETIME(
+        GET_ALL_RESPONSES.sql + " WHERE req.request_time BETWEEN :startDateTime AND :endDateTime"
+    ),
+
     INSERT_REQUEST(
         "INSERT INTO public." + SqlTable.API_REQUEST + "\n"+
         "(request_time, url, ipaddress, method, agent, apikey)" + "\n"+

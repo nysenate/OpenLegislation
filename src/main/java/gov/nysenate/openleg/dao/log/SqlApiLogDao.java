@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.dao.log;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.auth.RequestResponseQuery;
-import gov.nysenate.openleg.dao.base.ImmutableParams;
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.auth.ApiRequest;
 import gov.nysenate.openleg.model.auth.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -12,19 +14,18 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static gov.nysenate.openleg.util.DateUtils.toDate;
+import static gov.nysenate.openleg.util.DateUtils.*;
 
 @Repository
 public class SqlApiLogDao extends SqlBaseDao implements ApiLogDao
 {
-    @Override
-    public List<ApiRequest> getRequests() {
-        throw new UnsupportedOperationException();
-    }
+    private static final Logger logger = LoggerFactory.getLogger(SqlApiLogDao.class);
 
     private static final RowMapper<ApiRequest> apiRequestMapper = (rs, rowNum) -> {
         ApiRequest request = new ApiRequest();
@@ -34,8 +35,25 @@ public class SqlApiLogDao extends SqlBaseDao implements ApiLogDao
         request.setRequestTime(getLocalDateTimeFromRs(rs, "request_time"));
         request.setUserAgent(rs.getString("agent"));
         request.setUrl(rs.getString("url"));
-        request.setIpAddress((InetAddress) rs.getObject("ipaddress"));
+        String ipAddress = rs.getString("ipaddress");
+        if (ipAddress != null) {
+            try {
+                request.setIpAddress(InetAddress.getByName(ipAddress));
+            } catch (UnknownHostException e) {
+                logger.error("Failed to parse IP", e);
+            }
+        }
         return request;
+    };
+
+    private static final RowMapper<ApiResponse> apiResponseMapper = (rs, rowNum) -> {
+        ApiRequest apiRequest = apiRequestMapper.mapRow(rs, rowNum);
+        ApiResponse response = new ApiResponse(apiRequest);
+        response.setContentType(rs.getString("content_type"));
+        response.setStatusCode(rs.getInt("status_code"));
+        response.setProcessTime(rs.getDouble("process_time"));
+        response.setResponseDateTime(getLocalDateTimeFromRs(rs, "response_time"));
+        return response;
     };
 
     private static ImmutableParams getApiRequestParams(ApiRequest req) {
@@ -58,22 +76,33 @@ public class SqlApiLogDao extends SqlBaseDao implements ApiLogDao
             .addValue("processTime", response.getProcessTime()));
     }
 
-    /**
-     * Save an API Request to the database
-     * @param req The API Request to save
-     * @return The id of the API request to be used in creating an API response
-     */
+    /** {@inheritDoc} */
+    @Override
+    public List<ApiResponse> getResponses(LimitOffset limOff, SortOrder order) {
+        OrderBy orderBy = new OrderBy("request_time", order);
+        return jdbcNamed.query(
+                RequestResponseQuery.GET_ALL_RESPONSES.getSql(schema(), orderBy, limOff), apiResponseMapper);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<ApiResponse> getResponses(Range<LocalDateTime> dateTimeRange, LimitOffset limOff, SortOrder order) {
+        OrderBy orderBy = new OrderBy("request_time", order);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("startDateTime", startOfDateTimeRange(dateTimeRange));
+        params.addValue("endDateTime", endOfDateTimeRange(dateTimeRange));
+        return jdbcNamed.query(
+                RequestResponseQuery.GET_ALL_RESPONSES_BY_DATETIME.getSql(schema(), orderBy, limOff), params, apiResponseMapper);
+    }
+
+    /** {@inheritDoc} */
     @Override
     public int saveApiRequest(ApiRequest req) throws DataAccessException {
         return jdbcNamed.queryForObject(RequestResponseQuery.INSERT_REQUEST.getSql(schema()),
                 getApiRequestParams(req), new SingleColumnRowMapper<>());
     }
 
-    /**
-     * Save an API Response
-     * @param response The API response to save to the database
-     * @throws DataAccessException
-     */
+    /** {@inheritDoc} */
     @Override
     public void saveApiResponse(ApiResponse response) throws DataAccessException {
         jdbcNamed.update(RequestResponseQuery.INSERT_RESPONSE.getSql(schema()),
