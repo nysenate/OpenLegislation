@@ -9,6 +9,7 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
+import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -19,6 +20,7 @@ import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.entity.member.search.MemberSearchService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,49 @@ public class MemberGetCtrl extends BaseCtrl
      * Member Listing API
      * ------------------
      *
+     * Get all members.
+     * Request Parameters : sort - Lucene syntax for sorting by any field of a member response.
+     *                      full - If true, the full member view will be returned.
+     *                      limit - Limit the number of results
+     *                      offset - Start results from an offset.
+     */
+    @RequestMapping(value = "")
+    public BaseResponse getMembersByYear(@RequestParam(defaultValue = "shortName:asc") String sort,
+                                         @RequestParam(defaultValue = "false") boolean full,
+                                         WebRequest request) throws SearchException, MemberNotFoundEx {
+        LimitOffset limOff = getLimitOffset(request, 50);
+        SearchResults<Member> results = memberSearch.searchMembers("*", sort, limOff);
+        return getMemberResponse(full, limOff, results);
+    }
+
+    /**
+     * Member Listing API
+     * ------------------
+     *
+     * Retrieve all members for a session year: (GET) /api/3/members/{sessionYear}
+     * Request Parameters : sort - Lucene syntax for sorting by any field of a member response.
+     *                      full - If true, the full member view will be returned.
+     *                      limit - Limit the number of results
+     *                      offset - Start results from an offset.
+     */
+    @RequestMapping(value = "/{sessionYear}")
+    public BaseResponse getMembersByYear(@PathVariable String sessionYear,
+                                         @RequestParam(defaultValue = "shortName:asc") String sort,
+                                         @RequestParam(defaultValue = "false") boolean full,
+                                         WebRequest request) throws SearchException, MemberNotFoundEx {
+        LimitOffset limOff = getLimitOffset(request, 50);
+        if (sessionYear.isEmpty() || !StringUtils.isNumeric(sessionYear)) {
+            throw new InvalidRequestParamEx(sessionYear, "sessionYear", "int", "A valid session year");
+        }
+        Integer sessionYearInt = Integer.parseInt(sessionYear);
+        SearchResults<Member> results = memberSearch.searchMembers(SessionYear.of(sessionYearInt), sort, limOff);
+        return getMemberResponse(full, limOff, results);
+    }
+
+    /**
+     * Member Listing API
+     * ------------------
+     *
      * Retrieve information for a member from a session year: (GET) /api/3/members/{sessionYear}/{id}
      * Request Parameters : full - If true, the full member view will be returned.
      *
@@ -54,27 +99,6 @@ public class MemberGetCtrl extends BaseCtrl
                 (full) ? new MemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))
                         : new SimpleMemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))
         );
-    }
-
-    /**
-     * Member Listing API
-     * ------------------
-     *
-     * Retrieve all members for a session year: (GET) /api/3/members/{sessionYear}
-     * Request Parameters : sort - Lucene syntax for sorting by any field of a member response.
-     *                      full - If true, the full member view will be returned.
-     *                      limit - Limit the number of results
-     *                      offset - Start results from an offset.
-     *
-     */
-    @RequestMapping(value = "/{sessionYear}")
-    public BaseResponse getMembersByYear(@PathVariable int sessionYear,
-                                         @RequestParam(defaultValue = "shortName:asc") String sort,
-                                         @RequestParam(defaultValue = "false") boolean full,
-                                         WebRequest request) throws SearchException, MemberNotFoundEx {
-        LimitOffset limOff = getLimitOffset(request, 50);
-        SearchResults<Member> results = memberSearch.searchMembers(SessionYear.of(sessionYear), sort, limOff);
-        return getMemberResponse(full, limOff, results);
     }
 
     /**
