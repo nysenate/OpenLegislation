@@ -9,5 +9,4 @@ public enum SpotCheckMismatchStatus
     EXISTING,   // An ongoing problem that has yet to be resolved.
     REGRESSION, // The mismatch was resolved once before but has appeared again.
     RESOLVED,   // An existing mismatch has been resolved.
-    IGNORE      // The mismatch does not need to be resolved and should be ignored.
 }

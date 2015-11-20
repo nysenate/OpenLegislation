@@ -14,6 +14,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.daybreak.DaybreakBill;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
+import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ import static java.util.stream.Collectors.toSet;
  * and save reports for bill data.
  */
 @Service("daybreakReport")
-public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
+public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId>
 {
     private static final Logger logger = LoggerFactory.getLogger(DaybreakReportService.class);
 
@@ -57,6 +58,11 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_DAYBREAK;
+    }
+
+    @Override
+    protected SpotCheckReportDao<BaseBillId> getReportDao() {
+        return reportDao;
     }
 
     /** {@inheritDoc} */
@@ -130,6 +136,8 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
         return report;
     }
 
+    /** --- Internal Methods --- */
+
     private boolean billIsPublished(Bill bill) {
         Version activeVersion = bill.getActiveVersion();
         Optional<PublishStatus> pubStatus = bill.getPublishStatus(activeVersion);
@@ -139,53 +147,5 @@ public class DaybreakReportService implements SpotCheckReportService<BaseBillId>
     private void recordMismatch(SpotCheckReport<BaseBillId> report, SpotCheckObservation<BaseBillId> sourceMissingObs, SpotCheckMismatch mismatch) {
         sourceMissingObs.addMismatch(mismatch);
         report.addObservation(sourceMissingObs);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void saveReport(SpotCheckReport<BaseBillId> report) {
-        if (report == null) {
-            throw new IllegalArgumentException("Supplied report cannot be null.");
-        }
-        reportDao.saveReport(report);
-        daybreakDao.updateDaybreakReportSetChecked(report.getReferenceDateTime().toLocalDate(), true);
-    }
-
-    /** {@inheritDoc}
-     * @param reportId*/
-    @Override
-    public SpotCheckReport<BaseBillId> getReport(SpotCheckReportId reportId) {
-        if (reportId == null) {
-            throw new IllegalArgumentException("Supplied reportId cannot be null!");
-        }
-        try {
-            return reportDao.getReport(reportId);
-        }
-        catch (EmptyResultDataAccessException ex) {
-            throw new SpotCheckReportNotFoundEx(reportId);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end,
-                                                           SortOrder dateOrder) {
-        if (dateOrder == null) { dateOrder = SortOrder.ASC; }
-        return reportDao.getReportSummaries(reportType, start, end, dateOrder);
-    }
-
-    @Override
-    public SpotCheckOpenMismatches<BaseBillId> getOpenObservations(OpenMismatchQuery query) {
-        return reportDao.getOpenObservations(query);
-    }
-
-    /** {@inheritDoc}
-     * @param reportId*/
-    @Override
-    public void deleteReport(SpotCheckReportId reportId) {
-        if (reportId == null) {
-            throw new IllegalArgumentException("Supplied reportId cannot be null");
-        }
-        reportDao.deleteReport(reportId);
     }
 }

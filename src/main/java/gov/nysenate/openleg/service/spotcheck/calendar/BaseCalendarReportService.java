@@ -1,17 +1,16 @@
 package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.CalendarAlertReportDao;
+import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.spotcheck.*;
-import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public abstract class BaseCalendarReportService implements SpotCheckReportService<CalendarId> {
+public abstract class BaseCalendarReportService extends BaseSpotCheckReportService<CalendarId> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseCalendarReportService.class);
 
@@ -44,9 +43,16 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
      */
     protected abstract Calendar getActualCalendar(CalendarId id, LocalDate calDate);
 
+
+
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_CALENDAR_ALERT;
+    }
+
+    @Override
+    protected SpotCheckReportDao<CalendarId> getReportDao() {
+        return reportDao;
     }
 
     @Override
@@ -60,41 +66,6 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
         report.setNotes(getNotes());
         report.addObservations(createObservations(references));
         return report;
-    }
-
-    @Override
-    public void saveReport(SpotCheckReport<CalendarId> report) {
-        reportDao.saveReport(report);
-    }
-
-    @Override
-    public SpotCheckReport<CalendarId> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx {
-        if (reportId == null) {
-            throw new IllegalArgumentException("Supplies reportId cannot be null.");
-        }
-        try {
-            return reportDao.getReport(reportId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new SpotCheckReportNotFoundEx(reportId);
-        }
-    }
-
-    @Override
-    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end, SortOrder dateOrder) {
-        return reportDao.getReportSummaries(reportType, start, end, dateOrder);
-    }
-
-    @Override
-    public SpotCheckOpenMismatches<CalendarId> getOpenObservations(OpenMismatchQuery query) {
-        return reportDao.getOpenObservations(query);
-    }
-
-    @Override
-    public void deleteReport(SpotCheckReportId reportId) {
-        if (reportId == null) {
-            throw new IllegalArgumentException("Cannot delete a null reportId.");
-        }
-        reportDao.deleteReport(reportId);
     }
 
     private List<Calendar> retrieveReferences(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
@@ -124,7 +95,7 @@ public abstract class BaseCalendarReportService implements SpotCheckReportServic
             markAsChecked(id);
         }
         // Cancel the report if there are no observations
-        if (observations.size() == 0) {
+        if (observations.isEmpty()) {
             throw new SpotCheckAbortException();
         }
         return observations;

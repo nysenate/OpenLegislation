@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.controller.api.admin.SpotCheckCtrl;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.service.spotcheck.agenda.AgendaSpotcheckProcessService;
@@ -38,8 +39,9 @@ public class SpotcheckTests extends BaseTests {
     public void openObsGetTest() {
         LocalTime start = LocalTime.now();
         logger.info("start {}", start);
-        spotCheckCtrl.getOpenMismatches("scraped-bill", null, "CONTENT_KEY", null, false, false,
-                new ServletWebRequest(new MockHttpServletRequest()));
+        BaseResponse response =
+                spotCheckCtrl.getOpenMismatches("scraped-bill", null, "CONTENT_KEY", null, false, false, false, false, true,
+                        new ServletWebRequest(new MockHttpServletRequest()));
         LocalTime end = LocalTime.now();
         logger.info("done {}", end);
         logger.info("took {}", Duration.between(start, end));

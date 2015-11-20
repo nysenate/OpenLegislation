@@ -4,10 +4,12 @@ import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.agenda.reference.AgendaAlertDao;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.CommitteeAgendaReportDao;
+import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseAgendaCheckReportService implements SpotCheckReportService<CommitteeAgendaAddendumId> {
+public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportService<CommitteeAgendaAddendumId> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseAgendaCheckReportService.class);
 
@@ -40,6 +42,11 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_AGENDA_ALERT;
+    }
+
+    @Override
+    protected SpotCheckReportDao<CommitteeAgendaAddendumId> getReportDao() {
+        return reportDao;
     }
 
     /** {@inheritDoc} */
@@ -67,49 +74,6 @@ public abstract class BaseAgendaCheckReportService implements SpotCheckReportSer
         report.setNotes(getNotes());
 
         return report;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void saveReport(SpotCheckReport<CommitteeAgendaAddendumId> report) {
-        reportDao.saveReport(report);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SpotCheckReport<CommitteeAgendaAddendumId> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx {
-        if (reportId == null) {
-            throw new IllegalArgumentException("Supplied reportId cannot be null");
-        }
-        try {
-            return reportDao.getReport(reportId);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new SpotCheckReportNotFoundEx(reportId);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end, SortOrder dateOrder) {
-        return reportDao.getReportSummaries(reportType, start, end, dateOrder);
-    }
-
-    /** {@inheritDoc}
-     * @param mismatchTypes
-     * @param limitOffset
-     * @param query */
-    @Override
-    public SpotCheckOpenMismatches<CommitteeAgendaAddendumId> getOpenObservations(OpenMismatchQuery query) {
-        return reportDao.getOpenObservations(query);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void deleteReport(SpotCheckReportId reportId) {
-        if (reportId == null) {
-            throw new IllegalArgumentException("Supplied reportId cannot be null");
-        }
-        reportDao.deleteReport(reportId);
     }
 
     /** --- Internal Methods --- */

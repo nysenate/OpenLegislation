@@ -1,13 +1,9 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -83,4 +79,25 @@ public interface SpotCheckReportService<ContentKey>
      * @param reportId
      */
     void deleteReport(SpotCheckReportId reportId);
+
+    /**
+     * Sets the ignore status for a spotcheck mismatch
+     * @param mismatchId int
+     * @param ignoreStatus SpotCheckMismatchIgnore
+     */
+    void setMismatchIgnoreStatus(int mismatchId, SpotCheckMismatchIgnore ignoreStatus);
+
+    /**
+     * Adds the given issue id to the tracked issue ids of mismatch specified by the given mismatch id
+     * @param mismatchId int
+     * @param issueId String
+     */
+    void addIssueId(int mismatchId, String issueId);
+
+    /**
+     * Removes the given issue id from the tracked issue ids of the mismatch specified by the given mismatch id
+     * @param mismatchId int
+     * @param issueId String
+     */
+    void deleteIssueId(int mismatchId, String issueId);
 }

@@ -27,12 +27,19 @@ public class OpenMismatchQuery {
     /** Show resolved/ignored mismatches */
     boolean resolvedShown;
     boolean ignoredShown;
+    /** Get only ignored mismatches.  This overrides ignoredShown if that is false */
+    boolean ignoredOnly;
+    /** Show tracked/untracked mismatches */
+    boolean trackedShown;
+    boolean untrackedShown;
+
 
     /** --- Constructors --- */
 
     public OpenMismatchQuery(SpotCheckRefType refType, Collection<SpotCheckMismatchType> mismatchTypes,
                              LocalDateTime observedAfter, MismatchOrderBy orderBy, SortOrder order,
-                             LimitOffset limitOffset, boolean resolvedShown, boolean ignoredShown) {
+                             LimitOffset limitOffset, boolean resolvedShown, boolean ignoredShown, boolean ignoredOnly,
+                             boolean trackedShown, boolean untrackedShown) {
         this.refType = refType;
         this.mismatchTypes = mismatchTypes;
         this.observedAfter = observedAfter;
@@ -41,6 +48,9 @@ public class OpenMismatchQuery {
         this.limitOffset = limitOffset;
         this.resolvedShown = resolvedShown;
         this.ignoredShown = ignoredShown;
+        this.ignoredOnly = ignoredOnly;
+        this.trackedShown = trackedShown;
+        this.untrackedShown = untrackedShown;
     }
 
     /** --- Functional Getters --- */
@@ -82,5 +92,17 @@ public class OpenMismatchQuery {
 
     public boolean isIgnoredShown() {
         return ignoredShown;
+    }
+
+    public boolean isIgnoredOnly() {
+        return ignoredOnly;
+    }
+
+    public boolean isTrackedShown() {
+        return trackedShown;
+    }
+
+    public boolean isUntrackedShown() {
+        return untrackedShown;
     }
 }

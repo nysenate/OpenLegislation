@@ -1,14 +1,10 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,7 +26,6 @@ public interface SpotCheckReportDao<ContentKey>
 
     /**
      * Get a list of the report ids that have been saved with options to filter the result set.
-     *
      *
      * @param refType
      * @param start LocalDateTime - Retrieved reports will have been run after/on this date/time.
@@ -62,4 +57,25 @@ public interface SpotCheckReportDao<ContentKey>
      * @param reportId SpotCheckReportId
      */
     void deleteReport(SpotCheckReportId reportId);
+
+    /**
+     * Sets the ignore status for a spotcheck mismatch
+     * @param mismatchId int
+     * @param ignoreStatus SpotCheckMismatchIgnore
+     */
+    void setMismatchIgnoreStatus(int mismatchId, SpotCheckMismatchIgnore ignoreStatus);
+
+    /**
+     * Adds the given issue id to the tracked issue ids of mismatch specified by the given mismatch id
+     * @param mismatchId int
+     * @param issueId String
+     */
+    void addIssueId(int mismatchId, String issueId);
+
+    /**
+     * Removes the given issue id from the tracked issue ids of the mismatch specified by the given mismatch id
+     * @param mismatchId int
+     * @param issueId String
+     */
+    void deleteIssueId(int mismatchId, String issueId);
 }

@@ -60,14 +60,16 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "RETURNING id"
     ),
     OBS_MISMATCHES_SELECT_CLAUSE(
-        "SELECT m.id as mismatch_id, m.type, m.status, m.reference_data, m.observed_data, m.notes,\n" +
+        "SELECT m.id as mismatch_id, m.type, m.status, m.reference_data, m.observed_data, m.notes, m.issue_ids,\n" +
         "       o.report_id, o.reference_type, o.reference_active_date, o.key, o.observed_date_time,\n" +
-        "       r.report_date_time, r.reference_type AS report_reference_type\n"
+        "       r.report_date_time, r.reference_type AS report_reference_type, i.ignore_level\n"
     ),
     OBS_MISMATCHES_FROM_CLAUSE(
         "FROM ${schema}." + SqlTable.SPOTCHECK_REPORT + " r\n" +
         "JOIN ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o ON o.report_id = r.id\n" +
-        "LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m ON m.observation_id = o.id\n"
+        "LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m ON m.observation_id = o.id\n" +
+        "LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " i\n" +
+        "   ON o.key = i.key AND m.type = i.mismatch_type AND o.reference_type = i.reference_type\n"
     ),
     SELECT_OBS_MISMATCHES_BY_REPORT(
         // Have to use 'hstore_to_array' to parse the hstore key
@@ -87,7 +89,9 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
             "JOIN ${schema}." + SqlTable.SPOTCHECK_REPORT + " r ON o.report_id = r.id AND report_obs.report_id != r.id\n" +
             "   AND r.report_date_time < report_obs.report_date_time\n" +
             "JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m ON report_obs.type = m.type\n" +
-            "   AND m.observation_id = o.id" +
+            "   AND m.observation_id = o.id\n" +
+            "LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " i\n" +
+            "   ON o.key = i.key AND m.type = i.mismatch_type AND o.reference_type = i.reference_type\n" +
         ") q\n" +
         "ORDER BY current DESC"
     ),
@@ -100,7 +104,9 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "   JOIN ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o\n" +
         "       ON o.observed_date_time = latest_obs.latest_obs_date_time AND o.key = latest_obs.key\n" +
         "   JOIN ${schema}." + SqlTable.SPOTCHECK_REPORT + " r on o.report_id = r.id\n" +
-        "   LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m ON m.observation_id = o.id"
+        "   LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m ON m.observation_id = o.id" +
+        "   LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " i\n" +
+        "       ON o.key = i.key AND m.type = i.mismatch_type AND o.reference_type = i.reference_type\n"
     ),
     SELECT_LATEST_OBS_MISMATCHES_PARTIAL(
         "SELECT latest_obs.*, true AS current, hstore_to_array(latest_obs.key) AS key_arr\n" +
@@ -110,7 +116,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "SELECT q.*, hstore_to_array(q.key) AS key_arr FROM (\n" +
         "   WITH latest_obs AS (\n" +
         "       " + SELECT_LATEST_OBS_MISMATCHES.sql + "\n" +
-        "       WHERE m.id IS NOT NULL ${typeFilter}${dateFilter}${resolvedFilter}${ignoredFilter}\n" +
+        "       WHERE m.id IS NOT NULL ${typeFilter}${dateFilter}${resolvedFilter}${ignoredFilter}${trackedFilter}${untrackedFilter}\n" +
         "       ${orderBy}\n" +
         "       ${limitOffset}\n" +
         "   )\n" +
@@ -123,6 +129,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "       AND latest_obs.report_id != o.report_id\n" +
         "   JOIN ${schema}." + SqlTable.SPOTCHECK_REPORT + " r ON o.report_id = r.id\n" +
         "   JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m ON m.observation_id = o.id\n" +
+        "   LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " i\n" +
+        "       ON o.key = i.key AND m.type = i.mismatch_type AND o.reference_type = i.reference_type\n" +
         ") q\n" +
         "ORDER BY current DESC"
     ),
@@ -132,9 +140,61 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ),
     INSERT_MISMATCH(
         "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_MISMATCH + "\n" +
-        "(observation_id, type, status, reference_data, observed_data, notes)\n" +
-        "VALUES (:observationId, :type, :status, :referenceData, :observedData, :notes)"
-    );
+        "(observation_id, type, status, reference_data, observed_data, notes, issue_ids)\n" +
+        "VALUES (:observationId, :type, :status, :referenceData, :observedData, :notes, :issueIds)"
+    ),
+
+    /** --- Mismatch Ignore queries --- */
+
+    MISMATCH_ID_SUBQUERY(
+        "WITH mm_id_fields AS (\n" +
+        "   SELECT key, type, reference_type\n" +
+        "   FROM ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " mm\n" +
+        "   JOIN ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " obs\n" +
+        "       ON mm.observation_id = obs.id\n" +
+        "   WHERE mm.id = :mismatchId\n" +
+        ")\n"
+    ),
+    INSERT_MISMATCH_IGNORE(
+        MISMATCH_ID_SUBQUERY.getSql() +
+        "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + "\n" +
+        "       (key, mismatch_type, reference_type, ignore_level)\n" +
+        "SELECT  key, type, reference_type, :ignoreLevel\n" +
+        "FROM mm_id_fields"
+    ),
+    UPDATE_MISMATCH_IGNORE(
+        MISMATCH_ID_SUBQUERY.getSql() +
+        "UPDATE ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " ig\n" +
+        "SET ignore_level = :ignoreLevel\n" +
+        "FROM mm_id_fields\n" +
+        "WHERE ig.reference_type = mm_id_fields.reference_type\n" +
+        "   AND ig.key = mm_id_fields.key\n" +
+        "   AND ig.mismatch_type = mm_id_fields.type"
+    ),
+    DELETE_MISMATCH_IGNORE(
+        MISMATCH_ID_SUBQUERY.getSql() +
+        "DELETE FROM ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " ig\n" +
+        "USING mm_id_fields\n" +
+        "WHERE ig.reference_type = mm_id_fields.reference_type\n" +
+        "   AND ig.key = mm_id_fields.key\n" +
+        "   AND ig.mismatch_type = mm_id_fields.type"
+    ),
+
+    /** --- Issue Id Queries --- */
+
+    ADD_ISSUE_ID(
+        "UPDATE ${schema}." + SqlTable.SPOTCHECK_MISMATCH + "\n" +
+        "SET issue_ids = array_append(issue_ids, :issueId::text)\n" +
+        "WHERE id = :mismatchId AND NOT issue_ids @> ARRAY[:issueId::text ]"
+    ),
+
+    DELETE_ISSUE_ID(
+        "UPDATE ${schema}." + SqlTable.SPOTCHECK_MISMATCH + "\n" +
+        "SET issue_ids = array_remove(issue_ids, :issueId::text)\n" +
+        "WHERE id = :mismatchId"
+    ),
+
+    ;
 
     private String sql;
 
@@ -153,7 +213,11 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
                         ? " AND m.type IN (:mismatchTypes)" : "")
                 .put("dateFilter", query.getObservedAfter() != null ? " AND o.observed_date_time >= :earliest" : "")
                 .put("resolvedFilter", query.isResolvedShown() ? "" : " AND m.status != 'RESOLVED'")
-                .put("ignoredFilter", query.isIgnoredShown() ? "" : " AND m.status != 'IGNORED'")
+                .put("ignoredFilter", query.isIgnoredOnly()
+                        ? " AND i.ignore_level IS NOT NULL"
+                        : query.isIgnoredShown() ? "" : " AND i.ignore_level IS NULL")
+                .put("trackedFilter", query.isTrackedShown() ? "" : " AND array_length(m.issue_ids, 1) IS NULL")
+                .put("untrackedFilter", query.isUntrackedShown() ? "" : " AND array_length(m.issue_ids, 1) > 0")
                 .put("orderBy", SqlQueryUtils.getOrderByClause(query.getFullOrderBy()))
                 .put("limitOffset", SqlQueryUtils.getLimitOffsetClause(query.getLimitOffset()))
                 .build();

@@ -12,25 +12,33 @@ import java.util.stream.Collectors;
 
 public class MismatchView implements ViewObject
 {
+    protected int mismatchId;
     protected String mismatchType;
     protected String status;
     protected String referenceData;
     protected String observedData;
     protected String notes;
+    protected ListView<String> issueIds;
     protected ListView<PriorMismatchView> prior;
 
     public MismatchView(SpotCheckMismatch mismatch, List<SpotCheckPriorMismatch> priorMismatches) {
         if (mismatch != null) {
+            this.mismatchId = mismatch.getMismatchId();
             this.mismatchType = mismatch.getMismatchType().name();
             this.status = mismatch.getStatus().name();
             this.referenceData = mismatch.getReferenceData();
             this.observedData = mismatch.getObservedData();
             this.notes = mismatch.getNotes();
+            this.issueIds = ListView.ofStringList(mismatch.getIssueIds());
             this.prior = ListView.of(
                     priorMismatches.stream().map(PriorMismatchView::new)
                             .sorted((a, b) -> b.getReportId().compareTo(a.getReportId()))
                             .collect(Collectors.toList()));
         }
+    }
+
+    public int getMismatchId() {
+        return mismatchId;
     }
 
     public String getMismatchType() {
@@ -51,6 +59,10 @@ public class MismatchView implements ViewObject
 
     public String getNotes() {
         return notes;
+    }
+
+    public ListView<String> getIssueIds() {
+        return issueIds;
     }
 
     public ListView<PriorMismatchView> getPrior() {

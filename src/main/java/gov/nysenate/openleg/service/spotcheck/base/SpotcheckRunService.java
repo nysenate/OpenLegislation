@@ -48,7 +48,6 @@ public class SpotcheckRunService {
     /** Agenda Report Services */
     @Autowired AgendaReportService agendaReportService;
     @Autowired IntervalAgendaReportService weeklyAgendaReportService;
-    @Autowired OldApiAgendaReportService oldApiAgendaReportService;
 
     /** Bill Report Services */
     @Autowired DaybreakReportService daybreakReportService;
@@ -56,7 +55,6 @@ public class SpotcheckRunService {
 
     /** Calendar Report Services */
     @Autowired CalendarReportService calendarReportService;
-    @Autowired ProdCalendarReportService prodCalendarReportService;
     @Autowired IntervalCalendarReportService weeklyCalendarReportService;
 
     /** A multimap of reports that run whenever pertinent references are generated */
@@ -70,11 +68,9 @@ public class SpotcheckRunService {
         eventBus.register(this);
         eventTriggeredReports = ImmutableSetMultimap.<SpotCheckRefType, SpotCheckReportService>builder()
                 .put(LBDC_AGENDA_ALERT, agendaReportService)
-                .put(LBDC_AGENDA_ALERT, oldApiAgendaReportService)
                 .put(LBDC_DAYBREAK, daybreakReportService)
                 .put(LBDC_SCRAPED_BILL, billTextReportService)
                 .put(LBDC_CALENDAR_ALERT, calendarReportService)
-                .put(LBDC_CALENDAR_ALERT, prodCalendarReportService)
                 .build();
         weeklyReports = ImmutableSet.<SpotCheckReportService>builder()
                 .add(weeklyAgendaReportService)
