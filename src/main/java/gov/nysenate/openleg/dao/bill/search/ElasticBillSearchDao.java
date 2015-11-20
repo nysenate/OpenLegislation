@@ -23,6 +23,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     /** {@inheritDoc} */
     @Override
     public void updateBillIndex(Bill bill) {
-        updateBillIndex(Arrays.asList(bill));
+            updateBillIndex(Collections.singletonList(bill));
     }
 
     /** {@inheritDoc} */

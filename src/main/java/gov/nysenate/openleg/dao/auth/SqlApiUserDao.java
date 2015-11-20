@@ -6,13 +6,10 @@ import gov.nysenate.openleg.model.auth.ApiUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 @Repository
@@ -44,9 +41,9 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 
     protected MapSqlParameterSource getUserParams(ApiUser user) {
         return new MapSqlParameterSource()
-                .addValue("apikey", user.getApikey())
-                .addValue("authenticated", user.getAuthStatus())
-                .addValue("apiRequests", user.getNumRequests())
+                .addValue("apikey", user.getApiKey())
+                .addValue("authenticated", user.isAuthenticated())
+                .addValue("apiRequests", user.getNumApiRequests())
                 .addValue("email", user.getEmail())
                 .addValue("name", user.getName())
                 .addValue("organizationName", user.getOrganizationName())
@@ -61,7 +58,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 
     private static final RowMapper <ApiUser> apiUserMapper = (rs, rowNum) -> {
         ApiUser user = new ApiUser(rs.getString("email_addr"));
-        user.setAuthStatus(rs.getBoolean("authenticated"));
+        user.setAuthenticated(rs.getBoolean("authenticated"));
         user.setName(rs.getString("users_name"));
         user.setRegistrationToken(rs.getString("reg_token"));
         user.setApiKey(rs.getString("apikey"));
@@ -104,7 +101,6 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
         MapSqlParameterSource params = new MapSqlParameterSource("registrationToken", token);
         return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_TOKEN.getSql(schema()), params,
                 apiUserMapper);
-
     }
 
     /**

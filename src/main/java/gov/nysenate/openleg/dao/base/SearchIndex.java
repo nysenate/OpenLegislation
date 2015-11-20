@@ -14,6 +14,7 @@ public enum SearchIndex
     LAW("laws"),
     MEMBER("members"),
     NOTIFICATION("notifications"),
+    API_LOG("apilog")
     ;
 
     String indexName;

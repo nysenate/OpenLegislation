@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.log;
+package gov.nysenate.openleg.dao.log.data;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;

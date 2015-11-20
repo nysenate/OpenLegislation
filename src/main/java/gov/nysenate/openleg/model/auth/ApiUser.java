@@ -7,11 +7,12 @@ import java.io.Serializable;
 /**
  * This class will model an API User.
  */
-public class ApiUser implements Serializable, Comparable <ApiUser>
+public class ApiUser implements Serializable
 {
+    private static final long serialVersionUID = 4297265625690273957L;
 
     /** Each ApiUser will have their own unique key */
-    private String apikey;
+    private String apiKey;
 
     /** The user's email address */
     private String email;
@@ -26,7 +27,7 @@ public class ApiUser implements Serializable, Comparable <ApiUser>
     private boolean authenticated;
 
     /** Number of Api Requests made by the user */
-    private long apiRequests;
+    private long numApiRequests;
 
     /** The user's unique registration token */
     private String registrationToken;
@@ -34,11 +35,11 @@ public class ApiUser implements Serializable, Comparable <ApiUser>
     /** Whether or not this user is active */
     private boolean active;
 
-    /** Constructor */
+    /** --- Constructors --- */
 
     public ApiUser(String email) {
-        this.apikey = "";
-        this.apiRequests = 0l;
+        this.apiKey = "";
+        this.numApiRequests = 0l;
         this.authenticated = false;
         this.email = email;
         generateKey();
@@ -48,7 +49,7 @@ public class ApiUser implements Serializable, Comparable <ApiUser>
      * Code to handle when an apiuser makes an api request.
      */
     public void logRequest() {
-        this.apiRequests++;
+        this.numApiRequests++;
     }
 
     /**
@@ -63,40 +64,72 @@ public class ApiUser implements Serializable, Comparable <ApiUser>
      * This method will generate a new 32 character long key for the user.
      */
     public void generateKey() {
-        this.apikey = RandomStringUtils.randomAlphanumeric(32);
+        this.apiKey = RandomStringUtils.randomAlphanumeric(32);
     }
 
+    /** --- Basic Getters/Setters --- */
 
-    /** To be completed */
-    public int compareTo (ApiUser other)
-    {
-        return -1;
+    public String getApiKey() {
+        return apiKey;
     }
 
-    /** Getters and Setters */
-    public String getEmail() { return this.email; }
-    public void setEmail (String newadr) { this.email = newadr; }
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
 
-    public String getApikey() { return this.apikey; }
-    public void setApiKey(String key) { this.apikey = key; }
+    public String getEmail() {
+        return email;
+    }
 
-    public boolean getAuthStatus() { return this.authenticated; }
-    public void setAuthStatus(boolean auth) { this.authenticated = auth; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public Long getNumRequests() { return this.apiRequests; }
-    public void setNumRequests(long number) { this.apiRequests = number; }
+    public String getName() {
+        return name;
+    }
 
-    public String getName() { return this.name; }
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getOrganizationName() { return this.organizationName; }
-    public void setOrganizationName(String orgName) { this.organizationName = orgName; }
+    public String getOrganizationName() {
+        return organizationName;
+    }
 
-    public boolean isActive() { return this.active; }
-    public void setActive(boolean active) { this.active = active; }
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
 
-    public void setRegistrationToken(String token) { this.registrationToken = token; }
-    public String getRegistrationToken() { return this.registrationToken; }
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
 
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
+    }
 
+    public long getNumApiRequests() {
+        return numApiRequests;
+    }
+
+    public void setNumApiRequests(long numApiRequests) {
+        this.numApiRequests = numApiRequests;
+    }
+
+    public String getRegistrationToken() {
+        return registrationToken;
+    }
+
+    public void setRegistrationToken(String registrationToken) {
+        this.registrationToken = registrationToken;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

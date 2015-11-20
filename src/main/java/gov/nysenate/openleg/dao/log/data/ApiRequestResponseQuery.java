@@ -1,9 +1,9 @@
-package gov.nysenate.openleg.dao.auth;
+package gov.nysenate.openleg.dao.log.data;
 
 import gov.nysenate.openleg.dao.base.BasicSqlQuery;
 import gov.nysenate.openleg.dao.base.SqlTable;
 
-public enum RequestResponseQuery implements BasicSqlQuery
+public enum ApiRequestResponseQuery implements BasicSqlQuery
 {
     SELECT_BY_KEY(
         "SELECT * FROM public." + SqlTable.API_REQUEST + " where apikey = :apikey"
@@ -39,7 +39,8 @@ public enum RequestResponseQuery implements BasicSqlQuery
     public String getSql() { return this.sql; }
 
     private String sql;
-    RequestResponseQuery(String sql) {
+
+    ApiRequestResponseQuery(String sql) {
         this.sql = sql;
     }
 }

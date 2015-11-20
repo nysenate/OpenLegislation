@@ -1,7 +1,6 @@
-package gov.nysenate.openleg.dao.log;
+package gov.nysenate.openleg.dao.log.data;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.dao.auth.RequestResponseQuery;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.auth.ApiRequest;
 import gov.nysenate.openleg.model.auth.ApiResponse;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -81,7 +78,7 @@ public class SqlApiLogDao extends SqlBaseDao implements ApiLogDao
     public List<ApiResponse> getResponses(LimitOffset limOff, SortOrder order) {
         OrderBy orderBy = new OrderBy("request_time", order);
         return jdbcNamed.query(
-                RequestResponseQuery.GET_ALL_RESPONSES.getSql(schema(), orderBy, limOff), apiResponseMapper);
+                ApiRequestResponseQuery.GET_ALL_RESPONSES.getSql(schema(), orderBy, limOff), apiResponseMapper);
     }
 
     /** {@inheritDoc} */
@@ -92,20 +89,20 @@ public class SqlApiLogDao extends SqlBaseDao implements ApiLogDao
         params.addValue("startDateTime", startOfDateTimeRange(dateTimeRange));
         params.addValue("endDateTime", endOfDateTimeRange(dateTimeRange));
         return jdbcNamed.query(
-                RequestResponseQuery.GET_ALL_RESPONSES_BY_DATETIME.getSql(schema(), orderBy, limOff), params, apiResponseMapper);
+                ApiRequestResponseQuery.GET_ALL_RESPONSES_BY_DATETIME.getSql(schema(), orderBy, limOff), params, apiResponseMapper);
     }
 
     /** {@inheritDoc} */
     @Override
     public int saveApiRequest(ApiRequest req) throws DataAccessException {
-        return jdbcNamed.queryForObject(RequestResponseQuery.INSERT_REQUEST.getSql(schema()),
+        return jdbcNamed.queryForObject(ApiRequestResponseQuery.INSERT_REQUEST.getSql(schema()),
                 getApiRequestParams(req), new SingleColumnRowMapper<>());
     }
 
     /** {@inheritDoc} */
     @Override
     public void saveApiResponse(ApiResponse response) throws DataAccessException {
-        jdbcNamed.update(RequestResponseQuery.INSERT_RESPONSE.getSql(schema()),
+        jdbcNamed.update(ApiRequestResponseQuery.INSERT_RESPONSE.getSql(schema()),
             getApiResponseParams(response));
      }
 }

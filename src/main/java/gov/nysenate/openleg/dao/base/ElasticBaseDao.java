@@ -215,7 +215,7 @@ public abstract class ElasticBaseDao
 
     protected void deleteIndex(String index) {
         try {
-            logger.info("deleting search index {}", index);
+            logger.info("Deleting search index {}", index);
             searchClient.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
         }
         catch (IndexMissingException ex) {

@@ -6,10 +6,19 @@ import java.time.temporal.ChronoUnit;
 
 public class ApiResponse
 {
+    /** Reference to the originating API request */
     private ApiRequest baseRequest;
+
+    /** When the response was returned */
     private LocalDateTime responseDateTime;
+
+    /** HTTP status code of the response. */
     private int statusCode;
+
+    /** Content type of response */
     private String contentType;
+
+    /** Time it took to process the request. */
     private double processTime;
 
     /** --- Constructors --- */

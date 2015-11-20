@@ -22,7 +22,7 @@ public class ApiRequest
     /** THe User Agent that made this request */
     private String userAgent;
 
-    /** The user's apikey, if provided */
+    /** The user's api key, if provided */
     private String apikey;
 
     /** A unique identifier used to specify each request made */
@@ -30,9 +30,7 @@ public class ApiRequest
 
     /** --- Constructors --- */
 
-    public ApiRequest() {
-
-    }
+    public ApiRequest() {}
 
     public ApiRequest (HttpServletRequest request, LocalDateTime requestDateTime) {
         if (request != null) {

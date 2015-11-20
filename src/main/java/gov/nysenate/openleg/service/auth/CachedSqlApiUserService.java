@@ -110,7 +110,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         logger.info("Warming up API User Cache");
 
         // Feed in all the api users from the database into the cache
-        apiUserDao.getAllUsers().forEach(user -> apiUserCache.put(user.getApikey(), user));
+        apiUserDao.getAllUsers().forEach(user -> apiUserCache.put(user.getApiKey(), user));
     }
 
     @Override
@@ -150,7 +150,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         ApiUser newUser = new ApiUser(email);
         newUser.setName(name);
         newUser.setOrganizationName(orgName);
-        newUser.setAuthStatus(false);
+        newUser.setAuthenticated(false);
         newUser.setRegistrationToken(RandomStringUtils.randomAlphanumeric(32));
         newUser.setActive(true);
 
@@ -185,7 +185,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
 
         // If the user is stored in the cache, then retrieve their information
         if (user != null) {
-            return user.getAuthStatus();
+            return user.isAuthenticated();
 
         } else {
             // Fetch the user from the database
@@ -197,8 +197,8 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
             }
 
             // Add the user to the cache
-            apiUserCache.put(user.getApikey(), user);
-            return user.getAuthStatus();
+            apiUserCache.put(user.getApiKey(), user);
+            return user.isAuthenticated();
         }
     }
 
@@ -214,7 +214,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         try {
             ApiUser user = apiUserDao.getApiUserFromToken(registrationToken);
             user.setActive(true);
-            user.setAuthStatus(true);
+            user.setAuthenticated(true);
             apiUserDao.updateUser(user);
             sendApikeyEmail(user);
             sendNewApiUserNotification(user);
@@ -246,7 +246,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
      */
     public void sendApikeyEmail(ApiUser user) {
         String message = String.format("Hello %s,\n\n\tThank you for your interest in Open Legislation.\n\n\t" +
-                "Here's your API Key:\n%s\n\n-- NY Senate Development Team", user.getName(), user.getApikey());
+                "Here's your API Key:\n%s\n\n-- NY Senate Development Team", user.getName(), user.getApiKey());
 
         sendMailService.sendMessage(user.getEmail(), "Your Open Legislation API Key", message);
     }

@@ -84,13 +84,6 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
 
     /** {@inheritDoc} */
     @Override
-    public void evictCaches() {
-        logger.info("clearing the committee cache.");
-        committeeCache.removeAll();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void evictContent(CommitteeSessionId committeeSessionId) {
         committeeCache.remove(committeeSessionId);
     }
