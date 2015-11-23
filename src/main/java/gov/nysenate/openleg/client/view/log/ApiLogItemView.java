@@ -26,6 +26,10 @@ public class ApiLogItemView implements ViewObject
 
     /** --- Constructors --- */
 
+    public ApiLogItemView() {}
+
+    public ApiLogItemView(String json) {}
+
     public ApiLogItemView(ApiResponse apiResponse) {
         if (apiResponse != null) {
             if (apiResponse.getBaseRequest() != null) {
@@ -36,7 +40,7 @@ public class ApiLogItemView implements ViewObject
                 this.ipAddress = (req.getIpAddress() != null) ? req.getIpAddress().getHostAddress() : null;
                 this.requestMethod = req.getRequestMethod();
                 this.userAgent = req.getUserAgent();
-                this.apiKey = req.getApikey();
+                this.apiKey = req.getApiKey();
             }
             this.responseDateTime = apiResponse.getResponseDateTime();
             this.statusCode = apiResponse.getStatusCode();

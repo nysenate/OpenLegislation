@@ -33,16 +33,8 @@ public interface ApiLogDao
     List<ApiResponse> getResponses(Range<LocalDateTime> dateTimeRange, LimitOffset limOff, SortOrder order);
 
     /**
-     * Save an ApiRequest into the persistence layer.
-     *
-     * @param req ApiRequest
-     * @return int - request id
-     * @throws DataAccessException
-     */
-    int saveApiRequest(ApiRequest req) throws DataAccessException;
-
-    /**
-     * Save an ApiResponse into the persistence layer.
+     * Save an ApiResponse into the persistence layer. If the response is saved successfully
+     * a request id will be set on the passed in ApiResponse.
      *
      * @param res ApiResponse
      * @throws DataAccessException

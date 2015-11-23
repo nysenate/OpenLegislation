@@ -26,7 +26,7 @@ public class SqlApiLogDao extends SqlBaseDao implements ApiLogDao
 
     private static final RowMapper<ApiRequest> apiRequestMapper = (rs, rowNum) -> {
         ApiRequest request = new ApiRequest();
-        request.setApikey(rs.getString("apikey"));
+        request.setApiKey(rs.getString("apikey"));
         request.setRequestId(rs.getInt(("request_id")));
         request.setRequestMethod(rs.getString("method"));
         request.setRequestTime(getLocalDateTimeFromRs(rs, "request_time"));
@@ -59,7 +59,7 @@ public class SqlApiLogDao extends SqlBaseDao implements ApiLogDao
             .addValue("requestTime", toDate(req.getRequestTime()))
             .addValue("url", req.getUrl())
             .addValue("userAgent", req.getUserAgent())
-            .addValue("apikey", req.getApikey())
+            .addValue("apikey", req.getApiKey())
             .addValue("requestMethod", req.getRequestMethod())
         );
     }
@@ -94,15 +94,14 @@ public class SqlApiLogDao extends SqlBaseDao implements ApiLogDao
 
     /** {@inheritDoc} */
     @Override
-    public int saveApiRequest(ApiRequest req) throws DataAccessException {
-        return jdbcNamed.queryForObject(ApiRequestResponseQuery.INSERT_REQUEST.getSql(schema()),
-                getApiRequestParams(req), new SingleColumnRowMapper<>());
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void saveApiResponse(ApiResponse response) throws DataAccessException {
-        jdbcNamed.update(ApiRequestResponseQuery.INSERT_RESPONSE.getSql(schema()),
-            getApiResponseParams(response));
+        if (response != null) {
+            ApiRequest apiRequest = response.getBaseRequest();
+            Integer requestId = jdbcNamed.queryForObject(ApiRequestResponseQuery.INSERT_REQUEST.getSql(schema()),
+                                getApiRequestParams(apiRequest), new SingleColumnRowMapper<>());
+            apiRequest.setRequestId(requestId);
+            jdbcNamed.update(ApiRequestResponseQuery.INSERT_RESPONSE.getSql(schema()),
+                    getApiResponseParams(response));
+        }
      }
 }

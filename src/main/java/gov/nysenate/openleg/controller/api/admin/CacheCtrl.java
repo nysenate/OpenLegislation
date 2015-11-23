@@ -7,6 +7,7 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.view.cache.CacheStatsView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
+import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -136,6 +137,9 @@ public class CacheCtrl extends BaseCtrl
             throws MissingServletRequestParameterException {
         ContentCache targetCache = getTargetCache(cacheType);
         Object contentId = getContentId(targetCache, webRequest);
+        if (contentId == null) {
+            throw new InvalidRequestParamEx(cacheType, "cacheType", "string", "Supported cache type.");
+        }
         eventBus.post(new CacheEvictIdEvent<>(targetCache, contentId));
         return new SimpleResponse(true, "Cache eviction request sent for " + targetCache + ": " + contentId, "cache-evict");
     }

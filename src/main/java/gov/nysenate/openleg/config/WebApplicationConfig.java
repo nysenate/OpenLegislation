@@ -57,6 +57,8 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter implements Sch
     private static final String resourcePath = "/static/**";
     private static final String resourceLocation = "/static/";
 
+    @Autowired ApplicationConfig appConfig;
+
     @PostConstruct
     public void init() {
         logger.info("{}", AsciiArt.OPENLEG_2_LOGO.getText().replace("DATE", LocalDateTime.now().toString()));
@@ -102,18 +104,8 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter implements Sch
     @Bean
     public MappingJackson2HttpMessageConverter jackson2Converter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(objectMapper());
+        converter.setObjectMapper(appConfig.objectMapper());
         return converter;
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.registerModule(new GuavaModule());
-        objectMapper.registerModule(new JSR310Module());
-        return objectMapper;
     }
 
     @Bean(name = "openlegScheduler", destroyMethod = "shutdownNow")

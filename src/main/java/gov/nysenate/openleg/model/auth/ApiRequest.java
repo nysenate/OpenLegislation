@@ -23,10 +23,10 @@ public class ApiRequest
     private String userAgent;
 
     /** The user's api key, if provided */
-    private String apikey;
+    private String apiKey;
 
     /** A unique identifier used to specify each request made */
-    private int requestId;
+    private Integer requestId;
 
     /** --- Constructors --- */
 
@@ -34,7 +34,7 @@ public class ApiRequest
 
     public ApiRequest (HttpServletRequest request, LocalDateTime requestDateTime) {
         if (request != null) {
-            this.apikey = request.getParameter("key");
+            this.apiKey = request.getParameter("key");
             this.userAgent = request.getHeader("User-Agent");
             try {
                 this.ipAddress = InetAddress.getByName(request.getRemoteAddr());
@@ -89,15 +89,15 @@ public class ApiRequest
         this.userAgent = userAgent;
     }
 
-    public String getApikey() {
-        return apikey;
+    public String getApiKey() {
+        return apiKey;
     }
 
-    public void setApikey(String apikey) {
-        this.apikey = apikey;
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
-    public int getRequestId() {
+    public Integer getRequestId() {
         return requestId;
     }
 
