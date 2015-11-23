@@ -36,6 +36,9 @@
             </label>
             <md-checkbox ng-model="params.resolvedShown" class="md-primary" aria-label="glerp">Show Resolved</md-checkbox>
             <md-checkbox ng-model="params.ignoredShown" aria-label="glerp" class="md-primary">Show Ignored</md-checkbox>
+            <md-checkbox ng-model="params.ignoredOnly" aria-label="glerp" class="md-primary">Ignored Only</md-checkbox>
+            <md-checkbox ng-model="params.trackedShown" aria-label="glerp" class="md-primary">Show Tracked</md-checkbox>
+            <md-checkbox ng-model="params.untrackedShown" aria-label="glerp" class="md-primary">Show Untracked</md-checkbox>
           </h5>
           <div ng-show="showTypeFilter" layout="row" layout-align="space-around center" layout-wrap>
             <md-checkbox ng-model="typeFilter.all" ng-change="applyTypeFilterAll()"

@@ -10,15 +10,21 @@ import java.util.LinkedList;
 public class PriorMismatchView implements ViewObject
 {
     protected SpotCheckReportId reportId;
+    protected int mismatchId;
     protected String status;
     protected LinkedList<StringDiffer.Diff> diff;
 
     public PriorMismatchView(SpotCheckPriorMismatch priorMismatch) {
         if (priorMismatch != null) {
+            this.mismatchId = priorMismatch.getMismatchId();
             this.reportId = priorMismatch.getReportId();
             this.status = priorMismatch.getStatus().name();
             this.diff = priorMismatch.getDiff(true);
         }
+    }
+
+    public int getMismatchId() {
+        return mismatchId;
     }
 
     public SpotCheckReportId getReportId() {

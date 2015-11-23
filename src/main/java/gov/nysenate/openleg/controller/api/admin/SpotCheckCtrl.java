@@ -131,16 +131,34 @@ public class SpotCheckCtrl extends BaseCtrl
 
     /**
      * Spotcheck Open Observations API
+     *
+     * Queries spotcheck observations with open mismatches for a specific report type
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/open-mismatches/{reportType}
+     *
+     * Request Parameters: mismatchTypes - string[] - optional - only retrieves mismatches for the specified types if present
+     *                     orderBy - string (ASC|DESC) - optional, default DESC - determines order of returned observations
+     *                     observedAfter - string (ISO date) - optional - only returns observations with mismatches after
+     *                          the given date if present
+     *                     resolvedShown - boolean - optional, default false - will return resolved mismatches if true
+     *                     ignoredShown - boolean - optional, default false - will return ignored mismatches if true
+     *                     ignoredOnly - boolean - optional, default false - returns only ignored mismatches if true
+     *                          will override ignoredShown=false if set to true
+     *                     trackedShown - boolean - optional, default true - will return tracked issues if set to true
+     *                     untrackedShown - boolean - optional, default true - will return untracked issues if set to true
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/open-mismatches/{reportType}", method = RequestMethod.GET)
     public BaseResponse getOpenMismatches(@PathVariable String reportType,
-                                        @RequestParam(required = false) String[] mismatchType,
-                                        @RequestParam(required = false) String orderBy,
-                                        @RequestParam(required = false) String observedAfter,
-                                        @RequestParam(defaultValue = "false") boolean resolvedShown,
-                                        @RequestParam(defaultValue = "false") boolean ignoredShown,
-                                        WebRequest request) {
+                                          @RequestParam(required = false) String[] mismatchType,
+                                          @RequestParam(required = false) String orderBy,
+                                          @RequestParam(required = false) String observedAfter,
+                                          @RequestParam(defaultValue = "false") boolean resolvedShown,
+                                          @RequestParam(defaultValue = "false") boolean ignoredShown,
+                                          @RequestParam(defaultValue = "false") boolean ignoredOnly,
+                                          @RequestParam(defaultValue = "true") boolean trackedShown,
+                                          @RequestParam(defaultValue = "true") boolean untrackedShown,
+                                          WebRequest request) {
         SpotCheckRefType refType = getSpotcheckRefType(reportType, "reportType");
         LimitOffset limOff = getLimitOffset(request, 0);
         MismatchOrderBy mismatchOrderBy = getEnumParameter(orderBy, MismatchOrderBy.class, MismatchOrderBy.OBSERVED_DATE);
@@ -148,10 +166,55 @@ public class SpotCheckCtrl extends BaseCtrl
         Set<SpotCheckMismatchType> mismatchTypes = getSpotcheckMismatchTypes(mismatchType, "mismatchType", refType);
         LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
         OpenMismatchQuery query = new OpenMismatchQuery(refType, mismatchTypes, earliestDateTime,
-                mismatchOrderBy, order, limOff, resolvedShown, ignoredShown);
+                mismatchOrderBy, order, limOff, resolvedShown, ignoredShown, ignoredOnly, trackedShown, untrackedShown);
         SpotCheckOpenMismatches<?> observations = reportServiceMap.get(refType)
                 .getOpenObservations(query);
         return new OpenMismatchesResponse<>(observations, query);
+    }
+
+    /**
+     * Spotcheck Mismatch Ignore API
+     *
+     * Set the ignore status of a particular mismatch
+     *
+     * Usage: (POST) /api/3/admin/spotcheck/mismatch/{mismatchId}/ignore
+     *
+     * Request Parameters: ignoreLevel - string - specifies desired ignore level or unsets ignore if null or not present
+     *                                  @see SpotCheckMismatchIgnore
+     */
+    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/ignore", method = RequestMethod.POST)
+    public BaseResponse setIgnoreStatus(@PathVariable int mismatchId, @RequestParam(required = false) String ignoreLevel) {
+        SpotCheckMismatchIgnore ignoreStatus = ignoreLevel != null
+                ? getEnumParameter("ignoreLevel", ignoreLevel, SpotCheckMismatchIgnore.class)
+                : null;
+        getAnyReportService().setMismatchIgnoreStatus(mismatchId, ignoreStatus);
+        return new SimpleResponse(true, "ignore level set", "ignore-level-set");
+    }
+
+    /**
+     * Spotcheck Mismatch Add Issue Id API
+     *
+     * Adds an issue id to a spotcheck mismatch
+     *
+     * Usage: (PUT) /api/3/admin/spotcheck/mismatch/{mismatchId}/issue/{issueId}
+     */
+    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.PUT)
+    public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
+        getAnyReportService().addIssueId(mismatchId, issueId);
+        return new SimpleResponse(true, "issue id added", "issue-id-added");
+    }
+
+    /**
+     * Spotcheck Mismatch Remove Issue Id API
+     *
+     * Removes an issue id to a spotcheck mismatch
+     *
+     * Usage: (DELETE) /api/3/admin/spotcheck/mismatch/{mismatchId}/issue/{issueId}
+     */
+    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.DELETE)
+    public BaseResponse deleteMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
+        getAnyReportService().deleteIssueId(mismatchId, issueId);
+        return new SimpleResponse(true, "issue id deleted", "issue-id-deleted");
     }
 
     /**
@@ -202,6 +265,11 @@ public class SpotCheckCtrl extends BaseCtrl
 
     /** --- Internal Methods --- */
 
+    private SpotCheckReportService<?> getAnyReportService() {
+        return reportServices.stream().findAny()
+                .orElseThrow(() -> new IllegalStateException("No spotcheck report services found"));
+    }
+
     private SpotCheckRefType getSpotcheckRefType(String parameter, String paramName) {
         SpotCheckRefType result = getEnumParameter(parameter, SpotCheckRefType.class, null);
         if (result == null) {
@@ -209,10 +277,6 @@ public class SpotCheckCtrl extends BaseCtrl
                     SpotCheckRefType::getRefName, paramName, parameter);
         }
         return result;
-    }
-
-    private SpotCheckRefType getSpotcheckRefType(String parameter) {
-        return getEnumParameter(parameter, SpotCheckRefType.class, null);
     }
 
     private Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {

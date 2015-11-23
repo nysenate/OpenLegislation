@@ -3904,7 +3904,8 @@ CREATE TABLE spotcheck_mismatch (
     status text NOT NULL,
     reference_data text NOT NULL,
     observed_data text NOT NULL,
-    notes text
+    notes text,
+    issue_ids text[] DEFAULT ARRAY[]::text[] NOT NULL
 );
 
 
@@ -3915,6 +3916,13 @@ ALTER TABLE spotcheck_mismatch OWNER TO postgres;
 --
 
 COMMENT ON TABLE spotcheck_mismatch IS 'Listing of all spot check mismatches ';
+
+
+--
+-- Name: COLUMN spotcheck_mismatch.issue_ids; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN spotcheck_mismatch.issue_ids IS 'Issue tracker ids that are relevant to this mismatch';
 
 
 --
@@ -3936,6 +3944,77 @@ ALTER TABLE spotcheck_mismatch_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE spotcheck_mismatch_id_seq OWNED BY spotcheck_mismatch.id;
+
+
+--
+-- Name: spotcheck_mismatch_ignore; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE spotcheck_mismatch_ignore (
+    id integer NOT NULL,
+    key public.hstore NOT NULL,
+    mismatch_type text NOT NULL,
+    ignore_level smallint NOT NULL,
+    reference_type text NOT NULL
+);
+
+
+ALTER TABLE spotcheck_mismatch_ignore OWNER TO postgres;
+
+--
+-- Name: TABLE spotcheck_mismatch_ignore; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE spotcheck_mismatch_ignore IS 'A list of mismatches that are marked as ignored.';
+
+
+--
+-- Name: COLUMN spotcheck_mismatch_ignore.key; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN spotcheck_mismatch_ignore.key IS 'The content id of the targeted mismatch';
+
+
+--
+-- Name: COLUMN spotcheck_mismatch_ignore.mismatch_type; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN spotcheck_mismatch_ignore.mismatch_type IS 'The type of the targeted mismatch';
+
+
+--
+-- Name: COLUMN spotcheck_mismatch_ignore.ignore_level; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN spotcheck_mismatch_ignore.ignore_level IS 'A flag that determines how long the mismatch will be ignored';
+
+
+--
+-- Name: COLUMN spotcheck_mismatch_ignore.reference_type; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN spotcheck_mismatch_ignore.reference_type IS 'The report type of the targeted mismatch';
+
+
+--
+-- Name: spotcheck_mismatch_ignore_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
+--
+
+CREATE SEQUENCE spotcheck_mismatch_ignore_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE spotcheck_mismatch_ignore_id_seq OWNER TO postgres;
+
+--
+-- Name: spotcheck_mismatch_ignore_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
+--
+
+ALTER SEQUENCE spotcheck_mismatch_ignore_id_seq OWNED BY spotcheck_mismatch_ignore.id;
 
 
 --
@@ -4823,6 +4902,13 @@ ALTER TABLE ONLY spotcheck_mismatch ALTER COLUMN id SET DEFAULT nextval('spotche
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
+ALTER TABLE ONLY spotcheck_mismatch_ignore ALTER COLUMN id SET DEFAULT nextval('spotcheck_mismatch_ignore_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
+--
+
 ALTER TABLE ONLY spotcheck_observation ALTER COLUMN id SET DEFAULT nextval('spotcheck_observation_id_seq'::regclass);
 
 
@@ -5550,6 +5636,22 @@ ALTER TABLE ONLY data_process_run
 
 ALTER TABLE ONLY sobi_file
     ADD CONSTRAINT sobi_pkey PRIMARY KEY (file_name);
+
+
+--
+-- Name: spotcheck_mismatch_ignore_key_mismatch_type_report_type_key; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY spotcheck_mismatch_ignore
+    ADD CONSTRAINT spotcheck_mismatch_ignore_key_mismatch_type_report_type_key UNIQUE (key, mismatch_type, reference_type);
+
+
+--
+-- Name: spotcheck_mismatch_ignore_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY spotcheck_mismatch_ignore
+    ADD CONSTRAINT spotcheck_mismatch_ignore_pkey PRIMARY KEY (id);
 
 
 --

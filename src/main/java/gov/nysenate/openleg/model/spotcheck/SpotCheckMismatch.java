@@ -2,7 +2,9 @@ package gov.nysenate.openleg.model.spotcheck;
 
 import gov.nysenate.openleg.util.StringDiffer;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -10,6 +12,10 @@ import java.util.Objects;
  */
 public class SpotCheckMismatch
 {
+
+    /** An integer id that uniquely identifies this mismatch */
+    protected int mismatchId;
+
     /** The type of mismatch that occurred. */
     protected SpotCheckMismatchType mismatchType;
 
@@ -25,9 +31,13 @@ public class SpotCheckMismatch
     /** Any details about this mismatch. (Optional) */
     protected String notes;
 
-    /**
-     * --- Constructor ---
-     */
+    /** The ignore status of this mismatch. (Optional) */
+    protected SpotCheckMismatchIgnore ignoreStatus;
+
+    /** A list of related issue tracker ids */
+    protected List<String> issueIds = new ArrayList<>();
+
+    /** --- Constructor --- */
 
     public SpotCheckMismatch(SpotCheckMismatchType mismatchType, Object referenceData, Object observedData) {
         this(mismatchType, String.valueOf(referenceData), String.valueOf(observedData));
@@ -44,6 +54,8 @@ public class SpotCheckMismatch
         this.notes = notes;
     }
 
+
+
     /** --- Methods --- */
 
     /**
@@ -59,6 +71,12 @@ public class SpotCheckMismatch
             stringDiffer.diff_cleanupSemantic(diffs);
         }
         return diffs;
+    }
+
+    /** --- Functional Getters / Setters --- */
+
+    public boolean isIgnored() {
+        return ignoreStatus != null;
     }
 
     /** --- Implemented Methods --- */
@@ -80,7 +98,7 @@ public class SpotCheckMismatch
         return Objects.hash(mismatchType, status, referenceData, observedData, notes);
     }
 
-    /** --- Basic Getters --- */
+    /** --- Basic Getters / Setters --- */
 
     public SpotCheckMismatchType getMismatchType() {
         return mismatchType;
@@ -104,5 +122,29 @@ public class SpotCheckMismatch
 
     public String getNotes() {
         return notes;
+    }
+
+    public SpotCheckMismatchIgnore getIgnoreStatus() {
+        return ignoreStatus;
+    }
+
+    public void setIgnoreStatus(SpotCheckMismatchIgnore ignoreStatus) {
+        this.ignoreStatus = ignoreStatus;
+    }
+
+    public int getMismatchId() {
+        return mismatchId;
+    }
+
+    public void setMismatchId(int mismatchId) {
+        this.mismatchId = mismatchId;
+    }
+
+    public List<String> getIssueIds() {
+        return issueIds;
+    }
+
+    public void setIssueIds(List<String> issueIds) {
+        this.issueIds = issueIds;
     }
 }

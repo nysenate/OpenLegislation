@@ -14,11 +14,11 @@ import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@Component
+//@Component
 public class TestCommittees {
     private static Logger logger = LoggerFactory.getLogger(TestCommittees.class);
 
-    @Autowired
+//    @Autowired
     private MemberService memberService;
 
     private Map<String, Committee> createdCommittees = new HashMap<String,Committee>();

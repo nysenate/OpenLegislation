@@ -109,6 +109,7 @@ public enum SqlTable
     SPOTCHECK_REPORT             ("spotcheck_report"),
     SPOTCHECK_OBSERVATION        ("spotcheck_observation"),
     SPOTCHECK_MISMATCH           ("spotcheck_mismatch"),
+    SPOTCHECK_MISMATCH_IGNORE    ("spotcheck_mismatch_ignore"),
 
     TRANSCRIPT                   ("transcript"),
     TRANSCRIPT_FILE              ("transcript_file"),
