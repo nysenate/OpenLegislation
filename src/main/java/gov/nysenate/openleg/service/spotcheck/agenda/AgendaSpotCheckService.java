@@ -57,7 +57,7 @@ public class AgendaSpotCheckService
         // Some friendly logging
         int mismatchCount = observation.getMismatches().size();
         if (mismatchCount > 0) {
-            logger.info("Committee Meeting Agenda {} | {} mismatch(es). | {}", content.getId(), mismatchCount, observation.getMismatchTypes());
+            logger.info("Committee Meeting Agenda {} | {} mismatch(es). | {}", content.getId(), mismatchCount, observation.getMismatchTypes(false));
         }
         return observation;
     }

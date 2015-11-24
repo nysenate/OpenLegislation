@@ -6,6 +6,7 @@ import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Dao interface for retrieving, saving, and deleting spot check reports. The interface is templated
@@ -40,7 +41,16 @@ public interface SpotCheckReportDao<ContentKey>
      * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType
      * @param query OpenMismatchQuery
      * */
-    SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query);
+    SpotCheckOpenMismatches<ContentKey> getOpenMismatches(OpenMismatchQuery query);
+
+    /**
+     * Get a summary of type/status/ignore counts pertaining to the given query
+     *
+     * @param refTypes
+     * @param observedAfter
+     * @return OpenMismatchesSummary
+     */
+    OpenMismatchSummary getOpenMismatchSummary(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter);
 
     /**
      * Save the report to the backing store. This process may add additional observations to the

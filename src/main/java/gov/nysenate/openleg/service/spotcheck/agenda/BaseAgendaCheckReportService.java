@@ -139,7 +139,7 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
                             reference.getAgendaAlertInfoCommId().toString(), ""));
                     observations.add(obs);
                     logger.info("Committee Meeting Agenda {} | {} mismatch(es). | {}",
-                            reference.getAgendaAlertInfoCommId(), obs.getMismatches().size(), obs.getMismatchTypes());
+                            reference.getAgendaAlertInfoCommId(), obs.getMismatches().size(), obs.getMismatchTypes(false));
                     checkedReferences.add(reference);
                 }
             }

@@ -19,9 +19,7 @@ spotcheckModule.factory('SpotcheckDetailAPI', ['$resource', function($resource) 
 }]);
 
 spotcheckModule.factory('SpotcheckOpenMismatchAPI', ['$resource', function($resource) {
-    return $resource(adminApiPath + "/spotcheck/open-mismatches/:reportType", {
-        reportType: '@reportType'
-    });
+    return $resource(adminApiPath + "/spotcheck/open-mismatches");
 }]);
 
 var reportTypeMap = {};

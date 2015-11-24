@@ -1,11 +1,13 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import com.google.common.collect.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A SpotCheckReport is basically a collection of observations that have 1 or more mismatches associated
@@ -40,10 +42,36 @@ public class SpotCheckReport<ContentKey>
 
     /** --- Methods --- */
 
-    public long getOpenMismatchCount() {
+    public SpotCheckReportSummary getSummary() {
+        SpotCheckReportSummary summary = new SpotCheckReportSummary(reportId, notes, observations.size());
+        Table<SpotCheckMismatchType, SpotCheckMismatchStatus, Long> openMismatchTable = HashBasedTable.create();
+        Table<SpotCheckMismatchType, SpotCheckMismatchStatus, Long> ignoredMismatchMap = HashBasedTable.create();
+        observations.values().stream()
+                .flatMap(obs -> obs.getMismatches().values().stream())
+                .forEach(mismatch -> {
+                    Table<SpotCheckMismatchType, SpotCheckMismatchStatus, Long> relevantMap= mismatch.isIgnored()
+                            ? ignoredMismatchMap : openMismatchTable;
+                    long existingCount = Optional.ofNullable(relevantMap.get(mismatch.getMismatchType(), mismatch.getStatus()))
+                            .orElse(0L);
+                    relevantMap.put(mismatch.getMismatchType(), mismatch.getStatus(), existingCount + 1);
+                });
+        openMismatchTable.rowKeySet().forEach(type ->
+                openMismatchTable.row(type).forEach((status, count) -> summary.addMismatchTypeCount(type, status, count)));
+        ignoredMismatchMap.rowKeySet().forEach(type ->
+                ignoredMismatchMap.row(type).forEach((status, count) -> summary.addIgnoredMismatchTypeCount(type, status, count)));
+        return summary;
+    }
+
+    /**
+     * Get a count of open mismatches
+     * @param ignored boolean - returns the count of ignored mismatches if true, which are not included if false
+     * @return long
+     */
+    public long getOpenMismatchCount(boolean ignored) {
         return observations.values().stream()
                 .map(obs -> obs.getMismatches().values().stream()
-                        .filter(mismatch -> !SpotCheckMismatchStatus.RESOLVED.equals(mismatch.getStatus()))
+                        .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
+                        .filter(mismatch -> mismatch.getStatus() != SpotCheckMismatchStatus.RESOLVED)
                         .count()
                 )
                 .reduce(0L, (a, b) -> a + b);
@@ -51,17 +79,17 @@ public class SpotCheckReport<ContentKey>
 
     /**
      * Get the number of mismatches across all observations grouped by the mismatch status.
-     *
+     * @param ignored boolean - get the status count of ignored mismatches if true, which are not included if false
      * @return Map<SpotCheckMismatchStatus, Long>
      */
-    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts() {
+    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts(boolean ignored) {
         if (observations != null) {
             Map<SpotCheckMismatchStatus, Long> counts = new HashMap<>();
             for (SpotCheckMismatchStatus status : SpotCheckMismatchStatus.values()) {
                 counts.put(status, 0L);
             }
             observations.values().stream()
-                .flatMap(e -> e.getMismatchStatusCounts().entrySet().stream())
+                .flatMap(e -> e.getMismatchStatusCounts(ignored).entrySet().stream())
                 .forEach(e -> counts.merge(e.getKey(), e.getValue(), Long::sum));
             return counts;
         }
@@ -70,14 +98,14 @@ public class SpotCheckReport<ContentKey>
 
     /**
      * Gets a count of mismatch types grouped by statuses across all observations.
-     *
+     * @param ignored boolean - get type/status counts of ignored mismatches if true, which are not included if false
      * @return Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>>
      */
-    public Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> getMismatchTypeStatusCounts() {
+    public Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> getMismatchTypeStatusCounts(boolean ignored) {
         if (observations != null) {
             Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> counts = new HashMap<>();
             observations.values().stream()
-                .flatMap(e -> e.getMismatchStatusTypes().entrySet().stream())
+                .flatMap(e -> e.getMismatchStatusTypes(ignored).entrySet().stream())
                 .forEach(e -> {
                     if (!counts.containsKey(e.getKey())) {
                         counts.put(e.getKey(), new HashMap<>());
@@ -91,39 +119,34 @@ public class SpotCheckReport<ContentKey>
 
     /**
      * Gets a count of mismatch statuses grouped by type across all observations.
-     *
+     * @param ignored boolean - get status/type counts of ignored mismatches if true, which are not included if false
      * @return Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>>
      */
-    public Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>> getMismatchStatusTypeCounts() {
+    public Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>> getMismatchStatusTypeCounts(boolean ignored) {
         if (observations != null) {
-            Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>> counts = new HashMap<>();
+            Table<SpotCheckMismatchStatus, SpotCheckMismatchType, Long> countTable = HashBasedTable.create();
             observations.values().stream()
-                    .flatMap(e -> e.getMismatchStatusTypes().entrySet().stream())
-                    .forEach(e -> {
-                        if (!counts.containsKey(e.getValue())) {
-                            counts.put(e.getValue(), new HashMap<>());
-                        }
-                        long currentCount = 0;
-                        if (counts.get(e.getValue()).containsKey(e.getKey())) {
-                            currentCount = counts.get(e.getValue()).get(e.getKey());
-                        }
-                        counts.get(e.getValue()).merge(e.getKey(), 1L, (a, b) -> a + 1L);
+                    .flatMap(obs -> obs.getMismatchStatusTypes(ignored).entrySet().stream())
+                    .forEach(entry -> {
+                        long currentValue = Optional.ofNullable(countTable.get(entry.getValue(), entry.getKey()))
+                                .orElse(0l);
+                        countTable.put(entry.getValue(), entry.getKey(), currentValue + 1);
                     });
-            return counts;
+            return countTable.rowMap();
         }
         throw new IllegalStateException("The observations on this report have not yet been set.");
     }
 
     /**
      * Get the number of mismatches across all observations grouped by the mismatch type.
-     *
+     * @param ignored boolean - get type counts of ignored mismatches if true, which are not included if false
      * @return Map<SpotCheckMismatchType, Long>
      */
-    public Map<SpotCheckMismatchType, Long> getMismatchTypeCounts() {
+    public Map<SpotCheckMismatchType, Long> getMismatchTypeCounts(boolean ignored) {
         if (observations != null) {
             Map<SpotCheckMismatchType, Long> counts = new HashMap<>();
             observations.values().stream()
-                .flatMap(e -> e.getMismatchTypes().stream())
+                .flatMap(e -> e.getMismatchTypes(ignored).stream())
                 .forEach(e -> counts.merge(e, 1L, (a,b) -> a + 1L));
             return counts;
         }
@@ -149,6 +172,13 @@ public class SpotCheckReport<ContentKey>
             throw new IllegalArgumentException("Supplied observation collection cannot be null");
         }
         observations.forEach(this::addObservation);
+    }
+
+    /**
+     * Get the number of content items observed
+     */
+    public int getObservedCount() {
+        return Optional.ofNullable(this.observations).map(Map::size).orElse(0);
     }
 
     /** --- Delegates --- */

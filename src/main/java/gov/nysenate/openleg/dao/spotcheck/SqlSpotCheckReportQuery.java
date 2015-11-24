@@ -21,11 +21,13 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     SELECT_REPORT_SUMMARIES(
         "SELECT r.*, tsc.* FROM (" + SELECT_REPORT_SUMMARY_IDS.sql + ") as r\n" +
         "LEFT JOIN (\n" +
-        "   SELECT report_id, type, status, COUNT(m.id) AS mismatch_count\n" +
+        "   SELECT report_id, type, status, ignore_level, COUNT(m.id) AS mismatch_count\n" +
         "   FROM ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o\n" +
         "   JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m\n" +
         "       ON o.id = m.observation_id\n" +
-        "   GROUP BY report_id, type, status\n" +
+        "   LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " i\n" +
+        "       ON o.key = i.key AND m.type = i.mismatch_type AND o.reference_type = i.reference_type\n" +
+        "   GROUP BY report_id, type, status, ignore_level\n" +
         ") AS tsc\n" +
         "   ON r.id = tsc.report_id"
     ),
@@ -96,30 +98,36 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "ORDER BY current DESC"
     ),
     SELECT_LATEST_OBS_MISMATCHES(
-        OBS_MISMATCHES_SELECT_CLAUSE.sql + ", COUNT(*) OVER () AS mismatch_count FROM (\n" +
-        "       SELECT key, MAX(observed_date_time) AS latest_obs_date_time\n" +
+        OBS_MISMATCHES_SELECT_CLAUSE.sql + ", COUNT(*) OVER () AS mismatch_count\n" +
+        "   FROM (\n" +
+        "       SELECT reference_type, key, MAX(observed_date_time) AS latest_obs_date_time\n" +
         "       FROM ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + "\n" +
-        "       WHERE reference_type = :referenceType\n" +
-        "       GROUP BY key) AS latest_obs\n" +
+        "       WHERE reference_type in (:referenceTypes)\n" +
+        "       GROUP BY reference_type, key\n" +
+        "   ) AS latest_obs\n" +
         "   JOIN ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o\n" +
-        "       ON o.observed_date_time = latest_obs.latest_obs_date_time AND o.key = latest_obs.key\n" +
+        "       ON latest_obs.reference_type = o.reference_type AND \n" +
+        "            o.key = latest_obs.key AND o.observed_date_time = latest_obs.latest_obs_date_time\n" +
         "   JOIN ${schema}." + SqlTable.SPOTCHECK_REPORT + " r on o.report_id = r.id\n" +
         "   LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m ON m.observation_id = o.id" +
         "   LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " i\n" +
-        "       ON o.key = i.key AND m.type = i.mismatch_type AND o.reference_type = i.reference_type\n"
+        "       ON o.key = i.key AND m.type = i.mismatch_type AND o.reference_type = i.reference_type"
     ),
     SELECT_LATEST_OBS_MISMATCHES_PARTIAL(
         "SELECT latest_obs.*, true AS current, hstore_to_array(latest_obs.key) AS key_arr\n" +
         "FROM (\n" + SELECT_LATEST_OBS_MISMATCHES.sql + "\n) as latest_obs"
     ),
-    SELECT_LATEST_OPEN_OBS_MISMATCHES(
-        "SELECT q.*, hstore_to_array(q.key) AS key_arr FROM (\n" +
+    SELECT_LATEST_OPEN_OBS_MISMATCHES_SUB_QUERY(
         "   WITH latest_obs AS (\n" +
         "       " + SELECT_LATEST_OBS_MISMATCHES.sql + "\n" +
         "       WHERE m.id IS NOT NULL ${typeFilter}${dateFilter}${resolvedFilter}${ignoredFilter}${trackedFilter}${untrackedFilter}\n" +
         "       ${orderBy}\n" +
         "       ${limitOffset}\n" +
-        "   )\n" +
+        "   )\n"
+    ),
+    SELECT_LATEST_OPEN_OBS_MISMATCHES(
+        "SELECT q.*, hstore_to_array(q.key) AS key_arr FROM (\n" +
+            SELECT_LATEST_OPEN_OBS_MISMATCHES_SUB_QUERY.sql +
         "   SELECT latest_obs.*, true AS current FROM latest_obs\n" +
         "   UNION\n" +
         "   " + OBS_MISMATCHES_SELECT_CLAUSE.sql + ", -1 AS mismatch_count, false AS current\n" +
@@ -133,6 +141,12 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "       ON o.key = i.key AND m.type = i.mismatch_type AND o.reference_type = i.reference_type\n" +
         ") q\n" +
         "ORDER BY current DESC"
+    ),
+    SELECT_LATEST_OPEN_OBS_MISMATCHES_SUMMARY(
+        SELECT_LATEST_OPEN_OBS_MISMATCHES_SUB_QUERY.sql +
+        "SELECT reference_type, status, type, ignore_level, count(*) AS mismatch_count\n" +
+        "FROM latest_obs\n" +
+        "GROUP BY reference_type, status, type, ignore_level"
     ),
     SELECT_OBS_MISMATCHES_BY_TYPE(
         OBS_MISMATCHES_SELECT_CLAUSE.sql + OBS_MISMATCHES_FROM_CLAUSE.sql +
@@ -208,7 +222,17 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     }
 
     public static String getLatestOpenObsMismatchesQuery(String schema, OpenMismatchQuery query) {
-        Map<String, String> subMap = ImmutableMap.<String, String>builder()
+        Map<String, String> subMap = getOpenMismatchQuerySubMap(query);
+        return StrSubstitutor.replace(SELECT_LATEST_OPEN_OBS_MISMATCHES.getSql(schema), subMap);
+    }
+
+    public static String getOpenObsMismatchesSummaryQuery(String schema, OpenMismatchQuery query) {
+        Map<String, String> subMap = getOpenMismatchQuerySubMap(query);
+        return StrSubstitutor.replace(SELECT_LATEST_OPEN_OBS_MISMATCHES_SUMMARY.getSql(schema), subMap);
+    }
+
+    private static Map<String, String> getOpenMismatchQuerySubMap(OpenMismatchQuery query) {
+        return ImmutableMap.<String, String>builder()
                 .put("typeFilter", query.getMismatchTypes() != null && !query.getMismatchTypes().isEmpty()
                         ? " AND m.type IN (:mismatchTypes)" : "")
                 .put("dateFilter", query.getObservedAfter() != null ? " AND o.observed_date_time >= :earliest" : "")
@@ -221,6 +245,5 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
                 .put("orderBy", SqlQueryUtils.getOrderByClause(query.getFullOrderBy()))
                 .put("limitOffset", SqlQueryUtils.getLimitOffsetClause(query.getLimitOffset()))
                 .build();
-        return StrSubstitutor.replace(SELECT_LATEST_OPEN_OBS_MISMATCHES.getSql(schema), subMap);
     }
 }
