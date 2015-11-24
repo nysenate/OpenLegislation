@@ -2,23 +2,22 @@ package gov.nysenate.openleg.controller.api.admin;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
+import gov.nysenate.openleg.client.response.base.SimpleResponse;
+import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.base.SearchResultView;
-import gov.nysenate.openleg.client.view.base.StringView;
 import gov.nysenate.openleg.client.view.log.ApiLogItemView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.log.search.ApiLogSearchDao;
+import gov.nysenate.openleg.dao.log.search.ApiLogLongPollService;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.log.search.ApiLogSearchService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 import static java.util.stream.Collectors.toList;
@@ -30,6 +29,7 @@ public class ApiLogCtrl extends BaseCtrl
     private static final Logger logger = LoggerFactory.getLogger(ApiLogCtrl.class);
 
     @Autowired private ApiLogSearchService logSearchService;
+    @Autowired private ApiLogLongPollService logLongPollService;
 
     @RequiresPermissions("admin:apilog:view")
     @RequestMapping("")
@@ -42,5 +42,16 @@ public class ApiLogCtrl extends BaseCtrl
             results.getResults().stream()
                 .map(r -> new SearchResultView(r.getResult(), r.getRank(), r.getHighlights()))
                 .collect(toList()), results.getTotalResults(), limOff);
+    }
+
+    @RequiresPermissions("admin:apilog:view")
+    @RequestMapping("longPoll")
+    public DeferredResult<Object> pollLog(@RequestParam(defaultValue = "*") String term,
+                                          @RequestParam(defaultValue = "requestTime:DESC") String sort,
+                                          WebRequest webRequest) {
+        final DeferredResult<Object> result =
+            new DeferredResult<>(60000L, "0");
+        logLongPollService.addDeferred(result);
+        return result;
     }
 }

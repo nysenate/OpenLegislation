@@ -48,6 +48,7 @@ public class WebInitializer implements WebApplicationInitializer
         dispatcher = servletContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet(dispatcherContext));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
+        dispatcher.setAsyncSupported(true);
 
         /** Register Apache Shiro */
         DelegatingFilterProxy shiroFilter = new DelegatingFilterProxy("shiroFilter", dispatcherContext);
