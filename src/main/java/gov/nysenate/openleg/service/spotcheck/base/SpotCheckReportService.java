@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The SpotCheckReportService specifies the various methods that are available for use when
@@ -72,6 +73,15 @@ public interface SpotCheckReportService<ContentKey>
      * @return Map<ContentKey, SpotCheckObservation<ContentKey>>
      */
     SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query);
+
+    /**
+     * Get a summary of type/status/ignore counts pertaining to the given query
+     *
+     * @param refTypes
+     * @param observedAfter
+     * @return OpenMismatchesSummary
+     */
+    OpenMismatchSummary getOpenMismatchSummary(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter);
 
     /**
      * Wipe a report as well as all of its associated observations and mismatches from the backing store.

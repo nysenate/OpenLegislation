@@ -96,7 +96,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         // Some friendly logging
         int mismatchCount = observation.getMismatches().size();
         if (mismatchCount > 0) {
-            logger.info("Bill {} | {} mismatch(es). | {}", baseBillId, mismatchCount, observation.getMismatchTypes());
+            logger.info("Bill {} | {} mismatch(es). | {}", baseBillId, mismatchCount, observation.getMismatchTypes(false));
         }
         return observation;
     }

@@ -54,7 +54,7 @@ public class DaybreakSpotCheckReportDaoTests extends BaseTests
 
     @Test
     public void getOpenObsTest() {
-        //Map<BaseBillId, SpotCheckObservation<BaseBillId>> obs = reportDao.getOpenObservations(SpotCheckRefType.LBDC_SCRAPED_BILL);
+        //Map<BaseBillId, SpotCheckObservation<BaseBillId>> obs = reportDao.getOpenMismatches(SpotCheckRefType.LBDC_SCRAPED_BILL);
         logger.info("hi");
     }
 

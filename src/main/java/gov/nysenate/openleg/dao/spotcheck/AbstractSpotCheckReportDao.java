@@ -93,15 +93,25 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         return handler.getSummaries();
     }
 
-    /** {@inheritDoc}
-     * @param query*/
+    /** {@inheritDoc} */
     @Override
-    public SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query) {
+    public SpotCheckOpenMismatches<ContentKey> getOpenMismatches(OpenMismatchQuery query) {
         ImmutableParams params = ImmutableParams.from(getOpenObsParams(query));
         ReportObservationsHandler handler = new ReportObservationsHandler();
-        String sqlQuery = getLatestOpenObsMismatchesQuery(schema(), query);
+        final String sqlQuery = getLatestOpenObsMismatchesQuery(schema(), query);
         jdbcNamed.query(sqlQuery, params, handler);
-        return new SpotCheckOpenMismatches<>(query.getRefType(), handler.getObsMap(), handler.getMismatchTotal());
+        return new SpotCheckOpenMismatches<>(query.getRefTypes(), handler.getObsMap(), handler.getMismatchTotal());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OpenMismatchSummary getOpenMismatchSummary(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter) {
+        OpenMismatchQuery query = new OpenMismatchQuery(refTypes, null, observedAfter, null, null, null, false, true, false, true, true);
+        ImmutableParams params = ImmutableParams.from(getOpenObsParams(query));
+        OpenMismatchSummaryHandler handler = new OpenMismatchSummaryHandler(refTypes, observedAfter);
+        final String sqlQuery = getOpenObsMismatchesSummaryQuery(schema(), query);
+        jdbcNamed.query(sqlQuery, params, handler);
+        return handler.getSummary();
     }
 
     /** {@inheritDoc} */
@@ -226,7 +236,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         }
     }
 
-    protected class ReportSummaryHandler implements RowCallbackHandler
+    protected class ReportSummaryHandler extends SummaryHandler
     {
         private Map<SpotCheckReportId, SpotCheckReportSummary> summaryMap;
 
@@ -235,21 +245,63 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         }
 
         @Override
-        public void processRow(ResultSet rs) throws SQLException {
+        protected SpotCheckSummary getRelevantSummary(ResultSet rs) throws SQLException {
             SpotCheckReportId id = reportIdRowMapper.mapRow(rs, rs.getRow());
             if (!summaryMap.containsKey(id)) {
                 summaryMap.put(id, new SpotCheckReportSummary(id, rs.getString("notes"), rs.getInt("observation_count")));
             }
-            try {
-                SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("type"));
-                SpotCheckMismatchStatus status = SpotCheckMismatchStatus.valueOf(rs.getString("status"));
-                int count = rs.getInt("mismatch_count");
-                summaryMap.get(id).addMismatchTypeCount(type, status, count);
-            } catch (NullPointerException ignored) {}
+            return summaryMap.get(id);
         }
 
         public List<SpotCheckReportSummary> getSummaries() {
             return new ArrayList<>(summaryMap.values());
+        }
+    }
+
+    protected class OpenMismatchSummaryHandler extends SummaryHandler
+    {
+        protected OpenMismatchSummary summary;
+
+        public OpenMismatchSummaryHandler(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter) {
+            this.summary = new OpenMismatchSummary(refTypes, observedAfter);
+        }
+
+        @Override
+        protected SpotCheckSummary getRelevantSummary(ResultSet rs) throws SQLException {
+            SpotCheckRefType refType = SpotCheckRefType.valueOf(rs.getString("reference_type"));
+            return summary.getRefTypeSummary(refType);
+        }
+
+        public OpenMismatchSummary getSummary() {
+            return summary;
+        }
+
+    }
+
+    protected abstract class SummaryHandler implements RowCallbackHandler
+    {
+        protected abstract SpotCheckSummary getRelevantSummary(ResultSet rs) throws SQLException;
+
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            SpotCheckSummary relevantSummary = getRelevantSummary(rs);
+
+            // Check to see if this row was null in case the query used a left join
+            String typeString = rs.getString("type");
+            if (typeString == null) {
+                return;
+            }
+
+            SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("type"));
+            SpotCheckMismatchStatus status = SpotCheckMismatchStatus.valueOf(rs.getString("status"));
+            int count = rs.getInt("mismatch_count");
+            int ignoreLevel = rs.getInt("ignore_level");
+
+            if (rs.wasNull()) {
+                relevantSummary.addMismatchTypeCount(type, status, count);
+            } else {
+                relevantSummary.addIgnoredMismatchTypeCount(type, status, count);
+            }
         }
     }
 
@@ -361,11 +413,13 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
 
     private MapSqlParameterSource getOpenObsParams(OpenMismatchQuery query) {
         return new MapSqlParameterSource()
-                .addValue("referenceType", query.getRefType().name())
+                .addValue("referenceTypes", query.getRefTypes().stream().map(Enum::name).collect(Collectors.toList()))
                 .addValue("earliest", toDate(query.getObservedAfter()))
-                .addValue("mismatchTypes", query.getMismatchTypes().stream()
-                        .map(SpotCheckMismatchType::name)
-                        .collect(Collectors.toList()));
+                .addValue("mismatchTypes", query.getMismatchTypes() != null
+                        ? query.getMismatchTypes().stream()
+                                .map(SpotCheckMismatchType::name)
+                                .collect(Collectors.toList())
+                        : null);
     }
 
     private MapSqlParameterSource getIssueIdParams(int mismatchId, String issueId) {

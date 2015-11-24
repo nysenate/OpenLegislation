@@ -1,55 +1,55 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchStatus;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportSummary;
+import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.spotcheck.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
-public class ReportInfoView extends ReportIdView
+public class ReportInfoView extends SpotCheckSummaryView implements ViewObject
 {
+
+    protected String referenceType;
+    protected LocalDateTime referenceDateTime;
+    protected LocalDateTime reportDateTime;
     protected String notes;
     protected int observedCount;
-    protected Map<SpotCheckMismatchStatus, Long> mismatchStatuses;
-    protected Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> mismatchTypes;
 
     public ReportInfoView(SpotCheckReportSummary summary) {
-        super(summary != null ? summary.getReportId() : null);
-        if (summary != null) {
-            this.notes = summary.getNotes();
-            this.mismatchStatuses = summary.getMismatchStatuses();
-            this.mismatchTypes = summary.getMismatchTypes().rowMap();
-            this.observedCount = summary.getObservedCount();
-        }
+        this(summary,
+                summary != null ? summary.getNotes() : null,
+                summary != null ? summary.getObservedCount() : 0,
+                summary != null ? summary.getReportId() : null);
     }
 
     public ReportInfoView(SpotCheckReport<?> report) {
-        super(report != null ? report.getReportId() : null);
-        if (report != null) {
-            this.notes = report.getNotes();
-            this.mismatchStatuses = report.getMismatchStatusCounts();
-            this.mismatchTypes = report.getMismatchTypeStatusCounts();
-            this.observedCount = report.getObservations().size();
-        }
+        this(Optional.ofNullable(report));
     }
+
+    private ReportInfoView(Optional<SpotCheckReport<?>> reportOpt) {
+        this(reportOpt.map(SpotCheckReport::getSummary).orElse(null),
+                reportOpt.map(SpotCheckReport::getNotes).orElse(null),
+                reportOpt.map(SpotCheckReport::getObservedCount).orElse(0),
+                reportOpt.map(SpotCheckReport::getReportId).orElse(null));
+    }
+
+    protected ReportInfoView(SpotCheckSummary summary, String notes, int observedCount, SpotCheckReportId reportId) {
+        super(summary);
+        this.notes = notes;
+        this.observedCount = observedCount;
+
+        Optional<SpotCheckReportId> reportIdOpt = Optional.ofNullable(reportId);
+        this.referenceType = reportIdOpt.map(SpotCheckReportId::getReferenceType)
+                .map(Enum::name).orElse(null);
+        this.referenceDateTime = reportIdOpt.map(SpotCheckReportId::getReferenceDateTime).orElse(null);
+        this.reportDateTime = reportIdOpt.map(SpotCheckReportId::getReportDateTime).orElse(null);
+    }
+
+    /** --- Getters --- */
 
     public String getNotes() {
         return notes;
-    }
-
-    public Map<SpotCheckMismatchStatus, Long> getMismatchStatuses() {
-        return mismatchStatuses;
-    }
-
-    public Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> getMismatchTypes() {
-        return mismatchTypes;
-    }
-
-    public Long getOpenMismatches() {
-        return mismatchStatuses.entrySet().stream()
-            .filter(e -> !e.getKey().equals(SpotCheckMismatchStatus.RESOLVED))
-            .map(Map.Entry::getValue).reduce(Long::sum).orElse(0L);
     }
 
     public int getObservedCount() {
@@ -59,5 +59,17 @@ public class ReportInfoView extends ReportIdView
     @Override
     public String getViewType() {
         return referenceType + " report-info";
+    }
+
+    public String getReferenceType() {
+        return referenceType;
+    }
+
+    public LocalDateTime getReferenceDateTime() {
+        return referenceDateTime;
+    }
+
+    public LocalDateTime getReportDateTime() {
+        return reportDateTime;
     }
 }
