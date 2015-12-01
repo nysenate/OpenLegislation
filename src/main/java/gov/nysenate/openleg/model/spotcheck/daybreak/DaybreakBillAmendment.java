@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.daybreak;
+package gov.nysenate.openleg.model.spotcheck.daybreak;
 
 import gov.nysenate.openleg.model.bill.BillId;
 

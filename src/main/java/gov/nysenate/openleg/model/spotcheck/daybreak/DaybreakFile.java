@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.daybreak;
+package gov.nysenate.openleg.model.spotcheck.daybreak;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
@@ -12,15 +12,14 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 /**
  * The DaybreakFile class contains a reference to a local daybreak file along with some of the file's metadata
  * DaybreakFiles are broken up and stored as DaybreakFragments or PageFileEntries depending on the file's
  * DaybreakFileType
  *
- * @see gov.nysenate.openleg.model.daybreak.DaybreakFragment
- * @see gov.nysenate.openleg.model.daybreak.PageFileEntry
+ * @see gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakFragment
+ * @see gov.nysenate.openleg.model.spotcheck.daybreak.PageFileEntry
  */
 public class DaybreakFile implements DaybreakDocument{
 

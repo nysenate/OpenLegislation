@@ -1,14 +1,13 @@
 package gov.nysenate.openleg.processor.daybreak;
 
 import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
-import gov.nysenate.openleg.model.daybreak.*;
+import gov.nysenate.openleg.model.spotcheck.daybreak.*;
 import gov.nysenate.openleg.util.OpenlegThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

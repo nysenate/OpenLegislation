@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.dao.daybreak;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.model.daybreak.DaybreakBill;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

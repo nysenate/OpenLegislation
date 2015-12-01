@@ -22,6 +22,8 @@ public enum SpotCheckRefType
 
     LBDC_AGENDA_ALERT("agenda-alert", NotificationType.AGENDA_SPOTCHECK),
 
+    SENATE_SITE_BILLS("senate-site-bills", NotificationType.SENSITE_BILL_SPOTCHECK),
+
     ;
 
     private String refName;
