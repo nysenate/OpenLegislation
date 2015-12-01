@@ -24,6 +24,15 @@ public class ApiLogEvent
         this.logDateTime = LocalDateTime.now();
     }
 
+    /** --- Functional Getters --- */
+
+    public LocalDateTime getRequestTime() {
+        if (apiResponse != null && apiResponse.getBaseRequest() != null) {
+            return apiResponse.getBaseRequest().getRequestTime();
+        }
+        return null;
+    }
+
     /** --- Basic Getters --- */
 
     public LocalDateTime getLogDateTime() {
