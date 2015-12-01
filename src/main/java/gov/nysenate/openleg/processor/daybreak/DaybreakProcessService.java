@@ -1,8 +1,7 @@
 package gov.nysenate.openleg.processor.daybreak;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.daybreak.DaybreakBillId;
-import gov.nysenate.openleg.model.daybreak.DaybreakFragment;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBillId;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakFragment;
 import gov.nysenate.openleg.processor.base.ProcessService;
 
 import java.util.List;

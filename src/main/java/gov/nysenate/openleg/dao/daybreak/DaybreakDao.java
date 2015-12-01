@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.daybreak;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.daybreak.*;
+import gov.nysenate.openleg.model.spotcheck.daybreak.*;
 import org.springframework.dao.DataAccessException;
 
 import java.io.IOException;

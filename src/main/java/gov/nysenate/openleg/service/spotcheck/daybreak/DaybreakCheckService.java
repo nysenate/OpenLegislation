@@ -9,7 +9,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillSponsor;
-import gov.nysenate.openleg.model.daybreak.DaybreakBill;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
 import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;

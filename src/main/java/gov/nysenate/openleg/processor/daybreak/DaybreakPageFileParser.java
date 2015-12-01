@@ -2,9 +2,9 @@ package gov.nysenate.openleg.processor.daybreak;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.daybreak.DaybreakDocType;
-import gov.nysenate.openleg.model.daybreak.DaybreakFile;
-import gov.nysenate.openleg.model.daybreak.PageFileEntry;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakDocType;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakFile;
+import gov.nysenate.openleg.model.spotcheck.daybreak.PageFileEntry;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;

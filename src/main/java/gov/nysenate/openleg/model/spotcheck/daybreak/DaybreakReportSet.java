@@ -1,12 +1,10 @@
-package gov.nysenate.openleg.model.daybreak;
+package gov.nysenate.openleg.model.spotcheck.daybreak;
 
-import com.google.common.base.Functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This class encapsulates a set of daybreak documents that have not yet been grouped into reports

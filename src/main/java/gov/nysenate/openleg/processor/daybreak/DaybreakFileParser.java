@@ -2,9 +2,9 @@ package gov.nysenate.openleg.processor.daybreak;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.daybreak.DaybreakDocType;
-import gov.nysenate.openleg.model.daybreak.DaybreakFile;
-import gov.nysenate.openleg.model.daybreak.DaybreakFragment;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakDocType;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakFile;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakFragment;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,6 @@ import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

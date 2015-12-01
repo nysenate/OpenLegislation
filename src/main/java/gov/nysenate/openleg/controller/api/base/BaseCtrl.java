@@ -24,6 +24,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -408,6 +409,16 @@ public abstract class BaseCtrl
     protected ErrorResponse handleInvalidRequestParameterException(InvalidRequestParamEx ex) {
         logger.debug(ExceptionUtils.getStackTrace(ex));
         return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, new InvalidParameterView(ex));
+    }
+
+    @ExceptionHandler(TypeMismatchException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ErrorResponse handleTypeMismatchException(TypeMismatchException ex) {
+        logger.debug(ExceptionUtils.getStackTrace(ex));
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,
+                new InvalidParameterView(ex.getPropertyName(), ex.getRequiredType().getSimpleName(),
+                        "must be convertible to type: " + ex.getRequiredType().getSimpleName(),
+                        Objects.toString(ex.getValue())));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)

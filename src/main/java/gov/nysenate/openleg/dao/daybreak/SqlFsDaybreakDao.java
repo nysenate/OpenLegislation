@@ -11,7 +11,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.daybreak.*;
+import gov.nysenate.openleg.model.spotcheck.daybreak.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
