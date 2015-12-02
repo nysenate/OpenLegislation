@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.bill;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.Member;
 
@@ -105,6 +106,14 @@ public class BillAmendment implements Serializable, Cloneable
 
     public BillId getBillId() {
         return baseBillId.withVersion(this.version);
+    }
+
+    public boolean isSenateBill() {
+        return this.getBillId().getBillType().getChamber().equals(Chamber.SENATE);
+    }
+
+    public boolean isAssemblyBill() {
+        return this.getBillId().getBillType().getChamber().equals(Chamber.ASSEMBLY);
     }
 
     public BillType getBillType() {

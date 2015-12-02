@@ -38,9 +38,9 @@ import java.util.regex.Pattern;
  * are applied to the bills via these fragments.
  */
 @Service
-public class BillProcessor extends AbstractDataProcessor implements SobiProcessor
+public class BillSobiProcessor extends AbstractDataProcessor implements SobiProcessor
 {
-    private static final Logger logger = LoggerFactory.getLogger(BillProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
 
     /** --- Patterns --- */
 
@@ -74,7 +74,7 @@ public class BillProcessor extends AbstractDataProcessor implements SobiProcesso
 
     /** --- Constructors --- */
 
-    public BillProcessor() {}
+    public BillSobiProcessor() {}
 
     @PostConstruct
     public void init() {
