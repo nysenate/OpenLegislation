@@ -107,19 +107,3 @@ commonModule.directive('checkButton', function(){
             "</button>"
     };
 });
-
-/** --- Spotcheck Diff --- */
-
-//commonModule.directive('mismatchDiff', function(){
-//    return {
-//        restrict: 'E',
-//        scope: {
-//            diff: '='
-//        },
-//        template:
-//            "<span ng-repeat='segment in diff' ng-class=\"{'mismatch-diff-equal': segment.operation=='EQUAL', " +
-//            "'mismatch-diff-insert': segment.operation=='INSERT', 'mismatch-diff-delete': segment.operation=='DELETE'}\" >" +
-//                "{{segment.text}}" +
-//            "</span>"
-//    };
-//});

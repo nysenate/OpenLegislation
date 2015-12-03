@@ -13,7 +13,6 @@ coreModule.factory('CommitteeListingApi', ['$resource', function($resource) {
     });
 }]);
 
-
 coreModule.filter('default', ['$filter', function($filter) {
     return function(input, defaultVal) {
         return (!input) ? defaultVal : input;

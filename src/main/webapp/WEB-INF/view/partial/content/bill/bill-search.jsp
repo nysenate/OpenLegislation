@@ -2,14 +2,13 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="open" tagdir="/WEB-INF/tags/component" %>
 
-
 <%@ page import="gov.nysenate.openleg.model.bill.BillStatusType" %>
 <!-- We set the statusTypes here to make it easy to create a select menu out of the status types. -->
 <c:set var="statusTypes" value="<%=BillStatusType.values()%>"/>
 
-<section ng-controller="BillCtrl">
-  <section class="content-section">
-    <md-tabs md-selected="selectedView" md-dynamic-height="false" md-stretch-tabs="auto">
+<div ng-controller="BillCtrl">
+  <div class="content-section" layout-padding>
+    <md-tabs class="md-hue-2" md-selected="selectedView" md-dynamic-height="true" md-stretch-tabs="auto">
       <md-tab>
         <md-tab-label><i class="icon-magnifying-glass prefix-icon2"></i>Search</md-tab-label>
         <md-tab-body>
@@ -344,5 +343,5 @@
         </md-tab-body>
       </md-tab>
     </md-tabs>
-  </section>
-</section>
+  </div>
+</div>

@@ -11,26 +11,31 @@ var openApp = angular.module('open',
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {
-    var openBlue = $mdThemingProvider.extendPalette('blue', {
-        '500': '008cba',
-        '800': '2B6A90'
+    var primaryPalette = $mdThemingProvider.extendPalette('grey', {
+        '500': '#f1f1f1',
+        '300': '#eee',
+        //'800': '#f5f5f5',
+        'A100':'#fff',
+        'contrastDefaultColor': 'dark'
     });
-    $mdThemingProvider.definePalette('openBlue', openBlue);
+$mdThemingProvider.definePalette('primaryPalette', primaryPalette);
     $mdThemingProvider.theme('default')
-        .primaryPalette('openBlue')
-        .accentPalette('light-green', {
+        .primaryPalette('primaryPalette')
+        .accentPalette('blue', {
             'hue-1': '300',
             'hue-2': '400',
             'hue-3': '600'
         });
-    $mdThemingProvider.theme('success').primaryPalette('green');
+    $mdThemingProvider.theme('success').primaryPalette('light-green');
     $mdThemingProvider.theme('failure').primaryPalette('red');
 })
 // Disable gestures for now.
 .constant('$mdGesture', {})
+// Keep trailing slashes since they are needed for some API calls
 .config(function($resourceProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
 })
+// Custom template for pagination
 .config(function(paginationTemplateProvider) {
     paginationTemplateProvider.setPath(ctxPath +'/static/tpl/dirPagination.tpl.html');
 });
@@ -113,31 +118,6 @@ function($scope, $location, $mdSidenav, $mdDialog, $http, $interval) {
                                 .ok('OK'));
         }
     }
-}]);
-
-/**
- * Landing Controller
- * ------------------
- *
- * The landing controller is responsible for the home page content as well as handling new api-key registrations.
- */
-openApp.controller('LandingCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.setHeaderVisible(true);
-    $scope.setHeaderText('Search, explore, and integrate legislative information from the NYS Senate.');
-    $scope.dataWeProvide = [
-        { type: 'New York State Bills and Resolutions', blurb: 'Discover current and prior legislation that impacts New York State.',
-          icon: 'icon-documents', bgclass: 'blue3-bg', url: ctxPath + '/bills'},
-        { type: 'New York State Laws', blurb: 'Search through the current laws of NYS.',
-          icon: 'icon-bookmarks', bgclass: 'green3-bg', url: ctxPath + '/laws'},
-        { type: 'Senate Session/Hearing Transcripts', blurb: 'Records of Senate session floor discussion since 1993.',
-          icon: 'icon-text', bgclass: 'blue4-bg', url: ctxPath + '/transcripts'},
-        { type: 'Senate Committee Agendas', blurb: 'Committee meetings to discuss bills and the votes to move them to the floor.',
-          icon: 'icon-megaphone', bgclass: 'green2-bg', url: ctxPath + '/agendas'},
-        { type: 'Senate Floor Calendars', blurb: 'Listings of bills that are scheduled for discussion and voting on the senate floor.',
-          icon: 'icon-calendar', bgclass: 'blue5-bg', url: ctxPath + '/calendars'},
-        { type: 'Senate/Assembly Membership', blurb: 'Senators and assemblymembers for the current session.',
-          icon: 'icon-users', bgclass: 'green1-bg', url: ctxPath + '/members'}
-    ];
 }]);
 
 /**

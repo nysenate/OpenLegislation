@@ -7,6 +7,10 @@
 
 /** --- Reset --- */
 
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   font-family: 'Open Sans', sans-serif;
   background: #f5f5f5;
@@ -45,7 +49,11 @@ hr {
 /** --- Angular Material Overrides --- */
 
 md-toolbar {
-  min-height: 65px;
+  min-height: 70px;
+  .md-toolbar-tools {
+    height: 70px;
+    max-height: 70px;
+  }
   &.auto-height {
     min-height: 0;
     height: auto;
@@ -71,20 +79,14 @@ md-card {
     &.no-margin {
       margin: 0;
     }
-    .subheader {
-      font-size: 0.9rem;
-      padding: 10px;
-    }
-    .subheader, .md-subheader {
-      background: #fafafa;
+    .md-subheader {
+      background: #fcfcfc;
       border-bottom: 1px solid #f1f1f1;
-      color: #555;
-      margin: 0;
+      color: #444;
     }
     md-content {
       margin: 0;
       padding: 20px;
-
     }
   }
 }
@@ -97,23 +99,9 @@ md-input-container {
   }
 }
 
-md-tabs {
-  padding: 10px;
-}
-
-md-tab.active {
-  md-tab-label {
-    font-weight: bold;
-  }
-}
-
-md-tab-content {
-  overflow: visible !important;
-}
-
 // Prevent list headers from getting compressed when the line wraps
 md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-style .md-list-item-text h3, md-list-item.md-3-line .md-list-item-text h3, md-list-item.md-3-line>.md-no-style .md-list-item-text h3 {
-  line-height: 1.2em !important;
+  //line-height: 1.2em !important;
 }
 
 /** --- Transitions --- */
@@ -151,46 +139,6 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   user-select: none;
 }
 
-/** --- Layout --- */
-
-#app-wrapper {
-  background: #f5f5f5;
-}
-
-#content-wrapper {
-  #content-header {
-    min-height: 70px;
-    font-size: 1.5rem;
-    box-shadow: none;
-    display: none;
-    @media (max-width: 768px) {
-      font-size: 1.1rem;
-    }
-    background: $blue5;
-    h1 {
-      color: white;
-    }
-    .md-toolbar-tools {
-      height: 70px;
-      max-height: 70px;
-    }
-    &.header-visible {
-      display: block;
-    }
-    /* Content header should always be visible when there's no room for the left nav. */
-    @media (max-width: 959px) {
-      display: block;
-    }
-  }
-  #content {
-    min-height: 100vh;
-    .content-section {
-      max-width: 1100px;
-      margin: auto;
-    }
-  }
-}
-
 /** --- Common Classes  --- */
 
 .text-xsmall {
@@ -225,24 +173,26 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   font-weight: 300;
 }
 
+.text-normal {
+  font-weight: normal;
+}
+
 .tight-lines {
   line-height: 1.1em;
 }
 
-.margin-top-20 {
-  margin-top: 20px !important;
+/** --- Margins --- */
+
+.no-margin {
+  margin: 0;
 }
 
-.margin-bottom-20 {
-  margin-bottom: 20px !important;
+.no-top-margin {
+  margin-top: 0;
 }
 
-.margin-top-10 {
-  margin-top: 10px !important;
-}
-
-.margin-bottom-10 {
-  margin-bottom: 10px !important;
+.no-bottom-margin {
+  margin-bottom: 0;
 }
 
 .margin-5 {
@@ -253,29 +203,47 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   margin: 10px;
 }
 
-.margin-20 {
-  margin: 20px;
+.margin-top-10 {
+  margin-top: 10px !important;
+}
+
+.margin-bottom-10 {
+  margin-bottom: 10px !important;
 }
 
 .margin-left-10 {
   margin-left: 10px;
 }
 
+.margin-right-10 {
+  margin-right: 10px;
+}
+
 .margin-left-16 {
   margin-left: 16px;
+}
+
+.margin-20 {
+  margin: 20px;
+}
+
+.margin-top-20 {
+  margin-top: 20px !important;
+}
+
+.margin-bottom-20 {
+  margin-bottom: 20px !important;
 }
 
 .margin-left-20 {
   margin-left: 20px;
 }
 
-.margin-right-10 {
-  margin-right: 10px;
-}
-
 .margin-right-20 {
   margin-right: 20px;
 }
+
+/** --- Paddings --- */
 
 .padding-5 {
   padding: 5px;
@@ -283,6 +251,10 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
 
 .padding-10 {
   padding: 10px;
+}
+
+.padding-right-10 {
+  padding-right: 10px;
 }
 
 .padding-16 {
@@ -293,24 +265,8 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   padding: 20px;
 }
 
-.padding-right-10 {
-  padding-right: 10px;
-}
-
-.no-margin {
-  margin: 0;
-}
-
 .no-padding {
   padding: 0;
-}
-
-.no-top-margin {
-  margin-top: 0;
-}
-
-.no-bottom-margin {
-  margin-bottom: 0;
 }
 
 .relative {
@@ -377,13 +333,12 @@ a.white-2-blue {
 }
 
 a.result-link {
+  width: 100%;
   text-decoration: none;
   color: #555;
   &:hover {
     color: $blue5;
-    background: $gray3;
-    md-item-content {
-    }
+    background: #fbfbfb;
   }
   em {
     background: #fff6b4;
@@ -414,6 +369,24 @@ a.inactive-link {
   width: 55px;
 }
 
+/** --- Headers --- */
+
+h2 {
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1em;
+}
+
+h4 {
+  font-size: 0.9em;
+}
+
+h5 {
+  font-size: 0.8em;
+}
+
 /** --- Common Widgets --- */
 
 .loading-pulse {
@@ -423,28 +396,57 @@ a.inactive-link {
   font-size: 0.9rem;
 }
 
+/** --- Main Layout --- */
+
+#app-wrapper {
+  background: #f5f5f5;
+}
+
+#content-header {
+  z-index: 1000;
+  font-size: 1.5rem;
+  display: none;
+  background: $blue3;
+  h1 {
+    //color: white;
+  }
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+  &.header-visible {
+    display: flex;
+  }
+  /* Content header should always be visible when there's no room for the left nav. */
+  @media (max-width: 959px) {
+    display: flex;
+  }
+}
+
+#content-header-spacer {
+  height: 70px;
+  display: block;
+  width: 100%;
+}
+
+#content {
+  //min-height: 100vh;
+  .content-section {
+    max-width: 1100px;
+    margin: auto;
+  }
+}
+
 /** --- Left Nav --- */
 
 $left-nav-width: 305px;
 
 #left-nav {
-  min-height: 100vh;
   width: $left-nav-width;
-  min-width: $left-nav-width;
-  position: fixed;
-  background: #fafafa;
-  @include box-shadow(none);
+  background: $blue5;
+  min-height: 100vh;
   @media print {
     display: none;
   }
-}
-
-#left-nav-spacer {
-  width: $left-nav-width;
-}
-
-#logo-wrapper {
-  height: 70px;
 }
 
 #logo {
@@ -459,6 +461,7 @@ $left-nav-width: 305px;
     font-size: 1.5rem;
     text-decoration: none;
     color: white;
+    margin-left: 10px;
   }
   img {
     top: 14px;
@@ -467,17 +470,9 @@ $left-nav-width: 305px;
   }
 }
 
-.beta-tag {
-  color: white;
-  font-size: .4em;
-  position: absolute;
-  top: 5px;
-  right: 10px;
-}
-
 .left-nav-menu {
-  width:100%;
-  padding-top:18px;
+  //width:100%;
+  background: $blue5;
 }
 
 // Menu styles adapted from angular-material docs
@@ -485,21 +480,19 @@ $left-nav-width: 305px;
 .menu-item {
   background: none;
   border-width: 0;
+  color: white;
   cursor: pointer;
   display: block;
-  color: #333;
-  font-size: 0.8rem;
+  font-size: 0.8em;
   line-height: 40px;
+  margin: 0;
   max-height: 40px;
   opacity: 1;
-  margin: 0;
   outline: none;
-  padding: 0px 35px;
+  padding: 0 35px;
   position: relative;
   text-align: left;
   text-decoration: none;
-  width: 100%;
-  z-index: 1;
 }
 .menu-item.ng-hide {
   max-height: 0;
@@ -509,7 +502,7 @@ $left-nav-width: 305px;
   font-weight: bold;
 }
 .menu-item.menu-title {
-  color: #444;
+  color: white;
   font-weight: bold;
   font-size: 14px;
   padding-left: 20px;
@@ -519,13 +512,18 @@ $left-nav-width: 305px;
 .menu-item.menu-title:hover,
 .menu-item.menu-title:focus,
 .menu-item.active, {
-  color: $blue4;
   font-weight: bold;
+  background: $blue3;
+}
+.menu-item.menu-title.active {
+  background: $blue4;
 }
 
 .menu-item:hover {
-  background: #eee;
+  background: $blue4;
 }
+
+/** --- Top Bar Heading --- */
 
 .top-bar-heading {
   color: #ffffff;
@@ -887,16 +885,14 @@ a.slogan-link {
 .bill-ms-step {
   height: 10px;
   width: 10px;
-  border: 1px solid rgba(255,255,255,.6);
-  float: left;
+  border: 1px solid $blue3;
   border-radius: 100%;
+  float: left;
   cursor: pointer;
   &.filled {
-    background: rgb(174,213,129);
-    border: 1px solid rgb(151, 213, 84);
+    background: $blue3;
     &.vetoed {
       background: $red1;
-      border-radius: 0;
       border: 1px solid $red1;
     }
   }
@@ -906,7 +902,7 @@ a.slogan-link {
   width: 25px;
   height: 5px;
   float: left;
-  border-bottom: 1px solid rgba(255,255,255,.7);
+  border-bottom: 1px dashed $blue3;
 }
 
 .bill-full-text {

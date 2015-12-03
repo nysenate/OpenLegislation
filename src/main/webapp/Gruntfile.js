@@ -47,13 +47,13 @@ module.exports = function(grunt) {
 
         /** Compress all js into dev and prod files */
         uglify: {
-            all: {
-                options: {
-                    mangle: false,
-                    preserveComments: 'some', // Preserve licensing comments
-                    banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */',
-                    beautify: false
-                },
+            options: {
+                mangle: false,
+                preserveComments: 'some', // Preserve licensing comments
+                banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */',
+                beautify: false
+            },
+            vendor: {
                 files: {
                     '<%= jsDest %>/vendor.min.js': [
                         // Much dependencies
@@ -64,7 +64,6 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/angular-resource/angular-resource.min.js',
                         '<%= bowerRoot %>/angular-animate/angular-animate.min.js',
                         '<%= bowerRoot %>/angular-aria/angular-aria.min.js',
-                        //'<%= bowerRoot %>/hammerjs/hammer.min.js',
                         '<%= bowerRoot %>/angular-material/angular-material.min.js',
                         '<%= bowerRoot %>/angular-smart-table/dist/smart-table.min.js',
                         '<%= bowerRoot %>/ngInfiniteScroll/build/ng-infinite-scroll.js',
@@ -76,7 +75,41 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/angular-utils-pagination/dirPagination.js',
                         '<%= bowerRoot %>/google-diff-match-patch/diff_match_patch.js',
                         '<%= bowerRoot %>/angular-diff-match-patch/angular-diff-match-patch.js'
-                    ]//'<%= jsDest %>/main.min.js': ['<%= jsSource %>/**/*.js']
+                    ]
+                }
+            },
+            app: {
+                files: {
+                    '<%= jsDest %>/app.min.js':
+                        [
+                        // Core
+                        '<%= jsSource %>/app.js',
+                        '<%= jsSource %>/core.js',
+                        '<%= jsSource %>/routes.js',
+                        '<%= jsSource %>/api.js',
+
+                        // Content Pages
+                        '<%= jsSource %>/component/content/dashboard.js',
+                        '<%= jsSource %>/component/content/bill.js',
+                        '<%= jsSource %>/component/content/law.js',
+                        '<%= jsSource %>/component/content/agenda.js',
+                        '<%= jsSource %>/component/content/calendar.js',
+                        '<%= jsSource %>/component/content/agenda.js',
+                        '<%= jsSource %>/component/content/member.js',
+                        '<%= jsSource %>/component/content/transcript.js',
+
+                        // SpotChecks
+                        '<%= jsSource %>/component/report/spotcheck-base.js',
+                        '<%= jsSource %>/component/report/spotcheck-detail.js',
+                        '<%= jsSource %>/component/report/spotcheck-summary.js',
+                        '<%= jsSource %>/component/report/spotcheck-report.js',
+                        '<%= jsSource %>/component/report/spotcheck-mismatch.js',
+
+                        // Admin
+                        '<%= jsSource %>/component/admin/account.js',
+                        '<%= jsSource %>/component/admin/notification_sub.js',
+                        '<%= jsSource %>/component/admin/dashboard.js',
+                        '<%= jsSource %>/component/admin/environment.js']
                 }
             }
         },
@@ -131,7 +164,7 @@ module.exports = function(grunt) {
             },
             js: {
                 files: ['<%= jsSource %>/**/*.js'],
-                tasks: ['copy:js']
+                tasks: ['uglify:app']
             },
             docs: {
                 files: ['<%= docsSourceRoot %>/*.rst', '<%= docsSourceRoot %>/conf.py'],

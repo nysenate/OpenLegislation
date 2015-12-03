@@ -1,23 +1,22 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<section ng-controller="BillCtrl">
-  <section ng-controller="BillViewCtrl" class="content-section">
-    <section ng-if="response.success === true" md-theme="{{billTheme}}">
-      <md-toolbar class="md-toolbar-tools auto-height">
-        <h5 style="margin:20px 0;">{{bill.title}}</h5>
-      </md-toolbar>
-      <md-toolbar class=" md-toolbar-tools auto-height">
-        <section layout="row" layout-sm="column"
-                 layout-align="start center" layout-align-sm="start start">
-          <div class="margin-bottom-10 margin-top-10" layout="row" layout-align="start center" style="margin-right:60px;">
-            <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
-                 style="height: 60px;"/>
+<div ng-controller="BillCtrl">
+  <div ng-controller="BillViewCtrl" class="content-section">
+    <md-content layout-padding ng-if="response.success === true">
+      <h2 class="text-normal margin-10">{{bill.title}}</h2>
+      <md-toolbar>
+        <div layout="row" layout-sm="column"
+             layout-align="start center" layout-align-sm="start start">
+          <div class="margin-10" layout="row" layout-align="start center" style="margin-right:60px;">
+            <img class="margin-right-10"
+                 ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
+                 style="height: 65px;"/>
             <div layout="column" ng-if="!bill.sponsor.budget">
               <div ng-if="!bill.sponsor.rules" class="text-medium">Sponsored By</div>
               <div ng-if="bill.sponsor.rules" class="text-medium bold">
                 From the Rules Committee<span ng-if="bill.sponsor.member"> Via</span>
               </div>
-              <h5 class="bold no-margin">{{bill.sponsor.member.fullName}}</h5>
+              <h5 class="margin-top-5 no-bottom-margin">{{bill.sponsor.member.fullName}}</h5>
               <div ng-if="bill.sponsor.member" class="text-small">District {{bill.sponsor.member.districtCode}}</div>
             </div>
             <div layout="column" ng-if="bill.sponsor.budget">
@@ -26,24 +25,26 @@
           </div>
           <div class="margin-bottom-10 margin-top-10" layout="column" style="margin-right:60px;min-width: 280px;">
             <div class="text-medium">Status as of {{bill.status.actionDate | moment:'MMMM D, YYYY'}}</div>
-            <h5 class="bold no-margin">
-              <i ng-if="bill.signed === true || bill.adopted === true" class="prefix-icon icon-checkmark"></i>
-              <i ng-if="bill.vetoed === true" class="prefix-icon icon-blocked"></i>
+            <h5 class="bold margin-top-5 no-bottom-margin">
+              <i ng-if="bill.signed === true || bill.adopted === true" class="prefix-icon icon-check blue3"></i>
+              <i ng-if="bill.vetoed === true" class="prefix-icon icon-cross"></i>
               <span>{{getStatusDesc(bill.status)}}</span>
             </h5>
-            <milestones ng-hide="bill.billType.resolution" milestone-arr="bill.milestones" chamber="bill.billType.chamber"></milestones>
+            <milestones ng-hide="bill.billType.resolution"
+                        milestone-arr="bill.milestones" chamber="bill.billType.chamber">
+            </milestones>
           </div>
           <div class="margin-bottom-10 margin-top-10" layout="column" ng-if="bill.programInfo">
             <div class="text-medium">Bill #{{bill.programInfo.sequenceNo + 1}} on the program for </div>
             <h5 class="bold no-margin">{{bill.programInfo.name}}</h5>
           </div>
-        </section>
+        </div>
       </md-toolbar>
-      <md-toolbar ng-if="bill.amendments.size > 1" class="md-toolbar-tools md-hue-2 auto-height">
+      <md-toolbar ng-if="bill.amendments.size > 1" layout-padding class="md-toolbar-tools md-hue-1">
         <label class="margin-right-20 text-medium">Amendment Version </label>
         <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
-          <md-radio-button ng-repeat="(version, amd) in bill.amendments.items" class="md-accent md-hue-1"
-                           value="{{version}}">
+          <md-radio-button ng-repeat="(version, amd) in bill.amendments.items"
+                           value="{{version}}" class="md-primary md-hue-2">
             <span class="text-medium bold" ng-if="$first">Original</span>
             <span class="text-medium bold" ng-if="!$first">Revision {{version}}</span>
             <span class="text-medium bold" ng-if="$last"> (Latest)</span>
@@ -53,15 +54,17 @@
         </md-radio-group>
       </md-toolbar>
 
-      <md-tabs md-selected="curr.selectedView" class="margin-top-10" md-dynamic-height="false">
+      <md-tabs md-selected="curr.selectedView" class="md-hue-2 margin-top-10" md-dynamic-height="true">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
-            <span><i class="icon-magnifying-glass prefix-icon2"></i>Search</span>
+            <span><i class="icon-back prefix-icon2"></i>Search</span>
           </md-tab-label>
         </md-tab>
         <md-tab label="Details">
           <md-tab-body>
+
             <md-divider></md-divider>
+
             <%-- Substituted By --%>
             <section ng-if="curr.selectedView === 1">
               <div ng-if="bill.substitutedBy" class="margin-20">
@@ -71,26 +74,31 @@
                   This bill has been substituted by {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}.
                 </md-button>
               </div>
+
+              <%-- Same As Bills --%>
               <md-card class="content-card" ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0">
-                <md-subheader>Same As Bill</md-subheader>
+                <md-subheader>Same As Bills</md-subheader>
                 <md-content>
                   <md-list>
                     <md-list-item ng-repeat="sameAs in bill.amendments.items[curr.amdVersion].sameAs.items">
                       <a class="result-link"
                          ng-href="${ctxPath}/bills/{{sameAs.session}}/{{sameAs.basePrintNo}}?search={{billSearch.term}}&view=1">
-                        <div layout="row" layout-sm="column" layout-align-sm="start start" class="padding-10">
-                          <div class="text-medium margin-right-20" style="width:120px">
-                            <h4 class="no-margin">{{sameAs.printNo}} - {{sameAs.session}}</h4>
-                            <p class="no-margin">Same As Bill</p>
-                          </div>
-                          <div class="text-medium"
-                               ng-init="sameAsBill = bill.billInfoRefs.items[sameAs.basePrintNo + '-' + sameAs.session]">
+                        <div layout="row" layout-sm="column">
+                          <div class="text-medium" style="width:201px">
+                            <h2 class="no-top-margin no-bottom-margin">{{sameAs.printNo}} - {{sameAs.session}}</h2>
                             <p class="no-margin" ng-if="sameAsBill.sponsor.member.fullName">
-                              Sponsored By: {{sameAsBill.sponsor.member.fullName}}
+                              {{sameAsBill.sponsor.member.fullName}}
                             </p>
-                            <p class="no-margin" ng-if="sameAsBill.status.actionDate">
-                              Last Status as of {{sameAsBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(sameAsBill.status)}}
-                            </p>
+                          </div>
+                          <div flex layout="column">
+                            <div flex class="text-medium"
+                                 ng-init="sameAsBill = bill.billInfoRefs.items[sameAs.basePrintNo + '-' + sameAs.session]">
+
+                              <p class="no-margin" ng-if="sameAsBill.status.actionDate">
+                                Last Status as of {{sameAsBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(sameAsBill.status)}}
+                              </p>
+                            </div>
+                            <milestones flex milestone-arr="sameAsBill.milestones" chamber="sameAsBill.billType.chamber"></milestones>
                           </div>
                         </div>
                       </a>
@@ -125,7 +133,6 @@
                 <%-- Co-Prime Sponsor --%>
                 <section flex style="width:100%" ng-if="bill.additionalSponsors.size > 0">
                   <md-subheader>{{bill.additionalSponsors.size}} Co-Prime Sponsor(s)</md-subheader>
-                  <md-divider/>
                   <md-content style="max-height: 200px;" class="padding-10">
                     <md-list>
                       <md-list-item ng-repeat="coPrimeSponsor in bill.additionalSponsors.items">
@@ -133,21 +140,18 @@
                              style="height:60px;width:45px;"/>
                         <span class="text-medium">{{coPrimeSponsor.fullName}} - District {{coPrimeSponsor.districtCode}}</span>
                       </md-list-item>
-                      <md-divider></md-divider>
                     </md-list>
                   </md-content>
                 </section>
                 <%-- Co Sponsor --%>
                 <section flex style="width:100%" ng-if="bill.amendments.items[curr.amdVersion].coSponsors.size > 0">
                   <md-subheader>{{bill.amendments.items[curr.amdVersion].coSponsors.size}} Co Sponsor(s)</md-subheader>
-                  <md-divider/>
                   <md-content style="max-height: 200px;" class="padding-10">
                     <md-list>
                       <md-list-item ng-repeat="coSponsor in bill.amendments.items[curr.amdVersion].coSponsors.items">
                           <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{coSponsor.imgName}}"
                                style="height:60px;width:45px;"/>
                           <span class="text-medium">{{coSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
-                        <md-divider></md-divider>
                       </md-list-item>
                     </md-list>
                   </md-content>
@@ -155,14 +159,12 @@
                 <%-- Multi Sponsor --%>
                 <section flex style="width:100%" ng-if="bill.amendments.items[curr.amdVersion].multiSponsors.size > 0">
                   <md-subheader>{{bill.amendments.items[curr.amdVersion].multiSponsors.size}} Multi Sponsor(s)</md-subheader>
-                  <md-divider/>
                   <md-content style="max-height: 200px;" class="padding-10">
                     <md-list>
                       <md-list-item ng-repeat="multiSponsor in bill.amendments.items[curr.amdVersion].multiSponsors.items">
                         <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{multiSponsor.imgName}}"
                              style="height: 60px;width:45px;"/>
                         <span class="text-medium">{{multiSponsor.fullName}} - District {{multiSponsor.districtCode}}</span>
-                        <md-divider></md-divider>
                       </md-list-item>
                     </md-list>
                   </md-content>
@@ -225,7 +227,11 @@
               </md-card>
               <%-- Enacting Clause --%>
               <md-card class="content-card" ng-if="!bill.billType.resolution">
-                <md-subheader>Enacting Clause</md-subheader>
+                <md-subheader>Enacting Clause
+                  <md-tooltip md-direction="top">
+                    An enacting clause is used to briefly state a proposed change to law.
+                  </md-tooltip>
+                </md-subheader>
                 <md-content>
                   <p class="text-medium">{{bill.amendments.items[curr.amdVersion].actClause | default:'Not Available'}}</p>
                 </md-content>
@@ -245,31 +251,33 @@
                   <p class="text-medium">Law Code - {{bill.amendments.items[curr.amdVersion].lawCode | default:'N/A'}}</p>
                 </md-content>
               </md-card>
-              <%-- Identical Legislation --%>
+              <%-- Identical Previous Legislation --%>
               <md-card class="content-card" ng-if="bill.previousVersions.size > 0">
                 <md-subheader>Previous Versions of this Bill</md-subheader>
                 <md-content>
                   <md-list>
-                    <md-item ng-repeat="prevVersion in bill.previousVersions.items">
+                    <md-list-item ng-repeat="prevVersion in bill.previousVersions.items">
                       <a class="result-link"
                          ng-href="${ctxPath}/bills/{{prevVersion.session}}/{{prevVersion.basePrintNo}}?search={{billSearch.term}}&view=1">
-                        <md-item-content layout="row" layout-sm="column" layout-align-sm="start start" class="padding-10">
-                          <div class="text-medium margin-right-20" style="width:120px">
-                            <h4 class="no-margin">{{prevVersion.printNo}} - {{prevVersion.session}}</h4>
-                            <p class="no-margin">Prior Bill</p>
-                          </div>
-                          <div class="text-medium"
-                               ng-init="prevBill = bill.billInfoRefs.items[prevVersion.basePrintNo + '-' + prevVersion.session]">
-                            <p class="no-margin" ng-if="prevBill.sponsor.member.fullName">
-                              Sponsored By: {{prevBill.sponsor.member.fullName}}
-                            </p>
-                            <p class="no-margin" ng-if="prevBill.status.actionDate">
-                              Last Status as of {{prevBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(prevBill.status)}}
+                        <div layout="row" layout-sm="column">
+                          <div class="text-medium" style="width:201px">
+                            <h2 class="no-top-margin no-bottom-margin">{{prevVersion.printNo}} - {{prevVersion.session}}</h2>
+                            <p class="no-margin" ng-if="prevVersion.sponsor.member.fullName">
+                              {{prevVersion.sponsor.member.fullName}}
                             </p>
                           </div>
-                        </md-item-content>
+                          <div flex layout="column">
+                            <div flex class="text-medium"
+                                 ng-init="prevVersionBill = bill.billInfoRefs.items[prevVersion.basePrintNo + '-' + prevVersion.session]">
+                              <p class="no-margin" ng-if="prevVersionBill.status.actionDate">
+                                Last Status as of {{prevVersionBill.status.actionDate | moment:'MMMM D, YYYY'}} - {{getStatusDesc(prevVersionBill.status)}}
+                              </p>
+                            </div>
+                            <milestones flex milestone-arr="prevVersionBill.milestones" chamber="prevVersionBill.billType.chamber"></milestones>
+                          </div>
+                        </div>
                       </a>
-                    </md-item>
+                    </md-list-item>
                   </md-list>
                 </md-content>
               </md-card>
@@ -420,13 +428,15 @@
             </section>
           </md-tab-body>
         </md-tab>
-    </section>
+    </md-content>
     <section ng-if="response.success === false">
       <md-card>
         <md-content class="content-card padding-20">
-          <h4>Please note that data for bills and resolutions are only available from 2009.</h4>
+          <h3 class="red1">This bill could not be retrieved. It's likely that the bill does not exist or has not been published yet.</h3>
+          <h5>Please note that Open Legislation only has bill data starting from the 2009 session year. Bills prior to 2009
+          should be obtained via LBDC directly.</h5>
         </md-content>
       </md-card>
     </section>
-  </section>
-</section>
+  </div>
+</div>
