@@ -8,7 +8,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
@@ -393,14 +393,14 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
      * -------------------------------------------
      */
     private void applyCosponsors(String data, Bill baseBill) throws ParseError {
-        List<Member> coSponsors = new ArrayList<>();
+        List<SessionMember> coSponsors = new ArrayList<>();
         SessionYear session = baseBill.getSession();
         Chamber chamber = baseBill.getBillType().getChamber();
         List<String> badCoSponsors = new ArrayList<>();
         for (String coSponsor : data.replace("\n", " ").split(",")) {
             coSponsor = coSponsor.trim();
             if (!coSponsor.isEmpty()) {
-                Member member = getMemberFromShortName(coSponsor, session, chamber);
+                SessionMember member = getMemberFromShortName(coSponsor, session, chamber);
                 if (member != null) {
                     coSponsors.add(member);
                 } else {
@@ -435,14 +435,14 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
      * ----------------------------------------------
      */
     private void applyMultisponsors(String data, Bill baseBill) throws ParseError {
-        List<Member> multiSponsors = new ArrayList<>();
+        List<SessionMember> multiSponsors = new ArrayList<>();
         SessionYear session = baseBill.getSession();
         Chamber chamber = baseBill.getBillType().getChamber();
         List<String> badMultiSponsors = new ArrayList<>();
         for (String multiSponsor : data.replace("\n", " ").split(",")) {
             multiSponsor = multiSponsor.trim();
             if (!multiSponsor.isEmpty()) {
-                Member member = getMemberFromShortName(multiSponsor, session, chamber);
+                SessionMember member = getMemberFromShortName(multiSponsor, session, chamber);
                 if (member != null) {
                     multiSponsors.add(member);
                 } else {
@@ -688,7 +688,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
                     }
                     String shortName = voteLine.group(2).trim();
                     // Only senator votes are received. A valid member mapping is required.
-                    Member voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE);
+                    SessionMember voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE);
                     vote.addMemberVote(voteCode, voter);
                 }
             }

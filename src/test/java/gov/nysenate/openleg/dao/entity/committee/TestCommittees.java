@@ -6,8 +6,6 @@ import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.time.DayOfWeek;
@@ -35,7 +33,7 @@ public class TestCommittees {
     private CommitteeMember committeeMemberFromTriple(Object[] triple){
         try {
             CommitteeMember cm = new CommitteeMember();
-            Member m = memberService.getMemberById((int)triple[1], new SessionYear((int)triple[2]));
+            SessionMember m = memberService.getMemberById((int)triple[1], new SessionYear((int)triple[2]));
             cm.setMember(m);
             cm.setMajority(m.getMemberId()%2==0);
             cm.setTitle(CommitteeMemberTitle.MEMBER);

@@ -3,12 +3,14 @@ package gov.nysenate.openleg.controller.ui;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.entity.member.search.MemberSearchService;
+import gov.nysenate.openleg.util.OutputUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +29,8 @@ public abstract class BaseContentPageCtrl
     @Autowired private MemberService memberData;
     @Autowired private MemberSearchService memberSearchService;
 
-    protected static List<Member> senatorsList = null;
-    protected static List<Member> assemblyMemList = null;
+    protected static List<SessionMember> senatorsList = null;
+    protected static List<SessionMember> assemblyMemList = null;
 
     protected void baseInit() {
         initializeMembers();
@@ -54,31 +56,30 @@ public abstract class BaseContentPageCtrl
         if (senatorsList == null || assemblyMemList == null) {
             try {
                 String sort = "shortName:asc";
-                SearchResults<Member> senResults = memberSearchService.searchMembers(SessionYear.current(), Chamber.SENATE,
+                SearchResults<SessionMember> senResults = memberSearchService.searchMembers(SessionYear.current(), Chamber.SENATE,
                         sort, LimitOffset.THOUSAND);
-                senatorsList = senResults.getResults().stream().map(r -> {
-                    try {
-                        return memberData.getMemberById(r.getResult().getMemberId(), r.getResult().getSessionYear());
-                    } catch (MemberNotFoundEx memberNotFoundEx) {
-                        logger.error("Failed to fetch senator!", memberNotFoundEx);
-                    }
-                    return null;
-                }).collect(Collectors.toList());
+                senatorsList = fetchMembers(senResults);
 
-                SearchResults<Member> assemResults = memberSearchService.searchMembers(SessionYear.current(), Chamber.ASSEMBLY,
+                SearchResults<SessionMember> assemResults = memberSearchService.searchMembers(SessionYear.current(), Chamber.ASSEMBLY,
                         sort, LimitOffset.THOUSAND);
-                assemblyMemList = assemResults.getResults().stream().map(r -> {
-                    try {
-                        return memberData.getMemberById(r.getResult().getMemberId(), r.getResult().getSessionYear());
-                    } catch (MemberNotFoundEx memberNotFoundEx) {
-                        logger.error("Failed to fetch assembly member!", memberNotFoundEx);
-                    }
-                    return null;
-                }).collect(Collectors.toList());
+                assemblyMemList = fetchMembers(assemResults);
             }
             catch (SearchException e) {
                 logger.error("Failed to fetch members!", e);
             }
         }
+    }
+
+    private List<SessionMember> fetchMembers(SearchResults<SessionMember> results) {
+        return results.getRawResults().stream().map(result -> {
+            try {
+                return memberData.getMemberById(result.getMemberId(), result.getSessionYear());
+            } catch (MemberNotFoundEx memberNotFoundEx) {
+                logger.error("Failed to fetch senator!", memberNotFoundEx);
+            } catch (IllegalArgumentException ex) {
+                logger.error("bad search result:\n{}", OutputUtils.toJson(result));
+            }
+            return null;
+        }).collect(Collectors.toList());
     }
 }

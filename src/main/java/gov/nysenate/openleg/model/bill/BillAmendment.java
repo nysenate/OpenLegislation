@@ -4,7 +4,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 
 import java.io.Serializable;
 import java.util.*;
@@ -49,10 +49,10 @@ public class BillAmendment implements Serializable, Cloneable
 
     /** List of co-sponsors for the amendment. It's a list of Legislators who share credit for
      *  introducing a bill. */
-    protected List<Member> coSponsors = new ArrayList<>();
+    protected List<SessionMember> coSponsors = new ArrayList<>();
 
     /** List of multi-sponsors for the amendment. */
-    protected List<Member> multiSponsors = new ArrayList<>();
+    protected List<SessionMember> multiSponsors = new ArrayList<>();
 
     /** A flag marking this bill as stricken (effectively withdrawn) */
     protected Boolean stricken = false;
@@ -182,19 +182,19 @@ public class BillAmendment implements Serializable, Cloneable
         this.currentCommittee = currentCommittee;
     }
 
-    public List<Member> getCoSponsors() {
+    public List<SessionMember> getCoSponsors() {
         return coSponsors;
     }
 
-    public void setCoSponsors(List<Member> coSponsors) {
+    public void setCoSponsors(List<SessionMember> coSponsors) {
         this.coSponsors = coSponsors;
     }
 
-    public List<Member> getMultiSponsors() {
+    public List<SessionMember> getMultiSponsors() {
         return multiSponsors;
     }
 
-    public void setMultiSponsors(List<Member> multiSponsors) {
+    public void setMultiSponsors(List<SessionMember> multiSponsors) {
         this.multiSponsors = multiSponsors;
     }
 

@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.service.entity.member.data;
 
+import com.google.common.collect.TreeMultimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.member.data.MemberDao;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -10,9 +12,8 @@ import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
-import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.model.entity.*;
+import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.service.entity.member.event.UnverifiedMemberEvent;
@@ -31,8 +32,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class CachedMemberService implements MemberService, CachingService<Integer>
@@ -125,7 +128,7 @@ public class CachedMemberService implements MemberService, CachingService<Intege
 
     /** {@inheritDoc} */
     @Override
-    public Member getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
+    public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
         if (memberId <= 0) {
             throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");
         }
@@ -137,15 +140,27 @@ public class CachedMemberService implements MemberService, CachingService<Intege
         }
     }
 
+    @Override
+    public TreeMultimap<SessionYear, SessionMember> getMemberById(int memberId) throws MemberNotFoundEx {
+        if (memberId <= 0) {
+            throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");
+        }
+        TreeMultimap<SessionYear, SessionMember> sessionMemberMap = memberDao.getMemberById(memberId);
+        if (sessionMemberMap.isEmpty()) {
+            throw new MemberNotFoundEx(memberId);
+        }
+        return sessionMemberMap;
+    }
+
     /** {@inheritDoc} */
     @Override
-    public Member getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
+    public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
         SimpleKey key = new SimpleKey(sessionMemberId);
         if (memberCache.isKeyInCache(key)) {
-            return (Member) memberCache.get(key).getObjectValue();
+            return (SessionMember) memberCache.get(key).getObjectValue();
         }
         try {
-            Member member = memberDao.getMemberBySessionId(sessionMemberId);
+            SessionMember member = memberDao.getMemberBySessionId(sessionMemberId);
             putMemberInCache(member);
             return member;
         }
@@ -156,7 +171,7 @@ public class CachedMemberService implements MemberService, CachingService<Intege
 
     /** {@inheritDoc} */
     @Override
-    public Member getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
+    public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
         if (lbdcShortName == null || chamber == null) {
             throw new IllegalArgumentException("Shortname and/or chamber cannot be null.");
         }
@@ -170,24 +185,63 @@ public class CachedMemberService implements MemberService, CachingService<Intege
 
     /** {@inheritDoc} */
     @Override
-    public Member getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
+    public SessionMember getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
         try {
             return getMemberByShortName(lbdcShortName, sessionYear, chamber);
         }
         catch (MemberNotFoundEx ex) {
-            Member member = Member.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
-            memberDao.insertUnverifiedSessionMember(member);
-            eventBus.post(new UnverifiedMemberEvent(member));
+            SessionMember member = SessionMember.newMakeshiftMember(lbdcShortName, sessionYear, chamber);
+            memberDao.updatePerson(member);
+            memberDao.updateMember(member);
+            memberDao.updateSessionMember(member);
+            eventBus.post(new UnverifiedMemberEvent(member, LocalDateTime.now()));
             return member;
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    public List<Member> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
+    public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
             return memberDao.getAllMembers(sortOrder, limOff);
     }
 
-    private void putMemberInCache(Member member) {
+    /** {@inheritDoc} */
+    @Override
+    public List<FullMember> getAllFullMembers() {
+        return getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+                .collect(Collectors.groupingBy(SessionMember::getMemberId, LinkedHashMap::new, Collectors.toList()))
+                .values().stream()
+                .map(FullMember::new)
+                .collect(Collectors.toList());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateMembers(List<SessionMember> sessionMembers) {
+        Collection<? extends Person> persons = sessionMembers.stream()
+                .collect(Collectors.toMap(Person::getPersonId, Function.identity()))
+                .values();
+
+        Collection<SessionMember> members = sessionMembers.stream()
+                .collect(Collectors.toMap(SessionMember::getMemberId, Function.identity()))
+                .values();
+
+        persons.forEach(memberDao::updatePerson);
+        members.forEach(memberDao::updateMember);
+        sessionMembers.forEach(memberDao::updateSessionMember);
+
+        memberDao.clearOrphans();
+
+        // We need to rebuild cache and search index to account for session members that were
+        //      tangentially modified via a person or member update
+        eventBus.post(new CacheWarmEvent(Collections.singleton(ContentCache.MEMBER)));
+        eventBus.post(new RebuildIndexEvent(Collections.singleton(SearchIndex.MEMBER)));
+
+    }
+
+    /** --- Internal Methods --- */
+
+    private void putMemberInCache(SessionMember member) {
         memberCache.put(new Element(new SimpleKey(member.getSessionMemberId()), member, true));
     }
 }

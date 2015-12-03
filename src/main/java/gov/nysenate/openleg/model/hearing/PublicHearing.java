@@ -2,10 +2,8 @@ package gov.nysenate.openleg.model.hearing;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.Member;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 

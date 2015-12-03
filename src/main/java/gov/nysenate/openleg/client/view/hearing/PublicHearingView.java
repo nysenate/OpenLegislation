@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.client.view.hearing;
 
-import gov.nysenate.openleg.model.entity.Member;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;

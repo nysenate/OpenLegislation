@@ -13,7 +13,7 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
@@ -30,7 +30,6 @@ import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 import gov.nysenate.openleg.service.calendar.event.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -182,7 +181,7 @@ public abstract class AbstractDataProcessor
     /**
      * Retrieves a member from the LBDC short name.  Creates a new unverified session member entry if no member can be retrieved.
      */
-    protected Member getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
+    protected SessionMember getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
         return memberService.getMemberByShortNameEnsured(shortName, sessionYear, chamber);
     }
 

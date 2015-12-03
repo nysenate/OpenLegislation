@@ -99,7 +99,7 @@ public class ImportCommittees extends BaseScript {
 
         int sequenceNum = 1;
         List<CommitteeMember> committeeMembers = new ArrayList<>();
-        Set<Member> addedMembers = new HashSet<>(); // Used to prevent the same member from being added multiple times
+        Set<SessionMember> addedMembers = new HashSet<>(); // Used to prevent the same member from being added multiple times
 
         Iterator<JsonNode> chairs = root.path("chairs").elements();
         while (chairs.hasNext()) {
@@ -140,7 +140,7 @@ public class ImportCommittees extends BaseScript {
 
     private CommitteeMember getCommitteeMemberFromJson(JsonNode memberNode, int year, Chamber chamber) throws MemberNotFoundEx{
         CommitteeMember committeeMember = new CommitteeMember();
-        Member member = memberService.getMemberByShortName(memberNode.get("shortName").textValue(), SessionYear.of(year), chamber);
+        SessionMember member = memberService.getMemberByShortName(memberNode.get("shortName").textValue(), SessionYear.of(year), chamber);
         committeeMember.setMember(member);
         return committeeMember;
     }

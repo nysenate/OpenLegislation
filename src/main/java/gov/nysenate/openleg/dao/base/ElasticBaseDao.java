@@ -106,7 +106,7 @@ public abstract class ElasticBaseDao
                 .setQuery(query)
                 .setRescorer(rescorer)
                 .setFrom(limitOffset.getOffsetStart() - 1)
-                .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : -1)
+                .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
                 .setMinScore(0.05f)
                 .setFetchSource(fetchSource);
         if (highlightedFields != null) {

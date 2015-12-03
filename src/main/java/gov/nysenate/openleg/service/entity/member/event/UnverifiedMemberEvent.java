@@ -1,16 +1,14 @@
 package gov.nysenate.openleg.service.entity.member.event;
 
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 
-public class UnverifiedMemberEvent {
+import java.time.LocalDateTime;
 
-    Member member;
-
-    public UnverifiedMemberEvent(Member member) {
-        this.member = member;
-    }
-
-    public Member getMember() {
-        return member;
+/**
+ * An event that is propagated when an unverified member is created
+ */
+public class UnverifiedMemberEvent extends MemberUpdateEvent {
+    public UnverifiedMemberEvent(SessionMember member, LocalDateTime updateDateTime) {
+        super(member, updateDateTime);
     }
 }

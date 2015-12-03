@@ -4,7 +4,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.entity.member.data.SqlMemberDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class SqlMemberDaoTests extends BaseTests
 
     @Test
     public void testGetMemberBySessionMemberId() throws Exception {
-        Member member = memberDao.getMemberBySessionId(661);
+        SessionMember member = memberDao.getMemberBySessionId(661);
         logger.info(OutputUtils.toJson(member));
         assert(member.getSessionMemberId()==306);
         assert(member.getLbdcShortName().equals("PEOPLES-STOKES"));

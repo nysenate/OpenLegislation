@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 
 import java.io.Serializable;
@@ -56,7 +56,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected BillSponsor sponsor;
 
     /** A list of co-sponsors that will be given preferential display treatment. */
-    protected List<Member> additionalSponsors = new ArrayList<>();
+    protected List<SessionMember> additionalSponsors = new ArrayList<>();
 
     /** A list of committees this bill has been referred to. */
     protected SortedSet<CommitteeVersionId> pastCommittees = new TreeSet<>();
@@ -441,11 +441,11 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.pastCommittees = pastCommittees;
     }
 
-    public List<Member> getAdditionalSponsors() {
+    public List<SessionMember> getAdditionalSponsors() {
         return additionalSponsors;
     }
 
-    public void setAdditionalSponsors(List<Member> additionalSponsors) {
+    public void setAdditionalSponsors(List<SessionMember> additionalSponsors) {
         this.additionalSponsors = additionalSponsors;
     }
 

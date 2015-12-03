@@ -13,7 +13,7 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
     protected int sequenceNo;
 
     /** The member. */
-    protected Member member;
+    protected SessionMember member;
 
     /** The title of the member, e.g Chairperson, Vice-Chair. */
     protected CommitteeMemberTitle title;
@@ -61,7 +61,7 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
 
     public CommitteeMember(CommitteeMember other) {
         this.sequenceNo = other.sequenceNo;
-        this.member = new Member(other.member);
+        this.member = new SessionMember(other.member);
         this.title = other.title;
         this.majority = other.majority;
     }
@@ -82,11 +82,11 @@ public class CommitteeMember implements Serializable, Comparable<CommitteeMember
         this.sequenceNo = sequenceNo;
     }
 
-    public Member getMember() {
+    public SessionMember getMember() {
         return member;
     }
 
-    public void setMember(Member member) {
+    public void setMember(SessionMember member) {
         this.member = member;
     }
 
