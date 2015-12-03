@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.agenda;
 
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,7 +10,7 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
     private static final long serialVersionUID = -4328021920936602603L;
 
     /** Member in the attendance list. */
-    private Member member;
+    private SessionMember member;
 
     /** The order in which this member is listed. */
     private int rank;
@@ -25,7 +25,7 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
 
     public AgendaVoteAttendance() {}
 
-    public AgendaVoteAttendance(Member member, int rank, String party, String attendStatus) {
+    public AgendaVoteAttendance(SessionMember member, int rank, String party, String attendStatus) {
         this();
         this.setMember(member);
         this.setRank(rank);
@@ -58,11 +58,11 @@ public class AgendaVoteAttendance implements Serializable, Comparable<AgendaVote
 
     /** --- Basic Getters/Setters --- */
 
-    public Member getMember() {
+    public SessionMember getMember() {
         return member;
     }
 
-    public void setMember(Member member) {
+    public void setMember(SessionMember member) {
         this.member = member;
     }
 

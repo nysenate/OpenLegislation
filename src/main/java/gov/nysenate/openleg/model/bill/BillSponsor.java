@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,7 +15,7 @@ public class BillSponsor implements Serializable
     private static final long serialVersionUID = -9140631420743063575L;
 
     /** Typically a bill will have a single member that sponsored it. */
-    private Member member;
+    private SessionMember member;
 
     /** Indicates if bill is a budget bill (no member). */
     private boolean budget = false;
@@ -27,7 +27,7 @@ public class BillSponsor implements Serializable
 
     public BillSponsor() {}
 
-    public BillSponsor(Member member) {
+    public BillSponsor(SessionMember member) {
         this.member = member;
     }
 
@@ -70,11 +70,11 @@ public class BillSponsor implements Serializable
 
     /** --- Basic Getters/Setters --- */
 
-    public Member getMember() {
+    public SessionMember getMember() {
         return member;
     }
 
-    public void setMember(Member member) {
+    public void setMember(SessionMember member) {
         this.member = member;
     }
 

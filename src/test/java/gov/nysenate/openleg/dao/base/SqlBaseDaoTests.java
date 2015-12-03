@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -25,14 +25,14 @@ public class SqlBaseDaoTests extends BaseTests
 
     @Test
     public void testOrdinalMapTests() throws Exception {
-        List<Member> members1 = Lists.newArrayList();
-        List<Member> members2 = Lists.newArrayList();
+        List<SessionMember> members1 = Lists.newArrayList();
+        List<SessionMember> members2 = Lists.newArrayList();
 
         members1.add(memberService.getMemberByShortName("BALL", SessionYear.of(2013), Chamber.SENATE));
         members1.add(memberService.getMemberByShortName("SAVINO", SessionYear.of(2013), Chamber.SENATE));
         members1.add(memberService.getMemberByShortName("MARTINS", SessionYear.of(2013), Chamber.SENATE));
 
-        Map<Member, Integer> map1 = Maps.newHashMap();
+        Map<SessionMember, Integer> map1 = Maps.newHashMap();
         for (int i = 0; i < members1.size(); i++) {
             map1.put(members1.get(i), i);
         }
@@ -42,12 +42,12 @@ public class SqlBaseDaoTests extends BaseTests
         members2.add(memberService.getMemberByShortName("MARTINS", SessionYear.of(2013), Chamber.SENATE));
         members2.add(memberService.getMemberByShortName("ZELDIN", SessionYear.of(2013), Chamber.SENATE));
 
-        Map<Member, Integer> map2 = Maps.newHashMap();
+        Map<SessionMember, Integer> map2 = Maps.newHashMap();
         for (int i = 0; i < members2.size(); i++) {
             map2.put(members2.get(i), i);
         }
 
-        MapDifference<Member, Integer> diff = Maps.difference(map1, map2);
+        MapDifference<SessionMember, Integer> diff = Maps.difference(map1, map2);
         logger.info("{}", diff);
 //        Map<Integer, String> map1 =
 //                SqlBaseDao.getOridinalMapFromList(Lists.newArrayList("moose", "cow", "sheep"), 1);

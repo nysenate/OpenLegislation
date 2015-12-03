@@ -2,7 +2,7 @@ package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -28,7 +28,7 @@ public class MemberScraperUtils
     static final String ASSEMBLY_MEMBER_LISTING_URL = "http://assembly.state.ny.us/mem/email/";
     static final String SENATE_MEMBER_DIR_URL = "http://www.nysenate.gov/senators";
 
-    public static List<Member> getAssemblyMembers() throws IOException {
+    public static List<SessionMember> getAssemblyMembers() throws IOException {
         Document directoryPage = Jsoup.connect(ASSEMBLY_MEMBER_DIR_URL).get();
         Document listingPage = Jsoup.connect(ASSEMBLY_MEMBER_LISTING_URL).get();
         Elements csvNameElements = listingPage.select(".email1 a");
@@ -44,9 +44,9 @@ public class MemberScraperUtils
         }).collect(toList());
         List<String> lastNames = csvNameElements.stream().map(e -> e.text().split(",")[0]).collect(toList());
         List<String> imageNames = picElements.stream().map(i -> i.attr("src")).collect(toList());
-        List<Member> members = new ArrayList<>();
+        List<SessionMember> members = new ArrayList<>();
         for (int i = 0; i < lastNames.size(); i++) {
-            Member m = new Member();
+            SessionMember m = new SessionMember();
             m.setLastName(lastNames.get(i));
             m.setFullName(fullNames.get(i));
             m.setImgName(imageNames.get(i));
@@ -59,7 +59,7 @@ public class MemberScraperUtils
         return members;
     }
 
-    public static List<Member> getSenateMembers() throws IOException {
+    public static List<SessionMember> getSenateMembers() throws IOException {
         Document directoryPage = Jsoup.connect(SENATE_MEMBER_DIR_URL).get();
         Elements nodes = directoryPage.select(".view-senators .view-content .views-row");
         Elements imageElems = nodes.select(".views-field-field-profile-picture-fid img");
@@ -74,9 +74,9 @@ public class MemberScraperUtils
             m.find();
             return Integer.parseInt(m.group(1));
         }).collect(toList());
-        List<Member> senators = new ArrayList<>();
+        List<SessionMember> senators = new ArrayList<>();
         for (int i = 0; i < names.size(); i++) {
-            Member m = new Member();
+            SessionMember m = new SessionMember();
             String[] splitName = names.get(i).split(",");
             m.setLastName(splitName[0]);
             m.setFullName(splitName[1] + " " + splitName[0]);

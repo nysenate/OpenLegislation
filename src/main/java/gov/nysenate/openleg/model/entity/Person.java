@@ -1,12 +1,15 @@
 package gov.nysenate.openleg.model.entity;
 
-import java.util.Objects;
+import com.google.common.collect.ComparisonChain;
 
-public class Person
+import java.util.Objects;
+import java.util.Optional;
+
+public class Person implements Comparable<Person>
 {
     /** The unique id used to globally identify the person.
      *  This value should only be set after retrieval from the persistence layer. */
-    private Integer id;
+    private Integer personId;
 
     /** The prefix (Mr, Mrs, Senator, etc) */
     private String prefix = "";
@@ -32,12 +35,15 @@ public class Person
     /** The name of the image for this person. */
     private String imgName = "";
 
+    /** True if this person has been manually verified */
+    protected boolean verified;
+
     /** --- Constructors --- */
 
     public Person () {}
 
-    public Person(Integer id) {
-        this.id = id;
+    public Person(Integer personId) {
+        this.personId = personId;
     }
 
     public Person (String fullName) {
@@ -45,7 +51,7 @@ public class Person
     }
 
     public Person(Person other) {
-        this.id = other.id;
+        this.personId = other.personId;
         this.prefix = other.prefix;
         this.fullName = other.fullName;
         this.firstName = other.firstName;
@@ -53,6 +59,8 @@ public class Person
         this.lastName = other.lastName;
         this.suffix = other.suffix;
         this.email = other.email;
+        this.imgName = other.imgName;
+        this.verified = other.verified;
     }
 
     /** --- Overrides --- */
@@ -62,7 +70,8 @@ public class Person
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         final Person other = (Person) obj;
-        return Objects.equals(this.prefix, other.prefix) &&
+        return Objects.equals(this.personId, other.personId) &&
+               Objects.equals(this.prefix, other.prefix) &&
                Objects.equals(this.fullName, other.fullName) &&
                Objects.equals(this.firstName, other.firstName) &&
                Objects.equals(this.middleName, other.middleName) &&
@@ -79,7 +88,7 @@ public class Person
     @Override
     public String toString() {
         return "Person{" +
-                "id=" + id +
+                "id=" + personId +
                 ", prefix='" + prefix + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", firstName='" + firstName + '\'' +
@@ -91,10 +100,20 @@ public class Person
                 '}';
     }
 
+    @Override
+    public int compareTo(Person o) {
+        return ComparisonChain.start()
+                .compare(Optional.ofNullable(this.lastName).orElse(""), Optional.ofNullable(o.lastName).orElse(""))
+                .compare(Optional.ofNullable(this.firstName).orElse(""), Optional.ofNullable(o.firstName).orElse(""))
+                .compare(Optional.ofNullable(this.middleName).orElse(""), Optional.ofNullable(o.middleName).orElse(""))
+                .compare(this.personId, o.personId)
+                .result();
+    }
+
     /** --- Basic Getters/Setters --- */
 
-    public int getId() {
-        return id;
+    public int getPersonId() {
+        return personId;
     }
 
     public String getFullName() {
@@ -137,8 +156,8 @@ public class Person
         this.email = email;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPersonId(Integer personId) {
+        this.personId = personId;
     }
 
     public String getPrefix() {
@@ -163,5 +182,13 @@ public class Person
 
     public void setImgName(String imgName) {
         this.imgName = imgName;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }

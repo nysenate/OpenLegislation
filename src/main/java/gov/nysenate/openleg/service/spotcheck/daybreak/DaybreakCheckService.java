@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillSponsor;
 import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckMismatchEvent;
@@ -166,14 +166,14 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Check the active bill amendment's multisponsor list. Order and case do not matter.
      */
     protected void checkMultiSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
-        List<Member> billMuSponsors = bill.hasActiveAmendment() ? bill.getActiveAmendment().getMultiSponsors()
+        List<SessionMember> billMuSponsors = bill.hasActiveAmendment() ? bill.getActiveAmendment().getMultiSponsors()
                                                                 : new ArrayList<>();
         Set<String> daybreakMuSponsorSet =
             daybreakBill.getMultiSponsors().stream()
                 .map(c -> StringUtils.upperCase(c.replaceAll("[\\(\\)]+", "")))  // Upper case and remove any parenthesis
                 .collect(toSet());
         // The bill multi sponsor set will just have the short names as-is (they should already be uppercased)
-        Set<String> billMuSponsorSet = billMuSponsors.stream().map(Member::getLbdcShortName).collect(toSet());
+        Set<String> billMuSponsorSet = billMuSponsors.stream().map(SessionMember::getLbdcShortName).collect(toSet());
         // Only check for mismatch if a daybreak multisponsor is set. Sometimes the daybreaks omit the multisponsor.
         if (!daybreakMuSponsorSet.isEmpty() && (daybreakMuSponsorSet.size() != billMuSponsorSet.size() ||
                                                !daybreakMuSponsorSet.containsAll(billMuSponsorSet))) {
@@ -186,14 +186,14 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Check the active bill amendment's cosponsor list. Order and case do not matter.
      */
     protected void checkCoSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
-        List<Member> billCoSponsors = bill.hasActiveAmendment() ? bill.getActiveAmendment().getCoSponsors()
+        List<SessionMember> billCoSponsors = bill.hasActiveAmendment() ? bill.getActiveAmendment().getCoSponsors()
                                                                 : new ArrayList<>();
         Set<String> daybreakCoSponsorSet =
             daybreakBill.getCosponsors().stream()
                 .map(c -> StringUtils.upperCase(c.replaceAll("[\\(\\)]+", "")))  // Upper case and remove any parenthesis
                 .collect(toSet());
         // The bill co sponsor set will just have the short names as-is (they should already be uppercased)
-        Set<String> billCoSponsorSet = billCoSponsors.stream().map(Member::getLbdcShortName).collect(toSet());
+        Set<String> billCoSponsorSet = billCoSponsors.stream().map(SessionMember::getLbdcShortName).collect(toSet());
         // Only check for mismatch if a daybreak cosponsor is set. Sometimes the daybreaks omit the cosponsor.
         if (!daybreakCoSponsorSet.isEmpty() && (daybreakCoSponsorSet.size() != billCoSponsorSet.size() ||
                                                !daybreakCoSponsorSet.containsAll(billCoSponsorSet))) {

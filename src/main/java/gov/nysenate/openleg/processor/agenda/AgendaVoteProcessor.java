@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
@@ -98,7 +98,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                     for (int k = 0; k < xmlMembers.getLength(); k++) {
                         Node xmlMember = xmlMembers.item(k);
                         String memberName = xml.getString("name/text()", xmlMember);
-                        Member member = getMemberFromShortName(memberName, session, Chamber.SENATE);
+                        SessionMember member = getMemberFromShortName(memberName, session, Chamber.SENATE);
                         Integer rank = xml.getInteger("rank/text()", xmlMember);
                         String party = xml.getString("party/text()", xmlMember);
                         String attendance = xml.getString("attendance", xmlMember);
@@ -135,7 +135,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
                         for (int v = 0; v < xmlVotes.getLength(); v++) {
                             Node xmlVote = xmlVotes.item(v);
                             String voterName = xml.getString("name/text()", xmlVote);
-                            Member voterMember = getMemberFromShortName(voterName, session, Chamber.SENATE);
+                            SessionMember voterMember = getMemberFromShortName(voterName, session, Chamber.SENATE);
                             String voteCodeStr = xml.getString("vote/text()", xmlVote).replace(" ", "").replace("/", "");
                             BillVoteCode voteCode = BillVoteCode.getValue(voteCodeStr);
                             vote.addMemberVote(voteCode, voterMember);

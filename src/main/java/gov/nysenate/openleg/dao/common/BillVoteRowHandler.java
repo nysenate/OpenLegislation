@@ -4,7 +4,7 @@ import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
 import gov.nysenate.openleg.model.bill.BillVoteId;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public class BillVoteRowHandler extends SqlBaseDao implements RowCallbackHandler
         }
         BillVote billVote = billVoteMap.get(billVoteId);
         try {
-            Member voter = memberService.getMemberBySessionId(rs.getInt("session_member_id"));
+            SessionMember voter = memberService.getMemberBySessionId(rs.getInt("session_member_id"));
             BillVoteCode voteCode = BillVoteCode.getValue(rs.getString("vote_code"));
             billVote.addMemberVote(voteCode, voter);
         }

@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.script;
 
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.util.MemberScraperUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
 import gov.nysenate.openleg.util.RandomUtils;
@@ -22,7 +22,7 @@ public class MemberScraperCLI extends BaseScript
 
     @Override
     protected void execute(CommandLine opts) throws Exception {
-        List<Member> assemblyMembers = MemberScraperUtils.getAssemblyMembers();
+        List<SessionMember> assemblyMembers = MemberScraperUtils.getAssemblyMembers();
         assemblyMembers.stream().forEach(m -> {
             try {
                 InputStream in = new UrlResource(m.getImgName()).getInputStream();
