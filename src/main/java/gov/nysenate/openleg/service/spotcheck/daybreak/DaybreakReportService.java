@@ -3,7 +3,7 @@ package gov.nysenate.openleg.service.spotcheck.daybreak;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
+import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;

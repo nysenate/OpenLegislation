@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.daybreak;
+package gov.nysenate.openleg.dao.bill.reference.daybreak;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;

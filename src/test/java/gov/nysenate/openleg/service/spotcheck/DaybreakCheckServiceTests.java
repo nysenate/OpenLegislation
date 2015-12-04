@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
+import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.dao.spotcheck.BaseBillIdSpotCheckReportDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
