@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.daybreak;
+package gov.nysenate.openleg.dao.bill.reference.daybreak;
 
 import gov.nysenate.openleg.dao.base.BasicSqlQuery;
 import gov.nysenate.openleg.dao.base.SqlTable;

@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.daybreak;
+package gov.nysenate.openleg.dao.bill.reference.daybreak;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;

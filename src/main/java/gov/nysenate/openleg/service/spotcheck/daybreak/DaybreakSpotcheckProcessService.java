@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.daybreak;
 
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
+import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;

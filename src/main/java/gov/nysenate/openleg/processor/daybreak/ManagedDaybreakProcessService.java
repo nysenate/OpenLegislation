@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processor.daybreak;
 
-import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
+import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.spotcheck.daybreak.*;
 import gov.nysenate.openleg.util.OpenlegThreadFactory;
 import org.slf4j.Logger;

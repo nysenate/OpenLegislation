@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.controller.api.admin;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
@@ -18,11 +19,14 @@ import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteBillDao;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
 import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteBillDumpFragId;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
 import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -48,6 +53,10 @@ public class SpotCheckCtrl extends BaseCtrl
 
     @Autowired private List<SpotCheckReportService<?>> reportServices;
     @Autowired private SpotcheckRunService spotcheckRunService;
+
+    @Autowired private ObjectMapper objectMapper;
+
+    @Autowired private SenateSiteBillDao senateSiteBillDao;
 
     private ImmutableMap<SpotCheckRefType, SpotCheckReportService<?>> reportServiceMap;
 
@@ -272,6 +281,17 @@ public class SpotCheckCtrl extends BaseCtrl
     public BaseResponse runWeeklyReports() {
         spotcheckRunService.runWeeklyReports();
         return new SimpleResponse(true, "weekly reports run", "report report");
+    }
+
+    @RequestMapping(value = "/senatesite/billdump", method = RequestMethod.POST, consumes = "application/json")
+    public BaseResponse sendSenateSiteBillDumpFragment(@RequestBody Object billFragmentJson) {
+        SenateSiteBillDumpFragId fragId = objectMapper.convertValue(billFragmentJson, SenateSiteBillDumpFragId.class);
+        try {
+            senateSiteBillDao.saveDumpFragment(fragId, billFragmentJson);
+        } catch (IOException ex) {
+            return new SimpleResponse(false, "could not save dump :(", "bill-dump-failed");
+        }
+        return new SimpleResponse(true, "bill dump received.  Thanks!", "bill-dump-received");
     }
 
     /** --- Exception Handlers --- */

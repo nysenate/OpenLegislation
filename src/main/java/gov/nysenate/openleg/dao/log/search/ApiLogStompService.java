@@ -3,7 +3,6 @@ package gov.nysenate.openleg.dao.log.search;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.client.view.log.ApiLogItemView;
-import gov.nysenate.openleg.controller.api.base.ApiDeferredResult;
 import gov.nysenate.openleg.service.log.event.ApiLogEvent;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.slf4j.Logger;
