@@ -2,8 +2,9 @@ var billModule = angular.module('open.bill', ['open.core', 'open.api']);
 
 /** --- Parent Bill Controller --- */
 
-billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route', '$routeParams', 'MemberApi',
-                       function($scope, $rootScope, $location, $route, $routeParams, MemberApi) {
+billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route', '$routeParams',
+                      'BillUtils', 'MemberApi',
+                       function($scope, $rootScope, $location, $route, $routeParams, BillUtils, MemberApi) {
     $scope.setHeaderVisible(true);
     $scope.setHeaderText('Search NYS Legislation');
 
@@ -22,22 +23,7 @@ billModule.controller('BillCtrl', ['$scope', '$rootScope', '$location', '$route'
     });
 
     $scope.getStatusDesc = function(status) {
-        var desc = "";
-        if (status) {
-            switch (status.statusType) {
-                case "IN_SENATE_COMM":
-                    desc = "In Senate " + status.committeeName + " Committee"; break;
-                case "IN_ASSEMBLY_COMM":
-                    desc = "In Assembly " + status.committeeName + " Committee"; break;
-                case "SENATE_FLOOR":
-                    desc = "On Senate Floor as Calendar No: " + status.billCalNo; break;
-                case "ASSEMBLY_FLOOR":
-                    desc = "On Assembly Floor as Calendar No: " + status.billCalNo; break;
-                default:
-                    desc = status.statusDesc;
-            }
-        }
-        return desc;
+        return BillUtils.getStatusDesc(status);
     }
 }]);
 
@@ -313,13 +299,13 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         if (newView !== oldView) {
             $location.search('view', $scope.curr.selectedView).replace();
         }
-        if (newView === 4) { // selected full text tab
+        if (newView === 5) { // selected full text tab
             $scope.fetchFullText();
         }
     });
 
     $scope.$watch('curr.amdVersion', function(newVersion, oldVersion){
-        if (newVersion !== oldVersion && $scope.curr.selectedView === 4) {
+        if (newVersion !== oldVersion && $scope.curr.selectedView === 5) {
             $scope.fetchFullText();
         }
     });
@@ -492,3 +478,32 @@ billModule.directive('milestones', [function(){
         }
     }
 }]);
+
+billModule.directive('billListing', ['BillUtils', function(BillUtils) {
+    return {
+        restrict: 'E',
+        scope: {
+            'billIds': '=',
+            'billRefsMap': '=',
+            'bills': '=',
+            'billSearchTerm': '=',
+            'showTitle': '='
+        },
+        templateUrl: ctxPath + '/partial/content/bill/bill-listing-view',
+        controller: function($scope, $element){
+            $scope.billUtils = BillUtils;
+            if ($scope.billIds && $scope.billRefsMap && !$scope.bills) {
+                $scope.bills = $scope.billIds.map(function(id) {
+                    var baseIdStr = id.basePrintNo + '-' + id.session;
+                    if ($scope.billRefsMap[baseIdStr]) {
+                        return $scope.billRefsMap[baseIdStr];
+                    }
+                    return angular.extend({}, id, {'idOnly': true});
+                });
+            }
+        }
+    };
+}]);
+
+
+
