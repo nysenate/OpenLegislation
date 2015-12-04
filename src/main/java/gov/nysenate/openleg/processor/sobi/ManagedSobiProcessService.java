@@ -13,7 +13,7 @@ import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
 import gov.nysenate.openleg.model.sobi.*;
 import gov.nysenate.openleg.processor.agenda.AgendaProcessor;
 import gov.nysenate.openleg.processor.agenda.AgendaVoteProcessor;
-import gov.nysenate.openleg.processor.bill.BillProcessor;
+import gov.nysenate.openleg.processor.bill.BillSobiProcessor;
 import gov.nysenate.openleg.processor.calendar.ActiveListProcessor;
 import gov.nysenate.openleg.processor.calendar.CalendarProcessor;
 import gov.nysenate.openleg.processor.entity.CommitteeProcessor;
@@ -52,7 +52,7 @@ public class ManagedSobiProcessService implements SobiProcessService
 
     @Autowired private AgendaProcessor agendaProcessor;
     @Autowired private AgendaVoteProcessor agendaVoteProcessor;
-    @Autowired private BillProcessor billProcessor;
+    @Autowired private BillSobiProcessor billSobiProcessor;
     @Autowired private CalendarProcessor calendarProcessor;
     @Autowired private ActiveListProcessor activeListProcessor;
     @Autowired private CommitteeProcessor committeeProcessor;
@@ -66,7 +66,7 @@ public class ManagedSobiProcessService implements SobiProcessService
         processorMap = ImmutableMap.<SobiFragmentType, SobiProcessor>builder()
             .put(SobiFragmentType.AGENDA, agendaProcessor)
             .put(SobiFragmentType.AGENDA_VOTE, agendaVoteProcessor)
-            .put(SobiFragmentType.BILL, billProcessor)
+            .put(SobiFragmentType.BILL, billSobiProcessor)
             .put(SobiFragmentType.CALENDAR, calendarProcessor)
             .put(SobiFragmentType.CALENDAR_ACTIVE, activeListProcessor)
             .put(SobiFragmentType.COMMITTEE, committeeProcessor)
