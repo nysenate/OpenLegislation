@@ -35,7 +35,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected BillStatus status;
 
     /** A set of statuses that are considered milestones. */
-    protected LinkedList<BillStatus> milestones =  new LinkedList<>();
+    protected List<BillStatus> milestones =  new LinkedList<>();
 
     /** A mapping of amendment versions to BillAmendment instances (includes base amendment). */
     protected Map<Version, BillAmendment> amendmentMap = new TreeMap<>();
@@ -377,7 +377,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.status = status;
     }
 
-    public LinkedList<BillStatus> getMilestones() {
+    public List<BillStatus> getMilestones() {
         return milestones;
     }
 

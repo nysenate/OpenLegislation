@@ -3,7 +3,9 @@ package gov.nysenate.openleg.model.bill;
 import gov.nysenate.openleg.model.base.Version;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Contains a sample of the fields in {@link gov.nysenate.openleg.model.bill.Bill}.
@@ -20,7 +22,8 @@ public class BillInfo
     protected String summary;
     protected BillStatus status;
     protected BillSponsor sponsor;
-    protected LinkedList<BillStatus> milestones = new LinkedList<>();
+    protected List<BillStatus> milestones = new ArrayList<>();
+    protected List<BillAction> actions = new ArrayList<>();
     protected BillId substitutedBy;
     protected ProgramInfo programInfo;
 
@@ -40,6 +43,7 @@ public class BillInfo
         this.substitutedBy = bill.getSubstitutedBy();
         this.programInfo = bill.getProgramInfo();
         this.milestones = bill.getMilestones();
+        this.actions = bill.getActions();
     }
 
     /** --- Basic Getters/Setters --- */
@@ -100,12 +104,16 @@ public class BillInfo
         this.sponsor = sponsor;
     }
 
-    public LinkedList<BillStatus> getMilestones() {
+    public List<BillStatus> getMilestones() {
         return milestones;
     }
 
-    public void setMilestones(LinkedList<BillStatus> milestones) {
+    public void setMilestones(List<BillStatus> milestones) {
         this.milestones = milestones;
+    }
+
+    public List<BillAction> getActions() {
+        return actions;
     }
 
     public ProgramInfo getProgramInfo() {

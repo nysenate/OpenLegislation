@@ -108,6 +108,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         Bill bill = getBaseBill(baseParams);
         bill.setSponsor(getBillSponsor(baseParams));
         bill.setMilestones(getBillMilestones(baseParams));
+        bill.setActions(getBillActions(baseParams));
         return bill.getBillInfo();
     }
 

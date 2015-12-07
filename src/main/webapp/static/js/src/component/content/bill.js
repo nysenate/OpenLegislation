@@ -318,6 +318,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         function() {
             if ($scope.response.success) {
                 $scope.bill = $scope.response.result;
+                $scope.mergeActions($scope.bill);
                 $scope.setHeaderText('NYS ' + $scope.bill.billType.desc + ' ' +
                     $filter('resolutionOrBill')($scope.bill.billType.resolution) + ' ' +
                     $scope.bill.basePrintNo + '-' + $scope.bill.session + (($scope.bill.session !== $scope.activeSession) ? " (Inactive) " : ""));
@@ -353,6 +354,31 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
                 }, function() {
                     $scope.loading = false;
                 });
+        }
+    };
+
+    $scope.mergeActions = function(bill) {
+        if (bill.substitutedBy) {
+            var currPrintNoStr = bill.basePrintNoStr;
+            var subPrintNoStr = bill.substitutedBy.basePrintNoStr;
+            var mergedActions = bill.actions.items.concat(bill.billInfoRefs.items[subPrintNoStr].actions.items)
+                .sort(function(a,b) {
+                    return moment(a.date).diff(moment(b.date));
+                });
+            var actions1 = mergedActions.slice(0);
+            var actions2 = mergedActions.slice(0);
+            // Set sub bill actions to null in list 1
+            actions1 = actions1.map(function(a) {
+                return (a.billId.basePrintNoStr == currPrintNoStr) ? a : null;
+            });
+            // Set primary bill actions to null in list 2
+            actions2 = actions2.map(function(a) {
+                return (a.billId.basePrintNoStr == subPrintNoStr) ? a : null;
+            });
+            bill.mergedActions = [[currPrintNoStr, actions1], [subPrintNoStr, actions2]];
+        }
+        else {
+            bill.mergedActions = [[currPrintNoStr, bill.actions.items]];
         }
     };
 

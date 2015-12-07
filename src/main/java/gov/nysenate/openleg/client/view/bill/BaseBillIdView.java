@@ -7,11 +7,13 @@ public class BaseBillIdView implements ViewObject
 {
     protected String basePrintNo;
     protected int session;
+    protected String basePrintNoStr;
 
     public BaseBillIdView(BillId billId) {
         if (billId != null) {
             this.basePrintNo = billId.getBasePrintNo();
             this.session = billId.getSession().getYear();
+            this.basePrintNoStr = billId.toString();
         }
     }
 
@@ -26,5 +28,9 @@ public class BaseBillIdView implements ViewObject
 
     public int getSession() {
         return session;
+    }
+
+    public String getBasePrintNoStr() {
+        return basePrintNoStr;
     }
 }

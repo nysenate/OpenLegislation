@@ -112,10 +112,7 @@ public class BillGetCtrl extends BaseCtrl
      * Retrieve a single bill via printNo and session: (GET) /api/3/bills/{session}/{printNo}/
      * The version on the printNo is not needed since bills are returned with all amendments.
      *
-     * Request Parameters: summary - If true, then only a BillInfoView will be returned.
-     *                     detail - If true, then a DetailedBillView will be returned.
-     *
-     * Can't use 'summary' and 'detail' at the same time. If 'summary' is true, it will disregard 'detail'.
+     * Request Parameters: view - Specify the level of detail (defaults to BillViewLevel.DEFAULT)
      *
      * Expected Output: BillView, DetailedBillView, or BillInfoView
      */
