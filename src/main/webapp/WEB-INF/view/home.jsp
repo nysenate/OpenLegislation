@@ -74,7 +74,7 @@
 
     <div layout="column" role="main" flex>
         <%-- Content Header --%>
-        <md-toolbar id="content-header" md-scroll-shrink ng-class="{'header-visible': header.visible }">
+        <md-toolbar id="content-header" ng-class="{'header-visible': header.visible }">
           <div class="md-toolbar-tools">
             <h1 class="top-bar-heading">
               <i hide-gt-md ng-click="toggleLeftNav()" class="menu-icon icon-menu"></i>

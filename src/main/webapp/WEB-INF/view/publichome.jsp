@@ -51,8 +51,8 @@
               <div class="provide-data-icon" ng-class="provideData.bgclass">
                 <i ng-class="provideData.icon" class="white"></i>
               </div>
-              <div class="margin-left-20 md-list-item-text">
-                <h3 class="no-margin bold provide-data-type">{{provideData.type}}</h3>
+              <div layout-padding class="margin-left-20 md-list-item-text">
+                <h3 class="bold">{{provideData.type}}</h3>
                 <p style="color:#444">{{provideData.blurb}}</p>
               </div>
             </md-list-item>

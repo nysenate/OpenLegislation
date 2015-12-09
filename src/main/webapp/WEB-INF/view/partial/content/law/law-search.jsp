@@ -1,22 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <section ng-controller="LawCtrl">
   <section class="content-section">
-    <md-tabs md-selected="selectedView" md-dynamic-height="false">
+    <md-tabs class="md-hue-2" md-selected="selectedView" md-dynamic-height="true">
       <md-tab>
         <md-tab-label>
           <i class="icon-list prefix-icon2"></i>Listings
         </md-tab-label>
         <md-tab-body>
           <md-divider></md-divider>
-          <section ng-if="selectedView === 0" ng-controller="LawListingCtrl">
-            <md-card class="content-card law-listing-filter">
-              <md-content>
-                <md-input-container>
-                  <label><i class="icon-funnel prefix-icon2"></i>Filter law listing</label>
-                  <input ng-model-options="{debounce: 200}" ng-model="lawFilter"/>
-                </md-input-container>
-              </md-content>
-            </md-card>
+          <div ng-controller="LawListingCtrl">
+            <div class="law-listing-filter">
+              <label class="margin-bottom-10 margin-right-10">
+                <i class="icon-funnel prefix-icon2"></i>Filter law listing
+              </label>
+              <input class="padding-5" ng-model-options="{debounce: 200}" ng-model="lawFilter" placeholder="e.g. TAX"/>
+            </div>
             <md-card class="no-margin">
               <md-content class="text-medium">
                 <md-list>
@@ -35,14 +33,14 @@
                 <div infinite-scroll="keepScrolling()" infinite-scroll-distance="1"></div>
               </md-content>
             </md-card>
-          </section>
+          </div>
         </md-tab-body>
       </md-tab>
       <md-tab>
         <md-tab-label><i class="icon-magnifying-glass prefix-icon2"></i>Search</md-tab-label>
         <md-tab-body>
           <md-divider></md-divider>
-          <section ng-if="selectedView === 1" ng-controller="LawSearchCtrl">
+          <section ng-controller="LawSearchCtrl">
             <form name="law-search-form">
               <md-content class="relative padding-20 margin-top-10">
                 <md-input-container class="md-primary">
@@ -50,9 +48,9 @@
                   <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
                          ng-model="lawSearch.term" ng-model-options="{debounce: 300}" ng-change="simpleSearch(true)">
                 </md-input-container>
-                <div ng-if="lawSearch.searching" class="loading-pulse">
-                  Searching laws...
-                </div>
+                <md-progress-linear class="md-accent md-hue-1"
+                                    md-mode="{{(lawSearch.searching) ? 'query' : ''}}">
+                </md-progress-linear>
               </md-content>
               <md-divider></md-divider>
               <md-subheader ng-show="lawSearch.searched && lawSearch.term && !lawSearch.error && pagination.totalItems === 0"
@@ -130,7 +128,7 @@
         <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
         <md-tab-body>
           <md-divider></md-divider>
-          <section ng-if="selectedView === 2" ng-controller="LawUpdatesCtrl">
+          <section ng-controller="LawUpdatesCtrl">
             <md-card class="content-card">
               <md-subheader>Show law updates during the following date range</md-subheader>
               <div layout="row" class="padding-20 text-medium">

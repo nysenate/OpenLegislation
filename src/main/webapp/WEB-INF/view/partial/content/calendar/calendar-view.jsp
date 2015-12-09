@@ -3,7 +3,7 @@
 <section class="content-section" ng-controller="CalendarViewCtrl" ng-init="setHeaderVisible(true)">
 
   <section ng-if="calendarResponse.success === true">
-    <md-tabs md-selected="curr.activeIndex" md-dynamic-height="false">
+    <md-tabs md-selected="curr.activeIndex">
       <!-- Back to search -->
       <md-tab md-on-select="backToSearch()">
         <md-tab-label ng-if="previousPage == 'search'"><i class="icon-magnifying-glass prefix-icon2"></i>back to search</md-tab-label>

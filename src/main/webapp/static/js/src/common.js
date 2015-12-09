@@ -32,6 +32,17 @@ commonModule.filter('ordinalSuffix', ['$filter', function ($filter) {
     };
 }]);
 
+commonModule.factory('sessionYears', [function(){
+    function generateSessionYears() {
+        var years = [];
+        for (var year = 2009; year <= new Date().getFullYear(); year += 2) {
+            years.push(year);
+        }
+        return years;
+    }
+    return generateSessionYears();
+}]);
+
 /**
  * The toggle-panel directive wraps your content in expandable/collapsible container.
  *

@@ -4,7 +4,7 @@
     <a class="result-link"
        ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearchTerm}}&view=1">
       <div flex="none" layout="column" layout-gt-sm="row">
-        <div class="text-medium">
+        <div ng-show="showImg">
           <img class="margin-right-10" ng-if="bill.sponsor"
                ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
                style="width: 45px;"/>

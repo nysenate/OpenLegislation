@@ -358,8 +358,8 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
     };
 
     $scope.mergeActions = function(bill) {
+        var currPrintNoStr = bill.basePrintNoStr;
         if (bill.substitutedBy) {
-            var currPrintNoStr = bill.basePrintNoStr;
             var subPrintNoStr = bill.substitutedBy.basePrintNoStr;
             var mergedActions = bill.actions.items.concat(bill.billInfoRefs.items[subPrintNoStr].actions.items)
                 .sort(function(a,b) {
@@ -513,10 +513,11 @@ billModule.directive('billListing', ['BillUtils', function(BillUtils) {
             'billRefsMap': '=',
             'bills': '=',
             'billSearchTerm': '=',
-            'showTitle': '='
+            'showTitle': '=',
+            'showImg': '='
         },
         templateUrl: ctxPath + '/partial/content/bill/bill-listing-view',
-        controller: function($scope, $element){
+        controller: function($scope, $element) {
             $scope.billUtils = BillUtils;
             if ($scope.billIds && $scope.billRefsMap && !$scope.bills) {
                 $scope.bills = $scope.billIds.map(function(id) {
@@ -531,5 +532,21 @@ billModule.directive('billListing', ['BillUtils', function(BillUtils) {
     };
 }]);
 
-
+billModule.directive('billSearchListing', ['BillUtils', function(BillUtils) {
+    return {
+        restrict: 'E',
+        scope: {
+            'billSearchResponse': '=',
+            'billSearchTerm': '=',
+            'pagination': '=',
+            'paginationId': '&',
+            'showTitle': '=',
+            'showImg': '='
+        },
+        templateUrl: ctxPath + '/partial/content/bill/bill-search-listing-view',
+        controller: function($scope, $element){
+            $scope.billUtils = BillUtils;
+        }
+    };
+}]);
 

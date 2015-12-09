@@ -91,6 +91,7 @@ module.exports = function(grunt) {
                         // Content Pages
                         '<%= jsSource %>/component/content/dashboard.js',
                         '<%= jsSource %>/component/content/bill.js',
+                        '<%= jsSource %>/component/content/bill-utils.js',
                         '<%= jsSource %>/component/content/law.js',
                         '<%= jsSource %>/component/content/agenda.js',
                         '<%= jsSource %>/component/content/calendar.js',

@@ -921,18 +921,15 @@ calendarModule.directive('calendarEntryTable', function() {
         controller: function($scope) {
             $scope.billPageBaseUrl = ctxPath + '/bills';
             $scope.getCalBillNumUrl = $scope.getCalBillNumUrl();
-            $scope.listingLimit = 20;
-
-            $scope.keepScrolling = function() {
-                $scope.listingLimit += 10;
-            };
-
-            $scope.$on('billScrollEvent', function (sectionType) {
-                if ($scope.sectionType == sectionType) {
-                    $scope.listingLimit = 99999;
-                    console.log("buffed listing limit of", $scope.sectionType);
+            $scope.dynamicCalEntries = {
+                getItemAtIndex: function(index) {
+                    console.log($scope.calEntries);
+                    return $scope.calEntries[index];
+                },
+                getLength: function() {
+                    return $scope.calEntries.length;
                 }
-            });
+            };
         }
     };
 });

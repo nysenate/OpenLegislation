@@ -46,6 +46,10 @@ hr {
   border-top-style: solid;
 }
 
+p {
+  line-height: 1.7em;
+}
+
 /** --- Angular Material Overrides --- */
 
 md-toolbar {
@@ -269,6 +273,10 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   padding: 0;
 }
 
+.padding-left-0 {
+  padding-left: 0 !important;
+}
+
 .relative {
   position: relative;
 }
@@ -385,15 +393,6 @@ h4 {
 
 h5 {
   font-size: 0.8em;
-}
-
-/** --- Common Widgets --- */
-
-.loading-pulse {
-  position: absolute;
-  bottom: 15px;
-  color: $gray10;
-  font-size: 0.9rem;
 }
 
 /** --- Main Layout --- */
@@ -556,12 +555,12 @@ $left-nav-width: 305px;
 
 ul.pagination {
   margin: 0;
-  padding: 0;
+  padding: 10px;
+  border: 1px solid #f1f1f1;
   li {
     display: inline;
     list-style-type: none;
-    border: 1px solid #ddd;
-    margin-right: 3px;
+    margin-right: 8px;
     text-align: center;
     &.active {
       a {
@@ -576,7 +575,7 @@ ul.pagination {
       }
     }
     a {
-      font-size: 0.8rem;
+      font-size: 0.9em;
       text-decoration: none;
       color: #999;
       padding: 3px 7px;
@@ -642,6 +641,7 @@ ul.pagination {
     }
     cursor: pointer;
     color: #555;
+    border: 1px solid #ddd;
     .toggle-panel-label {
       font-size: 0.9rem;
       font-weight: bold;
@@ -650,7 +650,8 @@ ul.pagination {
   }
   &.open {
     > .toggle-panel-bar {
-      border-bottom: 1px solid #ddd;
+      background: #eee;
+      //border-bottom: 1px solid white;
       .toggle-panel-label {
         color: $blue3;
       }
@@ -670,10 +671,6 @@ ul.pagination {
 /** --- Search UI --- */
 
 .search-refine-panel {
-  width: 240px;
-  background: $gray1;
-  margin: 10px 0 0 0;
-  font-size: 0.9rem;
   h3 {
     background:white;
     font-size: 1rem;
@@ -684,6 +681,7 @@ ul.pagination {
     padding: 5px 10px 5px 15px;
     label {
       margin-top: 8px;
+      margin-bottom: 4px;
       font-size: 0.9rem;
       display: block;
     }
@@ -691,17 +689,10 @@ ul.pagination {
       width: 100%;
       display:block;
       border: 1px solid #ddd;
+      padding: 5px;
     }
-    md-checkbox {
+    md-checkbox, md-switch {
       margin: 10px 2px 0 2px;
-    }
-    hr {
-      border: 0;
-      height: 1px;
-      background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
-      background-image:    -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
-      background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
-      background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
     }
   }
 }
@@ -931,17 +922,19 @@ a.slogan-link {
   white-space: pre-line;
 }
 
+.positive {
+  background: #F1F8E9;
+}
+
+.negative {
+  background: #FFEBEE;
+}
+
 .bill-votes-table {
   font-size: 0.9rem;
   width: 100%;
   padding: 20px;
   tr {
-    &.positive {
-      background: #F1F8E9;
-    }
-    &.negative {
-      background: #FFEBEE;
-    }
     th {
       text-align: left;
     }
@@ -983,11 +976,8 @@ a.slogan-link {
 }
 
 .law-listing-filter {
-  &.content-card {
-    md-content {
-      padding: 2px 15px;
-    }
-  }
+  padding: 16px 20px;
+  background: #f1f1f1;
 }
 
 .law-node {
@@ -1007,6 +997,7 @@ a.slogan-link {
   }
   &.active {
     color: $blue4;
+    background: #f1f1f1;
     .law-node-toggle-icon {
       visibility: visible;
     }

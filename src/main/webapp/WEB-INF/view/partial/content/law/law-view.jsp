@@ -2,7 +2,7 @@
 
 <section ng-controller="LawCtrl">
   <section class="content-section" ng-controller="LawViewCtrl">
-    <md-tabs md-selected="selectedView" md-dynamic-height="false">
+    <md-tabs class="md-hue-2" md-selected="selectedView" md-dynamic-height="true">
       <md-tab md-on-select="backToListings()">
         <md-tab-label>
           <i class="icon-list prefix-icon2"></i>Listings
@@ -15,7 +15,7 @@
                class="margin-left-20 bill-full-text" style="white-space: pre-line;">
             {{curr.lawText}}
           </pre>
-          <section class="margin-top-10 gray1-bg" layout="row" layout-padding>
+          <div class="gray1-bg" layout="row" layout-padding>
             <div flex>
               <label class="gray10 text-medium">Navigate by section number</label>
               <md-autocomplete class="margin-top-10 margin-bottom-10 white-bg"
@@ -26,9 +26,9 @@
                 <span><strong>{{item.result.docType}} {{item.result.docLevelId}}</strong> {{item.result.title}}</span>
               </md-autocomplete>
             </div>
-          </section>
+          </div>
           <md-divider></md-divider>
-
+          <md-progress-linear class="md-accent md-hue-1" md-mode="{{(loading) ? 'query' : ''}}"></md-progress-linear>
           <div style="position:fixed;top:300px;right: 100px;z-index: 100" class="padding-20" ng-show="loading">
             <md-progress-circular md-mode="indeterminate"></md-progress-circular>
           </div>
@@ -73,7 +73,7 @@
                     Updated on {{doc.activeDate | moment:'MM/DD/YYYY'}}
                   </p>
                 </div>
-                <md-divider></md-divider>
+                <%--<md-divider></md-divider>--%>
               </md-list-item>
               <md-list-item ng-if="curr.showNested[doc.locationId]" class="law-node-ctrls">
                 <div>

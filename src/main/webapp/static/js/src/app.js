@@ -14,20 +14,22 @@ openApp.config(function($mdThemingProvider) {
     var primaryPalette = $mdThemingProvider.extendPalette('grey', {
         '500': '#f1f1f1',
         '300': '#eee',
-        //'800': '#f5f5f5',
+        '800': '#444',
         'A100':'#fff',
         'contrastDefaultColor': 'dark'
     });
-$mdThemingProvider.definePalette('primaryPalette', primaryPalette);
+    var accentPalette = $mdThemingProvider.extendPalette('blue', {
+        'A200': '#008cba',
+        'A100': '#165b81',
+        'A400': '#2b6a90',
+        //'A700':'#fff',
+        'contrastLightColors': ['A200', 'A100', 'A400', 'A700']
+    });
+    $mdThemingProvider.definePalette('primaryPalette', primaryPalette);
+    $mdThemingProvider.definePalette('bluePalette', accentPalette);
     $mdThemingProvider.theme('default')
         .primaryPalette('primaryPalette')
-        .accentPalette('blue', {
-            'hue-1': '300',
-            'hue-2': '400',
-            'hue-3': '600'
-        });
-    $mdThemingProvider.theme('success').primaryPalette('light-green');
-    $mdThemingProvider.theme('failure').primaryPalette('red');
+        .accentPalette('bluePalette');
 })
 // Disable gestures for now.
 .constant('$mdGesture', {})

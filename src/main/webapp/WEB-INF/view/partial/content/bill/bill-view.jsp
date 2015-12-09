@@ -58,7 +58,7 @@
         </div>
       </md-toolbar>
       <%-- Bill amendments switcher --%>
-      <md-toolbar ng-if="bill.amendments.size > 1" class="md-toolbar-tools">
+      <md-toolbar ng-if="bill.amendments.size > 1" style="padding:15px;" class="md-toolbar-tools auto-height">
         <label class="margin-right-20 text-medium">Amendment Version </label>
         <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
           <md-radio-button ng-repeat="(version, amd) in bill.amendments.items"
@@ -80,7 +80,6 @@
           </md-tab-label>
         </md-tab>
         <md-tab label="Details">
-          <md-divider></md-divider>
           <%-- Same As Bills --%>
           <md-card class="content-card" ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0">
             <md-subheader>Same As Bills</md-subheader>
@@ -196,17 +195,40 @@
           </md-tab-label>
           <md-tab-body>
             <md-content>
-              <md-card class="content-card">
-                <div ng-repeat="vote in bill.votes.items">
-                  <div class="padding-20">
-                    <h4 class="no-bottom-margin">{{vote.voteDate | moment:'MMM DD, YYYY'}} - {{vote.committee.name}}
-                      <span class="capitalize">{{vote.voteType | lowercase}}</span>
-                      Vote
+              <md-card class="content-card" layout-gt-sm="row" layout="column"
+                       layout-align="start start">
+                <div class="padding-10 margin-right-20" layout="column" ng-repeat="vote in bill.votes.items">
+                  <div flex="grow">
+                    <h4 class="no-bottom-margin"><i class="icon-prefix icon-calendar"></i>
+                      {{vote.voteDate | moment:'MMM DD, YYYY'}}
                     </h4>
+                    <h5 class="no-bottom-margin">{{vote.committee.name}} <span class="capitalize">{{vote.voteType | lowercase}}</span>
+                      Vote</h5>
                     <p class="no-top-margin text-medium">Voted on Amendment Revision: {{vote.version | prettyAmendVersion}}</p>
                     <md-divider></md-divider>
-                    <div layout="row" layout-align="center center" layout-sm="column" layout-align-sm="start start">
-                      <div flex>
+                    <div layout="column">
+                      <toggle-panel label="Voting Details" class="content-card">
+                        <md-content class="no-padding">
+                          <md-list ng-repeat="(voteType, votes) in vote.memberVotes.items">
+                            <md-list-item ng-repeat="voteItem in votes.items"
+                                          ng-class="{'positive': (voteType === 'AYE' || voteType === 'AYEWR'),
+                                                     'negative': (voteType === 'NAY')}">
+                              <div style="max-width:80px;" class="md-tile-left margin-right-10">
+                                <h5 style="margin:10px;">{{voteType}}</h5>
+                              </div>
+                              <div class="md-tile-left">
+                                <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{voteItem.imgName}}"
+                                     style="height: 35px;width:29px;"/>
+                              </div>
+                              <div style="padding:0" class="md-tile-content">
+                                <span class="text-medium">{{voteItem.fullName}}</span>
+                              </div>
+                            </md-list-item>
+                            <md-divider></md-divider>
+                          </md-list>
+                        </md-content>
+                      </toggle-panel>
+                      <div flex="1">
                         <table class="bill-votes-table">
                           <thead>
                           <tr>
@@ -224,25 +246,6 @@
                           </tbody>
                         </table>
                       </div>
-                      <div flex>
-                        <md-content class="margin-left-16 padding-10" style="max-height: 200px;">
-                          <md-list ng-repeat="(voteType, votes) in vote.memberVotes.items">
-                            <md-list-item ng-repeat="voteItem in votes.items">
-                              <div style="width:80px;" class="md-tile-left margin-right-10">
-                                <h5 style="margin:10px;">{{voteType}}</h5>
-                              </div>
-                              <div class="md-tile-left">
-                                <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{voteItem.imgName}}"
-                                     style="height: 35px;width:29px;"/>
-                              </div>
-                              <div style="padding:0" class="md-tile-content">
-                                <span class="text-medium">{{voteItem.fullName}}</span>
-                              </div>
-                            </md-list-item>
-                            <md-divider></md-divider>
-                          </md-list>
-                        </md-content>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -251,49 +254,55 @@
           </md-tab-body>
         </md-tab>
         <%-- Memos --%>
-        <md-tab label="Memo" ng-disabled="bill.billType.resolution">
-          <md-divider></md-divider>
-          <md-card class="content-card">
-            <md-subheader>
-              Sponsor's Memorandum
-            </md-subheader>
-            <md-content ng-if="bill.amendments.items[curr.amdVersion].memo">
+        <md-tab ng-disabled="bill.billType.resolution">
+          <md-tab-label>
+            <%-- Gives a count of the number of memos (sponsor, veto, approv) --%>
+            Memos ({{((bill.amendments.items[curr.amdVersion].memo) ? 1 : 0) +
+                      bill.vetoMessages.size + ((bill.approvalMessage) ? 1 : 0)}})
+          </md-tab-label>
+          <md-tab-body>
+            <md-card class="content-card">
+              <md-subheader>
+                Sponsor's Memorandum
+              </md-subheader>
+              <md-content ng-if="bill.amendments.items[curr.amdVersion].memo">
               <pre class="bill-full-text"
                    ng-bind="bill.amendments.items[curr.amdVersion].memo"></pre>
-            </md-content>
-            <md-content ng-if="bill.billType.chamber == 'ASSEMBLY'">
-              <div class="text-medium padding-20">Sponsor memos are not provided for Assembly bills.
-                <p ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0"
-                   ng-init="sameAsBill = bill.amendments.items[curr.amdVersion].sameAs.items[0]">
-                  You can view the sponsor memo for the Senate version of this bill here:
-                  <a target="_blank"
-                     ng-href="${ctxPath}/bills/{{sameAsBill.session}}/{{sameAsBill.basePrintNo}}?view=2">{{sameAsBill.basePrintNo}}</a>.</p>
-              </div>
-            </md-content>
-            <md-content ng-if="!bill.amendments.items[curr.amdVersion].memo && bill.billType.chamber == 'SENATE'">
-              <div class="text-medium padding-20">Sponsor memo is not available.</div>
-            </md-content>
-          </md-card>
-          <%-- Veto Messages --%>
-          <md-card class="content-card" ng-if="bill.vetoMessages.size > 0">
-            <md-subheader>Veto Message From Governor</md-subheader>
-            <md-content ng-repeat="veto in bill.vetoMessages.items">
-              <span class="text-medium">Veto #{{veto.vetoNumber}} for Year {{veto.year}}</span>
-              <md-divider></md-divider>
-              <pre class="bill-full-text">{{veto.memoText}}</pre>
-            </md-content>
-          </md-card>
-          <%-- Approval Message --%>
-          <md-card class="content-card" ng-if="bill.approvalMessage">
-            <md-subheader>Approval Message From Governor</md-subheader>
-            <md-content>
+              </md-content>
+              <md-content ng-if="bill.billType.chamber == 'ASSEMBLY'">
+                <div class="text-medium padding-20">Sponsor memos are not provided for Assembly bills.
+                  <p ng-if="bill.amendments.items[curr.amdVersion].sameAs.size > 0"
+                     ng-init="sameAsBill = bill.amendments.items[curr.amdVersion].sameAs.items[0]">
+                    You can view the sponsor memo for the Senate version of this bill here:
+                    <a target="_blank"
+                       ng-href="${ctxPath}/bills/{{sameAsBill.session}}/{{sameAsBill.basePrintNo}}?view=2">{{sameAsBill.basePrintNo}}</a>.</p>
+                </div>
+              </md-content>
+              <md-content ng-if="!bill.amendments.items[curr.amdVersion].memo && bill.billType.chamber == 'SENATE'">
+                <div class="text-medium padding-20">Sponsor memo is not available.</div>
+              </md-content>
+            </md-card>
+            <%-- Veto Messages --%>
+            <md-card class="content-card" ng-if="bill.vetoMessages.size > 0">
+              <md-subheader>Veto Message From Governor</md-subheader>
+              <md-content ng-repeat="veto in bill.vetoMessages.items">
+                <span class="text-medium">Veto #{{veto.vetoNumber}} for Year {{veto.year}}</span>
+                <md-divider></md-divider>
+                <pre class="bill-full-text">{{veto.memoText}}</pre>
+              </md-content>
+            </md-card>
+            <%-- Approval Message --%>
+            <md-card class="content-card" ng-if="bill.approvalMessage">
+              <md-subheader>Approval Message From Governor</md-subheader>
+              <md-content>
               <span class="text-medium">
                 Approval #{{bill.approvalMessage.approvalNumber}} for Year {{bill.approvalMessage.year}} - Chapter {{bill.approvalMessage.chapter}}
               </span>
-              <md-divider></md-divider>
-              <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
-            </md-content>
-          </md-card>
+                <md-divider></md-divider>
+                <pre class="bill-full-text">{{bill.approvalMessage.text}}</pre>
+              </md-content>
+            </md-card>
+          </md-tab-body>
         </md-tab>
         <%-- Bill Actions --%>
         <md-tab>
@@ -316,7 +325,7 @@
                           <h3 class="text-medium capitalize">{{action.text | lowercase}}</h3>
                         </div>
                         <div class="md-list-item-text" ng-if="!action">
-                          <h2 class="text-medium">&nbsp;</h2>
+                          <h2 class="text-medium gray7"><i class="icon-prefix margin-left-20 icon-dots-two-horizontal"></i></h2>
                           <h3 class="text-medium">&nbsp;</h3>
                         </div>
                       </md-list-item>
