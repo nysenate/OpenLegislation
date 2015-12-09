@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DocsPageCtrl
 {
     @RequestMapping("docs")
-    public String bleh() {
-        return  "redirect:/static/docs/html";
+    public String docs() {
+        return  "redirect:/static/docs/html/index.html";
     }
 }
