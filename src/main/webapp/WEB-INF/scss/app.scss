@@ -103,9 +103,10 @@ md-input-container {
   }
 }
 
-// Prevent list headers from getting compressed when the line wraps
-md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-style .md-list-item-text h3, md-list-item.md-3-line .md-list-item-text h3, md-list-item.md-3-line>.md-no-style .md-list-item-text h3 {
-  //line-height: 1.2em !important;
+// Couldn't get the colors right
+.md-default-theme.md-hue-2 .md-datepicker-input, .md-hue-2 .md-datepicker-input {
+  background: white;
+  color: #444;
 }
 
 /** --- Transitions --- */
@@ -443,10 +444,15 @@ $left-nav-width: 305px;
   width: $left-nav-width;
   background: $blue5;
   min-height: 100vh;
+  position: fixed;
   @media print {
     display: none;
   }
+  &.md-locked-open + * {
+    margin-left: $left-nav-width;
+  }
 }
+
 
 #logo {
   padding-left:10px;
@@ -954,6 +960,7 @@ a.slogan-link {
     }
     td {
       &:nth-child(1) {
+        font-size: 0.9rem;
         border-right: 1px solid #ddd;
       }
       &:nth-child(2) {
@@ -961,11 +968,18 @@ a.slogan-link {
       }
       pre {
         max-height: 300px;
+        font-size: 0.9rem;
       }
       border-bottom: 1px solid #ddd;
       overflow: auto;
     }
   }
+}
+
+.bill-json-iframe {
+  border: 0;
+  width: 90vw;
+  height: 50vh;
 }
 
 /** --- Law Page Styles --- */

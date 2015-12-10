@@ -2,10 +2,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="open" tagdir="/WEB-INF/tags/component" %>
 
-<%@ page import="gov.nysenate.openleg.model.bill.BillStatusType" %>
-<!-- We set the statusTypes here to make it easy to create a select menu out of the status types. -->
-<c:set var="statusTypes" value="<%=BillStatusType.values()%>"/>
-
 <div ng-controller="BillCtrl">
   <div class="content-section">
     <md-tabs class="md-hue-2" md-selected="selectedView" md-dynamic-height="true" md-stretch-tabs="auto">
@@ -15,7 +11,6 @@
           <md-divider></md-divider>
           <div ng-controller="BillSearchCtrl">
             <div class="gray2-bg" layout-padding>
-              <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.searching) ? 'query' : ''}}"></md-progress-linear>
               <%-- Main Search Controls --%>
               <form name="bill-search-form">
                 <div class="relative" layout="column">
@@ -23,150 +18,63 @@
                     Search for legislation by print no or term.
                   </label>
                   <input tabindex="1" class="padding-10" style="font-size:1.4em;" name="quick-term"
-                         placeholder="e.g. S1234-2015 or yogurt" ng-model="billSearch.term" ng-model-options="{debounce: 400}"
+                         placeholder="e.g. S1234-2015 or yogurt" ng-model="curr.billSearch.term" ng-model-options="{debounce: 400}"
                          ng-change="simpleSearch(true)">
                 </div>
-                <md-subheader ng-show="billSearch.searched && billSearch.term && !billSearch.error && curr.pagination.totalItems === 0
-                                   && billSearch.refine.isRefined === false"
-                              class="margin-10 md-warn md-whiteframe-z0">
-                  <h3>No search results were found for '{{billSearch.term}}'</h3>
-                </md-subheader>
-                <md-subheader ng-show="billSearch.searched && billSearch.term && billSearch.error"
-                              class="margin-10 md-warn md-whiteframe-z0">
-                  <h3>{{billSearch.error.message}}</h3>
-                </md-subheader>
               </form>
               <%-- Refine Panel --%>
               <div>
-                <toggle-panel label="Advanced search options" open="{{billSearch.refine.isRefined}}" extra-classes="content-card no-margin">
-                  <div layout-gt-sm="row" layout="column" class="search-refine-panel">
-                    <div flex="25" class="refine-controls margin-right-20">
-                      <label for="refine_session">Session</label>
-                      <select id="refine_session" ng-model="billSearch.refine.session">
-                        <option value="">All Sessions</option>
-                        <option value="2015">2015</option>
-                        <option value="2013">2013</option>
-                        <option value="2011">2011</option>
-                        <option value="2009">2009</option>
-                      </select>
-
-                      <label for="refine_chamber">Chamber</label>
-                      <select id="refine_chamber" ng-model="billSearch.refine.chamber">
-                        <option value="">Any</option><option value="SENATE">Senate</option><option value="ASSEMBLY">Assembly</option>
-                      </select>
-
-                      <label for="refine_type">Type</label>
-                      <select id="refine_type" ng-model="billSearch.refine.type">
-                        <option value="">Any</option>
-                        <option value="bills">Bills</option>
-                        <option value="resolutions">Resolution</option>
-                      </select>
-
-                      <label for="refine_sponsor">Primary Sponsor</label>
-                      <select id="refine_sponsor" ng-model="billSearch.refine.sponsor">
-                        <open:member-select-menu showSenators="true" showAssembly="true"/>
-                      </select>
-
-                      <label for="refine_status">Current Status</label>
-                      <select id="refine_status" ng-model="billSearch.refine.status">
-                        <option value="">Any</option>
-                        <c:forEach items="${statusTypes}" var="status">
-                          <option value="${status.name()}">${status.desc}</option>
-                        </c:forEach>
-                      </select>
-                    </div>
-                    <div flex="50" layout="column" class="refine-controls margin-right-20">
-                      <div layout="row">
-                        <div flex class="margin-right-10">
-                          <label>Print No</label>
-                          <input type="text" />
-                        </div>
-                        <div flex>
-                          <label>Title</label>
-                          <input type="text" />
-                        </div>
-                      </div>
-                      <div layout="row">
-                        <div flex class="margin-right-10">
-                          <label>Memo</label>
-                          <input type="text" />
-                        </div>
-                        <div flex>
-                          <label>Full Text</label>
-                          <input type="text" />
-                        </div>
-                      </div>
-                      <div layout="row">
-                        <div flex class="margin-right-10">
-                          <label>Contains Action Text</label>
-                          <input type="text" />
-                        </div>
-                        <div flex>
-                          <label>In Committee (Name)</label>
-                          <input type="text" />
-                        </div>
-                      </div>
-                      <div layout="row">
-                        <div flex class="margin-right-10">
-                          <label>Floor Calendar Number</label>
-                          <input type="number" />
-                        </div>
-                        <div flex>
-                          <label>In Committee (Name)</label>
-                          <input type="text" />
-                        </div>
-                      </div>
-                    </div>
-                    <div flex="25" layout="column" layout-align="center start" class="refine-controls margin-right-20">
-                      <md-switch ng-model="billSearch.refine.isSigned">Is Signed / Adopted</md-switch>
-                      <md-switch >Governor's Bill</md-switch>
-                      <md-switch ng-model="billSearch.refine.hasVotes">Has Votes</md-switch>
-                      <md-switch >Has Appr/Veto Memo</md-switch>
-                      <md-switch >Is Substituted By</md-switch>
-                      <md-switch >Is Uni Bill</md-switch>
-                      <md-switch >Budget Bill</md-switch>
-                      <md-switch >Rules Sponsored</md-switch>
-                    </div>
+                <toggle-panel label="Advanced search options {{(curr.billSearch.isRefined) ? '(Filtered)' : ''}}"
+                              open="{{curr.billSearch.isRefined}}" extra-classes="content-card no-margin">
+                  <bill-refine-search-panel search-params="curr.billSearch.refine" on-change="onRefineUpdate">
+                  </bill-refine-search-panel>
+                  <div ng-show="curr.billSearch.isRefined">
+                    <md-divider></md-divider>
+                    <md-button ng-click="resetRefine()" class="md-accent margin-top-10">
+                      Reset Filters
+                    </md-button>
                   </div>
-                  <md-divider></md-divider>
-                  <md-button ng-click="resetRefine()" class="md-accent margin-top-10">
-                    Reset Filters
-                  </md-button>
                 </toggle-panel>
               </div>
             </div>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.state === 'searching') ? 'query' : ''}}"></md-progress-linear>
             <div layout-padding>
-              <div ng-show="(billSearch.searched || curr.searching) && curr.pagination.totalItems > 0 || billSearch.refine.isRefined">
+              <md-subheader ng-show="curr.state === 'searched' && curr.pagination.totalItems === 0"
+                            class="margin-10 md-warn">
+                <h3>No search results were found
+                  <span ng-show="curr.billSearch.isRefined"> with the advanced search filters you entered.</span>
+                </h3>
+                <h3 ng-show="curr.billSearch.error">{{curr.billSearch.error.message}}</h3>
+              </md-subheader>
+
+              <div ng-show="curr.pagination.totalItems > 0">
                 <div class="subheader" layout="column" layout-gt-sm="row" layout-align="space-between center">
                   <div flex>
                     <h3>{{curr.pagination.totalItems}} <span class="text-normal">bills were found.</span></h3>
                   </div>
                   <div>
                     <label class="bold margin-right-10" for="sort-by-select">Sort By</label>
-                    <select id="sort-by-select" ng-model="billSearch.refine.sort">
+                    <select id="sort-by-select" ng-model="curr.billSearch.sort" ng-change="simpleSearch(true)">
                       <option value="_score:desc,session:desc">Relevant</option>
-                      <option value="status.actionDate:desc,_score:desc">Recent Relevant</option>
-                      <option value="status.actionDate:desc">Recent Status Update</option>
-                      <option value="milestones.size:desc">Most Progress</option>
-                      <option value="votes.items.memberVotes.items.NAY.size:desc">Most Nay Votes</option>
-                      <option value="amendments.size:desc">Most Amendments</option>
+                      <option value="status.actionDate:desc,_score:desc">Recent Status Update</option>
+                      <option value="milestones.size:desc,_score:desc">Most Progress</option>
+                      <option value="votes.items.memberVotes.items.NAY.size:desc,_score:desc">Most Nay Votes</option>
+                      <option value="amendments.size:desc,_score:desc">Most Amendments</option>
                     </select>
                   </div>
                 </div>
 
                 <md-card class="content-card">
                   <md-content layout="row" style="padding:0;" class="no-top-margin">
-                    <div class="padding-20" ng-if="billSearch.refine.isRefined === true && billSearch.response.total === 0">
-                      <p class="red1 text-medium bold">No results were found after applying your filters.</p>
-                    </div>
                     <div flex>
-                      <bill-search-listing bill-search-response="billSearch.response" bill-search-term="billSearch.term"
+                      <bill-search-listing bill-search-response="curr.billSearch.response" bill-search-term="curr.billSearch.term"
                                            pagination="curr.pagination" show-title="true" show-img="true">
                       </bill-search-listing>
                     </div>
                   </md-content>
                 </md-card>
               </div>
+
               <div>
                 <toggle-panel label="Quick Query Search Tips" open="true" extra-classes="content-card">
                   <p class="text-medium">Each bill and resolution has a print number and session year. If you are looking for a specific
@@ -264,11 +172,11 @@
                 </div>
                 <div flex>
                   <label>From</label>
-                  <input class="margin-left-10" ng-model="curr.fromDate" type="datetime-local">
+                  <md-datepicker class="margin-left-10" ng-model="curr.fromDate" md-max-date="curr.toDate"></md-datepicker>
                 </div>
                 <div flex>
                   <label>To</label>
-                  <input class="margin-left-10" ng-model="curr.toDate" type="datetime-local">
+                  <md-datepicker class="margin-left-10" ng-model="curr.toDate" md-min-date="curr.fromDate"></md-datepicker>
                 </div>
               </div>
               <md-divider></md-divider>
@@ -328,7 +236,7 @@
                      total-items="billUpdates.total" current-page="pagination.currPage"
                      ng-init="bill = billUpdate.item" pagination-id="bill-updates"
                      class="result-link text-medium"
-                     ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
+                     ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{curr.billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
                     <md-list-item class="md-3-line" style="cursor: pointer;">
                       <div class="md-list-item-text">
                         <h3>

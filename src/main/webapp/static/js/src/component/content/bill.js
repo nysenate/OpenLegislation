@@ -33,144 +33,153 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                                          'BillListingApi', 'BillSearchApi', 'PaginationModel',
                       function($scope, $filter, $routeParams, $location, $sce, BillListing, BillSearch, PaginationModel) {
     $scope.curr = {
-        searching: false,
-        pagination: angular.extend({}, PaginationModel)
-    };
-    $scope.curr.pagination.itemsPerPage = 6;
-
-    var defaultRefine = {
-        sort: '_score:desc,session:desc',
-        session: '',
-        chamber: '',
-        type: '',
-        sponsor: '',
-        status: '',
-        hasVotes: false,
-        isSigned: false,
-        isGovProg: false,
-        isRefined: false // Set to true if this model is updated
+        state: 'initial',
+        pagination: angular.extend({}, PaginationModel, { itemsPerPage: 6 }),
+        billSearch: {
+            term: $routeParams.search || '',
+            refine: {},
+            isRefined: false,
+            sort: '_score:desc,session:desc',
+            response: {},
+            results: [],
+            error: false
+        }
     };
 
-    $scope.billSearch = {
-        searched: false,
-        term: $routeParams.search || '',
-        refine: {
-            sort: $routeParams['sort'] || '_score:desc,session:desc',
-            session: $routeParams['session'],
-            chamber: $routeParams['chamber'],
-            type: $routeParams['type'],
-            sponsor: $routeParams['sponsor'],
-            status: $routeParams['status'],
-            hasVotes: $routeParams['hasVotes'],
-            isSigned: $routeParams['isSigned'],
-            isGovProg: $routeParams['isGovProg'],
-            isRefined: false
-        },
-        refineQuery: '',
-        sort: '',
-        response: {},
-        results: [],
-        error: false
+    // The refine parameters in the url will be prefixed with the following string
+    $scope.refineUrlParamPrefix = 'refine:';
+
+    // The following maps refine params to search columns
+    $scope.refinePaths = {
+        actionText: "actions.\*.text",
+        agendaNo: "committeeAgendas.items.\*.agendaId.number",
+        billCalNo: "status.billCalNo",
+        chamber: "billType.chamber",
+        committeeName: "status.committeeName",
+        fullText: "amendments.\*.fullText",
+        isRes: "billType.resolution",
+        lawCode: "amendments.\*.lawCode",
+        lawSection: "amendments.\*.lawSection",
+        memo: "amendments.\*.memo",
+        printNo: "printNo",
+        session: "session",
+        sponsor: "sponsor.member.memberId",
+        status: "status.statusType",
+        title: "title"
+    };
+    // Any refined params that have custom query logic are defined here
+    // These are params that don't have a simple column:value query.
+    $scope.refineFixedPaths = {
+        signed: '(signed:true OR adoped:true)',
+        hasVotes: '(amendments.\*.votes.size:>0)'
     };
 
     /** Initialize the bill search page. */
     $scope.init = function() {
-        if ($scope.selectedView == 0) {
-            $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
+        // Set the pagination to point to the page specified in the url
+        $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
+        // Set the refine params from the url
+        if (!$scope.getRefineUrlParams($scope.refineUrlParamPrefix)) {
+            // Perform a search to kick things off if there are no refine params.
+            // If there were refine params, a search would've kicked off as a result of a watch.
             $scope.simpleSearch(false);
         }
     };
 
     $scope.simpleSearch = function(resetPagination) {
-        var term = $scope.billSearch.term || '*';
+        var term = $scope.curr.billSearch.term || '*';
         if (term) {
-            $location.search("search", $scope.billSearch.term);
-            $scope.curr.searching = true;
-            $scope.billSearch.searched = false;
+            $location.search("search", $scope.curr.billSearch.term);
+            $scope.curr.state = 'searching';
             if (resetPagination) {
                 $scope.curr.pagination.currPage = 1;
                 $location.search('searchPage', 1);
             }
-            var query = $scope.applyRefineToQuery(term);
-            $scope.billSearch.response = BillSearch.get({
-                term: query, sort: $scope.billSearch.sort, limit: $scope.curr.pagination.getLimit(),
+            var query = $scope.buildRefinedQuery(term);
+            $scope.curr.billSearch.response = BillSearch.get({
+                term: query, sort: $scope.curr.billSearch.sort, limit: $scope.curr.pagination.getLimit(),
                 offset: $scope.curr.pagination.getOffset()},
                 function() {
-                    if ($scope.billSearch.response && $scope.billSearch.response.success) {
-                        $scope.billSearch.error = false;
-                        $scope.billSearch.results = $scope.billSearch.response.result.items || [];
-                        $scope.billSearch.searched = true;
-                        $scope.markHighlightsAsSafe($scope.billSearch.results);
-                        $scope.curr.pagination.setTotalItems($scope.billSearch.response.total);
-                        $scope.curr.searching = false;
+                    if ($scope.curr.billSearch.response && $scope.curr.billSearch.response.success) {
+                        $scope.curr.billSearch.error = false;
+                        $scope.curr.billSearch.results = $scope.curr.billSearch.response.result.items || [];
+                        //$scope.markHighlightsAsSafe($scope.curr.billSearch.results);
+                        $scope.curr.pagination.setTotalItems($scope.curr.billSearch.response.total);
+                        $scope.curr.state = 'searched';
                     }
                 }, function(data) {
-                    $scope.billSearch.searched = true;
-                    $scope.curr.searching = false;
-                    $scope.billSearch.error = data.data;
+                    $scope.curr.billSearch.error = data.data;
                     $scope.curr.pagination.setTotalItems(0);
+                    $scope.curr.state = 'searched';
                 });
         }
         else {
-            $scope.billSearch.error = false;
-            $scope.billSearch.results = [];
+            $scope.curr.billSearch.error = false;
+            $scope.curr.billSearch.results = [];
             $scope.curr.pagination.setTotalItems(0);
         }
     };
 
-    $scope.applyRefineToQuery = function(term) {
-        var refineQuery = '(' + term + ')';
-        var refine = $scope.billSearch.refine;
-        $scope.billSearch.sort = refine.sort;
+    $scope.buildRefinedQuery = function(term) {
+        var refine = $scope.curr.billSearch.refine;
+        var refineTerms = [];
+        for (var p in refine) {
+            if (refine.hasOwnProperty(p) && refine[p] !== '') {
+                if ($scope.refineFixedPaths[p]) {
+                    refineTerms.push($scope.refineFixedPaths[p]);
+                }
+                else if ($scope.refinePaths[p]) {
+                    refineTerms.push($scope.refinePaths[p] + ":" + refine[p]);
+                }
+            }
+        }
+        if (refineTerms.length > 0) {
+            term += " AND " + refineTerms.join(" AND ");
+            $scope.curr.billSearch.isRefined = true;
+        }
+        else {
+            $scope.curr.billSearch.isRefined = false;
+        }
+        return term;
+    };
 
-        $scope.setRefineUrlParams(refine);
-
-        if (refine.session) {
-            refineQuery += ' AND session:' + refine.session;
-        }
-        if (refine.chamber) {
-            refineQuery += ' AND billType.chamber:' + refine.chamber;
-        }
-        // Bill type
-        if (refine.type === 'bills') {
-            refineQuery += ' AND billType.resolution:false';
-        }
-        else if (refine.type === 'resolutions') {
-            refineQuery += ' AND billType.resolution:true';
-        }
-        // Bill Sponsor
-        if (refine.sponsor) {
-            refineQuery += ' AND sponsor.member.memberId:' + refine.sponsor;
-        }
-        // Bill status
-        if (refine.status) {
-            refineQuery += ' AND status.statusType:"' + refine.status + '"';
-        }
-        if (refine.hasVotes) {
-            refineQuery += ' AND votes.size:>0';
-        }
-        if (refine.isSigned) {
-            refineQuery += ' AND (signed:true OR adopted:true)'
-        }
-        if (refine.isGovProg) {
-            refineQuery += ' AND programInfo.name:Governor'
-        }
-        return refineQuery;
+    $scope.onRefineUpdate = function() {
+        $scope.setRefineUrlParams($scope.curr.billSearch.refine, $scope.refineUrlParamPrefix);
+        $scope.simpleSearch(true);
     };
 
     /** Reset the refine filters. */
     $scope.resetRefine = function() {
-        $scope.billSearch.refine = angular.extend({}, defaultRefine);
-        $scope.setRefineUrlParams($scope.billSearch.refine);
+        $scope.curr.billSearch.refine = {};
+        $scope.curr.billSearch.isRefined = false;
+        $scope.setRefineUrlParams($scope.curr.billSearch.refine, $scope.refineUrlParamPrefix);
+        $scope.simpleSearch(true);
     };
 
-    $scope.setRefineUrlParams = function(refine) {
-        // Set URL params
-        for (var p in refine) {
-            if (refine.hasOwnProperty(p)) {
-                $scope.setSearchParam(p, refine[p]);
+    $scope.setRefineUrlParams = function(refine, paramPrefix) {
+        // Delete any existing refine URL params
+        for (var p in $routeParams) {
+            if ($routeParams.hasOwnProperty(p) && p.slice(0, paramPrefix.length) === paramPrefix) {
+                delete $routeParams[p];
+                $scope.setSearchParam(p, null);
             }
         }
+        // Set new refine URL params
+        for (var p in refine) {
+            if (refine.hasOwnProperty(p) && refine[p]) {
+                $scope.setSearchParam(paramPrefix + p, refine[p]);
+            }
+        }
+    };
+
+    $scope.getRefineUrlParams = function(paramPrefix) {
+        for (var p in $routeParams) {
+            if ($routeParams.hasOwnProperty(p) && p.slice(0, paramPrefix.length) === paramPrefix) {
+                $scope.curr.billSearch.refine[p.slice(paramPrefix.length)] = $routeParams[p];
+                $scope.curr.billSearch.isRefined = true;
+            }
+        }
+        return $scope.curr.billSearch.isRefined;
     };
 
     // Mark highlighted search results as safe html.
@@ -192,13 +201,6 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
             $location.search('searchPage', newPage);
             $scope.simpleSearch();
          }
-    });
-
-    $scope.$watchCollection('billSearch.refine', function(n, o) {
-        if (!angular.equals(n, o)) {
-            $scope.billSearch.refine.isRefined = !angular.equals(n, defaultRefine);
-            $scope.simpleSearch();
-        }
     });
 
     $scope.init();
@@ -280,6 +282,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
                                        'BillGetApi', 'BillDiffApi', 'BillUpdatesApi',
     function($scope, $filter, $location, $routeParams, $sce, BillGetApi, BillDiffApi, BillUpdatesApi) {
 
+    $scope.apiPath = null;
     $scope.response = null;
     $scope.bill = null;
     $scope.loading = false;
@@ -314,6 +317,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         $scope.session = $routeParams.session;
         $scope.printNo = $routeParams.printNo;
         $scope.loading = true;
+        $scope.billApiPath = $sce.trustAsResourceUrl(apiPath + '/bills/' + $scope.session + '/' + $scope.printNo);
         $scope.response = BillGetApi.get({printNo: $scope.printNo, session: $scope.session, view: 'with_refs_no_fulltext'},
         function() {
             if ($scope.response.success) {
@@ -550,3 +554,19 @@ billModule.directive('billSearchListing', ['BillUtils', function(BillUtils) {
     };
 }]);
 
+billModule.directive('billRefineSearchPanel', ['BillUtils', function(BillUtils) {
+    return {
+        restrict: 'E',
+        scope: {
+            searchParams: '=',
+            onChange: '='
+        },
+        templateUrl: ctxPath + '/partial/content/bill/bill-refine-search-panel',
+        controller: function($scope, $element) {
+            $scope.params = $scope.params || {};
+            $scope.$watchCollection('searchParams', function(n,o) {
+                $scope.onChange($scope.searchParams);
+            });
+        }
+    }
+}]);

@@ -34,9 +34,9 @@
             </div>
           </div>
 
-          <div ng-init="statusBills = [bill, bill.billInfoRefs.items[bill.substitutedBy.basePrintNoStr]]">
+          <div layout="row" ng-init="statusBills = [bill, bill.billInfoRefs.items[bill.substitutedBy.basePrintNoStr]]">
             <div ng-repeat="statusBill in statusBills" ng-if="statusBill"
-                 class="margin-10" layout="column" style="margin-right:60px;min-width: 280px;">
+                 class="margin-10" layout="column" style="margin-right:60px;width: 260px;">
               <div class="text-medium">Status as of {{statusBill.status.actionDate | moment:'MMMM D, YYYY'}}
                 <span class="bold">({{statusBill.basePrintNo}})</span>
               </div>
@@ -404,6 +404,14 @@
             </md-card>
             <update-list update-response="updateHistoryResponse" show-details="true"></update-list>
           </md-tab-body>
+        </md-tab>
+        <%-- JSON --%>
+        <md-tab label="JSON">
+          <div class="padding-20">
+            <a class="blue3" ng-href="{{billApiPath}}">View JSON in new window</a>
+            <md-divider></md-divider>
+            <iframe class="bill-json-iframe" ng-src="{{billApiPath}}"></iframe>
+          </div>
         </md-tab>
       </md-tabs>
     </md-content>
