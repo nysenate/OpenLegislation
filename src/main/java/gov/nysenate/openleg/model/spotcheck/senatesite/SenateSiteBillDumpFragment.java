@@ -1,36 +1,21 @@
 package gov.nysenate.openleg.model.spotcheck.senatesite;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
-public class SenateSiteBillDumpFragment {
+public class SenateSiteBillDumpFragment extends SenateSiteBillDumpFragId {
 
-    protected LocalDateTime fromDateTime;
-    protected LocalDateTime toDateTime;
+    /** The file that contains the dump fragment */
+    protected File fragmentFile;
 
-    protected int sequenceNumber;
-    protected int totalFragmentCount;
-
-    /** --- Functional Getters --- */
-
-    public SenateSiteBillDumpId getBillDumpId() {
-        return new SenateSiteBillDumpId(fromDateTime, toDateTime, totalFragmentCount);
+    public SenateSiteBillDumpFragment(SenateSiteBillDumpFragId fragId, File fragmentFile) {
+        super(fragId);
+        this.fragmentFile = fragmentFile;
     }
 
-    /** --- Getters / Setters --- */
+    /** --- Getters --- */
 
-    public LocalDateTime getFromDateTime() {
-        return fromDateTime;
-    }
-
-    public LocalDateTime getToDateTime() {
-        return toDateTime;
-    }
-
-    public int getSequenceNumber() {
-        return sequenceNumber;
-    }
-
-    public int getTotalFragmentCount() {
-        return totalFragmentCount;
+    public File getFragmentFile() {
+        return fragmentFile;
     }
 }

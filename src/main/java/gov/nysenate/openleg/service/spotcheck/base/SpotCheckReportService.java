@@ -33,7 +33,7 @@ public interface SpotCheckReportService<ContentKey>
      * @throws ReferenceDataNotFoundEx - If there is no reference data that can be used for this report.
      */
     SpotCheckReport<ContentKey> generateReport(LocalDateTime start, LocalDateTime end)
-                                                      throws ReferenceDataNotFoundEx;
+            throws Exception;
 
     /**
      * Saves the report into the backing store. The report will be saved such that mismatches from

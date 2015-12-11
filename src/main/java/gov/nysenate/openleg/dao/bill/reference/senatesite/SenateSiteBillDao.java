@@ -12,7 +12,7 @@ public interface SenateSiteBillDao {
      * Get all nysenate.gov bill dump fragments that have not yet been processed into a report
      * @return Collection<SenateSiteBillDumpFragment>
      */
-    Collection<SenateSiteBillDump> getPendingDumps();
+    Collection<SenateSiteBillDump> getPendingDumps() throws IOException;
 
     /**
      * Persists the given nysenate.gov bill dump fragment
@@ -24,7 +24,7 @@ public interface SenateSiteBillDao {
     /**
      * Marks the designated bill dump fragment as processed, ensuring it will not be retrieved with
      * @see #getPendingDumps()
-     * @param fragId SenateSiteBillDumpFragId
+     * @param dump SenateSiteBillDumpFragId
      */
-    void setProcessed(SenateSiteBillDumpFragId fragId);
+    void setProcessed(SenateSiteBillDump dump) throws IOException;
 }

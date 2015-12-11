@@ -12,13 +12,10 @@ public class SenateSiteBillDumpFragId extends SenateSiteBillDumpId {
     // Protected default constructor for serialization
     protected SenateSiteBillDumpFragId() {}
 
-    public SenateSiteBillDumpFragId(LocalDateTime fromDateTime, LocalDateTime toDateTime,
-                                    int fragmentCount, int sequenceNo) {
-        super(fromDateTime, toDateTime, fragmentCount);
-        this.sequenceNo = sequenceNo;
+    public SenateSiteBillDumpFragId(SenateSiteBillDumpFragId other) {
+        super(other);
+        this.sequenceNo = other.sequenceNo;
     }
-
-    /** --
 
     /** --- Getters --- */
 

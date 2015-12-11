@@ -283,6 +283,14 @@ public class SpotCheckCtrl extends BaseCtrl
         return new SimpleResponse(true, "weekly reports run", "report report");
     }
 
+    /**
+     * nysenate.gov Bill Dump API
+     *
+     * Posts a fragment of a json bill data dump
+     *
+     * Usage: (POST) /api/3/admin/spotcheck/senatesite/billdump
+     */
+    @RequiresPermissions("admin:spotcheck:post")
     @RequestMapping(value = "/senatesite/billdump", method = RequestMethod.POST, consumes = "application/json")
     public BaseResponse sendSenateSiteBillDumpFragment(@RequestBody Object billFragmentJson) {
         SenateSiteBillDumpFragId fragId = objectMapper.convertValue(billFragmentJson, SenateSiteBillDumpFragId.class);

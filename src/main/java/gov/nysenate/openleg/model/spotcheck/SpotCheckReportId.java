@@ -28,6 +28,12 @@ public class SpotCheckReportId implements Comparable<SpotCheckReportId>
         this.referenceDateTime = referenceDateTime;
     }
 
+    /** --- Functional Getters --- */
+
+    public SpotCheckReferenceId getReferenceId() {
+        return new SpotCheckReferenceId(referenceType, referenceDateTime);
+    }
+
     /** --- Overrides --- */
 
     @Override

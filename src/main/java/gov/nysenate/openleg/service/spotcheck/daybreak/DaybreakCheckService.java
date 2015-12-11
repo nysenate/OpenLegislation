@@ -110,14 +110,14 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     protected void checkActiveVersions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         Version daybreakActiveVersion = daybreakBill.getActiveVersion();
         if (!daybreakActiveVersion.equals(bill.getActiveVersion())) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT, daybreakActiveVersion.name(),
-                ((bill.getActiveVersion() != null) ? bill.getActiveVersion().name() : "NULL")));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT, ((bill.getActiveVersion() != null) ? bill.getActiveVersion().name() : "NULL"), daybreakActiveVersion.name()
+            ));
         }
 
         String daybreakPubVersionsStr = publishedVersionsString(daybreakActiveVersion);
         String billPubVersionsStr = publishedVersionsString(bill);
         if (!daybreakPubVersionsStr.equals(billPubVersionsStr)) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_AMENDMENT_PUBLISH, daybreakPubVersionsStr, billPubVersionsStr));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_AMENDMENT_PUBLISH, billPubVersionsStr, daybreakPubVersionsStr));
         }
     }
 
@@ -136,8 +136,8 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
             }
         });
         if (!daybreakPageCounts.equals(billPageCounts)) {
-            SpotCheckMismatch pageCountMismatch = new SpotCheckMismatch(BILL_FULLTEXT_PAGE_COUNT, daybreakPageCounts.toString(),
-                                                                               billPageCounts.toString());
+            SpotCheckMismatch pageCountMismatch = new SpotCheckMismatch(BILL_FULLTEXT_PAGE_COUNT, billPageCounts.toString(), daybreakPageCounts.toString()
+            );
             obsrv.addMismatch(pageCountMismatch);
             eventBus.post(new SpotcheckMismatchEvent<>(LocalDateTime.now(), bill.getBaseBillId(), pageCountMismatch));
         }
@@ -158,7 +158,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
             }
             String daybreakActionsStr = actionsListString(daybreakBill.getActions());
             String billActionsStr = actionsListString(bill.getActions());
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, daybreakActionsStr, billActionsStr));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, billActionsStr, daybreakActionsStr));
         }
     }
 
@@ -177,8 +177,8 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         // Only check for mismatch if a daybreak multisponsor is set. Sometimes the daybreaks omit the multisponsor.
         if (!daybreakMuSponsorSet.isEmpty() && (daybreakMuSponsorSet.size() != billMuSponsorSet.size() ||
                                                !daybreakMuSponsorSet.containsAll(billMuSponsorSet))) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_MULTISPONSOR, StringUtils.join(daybreakMuSponsorSet, " "),
-                                                                       StringUtils.join(billMuSponsorSet, " ")));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_MULTISPONSOR, StringUtils.join(billMuSponsorSet, " "), StringUtils.join(daybreakMuSponsorSet, " ")
+            ));
         }
     }
 
@@ -197,8 +197,8 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         // Only check for mismatch if a daybreak cosponsor is set. Sometimes the daybreaks omit the cosponsor.
         if (!daybreakCoSponsorSet.isEmpty() && (daybreakCoSponsorSet.size() != billCoSponsorSet.size() ||
                                                !daybreakCoSponsorSet.containsAll(billCoSponsorSet))) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_COSPONSOR, StringUtils.join(daybreakCoSponsorSet, " "),
-                                                                    StringUtils.join(billCoSponsorSet, " ")));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_COSPONSOR, StringUtils.join(billCoSponsorSet, " "), StringUtils.join(daybreakCoSponsorSet, " ")
+            ));
         }
     }
 
@@ -209,7 +209,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     protected void checkBillSponsor(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         String billSponsorStr = sponsorString(bill.getSponsor());
         if (!stringEquals(daybreakBill.getSponsor(), billSponsorStr, true, true)) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_SPONSOR, daybreakBill.getSponsor(), billSponsorStr));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_SPONSOR, billSponsorStr, daybreakBill.getSponsor()));
         }
     }
 
@@ -223,7 +223,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         billLawSummary = billLawSummary.replace('§', 'S').replace('¶', 'P');
         String dayBreakLawSummary = daybreakBill.getLawCodeAndSummary();
         if (!stringEquals(billLawSummary, dayBreakLawSummary, false, true)) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_LAW_CODE_SUMMARY, dayBreakLawSummary, billLawSummary));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_LAW_CODE_SUMMARY, billLawSummary, dayBreakLawSummary));
         }
     }
 
@@ -232,7 +232,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      */
     protected void checkBillTitle(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         if (!stringEquals(daybreakBill.getTitle(), bill.getTitle(), false, true)) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_TITLE, daybreakBill.getTitle(), bill.getTitle()));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_TITLE, bill.getTitle(), daybreakBill.getTitle()));
         }
     }
 

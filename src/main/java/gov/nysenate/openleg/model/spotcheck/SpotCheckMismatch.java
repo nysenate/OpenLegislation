@@ -39,15 +39,15 @@ public class SpotCheckMismatch
 
     /** --- Constructor --- */
 
-    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, Object referenceData, Object observedData) {
-        this(mismatchType, String.valueOf(referenceData), String.valueOf(observedData));
+    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, Object observedData, Object referenceData) {
+        this(mismatchType, String.valueOf(observedData), String.valueOf(referenceData));
     }
 
-    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData) {
-        this(mismatchType, referenceData, observedData, "");
+    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String observedData, String referenceData) {
+        this(mismatchType, observedData, referenceData, "");
     }
 
-    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData, String notes) {
+    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String observedData, String referenceData, String notes) {
         this.mismatchType = mismatchType;
         this.referenceData = referenceData == null ? "" : referenceData;
         this.observedData = observedData == null ? "" : observedData;

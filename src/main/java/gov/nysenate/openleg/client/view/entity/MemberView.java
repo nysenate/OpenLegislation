@@ -8,7 +8,7 @@ public class MemberView extends SimpleMemberView
     protected Integer districtCode;
     protected String imgName;
 
-    protected MemberView(){}
+    public MemberView(){}
 
     public MemberView(SessionMember member) {
         super(member);

@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
@@ -12,6 +13,7 @@ import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The Bill class serves as a container for all the entities that can be classified under a print number
@@ -156,6 +158,13 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /**
+     * @return the Chamber of this bill
+     */
+    public Chamber getChamber() {
+        return this.baseBillId.getChamber();
+    }
+
+    /**
      * Returns true if this bill is a resolution of some sort.
      */
     public boolean isResolution() {
@@ -181,6 +190,15 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      */
     public List<BillAmendment> getAmendmentList() {
         return new ArrayList<>(this.amendmentMap.values());
+    }
+
+    /**
+     * @return a set containing the bill ids of this bill's amendments
+     */
+    public TreeSet<BillId> getAmendmentIds() {
+        return this.amendmentMap.values().stream()
+                .map(BillAmendment::getBillId)
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     /**

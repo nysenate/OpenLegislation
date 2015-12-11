@@ -75,28 +75,28 @@ public class ActiveListSpotCheckService<ContentKey, ContentType, ReferenceType> 
                              SpotCheckObservation<CalendarActiveListId> obsrv){
         if (!content.getCalDate().equals(reference.getCalDate())){
             obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.LIST_CAL_DATE,
-                    reference.getCalDate().toString(), content.getCalDate().toString()));
+                    content.getCalDate().toString(), reference.getCalDate().toString()));
         }
     }
     public void checkReleaseDateTime(CalendarActiveList content, ActiveListSpotcheckReference reference,
                                      SpotCheckObservation<CalendarActiveListId> obsrv) {
         if (!content.getReleaseDateTime().equals(reference.getReleaseDateTime())) {
             obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.LIST_RELEASE_DATE_TIME,
-                    reference.getReleaseDateTime().toString(), content.getReleaseDateTime().toString()));
+                    content.getReleaseDateTime().toString(), reference.getReleaseDateTime().toString()));
         }
     }
     public void checkCalendarMismatch(CalendarActiveList content, ActiveListSpotcheckReference reference,
                                    SpotCheckObservation<CalendarActiveListId> obsrv) {
         if (!content.getCalendarId().equals(reference.getCalendarId())) {
             obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.LIST_CALENDAR_MISMATCH,
-                    reference.getCalendarId().toString(), content.getCalendarId().toString()));
+                    content.getCalendarId().toString(), reference.getCalendarId().toString()));
         }
     }
     public void checkEntryMismatch(TreeSet referenceSet, TreeSet contentSet,
                                    SpotCheckObservation<CalendarActiveListId> obsrv){
         if (!contentSet.equals(referenceSet)){
             obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.LIST_ENTRY_MISMATCH,
-                    referenceSet.toString(), contentSet.toString()));
+                    contentSet.toString(), referenceSet.toString()));
         }
     }
 

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.spotcheck;
 
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.spotcheck.*;
+import org.postgresql.core.types.PGType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -12,8 +13,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -135,15 +138,20 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         // Insert all observations
         report.getObservations().forEach((k,v) -> {
             ImmutableParams observationParams = ImmutableParams.from(getObservationParams(reportParams, v));
-            int observationId = jdbcNamed.queryForObject(INSERT_OBSERVATION_AND_RETURN_ID.getSql(schema()), observationParams,
-                    (rs, row) -> rs.getInt(1));
-            // Insert the mismatches for the observation
-            v.getMismatches().values().forEach(m -> {
-                ImmutableParams mismatchParams = ImmutableParams.from(getMismatchParams(observationId, m));
-                KeyHolder mismatchIdHolder = new GeneratedKeyHolder();
-                jdbcNamed.update(INSERT_MISMATCH.getSql(schema()), mismatchParams, mismatchIdHolder, new String[]{"id"});
-                m.setMismatchId(mismatchIdHolder.getKey().intValue());
-            });
+            try {
+                int observationId = jdbcNamed.queryForObject(INSERT_OBSERVATION_AND_RETURN_ID.getSql(schema()), observationParams,
+                        (rs, row) -> rs.getInt(1));
+                // Insert the mismatches for the observation
+                v.getMismatches().values().forEach(m -> {
+                    ImmutableParams mismatchParams = ImmutableParams.from(getMismatchParams(observationId, m));
+                    KeyHolder mismatchIdHolder = new GeneratedKeyHolder();
+                    jdbcNamed.update(INSERT_MISMATCH.getSql(schema()), mismatchParams, mismatchIdHolder, new String[]{"id"});
+                    m.setMismatchId(mismatchIdHolder.getKey().intValue());
+                    m.getIssueIds().forEach(issueId -> addIssueId(m.getMismatchId(), issueId));
+                });
+            } catch(Throwable ex) {
+                logger.info("loolololo");
+            }
         });
     }
 
@@ -194,7 +202,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     private void setMismatchStatuses(SpotCheckReport<ContentKey> report) {
         // Get latest observation for each content key of this report's reference type
         ReportObservationsHandler obsHandler = new ReportObservationsHandler();
-        MapSqlParameterSource params = new MapSqlParameterSource("referenceType", String.valueOf(report.getReferenceType()));
+        MapSqlParameterSource params = new MapSqlParameterSource("referenceTypes", String.valueOf(report.getReferenceType()));
         jdbcNamed.query(SELECT_LATEST_OBS_MISMATCHES_PARTIAL.getSql(schema()), params, obsHandler);
         Map<ContentKey, SpotCheckObservation<ContentKey>> latestObs = obsHandler.getObsMap();
 
@@ -349,7 +357,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 SpotCheckMismatch mismatch;
                 // Add the current mismatch
                 if (current) {
-                    mismatch = new SpotCheckMismatch(type, refData, obsData, notes);
+                    mismatch = new SpotCheckMismatch(type, obsData, refData, notes);
                     obs.addMismatch(mismatch);
                 }
                 // Otherwise add the prior mismatch
@@ -401,6 +409,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     }
 
     private MapSqlParameterSource getMismatchParams(int observationId, SpotCheckMismatch mismatch) {
+        List<String> issueIds = Optional.ofNullable(mismatch.getIssueIds()).orElse(Collections.emptyList());
         return new MapSqlParameterSource()
             .addValue("observationId", observationId)
             .addValue("type", mismatch.getMismatchType().name())
@@ -408,7 +417,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             .addValue("referenceData", mismatch.getReferenceData())
             .addValue("observedData", mismatch.getObservedData())
             .addValue("notes", mismatch.getNotes())
-            .addValue("issueIds", mismatch.getIssueIds());
+            .addValue("issueIds", issueIds, Types.ARRAY);
     }
 
     private MapSqlParameterSource getOpenObsParams(OpenMismatchQuery query) {
