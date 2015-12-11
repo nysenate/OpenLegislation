@@ -3,6 +3,8 @@ package gov.nysenate.openleg.model.spotcheck.senatesite;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Range;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -11,7 +13,7 @@ import java.time.LocalDateTime;
  * Identifies a senate site bill dump via the referenced update date times
  * and total fragment count
  */
-public class SenateSiteBillDumpId implements Serializable {
+public class SenateSiteBillDumpId implements Serializable, Comparable<SenateSiteBillDumpId> {
 
     private static final long serialVersionUID = 6581598432572888768L;
 
@@ -26,10 +28,19 @@ public class SenateSiteBillDumpId implements Serializable {
     // Protected default constructor for serialization
     protected SenateSiteBillDumpId() {}
 
-    public SenateSiteBillDumpId(LocalDateTime fromDateTime, LocalDateTime toDateTime, int fragmentCount) {
-        this.fromDateTime = fromDateTime;
-        this.toDateTime = toDateTime;
-        this.fragmentCount = fragmentCount;
+    public SenateSiteBillDumpId(SenateSiteBillDumpId other) {
+        this.fromDateTime = other.fromDateTime;
+        this.toDateTime = other.toDateTime;
+        this.fragmentCount = other.fragmentCount;
+    }
+
+    /** --- Functional Getters / Setters --- */
+
+    /**
+     * @return Range<LocalDateTime> - the update datetime range used to generate this dump
+     */
+    public Range<LocalDateTime> getUpdateInterval() {
+        return Range.open(fromDateTime, toDateTime);
     }
 
     /** --- Overridden Methods --- */
@@ -47,6 +58,14 @@ public class SenateSiteBillDumpId implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(fromDateTime, toDateTime, fragmentCount);
+    }
+
+    @Override
+    public int compareTo(SenateSiteBillDumpId o) {
+        return ComparisonChain.start()
+                .compare(this.toDateTime, o.toDateTime)
+                .compare(this.fromDateTime, o.fromDateTime)
+                .result();
     }
 
     /** --- Getters --- */

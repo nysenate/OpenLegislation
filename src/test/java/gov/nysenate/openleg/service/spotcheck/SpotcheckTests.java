@@ -33,7 +33,7 @@ public class SpotcheckTests extends WebAppBaseTests {
 
     @Test
     public void runReports() {
-        spotcheckRunService.runReports(SpotCheckRefType.LBDC_DAYBREAK);
+        spotcheckRunService.runReports(SpotCheckRefType.SENATE_SITE_BILLS);
     }
 
     @Test

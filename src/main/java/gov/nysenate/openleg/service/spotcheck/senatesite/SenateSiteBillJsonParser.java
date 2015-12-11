@@ -1,0 +1,179 @@
+package gov.nysenate.openleg.service.spotcheck.senatesite;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.bill.BillActionView;
+import gov.nysenate.openleg.client.view.bill.BillIdView;
+import gov.nysenate.openleg.client.view.bill.BillStatusView;
+import gov.nysenate.openleg.client.view.entity.MemberView;
+import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.spotcheck.senatesite.*;
+import gov.nysenate.openleg.processor.base.ParseError;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.time.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+public class SenateSiteBillJsonParser {
+
+    @Autowired ObjectMapper objectMapper;
+
+    public List<SenateSiteBill> parseBills(SenateSiteBillDump billDump) throws ParseError {
+        return billDump.getDumpFragments().stream()
+                .flatMap(fragment -> extractBillsFromFragment(fragment).stream())
+                .collect(Collectors.toList());
+    }
+
+    /** --- Internal Methods --- */
+
+    private List<SenateSiteBill> extractBillsFromFragment(SenateSiteBillDumpFragment fragment) throws ParseError {
+        try {
+            JsonNode billMap = objectMapper.readTree(fragment.getFragmentFile())
+                    .path("bills");
+            if (billMap.isMissingNode()) {
+                throw new ParseError("Could not locate \"bills\" node in senate site bill dump fragment file: " +
+                        fragment.getFragmentFile().getAbsolutePath());
+            }
+            List<SenateSiteBill> bills = new LinkedList<>();
+            for (JsonNode billNode : billMap) {
+                bills.add(extractSenSiteBill(billNode, fragment));
+            }
+            return bills;
+        } catch (IOException | NoSuchElementException ex) {
+            throw new ParseError("error while reading senate site bill dump fragment file: " +
+                    fragment.getFragmentFile().getAbsolutePath(),
+                    ex);
+        }
+    }
+
+    private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteBillDumpId dumpId) throws IOException {
+        SenateSiteBill bill = new SenateSiteBill(dumpId.getToDateTime());
+
+        bill.setActiveVersion(getValue(billNode, "field_ol_active_version"));
+        bill.setMilestones(getMilestones(billNode, "field_ol_all_statuses"));
+        bill.setBasePrintNo(getValue(billNode, "field_ol_base_print_no"));
+        bill.setChamber(getValue(billNode, "field_ol_chamber"));
+        bill.setCoSponsors(getMembers(billNode, "field_ol_co_sponsor_names"));
+        bill.setText(getValue(billNode, "field_ol_full_text"));
+        bill.setHasSameAs(getBooleanValue(billNode, "field_ol_has_same_as"));
+        bill.setAmended(getBooleanValue(billNode, "field_ol_is_amended"));
+        bill.setLatestStatusCommittee(getValue(billNode, "field_ol_latest_status_committee"));
+        bill.setLawCode(getValue(billNode, "field_ol_law_code"));
+        bill.setLawSection(getValue(billNode, "field_ol_law_section"));
+        bill.setMemo(getValue(billNode, "field_ol_memo"));
+        bill.setMultiSponsors(getMembers(billNode, "field_ol_multi_sponsor_names"));
+        bill.setTitle(getValue(billNode, "field_ol_name"));
+        bill.setPreviousVersions(getBillIdList(billNode, "field_ol_previous_versions"));
+        bill.setPrintNo(getValue(billNode, "field_ol_print_no"));
+        bill.setPublishDate(getDateTimeValue(billNode, "field_ol_publish_date"));
+        bill.setSameAs(getBillIdList(billNode, "field_ol_same_as"));
+        bill.setSponsor(getValue(billNode, "field_ol_sponsor_name"));
+        bill.setSummary(getValue(billNode, "field_ol_summary"));
+        bill.setSessionYear(getIntValue(billNode, "field_ol_session"));
+        bill.setLastStatus(getValue(billNode, "field_ol_last_status"));
+        bill.setLastStatusDate(getDateTimeValue(billNode, "field_ol_last_status_date"));
+        bill.setActions(getActionList(billNode, "field_ol_all_actions"));
+
+        return bill;
+    }
+
+    private List<BillStatusView> getMilestones(JsonNode billNode, String fieldName) {
+        TypeReference<ListView<BillStatusView>> billStatusListType = new TypeReference<ListView<BillStatusView>>() {};
+        Optional<ListView<BillStatusView>> billStatusList = deserializeValue(billNode, fieldName, billStatusListType);
+        return billStatusList.map(ListView::getItems).orElse(ImmutableList.of());
+    }
+
+    private List<String> getMembers(JsonNode billNode, String memberFieldName) {
+        TypeReference<List<MemberView>> memberListType = new TypeReference<List<MemberView>>() {};
+        Optional<List<MemberView>> memberList = deserializeValue(billNode, memberFieldName, memberListType);
+        return memberList.orElse(Collections.emptyList()).stream()
+                .map(MemberView::getShortName)
+                .collect(Collectors.toList());
+    }
+
+    private List<BillId> getBillIdList(JsonNode billNode, String fieldName) {
+        TypeReference<List<BillIdView>> billIdListType = new TypeReference<List<BillIdView>>() {};
+        Optional<List<BillIdView>> billIdViews = deserializeValue(billNode, fieldName, billIdListType);
+        return billIdViews.orElse(Collections.emptyList()).stream()
+                .map(BillIdView::toBillId)
+                .collect(Collectors.toList());
+    }
+
+    private List<BillAction> getActionList(JsonNode billNode, String fieldName) {
+        TypeReference<ListView<BillActionView>> actionListType = new TypeReference<ListView<BillActionView>>() {};
+        Optional<ListView<BillActionView>> actionListView = deserializeValue(billNode, fieldName, actionListType);
+        return actionListView
+                .map(ListView::getItems)
+                .orElse(ImmutableList.of()).stream()
+                .map(BillActionView::toBillAction)
+                .collect(Collectors.toList());
+    }
+
+    private <T> Optional<T> deserializeValue(JsonNode billNode, String fieldName, TypeReference<T> resultType) {
+        String jsonValue = getValue(billNode, fieldName);
+        return Optional.ofNullable(jsonValue).map(json -> {
+            try {
+                return objectMapper.readValue(json, resultType);
+            } catch (IOException ex) {
+                throw new ParseError("Error while attempting to map json. " +
+                        "target_class: " + resultType.getType() + " field: " + fieldName + " value: " + json,
+                        ex);
+            }
+        });
+    }
+
+    private String getValue(JsonNode parentNode, String fieldName) {
+        try {
+            JsonNode fieldNode = parentNode.path(fieldName);
+            if (fieldNode.isArray()) { // missing values are signified by an array...
+                return null;
+            }
+            JsonNode textNode = fieldNode
+                    .path("und")
+                    .elements().next()
+                    .path("value");
+            if (textNode.isTextual() || textNode.isNull()) {
+                return textNode.textValue();
+            }
+            throw new ParseError("could not extract text value from field: " + fieldName +
+                    " - could not locate text field");
+        } catch (NoSuchElementException ex) {
+            throw new ParseError("could not extract text value from field: " + fieldName, ex);
+        }
+    }
+
+    private int getIntValue(JsonNode parentNode, String fieldName) {
+        String rawValue = getValue(parentNode, fieldName);
+        try {
+            return Integer.parseInt(rawValue);
+        } catch (NumberFormatException ex) {
+            throw new ParseError("could not parsse int value. field: " + fieldName + " value: " + rawValue, ex);
+        }
+    }
+
+    private boolean getBooleanValue(JsonNode parentNode, String fieldName) {
+        String rawValue = getValue(parentNode, fieldName);
+        if ("1".equals(rawValue) ^ "0".equals(rawValue)) {
+            return "1".equals(getValue(parentNode, fieldName));
+        }
+        throw new ParseError("unexpected value for boolean. field: " + fieldName + " value: " + rawValue);
+    }
+
+    private LocalDateTime getDateTimeValue(JsonNode parentNode, String fieldName) {
+        String rawValue = getValue(parentNode, fieldName);
+        try {
+            long msvalue = Long.parseLong(rawValue);
+            return LocalDateTime.ofInstant(Instant.ofEpochSecond(msvalue), ZoneId.of("America/New_York"));
+        } catch (DateTimeException | NumberFormatException ex) {
+            throw new ParseError("cannot convert value into LocalDateTime. field: " + fieldName + " value: " + rawValue, ex);
+        }
+    }
+}

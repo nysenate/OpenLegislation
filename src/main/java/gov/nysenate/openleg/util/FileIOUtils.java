@@ -117,4 +117,29 @@ public class FileIOUtils
         stuffToWrite.close();
         os.close();
     }
+
+    public static boolean isFileClosed(File file) throws IOException {
+        Process plsof = null;
+        BufferedReader reader = null;
+        try {
+            plsof = new ProcessBuilder(new String[]{"lsof", "|", "grep", file.getAbsolutePath()}).start();
+            reader = new BufferedReader(new InputStreamReader(plsof.getInputStream()));
+            String line;
+            while((line=reader.readLine())!=null) {
+                if(line.contains(file.getAbsolutePath())) {
+                    reader.close();
+                    plsof.destroy();
+                    return false;
+                }
+            }
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException ignored) {}
+            Optional.ofNullable(plsof).ifPresent(Process::destroy);
+        }
+        return true;
+    }
 }

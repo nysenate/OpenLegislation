@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.spotcheck.billtext;
 
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
 import gov.nysenate.openleg.dao.spotcheck.BaseBillIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
@@ -14,10 +13,8 @@ import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.ScrapedBillMemoParser;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
-import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -63,7 +60,7 @@ public class BillTextReportService extends BaseSpotCheckReportService {
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
+    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
         List<BillTextReference> references = dao.getUncheckedBillTextReferences();
         if (references.isEmpty()) {
             throw new ReferenceDataNotFoundEx();
@@ -101,9 +98,9 @@ public class BillTextReportService extends BaseSpotCheckReportService {
             SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(btr.getReferenceId(), btr.getBaseBillId());
             if (btr.isNotFound()) { // Bill text references are still generated if LRS data is not found
                 ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING,
-                        btr.getBaseBillId() + "\n" + btr.getText(), "also missing"));
+                        "also missing", btr.getBaseBillId() + "\n" + btr.getText()));
             }
-            ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, btr.getBaseBillId().toString(), ""));
+            ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", btr.getBaseBillId().toString()));
             return ob;
         }
     }

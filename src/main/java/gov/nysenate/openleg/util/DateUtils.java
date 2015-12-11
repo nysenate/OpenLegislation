@@ -12,6 +12,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 public abstract class DateUtils
 {
@@ -26,6 +27,7 @@ public abstract class DateUtils
     public final static DateTimeFormatter LRS_WEBSITE_DATETIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm a");
 
     public final static DateTimeFormatter BASIC_ISO_DATE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
+    public final static Pattern BASIC_ISO_DATE_TIME_REGEX = Pattern.compile("\\d{8}T\\d{6}");
 
     /** --- Reference Dates --- */
 

@@ -28,8 +28,7 @@ public class AgendaReportService extends BaseAgendaCheckReportService {
         return references;
     }
 
-    /** {@inheritDoc}
-     * @param agendaAlertInfoCommittee*/
+    /** {@inheritDoc} */
     @Override
     protected Agenda getAgenda(AgendaAlertInfoCommittee agendaAlertInfoCommittee) throws AgendaNotFoundEx {
         return agendaDataService.getAgenda(agendaAlertInfoCommittee.getWeekOf());

@@ -100,7 +100,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     SELECT_LATEST_OBS_MISMATCHES(
         OBS_MISMATCHES_SELECT_CLAUSE.sql + ", COUNT(*) OVER () AS mismatch_count\n" +
         "   FROM (\n" +
-        "       SELECT reference_type, key, MAX(observed_date_time) AS latetst_obs_date_time\n" +
+        "       SELECT reference_type, key, MAX(observed_date_time) AS latest_obs_date_time\n" +
         "       FROM ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + "\n" +
         "       WHERE reference_type in (:referenceTypes)\n" +
         "       GROUP BY reference_type, key\n" +
@@ -154,8 +154,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ),
     INSERT_MISMATCH(
         "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_MISMATCH + "\n" +
-        "(observation_id, type, status, reference_data, observed_data, notes, issue_ids)\n" +
-        "VALUES (:observationId, :type, :status, :referenceData, :observedData, :notes, :issueIds)"
+        "(observation_id, type, status, reference_data, observed_data, notes)\n" +
+        "VALUES (:observationId, :type, :status, :referenceData, :observedData, :notes)"
     ),
 
     /** --- Mismatch Ignore queries --- */

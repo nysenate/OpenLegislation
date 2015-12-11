@@ -94,12 +94,12 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
 
     private void recordObservationDataMismatch(SpotCheckObservation<CalendarId> observation, CalendarSupplemental reference) {
         observation.addMismatch(new SpotCheckMismatch(
-                SpotCheckMismatchType.OBSERVE_DATA_MISSING, getVersionString(reference), ""));
+                SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", getVersionString(reference)));
     }
 
     private void recordReferenceDataMismatch(SpotCheckObservation<CalendarId> observation, CalendarSupplemental content) {
         observation.addMismatch(new SpotCheckMismatch(
-                SpotCheckMismatchType.REFERENCE_DATA_MISSING, "", getVersionString(content)));
+                SpotCheckMismatchType.REFERENCE_DATA_MISSING, getVersionString(content), ""));
     }
 
     /**
@@ -125,7 +125,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
         String contentDate = contentSuppDiff.getCalDate() == null ? "" : contentSuppDiff.getCalDate().toString();
         String referenceDate = referenceSuppDiff.getCalDate() == null ? "" : referenceSuppDiff.getCalDate().toString();
         if (!StringUtils.equals(contentDate, referenceDate)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.SUPPLEMENTAL_CAL_DATE, referenceDate, contentDate));
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.SUPPLEMENTAL_CAL_DATE, contentDate, referenceDate));
         }
 
     }
@@ -134,8 +134,8 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
                                       Set<CalendarSectionType> referenceSectionTypes) {
         if (!Sets.symmetricDifference(contentSectionTypes, referenceSectionTypes).isEmpty()) {
             observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.SUPPLEMENTAL_SECTION_TYPE, StringUtils.join(referenceSectionTypes, "\n"),
-                    StringUtils.join(contentSectionTypes, "\n")));
+                    SpotCheckMismatchType.SUPPLEMENTAL_SECTION_TYPE, StringUtils.join(contentSectionTypes, "\n"), StringUtils.join(referenceSectionTypes, "\n")
+            ));
         }
     }
 
@@ -150,8 +150,8 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
             CalendarSupplementalEntry referenceDiff = referenceEntryMap.get(diff);
 
             observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.SUPPLEMENTAL_ENTRY,
-                                                          referenceDiff == null ? "" : referenceDiff.toString(),
-                                                          contentDiff == null ? "" : contentDiff.toString()));
+                    contentDiff == null ? "" : contentDiff.toString(), referenceDiff == null ? "" : referenceDiff.toString()
+            ));
         }
     }
 
@@ -191,11 +191,11 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
 
         if (contentActiveListMap.size() == 0) {
             observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.OBSERVE_DATA_MISSING, referenceActiveListMap.get(referenceActiveListMap.size() - 1).getSequenceNo(), ""));
+                    SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", referenceActiveListMap.get(referenceActiveListMap.size() - 1).getSequenceNo()));
         }
         else if (referenceActiveListMap.size() == 0) {
              observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.REFERENCE_DATA_MISSING, "", contentActiveListMap.get(contentActiveListMap.size() - 1).getSequenceNo()));
+                    SpotCheckMismatchType.REFERENCE_DATA_MISSING, contentActiveListMap.get(contentActiveListMap.size() - 1).getSequenceNo(), ""));
         }
         else {
             CalendarActiveList contentMostRecent = getMostRecentActiveList(content);
@@ -223,7 +223,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
         String contentCalDate = contentDiff.getCalDate() == null ? "" : contentDiff.getCalDate().toString();
         String referenceCalDate = referenceDiff.getCalDate() == null ? "" : referenceDiff.getCalDate().toString();
         if (!StringUtils.equals(contentCalDate, referenceCalDate)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE, referenceCalDate, contentCalDate));
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE, contentCalDate, referenceCalDate));
         }
     }
 
@@ -234,7 +234,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarId, Calend
         if (!Sets.symmetricDifference(contentDiffEntries, referenceDiffEntries).isEmpty()) {
             observation.addMismatch(new SpotCheckMismatch(
                     SpotCheckMismatchType.ACTIVE_LIST_ENTRY,
-                    StringUtils.join(referenceDiffEntries, "\n"), StringUtils.join(contentDiffEntries, "\n")));
+                    StringUtils.join(contentDiffEntries, "\n"), StringUtils.join(referenceDiffEntries, "\n")));
         }
     }
 

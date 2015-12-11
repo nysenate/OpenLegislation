@@ -11,7 +11,7 @@ public class SpotCheckReferenceId
     /** Indicate the type of reference that is being used when performing QA. */
     protected SpotCheckRefType referenceType;
 
-    /** The date (and time) in which the reference data is valid from. */
+    /** The date (and time) from which the reference data is valid from. */
     protected LocalDateTime refActiveDateTime;
 
     /** --- Constructors --- */

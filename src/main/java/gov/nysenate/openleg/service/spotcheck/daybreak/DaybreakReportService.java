@@ -17,7 +17,6 @@ import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -64,19 +63,13 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
+    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
         // Create a new report instance
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
         // Fetch the daybreak bills that are within the given date range
         logger.info("Fetching daybreak bills...");
         Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
-        List<DaybreakBill> daybreakBills;
-        try {
-            daybreakBills = daybreakDao.getCurrentDaybreakBills(dateRange);
-        }
-        catch (DataAccessException ex) {
-            throw new ReferenceDataNotFoundEx("Failed to retrieve daybreak bills within the given date range.");
-        }
+        List<DaybreakBill> daybreakBills = daybreakDao.getCurrentDaybreakBills(dateRange);
         if (daybreakBills.isEmpty()) {
             throw new ReferenceDataNotFoundEx("The collection of daybreak bills within the given date range is empty.");
         }
@@ -110,14 +103,14 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
                         Bill bill = billDataService.getBill(id);
                         if (billIsPublished(bill)) {
                             logger.info("Missing Daybreak bill {}", id);
-                            mismatch = new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", id.toString());
+                            mismatch = new SpotCheckMismatch(REFERENCE_DATA_MISSING, id.toString(), "");
                             recordMismatch(report, sourceMissingObs, mismatch);
                         }
                     }
                     else {
                         // daybreak has the bill but openleg does not, add observe missing mismatch.
                         logger.info("Missing OpenLeg bill {}", id);
-                        mismatch = new SpotCheckMismatch(OBSERVE_DATA_MISSING, id.toString(), "");
+                        mismatch = new SpotCheckMismatch(OBSERVE_DATA_MISSING, "", id.toString());
                         recordMismatch(report, sourceMissingObs, mismatch);
                     }
                 });
