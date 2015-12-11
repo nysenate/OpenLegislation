@@ -13,7 +13,7 @@
     "moment": "~2.8.2",
     "angular-ui-calendar": "0.8.1",
     "ngInfiniteScroll": "1.0.0",
-    "angular-utils-pagination": "0.5.0",
+    "angular-utils-pagination": "0.9.3",
     "google-diff-match-patch": "0.1.0",
     "angular-diff-match-patch": "0.1.11",
     "sockjs": "~0.3.4"

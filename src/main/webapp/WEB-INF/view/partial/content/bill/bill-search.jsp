@@ -28,8 +28,8 @@
                               open="{{curr.billSearch.isRefined}}" extra-classes="content-card no-margin">
                   <bill-refine-search-panel search-params="curr.billSearch.refine" on-change="onRefineUpdate">
                   </bill-refine-search-panel>
+                  <p class="margin-left-16 no-bottom-margin text-small">Tip: To match an entire phrase, surround your query with double quotes.</p>
                   <div ng-show="curr.billSearch.isRefined">
-                    <md-divider></md-divider>
                     <md-button ng-click="resetRefine()" class="md-accent margin-top-10">
                       Reset Filters
                     </md-button>
@@ -54,9 +54,10 @@
                   </div>
                   <div>
                     <label class="bold margin-right-10" for="sort-by-select">Sort By</label>
-                    <select id="sort-by-select" ng-model="curr.billSearch.sort" ng-change="simpleSearch(true)">
+                    <select id="sort-by-select" ng-model="curr.billSearch.sort" ng-change="sortChanged()">
                       <option value="_score:desc,session:desc">Relevant</option>
                       <option value="status.actionDate:desc,_score:desc">Recent Status Update</option>
+                      <option value="printNo:asc,session:desc">Print No</option>
                       <option value="milestones.size:desc,_score:desc">Most Progress</option>
                       <option value="votes.items.memberVotes.items.NAY.size:desc,_score:desc">Most Nay Votes</option>
                       <option value="amendments.size:desc,_score:desc">Most Amendments</option>
@@ -68,7 +69,7 @@
                   <md-content layout="row" style="padding:0;" class="no-top-margin">
                     <div flex>
                       <bill-search-listing bill-search-response="curr.billSearch.response" bill-search-term="curr.billSearch.term"
-                                           pagination="curr.pagination" show-title="true" show-img="true">
+                                           pagination="curr.pagination" on-page-change="pageChanged" show-title="true" show-img="true">
                       </bill-search-listing>
                     </div>
                   </md-content>
@@ -156,7 +157,7 @@
         </md-tab-body>
       </md-tab>
       <md-tab>
-        <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
+        <md-tab-label><i class="icon-flow-branch prefix-icon2"></i>Updates</md-tab-label>
         <md-tab-body>
           <md-divider></md-divider>
           <section ng-controller="BillUpdatesCtrl">
@@ -170,17 +171,6 @@
                     <option value="published">Published Date</option>
                   </select>
                 </div>
-                <div flex>
-                  <label>From</label>
-                  <md-datepicker class="margin-left-10" ng-model="curr.fromDate" md-max-date="curr.toDate"></md-datepicker>
-                </div>
-                <div flex>
-                  <label>To</label>
-                  <md-datepicker class="margin-left-10" ng-model="curr.toDate" md-min-date="curr.fromDate"></md-datepicker>
-                </div>
-              </div>
-              <md-divider></md-divider>
-              <div layout="row" layout-sm="column"class="padding-20 text-medium">
                 <div flex>
                   <label>Type </label>
                   <select class="margin-left-10" ng-model="curr.filter">
@@ -210,6 +200,17 @@
                     <option value="asc">Oldest First</option>
                   </select>
                 </div>
+              </div>
+              <md-divider></md-divider>
+              <div layout="row" layout-sm="column" layout-align="start center" class="padding-20 text-medium">
+                <div flex>
+                  <label>From</label>
+                  <md-datepicker ng-model="curr.fromDate" md-max-date="curr.toDate"></md-datepicker>
+                </div>
+                <div flex>
+                  <label>To</label>
+                  <md-datepicker ng-model="curr.toDate" md-min-date="curr.fromDate"></md-datepicker>
+                </div>
                 <div flex>
                   <md-checkbox class="md-hue-3 no-margin" ng-model="curr.detail" aria-label="detail">Show Detail</md-checkbox>
                 </div>
@@ -219,17 +220,20 @@
             <md-card class="content-card" ng-if="billUpdates.response.success === true">
               <md-subheader>
                 <div>
-                  <strong>{{billUpdates.total}} </strong>
-                  <span ng-if="!curr.detail">bills were updated </span>
-                  <span ng-if="curr.detail"> granular bill updates were made </span>
-                  between {{billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.toDate | moment:'llll'}}
+                  <h3>{{billUpdates.total}}
+                    <span class="text-normal">
+                      <span ng-if="!curr.detail">bills were updated </span>
+                      <span ng-if="curr.detail"> granular bill updates were made </span>
+                      between {{billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.toDate | moment:'llll'}}
+                    </span>
+                  </h3>
                 </div>
               </md-subheader>
-              <div class="subheader" ng-show="billUpdates.total > 0">
-                <div flex style="text-align: right;">
-                  <dir-pagination-controls pagination-id="bill-updates" max-size="5" boundary-links="true"></dir-pagination-controls>
-                </div>
-              </div>
+              <%--<div class="subheader" ng-show="billUpdates.total > 0">--%>
+                <%--<div flex style="text-align: right;">--%>
+                  <%--<dir-pagination-controls pagination-id="bill-updates" max-size="5" boundary-links="true"></dir-pagination-controls>--%>
+                <%--</div>--%>
+              <%--</div>--%>
               <section ng-if="billUpdates.total > 0">
                 <md-list>
                   <a dir-paginate="billUpdate in billUpdates.result.items | itemsPerPage: 20"
@@ -244,11 +248,6 @@
                           <span class="margin-left-20">{{bill.sponsor.member.fullName}}</span>
                         </h3>
                         <hr/>
-                        <p class="text-medium" ng-if="!highlights.title">{{bill.title}}</p>
-
-                        <h4 style="color:#444"><strong>Last Published:</strong> {{billUpdate.sourceDateTime | moment:'llll'}}</h4>
-                        <h4 style="color:#444"><strong>Last Processed:</strong> {{billUpdate.processedDateTime | moment:'MMM D, YYYY h:mm:ss A'}}</h4>
-                        <h4 style="color:#444"><strong>Update Source Id:</strong> {{billUpdate.sourceId}}</h4>
                         <div ng-if="curr.detail" class="margin-top-20">
                           <span class="text-medium bold green2">{{billUpdate.action}} {{billUpdate.scope}}</span>
                           <table class="bill-updates-table" style="width:100%;">
@@ -271,11 +270,11 @@
                   </a>
                 </md-list>
               </section>
-              <div class="subheader" ng-show="billUpdates.total > 0">
-                <div flex style="text-align: right;">
-                  <dir-pagination-controls pagination-id="bill-updates" max-size="5" boundary-links="true"></dir-pagination-controls>
-                </div>
-              </div>
+              <%--<div class="subheader" ng-show="billUpdates.total > 0">--%>
+                <%--<div flex style="text-align: right;">--%>
+                  <%--<dir-pagination-controls pagination-id="bill-updates" max-size="5" boundary-links="true"></dir-pagination-controls>--%>
+                <%--</div>--%>
+              <%--</div>--%>
             </md-card>
             <md-card class="content-card" ng-if="billUpdates.response.success === false">
               <md-subheader class="margin-10 md-warn">

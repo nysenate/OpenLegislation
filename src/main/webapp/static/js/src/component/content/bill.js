@@ -36,10 +36,10 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         state: 'initial',
         pagination: angular.extend({}, PaginationModel, { itemsPerPage: 6 }),
         billSearch: {
-            term: $routeParams.search || '',
+            term: $routeParams['search'] || '',
             refine: {},
             isRefined: false,
-            sort: '_score:desc,session:desc',
+            sort: $routeParams['sort'] || '_score:desc,session:desc',
             response: {},
             results: [],
             error: false
@@ -51,16 +51,16 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
     // The following maps refine params to search columns
     $scope.refinePaths = {
-        actionText: "actions.\*.text",
-        agendaNo: "committeeAgendas.items.\*.agendaId.number",
-        billCalNo: "status.billCalNo",
+        actionText: "actions.\\*.text",
+        agendaNo: "\\*.agendaId.number",
+        billCalNo: "\\*.billCalNo",
         chamber: "billType.chamber",
         committeeName: "status.committeeName",
-        fullText: "amendments.\*.fullText",
+        fullText: "amendments.\\*.fullText",
         isRes: "billType.resolution",
-        lawCode: "amendments.\*.lawCode",
-        lawSection: "amendments.\*.lawSection",
-        memo: "amendments.\*.memo",
+        lawCode: "amendments.\\*.lawCode",
+        lawSection: "amendments.\\*.lawSection",
+        memo: "amendments.\\*.memo",
         printNo: "printNo",
         session: "session",
         sponsor: "sponsor.member.memberId",
@@ -70,8 +70,14 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     // Any refined params that have custom query logic are defined here
     // These are params that don't have a simple column:value query.
     $scope.refineFixedPaths = {
-        signed: '(signed:true OR adoped:true)',
-        hasVotes: '(amendments.\*.votes.size:>0)'
+        signed: '(signed:true OR adopted:true)',
+        hasVotes: '(votes.size:>0)',
+        hasApVetoMemo: '(vetoMessages.size:>0 OR !_empty_:approvalMessage)',
+        isGov: '(programInfo.name:*Governor*)',
+        isSubstituted: '(_exists_:substitutedBy)',
+        isUni: '(amendments.\\*.uniBill:true)',
+        isBudget: '(sponsor.budget:true)',
+        isRulesSponsor: '(sponsor.rules:true)'
     };
 
     /** Initialize the bill search page. */
@@ -103,7 +109,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                     if ($scope.curr.billSearch.response && $scope.curr.billSearch.response.success) {
                         $scope.curr.billSearch.error = false;
                         $scope.curr.billSearch.results = $scope.curr.billSearch.response.result.items || [];
-                        //$scope.markHighlightsAsSafe($scope.curr.billSearch.results);
+                        $scope.markHighlightsAsSafe($scope.curr.billSearch.results);
                         $scope.curr.pagination.setTotalItems($scope.curr.billSearch.response.total);
                         $scope.curr.state = 'searched';
                     }
@@ -124,12 +130,12 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         var refine = $scope.curr.billSearch.refine;
         var refineTerms = [];
         for (var p in refine) {
-            if (refine.hasOwnProperty(p) && refine[p] !== '') {
+            if (refine.hasOwnProperty(p) && refine[p]) {
                 if ($scope.refineFixedPaths[p]) {
                     refineTerms.push($scope.refineFixedPaths[p]);
                 }
                 else if ($scope.refinePaths[p]) {
-                    refineTerms.push($scope.refinePaths[p] + ":" + refine[p]);
+                    refineTerms.push($scope.refinePaths[p] + ":(" + refine[p] + ")");
                 }
             }
         }
@@ -145,7 +151,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
     $scope.onRefineUpdate = function() {
         $scope.setRefineUrlParams($scope.curr.billSearch.refine, $scope.refineUrlParamPrefix);
-        $scope.simpleSearch(true);
+        $scope.simpleSearch(false);
     };
 
     /** Reset the refine filters. */
@@ -186,7 +192,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
     $scope.markHighlightsAsSafe = function(results) {
         angular.forEach(results, function(r) {
             if (r.hasOwnProperty('highlights')) {
-                for (prop in r['highlights']) {
+                for (var prop in r['highlights']) {
                     if (r['highlights'][prop][0]) {
                         r['highlights'][prop][0] = $sce.trustAsHtml(String(r['highlights'][prop][0]));
                     }
@@ -195,13 +201,17 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         });
     };
 
-    /** Watch for changes to the current search page. */
-    $scope.$watch('curr.pagination.currPage', function(newPage, oldPage) {
-        if (newPage !== oldPage) {
-            $location.search('searchPage', newPage);
-            $scope.simpleSearch();
-         }
-    });
+    // Trigger a search and update the url when the sort field is changed.
+    $scope.sortChanged = function() {
+        $scope.setSearchParam('sort', $scope.curr.billSearch.sort);
+        $scope.simpleSearch(true);
+    };
+
+    // Method that is triggered when the search listing page is changed.
+    $scope.pageChanged = function(newPage) {
+        $scope.setSearchParam('searchPage', newPage);
+        $scope.simpleSearch(false);
+    };
 
     $scope.init();
 }]);
@@ -543,13 +553,44 @@ billModule.directive('billSearchListing', ['BillUtils', function(BillUtils) {
             'billSearchResponse': '=',
             'billSearchTerm': '=',
             'pagination': '=',
-            'paginationId': '&',
+            'onPageChange': '=',
             'showTitle': '=',
             'showImg': '='
         },
         templateUrl: ctxPath + '/partial/content/bill/bill-search-listing-view',
         controller: function($scope, $element){
             $scope.billUtils = BillUtils;
+            var currPage = $scope.pagination.currPage;
+            $scope.pageChange = function(newPageNumber) {
+                if (currPage != newPageNumber && $scope.onPageChange) {
+                    currPage = newPageNumber; // Prevents duplicate calls
+                    $scope.onPageChange(newPageNumber);
+                }
+            }
+        }
+    };
+}]);
+
+billModule.directive('billUpdatesListing', ['BillUtils', function(BillUtils) {
+    return {
+        restrict: 'E',
+        scope: {
+            'billUpdateResponse': '=',
+            'pagination': '=',
+            'onPageChange': '=',
+            'showTitle': '=',
+            'showImg': '='
+        },
+        templateUrl: ctxPath + '/partial/content/bill/bill-update-listing-view',
+        controller: function($scope, $element){
+            $scope.billUtils = BillUtils;
+            var currPage = $scope.pagination.currPage;
+            $scope.pageChange = function(newPageNumber) {
+                if (currPage != newPageNumber && $scope.onPageChange) {
+                    currPage = newPageNumber; // Prevents duplicate calls
+                    $scope.onPageChange(newPageNumber);
+                }
+            }
         }
     };
 }]);

@@ -1,15 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<dir-pagination-controls class="text-align-center" pagination-id="bill-search" boundary-links="true"
-                         on-page-change="pageChange(newPageNumber)" max-size="10">
-</dir-pagination-controls>
+<dir-pagination-controls class="text-align-center" pagination-id="bill-updates" boundary-links="true" max-size="10"></dir-pagination-controls>
 <md-list>
-  <md-list-item dir-paginate="billRes in billSearchResponse.result.items | itemsPerPage: 6"
-                total-items="billSearchResponse.total" current-page="pagination.currPage"
-                ng-init="bill = billRes.result; highlights = billRes.highlights;" pagination-id="bill-search"
+  <md-list-item dir-paginate="billUpdate in billUpdates.result.items | itemsPerPage: 20"
+                total-items="billUpdates.total" current-page="pagination.currPage"
+                ng-init="bill = billUpdate.item" pagination-id="bill-updates"
                 class="margin-bottom-10">
     <a class="result-link"
        ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearchTerm}}&searchPage={{pagination.currPage}}">
       <div flex="none" layout-padding layout="column" layout-gt-sm="row">
+        <h4 style="color:#444"><strong>Last Published:</strong> {{billUpdate.sourceDateTime | moment:'llll'}}</h4>
+        <h4 style="color:#444"><strong>Last Processed:</strong> {{billUpdate.processedDateTime | moment:'MMM D, YYYY h:mm:ss A'}}</h4>
+        <h4 style="color:#444"><strong>Update Source Id:</strong> {{billUpdate.sourceId}}</h4>
         <div layout="row">
           <div ng-show="showImg">
             <img class="margin-right-10" ng-if="bill.sponsor"
@@ -40,6 +41,4 @@
     <md-divider ng-if="!$last"></md-divider>
   </md-list-item>
 </md-list>
-<dir-pagination-controls class="text-align-center" pagination-id="bill-search" boundary-links="true"
-                         on-page-change="pageChange(newPageNumber)" max-size="10">
-</dir-pagination-controls>
+<dir-pagination-controls class="text-align-center" pagination-id="bill-updates" boundary-links="true" max-size="10"></dir-pagination-controls>

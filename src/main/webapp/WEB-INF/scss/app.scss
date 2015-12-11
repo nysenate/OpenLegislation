@@ -37,8 +37,8 @@ pre {
 
 select {
   background: white;
-  border-color: #ddd;
-  padding: 2px;
+  border: 1px solid #ddd;
+  padding: 5px;
 }
 
 hr {
@@ -685,11 +685,14 @@ ul.pagination {
   }
   .refine-controls {
     padding: 5px 10px 5px 15px;
-    label {
-      margin-top: 8px;
-      margin-bottom: 4px;
+    label, .md-label {
+      padding: 5px;
       font-size: 0.9rem;
       display: block;
+      &.lit {
+        margin-top: 3px;
+        background: #fff6b4;
+      }
     }
     select, input {
       width: 100%;
@@ -699,6 +702,12 @@ ul.pagination {
     }
     md-checkbox, md-switch {
       margin: 10px 2px 0 2px;
+      &.lit {
+        .md-label {
+          margin-top: 3px;
+          background: #fff6b4;
+        }
+      }
     }
   }
 }
@@ -979,7 +988,7 @@ a.slogan-link {
 .bill-json-iframe {
   border: 0;
   width: 90vw;
-  height: 50vh;
+  height: 80vh;
 }
 
 /** --- Law Page Styles --- */
