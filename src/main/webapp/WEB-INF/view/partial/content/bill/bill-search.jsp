@@ -161,122 +161,85 @@
         <md-tab-body>
           <md-divider></md-divider>
           <section ng-controller="BillUpdatesCtrl">
-            <md-card class="content-card">
-              <md-subheader>Show bill updates during the following date range</md-subheader>
-              <div layout="row" layout-sm="column" class="padding-20 text-medium">
-                <div flex>
-                  <label>With </label>
-                  <select class="margin-left-10" ng-model="curr.type">
-                    <option value="processed">Processed Date</option>
-                    <option value="published">Published Date</option>
-                  </select>
+            <div class="gray2-bg" layout-padding>
+              <div>
+                <label class="margin-bottom-10">Show bill updates during the following date range</label>
+                <div layout="row" layout-sm="column" class="padding-20 text-medium">
+                  <div flex>
+                    <label>With {{curr.input.type}}</label>
+                    <select class="margin-left-10" ng-model="curr.options.type" ng-change="onParamChange()">
+
+                      <option value="processed">Processed Date</option>
+                      <option value="published">Published Date</option>
+                    </select>
+                  </div>
+                  <div flex>
+                    <label>Content Type </label>
+                    <select class="margin-left-10" ng-model="curr.options.filter" ng-change="onParamChange()">
+                      <option value="">All</option>
+                      <option value="published_bill">Newly Published</option>
+                      <option value="action">Action</option>
+                      <option value="active_version">Active Version</option>
+                      <option value="approval">Approval Memo</option>
+                      <option value="cosponsor">Co Sponsor</option>
+                      <option value="act_clause">Enacting Clause</option>
+                      <option value="fulltext">Full Text</option>
+                      <option value="law">Law</option>
+                      <option value="memo">Memo</option>
+                      <option value="multisponsor">Multi Sponsor</option>
+                      <option value="sponsor">Sponsor</option>
+                      <option value="status">Status</option>
+                      <option value="summary">Summary</option>
+                      <option value="title">Title</option>
+                      <option value="veto">Veto</option>
+                      <option value="vote">Vote</option>
+                    </select>
+                  </div>
+                  <div flex>
+                    <label>Sort </label>
+                    <select class="margin-left-10" ng-model="curr.options.sortOrder" ng-change="onParamChange()">
+                      <option value="desc" selected>Newest First</option>
+                      <option value="asc">Oldest First</option>
+                    </select>
+                  </div>
                 </div>
-                <div flex>
-                  <label>Type </label>
-                  <select class="margin-left-10" ng-model="curr.filter">
-                    <option value="">All</option>
-                    <option value="published_bill">Newly Published</option>
-                    <option value="action">Action</option>
-                    <option value="active_version">Active Version</option>
-                    <option value="approval">Approval Memo</option>
-                    <option value="cosponsor">Co Sponsor</option>
-                    <option value="act_clause">Enacting Clause</option>
-                    <option value="fulltext">Full Text</option>
-                    <option value="law">Law</option>
-                    <option value="memo">Memo</option>
-                    <option value="multisponsor">Multi Sponsor</option>
-                    <option value="sponsor">Sponsor</option>
-                    <option value="status">Status</option>
-                    <option value="summary">Summary</option>
-                    <option value="title">Title</option>
-                    <option value="veto">Veto</option>
-                    <option value="vote">Vote</option>
-                  </select>
-                </div>
-                <div flex>
-                  <label>Sort </label>
-                  <select class="margin-left-10" ng-model="curr.sortOrder">
-                    <option value="desc" selected>Newest First</option>
-                    <option value="asc">Oldest First</option>
-                  </select>
+                <div layout="row" layout-sm="column" layout-align="start center"
+                     class="padding-20 text-medium">
+                  <div flex>
+                    <label>From</label>
+                    <md-datepicker ng-model="curr.options.fromDate" md-max-date="curr.options.toDate"
+                                   ng-change="onParamChange()"></md-datepicker>
+                  </div>
+                  <div flex>
+                    <label>To</label>
+                    <md-datepicker ng-model="curr.options.toDate" md-min-date="curr.options.fromDate"
+                                   ng-change="onParamChange()"></md-datepicker>
+                  </div>
+                  <div flex>
+                    <md-checkbox class="md-hue-3 no-margin" ng-model="curr.options.detail" ng-change="onParamChange()"
+                                 aria-label="detail">Show Detail</md-checkbox>
+                  </div>
                 </div>
               </div>
-              <md-divider></md-divider>
-              <div layout="row" layout-sm="column" layout-align="start center" class="padding-20 text-medium">
-                <div flex>
-                  <label>From</label>
-                  <md-datepicker ng-model="curr.fromDate" md-max-date="curr.toDate"></md-datepicker>
-                </div>
-                <div flex>
-                  <label>To</label>
-                  <md-datepicker ng-model="curr.toDate" md-min-date="curr.fromDate"></md-datepicker>
-                </div>
-                <div flex>
-                  <md-checkbox class="md-hue-3 no-margin" ng-model="curr.detail" aria-label="detail">Show Detail</md-checkbox>
-                </div>
+            </div>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.state === 'searching') ? 'query' : ''}}"></md-progress-linear>
+            <div class="content-card" ng-if="curr.billUpdates.response.success === true">
+              <div class="padding-10 margin-left-16">
+                <h3>{{curr.billUpdates.total}}
+                  <span class="text-normal">
+                    <span ng-if="!curr.options.detail">bills were updated </span>
+                    <span ng-if="curr.options.detail"> bill updates were made </span>
+                    between {{curr.billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.billUpdates.response.toDateTime | moment:'llll'}}
+                  </span>
+                </h3>
               </div>
-            </md-card>
-            <div ng-if="billUpdates.fetching" class="text-medium text-align-center">Fetching updates, please wait.</div>
-            <md-card class="content-card" ng-if="billUpdates.response.success === true">
-              <md-subheader>
-                <div>
-                  <h3>{{billUpdates.total}}
-                    <span class="text-normal">
-                      <span ng-if="!curr.detail">bills were updated </span>
-                      <span ng-if="curr.detail"> granular bill updates were made </span>
-                      between {{billUpdates.response.fromDateTime | moment:'llll'}} and {{curr.toDate | moment:'llll'}}
-                    </span>
-                  </h3>
-                </div>
-              </md-subheader>
-              <%--<div class="subheader" ng-show="billUpdates.total > 0">--%>
-                <%--<div flex style="text-align: right;">--%>
-                  <%--<dir-pagination-controls pagination-id="bill-updates" max-size="5" boundary-links="true"></dir-pagination-controls>--%>
-                <%--</div>--%>
-              <%--</div>--%>
-              <section ng-if="billUpdates.total > 0">
-                <md-list>
-                  <a dir-paginate="billUpdate in billUpdates.result.items | itemsPerPage: 20"
-                     total-items="billUpdates.total" current-page="pagination.currPage"
-                     ng-init="bill = billUpdate.item" pagination-id="bill-updates"
-                     class="result-link text-medium"
-                     ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{curr.billSearch.term}}&view=1&searchPage={{curr.pagination.currPage}}">
-                    <md-list-item class="md-3-line" style="cursor: pointer;">
-                      <div class="md-list-item-text">
-                        <h3>
-                          <span class="blue3 bold">{{bill.basePrintNo}} - {{bill.session}}</span>
-                          <span class="margin-left-20">{{bill.sponsor.member.fullName}}</span>
-                        </h3>
-                        <hr/>
-                        <div ng-if="curr.detail" class="margin-top-20">
-                          <span class="text-medium bold green2">{{billUpdate.action}} {{billUpdate.scope}}</span>
-                          <table class="bill-updates-table" style="width:100%;">
-                            <thead>
-                            <tr>
-                              <th style="width:150px;">Field Name</th>
-                              <th>Data</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="(field, value) in billUpdate.fields">
-                              <td>{{field}}</td>
-                              <td><pre>{{value}}</pre></td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </md-list-item>
-                  </a>
-                </md-list>
-              </section>
-              <%--<div class="subheader" ng-show="billUpdates.total > 0">--%>
-                <%--<div flex style="text-align: right;">--%>
-                  <%--<dir-pagination-controls pagination-id="bill-updates" max-size="5" boundary-links="true"></dir-pagination-controls>--%>
-                <%--</div>--%>
-              <%--</div>--%>
-            </md-card>
-            <md-card class="content-card" ng-if="billUpdates.response.success === false">
+              <div ng-if="curr.billUpdates.total > 0">
+                <bill-updates-listing bill-update-response="curr.billUpdates.response" pagination="pagination"
+                        on-page-change="onPageChange" show-title="true" show-img="false" show-detail="curr.options.detail">
+                </bill-updates-listing>
+              </div>
+            </div>
+            <md-card class="content-card" ng-if="curr.billUpdates.response.success === false">
               <md-subheader class="margin-10 md-warn">
                 <h4>{{billUpdates.errMsg}}</h4>
               </md-subheader>

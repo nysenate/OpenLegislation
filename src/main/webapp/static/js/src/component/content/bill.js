@@ -218,72 +218,77 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
 
 /** --- Bill Updates Controller --- */
 
-billModule.controller('BillUpdatesCtrl', ['$scope', '$location', 'BillAggUpdatesApi', 'PaginationModel',
-    function($scope, $location, BillAggUpdatesApi, PaginationModel){
+billModule.controller('BillUpdatesCtrl', ['$scope', '$location', '$routeParams', 'BillAggUpdatesApi', 'PaginationModel',
+    function($scope, $location, $routeParams, BillAggUpdatesApi, PaginationModel){
 
     $scope.pagination = angular.extend({}, PaginationModel);
+    $scope.pagination.currPage = $routeParams.page || 1;
     $scope.pagination.itemsPerPage = 20;
 
     $scope.curr = {
-        fromDate: moment().subtract(5, 'days').startOf('minute').toDate(),
-        toDate: moment().startOf('minute').toDate(),
-        type: $location.$$search.type || 'published',
-        sortOrder: $location.$$search.sortOrder || 'desc',
-        detail: $location.$$search.detail === true,
-        filter: $location.$$search.filter ||  ''
+        state: 'initial',
+        options: {
+            fromDate: ($routeParams.fromDate) ? new Date($routeParams.fromDate)
+                                              : moment().subtract(5, 'days').startOf('minute').toDate(),
+            toDate: ($routeParams.toDate) ? new Date($routeParams.toDate) : moment().startOf('minute').toDate(),
+            type: $routeParams.type || 'published',
+            sortOrder: $routeParams.sortOrder || 'desc',
+            detail: $routeParams.detail === true,
+            filter: $routeParams.filter ||  ''
+        },
+        billUpdates: {
+            response: {},
+            total: 0,
+            result: {},
+            errMsg: ''
+        }
     };
-
-    $scope.billUpdates = {
-        response: {},
-        fetching: false,
-        total: 0,
-        result: {},
-        errMsg: ''
-    };
-
-    $scope.$on('viewChange', function(ev) {
-        $scope.getUpdates();
-    });
 
     $scope.getUpdates = function() {
-        $scope.billUpdates.fetching = true;
-        $scope.billUpdates.response = BillAggUpdatesApi.get({
-            from: $scope.curr.fromDate.toISOString(), to: $scope.curr.toDate.toISOString(),
-            type: $scope.curr.type, order: $scope.curr.sortOrder, detail: $scope.curr.detail,
-            filter: $scope.curr.filter, limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
+        $scope.curr.state = 'searching';
+        $scope.curr.billUpdates.response = BillAggUpdatesApi.get({
+            from: $scope.curr.options.fromDate.toISOString(), to: $scope.curr.options.toDate.toISOString(),
+            type: $scope.curr.options.type, order: $scope.curr.options.sortOrder, detail: $scope.curr.options.detail,
+            filter: $scope.curr.options.filter, limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
         }, function() {
-            $scope.billUpdates.total = $scope.billUpdates.response.total;
-            $scope.billUpdates.result = $scope.billUpdates.response.result;
-            $scope.billUpdates.fetching = false;
+            $scope.curr.billUpdates.total = $scope.curr.billUpdates.response.total;
+            $scope.curr.billUpdates.result = $scope.curr.billUpdates.response.result;
+            $scope.curr.state = 'searched';
         }, function(resp) {
-            $scope.billUpdates.response.success = false;
-            $scope.billUpdates.total = 0;
-            $scope.billUpdates.errMsg = resp.data.message;
-            $scope.billUpdates.fetching = false;
+            $scope.curr.billUpdates.response.success = false;
+            $scope.curr.billUpdates.total = 0;
+            $scope.curr.billUpdates.errMsg = resp.data.message;
+            $scope.curr.state = 'searched';
         });
     };
 
-    $scope.refreshParams = function() {
-        angular.forEach($scope.curr, function(val, key) {
-            var paramVal = val;
-            if (paramVal instanceof Date) {
+    $scope.setUrlParams = function() {
+        angular.forEach($scope.curr.options, function(paramVal, key) {
+            if (paramVal && paramVal instanceof Date) {
                 paramVal = paramVal.toISOString();
             }
-            $location.search(key, paramVal);
+            $scope.setSearchParam(key, paramVal);
         });
     };
 
-    $scope.$watchCollection('curr', function(n, o) {
-        if ($scope.selectedView === 1) {
-            $scope.getUpdates();
-        }
-    });
+    $scope.onParamChange = function() {
+        $scope.setUrlParams();
+        $scope.getUpdates();
+        $scope.pagination.reset();
+    };
 
-    $scope.$watch('pagination.currPage', function(newPage, oldPage) {
-        if (newPage !== oldPage) {
-            $scope.getUpdates();
-        }
-    });
+    $scope.onPageChange = function(newPage) {
+        $scope.setSearchParam('page', newPage);
+        $scope.getUpdates();
+    };
+
+    $scope.init = function() {
+        $scope.getUpdates();
+    };
+
+    // Initialize
+    $scope.init();
+
 }]);
 
 /** --- Bill View Controller --- */
@@ -579,7 +584,8 @@ billModule.directive('billUpdatesListing', ['BillUtils', function(BillUtils) {
             'pagination': '=',
             'onPageChange': '=',
             'showTitle': '=',
-            'showImg': '='
+            'showImg': '=',
+            'showDetail': '='
         },
         templateUrl: ctxPath + '/partial/content/bill/bill-update-listing-view',
         controller: function($scope, $element){

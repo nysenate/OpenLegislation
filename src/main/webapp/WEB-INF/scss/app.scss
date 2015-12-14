@@ -103,10 +103,23 @@ md-input-container {
   }
 }
 
-// Couldn't get the colors right
+// Couldn't get the colors right on the datepicker
 .md-default-theme.md-hue-2 .md-datepicker-input, .md-hue-2 .md-datepicker-input {
   background: white;
-  color: #444;
+  padding: 5px;
+  margin-left: 0;
+  color: #333;
+}
+.md-default-theme.md-hue-2 .md-datepicker-input-container, .md-hue-2 .md-datepicker-input-container {
+  padding: 0;
+  border: 1px solid #ddd;
+}
+md-datepicker {
+  background: transparent;
+}
+.md-calendar-day-header, .md-calendar-selected-date.md-focus .md-calendar-date-selection-indicator {
+  background: $blue3 !important;
+  color: white !important;
 }
 
 /** --- Transitions --- */
@@ -978,6 +991,7 @@ a.slogan-link {
       pre {
         max-height: 300px;
         font-size: 0.9rem;
+        white-space: normal;
       }
       border-bottom: 1px solid #ddd;
       overflow: auto;
