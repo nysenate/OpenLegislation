@@ -90,8 +90,16 @@ module.exports = function(grunt) {
 
                         // Content Pages
                         '<%= jsSource %>/component/content/dashboard.js',
-                        '<%= jsSource %>/component/content/bill.js',
-                        '<%= jsSource %>/component/content/bill-utils.js',
+
+                            // Bills
+                            '<%= jsSource %>/component/content/bill/bill.js',
+                            '<%= jsSource %>/component/content/bill/bill-utils.js',
+                            '<%= jsSource %>/component/content/bill/bill-filters.js',
+                            '<%= jsSource %>/component/content/bill/bill-directives.js',
+                            '<%= jsSource %>/component/content/bill/bill-search-ctrl.js',
+                            '<%= jsSource %>/component/content/bill/bill-updates-ctrl.js',
+                            '<%= jsSource %>/component/content/bill/bill-view-ctrl.js',
+
                         '<%= jsSource %>/component/content/law.js',
                         '<%= jsSource %>/component/content/agenda.js',
                         '<%= jsSource %>/component/content/calendar.js',
