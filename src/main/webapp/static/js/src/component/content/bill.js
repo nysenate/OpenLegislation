@@ -230,7 +230,7 @@ billModule.controller('BillUpdatesCtrl', ['$scope', '$location', '$routeParams',
         options: {
             fromDate: ($routeParams.fromDate) ? new Date($routeParams.fromDate)
                                               : moment().subtract(5, 'days').startOf('minute').toDate(),
-            toDate: ($routeParams.toDate) ? new Date($routeParams.toDate) : moment().startOf('minute').toDate(),
+            toDate: ($routeParams.toDate) ? new Date($routeParams.toDate) : moment().add(1, 'days').startOf('minute').toDate(),
             type: $routeParams.type || 'published',
             sortOrder: $routeParams.sortOrder || 'desc',
             detail: $routeParams.detail === true,
@@ -247,7 +247,8 @@ billModule.controller('BillUpdatesCtrl', ['$scope', '$location', '$routeParams',
     $scope.getUpdates = function() {
         $scope.curr.state = 'searching';
         $scope.curr.billUpdates.response = BillAggUpdatesApi.get({
-            from: $scope.curr.options.fromDate.toISOString(), to: $scope.curr.options.toDate.toISOString(),
+            from: $scope.toZonelessISOString(moment($scope.curr.options.fromDate)),
+            to: $scope.toZonelessISOString(moment($scope.curr.options.toDate)),
             type: $scope.curr.options.type, order: $scope.curr.options.sortOrder, detail: $scope.curr.options.detail,
             filter: $scope.curr.options.filter, limit: $scope.pagination.getLimit(), offset: $scope.pagination.getOffset()
         }, function() {
@@ -265,7 +266,7 @@ billModule.controller('BillUpdatesCtrl', ['$scope', '$location', '$routeParams',
     $scope.setUrlParams = function() {
         angular.forEach($scope.curr.options, function(paramVal, key) {
             if (paramVal && paramVal instanceof Date) {
-                paramVal = paramVal.toISOString();
+                paramVal = $scope.toZonelessISOString(moment(paramVal));
             }
             $scope.setSearchParam(key, paramVal);
         });
