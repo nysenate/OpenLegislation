@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <section class="content-section" ng-controller="CalendarSearchPageCtrl" ng-init="setHeaderVisible(true); setCalendarHeaderText()">
-  <md-tabs md-selected="activeIndex" md-dynamic-height="true">
+  <md-tabs md-selected="activeIndex" class="md-hue-2" md-dynamic-height="true">
 
     <!-- Browse Calendars -->
 
@@ -11,6 +11,7 @@
       </md-tab-label>
       <md-tab-body>
         <md-divider></md-divider>
+        <md-progress-linear class="md-accent md-hue-1" md-mode="{{(requestsInProgress > 0) ? 'query' : ''}}"></md-progress-linear>
         <md-card ng-if="pageNames[activeIndex] === 'browse'" ng-controller="CalendarBrowseCtrl" class="content-card">
          <md-card-content id="calendar-date-picker" ui-calendar="calendarConfig" ng-model="eventSources"></md-card-content>
         </md-card>

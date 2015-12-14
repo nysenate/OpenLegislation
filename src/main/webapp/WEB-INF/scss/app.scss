@@ -1361,8 +1361,26 @@ md-list.env-list {
 
 /** --- Calendar Picker Styling --- */
 
-#calendar-date-picker .fc-button-today .fc-button-prev .fc-button-next {
-//  @extend .button;
+.fc-header {
+  .fc-button {
+    background: transparent;
+    border: 0;
+    color: $blue3;
+  }
+}
+
+#calendar-date-picker {
+  .fc-event.session-day {
+    background: #f1f1f1;
+    border: 0;
+    color: $blue3;
+    padding: 3px;
+    &:hover {
+      cursor: pointer;
+      background: $blue3;
+      color: white;
+    }
+  }
 }
 
 #calendar-date-picker div.fc-day-content > div {
