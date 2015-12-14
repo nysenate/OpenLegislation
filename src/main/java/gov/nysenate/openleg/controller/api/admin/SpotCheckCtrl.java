@@ -2,6 +2,7 @@ package gov.nysenate.openleg.controller.api.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
@@ -15,7 +16,6 @@ import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.spotcheck.OpenMismatchSummaryView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
@@ -25,8 +25,8 @@ import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteBillDumpFragId;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
+import gov.nysenate.openleg.util.AsyncRunner;
 import gov.nysenate.openleg.util.DateUtils;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +54,10 @@ public class SpotCheckCtrl extends BaseCtrl
     @Autowired private List<SpotCheckReportService<?>> reportServices;
     @Autowired private SpotcheckRunService spotcheckRunService;
 
+    @Autowired private AsyncRunner asyncRunner;
+
+    @Autowired private EventBus eventBus;
+
     @Autowired private ObjectMapper objectMapper;
 
     @Autowired private SenateSiteBillDao senateSiteBillDao;
@@ -62,6 +66,7 @@ public class SpotCheckCtrl extends BaseCtrl
 
     @PostConstruct
     public void init() {
+        eventBus.register(this);
         reportServiceMap = ImmutableMap.copyOf(
                 reportServices.stream()
                         .collect(Collectors.toMap(SpotCheckReportService::getSpotcheckRefType, Function.identity(),(a, b) -> b)));
@@ -299,6 +304,8 @@ public class SpotCheckCtrl extends BaseCtrl
         } catch (IOException ex) {
             return new SimpleResponse(false, "could not save dump :(", "bill-dump-failed");
         }
+        asyncRunner.run(() ->
+                eventBus.post(new SpotCheckReferenceEvent(SpotCheckRefType.SENATE_SITE_BILLS)));
         return new SimpleResponse(true, "bill dump received.  Thanks!", "bill-dump-received");
     }
 
