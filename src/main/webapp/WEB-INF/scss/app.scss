@@ -237,6 +237,10 @@ md-datepicker {
   margin-right: 10px;
 }
 
+.margin-top-16 {
+  margin-top: 16px;
+}
+
 .margin-left-16 {
   margin-left: 16px;
 }
@@ -725,6 +729,10 @@ ul.pagination {
   }
 }
 
+.listing-filter {
+  padding: 16px 20px;
+  background: #f5f5f5;
+}
 
 /** --- Landing Page Styles --- */
 
@@ -899,6 +907,7 @@ a.slogan-link {
 
 .bill-ms-container {
   padding: 5px 0;
+  min-width: 256px;
 }
 
 .bill-ms-step {
@@ -1344,6 +1353,20 @@ md-list.env-list {
 
 /** --- Calendar View --- */
 
+.cal-entry-repeat-container {
+  height: 80vh;
+  width: 100%;
+  border: none;
+}
+
+.repeated-item {
+  height: 150px;
+  border-bottom: 1px solid #ddd;
+  padding-left: 16px;
+  padding-bottom : 20px;
+  padding-top:20px;
+}
+
 .cal-entry-sponsor-img {
   background: 50% 50% no-repeat;
   border-radius: 50%;
@@ -1353,10 +1376,6 @@ md-list.env-list {
 
 .cal-entry-highlight {
   background: #fbfdb0
-}
-
-.supplemental-toolbar {
-  height: 88px;
 }
 
 /** --- Calendar Picker Styling --- */

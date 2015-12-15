@@ -49,7 +49,7 @@ openApp.config(function($mdThemingProvider) {
  * Since AppCtrl is the top-most parent controller, some useful utility methods are included here to be used
  * by the children controller.
  */
-openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$mdDialog', '$http', '$interval',
+openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$mdDialog', '$http', '$interval', 'BillUtils',
 function($scope, $location, $mdSidenav, $mdDialog, $http, $interval) {
     $scope.header = {text: '', visible: false};
     $scope.activeSession = 2015;
@@ -118,114 +118,6 @@ function($scope, $location, $mdSidenav, $mdDialog, $http, $interval) {
                                 .content("Value '" + errorData.receivedValue +
                                             "' is not a valid for request parameter " + paramName)
                                 .ok('OK'));
-        }
-    }
-}]);
-
-/**
- * Main Menu Directive
- * -------------------
- * Constructs the left navigation menu with collapsible sections. Check out the fancy ink ripples!
- * Usage:
- * <material-menu>
- *     <menu-section title="Title of the section">
- *         <menu-item url="URL of the section item">Title of the menu item</menu-item>
-*          ...
- *     </menu-section>
- * </material-menu>
- */
-openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log', '$location',
-                  function($compile, $rootScope, $mdSidenav, $log, $location) {
-    return {
-        scope: {},    // Isolated scope
-        template:
-        '<nav>' +
-        '  <div ng-repeat="section in menu.sections">' +
-        '    <a ng-class="{active: isSectionSelected(section)}" class="menu-item menu-title md-menu-item"' +
-        '       ng-click="selectSection(section)" md-ink-ripple="#bbb" tab-index="-1"> {{section.title}}' +
-        '    </a>' +
-        '    <md-divider></md-divider> '  +
-        '    <div ng-if="section.items" ng-repeat="item in section.items">' +
-        '      <a ng-class="{active: isItemSelected(item)}" target="{{item.target}}"' +
-        '         class="menu-item menu-sub-item md-menu-item" md-ink-ripple="#bbb" ' +
-        '         ng-show="isSectionSelected(section)" tab-index="-1"' +
-        '         ng-href="{{item.url}}">' +
-        '         <span><i ng-class="item.icon" class="prefix-icon2"></i><span ng-bind="item.title"></span></span>' +
-        '      </a>' +
-        '    </div>' +
-        '  </div>' +
-        '</nav>',
-        restrict: 'E',
-        replace: true,
-        controller : function($scope) {
-            $scope.isSectionSelected = function(section) {
-                return section.active;
-            };
-            $scope.isItemSelected = function(item) {
-                return item.active;
-            };
-            $scope.selectSection = function(section) {
-                deselectMenu(false);
-                section.active = true;
-            };
-            $scope.selectItem = function(item) {
-                deselectMenu(true);
-                item.active = true;
-                $mdSidenav('left').close();
-            };
-
-            function deselectMenu(itemsOnly) {
-                angular.forEach($scope.urlMap, function(s) {
-                    if (itemsOnly) {
-                        s.ref.active = false;
-                    }
-                    else {
-                        s.secRef.active = false;
-                    }
-                });
-            }
-
-            $rootScope.$on('$routeChangeSuccess', function() {
-                $scope.urlMap.some(function(secItem) {
-                    if (secItem.re.test($location.url())) {
-                        $scope.selectSection(secItem.secRef);
-                        $scope.selectItem(secItem.ref);
-                        return true;
-                    }
-                    return false;
-                });
-            });
-        },
-        compile: function compile($elem, attrs, transclude) {
-            return {
-                pre: function preLink(scope, $elem, attrs) {
-                    // The menu object is used to render the nav.
-                    scope.menu = {sections: []};
-                    var $sections = $($elem.context).children('menu-section');
-                    angular.forEach($sections, function(_s) {
-                        var section = {title: _s.title, items: []};
-                        angular.forEach($(_s).children('menu-item'), function(_i) {
-                            var item = {
-                                url: $(_i).attr('url'),
-                                title: $(_i).text(),
-                                icon: $(_i).attr('icon'),
-                                target: $(_i).attr('target')
-                            };
-                            section.items.push(item);
-                        });
-                        scope.menu.sections.push(section);
-                    });
-                    // The url map is used to find route matches when the location changes.
-                    scope.urlMap = [];
-                    angular.forEach(scope.menu.sections, function(section){
-                        angular.forEach(section.items, function(item) {
-                            scope.urlMap.push({isSection: false, url: item.url, re: new RegExp('^' + item.url),
-                                               ref: item, secRef: section});
-                        });
-                    });
-                    scope.urlMap.sort(function(a,b) {return b.url.length - a.url.length});
-                }
-            }
         }
     }
 }]);

@@ -12,7 +12,10 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
 
     $scope.ctxPath = ctxPath;
 
-    $scope.curr = {activeIndex: 2};
+    $scope.curr = {
+        activeIndex: 2,
+        topListIndex: 0
+    };
 
     $scope.pageNames = ['sklerch', 'active-list', 'floor', 'updates'];
 
@@ -41,7 +44,7 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
     /** --- Tab / Header Management --- */
 
     $scope.changeTab = function(pageName) {
-        console.log('changing view to', pageName);
+        console.log('View Change: ', pageName);
         var newIndex = $scope.pageNames.indexOf(pageName);
         if (newIndex >= 0) $scope.curr.activeIndex = newIndex;
     };
@@ -105,6 +108,7 @@ function($scope, $rootScope, $routeParams, $location, $q, $filter, $timeout, Cal
     }
 
     // Scrolls to the bill specified by identifier
+    // TODO
     $scope.scrollToBill = function (identifier) {
         identifier = identifier.toUpperCase();
         var billCalNoPattern = /^\d+$/;
@@ -618,6 +622,12 @@ calendarModule.controller('CalendarBrowseCtrl', ['$scope', '$rootScope', '$route
                                                  '$mdToast', '$mdMedia', 'CalendarIdsApi',
 function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, $mdMedia, CalendarIdsApi) {
 
+    $scope.curr = {
+        prevStart: null,       // Keep track of the last month the user viewed
+        monthHasEvents: false, // Indicates if the current month has any events,
+        startDate: null
+    };
+
     $scope.eventSources = [];
     $scope.calendarConfig = null;
     $scope.calendarIds = {};
@@ -668,14 +678,12 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, $m
     }
 
     function getEvent(calendarId) {
-        var isDesktop = $mdMedia('gt-sm');
-        var title = (isDesktop)
-            ?  // Full detail for desktop
-               'Floor Cal #' + calendarId.calendarNumber + ' - ' + calendarId.floorCalendar.totalEntries + ' Bills\n' +
+        var fitsFull = window.innerWidth > 820;
+        var title = (fitsFull)
+            ? ('Floor Cal #' + calendarId.calendarNumber + ' - ' + calendarId.floorCalendar.totalEntries + ' Bills\n' +
                calendarId.supplementalCalendars.size + ' Supplementals\n' +
-               calendarId.activeLists.size + ' Active Lists'
-            :  // Simple mobile display
-               calendarId.calendarNumber
+               calendarId.activeLists.size + ' Active Lists')
+            : ('Calendar ' + calendarId.calendarNumber);
         return {
             title: title,
             start: calendarId.calDate,
@@ -729,8 +737,19 @@ function($scope, $rootScope, $routeParams, $location, $timeout, $q, $mdToast, $m
 
     // Set the search param to match the currently viewed month
     function viewRenderHandler(view, element) {
-        var monthStart = moment(view.start);
-        $scope.setSearchParam('bdate', monthStart.format('YYYY-MM-DD'), !monthStart.isSame(moment(), 'month'));
+        if (!$scope.curr.prevStart || $scope.curr.prevStart != view.start) {
+            var monthStart = moment(view.start);
+            $scope.setSearchParam('bdate', monthStart.format('YYYY-MM-DD'), !monthStart.isSame(moment(), 'month'));
+            // TODO TODO
+            //$scope.curr.startDate = monthStart;
+            //var hasEvents = $scope.calendarIds[monthStart.year()] &&
+            //                $scope.calendarIds[monthStart.year()].some(function(calInfo) {
+            //                    return moment(calInfo.calDate).month() == monthStart.month();
+            //                });
+            //$scope.curr.monthHasEvents = hasEvents;
+
+        }
+        $scope.curr.prevStart = view.start;
     }
 
     // Configures the full calendar directive.
@@ -860,31 +879,23 @@ function ($scope, $routeParams, $location, $mdToast, UpdatesApi, PaginationModel
     });
 }]);
 
-calendarModule.directive('calendarEntryTable', function() {
+calendarModule.directive('calendarEntryTable', ['BillUtils', function(BillUtils) {
     return {
         scope: {
             year: '=',
-            calEntries: '=calEntries',
+            calEntries: '=',
             getCalBillNumUrl: '&',
             highlightValue: '=',
             sectionType: '@'
         },
         templateUrl: ctxPath + '/partial/content/calendar/calendar-entry-table',
         controller: function($scope) {
+            $scope.billUtils = BillUtils;
             $scope.billPageBaseUrl = ctxPath + '/bills';
             $scope.getCalBillNumUrl = $scope.getCalBillNumUrl();
-            $scope.dynamicCalEntries = {
-                getItemAtIndex: function(index) {
-                    console.log($scope.calEntries);
-                    return $scope.calEntries[index];
-                },
-                getLength: function() {
-                    return $scope.calEntries.length;
-                }
-            };
         }
     };
-});
+}]);
 
 calendarModule.filter('sectionDisplayName', function() {
     var sectionNameMap = {
@@ -895,6 +906,7 @@ calendarModule.filter('sectionDisplayName', function() {
        'THIRD_READING' : 'Third Reading',
        'STARRED_ON_THIRD_READING' : 'Starred on Third Reading'
     };
+
     return function(input) {
         if (sectionNameMap.hasOwnProperty(input)) {
             return sectionNameMap[input];

@@ -88,21 +88,25 @@ module.exports = function(grunt) {
                         '<%= jsSource %>/routes.js',
                         '<%= jsSource %>/api.js',
 
-                        // Content Pages
+                        // Dashboard
                         '<%= jsSource %>/component/content/dashboard.js',
 
-                            // Bills
-                            '<%= jsSource %>/component/content/bill/bill.js',
-                            '<%= jsSource %>/component/content/bill/bill-utils.js',
-                            '<%= jsSource %>/component/content/bill/bill-filters.js',
-                            '<%= jsSource %>/component/content/bill/bill-directives.js',
-                            '<%= jsSource %>/component/content/bill/bill-search-ctrl.js',
-                            '<%= jsSource %>/component/content/bill/bill-updates-ctrl.js',
-                            '<%= jsSource %>/component/content/bill/bill-view-ctrl.js',
+                        // Bills
+                        '<%= jsSource %>/component/content/bill/bill.js',
+                        '<%= jsSource %>/component/content/bill/bill-utils.js',
+                        '<%= jsSource %>/component/content/bill/bill-filters.js',
+                        '<%= jsSource %>/component/content/bill/bill-directives.js',
+                        '<%= jsSource %>/component/content/bill/bill-search-ctrl.js',
+                        '<%= jsSource %>/component/content/bill/bill-updates-ctrl.js',
+                        '<%= jsSource %>/component/content/bill/bill-view-ctrl.js',
+
+                        // Calendars
+                        '<%= jsSource %>/component/content/calendar/calendar.js',
 
                         '<%= jsSource %>/component/content/law.js',
                         '<%= jsSource %>/component/content/agenda.js',
-                        '<%= jsSource %>/component/content/calendar.js',
+
+
                         '<%= jsSource %>/component/content/agenda.js',
                         '<%= jsSource %>/component/content/member.js',
                         '<%= jsSource %>/component/content/transcript.js',

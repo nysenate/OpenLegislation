@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.calendar;
 
+import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.client.view.bill.SimpleBillInfoView;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarEntry;
@@ -7,8 +8,8 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 
 import java.util.Comparator;
 
-public class CalendarEntryView extends SimpleBillInfoView {
-
+public class CalendarEntryView extends BillInfoView
+{
     protected int billCalNo;
 
     public CalendarEntryView(CalendarEntry calendarEntry, BillDataService billDataService) {

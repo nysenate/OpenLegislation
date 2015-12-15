@@ -12,9 +12,9 @@
       <md-tab-body>
         <md-divider></md-divider>
         <md-progress-linear class="md-accent md-hue-1" md-mode="{{(requestsInProgress > 0) ? 'query' : ''}}"></md-progress-linear>
-        <md-card ng-if="pageNames[activeIndex] === 'browse'" ng-controller="CalendarBrowseCtrl" class="content-card">
-         <md-card-content id="calendar-date-picker" ui-calendar="calendarConfig" ng-model="eventSources"></md-card-content>
-        </md-card>
+        <div ng-if="pageNames[activeIndex] === 'browse'" ng-controller="CalendarBrowseCtrl" class="content-card">
+          <div id="calendar-date-picker" ui-calendar="calendarConfig" ng-model="eventSources" class="padding-20"></div>
+        </div>
       </md-tab-body>
     </md-tab>
 
