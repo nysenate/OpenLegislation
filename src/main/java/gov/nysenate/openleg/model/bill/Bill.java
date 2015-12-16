@@ -81,8 +81,10 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** Associated floor calendar ids. */
     protected List<CalendarId> calendars = new ArrayList<>();
 
+    /** Bills that are passed are assigned a chapter number. */
     protected Integer chapterNum;
 
+    /** Year this bill was signed into law. */
     protected Integer chapterYear;
 
     /** --- Constructors --- */

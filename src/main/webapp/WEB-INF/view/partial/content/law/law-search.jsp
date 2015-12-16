@@ -27,7 +27,7 @@
                       <h3>{{law.name}}</h3>
                       <p>{{law.lawType}} | Chapter {{law.chapter}}</p>
                     </div>
-                    <md-divider></md-divider>
+                    <%--<md-divider></md-divider>--%>
                   </md-list-item>
                 </md-list>
                 <div infinite-scroll="keepScrolling()" infinite-scroll-distance="1"></div>

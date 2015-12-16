@@ -37,8 +37,8 @@ pre {
 
 select {
   background: white;
-  border-color: #ddd;
-  padding: 2px;
+  border: 1px solid #ddd;
+  padding: 5px;
 }
 
 hr {
@@ -103,10 +103,23 @@ md-input-container {
   }
 }
 
-// Couldn't get the colors right
+// Couldn't get the colors right on the datepicker
 .md-default-theme.md-hue-2 .md-datepicker-input, .md-hue-2 .md-datepicker-input {
   background: white;
-  color: #444;
+  padding: 5px;
+  margin-left: 0;
+  color: #333;
+}
+.md-default-theme.md-hue-2 .md-datepicker-input-container, .md-hue-2 .md-datepicker-input-container {
+  padding: 0;
+  border: 1px solid #ddd;
+}
+md-datepicker {
+  background: transparent;
+}
+.md-calendar-day-header, .md-calendar-selected-date.md-focus .md-calendar-date-selection-indicator {
+  background: $blue3 !important;
+  color: white !important;
 }
 
 /** --- Transitions --- */
@@ -222,6 +235,10 @@ md-input-container {
 
 .margin-right-10 {
   margin-right: 10px;
+}
+
+.margin-top-16 {
+  margin-top: 16px;
 }
 
 .margin-left-16 {
@@ -685,11 +702,14 @@ ul.pagination {
   }
   .refine-controls {
     padding: 5px 10px 5px 15px;
-    label {
-      margin-top: 8px;
-      margin-bottom: 4px;
+    label, .md-label {
+      padding: 5px;
       font-size: 0.9rem;
       display: block;
+      &.lit {
+        margin-top: 3px;
+        background: #fff6b4;
+      }
     }
     select, input {
       width: 100%;
@@ -699,10 +719,20 @@ ul.pagination {
     }
     md-checkbox, md-switch {
       margin: 10px 2px 0 2px;
+      &.lit {
+        .md-label {
+          margin-top: 3px;
+          background: #fff6b4;
+        }
+      }
     }
   }
 }
 
+.listing-filter {
+  padding: 16px 20px;
+  background: #f5f5f5;
+}
 
 /** --- Landing Page Styles --- */
 
@@ -877,6 +907,7 @@ a.slogan-link {
 
 .bill-ms-container {
   padding: 5px 0;
+  min-width: 256px;
 }
 
 .bill-ms-step {
@@ -969,6 +1000,7 @@ a.slogan-link {
       pre {
         max-height: 300px;
         font-size: 0.9rem;
+        white-space: normal;
       }
       border-bottom: 1px solid #ddd;
       overflow: auto;
@@ -979,7 +1011,7 @@ a.slogan-link {
 .bill-json-iframe {
   border: 0;
   width: 90vw;
-  height: 50vh;
+  height: 80vh;
 }
 
 /** --- Law Page Styles --- */
@@ -1321,6 +1353,20 @@ md-list.env-list {
 
 /** --- Calendar View --- */
 
+.cal-entry-repeat-container {
+  height: 80vh;
+  width: 100%;
+  border: none;
+}
+
+.repeated-item {
+  height: 150px;
+  border-bottom: 1px solid #ddd;
+  padding-left: 16px;
+  padding-bottom : 20px;
+  padding-top:20px;
+}
+
 .cal-entry-sponsor-img {
   background: 50% 50% no-repeat;
   border-radius: 50%;
@@ -1332,14 +1378,28 @@ md-list.env-list {
   background: #fbfdb0
 }
 
-.supplemental-toolbar {
-  height: 88px;
-}
-
 /** --- Calendar Picker Styling --- */
 
-#calendar-date-picker .fc-button-today .fc-button-prev .fc-button-next {
-//  @extend .button;
+.fc-header {
+  .fc-button {
+    background: transparent;
+    border: 0;
+    color: $blue3;
+  }
+}
+
+#calendar-date-picker {
+  .fc-event.session-day {
+    background: #f1f1f1;
+    border: 0;
+    color: $blue3;
+    padding: 3px;
+    &:hover {
+      cursor: pointer;
+      background: $blue3;
+      color: white;
+    }
+  }
 }
 
 #calendar-date-picker div.fc-day-content > div {

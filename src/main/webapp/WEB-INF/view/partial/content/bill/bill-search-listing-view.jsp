@@ -1,9 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<dir-pagination-controls class="text-align-center" pagination-id="bill-search" boundary-links="true" max-size="10"></dir-pagination-controls>
+<dir-pagination-controls class="text-align-center" pagination-id="bill-search" boundary-links="true"
+                         on-page-change="pageChange(newPageNumber)" max-size="10">
+</dir-pagination-controls>
 <md-list>
   <md-list-item dir-paginate="billRes in billSearchResponse.result.items | itemsPerPage: 6"
                 total-items="billSearchResponse.total" current-page="pagination.currPage"
-                ng-init="bill = billRes.result;" pagination-id="bill-search"
+                ng-init="bill = billRes.result; highlights = billRes.highlights;" pagination-id="bill-search"
                 class="margin-bottom-10">
     <a class="result-link"
        ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearchTerm}}&searchPage={{pagination.currPage}}">
@@ -23,7 +25,10 @@
         </div>
         <div flex layout="column" ng-if="bill.status" ng-class="{'margin-top-10': !showTitle}">
           <div flex>
-            <p ng-if="showTitle" class="no-margin text-medium">{{bill.title | limitTo:150}}</p>
+            <p ng-if="showTitle" class="no-margin text-medium">
+              <span ng-if="!highlights.title">{{bill.title | limitTo:150}}</span>
+              <span ng-if="highlights.title" ng-bind-html="highlights.title[0]"></span>
+            </p>
             <p class="no-margin text-medium blue2" ng-if="bill.status.actionDate">
               {{bill.status.actionDate | moment:'MMMM D, YYYY'}} - {{billUtils.getStatusDesc(bill.status)}}
             </p>
@@ -35,4 +40,6 @@
     <md-divider ng-if="!$last"></md-divider>
   </md-list-item>
 </md-list>
-<dir-pagination-controls class="text-align-center" pagination-id="bill-search" boundary-links="true" max-size="10"></dir-pagination-controls>
+<dir-pagination-controls class="text-align-center" pagination-id="bill-search" boundary-links="true"
+                         on-page-change="pageChange(newPageNumber)" max-size="10">
+</dir-pagination-controls>
