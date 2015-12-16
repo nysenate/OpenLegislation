@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.service.auth;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.auth.ApiUserDao;
 import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.model.auth.ApiUserAuthEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
@@ -17,20 +19,19 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheCache;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -110,7 +111,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         logger.info("Warming up API User Cache");
 
         // Feed in all the api users from the database into the cache
-        apiUserDao.getAllUsers().forEach(user -> apiUserCache.put(user.getApiKey(), user));
+        apiUserDao.getAllUsers().forEach(this::cacheApiUser);
     }
 
     @Override
@@ -123,15 +124,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
 
     /** --- ApiUserService Implementation --- */
 
-    /**
-     * This method will be called whenever there is an attempt to register a new user.
-     * The appropriate checks will be made to ensure that a registration will only be successful if the
-     * given email address has not already been sued for registration
-     * @param email The user's submitted email address
-     * @param name The entered name
-     * @param orgName The entered name of the user's organization
-     * @return A new ApiUser object if the registration is successful
-     */
+    /** {@inheritDoc} */
     @Override
     public ApiUser registerNewUser(String email, String name, String orgName) {
         Pattern emailRegex = Pattern.compile("^[a-zA-Z\\d-._]+@[a-zA-Z\\d-._]+.[a-zA-Z]{2,4}$");
@@ -159,56 +152,21 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         return newUser;
     }
 
-    /**
-     * Get an API User from a given email address
-     * @param email The email address of the user being search for.
-     * @return An APIUser if the email is valid
-     */
+    /** {@inheritDoc} */
     @Override
     public ApiUser getUser(String email) {
         return apiUserDao.getApiUserFromEmail(email);
     }
 
-    /**
-     * Check to see if a given Apikey is valid.
-     * If the key belongs to a user, and the user has activated their account
-     * then this method will return true.
-     *
-     * @param apikey The apikey used with the call to the API
-     * @return True if the key is valid and the user has activated their account.
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean validateKey(String apikey) {
-        // hit the cache first
-        ApiUser user = null;
-        user = (apiUserCache.get(apikey) != null) ? (ApiUser) apiUserCache.get(apikey).get() : null;
-
-        // If the user is stored in the cache, then retrieve their information
-        if (user != null) {
-            return user.isAuthenticated();
-
-        } else {
-            // Fetch the user from the database
-            try {
-                user = apiUserDao.getApiUserFromKey(apikey);
-
-            } catch (DataAccessException e) {
-                return false;
-            }
-
-            // Add the user to the cache
-            apiUserCache.put(user.getApiKey(), user);
-            return user.isAuthenticated();
-        }
+        return getUserByKey(apikey)
+                .map(ApiUser::isAuthenticated)
+                .orElse(false);
     }
 
-    /**
-     * Attempt to activate a user based on the provided registration token. If a valid registration
-     * token is indeed supplied, then that user will have their account activated, and their
-     * API Key will be sent to them via email.
-     *
-     * @param registrationToken The supplied registration token.
-     */
+    /** {@inheritDoc} */
     @Override
     public void activateUser(String registrationToken) {
         try {
@@ -216,11 +174,80 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
             user.setActive(true);
             user.setAuthenticated(true);
             apiUserDao.updateUser(user);
+            cacheApiUser(user);
             sendApikeyEmail(user);
             sendNewApiUserNotification(user);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Invalid registration token supplied!");
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ImmutableSet<OpenLegRole> getRoles(String key) {
+        return getUserByKey(key)
+                .map(ApiUser::getGrantedRoles)
+                .orElse(ImmutableSet.of());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void grantRole(String apiKey, OpenLegRole role) {
+        apiUserDao.grantRole(apiKey, role);
+        getCachedApiUser(apiKey).ifPresent(apiUser -> apiUser.addRole(role));
+        eventBus.post(new ApiUserAuthEvictEvent(apiKey));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void revokeRole(String apiKey, OpenLegRole role) {
+        apiUserDao.revokeRole(apiKey, role);
+        getCachedApiUser(apiKey).ifPresent(apiUser -> apiUser.removeRole(role));
+        eventBus.post(new ApiUserAuthEvictEvent(apiKey));
+    }
+
+    /** --- Internal Methods --- */
+
+
+    /***
+     * Inserts the given api user into the cache
+     */
+    private void cacheApiUser(ApiUser apiUser) {
+        if (apiUser != null) {
+            apiUserCache.put(apiUser.getApiKey(), apiUser);
+        }
+    }
+
+    /**
+     * Attempt to get an api user as an optional value
+     * If the user does not exist in the cache, attempt to retrieve the user from the database
+     * Return an empty optional if it is not in the database
+     * @param apiKey String
+     * @return Optional<ApiUser>
+     */
+    private Optional<ApiUser> getUserByKey(String apiKey) {
+        Optional<ApiUser> userOpt = getCachedApiUser(apiKey);
+        if (userOpt.isPresent()) {
+            return userOpt;
+        }
+        try {
+            ApiUser user = apiUserDao.getApiUserFromKey(apiKey);
+            cacheApiUser(user);
+            return Optional.of(user);
+        } catch (EmptyResultDataAccessException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Attempt to get an api user from the cache as an optional value
+     * If no user with the given key exists in the cache, return an empty optional
+     * @param apiKey String
+     * @return Optional<ApiUser>
+     */
+    private Optional<ApiUser> getCachedApiUser(String apiKey) {
+        return Optional.ofNullable(apiUserCache.get(apiKey))
+                .map(valueWrapper -> (ApiUser) valueWrapper.get());
     }
 
     /**
@@ -229,14 +256,14 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
      *
      * @param user The user to send the registration information to
      */
-    public void sendRegistrationEmail(ApiUser user) {
+    private void sendRegistrationEmail(ApiUser user) {
         String message = String.format("Hello %s,\n\n\tThank you for your interest in Open Legislation. " +
-                  "In order to receive your API key you must first activate your account by visiting the link below. " +
-                  "Once you have confirmed your email address, an email will be sent to you containing your API Key.\n\n" +
-                  "Activate your account here:\n%s/%s" +
-                  "\n\n-- NY Senate Development Team", user.getName(), domainUrl + "/register/token", user.getRegistrationToken());
+                "In order to receive your API key you must first activate your account by visiting the link below. " +
+                "Once you have confirmed your email address, an email will be sent to you containing your API Key.\n\n" +
+                "Activate your account here:\n%s/%s" +
+                "\n\n-- NY Senate Development Team", user.getName(), domainUrl + "/register/token", user.getRegistrationToken());
 
-         sendMailService.sendMessage(user.getEmail(), "Open Legislation API Account Registration", message);
+        sendMailService.sendMessage(user.getEmail(), "Open Legislation API Account Registration", message);
     }
 
     /**
@@ -244,16 +271,12 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
      * It is called whenever a user confirms their email address via their registration token.
      * @param user The user to send the API Key to.
      */
-    public void sendApikeyEmail(ApiUser user) {
+    private void sendApikeyEmail(ApiUser user) {
         String message = String.format("Hello %s,\n\n\tThank you for your interest in Open Legislation.\n\n\t" +
                 "Here's your API Key:\n%s\n\n-- NY Senate Development Team", user.getName(), user.getApiKey());
 
         sendMailService.sendMessage(user.getEmail(), "Your Open Legislation API Key", message);
     }
-
-    /**
-     * --- Internal Methods ---
-     */
 
     private void sendNewApiUserNotification(ApiUser user) {
         boolean named = user.getName() != null;

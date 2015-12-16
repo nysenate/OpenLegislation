@@ -2,6 +2,7 @@ package gov.nysenate.openleg.controller.api.base;
 
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.model.auth.ApiKeyLoginToken;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.shiro.SecurityUtils;
@@ -43,10 +44,12 @@ public class ApiAuthFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         Subject subject = SecurityUtils.getSubject();
         if (enabled) {
-            if (ipAddress.matches(filterAddress) || subject.isPermitted("ui:view") || apiUserService.validateKey(key)) {
+            if (ipAddress.matches(filterAddress) || subject.isPermitted("ui:view")) {
                 filterChain.doFilter(servletRequest, servletResponse);
-            }
-            else {
+            } else if (apiUserService.validateKey(key)) {
+                subject.login(new ApiKeyLoginToken(key, ipAddress));
+                filterChain.doFilter(servletRequest, servletResponse);
+            } else {
                 ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_KEY_REQUIRED);
                 response.getWriter().append(OutputUtils.toJson(errorResponse));
                 response.setContentType("application/json");

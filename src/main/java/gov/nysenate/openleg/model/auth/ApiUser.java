@@ -1,8 +1,12 @@
 package gov.nysenate.openleg.model.auth;
 
+import com.google.common.collect.ImmutableSet;
+import gov.nysenate.openleg.service.auth.OpenLegRole;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class will model an API User.
@@ -35,6 +39,9 @@ public class ApiUser implements Serializable
     /** Whether or not this user is active */
     private boolean active;
 
+    /** A list of additional roles granted to this api user */
+    private final Set<OpenLegRole> grantedRoles = new HashSet<>();
+
     /** --- Constructors --- */
 
     public ApiUser(String email) {
@@ -65,6 +72,25 @@ public class ApiUser implements Serializable
      */
     public void generateKey() {
         this.apiKey = RandomStringUtils.randomAlphanumeric(32);
+    }
+
+    /**
+     * Adds a role to the api user's granted roles
+     */
+    public void addRole(OpenLegRole role) {
+        this.grantedRoles.add(role);
+    }
+
+
+    /**
+     * removes a role to the api user's granted roles
+     */
+    public void removeRole(OpenLegRole role) {
+        this.grantedRoles.remove(role);
+    }
+
+    public ImmutableSet<OpenLegRole> getGrantedRoles() {
+        return ImmutableSet.copyOf(grantedRoles);
     }
 
     /** --- Basic Getters/Setters --- */
