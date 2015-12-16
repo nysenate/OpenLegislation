@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div class="content-section" ng-controller="CalendarViewCtrl" ng-init="setHeaderVisible(true)">
     <div ng-if="calendarResponse.success === true">
-      <md-tabs md-selected="curr.activeIndex" class="md-hue-2" md-dynamic-height="true">
+      <md-tabs md-selected="curr.activeIndex" class="md-hue-2" md-dynamic-height="true" md-no-ink>
         <!-- Back to search -->
         <md-tab md-on-select="backToSearch()">
           <md-tab-label ng-if="previousPage == 'search'"><i class="icon-magnifying-glass prefix-icon2"></i>back to search</md-tab-label>
@@ -9,6 +9,7 @@
           <md-tab-label ng-if="previousPage == 'updates'"><i class="icon-flag prefix-icon2"></i>back to updates</md-tab-label>
           <md-tab-label ng-if="!previousPage"><i class="icon-calendar prefix-icon2"></i>browse</md-tab-label>
         </md-tab>
+        <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.state === 'fetching') ? 'query' : ''}}"></md-progress-linear>
 
         <!-- Active Lists -->
         <md-tab label="Active List" md-on-select="setCalendarHeaderText()"
@@ -37,7 +38,8 @@
               <div ng-show="displayedEntries.length > 0" layout-padding>
                 <calendar-entry-table section-type="active-list" cal-entries="displayedEntries" year="year"
                                       highlight-value="highlightValue"
-                                      get-cal-bill-num-url="getCalBillNumUrl">
+                                      get-cal-bill-num-url="getCalBillNumUrl"
+                                      scroll-to="curr.topListIndex[section]">
                 </calendar-entry-table>
               </div>
             </div>
@@ -46,7 +48,10 @@
 
         <!-- Supplemental Calendars -->
 
-        <md-tab label="Floor" md-on-select="setCalendarHeaderText()">
+        <md-tab md-on-select="setCalendarHeaderText()">
+          <md-label>
+            Floor ({{calendarView.supplementalCalendars.size + 1}})
+          </md-label>
           <md-tab-body>
             <md-divider></md-divider>
             <section ng-if="pageNames[curr.activeIndex] === 'floor'" ng-controller="FloorCalendarCtrl">
@@ -65,11 +70,11 @@
                 </div>
               </md-toolbar>
               <div layout-padding>
-                <toggle-panel ng-repeat="(section, entries) in displayedSections" class="content-card"
-                              open="{{openSections[section]}}"
+                <toggle-panel ng-repeat="(section, entries) in displayedSections" class="content-card gray4-bg"
+                              open="{{curr.openSections[section]}}"
                               label="{{section | sectionDisplayName}} - {{entries.length}} Bills">
                   <calendar-entry-table section-type="{{section}}" cal-entries="entries" year="year" highlight-value="highlightValue"
-                                        get-cal-bill-num-url="getCalBillNumUrl">
+                                        get-cal-bill-num-url="getCalBillNumUrl" scroll-to="curr.topListIndex[section]">
                   </calendar-entry-table>
                 </toggle-panel>
               </div>
@@ -81,21 +86,22 @@
         <md-tab label="Updates" md-on-select="setCalendarHeaderText()">
           <md-tab-body>
             <md-divider></md-divider>
-            <section ng-if="pageNames[curr.activeIndex] === 'updates'" ng-controller="CalendarUpdatesCtrl">
-              <md-card class="content-card">
-                <md-content layout="row" layout-sm="column">
-                  <div flex>
-                    <label>Sort By: </label>
-                    <select ng-model="updatesOrder" class="margin-left-10">
-                      <option value="DESC">Newest First</option>
-                      <option value="ASC">Oldest First</option>
-                    </select>
-                  </div>
-                </md-content>
-              </md-card>
-              <md-progress-linear md-mode="indeterminate" ng-if="loadingUpdates"></md-progress-linear>
-              <update-list ng-if="!loadingUpdates" update-response="updateResponse" ng-init="showId=false" show-id="showId"></update-list>
-            </section>
+            <div ng-if="pageNames[curr.activeIndex] === 'updates'"
+                 ng-controller="CalendarUpdatesCtrl">
+              <div layout="row" layout-sm="column" class="padding-20 gray3-bg">
+                <div flex>
+                  <label>Sort By: </label>
+                  <select ng-model="updatesOrder" class="margin-left-10">
+                    <option value="DESC">Newest First</option>
+                    <option value="ASC">Oldest First</option>
+                  </select>
+                </div>
+                </div>
+              <div class="padding-20">
+                <md-progress-linear md-mode="indeterminate" ng-if="loadingUpdates"></md-progress-linear>
+                <update-list ng-if="!loadingUpdates" update-response="updateResponse" ng-init="showId=false" show-id="showId"></update-list>
+              </div>
+              </div>
           </md-tab-body>
         </md-tab>
       </md-tabs>

@@ -58,12 +58,11 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
             // Set the pagination to point to the page specified in the url
             $scope.curr.pagination.currPage = Math.max(parseInt($routeParams['searchPage']) || 1, 1);
             // Set the refine params from the url
-            if (!$scope.getRefineUrlParams($scope.refineUrlParamPrefix)) {
-                // Perform a search to kick things off if there are no refine params.
-                // If there were refine params, a search would've kicked off as a result of a watch.
-                $scope.simpleSearch(false);
-            }
+            $scope.getRefineUrlParams($scope.refineUrlParamPrefix);
+            // Perform a search to kick things off if there are no refine params.
+            $scope.simpleSearch(false);
         };
+
 
         // Performs a search against the API
         $scope.simpleSearch = function(resetPagination) {

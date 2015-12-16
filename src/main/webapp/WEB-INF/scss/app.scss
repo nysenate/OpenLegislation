@@ -77,7 +77,10 @@ md-toolbar {
 md-card {
   &.content-card {
     @extend .md-whiteframe-z0;
-    @extend .white-bg;
+    background: white;
+    &.gray4-bg {
+      @extend .gray4-bg;
+    }
     padding: 0;
     margin: 10px 0;
     &.no-margin {
@@ -289,6 +292,10 @@ md-datepicker {
 
 .no-padding {
   padding: 0;
+}
+
+.no-bottom-padding {
+  padding-bottom: 0;
 }
 
 .padding-left-0 {
@@ -1389,6 +1396,11 @@ md-list.env-list {
 }
 
 #calendar-date-picker {
+  .fc-event.no-session-month {
+    background: white;
+    color: $red1;
+    border: 0;
+  }
   .fc-event.session-day {
     background: #f1f1f1;
     border: 0;
@@ -1399,6 +1411,9 @@ md-list.env-list {
       background: $blue3;
       color: white;
     }
+  }
+  .fc-other-month {
+    background: $gray3;
   }
 }
 

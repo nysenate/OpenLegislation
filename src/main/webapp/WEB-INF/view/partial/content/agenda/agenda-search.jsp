@@ -2,7 +2,7 @@
 
 <section ng-controller="AgendaCtrl">
   <section class="content-section">
-    <md-tabs md-selected="selectedView" md-dynamic-height="false">
+    <md-tabs md-selected="selectedView" class="md-hue-2" md-dynamic-height="true">
       <md-tab>
         <md-tab-label><i class="icon-calendar prefix-icon2"></i>Browse</md-tab-label>
         <md-tab-body>
@@ -146,7 +146,7 @@
         </md-tab-body>
       </md-tab>
       <md-tab>
-        <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
+        <md-tab-label><i class="icon-flow-branch prefix-icon2"></i>Updates</md-tab-label>
         <md-tab-body>
           <md-divider></md-divider>
           <section ng-if="selectedView === 2" ng-controller="AgendaUpdatesCtrl">

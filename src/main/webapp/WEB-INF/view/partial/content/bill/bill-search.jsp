@@ -65,7 +65,7 @@
                   </div>
                 </div>
 
-                <md-card class="content-card">
+                <md-card class="content-card" ng-hide="curr.state === 'searching'">
                   <md-content layout="row" style="padding:0;" class="no-top-margin">
                     <div flex>
                       <bill-search-listing bill-search-response="curr.billSearch.response" bill-search-term="curr.billSearch.term"
@@ -164,7 +164,7 @@
             <div class="gray2-bg" layout-padding>
               <div>
                 <label class="margin-bottom-10">Show bill updates during the following date range</label>
-                <div layout="row" layout-sm="column" class="padding-20 text-medium">
+                <div layout="column" layout-gt-sm="row" layout-align="start center" class="padding-20 text-medium">
                   <div flex>
                     <label>With {{curr.input.type}}</label>
                     <select class="margin-left-10" ng-model="curr.options.type" ng-change="onParamChange()">
@@ -203,7 +203,7 @@
                     </select>
                   </div>
                 </div>
-                <div layout="row" layout-sm="column" layout-align="start center"
+                <div layout="column" layout-gt-sm="row" layout-align="start center"
                      class="padding-20 text-medium">
                   <div flex>
                     <label>From</label>

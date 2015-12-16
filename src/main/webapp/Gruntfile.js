@@ -102,6 +102,12 @@ module.exports = function(grunt) {
 
                         // Calendars
                         '<%= jsSource %>/component/content/calendar/calendar.js',
+                        '<%= jsSource %>/component/content/calendar/calendar-filters.js',
+                        '<%= jsSource %>/component/content/calendar/calendar-directives.js',
+                        '<%= jsSource %>/component/content/calendar/calendar-view-ctrl.js',
+                        '<%= jsSource %>/component/content/calendar/calendar-browse-ctrl.js',
+                        '<%= jsSource %>/component/content/calendar/calendar-search-ctrl.js',
+                        '<%= jsSource %>/component/content/calendar/calendar-updates-ctrl.js',
 
                         '<%= jsSource %>/component/content/law.js',
                         '<%= jsSource %>/component/content/agenda.js',

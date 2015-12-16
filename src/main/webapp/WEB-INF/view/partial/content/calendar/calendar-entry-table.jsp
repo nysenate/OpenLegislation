@@ -3,15 +3,11 @@
     <label class="margin-right-10">Filter calendar listing</label>
     <input type="text" class="padding-5" ng-model="calEntryFilter"/>
   </div>
-  <md-virtual-repeat-container class="cal-entry-repeat-container" md-top-index="topListIndex">
-    <md-list>
-      <md-list-item class="repeated-item" md-virtual-repeat="calEntry in calEntries | filter:calEntryFilter"
-                    data-print-no="{{calEntry.printNo}}" data-cal-no="{{calEntry.billCalNo}}">
+  <md-virtual-repeat-container class="cal-entry-repeat-container white-bg" md-top-index="scrollTo">
+    <div class="repeated-item" md-virtual-repeat="calEntry in calEntries | filter:calEntryFilter" md-item-size="150"
+           data-print-no="{{calEntry.printNo}}" data-cal-no="{{calEntry.billCalNo}}">
         <div flex="none" layout="column" layout-align="start center" layout-gt-sm="row"
              ng-class="{'cal-entry-highlight': calEntry.printNo === highlightValue || calEntry.billCalNo == highlightValue}">
-          <div class="margin-right-10 text-small">
-            {{$index + 1}}
-          </div>
           <div>
             <img class="margin-right-10" ng-if="calEntry.sponsor"
                  ng-src="${ctxPath}/static/img/business_assets/members/mini/{{calEntry.sponsor.member.imgName}}"
@@ -45,7 +41,6 @@
             <milestones milestone-arr="calEntry.milestones" chamber="calEntry.billType.chamber"></milestones>
           </div>
         </div>
-      </md-list-item>
-    </md-list>
+      </div>
   </md-virtual-repeat-container>
 </section>

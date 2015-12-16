@@ -23,7 +23,7 @@
           <div class="bold">{{agenda.totalBillsVotedOn}}</div><span class="text-medium">Bills Voted On</span>
         </div>
       </md-toolbar>
-      <md-tabs md-selected="1" class="margin-top-10" md-dynamic-height="false" md-stretch-tabs="never">
+      <md-tabs md-selected="1" layout-padding class="margin-top-10 md-hue-2" md-dynamic-height="true" md-stretch-tabs="never">
         <md-tab md-on-select="backToSearch()">
           <md-tab-label>
             <span><i class="icon-search prefix-icon2"></i>{{searchTabName}}</span>

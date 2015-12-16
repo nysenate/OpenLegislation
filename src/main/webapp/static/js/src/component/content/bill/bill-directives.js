@@ -47,8 +47,9 @@ billModule.directive('milestones', [function(){
         '<div class="bill-ms-step" ng-class="{\'filled\': milestone.actionDate !== null, ' +
         '\'vetoed\': milestone.statusDesc == \'Vetoed\'}">' +
         '<md-tooltip>{{milestone.statusDesc}}' +
-        '<span ng-if="milestone.actionDate !== null"><br/>On {{milestone.actionDate | moment:\'MMM DD, YYYY\'}}</span>' +
-        '<span ng-if="milestone.committeeName"><br/>{{milestone.committeeName}}</span>' +
+        '<span ng-if="milestone.actionDate">&nbsp;| {{milestone.actionDate | moment:\'MMM DD, YYYY\'}}</span>' +
+        '<span ng-if="milestone.committeeName">&nbsp;| {{milestone.committeeName}}</span>' +
+        '<span ng-if="milestone.billCalNo">&nbsp;| Cal #{{milestone.billCalNo}}</span>' +
         '</md-tooltip></div>' +
         '<div ng-class="{\'bill-ms-line\': $index !== 7}"></div>' +
         '</div>' +
@@ -147,7 +148,9 @@ billModule.directive('billRefineSearchPanel', ['BillUtils', function(BillUtils) 
         controller: function($scope, $element) {
             $scope.params = $scope.params || {};
             $scope.$watchCollection('searchParams', function(n,o) {
-                $scope.onChange($scope.searchParams);
+                if (n != o) {
+                    $scope.onChange($scope.searchParams);
+                }
             });
         }
     }

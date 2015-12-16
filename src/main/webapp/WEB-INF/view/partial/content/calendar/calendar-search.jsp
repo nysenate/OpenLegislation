@@ -11,7 +11,6 @@
       </md-tab-label>
       <md-tab-body>
         <md-divider></md-divider>
-        <md-progress-linear class="md-accent md-hue-1" md-mode="{{(requestsInProgress > 0) ? 'query' : ''}}"></md-progress-linear>
         <div ng-if="pageNames[activeIndex] === 'browse'" ng-controller="CalendarBrowseCtrl" class="content-card">
           <div id="calendar-date-picker" ui-calendar="calendarConfig" ng-model="eventSources" class="padding-20"></div>
         </div>
@@ -27,42 +26,53 @@
       <md-tab-body>
         <md-divider></md-divider>
         <section ng-if="pageNames[activeIndex] === 'search'" ng-controller="CalendarSearchCtrl">
-          <form name="calendar-search-form" class="margin-top-20">
-            <md-tabs md-selected="searchActiveIndex" md-no-bar md-dynamic-height="false">
+          <form name="calendar-search-form" layout-padding class="gray3-bg">
+            <md-tabs md-selected="searchActiveIndex" md-no-ink-bar md-dynamic-height="true">
               <md-tab label="field search">
                 <md-tab-body>
-                  <md-content layout="row" layout-sm="column" class="cal-search-options padding-20">
-                    <select name="year-select" ng-model="searchFields.year" class="margin-right-20"
-                            style="margin-bottom: 30px; margin-top: 20px"
-                            ng-options="year for year in activeYears">
-                      <option value="">All Years</option>
-                    </select>
-                    <div layout="row" style="height: 85px">
-                      <select ng-model="searchFields.fieldName" class="margin-right-10"
-                              style="margin-bottom: 30px; margin-top: 20px"
-                              ng-options="value as label for (value, label) in fieldOptions">
-                      </select>
-                      <md-input-container style="height: 53px" class="margin-right-10">
-                        <label>Field Value</label>
-                        <input type="text" ng-model="searchFields.fieldValue" ng-model-options="{debounce: 300}">
-                      </md-input-container>
+                  <div layout="row" layout-sm="column">
+                    <div class="search-refine-panel">
+                      <div class="refine-controls" layout-gt-xs="row"  layout="column">
+                        <div flex class="margin-right-20">
+                          <label>Year</label>
+                          <select name="year-select" ng-model="searchFields.year" class="margin-right-20"
+                                  ng-options="year for year in activeYears">
+                            <option value="">All Years</option>
+                          </select>
+                        </div>
+                        <div flex class="margin-right-20">
+                          <label>Search By</label>
+                          <select ng-model="searchFields.fieldName" class="margin-right-10"
+                                  ng-options="value as label for (value, label) in fieldOptions">
+                          </select>
+                        </div>
+                        <div flex class="margin-right-20">
+                          <label>Search Value</label>
+                          <input type="text" ng-model="searchFields.fieldValue" ng-model-options="{debounce: 300}">
+                        </div>
+                        <div flex class="margin-right-20">
+                          <label>Sort By</label>
+                          <select ng-model="searchFields.order"
+                                  ng-options="value as label for (value, label) in orderOptions">
+                            <option value="">--</option>
+                          </select>
+                        </div>
+                        <div flex>
+                          <md-checkbox ng-model="searchFields.activeList" ng-disabled="searchFields.fieldName === 'calendarNumber'"
+                                       class="margin-top-20 md-hue-2" style="height: 33px">
+                            Active List Only
+                          </md-checkbox>
+                        </div>
+                      </div>
                     </div>
-                    <select ng-model="searchFields.order" style="margin-bottom: 30px; margin-top: 20px"
-                            ng-options="value as label for (value, label) in orderOptions">
-                      <option value="">-- Sort Order --</option>
-                    </select>
-                    <md-checkbox ng-model="searchFields.activeList" ng-disabled="searchFields.fieldName === 'calendarNumber'"
-                                 class="margin-top-20 md-hue-2" style="height: 33px">
-                      Active List Only
-                    </md-checkbox>
-                  </md-content>
+                  </div>
                 </md-tab-body>
               </md-tab>
               <md-tab label="query search">
                 <md-tab-body>
-                  <md-content class="cal-search-options padding-20" layout="row" layout-sm="column">
+                  <div class="padding-20" layout="row" layout-sm="column">
                     <md-input-container class="md-primary" flex="60">
-                      <label><i class="prefix-icon2 icon-magnifying-glass"></i>Search for calendars</label>
+                      <label><i class="prefix-icon2 icon-magnifying-glass"></i>Advanced Calendar Query Search</label>
                       <input tabindex="1" style="font-size:1.4rem;" name="quick-term"
                              ng-model="searchQuery.term" ng-model-options="{debounce: 300}">
                     </md-input-container>
@@ -71,76 +81,78 @@
                       <input tabindex="2" style="font-size:1.4rem;" name="quick-term"
                              ng-model="searchQuery.sort" ng-model-options="{debounce: 300}">
                     </md-input-container>
-                  </md-content>
+                  </div>
                 </md-tab-body>
               </md-tab>
             </md-tabs>
           </form>
 
           <md-divider></md-divider>
-          <md-subheader ng-show="!searching && searchQuery.term && pagination.totalItems === 0"
-                        class="margin-10 md-warn md-whiteframe-z0">
-            <h4>No search results were found for '{{searchQuery.term}}'</h4>
-          </md-subheader>
-          <md-progress-linear md-mode="indeterminate" ng-show="searching"></md-progress-linear>
+          <div layout-padding>
+            <md-subheader ng-show="!searching && searchQuery.term && pagination.totalItems === 0"
+                          class="margin-10 md-warn md-whiteframe-z0">
+              <h3>No search results were found for '{{searchQuery.term}}'</h3>
+            </md-subheader>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="{{(searching) ? 'query' : ''}}"></md-progress-linear>
 
-          <section ng-show="!searching && searchQuery.term && pagination.totalItems > 0">
-            <md-card class="content-card">
-              <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
-                <div class="margin-5">
-                  {{pagination.totalItems}} calendars were matched.&nbsp;&nbsp;<br hide-gt-sm/>
-                  Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.
+            <div ng-show="!searching && searchQuery.term && pagination.totalItems > 0">
+              <div>
+                <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
+                  <div class="margin-5">
+                    <strong>{{pagination.totalItems}}</strong> calendars were matched.&nbsp;&nbsp;<br hide-gt-sm/>
+                    Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.
+                  </div>
+                  <dir-pagination-controls pagination-id="33" boundary-links="true"></dir-pagination-controls>
                 </div>
-                <dir-pagination-controls pagination-id="33" boundary-links="true"></dir-pagination-controls>
+                <md-content class="no-top-margin">
+                  <md-list>
+                    <a dir-paginate="r in searchResults | itemsPerPage: 6"
+                       total-items="searchResponse.total" current-page="pagination.currPage"
+                       ng-init="cal = r.result" class="result-link" pagination-id="33"
+                       ng-href="{{getCalendarUrl(cal.year, cal.calendarNumber, searchActiveIndex === 0 && ['billCalNo', 'printNo'].indexOf(searchFields.fieldName) >= 0 ? searchFields.fieldValue : null)}}"
+                       ng-click="changeTab(cal.activeLists.size>0 ? 'active-list' : 'floor')">
+
+                      <md-list-item layout-sm="column" layout-align-sm="center start"
+                                    style="cursor: pointer;" >
+                        <div layout-sm="row" layout-align-sm="start end" style="padding:16px;">
+                          <h3 class="no-margin blue3 margin-right-20">
+                            Senate Calendar {{cal.calendarNumber}}
+                            <span hide-gt-sm>&nbsp;</span>
+                          </h3>
+                          <h5 class="no-margin">
+                            {{cal.calDate | moment:'MMMM D, YYYY'}}
+                          </h5>
+                        </div>
+                        <div class="md-tile-content" layout="column">
+                          <div layout-gt-sm="row" layout-align="start end">
+                            <h5 class="no-margin" style="width: 200px">
+                              {{getTotalActiveListBills(cal)}} Total Active List Bills
+                            </h5>
+                            <h5 class="no-margin" hide-sm style="width: 200px">
+                              {{cal.activeLists.size > 0 ? cal.activeLists.size - 1 : 0}} Active List Supplementals
+                            </h5>
+                          </div>
+                          <div layout-gt-sm="row" layout-align="start end">
+                            <h5 class="no-margin" style="width: 200px">
+                              {{getTotalFloorBills(cal)}} Total Floor Bills
+                            </h5>
+                            <h5 class="no-margin" hide-sm style="width: 200px">
+                              {{cal.supplementalCalendars.size}} Floor Supplementals
+                            </h5>
+                          </div>
+                        </div>
+                      </md-list-item>
+
+                      <md-divider hide-gt-sm ng-hide="$last"></md-divider>
+                    </a>
+                  </md-list>
+                </md-content>
               </div>
-              <md-content class="no-top-margin">
-                <md-list>
-                  <a dir-paginate="r in searchResults | itemsPerPage: 6"
-                     total-items="searchResponse.total" current-page="pagination.currPage"
-                     ng-init="cal = r.result" class="result-link" pagination-id="33"
-                     ng-href="{{getCalendarUrl(cal.year, cal.calendarNumber, searchActiveIndex === 0 && ['billCalNo', 'printNo'].indexOf(searchFields.fieldName) >= 0 ? searchFields.fieldValue : null)}}"
-                     ng-click="changeTab(cal.activeLists.size>0 ? 'active-list' : 'floor')">
-
-                    <md-list-item layout-sm="column" layout-align-sm="center start"
-                                  style="cursor: pointer;" >
-                      <div layout-sm="row" layout-align-sm="start end" style="width:180px;padding:16px;">
-                        <h3 class="no-margin blue3">
-                          {{cal.year}} &#35;{{cal.calendarNumber}}
-                          <span hide-gt-sm>&nbsp;</span>
-                        </h3>
-                        <h5 class="no-margin">
-                          {{cal.calDate | moment:'MMMM D'}}
-                        </h5>
-                      </div>
-                      <div class="md-tile-content" layout="column">
-                        <div layout-gt-sm="row" layout-align="start end">
-                          <h5 class="no-margin" style="width: 200px">
-                            {{getTotalActiveListBills(cal)}} Total Active List Bills
-                          </h5>
-                          <h5 class="no-margin" hide-sm style="width: 200px">
-                            {{cal.activeLists.size > 0 ? cal.activeLists.size - 1 : 0}} Active List Supplementals
-                          </h5>
-                        </div>
-                        <div layout-gt-sm="row" layout-align="start end">
-                          <h5 class="no-margin" style="width: 200px">
-                            {{getTotalFloorBills(cal)}} Total Floor Bills
-                          </h5>
-                          <h5 class="no-margin" hide-sm style="width: 200px">
-                            {{cal.supplementalCalendars.size}} Floor Supplementals
-                          </h5>
-                        </div>
-                      </div>
-                    </md-list-item>
-
-                    <md-divider hide-gt-sm ng-hide="$last"></md-divider>
-                  </a>
-                </md-list>
-              </md-content>
-            </md-card>
-          </section>
+            </div>
+          </div>
 
           <!-- Search Documentation -->
-          <section ng-if="searchActiveIndex == 1" class="fade fade-out">
+          <section ng-if="searchActiveIndex == 1" class="fade fade-out padding-20">
             <toggle-panel label="Quick search for Calendars" open="true" extra-classes="content-card">
               <div class="padding-20">
                 <p class="text-medium">Calendars are uniquely identified by their year and a calendar number, which corresponds
@@ -187,55 +199,57 @@
 
     <!-- Calendar Updates -->
     <md-tab md-on-select="setCalendarHeaderText()">
-      <md-tab-label><i class="icon-flag prefix-icon2"></i>Updates</md-tab-label>
+      <md-tab-label><i class="icon-flow-branch prefix-icon2"></i>Updates</md-tab-label>
       <md-tab-body>
         <md-divider></md-divider>
         <section ng-if="pageNames[activeIndex] === 'updates'" ng-controller="CalendarFullUpdatesCtrl">
-          <md-card class="content-card">
-            <md-subheader>Show calendar updates during the following date range</md-subheader>
-            <div class="padding-20 text-medium">
-              <div layout="row">
-                <div flex>
-                  <label class="margin-right-10">From</label>
-                  <input type="datetime-local" class="margin-right-10"
-                         ng-model="updateOptions.fromDateTime" ng-model-options="{debounce: 300}">
-                </div>
-                <div flex>
-                  <label class="margin-right-10">To</label>
-                  <input type="datetime-local" class="margin-right-10"
-                         ng-model="updateOptions.toDateTime" ng-model-options="{debounce: 300}">
-                </div>
-              </div>
-            </div>
-            <md-divider></md-divider>
-            <div style="padding-left:20px" class="text-medium">
-              <div layout="row" layout-align="start center">
+          <div class="gray2-bg padding-20 no-bottom-padding">
+            <label class="margin-bottom-20">Show calendar updates during the following date range</label>
+            <div class="text-medium padding-20">
+              <div layout="row" class="margin-bottom-20 text-medium" layout-align="center center">
                 <div flex>
                   <label class="margin-right-10">Using</label>
-                  <md-select ng-model="updateOptions.type" class="no-top-margin margin-right-20">
-                    <md-select-label>{{updateOptions.type=="processed" ? "Processed Date" : "Published Date"}}</md-select-label>
-                    <md-option value="processed">Processed Date</md-option>
-                    <md-option value="published">Published Date</md-option>
-                  </md-select>
+                  <select ng-model="updateOptions.type" class="no-top-margin margin-right-20">
+                    <option value="processed">Processed Date</option>
+                    <option value="published">Published Date</option>
+                  </select>
                 </div>
                 <div flex>
                   <label class="margin-right-10">Sort</label>
-                  <md-select ng-model="updateOptions.order" class="no-top-margin margin-right-20">
-                    <md-select-label>{{updateOptions.order=="ASC" ? "Oldest First" : "Newest First"}}</md-select-label>
-                    <md-option value="ASC">Oldest First</md-option>
-                    <md-option value="DESC">Newest First</md-option>
-                  </md-select>
+                  <select ng-model="updateOptions.order" class="no-top-margin margin-right-20">
+                    <option value="ASC">Oldest First</option>
+                    <option value="DESC">Newest First</option>
+                  </select>
                 </div>
                 <div flex>
-                  <md-checkbox class="md-accent md-hue-1" ng-model="updateOptions.detail" aria-label="detaail">Show Detail</md-checkbox>
+                  <md-checkbox class="md-accent md-hue-3 no-bottom-margin" ng-model="updateOptions.detail" aria-label="detail">
+                    Show Detail
+                  </md-checkbox>
+                </div>
+              </div>
+              <div layout="row">
+                <div flex>
+                  <label class="margin-right-10">From</label>
+                  <md-datepicker class="margin-right-10" md-max-date="updateOptions.toDateTime"
+                         ng-model="updateOptions.fromDateTime" ng-model-options="{debounce: 300}">
+                  </md-datepicker>
+                </div>
+                <div flex>
+                  <label class="margin-right-10">To</label>
+                  <md-datepicker class="margin-right-10"
+                         ng-model="updateOptions.toDateTime" ng-model-options="{debounce: 300}">
+                  </md-datepicker>
                 </div>
               </div>
             </div>
-          </md-card>
-          <md-progress-linear md-mode="indeterminate" ng-show="loadingUpdates"></md-progress-linear>
-          <update-list class="error-toast-parent" ng-show="!loadingUpdates"
-                       update-response="updateResponse" pagination="pagination" show-details="updateOptions.detail"></update-list>
-        </section>
+          </div>
+          <md-progress-linear class="md-accent md-hue-1" md-mode="{{(loadingUpdates) ? 'query' : ''}}"></md-progress-linear>
+          <div class="padding-20">
+            <update-list class="error-toast-parent" ng-show="!loadingUpdates"
+                         update-response="updateResponse" pagination="pagination" show-details="updateOptions.detail">
+            </update-list>
+          </div>
+          </section>
       </md-tab-body>
     </md-tab>
   </md-tabs>
