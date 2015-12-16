@@ -4386,6 +4386,61 @@ COMMENT ON COLUMN apiuser.reg_token IS 'The registration token for this user';
 
 
 --
+-- Name: apiuser_roles; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE apiuser_roles (
+    apikey character varying(32) NOT NULL,
+    role text NOT NULL,
+    id integer NOT NULL
+);
+
+
+ALTER TABLE apiuser_roles OWNER TO postgres;
+
+--
+-- Name: TABLE apiuser_roles; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE apiuser_roles IS 'Explicitly grants roles to certain api users';
+
+
+--
+-- Name: COLUMN apiuser_roles.apikey; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN apiuser_roles.apikey IS 'API key of the user that is granted this role';
+
+
+--
+-- Name: COLUMN apiuser_roles.role; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN apiuser_roles.role IS 'The granted role';
+
+
+--
+-- Name: apiuser_roles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE apiuser_roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE apiuser_roles_id_seq OWNER TO postgres;
+
+--
+-- Name: apiuser_roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE apiuser_roles_id_seq OWNED BY apiuser_roles.id;
+
+
+--
 -- Name: member; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -4920,6 +4975,13 @@ ALTER TABLE ONLY spotcheck_report ALTER COLUMN id SET DEFAULT nextval('spotcheck
 
 
 SET search_path = public, pg_catalog;
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY apiuser_roles ALTER COLUMN id SET DEFAULT nextval('apiuser_roles_id_seq'::regclass);
+
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
@@ -5734,6 +5796,22 @@ ALTER TABLE ONLY apiuser
 
 ALTER TABLE ONLY apiuser
     ADD CONSTRAINT apiuser_pkey PRIMARY KEY (apikey);
+
+
+--
+-- Name: apiuser_roles_apikey_role_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY apiuser_roles
+    ADD CONSTRAINT apiuser_roles_apikey_role_key UNIQUE (apikey, role);
+
+
+--
+-- Name: apiuser_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY apiuser_roles
+    ADD CONSTRAINT apiuser_roles_pkey PRIMARY KEY (id);
 
 
 --
@@ -6940,6 +7018,14 @@ ALTER TABLE ONLY transcript
 
 
 SET search_path = public, pg_catalog;
+
+--
+-- Name: apiuser_roles_apikey_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY apiuser_roles
+    ADD CONSTRAINT apiuser_roles_apikey_fkey FOREIGN KEY (apikey) REFERENCES apiuser(apikey);
+
 
 --
 -- Name: member_person_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
