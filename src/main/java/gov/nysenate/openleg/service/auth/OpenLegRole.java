@@ -16,7 +16,9 @@ public enum OpenLegRole
     MASTER_ADMIN(Collections.singletonList("*")),
     READONLY_ADMIN(Arrays.asList("admin:view", "ui:view")),
     INTERNAL_USER(Arrays.asList("ui:view")),
-    API_USER(Arrays.asList("ui:view"));
+    API_USER(Arrays.asList("ui:view")),
+    SEN_SITE_API_USER(Collections.singletonList("senatesite:*:*"))
+    ;
 
     private List<String> permissions;
     private List<Permission> wildcardPermissions;
@@ -25,7 +27,7 @@ public enum OpenLegRole
         this.permissions = permissions;
         this.wildcardPermissions =
             this.permissions.stream()
-                .map(p -> new WildcardPermission(p))
+                .map(WildcardPermission::new)
                 .collect(Collectors.toList());
     }
 

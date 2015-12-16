@@ -1,19 +1,28 @@
 package gov.nysenate.openleg.service.auth;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.model.auth.ApiKeyLoginToken;
+import gov.nysenate.openleg.model.auth.ApiUserAuthEvictEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.cache.Cache;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
@@ -35,8 +44,15 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
 
     private static final CredentialsMatcher apiCredentialsMatcher = new ApiCredentialsMatcher();
 
-    @Autowired
-    private ApiUserService apiUserService;
+    @Autowired private ApiUserService apiUserService;
+
+    @Autowired private EventBus eventBus;
+
+    @Override
+    public void onInit() {
+        super.onInit();
+        eventBus.register(this);
+    }
 
     /**
      * Check to see if the API Key exists. If it does return the AuthenticationInfo.
@@ -79,12 +95,33 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         Collection principalCollection = principals.fromRealm(getName());
         if (!principalCollection.isEmpty()) {
-            SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-            logger.info("Assigning API USER role to {}", principalCollection.iterator().next().toString());
-            info.addRole(OpenLegRole.API_USER.name());
-            return info;
+            SimpleAuthorizationInfo authInfo = new SimpleAuthorizationInfo();
+            String apiKey = principalCollection.iterator().next().toString();
+            logger.info("Assigning API_USER role to {}", apiKey);
+            authInfo.addRole(OpenLegRole.API_USER.name());
+
+            // Add any explicitly defined roles
+            apiUserService.getRoles(apiKey).stream()
+                    .map(OpenLegRole::name)
+                    .peek(role -> logger.info("Assigning role {} to api user: {}", role, apiKey))
+                    .forEach(authInfo::addRole);
+
+            return authInfo;
         }
         return null;
+    }
+
+    @Subscribe
+    public void handleApiUserAuthEvictEvent(ApiUserAuthEvictEvent e) {
+        this.clearAuthForKey(e.getApiKey());
+    }
+
+    protected void clearAuthForKey(String apiKey) {
+        Cache<Object, AuthorizationInfo> authCache = getAuthorizationCache();
+        List<Object> keyList = authCache.keys().stream()
+                .filter(principals -> StringUtils.equals(Objects.toString(principals), apiKey))
+                .collect(Collectors.toList());
+        keyList.forEach(authCache::remove);
     }
 
     @Override

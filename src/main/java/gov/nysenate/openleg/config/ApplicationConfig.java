@@ -109,6 +109,7 @@ public class ApplicationConfig implements CachingConfigurer
             return tc;
         }
         catch (ElasticsearchException ex) {
+            logger.error("Error while initializing elasticsearch client:\n" + ExceptionUtils.getStackTrace(ex));
             logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
                     elasticSearchCluster, elasticSearchHost, elasticSearchPort);
             logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());

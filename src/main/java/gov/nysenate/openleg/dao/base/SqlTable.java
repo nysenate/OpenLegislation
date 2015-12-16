@@ -31,6 +31,7 @@ public enum SqlTable
     API_REQUEST                  ("request"),
     API_RESPONSE                 ("response"),
     API_USER                     ("apiuser"),
+    API_USER_ROLE                ("apiuser_roles"),
 
     BILL                         ("bill"),
     BILL_AMENDMENT               ("bill_amendment"),
