@@ -5,7 +5,7 @@
     <md-tabs class="md-hue-2" md-selected="selectedView" md-dynamic-height="true">
       <md-tab md-on-select="backToListings()">
         <md-tab-label>
-          <i class="icon-list prefix-icon2"></i>Listings
+          <i class="icon-back prefix-icon2"></i>Back
         </md-tab-label>
       </md-tab>
       <md-tab label="{{curr.lawId}} Directory">
@@ -20,15 +20,21 @@
               <label class="gray10 text-medium">Navigate by section number</label>
               <md-autocomplete class="margin-top-10 margin-bottom-10 white-bg"
                                md-selected-item="selectedItem" md-search-text="filterText"
-                               md-items="item in getFilterResults(filterText)" md-no-cache="true"
+                               md-item-text="item.result.docLevelId" md-items="item in getFilterResults(filterText)" md-no-cache="true"
                                placeholder="e.g 32.01" md-autoselect
                                md-selected-item-change="navigateToLawDoc(item.result)" md-delay="50">
-                <span><strong>{{item.result.docType}} {{item.result.docLevelId}}</strong> {{item.result.title}}</span>
+                <md-item-template>
+                  <span md-highlight-text="filterText">
+                    {{item.result.docType}} {{item.result.docLevelId}} - {{item.result.title}}</span>
+                  </span>
+                </md-item-template>
+                <md-not-found>
+                  No matches found.
+                </md-not-found>
               </md-autocomplete>
             </div>
           </div>
           <md-divider></md-divider>
-          <md-progress-linear class="md-accent md-hue-1" md-mode="{{(loading) ? 'query' : ''}}"></md-progress-linear>
           <div style="position:fixed;top:300px;right: 100px;z-index: 100" class="padding-20" ng-show="loading">
             <md-progress-circular md-mode="indeterminate"></md-progress-circular>
           </div>
@@ -127,18 +133,16 @@
       <md-tab label="{{curr.lawId}} Updates" md-on-select="getUpdates()">
         <md-tab-body>
           <md-divider></md-divider>
-          <md-card class="content-card">
-            <md-content layout="row" layout-sm="column">
-              <div flex>
-                <label>Sort By: </label>
-                <select ng-model="curr.updateOrder" ng-change="getUpdates()" class="margin-left-10">
-                  <option value="desc">Newest First</option>
-                  <option value="asc">Oldest First</option>
-                </select>
-              </div>
-            </md-content>
-          </md-card>
-          <update-list update-response="updatesResponse" pagination="updatesPagination" show-details="true"></update-list>
+          <div class="padding-20 gray3-bg">
+            <label>Sort By: </label>
+            <select ng-model="curr.updateOrder" ng-change="getUpdates()" class="margin-left-10">
+              <option value="desc">Newest First</option>
+              <option value="asc">Oldest First</option>
+            </select>
+          </div>
+          <div class="padding-20">
+            <update-list update-response="updatesResponse" pagination="updatesPagination" show-details="true"></update-list>
+          </div>
         </md-tab-body>
       </md-tab>
     </md-tabs>

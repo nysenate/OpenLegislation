@@ -119,7 +119,10 @@ module.exports = function(grunt) {
                         '<%= jsSource %>/component/content/agenda/agenda-directives.js',
 
                         // Laws
-                        '<%= jsSource %>/component/content/law.js',
+                        '<%= jsSource %>/component/content/law/law.js',
+                        '<%= jsSource %>/component/content/law/law-search-ctrl.js',
+                        '<%= jsSource %>/component/content/law/law-updates-ctrl.js',
+                        '<%= jsSource %>/component/content/law/law-view-ctrl.js',
 
                         '<%= jsSource %>/component/content/member.js',
                         '<%= jsSource %>/component/content/transcript.js',
