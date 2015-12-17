@@ -58,7 +58,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         /** --- Home Page --- */
 
         .otherwise({
-            templateUrl: ctxPath + '/partial/home/landing'
+            redirectTo: ctxPath + '/bills'
         });
 
     $locationProvider.html5Mode(true);

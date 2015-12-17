@@ -8,24 +8,15 @@
 
 <div layout-gt-sm="row" layout="column" class="search-refine-panel">
   <div flex="25" class="refine-controls margin-right-20">
-    <label for="refine_session" ng-class="{lit: searchParams.session}">Session</label>
-    <select id="refine_session" name="session" ng-model="searchParams.session">
-      <option value="">All Sessions</option>
-      <option value="2015">2015</option>
-      <option value="2013">2013</option>
-      <option value="2011">2011</option>
-      <option value="2009">2009</option>
-    </select>
-
     <label for="refine_chamber" ng-class="{lit: searchParams.chamber}">Chamber</label>
     <select id="refine_chamber" ng-model="searchParams.chamber">
       <option value="">Any</option><option value="SENATE">Senate</option><option value="ASSEMBLY">Assembly</option>
     </select>
 
-    <label for="refine_type" ng-class="{lit: searchParams.isRes}">Type</label>
+    <label for="refine_type" ng-class="{lit: searchParams.isRes}">Bill/Resolution</label>
     <select id="refine_type" name="isRes" ng-model="searchParams.isRes">
       <option value="">Any</option>
-      <option value="false">Bills</option>
+      <option value="false">Bill</option>
       <option value="true">Resolution</option>
     </select>
 

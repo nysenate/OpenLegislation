@@ -10,6 +10,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
             pagination: angular.extend({}, PaginationModel, { itemsPerPage: 6 }),
             billSearch: {
                 term: $routeParams['search'] || '',
+                session: $routeParams['session'] || '2015',
                 refine: {},
                 isRefined: false,
                 sort: $routeParams['sort'] || '_score:desc,session:desc',
@@ -35,7 +36,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
             lawSection: "amendments.\\*.lawSection",
             memo: "amendments.\\*.memo",
             printNo: "printNo",
-            session: "session",
+            //milestones: "milestones.size",
             sponsor: "sponsor.member.memberId",
             status: "status.statusType",
             title: "title"
@@ -76,6 +77,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
                 }
                 var query = $scope.buildRefinedQuery(term);
                 $scope.curr.billSearch.response = BillSearch.get({
+                        session: $scope.curr.billSearch.session,
                         term: query, sort: $scope.curr.billSearch.sort, limit: $scope.curr.pagination.getLimit(),
                         offset: $scope.curr.pagination.getOffset()},
                     function() {
@@ -178,6 +180,12 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
         // Trigger a search and update the url when the sort field is changed.
         $scope.sortChanged = function() {
             $scope.setSearchParam('sort', $scope.curr.billSearch.sort);
+            $scope.simpleSearch(true);
+        };
+
+        // Trigger a search and update the url when the session field is changed.
+        $scope.sessionChanged = function() {
+            $scope.setSearchParam('session', $scope.curr.billSearch.session);
             $scope.simpleSearch(true);
         };
 

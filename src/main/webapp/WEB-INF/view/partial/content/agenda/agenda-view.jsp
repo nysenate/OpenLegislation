@@ -1,25 +1,25 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <section ng-controller="AgendaCtrl">
   <section class="content-section" ng-controller="AgendaViewCtrl">
-    <md-progress-linear ng-if="curr.loading" md-mode="indeterminate"></md-progress-linear>
+    <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.loading) ? 'query' : ''}}"></md-progress-linear>
     <section ng-if="response.success === true">
       <md-toolbar class="md-toolbar-tools md-tall" layout="row">
-        <div flex-gt-sm="33" flex-sm="100">
+        <div flex-gt-xs="33" flex-xs="100">
           <div class="bold text-large">
             <i class="icon-calendar prefix-icon2"></i>Week of {{agenda.weekOf | moment:'MMM Do'}}
           </div>
           <span class="text-medium">Published {{agenda.publishedDateTime | moment:'MM/DD/YYYY h:mm:ss A'}}</span>
         </div>
-        <div hide-sm flex class="text-align-center" style="border-right: 1px solid #eee;">
+        <div hide-xs flex class="text-align-center" style="border-right: 1px solid #eee;">
           <div class="bold">{{agenda.totalAddendum}}</div>
           <span class="text-medium">Addenda</span></div>
-        <div hide-sm flex class="text-align-center" style="border-right: 1px solid #eee;">
+        <div hide-xs flex class="text-align-center" style="border-right: 1px solid #eee;">
           <div class="bold">{{agenda.totalCommittees}}</div><span class="text-medium">Committee(s)</span>
         </div>
-        <div hide-sm flex class="text-align-center" style="border-right: 1px solid #eee;">
+        <div hide-xs flex class="text-align-center" style="border-right: 1px solid #eee;">
           <div class="bold">{{agenda.totalBillsConsidered}}</div><span class="text-medium">Bills on Agenda</span>
         </div>
-        <div hide-sm flex class="text-align-center">
+        <div hide-xs flex class="text-align-center">
           <div class="bold">{{agenda.totalBillsVotedOn}}</div><span class="text-medium">Bills Voted On</span>
         </div>
       </md-toolbar>
@@ -47,8 +47,8 @@
                     <span ng-if="addn.addendumId === ''">Initial&nbsp;</span>Addendum {{addn.addendumId}}
                   </p>
                   <md-divider></md-divider>
-                  <section class="padding-20">
-                    <div layout="row" layout-sm="column">
+                  <section>
+                    <div layout-gt-sm="row" layout="column">
                       <md-card flex class="content-card no-margin">
                         <md-subheader>Meeting Information</md-subheader>
                         <md-card-content class="text-medium">
@@ -69,43 +69,38 @@
                               <div class="md-tile-content" style="padding:10px;">
                                 {{senator.member.fullName}} ({{senator.party}}) - {{senator.attend}}
                               </div>
-                              <md-divider></md-divider>
                             </md-list-item>
                           </md-list>
                         </md-content>
                       </md-card>
                     </div>
                     <toggle-panel class="margin-top-10 no-margin content-card" ng-if="addn.bills.size > 0" open="false"
-                                  class="content-card no-margin" label="Bills added to the Agenda ({{addn.bills.size}})">
-                      <md-content style="max-height:500px;">
-                        <md-list>
-                          <a id="{{bill.billId.basePrintNo}}-{{bill.billId.session}}" class="result-link"
-                             ng-repeat="bill in addn.bills.items"
-                             ng-href="${ctxPath}/bills/{{bill.billId.session}}/{{bill.billId.basePrintNo}}">
-                            <md-list-item class="md-3-line" style="cursor: pointer;">
-                              <div class="md-list-item-text" ng-init="billVote = votes[bill.billId.basePrintNo][comm.committeeId.name]">
-                                <h3>
-                                  <span class="blue3 no-margin bold">{{bill.billId.printNo}} - {{bill.billId.session}}</span>
-                                  <span class="margin-left-20">{{bill.billInfo.sponsor.member.fullName}}</span>
-                                </h3>
-                                <p class="text-medium" ng-if="!highlights.title">{{bill.billInfo.title}}</p>
-                                <p style="color: #43ac6a" class="no-margin capitalize">
-                                  Votes:
-                                    <span class="blue4"
-                                          ng-repeat="(type, vote) in billVote.vote.memberVotes.items">
-                                      {{type}} ({{vote.size}})
-                                    </span>
-                                    <span ng-hide="billVote">No Vote Taken On Bill</span>
-                                </p>
-                                <p>
-                                  <span ng-show="billVote.action">Action: {{billVote.action | agendaActionFilter}}</span>
-                                </p>
-                                <md-divider></md-divider>
-                              </div>
-                            </md-list-item>
-                          </a>
-                        </md-list>
-                      </md-content>
+                                  label="Bills added to the Agenda ({{addn.bills.size}})">
+                      <%--<md-content style="max-height:500px;">--%>
+                        <%--<md-list>--%>
+                          <%--<a id="{{bill.billId.basePrintNo}}-{{bill.billId.session}}" class="result-link"--%>
+                             <%--ng-repeat="bill in addn.bills.items"--%>
+                             <%--ng-href="${ctxPath}/bills/{{bill.billId.session}}/{{bill.billId.basePrintNo}}">--%>
+                            <%--<md-list-item class="md-3-line" style="cursor: pointer;">--%>
+                              <%--<div class="md-list-item-text" ng-init="billVote = votes[bill.billId.basePrintNo][comm.committeeId.name]">--%>
+                                <%--<h3>--%>
+                                  <%--<span class="blue3 no-margin bold">{{bill.billId.printNo}} - {{bill.billId.session}}</span>--%>
+                                  <%--<span class="margin-left-20">{{bill.billInfo.sponsor.member.fullName}}</span>--%>
+                                <%--</h3>--%>
+                                <%--<p class="text-medium" ng-if="!highlights.title">{{bill.billInfo.title}}</p>--%>
+
+                                <%--<p>--%>
+                                  <%--<span ng-show="billVote.action">Action: {{billVote.action | agendaActionFilter}}</span>--%>
+                                <%--</p>--%>
+                                <%--<md-divider></md-divider>--%>
+                              <%--</div>--%>
+                            <%--</md-list-item>--%>
+                          <%--</a>--%>
+                        <%--</md-list>--%>
+                      <%--</md-content>--%>
+                      <agenda-bill-listing agenda-bills="addn.bills.items" votes="votes" committee="comm" show-title="true"
+                                           show-img="false">
+                      </agenda-bill-listing>
                     </toggle-panel>
                   </section>
                 </section>
@@ -116,7 +111,7 @@
         <md-tab label="Updates" md-on-select="getUpdates()">
           <md-tab-body>
             <md-card class="content-card">
-              <md-content layout="row" layout-sm="column">
+              <md-content layout-gt-sm="row" layout="column">
                 <div flex>
                   <label>Sort By: </label>
                   <select ng-model="curr.updateOrder" ng-change="getUpdates()" class="margin-left-10">

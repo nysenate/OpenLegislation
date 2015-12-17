@@ -39,19 +39,21 @@
             </div>
             <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.state === 'searching') ? 'query' : ''}}"></md-progress-linear>
             <div layout-padding>
-              <md-subheader ng-show="curr.state === 'searched' && curr.pagination.totalItems === 0"
-                            class="margin-10 md-warn">
-                <h3>No search results were found
-                  <span ng-show="curr.billSearch.isRefined"> with the advanced search filters you entered.</span>
-                </h3>
-                <h3 ng-show="curr.billSearch.error">{{curr.billSearch.error.message}}</h3>
-              </md-subheader>
-
-              <div ng-show="curr.pagination.totalItems > 0">
+              <div>
                 <div class="subheader" layout="column" layout-gt-sm="row" layout-align="space-between center">
                   <div flex>
                     <h3>{{curr.pagination.totalItems}} <span class="text-normal">bills were found.</span></h3>
                   </div>
+                  <div class="margin-right-20">
+                    <label class="bold margin-right-10" for="filter-session">Session</label>
+                    <select id="filter-session" name="session" ng-model="curr.billSearch.session" ng-change="sessionChanged()">
+                      <option value="">All Sessions</option>
+                      <option value="2015">2015</option>
+                      <option value="2013">2013</option>
+                      <option value="2011">2011</option>
+                      <option value="2009">2009</option>
+                    </select>
+                    </div>
                   <div>
                     <label class="bold margin-right-10" for="sort-by-select">Sort By</label>
                     <select id="sort-by-select" ng-model="curr.billSearch.sort" ng-change="sortChanged()">
@@ -64,8 +66,15 @@
                     </select>
                   </div>
                 </div>
+                <md-subheader ng-show="curr.state === 'searched' && curr.pagination.totalItems === 0"
+                              class="margin-10 md-warn">
+                  <h3>No search results were found
+                    <span ng-show="curr.billSearch.isRefined"> with the advanced search filters you entered.</span>
+                  </h3>
+                  <h3 ng-show="curr.billSearch.error">{{curr.billSearch.error.message}}</h3>
+                </md-subheader>
 
-                <md-card class="content-card" ng-hide="curr.state === 'searching'">
+                <md-card ng-show="curr.pagination.totalItems > 0" class="content-card" ng-hide="curr.state === 'searching'">
                   <md-content layout="row" style="padding:0;" class="no-top-margin">
                     <div flex>
                       <bill-search-listing bill-search-response="curr.billSearch.response" bill-search-term="curr.billSearch.term"

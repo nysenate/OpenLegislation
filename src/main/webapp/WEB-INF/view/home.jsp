@@ -44,7 +44,7 @@
       <md-content class="left-nav-menu">
         <material-menu>
           <menu-section title="Explore">
-            <menu-item url="${ctxPath}/" icon="icon-home">Dashboard</menu-item>
+            <%--<menu-item url="${ctxPath}/" icon="icon-home">Dashboard</menu-item>--%>
             <menu-item url="${ctxPath}/calendars" icon="icon-calendar">Senate Calendars</menu-item>
             <menu-item url="${ctxPath}/agendas" icon="icon-megaphone">Senate Agendas / Meetings</menu-item>
             <menu-item url="${ctxPath}/bills" icon="icon-documents">Bills and Resolutions</menu-item>

@@ -12,7 +12,8 @@ apiModule.factory('BillListingApi', ['$resource', function($resource) {
 }]);
 
 apiModule.factory('BillSearchApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/bills/search/?term=:term&sort=:sort&limit=:limit&offset=:offset', {
+    return $resource(apiPath + '/bills/:session/search/?term=:term&sort=:sort&limit=:limit&offset=:offset', {
+        session: '@session',
         term: '@term',
         sort: '@sort',
         limit: '@limit',
@@ -98,6 +99,54 @@ apiModule.factory('CalendarFullUpdatesApi', ['$resource', function ($resource) {
     return $resource(apiPath + '/calendars/updates/:fromDateTime/:toDateTime/', {
         fromDateTime: '@fromDateTime', toDateTime: '@toDateTime'
     });
+}]);
+
+/** --- Agenda API --- */
+
+apiModule.factory('AgendaListingApi', ['$resource', function($resource){
+    return $resource(apiPath + '/agendas/:year?sort=:sort&limit=:limit&offset=:offset', {
+        year: '@year',
+        sort: '@sort',
+        limit: '@limit',
+        offset: '@offset'
+    });
+}]);
+
+apiModule.factory('AgendaMeetingApi', ['$resource', function($resource){
+    return $resource(apiPath + '/agendas/meetings/:from/:to', {
+        from: '@from',
+        to: '@to'
+    });
+}]);
+
+apiModule.factory('AgendaSearchApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/agendas/search?term=:term&sort=:sort&limit=:limit&offset=:offset', {
+        term: '@term',
+        sort: '@sort',
+        limit: '@limit',
+        offset: '@offset'
+    });
+}]);
+
+apiModule.factory('AgendaGetApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/agendas/:year/:agendaNo/', {
+        year: '@year',
+        agendaNo: '@agendaNo'
+    });
+}]);
+
+apiModule.factory('AgendaUpdatesApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/agendas/:year/:agendaNo/updates', {
+        year: '@year',
+        agendaNo: '@agendaNo'
+    });
+}]);
+
+apiModule.factory('AgendaAggUpdatesApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/agendas/updates/:from/:to', {
+        from: '@from',
+        to: '@to'
+    })
 }]);
 
 /** --- Law API --- */

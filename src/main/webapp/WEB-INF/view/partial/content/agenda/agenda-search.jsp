@@ -11,36 +11,6 @@
             <p class="text-medium margin-left-10 gray10">
               <i class="prefix-icon2 icon-info"></i>Repeated meetings typically have notes associated with them to indicate changes to the time/location.
             </p>
-            <md-card class="content-card">
-              <md-content layout="row">
-                <div flex>
-                  <label>Select month/year: </label>
-                  <select ng-model="curr.month" ng-change="updateSelectedDate()" class="margin-left-10">
-                    <option value="0">January</option>
-                    <option value="1">February</option>
-                    <option value="2">March</option>
-                    <option value="3">Apr</option>
-                    <option value="4">May</option>
-                    <option value="5">June</option>
-                    <option value="6">July</option>
-                    <option value="7">August</option>
-                    <option value="8">September</option>
-                    <option value="9">October</option>
-                    <option value="10">November</option>
-                    <option value="11">December</option>
-                  </select>
-                  <select ng-model="curr.year" ng-change="updateSelectedDate()" class="margin-left-10">
-                    <option>2015</option>
-                    <option>2014</option>
-                    <option>2013</option>
-                    <option>2012</option>
-                    <option>2011</option>
-                    <option>2010</option>
-                    <option>2009</option>
-                  </select>
-                </div>
-              </md-content>
-            </md-card>
             <md-progress-linear ng-if="loading" md-mode="indeterminate"></md-progress-linear>
             <md-card class="content-card">
               <md-card-content id="agenda-date-picker" ui-calendar="calendarConfig" ng-model="meetingEventSources"></md-card-content>
@@ -52,36 +22,27 @@
         <md-tab-label><i class="icon-magnifying-glass prefix-icon2"></i>Search</md-tab-label>
         <md-tab-body>
           <md-divider></md-divider>
-          <section ng-if="selectedView === 1" ng-controller="AgendaSearchCtrl">
-            <section class="margin-top-10">
-              <md-card class="content-card text-medium">
+          <div ng-if="selectedView === 1" ng-controller="AgendaSearchCtrl">
+            <div>
+              <div class="gray2-bg" layout-padding>
                 <form class="agenda-search">
                   <div flex>
                     <label>Search for agendas by year</label>
-                    <select ng-model="searchParams.year" ng-change="selectedYearChanged()">
-                      <option ng-repeat="year in years">{{year}}</option>
+                    <select ng-model="searchParams.year" ng-change="selectedYearChanged()"
+                            ng-options="year as year for year in years">
                     </select>
                   </div>
                 </form>
-              </md-card>
+              </div>
               <md-card ng-if="agendaSearch.error" class="content-card">
                 <md-subheader class="md-warn">{{agendaSearch.error.message}}</md-subheader>
               </md-card>
               <md-card class="content-card">
-                <div class="subheader" layout="row" layout-sm="column" layout-align="space-between center">
-                  <div flex> {{pagination.totalItems}} committee agendas were matched.
-                  <span ng-if="pagination.totalItems > 0">
-                    Viewing page {{pagination.currPage}} of {{pagination.lastPage}}.
-                  </span>
-                  </div>
-                  <div flex class="text-align-right">
-                    <dir-pagination-controls pagination-id="agenda-search" boundary-links="true" max-size="5"></dir-pagination-controls>
-                  </div>
+                <div class="margin-left-20">
+                  <div><strong>{{pagination.totalItems}}</strong> committee agendas were matched.</div>
                 </div>
-                <md-content layout="row" style="padding:0" class="no-top-margin">
-                  <div class="search-refine-panel" hide-sm>
-                    <h3>Refine your search</h3>
-                    <md-divider></md-divider>
+                <md-content layout="row" class="no-top-margin">
+                  <div class="search-refine-panel gray2-bg" flex="25" hide show-gt-sm>
                     <div class="refine-controls">
                       <label for="sort_by_param">Sort By</label>
                       <select id="sort_by_param" ng-model="searchSort" ng-change="simpleSearch(false)">
@@ -111,13 +72,16 @@
                       <label for="notes_param">Meeting Notes</label>
                       <input id="notes_param" type="text" ng-model="searchParams.notes" ng-model-options="{debounce: 300}"
                              placeholder="e.g. Off the floor"/>
-                      <md-button ng-click="resetSearchParams() && simpleSearch(true)" class="md-primary margin-top-10">Reset Filters</md-button>
+                      <md-button ng-click="resetSearchParams() && simpleSearch(true)" class="md-accent md-hue-2 margin-top-10">Reset Filters</md-button>
                     </div>
                   </div>
                   <div class="padding-20" ng-if="agendaSearch.response.total === 0">
                     <p class="red1 text-medium bold">No results were found after applying your filters.</p>
                   </div>
-                  <div flex class="padding-20">
+                  <div flex>
+                    <div flex class="text-align-right">
+                      <dir-pagination-controls pagination-id="agenda-search" boundary-links="true" max-size="10"></dir-pagination-controls>
+                    </div>
                     <md-list>
                       <a class="result-link"
                          dir-paginate="r in agendaSearch.results | itemsPerPage: 6"
@@ -133,16 +97,14 @@
                         </md-list-item>
                       </a>
                     </md-list>
+                    <div flex style="text-align: right;">
+                      <dir-pagination-controls pagination-id="agenda-search" boundary-links="true" max-size="10"></dir-pagination-controls>
+                    </div>
                   </div>
                 </md-content>
-                <div class="subheader" layout="row" layout-align="end center">
-                  <div flex style="text-align: right;">
-                    <dir-pagination-controls pagination-id="agenda-search" boundary-links="true" max-size="5"></dir-pagination-controls>
-                  </div>
-                </div>
               </md-card>
-            </section>
-          </section>
+            </div>
+          </div>
         </md-tab-body>
       </md-tab>
       <md-tab>
@@ -150,50 +112,59 @@
         <md-tab-body>
           <md-divider></md-divider>
           <section ng-if="selectedView === 2" ng-controller="AgendaUpdatesCtrl">
-            <md-card class="content-card">
-              <md-subheader>Show agenda updates during the following date range</md-subheader>
-              <div layout="row" class="padding-20 text-medium">
-                <div flex>
-                  <label>From</label>
-                  <input class="margin-left-10" ng-model="curr.fromDate" type="datetime-local">
+            <div class="gray2-bg padding-20 no-bottom-padding">
+              <label class="margin-bottom-20">Show agenda updates during the following date range</label>
+              <div class="text-medium padding-20">
+                <div layout="row" class="margin-bottom-20 text-medium" layout-align="center center">
+                  <div flex>
+                    <label class="margin-right-10">Using</label>
+                    <select ng-model="curr.type" class="no-top-margin margin-right-20">
+                      <option value="processed">Processed Date</option>
+                      <option value="published">Published Date</option>
+                    </select>
+                  </div>
+                  <div flex>
+                    <label class="margin-right-10">Sort</label>
+                    <select ng-model="curr.sortOrder" class="no-top-margin margin-right-20">
+                      <option value="ASC">Oldest First</option>
+                      <option value="DESC">Newest First</option>
+                    </select>
+                  </div>
+                  <div flex>
+                    <md-checkbox class="md-accent md-hue-3 no-bottom-margin" ng-model="curr.detail" aria-label="detail">
+                      Show Detail
+                    </md-checkbox>
+                  </div>
                 </div>
-                <div flex>
-                  <label>To</label>
-                  <input class="margin-left-10" ng-model="curr.toDate" type="datetime-local">
+                <div layout="row">
+                  <div flex>
+                    <label class="margin-right-10">From</label>
+                    <md-datepicker class="margin-right-10" md-max-date="curr.toDate"
+                                   ng-model="curr.fromDate" ng-model-options="{debounce: 300}">
+                    </md-datepicker>
+                  </div>
+                  <div flex>
+                    <label class="margin-right-10">To</label>
+                    <md-datepicker class="margin-right-10"
+                                   ng-model="curr.toDate" ng-model-options="{debounce: 300}">
+                    </md-datepicker>
+                  </div>
                 </div>
               </div>
-              <md-divider></md-divider>
-              <div layout="row" class="padding-20 text-medium">
-                <div flex>
-                  <label>With </label>
-                  <select class="margin-left-10" ng-model="curr.type">
-                    <option value="processed">Processed Date</option>
-                    <option value="published">Published Date</option>
-                  </select>
-                </div>
-                <div flex>
-                  <label>Sort </label>
-                  <select class="margin-left-10" ng-model="curr.sortOrder">
-                    <option value="desc" selected>Newest First</option>
-                    <option value="asc">Oldest First</option>
-                  </select>
-                </div>
-                <div flex>
-                  <md-checkbox class="md-hue-3 no-margin" ng-model="curr.detail" aria-label="detail">Show Detail</md-checkbox>
-                </div>
-              </div>
-            </md-card>
-            <div ng-if="agendaUpdates.fetching" class="text-medium text-align-center">Fetching updates, please wait.</div>
-            <update-list ng-show="!agendaUpdates.fetching && agendaUpdates.response.success === true"
-                         update-response="agendaUpdates.response"
-                         from-date="curr.fromDate" to-date="curr.toDate"
-                         pagination="pagination" show-details="curr.detail">
-            </update-list>
-            <md-card class="content-card" ng-if="agendaUpdates.response.success === false">
-              <md-subheader class="margin-10 md-warn">
-                <h4>{{agendaUpdates.errMsg}}</h4>
-              </md-subheader>
-            </md-card>
+            </div>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="{{(agendaUpdates.fetching) ? 'query' : ''}}"></md-progress-linear>
+            <div class="padding-20">
+              <update-list ng-show="!agendaUpdates.fetching && agendaUpdates.response.success === true"
+                           update-response="agendaUpdates.response"
+                           from-date="curr.fromDate" to-date="curr.toDate"
+                           pagination="pagination" show-details="curr.detail">
+              </update-list>
+              <md-card class="content-card" ng-if="agendaUpdates.response.success === false">
+                <md-subheader class="margin-10 md-warn">
+                  <h4>{{agendaUpdates.errMsg}}</h4>
+                </md-subheader>
+              </md-card>
+            </div>
           </section>
         </md-tab-body>
       </md-tab>

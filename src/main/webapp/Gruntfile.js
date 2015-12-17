@@ -109,11 +109,18 @@ module.exports = function(grunt) {
                         '<%= jsSource %>/component/content/calendar/calendar-search-ctrl.js',
                         '<%= jsSource %>/component/content/calendar/calendar-updates-ctrl.js',
 
+                        // Agendas
+                        '<%= jsSource %>/component/content/agenda/agenda.js',
+                        '<%= jsSource %>/component/content/agenda/agenda-browse-ctrl.js',
+                        '<%= jsSource %>/component/content/agenda/agenda-search-ctrl.js',
+                        '<%= jsSource %>/component/content/agenda/agenda-updates-ctrl.js',
+                        '<%= jsSource %>/component/content/agenda/agenda-view-ctrl.js',
+                        '<%= jsSource %>/component/content/agenda/agenda-filters.js',
+                        '<%= jsSource %>/component/content/agenda/agenda-directives.js',
+
+                        // Laws
                         '<%= jsSource %>/component/content/law.js',
-                        '<%= jsSource %>/component/content/agenda.js',
 
-
-                        '<%= jsSource %>/component/content/agenda.js',
                         '<%= jsSource %>/component/content/member.js',
                         '<%= jsSource %>/component/content/transcript.js',
 

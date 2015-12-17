@@ -330,6 +330,7 @@ coreModule.directive('lineNumbers', function() {
  * render-closed (boolean) Allows closed content to render when set to true
  * extra-classes (String) Any css classes you want to apply to the outermost toggle panel container
  * show-tip (boolean) Set to true to see a 'Click to expand section' tip when panel is collapsed.
+ * callback (fn) Callback when the panel is opened
  */
 coreModule.directive('togglePanel', [function(){
     return {
@@ -337,7 +338,7 @@ coreModule.directive('togglePanel', [function(){
         scope: {
             label: "@",
             extraClasses: "@",
-            callback: "&",
+            callback: "=",
             renderClosed: "@"
         },
         replace: true,
@@ -375,7 +376,6 @@ coreModule.directive('togglePanel', [function(){
                 var panelElem = $element.children(".panel-content");
                 (newOpen) ? panelElem.slideDown(200) : panelElem.slideUp(200);
                 $scope.opened = newOpen || $scope.opened;
-                //console.log("opened", $scope.opened);
             });
         }
     }

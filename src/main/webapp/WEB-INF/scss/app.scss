@@ -698,6 +698,10 @@ ul.pagination {
   }
 }
 
+.fc-other-month {
+  background: $gray3;
+}
+
 /** --- Search UI --- */
 
 .search-refine-panel {
@@ -1081,8 +1085,8 @@ a.slogan-link {
 /** --- Agenda Page --- */
 
 // Agenda calendar events
-.agenda-event {
-  &.fc-event-hori {
+#agenda-date-picker {
+  .fc-event-hori {
     margin-bottom: 5px;
     padding: 4px;
     background: #fafafa;
@@ -1095,8 +1099,13 @@ a.slogan-link {
     color: $blue3;
     cursor: pointer;
     &:hover {
-      background: white;
+      backgrfound: white;
     }
+  }
+  .fc-event.fc-event-hori.no-agenda-month {
+    background: white;
+    color: $red1;
+    border: 0;
   }
 }
 
@@ -1110,6 +1119,16 @@ a.slogan-link {
   select, input {
     margin-left: 10px;
   }
+}
+
+.agenda-vote-chip {
+  border: 1px solid #bbb;
+  color: #333;
+  text-align: center;
+  padding: 3px;
+  margin: 3px;
+  float: left;
+  font-size: 0.8em;
 }
 
 /** --- Transcript Page Styles --- */
@@ -1411,9 +1430,6 @@ md-list.env-list {
       background: $blue3;
       color: white;
     }
-  }
-  .fc-other-month {
-    background: $gray3;
   }
 }
 
