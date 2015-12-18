@@ -3,7 +3,7 @@
                          on-page-change="pageChange(newPageNumber)" max-size="10">
 </dir-pagination-controls>
 <md-list>
-  <md-list-item dir-paginate="billRes in billSearchResponse.result.items | itemsPerPage: 6"
+  <md-list-item dir-paginate="billRes in billSearchResponse.result.items | itemsPerPage: pagination.itemsPerPage"
                 total-items="billSearchResponse.total" current-page="pagination.currPage"
                 ng-init="bill = billRes.result; highlights = billRes.highlights;" pagination-id="bill-search"
                 class="margin-bottom-10">

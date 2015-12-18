@@ -7,7 +7,7 @@ var openApp = angular.module('open',
         'diff-match-patch',
 // Internal modules
     'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.spotcheck', 'open.transcript', 'open.account',
-    'open.dashboard', 'open.environment', 'open.notification.subscription', 'open.member']);
+    'open.dashboard', 'open.environment', 'open.notification.subscription']);
 
 // Configure the material themes
 openApp.config(function($mdThemingProvider) {

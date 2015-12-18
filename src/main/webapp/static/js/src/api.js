@@ -198,3 +198,72 @@ apiModule.factory('LawVolumeUpdatesApi', ['$resource', function($resource) {
         order: '@order'
     });
 }]);
+
+/** --- Transcript API --- */
+
+apiModule.factory('SessionListingApi', ['$resource', function($resource) {
+    return $resource(apiPath + "/transcripts/:year?summary=true&limit=:limit&offset=:offset&sort=:sort", {
+        year: '@year',
+        limit: '@limit',
+        offset: '@offset',
+        sort: 'dateTime:desc'
+    });
+}]);
+
+apiModule.factory('SessionTranscriptDetailsApi', ['$resource', function($resource) {
+    return $resource(apiPath + "/transcripts/:filename", {
+        filename: '@filename'
+    });
+}]);
+
+apiModule.factory('PublicHearingListingApi', ['$resource', function($resource) {
+    return $resource(apiPath + "/hearings/:year?full=true&limit=:limit&offset=:offset&sort=:soft", {
+        year: '@year',
+        limit: '@limit',
+        offset: '@offset',
+        sort: 'date:desc'
+    });
+}]);
+
+apiModule.factory('PublicHearingDetailsApi', ['$resource', function($resource) {
+    return $resource(apiPath + "/hearings/:filename", {
+        filename: '@filename'
+    });
+}]);
+
+apiModule.factory('TranscriptSearchApi', ['$resource', function ($resource) {
+    return $resource(apiPath + "/transcripts/:year/search", {
+        term: '@term',
+        summary: true,
+        year: '@year',
+        limit: '@limit',
+        offset: '@offset',
+        sort: '_score:desc,dateTime:desc'
+    })
+}]);
+
+apiModule.factory('PublicHearingSearchApi', ['$resource', function ($resource) {
+    return $resource(apiPath + "/hearings/:year/search", {
+        term: '@term',
+        summary: true,
+        year: '@year',
+        limit: '@limit',
+        offset: '@offset',
+        sort: '_score:desc,date:desc'
+    })
+}]);
+
+/** --- Members API --- */
+
+coreModule.factory('MemberApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/members/:sessionYear/:chamber?limit=1000', {
+        sessionYear: '@sessionYear',
+        chamber: '@chamber'
+    });
+}]);
+
+coreModule.factory('CommitteeListingApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/committees/:sessionYear/senate', {
+        sessionYear: '@sessionYear'
+    });
+}]);

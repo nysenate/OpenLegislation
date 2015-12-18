@@ -31,8 +31,8 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         /** --- Transcripts --- */
 
         .when(ctxPath + '/transcripts', { templateUrl: ctxPath + '/partial/content/transcript/transcript-list', reloadOnSearch: false})
-        .when(ctxPath + '/transcripts/session/:filename', { templateUrl: ctxPath + '/partial/content/transcript/session-transcript-view', reloadOnSearch: false})
-        .when(ctxPath + '/transcripts/hearing/:filename', { templateUrl: ctxPath + '/partial/content/transcript/hearing-transcript-view'})
+        .when(ctxPath + '/transcripts/session/:filename/', { templateUrl: ctxPath + '/partial/content/transcript/session-transcript-view', reloadOnSearch: false})
+        .when(ctxPath + '/transcripts/hearing/:filename/', { templateUrl: ctxPath + '/partial/content/transcript/hearing-transcript-view'})
 
         /** --- Reports --- */
 

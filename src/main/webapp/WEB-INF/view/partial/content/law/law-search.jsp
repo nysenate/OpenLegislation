@@ -17,7 +17,7 @@
                     Search for laws
                   </label>
                   <input tabindex="1" class="padding-10" style="font-size:1.4em;" name="quick-term"
-                         placeholder="e.g. State muffin" ng-model="lawSearch.term" ng-model-options="{debounce: 400}"
+                         placeholder="e.g. official state muffin, STL 84" ng-model="lawSearch.term" ng-model-options="{debounce: 400}"
                          ng-change="simpleSearch(true)">
                 </div>
               </form>

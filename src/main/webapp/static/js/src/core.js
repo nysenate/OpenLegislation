@@ -1,24 +1,20 @@
 var coreModule = angular.module('open.core', []);
 
-coreModule.factory('MemberApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/members/:sessionYear/:chamber?limit=1000', {
-        sessionYear: '@sessionYear',
-        chamber: '@chamber'
-    });
-}]);
-
-coreModule.factory('CommitteeListingApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/committees/:sessionYear/senate', {
-        sessionYear: '@sessionYear'
-    });
-}]);
-
+/**
+ * Filter to provide a default string if the input is falsy.
+ */
 coreModule.filter('default', ['$filter', function($filter) {
     return function(input, defaultVal) {
         return (!input) ? defaultVal : input;
     };
 }]);
 
+/**
+ * Converts a date/time string into a moment object and then produces
+ * a formatted date/time string based on the supplied moment format.
+ *
+ * e.g. {{myRawDateString | moment:'MM/DD/YYYY'}}
+ */
 coreModule.filter('moment', ['$filter', function($filter) {
     return function(input, format, defaultVal) {
         if (input) {
@@ -30,12 +26,18 @@ coreModule.filter('moment', ['$filter', function($filter) {
     };
 }]);
 
+/**
+ * Converts a year into it's session year.
+ */
 coreModule.filter('sessionYear', ['$filter', function ($filter) {
     return function (year) {
         return (year % 2 === 0) ? year - 1 : year;
     };
 }]);
 
+/**
+ * Outputs a value if the given input matches a key on the supplied map.
+ */
 coreModule.filter('label', function() {
     return function (item, labelMap) {
         if (item in labelMap) {
@@ -60,7 +62,6 @@ coreModule.filter('ordinalSuffix', ['$filter', function ($filter) {
     };
 }]);
 
-
 /**
  * Converts the properties of an object to an array of key, value pairs.
  * Useful when you want to use the orderBy filter on the properties of an object
@@ -77,6 +78,9 @@ coreModule.filter('toDictionaryArray', function () {
     }
 });
 
+/**
+ * Takes a camelCased string like 'meowCasedWoof' and turns it into 'meow cased woof'
+ */
 coreModule.filter('unCamelCase', function () {
     return function(str) {
         return str.split(/(?=[A-Z])/)
@@ -85,6 +89,9 @@ coreModule.filter('unCamelCase', function () {
     }
 });
 
+/**
+ * Capitalizes the first letter of each word.
+ */
 coreModule.filter('titleCaps', function () {
     return function(str) {
         return str.replace(/\w\S*/g, function (word) {
@@ -93,6 +100,32 @@ coreModule.filter('titleCaps', function () {
     }
 });
 
+/**
+ * Generates list of years.
+ */
+coreModule.factory('YearGenerator', function() {
+    return {
+        getSingleYearsInt: function(start, end) {
+            var years = [];
+            for (var year = start; year <= end; year++) {
+                years.push(year);
+            }
+            return years;
+        },
+        getSessionYearsInt: function(start, end) {
+            var years = this.getSingleYearsInt(start, end);
+            return years.filter(function(y) { return y % 2 != 0; });
+        },
+        getSingleYearsStr: function(start, end) {
+            var years = this.getSingleYearsInt(start, end);
+            return years.map(function(y) { return String(y); });
+        }
+    }
+});
+
+/**
+ * Basic Pagination model that represents the state of a paginated list.
+ */
 coreModule.factory('PaginationModel', function() {
     return {
         firstPage: 1,
@@ -515,6 +548,9 @@ coreModule.directive('checkButton', function(){
     };
 });
 
+/**
+ * Utility methods related to bill data.
+ */
 coreModule.factory('BillUtils', [function() {
     return {
         getStatusDesc: function(status) {

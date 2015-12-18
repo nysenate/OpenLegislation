@@ -371,7 +371,7 @@
           <md-tab-body>
             <md-divider></md-divider>
             <md-card class="content-card">
-              <md-content layout="row" layout-sm="column">
+              <md-content class="gray3-bg" layout="row" layout-sm="column">
                 <div flex>
                   <label>Filter by update type: </label>
                   <select ng-model="curr.updateTypeFilter" ng-change="getUpdates()" class="margin-left-10">
@@ -402,13 +402,17 @@
                 </div>
               </md-content>
             </md-card>
-            <update-list update-response="updateHistoryResponse" show-details="true"></update-list>
+            <div class="padding-20">
+              <update-list update-response="updateHistoryResponse" show-details="true"></update-list>
+            </div>
           </md-tab-body>
         </md-tab>
         <%-- JSON --%>
         <md-tab label="JSON">
           <div class="padding-20">
-            <a class="blue3" ng-href="{{billApiPath}}">View JSON in new window</a>
+            <div class="gray3-bg padding-10">
+              <a class="blue3" ng-href="{{billApiPath}}">View JSON in new window</a>
+            </div>
             <md-divider></md-divider>
             <iframe class="bill-json-iframe" ng-src="{{billApiPath}}"></iframe>
           </div>

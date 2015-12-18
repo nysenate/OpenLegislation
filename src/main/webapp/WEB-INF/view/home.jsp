@@ -49,7 +49,7 @@
             <menu-item url="${ctxPath}/agendas" icon="icon-megaphone">Senate Agendas / Meetings</menu-item>
             <menu-item url="${ctxPath}/bills" icon="icon-documents">Bills and Resolutions</menu-item>
             <menu-item url="${ctxPath}/laws" icon="icon-bookmarks">New York State Laws</menu-item>
-            <menu-item url="${ctxPath}/transcripts" icon="icon-text">Floor/Hearing Transcripts</menu-item>
+            <menu-item url="${ctxPath}/transcripts" icon="icon-text">Session/Hearing Transcripts</menu-item>
             <menu-item url="${ctxPath}/docs" target="_self" icon="icon-code">JSON API Docs</menu-item>
             <shiro:user>
               <menu-item url="${ctxPath}/logout" target="_self" icon="icon-log-out">Logout</menu-item>

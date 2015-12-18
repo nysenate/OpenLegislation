@@ -124,8 +124,11 @@ module.exports = function(grunt) {
                         '<%= jsSource %>/component/content/law/law-updates-ctrl.js',
                         '<%= jsSource %>/component/content/law/law-view-ctrl.js',
 
-                        '<%= jsSource %>/component/content/member.js',
-                        '<%= jsSource %>/component/content/transcript.js',
+                        // Transcripts
+                        '<%= jsSource %>/component/content/transcript/transcript.js',
+                        '<%= jsSource %>/component/content/transcript/transcript-search-ctrl.js',
+                        '<%= jsSource %>/component/content/transcript/transcript-hearing-view-ctrl.js',
+                        '<%= jsSource %>/component/content/transcript/transcript-session-view-ctrl.js',
 
                         // SpotChecks
                         '<%= jsSource %>/component/report/spotcheck-base.js',

@@ -4,6 +4,7 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.SearchResultView;
 import gov.nysenate.openleg.client.view.hearing.PublicHearingIdView;
+import gov.nysenate.openleg.client.view.hearing.PublicHearingInfoView;
 import gov.nysenate.openleg.client.view.hearing.PublicHearingView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -44,11 +45,12 @@ public class PublicHearingSearchCtrl extends BaseCtrl
     @RequestMapping(value = "/search")
     public BaseResponse globalSearch(@RequestParam(required = true) String term,
                                      @RequestParam(defaultValue = "") String sort,
+                                     @RequestParam(defaultValue = "true") boolean summary,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(term, sort, limOff);
-        return getSearchResponse(full, limOff, results);
+        return getSearchResponse(full, summary, limOff, results);
     }
 
     /**
@@ -62,18 +64,19 @@ public class PublicHearingSearchCtrl extends BaseCtrl
     public BaseResponse yearSearch(@PathVariable int year,
                                    @RequestParam(required = true) String term,
                                    @RequestParam(defaultValue = "") String sort,
+                                   @RequestParam(defaultValue = "true") boolean summary,
                                    @RequestParam(defaultValue = "false") boolean full,
                                    WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<PublicHearingId> results = hearingSearch.searchPublicHearings(term, year, sort, limOff);
-        return getSearchResponse(full, limOff, results);
+        return getSearchResponse(full, summary, limOff, results);
     }
 
-    private BaseResponse getSearchResponse(boolean full, LimitOffset limOff, SearchResults<PublicHearingId> results) {
-        return ListViewResponse.of(results.getResults().stream()
-                .map(r -> new SearchResultView((full)
-                        ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
-                        : new PublicHearingIdView(r.getResult()), r.getRank(), r.getHighlights()))
+    private BaseResponse getSearchResponse(boolean full, boolean summary, LimitOffset limOff, SearchResults<PublicHearingId> results) {
+        return ListViewResponse.of(results.getResults().stream().map(r -> new SearchResultView(
+                (full) ? new PublicHearingView(hearingData.getPublicHearing(r.getResult()))
+                        : (summary) ? new PublicHearingInfoView(hearingData.getPublicHearing(r.getResult()))
+                           : new PublicHearingIdView(r.getResult()), r.getRank(), r.getHighlights()))
                 .collect(toList()), results.getTotalResults(), limOff);
     }
 }
