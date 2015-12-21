@@ -10,7 +10,7 @@ billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$
             pagination: angular.extend({}, PaginationModel, { itemsPerPage: 6 }),
             billSearch: {
                 term: $routeParams['search'] || '',
-                session: $routeParams['session'] || '2015',
+                session: $routeParams['session'] || '',
                 refine: {},
                 isRefined: false,
                 sort: $routeParams['sort'] || '_score:desc,session:desc',
