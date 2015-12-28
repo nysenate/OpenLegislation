@@ -16,7 +16,8 @@
     "angular-utils-pagination": "0.9.3",
     "google-diff-match-patch": "0.1.0",
     "angular-diff-match-patch": "0.1.11",
-    "sockjs": "~0.3.4"
+    "sockjs": "~0.3.4",
+    "stomp-websocket": "2.3.4"
   },
   "devDependencies": {
 

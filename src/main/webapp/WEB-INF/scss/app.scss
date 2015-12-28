@@ -619,6 +619,12 @@ ul.pagination {
   }
 }
 
+
+.listing-filter {
+  padding: 16px 20px;
+  background: #f1f1f1;
+}
+
 /** --- Docs Tables --- */
 
 .docs-table {
@@ -1037,9 +1043,9 @@ a.slogan-link {
   margin: 10px 0;
 }
 
+
 .law-listing-filter {
-  padding: 16px 20px;
-  background: #f1f1f1;
+  @extend .listing-filter;
 }
 
 .law-node {
@@ -1389,9 +1395,8 @@ diff-summary, mismatch-diff {
 
 md-list.env-list {
   md-list-item:nth-child(odd) {
-    background: #e2eaff;
+    background: #eee;
   }
-  max-width: 40em;
 }
 
 /** --- Calendar View --- */
@@ -1462,3 +1467,31 @@ md-list.env-list {
   height: 125px;
 }
 
+/** --- Admin Log Page --- */
+
+.api-request-table-container {
+  max-height: 50vh;
+  overflow-y: scroll;
+}
+
+table.api-request-table {
+  width: 100%;
+  text-align: center;
+  th {
+    font-size: 0.9rem;
+    padding: 5px;
+  }
+  td {
+    padding: 5px;
+    font-size: 0.8rem;
+    a {
+      color: $blue3;
+    }
+    .url-td {
+      max-width: 350px;
+    }
+  }
+  tbody tr:nth-child(odd) {
+    background: #f5f5f5;
+  }
+}

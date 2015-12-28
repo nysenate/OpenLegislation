@@ -59,9 +59,8 @@
           <shiro:hasPermission name="admin:view">
             <menu-section title="Admin">
               <menu-item url="${ctxPath}/admin">Configuration</menu-item>
-              <menu-item url="${ctxPath}/admin/account">Data Q/A</menu-item>
-              <menu-item url="${ctxPath}/admin/">Logs</menu-item>
-              <menu-item url="${ctxPath}/admin/">Account Settings</menu-item>
+              <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
+              <menu-item url="${ctxPath}/admin/logs">Logs</menu-item>
             </menu-section>
             <menu-section title="Reports">
               <menu-item url="${ctxPath}/admin/report/spotcheck">Spotcheck Reports</menu-item>
