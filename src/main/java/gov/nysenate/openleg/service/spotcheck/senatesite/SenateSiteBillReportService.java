@@ -147,7 +147,9 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
                 ignoredBills.add(senSiteBill.getBaseBillId());
             }
         });
-        report.setNotes("ignored: " + StringUtils.join(ignoredBills, ", "));
+        if (!ignoredBills.isEmpty()) {
+            report.setNotes("ignored: " + StringUtils.join(ignoredBills, ", "));
+        }
         return includedBills;
     }
 
