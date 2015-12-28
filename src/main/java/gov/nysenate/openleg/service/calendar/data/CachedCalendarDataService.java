@@ -29,6 +29,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -46,13 +47,18 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
 
     @Value("${calendar.cache.size}") private long calendarCacheSizeMb;
 
-    private static final String calendarDataCache = "calendarData";
     private Cache calendarCache;
 
     @PostConstruct
     private void init() {
         setupCaches();
         eventBus.register(this);
+    }
+
+    @PreDestroy
+    private void cleanUp() {
+        evictCaches();
+        cacheManager.removeCache(ContentCache.CALENDAR.name());
     }
 
     /** --- CachingService implementation --- */
@@ -66,7 +72,7 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
     /** {@inheritDoc} */
     @Override
     public void setupCaches() {
-        calendarCache = new Cache(new CacheConfiguration().name(calendarDataCache)
+        calendarCache = new Cache(new CacheConfiguration().name(ContentCache.CALENDAR.name())
                 .eternal(true)
                 .maxBytesLocalHeap(calendarCacheSizeMb, MemoryUnit.MEGABYTES)
                 .sizeOfPolicy(defaultSizeOfPolicy()));

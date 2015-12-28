@@ -46,7 +46,6 @@ public class CachedMemberService implements MemberService, CachingService<Intege
     private EventBus eventBus;
 
     private Cache memberCache;
-    private static final String memberCacheName = "members";
 
     @Autowired
     private CacheManager cacheManager;
@@ -64,7 +63,7 @@ public class CachedMemberService implements MemberService, CachingService<Intege
     @PreDestroy
     private void cleanUp() {
         evictCaches();
-        cacheManager.removeCache(memberCacheName);
+        cacheManager.removeCache(ContentCache.MEMBER.name());
     }
 
     /** --- Caching Service Implementation --- */
@@ -72,7 +71,7 @@ public class CachedMemberService implements MemberService, CachingService<Intege
     /** {@inheritDoc} */
     @Override
     public void setupCaches() {
-        this.memberCache = new Cache(new CacheConfiguration().name(memberCacheName).eternal(true));
+        this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.MEMBER.name()).eternal(true));
         cacheManager.addCache(this.memberCache);
     }
 

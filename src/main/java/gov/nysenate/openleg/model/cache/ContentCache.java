@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableSet;
 public enum ContentCache
 {
     BILL,
+    BILL_INFO,
     AGENDA,
     CALENDAR,
     LAW,

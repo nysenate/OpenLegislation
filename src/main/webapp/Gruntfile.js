@@ -138,9 +138,11 @@ module.exports = function(grunt) {
                         '<%= jsSource %>/component/report/spotcheck-mismatch.js',
 
                         // Admin
+                        '<%= jsSource %>/component/admin/admin.js',
+                        '<%= jsSource %>/component/admin/dashboard.js',
+                        '<%= jsSource %>/component/admin/cache.js',
                         '<%= jsSource %>/component/admin/account.js',
                         '<%= jsSource %>/component/admin/notification_sub.js',
-                        '<%= jsSource %>/component/admin/dashboard.js',
                         '<%= jsSource %>/component/admin/environment.js']
                 }
             }

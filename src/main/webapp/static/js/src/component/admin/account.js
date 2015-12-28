@@ -1,20 +1,20 @@
-var accountModule = angular.module('open.account', ['open.core']);
+var adminModule = angular.module('open.admin');
 
 /** --- REST resources for getting and setting admin account data --- */
 
 // Allows for retrieval, creation, and deletion of admin accounts
-accountModule.factory('AccountsAPI', ['$resource', function($resource) {
+adminModule.factory('AccountsAPI', ['$resource', function($resource) {
     return $resource(adminApiPath + '/accounts/:username', {username: '@username', master: '@master'});
 }]);
 
 // Changes the password of the currently authenticated user
-accountModule.factory('PassChangeAPI', ['$resource', function ($resource) {
+adminModule.factory('PassChangeAPI', ['$resource', function ($resource) {
     return $resource(adminApiPath + '/accounts/passchange', {password: '@password'});
 }]);
 
 /** --- Account Settings Ctrl --- */
 
-accountModule.controller('AccountSettingsCtrl', ['$scope', '$routeParams', '$location',
+adminModule.controller('AccountSettingsCtrl', ['$scope', '$routeParams', '$location',
 function($scope, $routeParams, $location) {
 
     var pageNames = ['passchange', 'notification_subscriptions', 'manage_users'];
@@ -44,7 +44,7 @@ function($scope, $routeParams, $location) {
 
 /** --- Password change controller --- */
 
-accountModule.controller('PassChangeCtrl', ['$scope', '$element', '$mdToast', 'PassChangeAPI',
+adminModule.controller('PassChangeCtrl', ['$scope', '$element', '$mdToast', 'PassChangeAPI',
 function($scope, $element, $mdToast, PassChangeAPI) {
     $scope.minPassLength = 5;
     $scope.newPass = "";
@@ -78,7 +78,7 @@ function($scope, $element, $mdToast, PassChangeAPI) {
 
 /** -- Manage Admin Users controller -- */
 
-accountModule.controller('ManageAdminUsersCtrl', ['$scope', '$mdToast', '$mdDialog', 'AccountsAPI',
+adminModule.controller('ManageAdminUsersCtrl', ['$scope', '$mdToast', '$mdDialog', 'AccountsAPI',
 function ($scope, $mdToast, $mdDialog, AccountsApi) {
     $scope.accounts = [];
     var blankAccount = {username: '', master: false};

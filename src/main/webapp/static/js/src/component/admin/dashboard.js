@@ -1,30 +1,24 @@
-angular.module('open.dashboard', ['open.core'])
+angular.module('open.admin')
     .controller('DashboardCtrl', ['$scope', '$routeParams',
 function ($scope, $routeParams) {
-    $scope.views = ['environment'];
-    $scope.activeIndex = 0;
+    $scope.activeIndex = parseInt($routeParams.view, 10) || 0;
 
     $scope.init = function() {
         $scope.setHeaderVisible(true);
-        if ($routeParams.hasOwnProperty('view')) {
-            $scope.goToView($routeParams['view']);
-        }
+        $scope.setHeaderText("Manage configuration");
     };
 
-    var headerText = {
-        environment: "View and Set Environment Variables"
-    };
-    $scope.$watch('activeIndex', function() {
-        $scope.setHeaderText(headerText[$scope.views[$scope.activeIndex]]);
-        $scope.setSearchParam('view', $scope.views[$scope.activeIndex]);
+    $scope.$watch('activeIndex', function(n, o) {
+        if (n !== o && $routeParams.view !== n) {
+            $scope.setSearchParam('view', $scope.activeIndex);
+        }
     });
 
-    $scope.goToView = function(viewName) {
-        var index = $scope.views.indexOf(viewName);
-        if (index >= 0) {
-            $scope.activeIndex = index;
-        } else {
-            console.log("no such view:", viewName);
-        }
+    $scope.viewMap = {
+        'environment': 0,
+        'cache': 1,
+        'index': 2
     };
+
+    $scope.init();
 }]);

@@ -50,7 +50,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     @Autowired private CacheManager cacheManager;
     @Autowired private EventBus eventBus;
 
-    private static final String apiUserCacheName = "apiusers";
+//    private static final String apiUserCacheName = ;
     private EhCacheCache apiUserCache;
 
     private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
@@ -64,14 +64,14 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     @PreDestroy
     private void cleanUp() {
         evictCaches();
-        cacheManager.removeCache(apiUserCacheName);
+        cacheManager.removeCache(ContentCache.APIUSER.name());
     }
 
     /*** --- CachingService Implementation --- */
 
     @Override
     public void setupCaches() {
-        Cache cache = new Cache(new CacheConfiguration().name(apiUserCacheName)
+        Cache cache = new Cache(new CacheConfiguration().name(ContentCache.APIUSER.name())
             .eternal(true)
             .sizeOfPolicy(defaultSizeOfPolicy()));
         cacheManager.addCache(cache);
