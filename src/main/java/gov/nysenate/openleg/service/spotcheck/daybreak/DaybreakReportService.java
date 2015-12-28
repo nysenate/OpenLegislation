@@ -63,7 +63,7 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
+    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         // Create a new report instance
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
         // Fetch the daybreak bills that are within the given date range
@@ -122,6 +122,8 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
                 Bill bill = billDataService.getBill(daybreakBill.getBaseBillId());
                 report.addObservation(daybreakCheckService.check(bill, daybreakBill));
             });
+        // Set the report as being checked
+        daybreakDao.updateDaybreakReportSetChecked(report.getReferenceDateTime().toLocalDate(), true);
         // Done with this report!
         return report;
     }
