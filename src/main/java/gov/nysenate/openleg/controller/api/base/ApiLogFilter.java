@@ -30,7 +30,7 @@ public class ApiLogFilter implements Filter
     @Autowired protected ApiLogDataService logDataService;
     @Autowired protected ApiUserService apiUserService;
 
-    private static String[] IGNORED_PATHS = new String[]{"/api/3/admin/apiLog"};
+    private static String[] IGNORED_PATHS = new String[]{"/api/3/admin/apiLog", "/api/3/admin/process/runs/"};
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}

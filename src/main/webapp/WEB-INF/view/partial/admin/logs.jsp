@@ -62,12 +62,12 @@
         </div>
       </div>
       <div flex layout-padding class="api-request-table-container">
-        <div ng-show="lawSearchResp.total == 0">
+        <div ng-show="logSearchResp.total == 0">
           <h3 class="red1">No matching requests found.</h3>
         </div>
-        <div ng-show="lawSearchResp.total > 0" layout="row" layout-align="space-between center">
+        <div ng-show="logSearchResp.total > 0" layout="row" layout-align="space-between center">
           <div>
-            <h3>{{lawSearchResp.total}} requests</h3>
+            <h3>{{logSearchResp.total}} requests</h3>
           </div>
           <div>
             <dir-pagination-controls
@@ -87,7 +87,7 @@
             </select>
           </div>
         </div>
-        <table class="api-request-table" ng-if="lawSearchResp.total > 0">
+        <table class="api-request-table" ng-if="logSearchResp.total > 0">
           <thead>
           <th>Time</th>
           <th>IP</th>
@@ -98,8 +98,8 @@
           <th>Url</th>
           </thead>
           <tbody>
-          <tr dir-paginate="req in lawSearchResults | itemsPerPage: apiLogSearchPagination.itemsPerPage"
-              total-items="lawSearchResp.total" current-page="apiLogSearchPagination.currPage"
+          <tr dir-paginate="req in logSearchResults | itemsPerPage: apiLogSearchPagination.itemsPerPage"
+              total-items="logSearchResp.total" current-page="apiLogSearchPagination.currPage"
               pagination-id="api-log-search">
             <td class="time-td">{{req.result.requestTime}}</td>
             <td>{{req.result.ipAddress}}</td>
@@ -111,6 +111,43 @@
           </tr>
           </tbody>
         </table>
+      </div>
+    </md-tab>
+    <md-tab label="Data Process Log">
+      <div layout="row" layout-align="space-between center" class="listing-filter">
+        <div flex="none" class="margin-right-20">
+          <label class="margin-right-10">Hide Empty Runs</label>
+          <md-checkbox aria-label="Hide Empty" style="margin-bottom:7px;" ng-model="hideEmptyRuns"
+                       ng-change="getRuns()">
+          </md-checkbox>
+        </div>
+        <div flex>
+          <label>Processed During</label>
+          <md-datepicker ng-model="runsFromDate" md-max-date="runsToDate" ng-change="getRuns()"></md-datepicker>
+          <md-datepicker ng-model="runsToDate" md-min-date="runsFromDate" ng-change="getRuns()"></md-datepicker>
+        </div>
+      </div>
+      <div layout-padding ng-show="runsResp.total == 0">
+        <h3 class="red1">No matching process runs found.</h3>
+      </div>
+      <div class="padding-20">
+          <div ng-repeat="run in runsResults">
+            <h3 class="no-bottom-margin"><i ng-show="!run.endDateTime" class="prefix-icon icon-cog green3"></i> Run # {{run.id}} started on {{run.startDateTime | moment:'lll HH:mm:ss.SSS'}}
+              <span ng-show="run.endDateTime">and ended on {{run.endDateTime | moment:'lll HH:mm:ss.SSS'}}</span>
+            </h3>
+            <h5 class="no-top-margin gray7">Invoked By {{run.invokedBy}}</h5>
+            <pre style="max-height:120px;overflow:scroll;" class="red1 text-medium" ng-show="run.exceptions">{{run.exceptions}}</pre>
+            <p ng-if="run.details.total == 0">Nothing processed</p>
+
+            <%--<toggle-panel ng-if="run.details.total > 0" open="false" label="{{run.details.total}} Units Processed">--%>
+              <%--<div ng-repeat="unit in run.details.result.items">--%>
+                <%--<h3>{{unit.action}} - {{unit.sourceId}} ({{unit.sourceType}})</h3>--%>
+                <%--<label>Start:</label> {{unit.startDateTime}} <label>End:</label> {{unit.endDateTime}}--%>
+                <%--<pre>{{unit.messages}}</pre>--%>
+              <%--</div>--%>
+            <%--</toggle-panel>--%>
+            <md-divider></md-divider>
+          </div>
       </div>
     </md-tab>
   </md-tabs>

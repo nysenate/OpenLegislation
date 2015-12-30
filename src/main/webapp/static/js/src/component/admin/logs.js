@@ -4,8 +4,17 @@ adminModule.factory('LogSearchAPI', ['$resource', function($resource) {
     return $resource(adminApiPath + '/apiLogs/');
 }]);
 
-adminModule.controller('LogsCtrl', ['$scope', '$routeParams', 'PaginationModel', 'LogSearchAPI',
-    function($scope, $routeParams, PaginationModel, LogSearchAPI) {
+adminModule.factory('DataProcessRunsAPI', ['$resource', function($resource) {
+    return $resource(adminApiPath + '/process/runs/:from/:to');
+}]);
+
+adminModule.factory('DataProcessRunsDetailsAPI', ['$resource', function($resource) {
+    return $resource(adminApiPath + '/process/runs/id/:id');
+}]);
+
+adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'PaginationModel', 'LogSearchAPI',
+    'DataProcessRunsAPI', 'DataProcessRunsDetailsAPI',
+    function($scope, $routeParams, $timeout, PaginationModel, LogSearchAPI, DataProcessRunsAPI, DataProcessRunsDetailsAPI) {
 
     $scope.view = (parseInt($routeParams.view, 10) || 0);
 
@@ -80,8 +89,8 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', 'PaginationModel',
             limit: $scope.apiLogSearchPagination.getLimit(),
             offset: $scope.apiLogSearchPagination.getOffset()}, function(resp) {
             if (resp && resp.success) {
-                $scope.lawSearchResp = resp;
-                $scope.lawSearchResults = resp.result.items;
+                $scope.logSearchResp = resp;
+                $scope.logSearchResults = resp.result.items;
             }
         });
     };
@@ -91,13 +100,55 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', 'PaginationModel',
         $scope.searchLogs();
     };
 
+    // Data Process Runs
+
+    $scope.runsResults = [];
+    $scope.hideEmptyRuns = $routeParams.hideEmptyRuns !== 'false';
+    $scope.runsFromDate = ($routeParams.runsStart) ? moment($routeParams.runsStart).toDate()
+        : moment().subtract('days', 1).toDate();
+    $scope.runsToDate = ($routeParams.runsEnd) ? moment($routeParams.runsEnd).toDate()
+        : moment().add('days', 1).toDate();
+    $scope.runsPagination = angular.extend({}, PaginationModel);
+    $scope.runsPagination.currPage = $routeParams.page || 1;
+    $scope.runsPagination.itemsPerPage = 20;
+
+    $scope.getRuns = function() {
+        var fromDate = $scope.toZonelessISOString(moment($scope.runsFromDate));
+        var toDate = $scope.toZonelessISOString(moment($scope.runsToDate));
+        $scope.setSearchParam('hideEmptyRuns', $scope.hideEmptyRuns);
+        $scope.setSearchParam('runsStart', fromDate);
+        $scope.setSearchParam('runsEnd', toDate);
+        DataProcessRunsAPI.get({
+            from: fromDate, to: toDate,
+            full: !$scope.hideEmptyRuns, detail: true},
+            function(resp) {
+                $scope.runsResp = resp;
+                if (resp.success) {
+                    $scope.runsResults = resp.result.items;
+                }
+            });
+    };
+
+    $scope.getRunsPolling = function() {
+        $scope.getRuns();
+        console.log("In runs polling");
+        $timeout(function() {
+            $scope.getRunsPolling();
+        }, 15000);
+    };
+
+    $scope.fetchUnits = function(run) {
+
+    };
+
     /** --- Initialize --- */
 
     $scope.init = function() {
         $scope.setHeaderText("View Logs");
         $scope.setHeaderVisible(true);
-        $scope.searchLogs();
         $scope.connectToSocket();
+        $scope.searchLogs();
+        $scope.getRunsPolling();
     };
 
     $scope.init();

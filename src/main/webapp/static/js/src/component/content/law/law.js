@@ -6,6 +6,8 @@ var lawModule = angular.module('open.law', ['open.core', 'open.api', 'infinite-s
 lawModule.controller('LawCtrl', ['$scope', '$location', '$routeParams', function($scope, $location, $routeParams) {
     $scope.selectedView = (parseInt($routeParams.view, 10) || 0);
 
+    $scope.setHeaderText("NYS Laws");
+
     /** Watch for changes to the current view. */
     $scope.$watch('selectedView', function(n, o) {
         if (n !== o && $location.search().view !== n) {
