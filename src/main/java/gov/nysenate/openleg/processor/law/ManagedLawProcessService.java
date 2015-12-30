@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.law;
 
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.law.data.LawFileDao;
@@ -18,11 +19,9 @@ public class ManagedLawProcessService implements LawProcessService
 {
     private static final Logger logger = LoggerFactory.getLogger(ManagedLawProcessService.class);
 
-    @Autowired
-    private LawFileDao lawFileDao;
-
-    @Autowired
-    private LawProcessor lawProcessor;
+    @Autowired private Environment env;
+    @Autowired private LawFileDao lawFileDao;
+    @Autowired private LawProcessor lawProcessor;
 
     /** {@inheritDoc}*/
     @Override
@@ -71,6 +70,7 @@ public class ManagedLawProcessService implements LawProcessService
     @Override
     public void processLawFiles(List<LawFile> lawFiles) {
         for (LawFile lawFile : lawFiles) {
+            if (!env.isProcessingEnabled()) break;
             // Process the law file
             lawProcessor.process(lawFile);
             lawFile.setProcessedCount(lawFile.getProcessedCount() + 1);

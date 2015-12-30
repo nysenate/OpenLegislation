@@ -128,7 +128,7 @@ public class ManagedSobiProcessService implements SobiProcessService
                     eventBus.post(new DataProcessUnitEvent(unit));
                 }
             }
-            while (!newSobis.isEmpty());
+            while (!newSobis.isEmpty() && env.isProcessingEnabled());
             return totalCollated;
         }
         catch (IOException ex) {
@@ -184,8 +184,7 @@ public class ManagedSobiProcessService implements SobiProcessService
             fragments = sobiDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, limOff);
             processCount += processFragments(fragments, options);
         }
-        while (!fragments.isEmpty());
-
+        while (!fragments.isEmpty() && env.isProcessingEnabled());
         return processCount;
     }
 
