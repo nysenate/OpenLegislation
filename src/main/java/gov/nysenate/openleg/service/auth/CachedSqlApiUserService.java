@@ -35,7 +35,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 @Service
 public class CachedSqlApiUserService implements ApiUserService, CachingService<String>
 {
@@ -206,18 +205,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         eventBus.post(new ApiUserAuthEvictEvent(apiKey));
     }
 
-    /** --- Internal Methods --- */
-
-
-    /***
-     * Inserts the given api user into the cache
-     */
-    private void cacheApiUser(ApiUser apiUser) {
-        if (apiUser != null) {
-            apiUserCache.put(apiUser.getApiKey(), apiUser);
-        }
-    }
-
     /**
      * Attempt to get an api user as an optional value
      * If the user does not exist in the cache, attempt to retrieve the user from the database
@@ -225,7 +212,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
      * @param apiKey String
      * @return Optional<ApiUser>
      */
-    private Optional<ApiUser> getUserByKey(String apiKey) {
+    public Optional<ApiUser> getUserByKey(String apiKey) {
         Optional<ApiUser> userOpt = getCachedApiUser(apiKey);
         if (userOpt.isPresent()) {
             return userOpt;
@@ -236,6 +223,17 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
             return Optional.of(user);
         } catch (EmptyResultDataAccessException ex) {
             return Optional.empty();
+        }
+    }
+
+    /** --- Internal Methods --- */
+
+    /***
+     * Inserts the given api user into the cache
+     */
+    private void cacheApiUser(ApiUser apiUser) {
+        if (apiUser != null) {
+            apiUserCache.put(apiUser.getApiKey(), apiUser);
         }
     }
 

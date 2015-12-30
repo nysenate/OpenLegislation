@@ -3,6 +3,8 @@ package gov.nysenate.openleg.dao.log.search;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.client.view.log.ApiLogItemView;
+import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.service.log.event.ApiLogEvent;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Optional;
 
 @Service
 public class ApiLogStompService
