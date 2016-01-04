@@ -112,7 +112,7 @@ public class Person implements Comparable<Person>
 
     /** --- Basic Getters/Setters --- */
 
-    public int getPersonId() {
+    public Integer getPersonId() {
         return personId;
     }
 
