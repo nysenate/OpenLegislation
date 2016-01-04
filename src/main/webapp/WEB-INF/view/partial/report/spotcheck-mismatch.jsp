@@ -4,9 +4,10 @@
 <%@ taglib prefix="open-component" tagdir="/WEB-INF/tags/component" %>
 
 <%
-  String refTypeMap = SpotCheckRefType.getJsonMap();
+  String refTypeMap = SpotCheckRefType.getRefJsonMap();
+  String refTypeDisplayMap = SpotCheckRefType.getDisplayJsonMap();
   String mismatchMap = SpotCheckMismatchType.getJsonMap();
-  String daybreakInitArgs = refTypeMap + ", " + mismatchMap;
+  String daybreakInitArgs = refTypeMap + ", " + refTypeDisplayMap + ", " + mismatchMap;
   String refTypeMismatchMap = SpotCheckMismatchType.getJsonReftypeMismatchMap();
 %>
 

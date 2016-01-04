@@ -14,30 +14,36 @@ import java.util.stream.Collectors;
  */
 public enum SpotCheckRefType
 {
-    LBDC_DAYBREAK("daybreak", NotificationType.DAYBREAK_SPOTCHECK),
+    LBDC_DAYBREAK("daybreak", "Daybreak", NotificationType.DAYBREAK_SPOTCHECK),
 
-    LBDC_SCRAPED_BILL("scraped-bill", NotificationType.BILL_TEXT_SPOTCHECK),
+    LBDC_SCRAPED_BILL("scraped-bill", "Scraped Bill", NotificationType.BILL_TEXT_SPOTCHECK),
 
-    LBDC_CALENDAR_ALERT("floor-alert", NotificationType.CALENDAR_SPOTCHECK),
+    LBDC_CALENDAR_ALERT("floor-alert", "Floor Calendar Alert", NotificationType.CALENDAR_SPOTCHECK),
 
-    LBDC_AGENDA_ALERT("agenda-alert", NotificationType.AGENDA_SPOTCHECK),
+    LBDC_AGENDA_ALERT("agenda-alert", "Agenda Alert", NotificationType.AGENDA_SPOTCHECK),
 
-    SENATE_SITE_BILLS("senate-site-bills", NotificationType.SENSITE_BILL_SPOTCHECK),
+    SENATE_SITE_BILLS("senate-site-bills", "Nysenate.gov Bill", NotificationType.SENSITE_BILL_SPOTCHECK),
 
     ;
 
     private String refName;
+    private String displayName;
 
     /** A notification type that is used to send notifications for this type of report */
     private NotificationType notificationType;
 
-    private SpotCheckRefType(String refName, NotificationType type) {
+    private SpotCheckRefType(String refName, String displayName, NotificationType type) {
         this.refName = refName;
+        this.displayName = displayName;
         this.notificationType = type;
     }
 
     public String getRefName() {
         return refName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public NotificationType getNotificationType() {
@@ -56,9 +62,18 @@ public enum SpotCheckRefType
     /**
      * Get a json object of each refType mapped to its refName
      */
-    public static String getJsonMap() {
+    public static String getRefJsonMap() {
         return OutputUtils.toJson(EnumSet.allOf(SpotCheckRefType.class).stream()
                 .collect(Collectors.toMap(SpotCheckRefType::name, SpotCheckRefType::getRefName)));
+    }
+
+
+    /**
+     * Get a json object of each refType mapped to its display name
+     */
+    public static String getDisplayJsonMap() {
+        return OutputUtils.toJson(EnumSet.allOf(SpotCheckRefType.class).stream()
+                .collect(Collectors.toMap(SpotCheckRefType::name, SpotCheckRefType::getDisplayName)));
     }
 
 }

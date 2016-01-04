@@ -23,6 +23,7 @@ spotcheckModule.factory('SpotcheckOpenMismatchAPI', ['$resource', function($reso
 }]);
 
 var reportTypeMap = {};
+var reportTypeDispMap = {};
 var mismatchTypeMap = {};
 
 // Returns a formatted label for the given mismatch status
@@ -46,9 +47,15 @@ spotcheckModule.filter('mismatchTypeLabel', ['$filter', function ($filter) {
     };
 }]);
 
-spotcheckModule.filter('reportTypeLabel', ['$filter', function ($filter) {
+spotcheckModule.filter('reportTypeRefName', ['$filter', function ($filter) {
     return function(type) {
         return $filter('label')(type, reportTypeMap);
+    }
+}]);
+
+spotcheckModule.filter('reportTypeLabel', ['$filter', function ($filter) {
+    return function(type) {
+        return $filter('label')(type, reportTypeDispMap);
     }
 }]);
 
@@ -70,7 +77,8 @@ spotcheckModule.filter('contentType', function() {
         LBDC_AGENDA_ALERT: "Agenda",
         LBDC_DAYBREAK: "Bill",
         LBDC_CALENDAR_ALERT: "Floor Cal",
-        LBDC_SCRAPED_BILL: "Bill"
+        LBDC_SCRAPED_BILL: "Bill",
+        SENATE_SITE_BILLS: "Bill"
     };
     return function(reportType) {
         if (contentTypeMap.hasOwnProperty(reportType)) {
@@ -85,16 +93,13 @@ spotcheckModule.filter('contentType', function() {
 spotcheckModule.controller('SpotcheckCtrl', ['$scope', '$routeParams', '$location', '$timeout', '$filter', '$mdDialog',
 function ($scope, $routeParams, $location, $timeout, $filter, $mdDialog) {
 
-    // The index of the currently selected tab
-    $scope.selectedIndex = 0;
-
-    $scope.tabNames = ['summary', 'report'];
-
     $scope.rtmap = {};
+    $scope.rtDispMap = {};
     $scope.mtmap = {};
 
-    $scope.init = function (rtmap, mtmap) {
+    $scope.init = function (rtmap, rtDispMap, mtmap) {
         $scope.rtmap = reportTypeMap = rtmap;
+        $scope.rtDispMap = reportTypeDispMap = rtDispMap;
         $scope.mtmap = mismatchTypeMap = mtmap;
 
         $scope.setHeaderVisible(true);
@@ -103,7 +108,7 @@ function ($scope, $routeParams, $location, $timeout, $filter, $mdDialog) {
 
     $scope.getReportURL = function (reportType, reportRunTime) {
         return ctxPath + "/admin/report/spotcheck/" +
-            $filter('reportTypeLabel')(reportType) + "/" + $filter('moment')(reportRunTime, "YYYY-MM-DD[T]HH:mm:ss.SSS");
+            $filter('reportTypeRefName')(reportType) + "/" + $filter('moment')(reportRunTime, "YYYY-MM-DD[T]HH:mm:ss.SSS");
     };
 
     /**
@@ -231,6 +236,10 @@ function ($scope, $routeParams, $location, $timeout, $filter, $mdDialog) {
                 getContentUrl: function() {return $scope.getContentUrl;}
             }
         });
+    };
+
+    $scope.showSummaryDetails = function(summary) {
+        $scope.notImplementedDialog();
     };
 }]);
 
