@@ -49,8 +49,8 @@ openApp.config(function($mdThemingProvider) {
  * Since AppCtrl is the top-most parent controller, some useful utility methods are included here to be used
  * by the children controller.
  */
-openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$mdDialog', '$http', '$interval', 'BillUtils',
-function($scope, $location, $mdSidenav, $mdDialog, $http, $interval) {
+openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$mdDialog', '$http', '$interval', '$window', 'BillUtils',
+function($scope, $location, $mdSidenav, $mdDialog, $http, $interval, $window) {
     $scope.header = {text: '', visible: false};
     $scope.activeSession = 2015;
 
@@ -88,6 +88,16 @@ function($scope, $location, $mdSidenav, $mdDialog, $http, $interval) {
         $location.url(url);
     };
 
+    /**
+     * Navigate to the given url in a new tab.
+     * @param url string
+     */
+    $scope.goNewTab = function(url) {
+        console.log('hello');
+        console.log('opening', url, 'in new tab');
+        $window.open(url, '_blank');
+    };
+
     /** Given a moment date object, return an iso-8601 string representing the local time */
     $scope.toZonelessISOString = function (momentDate) {
         return momentDate.format('YYYY-MM-DDTHH:mm:ss.SSS');
@@ -119,5 +129,17 @@ function($scope, $location, $mdSidenav, $mdDialog, $http, $interval) {
                                             "' is not a valid for request parameter " + paramName)
                                 .ok('OK'));
         }
-    }
+    };
+
+    $scope.notImplementedDialog = function() {
+        $mdDialog.show(
+            $mdDialog.confirm()
+                .title("Not Yet Implemented")
+                .content("Coming Soon!")
+                .ariaLabel("Feature Not Yet Implemented")
+                .theme("md-primary")
+                .ok("Can't Wait!!")
+                .cancel("I can wait")
+        );
+    };
 }]);

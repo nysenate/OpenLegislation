@@ -548,7 +548,7 @@ $left-nav-width: 305px;
 }
 .menu-item.menu-title:hover,
 .menu-item.menu-title:focus,
-.menu-item.active, {
+.menu-item.active {
   font-weight: bold;
   background: $blue3;
 }
@@ -1166,6 +1166,7 @@ a.slogan-link {
 /** --- Styles for Report page --- */
 
 #daybreak-summary-table {
+  //todo delete when done
   table-layout: auto;
   border: 1px solid #ccc;
   th {
@@ -1181,6 +1182,41 @@ a.slogan-link {
     width: 4.2em;
   }
 }
+
+.spotcheck-report-list {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.open-mismatch-total {
+  justify-content: center;
+  text-align: center;
+  .open-mismatch-total-count {
+    font-size: 28px;
+  }
+  .open-mismatch-total-label {
+    font-size: 14px;
+    line-height: 1.5;
+    width: 5.5em;
+  }
+}
+
+$sptchk-notes-font-sz: 14px;
+$sptchk-notes-line-height: 1.5;
+$sptchk-notes-lines-shown: 1;
+
+p.spotcheck-summary-notes {
+  display:block;
+  display: -webkit-box;
+  max-height: $sptchk-notes-font-sz * $sptchk-notes-line-height * $sptchk-notes-lines-shown*1.2;
+  font-size: $sptchk-notes-font-sz;
+  line-height: $sptchk-notes-line-height;
+  -webkit-line-clamp: $sptchk-notes-lines-shown;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotcheck-summary-
 
 table.table-striped tbody tr:nth-child(odd) {
   background-color: #d0f3ff;
@@ -1327,7 +1363,7 @@ diff-summary, mismatch-diff {
 }
 
 .mismatch-dialog {
-  padding: 0 20px 20px 20pxu
+  padding: 0 20px 20px 20px;
 }
 
 .mismatch-dialog-tabs md-content {

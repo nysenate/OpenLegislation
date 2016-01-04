@@ -201,7 +201,7 @@ module.exports = function(grunt) {
             },
             js: {
                 files: ['<%= jsSource %>/**/*.js'],
-                tasks: ['uglify:app']
+                tasks: ['uglify:app', 'copy:js']
             },
             docs: {
                 files: ['<%= docsSourceRoot %>/*.rst', '<%= docsSourceRoot %>/conf.py'],
@@ -219,5 +219,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-shell');
 
-    grunt.registerTask('default', ['compass', 'concat', 'cssmin', 'uglify', 'shell:docs', 'copy']);
+    grunt.registerTask('default', ['compass', 'concat', 'cssmin', 'uglify', 'copy']);
 };
