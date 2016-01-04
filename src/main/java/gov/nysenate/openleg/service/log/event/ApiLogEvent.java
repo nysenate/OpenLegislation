@@ -2,12 +2,14 @@ package gov.nysenate.openleg.service.log.event;
 
 import gov.nysenate.openleg.model.auth.ApiRequest;
 import gov.nysenate.openleg.model.auth.ApiResponse;
+import gov.nysenate.openleg.model.auth.ApiUser;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class ApiLogEvent
 {

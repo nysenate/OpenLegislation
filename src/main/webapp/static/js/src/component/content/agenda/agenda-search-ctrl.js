@@ -1,8 +1,9 @@
 var agendaModule = angular.module('open.agenda');
 
 agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$routeParams',
-    'PaginationModel', 'AgendaListingApi', 'AgendaSearchApi', 'CommitteeListingApi',
-    function($scope, $location, $route, $routeParams, PaginationModel, AgendaListingApi, AgendaSearchApi, CommitteeListingApi) {
+    'PaginationModel', 'AgendaListingApi', 'AgendaSearchApi', 'CommitteeListingApi', 'YearGenerator',
+    function($scope, $location, $route, $routeParams, PaginationModel, AgendaListingApi, AgendaSearchApi,
+             CommitteeListingApi, YearGenerator) {
         $scope.tabInit = function() {
             $scope.setHeaderText('Search Agendas');
         };
@@ -10,7 +11,7 @@ agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$
         $scope.pagination.itemsPerPage = 6;
 
         $scope.searchParams = {
-            year: $routeParams['year'] || moment().year(),
+            year: parseInt($routeParams['year'], 10) || moment().year(),
             agendaNo: $routeParams['agendaNo'] || '',
             commName: $routeParams['commName'] || '',
             printNo: $routeParams['printNo'] || '',
@@ -49,7 +50,7 @@ agendaModule.controller('AgendaSearchCtrl', ['$scope', '$location', '$route', '$
             }
         };
 
-        $scope.years = ['2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009'];
+        $scope.years = YearGenerator.getSingleYearsInt(2009);
 
         // Create list of numbers between 1 and 20.
         $scope.agendaNoList = Array.apply(0, Array(25)).map(function(x,i) { return i + 1; });

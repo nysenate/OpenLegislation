@@ -196,57 +196,59 @@
           <md-tab-body>
             <md-content>
               <md-card class="content-card" layout-gt-sm="row" layout="column"
-                       layout-align="start start">
-                <div class="padding-10 margin-right-20" layout="column" ng-repeat="vote in bill.votes.items">
-                  <div flex="50">
-                    <h4 class="no-bottom-margin"><i class="icon-prefix icon-calendar"></i>
-                      {{vote.voteDate | moment:'MMM DD, YYYY'}}
-                    </h4>
-                    <h5 class="no-bottom-margin">{{vote.committee.name}} <span class="capitalize">{{vote.voteType | lowercase}}</span>
-                      Vote</h5>
-                    <p class="no-top-margin text-medium">Voted on Amendment Revision: {{vote.version | prettyAmendVersion}}</p>
-                    <md-divider></md-divider>
-                    <div layout="column">
-                      <toggle-panel label="Voting Details" open="true" class="content-card">
-                        <md-content class="no-padding">
-                          <div flex="1">
-                            <table class="bill-votes-table">
-                              <thead>
-                              <tr>
-                                <th style="min-width: 100px;">Vote</th>
-                                <th>Count</th>
-                              </tr>
-                              </thead>
-                              <tbody>
-                              <tr ng-class="{'positive': (voteType === 'AYE' || voteType === 'AYEWR'),
-                                     'negative': (voteType === 'NAY')}"
-                                  ng-repeat="(voteType, votes) in vote.memberVotes.items">
-                                <td>{{voteType | voteTypeFilter}}</td>
-                                <td>{{votes.size}}</td>
-                              </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                          <md-list ng-repeat="(voteType, votes) in vote.memberVotes.items">
-                            <md-list-item ng-repeat="voteItem in votes.items"
-                                          ng-class="{'positive': (voteType === 'AYE' || voteType === 'AYEWR'),
-                                                     'negative': (voteType === 'NAY')}">
-                              <div style="max-width:80px;" class="md-tile-left margin-right-10">
-                                <h5 style="margin:10px;">{{voteType}}</h5>
-                              </div>
-                              <div class="md-tile-left">
-                                <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{voteItem.imgName}}"
-                                     style="height: 35px;width:29px;"/>
-                              </div>
-                              <div style="padding:0" class="md-tile-content">
-                                <span class="text-medium">{{voteItem.fullName}}</span>
-                              </div>
-                            </md-list-item>
-                            <md-divider></md-divider>
-                          </md-list>
-                        </md-content>
-                      </toggle-panel>
+                       layout-align="start start" layout-wrap>
+                <div flex="50" class="padding-10 margin-right-20" ng-repeat="vote in bill.votes.items">
+                  <div layout="row">
+                    <div flex="50">
+                      <h4 class="no-bottom-margin"><i class="icon-prefix icon-calendar"></i>
+                        {{vote.voteDate | moment:'MMM DD, YYYY'}}
+                      </h4>
+                      <h4 class="no-bottom-margin">{{vote.committee.name}} <span class="capitalize">{{vote.voteType | lowercase}}</span>
+                        Vote</h4>
+                      <p class="no-top-margin text-medium">Voted on Amendment Revision: {{vote.version | prettyAmendVersion}}</p>
                     </div>
+                    <div flex="50">
+                      <table class="bill-votes-table">
+                        <thead>
+                        <tr>
+                          <th style="min-width: 100px;">Vote</th>
+                          <th>Count</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-class="{'positive': (voteType === 'AYE' || voteType === 'AYEWR'),
+                                   'negative': (voteType === 'NAY')}"
+                            ng-repeat="(voteType, votes) in vote.memberVotes.items">
+                          <td>{{voteType | voteTypeFilter}}</td>
+                          <td>{{votes.size}}</td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <md-divider></md-divider>
+                  <div layout="column">
+                    <toggle-panel label="Voting Details" open="false" class="content-card">
+                      <md-content class="no-padding">
+                        <md-list ng-repeat="(voteType, votes) in vote.memberVotes.items">
+                          <md-list-item ng-repeat="voteItem in votes.items"
+                                        ng-class="{'positive': (voteType === 'AYE' || voteType === 'AYEWR'),
+                                                   'negative': (voteType === 'NAY')}">
+                            <div style="max-width:80px;" class="md-tile-left margin-right-10">
+                              <h5 style="margin:10px;">{{voteType}}</h5>
+                            </div>
+                            <div class="md-tile-left">
+                              <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{voteItem.imgName}}"
+                                   style="height: 35px;width:29px;"/>
+                            </div>
+                            <div style="padding:0" class="md-tile-content">
+                              <span class="text-medium">{{voteItem.fullName}}</span>
+                            </div>
+                          </md-list-item>
+                          <md-divider></md-divider>
+                        </md-list>
+                      </md-content>
+                    </toggle-panel>
                   </div>
                 </div>
               </md-card>
@@ -411,7 +413,7 @@
         <md-tab label="JSON">
           <div class="padding-20">
             <div class="gray3-bg padding-10">
-              <a class="blue3" ng-href="{{billApiPath}}">View JSON in new window</a>
+              <a class="blue3" target="_blank" ng-href="{{billApiPath}}">View JSON in new window</a>
             </div>
             <md-divider></md-divider>
             <iframe class="bill-json-iframe" ng-src="{{billApiPath}}"></iframe>

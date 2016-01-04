@@ -18,7 +18,8 @@ public class ApiLogItemView implements ViewObject
     private String requestMethod;
     private String userAgent;
     private String apiKey;
-    private String apiUser;
+    private String apiUserName;
+    private String apiUserEmail;
     private LocalDateTime responseDateTime;
     private int statusCode;
     private String contentType;
@@ -41,6 +42,10 @@ public class ApiLogItemView implements ViewObject
                 this.requestMethod = req.getRequestMethod();
                 this.userAgent = req.getUserAgent();
                 this.apiKey = req.getApiKey();
+                if (req.getApiUser() != null) {
+                    this.apiUserEmail = req.getApiUser().getEmail();
+                    this.apiUserName = req.getApiUser().getName();
+                }
             }
             this.responseDateTime = apiResponse.getResponseDateTime();
             this.statusCode = apiResponse.getStatusCode();
@@ -84,8 +89,12 @@ public class ApiLogItemView implements ViewObject
         return apiKey;
     }
 
-    public String getApiUser() {
-        return apiUser;
+    public String getApiUserName() {
+        return apiUserName;
+    }
+
+    public String getApiUserEmail() {
+        return apiUserEmail;
     }
 
     public LocalDateTime getResponseDateTime() {

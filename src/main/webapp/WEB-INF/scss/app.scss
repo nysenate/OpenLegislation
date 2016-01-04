@@ -183,6 +183,10 @@ md-datepicker {
   font-size: 1.1rem;
 }
 
+.text-xlarge {
+  font-size: 1.5rem;
+}
+
 .text-align-center {
   text-align: center;
 }
@@ -458,7 +462,6 @@ h5 {
 }
 
 #content {
-  //min-height: 100vh;
   .content-section {
     max-width: 1100px;
     margin: auto;
@@ -1506,13 +1509,35 @@ md-list.env-list {
 /** --- Admin Log Page --- */
 
 .api-request-table-container {
-  max-height: 50vh;
-  overflow-y: scroll;
+
+}
+
+@-webkit-keyframes new-request {
+  0% {
+    background-color: transparent;
+    opacity:1;
+  }
+  50% {
+    background-color: #b1c48e;
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 table.api-request-table {
   width: 100%;
   text-align: center;
+  tr.new-request {
+    -webkit-animation-name: new-request;
+    -webkit-animation-duration: 2000ms;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: new-request;
+    -moz-animation-duration: 2000ms;
+    -moz-animation-iteration-count: 1;
+    -moz-animation-timing-function: linear;
+  }
   th {
     font-size: 0.9rem;
     padding: 5px;
@@ -1523,7 +1548,10 @@ table.api-request-table {
     a {
       color: $blue3;
     }
-    .url-td {
+    &.time-td {
+      width: 165px;
+    }
+    &.url-td {
       max-width: 350px;
     }
   }
@@ -1531,3 +1559,4 @@ table.api-request-table {
     background: #f5f5f5;
   }
 }
+

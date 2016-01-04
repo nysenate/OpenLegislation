@@ -107,6 +107,7 @@ coreModule.factory('YearGenerator', function() {
     return {
         getSingleYearsInt: function(start, end) {
             var years = [];
+            if (!end) end = (new Date()).getFullYear();
             for (var year = start; year <= end; year++) {
                 years.push(year);
             }
@@ -181,6 +182,66 @@ coreModule.factory('PaginationModel', function() {
         toFirstPage: function() {
             this.currPage = this.firstPage;
         }
+    };
+});
+
+coreModule.filter('default', ['$filter', function($filter) {
+    return function(input, defaultVal) {
+        return (!input) ? defaultVal : input;
+    };
+}]);
+
+coreModule.filter('moment', ['$filter', function($filter) {
+    return function(input, format, defaultVal) {
+        if (input) {
+            return moment(input).format(format);
+        }
+        else {
+            return (typeof defaultVal !== 'undefined') ? defaultVal : "--";
+        }
+    };
+}]);
+
+/**
+ * Appends an appropriate ordinal suffix to the input number
+ */
+coreModule.filter('ordinalSuffix', ['$filter', function ($filter) {
+    var suffixes = ["th", "st", "nd", "rd"];
+    return function(input) {
+        if (typeof input==='number' && (input%1)===0) {
+            var relevantDigits = (input < 20) ? input % 20 : input % 10;
+            return input.toString().concat((relevantDigits <= 3) ? suffixes[relevantDigits] : suffixes[0]);
+        } else {
+            return "D:"
+        }
+    };
+}]);
+
+coreModule.factory('sessionYears', [function(){
+    function generateSessionYears() {
+        var years = [];
+        for (var year = 2009; year <= new Date().getFullYear(); year += 2) {
+            years.push(year);
+        }
+        return years;
+    }
+    return generateSessionYears();
+}]);
+
+/** --- CheckButton --- */
+
+coreModule.directive('checkButton', function(){
+    return {
+        restrict: 'E',
+        scope: {
+            btnclass: '@btnClass',
+            btnmodel: '=ngModel'
+        },
+        transclude: true,
+        template:
+        "<button type='button' class='check-button {{btnclass}}' ng-class='{success: btnmodel, disabled: !btnmodel }' " +
+        "btn-checkbox ng-model='btnmodel' ng-transclude>" +
+        "</button>"
     };
 });
 

@@ -60,7 +60,7 @@ public class DataProcessor
             .add(transcriptProcessService)
             .add(publicHearingProcessService)
             .add(lawProcessService)
-            .addAll(spotcheckProcessServices)
+//            .addAll(spotcheckProcessServices)
             .build();
     }
 

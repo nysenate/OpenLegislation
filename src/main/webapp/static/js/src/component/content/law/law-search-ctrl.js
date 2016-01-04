@@ -22,7 +22,6 @@ lawModule.controller('LawSearchCtrl', ['$scope', '$location', '$routeParams', 'L
         };
 
         function tabInit() {
-            $scope.setHeaderText('Search NYS Laws');
             $scope.setHeaderVisible(true);
         }
 

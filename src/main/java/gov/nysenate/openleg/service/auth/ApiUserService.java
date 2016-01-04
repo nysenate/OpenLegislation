@@ -3,6 +3,8 @@ package gov.nysenate.openleg.service.auth;
 import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.model.auth.ApiUser;
 
+import java.util.Optional;
+
 public interface ApiUserService
 {
     /**
@@ -21,7 +23,14 @@ public interface ApiUserService
      * @param email The email address of the user being search for.
      * @return An APIUser if the email is valid
      */
-    public ApiUser getUser (String email);
+    public ApiUser getUser(String email);
+
+    /**
+     * Get an API User from a given api key
+     * @param apiKey The apiKey of the user being search for.
+     * @return An APIUser if the apiKey matches
+     */
+    public Optional<ApiUser> getUserByKey(String apiKey);
 
     /**
      * Attempt to activate a user based on the provided registration token. If a valid registration

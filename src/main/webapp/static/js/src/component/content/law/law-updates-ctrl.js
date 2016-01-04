@@ -6,7 +6,6 @@ var lawModule = angular.module('open.law');
 lawModule.controller('LawUpdatesCtrl', ['$scope', '$location', '$routeParams', 'PaginationModel', 'LawFullUpdatesApi',
     function($scope, $location, $routeParams, PaginationModel, LawFullUpdatesApi) {
         function tabInit() {
-            $scope.setHeaderText('NYS Laws Updates');
             $scope.setHeaderVisible(true);
         }
 
