@@ -8,6 +8,7 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.log.search.ApiLogStompService;
 import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.auth.ApiUserService;
@@ -27,7 +28,7 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_P
 import static java.util.stream.Collectors.toList;
 
 @RestController
-@RequestMapping(value = BASE_ADMIN_API_PATH + "/apiLogs/")
+@RequestMapping(value = BASE_ADMIN_API_PATH + "/apiLogs")
 public class ApiLogCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(ApiLogCtrl.class);
@@ -39,7 +40,7 @@ public class ApiLogCtrl extends BaseCtrl
     @RequestMapping("")
     public BaseResponse searchLogs(@RequestParam(defaultValue = "*") String term,
                                    @RequestParam(defaultValue = "requestTime:DESC") String sort,
-                                    WebRequest webRequest) {
+                                    WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);
         SearchResults<ApiLogItemView> results = logSearchService.searchApiLogs(term, sort, limOff);
         return ListViewResponse.of(

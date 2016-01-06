@@ -11,9 +11,12 @@ import gov.nysenate.openleg.dao.log.search.ElasticApiLogSearchDao;
 import gov.nysenate.openleg.model.auth.ApiResponse;
 import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
+import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.log.event.ApiLogIndexEvent;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +41,16 @@ public class ElasticApiLogSearchService implements ApiLogSearchService
     }
 
     @Override
-    public SearchResults<ApiLogItemView> searchApiLogs(String query, String sort, LimitOffset limOff) {
-        return apiLogSearchDao.searchLogsAndFetchData(QueryBuilders.queryString(query), null, sort, limOff);
+    public SearchResults<ApiLogItemView> searchApiLogs(String query, String sort, LimitOffset limOff) throws SearchException {
+        try {
+            return apiLogSearchDao.searchLogsAndFetchData(QueryBuilders.queryString(query), null, sort, limOff);
+        }
+        catch (SearchParseException ex) {
+            throw new SearchException("Invalid query string");
+        }
+        catch (ElasticsearchException ex) {
+            throw new SearchException("Unexpected search exception!");
+        }
     }
 
     @Override
