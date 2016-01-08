@@ -58,19 +58,22 @@
         </div>
       </md-toolbar>
       <%-- Bill amendments switcher --%>
-      <md-toolbar ng-if="bill.amendments.size > 1" style="padding:15px;" class="md-toolbar-tools auto-height">
-        <label class="margin-right-20 text-medium">Amendment Version </label>
-        <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
-          <md-radio-button ng-repeat="(version, amd) in bill.amendments.items"
-                           value="{{version}}" class="md-primary md-hue-2">
-            <span class="text-medium bold" ng-if="$first">Original</span>
-            <span class="text-medium bold" ng-if="!$first">Revision {{version}}</span>
-            <span class="text-medium bold" ng-if="$last"> (Latest)</span>
-            <br/>
-            <span class="text-small">{{amd.publishDate | moment:'MMM D, YYYY'}}</span>
-          </md-radio-button>
-        </md-radio-group>
-      </md-toolbar>
+      <div ng-if="bill.amendments.size > 1">
+        <md-toolbar style="padding:15px;" class="md-toolbar-tools md-hue-3 auto-height">
+          <label class="margin-right-20 text-medium">Amendment Version </label>
+          <md-radio-group layout="row" layout-sm="column" ng-model="curr.amdVersion">
+            <md-radio-button ng-repeat="(version, amd) in bill.amendments.items"
+                             value="{{version}}" class="md-accent md-hue-2">
+              <span class="text-medium bold" ng-if="$first">Original</span>
+              <span class="text-medium bold" ng-if="!$first">Revision {{version}}</span>
+              <span class="text-medium bold" ng-if="$last"> (Latest)</span>
+              <br/>
+              <span class="text-small">{{amd.publishDate | moment:'MMM D, YYYY'}}</span>
+            </md-radio-button>
+          </md-radio-group>
+        </md-toolbar>
+        <md-divider></md-divider>
+      </div>
       <%-- Bill Tabs --%>
       <md-tabs md-selected="curr.selectedView" class="md-hue-2 margin-top-10"
                md-dynamic-height="true" md-no-ink md-stretch-tabs="always">
@@ -312,7 +315,6 @@
             Actions ({{bill.actions.size}})
           </md-tab-label>
           <md-tab-body>
-            <md-divider></md-divider>
             <div layout="row">
               <div ng-repeat="mergedActionList in bill.mergedActions" flex>
                 <md-card class="content-card">
