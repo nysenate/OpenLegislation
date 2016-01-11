@@ -20,6 +20,8 @@ public class BillTextUtils
     protected static Pattern billTextPageStartPattern =
         Pattern.compile("^(\\s+\\w.\\s\\d+(--\\w)?)?\\s{10,}(\\d+)(\\s{10,}(\\w.\\s\\d+(--\\w)?)?(\\d+-\\d+-\\d(--\\w)?)?)?$");
 
+    protected static Integer MAX_LINES_RES_PAGE = 60;
+
     /**
      * Extracts a list of numbers which represent the line indices in which a
      * page break occurs. The indices start at 0 since they are extracted
@@ -39,7 +41,7 @@ public class BillTextUtils
      * @param fullText String - String - Bill full text
      * @return List<List<String>>
      */
-    public static List<List<String>> getPages(String fullText) {
+    public static List<List<String>> getBillPages(String fullText) {
         List<List<String>> pages = new ArrayList<>();
         List<String> lines = Splitter.on("\n").splitToList(fullText);
         int startLine = 0;
@@ -48,6 +50,24 @@ public class BillTextUtils
             startLine = newPageLine;
         }
         pages.add(lines.subList(startLine, lines.size()));
+        return pages;
+    }
+
+    /**
+     * Returns the pages for resolution full text. Since resolutions don't have the same
+     * formatting cues as bills, we just cap the pages to a certain number of lines.
+     * @param fullText
+     * @return
+     */
+    public static List<List<String>> getResolutionPages(String fullText) {
+        List<List<String>> pages = new ArrayList<>();
+        List<String> lines = Splitter.on("\n").splitToList(fullText);
+        int numPages = new Double(Math.ceil((double) lines.size() / MAX_LINES_RES_PAGE)).intValue();
+        for (int page = 0; page < numPages; page++) {
+            int pageStart = page * MAX_LINES_RES_PAGE;
+            int pageEnd = Math.min(pageStart + MAX_LINES_RES_PAGE, lines.size());
+            pages.add(lines.subList(pageStart, pageEnd));
+        }
         return pages;
     }
 
