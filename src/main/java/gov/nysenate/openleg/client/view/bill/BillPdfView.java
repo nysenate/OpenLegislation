@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
@@ -37,37 +36,38 @@ public class BillPdfView
         }
 
         BillAmendment ba = bill.getAmendment(version);
-        PDDocument doc = new PDDocument();
-        PDFont font = PDType1Font.COURIER;
-
-        Float margin = billMargin;
-        if (bill.isResolution()) {
-            margin = resolutionMargin;
-        }
-
         List<List<String>> pages;
         if (ba.getFullText() == null || ba.getFullText().isEmpty()) {
             pages = Arrays.asList(Arrays.asList("No full text available for " + bill.getBaseBillId().withVersion(version)));
         }
-        else {
-            pages = BillTextUtils.getPages(ba.getFullText());
+        else if (bill.isResolution()) {
+            pages = BillTextUtils.getResolutionPages(ba.getFullText());
         }
-        for (List<String> page : pages) {
-            PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
-            PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
-            contentStream.beginText();
-            contentStream.setFont(font, fontSize);
-            contentStream.moveTextPositionByAmount(margin, top);
-            for (String line : page) {
-                contentStream.drawString(line);
-                contentStream.moveTextPositionByAmount(0, -fontSize);
-            }
-            contentStream.endText();
-            contentStream.close();
-            doc.addPage(pg);
+        else {
+            pages = BillTextUtils.getBillPages(ba.getFullText());
         }
 
-        doc.save(outputStream);
-        doc.close();
+        try (PDDocument doc = new PDDocument()) {
+            PDFont font = PDType1Font.COURIER;
+            Float margin = billMargin;
+            if (bill.isResolution()) {
+                margin = resolutionMargin;
+            }
+            for (List<String> page : pages) {
+                PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
+                PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
+                contentStream.beginText();
+                contentStream.setFont(font, fontSize);
+                contentStream.moveTextPositionByAmount(margin, top);
+                for (String line : page) {
+                    contentStream.drawString(line);
+                    contentStream.moveTextPositionByAmount(0, -fontSize);
+                }
+                contentStream.endText();
+                contentStream.close();
+                doc.addPage(pg);
+            }
+            doc.save(outputStream);
+        }
     }
 }
