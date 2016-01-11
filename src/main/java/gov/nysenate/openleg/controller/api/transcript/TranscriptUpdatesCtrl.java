@@ -75,7 +75,7 @@ public class TranscriptUpdatesCtrl extends BaseCtrl
 
     private BaseResponse getNewTranscriptsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 25);
-        Range<LocalDateTime> range = getOpenRange(to, from, "from", "to");
+        Range<LocalDateTime> range = getOpenRange(from, to, "from", "to");
         PaginatedList<TranscriptUpdateToken> updates = transcriptDao.transcriptsUpdatedDuring(range, SortOrder.ASC, limOff);
         return ListViewResponse.of(updates.getResults().stream()
                 .map(TranscriptUpdateTokenView::new)
