@@ -140,8 +140,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ),
     INSERT_MISMATCH(
         "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_MISMATCH + "\n" +
-        "(observation_id, type, status, reference_data, observed_data, notes, issue_ids)\n" +
-        "VALUES (:observationId, :type, :status, :referenceData, :observedData, :notes, :issueIds)"
+        "(observation_id, type, status, reference_data, observed_data, notes)\n" +
+        "VALUES (:observationId, :type, :status, :referenceData, :observedData, :notes)"
     ),
 
     /** --- Mismatch Ignore queries --- */
