@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class FsSenateSiteBillDao implements SenateSiteBillDao {
     public void saveDumpFragment(SenateSiteBillDumpFragId fragmentId, Object fragmentData) throws IOException {
         File fragmentFile = new File(incomingBillDumpDir, getDumpFragFilename(fragmentId));
         logger.info("saving senate site bill dump fragment {}", fragmentFile.getAbsolutePath());
-        FileUtils.write(fragmentFile, OutputUtils.toJson(fragmentData));
+        FileUtils.write(fragmentFile, OutputUtils.toJson(fragmentData), Charset.forName("UTF-8"));
     }
 
     @Override
