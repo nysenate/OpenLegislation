@@ -63,7 +63,6 @@ public class SenateSiteBillJsonParser {
         bill.setChamber(getValue(billNode, "field_ol_chamber"));
         bill.setCoSponsors(getMembers(billNode, "field_ol_co_sponsor_names"));
         bill.setText(getValue(billNode, "field_ol_full_text"));
-        bill.setHasSameAs(getBooleanValue(billNode, "field_ol_has_same_as"));
         bill.setAmended(getBooleanValue(billNode, "field_ol_is_amended"));
         bill.setLatestStatusCommittee(getValue(billNode, "field_ol_latest_status_committee"));
         bill.setLawCode(getValue(billNode, "field_ol_law_code"));
@@ -81,6 +80,12 @@ public class SenateSiteBillJsonParser {
         bill.setLastStatus(getValue(billNode, "field_ol_last_status"));
         bill.setLastStatusDate(getDateTimeValue(billNode, "field_ol_last_status_date"));
         bill.setActions(getActionList(billNode, "field_ol_all_actions"));
+
+        if (bill.getBaseBillId().getBillType().isResolution()) {
+
+        } else {
+            bill.setHasSameAs(getBooleanValue(billNode, "field_ol_has_same_as"));
+        }
 
         return bill;
     }
@@ -131,36 +136,36 @@ public class SenateSiteBillJsonParser {
     }
 
     private String getValue(JsonNode parentNode, String fieldName) {
-        try {
-            JsonNode fieldNode = parentNode.path(fieldName);
-            if (fieldNode.isArray()) { // missing values are signified by an array...
-                return null;
-            }
-            JsonNode textNode = fieldNode
-                    .path("und")
-                    .elements().next()
-                    .path("value");
-            if (textNode.isTextual() || textNode.isNull()) {
-                return textNode.textValue();
-            }
-            throw new ParseError("could not extract text value from field: " + fieldName +
-                    " - could not locate text field");
-        } catch (NoSuchElementException ex) {
-            throw new ParseError("could not extract text value from field: " + fieldName, ex);
+        JsonNode undNode = parentNode.path(fieldName)
+                .path("und");
+        if (!undNode.isArray() || !undNode.elements().hasNext()) {
+            return null;
         }
+        JsonNode valueNode = undNode.elements().next()
+                .path("value");
+        if (valueNode.isTextual() || valueNode.isNull()) {
+            return valueNode.textValue();
+        }
+        return null;
     }
 
     private int getIntValue(JsonNode parentNode, String fieldName) {
         String rawValue = getValue(parentNode, fieldName);
+        if (rawValue == null) {
+            return 0;
+        }
         try {
             return Integer.parseInt(rawValue);
         } catch (NumberFormatException ex) {
-            throw new ParseError("could not parsse int value. field: " + fieldName + " value: " + rawValue, ex);
+            throw new ParseError("could not parse int value. field: " + fieldName + " value: " + rawValue, ex);
         }
     }
 
     private boolean getBooleanValue(JsonNode parentNode, String fieldName) {
         String rawValue = getValue(parentNode, fieldName);
+        if (rawValue == null) {
+            return false;
+        }
         if ("1".equals(rawValue) ^ "0".equals(rawValue)) {
             return "1".equals(getValue(parentNode, fieldName));
         }
@@ -169,6 +174,9 @@ public class SenateSiteBillJsonParser {
 
     private LocalDateTime getDateTimeValue(JsonNode parentNode, String fieldName) {
         String rawValue = getValue(parentNode, fieldName);
+        if (rawValue == null) {
+            return null;
+        }
         try {
             long msvalue = Long.parseLong(rawValue);
             return LocalDateTime.ofInstant(Instant.ofEpochSecond(msvalue), ZoneId.of("America/New_York"));
