@@ -57,47 +57,49 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
     @Override
     public synchronized SpotCheckReport<BillId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         SenateSiteBillDump billDump = getMostRecentDump();
-
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_BILLS,
                 billDump.getBillDumpId().getToDateTime(), LocalDateTime.now());
         SpotCheckReport<BillId> report = new SpotCheckReport<>(reportId);
+        try {
 
-        logger.info("getting bill updates");
+            logger.info("getting bill updates");
 
-        // Get reference bills using the bill dump update interval
-        Set<BaseBillId> updatedBillIds = getBillUpdatesDuring(billDump);
-        logger.info("got {} updated bill ids", updatedBillIds.size());
-        Map<BaseBillId, Bill> updatedBills = new LinkedHashMap<>();
-        logger.info("retrieving bills");
-        for (BaseBillId billId : updatedBillIds) {
-            try {
-                updatedBills.put(billId, billDataService.getBill(billId));
-            } catch (BillNotFoundEx ex) {
-                SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(reportId.getReferenceId(), billId);
-                observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, null, billId));
-                report.addObservation(observation);
+            // Get reference bills using the bill dump update interval
+            Set<BaseBillId> updatedBillIds = getBillUpdatesDuring(billDump);
+            logger.info("got {} updated bill ids", updatedBillIds.size());
+            Map<BaseBillId, Bill> updatedBills = new LinkedHashMap<>();
+            logger.info("retrieving bills");
+            for (BaseBillId billId : updatedBillIds) {
+                try {
+                    updatedBills.put(billId, billDataService.getBill(billId));
+                } catch (BillNotFoundEx ex) {
+                    SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(reportId.getReferenceId(), billId);
+                    observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, null, billId));
+                    report.addObservation(observation);
+                }
             }
+            logger.info("got {} bills", updatedBills.size());
+            logger.info("retrieving bill dump");
+            // Extract senate site bills from the dump, filtering out those that have received updates since the dump
+            // Ignored bills are added to the report notes
+            List<SenateSiteBill> dumpedBills = getDumpedBills(billDump, updatedBills, report);
+            logger.info("parsed {} dumped bills", dumpedBills.size());
+            logger.info("archiving bill dump...");
+
+            logger.info("comparing bills present");
+            // Add observations for any missing bills that should have been in the dump
+            report.addObservations(getRefDataMissingObs(dumpedBills, updatedBills.values(), reportId.getReferenceId()));
+
+            logger.info("checking bills");
+            // Check each dumped senate site bill
+            dumpedBills.stream()
+                    .map(senSiteBill -> billCheckService.check(updatedBills.get(senSiteBill.getBaseBillId()), senSiteBill))
+                    .forEach(report::addObservation);
+
+            logger.info("done: {} mismatches", report.getOpenMismatchCount(false));
+        } finally {
+            senateSiteBillDao.setProcessed(billDump);
         }
-        logger.info("got {} bills", updatedBills.size());
-        logger.info("retrieving bill dump");
-        // Extract senate site bills from the dump, filtering out those that have received updates since the dump
-        // Ignored bills are added to the report notes
-        List<SenateSiteBill> dumpedBills = getDumpedBills(billDump, updatedBills, report);
-        logger.info("parsed {} dumped bills", dumpedBills.size());
-
-        logger.info("comparing bills present");
-        // Add observations for any missing bills that should have been in the dump
-        report.addObservations(getRefDataMissingObs(dumpedBills, updatedBills.values(), reportId.getReferenceId()));
-
-        logger.info("checking bills");
-        // Check each dumped senate site bill
-        dumpedBills.stream()
-                .map(senSiteBill -> billCheckService.check(updatedBills.get(senSiteBill.getBaseBillId()), senSiteBill))
-                .forEach(report::addObservation);
-
-        logger.info("done: {} mismatches", report.getOpenMismatchCount(false));
-        senateSiteBillDao.setProcessed(billDump);
-
         return report;
     }
 
