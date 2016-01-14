@@ -73,7 +73,6 @@ spotcheckModule.filter('reportType', function(){
 
 spotcheckModule.filter('contentType', function() {
     var contentTypeMap = {
-        LBDC_ACTIVE_LIST: "Active List",
         LBDC_AGENDA_ALERT: "Agenda",
         LBDC_DAYBREAK: "Bill",
         LBDC_CALENDAR_ALERT: "Floor Cal",
@@ -125,6 +124,7 @@ function ($scope, $routeParams, $location, $timeout, $filter, $mdDialog) {
     var contentTypeIdMap = {
         LBDC_DAYBREAK: getBillId,
         LBDC_SCRAPED_BILL: getBillId,
+        SENATE_SITE_BILLS: getBillId,
         LBDC_AGENDA_ALERT: getAgendaId,
         LBDC_CALENDAR_ALERT: getCalendarId
     };
