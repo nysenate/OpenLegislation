@@ -21,7 +21,6 @@ import java.util.ArrayList;
 public class CalendarScraper extends LRSScraper{
     private static final Logger logger = Logger.getLogger(LRSScraper.class);
     protected static final String allCalendars = "http://leginfo.state.ny.us/ASMSEN/menugetl.cgi?COMMONQUERY=CALENDAR";
-    protected URL calendarURL;
     private File outfile = null;
 
 
@@ -29,7 +28,6 @@ public class CalendarScraper extends LRSScraper{
 
     @PostConstruct
     public void init() throws IOException{
-        calendarURL = new URL(allCalendars);
         this.calendarDirectory = new File(environment.getScrapedStagingDir(), "calendar");
         try {
             FileUtils.forceMkdir(calendarDirectory);
@@ -42,9 +40,9 @@ public class CalendarScraper extends LRSScraper{
     //Active list sequence number get from parsing the page here with all the calendars
     //ToDo Scraping doesn't handle going through the supplemental calendar intermediary page
     @Override
-    public int scrape() throws IOException{
+    protected int doScrape() throws IOException{
         logger.info("SCRETCHING landing page.");
-        Document doc = Jsoup.connect(calendarURL.toString()).get();
+        Document doc = getJsoupDocument(allCalendars);
 
         System.out.println(doc.text());
 
@@ -54,7 +52,7 @@ public class CalendarScraper extends LRSScraper{
         System.out.println("THIS IS THE URL: :::::::::::::::::   " + url);
 
         logger.info("Searching for link to bottom half");
-        Document calendarPage = Jsoup.connect(url).get();
+        Document calendarPage = getJsoupDocument(url);
         logger.info("Fetching bottom half");
 
         System.out.println(calendarPage.text());
@@ -77,18 +75,31 @@ public class CalendarScraper extends LRSScraper{
                     System.out.println();
                     LocalDateTime listDate =  LocalDateTime. parse(td.get(2).text(), DateUtils.LRS_WEBSITE_DATETIME_FORMAT);
                     System.out.println("PARSE DATE with formatter:::: " + listDate);
-                    filename = dateFormat.format(LocalDateTime.now()) + "." + td.get(0).text().trim().replace(".", "").replace(" ", "_").toLowerCase() + "_active_list_" + listDate + ".html";
+                    filename = dateFormat.format(LocalDateTime.now()) + "." +
+                            td.get(0).text().trim().replace(".", "").replace(" ", "_").toLowerCase() +
+                            "_active_list_" + listDate + ".html";
                     activeInfo = "<h1>Active List</h1><h1>" + td.get(2).text() + "</h1><h1>" + activeCount +"</h1>\n";
                     activeCount++; //Oldest (highest) active list is the number 0
                 }else if (td.get(1).text().startsWith("Debate List")) {
-                    filename = dateFormat.format(LocalDateTime.now()) + "." + td.get(0).text().trim().replace(".", "").replace(" ", "_").toLowerCase() + "_debate_List" + ".html";
+                    filename = dateFormat.format(LocalDateTime.now()) + "." +
+                            td.get(0).text().trim()
+                                    .replace(".", "")
+                                    .replace(" ", "_")
+                                    .toLowerCase() +
+                            "_debate_List" + ".html";
                 }else{
-                    filename = dateFormat.format(LocalDateTime.now()) + "." + td.get(0).text().trim().replace(".", "").replace(" ", "_").replace("\u00a0", "").toLowerCase() + ".html";
+                    filename = dateFormat.format(LocalDateTime.now()) + "." +
+                            td.get(0).text().trim()
+                                    .replace(".", "")
+                                    .replace(" ", "_")
+                                    .replace("\u00a0", "")
+                                    .toLowerCase() +
+                            ".html";
                 }
                 outfile = new File(calendarDirectory, filename);
                 logger.info("Fetching " + td.get(1).text().trim());
 
-                String contents = activeInfo + IOUtils.toString(contentURL);
+                String contents = activeInfo + getUrlContents(contentURL);
                 logger.info("Writing content to " + outfile);
                 FileUtils.write(outfile, contents);
             }

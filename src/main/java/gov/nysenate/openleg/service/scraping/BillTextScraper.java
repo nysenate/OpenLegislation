@@ -3,27 +3,21 @@ package gov.nysenate.openleg.service.scraping;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.dao.bill.text.BillTextReferenceDao;
 import gov.nysenate.openleg.dao.scraping.LRSScraper;
+import gov.nysenate.openleg.dao.scraping.ScrapingIOException;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 
 /**
  * Created by kyle on 1/29/15.
@@ -59,7 +53,7 @@ public class BillTextScraper extends LRSScraper {
      * @throws IOException If there is an error while downloading or saving the bill html file
      */
     @Override
-    public int scrape() throws IOException {
+    protected int doScrape() throws IOException {
         try {
             BaseBillId billId = btrDao.getScrapeQueueHead();
 
@@ -96,6 +90,6 @@ public class BillTextScraper extends LRSScraper {
 
         File file = new File(destinationDir, filename);
 
-        FileUtils.copyURLToFile(billUrl, file, 2000, 10000);
+        copyUrlToFile(billUrl, file);
     }
 }

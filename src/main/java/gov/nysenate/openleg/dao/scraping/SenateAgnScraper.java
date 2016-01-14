@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.scraping;
 
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -23,16 +22,14 @@ import java.util.ArrayList;
 @Repository
 public class SenateAgnScraper extends LRSScraper{
     private static final Logger logger = Logger.getLogger(LRSScraper.class);
-    String senateAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=SENAGEN";
-    private File outfile;
+    private static final String senateAgendaLandingPage =
+            "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=SENAGEN";
 
-    protected URL senateURL;
     private File senateAgendaDirectory;
 
 
     @PostConstruct
     public void init() throws IOException {
-        senateURL = new URL(senateAgendas);
         this.senateAgendaDirectory = new File(environment.getScrapedStagingDir(), "sen-agenda");
         try {
             FileUtils.forceMkdir(senateAgendaDirectory);
@@ -42,9 +39,9 @@ public class SenateAgnScraper extends LRSScraper{
     }
 
     @Override
-    public int scrape() throws IOException {
+    protected int doScrape() throws IOException {
         logger.info("SCRETCHING landing page.");
-        Document doc = Jsoup.connect(senateURL.toString()).timeout(10000).get();
+        Document doc = getJsoupDocument(senateAgendaLandingPage);
 
         System.out.println(doc.text());
 
@@ -54,11 +51,13 @@ public class SenateAgnScraper extends LRSScraper{
         System.out.println("THIS IS THE URL: :::::::::::::::::   " + url);
 
         logger.info("Searching for link to bottom half");
-        Document agendaPage = Jsoup.connect(url).timeout(10000).get();
+        Document agendaPage = getJsoupDocument(url);
         logger.info("Fetching bottom half");
 
         System.out.println(agendaPage.text());
         Elements links = agendaPage.select("a");
+
+        int scrapedCount = 0;
 
         for (Element link : links){
             if (link.text().equalsIgnoreCase("All Committee Agendas")){
@@ -67,16 +66,14 @@ public class SenateAgnScraper extends LRSScraper{
                 URL contentURL = new URL(absHref);
 
                 String filename = dateFormat.format(LocalDateTime.now()) + ".all_senate_agendas.html";
-                outfile = new File(senateAgendaDirectory, filename);
+                File scrapedAgendaFile = new File(senateAgendaDirectory, filename);
                 logger.info("Fetching all committee agendas");
-                String contents = IOUtils.toString(contentURL);
+                String contents = getUrlContents(contentURL);
                 logger.info("Writing content to "+filename);
-                FileUtils.write(outfile, contents);
+                FileUtils.write(scrapedAgendaFile, contents);
+                scrapedCount++;
             }
         }
-        ArrayList<File> list = new ArrayList<File>();
-        list.add(outfile);
-        return list.size();
-
+        return scrapedCount;
     }
 }
