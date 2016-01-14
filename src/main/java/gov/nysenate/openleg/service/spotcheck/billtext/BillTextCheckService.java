@@ -60,9 +60,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
 
         //Add mismatches to observation
         if (reference.isNotFound()) {
-            observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING,
-                    OutputUtils.toJson(new BillInfoView(bill.getBillInfo())), reference.getBaseBillId() + "\n" + reference.getText()
-            ));
+            observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", reference.getText()));
         } else {
             checkAmendment(bill, reference, observation);
             if (bill.hasAmendment(reference.getActiveVersion())) {
