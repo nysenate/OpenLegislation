@@ -18,16 +18,17 @@ import gov.nysenate.openleg.service.bill.data.ApprovalDataService;
 import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.bill.data.VetoNotFoundException;
-import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -196,7 +197,15 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     public int getBillCount(SessionYear sessionYear) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
         return jdbcNamed.queryForObject(SqlBillQuery.SELECT_COUNT_ALL_BILLS_IN_SESSION.getSql(schema()), params,
-            (rs,row) -> rs.getInt("total"));
+                (rs, row) -> rs.getInt("total"));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getAlternateBillPdfUrl(BillId billId) {
+        SqlParameterSource params = getBillIdParams(billId);
+        return jdbcNamed.queryForObject(SqlBillQuery.SELECT_ALTERNATE_PDF_URL.getSql(schema()), params,
+            (rs, row) -> rs.getString("url_path"));
     }
 
     /** {@inheritDoc} */
@@ -790,6 +799,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return ImmutableParams.from(new MapSqlParameterSource()
                 .addValue("printNo", billId.getBasePrintNo())
                 .addValue("sessionYear", billId.getSession().getYear()));
+    }
+
+    public ImmutableParams getBillIdParams(BillId billId) {
+        return ImmutableParams.from(new MapSqlParameterSource()
+                .addValue("printNo", billId.getBasePrintNo())
+                .addValue("sessionYear", billId.getSession().getYear())
+                .addValue("version", billId.getVersion().getValue()));
     }
 
     /**

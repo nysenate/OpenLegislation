@@ -3253,6 +3253,53 @@ COMMENT ON COLUMN law_tree.created_date_time IS 'Date/time this record was creat
 
 COMMENT ON COLUMN law_tree.law_file IS 'Reference to the source law file';
 
+CREATE TABLE bill_text_alternate_pdf (
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    bill_amend_version character(1) NOT NULL,
+    active boolean,
+    url_path text
+);
+
+
+ALTER TABLE master.bill_text_alternate_pdf OWNER TO postgres;
+
+--
+-- Name: TABLE bill_text_alternate_pdf; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE bill_text_alternate_pdf IS 'Mapping of urls to redirect to for certain budget bills';
+
+
+--
+-- Name: COLUMN bill_text_alternate_pdf.url_path; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill_text_alternate_pdf.url_path IS 'Specify protocol for absolute urls';
+
+
+--
+-- Data for Name: bill_text_alternate_pdf; Type: TABLE DATA; Schema: master; Owner: postgres
+--
+
+INSERT INTO bill_text_alternate_pdf VALUES ('S6401', 2015, ' ', true, '/static/pdf/S6401-A9001.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9001', 2015, ' ', true, '/static/pdf/S6401-A9001.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('S6402', 2015, ' ', true, '/static/pdf/S6402-A9002.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9002', 2015, ' ', true, '/static/pdf/S6402-A9002.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('S6403', 2015, ' ', true, '/static/pdf/S6403-A9003.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9003', 2015, ' ', true, '/static/pdf/S6403-A9003.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('S6404', 2015, ' ', true, '/static/pdf/S6404-A9004.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9004', 2015, ' ', true, '/static/pdf/S6404-A9004.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('S6400', 2015, ' ', true, '/static/pdf/S6400-A9000.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9000', 2015, ' ', true, '/static/pdf/S6400-A9000.pdf');
+
+
+--
+-- Name: bill_text_external_pdf_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY bill_text_alternate_pdf
+    ADD CONSTRAINT bill_text_external_pdf_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version);
 
 --
 -- Name: notification; Type: TABLE; Schema: master; Owner: postgres; Tablespace: 
@@ -7718,7 +7765,6 @@ GRANT ALL ON TABLE law_info TO postgres;
 REVOKE ALL ON TABLE law_tree FROM PUBLIC;
 REVOKE ALL ON TABLE law_tree FROM postgres;
 GRANT ALL ON TABLE law_tree TO postgres;
-
 
 --
 -- Name: notification; Type: ACL; Schema: master; Owner: postgres

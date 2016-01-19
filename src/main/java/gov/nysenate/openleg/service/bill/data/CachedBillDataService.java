@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
@@ -264,6 +265,17 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     public Optional<Range<SessionYear>> activeSessionRange() {
         try {
             return Optional.of(billDao.activeSessionRange());
+        }
+        catch (DataAccessException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Optional<String> getAlternateBillPdfUrl(BillId billId) {
+        try {
+            return Optional.of(billDao.getAlternateBillPdfUrl(billId));
         }
         catch (DataAccessException ex) {
             return Optional.empty();
