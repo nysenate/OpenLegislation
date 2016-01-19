@@ -80,6 +80,12 @@ public enum SqlBillQuery implements BasicSqlQuery
         "FROM ${schema}.bill_amendment \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
+    SELECT_ALTERNATE_PDF_URL(
+        "SELECT url_path \n" +
+        "FROM ${schema}." + SqlTable.BILL_ALTERNATE_PDF + "\n" +
+        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version\n" +
+        "AND active = true"
+    ),
 
     /** --- Bill Amendment --- */
 

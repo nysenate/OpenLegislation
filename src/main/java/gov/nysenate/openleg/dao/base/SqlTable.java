@@ -51,6 +51,7 @@ public enum SqlTable
     BILL_VETO                    ("bill_veto"),
     BILL_TEXT_REFERENCE          ("bill_text_reference"),
     BILL_SCRAPE_QUEUE            ("bill_scrape_queue"),
+    BILL_ALTERNATE_PDF           ("bill_text_alternate_pdf"),
 
     BILL_CHANGE_LOG              ("bill_change_log"),
 

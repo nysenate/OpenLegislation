@@ -12,6 +12,7 @@ import gov.nysenate.openleg.model.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * DAO interface for retrieving and persisting Bill data.
@@ -75,6 +76,14 @@ public interface BillDao
      * @throws DataAccessException - Should only be thrown if there was a fatal error
      */
     public int getBillCount(SessionYear sessionYear) throws DataAccessException;
+
+    /**
+     * Certain bills require alternate urls when linking their pdfs. If the given bill id is one of
+     * those bills, return the mapped url.
+     * @param billId BillId
+     * @return String
+     */
+    public String getAlternateBillPdfUrl(BillId billId) throws DataAccessException;
 
     /**
      * Returns a range containing the minimum and maximum session years for which there is bill data for.

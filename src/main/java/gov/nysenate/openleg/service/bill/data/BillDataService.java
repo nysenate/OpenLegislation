@@ -5,8 +5,10 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
+import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,4 +90,12 @@ public interface BillDataService
      * @return Optional<Range<SessionYear>>
      */
     public Optional<Range<SessionYear>> activeSessionRange();
+
+    /**
+     * Certain bills require alternate urls when linking their pdfs. If the given bill id is one of
+     * those bills, return the mapped url.
+     * @param billId BillId
+     * @return Optional<String>
+     */
+    public Optional<String> getAlternateBillPdfUrl(BillId billId);
 }
