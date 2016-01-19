@@ -132,6 +132,8 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
                 Bill bill = billDataService.getBill(daybreakBill.getBaseBillId());
                 report.addObservation(daybreakCheckService.check(bill, daybreakBill));
             });
+        // Set the report as being checked
+        daybreakDao.updateDaybreakReportSetChecked(report.getReferenceDateTime().toLocalDate(), true);
         // Done with this report!
         return report;
     }
