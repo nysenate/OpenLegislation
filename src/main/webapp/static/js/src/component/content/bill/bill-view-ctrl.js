@@ -31,6 +31,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         });
 
         $scope.$watch('curr.amdVersion', function(newVersion, oldVersion){
+            console.log(newVersion);
             if (newVersion !== oldVersion && $scope.curr.selectedView === 5) {
                 $scope.fetchFullText();
             }
@@ -39,6 +40,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         $scope.init = function() {
             $scope.session = $routeParams.session;
             $scope.printNo = $routeParams.printNo;
+            var requestedVersion = $routeParams.version === 'DEFAULT' ? '' : $routeParams.version;
             $scope.loading = true;
             $scope.billApiPath = $sce.trustAsResourceUrl(apiPath + '/bills/' + $scope.session + '/' + $scope.printNo);
             $scope.response = BillGetApi.get({printNo: $scope.printNo, session: $scope.session, view: 'with_refs_no_fulltext'},
@@ -49,7 +51,8 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
                         $scope.setHeaderText('NYS ' + $scope.bill.billType.desc + ' ' +
                             $filter('resolutionOrBill')($scope.bill.billType.resolution) + ' ' +
                             $scope.bill.basePrintNo + '-' + $scope.bill.session + (($scope.bill.session !== $scope.activeSession) ? " (Inactive) " : ""));
-                        $scope.curr.amdVersion = $scope.bill.activeVersion;
+                        $scope.curr.amdVersion = $scope.bill.amendments.items.hasOwnProperty(requestedVersion)
+                                ? requestedVersion : $scope.bill.activeVersion;
                     }
                     $scope.loading = false;
                 }, function(response) {

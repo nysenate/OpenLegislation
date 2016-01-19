@@ -50,7 +50,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId,Bill
 
         BillAmendment amendment;
         try {
-            Version refVersion = Version.of(reference.getActiveVersion());
+            Version refVersion = reference.getBillId().getVersion();
             amendment = content.getAmendment(refVersion);
         } catch (IllegalArgumentException | BillAmendNotFoundEx ex) {
             observation.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, null, reference.getBillId()));
@@ -71,6 +71,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId,Bill
         checkTitle(content, reference, observation);
         checkSummary(content, reference, observation);
 
+        checkText(amendment, reference, observation);
         checkMemo(amendment, reference, observation);
         checkCoSponsors(amendment, reference, observation);
         checkMultiSponsors(amendment, reference, observation);
