@@ -1,22 +1,32 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Table;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchStatus;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckSummary;
+import gov.nysenate.openleg.model.spotcheck.*;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SpotCheckSummaryView implements ViewObject {
 
     protected Map<SpotCheckMismatchStatus, Long> mismatchStatuses;
-    protected Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> mismatchTypes;
-    protected Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> ignoredMismatchTypes;
+    protected Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus,
+            Map<SpotCheckMismatchIgnore, Map<SpotCheckMismatchTracked, Long>>>> mismatchCounts;
 
     public SpotCheckSummaryView(SpotCheckSummary summary) {
         this.mismatchStatuses = summary.getMismatchStatuses();
-        this.mismatchTypes = summary.getMismatchTypes().rowMap();
-        this.ignoredMismatchTypes = summary.getIgnoredMismatchTypes().rowMap();
+        this.mismatchCounts = summary.getMismatchCounts().cellSet().stream()
+                .collect(Collectors.toMap(Table.Cell::getRowKey,
+                        cell -> ImmutableMap.of(cell.getColumnKey(), cell.getValue().rowMap()),
+                        (map1, map2) -> {
+                            Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchIgnore,
+                                    Map<SpotCheckMismatchTracked, Long>>> mergedMap = new HashMap<>(map1);
+                            mergedMap.putAll(map2);
+                            return mergedMap;
+                        }));
     }
 
     public Long getOpenMismatches() {
@@ -29,12 +39,9 @@ public class SpotCheckSummaryView implements ViewObject {
         return mismatchStatuses;
     }
 
-    public Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> getMismatchTypes() {
-        return mismatchTypes;
-    }
-
-    public Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> getIgnoredMismatchTypes() {
-        return ignoredMismatchTypes;
+    public Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus,
+            Map<SpotCheckMismatchIgnore, Map<SpotCheckMismatchTracked, Long>>>> getMismatchCounts() {
+        return mismatchCounts;
     }
 
     @Override

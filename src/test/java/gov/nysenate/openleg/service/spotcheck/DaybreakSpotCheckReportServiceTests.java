@@ -34,7 +34,7 @@ public class DaybreakSpotCheckReportServiceTests extends BaseTests
         SpotCheckReportSummary reportSummary = daybreakReportService.getReportSummaries(SpotCheckRefType.LBDC_DAYBREAK, DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now(),
                 SortOrder.DESC).get(0);
         logger.info("{}", reportSummary.getMismatchStatuses());
-        logger.info("{}", reportSummary.getMismatchTypes());
+        logger.info("{}", reportSummary.getMismatchCounts());
 //        report.getObservations().forEach((k,v) -> logger.info("{}", v.getPriorMismatches()));
     }
 }

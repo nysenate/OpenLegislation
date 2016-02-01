@@ -177,9 +177,9 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     /**
-     * Spotcheck Open Observations API
+     * Spotcheck Open Observations Summary API
      *
-     * Queries spotcheck observations with open mismatches for a specific report type
+     * Get a summary of spotcheck observations with open mismatches for a specific report type
      *
      * Usage: (GET) /api/3/admin/spotcheck/open-mismatches/summary
      *
@@ -221,9 +221,9 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Adds an issue id to a spotcheck mismatch
      *
-     * Usage: (PUT) /api/3/admin/spotcheck/mismatch/{mismatchId}/issue/{issueId}
+     * Usage: (POST) /api/3/admin/spotcheck/mismatch/{mismatchId}/issue/{issueId}
      */
-    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
     public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
         getAnyReportService().addIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id added", "issue-id-added");

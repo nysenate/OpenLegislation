@@ -54,8 +54,6 @@ public class SpotCheckMismatch
         this.notes = notes;
     }
 
-
-
     /** --- Methods --- */
 
     /**
@@ -77,6 +75,10 @@ public class SpotCheckMismatch
 
     public boolean isIgnored() {
         return ignoreStatus != null;
+    }
+
+    public SpotCheckMismatchTracked getTracked() {
+        return SpotCheckMismatchTracked.getFromBoolean(!issueIds.isEmpty());
     }
 
     /** --- Implemented Methods --- */

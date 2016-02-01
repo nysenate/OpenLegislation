@@ -125,10 +125,12 @@ public class SqlFsBillTextReferenceDao extends SqlBaseDao implements BillTextRef
 
     @Override
     public void addBillToScrapeQueue(BaseBillId id, int priority) {
+        MapSqlParameterSource params = getQueueParams(id, priority);
         try {
-            MapSqlParameterSource params = getQueueParams(id, priority);
             jdbcNamed.update(INSERT_SCRAPE_QUEUE.getSql(schema()), params);
-        }catch(DuplicateKeyException ignored){}
+        }catch(DuplicateKeyException ex){
+            jdbcNamed.update(UPDATE_SCRAPE_QUEUE.getSql(schema()), params);
+        }
     }
 
     @Override

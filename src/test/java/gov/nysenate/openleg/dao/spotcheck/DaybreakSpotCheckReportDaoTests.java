@@ -45,9 +45,9 @@ public class DaybreakSpotCheckReportDaoTests extends BaseTests
     @Test
     public void setIgnoreStatusTest() {
         //Shouldn't do anything
-        reportDao.setMismatchIgnoreStatus(-1, SpotCheckMismatchIgnore.IGNORE_PERMANTENTLY);
+        reportDao.setMismatchIgnoreStatus(-1, SpotCheckMismatchIgnore.IGNORE_PERMANENTLY);
         // Should set ignore status
-        reportDao.setMismatchIgnoreStatus(5235, SpotCheckMismatchIgnore.IGNORE_PERMANTENTLY);
+        reportDao.setMismatchIgnoreStatus(5235, SpotCheckMismatchIgnore.IGNORE_PERMANENTLY);
         // Should delete ignore status
         reportDao.setMismatchIgnoreStatus(5235, null);
     }

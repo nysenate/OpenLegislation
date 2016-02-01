@@ -18,7 +18,7 @@ function($scope, $mdDialog, mismatchRow, getDetails, findFirstOpenedDates, getMi
     $scope.newDetails = function (newmismatchRow) {
         $scope.details = newmismatchRow;
 
-        console.log(newmismatchRow)
+        console.log(newmismatchRow);
         $scope.contentId = $scope.getContentId($scope.reportType, newmismatchRow.observation.key);
         $scope.contentUrl = $scope.getContentUrl($scope.reportType, newmismatchRow.observation.key);
         $scope.observation = newmismatchRow.observation;

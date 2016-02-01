@@ -11,18 +11,18 @@ import java.util.stream.Collectors;
 
 public class OpenMismatchSummaryView implements ViewObject {
 
-    protected Map<SpotCheckRefType, RefTypeMismatchSummaryView> summmaryMap;
+    protected Map<SpotCheckRefType, RefTypeMismatchSummaryView> summaryMap;
     protected LocalDateTime observedAfter;
 
     public OpenMismatchSummaryView(OpenMismatchSummary summary) {
-        this.summmaryMap = summary.getSummaryMap().values().stream()
+        this.summaryMap = summary.getSummaryMap().values().stream()
                 .map(RefTypeMismatchSummaryView::new)
                 .collect(Collectors.toMap(RefTypeMismatchSummaryView::getRefType, Function.identity()));
         this.observedAfter = summary.getObservedAfter();
     }
 
-    public Map<SpotCheckRefType, RefTypeMismatchSummaryView> getSummmaryMap() {
-        return summmaryMap;
+    public Map<SpotCheckRefType, RefTypeMismatchSummaryView> getSummaryMap() {
+        return summaryMap;
     }
 
     public LocalDateTime getObservedAfter() {

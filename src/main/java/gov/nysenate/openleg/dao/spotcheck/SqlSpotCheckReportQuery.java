@@ -21,13 +21,14 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     SELECT_REPORT_SUMMARIES(
         "SELECT r.*, tsc.* FROM (" + SELECT_REPORT_SUMMARY_IDS.sql + ") as r\n" +
         "LEFT JOIN (\n" +
-        "   SELECT report_id, type, status, ignore_level, COUNT(m.id) AS mismatch_count\n" +
+        "   SELECT report_id, type, status, ignore_level, array_dims(issue_ids) IS NOT NULL AS tracked,\n" +
+        "       COUNT(m.id) AS mismatch_count\n" +
         "   FROM ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " o\n" +
         "   JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " m\n" +
         "       ON o.id = m.observation_id\n" +
         "   LEFT JOIN ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " i\n" +
         "       ON o.key = i.key AND m.type = i.mismatch_type AND o.reference_type = i.reference_type\n" +
-        "   GROUP BY report_id, type, status, ignore_level\n" +
+        "   GROUP BY report_id, type, status, ignore_level, tracked\n" +
         ") AS tsc\n" +
         "   ON r.id = tsc.report_id"
     ),
@@ -144,9 +145,10 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ),
     SELECT_LATEST_OPEN_OBS_MISMATCHES_SUMMARY(
         SELECT_LATEST_OPEN_OBS_MISMATCHES_SUB_QUERY.sql +
-        "SELECT reference_type, status, type, ignore_level, count(*) AS mismatch_count\n" +
+        "SELECT reference_type, status, type, ignore_level, array_dims(issue_ids) IS NOT NULL AS tracked,\n" +
+        "   count(*) AS mismatch_count\n" +
         "FROM latest_obs\n" +
-        "GROUP BY reference_type, status, type, ignore_level"
+        "GROUP BY reference_type, status, type, ignore_level, tracked"
     ),
     SELECT_OBS_MISMATCHES_BY_TYPE(
         OBS_MISMATCHES_SELECT_CLAUSE.sql + OBS_MISMATCHES_FROM_CLAUSE.sql +

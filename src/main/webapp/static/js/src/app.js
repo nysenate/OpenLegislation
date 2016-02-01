@@ -4,7 +4,7 @@
 var openApp = angular.module('open',
 // External modules
     ['ngRoute', 'ngResource', 'ngMaterial', 'smart-table', 'ui.calendar', 'angularUtils.directives.dirPagination',
-        'diff-match-patch',
+        'diff-match-patch', 'ngAnimate',
 // Internal modules
     'open.bill', 'open.agenda', 'open.law', 'open.calendar', 'open.spotcheck', 'open.transcript',
     'open.admin']);
@@ -53,6 +53,7 @@ openApp.controller('AppCtrl', ['$scope', '$location', '$mdSidenav', '$mdDialog',
 function($scope, $location, $mdSidenav, $mdDialog, $http, $interval, $window) {
     $scope.header = {text: '', visible: false};
     $scope.activeSession = 2015;
+    $scope.ctxPath = ctxPath;
 
     /**
      * Toggle the left navigation menu (only works on mobile, left nav is locked on larger screens).
@@ -78,6 +79,23 @@ function($scope, $location, $mdSidenav, $mdDialog, $http, $interval, $window) {
      */
     $scope.setHeaderVisible = function(visible) {
         $scope.header.visible = visible;
+    };
+
+    /**
+     * Log a message in the console
+     * @param stuff
+     */
+    $scope.log = function(stuff) {
+        console.log(stuff);
+    };
+
+    /**
+     * Return the keys of the given object in array form
+     * @param obj
+     * @returns {Array}
+     */
+    $scope.keys = function(obj) {
+        return Object.keys(obj);
     };
 
     /**

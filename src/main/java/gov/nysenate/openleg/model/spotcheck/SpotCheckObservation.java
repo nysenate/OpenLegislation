@@ -26,6 +26,9 @@ public class SpotCheckObservation<ContentKey>
     /** The datetime this observation was made. */
     protected LocalDateTime observedDateTime;
 
+    /** The date time when the report that generated this observation was run */
+    protected LocalDateTime reportDateTime;
+
     /** Mapping of mismatches that exist between the reference content and our content. */
     protected Map<SpotCheckMismatchType, SpotCheckMismatch> mismatches = new HashMap<>();
 
@@ -118,6 +121,14 @@ public class SpotCheckObservation<ContentKey>
     }
 
     /** --- Basic Getters/Setters --- */
+
+    public LocalDateTime getReportDateTime() {
+        return reportDateTime;
+    }
+
+    public void setReportDateTime(LocalDateTime reportDateTime) {
+        this.reportDateTime = reportDateTime;
+    }
 
     public SpotCheckReferenceId getReferenceId() {
         return referenceId;

@@ -51,7 +51,7 @@ module.exports = function(grunt) {
                 mangle: false,
                 preserveComments: 'some', // Preserve licensing comments
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */',
-                beautify: false
+                beautify: true
             },
             vendor: {
                 files: {
@@ -138,6 +138,8 @@ module.exports = function(grunt) {
                         '<%= jsSource %>/component/report/spotcheck-summary.js',
                         '<%= jsSource %>/component/report/spotcheck-report.js',
                         '<%= jsSource %>/component/report/spotcheck-mismatch.js',
+                        '<%= jsSource %>/component/report/spotcheck-mismatch-view.js',
+                        '<%= jsSource %>/component/report/spotcheck-open-summary.js',
 
                         // Admin
                         '<%= jsSource %>/component/admin/admin.js',
@@ -193,15 +195,15 @@ module.exports = function(grunt) {
         watch: {
             css: {
                 files: ['<%= scssRoot %>/*.scss'],
-                tasks: ['compass', 'concat', 'cssmin', 'copy:css']
+                tasks: ['compass', 'concat', 'cssmin', 'copy:css', 'beep']
             },
             jsp: {
                 files: ['<%= jspSource %>/**/*.jsp', '<%= tagSource %>/**/*.tag'],
-                tasks: ['copy:jsp']
+                tasks: ['copy:jsp', 'beep']
             },
             js: {
                 files: ['<%= jsSource %>/**/*.js'],
-                tasks: ['uglify:app', 'copy:js']
+                tasks: ['uglify:app', 'copy:js', 'beep']
             },
             docs: {
                 files: ['<%= docsSourceRoot %>/*.rst', '<%= docsSourceRoot %>/conf.py'],
@@ -218,6 +220,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-shell');
+    grunt.loadNpmTasks('grunt-beep');
 
     grunt.registerTask('default', ['compass', 'concat', 'cssmin', 'uglify', 'copy']);
 };

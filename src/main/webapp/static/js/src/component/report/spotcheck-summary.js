@@ -10,7 +10,7 @@ function ($scope, $filter, $routeParams, $location, SpotcheckSummaryAPI) {
     $scope.response = null;
     $scope.loadingSummaries = false;
     $scope.summariesNotFound = false;
-    $scope.hideErrorlessReports = true;
+    $scope.showErrorlessReports = false;
     $scope.resultsPerPage = 20;
 
     $scope.params = {
@@ -115,14 +115,14 @@ function ($scope, $filter, $routeParams, $location, SpotcheckSummaryAPI) {
     };
 
     $scope.noErrorFilter = function(row) {
-        return !$scope.hideErrorlessReports || row.openMismatches > 0;
+        return $scope.showErrorlessReports || row.openMismatches > 0;
     };
 
     $scope.filterSummaries = function() {
         $scope.filteredReportSummaries = $scope.reportSummaries.filter($scope.noErrorFilter);
     };
 
-    $scope.$watch('hideErrorlessReports', $scope.filterSummaries);
+    $scope.$watch('showErrorlessReports', $scope.filterSummaries);
 
     $scope.init();
 
