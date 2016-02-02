@@ -6,11 +6,12 @@
 
 <section ng-controller="AccountSettingsCtrl" ng-init="setHeaderVisible(true)" class="content-section">
 
-  <shiro:hasRole name="masterAdmin">
+  <shiro:hasPermission name="admin:account:modify">
     <span ng-init="isMaster = true"></span>
-  </shiro:hasRole>
+  </shiro:hasPermission>
 
-  <md-tabs md-selected="selectedIndex" md-dynamic-height="false" ng-init="setHeaderText('Admin Account Settings')">
+  <md-tabs md-selected="selectedIndex" md-dynamic-height="true" class="md-hue-2"
+           ng-init="setHeaderText('Admin Account Settings')">
 
     <!-- Change Password -->
 

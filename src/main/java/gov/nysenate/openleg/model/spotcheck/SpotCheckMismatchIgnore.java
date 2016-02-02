@@ -8,8 +8,10 @@ import java.util.stream.Collectors;
 
 public enum SpotCheckMismatchIgnore {
 
-    IGNORE_PERMANTENTLY(0),
-    IGNORE_UNTIL_RESOLVED(1)
+    NOT_IGNORED(-1),
+    IGNORE_PERMANENTLY(0),
+    IGNORE_UNTIL_RESOLVED(1),
+    IGNORE_ONCE(2)
     ;
 
     private int code;

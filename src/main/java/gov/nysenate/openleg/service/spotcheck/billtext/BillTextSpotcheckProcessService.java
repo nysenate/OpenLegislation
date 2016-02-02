@@ -3,7 +3,6 @@ package gov.nysenate.openleg.service.spotcheck.billtext;
 import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
-import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.ScrapedBillMemoParser;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;

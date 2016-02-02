@@ -291,6 +291,10 @@ md-datepicker {
   padding-right: 10px;
 }
 
+.padding-top-10 {
+  padding-top: 10px !important;
+}
+
 .padding-16 {
   padding: 16px;
 }
@@ -325,8 +329,7 @@ md-datepicker {
   display: block;
   .line-numbers {
     float: left;
-    margin-right: 1em;
-    margin-left: 0;
+    margin: 0 1em 0 0;
     border-right: 1px solid;
     text-align: right;
     background: #fdd2a8;
@@ -1167,25 +1170,23 @@ a.slogan-link {
   background: #f5f5f5;
 }
 
-/** --- Styles for Report page --- */
+/** --- Styles for Open Mismatch Summary Page --- */
 
-#daybreak-summary-table {
-  //todo delete when done
-  table-layout: auto;
-  border: 1px solid #ccc;
-  th {
-    text-align: center;
+.open-mismatch-summary-item {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  &.not-first {
+    border-top: none;
   }
-  .th-section {
-    border: 1px none #ccc;
-    border-left-style: solid;
-    text-align: center;
-    background: #ededed;
+  md-chips.md-default-theme .md-chips, md-chips .md-chips {
+    box-shadow: none
   }
-  .delta-column {
-    width: 4.2em;
+  .md-button {
+    margin: 0;
+    padding: 6px 24px;
   }
 }
+
+/** --- Styles for Report Summary page --- */
 
 .spotcheck-report-list {
   border: 1px solid rgba(0, 0, 0, 0.12);
@@ -1208,34 +1209,20 @@ $sptchk-notes-font-sz: 14px;
 $sptchk-notes-line-height: 1.5;
 $sptchk-notes-lines-shown: 1;
 
-p.spotcheck-summary-notes {
-  display:block;
-  display: -webkit-box;
-  max-height: $sptchk-notes-font-sz * $sptchk-notes-line-height * $sptchk-notes-lines-shown*1.2;
-  font-size: $sptchk-notes-font-sz;
-  line-height: $sptchk-notes-line-height;
-  -webkit-line-clamp: $sptchk-notes-lines-shown;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.spotcheck-summary-
-
-table.table-striped tbody tr:nth-child(odd) {
-  background-color: #d0f3ff;
+.spotcheck-summary-notes-container {
+  flex: 1 1 75% !important;
+  max-width: 75%;
+  .spotcheck-summary-notes {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .blue-title-icon {
   color: #006b80;
   margin-right: 20px;
-}
-
-#noDataAvailable {
-  h3 {
-    text-align: center;
-    color: #aaa;
-  }
 }
 
 .prefix-icon {
@@ -1262,100 +1249,120 @@ table.table-striped tbody tr:nth-child(odd) {
   color:#aaa;
 }
 
-/** --- Styles for Report Error Page --- */
+/** --- Styles for Spotcheck Report Page --- */
 
-.st-sort-ascent:before {
-  content: '\25B2';
-}
-.st-sort-descent:before {
-  content: '\25BC';
-}
-
-.spotcheck-column {
-
-}
-
-.mismatch-type-column {
-  min-width: 10em;
-}
-
-.mismatch-status-column {
-  min-width: 3em;
-}
-
-.mismatch-date-column {
-  min-width: 8em;
-}
-
-.report-table-snippet {
-  height:20px;
-  overflow: hidden;
-  max-width:20vw;
-  word-wrap: break-word;
-}
-
-#report-detail-container {
-  padding: 10px !important;
-}
-
-.st-pagination {
-  a {
-    margin-left: 1em;
+.spotcheck-report-notes {
+  margin-top: 10px;
+  &.closed {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
-#daybreak-page button.ng-scope,
-#daybreak-page .check-butt {
-  margin-right: 4px;
+/** --- Styles for Spotcheck Mismatch Viewer --- */
+
+$spotcheckMismatchListBlur: 2px;
+.spotcheck-mismatch-list-container {
+  min-height: 200px;
+  position: relative;
+}
+.spotcheck-mismatch-list {
+  .loading {
+    filter: blur($spotcheckMismatchListBlur);
+    -o-filter: blur($spotcheckMismatchListBlur);
+    -ms-filter: blur($spotcheckMismatchListBlur);
+    -moz-filter: blur($spotcheckMismatchListBlur);
+    -webkit-filter: blur($spotcheckMismatchListBlur);
+  }
 }
 
-// -- Table Column headers --
+.spotcheck-mismatch {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  &.not-first {
+    border-top: none;
+  }
+  &.open {
+    border: 2px solid rgba(22,91,129,0.24);
+  }
 
-// Bill Id
-table.report-detail-table thead tr th:first-child {
-  width: 6em;
+  .spotcheck-mismatch-status {
+    .NEW, .REGRESSION {
+      color: red;
+    }
+    .EXISTING {
+      color: #aaa;
+    }
+    .RESOLVED {
+      color: green;
+    }
+  }
+
+  .mismatch-snippet {
+    white-space: nowrap;
+    overflow: hidden;
+  }
 }
 
-// Mismatch Type
-table.report-detail-table thead tr th:nth-child(2) {
-  width: 10em;
+$mmDetailTransTime: 0.5s;
+.spotcheck-mismatch-details {
+  border: 2px solid rgba(22,91,129,0.24);
+  border-top: none;
+  &.ng-enter {
+    -webkit-transition: $mmDetailTransTime linear all;
+    -moz-transition: $mmDetailTransTime linear all;
+    -ms-transition: $mmDetailTransTime linear all;
+    -o-transition: $mmDetailTransTime linear all;
+    transition: $mmDetailTransTime linear all;
+  }
+  &.ng-enter, &.ng-leave.ng-leave-active {
+    max-height: 0;
+    opacity: 0;
+  }
+  &.ng-enter.ng-enter-active, &.ng-leave {
+    max-height: none;
+    opacity: 1;
+  }
 }
 
-// Status
-table.report-detail-table thead tr th:nth-child(3) {
-  width: 6em;
+.mismatch-loading-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
-// Opened At
-table.report-detail-table thead tr th:nth-child(4) {
-  width: 14em;
-}
+/** --- Styles for Spotcheck diffs --- */
 
-// Snippet
-table.report-detail-table thead tr th:nth-child(5) {
-  width: 35em;
-}
+$diff-del-color: #f88;
+$diff-ins-color: #9f9;
 
-// Details
-table.report-detail-table thead tr th:nth-child(6) {
-  width: 5em;
-}
-
-table.report-detail-table tbody tr td {
-  border: 1px solid #eee;
-}
-
-.current-page {
-  color: #006b80;
+.diff-key-color {
+  float: left;
+  height: 15px;
+  width: 20px;
+  margin: 4px;
+  border: 1px solid rgba(0,0,0,0.12);
+  &.del {
+    background-color: $diff-del-color;
+  }
+  &.ins {
+    background-color: $diff-ins-color;
+  }
 }
 
 diff-summary, mismatch-diff {
   ins {
-    background-color: #99ff99;
+    background-color: $diff-ins-color;
     text-decoration: none;
   }
   del {
-    background-color: #ff8888;
+    background-color: $diff-del-color;
     text-decoration: none;
   }
 }
@@ -1366,13 +1373,24 @@ diff-summary, mismatch-diff {
   font-weight: bold;
 }
 
-.mismatch-dialog {
-  padding: 0 20px 20px 20px;
+.diff-tabs {
+  md-content {
+    margin: 0;
+    padding: 30px;
+    border-top: 1px solid rgba(0,0,0,0.12);
+    & > div {
+      overflow-y: auto;
+      max-height: 40vh;
+    }
+  }
+  .mismatch-ignore-conf {
+    height: 3.1em;
+  }
 }
 
-.mismatch-dialog-tabs md-content {
-  width: 75vw;
-  height: 57vh;
+.mismatch-diff-box {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  overflow: auto;
 }
 
 .margin-top-5 {

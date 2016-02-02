@@ -31,7 +31,6 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         });
 
         $scope.$watch('curr.amdVersion', function(newVersion, oldVersion){
-            console.log(newVersion);
             if (newVersion !== oldVersion && $scope.curr.selectedView === 5) {
                 $scope.fetchFullText();
             }
@@ -40,7 +39,9 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         $scope.init = function() {
             $scope.session = $routeParams.session;
             $scope.printNo = $routeParams.printNo;
-            var requestedVersion = $routeParams.version === 'DEFAULT' ? '' : $routeParams.version;
+            var baseVersionRegex = /default|base/i;
+            var requestedVersion = baseVersionRegex.exec($routeParams.version) ? ''
+                : $routeParams.version && $routeParams.version.toUpperCase();
             $scope.loading = true;
             $scope.billApiPath = $sce.trustAsResourceUrl(apiPath + '/bills/' + $scope.session + '/' + $scope.printNo);
             $scope.response = BillGetApi.get({printNo: $scope.printNo, session: $scope.session, view: 'with_refs_no_fulltext'},

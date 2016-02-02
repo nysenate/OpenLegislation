@@ -20,10 +20,6 @@ function ($scope, EnvApi, SetEnvApi) {
         $scope.getVariables();
     };
 
-    $scope.log = function(stuff) {
-        console.log(stuff);
-    };
-
     $scope.getVariables = function() {
         $scope.loading = true;
         EnvApi.get({varName: $scope.requestedVars},

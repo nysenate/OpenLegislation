@@ -390,7 +390,8 @@ coreModule.directive('lineNumbers', function() {
         restrict: 'E',
         scope: {
             lineStart: '=?',
-            lineEnd: '='
+            lineEnd: '=?',
+            source: '=?'
         },
         replace: true,
         transclude: true,
@@ -401,6 +402,13 @@ coreModule.directive('lineNumbers', function() {
         ,
         link: function($scope) {
             $scope.lineStart = $scope.lineStart || 1;
+            if (!$scope.lineEnd) {
+                if ($scope.source && typeof $scope.source === 'string') {
+                    $scope.lineEnd = $scope.source.split('\n').length;
+                } else {
+                    $scope.lineEnd = 0;
+                }
+            }
             $scope.range = function(num) {
                 return new Array(num);
             };

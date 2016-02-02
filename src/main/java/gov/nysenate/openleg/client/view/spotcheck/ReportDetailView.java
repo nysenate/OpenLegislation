@@ -18,4 +18,9 @@ public class ReportDetailView<ContentKey> extends ReportInfoView {
     public TreeMap<ContentKey, ObservationView<ContentKey>> getObservations() {
         return observations;
     }
+
+    @Override
+    public String getViewType() {
+        return "report-details";
+    }
 }

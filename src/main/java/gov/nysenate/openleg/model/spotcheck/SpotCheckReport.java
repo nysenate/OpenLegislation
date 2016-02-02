@@ -44,21 +44,7 @@ public class SpotCheckReport<ContentKey>
 
     public SpotCheckReportSummary getSummary() {
         SpotCheckReportSummary summary = new SpotCheckReportSummary(reportId, notes, observations.size());
-        Table<SpotCheckMismatchType, SpotCheckMismatchStatus, Long> openMismatchTable = HashBasedTable.create();
-        Table<SpotCheckMismatchType, SpotCheckMismatchStatus, Long> ignoredMismatchMap = HashBasedTable.create();
-        observations.values().stream()
-                .flatMap(obs -> obs.getMismatches().values().stream())
-                .forEach(mismatch -> {
-                    Table<SpotCheckMismatchType, SpotCheckMismatchStatus, Long> relevantMap= mismatch.isIgnored()
-                            ? ignoredMismatchMap : openMismatchTable;
-                    long existingCount = Optional.ofNullable(relevantMap.get(mismatch.getMismatchType(), mismatch.getStatus()))
-                            .orElse(0L);
-                    relevantMap.put(mismatch.getMismatchType(), mismatch.getStatus(), existingCount + 1);
-                });
-        openMismatchTable.rowKeySet().forEach(type ->
-                openMismatchTable.row(type).forEach((status, count) -> summary.addMismatchTypeCount(type, status, count)));
-        ignoredMismatchMap.rowKeySet().forEach(type ->
-                ignoredMismatchMap.row(type).forEach((status, count) -> summary.addIgnoredMismatchTypeCount(type, status, count)));
+        summary.addCountsFromObservations(observations.values());
         return summary;
     }
 
