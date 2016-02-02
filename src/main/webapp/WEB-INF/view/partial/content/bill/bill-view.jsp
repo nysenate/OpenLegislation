@@ -3,7 +3,7 @@
 <div ng-controller="BillCtrl">
   <div ng-controller="BillViewCtrl" class="content-section">
     <md-content layout-padding ng-if="response.success === true">
-      <md-toolbar class="md-hue-1 auto-height" ng-if="bill.substitutedBy">
+      <div class="bill-sub-message auto-height" ng-if="bill.substitutedBy">
         <h4 class="margin-5">
           <i class="icon-copy prefix-icon2"></i>
           This bill has been substituted by
@@ -11,7 +11,7 @@
             {{bill.substitutedBy.basePrintNo}} - {{bill.substitutedBy.session}}.
           </a>
         </h4>
-      </md-toolbar>
+      </div>
       <h2 class="text-normal margin-10">{{bill.title}}</h2>
       <div ng-if="bill.programInfo">
         <p class="text-medium margin-left-10 no-margin">
