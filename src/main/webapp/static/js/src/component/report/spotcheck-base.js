@@ -379,24 +379,6 @@ function ($scope, $routeParams, $location, $timeout, $filter, $mdDialog) {
         return mismatchRows;
     };
 
-    // Triggers a detail sheet popup for the mismatch designated by mismatchId
-    $scope.showMismatchDetails = function(mismatchRow, getDetails) {
-        $mdDialog.show({
-            templateUrl: 'mismatchDetailWindow',
-            controller: 'detailDialogCtrl',
-            locals: {
-                mismatchRow: mismatchRow
-            },
-            resolve: {
-                getDetails: function() { return getDetails},
-                findFirstOpenedDates: function() {return $scope.findFirstOpenedDates;},
-                getMismatchId: function() { return $scope.getMismatchId; },
-                getContentId: function() { return $scope.getContentId;},
-                getContentUrl: function() {return $scope.getContentUrl;}
-            }
-        });
-    };
-
     $scope.showSummaryDetails = function(summary) {
         $scope.notImplementedDialog();
     };
@@ -429,9 +411,9 @@ spotcheckModule.directive('mismatchDiff', ['$timeout', function($timeout){
                     $timeout(function () {
                         var childElement = $element.children()[0];
                         var elementHeight = childElement.offsetHeight;
-                        $scope.lines = elementHeight / $scope.lineHeight;
+                        $scope.lines = Math.ceil(elementHeight / $scope.lineHeight);
                         $scope.pre = $scope.lines > 1;
-                    }, 50);
+                    }, 100);
                 }
             };
             $scope.$watchGroup(['left', 'right'], $scope.adjustLineCount);

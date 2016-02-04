@@ -16,9 +16,9 @@ function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, 
         templateUrl: ctxPath + "/partial/report/spotcheck-mismatch-view",
         link: function mismatchFacetLink($scope, $element, $attrs) {
 
-            $scope.$watch('mismatches', function () {
-                console.log('first mismatch', $scope.mismatches[0]);
-            });
+            //$scope.$watch('mismatches', function () {
+            //    console.log('first mismatch', $scope.mismatches[0]);
+            //});
 
             var defaultOptions = ['all'];
 
@@ -185,10 +185,10 @@ function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, 
                 }
             }
 
-            $scope.$watch('iSelectedStatus', function () {
-                if ($scope.statusOptions) {
-                    console.log('selected new status:', $scope.statusOptions[$scope.iSelectedStatus]);
-                    var status = $scope.statusOptions[$scope.iSelectedStatus];
+            $scope.$watch('state.iSelectedStatus', function () {
+                if ($scope.state.statusOptions) {
+                    console.log('selected new status:', $scope.state.statusOptions[$scope.state.iSelectedStatus]);
+                    var status = $scope.state.statusOptions[$scope.state.iSelectedStatus];
                     setAllProperties($scope.filter.statuses, status === 'all');
                     if ($scope.filter.statuses.hasOwnProperty(status)) {
                         $scope.filter.statuses[status] = true;
@@ -197,10 +197,10 @@ function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, 
                 }
             });
 
-            $scope.$watch('iSelectedType', function () {
-                if ($scope.typeOptions) {
-                    console.log('selected new type:', $scope.typeOptions[$scope.iSelectedType]);
-                    var type = $scope.typeOptions[$scope.iSelectedType];
+            $scope.$watch('state.iSelectedType', function () {
+                if ($scope.state.typeOptions) {
+                    console.log('selected new type:', $scope.state.typeOptions[$scope.state.iSelectedType]);
+                    var type = $scope.state.typeOptions[$scope.state.iSelectedType];
                     setAllProperties($scope.filter.types, type === 'all');
                     if ($scope.filter.types.hasOwnProperty(type)) {
                         $scope.filter.types[type] = true;
@@ -237,8 +237,8 @@ function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, 
 
             // Update status/type options
             function updateOptions() {
-                $scope.statusOptions = defaultOptions.concat(Object.keys($scope.summary.mismatchStatuses));
-                $scope.typeOptions = defaultOptions.concat(Object.keys($scope.summary.mismatchCounts));
+                $scope.state.statusOptions = defaultOptions.concat(Object.keys($scope.summary.mismatchStatuses));
+                $scope.state.typeOptions = defaultOptions.concat(Object.keys($scope.summary.mismatchCounts));
             }
 
             function setTotal() {
@@ -255,6 +255,18 @@ function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, 
                 }
                 console.log('filter changed', $scope.filter);
                 $rootScope.$emit('mismatchFilterChange');
+            };
+
+            // Triggers a detail sheet popup for the mismatch designated by mismatchId
+            $scope.showDetailedDiff = function(mismatchRow) {
+                console.log('wtf');
+                $mdDialog.show({
+                    templateUrl: 'mismatchDetailWindow',
+                    controller: 'detailDialogCtrl',
+                    locals: {
+                        mismatchRow: mismatchRow
+                    }
+                });
             };
         }
     };

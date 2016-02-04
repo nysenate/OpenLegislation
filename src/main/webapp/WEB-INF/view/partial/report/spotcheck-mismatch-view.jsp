@@ -31,16 +31,16 @@
 
 <!-- Mismatch Filter -->
 <div>
-  <md-tabs ng-if="showStatusFilter" class="md-hue-2" md-selected="iSelectedStatus">
-    <md-tab ng-repeat="status in statusOptions">
+  <md-tabs ng-if="showStatusFilter" class="md-hue-2" md-selected="state.iSelectedStatus">
+    <md-tab ng-repeat="status in state.statusOptions">
       <md-tab-label>
         <span ng-if="status === 'all'">All {{total}}</span>
         <span ng-if="status !== 'all'">{{status | mismatchStatusLabel}} {{summary.mismatchStatuses[status]}}</span>
       </md-tab-label>
     </md-tab>
   </md-tabs>
-  <md-tabs class="md-hue-2" md-selected="iSelectedType">
-    <md-tab ng-repeat="type in typeOptions">
+  <md-tabs class="md-hue-2" md-selected="state.iSelectedType">
+    <md-tab ng-repeat="type in state.typeOptions">
       <md-tab-label ng-switch="type">
         <span ng-if="type === 'all'">
           <span ng-if="showStatusFilter">All Types</span>
@@ -93,10 +93,10 @@
            ng-init="singleLineObs = mismatchRow.obsData.indexOf('\n') < 0; singleLineRef = mismatchRow.refData.indexOf('\n') < 0; singleLineDiff = singleLineObs && singleLineRef">
         <md-divider></md-divider>
         <md-tabs class="diff-tabs md-hue-2" md-dynamic-height="true" md-selected="iDiffTab" ng-init="iDiffTab = 0">
-          <md-tab label="Diff">
+          <md-tab label="Basic Diff">
             <md-content>
               <diff-key></diff-key>
-              <div class="mismatch-diff-box" ng-if="iDiffTab === 0" ng-class="{'padding-10': singleLineDiff}">
+              <div class="mismatch-diff-box" ng-class="{'padding-10': singleLineDiff}">
                 <mismatch-diff class="margin-top-10" right="mismatchRow.refData" left="mismatchRow.obsData"></mismatch-diff>
               </div>
             </md-content>
@@ -116,6 +116,9 @@
                 </div>
               </div>
             </md-content>
+          </md-tab>
+          <md-tab label="Diff Tool" md-on-select="showDetailedDiff(mismatchRow); iDiffTab = 0;">
+            <div style="height:105px;"></div>
           </md-tab>
           <md-tab label="Ignore Status">
             <md-content ng-init="newIgnoreStatus = mismatchRow.mismatch.ignoreStatus">
@@ -185,3 +188,5 @@
     </div>
   </md-list>
 </div>
+
+<jsp:include page="spotcheck-detail-window.jsp"/>
