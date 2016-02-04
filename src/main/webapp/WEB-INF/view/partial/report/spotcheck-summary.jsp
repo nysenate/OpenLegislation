@@ -88,7 +88,7 @@
     <div ng-show="loadingSummaries">
       <md-divider></md-divider>
       <h3>Loading Summaries...</h3>
-      <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+      <md-progress-linear md-mode="indeterminate" class="md-hue-2"></md-progress-linear>
     </div>
     <div ng-show="!loadingSummaries && summariesNotFound">
       <md-divider></md-divider>

@@ -1,21 +1,33 @@
 <!-- Ordering, Tracked/Ignored Filtering -->
 <div class="gray2-bg">
-  <div class="text-medium padding-20" layout="row">
+  <div class="text-medium padding-20" layout="row" layout-wrap>
+    <div flex layout="column" layout-align="space-around start">
+      <div flex class="margin-5">
+        <label class="margin-right-10">Status</label>
+        <select ng-model="state.selectedStatus" ng-change="onStatusChange()"
+                ng-options="status as (status | statusSelectLabel:summary:filter) for status in state.statusOptions"></select>
+      </div>
+      <div flex class="margin-5">
+        <label class="margin-right-10" style="margin-left: 0.675em">Type</label>
+        <select ng-model="state.selectedType" ng-change="onTypeChange()"
+                ng-options="type as (type | typeSelectLabel:summary:filter:state.selectedStatus) for type in state.typeOptions"></select>
+      </div>
+    </div>
     <div flex layout="column" layout-align="space-around start">
       <div flex class="margin-5">
         <label class="margin-right-10">Order By</label>
         <select ng-model="filter.orderBy" ng-change="onFilterChange()"
                 ng-options="orderBy as label for (orderBy, label) in orderByLabels"></select>
       </div>
-      <div flex class="margin-5" style="margin-left: 2.65em">
-        <label class="margin-right-10">Sort</label>
+      <div flex class="margin-5">
+        <label class="margin-right-10" style="margin-left: 2.3em">Sort</label>
         <select ng-model="filter.sortOrder" ng-change="onFilterChange()"
                 ng-options="order as label for (order, label) in sortOrderLabels"></select>
       </div>
     </div>
     <div flex layout="column" layout-align="space-around start">
       <div flex class="margin-5">
-        <label class="margin-right-10">Ignored Mismatches</label>
+        <label class="margin-right-10" style="margin-left: 0.075em">Ignored Mismatches</label>
         <select ng-model="state.ignoreFilter" ng-change="onIgnoreChange()"
                 ng-options="ignoreFilterOptions.indexOf(label) as label for label in ignoreFilterOptions | filter:'!unused'">
         </select>
@@ -29,29 +41,6 @@
   </div>
 </div>
 
-<!-- Mismatch Filter -->
-<div>
-  <md-tabs ng-if="showStatusFilter" class="md-hue-2" md-selected="state.iSelectedStatus">
-    <md-tab ng-repeat="status in state.statusOptions">
-      <md-tab-label>
-        <span ng-if="status === 'all'">All {{total}}</span>
-        <span ng-if="status !== 'all'">{{status | mismatchStatusLabel}} {{summary.mismatchStatuses[status]}}</span>
-      </md-tab-label>
-    </md-tab>
-  </md-tabs>
-  <md-tabs class="md-hue-2" md-selected="state.iSelectedType">
-    <md-tab ng-repeat="type in state.typeOptions">
-      <md-tab-label ng-switch="type">
-        <span ng-if="type === 'all'">
-          <span ng-if="showStatusFilter">All Types</span>
-          <span ng-if="!showStatusFilter">All {{total}}</span>
-        </span>
-        <span ng-if="type !== 'all'">{{type | mismatchTypeLabel}} {{getTypeCount(type)}}</span>
-      </md-tab-label>
-    </md-tab>
-  </md-tabs>
-</div>
-
 <!-- Mismatch List -->
 <div ng-if="state.filterLoaded" class="spotcheck-mismatch-list-container">
   <div class="mismatch-loading-overlay" layout="row" layout-align="center center" ng-show="isLoading()">
@@ -63,7 +52,7 @@
     <div dir-paginate="mismatchRow in mismatches | itemsPerPage:filter.limit"
          pagination-id="spotcheck-mismatch" current-page="state.currentPage" total-items="summary | mismatchCount:filter"
          ng-init="mismatchOpen = false">
-      <md-list-item layout="row" ng-click="mismatchOpen = !mismatchOpen" tabindex="1"
+      <md-list-item layout="row" layout-wrap ng-click="mismatchOpen = !mismatchOpen" tabindex="1"
            class="spotcheck-mismatch" ng-class="{'not-first': !$first, open: mismatchOpen, loading: isLoading()}">
         <p flex="15" class="mismatch-content-key">
           {{mismatchRow.refType | contentType}}
@@ -133,7 +122,7 @@
                     </span>
                   </md-radio-button>
                 </md-radio-group>
-                <md-progress-circular md-mode="{{state.settingIgnoreStatus ? 'indeterminate' : ''}}"></md-progress-circular>
+                <md-progress-circular class="md-hue-2" md-mode="{{state.settingIgnoreStatus ? 'indeterminate' : ''}}"></md-progress-circular>
                 <md-button class="md-raised" ng-click="setIgnoreStatus(mismatchRow, newIgnoreStatus)"
                            ng-disabled="newIgnoreStatus === mismatchRow.mismatch.ignoreStatus || state.settingIgnoreStatus">
                   Set Ignore Status
@@ -145,7 +134,7 @@
             <md-content>
               <p ng-show="mismatchRow.mismatch.issueIds.items.length === 0 && !state.settingIssueId" class="bold">
                 No associated issues</p>
-              <md-progress-linear md-mode="{{state.settingIssueId ? 'indeterminate' : ''}}"></md-progress-linear>
+              <md-progress-linear class="md-hue-2" md-mode="{{state.settingIssueId ? 'indeterminate' : ''}}"></md-progress-linear>
               <md-list ng-show="mismatchRow.mismatch.issueIds.items.length > 0">
                 <md-list-item ng-repeat="issueId in mismatchRow.mismatch.issueIds.items" layout="row" layout-align="start center">
                   <md-button class="md-raised" ng-click="removeIssueIdPrompt(mismatchRow, issueId)"

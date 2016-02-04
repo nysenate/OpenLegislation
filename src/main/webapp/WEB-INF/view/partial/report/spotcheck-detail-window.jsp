@@ -2,7 +2,10 @@
 <!-- Detail Template -->
 <script type="text/ng-template" id="mismatchDetailWindow">
   <md-dialog aria-label="Mismatch Detail" class="detail-diff-dialog">
-    <span ng-click="cancel()" class="icon-cross" style="font-size: 24px; text-align: right;"></span>
+    <div layout="row">
+      <span flex></span>
+      <span ng-click="cancel()" class="icon-cross" style="font-size: 24px; text-align: right;"></span>
+    </div>
     <md-content>
       <div id="mismatch-detail-top-section">
         <div layout="row" layout-align="space-around center">

@@ -74,7 +74,7 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
                     updatedBills.put(billId, billDataService.getBill(billId));
                 } catch (BillNotFoundEx ex) {
                     SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(reportId.getReferenceId(), billId);
-                    observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, null, billId));
+                    observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", ""));
                     report.addObservation(observation);
                 }
             }
@@ -175,8 +175,7 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
         return Sets.difference(openlegBillIds, senSiteBillIds).stream()
                 .map(billId -> {
                     SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(refId, billId);
-                    observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING,
-                            billId.toString(), ""));
+                    observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING, "", ""));
                     return observation;
                 })
                 .collect(Collectors.toList());

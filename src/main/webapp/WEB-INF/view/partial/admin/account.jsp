@@ -145,7 +145,7 @@
           <md-divider></md-divider>
           <div ng-show="loadingAccounts || creatingAccount || removingAccount">
             <h4>Loading accounts...</h4>
-            <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+            <md-progress-linear md-mode="indeterminate" class="md-hue-2"></md-progress-linear>
           </div>
           <md-list ng-if="!(loadingAccounts || creatingAccount || removingAccount)">
             <md-list-item ng-repeat="account in accounts" ng-class="{'master-admin': account.master}">

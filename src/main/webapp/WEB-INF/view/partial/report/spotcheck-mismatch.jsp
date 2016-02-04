@@ -23,14 +23,12 @@
       </div>
       <md-divider class="margin-bottom-10"></md-divider>
       <div ng-show="lastReceived > 0 && !parameterError && !requestError">
-        <md-progress-linear md-mode="indeterminate" ng-class="{'vis-hidden': lastReceived >= requestCount}"
-                            class="margin-bottom-10"></md-progress-linear>
         <mismatch-view mismatches="mismatchRows" summary="summary" filter="filter"
                        loading="{{lastReceived < requestCount}}" no-status-filter></mismatch-view>
       </div>
       <div ng-show="lastReceived === 0 && requestCount > 0">
         <h3>Loading Mismatches</h3>
-        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+        <md-progress-linear md-mode="indeterminate" class="md-hue-2"></md-progress-linear>
       </div>
       <div ng-show="parameterError" style="color: red">
         Invalid parameter: {{parameterErrorVal}}
