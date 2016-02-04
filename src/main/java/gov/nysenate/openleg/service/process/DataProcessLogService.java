@@ -4,10 +4,10 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.model.process.DataProcessRun;
+import gov.nysenate.openleg.model.process.DataProcessRunInfo;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,15 +25,23 @@ public interface DataProcessLogService
     public Optional<DataProcessRun> getRun(int processId);
 
     /**
-     * Returns a paginated list of DataProcessRuns that have been stored in the persistence layer.
+     * Fetch the DataProcessRunInfo with the given processId. Returns an empty optional if it doesn't exist.
+     *
+     * @param processId int
+     * @return Optional<DataProcessRunInfo>
+     */
+    public Optional<DataProcessRunInfo> getRunInfo(int processId);
+
+    /**
+     * Returns a paginated list of DataProcessRunInfo.
      *
      * @param dateTimeRange Range<LocalDateTime> - The date/time range during which the runs started.
      * @param limOff LimitOffset - Limit the result set.
      * @param showActivityOnly boolean - Set to true to only return runs that have units associated with them.
-     * @return List<DataProcessRun>
+     * @return List<DataProcessRunInfo>
      */
-    public PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
-                                                 boolean showActivityOnly);
+    public PaginatedList<DataProcessRunInfo> getRunInfos(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
+                                                         boolean showActivityOnly);
 
     /**
      * Returns a paginated list of DataProcessUnits that are associated with the given process run id.

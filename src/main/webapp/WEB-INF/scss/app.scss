@@ -1530,7 +1530,11 @@ md-list.env-list {
 
 /** --- Admin Log Page --- */
 
-.api-request-table-container {
+.run-unit-summary {
+  font-size: 0.9em;
+  label {
+    font-weight: bold;
+  }
 
 }
 

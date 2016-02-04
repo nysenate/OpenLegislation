@@ -45,6 +45,16 @@ public enum SqlDataProcessLogQuery implements BasicSqlQuery
         "WHERE process_id = :processId"
     ),
 
+    SELECT_FIRST_AND_LAST_DATA_PROCESS_UNITS(
+        "SELECT process_id, source_type, source_id, action, start_date_time, end_date_time, errors, messages\n" +
+        "FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + "\n" +
+        "WHERE process_id = :processId AND start_date_time = " +
+            "(SELECT MIN(start_date_time) FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + " WHERE process_id = :processId)\n" +
+        "OR start_date_time = " +
+            "(SELECT MAX(start_date_time) FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + " WHERE process_id = :processId)\n" +
+        "ORDER BY start_date_time ASC"
+    ),
+
     DELETE_PROCESS_UNITS(
         "DELETE FROM ${schema}." + SqlTable.DATA_PROCESS_UNIT + "\n" +
         "WHERE process_id = :processId"

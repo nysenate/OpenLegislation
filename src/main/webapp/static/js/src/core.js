@@ -503,12 +503,12 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
             '<nav>' +
             '  <div ng-repeat="section in menu.sections">' +
             '    <a ng-class="{active: isSectionSelected(section)}" class="menu-item menu-title md-menu-item"' +
-            '       ng-click="selectSection(section)" md-ink-ripple="#bbb" tab-index="-1"> {{section.title}}' +
+            '       ng-click="selectSection(section)" tab-index="-1"> {{section.title}}' +
             '    </a>' +
             '    <md-divider></md-divider> '  +
             '    <div ng-if="section.items" ng-repeat="item in section.items">' +
             '      <a ng-class="{active: isItemSelected(item)}" target="{{item.target}}"' +
-            '         class="menu-item menu-sub-item md-menu-item" md-ink-ripple="#bbb" ' +
+            '         class="menu-item menu-sub-item md-menu-item" ' +
             '         ng-show="isSectionSelected(section)" tab-index="-1"' +
             '         ng-href="{{item.url}}">' +
             '         <span><i ng-class="item.icon" class="prefix-icon2"></i><span ng-bind="item.title"></span></span>' +

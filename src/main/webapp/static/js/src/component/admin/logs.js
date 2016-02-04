@@ -103,13 +103,14 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     // Data Process Runs
 
     $scope.runsResults = [];
+    $scope.pollPromise = null;
     $scope.hideEmptyRuns = $routeParams.hideEmptyRuns !== 'false';
     $scope.runsFromDate = ($routeParams.runsStart) ? moment($routeParams.runsStart).toDate()
         : moment().subtract('days', 1).toDate();
     $scope.runsToDate = ($routeParams.runsEnd) ? moment($routeParams.runsEnd).toDate()
         : moment().add('days', 1).toDate();
     $scope.runsPagination = angular.extend({}, PaginationModel);
-    $scope.runsPagination.currPage = $routeParams.page || 1;
+    $scope.runsPagination.currPage = $routeParams.runLogPage || 1;
     $scope.runsPagination.itemsPerPage = 20;
 
     $scope.getRuns = function() {
@@ -120,7 +121,11 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
         $scope.setSearchParam('runsEnd', toDate);
         DataProcessRunsAPI.get({
             from: fromDate, to: toDate,
-            full: !$scope.hideEmptyRuns, detail: true},
+            full: !$scope.hideEmptyRuns,
+            detail: true,
+            limit: $scope.runsPagination.getLimit(),
+            offset: $scope.runsPagination.getOffset()
+            },
             function(resp) {
                 $scope.runsResp = resp;
                 if (resp.success) {
@@ -132,13 +137,17 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     $scope.getRunsPolling = function() {
         $scope.getRuns();
         console.log("In runs polling");
-        $timeout(function() {
+        $scope.pollPromise = $timeout(function() {
             $scope.getRunsPolling();
         }, 15000);
     };
 
-    $scope.fetchUnits = function(run) {
-
+    $scope.dataProcessLogPageChange = function(newPageNumber) {
+        if ($scope.pollPromise) {
+            $timeout.cancel($scope.pollPromise);
+        }
+        $scope.getRunsPolling();
+        $scope.setSearchParam('runLogPage', newPageNumber);
     };
 
     /** --- Initialize --- */
@@ -148,7 +157,7 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
         $scope.setHeaderVisible(true);
         $scope.connectToSocket();
         $scope.searchLogs();
-        $scope.getRunsPolling();
+        $scope.getRuns();
     };
 
     $scope.init();

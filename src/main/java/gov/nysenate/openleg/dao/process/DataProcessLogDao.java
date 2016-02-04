@@ -6,6 +6,7 @@ import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.process.DataProcessRun;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.dao.DataAccessException;
 
 import java.time.LocalDateTime;
@@ -46,6 +47,15 @@ public interface DataProcessLogDao
      * @return PaginatedList<DataProcessUnit>
      */
     public PaginatedList<DataProcessUnit> getUnits(int processId, SortOrder dateOrder, LimitOffset limOff);
+
+    /**
+     * Returns the first and last data process units for a given DataProcessRun.
+     * @param processId - The id of the associated DataProcessRun
+     * @return List<DataProcessUnit> - empty list if no units processed, single item if only one item processed,
+     *                                 two items if >1 units processed where first item is first processed, second
+     *                                 item is last processed.
+     */
+    public List<DataProcessUnit> getFirstAndLastUnits(int processId);
 
     /**
      * Insert a run into the persistence layer.

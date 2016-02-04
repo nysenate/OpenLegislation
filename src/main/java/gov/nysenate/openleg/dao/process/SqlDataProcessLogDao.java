@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static gov.nysenate.openleg.dao.process.SqlDataProcessLogQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.*;
@@ -53,6 +54,12 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
         PaginatedRowHandler<DataProcessUnit> handler = new PaginatedRowHandler<>(limOff, "total_count", processUnitRowMapper);
         jdbcNamed.query(SELECT_DATA_PROCESS_UNITS.getSql(schema(), orderBy, limOff), params, handler);
         return handler.getList();
+    }
+
+    @Override
+    public List<DataProcessUnit> getFirstAndLastUnits(int processId) {
+        MapSqlParameterSource params = new MapSqlParameterSource("processId", processId);
+        return jdbcNamed.query(SELECT_FIRST_AND_LAST_DATA_PROCESS_UNITS.getSql(schema()), params, processUnitRowMapper);
     }
 
     /** {@inheritDoc} */

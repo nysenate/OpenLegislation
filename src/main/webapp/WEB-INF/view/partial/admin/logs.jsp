@@ -131,21 +131,28 @@
         <h3 class="red1">No matching process runs found.</h3>
       </div>
       <div class="padding-20">
-          <div ng-repeat="run in runsResults">
-            <h3 class="no-bottom-margin"><i ng-show="!run.endDateTime" class="prefix-icon icon-cog green3"></i> Run # {{run.id}} started on {{run.startDateTime | moment:'lll HH:mm:ss.SSS'}}
-              <span ng-show="run.endDateTime">and ended on {{run.endDateTime | moment:'lll HH:mm:ss.SSS'}}</span>
-            </h3>
+          <dir-pagination-controls
+              class="text-align-center" pagination-id="data-process-log" boundary-links="true"
+              on-page-change="dataProcessLogPageChange(newPageNumber)" max-size="10">
+          </dir-pagination-controls>
+          <div dir-paginate="res in runsResults | itemsPerPage: runsPagination.itemsPerPage"
+               total-items="runsResp.total" current-page="runsPagination.currPage"
+               pagination-id="data-process-log" ng-init="run = res.run">
+            <p class="no-bottom-margin"><i ng-show="!run.endDateTime" class="prefix-icon icon-cog green3"></i> <strong>Run # {{run.id}}</strong> started on
+              <strong>{{run.startDateTime | moment:'ll HH:mm:ss.SSS'}}</strong> <span ng-show="run.endDateTime">and ended on
+              <strong>{{run.endDateTime | moment:'ll HH:mm:ss.SSS'}}</strong></span>
+            </p>
             <h5 class="no-top-margin gray7">Invoked By {{run.invokedBy}}</h5>
             <pre style="max-height:120px;overflow:scroll;" class="red1 text-medium" ng-show="run.exceptions">{{run.exceptions}}</pre>
             <p ng-if="run.details.total == 0">Nothing processed</p>
-
-            <%--<toggle-panel ng-if="run.details.total > 0" open="false" label="{{run.details.total}} Units Processed">--%>
-              <%--<div ng-repeat="unit in run.details.result.items">--%>
-                <%--<h3>{{unit.action}} - {{unit.sourceId}} ({{unit.sourceType}})</h3>--%>
-                <%--<label>Start:</label> {{unit.startDateTime}} <label>End:</label> {{unit.endDateTime}}--%>
-                <%--<pre>{{unit.messages}}</pre>--%>
-              <%--</div>--%>
-            <%--</toggle-panel>--%>
+            <div class="margin-bottom-20">
+              <div ng-show="res.first" class="run-unit-summary">
+                <label>First Processed: </label><span>{{res.first.action}} {{res.first.sourceId}}</span>
+              </div>
+              <div ng-show="res.last" class="run-unit-summary">
+                <label>Last Processed: </label><span>{{res.last.action}} {{res.last.sourceId}}</span>
+              </div>
+            </div>
             <md-divider></md-divider>
           </div>
       </div>
