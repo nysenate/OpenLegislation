@@ -10,7 +10,7 @@
     <a class="result-link"
        ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearchTerm}}&searchPage={{pagination.currPage}}">
       <div flex="none" layout-padding layout="column" layout-gt-sm="row">
-        <div layout="row">
+        <div layout="row" layout-align="start center">
           <div ng-show="showImg">
             <img class="margin-right-10" ng-if="bill.sponsor.member"
                  ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
@@ -33,7 +33,7 @@
               <span ng-if="!highlights.title">{{bill.title | limitTo:150}}</span>
               <span ng-if="highlights.title" ng-bind-html="highlights.title[0]"></span>
             </p>
-            <p class="no-margin text-medium blue2" ng-if="bill.status.actionDate">
+            <p class="search-bill-status-desc text-medium blue2" ng-if="bill.status.actionDate">
               {{bill.status.actionDate | moment:'MMMM D, YYYY'}} - {{billUtils.getStatusDesc(bill.status)}}
             </p>
           </div>
