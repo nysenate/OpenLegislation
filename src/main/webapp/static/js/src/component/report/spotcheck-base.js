@@ -45,6 +45,7 @@ var mismatchTypeMap = {};
 // Returns a formatted label for the given mismatch status
 spotcheckModule.filter('mismatchStatusLabel', ['$filter', function ($filter) {
     var statusLabelMap = {
+        all: 'All',
         RESOLVED: "Closed",
         NEW: "New",
         EXISTING: "Existing",
@@ -59,6 +60,9 @@ spotcheckModule.filter('mismatchStatusLabel', ['$filter', function ($filter) {
 // Returns a formatted label for the given mismatch type
 spotcheckModule.filter('mismatchTypeLabel', ['$filter', function ($filter) {
     return function(type) {
+        if (type === 'all') {
+            return 'All';
+        }
         return $filter('label')(type, mismatchTypeMap);
     };
 }]);

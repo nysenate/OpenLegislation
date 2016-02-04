@@ -7,8 +7,6 @@ function($scope, $mdDialog, mismatchRow) {
 
     $scope.reportType = mismatchRow.refType;
 
-    $scope.tabHeightStyle = {height: 'calc(100% - 114px)'};
-
     $scope.newDetails = function (newMismatchRow) {
         $scope.mismatchRow = newMismatchRow;
 
@@ -30,16 +28,6 @@ function($scope, $mdDialog, mismatchRow) {
     $scope.cancel = function () {
         $mdDialog.hide();
     };
-
-    function bindTopResize() {
-        console.log('glerp');
-        var topSection = angular.element('#mismatch-detail-top-section');
-        topSection.bind('DOMSubtreeModified', function () {
-            console.log('woooooooo');
-            //$scope.tabHeightStyle = {height: 'calc(100% - ' + topSection.innerHeight() + 'px)'};
-            $scope.tabHeightStyle = {height: '5px'};
-        });
-    }
 
     function setDefaultTextOptions(mismatchType) {
         var nonAlphaMismatches = ['BILL_TEXT_LINE_OFFSET', 'BILL_TEXT_CONTENT'];
@@ -102,7 +90,6 @@ function($scope, $mdDialog, mismatchRow) {
 
     function init() {
         $scope.newDetails(mismatchRow);
-        bindTopResize();
     }
 
     init();

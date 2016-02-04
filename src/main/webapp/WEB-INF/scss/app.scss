@@ -1438,10 +1438,10 @@ md-dialog.detail-diff-dialog {
     overflow: hidden;
     height: 100%;
     margin: 0;
-    padding: 20px;
+    padding: 0 20px 20px;
   }
   md-tabs {
-    height: calc(100% - 115px);
+    height: calc(100% - 127px);
     md-tab-content > div {
       height: 100%;
       md-content {

@@ -41,7 +41,7 @@
       </md-card-content>
       <md-card-content ng-show="state.loadingReport">
         <h3>Loading Report...</h3>
-        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+        <md-progress-linear md-mode="indeterminate" class="md-hue-2"></md-progress-linear>
       </md-card-content>
     </md-card>
   </section>

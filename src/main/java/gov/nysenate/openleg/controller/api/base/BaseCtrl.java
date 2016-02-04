@@ -66,12 +66,14 @@ public abstract class BaseCtrl
      * @return SortOrder
      */
     protected SortOrder getSortOrder(WebRequest webRequest, SortOrder defaultSortOrder) {
-        try {
-            return SortOrder.valueOf(webRequest.getParameter("order").toUpperCase());
+        String sortOrderParam = Optional.ofNullable(webRequest.getParameter("order"))
+                .orElse(webRequest.getParameter("sortOrder"));
+        if (sortOrderParam != null) {
+            try {
+                return SortOrder.valueOf(sortOrderParam.toUpperCase());
+            } catch (IllegalArgumentException ignored) {}
         }
-        catch (Exception ex) {
-            return defaultSortOrder;
-        }
+        return defaultSortOrder;
     }
 
     /**

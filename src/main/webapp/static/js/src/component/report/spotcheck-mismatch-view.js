@@ -2,7 +2,10 @@ angular.module('open.spotcheck')
     .directive('mismatchView',
         ['$rootScope', '$mdDialog', 'SpotcheckDefaultFilter', 'SpotcheckMismatchIgnoreAPI', 'SpotcheckMismatchTrackingAPI',
             'IgnoreStatuses', mismatchViewDirective])
-    .filter('orderByLabel', orderByLabelFilter);
+    .filter('orderByLabel', orderByLabelFilter)
+    .filter('statusSelectLabel', ['$filter', statusSelectLabelFilter])
+    .filter('typeSelectLabel', ['$filter', typeSelectLabelFilter])
+    ;
 
 function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, TrackingApi, ignoreStatuses) {
     return {
@@ -34,6 +37,8 @@ function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, 
                 filterLoaded: false,
                 iSelectedStatus: 0,
                 iSelectedType: 0,
+                selectedStatus: 'all',
+                selectedType: 'all',
                 statusOptions: angular.extend(defaultOptions),
                 typeOptions: angular.extend(defaultOptions),
                 currentPage: 1,
@@ -185,29 +190,25 @@ function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, 
                 }
             }
 
-            $scope.$watch('state.iSelectedStatus', function () {
-                if ($scope.state.statusOptions) {
-                    console.log('selected new status:', $scope.state.statusOptions[$scope.state.iSelectedStatus]);
-                    var status = $scope.state.statusOptions[$scope.state.iSelectedStatus];
-                    setAllProperties($scope.filter.statuses, status === 'all');
-                    if ($scope.filter.statuses.hasOwnProperty(status)) {
-                        $scope.filter.statuses[status] = true;
-                    }
-                    $scope.onFilterChange();
+            $scope.onStatusChange = function () {
+                console.log('selected new status:', $scope.state.selectedStatus);
+                var status = $scope.state.selectedStatus;
+                setAllProperties($scope.filter.statuses, status === 'all');
+                if ($scope.filter.statuses.hasOwnProperty(status)) {
+                    $scope.filter.statuses[status] = true;
                 }
-            });
+                $scope.onFilterChange();
+            };
 
-            $scope.$watch('state.iSelectedType', function () {
-                if ($scope.state.typeOptions) {
-                    console.log('selected new type:', $scope.state.typeOptions[$scope.state.iSelectedType]);
-                    var type = $scope.state.typeOptions[$scope.state.iSelectedType];
-                    setAllProperties($scope.filter.types, type === 'all');
-                    if ($scope.filter.types.hasOwnProperty(type)) {
-                        $scope.filter.types[type] = true;
-                    }
-                    $scope.onFilterChange();
+            $scope.onTypeChange = function () {
+                console.log('selected new type:', $scope.state.selectedType);
+                var type = $scope.state.selectedType;
+                setAllProperties($scope.filter.types, type === 'all');
+                if ($scope.filter.types.hasOwnProperty(type)) {
+                    $scope.filter.types[type] = true;
                 }
-            });
+                $scope.onFilterChange();
+            };
 
             $scope.ignoreFilterOptions = ['Hide Ignored', 'Show Ignored', 'unused', 'Show Only Ignored'];
             $scope.onIgnoreChange = function onIgnoreChange() {
@@ -286,6 +287,40 @@ function orderByLabelFilter () {
             ? orderByLabels[orderBy]
             : "Order By!?";
     };
+}
+
+function extractIgnoreTrackFilter(filter) {
+    var simpleFilter = {};
+    if (filter.ignoredOnly) {
+        simpleFilter.ignored = true;
+    } else if (!filter.ignoredShown) {
+        simpleFilter.ignored = false;
+    }
+    if (!filter.trackedShown) {
+        simpleFilter.tracked = false;
+    } else if (!filter.untrackedShown) {
+        simpleFilter.tracked = true;
+    }
+    return simpleFilter;
+}
+
+function statusSelectLabelFilter($filter) {
+    return function (status, summary, filter) {
+        var simpleFilter = extractIgnoreTrackFilter(filter);
+        simpleFilter.status = status;
+        var count = $filter('mismatchCount')(summary, simpleFilter);
+        return $filter('mismatchStatusLabel')(status) + ' - ' + count;
+    }
+}
+
+function typeSelectLabelFilter($filter) {
+    return function (type, summary, filter, status) {
+        var simpleFilter = extractIgnoreTrackFilter(filter);
+        simpleFilter.type = type;
+        simpleFilter.status = status;
+        var count = $filter('mismatchCount')(summary, simpleFilter);
+        return $filter('mismatchTypeLabel')(type) + ' - ' + count;
+    }
 }
 
 // Ensures that the copycat object contains properties
