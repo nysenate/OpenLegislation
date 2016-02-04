@@ -130,6 +130,10 @@ md-datepicker {
   color: white !important;
 }
 
+md-dialog {
+  z-index: 1500;
+}
+
 /** --- Transitions --- */
 
 .fade {
@@ -315,6 +319,10 @@ md-datepicker {
   padding-left: 0 !important;
 }
 
+.width-50 {
+  width: 50%;
+}
+
 .relative {
   position: relative;
 }
@@ -456,6 +464,10 @@ h5 {
   @media (max-width: 959px) {
     display: flex;
   }
+}
+
+.md-dialog-is-showing #content-header {
+  z-index: 50;
 }
 
 #content-header-spacer {
@@ -1282,21 +1294,21 @@ $spotcheckMismatchListBlur: 2px;
     border: 2px solid rgba(22,91,129,0.24);
   }
 
-  .spotcheck-mismatch-status {
-    .NEW, .REGRESSION {
-      color: red;
-    }
-    .EXISTING {
-      color: #aaa;
-    }
-    .RESOLVED {
-      color: green;
-    }
-  }
-
   .mismatch-snippet {
     white-space: nowrap;
     overflow: hidden;
+  }
+}
+
+.spotcheck-mismatch-status {
+  .NEW, .REGRESSION {
+    color: red;
+  }
+  .EXISTING {
+    color: #aaa;
+  }
+  .RESOLVED {
+    color: green;
   }
 }
 
@@ -1385,12 +1397,57 @@ diff-summary, mismatch-diff {
 }
 
 .mismatch-diff-box {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  overflow: auto;
+  &:not(.scroll-join) {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    overflow: auto;
+  }
+  &:not(.multi-line) {
+    padding: 10px;
+    &.scroll-join {
+      width: 50%;
+    }
+  }
 }
 
 .margin-top-5 {
   margin-top: 5px;
+}
+
+md-dialog.detail-diff-dialog {
+  width: 90vw;
+  height: 90vh;
+  max-height: 100vh;
+  max-width: 100vw;
+  & > md-content {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 20px;
+  }
+  md-tabs {
+    height: calc(100% - 115px);
+    md-tab-content > div {
+      height: 100%;
+      md-content {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        .mismatch-detail-diff-container {
+          height: calc(100% - 1.7em);
+        }
+      }
+    }
+  }
+}
+
+.detail-diff-text-controls {
+  @extend .gray2-bg;
+  @extend .text-medium;
+  padding: 20px;
+  margin-top: 10px;
+  md-checkbox {
+    margin: 0;
+  }
 }
 
 .stats-block-container {
