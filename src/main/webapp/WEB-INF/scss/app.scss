@@ -479,6 +479,7 @@ h5 {
 
 #content {
   padding-top: 70px;
+  min-height: 100vh; // Required for IE
   .content-section {
     max-width: 1100px;
     margin: auto;
@@ -501,7 +502,6 @@ $left-nav-width: 305px;
     margin-left: $left-nav-width;
   }
 }
-
 
 #logo {
   padding-left:10px;

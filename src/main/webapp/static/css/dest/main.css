@@ -419,16 +419,16 @@ h5 { font-size: 0.8em; }
 #content-header-spacer { height: 70px; display: block; width: 100%; }
 
 /* line 480, ../../../WEB-INF/scss/app.scss */
-#content { padding-top: 70px; }
-/* line 482, ../../../WEB-INF/scss/app.scss */
+#content { padding-top: 70px; min-height: 100vh; }
+/* line 483, ../../../WEB-INF/scss/app.scss */
 #content .content-section { max-width: 1100px; margin: auto; }
 
 /** --- Left Nav --- */
-/* line 492, ../../../WEB-INF/scss/app.scss */
+/* line 493, ../../../WEB-INF/scss/app.scss */
 #left-nav { width: 305px; background: #eeeeee; min-height: 100vh; position: fixed; }
-@media print { /* line 492, ../../../WEB-INF/scss/app.scss */
+@media print { /* line 493, ../../../WEB-INF/scss/app.scss */
   #left-nav { display: none; } }
-/* line 500, ../../../WEB-INF/scss/app.scss */
+/* line 501, ../../../WEB-INF/scss/app.scss */
 #left-nav.md-locked-open + * { margin-left: 305px; }
 
 /* line 506, ../../../WEB-INF/scss/app.scss */
