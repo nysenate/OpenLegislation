@@ -75,13 +75,16 @@ billModule.directive('billListing', ['BillUtils', function(BillUtils) {
         controller: function($scope, $element) {
             $scope.billUtils = BillUtils;
             if ($scope.billIds && $scope.billRefsMap && !$scope.bills) {
-                $scope.bills = $scope.billIds.map(function(id) {
+                $scope.billViews = $scope.billIds.map(function(id) {
                     var baseIdStr = id.basePrintNo + '-' + id.session;
                     if ($scope.billRefsMap[baseIdStr]) {
                         return $scope.billRefsMap[baseIdStr];
                     }
                     return angular.extend({}, id, {'idOnly': true});
                 });
+            }
+            else if ($scope.bills) {
+                $scope.billViews = $scope.bills;
             }
         }
     };

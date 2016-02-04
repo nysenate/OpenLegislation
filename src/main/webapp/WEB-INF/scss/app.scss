@@ -450,6 +450,7 @@ h5 {
   z-index: 1000;
   font-size: 1.5rem;
   display: none;
+  position: fixed;
   background: $blue3;
   h1 {
     //color: white;
@@ -477,6 +478,7 @@ h5 {
 }
 
 #content {
+  padding-top: 70px;
   .content-section {
     max-width: 1100px;
     margin: auto;
@@ -489,7 +491,7 @@ $left-nav-width: 305px;
 
 #left-nav {
   width: $left-nav-width;
-  background: $blue5;
+  background: $gray4;
   min-height: 100vh;
   position: fixed;
   @media print {
@@ -523,22 +525,20 @@ $left-nav-width: 305px;
 }
 
 .left-nav-menu {
-  //width:100%;
-  background: $blue5;
+  background: $gray4;
 }
 
 // Menu styles adapted from angular-material docs
 
 .menu-item {
-  background: none;
   border-width: 0;
-  color: white;
+  color: #444;
   cursor: pointer;
   display: block;
   font-size: 0.8em;
-  line-height: 40px;
+  line-height: 48px;
   margin: 0;
-  max-height: 40px;
+  max-height: 48px;
   opacity: 1;
   outline: none;
   padding: 0 35px;
@@ -550,11 +550,12 @@ $left-nav-width: 305px;
   max-height: 0;
   opacity: 0;
 }
+
 .menu-item:focus {
   font-weight: bold;
 }
 .menu-item.menu-title {
-  color: white;
+  color: #444;
   font-weight: bold;
   font-size: 14px;
   padding-left: 20px;
@@ -566,13 +567,20 @@ $left-nav-width: 305px;
 .menu-item.active {
   font-weight: bold;
   background: $blue3;
+  color: white;
 }
 .menu-item.menu-title.active {
   background: $blue4;
 }
 
 .menu-item:hover {
-  background: $blue4;
+  &.active {
+    background: $blue3;
+  }
+  &.menu-title.active {
+    background: $blue4;
+  }
+  background: $gray3;
 }
 
 /** --- Top Bar Heading --- */

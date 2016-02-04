@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <md-list>
-  <md-list-item ng-repeat="bill in bills" style="padding-left:0">
+  <md-list-item ng-repeat="bill in billViews" style="padding-left:0">
     <a class="result-link"
        ng-href="${ctxPath}/bills/{{bill.session}}/{{bill.basePrintNo}}?search={{billSearchTerm}}&view=1">
       <div flex="none" layout="column" layout-gt-sm="row">

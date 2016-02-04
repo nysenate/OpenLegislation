@@ -505,7 +505,6 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
             '    <a ng-class="{active: isSectionSelected(section)}" class="menu-item menu-title md-menu-item"' +
             '       ng-click="selectSection(section)" tab-index="-1"> {{section.title}}' +
             '    </a>' +
-            '    <md-divider></md-divider> '  +
             '    <div ng-if="section.items" ng-repeat="item in section.items">' +
             '      <a ng-class="{active: isItemSelected(item)}" target="{{item.target}}"' +
             '         class="menu-item menu-sub-item md-menu-item" ' +

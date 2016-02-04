@@ -12,12 +12,16 @@
       <div flex="none" layout-padding layout="column" layout-gt-sm="row">
         <div layout="row">
           <div ng-show="showImg">
-            <img class="margin-right-10" ng-if="bill.sponsor"
+            <img class="margin-right-10" ng-if="bill.sponsor.member"
                  ng-src="${ctxPath}/static/img/business_assets/members/mini/{{bill.sponsor.member.imgName}}"
                  style="width: 45px;"/>
+              <img class="margin-right-10" ng-if="!bill.sponsor.member"
+                   ng-src="${ctxPath}/static/img/business_assets/members/mini/no_image.jpg"
+                   style="width: 45px;"/>
           </div>
           <div flex="none" class="margin-right-20" style="width: 180px;">
             <h3 class="margin-top-10 no-bottom-margin">{{bill.printNo}} - {{bill.session}}</h3>
+            <h5 ng-if="bill.substitutedBy" class="bill-sub-message no-margin">Substituted By {{bill.substitutedBy.basePrintNoStr}}</h5>
             <p ng-if="bill.sponsor" class="no-margin text-medium" ng-if="bill.sponsor.member.fullName">
               {{bill.sponsor.member.fullName}}
             </p>
