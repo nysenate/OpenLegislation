@@ -17,7 +17,7 @@
       <md-progress-circular md-mode="indeterminate" class="md-hue-2" md-diameter="200"></md-progress-circular>
     </div>
     <div ng-show="!loadingSummaries">
-      <h3>Select a report type to see mismatch details</h3>
+      <h3 class="margin-left-20">Select a report type to see mismatch details</h3>
       <md-list>
         <div ng-repeat="(reportType, summary) in summaries"
              ng-init="mmTypes = ['all'].concat(keys(summary.mismatchCounts))">
