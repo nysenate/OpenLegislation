@@ -43,7 +43,16 @@
       <md-tabs class="md-hue-2" md-selected="iDiffTab">
         <md-tab label="Diff">
           <md-content>
-            <diff-key></diff-key>
+            <div layout="row" layout-align="space-around center">
+              <div>
+                <span class="diff-key-color del"></span>
+                {{mismatchRow.refType | reportDataProvider}} Data
+              </div>
+              <div>
+                <span class="diff-key-color ins"></span>
+                {{mismatchRow.refType | reportReferenceProvider}} Data
+              </div>
+            </div>
             <div class="mismatch-detail-diff-container mismatch-diff-box" ng-class="{'padding-10': !multiLine}" ng-if="iDiffTab === 0">
               <mismatch-diff left="observedData" right="referenceData"></mismatch-diff>
             </div>
@@ -52,8 +61,8 @@
         <md-tab label="Side By Side">
           <md-content>
             <div layout="row">
-              <p flex class="text-align-center no-margin bold">Observed Data</p>
-              <p flex class="text-align-center no-margin bold">Reference Data</p>
+              <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportDataProvider}} Data</p>
+              <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportReferenceProvider}} Data</p>
             </div>
             <div layout="row" ng-if="iDiffTab === 1"
                  class="mismatch-detail-diff-container" ng-class="{'mismatch-diff-box': sideScrollJoin}">

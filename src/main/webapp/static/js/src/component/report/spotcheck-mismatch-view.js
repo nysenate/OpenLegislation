@@ -309,7 +309,7 @@ function statusSelectLabelFilter($filter) {
         var simpleFilter = extractIgnoreTrackFilter(filter);
         simpleFilter.status = status;
         var count = $filter('mismatchCount')(summary, simpleFilter);
-        return $filter('mismatchStatusLabel')(status) + ' - ' + count;
+        return $filter('mismatchStatusLabel')(status) + ' (' + count + ')';
     }
 }
 
@@ -319,7 +319,7 @@ function typeSelectLabelFilter($filter) {
         simpleFilter.type = type;
         simpleFilter.status = status;
         var count = $filter('mismatchCount')(summary, simpleFilter);
-        return $filter('mismatchTypeLabel')(type) + ' - ' + count;
+        return $filter('mismatchTypeLabel')(type) + ' (' + count + ')';
     }
 }
 

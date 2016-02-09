@@ -107,6 +107,45 @@ spotcheckModule.filter('contentType', function() {
     };
 });
 
+spotcheckModule.filter('reportDataProvider', function () {
+    var defaultDataProvider = "Openleg";
+    return function (refType) {
+        return defaultDataProvider;
+    }
+});
+
+spotcheckModule.filter('reportReferenceProvider', function () {
+    var refProviderMap = {
+        LBDC_DAYBREAK: 'LBDC',
+        LBDC_SCRAPED_BILL: 'LBDC',
+        SENATE_SITE_BILLS: 'Nysenate.gov',
+        LBDC_AGENDA_ALERT: 'LBDC',
+        LBDC_CALENDAR_ALERT: 'LBDC'
+    };
+    return function (refType) {
+        if (refProviderMap.hasOwnProperty(refType)) {
+            return refProviderMap[refType];
+        }
+        return "unknown provider of [" + refType + "]";
+    }
+});
+
+spotcheckModule.filter('refTypeLabel', function () {
+    var refTypeLabelMap = {
+        LBDC_DAYBREAK: 'Daybreak report',
+        LBDC_SCRAPED_BILL: 'scraped bill',
+        SENATE_SITE_BILLS: 'node dump',
+        LBDC_AGENDA_ALERT: 'alert',
+        LBDC_CALENDAR_ALERT: 'alert'
+    };
+    return function (refType) {
+        if (refTypeLabelMap.hasOwnProperty(refType)) {
+            return refTypeLabelMap[refType];
+        }
+        return "'" + refType + "'?!";
+    };
+});
+
 spotcheckModule.filter('contentUrl', function() {
     var contentTypeUrlMap = {
         LBDC_DAYBREAK: getBaseBillUrl,
@@ -424,23 +463,6 @@ spotcheckModule.directive('mismatchDiff', ['$timeout', function($timeout){
         }
     };
 }]);
-
-spotcheckModule.directive('diffKey', function() {
-    return {
-        restrict: 'E',
-        template:
-        "<div layout='row' layout-align='space-around center'>" +
-            "<div>" +
-                "<span class='diff-key-color del'></span>" +
-                "Observed Data" +
-            "</div>" +
-            "<div>" +
-                "<span class='diff-key-color ins'></span>" +
-                "Reference Data" +
-            "</div>" +
-        "</div>"
-    }
-});
 
 spotcheckModule.directive('diffSummary', function () {
     return {
