@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.notification.NotificationDigest;
 import gov.nysenate.openleg.model.notification.NotificationDigestSubscription;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
+import gov.nysenate.openleg.model.search.SearchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class ElasticNotificationDigestService implements NotificationDigestServi
     private NotificationService notificationService;
 
     @Override
-    public NotificationDigest getDigest(NotificationDigestSubscription subscription) {
+    public NotificationDigest getDigest(NotificationDigestSubscription subscription) throws SearchException {
         Range<LocalDateTime> digestRange = Range.openClosed(subscription.getStartDateTime(), subscription.getNextDigest());
         return new NotificationDigest(subscription.getType(), digestRange,
                 getNotifications(subscription.getType(), digestRange), subscription.isFull(),
@@ -33,7 +34,8 @@ public class ElasticNotificationDigestService implements NotificationDigestServi
     /**
      * Searches for notifications of the given type, that occurred within the given date time range
      */
-    private List<RegisteredNotification> getNotifications(NotificationType type, Range<LocalDateTime> dateTimeRange) {
+    private List<RegisteredNotification> getNotifications(NotificationType type, Range<LocalDateTime> dateTimeRange)
+            throws SearchException {
         return notificationService.getNotificationList(Collections.singleton(type), dateTimeRange,
                 SortOrder.ASC, LimitOffset.ALL).getResults();
     }

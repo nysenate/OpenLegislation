@@ -15,6 +15,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.model.search.UnexpectedSearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
@@ -431,6 +432,14 @@ public abstract class BaseCtrl
             new ParameterView(ex.getParameterName(), ex.getParameterType()));
     }
 
+    @ExceptionHandler(UnexpectedSearchException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ViewObjectErrorResponse unexpectedSearchExceptionHandler(UnexpectedSearchException ex) {
+        logger.error("Caught unexpected search exception!", ex);
+//        pushExceptionNotification(ex);
+        return searchExceptionHandler(ex);
+    }
+
     @ExceptionHandler(SearchException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
@@ -448,7 +457,7 @@ public abstract class BaseCtrl
     @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT, reason = "Client abort")
     @ExceptionHandler(ClientAbortException.class)
     public void handleClientAbortException(ClientAbortException ex) {
-        logger.debug("Client aborted");
+        logger.debug("Client aborted", ex);
         // Do Nothing
     }
 

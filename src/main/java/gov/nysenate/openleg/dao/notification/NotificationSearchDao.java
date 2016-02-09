@@ -7,7 +7,9 @@ import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface NotificationSearchDao {
@@ -28,7 +30,7 @@ public interface NotificationSearchDao {
      * @return SearchResults<RegisteredNotification>
      */
     public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, FilterBuilder filter,
-                                                                     String sort, LimitOffset limitOffset);
+                                                                     List<SortBuilder> sort, LimitOffset limitOffset);
 
     /**
      * Inserts a notification into the data store and assigns it a notification id, returning a registered notification

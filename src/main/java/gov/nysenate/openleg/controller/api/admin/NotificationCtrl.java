@@ -17,6 +17,7 @@ import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
+import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.notification.data.NotificationNotFoundException;
 import gov.nysenate.openleg.service.notification.data.NotificationService;
@@ -76,7 +77,7 @@ public class NotificationCtrl extends BaseCtrl
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "")
-    public BaseResponse getNotifications(WebRequest request) {
+    public BaseResponse getNotifications(WebRequest request) throws SearchException {
         LocalDateTime fromDate = LocalDate.now().minusDays(7).atStartOfDay();
         LocalDateTime toDate = LocalDateTime.now();
         return getNotificationsDuring(fromDate, toDate, request);
@@ -91,7 +92,7 @@ public class NotificationCtrl extends BaseCtrl
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/{from:\\d{4}-.*}")
-    public BaseResponse getNotifications(@PathVariable String from, WebRequest request) {
+    public BaseResponse getNotifications(@PathVariable String from, WebRequest request) throws SearchException {
         LocalDateTime fromDate = parseISODateTime(from, "from");
         LocalDateTime toDate = LocalDateTime.now();
         return getNotificationsDuring(fromDate, toDate, request);
@@ -108,7 +109,7 @@ public class NotificationCtrl extends BaseCtrl
     @RequestMapping(value = "/{from}/{to:.*\\.?.*}")
     public BaseResponse getNotifications(@PathVariable String from,
                                          @PathVariable String to,
-                                         WebRequest request) {
+                                         WebRequest request) throws SearchException {
         LocalDateTime fromDate = parseISODateTime(from, "from");
         LocalDateTime toDate = parseISODateTime(to, "to");
         return getNotificationsDuring(fromDate, toDate, request);
@@ -135,7 +136,7 @@ public class NotificationCtrl extends BaseCtrl
     @RequestMapping(value = "/search")
     public BaseResponse searchForNotifications(@RequestParam(required = true) String term,
                                                @RequestParam(defaultValue = "") String sort,
-                                               WebRequest request) {
+                                               WebRequest request) throws SearchException {
         LimitOffset limitOffset = getLimitOffset(request, 25);
         boolean full = getBooleanParam(request, "full", false);
         SearchResults<RegisteredNotification> results = notificationService.notificationSearch(term, sort, limitOffset);
@@ -150,7 +151,7 @@ public class NotificationCtrl extends BaseCtrl
 
     /** --- Internal --- */
 
-    private BaseResponse getNotificationsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
+    private BaseResponse getNotificationsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) throws SearchException {
         Range<LocalDateTime> dateRange = getClosedRange(from, to, "from", "to");
         LimitOffset limOff = getLimitOffset(request, 25);
         SortOrder order = getSortOrder(request, SortOrder.DESC);

@@ -15,6 +15,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -33,7 +34,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<SessionMember> searchMembers(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff) {
+    public SearchResults<SessionMember> searchMembers(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(memberIndexName, query, filter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Member search result with query {} and filter {} took {} ms", query, filter, response.getTookInMillis());

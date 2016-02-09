@@ -16,6 +16,7 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -39,7 +40,8 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff) {
+    public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, FilterBuilder postFilter,
+                                                               List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(publicHearingIndexName, query, postFilter, highlightedFields, null, sort, limOff, false);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Public Hearing search result with query {} and filter {} took {} ms", query, postFilter, response.getTookInMillis());

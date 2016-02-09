@@ -16,6 +16,7 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,8 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
 
     /**{@inheritDoc}*/
     @Override
-    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limitOffset) {
+    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, FilterBuilder postFilter,
+                                                     List<SortBuilder> sort, LimitOffset limitOffset) {
         SearchRequestBuilder searchBuilder = getSearchRequest(calIndexName, query, postFilter, sort, limitOffset);
         SearchResponse response = searchBuilder.execute().actionGet();
         return getSearchResults(response, limitOffset, this::getCalendarId);

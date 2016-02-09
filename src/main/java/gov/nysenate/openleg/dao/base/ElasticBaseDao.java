@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.base;
 
 import com.google.common.base.Splitter;
 import com.google.common.primitives.Ints;
+import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.ElasticsearchException;
@@ -75,13 +76,12 @@ public abstract class ElasticBaseDao
 
     /**
      * Generates a typical search request that involves a query, filter, sort string, and a limit + offset
-     * @see #getSearchRequest(String, org.elasticsearch.index.query.QueryBuilder,
-     *                        org.elasticsearch.index.query.FilterBuilder, String, LimitOffset)
+     * @see #getSearchRequest(String, QueryBuilder, FilterBuilder, List, LimitOffset)
      *
      * Highlighting, rescoring, and full source response are not supported via this method.
      */
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
-                                                    String sort, LimitOffset limitOffset) {
+                                                    List<SortBuilder> sort, LimitOffset limitOffset) {
         return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset, false);
     }
 
@@ -93,14 +93,14 @@ public abstract class ElasticBaseDao
      * @param postFilter - Optional FilterBuilder to filter out the results.
      * @param highlightedFields - Optional list of field names to return as highlighted fields.
      * @param rescorer - Optional rescorer that can be used to fine tune the query ranking.
-     * @param sort - String to specify how results should be sorted, (e.g. field1:ASC, field2:DESC)
+     * @param sort - List of SortBuilders specifying the desired sorting
      * @param limitOffset - Restrict the number of results returned as well as paginate.
      * @param fetchSource - Will return the indexed source fields when set to true
      * @return SearchRequestBuilder
      */
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
                                                     List<HighlightBuilder.Field> highlightedFields, RescoreBuilder.Rescorer rescorer,
-                                                    String sort, LimitOffset limitOffset, boolean fetchSource) {
+                                                    List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) {
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(query)
@@ -120,7 +120,7 @@ public abstract class ElasticBaseDao
             searchBuilder.setPostFilter(postFilter);
         }
         // Add the sort by fields
-        extractSortFilters(sort).forEach(searchBuilder::addSort);
+        sort.forEach(searchBuilder::addSort);
         logger.debug("{}", searchBuilder);
         return searchBuilder;
     }
@@ -146,27 +146,6 @@ public abstract class ElasticBaseDao
             resultList.add(result);
         }
         return new SearchResults<>(Ints.checkedCast(response.getHits().getTotalHits()), resultList, limitOffset);
-    }
-
-    /**
-     * Generates a list of elastic search sort parameters from a CSV string.  If no parameters are specified,
-     *  a single score sort parameter is used.
-     *
-     * @param sort
-     * @return
-     */
-    protected List<SortBuilder> extractSortFilters(String sort) {
-        List<SortBuilder> sortBuilders = new ArrayList<>();
-        if (sort == null || sort.trim().isEmpty()) {
-            sortBuilders.add(SortBuilders.scoreSort());
-        }
-        else {
-            Map<String, String> sortMap =
-                Splitter.on(",").omitEmptyStrings().trimResults().withKeyValueSeparator(":").split(sort);
-            sortMap.forEach((k,v) -> sortBuilders.add(
-                SortBuilders.fieldSort(k).order(org.elasticsearch.search.sort.SortOrder.valueOf(v.toUpperCase()))));
-        }
-        return sortBuilders;
     }
 
     /**
