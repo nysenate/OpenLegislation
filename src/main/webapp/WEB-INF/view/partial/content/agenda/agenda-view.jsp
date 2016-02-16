@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <section ng-controller="AgendaCtrl">
   <section class="content-section" ng-controller="AgendaViewCtrl">
-    <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.loading) ? 'query' : ''}}"></md-progress-linear>
+    <md-progress-linear class="md-accent md-hue-2" md-mode="{{(curr.loading) ? 'query' : ''}}"></md-progress-linear>
     <section ng-if="response.success === true">
       <md-toolbar class="md-toolbar-tools md-tall" layout="row">
         <div flex-gt-xs="33" flex-xs="100">
