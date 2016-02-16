@@ -17,22 +17,30 @@
       <md-progress-circular md-mode="indeterminate" class="md-hue-2" md-diameter="200"></md-progress-circular>
     </div>
     <div ng-show="!loadingSummaries">
-      <h3>Select a report type to see mismatch details</h3>
+      <h3 class="margin-left-20">Select a report type to see mismatch details</h3>
       <md-list>
-        <div ng-repeat="(reportType, summary) in summaries"
-             ng-init="mmTypes = ['all'].concat(keys(summary.mismatchCounts))">
-          <md-list-item href="{{ctxPath}}/admin/report/spotcheck/open/{{reportType}}"
-                        class="open-mismatch-summary-item" ng-class="{'not-first': !$first}" layout="row">
-            <h2 flex="33" class="margin-right-20">{{reportType | reportTypeLabel}}</h2>
-            <md-chips flex ng-model="mmTypes" readonly="true">
+        <md-list-item ng-href="{{ctxPath}}/admin/report/spotcheck/open/{{reportType}}"
+                      ng-repeat="(reportType, summary) in summaries"
+                      ng-init="mmTypes = ['all'].concat(keys(summary.mismatchCounts))"
+                      ng-mouseover="mouselover = true" ng-mouseleave="mouselover = false"
+                      class="md-2-line open-mismatch-summary-item" ng-class="{'not-first': !$first}">
+          <div>
+            <div class="md-list-item-text">
+              <h3 class="bold margin-right-10">{{reportType | reportTypeLabel}}</h3>
+              <p>
+                {{reportType | reportDataProvider}} {{reportType | contentType}}s checked against
+                {{reportType | reportReferenceProvider}} {{reportType | refTypeLabel}}s
+              </p>
+            </div>
+            <md-chips ng-model="mmTypes" readonly="true">
               <md-chip-template ng-class="{bold: $chip === 'all'}">
                 {{summary | mismatchCount:{type: $chip, ignored: false} }}
                 <span ng-if="$chip === 'all'">Total</span>
                 <span ng-if="$chip !== 'all'">{{$chip | mismatchTypeLabel}}</span>
               </md-chip-template>
             </md-chips>
-          </md-list-item>
-        </div>
+          </div>
+        </md-list-item>
       </md-list>
     </div>
   </section>

@@ -10,10 +10,8 @@ import gov.nysenate.openleg.dao.entity.member.search.ElasticMemberSearchDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
-import gov.nysenate.openleg.model.search.ClearIndexEvent;
-import gov.nysenate.openleg.model.search.RebuildIndexEvent;
-import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.model.search.*;
+import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.entity.member.event.BulkMemberUpdateEvent;
@@ -78,13 +76,13 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
             throws SearchException {
         if (limOff == null) limOff = LimitOffset.TWENTY_FIVE;
         try {
-            return memberSearchDao.searchMembers(query, postFilter, sort, limOff);
+            return memberSearchDao.searchMembers(query, postFilter, ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
         }
         catch (SearchParseException ex) {
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new SearchException("Unexpected search exception!", ex);
+            throw new UnexpectedSearchException(ex);
         }
     }
 

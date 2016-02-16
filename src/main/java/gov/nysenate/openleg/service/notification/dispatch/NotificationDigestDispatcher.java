@@ -6,6 +6,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.notification.NotificationSearchDao;
 import gov.nysenate.openleg.dao.notification.NotificationSubscriptionDao;
 import gov.nysenate.openleg.model.notification.*;
+import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.notification.data.NotificationDigestService;
 import gov.nysenate.openleg.util.DateUtils;
@@ -65,12 +66,17 @@ public class NotificationDigestDispatcher {
     }
 
     public void sendDigest(NotificationDigestSubscription subscription) {
-        NotificationDigest digest = digestService.getDigest(subscription);
+        NotificationDigest digest = null;
+        try {
+            digest = digestService.getDigest(subscription);
 
-        if (subscription.isSendEmptyDigest() || !digest.isEmpty()) {
-            logger.info("sending {} to {}:{}", NotificationDigestFormatter.getSummary(digest),
-                    digest.getTarget(), digest.getAddress());
-            senderMap.get(subscription.getTarget()).sendDigest(digest);
+            if (subscription.isSendEmptyDigest() || !digest.isEmpty()) {
+                logger.info("sending {} to {}:{}", NotificationDigestFormatter.getSummary(digest),
+                        digest.getTarget(), digest.getAddress());
+                senderMap.get(subscription.getTarget()).sendDigest(digest);
+            }
+        } catch (SearchException e) {
+            logger.error("Could not retrieve notifications for digest subscription: \n" + subscription, e);
         }
     }
 

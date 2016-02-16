@@ -6,22 +6,23 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface CalendarSearchDao {
 
     /**
      * Performs a calendar search based on the given query string.
      * Results are sorted and curtailed according to the given sort string and limit offset.
-     *
-     * @param query
+     *  @param query
      * @param postFilter
-     *@param sort
+     * @param sort
      * @param limitOffset   @return
-     */
+     * */
     public SearchResults<CalendarId> searchCalendars(QueryBuilder query, FilterBuilder postFilter,
-                                                     String sort, LimitOffset limitOffset);
+                                                     List<SortBuilder> sort, LimitOffset limitOffset);
 
     /**
      * Updates or inserts a single calendar into the index

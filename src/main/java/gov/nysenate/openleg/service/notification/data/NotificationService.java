@@ -7,6 +7,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
+import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 
 import java.time.LocalDateTime;
@@ -33,12 +34,12 @@ public interface NotificationService {
      */
     public PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types, Range<LocalDateTime> dateTimeRange,
                                                                      SortOrder order,
-                                                                     LimitOffset limitOffset);
+                                                                     LimitOffset limitOffset) throws SearchException;
 
     /**
      * Performs a search across all notifications using the given query, filter, and sort string
      */
-    public SearchResults<RegisteredNotification> notificationSearch(String queryString, String sort, LimitOffset limitOffset);
+    public SearchResults<RegisteredNotification> notificationSearch(String queryString, String sort, LimitOffset limitOffset) throws SearchException;
 
     /**
      * Inserts a notification into the data store and assigns it a notification id, returning a registered notification

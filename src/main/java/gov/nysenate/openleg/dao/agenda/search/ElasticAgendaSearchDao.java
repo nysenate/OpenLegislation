@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.agenda.search;
 
-import com.google.common.collect.Lists;
 import gov.nysenate.openleg.client.view.agenda.AgendaCommFlatView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -18,13 +17,14 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -36,16 +36,18 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<AgendaId> searchAgendas(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff) {
+    public SearchResults<AgendaId> searchAgendas(QueryBuilder query, FilterBuilder postFilter,
+                                                 List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Agenda Search result with query {} took {} ms", query, response.getTookInMillis());
-        return getSearchResults(response, limOff, (hit) -> getAgendaIdFromHit(hit));
+        return getSearchResults(response, limOff, this::getAgendaIdFromHit);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff) {
+    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, FilterBuilder postFilter,
+                                                                   List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Committee Agenda search result with query {} took {} ms", query, response.getTookInMillis());
@@ -63,7 +65,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     /** {@inheritDoc} */
     @Override
     public void updateAgendaIndex(Agenda agenda) {
-        updateAgendaIndex(Arrays.asList(agenda));
+        updateAgendaIndex(Collections.singletonList(agenda));
     }
 
     /** {@inheritDoc} */

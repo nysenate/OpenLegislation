@@ -19,6 +19,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -47,7 +48,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     /** {@inheritDoc} */
     @Override
     public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, FilterBuilder filter,
-                                                                     String sort, LimitOffset limitOffset) {
+                                                                     List<SortBuilder> sort, LimitOffset limitOffset) {
         // Restrict search to only notifications, excluding the id incrementer
         FilterBuilder fullFilter = FilterBuilders.andFilter(filter, FilterBuilders.typeFilter(notificationType));
         SearchRequestBuilder request = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, true);

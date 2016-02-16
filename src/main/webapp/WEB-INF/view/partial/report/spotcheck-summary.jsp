@@ -85,17 +85,14 @@
       <dir-pagination-controls class="text-align-center" pagination-id="spotcheck-summary" boundary-links="true" max-size="10">
       </dir-pagination-controls>
     </div>
-    <div ng-show="loadingSummaries">
-      <md-divider></md-divider>
+    <div ng-show="loadingSummaries" class="margin-20">
       <h3>Loading Summaries...</h3>
       <md-progress-linear md-mode="indeterminate" class="md-hue-2"></md-progress-linear>
     </div>
-    <div ng-show="!loadingSummaries && summariesNotFound">
-      <md-divider></md-divider>
+    <div ng-show="!loadingSummaries && summariesNotFound" class="margin-20">
       <h3 style="color:#ff00ff">Err0r: Could not load summaries</h3>
     </div>
-    <div ng-show="!loadingSummaries && !summariesNotFound && reportSummaries.length < 1">
-      <md-divider></md-divider>
+    <div ng-show="!loadingSummaries && !summariesNotFound && reportSummaries.length < 1" class="margin-20">
       <h3>No reports found for type and date range</h3>
     </div>
   </section>

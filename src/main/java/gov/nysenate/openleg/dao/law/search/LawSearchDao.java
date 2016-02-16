@@ -7,8 +7,10 @@ import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * DAO Interface for searching law data.
@@ -26,7 +28,7 @@ public interface LawSearchDao
      * @return SearchResults<LawDocId>
      */
     public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, FilterBuilder filter, RescoreBuilder.Rescorer rescorer,
-                                                 String sort, LimitOffset limOff);
+                                                 List<SortBuilder> sort, LimitOffset limOff);
 
     /**
      * Update the law index with the supplied law doc.

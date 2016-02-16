@@ -6,8 +6,10 @@ import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * DAO interface for searching session transcripts.
@@ -24,7 +26,7 @@ public interface TranscriptSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff);
+    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
 
     /**
      * Update the transcript search index with the supplied transcript.

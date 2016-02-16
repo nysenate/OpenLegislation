@@ -10,13 +10,12 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.search.ElasticCalendarSearchDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.search.ClearIndexEvent;
-import gov.nysenate.openleg.model.search.RebuildIndexEvent;
-import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.model.search.*;
+import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.event.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.service.calendar.event.CalendarUpdateEvent;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
@@ -158,11 +157,12 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
             limitOffset = LimitOffset.ALL;
         }
         try {
-            return calendarSearchDao.searchCalendars(query, postFilter, sort, limitOffset);
+            return calendarSearchDao.searchCalendars(query, postFilter,
+                    ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
         } catch (SearchParseException ex) {
             throw new SearchException("There was a problem parsing the supplied query string.", ex);
-        } catch (Exception ex) {
-            throw new SearchException("Unexpected search exception!", ex);
+        } catch (ElasticsearchException ex) {
+            throw new UnexpectedSearchException(ex);
         }
     }
 

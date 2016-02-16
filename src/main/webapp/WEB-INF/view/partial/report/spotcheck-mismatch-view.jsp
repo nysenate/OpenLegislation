@@ -84,7 +84,16 @@
         <md-tabs class="diff-tabs md-hue-2" md-dynamic-height="true" md-selected="iDiffTab" ng-init="iDiffTab = 0">
           <md-tab label="Basic Diff">
             <md-content>
-              <diff-key></diff-key>
+              <div layout="row" layout-align="space-around center">
+                <div>
+                  <span class="diff-key-color del"></span>
+                  {{mismatchRow.refType | reportDataProvider}} Data
+                </div>
+                <div>
+                  <span class="diff-key-color ins"></span>
+                  {{mismatchRow.refType | reportReferenceProvider}} Data
+                </div>
+              </div>
               <div class="mismatch-diff-box" ng-class="{'padding-10': singleLineDiff}">
                 <mismatch-diff class="margin-top-10" right="mismatchRow.refData" left="mismatchRow.obsData"></mismatch-diff>
               </div>
@@ -93,8 +102,8 @@
           <md-tab label="Side By Side">
             <md-content>
               <div layout="row">
-                <p flex class="text-align-center no-margin bold">Observed Data</p>
-                <p flex class="text-align-center no-margin bold">Reference Data</p>
+                <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportDataProvider}} Data</p>
+                <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportReferenceProvider}} Data</p>
               </div>
               <div layout="row" class="diff-side" ng-if="sideDiffOpened || iDiffTab === 1" ng-init="sideDiffOpened=true">
                 <div flex class="mismatch-diff-box" ng-class="{'padding-10': singleLineObs}">

@@ -7,12 +7,10 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.transcript.search.ElasticTranscriptSearchDao;
-import gov.nysenate.openleg.model.search.ClearIndexEvent;
-import gov.nysenate.openleg.model.search.RebuildIndexEvent;
-import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
+import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import gov.nysenate.openleg.service.transcript.event.BulkTranscriptUpdateEvent;
@@ -85,13 +83,14 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
                                                String sort, LimitOffset limOff) throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;
         try {
-            return transcriptSearchDao.searchTranscripts(query, postFilter, sort, limOff);
+            return transcriptSearchDao.searchTranscripts(query, postFilter,
+                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
         }
         catch (SearchParseException ex) {
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new SearchException("Unexpected search exception!", ex);
+            throw new UnexpectedSearchException(ex);
         }
     }
 
