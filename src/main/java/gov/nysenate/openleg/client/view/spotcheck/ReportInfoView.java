@@ -4,7 +4,6 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Optional;
 
 public class ReportInfoView extends SpotCheckSummaryView implements ViewObject
@@ -14,12 +13,10 @@ public class ReportInfoView extends SpotCheckSummaryView implements ViewObject
     protected LocalDateTime referenceDateTime;
     protected LocalDateTime reportDateTime;
     protected String notes;
-    protected int observedCount;
 
     public ReportInfoView(SpotCheckReportSummary summary) {
         this(summary,
                 summary != null ? summary.getNotes() : null,
-                summary != null ? summary.getObservedCount() : 0,
                 summary != null ? summary.getReportId() : null);
     }
 
@@ -30,14 +27,12 @@ public class ReportInfoView extends SpotCheckSummaryView implements ViewObject
     private ReportInfoView(Optional<SpotCheckReport<?>> reportOpt) {
         this(reportOpt.map(SpotCheckReport::getSummary).orElse(null),
                 reportOpt.map(SpotCheckReport::getNotes).orElse(null),
-                reportOpt.map(SpotCheckReport::getObservedCount).orElse(0),
                 reportOpt.map(SpotCheckReport::getReportId).orElse(null));
     }
 
-    protected ReportInfoView(SpotCheckSummary summary, String notes, int observedCount, SpotCheckReportId reportId) {
+    protected ReportInfoView(SpotCheckSummary summary, String notes, SpotCheckReportId reportId) {
         super(summary);
         this.notes = notes;
-        this.observedCount = observedCount;
 
         Optional<SpotCheckReportId> reportIdOpt = Optional.ofNullable(reportId);
         this.referenceType = reportIdOpt.map(SpotCheckReportId::getReferenceType)
@@ -50,10 +45,6 @@ public class ReportInfoView extends SpotCheckSummaryView implements ViewObject
 
     public String getNotes() {
         return notes;
-    }
-
-    public int getObservedCount() {
-        return observedCount;
     }
 
     @Override

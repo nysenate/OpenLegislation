@@ -43,7 +43,7 @@ public class SpotCheckReport<ContentKey>
     /** --- Methods --- */
 
     public SpotCheckReportSummary getSummary() {
-        SpotCheckReportSummary summary = new SpotCheckReportSummary(reportId, notes, observations.size());
+        SpotCheckReportSummary summary = new SpotCheckReportSummary(reportId, notes);
         summary.addCountsFromObservations(observations.values());
         return summary;
     }

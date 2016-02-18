@@ -2,7 +2,6 @@ package gov.nysenate.openleg.dao.spotcheck;
 
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.spotcheck.*;
-import org.postgresql.core.types.PGType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -13,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -236,13 +234,6 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                                   getLocalDateTimeFromRs(rs, "reference_date_time"),
                                   getLocalDateTimeFromRs(rs, "report_date_time"));
 
-    protected class ReportIdHandler extends PaginatedRowHandler<SpotCheckReportId>
-    {
-        public ReportIdHandler(LimitOffset limOff) {
-            super(limOff, "total", reportIdRowMapper);
-        }
-    }
-
     protected class ReportSummaryHandler extends SummaryHandler
     {
         private Map<SpotCheckReportId, SpotCheckReportSummary> summaryMap;
@@ -255,7 +246,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         protected SpotCheckSummary getRelevantSummary(ResultSet rs) throws SQLException {
             SpotCheckReportId id = reportIdRowMapper.mapRow(rs, rs.getRow());
             if (!summaryMap.containsKey(id)) {
-                summaryMap.put(id, new SpotCheckReportSummary(id, rs.getString("notes"), rs.getInt("observation_count")));
+                summaryMap.put(id, new SpotCheckReportSummary(id, rs.getString("notes")));
             }
             return summaryMap.get(id);
         }
@@ -354,31 +345,48 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 } else {
                     ignoreStatus = SpotCheckMismatchIgnore.NOT_IGNORED;
                 }
-                List<String> issueIds = Arrays.asList((String[]) rs.getArray("issue_ids").getArray());
+                String issueId = rs.getString("issue_id");
 
                 SpotCheckMismatch mismatch;
                 // Add the current mismatch
                 if (current) {
-                    mismatch = new SpotCheckMismatch(type, obsData, refData, notes);
-                    obs.addMismatch(mismatch);
+                    if (obs.getMismatches().containsKey(type)) {
+                        mismatch = obs.getMismatches().get(type);
+                    } else {
+                        mismatch = new SpotCheckMismatch(type, obsData, refData, notes);
+                        obs.addMismatch(mismatch);
+                    }
                 }
-                // Otherwise add the prior mismatch
+                // Otherwise add as a prior mismatch
                 else {
                     SpotCheckReportId reportId = new SpotCheckReportId(
                             SpotCheckRefType.valueOf(rs.getString("report_reference_type")),
                             getLocalDateTimeFromRs(rs, "reference_active_date"),
                             getLocalDateTimeFromRs(rs, "report_date_time")
                     );
-                    SpotCheckPriorMismatch priorMismatch = new SpotCheckPriorMismatch(type, refData, obsData, notes);
+                    List<SpotCheckPriorMismatch> existingPriorMMs = obs.getPriorMismatches().get(type);
+                    Optional<SpotCheckPriorMismatch> priorMMOpt = Optional.ofNullable(existingPriorMMs)
+                            .flatMap(priorMMs -> priorMMs.stream()
+                                            .filter(priorMM -> reportId.equals(priorMM.getReportId()))
+                                            .findFirst()
+                            );
+                    SpotCheckPriorMismatch priorMismatch;
+                    if (priorMMOpt.isPresent()) {
+                        priorMismatch = priorMMOpt.get();
+                    } else {
+                        priorMismatch = new SpotCheckPriorMismatch(type, refData, obsData, notes);
+                        priorMismatch.setReportId(reportId);
+                        obs.addPriorMismatch(priorMismatch);
+                    }
                     mismatch = priorMismatch;
-                    priorMismatch.setReportId(reportId);
-                    obs.addPriorMismatch(priorMismatch);
                 }
                 // set data common to standard and prior mismatches
                 mismatch.setMismatchId(mismatchId);
                 mismatch.setStatus(status);
                 mismatch.setIgnoreStatus(ignoreStatus);
-                mismatch.setIssueIds(issueIds);
+                if (issueId != null) {
+                    mismatch.addIssueId(issueId);
+                }
             }
         }
 

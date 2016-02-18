@@ -112,6 +112,7 @@ public enum SqlTable
     SPOTCHECK_OBSERVATION        ("spotcheck_observation"),
     SPOTCHECK_MISMATCH           ("spotcheck_mismatch"),
     SPOTCHECK_MISMATCH_IGNORE    ("spotcheck_mismatch_ignore"),
+    SPOTCHECK_MISMATCH_ISSUE_ID  ("spotcheck_mismatch_issue_id"),
 
     TRANSCRIPT                   ("transcript"),
     TRANSCRIPT_FILE              ("transcript_file"),
