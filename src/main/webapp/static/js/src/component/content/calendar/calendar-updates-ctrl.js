@@ -70,11 +70,9 @@ calendarModule.controller('CalendarSearchPageCtrl', ['$scope', '$rootScope', '$r
         $scope.setCalendarHeaderText = function() {
             $timeout(function() {   // Set text on next digest to account for delay in active index change
                 var pageName = $scope.pageNames[$scope.activeIndex];
-                var newHeader = '8)';
+                var newHeader = 'Search For Calendars';
 
-                if (pageName == 'search') {
-                    newHeader = 'Search for Calendars';
-                } else if (pageName == 'browse') {
+                if (pageName == 'browse') {
                     newHeader = 'Browse Calendars';
                 } else if (pageName == 'updates') {
                     newHeader = 'View Calendar Updates';
