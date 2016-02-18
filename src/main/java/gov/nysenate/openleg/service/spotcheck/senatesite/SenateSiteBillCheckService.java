@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite;
 
+import com.google.common.collect.ImmutableList;
+import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.bill.*;
 import gov.nysenate.openleg.client.view.entity.MemberView;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -81,6 +84,8 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         checkMultiSponsors(amendment, reference, observation);
         checkHasSameAs(amendment, reference, observation);
         checkSameAs(amendment, reference, observation);
+        checkLawCode(amendment, reference, observation);
+        checkLawSection(amendment, reference, observation);
 
         return observation;
     }
@@ -100,7 +105,10 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkSameAs(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        TreeSet<BillId> olSameAs = content.getSameAs().getItems().stream()
+        TreeSet<BillId> olSameAs = Optional.ofNullable(content.getSameAs())
+                .map(ListView::getItems)
+                .orElse(ImmutableList.of())
+                .stream()
                 .map(BillIdView::toBillId)
                 .collect(Collectors.toCollection(TreeSet::new));
         TreeSet<BillId> refSameAs = new TreeSet<>(reference.getSameAs());
@@ -108,7 +116,10 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkPrevVersions(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        TreeSet<BillId> olPrevVers = content.getPreviousVersions().getItems().stream()
+        TreeSet<BillId> olPrevVers = Optional.ofNullable(content.getPreviousVersions())
+                .map(ListView::getItems)
+                .orElse(ImmutableList.of())
+                .stream()
                 .map(BillIdView::toBillId)
                 .collect(Collectors.toCollection(TreeSet::new));
         TreeSet<BillId> refPrevVers = new TreeSet<>(reference.getPreviousVersions());
@@ -116,13 +127,18 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkIsAmended(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        boolean olIsAmended = content.getAmendmentVersions().getSize() > 1;
+        boolean olIsAmended = Optional.ofNullable(content.getAmendmentVersions())
+                .map(ListView::getSize)
+                .orElse(0) > 1;
         boolean refIsAmended = reference.isAmended();
         checkObject(olIsAmended, refIsAmended, observation, BILL_IS_AMENDED);
     }
 
     private void checkHasSameAs(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkObject(content.getSameAs().getSize() > 0, reference.isHasSameAs(), observation, BILL_HAS_SAME_AS);
+        boolean contentHasSameAs = Optional.ofNullable(content.getSameAs())
+                .map(ListView::getSize)
+                .orElse(0) > 0;
+        checkObject(contentHasSameAs, reference.isHasSameAs(), observation, BILL_HAS_SAME_AS);
     }
 
     private void checkPublishDate(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
@@ -140,7 +156,10 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkActions(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        List<BillAction> contentActions = content.getActions().getItems().stream()
+        List<BillAction> contentActions = Optional.ofNullable(content.getActions())
+                .map(ListView::getItems)
+                .orElse(ImmutableList.of())
+                .stream()
                 .map(BillActionView::toBillAction)
                 .collect(Collectors.toList());
         checkCollection(contentActions, reference.getActions(), observation, BILL_ACTION,
@@ -156,7 +175,10 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkMilestones(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkCollection(content.getMilestones().getItems(), reference.getMilestones(), observation, BILL_MILESTONES,
+        List<BillStatusView> contentMilestones = Optional.ofNullable(content.getMilestones())
+                .map(ListView::getItems)
+                .orElse(ImmutableList.of());
+        checkCollection(contentMilestones, reference.getMilestones(), observation, BILL_MILESTONES,
                 this::billStatusToString, "\n");
     }
 
@@ -165,34 +187,43 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkLastStatusComm(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkStringUpper(content.getStatus().getCommitteeName(), reference.getLatestStatusCommittee(),
+        String contentLastStatusComm = Optional.ofNullable(content.getStatus())
+                .map(BillStatusView::getCommitteeName)
+                .orElse(null);
+        checkStringUpper(contentLastStatusComm, reference.getLatestStatusCommittee(),
                 observation, BILL_LAST_STATUS_COMM);
     }
 
     private void checkLastStatusDate(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkObject(content.getStatus().getActionDate(), reference.getLastStatusDate(), observation, BILL_LAST_STATUS_DATE);
+        LocalDate contentStatusDate = Optional.ofNullable(content.getStatus())
+                .map(BillStatusView::getActionDate)
+                .orElse(null);
+        checkObject(contentStatusDate, reference.getLastStatusDate(), observation, BILL_LAST_STATUS_DATE);
     }
 
     private void checkSponsor(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkString(content.getSponsor().getMember().getShortName(), reference.getSponsor(), observation, BILL_SPONSOR);
-    }
-
-    private List<String> extractAdditionalSponsors(List<SessionMember> sponsorList) {
-        return Optional.ofNullable(sponsorList)
-                .orElse(Collections.emptyList()).stream()
-                .map(SessionMember::getLbdcShortName)
-                .collect(Collectors.toList());
+        String contentSponsor = Optional.ofNullable(content.getSponsor())
+                .map(SponsorView::getMember)
+                .map(MemberView::getShortName)
+                .orElse(null);
+        checkString(contentSponsor, reference.getSponsor(), observation, BILL_SPONSOR);
     }
 
     private void checkCoSponsors(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        List<String> contentCoSponsors =content.getCoSponsors().getItems().stream()
+        List<String> contentCoSponsors = Optional.ofNullable(content.getCoSponsors())
+                .map(ListView::getItems)
+                .orElse(ImmutableList.of())
+                .stream()
                 .map(MemberView::getShortName)
                 .collect(Collectors.toList());
         checkCollection(contentCoSponsors, reference.getCoSponsors(), observation, BILL_COSPONSOR);
     }
 
     private void checkMultiSponsors(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        List<String> contentMultiSponsors =content.getMultiSponsors().getItems().stream()
+        List<String> contentMultiSponsors = Optional.ofNullable(content.getMultiSponsors())
+                .map(ListView::getItems)
+                .orElse(ImmutableList.of())
+                .stream()
                 .map(MemberView::getShortName)
                 .collect(Collectors.toList());
         checkCollection(contentMultiSponsors, reference.getMultiSponsors(), observation, BILL_MULTISPONSOR);
