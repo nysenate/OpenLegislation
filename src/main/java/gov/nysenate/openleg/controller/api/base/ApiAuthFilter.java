@@ -38,12 +38,16 @@ public class ApiAuthFilter implements Filter
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        String key = servletRequest.getParameter("key");
-        String ipAddress = servletRequest.getRemoteAddr();
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        String key = servletRequest.getParameter("key");
+        String forwardedForIp = request.getHeader("x-forwarded-for");
+        String ipAddress = forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
+
         Subject subject = SecurityUtils.getSubject();
+
         if (enabled) {
             if (!StringUtils.isEmpty(key) && apiUserService.validateKey(key)) {
                 subject.login(new ApiKeyLoginToken(key, ipAddress));
