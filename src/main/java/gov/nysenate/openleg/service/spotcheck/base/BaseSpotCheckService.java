@@ -16,6 +16,8 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
 
     protected void checkString(String content, String reference,
                                     SpotCheckObservation<ContentKey> observation, SpotCheckMismatchType mismatchType) {
+        content = StringUtils.trimToEmpty(content);
+        reference = StringUtils.trimToEmpty(reference);
         if (!StringUtils.equals(content, reference)) {
             observation.addMismatch(new SpotCheckMismatch(mismatchType, content, reference));
         }
@@ -37,7 +39,7 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
                                             Function<T, String> toString, String split) {
         Function<Collection<T>, String> stringify = collection ->
                 Optional.ofNullable(collection).orElse(Collections.emptyList()).stream()
-                        .map(toString).reduce("", (a, b) -> a + split + b);
+                        .map(toString).reduce("", (a, b) -> StringUtils.isEmpty(a) ? b : a + split + b);
         checkString(stringify.apply(content), stringify.apply(reference), observation, mismatchType);
     }
 

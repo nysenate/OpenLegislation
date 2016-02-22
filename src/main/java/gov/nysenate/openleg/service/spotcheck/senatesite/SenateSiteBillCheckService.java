@@ -127,9 +127,15 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkIsAmended(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
+        String amendVersion = Optional.ofNullable(reference.getBillId())
+                .map(billid -> billid.getVersion().toString())
+                .orElse("");
         boolean olIsAmended = Optional.ofNullable(content.getAmendmentVersions())
-                .map(ListView::getSize)
-                .orElse(0) > 1;
+                .map(ListView::getItems)
+                .flatMap(items -> items.stream()
+                        .filter(version -> version.compareTo(amendVersion) > 0)
+                        .findAny())
+                .isPresent();
         boolean refIsAmended = reference.isAmended();
         checkObject(olIsAmended, refIsAmended, observation, BILL_IS_AMENDED);
     }
@@ -183,7 +189,10 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkLastStatus(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkObject(content.getStatus(), reference.getLastStatus(), observation, BILL_LAST_STATUS);
+        String contentStatus = Optional.ofNullable(content.getStatus())
+                .map(BillStatusView::getStatusType)
+                .orElse(null);
+        checkObject(contentStatus, reference.getLastStatus(), observation, BILL_LAST_STATUS);
     }
 
     private void checkLastStatusComm(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
@@ -195,8 +204,9 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkLastStatusDate(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        LocalDate contentStatusDate = Optional.ofNullable(content.getStatus())
+        LocalDateTime contentStatusDate = Optional.ofNullable(content.getStatus())
                 .map(BillStatusView::getActionDate)
+                .map(LocalDate::atStartOfDay)
                 .orElse(null);
         checkObject(contentStatusDate, reference.getLastStatusDate(), observation, BILL_LAST_STATUS_DATE);
     }

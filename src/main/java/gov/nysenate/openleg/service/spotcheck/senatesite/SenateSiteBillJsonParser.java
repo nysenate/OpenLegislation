@@ -57,9 +57,9 @@ public class SenateSiteBillJsonParser {
     private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteBillDumpId dumpId) throws IOException {
         SenateSiteBill bill = new SenateSiteBill(dumpId.getToDateTime());
 
+        bill.setBasePrintNo(getValue(billNode, "field_ol_base_print_no"));
         bill.setActiveVersion(getValue(billNode, "field_ol_active_version"));
         bill.setMilestones(getMilestones(billNode, "field_ol_all_statuses"));
-        bill.setBasePrintNo(getValue(billNode, "field_ol_base_print_no"));
         bill.setChamber(getValue(billNode, "field_ol_chamber"));
         bill.setCoSponsors(getMembers(billNode, "field_ol_co_sponsor_names"));
         bill.setText(getValue(billNode, "field_ol_full_text"));
