@@ -84,8 +84,8 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
             logger.info("got {} bills", updatedBills.size());
             logger.info("retrieving bill dump");
             // Extract senate site bills from the dump
-            Multimap<BaseBillId, SenateSiteBill> dumpedBills =
-                    Multimaps.index(billJsonParser.parseBills(billDump), SenateSiteBill::getBaseBillId);
+            Multimap<BaseBillId, SenateSiteBill> dumpedBills = ArrayListMultimap.create();
+            billJsonParser.parseBills(billDump).forEach(b -> dumpedBills.put(b.getBaseBillId(), b));
             logger.info("parsed {} dumped bills", dumpedBills.size());
 
             prunePostDumpBills(billDump, report, dumpedBills, updatedBills);
