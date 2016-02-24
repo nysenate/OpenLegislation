@@ -15,8 +15,9 @@
           </div>
           <div flex="none" class="margin-right-20" style="width: 180px;">
             <h3 class="margin-top-10 no-bottom-margin">
-              <a target="_blank" class="blue3" ng-href="${ctxPath}/bills/{{calEntry.session}}/{{calEntry.basePrintNo}}?&view=1">
-                {{calEntry.printNo}} - {{calEntry.session}}
+              <a target="_blank" class="blue3"
+                 ng-href="${ctxPath}/bills/{{calEntry.session}}/{{calEntry.basePrintNo}}?version={{calEntry.selectedVersion}}&view=1">
+                {{calEntry.basePrintNo}}{{calEntry.selectedVersion}} - {{calEntry.session}}
               </a>
               <md-tooltip>View this bill</md-tooltip>
             </h3>
