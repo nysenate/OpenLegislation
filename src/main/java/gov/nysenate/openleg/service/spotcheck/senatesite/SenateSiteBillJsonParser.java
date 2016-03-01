@@ -12,7 +12,9 @@ import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.*;
+import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,7 @@ public class SenateSiteBillJsonParser {
 
     @Autowired ObjectMapper objectMapper;
 
-    public List<SenateSiteBill> parseBills(SenateSiteBillDump billDump) throws ParseError {
+    public List<SenateSiteBill> parseBills(SenateSiteDump billDump) throws ParseError {
         return billDump.getDumpFragments().stream()
                 .flatMap(fragment -> extractBillsFromFragment(fragment).stream())
                 .collect(Collectors.toList());
@@ -34,7 +36,7 @@ public class SenateSiteBillJsonParser {
 
     /** --- Internal Methods --- */
 
-    private List<SenateSiteBill> extractBillsFromFragment(SenateSiteBillDumpFragment fragment) throws ParseError {
+    private List<SenateSiteBill> extractBillsFromFragment(SenateSiteDumpFragment fragment) throws ParseError {
         try {
             JsonNode billMap = objectMapper.readTree(fragment.getFragmentFile())
                     .path("bills");
@@ -54,8 +56,8 @@ public class SenateSiteBillJsonParser {
         }
     }
 
-    private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteBillDumpId dumpId) throws IOException {
-        SenateSiteBill bill = new SenateSiteBill(dumpId.getToDateTime());
+    private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteDumpFragment fragment) throws IOException {
+        SenateSiteBill bill = new SenateSiteBill(DateUtils.endOfDateTimeRange(fragment.getDumpId().getRange()));
 
         bill.setBasePrintNo(getValue(billNode, "field_ol_base_print_no"));
         bill.setActiveVersion(getValue(billNode, "field_ol_active_version"));

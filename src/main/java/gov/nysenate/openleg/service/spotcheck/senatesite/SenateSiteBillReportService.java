@@ -5,24 +5,22 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillUpdatesDao;
-import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteBillDao;
+import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.dao.spotcheck.BillIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.*;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteBill;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteBillDump;
+import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import gov.nysenate.openleg.util.DateUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +37,7 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
     private static final Logger logger = LoggerFactory.getLogger(SenateSiteBillReportService.class);
 
     @Autowired private BillIdSpotCheckReportDao billReportDao;
-    @Autowired private SenateSiteBillDao senateSiteBillDao;
+    @Autowired private SenateSiteDao senateSiteDao;
     @Autowired private SenateSiteBillJsonParser billJsonParser;
 
     @Autowired private BillDataService billDataService;
@@ -59,9 +57,9 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
 
     @Override
     public synchronized SpotCheckReport<BillId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
-        SenateSiteBillDump billDump = getMostRecentDump();
+        SenateSiteDump billDump = getMostRecentDump();
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_BILLS,
-                billDump.getBillDumpId().getToDateTime(), LocalDateTime.now());
+                DateUtils.endOfDateTimeRange(billDump.getDumpId().getRange()), LocalDateTime.now());
         SpotCheckReport<BillId> report = new SpotCheckReport<>(reportId);
         try {
 
@@ -104,17 +102,17 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
             logger.info("done: {} mismatches", report.getOpenMismatchCount(false));
         } finally {
             logger.info("archiving bill dump...");
-            senateSiteBillDao.setProcessed(billDump);
+            senateSiteDao.setProcessed(billDump);
         }
         return report;
     }
 
     /** --- Internal Methods --- */
 
-    private SenateSiteBillDump getMostRecentDump() throws IOException, ReferenceDataNotFoundEx {
-        return senateSiteBillDao.getPendingDumps().stream()
-                .filter(SenateSiteBillDump::isComplete)
-                .max(SenateSiteBillDump::compareTo)
+    private SenateSiteDump getMostRecentDump() throws IOException, ReferenceDataNotFoundEx {
+        return senateSiteDao.getPendingDumps(SpotCheckRefType.SENATE_SITE_BILLS).stream()
+                .filter(SenateSiteDump::isComplete)
+                .max(SenateSiteDump::compareTo)
                 .orElseThrow(() -> new ReferenceDataNotFoundEx("Found no full senate site bill dumps"));
     }
 
@@ -125,9 +123,9 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
      * @param billDump SenateSiteBillDump
      * @return Set<Bill>
      */
-    private Set<BaseBillId> getBillUpdatesDuring(SenateSiteBillDump billDump) {
-        Range<LocalDateTime> dumpUpdateInterval = billDump.getBillDumpId().getUpdateInterval();
-        return billUpdatesDao.getUpdates(Range.greaterThan(billDump.getBillDumpId().getFromDateTime()),
+    private Set<BaseBillId> getBillUpdatesDuring(SenateSiteDump billDump) {
+        Range<LocalDateTime> dumpUpdateInterval = billDump.getDumpId().getRange();
+        return billUpdatesDao.getUpdates(Range.greaterThan(DateUtils.startOfDateTimeRange(billDump.getDumpId().getRange())),
                 UpdateType.PROCESSED_DATE, null, SortOrder.ASC, LimitOffset.ALL)
                 .getResults().stream()
                 .filter(token -> dumpUpdateInterval.contains(token.getProcessedDateTime()))
@@ -144,9 +142,9 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
      * @param senSiteBills Multimap<BaseBillId, SenateSiteBill>
      * @param openlegBills Map<BaseBillId, Bill>
      */
-    private void prunePostDumpBills(SenateSiteBillDump billDump, SpotCheckReport report,
+    private void prunePostDumpBills(SenateSiteDump billDump, SpotCheckReport report,
                                     Multimap<BaseBillId, SenateSiteBill> senSiteBills, Map<BaseBillId, Bill> openlegBills) {
-        Range<LocalDateTime> billDumpRange = billDump.getBillDumpId().getUpdateInterval();
+        Range<LocalDateTime> billDumpRange = billDump.getDumpId().getRange();
         Range<LocalDateTime> postDumpRange =  Range.downTo(DateUtils.endOfDateTimeRange(billDumpRange),
                 billDumpRange.upperBoundType() == BoundType.OPEN ? BoundType.CLOSED : BoundType.OPEN);
         PaginatedList<UpdateToken<BaseBillId>> postDumpUpdates =

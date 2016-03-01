@@ -29,6 +29,7 @@ public enum ErrorCode
     /** --- Spotcheck --- */
 
     SPOTCHECK_REPORT_NOT_FOUND(31, "The requested spotcheck report was not found"),
+    SENATE_SITE_JSON_DUMP_MISSING_FIELDS(32, "The JSON dump is missing required fields"),
 
     /** --- Committee --- */
 

@@ -28,6 +28,5 @@ public class SillyTests extends BaseTests {
 
     @Test
     public void testTest() {
-
     }
 }
