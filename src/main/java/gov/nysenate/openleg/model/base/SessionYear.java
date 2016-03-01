@@ -105,6 +105,13 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
         return Range.closed(LocalDate.of(getSessionStartYear(), 1, 1), LocalDate.of(getSessionEndYear(), 12, 31));
     }
 
+    /** Returns a date time range encompassing this session. */
+    @JsonIgnore
+    public Range<LocalDateTime> asDateTimeRange() {
+        return Range.closed(LocalDateTime.of(getSessionStartYear(), 1, 1, 0, 0, 0),
+                            LocalDateTime.of(getSessionEndYear(), 12, 31, 23, 59, 59));
+    }
+
     /** --- Overrides --- */
 
     @Override
