@@ -43,7 +43,6 @@ public class SenateSiteBillDumpCtrl extends BaseCtrl {
      *
      * Usage: (POST) /api/3/senatesite/billdump
      */
-    @RequiresPermissions("senatesite:billdump:post")
     @RequestMapping(value = "/billdump", method = RequestMethod.POST, consumes = "application/json")
     public BaseResponse sendSenateSiteBillDumpFragment(@RequestBody String billFragmentJson) throws IOException {
         SenateSiteDumpFragment fragment = parser.parseFragment(billFragmentJson, SpotCheckRefType.SENATE_SITE_BILLS);

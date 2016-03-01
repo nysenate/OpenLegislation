@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.dao.bill.reference.senatesite;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
@@ -34,6 +36,7 @@ public class FsSenateSiteDao implements SenateSiteDao {
 
     @Autowired private Environment environment;
     @Autowired private SenateSiteDumpFragParser parser;
+    @Autowired private ObjectMapper objectMapper;
 
     public static final String SENSITE_DUMP_DIRNAME = "sensite-dump";
     private static final String DUMP_FRAG_FILENAME_PREFIX_TEMPL = "_dump-${fromDateTime}-${toDateTime}-";
@@ -69,7 +72,12 @@ public class FsSenateSiteDao implements SenateSiteDao {
     public void saveDumpFragment(SenateSiteDumpFragment fragment, String fragmentData) throws IOException {
         File fragmentFile = new File(getIncomingDumpDir(fragment.getDumpId().getRefType()), getDumpFragFilename(fragment));
         logger.info("saving senate site dump fragment {}", fragmentFile.getAbsolutePath());
-        FileUtils.write(fragmentFile, fragmentData, Charset.forName("UTF-8"));
+        FileUtils.write(fragmentFile, prettyPrintJson(fragmentData), Charset.forName("UTF-8"));
+    }
+
+    private String prettyPrintJson(String fragmentData) throws IOException {
+        Object json = objectMapper.readValue(fragmentData, Object.class);
+        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
     }
 
     @Override
