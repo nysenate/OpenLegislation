@@ -62,7 +62,7 @@ public class SenateSiteBillDumpCtrl extends BaseCtrl {
     @ExceptionHandler(SenateSiteDumpFragParserException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleBadJsonData(SenateSiteDumpFragParserException ex) {
-        logger.error("Senate site dump fragment json parsing error", ex.getMessage());
+        logger.error("Senate site dump fragment json parsing error", ex);
         return new ViewObjectErrorResponse(ErrorCode.SENATE_SITE_JSON_DUMP_MISSING_FIELDS, ex.getMessage());
     }
 }

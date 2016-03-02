@@ -75,7 +75,7 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
                     updatedBills.put(billId, billDataService.getBill(billId));
                 } catch (BillNotFoundEx ex) {
                     SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(reportId.getReferenceId(), billId);
-                    observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", ""));
+                    observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", billId));
                     report.addObservation(observation);
                 }
             }
