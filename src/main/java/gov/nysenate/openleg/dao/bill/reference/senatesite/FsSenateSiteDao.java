@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.bill.reference.senatesite;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.config.Environment;

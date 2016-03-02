@@ -36,4 +36,22 @@ public class SenateSiteDumpSessionId extends SenateSiteDumpId implements Seriali
                "session=" + session +
                '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        SenateSiteDumpSessionId that = (SenateSiteDumpSessionId) o;
+
+        return !(session != null ? !session.equals(that.session) : that.session != null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (session != null ? session.hashCode() : 0);
+        return result;
+    }
 }

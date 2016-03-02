@@ -51,4 +51,24 @@ public class SenateSiteDumpRangeId extends SenateSiteDumpId implements Serializa
                ", toDateTime=" + toDateTime +
                '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        SenateSiteDumpRangeId that = (SenateSiteDumpRangeId) o;
+
+        if (fromDateTime != null ? !fromDateTime.equals(that.fromDateTime) : that.fromDateTime != null) return false;
+        return !(toDateTime != null ? !toDateTime.equals(that.toDateTime) : that.toDateTime != null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (fromDateTime != null ? fromDateTime.hashCode() : 0);
+        result = 31 * result + (toDateTime != null ? toDateTime.hashCode() : 0);
+        return result;
+    }
 }

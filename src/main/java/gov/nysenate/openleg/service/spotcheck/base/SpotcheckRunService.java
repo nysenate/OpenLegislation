@@ -133,7 +133,7 @@ public class SpotcheckRunService {
             reportService.saveReport(report);
             spotCheckNotificationService.spotcheckCompleteNotification(report);
         } catch (ReferenceDataNotFoundEx ex) {
-            logger.info("No report generated: no {} references could be found", reportService.getSpotcheckRefType());
+            logger.info("No report generated: no {} references could be found. Message: " + ex.getMessage(), reportService.getSpotcheckRefType());
         } catch (Exception ex) {
             spotCheckNotificationService.handleSpotcheckException(ex, true);
         }

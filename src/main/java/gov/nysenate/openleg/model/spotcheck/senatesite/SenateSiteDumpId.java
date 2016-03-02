@@ -37,4 +37,22 @@ public abstract class SenateSiteDumpId {
                ", fragmentCount=" + fragmentCount +
                '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SenateSiteDumpId dumpId = (SenateSiteDumpId) o;
+
+        if (fragmentCount != dumpId.fragmentCount) return false;
+        return refType == dumpId.refType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = refType != null ? refType.hashCode() : 0;
+        result = 31 * result + fragmentCount;
+        return result;
+    }
 }
