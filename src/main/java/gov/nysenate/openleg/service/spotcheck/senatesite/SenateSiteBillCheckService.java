@@ -67,11 +67,16 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         checkIsAmended(contentBillView, reference, observation);
         checkPublishDate(contentBillView, reference, observation);
         checkActions(contentBillView, reference, observation);
+        // Don't check milestones, last status, last status date, or last status committee for resolutions.
         if (!reference.getBaseBillId().getBillType().isResolution()) {
             checkMilestones(contentBillView, reference, observation);
             checkLastStatus(contentBillView, reference, observation);
-            checkLastStatusDate(contentBillView, reference, observation);
-            checkLastStatusComm(contentBillView, reference, observation);
+            // Public website bill models last status date and last status committee are always incorrect when status = STRICKEN.
+            // So only check for those errors if there is a last status mismatch or the status != STRICKEN.
+            if (observation.hasMismatch(BILL_LAST_STATUS) || !StringUtils.equals(reference.getLastStatus(), BillStatusType.STRICKEN.name())) {
+                checkLastStatusDate(contentBillView, reference, observation);
+                checkLastStatusComm(contentBillView, reference, observation);
+            }
         }
         checkSponsor(contentBillView, reference, observation);
         checkTitle(contentBillView, reference, observation);
