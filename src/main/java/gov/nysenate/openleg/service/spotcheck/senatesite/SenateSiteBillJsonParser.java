@@ -84,7 +84,9 @@ public class SenateSiteBillJsonParser {
         bill.setActions(getActionList(billNode, "field_ol_all_actions"));
 
         if (bill.getBaseBillId().getBillType().isResolution()) {
-
+            // Public Website has different models for resolution and bills. For resolutions action info is stored
+            // in the field_ol_all_statuses node.
+            bill.setActions(getActionList(billNode, "field_ol_all_statuses"));
         } else {
             bill.setHasSameAs(getBooleanValue(billNode, "field_ol_has_same_as"));
         }

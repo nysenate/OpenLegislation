@@ -67,10 +67,12 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         checkIsAmended(contentBillView, reference, observation);
         checkPublishDate(contentBillView, reference, observation);
         checkActions(contentBillView, reference, observation);
-        checkMilestones(contentBillView, reference, observation);
-        checkLastStatus(contentBillView, reference, observation);
-        checkLastStatusComm(contentBillView, reference, observation);
-        checkLastStatusDate(contentBillView, reference, observation);
+        if (!reference.getBaseBillId().getBillType().isResolution()) {
+            checkMilestones(contentBillView, reference, observation);
+            checkLastStatus(contentBillView, reference, observation);
+            checkLastStatusDate(contentBillView, reference, observation);
+            checkLastStatusComm(contentBillView, reference, observation);
+        }
         checkSponsor(contentBillView, reference, observation);
         checkTitle(contentBillView, reference, observation);
         checkSummary(contentBillView, reference, observation);
