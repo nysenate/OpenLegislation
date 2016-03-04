@@ -2,7 +2,6 @@ package gov.nysenate.openleg.service.spotcheck.agenda;
 
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.agenda.reference.AgendaAlertDao;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.CommitteeAgendaReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.agenda.*;
@@ -10,11 +9,9 @@ import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
-import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -51,7 +48,7 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckReport<CommitteeAgendaAddendumId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
+    public SpotCheckReport<CommitteeAgendaAddendumId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
         // Create a new report instance
         SpotCheckReport<CommitteeAgendaAddendumId> report = new SpotCheckReport<>();
 
@@ -136,10 +133,10 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
                     SpotCheckObservation<CommitteeAgendaAddendumId> obs = new SpotCheckObservation<>(reference.getReferenceId(),
                             reference.getAgendaAlertInfoCommId().getCommiteeAgendaAddendumId(obsAgId));
                     obs.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
-                            reference.getAgendaAlertInfoCommId().toString(), ""));
+                            "", reference.getAgendaAlertInfoCommId().toString()));
                     observations.add(obs);
                     logger.info("Committee Meeting Agenda {} | {} mismatch(es). | {}",
-                            reference.getAgendaAlertInfoCommId(), obs.getMismatches().size(), obs.getMismatchTypes());
+                            reference.getAgendaAlertInfoCommId(), obs.getMismatches().size(), obs.getMismatchTypes(false));
                     checkedReferences.add(reference);
                 }
             }

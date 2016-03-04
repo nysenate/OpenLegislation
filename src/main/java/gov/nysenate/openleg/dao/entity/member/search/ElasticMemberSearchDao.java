@@ -6,7 +6,7 @@ import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
@@ -15,6 +15,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -33,7 +34,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<Member> searchMembers(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff) {
+    public SearchResults<SessionMember> searchMembers(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(memberIndexName, query, filter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Member search result with query {} and filter {} took {} ms", query, filter, response.getTookInMillis());
@@ -42,13 +43,13 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
 
     /** {@inheritDoc} */
     @Override
-    public void updateMemberIndex(Member member) {
+    public void updateMemberIndex(SessionMember member) {
         updateMemberIndex(Arrays.asList(member));
     }
 
     /** {@inheritDoc} */
     @Override
-    public void updateMemberIndex(Collection<Member> members) {
+    public void updateMemberIndex(Collection<SessionMember> members) {
         if (!members.isEmpty()) {
             BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
             List<MemberView> memberViewList = members.stream().map(MemberView::new).collect(Collectors.toList());
@@ -64,9 +65,9 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
 
     /** {@inheritDoc} */
     @Override
-    public void deleteMemberFromIndex(Member member) {
+    public void deleteMemberFromIndex(SessionMember member) {
         if (member != null) {
-            deleteEntry(memberIndexName, String.valueOf(member.getId()), String.valueOf(member.getSessionYear()));
+            deleteEntry(memberIndexName, String.valueOf(member.getPersonId()), String.valueOf(member.getSessionYear()));
         }
     }
 
@@ -76,7 +77,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
         return Lists.newArrayList(memberIndexName);
     }
 
-    private Member getMemberFromHit(SearchHit hit) {
-        return new Member(Integer.valueOf(hit.getId()), SessionYear.of(Integer.valueOf(hit.getType())));
+    private SessionMember getMemberFromHit(SearchHit hit) {
+        return new SessionMember(Integer.valueOf(hit.getId()), SessionYear.of(Integer.valueOf(hit.getType())));
     }
 }

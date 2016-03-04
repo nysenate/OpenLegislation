@@ -58,7 +58,7 @@ public class CacheCtrl extends BaseCtrl
      * Cache Stats API
      * ---------------
      *
-     * Gets stats for all memory caches: (GET) /api/3/cache/
+     * Gets stats for all memory caches: (GET) /api/3/admin/cache/
      */
     @RequiresPermissions("admin:cacheEdit")
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -75,7 +75,7 @@ public class CacheCtrl extends BaseCtrl
      * This api can be used to clear out and pre-load a pre-determined subset of data into the cache
      * to boost performance of commonly used api calls.
      *
-     * Warm memory caches: (PUT) /api/3/cache/{cacheType}
+     * Warm memory caches: (PUT) /api/3/admin/cache/{cacheType}
      * The cacheType can be either 'all' for all caches, or one of the values in the
      * {@link gov.nysenate.openleg.model.cache.ContentCache} enumeration.
      */
@@ -91,7 +91,7 @@ public class CacheCtrl extends BaseCtrl
      * Cache Evict API
      * ---------------
      *
-     * Delete all entries in the specified cache(s): (DELETE) /api/3/cache/{cacheType}
+     * Delete all entries in the specified cache(s): (DELETE) /api/3/admin/cache/{cacheType}
      * @see #warmCache(String) for details about 'cacheType'
      */
     @RequiresPermissions("admin:cacheEdit")
@@ -107,7 +107,7 @@ public class CacheCtrl extends BaseCtrl
      * ---------------------
      *
      * Delete the entry in the specified cache designated by the given id:
-     * (DELETE) /api/3/cache/{cacheType}/id
+     * (DELETE) /api/3/admin/cache/{cacheType}/id
      *
      * The id is specified through required request parameters, which depend on the cacheType
      *

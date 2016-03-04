@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.common.eventbus.SubscriberExceptionHandler;
@@ -15,6 +17,7 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.base.IngestCache;
 import gov.nysenate.openleg.util.AsciiArt;
+import gov.nysenate.openleg.util.OpenlegThreadFactory;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -41,6 +44,8 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Configuration
 @EnableCaching
@@ -108,6 +113,7 @@ public class ApplicationConfig implements CachingConfigurer
             return tc;
         }
         catch (ElasticsearchException ex) {
+            logger.error("Error while initializing elasticsearch client:\n" + ExceptionUtils.getStackTrace(ex));
             logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
                     elasticSearchCluster, elasticSearchHost, elasticSearchPort);
             logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
@@ -120,10 +126,20 @@ public class ApplicationConfig implements CachingConfigurer
     @Bean
     public EventBus eventBus() {
         SubscriberExceptionHandler errorHandler = (exception, context) -> {
-            logger.error("Exception thrown during event handling within {}: {}, {}", context.getSubscriberMethod(),
+            logger.error("Event Bus Exception thrown during event handling within {}: {}, {}", context.getSubscriberMethod(),
                 exception, ExceptionUtils.getStackTrace(exception));
         };
         return new EventBus(errorHandler);
+    }
+
+    @Bean
+    public AsyncEventBus asyncEventBus() {
+        SubscriberExceptionHandler errorHandler = (exception, context) -> {
+            logger.error("Async Event Bus Exception thrown during event handling within {}: {}, {}",
+                    context.getSubscriberMethod(), exception, ExceptionUtils.getStackTrace(exception));
+        };
+        ExecutorService executor = Executors.newCachedThreadPool(new OpenlegThreadFactory("async-eventbus"));
+        return new AsyncEventBus(executor, errorHandler);
     }
 
     /** --- Object Mapper --- */
@@ -135,6 +151,7 @@ public class ApplicationConfig implements CachingConfigurer
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.registerModule(new GuavaModule());
         objectMapper.registerModule(new JSR310Module());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
 

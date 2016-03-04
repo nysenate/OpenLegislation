@@ -44,7 +44,6 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
 
     @Value("${law.cache.size}") private long lawTreeCacheHeapSize;
 
-    private static final String lawTreeCacheName = "lawtree";
     private EhCacheCache lawTreeCache;
 
     private Map<String, LocalDate> maxPubDates = new HashMap<>();
@@ -59,7 +58,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     @PreDestroy
     private void cleanUp() {
         evictCaches();
-        cacheManager.removeCache(lawTreeCacheName);
+        cacheManager.removeCache(ContentCache.LAW.name());
         maxPubDates.clear();
     }
 
@@ -74,7 +73,7 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
     /** {@inheritDoc} */
     @Override
     public void setupCaches() {
-        Cache cache = new Cache(new CacheConfiguration().name(lawTreeCacheName)
+        Cache cache = new Cache(new CacheConfiguration().name(ContentCache.LAW.name())
                 .eternal(true)
                 .maxBytesLocalHeap(lawTreeCacheHeapSize, MemoryUnit.MEGABYTES)
                 .sizeOfPolicy(defaultSizeOfPolicy()));

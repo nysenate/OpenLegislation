@@ -5,7 +5,6 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportSummary;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
 import gov.nysenate.openleg.util.DateUtils;
@@ -35,7 +34,7 @@ public class DaybreakSpotCheckReportServiceTests extends BaseTests
         SpotCheckReportSummary reportSummary = daybreakReportService.getReportSummaries(SpotCheckRefType.LBDC_DAYBREAK, DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now(),
                 SortOrder.DESC).get(0);
         logger.info("{}", reportSummary.getMismatchStatuses());
-        logger.info("{}", reportSummary.getMismatchTypes());
+        logger.info("{}", reportSummary.getMismatchCounts());
 //        report.getObservations().forEach((k,v) -> logger.info("{}", v.getPriorMismatches()));
     }
 }

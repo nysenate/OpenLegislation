@@ -8,12 +8,15 @@ import gov.nysenate.openleg.dao.notification.NotificationSearchDao;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
+import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.model.search.UnexpectedSearchException;
+import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.util.DateUtils;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.logging.Filter;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +46,7 @@ public class ElasticNotificationService implements NotificationService {
     /** {@inheritDoc} */
     @Override
     public PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types, Range<LocalDateTime> dateTimeRange,
-                                                                     SortOrder order, LimitOffset limitOffset) {
+                                                                     SortOrder order, LimitOffset limitOffset) throws SearchException {
         //Todo figure out why the notificationType term filter doesn't work
 //        FilterBuilder rangeFilter = FilterBuilders.matchAllFilter();
 //        FilterBuilder typesFilter = FilterBuilders.matchAllFilter();
@@ -104,9 +106,19 @@ public class ElasticNotificationService implements NotificationService {
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<RegisteredNotification> notificationSearch(String queryString, String sort, LimitOffset limitOffset) {
-        return notificationDao.searchNotifications(QueryBuilders.queryString(queryString),
-                                                    FilterBuilders.matchAllFilter(), sort, limitOffset);
+    public SearchResults<RegisteredNotification> notificationSearch(String queryString, String sort, LimitOffset limitOffset) throws SearchException {
+        if (limitOffset == null) {
+            limitOffset = LimitOffset.ALL;
+        }
+        try {
+            return notificationDao.searchNotifications(QueryBuilders.queryString(queryString), FilterBuilders.matchAllFilter(),
+                    ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
+        } catch (SearchParseException ex) {
+            throw new SearchException("Invalid query string", ex);
+        }
+        catch (ElasticsearchException ex) {
+            throw new UnexpectedSearchException(ex);
+        }
     }
 
     /** {@inheritDoc} */

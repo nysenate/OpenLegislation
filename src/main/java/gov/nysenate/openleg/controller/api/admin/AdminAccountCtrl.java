@@ -75,7 +75,7 @@ public class AdminAccountCtrl extends BaseCtrl
         return new SimpleResponse(true, "you have been logged out", "logout");
     }
 
-    @RequiresPermissions("admin:view")
+    @RequiresPermissions("admin:account:view")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public BaseResponse getAdminUsers() {
         return new ViewObjectResponse<>(ListView.of(
@@ -84,7 +84,7 @@ public class AdminAccountCtrl extends BaseCtrl
                         .collect(Collectors.toList())));
     }
 
-    @RequiresPermissions("admin:view")
+    @RequiresPermissions("admin:account:view")
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.GET)
     public BaseResponse getAdminUser(@PathVariable String username) {
         if (StringUtils.isBlank(username)) {
@@ -110,7 +110,7 @@ public class AdminAccountCtrl extends BaseCtrl
      *
      *  Expected Output: successful admin-registered response if the user was created, ErrorResponse otherwise
      */
-    @RequiresPermissions("admin:createAdmin")
+    @RequiresPermissions("admin:account:modify")
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.POST)
     public Object createNewUser(@PathVariable String username,
                                 @RequestParam(defaultValue = "false") boolean master) {
@@ -144,7 +144,7 @@ public class AdminAccountCtrl extends BaseCtrl
      *
      *  Expected Output: successful admin-deleted if a user was removed, ErrorResponse otherwise
      */
-    @RequiresPermissions("admin:deleteAdmin")
+    @RequiresPermissions("admin:account:modify")
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.DELETE)
     public Object removeUser(@PathVariable String username) {
         if (!adminUserService.adminInDb(username)) {
@@ -173,7 +173,7 @@ public class AdminAccountCtrl extends BaseCtrl
      *
      *  Expected Output: successful pass-changed response if the password was changed, ErrorResponse otherwise
      */
-    @RequiresPermissions("admin:passChange")
+    @RequiresPermissions("admin")
     @RequestMapping(value = "/passchange", method = RequestMethod.POST)
     public Object changePassword(@RequestParam(required = true) String password) {
         String username = getSubjectUsername();

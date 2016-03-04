@@ -42,7 +42,7 @@ public interface BillDataService
 
     /**
      * Retrieves a BillInfo instance for the matching BillId. This contains
-     * less information that the Bill for the puposes of displaying in listings.
+     * less information that the Bill for the purposes of displaying in listings.
      * If the requested BillInfo is not found, returns a dummy BillInfo that indicates
      * that data is not yet available for the given bill id.
      *

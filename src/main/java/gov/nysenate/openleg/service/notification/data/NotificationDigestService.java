@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.notification.data;
 
 import gov.nysenate.openleg.model.notification.NotificationDigest;
 import gov.nysenate.openleg.model.notification.NotificationDigestSubscription;
+import gov.nysenate.openleg.model.search.SearchException;
 
 /**
  * Constructs a notification digest based on notification digest subscriptions
@@ -14,5 +15,5 @@ public interface NotificationDigestService {
      * @param subscription NotificationDigestSubscription
      * @return NotificationDigest
      */
-    NotificationDigest getDigest(NotificationDigestSubscription subscription);
+    NotificationDigest getDigest(NotificationDigestSubscription subscription) throws SearchException;
 }

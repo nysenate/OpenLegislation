@@ -7,6 +7,10 @@
 
 /** --- Reset --- */
 
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   font-family: 'Open Sans', sans-serif;
   background: #f5f5f5;
@@ -33,8 +37,13 @@ pre {
 
 select {
   background: white;
-  border-color: #ddd;
-  padding: 2px;
+  border: 1px solid #ddd;
+  padding: 5px;
+}
+
+input {
+  background: white;
+  border: 1px solid #ddd;
 }
 
 hr {
@@ -42,10 +51,18 @@ hr {
   border-top-style: solid;
 }
 
+p {
+  line-height: 1.7em;
+}
+
 /** --- Angular Material Overrides --- */
 
 md-toolbar {
-  min-height: 65px;
+  min-height: 70px;
+  .md-toolbar-tools {
+    height: 70px;
+    max-height: 70px;
+  }
   &.auto-height {
     min-height: 0;
     height: auto;
@@ -65,26 +82,23 @@ md-toolbar {
 md-card {
   &.content-card {
     @extend .md-whiteframe-z0;
-    @extend .white-bg;
+    background: white;
+    &.gray4-bg {
+      @extend .gray4-bg;
+    }
     padding: 0;
     margin: 10px 0;
     &.no-margin {
       margin: 0;
     }
-    .subheader {
-      font-size: 0.9rem;
-      padding: 10px;
-    }
-    .subheader, .md-subheader {
-      background: #fafafa;
+    .md-subheader {
+      background: #fcfcfc;
       border-bottom: 1px solid #f1f1f1;
-      color: #555;
-      margin: 0;
+      color: #444;
     }
     md-content {
       margin: 0;
       padding: 20px;
-
     }
   }
 }
@@ -97,23 +111,27 @@ md-input-container {
   }
 }
 
-md-tabs {
-  padding: 10px;
+// Couldn't get the colors right on the datepicker
+.md-default-theme.md-hue-2 .md-datepicker-input, .md-hue-2 .md-datepicker-input {
+  background: white;
+  padding: 5px;
+  margin-left: 0;
+  color: #333;
+}
+.md-default-theme.md-hue-2 .md-datepicker-input-container, .md-hue-2 .md-datepicker-input-container {
+  padding: 0;
+  border: 1px solid #ddd;
+}
+md-datepicker {
+  background: transparent;
+}
+.md-calendar-day-header, .md-calendar-selected-date.md-focus .md-calendar-date-selection-indicator {
+  background: $blue3 !important;
+  color: white !important;
 }
 
-md-tab.active {
-  md-tab-label {
-    font-weight: bold;
-  }
-}
-
-md-tab-content {
-  overflow: visible !important;
-}
-
-// Prevent list headers from getting compressed when the line wraps
-md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-style .md-list-item-text h3, md-list-item.md-3-line .md-list-item-text h3, md-list-item.md-3-line>.md-no-style .md-list-item-text h3 {
-  line-height: 1.2em !important;
+md-dialog {
+  z-index: 1500;
 }
 
 /** --- Transitions --- */
@@ -151,46 +169,6 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   user-select: none;
 }
 
-/** --- Layout --- */
-
-#app-wrapper {
-  background: #f5f5f5;
-}
-
-#content-wrapper {
-  #content-header {
-    min-height: 70px;
-    font-size: 1.5rem;
-    box-shadow: none;
-    display: none;
-    @media (max-width: 768px) {
-      font-size: 1.1rem;
-    }
-    background: $blue5;
-    h1 {
-      color: white;
-    }
-    .md-toolbar-tools {
-      height: 70px;
-      max-height: 70px;
-    }
-    &.header-visible {
-      display: block;
-    }
-    /* Content header should always be visible when there's no room for the left nav. */
-    @media (max-width: 959px) {
-      display: block;
-    }
-  }
-  #content {
-    min-height: 100vh;
-    .content-section {
-      max-width: 1100px;
-      margin: auto;
-    }
-  }
-}
-
 /** --- Common Classes  --- */
 
 .text-xsmall {
@@ -209,6 +187,10 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   font-size: 1.1rem;
 }
 
+.text-xlarge {
+  font-size: 1.5rem;
+}
+
 .text-align-center {
   text-align: center;
 }
@@ -225,24 +207,26 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   font-weight: 300;
 }
 
+.text-normal {
+  font-weight: normal;
+}
+
 .tight-lines {
   line-height: 1.1em;
 }
 
-.margin-top-20 {
-  margin-top: 20px !important;
+/** --- Margins --- */
+
+.no-margin {
+  margin: 0;
 }
 
-.margin-bottom-20 {
-  margin-bottom: 20px !important;
+.no-top-margin {
+  margin-top: 0;
 }
 
-.margin-top-10 {
-  margin-top: 10px !important;
-}
-
-.margin-bottom-10 {
-  margin-bottom: 10px !important;
+.no-bottom-margin {
+  margin-bottom: 0;
 }
 
 .margin-5 {
@@ -253,29 +237,51 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   margin: 10px;
 }
 
-.margin-20 {
-  margin: 20px;
+.margin-top-10 {
+  margin-top: 10px !important;
+}
+
+.margin-bottom-10 {
+  margin-bottom: 10px !important;
 }
 
 .margin-left-10 {
   margin-left: 10px;
 }
 
+.margin-right-10 {
+  margin-right: 10px;
+}
+
+.margin-top-16 {
+  margin-top: 16px;
+}
+
 .margin-left-16 {
   margin-left: 16px;
+}
+
+.margin-20 {
+  margin: 20px;
+}
+
+.margin-top-20 {
+  margin-top: 20px !important;
+}
+
+.margin-bottom-20 {
+  margin-bottom: 20px !important;
 }
 
 .margin-left-20 {
   margin-left: 20px;
 }
 
-.margin-right-10 {
-  margin-right: 10px;
-}
-
 .margin-right-20 {
   margin-right: 20px;
 }
+
+/** --- Paddings --- */
 
 .padding-5 {
   padding: 5px;
@@ -283,6 +289,14 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
 
 .padding-10 {
   padding: 10px;
+}
+
+.padding-right-10 {
+  padding-right: 10px;
+}
+
+.padding-top-10 {
+  padding-top: 10px !important;
 }
 
 .padding-16 {
@@ -293,24 +307,20 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   padding: 20px;
 }
 
-.padding-right-10 {
-  padding-right: 10px;
-}
-
-.no-margin {
-  margin: 0;
-}
-
 .no-padding {
   padding: 0;
 }
 
-.no-top-margin {
-  margin-top: 0;
+.no-bottom-padding {
+  padding-bottom: 0;
 }
 
-.no-bottom-margin {
-  margin-bottom: 0;
+.padding-left-0 {
+  padding-left: 0 !important;
+}
+
+.width-50 {
+  width: 50%;
 }
 
 .relative {
@@ -327,8 +337,7 @@ md-list-item.md-2-line .md-list-item-text h3, md-list-item.md-2-line>.md-no-styl
   display: block;
   .line-numbers {
     float: left;
-    margin-right: 1em;
-    margin-left: 0;
+    margin: 0 1em 0 0;
     border-right: 1px solid;
     text-align: right;
     background: #fdd2a8;
@@ -377,13 +386,12 @@ a.white-2-blue {
 }
 
 a.result-link {
+  width: 100%;
   text-decoration: none;
   color: #555;
   &:hover {
     color: $blue5;
-    background: $gray3;
-    md-item-content {
-    }
+    background: #fbfbfb;
   }
   em {
     background: #fff6b4;
@@ -414,13 +422,68 @@ a.inactive-link {
   width: 55px;
 }
 
-/** --- Common Widgets --- */
+/** --- Headers --- */
 
-.loading-pulse {
-  position: absolute;
-  bottom: 15px;
-  color: $gray10;
-  font-size: 0.9rem;
+h2 {
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1em;
+}
+
+h4 {
+  font-size: 0.9em;
+}
+
+h5 {
+  font-size: 0.8em;
+}
+
+/** --- Main Layout --- */
+
+#app-wrapper {
+  background: #f5f5f5;
+}
+
+#content-header {
+  z-index: 1000;
+  font-size: 1.5rem;
+  display: none;
+  position: fixed;
+  background: $blue3;
+  h1 {
+    //color: white;
+  }
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+  &.header-visible {
+    display: flex;
+  }
+  /* Content header should always be visible when there's no room for the left nav. */
+  @media (max-width: 959px) {
+    display: flex;
+  }
+}
+
+.md-dialog-is-showing #content-header {
+  z-index: 50;
+}
+
+#content-header-spacer {
+  height: 70px;
+  display: block;
+  width: 100%;
+}
+
+#content {
+  padding-top: 70px;
+  min-height: 100vh; // Required for IE
+  .content-section {
+    max-width: 1100px;
+    margin: auto;
+  }
 }
 
 /** --- Left Nav --- */
@@ -428,23 +491,16 @@ a.inactive-link {
 $left-nav-width: 305px;
 
 #left-nav {
-  min-height: 100vh;
   width: $left-nav-width;
-  min-width: $left-nav-width;
+  background: $gray4;
+  min-height: 100vh;
   position: fixed;
-  background: #fafafa;
-  @include box-shadow(none);
   @media print {
     display: none;
   }
-}
-
-#left-nav-spacer {
-  width: $left-nav-width;
-}
-
-#logo-wrapper {
-  height: 70px;
+  &.md-locked-open + * {
+    margin-left: $left-nav-width;
+  }
 }
 
 #logo {
@@ -459,6 +515,7 @@ $left-nav-width: 305px;
     font-size: 1.5rem;
     text-decoration: none;
     color: white;
+    margin-left: 10px;
   }
   img {
     top: 14px;
@@ -467,44 +524,33 @@ $left-nav-width: 305px;
   }
 }
 
-.beta-tag {
-  color: white;
-  font-size: .4em;
-  position: absolute;
-  top: 5px;
-  right: 10px;
-}
-
 .left-nav-menu {
-  width:100%;
-  padding-top:18px;
+  background: $gray4;
 }
 
 // Menu styles adapted from angular-material docs
 
 .menu-item {
-  background: none;
   border-width: 0;
+  color: #444;
   cursor: pointer;
   display: block;
-  color: #333;
-  font-size: 0.8rem;
-  line-height: 40px;
-  max-height: 40px;
-  opacity: 1;
+  font-size: 0.8em;
+  line-height: 48px;
   margin: 0;
+  max-height: 48px;
+  opacity: 1;
   outline: none;
-  padding: 0px 35px;
+  padding: 0 35px;
   position: relative;
   text-align: left;
   text-decoration: none;
-  width: 100%;
-  z-index: 1;
 }
 .menu-item.ng-hide {
   max-height: 0;
   opacity: 0;
 }
+
 .menu-item:focus {
   font-weight: bold;
 }
@@ -518,14 +564,26 @@ $left-nav-width: 305px;
 }
 .menu-item.menu-title:hover,
 .menu-item.menu-title:focus,
-.menu-item.active, {
-  color: $blue4;
+.menu-item.active {
   font-weight: bold;
+  background: $blue3;
+  color: white;
+}
+.menu-item.menu-title.active {
+  background: $blue4;
 }
 
 .menu-item:hover {
-  background: #eee;
+  &.active {
+    background: $blue3;
+  }
+  &.menu-title.active {
+    background: $blue4;
+  }
+  background: $gray3;
 }
+
+/** --- Top Bar Heading --- */
 
 .top-bar-heading {
   color: #ffffff;
@@ -558,12 +616,12 @@ $left-nav-width: 305px;
 
 ul.pagination {
   margin: 0;
-  padding: 0;
+  padding: 10px;
+  border: 1px solid #f1f1f1;
   li {
     display: inline;
     list-style-type: none;
-    border: 1px solid #ddd;
-    margin-right: 3px;
+    margin-right: 8px;
     text-align: center;
     &.active {
       a {
@@ -578,13 +636,19 @@ ul.pagination {
       }
     }
     a {
-      font-size: 0.8rem;
+      font-size: 0.9em;
       text-decoration: none;
       color: #999;
       padding: 3px 7px;
       vertical-align: initial;
     }
   }
+}
+
+
+.listing-filter {
+  padding: 16px 20px;
+  background: #f1f1f1;
 }
 
 /** --- Docs Tables --- */
@@ -644,6 +708,7 @@ ul.pagination {
     }
     cursor: pointer;
     color: #555;
+    border: 1px solid #ddd;
     .toggle-panel-label {
       font-size: 0.9rem;
       font-weight: bold;
@@ -652,7 +717,8 @@ ul.pagination {
   }
   &.open {
     > .toggle-panel-bar {
-      border-bottom: 1px solid #ddd;
+      background: #eee;
+      //border-bottom: 1px solid white;
       .toggle-panel-label {
         color: $blue3;
       }
@@ -669,13 +735,13 @@ ul.pagination {
   }
 }
 
+.fc-other-month {
+  background: $gray3;
+}
+
 /** --- Search UI --- */
 
 .search-refine-panel {
-  width: 240px;
-  background: $gray1;
-  margin: 10px 0 0 0;
-  font-size: 0.9rem;
   h3 {
     background:white;
     font-size: 1rem;
@@ -684,30 +750,37 @@ ul.pagination {
   }
   .refine-controls {
     padding: 5px 10px 5px 15px;
-    label {
-      margin-top: 8px;
+    label, .md-label {
+      padding: 5px;
       font-size: 0.9rem;
       display: block;
+      &.lit {
+        margin-top: 3px;
+        background: #fff6b4;
+      }
     }
     select, input {
       width: 100%;
       display:block;
       border: 1px solid #ddd;
+      padding: 5px;
     }
-    md-checkbox {
+    md-checkbox, md-switch {
       margin: 10px 2px 0 2px;
-    }
-    hr {
-      border: 0;
-      height: 1px;
-      background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
-      background-image:    -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
-      background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
-      background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.5), rgba(0,0,0,0));
+      &.lit {
+        .md-label {
+          margin-top: 3px;
+          background: #fff6b4;
+        }
+      }
     }
   }
 }
 
+.listing-filter {
+  padding: 16px 20px;
+  background: #f5f5f5;
+}
 
 /** --- Landing Page Styles --- */
 
@@ -882,21 +955,20 @@ a.slogan-link {
 
 .bill-ms-container {
   padding: 5px 0;
+  min-width: 256px;
 }
 
 .bill-ms-step {
   height: 10px;
   width: 10px;
-  border: 1px solid rgba(255,255,255,.6);
-  float: left;
+  border: 1px solid $blue3;
   border-radius: 100%;
+  float: left;
   cursor: pointer;
   &.filled {
-    background: rgb(174,213,129);
-    border: 1px solid rgb(151, 213, 84);
+    background: $blue3;
     &.vetoed {
       background: $red1;
-      border-radius: 0;
       border: 1px solid $red1;
     }
   }
@@ -906,7 +978,7 @@ a.slogan-link {
   width: 25px;
   height: 5px;
   float: left;
-  border-bottom: 1px solid rgba(255,255,255,.7);
+  border-bottom: 1px dashed $blue3;
 }
 
 .bill-full-text {
@@ -927,6 +999,10 @@ a.slogan-link {
   }
 }
 
+.bill-sub-message {
+  background: rgb(255, 252, 230);
+}
+
 .bill-memo-heading {
   font-weight: 400;
   display: block;
@@ -935,17 +1011,19 @@ a.slogan-link {
   white-space: pre-line;
 }
 
+.positive {
+  background: #F1F8E9;
+}
+
+.negative {
+  background: #FFEBEE;
+}
+
 .bill-votes-table {
   font-size: 0.9rem;
   width: 100%;
   padding: 20px;
   tr {
-    &.positive {
-      background: #F1F8E9;
-    }
-    &.negative {
-      background: #FFEBEE;
-    }
     th {
       text-align: left;
     }
@@ -965,6 +1043,7 @@ a.slogan-link {
     }
     td {
       &:nth-child(1) {
+        font-size: 0.9rem;
         border-right: 1px solid #ddd;
       }
       &:nth-child(2) {
@@ -972,11 +1051,23 @@ a.slogan-link {
       }
       pre {
         max-height: 300px;
+        font-size: 0.9rem;
+        white-space: normal;
       }
       border-bottom: 1px solid #ddd;
       overflow: auto;
     }
   }
+}
+
+.bill-json-iframe {
+  border: 0;
+  width: 100%;
+  height: 80vh;
+}
+
+.search-bill-status-desc {
+  margin: 4px 0;
 }
 
 /** --- Law Page Styles --- */
@@ -986,12 +1077,9 @@ a.slogan-link {
   margin: 10px 0;
 }
 
+
 .law-listing-filter {
-  &.content-card {
-    md-content {
-      padding: 2px 15px;
-    }
-  }
+  @extend .listing-filter;
 }
 
 .law-node {
@@ -1011,6 +1099,7 @@ a.slogan-link {
   }
   &.active {
     color: $blue4;
+    background: #f1f1f1;
     .law-node-toggle-icon {
       visibility: visible;
     }
@@ -1041,8 +1130,8 @@ a.slogan-link {
 /** --- Agenda Page --- */
 
 // Agenda calendar events
-.agenda-event {
-  &.fc-event-hori {
+#agenda-date-picker {
+  .fc-event-hori {
     margin-bottom: 5px;
     padding: 4px;
     background: #fafafa;
@@ -1055,8 +1144,13 @@ a.slogan-link {
     color: $blue3;
     cursor: pointer;
     &:hover {
-      background: white;
+      backgrfound: white;
     }
+  }
+  .fc-event.fc-event-hori.no-agenda-month {
+    background: white;
+    color: $red1;
+    border: 0;
   }
 }
 
@@ -1072,45 +1166,87 @@ a.slogan-link {
   }
 }
 
+.agenda-vote-chip {
+  border: 1px solid #bbb;
+  color: #333;
+  text-align: center;
+  padding: 3px;
+  margin: 3px;
+  float: left;
+  font-size: 0.8em;
+}
+
 /** --- Transcript Page Styles --- */
 
 .transcript-result-link {
   cursor: pointer;
-}
-
-/** --- Styles for Report page --- */
-
-#daybreak-summary-table {
-  table-layout: auto;
-  border: 1px solid #ccc;
-  th {
-    text-align: center;
-  }
-  .th-section {
-    border: 1px none #ccc;
-    border-left-style: solid;
-    text-align: center;
-    background: #ededed;
-  }
-  .delta-column {
-    width: 4.2em;
+  margin-bottom: 16px;
+  &:hover {
+    background: #eee;
   }
 }
 
-table.table-striped tbody tr:nth-child(odd) {
-  background-color: #d0f3ff;
+.tx-result-highlight {
+  margin: 0;
+  padding: 0;
+  line-height: 0.7em;
+  font-size: 0.9em;
+  background: #f5f5f5;
+}
+
+/** --- Styles for Open Mismatch Summary Page --- */
+
+.open-mismatch-summary-item {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  &.not-first {
+    border-top: none;
+  }
+  md-chips.md-default-theme .md-chips, md-chips .md-chips {
+    box-shadow: none
+  }
+  .md-button {
+    margin: 0;
+    padding: 6px 24px;
+  }
+}
+
+/** --- Styles for Report Summary page --- */
+
+.spotcheck-report-list {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.open-mismatch-total {
+  justify-content: center;
+  text-align: center;
+  .open-mismatch-total-count {
+    font-size: 28px;
+  }
+  .open-mismatch-total-label {
+    font-size: 14px;
+    line-height: 1.5;
+    width: 5.5em;
+  }
+}
+
+$sptchk-notes-font-sz: 14px;
+$sptchk-notes-line-height: 1.5;
+$sptchk-notes-lines-shown: 1;
+
+.spotcheck-summary-notes-container {
+  flex: 1 1 75% !important;
+  max-width: 75%;
+  .spotcheck-summary-notes {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .blue-title-icon {
   color: #006b80;
   margin-right: 20px;
-}
-
-#noDataAvailable {
-  h3 {
-    text-align: center;
-    color: #aaa;
-  }
 }
 
 .prefix-icon {
@@ -1137,100 +1273,120 @@ table.table-striped tbody tr:nth-child(odd) {
   color:#aaa;
 }
 
-/** --- Styles for Report Error Page --- */
+/** --- Styles for Spotcheck Report Page --- */
 
-.st-sort-ascent:before {
-  content: '\25B2';
-}
-.st-sort-descent:before {
-  content: '\25BC';
-}
-
-.spotcheck-column {
-
-}
-
-.mismatch-type-column {
-  min-width: 10em;
-}
-
-.mismatch-status-column {
-  min-width: 3em;
-}
-
-.mismatch-date-column {
-  min-width: 8em;
-}
-
-.report-table-snippet {
-  height:20px;
-  overflow: hidden;
-  max-width:20vw;
-  word-wrap: break-word;
-}
-
-#report-detail-container {
-  padding: 10px !important;
-}
-
-.st-pagination {
-  a {
-    margin-left: 1em;
+.spotcheck-report-notes {
+  margin-top: 10px;
+  &.closed {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
-#daybreak-page button.ng-scope,
-#daybreak-page .check-butt {
-  margin-right: 4px;
+/** --- Styles for Spotcheck Mismatch Viewer --- */
+
+$spotcheckMismatchListBlur: 2px;
+.spotcheck-mismatch-list-container {
+  min-height: 200px;
+  position: relative;
+}
+.spotcheck-mismatch-list {
+  .loading {
+    filter: blur($spotcheckMismatchListBlur);
+    -o-filter: blur($spotcheckMismatchListBlur);
+    -ms-filter: blur($spotcheckMismatchListBlur);
+    -moz-filter: blur($spotcheckMismatchListBlur);
+    -webkit-filter: blur($spotcheckMismatchListBlur);
+  }
 }
 
-// -- Table Column headers --
+.spotcheck-mismatch {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  &.not-first {
+    border-top: none;
+  }
+  &.open {
+    border: 2px solid rgba(22,91,129,0.24);
+  }
 
-// Bill Id
-table.report-detail-table thead tr th:first-child {
-  width: 6em;
+  .mismatch-snippet {
+    white-space: nowrap;
+    overflow: hidden;
+  }
 }
 
-// Mismatch Type
-table.report-detail-table thead tr th:nth-child(2) {
-  width: 10em;
+.spotcheck-mismatch-status {
+  .NEW, .REGRESSION {
+    color: red;
+  }
+  .EXISTING {
+    color: #aaa;
+  }
+  .RESOLVED {
+    color: green;
+  }
 }
 
-// Status
-table.report-detail-table thead tr th:nth-child(3) {
-  width: 6em;
+$mmDetailTransTime: 0.5s;
+.spotcheck-mismatch-details {
+  border: 2px solid rgba(22,91,129,0.24);
+  border-top: none;
+  &.ng-enter {
+    -webkit-transition: $mmDetailTransTime linear all;
+    -moz-transition: $mmDetailTransTime linear all;
+    -ms-transition: $mmDetailTransTime linear all;
+    -o-transition: $mmDetailTransTime linear all;
+    transition: $mmDetailTransTime linear all;
+  }
+  &.ng-enter, &.ng-leave.ng-leave-active {
+    max-height: 0;
+    opacity: 0;
+  }
+  &.ng-enter.ng-enter-active, &.ng-leave {
+    max-height: none;
+    opacity: 1;
+  }
 }
 
-// Opened At
-table.report-detail-table thead tr th:nth-child(4) {
-  width: 14em;
+.mismatch-loading-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
-// Snippet
-table.report-detail-table thead tr th:nth-child(5) {
-  width: 35em;
-}
+/** --- Styles for Spotcheck diffs --- */
 
-// Details
-table.report-detail-table thead tr th:nth-child(6) {
-  width: 5em;
-}
+$diff-del-color: #f88;
+$diff-ins-color: #9f9;
 
-table.report-detail-table tbody tr td {
-  border: 1px solid #eee;
-}
-
-.current-page {
-  color: #006b80;
+.diff-key-color {
+  float: left;
+  height: 15px;
+  width: 20px;
+  margin: 4px;
+  border: 1px solid rgba(0,0,0,0.12);
+  &.del {
+    background-color: $diff-del-color;
+  }
+  &.ins {
+    background-color: $diff-ins-color;
+  }
 }
 
 diff-summary, mismatch-diff {
   ins {
-    background-color: #99ff99;
+    background-color: $diff-ins-color;
     text-decoration: none;
   }
   del {
-    background-color: #ff8888;
+    background-color: $diff-del-color;
     text-decoration: none;
   }
 }
@@ -1241,17 +1397,73 @@ diff-summary, mismatch-diff {
   font-weight: bold;
 }
 
-.mismatch-dialog {
-  padding: 0 20px 20px 20pxu
+.diff-tabs {
+  md-content {
+    margin: 0;
+    padding: 30px;
+    border-top: 1px solid rgba(0,0,0,0.12);
+    & > div {
+      overflow-y: auto;
+      max-height: 40vh;
+    }
+  }
+  .mismatch-ignore-conf {
+    height: 3.1em;
+  }
 }
 
-.mismatch-dialog-tabs md-content {
-  width: 75vw;
-  height: 57vh;
+.mismatch-diff-box {
+  &:not(.scroll-join) {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    overflow: auto;
+  }
+  &:not(.multi-line) {
+    padding: 10px;
+    &.scroll-join {
+      width: 50%;
+    }
+  }
 }
 
 .margin-top-5 {
   margin-top: 5px;
+}
+
+md-dialog.detail-diff-dialog {
+  width: 90vw;
+  height: 90vh;
+  max-height: 100vh;
+  max-width: 100vw;
+  & > md-content {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0 20px 20px;
+  }
+  md-tabs {
+    height: calc(100% - 127px);
+    md-tab-content > div {
+      height: 100%;
+      md-content {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        .mismatch-detail-diff-container {
+          height: calc(100% - 1.7em);
+        }
+      }
+    }
+  }
+}
+
+.detail-diff-text-controls {
+  @extend .gray2-bg;
+  @extend .text-medium;
+  padding: 20px;
+  margin-top: 10px;
+  md-checkbox {
+    margin: 0;
+  }
 }
 
 .stats-block-container {
@@ -1313,12 +1525,25 @@ diff-summary, mismatch-diff {
 
 md-list.env-list {
   md-list-item:nth-child(odd) {
-    background: #e2eaff;
+    background: #eee;
   }
-  max-width: 40em;
 }
 
 /** --- Calendar View --- */
+
+.cal-entry-repeat-container {
+  height: 80vh;
+  width: 100%;
+  border: none;
+}
+
+.repeated-item {
+  height: 150px;
+  border-bottom: 1px solid #ddd;
+  padding-left: 16px;
+  padding-bottom : 20px;
+  padding-top:20px;
+}
 
 .cal-entry-sponsor-img {
   background: 50% 50% no-repeat;
@@ -1331,14 +1556,33 @@ md-list.env-list {
   background: #fbfdb0
 }
 
-.supplemental-toolbar {
-  height: 88px;
-}
-
 /** --- Calendar Picker Styling --- */
 
-#calendar-date-picker .fc-button-today .fc-button-prev .fc-button-next {
-//  @extend .button;
+.fc-header {
+  .fc-button {
+    background: transparent;
+    border: 0;
+    color: $blue3;
+  }
+}
+
+#calendar-date-picker {
+  .fc-event.no-session-month {
+    background: white;
+    color: $red1;
+    border: 0;
+  }
+  .fc-event.session-day {
+    background: #f1f1f1;
+    border: 0;
+    color: $blue3;
+    padding: 3px;
+    &:hover {
+      cursor: pointer;
+      background: $blue3;
+      color: white;
+    }
+  }
 }
 
 #calendar-date-picker div.fc-day-content > div {
@@ -1351,5 +1595,62 @@ md-list.env-list {
 
 .cal-search-options {
   height: 125px;
+}
+
+/** --- Admin Log Page --- */
+
+.run-unit-summary {
+  font-size: 0.9em;
+  label {
+    font-weight: bold;
+  }
+}
+
+@-webkit-keyframes new-request {
+  0% {
+    background-color: transparent;
+    opacity:1;
+  }
+  50% {
+    background-color: #b1c48e;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+table.api-request-table {
+  width: 100%;
+  text-align: center;
+  tr.new-request {
+    -webkit-animation-name: new-request;
+    -webkit-animation-duration: 2000ms;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: new-request;
+    -moz-animation-duration: 2000ms;
+    -moz-animation-iteration-count: 1;
+    -moz-animation-timing-function: linear;
+  }
+  th {
+    font-size: 0.9rem;
+    padding: 5px;
+  }
+  td {
+    padding: 5px;
+    font-size: 0.8rem;
+    a {
+      color: $blue3;
+    }
+    &.time-td {
+      width: 165px;
+    }
+    &.url-td {
+      max-width: 350px;
+    }
+  }
+  tbody tr:nth-child(odd) {
+    background: #f5f5f5;
+  }
 }
 

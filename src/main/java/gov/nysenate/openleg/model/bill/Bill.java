@@ -5,13 +5,15 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The Bill class serves as a container for all the entities that can be classified under a print number
@@ -35,7 +37,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected BillStatus status;
 
     /** A set of statuses that are considered milestones. */
-    protected LinkedList<BillStatus> milestones =  new LinkedList<>();
+    protected List<BillStatus> milestones =  new LinkedList<>();
 
     /** A mapping of amendment versions to BillAmendment instances (includes base amendment). */
     protected Map<Version, BillAmendment> amendmentMap = new TreeMap<>();
@@ -56,7 +58,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected BillSponsor sponsor;
 
     /** A list of co-sponsors that will be given preferential display treatment. */
-    protected List<Member> additionalSponsors = new ArrayList<>();
+    protected List<SessionMember> additionalSponsors = new ArrayList<>();
 
     /** A list of committees this bill has been referred to. */
     protected SortedSet<CommitteeVersionId> pastCommittees = new TreeSet<>();
@@ -79,8 +81,10 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** Associated floor calendar ids. */
     protected List<CalendarId> calendars = new ArrayList<>();
 
+    /** Bills that are passed are assigned a chapter number. */
     protected Integer chapterNum;
 
+    /** Year this bill was signed into law. */
     protected Integer chapterYear;
 
     /** --- Constructors --- */
@@ -156,6 +160,13 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /**
+     * @return the Chamber of this bill
+     */
+    public Chamber getChamber() {
+        return this.baseBillId.getChamber();
+    }
+
+    /**
      * Returns true if this bill is a resolution of some sort.
      */
     public boolean isResolution() {
@@ -181,6 +192,15 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      */
     public List<BillAmendment> getAmendmentList() {
         return new ArrayList<>(this.amendmentMap.values());
+    }
+
+    /**
+     * @return a set containing the bill ids of this bill's amendments
+     */
+    public TreeSet<BillId> getAmendmentIds() {
+        return this.amendmentMap.values().stream()
+                .map(BillAmendment::getBillId)
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     /**
@@ -377,7 +397,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.status = status;
     }
 
-    public LinkedList<BillStatus> getMilestones() {
+    public List<BillStatus> getMilestones() {
         return milestones;
     }
 
@@ -441,11 +461,11 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.pastCommittees = pastCommittees;
     }
 
-    public List<Member> getAdditionalSponsors() {
+    public List<SessionMember> getAdditionalSponsors() {
         return additionalSponsors;
     }
 
-    public void setAdditionalSponsors(List<Member> additionalSponsors) {
+    public void setAdditionalSponsors(List<SessionMember> additionalSponsors) {
         this.additionalSponsors = additionalSponsors;
     }
 

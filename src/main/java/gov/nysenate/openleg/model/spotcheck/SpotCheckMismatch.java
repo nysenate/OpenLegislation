@@ -2,10 +2,7 @@ package gov.nysenate.openleg.model.spotcheck;
 
 import gov.nysenate.openleg.util.StringDiffer;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Encapsulates basic information about a mismatch between the reference and target content.
@@ -35,26 +32,24 @@ public class SpotCheckMismatch
     protected SpotCheckMismatchIgnore ignoreStatus;
 
     /** A list of related issue tracker ids */
-    protected List<String> issueIds = new ArrayList<>();
+    protected LinkedHashSet<String> issueIds = new LinkedHashSet<>();
 
     /** --- Constructor --- */
 
-    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, Object referenceData, Object observedData) {
-        this(mismatchType, String.valueOf(referenceData), String.valueOf(observedData));
+    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, Object observedData, Object referenceData) {
+        this(mismatchType, String.valueOf(observedData), String.valueOf(referenceData));
     }
 
-    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData) {
-        this(mismatchType, referenceData, observedData, "");
+    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String observedData, String referenceData) {
+        this(mismatchType, observedData, referenceData, "");
     }
 
-    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData, String notes) {
+    public SpotCheckMismatch(SpotCheckMismatchType mismatchType, String observedData, String referenceData, String notes) {
         this.mismatchType = mismatchType;
         this.referenceData = referenceData == null ? "" : referenceData;
         this.observedData = observedData == null ? "" : observedData;
         this.notes = notes;
     }
-
-
 
     /** --- Methods --- */
 
@@ -77,6 +72,22 @@ public class SpotCheckMismatch
 
     public boolean isIgnored() {
         return ignoreStatus != null;
+    }
+
+    public SpotCheckMismatchTracked getTracked() {
+        return SpotCheckMismatchTracked.getFromBoolean(!issueIds.isEmpty());
+    }
+
+    public void addIssueId(String issueId) {
+        issueIds.add(issueId);
+    }
+
+    public List<String> getIssueIds() {
+        return new ArrayList<>(issueIds);
+    }
+
+    public void setIssueIds(Collection<String> issueIds) {
+        this.issueIds = new LinkedHashSet<>(issueIds);
     }
 
     /** --- Implemented Methods --- */
@@ -138,13 +149,5 @@ public class SpotCheckMismatch
 
     public void setMismatchId(int mismatchId) {
         this.mismatchId = mismatchId;
-    }
-
-    public List<String> getIssueIds() {
-        return issueIds;
-    }
-
-    public void setIssueIds(List<String> issueIds) {
-        this.issueIds = issueIds;
     }
 }

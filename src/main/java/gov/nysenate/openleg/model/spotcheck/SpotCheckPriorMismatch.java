@@ -12,12 +12,12 @@ public class SpotCheckPriorMismatch extends SpotCheckMismatch
     /** --- Constructor --- */
 
     public SpotCheckPriorMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData) {
-        super(mismatchType, referenceData, observedData);
+        super(mismatchType, observedData, referenceData);
     }
 
     public SpotCheckPriorMismatch(SpotCheckMismatchType mismatchType, String referenceData, String observedData,
                                   String notes) {
-        super(mismatchType, referenceData, observedData, notes);
+        super(mismatchType, observedData, referenceData, notes);
     }
 
     /** --- Basic Getters/Setters --- */

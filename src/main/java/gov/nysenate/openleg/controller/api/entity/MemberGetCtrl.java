@@ -9,25 +9,22 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
-import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.entity.member.search.MemberSearchService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -54,7 +51,7 @@ public class MemberGetCtrl extends BaseCtrl
                                          @RequestParam(defaultValue = "false") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
-        SearchResults<Member> results = memberSearch.searchMembers("*", sort, limOff);
+        SearchResults<SessionMember> results = memberSearch.searchMembers("*", sort, limOff);
         return getMemberResponse(full, limOff, results);
     }
 
@@ -68,17 +65,13 @@ public class MemberGetCtrl extends BaseCtrl
      *                      limit - Limit the number of results
      *                      offset - Start results from an offset.
      */
-    @RequestMapping(value = "/{sessionYear}")
-    public BaseResponse getMembersByYear(@PathVariable String sessionYear,
+    @RequestMapping(value = "/{sessionYear:\\d+}")
+    public BaseResponse getMembersByYear(@PathVariable int sessionYear,
                                          @RequestParam(defaultValue = "shortName:asc") String sort,
                                          @RequestParam(defaultValue = "false") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
-        if (sessionYear.isEmpty() || !StringUtils.isNumeric(sessionYear)) {
-            throw new InvalidRequestParamEx(sessionYear, "sessionYear", "int", "A valid session year");
-        }
-        Integer sessionYearInt = Integer.parseInt(sessionYear);
-        SearchResults<Member> results = memberSearch.searchMembers(SessionYear.of(sessionYearInt), sort, limOff);
+        SearchResults<SessionMember> results = memberSearch.searchMembers(SessionYear.of(sessionYear), sort, limOff);
         return getMemberResponse(full, limOff, results);
     }
 
@@ -88,9 +81,8 @@ public class MemberGetCtrl extends BaseCtrl
      *
      * Retrieve information for a member from a session year: (GET) /api/3/members/{sessionYear}/{id}
      * Request Parameters : full - If true, the full member view will be returned.
-     *
      */
-    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{id:\\d*}")
+    @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{id:\\d+}")
     public BaseResponse getMembersByYear(@PathVariable int id,
                                          @PathVariable int sessionYear,
                                          @RequestParam(defaultValue = "true") boolean full,
@@ -118,17 +110,18 @@ public class MemberGetCtrl extends BaseCtrl
                                          @RequestParam(defaultValue = "false") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
-        SearchResults<Member> results = memberSearch.searchMembers(SessionYear.of(sessionYear), Chamber.getValue(chamber), sort, limOff);
+        SearchResults<SessionMember> results = memberSearch.searchMembers(SessionYear.of(sessionYear), Chamber.getValue(chamber), sort, limOff);
         return getMemberResponse(full, limOff, results);
     }
 
-    private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<Member> results) throws MemberNotFoundEx {
-        List<ViewObject> viewtypes = new ArrayList<>();
-        for (SearchResult<Member> result : results.getResults()) {
-            Member member = memberData.getMemberById(result.getResult().getMemberId(), result.getResult().getSessionYear());
-            viewtypes.add((full) ? new MemberView(member) : new SimpleMemberView(member));
-        }
-        return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
+    private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<SessionMember> results) throws MemberNotFoundEx {
+        List<ViewObject> memberList;
+            memberList = results.getRawResults().stream()
+                    .map(member -> memberData.getMemberById(member.getMemberId(), member.getSessionYear()))
+                    .map(member -> full ? new MemberView(member) : new SimpleMemberView(member))
+                    .collect(Collectors.toList());
+
+        return ListViewResponse.of(memberList, results.getTotalResults(), limOff);
     }
 
     @ExceptionHandler(MemberNotFoundEx.class)

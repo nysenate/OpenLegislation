@@ -2,8 +2,10 @@ package gov.nysenate.openleg.controller.api.base;
 
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.model.auth.ApiKeyLoginToken;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.util.OutputUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -36,17 +38,23 @@ public class ApiAuthFilter implements Filter
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        String key = servletRequest.getParameter("key");
-        String ipAddress = servletRequest.getRemoteAddr();
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        String key = servletRequest.getParameter("key");
+        String forwardedForIp = request.getHeader("x-forwarded-for");
+        String ipAddress = forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
+
         Subject subject = SecurityUtils.getSubject();
+
         if (enabled) {
-            if (ipAddress.matches(filterAddress) || subject.isPermitted("ui:view") || apiUserService.validateKey(key)) {
+            if (!StringUtils.isEmpty(key) && apiUserService.validateKey(key)) {
+                subject.login(new ApiKeyLoginToken(key, ipAddress));
                 filterChain.doFilter(servletRequest, servletResponse);
-            }
-            else {
+            } else if (ipAddress.matches(filterAddress) || subject.isPermitted("ui:view")) {
+                filterChain.doFilter(servletRequest, servletResponse);
+            } else {
                 ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_KEY_REQUIRED);
                 response.getWriter().append(OutputUtils.toJson(errorResponse));
                 response.setContentType("application/json");

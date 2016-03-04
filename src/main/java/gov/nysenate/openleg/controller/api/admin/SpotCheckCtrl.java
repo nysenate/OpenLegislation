@@ -11,12 +11,12 @@ import gov.nysenate.openleg.client.response.spotcheck.OpenMismatchesResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportDetailResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportSummaryResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.spotcheck.OpenMismatchSummaryView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
@@ -37,7 +37,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
-import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -46,7 +45,6 @@ public class SpotCheckCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(SpotCheckCtrl.class);
 
-    @Autowired private Environment env;
     @Autowired private List<SpotCheckReportService<?>> reportServices;
     @Autowired private SpotcheckRunService spotcheckRunService;
 
@@ -134,9 +132,10 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Queries spotcheck observations with open mismatches for a specific report type
      *
-     * Usage: (GET) /api/3/admin/spotcheck/open-mismatches/{reportType}
+     * Usage: (GET) /api/3/admin/spotcheck/open-mismatches
      *
-     * Request Parameters: mismatchTypes - string[] - optional - only retrieves mismatches for the specified types if present
+     * Request Parameters: reportType - string - the reference type of the mismatches to be retrieved
+     *                     mismatchTypes - string[] - optional - only retrieves mismatches for the specified types if present
      *                     orderBy - string (ASC|DESC) - optional, default DESC - determines order of returned observations
      *                     observedAfter - string (ISO date) - optional - only returns observations with mismatches after
      *                          the given date if present
@@ -148,8 +147,8 @@ public class SpotCheckCtrl extends BaseCtrl
      *                     untrackedShown - boolean - optional, default true - will return untracked issues if set to true
      */
     @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/open-mismatches/{reportType}", method = RequestMethod.GET)
-    public BaseResponse getOpenMismatches(@PathVariable String reportType,
+    @RequestMapping(value = "/open-mismatches", method = RequestMethod.GET)
+    public BaseResponse getOpenMismatches(@RequestParam String reportType,
                                           @RequestParam(required = false) String[] mismatchType,
                                           @RequestParam(required = false) String orderBy,
                                           @RequestParam(required = false) String observedAfter,
@@ -160,16 +159,38 @@ public class SpotCheckCtrl extends BaseCtrl
                                           @RequestParam(defaultValue = "true") boolean untrackedShown,
                                           WebRequest request) {
         SpotCheckRefType refType = getSpotcheckRefType(reportType, "reportType");
+        Set<SpotCheckRefType> refTypes = Collections.singleton(refType);
         LimitOffset limOff = getLimitOffset(request, 0);
         MismatchOrderBy mismatchOrderBy = getEnumParameter(orderBy, MismatchOrderBy.class, MismatchOrderBy.OBSERVED_DATE);
         SortOrder order = getSortOrder(request, SortOrder.DESC);
-        Set<SpotCheckMismatchType> mismatchTypes = getSpotcheckMismatchTypes(mismatchType, "mismatchType", refType);
+        Set<SpotCheckMismatchType> mismatchTypes = getSpotcheckMismatchTypes(mismatchType, "mismatchType", refTypes);
         LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
-        OpenMismatchQuery query = new OpenMismatchQuery(refType, mismatchTypes, earliestDateTime,
+        OpenMismatchQuery query = new OpenMismatchQuery(refTypes, mismatchTypes, earliestDateTime,
                 mismatchOrderBy, order, limOff, resolvedShown, ignoredShown, ignoredOnly, trackedShown, untrackedShown);
-        SpotCheckOpenMismatches<?> observations = reportServiceMap.get(refType)
-                .getOpenObservations(query);
-        return new OpenMismatchesResponse<>(observations, query);
+        SpotCheckOpenMismatches<?> observations = reportServiceMap.get(refType).getOpenObservations(query);
+        OpenMismatchSummary summary = getAnyReportService().getOpenMismatchSummary(refTypes, earliestDateTime);
+        return new OpenMismatchesResponse<>(observations, summary, query);
+    }
+
+    /**
+     * Spotcheck Open Observations Summary API
+     *
+     * Get a summary of spotcheck observations with open mismatches for a specific report type
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/open-mismatches/summary
+     *
+     * Request Parameters: reportType - string - the reference type of the mismatches to be retrieved
+     *                     observedAfter - string (ISO date) - optional - only returns observations with mismatches after
+     *                          the given date if present
+     */
+    @RequiresPermissions("admin:view")
+    @RequestMapping(value = "/open-mismatches/summary", method = RequestMethod.GET)
+    public BaseResponse getOpenMismatchSummary(@RequestParam(required = false) String[] reportType,
+                                          @RequestParam(required = false) String observedAfter) {
+        Set<SpotCheckRefType> refTypes = getSpotcheckRefTypes(reportType, "reportType");
+        LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
+        OpenMismatchSummary summary = getAnyReportService().getOpenMismatchSummary(refTypes, earliestDateTime);
+        return new ViewObjectResponse<>(new OpenMismatchSummaryView(summary));
     }
 
     /**
@@ -196,9 +217,9 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Adds an issue id to a spotcheck mismatch
      *
-     * Usage: (PUT) /api/3/admin/spotcheck/mismatch/{mismatchId}/issue/{issueId}
+     * Usage: (POST) /api/3/admin/spotcheck/mismatch/{mismatchId}/issue/{issueId}
      */
-    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
     public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
         getAnyReportService().addIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id added", "issue-id-added");
@@ -288,11 +309,14 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     private Set<SpotCheckMismatchType> getSpotcheckMismatchTypes(String[] parameters, String paramName,
-                                                                 SpotCheckRefType refType) {
+                                                                 Set<SpotCheckRefType> refTypes) {
         return parameters == null
-                ? SpotCheckMismatchType.getMismatchTypes(refType)
+                ? refTypes.stream()
+                        .flatMap(refType -> SpotCheckMismatchType.getMismatchTypes(refType).stream())
+                        .collect(Collectors.toSet())
                 : Arrays.asList(parameters).stream()
                         .map(paramValue -> getEnumParameter(paramName, paramValue, SpotCheckMismatchType.class))
                         .collect(Collectors.toSet());
     }
+
 }

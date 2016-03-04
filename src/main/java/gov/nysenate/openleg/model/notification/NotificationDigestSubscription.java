@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.notification;
 
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -86,6 +87,20 @@ public class NotificationDigestSubscription extends NotificationSubscription {
             nextNextDigest = nextNextDigest.plus(getPeriod());
         }
         return nextNextDigest;
+    }
+
+    /** --- Overridden Methods --- */
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("periodHours", periodHours)
+                .append("periodDays", periodDays)
+                .append("nextDigest", nextDigest)
+                .append("sendEmptyDigest", sendEmptyDigest)
+                .append("full", full)
+                .toString();
     }
 
     /** --- Getters / Setters --- */

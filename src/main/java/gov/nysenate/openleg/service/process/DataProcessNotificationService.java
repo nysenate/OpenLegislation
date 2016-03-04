@@ -3,7 +3,7 @@ package gov.nysenate.openleg.service.process;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.process.DataProcessErrorEvent;
 import gov.nysenate.openleg.model.process.DataProcessRun;
@@ -13,7 +13,6 @@ import gov.nysenate.openleg.processor.DataProcessor;
 import gov.nysenate.openleg.service.entity.member.event.UnverifiedMemberEvent;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -67,7 +66,7 @@ public class DataProcessNotificationService {
         eventBus.post(notification);
     }
 
-    public void unverifiedMemberNotification(Member member) {
+    public void unverifiedMemberNotification(SessionMember member) {
         Optional<DataProcessRun> run = dataProcessor.getCurrentRun();
         LocalDateTime occurred = LocalDateTime.now();
         String summary = "New unverified session member: " + member.getLbdcShortName();

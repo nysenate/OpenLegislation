@@ -51,7 +51,7 @@
     <shiro.version>1.2.3</shiro.version>
     <slf4j.version>1.7.5</slf4j.version>
     <spring.version>4.0.6.RELEASE</spring.version>
-    <tomcat.servlet.version>7.0.47</tomcat.servlet.version>
+    <tomcat.servlet.version>8.0.29</tomcat.servlet.version>
     <woodstox.version>4.2.0</woodstox.version>
   </properties>
 
@@ -79,6 +79,18 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-websocket</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-messaging</artifactId>
       <version>${spring.version}</version>
     </dependency>
 
@@ -110,6 +122,12 @@
       <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.servlet.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-websocket</artifactId>
+      <version>${tomcat.servlet.version}</version>
     </dependency>
 
     <!-- JSTL -->

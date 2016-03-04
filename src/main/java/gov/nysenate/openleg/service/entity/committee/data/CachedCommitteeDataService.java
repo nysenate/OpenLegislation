@@ -46,7 +46,6 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
 
     @Value("${committee.cache.size}") private long committeeCacheSizeMb;
 
-    private static final String committeeCacheName = "committee";
     private Cache committeeCache;
 
     @PostConstruct
@@ -58,7 +57,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     @PreDestroy
     private void cleanUp() {
         evictCaches();
-        cacheManager.removeCache(committeeCacheName);
+        cacheManager.removeCache(ContentCache.COMMITTEE.name());
     }
 
     /** --- Cache Management --- */
@@ -74,7 +73,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     /** {@inheritDoc} */
     @Override
     public void setupCaches() {
-        committeeCache = new Cache(new CacheConfiguration().name(committeeCacheName)
+        committeeCache = new Cache(new CacheConfiguration().name(ContentCache.COMMITTEE.name())
                 .eternal(true)
                 .maxBytesLocalHeap(committeeCacheSizeMb, MemoryUnit.MEGABYTES)
                 .sizeOfPolicy(defaultSizeOfPolicy()));

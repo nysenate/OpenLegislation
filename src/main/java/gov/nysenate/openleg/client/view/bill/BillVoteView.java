@@ -7,22 +7,24 @@ import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
+import gov.nysenate.openleg.model.bill.BillVoteType;
 
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 public class BillVoteView implements ViewObject
 {
     protected String version;
-    protected String voteType;
-    protected String voteDate;
+    protected BillVoteType voteType;
+    protected LocalDate voteDate;
     protected CommitteeIdView committee;
     protected MapView<String, ListView<MemberView>> memberVotes;
 
     public BillVoteView(BillVote billVote) {
         if(billVote != null) {
             this.version = new BillIdView(billVote.getBillId()).getVersion();
-            this.voteType = billVote.getVoteType().name();
-            this.voteDate = billVote.getVoteDate().toString();
+            this.voteType = billVote.getVoteType();
+            this.voteDate = billVote.getVoteDate();
             this.committee = billVote.getCommitteeId() != null ? new CommitteeIdView(billVote.getCommitteeId()) : null;
             this.memberVotes = MapView.of(
                 billVote.getMemberVotes().keySet().stream()
@@ -39,11 +41,11 @@ public class BillVoteView implements ViewObject
         return version;
     }
 
-    public String getVoteType() {
+    public BillVoteType getVoteType() {
         return voteType;
     }
 
-    public String getVoteDate() {
+    public LocalDate getVoteDate() {
         return voteDate;
     }
 

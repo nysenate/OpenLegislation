@@ -1,13 +1,7 @@
 package gov.nysenate.openleg.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import gov.nysenate.openleg.util.AsciiArt;
 import gov.nysenate.openleg.util.OpenlegThreadFactory;
-import org.apache.shiro.realm.Realm;
-import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +42,7 @@ import java.util.concurrent.ScheduledExecutorService;
 @EnableAsync
 @EnableScheduling
 @ComponentScan("gov.nysenate.openleg")
-@Import({DatabaseConfig.class, SecurityConfig.class, ApplicationConfig.class})
+@Import({DatabaseConfig.class, SecurityConfig.class, ApplicationConfig.class, WebSocketsConfig.class})
 public class WebApplicationConfig extends WebMvcConfigurerAdapter implements SchedulingConfigurer,
                                                                              AsyncConfigurer
 {
@@ -123,7 +117,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter implements Sch
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadFactory(new OpenlegThreadFactory("spring-async"));
-        executor.setCorePoolSize(4);
+        executor.setCorePoolSize(10);
         executor.initialize();
         return executor;
     }

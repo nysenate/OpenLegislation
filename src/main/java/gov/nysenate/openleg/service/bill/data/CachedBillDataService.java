@@ -56,9 +56,6 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     @Value("${bill.cache.size}") private long billCacheSizeMb;
     @Value("${bill-info.cache.size}") private long billInfoCacheSizeMb;
 
-    private static final String billCacheName = "bills";
-    private static final String billInfoCacheName = "billInfos";
-
     private Cache billCache;
     private Cache billInfoCache;
 
@@ -71,8 +68,8 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     @PreDestroy
     private void cleanUp() {
         evictCaches();
-        cacheManager.removeCache(billCacheName);
-        cacheManager.removeCache(billInfoCacheName);
+        cacheManager.removeCache(ContentCache.BILL.name());
+        cacheManager.removeCache(ContentCache.BILL_INFO.name());
     }
 
     /** --- CachingService implementation --- */
@@ -87,7 +84,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     @Override
     public void setupCaches() {
         // Partial bill cache will store Bill instances with the full text fields stripped to save space.
-        this.billCache = new Cache(new CacheConfiguration().name(billCacheName)
+        this.billCache = new Cache(new CacheConfiguration().name(ContentCache.BILL.name())
             .eternal(true)
             .maxBytesLocalHeap(billCacheSizeMb, MemoryUnit.MEGABYTES)
             .sizeOfPolicy(defaultSizeOfPolicy()));
@@ -97,7 +94,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
 
         // Bill Info cache will store BillInfo instances to speed up search and listings.
         // If a bill is already stored in the billCache, it's BillInfo does not need to be stored here.
-        this.billInfoCache = new Cache(new CacheConfiguration().name(billInfoCacheName)
+        this.billInfoCache = new Cache(new CacheConfiguration().name(ContentCache.BILL_INFO.name())
             .eternal(true)
             .maxBytesLocalHeap(billInfoCacheSizeMb, MemoryUnit.MEGABYTES)
             .sizeOfPolicy(defaultSizeOfPolicy()));
@@ -134,7 +131,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     @Override
     @Subscribe
     public synchronized void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(ContentCache.BILL)) {
+        if (evictEvent.affects(ContentCache.BILL) || evictEvent.affects(ContentCache.BILL_INFO)) {
             evictCaches();
         }
     }
@@ -143,7 +140,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     @Subscribe
     @Override
     public void handleCacheEvictIdEvent(CacheEvictIdEvent<BaseBillId> evictIdEvent) {
-        if (evictIdEvent.affects(ContentCache.BILL)) {
+        if (evictIdEvent.affects(ContentCache.BILL) || evictIdEvent.affects(ContentCache.BILL_INFO)) {
             evictContent(evictIdEvent.getContentId());
         }
     }
@@ -159,7 +156,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
     /** {@inheritDoc} */
     @Subscribe
     public synchronized void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(ContentCache.BILL)) {
+        if (warmEvent.affects(ContentCache.BILL) || warmEvent.affects(ContentCache.BILL_INFO)) {
             warmCaches();
         }
     }

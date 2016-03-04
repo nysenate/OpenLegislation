@@ -6,11 +6,12 @@
 
 <section ng-controller="AccountSettingsCtrl" ng-init="setHeaderVisible(true)" class="content-section">
 
-  <shiro:hasRole name="masterAdmin">
+  <shiro:hasPermission name="admin:account:modify">
     <span ng-init="isMaster = true"></span>
-  </shiro:hasRole>
+  </shiro:hasPermission>
 
-  <md-tabs md-selected="selectedIndex" md-dynamic-height="false" ng-init="setHeaderText('Admin Account Settings')">
+  <md-tabs md-selected="selectedIndex" md-dynamic-height="true" class="md-hue-2"
+           ng-init="setHeaderText('Admin Account Settings')">
 
     <!-- Change Password -->
 
@@ -144,7 +145,7 @@
           <md-divider></md-divider>
           <div ng-show="loadingAccounts || creatingAccount || removingAccount">
             <h4>Loading accounts...</h4>
-            <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+            <md-progress-linear md-mode="indeterminate" class="md-hue-2"></md-progress-linear>
           </div>
           <md-list ng-if="!(loadingAccounts || creatingAccount || removingAccount)">
             <md-list-item ng-repeat="account in accounts" ng-class="{'master-admin': account.master}">

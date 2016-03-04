@@ -16,12 +16,14 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,12 +35,14 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     protected static final String transcriptIndexName = SearchIndex.TRANSCRIPT.getIndexName();
 
     protected static final List<HighlightBuilder.Field> highlightedFields =
-            Arrays.asList(new HighlightBuilder.Field("text").numOfFragments(3));
+            Collections.singletonList(new HighlightBuilder.Field("text").numOfFragments(3));
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(transcriptIndexName, query, postFilter, highlightedFields, null, sort, limOff, false);
+    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, FilterBuilder postFilter,
+                                                         List<SortBuilder> sort, LimitOffset limOff) {
+        SearchRequestBuilder searchBuilder = getSearchRequest(transcriptIndexName, query, postFilter,
+                highlightedFields, null, sort, limOff, false);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Transcript search result with query {} and filter {} took {} ms", query, postFilter, response.getTookInMillis());
         return getSearchResults(response, limOff, this::getTranscriptIdFromHit);
@@ -47,7 +51,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     /** {@inheritDoc} */
     @Override
     public void updateTranscriptIndex(Transcript transcript) {
-        updateTranscriptIndex(Arrays.asList(transcript));
+        updateTranscriptIndex(Collections.singletonList(transcript));
     }
 
     /** {@inheritDoc} */

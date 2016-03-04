@@ -8,12 +8,13 @@ import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Set;
 
 /** Contains query parameters used to poll for open spotcheck mismatches */
 public class OpenMismatchQuery {
 
-    /** The type of report to query from */
-    SpotCheckRefType refType;
+    /** The type of reports to query from */
+    Set<SpotCheckRefType> refTypes;
     /** A set of mismatch types to filter by */
     Collection<SpotCheckMismatchType> mismatchTypes;
     /** Get mismatches observed on or after this date */
@@ -36,11 +37,11 @@ public class OpenMismatchQuery {
 
     /** --- Constructors --- */
 
-    public OpenMismatchQuery(SpotCheckRefType refType, Collection<SpotCheckMismatchType> mismatchTypes,
+    public OpenMismatchQuery(Set<SpotCheckRefType> refTypes, Collection<SpotCheckMismatchType> mismatchTypes,
                              LocalDateTime observedAfter, MismatchOrderBy orderBy, SortOrder order,
                              LimitOffset limitOffset, boolean resolvedShown, boolean ignoredShown, boolean ignoredOnly,
                              boolean trackedShown, boolean untrackedShown) {
-        this.refType = refType;
+        this.refTypes = refTypes;
         this.mismatchTypes = mismatchTypes;
         this.observedAfter = observedAfter;
         this.orderBy = orderBy;
@@ -62,8 +63,8 @@ public class OpenMismatchQuery {
 
     /** --- Getters --- */
 
-    public SpotCheckRefType getRefType() {
-        return refType;
+    public Set<SpotCheckRefType> getRefTypes() {
+        return refTypes;
     }
 
     public Collection<SpotCheckMismatchType> getMismatchTypes() {

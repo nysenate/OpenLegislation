@@ -1,26 +1,23 @@
-var envModule = angular.module('open.environment', ['open.core']);
+var adminModule = angular.module('open.admin');
 
 /** --- REST resources for getting and setting environment variables --- */
 
-envModule.factory('EnvironmentAPI', ['$resource', function ($resource) {
+adminModule.factory('EnvironmentAPI', ['$resource', function ($resource) {
     return $resource(adminApiPath + '/environment');
 }]);
 
-envModule.factory('SetEnvironmentAPI', ['$resource', function ($resource) {
+adminModule.factory('SetEnvironmentAPI', ['$resource', function ($resource) {
     return $resource(adminApiPath + '/environment/set');
 }]);
 
-envModule.controller('EnvironmentCtrl', ['$scope', 'EnvironmentAPI', 'SetEnvironmentAPI',
+adminModule.controller('EnvironmentCtrl', ['$scope', 'EnvironmentAPI', 'SetEnvironmentAPI',
 function ($scope, EnvApi, SetEnvApi) {
+
     $scope.vars = [];
     $scope.requestedVars = [];
 
     $scope.init = function() {
         $scope.getVariables();
-    };
-
-    $scope.log = function(stuff) {
-        console.log(stuff);
     };
 
     $scope.getVariables = function() {

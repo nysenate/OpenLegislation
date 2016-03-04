@@ -6,7 +6,7 @@ import com.google.common.io.Files;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.dao.daybreak.SqlFsDaybreakDao;
+import gov.nysenate.openleg.dao.bill.reference.daybreak.SqlFsDaybreakDao;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommitteeItem;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertId;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommId;

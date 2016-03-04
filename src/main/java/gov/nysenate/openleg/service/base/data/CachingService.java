@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static net.sf.ehcache.config.SizeOfPolicyConfiguration.MaxDepthExceededBehavior.ABORT;
+import static net.sf.ehcache.config.SizeOfPolicyConfiguration.MaxDepthExceededBehavior.CONTINUE;
 
 public interface CachingService<ContentId>
 {
@@ -75,11 +75,11 @@ public interface CachingService<ContentId>
     /**
      * (Default Method)
      * Default 'size of' configuration which sets the maximum limit for how many nodes are traversed
-     * when computing the heap size of an object before bailing out to minimize performance impact.
+     * when computing the heap size of an object before raising a warning.
      *
      * @return SizeOfPolicyConfiguration
      */
     public default SizeOfPolicyConfiguration defaultSizeOfPolicy() {
-        return new SizeOfPolicyConfiguration().maxDepth(50000).maxDepthExceededBehavior(ABORT);
+        return new SizeOfPolicyConfiguration().maxDepth(50000).maxDepthExceededBehavior(CONTINUE);
     }
 }

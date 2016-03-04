@@ -9,10 +9,8 @@ import gov.nysenate.openleg.dao.hearing.search.ElasticPublicHearingSearchDao;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
-import gov.nysenate.openleg.model.search.ClearIndexEvent;
-import gov.nysenate.openleg.model.search.RebuildIndexEvent;
-import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.model.search.*;
+import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.hearing.event.BulkPublicHearingUpdateEvent;
 import gov.nysenate.openleg.service.hearing.event.PublicHearingUpdateEvent;
@@ -81,13 +79,14 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
             throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;
         try {
-            return publicHearingSearchDao.searchPublicHearings(query, postFilter, sort, limOff);
+            return publicHearingSearchDao.searchPublicHearings(query, postFilter,
+                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
         }
         catch (SearchParseException ex) {
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new SearchException("Unexpected search exception!", ex);
+            throw new UnexpectedSearchException(ex);
         }
     }
 

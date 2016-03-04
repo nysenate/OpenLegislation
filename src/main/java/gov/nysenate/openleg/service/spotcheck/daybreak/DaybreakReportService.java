@@ -3,24 +3,20 @@ package gov.nysenate.openleg.service.spotcheck.daybreak;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
+import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.daybreak.DaybreakBill;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
-import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -73,13 +69,7 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
         // Fetch the daybreak bills that are within the given date range
         logger.info("Fetching daybreak bills...");
         Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
-        List<DaybreakBill> daybreakBills;
-        try {
-            daybreakBills = daybreakDao.getCurrentDaybreakBills(dateRange);
-        }
-        catch (DataAccessException ex) {
-            throw new ReferenceDataNotFoundEx("Failed to retrieve daybreak bills within the given date range.");
-        }
+        List<DaybreakBill> daybreakBills = daybreakDao.getCurrentDaybreakBills(dateRange);
         if (daybreakBills.isEmpty()) {
             throw new ReferenceDataNotFoundEx("The collection of daybreak bills within the given date range is empty.");
         }
@@ -113,14 +103,14 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
                         Bill bill = billDataService.getBill(id);
                         if (billIsPublished(bill)) {
                             logger.info("Missing Daybreak bill {}", id);
-                            mismatch = new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", id.toString());
+                            mismatch = new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", "");
                             recordMismatch(report, sourceMissingObs, mismatch);
                         }
                     }
                     else {
                         // daybreak has the bill but openleg does not, add observe missing mismatch.
                         logger.info("Missing OpenLeg bill {}", id);
-                        mismatch = new SpotCheckMismatch(OBSERVE_DATA_MISSING, id.toString(), "");
+                        mismatch = new SpotCheckMismatch(OBSERVE_DATA_MISSING, "", "");
                         recordMismatch(report, sourceMissingObs, mismatch);
                     }
                 });

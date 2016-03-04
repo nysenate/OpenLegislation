@@ -8,7 +8,7 @@ import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResult;
@@ -49,7 +49,7 @@ public class MemberSearchCtrl extends BaseCtrl
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);
-        SearchResults<Member> results = memberSearch.searchMembers(term, sort, limOff);
+        SearchResults<SessionMember> results = memberSearch.searchMembers(term, sort, limOff);
         return getSearchResponse(results, full, limOff);
     }
 
@@ -71,14 +71,14 @@ public class MemberSearchCtrl extends BaseCtrl
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);
-        SearchResults<Member> results = memberSearch.searchMembers(term, SessionYear.of(sessionYear), sort, limOff);
+        SearchResults<SessionMember> results = memberSearch.searchMembers(term, SessionYear.of(sessionYear), sort, limOff);
         return getSearchResponse(results, full, limOff);
     }
 
-    private BaseResponse getSearchResponse(SearchResults<Member> results, boolean full, LimitOffset limOff) throws SearchException {
+    private BaseResponse getSearchResponse(SearchResults<SessionMember> results, boolean full, LimitOffset limOff) throws SearchException {
         List<ViewObject> viewtypes = new ArrayList<>();
-        for (SearchResult<Member> result : results.getResults()) {
-            Member member;
+        for (SearchResult<SessionMember> result : results.getResults()) {
+            SessionMember member;
             try {
                 member = memberData.getMemberById(result.getResult().getMemberId(), result.getResult().getSessionYear());
             } catch (MemberNotFoundEx ex) {

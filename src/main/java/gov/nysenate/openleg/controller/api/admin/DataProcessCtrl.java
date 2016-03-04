@@ -8,6 +8,7 @@ import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.process.DataProcessRunDetailView;
+import gov.nysenate.openleg.client.view.process.DataProcessRunInfoView;
 import gov.nysenate.openleg.client.view.process.DataProcessRunView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
@@ -15,9 +16,9 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.process.DataProcessRun;
+import gov.nysenate.openleg.model.process.DataProcessRunInfo;
 import gov.nysenate.openleg.processor.DataProcessor;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
-import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -50,12 +51,12 @@ public class DataProcessCtrl extends BaseCtrl
      * ----------------
      *
      * Triggers a data processing run
-     * Usage: (GET) /api/3/admin/process/run
+     * Usage: (POST) /api/3/admin/process/run
      *
      * Expected Output: DataProcessRunView if the run was successful, ErrorResponse otherwise
      */
     @RequiresPermissions("admin:dataProcess")
-    @RequestMapping(value = "/run")
+    @RequestMapping(value = "/run", method = RequestMethod.POST)
     public BaseResponse triggerDataProcess() {
         try {
             DataProcessRun run = dataProcessor.run("api");
@@ -123,11 +124,11 @@ public class DataProcessCtrl extends BaseCtrl
         boolean full = getBooleanParam(request, "full", false);
         boolean detail = getBooleanParam(request, "detail", false);
 
-        PaginatedList<DataProcessRun> runs = processLogs.getRuns(Range.closedOpen(fromDateTime, toDateTime), limOff, !full);
+        PaginatedList<DataProcessRunInfo> runs = processLogs.getRunInfos(Range.closedOpen(fromDateTime, toDateTime), limOff, !full);
         return ListViewResponse.of(runs.getResults().stream()
-            .map(run -> (detail)
-                    ? new DataProcessRunDetailView(run, processLogs.getUnits(run.getProcessId(), LimitOffset.HUNDRED))
-                    : new DataProcessRunView(run))
+            .map(runInfo -> (detail)
+                    ? new DataProcessRunDetailView(runInfo, processLogs.getUnits(runInfo.getRun().getProcessId(), LimitOffset.FIFTY))
+                    : new DataProcessRunInfoView(runInfo))
             .collect(toList()),
             runs.getTotal(), runs.getLimOff());
     }
@@ -147,10 +148,10 @@ public class DataProcessCtrl extends BaseCtrl
     @RequestMapping("/runs/id/{id:[0-9]+}")
     public BaseResponse getRuns(@PathVariable int id, WebRequest webRequest) {
         LimitOffset limOff = getLimitOffset(webRequest, 100);
-        Optional<DataProcessRun> run = processLogs.getRun(id);
-        if (run.isPresent()) {
+        Optional<DataProcessRunInfo> runInfo = processLogs.getRunInfo(id);
+        if (runInfo.isPresent()) {
             return new ViewObjectResponse<>(
-                new DataProcessRunDetailView(run.get(), processLogs.getUnits(run.get().getProcessId(), limOff)));
+                new DataProcessRunDetailView(runInfo.get(), processLogs.getUnits(runInfo.get().getRun().getProcessId(), limOff)));
         }
         else {
             return new ErrorResponse(ErrorCode.PROCESS_RUN_NOT_FOUND);

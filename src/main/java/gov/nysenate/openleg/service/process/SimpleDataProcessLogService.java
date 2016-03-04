@@ -1,25 +1,23 @@
 package gov.nysenate.openleg.service.process;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.process.DataProcessLogDao;
-import gov.nysenate.openleg.dao.process.SqlDataProcessLogDao;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.process.DataProcessRun;
+import gov.nysenate.openleg.model.process.DataProcessRunInfo;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import org.apache.shiro.dao.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class SimpleDataProcessLogService implements DataProcessLogService
@@ -38,11 +36,22 @@ public class SimpleDataProcessLogService implements DataProcessLogService
         }
     }
 
+    @Override
+    public Optional<DataProcessRunInfo> getRunInfo(int processId) {
+        Optional<DataProcessRun> run = getRun(processId);
+        if (run.isPresent()) {
+            return Optional.of(getRunInfoFromRun(run.get()));
+        }
+        return Optional.empty();
+    }
+
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
-                                                 boolean showActivityOnly) {
-        return processLogDao.getRuns(dateTimeRange, showActivityOnly, SortOrder.DESC, limOff);
+    public PaginatedList<DataProcessRunInfo> getRunInfos(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
+                                                         boolean showActivityOnly) {
+        PaginatedList<DataProcessRun> runs = processLogDao.getRuns(dateTimeRange, showActivityOnly, SortOrder.DESC, limOff);
+        List<DataProcessRunInfo> runInfos = runs.getResults().stream().map(this::getRunInfoFromRun).collect(toList());
+        return new PaginatedList<>(runs.getTotal(), runs.getLimOff(), runInfos);
     }
 
     /** {@inheritDoc} */
@@ -76,5 +85,17 @@ public class SimpleDataProcessLogService implements DataProcessLogService
             run.setEndDateTime(LocalDateTime.now());
             processLogDao.updateRun(run);
         }
+    }
+
+    private DataProcessRunInfo getRunInfoFromRun(DataProcessRun run) {
+        DataProcessRunInfo runInfo = new DataProcessRunInfo(run);
+        List<DataProcessUnit> firstAndLastUnits = processLogDao.getFirstAndLastUnits(run.getProcessId());
+        if (!firstAndLastUnits.isEmpty()) {
+            runInfo.setFirstProcessed(Optional.of(firstAndLastUnits.get(0)));
+            if (firstAndLastUnits.size() > 1) {
+                runInfo.setLastProcessed(Optional.of(firstAndLastUnits.get(1)));
+            }
+        }
+        return runInfo;
     }
 }

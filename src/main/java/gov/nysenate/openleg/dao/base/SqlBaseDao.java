@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -157,7 +158,10 @@ public abstract class SqlBaseDao
      */
     public static String toHstoreString(Map<String, String> hstoreMap) {
         return hstoreMap.entrySet().stream()
-            .map(kv -> kv.getKey() + "=>" + kv.getValue().replaceAll("([,=> ])", "\\\\$1").replaceAll("'", "''"))
+            .map(kv -> kv.getKey() + "=>" +
+                    (kv.getValue() == null ? "NULL"
+                            : StringUtils.isEmpty(kv.getValue()) ? "\"\""
+                            : kv.getValue().replaceAll("([,=> ])", "\\\\$1").replaceAll("'", "''")))
             .collect(Collectors.joining(","));
     }
 

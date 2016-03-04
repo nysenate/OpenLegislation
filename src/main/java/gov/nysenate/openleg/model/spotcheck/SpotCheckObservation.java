@@ -26,6 +26,9 @@ public class SpotCheckObservation<ContentKey>
     /** The datetime this observation was made. */
     protected LocalDateTime observedDateTime;
 
+    /** The date time when the report that generated this observation was run */
+    protected LocalDateTime reportDateTime;
+
     /** Mapping of mismatches that exist between the reference content and our content. */
     protected Map<SpotCheckMismatchType, SpotCheckMismatch> mismatches = new HashMap<>();
 
@@ -70,12 +73,14 @@ public class SpotCheckObservation<ContentKey>
      * {NEW=4, EXISTING=2} would be returned if there were four new mismatches and two
      * existing mismatches.
      *
+     * @param ignored boolean - if true, will return counts for ignored mismatches, which are left out if false
      * @return Map<SpotCheckMismatchStatus, Long>
      */
-    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts() {
+    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts(boolean ignored) {
         if (mismatches != null) {
             return mismatches.values().stream()
-                .collect(Collectors.groupingBy(SpotCheckMismatch::getStatus, Collectors.counting()));
+                    .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
+                    .collect(Collectors.groupingBy(SpotCheckMismatch::getStatus, Collectors.counting()));
         }
         else {
             throw new IllegalStateException("Collection of mismatches is null");
@@ -87,10 +92,11 @@ public class SpotCheckObservation<ContentKey>
      *
      * @return Map<SpotCheckMismatchType, SpotCheckMismatchStatus>
      */
-    public Map<SpotCheckMismatchType, SpotCheckMismatchStatus> getMismatchStatusTypes() {
+    public Map<SpotCheckMismatchType, SpotCheckMismatchStatus> getMismatchStatusTypes(boolean ignored) {
         if (mismatches != null) {
             return mismatches.values().stream()
-                .collect(Collectors.toMap(SpotCheckMismatch::getMismatchType, SpotCheckMismatch::getStatus));
+                    .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
+                    .collect(Collectors.toMap(SpotCheckMismatch::getMismatchType, SpotCheckMismatch::getStatus));
         }
         else {
             throw new IllegalStateException("Collection of mismatches is null");
@@ -102,9 +108,12 @@ public class SpotCheckObservation<ContentKey>
      *
      * @return Set<SpotCheckMismatchType>
      */
-    public Set<SpotCheckMismatchType> getMismatchTypes() {
+    public Set<SpotCheckMismatchType> getMismatchTypes(boolean ignored) {
         if (mismatches != null) {
-            return mismatches.keySet();
+            return mismatches.values().stream()
+                    .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
+                    .map(SpotCheckMismatch::getMismatchType)
+                    .collect(Collectors.toSet());
         }
         else {
             throw new IllegalStateException("Collection of mismatches is null");
@@ -112,6 +121,14 @@ public class SpotCheckObservation<ContentKey>
     }
 
     /** --- Basic Getters/Setters --- */
+
+    public LocalDateTime getReportDateTime() {
+        return reportDateTime;
+    }
+
+    public void setReportDateTime(LocalDateTime reportDateTime) {
+        this.reportDateTime = reportDateTime;
+    }
 
     public SpotCheckReferenceId getReferenceId() {
         return referenceId;

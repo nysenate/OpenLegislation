@@ -1,14 +1,15 @@
 package gov.nysenate.openleg.model.spotcheck;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Stores a collection of all currently open observations for a particular spotcheck reference type
  */
 public class SpotCheckOpenMismatches<ContentKey>
 {
-    /** Designates the type of report that produced these open observations */
-    private SpotCheckRefType spotCheckRefType;
+    /** Designates the types of reports that produced these open observations */
+    private Set<SpotCheckRefType> spotCheckRefTypes;
 
     /** A map of open observations */
     private Map<ContentKey, SpotCheckObservation<ContentKey>> observations;
@@ -18,18 +19,18 @@ public class SpotCheckOpenMismatches<ContentKey>
 
     /** --- Constructors --- */
 
-    public SpotCheckOpenMismatches(SpotCheckRefType spotCheckRefType,
+    public SpotCheckOpenMismatches(Set<SpotCheckRefType> spotCheckRefTypes,
                                    Map<ContentKey, SpotCheckObservation<ContentKey>> observations,
                                    int totalCurrentMismatches) {
-        this.spotCheckRefType = spotCheckRefType;
+        this.spotCheckRefTypes = spotCheckRefTypes;
         this.observations = observations;
         this.totalCurrentMismatches = totalCurrentMismatches;
     }
 
     /** --- Getters / Setters --- */
 
-    public SpotCheckRefType getSpotCheckRefType() {
-        return spotCheckRefType;
+    public Set<SpotCheckRefType> getSpotCheckRefTypes() {
+        return spotCheckRefTypes;
     }
 
     public Map<ContentKey, SpotCheckObservation<ContentKey>> getObservations() {

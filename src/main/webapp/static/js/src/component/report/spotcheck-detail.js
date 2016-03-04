@@ -1,51 +1,54 @@
 
 angular.module('open.spotcheck')
-    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow', 'getDetails', 'findFirstOpenedDates',
-        'getMismatchId', 'getContentId', 'getContentUrl',
-function($scope, $mdDialog, mismatchRow, getDetails, findFirstOpenedDates, getMismatchId, getContentId, getContentUrl) {
+    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow',
+function($scope, $mdDialog, mismatchRow) {
 
-    $scope.selectedIndex = 0;
-
-    $scope.getDetails = getDetails;
-    $scope.findFirstOpenedDates = findFirstOpenedDates;
-    $scope.getMismatchId = getMismatchId;
-    $scope.getContentId = getContentId;
-    $scope.getContentUrl = getContentUrl;
+    $scope.iDiffTab = 0;
 
     $scope.reportType = mismatchRow.refType;
 
+    $scope.newDetails = function (newMismatchRow) {
+        $scope.mismatchRow = newMismatchRow;
 
-    $scope.newDetails = function (newmismatchRow) {
-        $scope.details = newmismatchRow;
+        console.log('loading detail dialog for', newMismatchRow);
+        $scope.observation = newMismatchRow.observation;
+        $scope.currentMismatch = newMismatchRow.mismatch;
+        $scope.allMismatches = newMismatchRow.observation.mismatches.items;
 
-        console.log(newmismatchRow)
-        $scope.contentId = $scope.getContentId($scope.reportType, newmismatchRow.observation.key);
-        $scope.contentUrl = $scope.getContentUrl($scope.reportType, newmismatchRow.observation.key);
-        $scope.observation = newmismatchRow.observation;
-        $scope.currentMismatch = newmismatchRow.mismatch;
-        $scope.multiLine = $scope.currentMismatch.referenceData.split(/\n/).length > 1 ||
-                $scope.currentMismatch.observedData.split(/\n/).length > 1;
-        $scope.allMismatches = newmismatchRow.observation.mismatches.items;
-
-        $scope.firstOpened = $scope.findFirstOpenedDates($scope.currentMismatch, $scope.observation);
+        setDefaultTextOptions(newMismatchRow.type);
         $scope.formatDisplayData();
     };
 
-    $scope.openNewDetail = function(mismatchId) {
-        $scope.newDetails($scope.getDetails(mismatchId));
-    };
+    $scope.$watchGroup(['referenceData', 'displayData'], function () {
+        $scope.obsMultiLine = $scope.observedData && $scope.observedData.indexOf('\n') > -1;
+        $scope.refMultiLine = $scope.referenceData && $scope.referenceData.indexOf('\n') > -1;
+        $scope.multiLine = $scope.obsMultiLine || $scope.refMultiLine;
+    });
 
     $scope.cancel = function () {
         $mdDialog.hide();
     };
 
-    $scope.isBillTextMismatch = function() {
-        return ['BILL_TEXT_LINE_OFFSET', 'BILL_TEXT_CONTENT'].indexOf($scope.currentMismatch.mismatchType) >= 0;
+    function setDefaultTextOptions(mismatchType) {
+        var nonAlphaMismatches = ['BILL_TEXT_LINE_OFFSET', 'BILL_TEXT_CONTENT'];
+        var noLinePageNumMismatches = ['BILL_TEXT_CONTENT'];
+        if (nonAlphaMismatches.indexOf(mismatchType) > -1) {
+            $scope.textControls.whitespace = 'stripNonAlpha';
+        }
+        if (noLinePageNumMismatches.indexOf(mismatchType) > -1) {
+            $scope.textControls.removeLinePageNums = true;
+        }
+    }
+
+    $scope.whitespaceOptions = {
+        initial: 'No Formatting',
+        normalize: 'Normalize Whitespace',
+        stripNonAlpha: 'Strip Non-Alphanumeric'
     };
 
-    $scope.billTextCtrls = {
-        normalizeSpaces: false,
-        removeNonAlphaNum: false,
+    $scope.textControls = {
+        whitespace: 'initial',
+        capitalize: false,
         removeLinePageNums: false
     };
 
@@ -63,29 +66,26 @@ function($scope, $mdDialog, mismatchRow, getDetails, findFirstOpenedDates, getMi
             .replace(/\n+/, '\n');
     }
 
-    function formatBillText() {
+    $scope.formatDisplayData = function() {
         var texts = [$scope.currentMismatch.referenceData, $scope.currentMismatch.observedData];
-        if ($scope.billTextCtrls.removeLinePageNums) {
+        if ($scope.textControls.removeLinePageNums) {
             texts = texts.map(removeLinePageNumbers);
         }
-        if ($scope.billTextCtrls.removeNonAlphaNum) {
-            texts = texts.map(function (text) {return text.replace(/(?:[^\w]|_)+/g, '')});
-        } else if ($scope.billTextCtrls.normalizeSpaces) {
-            texts = texts.map(function (text) {return text.replace(/[ ]+/g, ' ')});
-            texts = texts.map(function (text) {return text.replace(/^[ ]+|[ ]+$/gm, '')});
+        switch ($scope.textControls.whitespace) {
+            case 'stripNonAlpha':
+                texts = texts.map(function (text) {return text.replace(/(?:[^\w]|_)+/g, '')});
+                break;
+            case 'normalize':
+                texts = texts.map(function (text) {return text.replace(/[ ]+/g, ' ')});
+                texts = texts.map(function (text) {return text.replace(/^[ ]+|[ ]+$/gm, '')});
+                break;
+        }
+        if ($scope.textControls.capitalize) {
+            texts = texts.map(function(text) { return text.toUpperCase();});
         }
 
-        $scope.lbdcData = texts[0];
-        $scope.openlegData = texts[1];
-    }
-
-    $scope.formatDisplayData = function() {
-        if ($scope.isBillTextMismatch()) {
-            formatBillText();
-        } else {
-            $scope.lbdcData = $scope.currentMismatch.referenceData;
-            $scope.openlegData = $scope.currentMismatch.observedData;
-        }
+        $scope.referenceData = texts[0];
+        $scope.observedData = texts[1];
     };
 
     function init() {

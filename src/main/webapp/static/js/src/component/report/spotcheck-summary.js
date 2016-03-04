@@ -10,13 +10,18 @@ function ($scope, $filter, $routeParams, $location, SpotcheckSummaryAPI) {
     $scope.response = null;
     $scope.loadingSummaries = false;
     $scope.summariesNotFound = false;
-    $scope.hideErrorlessReports = true;
+    $scope.showErrorlessReports = false;
     $scope.resultsPerPage = 20;
 
     $scope.params = {
-        summaryType: "all",
+        summaryType: "LBDC_DAYBREAK",
         inputStartDate: null,
         inputEndDate: null
+    };
+
+    $scope.pagination = {
+        currPage: 1,
+        itemsPerPage: 10
     };
 
     $scope.init = function() {
@@ -39,7 +44,7 @@ function ($scope, $filter, $routeParams, $location, SpotcheckSummaryAPI) {
 
     $scope.getSummaries = function() {
         console.log("getting new summaries");
-        var summaryType = $scope.params.summaryType !== "all" ? $filter('reportTypeLabel')($scope.params.summaryType) : [];
+        var summaryType = $scope.params.summaryType !== "all" ? $filter('reportTypeRefName')($scope.params.summaryType) : [];
         $scope.loadingSummaries = true;
         $scope.response = SpotcheckSummaryAPI.get({startDate: $scope.startDate.format(),
                 endDate: $scope.endDate.endOf('day').format(),
@@ -68,16 +73,12 @@ function ($scope, $filter, $routeParams, $location, SpotcheckSummaryAPI) {
     });
 
     $scope.setSummarySearchParams = function () {
-        if ($scope.tabNames[$scope.selectedIndex] === "summary") {
-            $scope.clearSearchParams();
-            $scope.setSearchParam('type', $filter('reportTypeLabel')($scope.params.summaryType),
-                $scope.params.summaryType !== "all");
-            $scope.setSearchParam('startDate', $scope.startDate.format('YYYY-MM-DD'));
-            $scope.setSearchParam('endDate', $scope.endDate.format('YYYY-MM-DD'));
-        }
+        $scope.clearSearchParams();
+        $scope.setSearchParam('type', $filter('reportTypeRefName')($scope.params.summaryType),
+            $scope.params.summaryType !== "all");
+        //$scope.setSearchParam('startDate', $scope.startDate.format('YYYY-MM-DD'));
+        //$scope.setSearchParam('endDate', $scope.endDate.format('YYYY-MM-DD'));
     };
-
-    $scope.$on('tabChangeEvent', $scope.setSummarySearchParams);
 
     // Compute the total number of mismatches for a given type.
     $scope.computeMismatchCount = function(summaryItem, type) {
@@ -114,14 +115,14 @@ function ($scope, $filter, $routeParams, $location, SpotcheckSummaryAPI) {
     };
 
     $scope.noErrorFilter = function(row) {
-        return !$scope.hideErrorlessReports || row.openMismatches > 0;
+        return $scope.showErrorlessReports || row.openMismatches > 0;
     };
 
     $scope.filterSummaries = function() {
         $scope.filteredReportSummaries = $scope.reportSummaries.filter($scope.noErrorFilter);
     };
 
-    $scope.$watch('hideErrorlessReports', $scope.filterSummaries);
+    $scope.$watch('showErrorlessReports', $scope.filterSummaries);
 
     $scope.init();
 

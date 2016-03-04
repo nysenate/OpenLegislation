@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.client.view.entity;
 
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 
 public class MemberView extends SimpleMemberView
 {
@@ -8,7 +8,9 @@ public class MemberView extends SimpleMemberView
     protected Integer districtCode;
     protected String imgName;
 
-    public MemberView(Member member) {
+    public MemberView(){}
+
+    public MemberView(SessionMember member) {
         super(member);
         if (member != null) {
             this.fullName = member.getFullName();

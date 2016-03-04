@@ -1,7 +1,11 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.entity.Chamber;
+
+import java.time.LocalDate;
 
 public class BillActionView implements ViewObject {
 
@@ -11,6 +15,8 @@ public class BillActionView implements ViewObject {
     protected int sequenceNo;
     protected String text;
 
+    protected BillActionView() {}
+
     public BillActionView(BillAction billAction) {
         if (billAction != null) {
             billId = new BillIdView(billAction.getBillId());
@@ -19,6 +25,17 @@ public class BillActionView implements ViewObject {
             sequenceNo = billAction.getSequenceNo();
             text = billAction.getText();
         }
+    }
+
+    @JsonIgnore
+    public BillAction toBillAction() {
+        return new BillAction(
+                LocalDate.parse(date),
+                text,
+                Chamber.getValue(chamber),
+                sequenceNo,
+                billId.toBillId()
+        );
     }
 
     public BillIdView getBillId() {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,10 +42,10 @@ public class AssemblyAgnScraper extends LRSScraper {
     }
 
     @Override
-    public int scrape() throws IOException {
+    protected int doScrape() throws IOException {
         System.out.println("ASSEMBLY AGENDA DIRECTORY ::::::: " + assemblyAgendaDirectory);
         logger.info("SCRETCHING landing page.");
-        Document doc = Jsoup.connect(agendaURL.toString()).timeout(10000).get();
+        Document doc = getJsoupDocument(agendaURL.toString());
 
         System.out.println(doc.text());
 
@@ -54,7 +55,7 @@ public class AssemblyAgnScraper extends LRSScraper {
         System.out.println("THIS IS THE URL: :::::::::::::::::   " + url);
 
         logger.info("Searching for link to bottom half");
-        Document agendaPage = Jsoup.connect(url).timeout(10000).get();
+        Document agendaPage = getJsoupDocument(url);
         logger.info("Fetching bottom half");
 
         System.out.println(agendaPage.text());
@@ -69,7 +70,7 @@ public class AssemblyAgnScraper extends LRSScraper {
                 String filename = dateFormat.format(LocalDateTime.now()) + ".all_assembly_agendas.html";
                 outfile = new File(assemblyAgendaDirectory, filename);
                 logger.info("Fetching all committee agendas");
-                String contents = IOUtils.toString(contentURL);
+                String contents = getUrlContents(contentURL);
                 logger.info("Writing content to "+filename);
                 FileUtils.write(outfile, contents);
             }

@@ -10,6 +10,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${title}</title>
+    <link rel="shortcut icon" type="image/png" href="${ctxPath}/static/favicon.ico"/>
+
     <!-- The base is needed for angular HTML5 routing -->
     <base href="<%= (request.getContextPath().isEmpty()) ? "/" : request.getContextPath() %>">
 

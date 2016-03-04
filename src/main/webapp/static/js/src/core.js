@@ -1,25 +1,20 @@
 var coreModule = angular.module('open.core', []);
 
-coreModule.factory('MemberApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/members/:sessionYear/:chamber?limit=1000', {
-        sessionYear: '@sessionYear',
-        chamber: '@chamber'
-    });
-}]);
-
-coreModule.factory('CommitteeListingApi', ['$resource', function($resource) {
-    return $resource(apiPath + '/committees/:sessionYear/senate', {
-        sessionYear: '@sessionYear'
-    });
-}]);
-
-
+/**
+ * Filter to provide a default string if the input is falsy.
+ */
 coreModule.filter('default', ['$filter', function($filter) {
     return function(input, defaultVal) {
         return (!input) ? defaultVal : input;
     };
 }]);
 
+/**
+ * Converts a date/time string into a moment object and then produces
+ * a formatted date/time string based on the supplied moment format.
+ *
+ * e.g. {{myRawDateString | moment:'MM/DD/YYYY'}}
+ */
 coreModule.filter('moment', ['$filter', function($filter) {
     return function(input, format, defaultVal) {
         if (input) {
@@ -31,12 +26,18 @@ coreModule.filter('moment', ['$filter', function($filter) {
     };
 }]);
 
+/**
+ * Converts a year into it's session year.
+ */
 coreModule.filter('sessionYear', ['$filter', function ($filter) {
     return function (year) {
         return (year % 2 === 0) ? year - 1 : year;
     };
 }]);
 
+/**
+ * Outputs a value if the given input matches a key on the supplied map.
+ */
 coreModule.filter('label', function() {
     return function (item, labelMap) {
         if (item in labelMap) {
@@ -61,7 +62,6 @@ coreModule.filter('ordinalSuffix', ['$filter', function ($filter) {
     };
 }]);
 
-
 /**
  * Converts the properties of an object to an array of key, value pairs.
  * Useful when you want to use the orderBy filter on the properties of an object
@@ -78,6 +78,9 @@ coreModule.filter('toDictionaryArray', function () {
     }
 });
 
+/**
+ * Takes a camelCased string like 'meowCasedWoof' and turns it into 'meow cased woof'
+ */
 coreModule.filter('unCamelCase', function () {
     return function(str) {
         return str.split(/(?=[A-Z])/)
@@ -86,6 +89,9 @@ coreModule.filter('unCamelCase', function () {
     }
 });
 
+/**
+ * Capitalizes the first letter of each word.
+ */
 coreModule.filter('titleCaps', function () {
     return function(str) {
         return str.replace(/\w\S*/g, function (word) {
@@ -94,6 +100,33 @@ coreModule.filter('titleCaps', function () {
     }
 });
 
+/**
+ * Generates list of years.
+ */
+coreModule.factory('YearGenerator', function() {
+    return {
+        getSingleYearsInt: function(start, end) {
+            var years = [];
+            if (!end) end = (new Date()).getFullYear();
+            for (var year = start; year <= end; year++) {
+                years.push(year);
+            }
+            return years;
+        },
+        getSessionYearsInt: function(start, end) {
+            var years = this.getSingleYearsInt(start, end);
+            return years.filter(function(y) { return y % 2 != 0; });
+        },
+        getSingleYearsStr: function(start, end) {
+            var years = this.getSingleYearsInt(start, end);
+            return years.map(function(y) { return String(y); });
+        }
+    }
+});
+
+/**
+ * Basic Pagination model that represents the state of a paginated list.
+ */
 coreModule.factory('PaginationModel', function() {
     return {
         firstPage: 1,
@@ -149,6 +182,66 @@ coreModule.factory('PaginationModel', function() {
         toFirstPage: function() {
             this.currPage = this.firstPage;
         }
+    };
+});
+
+coreModule.filter('default', ['$filter', function($filter) {
+    return function(input, defaultVal) {
+        return (!input) ? defaultVal : input;
+    };
+}]);
+
+coreModule.filter('moment', ['$filter', function($filter) {
+    return function(input, format, defaultVal) {
+        if (input) {
+            return moment(input).format(format);
+        }
+        else {
+            return (typeof defaultVal !== 'undefined') ? defaultVal : "--";
+        }
+    };
+}]);
+
+/**
+ * Appends an appropriate ordinal suffix to the input number
+ */
+coreModule.filter('ordinalSuffix', ['$filter', function ($filter) {
+    var suffixes = ["th", "st", "nd", "rd"];
+    return function(input) {
+        if (typeof input==='number' && (input%1)===0) {
+            var relevantDigits = (input < 20) ? input % 20 : input % 10;
+            return input.toString().concat((relevantDigits <= 3) ? suffixes[relevantDigits] : suffixes[0]);
+        } else {
+            return "D:"
+        }
+    };
+}]);
+
+coreModule.factory('sessionYears', [function(){
+    function generateSessionYears() {
+        var years = [];
+        for (var year = 2009; year <= new Date().getFullYear(); year += 2) {
+            years.push(year);
+        }
+        return years;
+    }
+    return generateSessionYears();
+}]);
+
+/** --- CheckButton --- */
+
+coreModule.directive('checkButton', function(){
+    return {
+        restrict: 'E',
+        scope: {
+            btnclass: '@btnClass',
+            btnmodel: '=ngModel'
+        },
+        transclude: true,
+        template:
+        "<button type='button' class='check-button {{btnclass}}' ng-class='{success: btnmodel, disabled: !btnmodel }' " +
+        "btn-checkbox ng-model='btnmodel' ng-transclude>" +
+        "</button>"
     };
 });
 
@@ -297,7 +390,8 @@ coreModule.directive('lineNumbers', function() {
         restrict: 'E',
         scope: {
             lineStart: '=?',
-            lineEnd: '='
+            lineEnd: '=?',
+            source: '=?'
         },
         replace: true,
         transclude: true,
@@ -308,6 +402,13 @@ coreModule.directive('lineNumbers', function() {
         ,
         link: function($scope) {
             $scope.lineStart = $scope.lineStart || 1;
+            if (!$scope.lineEnd) {
+                if ($scope.source && typeof $scope.source === 'string') {
+                    $scope.lineEnd = $scope.source.split('\n').length;
+                } else {
+                    $scope.lineEnd = 0;
+                }
+            }
             $scope.range = function(num) {
                 return new Array(num);
             };
@@ -331,6 +432,7 @@ coreModule.directive('lineNumbers', function() {
  * render-closed (boolean) Allows closed content to render when set to true
  * extra-classes (String) Any css classes you want to apply to the outermost toggle panel container
  * show-tip (boolean) Set to true to see a 'Click to expand section' tip when panel is collapsed.
+ * callback (fn) Callback when the panel is opened
  */
 coreModule.directive('togglePanel', [function(){
     return {
@@ -338,7 +440,7 @@ coreModule.directive('togglePanel', [function(){
         scope: {
             label: "@",
             extraClasses: "@",
-            callback: "&",
+            callback: "=",
             renderClosed: "@"
         },
         replace: true,
@@ -376,11 +478,118 @@ coreModule.directive('togglePanel', [function(){
                 var panelElem = $element.children(".panel-content");
                 (newOpen) ? panelElem.slideDown(200) : panelElem.slideUp(200);
                 $scope.opened = newOpen || $scope.opened;
-                //console.log("opened", $scope.opened);
             });
         }
     }
 }]);
+
+/**
+ * Main Menu Directive
+ * -------------------
+ * Constructs the left navigation menu with collapsible sections. Check out the fancy ink ripples!
+ * Usage:
+ * <material-menu>
+ *     <menu-section title="Title of the section">
+ *         <menu-item url="URL of the section item">Title of the menu item</menu-item>
+ *          ...
+ *     </menu-section>
+ * </material-menu>
+ */
+openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log', '$location', '$timeout',
+    function($compile, $rootScope, $mdSidenav, $log, $location, $timeout) {
+        return {
+            scope: {},    // Isolated scope
+            template:
+            '<nav>' +
+            '  <div ng-repeat="section in menu.sections">' +
+            '    <a ng-class="{active: isSectionSelected(section)}" class="menu-item menu-title md-menu-item"' +
+            '       ng-click="selectSection(section)" tab-index="-1"> {{section.title}}' +
+            '    </a>' +
+            '    <div ng-if="section.items" ng-repeat="item in section.items">' +
+            '      <a ng-class="{active: isItemSelected(item)}" target="{{item.target}}"' +
+            '         class="menu-item menu-sub-item md-menu-item" ' +
+            '         ng-show="isSectionSelected(section)" tab-index="-1"' +
+            '         ng-href="{{item.url}}">' +
+            '         <span><i ng-class="item.icon" class="prefix-icon2"></i><span ng-bind="item.title"></span></span>' +
+            '      </a>' +
+            '    </div>' +
+            '  </div>' +
+            '</nav>',
+            restrict: 'E',
+            replace: true,
+            controller : function($scope) {
+                $scope.isSectionSelected = function(section) {
+                    return section.active;
+                };
+                $scope.isItemSelected = function(item) {
+                    return item.active;
+                };
+                $scope.selectSection = function(section) {
+                    deselectMenu(false);
+                    section.active = true;
+                };
+                $scope.selectItem = function(item) {
+                    deselectMenu(true);
+                    item.active = true;
+                    $mdSidenav('left').close();
+                };
+
+                function deselectMenu(itemsOnly) {
+                    angular.forEach($scope.urlMap, function(s) {
+                        if (itemsOnly) {
+                            s.ref.active = false;
+                        }
+                        else {
+                            s.secRef.active = false;
+                        }
+                    });
+                }
+
+                $rootScope.$on('$routeChangeSuccess', function() {
+                    $scope.urlMap.some(function(secItem) {
+                        if (secItem.re.test($location.url())) {
+                            $scope.selectSection(secItem.secRef);
+                            $scope.selectItem(secItem.ref);
+                            return true;
+                        }
+                        return false;
+                    });
+                });
+            },
+            compile: function compile($elem, attrs, transclude) {
+                return {
+                    pre: function preLink(scope, $elem, attrs) {
+                        // The menu object is used to render the nav.
+                        scope.menu = {sections: []};
+                        var $sections = $($elem.context).children('menu-section');
+                        angular.forEach($sections, function(_s) {
+                            var section = {title: _s.title, items: []};
+                            angular.forEach($(_s).children('menu-item'), function(_i) {
+                                var item = {
+                                    url: $(_i).attr('url'),
+                                    title: $(_i).text(),
+                                    icon: $(_i).attr('icon'),
+                                    target: $(_i).attr('target')
+                                };
+                                section.items.push(item);
+                            });
+                            scope.menu.sections.push(section);
+                        });
+                        // The url map is used to find route matches when the location changes.
+                        scope.urlMap = [];
+                        angular.forEach(scope.menu.sections, function(section){
+                            angular.forEach(section.items, function(item) {
+                                scope.urlMap.push({isSection: false, url: item.url, re: new RegExp('^' + item.url),
+                                    ref: item, secRef: section});
+                            });
+                        });
+                        scope.urlMap.sort(function(a,b) {return b.url.length - a.url.length});
+                    }
+                }
+            }
+        }
+    }]);
+
 
 /** --- CheckButton --- */
 
@@ -406,6 +615,36 @@ coreModule.directive('checkButton', function(){
         }
     };
 });
+
+/**
+ * Utility methods related to bill data.
+ */
+coreModule.factory('BillUtils', [function() {
+    return {
+        getStatusDesc: function(status) {
+            var desc = "";
+            if (status) {
+                switch (status.statusType) {
+                    case "IN_SENATE_COMM":
+                        desc = "In Senate " + status.committeeName + " Committee";
+                        break;
+                    case "IN_ASSEMBLY_COMM":
+                        desc = "In Assembly " + status.committeeName + " Committee";
+                        break;
+                    case "SENATE_FLOOR":
+                        desc = "On Senate Floor as Calendar No: " + status.billCalNo;
+                        break;
+                    case "ASSEMBLY_FLOOR":
+                        desc = "On Assembly Floor as Calendar No: " + status.billCalNo;
+                        break;
+                    default:
+                        desc = status.statusDesc;
+                }
+            }
+            return desc;
+        }
+    };
+}]);
 
 
 /** --- Am Charts --- */

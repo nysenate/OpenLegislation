@@ -7,6 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Provides base functionality for implementors of SpotCheckReportService
@@ -41,7 +42,15 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
     /** {@inheritDoc} */
     @Override
     public SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query) {
-        return getReportDao().getOpenObservations(query);
+        return getReportDao().getOpenMismatches(query);
+    }
+
+    /** {@inheritDoc}
+     * @param refTypes
+     * @param observedAfter*/
+    @Override
+    public OpenMismatchSummary getOpenMismatchSummary(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter) {
+        return getReportDao().getOpenMismatchSummary(refTypes, observedAfter);
     }
 
     /** {@inheritDoc} */

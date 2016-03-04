@@ -71,10 +71,10 @@ public class SpotCheckNotificationService {
                 .append(StringUtils.isNotBlank(daybreakReport.getNotes()) ? "Notes: " + daybreakReport.getNotes() : "")
                 .append("\n\n")
                 .append("Total open errors: ")
-                .append(daybreakReport.getOpenMismatchCount())
+                .append(daybreakReport.getOpenMismatchCount(false))
                 .append("\n");
 
-        daybreakReport.getMismatchStatusTypeCounts().forEach((status, typeCounts) -> {
+        daybreakReport.getMismatchStatusTypeCounts(false).forEach((status, typeCounts) -> {
             long totalTypeCounts = typeCounts.values().stream().reduce(0L, (a, b) -> a + b);
             messageBuilder.append(status)
                     .append(": ")
@@ -88,7 +88,14 @@ public class SpotCheckNotificationService {
                             .append("\n"));
         });
 
-        NotificationType type = daybreakReport.getOpenMismatchCount() > 0
+        long ignoredCount = daybreakReport.getOpenMismatchCount(true);
+        if (ignoredCount > 0) {
+            messageBuilder.append("IGNORED: ")
+                    .append(ignoredCount)
+                    .append("\n");
+        }
+
+        NotificationType type = daybreakReport.getOpenMismatchCount(false) > 0
                 ? daybreakReport.getReferenceType().getNotificationType()
                 : NotificationType.SPOTCHECK_ALL_CLEAR;
 

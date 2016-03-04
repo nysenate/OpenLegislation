@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.daybreak;
 
-import gov.nysenate.openleg.model.daybreak.*;
+import gov.nysenate.openleg.model.spotcheck.daybreak.*;
 import gov.nysenate.openleg.service.spotcheck.base.BaseCheckMailService;
 import gov.nysenate.openleg.service.spotcheck.base.CheckMailService;
 import org.apache.commons.lang3.exception.ExceptionUtils;

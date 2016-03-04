@@ -21,6 +21,7 @@ import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     @Override
     public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, FilterBuilder filter,
-                                                              String sort, LimitOffset limitOffset) {
+                                                              List<SortBuilder> sort, LimitOffset limitOffset) {
         SearchRequestBuilder searchRequest = getSearchRequest(committeeSearchIndexName, query, filter, sort, limitOffset);
         SearchResponse response = searchRequest.execute().actionGet();
         return getSearchResults(response, limitOffset, this::getCommitteeVersionId);

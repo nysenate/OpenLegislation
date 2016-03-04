@@ -45,7 +45,6 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
 
     @Value("${agenda.cache.size}") private long agendaCacheSizeMb;
 
-    private static final String agendaCacheName = "agendas";
     private EhCacheCache agendaCache;
 
     @PostConstruct
@@ -57,7 +56,7 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
     @PreDestroy
     private void cleanUp() {
         evictCaches();
-        cacheManager.removeCache(agendaCacheName);
+        cacheManager.removeCache(ContentCache.AGENDA.name());
     }
 
     /** --- CachingService implementation --- */
@@ -70,7 +69,7 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
     /** {@inheritDoc} */
     @Override
     public void setupCaches() {
-        Cache cache = new Cache(new CacheConfiguration().name(agendaCacheName)
+        Cache cache = new Cache(new CacheConfiguration().name(ContentCache.AGENDA.name())
             .eternal(true)
             .maxBytesLocalHeap(agendaCacheSizeMb, MemoryUnit.MEGABYTES)
             .sizeOfPolicy(defaultSizeOfPolicy()));

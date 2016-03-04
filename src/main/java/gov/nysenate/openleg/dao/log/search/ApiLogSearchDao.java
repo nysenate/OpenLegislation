@@ -6,8 +6,10 @@ import gov.nysenate.openleg.model.auth.ApiResponse;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface ApiLogSearchDao
 {
@@ -20,7 +22,7 @@ public interface ApiLogSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<Integer>
      */
-    SearchResults<Integer> searchLogs(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff);
+    SearchResults<Integer> searchLogs(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
 
     /**
      * Similar to #searchLogs, but instead of fetching just the request ids, this will
@@ -28,7 +30,7 @@ public interface ApiLogSearchDao
      *
      * @return SearchResults<ApiLogItemView>
      */
-    SearchResults<ApiLogItemView> searchLogsAndFetchData(QueryBuilder query, FilterBuilder filter, String sort, LimitOffset limOff);
+    SearchResults<ApiLogItemView> searchLogsAndFetchData(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
 
     /**
      * Update the log index with the content of the supplied ApiResponse.

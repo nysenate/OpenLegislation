@@ -31,13 +31,15 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         /** --- Transcripts --- */
 
         .when(ctxPath + '/transcripts', { templateUrl: ctxPath + '/partial/content/transcript/transcript-list', reloadOnSearch: false})
-        .when(ctxPath + '/transcripts/session/:filename', { templateUrl: ctxPath + '/partial/content/transcript/session-transcript-view', reloadOnSearch: false})
-        .when(ctxPath + '/transcripts/hearing/:filename', { templateUrl: ctxPath + '/partial/content/transcript/hearing-transcript-view'})
+        .when(ctxPath + '/transcripts/session/:filename/', { templateUrl: ctxPath + '/partial/content/transcript/session-transcript-view', reloadOnSearch: false})
+        .when(ctxPath + '/transcripts/hearing/:filename/', { templateUrl: ctxPath + '/partial/content/transcript/hearing-transcript-view'})
 
         /** --- Reports --- */
 
         .when(ctxPath + '/admin/report/spotcheck', { templateUrl: ctxPath + '/partial/report/spotcheck-summary', reloadOnSearch: false })
-        .when(ctxPath + '/admin/report/spotcheck/open', { templateUrl: ctxPath + '/partial/report/spotcheck-mismatch', reloadOnSearch: false})
+        .when(ctxPath + '/admin/report/spotcheck/open', { templateUrl: ctxPath + '/partial/report/spotcheck-open-summary'})
+        .when(ctxPath + '/admin/report/spotcheck/open/:reportType',
+            { templateUrl: ctxPath + '/partial/report/spotcheck-mismatch', reloadOnSearch: false})
         .when(ctxPath + '/admin/report/spotcheck/:type/:runTime',
                 { templateUrl: ctxPath + '/partial/report/spotcheck-report', reloadOnSearch: false })
 
@@ -45,6 +47,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
 
         .when(ctxPath + '/admin', { templateUrl: ctxPath + '/partial/admin/dashboard', reloadOnSearch: false })
         .when(ctxPath + '/admin/account', { templateUrl: ctxPath + '/partial/admin/account', reloadOnSearch: false })
+        .when(ctxPath + '/admin/logs', { templateUrl: ctxPath + '/partial/admin/logs', reloadOnSearch: false })
         .when(ctxPath + '/admin/logout', {templateUrl: ctxPath + '/partial/admin/logout'})
 
         /** --- Docs --- */
@@ -58,7 +61,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         /** --- Home Page --- */
 
         .otherwise({
-            templateUrl: ctxPath + '/partial/home/landing'
+            redirectTo: ctxPath + '/bills'
         });
 
     $locationProvider.html5Mode(true);

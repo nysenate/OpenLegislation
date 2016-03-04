@@ -15,6 +15,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.model.search.UnexpectedSearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.BooleanUtils;
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -65,12 +67,14 @@ public abstract class BaseCtrl
      * @return SortOrder
      */
     protected SortOrder getSortOrder(WebRequest webRequest, SortOrder defaultSortOrder) {
-        try {
-            return SortOrder.valueOf(webRequest.getParameter("order").toUpperCase());
+        String sortOrderParam = Optional.ofNullable(webRequest.getParameter("order"))
+                .orElse(webRequest.getParameter("sortOrder"));
+        if (sortOrderParam != null) {
+            try {
+                return SortOrder.valueOf(sortOrderParam.toUpperCase());
+            } catch (IllegalArgumentException ignored) {}
         }
-        catch (Exception ex) {
-            return defaultSortOrder;
-        }
+        return defaultSortOrder;
     }
 
     /**
@@ -410,12 +414,30 @@ public abstract class BaseCtrl
         return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS, new InvalidParameterView(ex));
     }
 
+    @ExceptionHandler(TypeMismatchException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected ErrorResponse handleTypeMismatchException(TypeMismatchException ex) {
+        logger.debug(ExceptionUtils.getStackTrace(ex));
+        return new ViewObjectErrorResponse(ErrorCode.INVALID_ARGUMENTS,
+                new InvalidParameterView(ex.getPropertyName(), ex.getRequiredType().getSimpleName(),
+                        "must be convertible to type: " + ex.getRequiredType().getSimpleName(),
+                        Objects.toString(ex.getValue())));
+    }
+
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ErrorResponse handleMissingParameterException(MissingServletRequestParameterException ex) {
         logger.debug(ExceptionUtils.getStackTrace(ex));
         return new ViewObjectErrorResponse(ErrorCode.MISSING_PARAMETERS,
             new ParameterView(ex.getParameterName(), ex.getParameterType()));
+    }
+
+    @ExceptionHandler(UnexpectedSearchException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ViewObjectErrorResponse unexpectedSearchExceptionHandler(UnexpectedSearchException ex) {
+        logger.error("Caught unexpected search exception!", ex);
+//        pushExceptionNotification(ex);
+        return searchExceptionHandler(ex);
     }
 
     @ExceptionHandler(SearchException.class)
@@ -435,7 +457,7 @@ public abstract class BaseCtrl
     @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT, reason = "Client abort")
     @ExceptionHandler(ClientAbortException.class)
     public void handleClientAbortException(ClientAbortException ex) {
-        logger.debug("Client aborted");
+        logger.debug("Client aborted", ex);
         // Do Nothing
     }
 

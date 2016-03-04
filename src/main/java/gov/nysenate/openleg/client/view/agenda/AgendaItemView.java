@@ -12,14 +12,14 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 public class AgendaItemView implements ViewObject
 {
     private BillIdView billId;
-    private SimpleBillInfoView billInfo;
+    private BillInfoView billInfo;
     private String message;
 
     public AgendaItemView(AgendaInfoCommitteeItem item, BillDataService billDataService) {
         if (item != null) {
             billId = new BillIdView(item.getBillId());
             if (billDataService != null) {
-                this.billInfo = new SimpleBillInfoView(billDataService.getBillInfoSafe(BaseBillId.of(item.getBillId())));
+                this.billInfo = new BillInfoView(billDataService.getBillInfoSafe(BaseBillId.of(item.getBillId())));
             }
             this.message = item.getMessage();
         }
@@ -29,7 +29,7 @@ public class AgendaItemView implements ViewObject
         return billId;
     }
 
-    public SimpleBillInfoView getBillInfo() {
+    public BillInfoView getBillInfo() {
         return billInfo;
     }
 

@@ -63,6 +63,11 @@ public enum SqlBillTextReferenceQuery implements BasicSqlQuery {
         "(print_no, session_year, priority) " +
         "VALUES(:printNo, :sessionYear, :priority)"
     ),
+    UPDATE_SCRAPE_QUEUE(
+        "UPDATE ${schema}." + SqlTable.BILL_SCRAPE_QUEUE + "\n" +
+        "SET priority = :priority\n" +
+        "WHERE session_year = :sessionYear AND print_no = :printNo"
+    ),
     SELECT_SCRAPE_QUEUE(
         "SELECT *, COUNT(*) OVER () AS total FROM ${schema}."+SqlTable.BILL_SCRAPE_QUEUE
     ),

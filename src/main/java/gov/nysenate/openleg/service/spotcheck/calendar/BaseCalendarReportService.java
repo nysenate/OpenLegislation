@@ -56,7 +56,7 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
     }
 
     @Override
-    public SpotCheckReport<CalendarId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
+    public SpotCheckReport<CalendarId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
         List<Calendar> references = retrieveReferences(start, end);
         LocalDateTime referenceDateTime = getMostRecentReference(references);
         SpotCheckReportId reportId = new SpotCheckReportId(getSpotcheckRefType(),
@@ -107,7 +107,7 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
 
         SpotCheckObservation<CalendarId> observation = new SpotCheckObservation<>(obsRefId, id);
         observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
-                                                      id.toString(), ""));
+                "", id.toString()));
         observations.add(observation);
     }
 

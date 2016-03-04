@@ -10,26 +10,7 @@
 
 <open-layout:head title="Open 2.0">
   <!-- Application Scripts -->
-  <script type="application/javascript" src="${ctxPath}/static/js/src/core.js"></script>
-  <script type="application/javascript" src="${ctxPath}/static/js/src/app.js"></script>
-  <script type="application/javascript" src="${ctxPath}/static/js/src/routes.js"></script>
-
-  <script src="${ctxPath}/static/js/src/component/content/bill.js"></script>
-  <script src="${ctxPath}/static/js/src/component/content/law.js"></script>
-  <script src="${ctxPath}/static/js/src/component/content/agenda.js"></script>
-  <script src="${ctxPath}/static/js/src/component/content/calendar.js"></script>
-  <script src="${ctxPath}/static/js/src/component/content/agenda.js"></script>
-  <script src="${ctxPath}/static/js/src/component/content/member.js"></script>
-  <script src="${ctxPath}/static/js/src/component/content/transcript.js"></script>
-  <script src="${ctxPath}/static/js/src/component/report/spotcheck-base.js"></script>
-  <script src="${ctxPath}/static/js/src/component/report/spotcheck-detail.js"></script>
-  <script src="${ctxPath}/static/js/src/component/report/spotcheck-summary.js"></script>
-  <script src="${ctxPath}/static/js/src/component/report/spotcheck-report.js"></script>
-  <script src="${ctxPath}/static/js/src/component/report/spotcheck-mismatch.js"></script>
-  <script src="${ctxPath}/static/js/src/component/admin/account.js"></script>
-  <script src="${ctxPath}/static/js/src/component/admin/notification_sub.js"></script>
-  <script src="${ctxPath}/static/js/src/component/admin/dashboard.js"></script>
-  <script src="${ctxPath}/static/js/src/component/admin/environment.js"></script>
+  <script type="application/javascript" src="${ctxPath}/static/js/dest/app.min.js"></script>
 </open-layout:head>
 <!--
                       __     __,
@@ -48,69 +29,65 @@
                              `'-'`
 -->
 <open-layout:body appName="open">
-  <section id="app-wrapper" layout="column" ng-controller="AppCtrl" layout-fill>
-    <section layout="row">
-      <%-- Left Nav --%>
-      <section>
-        <div id="left-nav-spacer" hide-sm hide-md></div>
-        <md-sidenav id="left-nav" class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
-          <div id="logo-wrapper">
-            <div id="logo">
-              <a class="margin-left-10" href="${ctxPath}/">
-                <img src="${ctxPath}/static/img/NYSS_seal.png"/>
-                <span>Open</span> Legislation
-              </a>
-            </div>
-          </div>
-          <%-- Left Nav Menu Items --%>
-          <div class="left-nav-menu">
-            <material-menu>
-              <menu-section title="Main Menu">
-                <menu-item url="${ctxPath}/" icon="icon-home">Home</menu-item>
-                <menu-item url="${ctxPath}/calendars" icon="icon-calendar">Senate Calendars</menu-item>
-                <menu-item url="${ctxPath}/agendas" icon="icon-megaphone">Senate Agendas / Meetings</menu-item>
-                <menu-item url="${ctxPath}/bills" icon="icon-documents">Bills and Resolutions</menu-item>
-                <menu-item url="${ctxPath}/laws" icon="icon-bookmarks">New York State Laws</menu-item>
-                <menu-item url="${ctxPath}/members" icon="icon-users">Senate / Assembly Membership</menu-item>
-                <menu-item url="${ctxPath}/transcripts" icon="icon-text">Floor/Hearing Transcripts</menu-item>
-                <menu-item url="${ctxPath}/docs" target="_self" icon="icon-code">JSON API Docs</menu-item>
-                <shiro:user>
-                  <menu-item url="${ctxPath}/logout" target="_self" icon="icon-log-out">Logout</menu-item>
-                </shiro:user>
-              </menu-section>
+  <div id="app-wrapper" layout="row" ng-controller="AppCtrl">
+    <%-- Left Nav --%>
+    <md-sidenav id="left-nav" md-component-id="left" class="md-sidenav-left" md-is-locked-open="$mdMedia('gt-md')">
+      <md-toolbar>
+        <div id="logo">
+          <a href="${ctxPath}/">
+            <img src="${ctxPath}/static/img/NYSS_seal.png"/>
+            <span>Open</span> Legislation
+          </a>
+        </div>
+      </md-toolbar>
+      <%-- Left Nav Menu Items --%>
+      <md-content class="left-nav-menu">
+        <material-menu>
+          <menu-section title="Explore">
+            <%--<menu-item url="${ctxPath}/" icon="icon-home">Dashboard</menu-item>--%>
+            <menu-item url="${ctxPath}/calendars" icon="icon-calendar">Senate Calendars</menu-item>
+            <menu-item url="${ctxPath}/agendas" icon="icon-megaphone">Senate Agendas / Meetings</menu-item>
+            <menu-item url="${ctxPath}/bills" icon="icon-documents">Bills and Resolutions</menu-item>
+            <menu-item url="${ctxPath}/laws" icon="icon-bookmarks">New York State Laws</menu-item>
+            <menu-item url="${ctxPath}/transcripts" icon="icon-text">Session/Hearing Transcripts</menu-item>
+            <menu-item url="${ctxPath}/docs" target="_self" icon="icon-code">JSON API Docs</menu-item>
+            <shiro:user>
+              <menu-item url="${ctxPath}/logout" target="_self" icon="icon-log-out">Logout</menu-item>
+            </shiro:user>
+          </menu-section>
 
-              <shiro:hasPermission name="admin:view">
-                <menu-section title="Admin">
-                  <menu-item url="${ctxPath}/admin">Dashboard</menu-item>
-                  <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
-                </menu-section>
-                <menu-section title="Reports">
-                  <menu-item url="${ctxPath}/admin/report/spotcheck">Spotcheck Reports</menu-item>
-                  <menu-item url="${ctxPath}/admin/report/spotcheck/open">Open Mismatches</menu-item>
-                  <%-- --%>
-                </menu-section>
-              </shiro:hasPermission>
-            </material-menu>
-          </div>
-        </md-sidenav>
-      </section>
-      <%-- Main Content Area --%>
-        <c:forEach var="m" items="${membersList}">
-          ${m}
-        </c:forEach>
-      <section id="content-wrapper" flex="1">
+          <shiro:hasPermission name="admin:view">
+            <menu-section title="Admin">
+              <menu-item url="${ctxPath}/admin">Configuration</menu-item>
+              <menu-item url="${ctxPath}/admin/logs">Logs</menu-item>
+              <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
+            </menu-section>
+            <menu-section title="Reports">
+              <menu-item url="${ctxPath}/admin/report/spotcheck/open">Open Mismatches</menu-item>
+              <menu-item url="${ctxPath}/admin/report/spotcheck">Report Log</menu-item>
+            </menu-section>
+          </shiro:hasPermission>
+        </material-menu>
+      </md-content>
+    </md-sidenav>
+
+
+    <div layout="column" role="main" flex>
         <%-- Content Header --%>
-        <md-toolbar id="content-header" class="md-primary" ng-class="{'header-visible': header.visible }">
-          <h1 class="top-bar-heading md-toolbar-tools">
-            <i hide-gt-md ng-click="toggleLeftNav()" class="menu-icon icon-menu"></i>
-            {{header.text}}
-          </h1>
+        <md-toolbar id="content-header" ng-class="{'header-visible': header.visible }">
+          <div class="md-toolbar-tools">
+            <h1 class="top-bar-heading">
+              <i hide-gt-md ng-click="toggleLeftNav()" class="menu-icon icon-menu"></i>
+              {{header.text}}
+            </h1>
+          </div>
         </md-toolbar>
-        <section id="content" ng-view class="fade" autoscroll="true">
-        </section>
-      </section>
-    </section>
-  </section>
+        <%-- Main Content Area --%>
+        <md-content id="content" flex md-scroll-y ng-view class="fade" autoscroll="true">
+            <%-- Content from the templates are injected here --%>
+        </md-content>
+    </div>
+  </div>
 </open-layout:body>
 <open-layout:footer>
 </open-layout:footer>

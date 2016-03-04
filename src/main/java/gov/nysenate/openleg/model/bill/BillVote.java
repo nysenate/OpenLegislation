@@ -6,7 +6,7 @@ import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.CommitteeId;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -38,7 +38,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
 
     /** Sets of members grouped based upon how they voted. */
     @SuppressWarnings("serial")
-    private SetMultimap<BillVoteCode, Member> memberVotes = HashMultimap.create();
+    private SetMultimap<BillVoteCode, SessionMember> memberVotes = HashMultimap.create();
 
     /** An identifier to uniquely identify votes that came in on the same day.
      *  Currently not implemented as the source data does not contain this value. */
@@ -88,7 +88,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
      * @param voteCode BillVoteCode
      * @return Set<Member>
      */
-    public Set<Member> getMembersByVote(BillVoteCode voteCode) {
+    public Set<SessionMember> getMembersByVote(BillVoteCode voteCode) {
         return memberVotes.get(voteCode);
     }
 
@@ -97,7 +97,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
      * @param voteCode BillVoteCode
      * @param member Member
      */
-    public void addMemberVote(BillVoteCode voteCode, Member member) {
+    public void addMemberVote(BillVoteCode voteCode, SessionMember member) {
         memberVotes.put(voteCode, member);
     }
 
@@ -189,7 +189,7 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
         this.billId = billId;
     }
 
-    public SetMultimap<BillVoteCode, Member> getMemberVotes() {
+    public SetMultimap<BillVoteCode, SessionMember> getMemberVotes() {
         return memberVotes;
     }
 

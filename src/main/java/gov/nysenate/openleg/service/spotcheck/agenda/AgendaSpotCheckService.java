@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
-import static org.apache.commons.lang3.StringUtils.*;
 
 @Service
 public class AgendaSpotCheckService
@@ -57,7 +56,7 @@ public class AgendaSpotCheckService
         // Some friendly logging
         int mismatchCount = observation.getMismatches().size();
         if (mismatchCount > 0) {
-            logger.info("Committee Meeting Agenda {} | {} mismatch(es). | {}", content.getId(), mismatchCount, observation.getMismatchTypes());
+            logger.info("Committee Meeting Agenda {} | {} mismatch(es). | {}", content.getId(), mismatchCount, observation.getMismatchTypes(false));
         }
         return observation;
     }
@@ -73,7 +72,7 @@ public class AgendaSpotCheckService
 
         if (!Sets.symmetricDifference(refBills, contentBills).isEmpty()) {
             obs.addMismatch(new SpotCheckMismatch(AGENDA_BILL_LISTING,
-                    StringUtils.join(refBills, "\n"), StringUtils.join(contentBills, "\n")));
+                    StringUtils.join(contentBills, "\n"), StringUtils.join(refBills, "\n")));
         }
     }
 
@@ -82,7 +81,7 @@ public class AgendaSpotCheckService
         String refChair = StringUtils.trim(reference.getChair());
         String contentChair = StringUtils.trim(content.getChair());
         if (!StringUtils.equals(refChair, contentChair)) {
-            obs.addMismatch(new SpotCheckMismatch(AGENDA_CHAIR, refChair, contentChair));
+            obs.addMismatch(new SpotCheckMismatch(AGENDA_CHAIR, contentChair, refChair));
         }
     }
 
@@ -91,7 +90,7 @@ public class AgendaSpotCheckService
         if (content.getMeetingDateTime() == null
                 || !content.getMeetingDateTime().equals(reference.getMeetingDateTime())) {
             obs.addMismatch(new SpotCheckMismatch(AGENDA_MEETING_TIME,
-                    String.valueOf(reference.getMeetingDateTime()), String.valueOf(content.getMeetingDateTime())));
+                    String.valueOf(content.getMeetingDateTime()), String.valueOf(reference.getMeetingDateTime())));
         }
     }
 
@@ -100,7 +99,7 @@ public class AgendaSpotCheckService
         String refLocation = StringUtils.trim(reference.getLocation());
         String contentLocation = StringUtils.trim(content.getLocation());
         if (!StringUtils.equals(refLocation, contentLocation)) {
-            obs.addMismatch(new SpotCheckMismatch(AGENDA_LOCATION, refLocation, contentLocation));
+            obs.addMismatch(new SpotCheckMismatch(AGENDA_LOCATION, contentLocation, refLocation));
         }
     }
 
@@ -109,7 +108,7 @@ public class AgendaSpotCheckService
         String refNotes = StringUtils.trim(reference.getNotes());
         String contentNotes = StringUtils.trim(content.getNotes());
         if (!StringUtils.equals(refNotes, contentNotes)) {
-            obs.addMismatch(new SpotCheckMismatch(AGENDA_NOTES, refNotes, contentNotes));
+            obs.addMismatch(new SpotCheckMismatch(AGENDA_NOTES, contentNotes, refNotes));
         }
     }
 }

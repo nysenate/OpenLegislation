@@ -1,15 +1,15 @@
 <!-- Template for displaying generic paginated content updates -->
-<md-card class="content-card">
-  <md-subheader flex><strong>{{updateResponse.total}}</strong> <span ng-show="showDetails"> granular </span> updates
+<div class="content-card">
+  <h3 class="text-normal"><strong>{{updateResponse.total}}</strong> <span ng-show="showDetails"> granular </span> updates
     <span ng-show="fromDate && toDate">between {{fromDate | moment:'lll'}} and {{toDate | moment:'lll'}}.</span>
     <span ng-show="pagination.totalItems > 0">Viewing page {{pagination.currPage}} of {{pagination.lastPage}}. </span>
-  </md-subheader>
+  </h3>
   <div class="subheader" ng-if="pagination.totalItems > pagination.itemsPerPage">
-    <div flex style="text-align: right;">
-      <dir-pagination-controls max-size="5" boundary-links="true"></dir-pagination-controls>
+    <div>
+      <dir-pagination-controls max-size="10" class="text-align-center" boundary-links="true"></dir-pagination-controls>
     </div>
   </div>
-</md-card>
+</div>
 <section>
   <div dir-paginate="update in updateResponse.result.items | itemsPerPage: updateResponse.limit"
        current-page="pagination.currPage" total-items="updateResponse.total">
@@ -45,10 +45,6 @@
     </md-card>
   </div>
 </section>
-<md-card class="content-card" ng-if="pagination.totalItems > pagination.itemsPerPage">
-  <div class="subheader">
-    <div flex style="text-align: right;">
-      <dir-pagination-controls max-size="5" boundary-links="true"></dir-pagination-controls>
-    </div>
-  </div>
-</md-card>
+<div ng-if="pagination.totalItems > pagination.itemsPerPage">
+  <dir-pagination-controls  max-size="10" class="text-align-center" boundary-links="true"></dir-pagination-controls>
+</div>

@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,7 +31,7 @@ public class ScrapedBillTextParser {
 
     private static final Pattern billIdPattern = Pattern.compile("^([A-z]\\d+)(?:-([A-z]))?$");
 
-    private static final Pattern resolutionStartPattern = Pattern.compile("^\\s+([A-Z]{2,})");
+    private static final Pattern resolutionStartPattern = Pattern.compile("^\\s+([A-z]{2,})");
 
     /**
      * Parses a scraped bill file into a bill text reference containing an active amendment, full text, and a sponsor memo
@@ -49,7 +50,7 @@ public class ScrapedBillTextParser {
             Document document = Jsoup.parse(file, "UTF-8");
             // If the scraped page indicates the bill was not found, return a "not found" bill text reference
             if (billNotFound(document)) {
-                return new BillTextReference(baseBillId, referenceDateTime, "", "", true);
+                return new BillTextReference(baseBillId, referenceDateTime, FileUtils.readFileToString(file), "", true);
             }
             try {
                 // Get the active amendment id, full text and memo
@@ -58,7 +59,8 @@ public class ScrapedBillTextParser {
                 String memo = getMemo(document, baseBillId);
                 return new BillTextReference(billId, referenceDateTime, text, memo, false);
             } catch (ParseError ex) {
-                throw new ParseError("Error while parsing scraped bill: " + file.getName(), ex);
+//                throw new ParseError("Error while parsing scraped bill: " + file.getName(), ex);
+                return new BillTextReference(baseBillId, referenceDateTime, "", "", true);
             }
         }
         throw new ParseError("Could not parse scraped bill filename: " + file.getName());
@@ -176,7 +178,7 @@ public class ScrapedBillTextParser {
      */
     private boolean billNotFound(Document document) {
         Element botContents = document.getElementById("nv_bot_contents");
-        if (botContents == null) return false;
+        if (botContents == null) return true;
         Elements redFonts = botContents.select("font[color=\"red\"]");
         Element notFoundText = redFonts.first();
         return notFoundText != null && "Bill Status Information Not Found".equals(notFoundText.text());

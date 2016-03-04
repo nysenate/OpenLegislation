@@ -24,6 +24,14 @@ public interface BasicSqlQuery
     }
 
     /**
+     * Overload of getSql(envSchema). Returns a sql string with an order by clause
+     * appended to the end according to the supplied OrderBy instance.
+     */
+    public default String getSql(String envSchema, OrderBy orderBy) {
+        return getSql(envSchema, orderBy, LimitOffset.ALL);
+    }
+
+    /**
      * Overload of getSql(envSchema, limitOffset). Returns a sql string with an
      * order by clause set according to the supplied OrderBy instance.
      */

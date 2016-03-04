@@ -2,8 +2,8 @@ package gov.nysenate.openleg.dao;
 
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.daybreak.DaybreakDao;
-import gov.nysenate.openleg.model.daybreak.DaybreakBill;
+import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
 import org.junit.Test;
 import org.slf4j.Logger;

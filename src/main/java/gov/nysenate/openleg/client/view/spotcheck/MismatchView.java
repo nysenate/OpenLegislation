@@ -3,6 +3,7 @@ package gov.nysenate.openleg.client.view.spotcheck;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchIgnore;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckPriorMismatch;
 import gov.nysenate.openleg.util.StringDiffer;
 
@@ -20,6 +21,7 @@ public class MismatchView implements ViewObject
     protected String notes;
     protected ListView<String> issueIds;
     protected ListView<PriorMismatchView> prior;
+    protected SpotCheckMismatchIgnore ignoreStatus;
 
     public MismatchView(SpotCheckMismatch mismatch, List<SpotCheckPriorMismatch> priorMismatches) {
         if (mismatch != null) {
@@ -30,6 +32,7 @@ public class MismatchView implements ViewObject
             this.observedData = mismatch.getObservedData();
             this.notes = mismatch.getNotes();
             this.issueIds = ListView.ofStringList(mismatch.getIssueIds());
+            this.ignoreStatus = mismatch.getIgnoreStatus();
             this.prior = ListView.of(
                     priorMismatches.stream().map(PriorMismatchView::new)
                             .sorted((a, b) -> b.getReportId().compareTo(a.getReportId()))
@@ -63,6 +66,10 @@ public class MismatchView implements ViewObject
 
     public ListView<String> getIssueIds() {
         return issueIds;
+    }
+
+    public SpotCheckMismatchIgnore getIgnoreStatus() {
+        return ignoreStatus;
     }
 
     public ListView<PriorMismatchView> getPrior() {

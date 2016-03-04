@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.dao.base;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * The paginated list is a wrapper for associating lists with a total count and
@@ -19,6 +22,14 @@ public class PaginatedList<T>
         this.total = total;
         this.limOff = limOff;
         this.results = results;
+    }
+
+    /** --- Functional Getters --- */
+
+    public Stream<T> stream() {
+        return Optional.ofNullable(results)
+                .orElse(Collections.emptyList())
+                .stream();
     }
 
     /** --- Basic Getters --- */

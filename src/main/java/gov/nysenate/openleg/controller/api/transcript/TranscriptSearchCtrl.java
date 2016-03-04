@@ -38,7 +38,7 @@ public class TranscriptSearchCtrl extends BaseCtrl
      * Search all transcripts:  (GET) /api/3/transcripts/search
      * Request Parameters:  term - The lucene query string.
      *                      sort - The lucene sort string (blank by default)
-     *                      summary - If true, the transcript info is returned.
+     *                      summary - If true, the transcript info is returned. (true by default)
      *                      full - Set to true to retrieve full transcript responses (false by default)
      *                      limit - Limit the number of results (default 25)
      *                      offset - Start results from offset
@@ -46,7 +46,7 @@ public class TranscriptSearchCtrl extends BaseCtrl
     @RequestMapping(value = "/search")
     public BaseResponse globalSearch(@RequestParam(required = true) String term,
                                      @RequestParam(defaultValue = "") String sort,
-                                     @RequestParam(defaultValue = "false") boolean summary,
+                                     @RequestParam(defaultValue = "true") boolean summary,
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
@@ -65,7 +65,7 @@ public class TranscriptSearchCtrl extends BaseCtrl
     public BaseResponse yearSearch(@PathVariable int year,
                                    @RequestParam(required = true) String term,
                                    @RequestParam(defaultValue = "") String sort,
-                                   @RequestParam(defaultValue = "false") boolean summary,
+                                   @RequestParam(defaultValue = "true") boolean summary,
                                    @RequestParam(defaultValue = "false") boolean full,
                                    WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);

@@ -3,7 +3,7 @@ package gov.nysenate.openleg.model.entity;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 
-public class MemberNotFoundEx extends Exception
+public class MemberNotFoundEx extends RuntimeException
 {
     private static final long serialVersionUID = 1963594118700545358L;
 

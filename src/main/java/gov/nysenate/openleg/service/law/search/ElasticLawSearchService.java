@@ -9,10 +9,8 @@ import gov.nysenate.openleg.dao.law.data.LawDataDao;
 import gov.nysenate.openleg.dao.law.search.ElasticLawSearchDao;
 import gov.nysenate.openleg.model.law.LawDocId;
 import gov.nysenate.openleg.model.law.LawDocument;
-import gov.nysenate.openleg.model.search.ClearIndexEvent;
-import gov.nysenate.openleg.model.search.RebuildIndexEvent;
-import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.model.search.*;
+import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.law.event.BulkLawUpdateEvent;
 import gov.nysenate.openleg.service.law.event.LawUpdateEvent;
@@ -63,13 +61,14 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
             queryBuilder = QueryBuilders.filteredQuery(queryBuilder, FilterBuilders.typeFilter(lawId));
         }
         try {
-            return lawSearchDao.searchLawDocs(queryBuilder, null, null, sort, limOff);
+            return lawSearchDao.searchLawDocs(queryBuilder, null, null,
+                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
         }
         catch (SearchParseException ex) {
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new SearchException("Unexpected search exception!", ex);
+            throw new UnexpectedSearchException(ex);
         }
     }
 

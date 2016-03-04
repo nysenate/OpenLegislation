@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class ApiRequest
 {
@@ -24,6 +25,9 @@ public class ApiRequest
 
     /** The user's api key, if provided */
     private String apiKey;
+
+    /** Reference to the ApiUser if applicable */
+    private ApiUser apiUser;
 
     /** A unique identifier used to specify each request made */
     private Integer requestId;
@@ -95,6 +99,14 @@ public class ApiRequest
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+    public ApiUser getApiUser() {
+        return apiUser;
+    }
+
+    public void setApiUser(ApiUser apiUser) {
+        this.apiUser = apiUser;
     }
 
     public Integer getRequestId() {

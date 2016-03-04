@@ -1,20 +1,20 @@
-var notificationModule = angular.module('open.notification.subscription', ['open.core']);
+var adminModule = angular.module('open.admin');
 
-notificationModule.factory('GetNotifSubsApi', ['$resource', function ($resource) {
+adminModule.factory('GetNotifSubsApi', ['$resource', function ($resource) {
     return $resource(adminApiPath + '/notifications/subscriptions');
 }]);
 
-notificationModule.factory('SubscribeToNotifApi', ['$resource', function ($resource) {
+adminModule.factory('SubscribeToNotifApi', ['$resource', function ($resource) {
     return $resource(adminApiPath + '/notifications/subscribe', {type: '@type', target: '@target', address: '@address'});
 }]);
 
-notificationModule.factory('UnsubscribeToNotifApi', ['$resource', function ($resource) {
+adminModule.factory('UnsubscribeToNotifApi', ['$resource', function ($resource) {
     return $resource(adminApiPath + '/notifications/unsubscribe', {type: '@type', target: '@target', address: '@address'});
 }]);
 
 /** --- Notification Subscription Controller --- */
 
-notificationModule.controller('NotificationSubCtrl', ['$scope', '$timeout', '$q', 'GetNotifSubsApi', 'SubscribeToNotifApi', 'UnsubscribeToNotifApi',
+adminModule.controller('NotificationSubCtrl', ['$scope', '$timeout', '$q', 'GetNotifSubsApi', 'SubscribeToNotifApi', 'UnsubscribeToNotifApi',
 function ($scope, $timeout, $q, getSubsApi, subscribeApi, unSubscribeApi) {
 
     // a list of active notification subscriptions

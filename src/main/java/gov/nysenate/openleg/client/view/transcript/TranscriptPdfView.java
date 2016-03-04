@@ -50,29 +50,26 @@ public class TranscriptPdfView
             throw new IllegalArgumentException("Supplied transcript cannot be null when converting to pdf.");
         }
 
-        PDDocument doc = new PDDocument();
-        PDFont font = PDType1Font.COURIER;
+        try (PDDocument doc = new PDDocument()) {
+            PDFont font = PDType1Font.COURIER;
+            List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
+            for (List<String> page : pages) {
+                PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
+                PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
+                drawBorder(contentStream);
+                contentStream.beginText();
+                contentStream.setFont(font, fontSize);
+                moveStreamToTopOfPage(contentStream);
 
-        List<List<String>> pages = TranscriptTextUtils.getPdfFormattedPages(transcript.getText());
-        for (List<String> page : pages) {
-            PDPage pg = new PDPage(PDPage.PAGE_SIZE_LETTER);
-            PDPageContentStream contentStream = new PDPageContentStream(doc, pg);
+                int lineCount = drawPageText(page, contentStream);
+                drawStenographer(transcript, contentStream, lineCount);
 
-            drawBorder(contentStream);
-
-            contentStream.beginText();
-            contentStream.setFont(font, fontSize);
-            moveStreamToTopOfPage(contentStream);
-
-            int lineCount = drawPageText(page, contentStream);
-            drawStenographer(transcript, contentStream, lineCount);
-
-            contentStream.endText();
-            contentStream.close();
-            doc.addPage(pg);
+                contentStream.endText();
+                contentStream.close();
+                doc.addPage(pg);
+            }
+            doc.save(outputStream);
         }
-        doc.save(outputStream);
-        doc.close();
     }
 
     /**

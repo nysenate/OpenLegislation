@@ -1,82 +1,79 @@
 
 <!-- Detail Template -->
 <script type="text/ng-template" id="mismatchDetailWindow">
-  <md-dialog aria-label="Mismatch Detail">
-    <span ng-click="cancel()" class="icon-cross" style="float:left;"></span>
-    <md-content class="mismatch-dialog">
-      <div layout="row" layout-align="space-around center" layout-wrap>
-        <h5>
-          {{reportType | contentType}}: <a ng-href="{{contentUrl}}" target="_blank">{{contentId}}</a><br/>
-          Mismatch: {{currentMismatch.mismatchType | mismatchTypeLabel}}<br/>
-          Status: {{currentMismatch.status | mismatchStatusLabel}}
-        </h5>
-        <h5>
-          Opened on: {{firstOpened.reportDateTime | moment:'lll'}}<br/>
-          First Reference: {{firstOpened.referenceDateTime | moment:'lll'}}<br/>
-          Current Reference: {{observation.refDateTime | moment:'lll'}}
-        </h5>
-        <div ng-if="isBillTextMismatch()" layout="row" layout-align="space-around center">
-          <div layout="column" layout-align="center start">
-            <md-checkbox ng-model="billTextCtrls.normalizeSpaces" ng-disabled="billTextCtrls.removeNonAlphaNum"
-                         ng-change="formatDisplayData()">
-              Normalize Spaces
-            </md-checkbox>
-            <md-checkbox ng-model="billTextCtrls.removeNonAlphaNum" ng-change="formatDisplayData()">
-              Strip Non-Alphanumeric
-            </md-checkbox>
-          </div>
-          <md-checkbox ng-model="billTextCtrls.removeLinePageNums" ng-change="formatDisplayData()"
-              >Remove Line/Page Numbers</md-checkbox>
+  <md-dialog aria-label="Mismatch Detail" class="detail-diff-dialog">
+    <div layout="row">
+      <span flex></span>
+      <span ng-click="cancel()" class="icon-cross" style="font-size: 24px; text-align: right;"></span>
+    </div>
+    <md-content>
+      <div id="mismatch-detail-top-section">
+        <div layout="row" layout-align="space-around center">
+          <h2 class="no-margin">
+            {{reportType | contentType}}
+            <a ng-href="{{mismatchRow.key | contentUrl:reportType}}" target="_blank">
+              {{mismatchRow.key | contentId:reportType}}
+            </a>
+          </h2>
+          <h2 class="spotcheck-mismatch-status no-margin">
+            <span class="{{currentMismatch.status}}">
+              {{currentMismatch.status | mismatchStatusLabel}}
+            </span>
+            {{currentMismatch.mismatchType | mismatchTypeLabel}} Mismatch
+          </h2>
+        </div>
+        <md-divider></md-divider>
+        <div layout="row" layout-align="space-around center" layout-wrap class="detail-diff-text-controls">
+          <label>
+            <span class="margin-right-10">Whitespace Formatting</span>
+            <select ng-model="textControls.whitespace" ng-change="formatDisplayData()"
+                    ng-options="value as label for (value, label) in whitespaceOptions"></select>
+          </label>
+          <md-checkbox ng-model="textControls.removeLinePageNums" ng-change="formatDisplayData()" >
+            Strip Line/Page Numbers
+          </md-checkbox>
+          <md-checkbox ng-model="textControls.capitalize" ng-change="formatDisplayData()" >
+            All Caps
+          </md-checkbox>
+          <md-checkbox ng-model="sideScrollJoin" ng-disabled="iDiffTab !== 1">
+            Side-By-Side: Single Scrollbar
+          </md-checkbox>
         </div>
       </div>
-      <md-tabs md-dynamic-height="true" class="mismatch-dialog-tabs">
+      <md-tabs class="md-hue-2" md-selected="iDiffTab">
         <md-tab label="Diff">
           <md-content>
-            <mismatch-diff left="lbdcData" right="openlegData"></mismatch-diff>
-          </md-content>
-        </md-tab>
-        <md-tab label="LBDC">
-          <md-content>
-            <span ng-class="{preformatted: multiLine, 'word-wrap': !multiLine}" ng-bind="lbdcData"></span>
-          </md-content>
-        </md-tab>
-        <md-tab label="Openleg">
-          <md-content>
-            <span ng-class="{preformatted: multiLine, 'word-wrap': !multiLine}" ng-bind="openlegData"></span>
-          </md-content>
-        </md-tab>
-        <md-tab label="Prior Occurrences" ng-disabled="currentMismatch.prior.items.length < 1">
-          <md-content>
-            <toggle-panel ng-repeat="priorMismatch in currentMismatch.prior.items"
-                          label="{{priorMismatch.reportId.reportDateTime | moment:'lll'}}">
-              <div layout="row" layout-align="space-around">
-                <h5 class="no-margin">Reference Date: {{priorMismatch.reportId.referenceDateTime | moment:'lll'}}</h5>
-                <h5 class="no-margin">Status: {{priorMismatch.status | mismatchStatusLabel}}</h5>
+            <div layout="row" layout-align="space-around center">
+              <div>
+                <span class="diff-key-color del"></span>
+                {{mismatchRow.refType | reportDataProvider}} Data
               </div>
-              <md-divider></md-divider>
-              <p>
-                <diff-summary full-diff="priorMismatch.diff"></diff-summary>
-              </p>
-            </toggle-panel>
-            <md-content>
+              <div>
+                <span class="diff-key-color ins"></span>
+                {{mismatchRow.refType | reportReferenceProvider}} Data
+              </div>
+            </div>
+            <div class="mismatch-detail-diff-container mismatch-diff-box" ng-class="{'padding-10': !multiLine}" ng-if="iDiffTab === 0">
+              <mismatch-diff left="observedData" right="referenceData"></mismatch-diff>
+            </div>
+          </md-content>
         </md-tab>
-        <md-tab label="Other Mismatches" ng-disabled="getDetails === null">
+        <md-tab label="Side By Side">
           <md-content>
-            <ul ng-show="allMismatches.length > 1" style="list-style-type: none">
-              <li ng-repeat="mismatch in allMismatches">
-                <span ng-show="mismatch.mismatchType==currentMismatch.mismatchType">
-                  {{mismatch.mismatchType | mismatchTypeLabel}} - {{mismatch.status | mismatchStatusLabel}}
-                </span>
-                <a ng-show="mismatch.mismatchType!=currentMismatch.mismatchType" ng-href="#"
-                   ng-click="openNewDetail(getMismatchId(details.observation, mismatch))">
-                  {{mismatch.mismatchType | mismatchTypeLabel}} - {{mismatch.status | mismatchStatusLabel}}
-                </a>
-              </li>
-            </ul>
-            <h4 ng-show="allMismatches.length <= 1" class="text-align-center">
-              No other mismatches for {{contentId}}
-            </h4>
-            <md-content>
+            <div layout="row">
+              <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportDataProvider}} Data</p>
+              <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportReferenceProvider}} Data</p>
+            </div>
+            <div layout="row" ng-if="iDiffTab === 1"
+                 class="mismatch-detail-diff-container" ng-class="{'mismatch-diff-box': sideScrollJoin}">
+              <div flex class="mismatch-diff-box" ng-class="{'multi-line': obsMultiLine, 'scroll-join': sideScrollJoin}">
+                <mismatch-diff right="observedData" left="observedData"></mismatch-diff>
+              </div>
+              <div flex class="mismatch-diff-box" ng-class="{'multi-line': refMultiLine, 'scroll-join': sideScrollJoin}">
+                <mismatch-diff right="referenceData" left="referenceData"></mismatch-diff>
+              </div>
+            </div>
+          </md-content>
         </md-tab>
       </md-tabs>
     </md-content>

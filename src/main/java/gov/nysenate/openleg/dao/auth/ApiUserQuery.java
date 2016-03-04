@@ -16,27 +16,38 @@ public enum ApiUserQuery implements BasicSqlQuery
             "users_name = :name, org_name = :organizationName, reg_token = :registrationToken" + "\n" +
         "WHERE email_addr = :email"
     ),
+    SELECT_API_USERS(
+        "SELECT u.apikey, u.authenticated, u.num_requests, u.email_addr, u.org_name, u.users_name, u.reg_token,\n" +
+        "   r.role\n" +
+        "FROM public." + SqlTable.API_USER + " u\n" +
+        "LEFT JOIN public." + SqlTable.API_USER_ROLE + " r\n" +
+        "   ON u.apikey = r.apikey\n"
+    ),
     SELECT_BY_EMAIL(
-        "SELECT * FROM public." + SqlTable.API_USER+ " WHERE email_addr ILIKE :email"
+        SELECT_API_USERS.getSql() + "WHERE u.email_addr ILIKE :email"
     ),
     SELECT_BY_KEY(
-        "SELECT * FROM public." + SqlTable.API_USER+ " WHERE apikey = :apikey"
-    ),
-    SELECT_BY_NAME(
-        "SELECT * FROM public." + SqlTable.API_USER+ " WHERE users_name = :name"
-    ),
-    SELECT_BY_ORGANIZATION(
-        "SELECT * FROM public." + SqlTable.API_USER+ " WHERE org_name = :organizationName"
+        SELECT_API_USERS.getSql() + "WHERE u.apikey = :apikey"
     ),
     SELECT_BY_TOKEN(
-        "SELECT * FROM public." + SqlTable.API_USER+ " WHERE reg_token = :registrationToken"
-    ),
-    SELECT_ALL_USERS(
-        "SELECT * FROM public." + SqlTable.API_USER
+        SELECT_API_USERS.getSql() + "WHERE u.reg_token = :registrationToken"
     ),
     DELETE_USER(
-        "DELETE FROM public." + SqlTable.API_USER+ " WHERE email_addr = :email"
-    );
+        "DELETE FROM public." + SqlTable.API_USER + " WHERE email_addr = :email"
+    ),
+
+    INSERT_API_USER_ROLE(
+        "INSERT INTO public." + SqlTable.API_USER_ROLE + "\n" +
+        "       (apikey,  role)\n" +
+        "VALUES(:apiKey, :role)"
+    ),
+
+    DELETE_API_USER_ROLE(
+        "DELETE FROM public." + SqlTable.API_USER_ROLE + "\n" +
+        "WHERE apikey = :apiKey AND role = :role"
+    ),
+
+    ;
 
     private String sql;
     ApiUserQuery(String sql) {

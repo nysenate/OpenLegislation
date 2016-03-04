@@ -60,9 +60,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
 
         //Add mismatches to observation
         if (reference.isNotFound()) {
-            observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING,
-                    reference.getBaseBillId() + "\n" + reference.getText(),
-                    OutputUtils.toJson(new BillInfoView(bill.getBillInfo()))));
+            observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", reference.getText()));
         } else {
             checkAmendment(bill, reference, observation);
             if (bill.hasAmendment(reference.getActiveVersion())) {
@@ -83,7 +81,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
     private void checkAmendment(Bill bill, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv) {
         if (bill.getActiveVersion() == null || !bill.getActiveVersion().equals(reference.getActiveVersion())) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT,
-                    reference.getActiveVersion(), bill.getActiveVersion()));
+                    bill.getActiveVersion(), reference.getActiveVersion()));
         }
     }
 
@@ -101,9 +99,9 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
             String pureContentRefText = stripNonContent(refText);
             String pureContentDataText = stripNonContent(dataText);
             if (!StringUtils.equals(pureContentRefText, pureContentDataText)) {
-                obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_CONTENT, refText, dataText));
+                obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_CONTENT, dataText, refText));
             } else {
-                obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_LINE_OFFSET, refText, dataText));
+                obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_LINE_OFFSET, dataText, refText));
             }
         }
     }
@@ -112,7 +110,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         String dataMemo = billAmendment.getMemo();
         String refMemo = reference.getMemo();
         if (!StringUtils.equalsIgnoreCase(dataMemo, refMemo)) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_MEMO, refMemo, dataMemo));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_MEMO, dataMemo, refMemo));
         }
     }
 

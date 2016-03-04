@@ -17,6 +17,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -42,7 +43,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     /** {@inheritDoc} */
     @Override
     public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, RescoreBuilder.Rescorer rescorer,
-                                                 String sort, LimitOffset limOff) {
+                                                 List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
             getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer , sort, limOff, false);
         SearchResponse response = searchBuilder.execute().actionGet();

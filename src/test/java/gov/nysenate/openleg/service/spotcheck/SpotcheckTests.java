@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.WebAppBaseTests;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.controller.api.admin.SpotCheckCtrl;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
@@ -17,7 +18,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class SpotcheckTests extends BaseTests {
+public class SpotcheckTests extends WebAppBaseTests {
     private static final Logger logger = LoggerFactory.getLogger(SpotcheckTests.class);
 
     @Autowired
@@ -32,7 +33,7 @@ public class SpotcheckTests extends BaseTests {
 
     @Test
     public void runReports() {
-        spotcheckRunService.runReports(SpotCheckRefType.LBDC_DAYBREAK);
+        spotcheckRunService.runReports(SpotCheckRefType.SENATE_SITE_BILLS);
     }
 
     @Test

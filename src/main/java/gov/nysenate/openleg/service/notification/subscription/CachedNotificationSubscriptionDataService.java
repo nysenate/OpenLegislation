@@ -41,7 +41,6 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
 
     private Cache subCache;
 
-    private static final String subCacheName = "notificationSubscriptions";
     private static final String subCacheKey = "sUbCaChE";
 
     @PostConstruct
@@ -53,7 +52,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     @PreDestroy
     private void cleanUp() {
         evictCaches();
-        cacheManager.removeCache(subCacheName);
+        cacheManager.removeCache(ContentCache.NOTIFICATION_SUBSCRIPTION.name());
     }
 
     /** --- NotificationSubscriptionDataService Implementation --- */
@@ -135,7 +134,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
      */
     @Override
     public void setupCaches() {
-        subCache = new Cache(new CacheConfiguration().name(subCacheName)
+        subCache = new Cache(new CacheConfiguration().name(ContentCache.NOTIFICATION_SUBSCRIPTION.name())
                 .eternal(true)
                 .sizeOfPolicy(defaultSizeOfPolicy()));
         cacheManager.addCache(subCache);
