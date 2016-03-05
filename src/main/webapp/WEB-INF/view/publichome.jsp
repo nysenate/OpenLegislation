@@ -29,10 +29,10 @@
           <form ng-submit="loginWithAPIKey()">
             <div layout="row" layout-sm="column" layout-align="center center">
               <md-input-container style="min-width: 75%" class="margin-right-20">
-                <label>Enter your API Key here to browse the data</label>
+                <label>EnTer your API Key here to browse the data</label>
                 <input type="text" name="apikey" ng-required ng-trim ng-model="apiKey"/>
               </md-input-container>
-              <md-button style="width: 160px;" class="bold md-primary md-raised">
+              <md-button type="submit" style="width: 160px;" class="bold md-primary md-raised">
                 View Legislation
               </md-button>
             </div>
