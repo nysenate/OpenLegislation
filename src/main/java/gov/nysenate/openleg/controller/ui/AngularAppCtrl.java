@@ -42,7 +42,8 @@ public class AngularAppCtrl
                      "/manage/**"
                      })
     public String home(HttpServletRequest request) {
-        String ipAddr = request.getRemoteAddr();
+        String forwardedForIp = request.getHeader("x-forwarded-for");
+        String ipAddr= forwardedForIp == null ? request.getRemoteAddr() : forwardedForIp;
         // Google Analytics
         request.setAttribute("gaTrackingId", gaTrackingId);
         Subject subject = SecurityUtils.getSubject();

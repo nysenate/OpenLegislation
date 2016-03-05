@@ -74,7 +74,7 @@ function ($scope, $element, $filter, $location, $timeout, $routeParams, $rootSco
 
     var orderByFields = {
         OBSERVED_DATE: "observation.observedDateTime",
-        CONTENT_KEY: "mismatch.observedData",
+        CONTENT_KEY: "keyString",
         REFERENCE_DATE: "observation.refDateTime",
         MISMATCH_TYPE: "mismatch.mismatchType",
         STATUS: "mismatch.status"
