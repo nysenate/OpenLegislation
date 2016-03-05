@@ -404,6 +404,7 @@ function ($scope, $routeParams, $location, $timeout, $filter, $mdDialog) {
                 });
                 mismatchRows.push({
                     key: obs.key,
+                    keyString: $scope.getContentId(refType, obs.key),
                     observation: obs,
                     mismatch: m,
                     type: m.mismatchType,
