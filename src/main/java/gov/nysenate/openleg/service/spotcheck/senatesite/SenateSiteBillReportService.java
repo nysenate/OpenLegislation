@@ -13,6 +13,9 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpRangeId;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.updates.UpdateToken;
@@ -61,6 +64,7 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_BILLS,
                 DateUtils.endOfDateTimeRange(billDump.getDumpId().getRange()), LocalDateTime.now());
         SpotCheckReport<BillId> report = new SpotCheckReport<>(reportId);
+        report.setNotes(getDumpNotes(billDump));
         try {
 
             logger.info("getting bill updates");
@@ -118,13 +122,19 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
 
     /**
      * Gets a set of bill ids that were updated during the update interval specified by the bill dump
-     * Bills that were updated after the end of this interval are excluded, even if they may have been included in the dump
      *
      * @param billDump SenateSiteBillDump
      * @return Set<Bill>
      */
     private Set<BaseBillId> getBillUpdatesDuring(SenateSiteDump billDump) {
         Range<LocalDateTime> dumpUpdateInterval = billDump.getDumpId().getRange();
+        SenateSiteDumpId dumpId = billDump.getDumpId();
+        if (dumpId instanceof SenateSiteDumpSessionId) {
+            logger.info("Getting Openleg Bills for session: {}", ((SenateSiteDumpSessionId) dumpId).getSession());
+            return new TreeSet<>(
+                    billDataService.getBillIds(((SenateSiteDumpSessionId) dumpId).getSession(), LimitOffset.ALL)
+            );
+        }
         return billUpdatesDao.getUpdates(Range.greaterThan(DateUtils.startOfDateTimeRange(billDump.getDumpId().getRange())),
                 UpdateType.PROCESSED_DATE, null, SortOrder.ASC, LimitOffset.ALL)
                 .getResults().stream()
@@ -160,7 +170,7 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
                     .peek(senSiteBills::removeAll)
                     .peek(openlegBills::remove)
                     .reduce("Ignored Bills:", (str, billId) -> str + " " + billId, (a, b) -> a + " " + b);
-            report.setNotes(notes);
+            report.setNotes(report.getNotes() + "\n" + notes);
         }
     }
 
@@ -191,5 +201,19 @@ public class SenateSiteBillReportService extends BaseSpotCheckReportService<Bill
                     return observation;
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * @param dump SenateSiteDump
+     * @return String - notes that indicate the type of dump and the relevant dates
+     */
+    private String getDumpNotes(SenateSiteDump dump) {
+        SenateSiteDumpId dumpId = dump.getDumpId();
+        if (dumpId instanceof SenateSiteDumpRangeId) {
+            return "Generated from update range dump: " + dumpId.getRange();
+        } else if (dumpId instanceof SenateSiteDumpSessionId) {
+            return "Generated from session year dump: " + ((SenateSiteDumpSessionId) dumpId).getSession();
+        }
+        return "Generated from unknown dump type: " + dumpId.getClass().getSimpleName() + " " + dumpId.getRange();
     }
 }

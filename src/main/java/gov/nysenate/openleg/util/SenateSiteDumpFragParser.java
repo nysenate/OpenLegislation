@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Parses a {@link SenateSiteDumpFragment} from a json String and {@link SpotCheckRefType}.
@@ -40,9 +41,11 @@ public class SenateSiteDumpFragParser {
         LocalDateTime to = parseDateTimeFromNode(getRequiredNode(rootNode, "to"));
         int part = getRequiredNode(rootNode, "part").asInt();
         int totalParts = getRequiredNode(rootNode, "totalParts").asInt();
-        int sessionYear = getRequiredNode(rootNode, "session").asInt();
 
-        SenateSiteDumpId dumpId = createDumpId(from, to, part, totalParts, sessionYear, refType);
+        JsonNode sessionNode = getRequiredNode(rootNode, "session");
+        Optional<Integer> sessionYearOpt = sessionNode.isNull() ? Optional.empty() : Optional.of(sessionNode.asInt());
+
+        SenateSiteDumpId dumpId = createDumpId(from, to, totalParts, sessionYearOpt, refType);
         return new SenateSiteDumpFragment(dumpId, part);
     }
 
@@ -55,7 +58,7 @@ public class SenateSiteDumpFragParser {
             return rootNode.get(fieldName);
         }
         else {
-            throw new SenateSiteDumpFragParserException(fieldName);
+            throw SenateSiteDumpFragParserException.missingField(fieldName);
         }
     }
 
@@ -71,14 +74,19 @@ public class SenateSiteDumpFragParser {
      * Returns a specific <code>SenateSiteDumpId</code> implementation depending on data in the json.
      * @see #parseFragment(String, SpotCheckRefType)
      */
-    private SenateSiteDumpId createDumpId(LocalDateTime from, LocalDateTime to, int part, int totalParts,
-                                          int sessionYear, SpotCheckRefType refType) {
+    private SenateSiteDumpId createDumpId(LocalDateTime from, LocalDateTime to, int totalParts,
+                                          Optional<Integer> sessionYearOpt, SpotCheckRefType refType) {
         SenateSiteDumpId dumpId = null;
-        if (from != null && to != null) {
-            dumpId = new SenateSiteDumpRangeId(refType, totalParts, from, to);
+        if (to == null) {
+            throw SenateSiteDumpFragParserException.nullField("to");
         }
-        else {
-            dumpId = new SenateSiteDumpSessionId(refType, totalParts, sessionYear);
+        if (sessionYearOpt.isPresent()) {
+            dumpId = new SenateSiteDumpSessionId(refType, totalParts, sessionYearOpt.get(), to);
+        } else if (from != null) {
+            dumpId = new SenateSiteDumpRangeId(refType, totalParts, from, to);
+        } else {
+            throw new SenateSiteDumpFragParserException(
+                    "Invalid senate site dump fragment: both 'from' and 'session' fields are null");
         }
         return dumpId;
     }
@@ -88,8 +96,18 @@ public class SenateSiteDumpFragParser {
     public static class SenateSiteDumpFragParserException extends RuntimeException {
         private static final long serialVersionUID = 5133300734005459879L;
 
-        public SenateSiteDumpFragParserException(String missingField) {
-            super("Required field: " + missingField + ", is missing from json dump.");
+        private SenateSiteDumpFragParserException(String message) {
+            super(message);
+        }
+
+        public static SenateSiteDumpFragParserException missingField(String missingField) {
+            return new SenateSiteDumpFragParserException(
+                    "Required field: " + missingField + ", is missing from json dump.");
+        }
+
+        public static SenateSiteDumpFragParserException nullField(String field) {
+            return new SenateSiteDumpFragParserException(
+                    "Required field: " + field + " is null");
         }
     }
 }
