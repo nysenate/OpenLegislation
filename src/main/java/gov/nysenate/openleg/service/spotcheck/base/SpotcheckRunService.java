@@ -16,6 +16,7 @@ import gov.nysenate.openleg.service.spotcheck.calendar.IntervalCalendarReportSer
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
 import gov.nysenate.openleg.service.spotcheck.senatesite.SenateSiteBillReportService;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,8 +129,12 @@ public class SpotcheckRunService {
         try {
             SpotCheckReport<T> report = reportService.generateReport(
                     DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange));
+            int notesCutoff = 140; // Cut off the notes in the display after this many characters
             logger.info("Saving report: {} {} {}", report.getReportDateTime(), report.getReferenceType(),
-                    report.getNotes() != null ? report.getNotes() : "");
+                    report.getNotes() != null
+                            ? StringUtils.substring(report.getNotes(), 0, notesCutoff) +
+                                (report.getNotes().length() > notesCutoff ? "..." : "")
+                            : "");
             reportService.saveReport(report);
             spotCheckNotificationService.spotcheckCompleteNotification(report);
         } catch (ReferenceDataNotFoundEx ex) {
