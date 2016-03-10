@@ -24,6 +24,8 @@ public enum SpotCheckRefType
 
     SENATE_SITE_BILLS("senate-site-bills", "Nysenate.gov Bill", NotificationType.SENSITE_BILL_SPOTCHECK),
 
+    SENATE_SITE_CALENDAR("senate-site-calendar", "Nysenate.gov Calendar", NotificationType.SENSITE_CALENDAR_SPOTCHECK),
+
     ;
 
     private String refName;

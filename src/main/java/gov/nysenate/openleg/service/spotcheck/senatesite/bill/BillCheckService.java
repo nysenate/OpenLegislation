@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.spotcheck.senatesite;
+package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 
 import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.client.view.base.ListView;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 @Service
-public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bill, SenateSiteBill> {
+public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateSiteBill> {
 
     /** {@inheritDoc} */
     @Override
