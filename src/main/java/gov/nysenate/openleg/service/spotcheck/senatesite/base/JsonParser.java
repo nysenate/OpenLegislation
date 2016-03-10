@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,9 +69,11 @@ public class JsonParser {
             return null;
         }
         List<Integer> integerList = new ArrayList<Integer>();
-        while (undNode.elements().hasNext()) {
-            JsonNode valueNode = undNode.elements().next().path("value");
-            if (valueNode.isIntegralNumber() || valueNode.isNull()) {
+        Iterator<JsonNode> iterator = undNode.elements();
+        for (JsonNode node : undNode)
+        {
+            JsonNode valueNode = node.path("value");
+            if (!valueNode.isNull()) {
                 integerList.add(valueNode.intValue());
             }
         }
@@ -83,9 +86,10 @@ public class JsonParser {
             return null;
         }
         List<String> valueList = new ArrayList<String>();
-        while (undNode.elements().hasNext()) {
-            JsonNode valueNode = undNode.elements().next().path("value");
-            if (valueNode.isTextual() || valueNode.isNull()) {
+        Iterator<JsonNode> iterator = undNode.elements();
+        for (JsonNode node : undNode) {
+            JsonNode valueNode = node.path("value");
+            if (valueNode.isTextual() || !valueNode.isNull()) {
                 valueList.add(valueNode.textValue());
             }
         }

@@ -59,13 +59,13 @@ public class SenateSiteBillDumpCtrl extends BaseCtrl {
      *
      * Usage: (POST) /api/3/senatesite/caldump
      */
-    @RequiresPermissions("senatesite:caldump:post")
+    //@RequiresPermissions("senatesite:caldump:post")
     @RequestMapping(value = "/caldump",method = RequestMethod.POST, consumes = "application/json")
     public BaseResponse sendSenateSiteCalDumpFragment(@RequestBody String calFragmentJson) throws IOException{
         if(!saveDump(calFragmentJson,SpotCheckRefType.SENATE_SITE_CALENDAR)){
             return new SimpleResponse(false, "could not save dump :(", "calendar-dump-failed");
         }
-        return new SimpleResponse(true, "bill dump received.  Thanks!", "calendar-dump-received");
+        return new SimpleResponse(true, "calendar dump received.  Thanks!", "calendar-dump-received");
     }
 
     /**

@@ -19,6 +19,7 @@ import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
 import gov.nysenate.openleg.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -33,8 +34,8 @@ public class CalendarJsonParser extends JsonParser {
     @Autowired
     ObjectMapper objectMapper;
 
-    public List<SenateSiteCalendar> parseCalendars(SenateSiteDump billDump) throws ParseError {
-        return billDump.getDumpFragments().stream()
+    public List<SenateSiteCalendar> parseCalendars(SenateSiteDump calendarDump) throws ParseError {
+        return calendarDump.getDumpFragments().stream()
                 .flatMap(fragment -> extractCalendarsFromFragment(fragment).stream())
                 .collect(Collectors.toList());
     }
@@ -67,18 +68,22 @@ public class CalendarJsonParser extends JsonParser {
         calendar.setSequenceNo(getIntValue(calendarNode,"field_ol_sequence_no"));
         calendar.setVersion(getVersion(getValue(calendarNode,"field_ol_version")));
         calendar.setCalendarId(getCalendarId(calendarNode,"calendar_id"));
-        calendar.setBill(getBillId(getListValue(calendarNode,"field_ol_bill"),calendar.getCalendarId().getYear()));
+        TypeReference<List<String>> listTypeReference = new TypeReference<List<String>>() {};
+        Optional<List<String>> value = deserializeValue(calendarNode,"field_ol_bill",listTypeReference);
+        calendar.setBill(getBillId(value.orElseThrow(() -> new ParseError("Emptylist")),calendar.getCalendarId().getYear()));
 
        return calendar;
     }
 
-    private CalendarType getCalendarType(String calendarType){
-        return CalendarType.valueOf(calendarType);
+    private CalendarType getCalendarType(String calendarType)
+    {
+        return CalendarType.valueOf(StringUtils.upperCase(calendarType));
     }
 
     private Version getVersion(String version)
+
     {
-        return Version.valueOf(version.toUpperCase());
+        return Version.of(version);
     }
 
     private List<BillId> getBillId(List<String> billNos, int year){

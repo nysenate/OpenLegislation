@@ -71,4 +71,5 @@ public class CalendarId implements Serializable, Comparable<CalendarId>
     public int getYear() {
         return year;
     }
+
 }
