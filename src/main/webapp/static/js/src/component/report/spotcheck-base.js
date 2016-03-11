@@ -97,7 +97,8 @@ spotcheckModule.filter('contentType', function() {
         LBDC_DAYBREAK: "Bill",
         LBDC_CALENDAR_ALERT: "Floor Cal",
         LBDC_SCRAPED_BILL: "Bill",
-        SENATE_SITE_BILLS: "Bill"
+        SENATE_SITE_BILLS: "Bill",
+        SENATE_SITE_CALENDAR: "Calendar"
     };
     return function(reportType) {
         if (contentTypeMap.hasOwnProperty(reportType)) {
@@ -119,6 +120,7 @@ spotcheckModule.filter('reportReferenceProvider', function () {
         LBDC_DAYBREAK: 'LBDC',
         LBDC_SCRAPED_BILL: 'LBDC',
         SENATE_SITE_BILLS: 'Nysenate.gov',
+        SENATE_SITE_CALENDAR: 'NYsenate.gov',
         LBDC_AGENDA_ALERT: 'LBDC',
         LBDC_CALENDAR_ALERT: 'LBDC'
     };
@@ -136,7 +138,8 @@ spotcheckModule.filter('refTypeLabel', function () {
         LBDC_SCRAPED_BILL: 'scraped bill',
         SENATE_SITE_BILLS: 'node dump',
         LBDC_AGENDA_ALERT: 'alert',
-        LBDC_CALENDAR_ALERT: 'alert'
+        LBDC_CALENDAR_ALERT: 'alert',
+        SENATE_SITE_CALENDAR: 'node dump'
     };
     return function (refType) {
         if (refTypeLabelMap.hasOwnProperty(refType)) {
@@ -152,7 +155,8 @@ spotcheckModule.filter('contentUrl', function() {
         LBDC_SCRAPED_BILL: getBaseBillUrl,
         SENATE_SITE_BILLS: getBillAmendmentUrl,
         LBDC_AGENDA_ALERT: getAgendaUrl,
-        LBDC_CALENDAR_ALERT: getCalendarUrl
+        LBDC_CALENDAR_ALERT: getCalendarUrl,
+        SENATE_SITE_CALENDAR: getCalListUrl
     };
     function getBaseBillUrl(key) {
         return ctxPath + "/bills/" + key.session.year + "/" + key.basePrintNo;
@@ -173,6 +177,10 @@ spotcheckModule.filter('contentUrl', function() {
     function getCalendarUrl(key) {
         return ctxPath + "/calendars/" +  key.year + "/" + key.calNo;
     }
+
+    function getCalListUrl(key){
+        return getCalendarUrl(key)+ "?view=" + (key.type==='ACTIVE_LIST' ? "active-list": "floor")
+    }
     return function(key, reportType) {
         if (contentTypeUrlMap.hasOwnProperty(reportType)) {
             return contentTypeUrlMap[reportType](key);
@@ -187,7 +195,8 @@ spotcheckModule.filter('contentId', function () {
         LBDC_SCRAPED_BILL: getBaseBillId,
         SENATE_SITE_BILLS: getBillId,
         LBDC_AGENDA_ALERT: getAgendaId,
-        LBDC_CALENDAR_ALERT: getCalendarId
+        LBDC_CALENDAR_ALERT: getCalendarId,
+        SENATE_SITE_CALENDAR: getCalListId
     };
     function getBaseBillId(key) {
         return key.basePrintNo;
@@ -206,6 +215,11 @@ spotcheckModule.filter('contentId', function () {
     function getCalendarId(key) {
         return key.calNo + ', ' + key.year;
     }
+
+    function getCalListId(key){
+        return getCalendarId(key) + (key.type==='ACTIVE_LIST' ? key.sequenceNo : key.version)
+    }
+
     return function (key, reportType) {
         if (contentTypeIdMap.hasOwnProperty(reportType)) {
             return contentTypeIdMap[reportType](key);
