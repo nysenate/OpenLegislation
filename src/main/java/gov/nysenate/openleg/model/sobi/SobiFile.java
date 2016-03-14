@@ -2,7 +2,6 @@ package gov.nysenate.openleg.model.sobi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
-import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -48,15 +47,17 @@ public class SobiFile
 
     /** --- Constructors --- */
 
-    public SobiFile(File sobiFile) throws IOException {
+    public SobiFile(File sobiFile) throws IOException, SobiFileNotFoundEx {
         this(sobiFile, DEFAULT_ENCODING);
     }
 
-    public SobiFile(File file, String encoding) throws IOException {
+    public SobiFile(File file, String encoding) throws IOException, SobiFileNotFoundEx {
         if (file.exists()) {
             this.file = file;
             this.encoding = encoding;
             this.archived = false;
+            // Attempt to parse the sobi file name, raising an exception if the name is invalid
+            getPublishedDateTime();
         }
         else {
             throw new FileNotFoundException(file.getAbsolutePath());
@@ -89,16 +90,19 @@ public class SobiFile
     /**
      * The published datetime is determined via the file name. If an error is encountered when
      * parsing the date, the last modified datetime of the file will be used instead.
+     * @throws InvalidSobiNameEx if this sobi has a filename that cannot be parsed
      */
-    public LocalDateTime getPublishedDateTime() {
+    public LocalDateTime getPublishedDateTime() throws InvalidSobiNameEx {
+        String fileName = this.getFileName();
         try {
             return LocalDateTime.ofInstant(
-                org.apache.commons.lang3.time.DateUtils.parseDate(getFileName(), sobiDateFullPattern, sobiDateNoSecsPattern).toInstant(),
+                org.apache.commons.lang3.time.DateUtils.parseDate(
+                        fileName, sobiDateFullPattern, sobiDateNoSecsPattern)
+                        .toInstant(),
                 ZoneId.systemDefault());
         }
         catch (ParseException ex) {
-            ex.printStackTrace();
-            return DateUtils.getLocalDateTimeFromMillis(file.lastModified());
+            throw new InvalidSobiNameEx(fileName, ex);
         }
     }
 
