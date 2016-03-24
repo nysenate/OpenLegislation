@@ -160,7 +160,9 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
 
     private String billActionToString(BillAction action) {
         return String.valueOf(action.getSequenceNo()) + " " +
-                action.getBillId() + " " +
+               // Only check base print number, don't check the amendment version associated with the action.
+               // Public website models this differently causing amendment errors we are not interested in.
+                action.getBillId().getBasePrintNo() + " " +
                 action.getChamber() + " " +
                 action.getDate() + " " +
                 action.getText();
