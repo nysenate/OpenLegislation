@@ -8,11 +8,16 @@ import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.dao.calendar.data.CalendarUpdatesDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotcheckCalendarIdSpotCheckReportDao;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.calendar.spotcheck.SpotcheckCalendarId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpRangeId;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.calendar.SenateSiteCalendar;
 import gov.nysenate.openleg.model.updates.UpdateToken;
 import gov.nysenate.openleg.model.updates.UpdateType;
@@ -61,6 +66,7 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_CALENDAR,
                 DateUtils.endOfDateTimeRange(calendarDump.getDumpId().getRange()), LocalDateTime.now());
         SpotCheckReport<SpotcheckCalendarId> report = new SpotCheckReport<>(reportId);
+        report.setNotes(getDumpNotes(calendarDump));
         try {
 
             logger.info("getting calendar updates");
@@ -159,12 +165,30 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
         Set<CalendarId> openlegCalendarIds = openlegCalendars.stream()
                 .map(Calendar::getId)
                 .collect(Collectors.toSet());
-        return Sets.difference(senSiteCalendarIds,openlegCalendarIds).stream()
+
+        return Sets.symmetricDifference(senSiteCalendarIds, openlegCalendarIds).stream()
                 .map(calendarId -> {
-                    SpotCheckObservation<SpotcheckCalendarId> observation = new SpotCheckObservation<>(refId, calendarId);
+                    System.out.println(calendarId);
+                    SpotCheckObservation<SpotcheckCalendarId> observation =
+                            new SpotCheckObservation<>(refId, new SpotcheckCalendarId(calendarId,CalendarType.ALL,Version.DEFAULT,0));
                     observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING, "", ""));
+                    System.out.println(observation);
                     return observation;
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * @param dump SenateSiteDump
+     * @return String - notes that indicate the type of dump and the relevant dates
+     */
+    private String getDumpNotes(SenateSiteDump dump) {
+        SenateSiteDumpId dumpId = dump.getDumpId();
+        if (dumpId instanceof SenateSiteDumpRangeId) {
+            return "Generated from update range dump: " + dumpId.getRange();
+        } else if (dumpId instanceof SenateSiteDumpSessionId) {
+            return "Generated from session year dump: " + ((SenateSiteDumpSessionId) dumpId).getSession();
+        }
+        return "Generated from unknown dump type: " + dumpId.getClass().getSimpleName() + " " + dumpId.getRange();
     }
 }

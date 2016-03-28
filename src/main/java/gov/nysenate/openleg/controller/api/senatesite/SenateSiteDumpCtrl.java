@@ -27,9 +27,9 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(BASE_API_PATH + "/senatesite")
-public class SenateSiteBillDumpCtrl extends BaseCtrl {
+public class SenateSiteDumpCtrl extends BaseCtrl {
 
-    private static final Logger logger = LoggerFactory.getLogger(SenateSiteBillDumpCtrl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SenateSiteDumpCtrl.class);
 
     @Autowired private SenateSiteDao senateSiteDao;
     @Autowired private AsyncRunner asyncRunner;

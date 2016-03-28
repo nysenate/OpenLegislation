@@ -179,7 +179,7 @@ spotcheckModule.filter('contentUrl', function() {
     }
 
     function getCalListUrl(key){
-        return getCalendarUrl(key)+ "?view=" + (key.type==='ACTIVE_LIST' ? "active-list": "floor")
+        return getCalendarUrl(key)+ (key.type==='ALL' ? "?view=" + (key.type==='ACTIVE_LIST' ? "active-list": "floor") : "");
     }
     return function(key, reportType) {
         if (contentTypeUrlMap.hasOwnProperty(reportType)) {
@@ -217,7 +217,7 @@ spotcheckModule.filter('contentId', function () {
     }
 
     function getCalListId(key){
-        return getCalendarId(key) + (key.type==='ACTIVE_LIST' ? key.sequenceNo : key.version)
+        return getCalendarId(key) + (key.type === 'ALL' ? (key.type==='ACTIVE_LIST' ? key.sequenceNo : key.version) : "");
     }
 
     return function (key, reportType) {
