@@ -168,11 +168,9 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
 
         return Sets.symmetricDifference(senSiteCalendarIds, openlegCalendarIds).stream()
                 .map(calendarId -> {
-                    System.out.println(calendarId);
                     SpotCheckObservation<SpotcheckCalendarId> observation =
                             new SpotCheckObservation<>(refId, new SpotcheckCalendarId(calendarId,CalendarType.ALL,Version.DEFAULT,0));
                     observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING, "", ""));
-                    System.out.println(observation);
                     return observation;
                 })
                 .collect(Collectors.toList());

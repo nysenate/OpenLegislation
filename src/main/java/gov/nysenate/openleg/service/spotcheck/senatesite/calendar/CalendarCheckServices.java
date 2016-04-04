@@ -40,7 +40,7 @@ public class CalendarCheckServices extends BaseSpotCheckService<SpotcheckCalenda
         }else{
             checkSupplemental(content,reference,observation);
         }
-        return null;
+        return observation;
     }
 
     private void checkCalendarId(Calendar content, SenateSiteCalendar reference, SpotCheckObservation<SpotcheckCalendarId> observation){
@@ -60,7 +60,8 @@ public class CalendarCheckServices extends BaseSpotCheckService<SpotcheckCalenda
                         .map(calendarSupplementalEntry -> (CalendarEntry)calendarSupplementalEntry)
                         .collect(Collectors.toList());
         List<CalendarEntry> refCalendarSupplementalEntries = getCalEntry(reference);
-        checkCollection(calendarSupplementalEntries,refCalendarSupplementalEntries,observation,SpotCheckMismatchType.SUPPLEMENTAL_ENTRY);
+        checkCollection(calendarSupplementalEntries,refCalendarSupplementalEntries,observation,SpotCheckMismatchType.SUPPLEMENTAL_ENTRY,
+                this::calEntryDiffString, "\n");
     }
 
     private List<CalendarEntry> getCalEntry(SenateSiteCalendar reference){
@@ -74,5 +75,9 @@ public class CalendarCheckServices extends BaseSpotCheckService<SpotcheckCalenda
             i++;
         }
         return calendarEntries;
+    }
+
+    private String calEntryDiffString(CalendarEntry entry) {
+        return "";
     }
 }

@@ -36,7 +36,7 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
     protected <T> void checkCollection(Collection<T> content, Collection<T> reference,
                                             SpotCheckObservation<ContentKey> observation,
                                             SpotCheckMismatchType mismatchType,
-                                            Function<T, String> toString, String split) {
+                                            Function<?super T, String> toString, String split) {
         Function<Collection<T>, String> stringify = collection ->
                 Optional.ofNullable(collection).orElse(Collections.emptyList()).stream()
                         .map(toString).reduce("", (a, b) -> StringUtils.isEmpty(a) ? b : a + split + b);

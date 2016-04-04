@@ -74,7 +74,7 @@ public class JsonParser {
         {
             JsonNode valueNode = node.path("value");
             if (!valueNode.isNull()) {
-                integerList.add(valueNode.intValue());
+                integerList.add(valueNode.asInt());
             }
         }
         return integerList;
