@@ -22,7 +22,7 @@ openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$window', '$loca
             icon: 'icon-megaphone', bgclass: 'green2-bg', docsPage: 'agendas.html'},
         { type: 'Senate Floor Calendars', blurb: 'Listings of bills that are scheduled for discussion and voting on the senate floor.',
             icon: 'icon-calendar', bgclass: 'blue5-bg', docsPage: 'calendars.html'},
-        { type: 'Senate/Assembly Membership', blurb: 'Senators and assemblymembers for the current session.',
+        { type: 'Senate/Assembly Membership', blurb: 'Senate and Assembly members for each session since 2009.',
             icon: 'icon-users', bgclass: 'green1-bg', docsPage: 'members.html'}
     ];
 
