@@ -111,7 +111,7 @@
     </div>
     <div class="copyright-footer-container">
       <div class="project-desc">
-        <img src="http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png"/>
+        <img src="//i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png"/>
         <p class="text-medium">This content is licensed under Creative Commons BY-NC-ND 3.0.
           The software and services provided under this site are offered under the BSD License and the GPL v3 License.</p>
       </div>
