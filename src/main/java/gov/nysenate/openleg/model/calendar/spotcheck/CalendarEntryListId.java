@@ -8,21 +8,21 @@ import gov.nysenate.openleg.model.calendar.CalendarType;
 /**
  * Created by PKS on 3/9/16.
  */
-public class SpotcheckCalendarId extends CalendarId {
+public class CalendarEntryListId extends CalendarId {
 
     protected CalendarType type;
     protected Version version;
     protected Integer sequenceNo;
 
-    public SpotcheckCalendarId(CalendarId calendarId,CalendarType type, Version version, Integer sequenceNo){
+    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo) {
         super(calendarId);
         this.type = type;
         this.version = version;
         this.sequenceNo = sequenceNo;
     }
 
-    public static SpotcheckCalendarId getActiveListId(CalendarId id, Integer sequenceNo) {
-        return new SpotcheckCalendarId(id, CalendarType.ACTIVE_LIST, null, sequenceNo);
+    public static CalendarEntryListId getActiveListId(CalendarId id, Integer sequenceNo) {
+        return new CalendarEntryListId(id, CalendarType.ACTIVE_LIST, null, sequenceNo);
     }
 
     @JsonIgnore

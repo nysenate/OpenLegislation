@@ -4,7 +4,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
-import gov.nysenate.openleg.model.calendar.spotcheck.SpotcheckCalendarId;
+import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 
@@ -35,8 +35,8 @@ public class SenateSiteCalendar {
         return calendarId;
     }
 
-    public SpotcheckCalendarId getSpotCheckCalendarId(){
-        return new SpotcheckCalendarId(calendarId, calendarType, version,sequenceNo);
+    public CalendarEntryListId getSpotCheckCalendarId() {
+        return new CalendarEntryListId(calendarId, calendarType, version, sequenceNo);
     }
 
     public SpotCheckReferenceId getReferenceId() {

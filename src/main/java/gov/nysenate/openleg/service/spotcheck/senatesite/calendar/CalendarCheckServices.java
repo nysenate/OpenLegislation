@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.senatesite.calendar;
 
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
-import gov.nysenate.openleg.model.calendar.spotcheck.SpotcheckCalendarId;
+import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
@@ -20,20 +20,20 @@ import java.util.stream.Collectors;
  * Created by PKS on 2/25/16.
  */
 @Service
-public class CalendarCheckServices extends BaseSpotCheckService<SpotcheckCalendarId, Calendar, SenateSiteCalendar> {
+public class CalendarCheckServices extends BaseSpotCheckService<CalendarEntryListId, Calendar, SenateSiteCalendar> {
     @Override
-    public SpotCheckObservation<SpotcheckCalendarId> check(Calendar content) throws ReferenceDataNotFoundEx {
+    public SpotCheckObservation<CalendarEntryListId> check(Calendar content) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException(":P");
     }
 
     @Override
-    public SpotCheckObservation<SpotcheckCalendarId> check(Calendar content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
+    public SpotCheckObservation<CalendarEntryListId> check(Calendar content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException(":P");
     }
 
     @Override
-    public SpotCheckObservation<SpotcheckCalendarId> check(Calendar content, SenateSiteCalendar reference) {
-        SpotCheckObservation<SpotcheckCalendarId> observation = new SpotCheckObservation<>(reference.getReferenceId(),reference.getSpotCheckCalendarId());
+    public SpotCheckObservation<CalendarEntryListId> check(Calendar content, SenateSiteCalendar reference) {
+        SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reference.getReferenceId(), reference.getSpotCheckCalendarId());
         checkCalendarId(content,reference,observation);
         if(reference.getCalendarType() == CalendarType.ACTIVE_LIST){
             checkActiveList(content,reference,observation);
@@ -43,21 +43,21 @@ public class CalendarCheckServices extends BaseSpotCheckService<SpotcheckCalenda
         return observation;
     }
 
-    private void checkCalendarId(Calendar content, SenateSiteCalendar reference, SpotCheckObservation<SpotcheckCalendarId> observation){
+    private void checkCalendarId(Calendar content, SenateSiteCalendar reference, SpotCheckObservation<CalendarEntryListId> observation) {
         checkString(content.getId().toString(),reference.getCalendarId().toString(),observation, SpotCheckMismatchType.CALENDAR_ID);
     }
 
-    private void checkActiveList(Calendar content, SenateSiteCalendar reference, SpotCheckObservation<SpotcheckCalendarId> observation){
+    private void checkActiveList(Calendar content, SenateSiteCalendar reference, SpotCheckObservation<CalendarEntryListId> observation) {
         List<CalendarEntry> calendarEntries = content.getActiveListMap().get(reference.getSequenceNo()).getEntries();
         List<CalendarEntry> refCalEntries = getCalEntry(reference);
-        checkCollection(calendarEntries,refCalEntries,observation,SpotCheckMismatchType.ACTIVE_LIST_ENTRY);
+        checkCollection(calendarEntries, refCalEntries, observation, SpotCheckMismatchType.ACTIVE_LIST_ENTRY);
     }
 
-    private void checkSupplemental(Calendar content, SenateSiteCalendar reference, SpotCheckObservation<SpotcheckCalendarId> observation){
+    private void checkSupplemental(Calendar content, SenateSiteCalendar reference, SpotCheckObservation<CalendarEntryListId> observation) {
         List<CalendarEntry> calendarSupplementalEntries =
                 content.getSupplemental(reference.getVersion()).getAllEntries()
                         .stream()
-                        .map(calendarSupplementalEntry -> (CalendarEntry)calendarSupplementalEntry)
+                        .map(calendarSupplementalEntry -> (CalendarEntry) calendarSupplementalEntry)
                         .collect(Collectors.toList());
         List<CalendarEntry> refCalendarSupplementalEntries = getCalEntry(reference);
         checkCollection(calendarSupplementalEntries,refCalendarSupplementalEntries,observation,SpotCheckMismatchType.SUPPLEMENTAL_ENTRY,

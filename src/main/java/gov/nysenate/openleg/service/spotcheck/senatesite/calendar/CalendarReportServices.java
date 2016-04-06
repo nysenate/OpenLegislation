@@ -12,7 +12,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
-import gov.nysenate.openleg.model.calendar.spotcheck.SpotcheckCalendarId;
+import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * Created by PKS on 2/25/16.
  */
 @Service
-public class CalendarReportServices extends BaseSpotCheckReportService<SpotcheckCalendarId> {
+public class CalendarReportServices extends BaseSpotCheckReportService<CalendarEntryListId> {
 
     private static final Logger logger = LoggerFactory.getLogger(CalendarReportServices.class);
 
@@ -51,7 +51,7 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
     @Autowired private SpotcheckCalendarIdSpotCheckReportDao spotcheckCalendarIdSpotCheckReportDao;
 
     @Override
-    protected SpotCheckReportDao<SpotcheckCalendarId> getReportDao() {
+    protected SpotCheckReportDao<CalendarEntryListId> getReportDao() {
         return spotcheckCalendarIdSpotCheckReportDao;
     }
 
@@ -61,26 +61,26 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
     }
 
     @Override
-    public SpotCheckReport<SpotcheckCalendarId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
+    public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         SenateSiteDump calendarDump = getMostRecentDump();
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_CALENDAR,
                 DateUtils.endOfDateTimeRange(calendarDump.getDumpId().getRange()), LocalDateTime.now());
-        SpotCheckReport<SpotcheckCalendarId> report = new SpotCheckReport<>(reportId);
+        SpotCheckReport<CalendarEntryListId> report = new SpotCheckReport<>(reportId);
         report.setNotes(getDumpNotes(calendarDump));
         try {
 
             logger.info("getting calendar updates");
 
             // Get reference calendars using the calendar dump update interval
-            Set<SpotcheckCalendarId> updatedCalendarIds = getCalendarUpdatesDuring(calendarDump);
+            Set<CalendarEntryListId> updatedCalendarIds = getCalendarUpdatesDuring(calendarDump);
             logger.info("got {} updated calendar ids", updatedCalendarIds.size());
-            Map<SpotcheckCalendarId, Calendar> updatedCalendars = new LinkedHashMap<>();
+            Map<CalendarEntryListId, Calendar> updatedCalendars = new LinkedHashMap<>();
             logger.info("retrieving calendars");
-            for (SpotcheckCalendarId calendarId : updatedCalendarIds) {
+            for (CalendarEntryListId calendarId : updatedCalendarIds) {
                 try {
                     updatedCalendars.put(calendarId, calendarDataService.getCalendar(calendarId.getCalendarId()));
                 } catch (CalendarNotFoundEx ex) {
-                    SpotCheckObservation<SpotcheckCalendarId> observation = new SpotCheckObservation<>(reportId.getReferenceId(), calendarId);
+                    SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reportId.getReferenceId(), calendarId);
                     observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", calendarId));
                     report.addObservation(observation);
                 }
@@ -89,7 +89,7 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
             logger.info("retrieving calendar dump");
             // Extract senate site calendars from the dump
             //todo make map
-            Multimap<SpotcheckCalendarId, SenateSiteCalendar> dumpedCalendars = ArrayListMultimap.create();
+            Multimap<CalendarEntryListId, SenateSiteCalendar> dumpedCalendars = ArrayListMultimap.create();
             calendarJsonParser.parseCalendars(calendarDump).forEach(b -> dumpedCalendars.put(b.getSpotCheckCalendarId(), b));
             logger.info("parsed {} dumped calendars", dumpedCalendars.size());
 
@@ -103,6 +103,7 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
             logger.info("checking calendars");
             // Check each dumped senate site calendar
             dumpedCalendars.values().stream()
+                    .filter(sencal -> updatedCalendars.containsValue(sencal.getCalendarId()))
                     .map(senSitecalendar -> calendarCheckServices.check(updatedCalendars.get(senSitecalendar.getCalendarId()), senSitecalendar))
                     .forEach(report::addObservation);
 
@@ -121,7 +122,7 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
                 .orElseThrow(() -> new ReferenceDataNotFoundEx("Found no full senate site calendar dumps"));
     }
 
-    private Set<SpotcheckCalendarId> getCalendarUpdatesDuring(SenateSiteDump calDump) {
+    private Set<CalendarEntryListId> getCalendarUpdatesDuring(SenateSiteDump calDump) {
         Range<LocalDateTime> dumpUpdateInterval = calDump.getDumpId().getRange();
         Set<CalendarId> calendarIds = calendarUpdatesDao.getUpdates(UpdateType.PROCESSED_DATE, Range.greaterThan(DateUtils.startOfDateTimeRange(calDump.getDumpId().getRange())),
                  SortOrder.ASC, LimitOffset.ALL)
@@ -130,12 +131,12 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
                 .map(UpdateToken::getId)
                 .collect(Collectors.toCollection(TreeSet::new));
         return calendarIds.stream()
-                .map(calendarId -> new SpotcheckCalendarId(calendarId, null, null, null))
+                .map(calendarId -> new CalendarEntryListId(calendarId, CalendarType.ALL, Version.DEFAULT, 0))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
     private void prunePostDumpcalendars(SenateSiteDump calendarDump, SpotCheckReport report,
-                                    Multimap<SpotcheckCalendarId, SenateSiteCalendar> senSiteCalendars, Map<SpotcheckCalendarId, Calendar> openlegCalendars) {
+                                        Multimap<CalendarEntryListId, SenateSiteCalendar> senSiteCalendars, Map<CalendarEntryListId, Calendar> openlegCalendars) {
         Range<LocalDateTime> calendarDumpRange = calendarDump.getDumpId().getRange();
         Range<LocalDateTime> postDumpRange =  Range.downTo(DateUtils.endOfDateTimeRange(calendarDumpRange),
                 calendarDumpRange.upperBoundType() == BoundType.OPEN ? BoundType.CLOSED : BoundType.OPEN);
@@ -156,24 +157,27 @@ public class CalendarReportServices extends BaseSpotCheckReportService<Spotcheck
         }
     }
 
-    private List<SpotCheckObservation<SpotcheckCalendarId>> getRefDataMissingObs(Collection<SenateSiteCalendar> senSiteCalendars,
+    private List<SpotCheckObservation<CalendarEntryListId>> getRefDataMissingObs(Collection<SenateSiteCalendar> senSiteCalendars,
                                                                     Collection<Calendar> openlegCalendars,
                                                                     SpotCheckReferenceId refId) {
-        Set<SpotcheckCalendarId> senSiteCalendarIds = senSiteCalendars.stream()
+        Set<CalendarEntryListId> senSiteCalendarIds = senSiteCalendars.stream()
                 .map(SenateSiteCalendar::getSpotCheckCalendarId)
                 .collect(Collectors.toSet());
-        Set<CalendarId> openlegCalendarIds = openlegCalendars.stream()
-                .map(Calendar::getId)
+
+        Set<CalendarEntryListId> openlegCalendarIds = openlegCalendars.stream()
+                .map(Calendar::getCalendarEntryListIds)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
 
-        return Sets.symmetricDifference(senSiteCalendarIds, openlegCalendarIds).stream()
+        List<SpotCheckObservation<CalendarEntryListId>> refData = Sets.difference(openlegCalendarIds, senSiteCalendarIds).stream()
                 .map(calendarId -> {
-                    SpotCheckObservation<SpotcheckCalendarId> observation =
-                            new SpotCheckObservation<>(refId, new SpotcheckCalendarId(calendarId,CalendarType.ALL,Version.DEFAULT,0));
+                    SpotCheckObservation<CalendarEntryListId> observation =
+                            new SpotCheckObservation<>(refId, calendarId);
                     observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING, "", ""));
                     return observation;
                 })
                 .collect(Collectors.toList());
+        return refData;
     }
 
     /**
