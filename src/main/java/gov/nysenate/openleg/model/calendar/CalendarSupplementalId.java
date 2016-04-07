@@ -55,7 +55,11 @@ public class CalendarSupplementalId extends CalendarId implements Serializable{
     /** --- Getters / Setters --- */
 
     public CalendarEntryListId toCalendarEntryListId() {
-        return new CalendarEntryListId(new CalendarId(this.calNo, this.getYear()), CalendarType.FLOOR_CALENDAR, this.getVersion(), 0);
+        return new CalendarEntryListId(new CalendarId(this.calNo, this.getYear()),
+                this.getVersion() == Version.DEFAULT ?
+                        CalendarType.FLOOR_CALENDAR :
+                        CalendarType.SUPPLEMENTAL_CALENDAR,
+                this.getVersion(), 0);
     }
 
     public Version getVersion() {

@@ -72,15 +72,16 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
             logger.info("getting calendar updates");
 
             // Get reference calendars using the calendar dump update interval
-            Set<CalendarEntryListId> updatedCalendarIds = getCalendarUpdatesDuring(calendarDump);
+            Set<CalendarId> updatedCalendarIds = getCalendarUpdatesDuring(calendarDump);
             logger.info("got {} updated calendar ids", updatedCalendarIds.size());
-            Map<CalendarEntryListId, Calendar> updatedCalendars = new LinkedHashMap<>();
+            Map<CalendarId, Calendar> updatedCalendars = new LinkedHashMap<>();
             logger.info("retrieving calendars");
-            for (CalendarEntryListId calendarId : updatedCalendarIds) {
+            for (CalendarId calendarId : updatedCalendarIds) {
                 try {
-                    updatedCalendars.put(calendarId, calendarDataService.getCalendar(calendarId.getCalendarId()));
+                    updatedCalendars.put(calendarId, calendarDataService.getCalendar(calendarId));
                 } catch (CalendarNotFoundEx ex) {
-                    SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reportId.getReferenceId(), calendarId);
+                    SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reportId.getReferenceId(),
+                            new CalendarEntryListId(calendarId, CalendarType.ALL, Version.DEFAULT, 0));
                     observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", calendarId));
                     report.addObservation(observation);
                 }
@@ -88,7 +89,6 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
             logger.info("got {} calendars", updatedCalendars.size());
             logger.info("retrieving calendar dump");
             // Extract senate site calendars from the dump
-            //todo make map
             Multimap<CalendarEntryListId, SenateSiteCalendar> dumpedCalendars = ArrayListMultimap.create();
             calendarJsonParser.parseCalendars(calendarDump).forEach(b -> dumpedCalendars.put(b.getSpotCheckCalendarId(), b));
             logger.info("parsed {} dumped calendars", dumpedCalendars.size());
@@ -122,21 +122,19 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
                 .orElseThrow(() -> new ReferenceDataNotFoundEx("Found no full senate site calendar dumps"));
     }
 
-    private Set<CalendarEntryListId> getCalendarUpdatesDuring(SenateSiteDump calDump) {
+    private Set<CalendarId> getCalendarUpdatesDuring(SenateSiteDump calDump) {
         Range<LocalDateTime> dumpUpdateInterval = calDump.getDumpId().getRange();
-        Set<CalendarId> calendarIds = calendarUpdatesDao.getUpdates(UpdateType.PROCESSED_DATE, Range.greaterThan(DateUtils.startOfDateTimeRange(calDump.getDumpId().getRange())),
+        return calendarUpdatesDao.getUpdates(UpdateType.PROCESSED_DATE,
+                Range.greaterThan(DateUtils.startOfDateTimeRange(calDump.getDumpId().getRange())),
                  SortOrder.ASC, LimitOffset.ALL)
                 .getResults().stream()
                 .filter(token -> dumpUpdateInterval.contains(token.getProcessedDateTime()))
                 .map(UpdateToken::getId)
                 .collect(Collectors.toCollection(TreeSet::new));
-        return calendarIds.stream()
-                .map(calendarId -> new CalendarEntryListId(calendarId, CalendarType.ALL, Version.DEFAULT, 0))
-                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     private void prunePostDumpcalendars(SenateSiteDump calendarDump, SpotCheckReport report,
-                                        Multimap<CalendarEntryListId, SenateSiteCalendar> senSiteCalendars, Map<CalendarEntryListId, Calendar> openlegCalendars) {
+                                        Multimap<CalendarEntryListId, SenateSiteCalendar> senSiteCalendars, Map<CalendarId, Calendar> openlegCalendars) {
         Range<LocalDateTime> calendarDumpRange = calendarDump.getDumpId().getRange();
         Range<LocalDateTime> postDumpRange =  Range.downTo(DateUtils.endOfDateTimeRange(calendarDumpRange),
                 calendarDumpRange.upperBoundType() == BoundType.OPEN ? BoundType.CLOSED : BoundType.OPEN);
@@ -169,7 +167,7 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
 
-        List<SpotCheckObservation<CalendarEntryListId>> refData = Sets.difference(openlegCalendarIds, senSiteCalendarIds).stream()
+        return Sets.difference(openlegCalendarIds, senSiteCalendarIds).stream()
                 .map(calendarId -> {
                     SpotCheckObservation<CalendarEntryListId> observation =
                             new SpotCheckObservation<>(refId, calendarId);
@@ -177,7 +175,6 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
                     return observation;
                 })
                 .collect(Collectors.toList());
-        return refData;
     }
 
     /**
