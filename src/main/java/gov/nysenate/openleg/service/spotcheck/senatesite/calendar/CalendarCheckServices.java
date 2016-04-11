@@ -33,7 +33,7 @@ public class CalendarCheckServices extends BaseSpotCheckService<CalendarEntryLis
 
     @Override
     public SpotCheckObservation<CalendarEntryListId> check(Calendar content, SenateSiteCalendar reference) {
-        SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reference.getReferenceId(), reference.getSpotCheckCalendarId());
+        SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reference.getReferenceId(), reference.getCalendarEntryListId());
         checkCalendarId(content,reference,observation);
         if(reference.getCalendarType() == CalendarType.ACTIVE_LIST){
             checkActiveList(content,reference,observation);

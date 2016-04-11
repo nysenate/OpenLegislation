@@ -13,7 +13,7 @@ public class CalendarActiveListId extends CalendarId implements Serializable {
     private int sequenceNo;
 
     public CalendarEntryListId toCalendarEntryListId() {
-        return new CalendarEntryListId(new CalendarId(this.getCalNo(), this.getYear()), CalendarType.ACTIVE_LIST, Version.DEFAULT, this.getSequenceNo());
+        return new CalendarEntryListId(new CalendarId(this.calNo, this.year), CalendarType.ACTIVE_LIST, Version.DEFAULT, this.sequenceNo);
     }
 
     /** --- Constructors --- */

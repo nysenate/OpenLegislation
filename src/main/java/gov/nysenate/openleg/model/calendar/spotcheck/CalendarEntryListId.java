@@ -14,6 +14,29 @@ public class CalendarEntryListId extends CalendarId {
     protected Version version;
     protected Integer sequenceNo;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CalendarEntryListId)) return false;
+        if (!super.equals(o)) return false;
+
+        CalendarEntryListId that = (CalendarEntryListId) o;
+
+        if (type != that.type) return false;
+        if (version != that.version) return false;
+        return sequenceNo != null ? sequenceNo.equals(that.sequenceNo) : that.sequenceNo == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + type.hashCode();
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        result = 31 * result + (sequenceNo != null ? sequenceNo.hashCode() : 0);
+        return result;
+    }
+
     public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo) {
         super(calendarId);
         this.type = type;

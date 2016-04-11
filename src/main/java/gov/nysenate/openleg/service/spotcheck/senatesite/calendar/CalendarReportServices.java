@@ -90,7 +90,7 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
             logger.info("retrieving calendar dump");
             // Extract senate site calendars from the dump
             Multimap<CalendarEntryListId, SenateSiteCalendar> dumpedCalendars = ArrayListMultimap.create();
-            calendarJsonParser.parseCalendars(calendarDump).forEach(b -> dumpedCalendars.put(b.getSpotCheckCalendarId(), b));
+            calendarJsonParser.parseCalendars(calendarDump).forEach(b -> dumpedCalendars.put(b.getCalendarEntryListId(), b));
             logger.info("parsed {} dumped calendars", dumpedCalendars.size());
 
             prunePostDumpcalendars(calendarDump, report, dumpedCalendars, updatedCalendars);
@@ -159,7 +159,7 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
                                                                     Collection<Calendar> openlegCalendars,
                                                                     SpotCheckReferenceId refId) {
         Set<CalendarEntryListId> senSiteCalendarIds = senSiteCalendars.stream()
-                .map(SenateSiteCalendar::getSpotCheckCalendarId)
+                .map(SenateSiteCalendar::getCalendarEntryListId)
                 .collect(Collectors.toSet());
 
         Set<CalendarEntryListId> openlegCalendarIds = openlegCalendars.stream()

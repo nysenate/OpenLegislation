@@ -35,7 +35,7 @@ public class SenateSiteCalendar {
         return calendarId;
     }
 
-    public CalendarEntryListId getSpotCheckCalendarId() {
+    public CalendarEntryListId getCalendarEntryListId() {
         return new CalendarEntryListId(calendarId, calendarType, version, sequenceNo);
     }
 
