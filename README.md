@@ -21,8 +21,8 @@ Updates to legislative data are distributed by the Legislative Bill drafting Com
 Current Senate Developers
 ---------------------------
 
-* Ash Islam <islam@nysenate.gov>
 * Sam Stouffer <stouffer@nysenate.gov>
+* Kevin Caseiras <caseiras@nysenate.gov>
 * Ken Zalewski <zalewski@nysenate.gov>
 
 Past Developers
@@ -31,4 +31,4 @@ Past Developers
 * Nathan Freitas <nathanfreitas@gmail.com>
 * Jared Williams <jared.mi.williams@gmail.com>
 * Graylin Kim <kim@nysenate.gov>
-* Kevin Caseiras <caseiras@nysenate.gov>
+* Ash Islam <islam@nysenate.gov>
