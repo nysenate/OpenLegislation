@@ -80,22 +80,6 @@ public class JsonParser {
         return integerList;
     }
 
-    protected List<String> getListValue(JsonNode parentNode, String fieldName){
-        JsonNode undNode = parentNode.path(fieldName).path("und");
-        if(!undNode.isArray() || !undNode.elements().hasNext()){
-            return null;
-        }
-        List<String> valueList = new ArrayList<String>();
-        Iterator<JsonNode> iterator = undNode.elements();
-        for (JsonNode node : undNode) {
-            JsonNode valueNode = node.path("value");
-            if (valueNode.isTextual() || !valueNode.isNull()) {
-                valueList.add(valueNode.textValue());
-            }
-        }
-        return valueList;
-    }
-
     protected boolean getBooleanValue(JsonNode parentNode, String fieldName) {
         String rawValue = getValue(parentNode, fieldName);
         if (rawValue == null) {

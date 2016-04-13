@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.model.calendar.spotcheck;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Created by PKS on 3/9/16.
@@ -35,6 +37,44 @@ public class CalendarEntryListId extends CalendarId {
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (sequenceNo != null ? sequenceNo.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(CalendarId o) {
+        int result = super.compareTo(o);
+        switch (result){
+            case 1:
+            case -1:
+                return result;
+            case 0:
+                if(o instanceof CalendarEntryListId){
+                    CalendarEntryListId c = (CalendarEntryListId) o;
+                    return ComparisonChain.start()
+                            .compare(this.getType(),c.getType())
+                            .compare(this.getSequenceNo(),c.getSequenceNo())
+                            .compare(this.getVersion(),c.getVersion())
+                            .result();
+                }else return result;
+            default:
+                throw new IllegalArgumentException("Invalid Comparision Result" + result);
+        }
+    }
+
+    @Override
+    public String toString() {
+        String calendarStr = super.toString();
+        switch (type){
+            case ALL:
+                return calendarStr;
+            case ACTIVE_LIST:
+                return calendarStr + " " + sequenceNo;
+            case FLOOR_CALENDAR:
+                return calendarStr + " " + "FLOOR";
+            case SUPPLEMENTAL_CALENDAR:
+                return calendarStr + " " + version;
+            default:
+                throw new IllegalArgumentException("Invalid Calendar Type" + type);
+        }
     }
 
     public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo) {
