@@ -25,6 +25,7 @@ import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import gov.nysenate.openleg.util.DateUtils;
+import org.elasticsearch.common.collect.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,13 +98,14 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
 
             logger.info("comparing calendars present");
             // Add observations for any missing calendars that should have been in the dump
-            report.addObservations(getRefDataMissingObs(dumpedCalendars.values(), updatedCalendars.values(),
-                    reportId.getReferenceId()));
+            Tuple<List<SpotCheckObservation<CalendarEntryListId>>,List<CalendarEntryListId>> obs = getRefDataMissingObs(dumpedCalendars.values(), updatedCalendars.values(),
+                    reportId.getReferenceId());
+            report.addObservations(obs.v1());
 
             logger.info("checking calendars");
             // Check each dumped senate site calendar
             dumpedCalendars.values().stream()
-                    .filter(sencal -> updatedCalendars.containsValue(sencal.getCalendarId()))
+                    .filter(sencal -> updatedCalendars.containsKey(sencal.getCalendarId()) && !obs.v2().contains(sencal.getCalendarEntryListId()))
                     .map(senSitecalendar -> calendarCheckServices.check(updatedCalendars.get(senSitecalendar.getCalendarId()), senSitecalendar))
                     .forEach(report::addObservation);
 
@@ -155,9 +157,9 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
         }
     }
 
-    private List<SpotCheckObservation<CalendarEntryListId>> getRefDataMissingObs(Collection<SenateSiteCalendar> senSiteCalendars,
-                                                                    Collection<Calendar> openlegCalendars,
-                                                                    SpotCheckReferenceId refId) {
+    private Tuple<List<SpotCheckObservation<CalendarEntryListId>>, List<CalendarEntryListId>> getRefDataMissingObs(Collection<SenateSiteCalendar> senSiteCalendars,
+                                                                                       Collection<Calendar> openlegCalendars,
+                                                                                       SpotCheckReferenceId refId) {
         Set<CalendarEntryListId> senSiteCalendarIds = senSiteCalendars.stream()
                 .map(SenateSiteCalendar::getCalendarEntryListId)
                 .collect(Collectors.toSet());
@@ -166,15 +168,29 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
                 .map(Calendar::getCalendarEntryListIds)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
+        List<CalendarEntryListId> toRemove = new ArrayList<>();
 
-        return Sets.difference(openlegCalendarIds, senSiteCalendarIds).stream()
+        List<SpotCheckObservation<CalendarEntryListId>> refData = Sets.difference(openlegCalendarIds, senSiteCalendarIds).stream()
                 .map(calendarId -> {
                     SpotCheckObservation<CalendarEntryListId> observation =
                             new SpotCheckObservation<>(refId, calendarId);
                     observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING, "", ""));
                     return observation;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
+
+        List<SpotCheckObservation<CalendarEntryListId>> obsData = Sets.difference(senSiteCalendarIds,openlegCalendarIds).stream()
+                .map(calendarId -> {
+                    SpotCheckObservation<CalendarEntryListId> observation =
+                            new SpotCheckObservation<>(refId, calendarId);
+                    observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", ""));
+                    toRemove.add(calendarId);
+                    return observation;
+                }).collect(Collectors.toList());
+
+        List<SpotCheckObservation<CalendarEntryListId>> allDataObs = new ArrayList<>();
+        allDataObs.addAll(refData);
+        allDataObs.addAll(obsData);
+        return Tuple.tuple(allDataObs,toRemove);
     }
 
     /**

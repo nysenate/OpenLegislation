@@ -50,7 +50,7 @@ public class CalendarCheckServices extends BaseSpotCheckService<CalendarEntryLis
     private void checkActiveList(Calendar content, SenateSiteCalendar reference, SpotCheckObservation<CalendarEntryListId> observation) {
         List<CalendarEntry> calendarEntries = content.getActiveListMap().get(reference.getSequenceNo()).getEntries();
         List<CalendarEntry> refCalEntries = getCalEntry(reference);
-        checkCollection(calendarEntries, refCalEntries, observation, SpotCheckMismatchType.ACTIVE_LIST_ENTRY);
+        checkCollection(calendarEntries, refCalEntries, observation, SpotCheckMismatchType.ACTIVE_LIST_ENTRY, this::calEntryDiffString,"\n");
     }
 
     private void checkSupplemental(Calendar content, SenateSiteCalendar reference, SpotCheckObservation<CalendarEntryListId> observation) {
@@ -78,6 +78,6 @@ public class CalendarCheckServices extends BaseSpotCheckService<CalendarEntryLis
     }
 
     private String calEntryDiffString(CalendarEntry entry) {
-        return "";
+        return String.valueOf(entry.getBillCalNo())+ " " + (entry.getBillId() == null ? "" : entry.getBillId().toString());
     }
 }
