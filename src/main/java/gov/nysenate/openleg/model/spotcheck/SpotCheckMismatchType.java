@@ -73,11 +73,15 @@ public enum SpotCheckMismatchType
     /** --- Supplemental mismatches --- */
     SUPPLEMENTAL_CAL_DATE("Supplemental Calendar Date", LBDC_CALENDAR_ALERT),
     SUPPLEMENTAL_SECTION_TYPE("Supplemental Section", LBDC_CALENDAR_ALERT),
-    SUPPLEMENTAL_ENTRY("Supplemental Entry", LBDC_CALENDAR_ALERT),
+    SUPPLEMENTAL_ENTRY("Supplemental Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_CALENDAR),
+    FLOOR_ENTRY("Floor Entry", SENATE_SITE_CALENDAR),
 
     /** --- Active list mismatches --- */
     ACTIVE_LIST_CAL_DATE("Active List Calendar Date", LBDC_CALENDAR_ALERT),
-    ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT),
+    ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_BILLS),
+
+    /** --- Calendar mismatches --- */
+    CALENDAR_ID("Calendar Id", SENATE_SITE_CALENDAR),
 
     ;
 

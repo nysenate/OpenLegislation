@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.calendar;
 
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ public class CalendarSupplementalId extends CalendarId implements Serializable{
 
     /** The identifier for this floor calendar, typically a single character */
     private Version version;
+
 
     /** --- Constructors --- */
 
@@ -51,6 +53,14 @@ public class CalendarSupplementalId extends CalendarId implements Serializable{
     }
 
     /** --- Getters / Setters --- */
+
+    public CalendarEntryListId toCalendarEntryListId() {
+        return new CalendarEntryListId(new CalendarId(this.calNo, this.year),
+                this.version == Version.DEFAULT ?
+                        CalendarType.FLOOR_CALENDAR :
+                        CalendarType.SUPPLEMENTAL_CALENDAR,
+                this.version, 0);
+    }
 
     public Version getVersion() {
         return version;

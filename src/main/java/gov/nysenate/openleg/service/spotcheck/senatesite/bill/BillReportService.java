@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.spotcheck.senatesite;
+package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 
 import com.google.common.collect.*;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -23,6 +23,8 @@ import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillCheckService;
+import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillJsonParser;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,18 +37,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class SenateSiteBillReportService extends BaseSpotCheckReportService<BillId> {
+public class BillReportService extends BaseSpotCheckReportService<BillId> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SenateSiteBillReportService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BillReportService.class);
 
     @Autowired private BillIdSpotCheckReportDao billReportDao;
     @Autowired private SenateSiteDao senateSiteDao;
-    @Autowired private SenateSiteBillJsonParser billJsonParser;
+    @Autowired private BillJsonParser billJsonParser;
 
     @Autowired private BillDataService billDataService;
     @Autowired private BillUpdatesDao billUpdatesDao;
 
-    @Autowired private SenateSiteBillCheckService billCheckService;
+    @Autowired private BillCheckService billCheckService;
 
     @Override
     protected SpotCheckReportDao<BillId> getReportDao() {

@@ -27,9 +27,9 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 
 @RestController
 @RequestMapping(BASE_API_PATH + "/senatesite")
-public class SenateSiteBillDumpCtrl extends BaseCtrl {
+public class SenateSiteDumpCtrl extends BaseCtrl {
 
-    private static final Logger logger = LoggerFactory.getLogger(SenateSiteBillDumpCtrl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SenateSiteDumpCtrl.class);
 
     @Autowired private SenateSiteDao senateSiteDao;
     @Autowired private AsyncRunner asyncRunner;
@@ -46,17 +46,47 @@ public class SenateSiteBillDumpCtrl extends BaseCtrl {
     @RequiresPermissions("senatesite:billdump:post")
     @RequestMapping(value = "/billdump", method = RequestMethod.POST, consumes = "application/json")
     public BaseResponse sendSenateSiteBillDumpFragment(@RequestBody String billFragmentJson) throws IOException {
-        SenateSiteDumpFragment fragment = parser.parseFragment(billFragmentJson, SpotCheckRefType.SENATE_SITE_BILLS);
-        try {
-            senateSiteDao.saveDumpFragment(fragment, billFragmentJson);
-        } catch (IOException ex) {
+        if(!saveDump(billFragmentJson,SpotCheckRefType.SENATE_SITE_BILLS)){
             return new SimpleResponse(false, "could not save dump :(", "bill-dump-failed");
         }
-        asyncRunner.run(() ->
-                eventBus.post(new SpotCheckReferenceEvent(SpotCheckRefType.SENATE_SITE_BILLS)));
         return new SimpleResponse(true, "bill dump received.  Thanks!", "bill-dump-received");
     }
 
+    /**
+     * nysenate.gov Calendar Dump API
+     *
+     * Posts a fragment of a json calendar data dump
+     *
+     * Usage: (POST) /api/3/senatesite/caldump
+     */
+    @RequiresPermissions("senatesite:caldump:post")
+    @RequestMapping(value = "/caldump",method = RequestMethod.POST, consumes = "application/json")
+    public BaseResponse sendSenateSiteCalDumpFragment(@RequestBody String calFragmentJson) throws IOException{
+        if(!saveDump(calFragmentJson,SpotCheckRefType.SENATE_SITE_CALENDAR)){
+            return new SimpleResponse(false, "could not save dump :(", "calendar-dump-failed");
+        }
+        return new SimpleResponse(true, "calendar dump received.  Thanks!", "calendar-dump-received");
+    }
+
+
+    /**
+     * This method saves FragmentJson received with appropriate SpotchekRefType
+     * @param fragmentJson: Bill or Calendar or Agenda Dump
+     * @param refType: Bill or Calendar or Agenda SpotCheckRefType
+     * @return true: if successful or false: otherwise
+     * @throws IOException
+     */
+    private boolean saveDump(String fragmentJson, SpotCheckRefType refType) throws IOException{
+        SenateSiteDumpFragment fragment = parser.parseFragment(fragmentJson, refType);
+        try {
+            senateSiteDao.saveDumpFragment(fragment, fragmentJson);
+        } catch (IOException ex) {
+            return false;
+        }
+        asyncRunner.run(() ->
+                eventBus.post(new SpotCheckReferenceEvent(refType)));
+        return true;
+    }
     /** Exception Handling */
 
     @ExceptionHandler(SenateSiteDumpFragParserException.class)

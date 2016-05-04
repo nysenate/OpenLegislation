@@ -60,7 +60,7 @@ public class SenateSiteBill {
     }
 
     public BaseBillId getBaseBillId() {
-        return new BaseBillId(printNo, sessionYear);
+        return new BaseBillId(basePrintNo, sessionYear);
     }
 
     public SpotCheckReferenceId getReferenceId() {

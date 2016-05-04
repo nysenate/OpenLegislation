@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.model.calendar;
 
+import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
+
 import java.io.Serializable;
 
 public class CalendarActiveListId extends CalendarId implements Serializable {
@@ -8,6 +11,10 @@ public class CalendarActiveListId extends CalendarId implements Serializable {
 
     /** A sequence number that identifies this active list */
     private int sequenceNo;
+
+    public CalendarEntryListId toCalendarEntryListId() {
+        return new CalendarEntryListId(new CalendarId(this.calNo, this.year), CalendarType.ACTIVE_LIST, Version.DEFAULT, this.sequenceNo);
+    }
 
     /** --- Constructors --- */
 

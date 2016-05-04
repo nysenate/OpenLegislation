@@ -3,10 +3,14 @@ package gov.nysenate.openleg.model.calendar;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Each day the Senate is in session an associated calendar is present which lists all the bills
@@ -104,6 +108,19 @@ public class Calendar extends BaseLegislativeContent
 
     public CalendarId getId() {
         return id;
+    }
+
+    public List<CalendarEntryListId> getCalendarEntryListIds() {
+        List<CalendarEntryListId> calendarEntryListIds = new ArrayList<>();
+        calendarEntryListIds.addAll(this.getSupplementalMap().values().stream()
+                .map(CalendarSupplemental::getCalendarSupplementalId)
+                .map(CalendarSupplementalId::toCalendarEntryListId)
+                .collect(Collectors.toList()));
+        calendarEntryListIds.addAll(this.getActiveListMap().values().stream()
+                .map(CalendarActiveList::getCalendarActiveListId)
+                .map(CalendarActiveListId::toCalendarEntryListId)
+                .collect(Collectors.toList()));
+        return calendarEntryListIds;
     }
 
     public void setId(CalendarId id) {

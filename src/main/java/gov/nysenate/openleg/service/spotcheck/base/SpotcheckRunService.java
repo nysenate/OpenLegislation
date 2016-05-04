@@ -14,7 +14,7 @@ import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.CalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.IntervalCalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
-import gov.nysenate.openleg.service.spotcheck.senatesite.SenateSiteBillReportService;
+import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -66,7 +66,8 @@ public class SpotcheckRunService {
     @Autowired private IntervalCalendarReportService weeklyCalendarReportService;
 
     /** Nysenate.gov Report Services */
-    @Autowired private SenateSiteBillReportService senSiteBillReportService;
+    @Autowired private BillReportService senSiteBillReportService;
+    @Autowired private gov.nysenate.openleg.service.spotcheck.senatesite.calendar.CalendarReportServices senSiteCalReportService;
 
     @PostConstruct
     public void init() {
@@ -77,6 +78,7 @@ public class SpotcheckRunService {
                 .put(LBDC_SCRAPED_BILL, billTextReportService)
                 .put(LBDC_CALENDAR_ALERT, calendarReportService)
                 .put(SENATE_SITE_BILLS, senSiteBillReportService)
+                .put(SENATE_SITE_CALENDAR, senSiteCalReportService)
                 .build();
         weeklyReports = ImmutableSet.<SpotCheckReportService>builder()
                 .add(weeklyAgendaReportService)

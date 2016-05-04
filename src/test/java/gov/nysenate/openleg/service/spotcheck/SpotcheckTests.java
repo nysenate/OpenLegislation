@@ -32,8 +32,9 @@ public class SpotcheckTests extends WebAppBaseTests {
     }
 
     @Test
-    public void runReports() {
-        spotcheckRunService.runReports(SpotCheckRefType.SENATE_SITE_BILLS);
+    public void runReports()
+    {
+        spotcheckRunService.runReports(SpotCheckRefType.SENATE_SITE_CALENDAR);
     }
 
     @Test

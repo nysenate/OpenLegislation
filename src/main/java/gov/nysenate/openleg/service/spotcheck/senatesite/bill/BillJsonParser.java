@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.spotcheck.senatesite;
+package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,6 +17,7 @@ import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
 
 import java.io.IOException;
 import java.time.*;
@@ -24,7 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class SenateSiteBillJsonParser {
+public class BillJsonParser extends JsonParser{
 
     @Autowired ObjectMapper objectMapper;
 
@@ -126,66 +127,5 @@ public class SenateSiteBillJsonParser {
                 .collect(Collectors.toList());
     }
 
-    private <T> Optional<T> deserializeValue(JsonNode billNode, String fieldName, TypeReference<T> resultType) {
-        String jsonValue = getValue(billNode, fieldName);
-        return Optional.ofNullable(jsonValue).map(json -> {
-            try {
-                return objectMapper.readValue(json, resultType);
-            } catch (IOException ex) {
-                throw new ParseError("Error while attempting to map json. " +
-                        "target_class: " + resultType.getType() + " field: " + fieldName + " value: " + json,
-                        ex);
-            }
-        });
-    }
 
-    private String getValue(JsonNode parentNode, String fieldName) {
-        JsonNode undNode = parentNode.path(fieldName)
-                .path("und");
-        if (!undNode.isArray() || !undNode.elements().hasNext()) {
-            return null;
-        }
-        JsonNode valueNode = undNode.elements().next()
-                .path("value");
-        if (valueNode.isTextual() || valueNode.isNull()) {
-            return valueNode.textValue();
-        }
-        return null;
-    }
-
-    private int getIntValue(JsonNode parentNode, String fieldName) {
-        String rawValue = getValue(parentNode, fieldName);
-        if (rawValue == null) {
-            return 0;
-        }
-        try {
-            return Integer.parseInt(rawValue);
-        } catch (NumberFormatException ex) {
-            throw new ParseError("could not parse int value. field: " + fieldName + " value: " + rawValue, ex);
-        }
-    }
-
-    private boolean getBooleanValue(JsonNode parentNode, String fieldName) {
-        String rawValue = getValue(parentNode, fieldName);
-        if (rawValue == null) {
-            return false;
-        }
-        if ("1".equals(rawValue) ^ "0".equals(rawValue)) {
-            return "1".equals(getValue(parentNode, fieldName));
-        }
-        throw new ParseError("unexpected value for boolean. field: " + fieldName + " value: " + rawValue);
-    }
-
-    private LocalDateTime getDateTimeValue(JsonNode parentNode, String fieldName) {
-        String rawValue = getValue(parentNode, fieldName);
-        if (rawValue == null) {
-            return null;
-        }
-        try {
-            long msvalue = Long.parseLong(rawValue);
-            return LocalDateTime.ofInstant(Instant.ofEpochSecond(msvalue), ZoneId.of("America/New_York"));
-        } catch (DateTimeException | NumberFormatException ex) {
-            throw new ParseError("cannot convert value into LocalDateTime. field: " + fieldName + " value: " + rawValue, ex);
-        }
-    }
 }

@@ -9,7 +9,7 @@
   <div class="public-home-page" ng-controller="PublicHomeCtrl">
     <section class="hero-container-public">
       <h1>
-        <img src="${ctxPath}/static/img/NYSS_seal.png"/>Open Legislation
+        <img src="${ctxPath}/static/img/nys_logo224x224.png"/>Open Legislation
       </h1>
     </section>
     <div class="pop-out-container">
@@ -29,7 +29,7 @@
           <form ng-submit="loginWithAPIKey()">
             <div layout="row" layout-sm="column" layout-align="center center">
               <md-input-container style="min-width: 75%" class="margin-right-20">
-                <label>EnTer your API Key here to browse the data</label>
+                <label>Enter your API Key here to browse the data</label>
                 <input type="text" name="apikey" ng-required ng-trim ng-model="apiKey"/>
               </md-input-container>
               <md-button type="submit" style="width: 160px;" class="bold md-primary md-raised">
@@ -111,7 +111,7 @@
     </div>
     <div class="copyright-footer-container">
       <div class="project-desc">
-        <img src="//i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png"/>
+        <img src="//licensebuttons.net/l/by-nc-nd/3.0/us/88x31.png"/>
         <p class="text-medium">This content is licensed under Creative Commons BY-NC-ND 3.0.
           The software and services provided under this site are offered under the BSD License and the GPL v3 License.</p>
       </div>
