@@ -59,7 +59,7 @@ public class SenateSiteDumpCtrl extends BaseCtrl {
      *
      * Usage: (POST) /api/3/senatesite/caldump
      */
-    //@RequiresPermissions("senatesite:caldump:post")
+    @RequiresPermissions("senatesite:caldump:post")
     @RequestMapping(value = "/caldump",method = RequestMethod.POST, consumes = "application/json")
     public BaseResponse sendSenateSiteCalDumpFragment(@RequestBody String calFragmentJson) throws IOException{
         if(!saveDump(calFragmentJson,SpotCheckRefType.SENATE_SITE_CALENDAR)){
@@ -68,10 +68,11 @@ public class SenateSiteDumpCtrl extends BaseCtrl {
         return new SimpleResponse(true, "calendar dump received.  Thanks!", "calendar-dump-received");
     }
 
+
     /**
      * This method saves FragmentJson received with appropriate SpotchekRefType
-     * @param fragmentJson: Bill or Calendar Dump
-     * @param refType: Bill or Calendar SpotCheckRefType
+     * @param fragmentJson: Bill or Calendar or Agenda Dump
+     * @param refType: Bill or Calendar or Agenda SpotCheckRefType
      * @return true: if successful or false: otherwise
      * @throws IOException
      */
