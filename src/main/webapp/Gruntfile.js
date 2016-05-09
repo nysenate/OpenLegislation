@@ -13,7 +13,7 @@ module.exports = function(grunt) {
         jsDest: '<%= jsRoot %>/dest',
         jspSource: 'WEB-INF/view',
         tagSource: 'WEB-INF/tags',
-        tomcatWeb: '/usr/local/Cellar/tomcat/8.0.32/libexec/webapps/ROOT',  // <-- CHANGE THIS AS NEEDED
+        tomcatWeb: '/usr/share/tomcat/webapps/legislation',  // <-- CHANGE THIS AS NEEDED
         docsSourceRoot: '../../../docs',
         docsDestRoot: 'static/docs',
 
