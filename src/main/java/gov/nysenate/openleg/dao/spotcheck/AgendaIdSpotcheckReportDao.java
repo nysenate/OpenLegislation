@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by PKS on 4/28/16.
  */
 @Repository
-public class AgendaIdSpotCheckReportDao extends AbstractSpotCheckReportDao<AgendaId> {
+public class AgendaIdSpotcheckReportDao extends AbstractSpotCheckReportDao<AgendaId> {
     @Override
     public AgendaId getKeyFromMap(Map<String, String> keyMap) {
         if (keyMap != null) {

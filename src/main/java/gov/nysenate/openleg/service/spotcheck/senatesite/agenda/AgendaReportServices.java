@@ -6,7 +6,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
-import gov.nysenate.openleg.dao.spotcheck.AgendaIdSpotCheckReportDao;
+import gov.nysenate.openleg.dao.spotcheck.AgendaIdSpotcheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
@@ -51,11 +51,11 @@ public class AgendaReportServices extends BaseSpotCheckReportService<AgendaId>{
     @Autowired
     private AgendaDataService agendaDataService;
     @Autowired
-    private AgendaIdSpotCheckReportDao agendaIdSpotCheckReportDao;
+    private AgendaIdSpotcheckReportDao agendaIdSpotcheckReportDao;
 
     @Override
     protected SpotCheckReportDao<AgendaId> getReportDao() {
-        return agendaIdSpotCheckReportDao;
+        return agendaIdSpotcheckReportDao;
     }
 
     @Override
