@@ -11,10 +11,7 @@ import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by PKS on 2/25/16.
@@ -61,6 +58,23 @@ public class JsonParser {
         } catch (NumberFormatException ex) {
             throw new ParseError("could not parse int value. field: " + fieldName + " value: " + rawValue, ex);
         }
+    }
+
+    protected List<String> getStringListValue(JsonNode parentNode, String fieldName){
+        JsonNode undNode = parentNode.path(fieldName).path("und");
+        if(!undNode.isArray() || !undNode.elements().hasNext()){
+            return null;
+        }
+        List<String> stringList = new ArrayList<String>();
+        Iterator<JsonNode> iterator = undNode.elements();
+        for (JsonNode node : undNode)
+        {
+            JsonNode valueNode = node.path("value");
+            if (!valueNode.isNull()) {
+                stringList.add(valueNode.asText());
+            }
+        }
+        return stringList;
     }
 
     protected List<Integer> getIntListValue(JsonNode parentNode, String fieldName){

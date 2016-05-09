@@ -35,6 +35,10 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
         }
     }
 
+    protected SimpleBillInfoView(){
+        super();
+    }
+
     public String getPrintNo() {
         return printNo;
     }

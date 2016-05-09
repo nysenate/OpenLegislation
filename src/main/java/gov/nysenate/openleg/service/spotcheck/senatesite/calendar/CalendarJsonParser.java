@@ -45,7 +45,7 @@ public class CalendarJsonParser extends JsonParser {
             JsonNode calendarMap = objectMapper.readTree(fragment.getFragmentFile())
                     .path("calendars");
             if (calendarMap.isMissingNode()) {
-                throw new ParseError("Could not locate \"calendars\" node in senate site bill dump fragment file: " +
+                throw new ParseError("Could not locate \"calendars\" node in senate site calendar dump fragment file: " +
                         fragment.getFragmentFile().getAbsolutePath());
             }
             List<SenateSiteCalendar> calendars = new LinkedList<>();
@@ -54,7 +54,7 @@ public class CalendarJsonParser extends JsonParser {
             }
             return calendars;
         } catch (IOException | NoSuchElementException ex) {
-            throw new ParseError("error while reading senate site bill dump fragment file: " +
+            throw new ParseError("error while reading senate site calendar dump fragment file: " +
                     fragment.getFragmentFile().getAbsolutePath(),
                     ex);
         }

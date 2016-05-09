@@ -25,6 +25,10 @@ public class AgendaItemView implements ViewObject
         }
     }
 
+    protected AgendaItemView(){
+        super();
+    }
+
     public BillIdView getBillId() {
         return billId;
     }

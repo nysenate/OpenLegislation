@@ -49,6 +49,10 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
         }
     }
 
+    protected BillInfoView(){
+        super();
+    }
+
     public String getSummary() {
         return summary;
     }
