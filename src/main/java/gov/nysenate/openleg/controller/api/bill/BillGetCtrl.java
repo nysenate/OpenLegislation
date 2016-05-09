@@ -30,11 +30,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -163,12 +167,15 @@ public class BillGetCtrl extends BaseCtrl
      * Expected Output: PDF response
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}.pdf")
-    public void getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo, HttpServletResponse response)
+    public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo)
                            throws Exception {
         BillId billId = getBillId(printNo, sessionYear, "printNo");
         Bill bill = billData.getBill(BaseBillId.of(billId));
-        new BillPdfView(bill, billId.getVersion(), response.getOutputStream());
-        response.setContentType("application/pdf");
+        ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
+        BillPdfView.writeBillPdf(bill, billId.getVersion(), pdfBytes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
     }
 
     /**
