@@ -73,8 +73,8 @@ public class BillActionAnalyzer
         Pattern.compile("AMEND(?:ED)? (?:\\(T\\) )?AND RECOMMIT(?:TED)? TO RULES " + simpleBillRegex)
     );
 
-    /** Patterns for bill actions that indicate that the specified bill amendment should be unpublished. */
-    private static final List<Pattern> unpublishBillEventPatterns = Arrays.asList(
+    /** Patterns for bill actions indicating that the specified version should be the new active version. */
+    private static final List<Pattern> amendmentRestoreBillEventPatterns = Arrays.asList(
         Pattern.compile("AMEND(?:ED)? BY RESTORING TO PREVIOUS PRINT " + simpleBillRegex),
         Pattern.compile("AMEND(?:ED)? BY RESTORING TO ORIGINAL PRINT " + simpleBillRegex)
     );
@@ -193,20 +193,13 @@ public class BillActionAnalyzer
                 break;
             }
         }
-        // Otherwise check if it's an un-publish event
+        // Otherwise check for amendment restore bill event patterns
         if (!foundPublishPattern) {
-            for (Pattern pattern : unpublishBillEventPatterns) {
+            for (Pattern pattern : amendmentRestoreBillEventPatterns) {
                 Matcher matcher = pattern.matcher(action.getText());
                 if (matcher.find()) {
-                    // The version matched here refers to the latest version that should be published after the revert.
+                    // The version matched here refers to the latest version that should be active after the revert.
                     publishVersion = Version.of(matcher.group(2));
-                    // All versions after this one should be marked as unpublished.
-                    for (Version v : publishStatusMap.keySet()) {
-                        if (v.compareTo(publishVersion) > 0) {
-                            publishStatusMap.put(v, new PublishStatus(false, action.getDate().atStartOfDay(),
-                                false, action.getText()));
-                        }
-                    }
                     break;
                 }
             }
