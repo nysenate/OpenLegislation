@@ -18,6 +18,10 @@ public class SponsorView implements ViewObject
         }
     }
 
+    protected SponsorView(){
+        super();
+    }
+
     @Override
     public String getViewType() {
         return "sponsor";

@@ -83,6 +83,9 @@ public enum SpotCheckMismatchType
     /** --- Calendar mismatches --- */
     CALENDAR_ID("Calendar Id", SENATE_SITE_CALENDAR),
 
+    /** --- Agenda mismatches --- */
+    AGENDA_ID("Agenda Id", SENATE_SITE_AGENDA),
+
     ;
 
     private String displayName;

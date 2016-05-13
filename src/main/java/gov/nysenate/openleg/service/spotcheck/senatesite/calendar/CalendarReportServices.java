@@ -125,6 +125,19 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
     }
 
     private Set<CalendarId> getCalendarUpdatesDuring(SenateSiteDump calDump) {
+        if(calDump.getDumpId() instanceof SenateSiteDumpSessionId){
+            SenateSiteDumpSessionId calDumpId = (SenateSiteDumpSessionId) calDump.getDumpId();
+            Set<CalendarId> calendarIds = calendarDataService.getCalendars(calDumpId.getSession().getSessionStartYear(),
+                                                    SortOrder.NONE,LimitOffset.ALL).stream()
+                                            .map(Calendar::getId)
+                                            .collect(Collectors.toCollection(TreeSet::new));
+            Set<CalendarId> calendarIds1 = calendarDataService.getCalendars(calDumpId.getSession().getSessionEndYear(),
+                                                    SortOrder.NONE,LimitOffset.ALL).stream()
+                                            .map(Calendar::getId)
+                                            .collect(Collectors.toCollection(TreeSet::new));
+            calendarIds.addAll(calendarIds1);
+            return calendarIds;
+        }
         Range<LocalDateTime> dumpUpdateInterval = calDump.getDumpId().getRange();
         return calendarUpdatesDao.getUpdates(UpdateType.PROCESSED_DATE,
                 Range.greaterThan(DateUtils.startOfDateTimeRange(calDump.getDumpId().getRange())),

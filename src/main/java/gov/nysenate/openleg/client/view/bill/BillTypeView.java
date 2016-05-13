@@ -17,6 +17,10 @@ public class BillTypeView implements ViewObject
         }
     }
 
+    protected BillTypeView(){
+        super();
+    }
+
     public String getChamber() {
         return chamber;
     }

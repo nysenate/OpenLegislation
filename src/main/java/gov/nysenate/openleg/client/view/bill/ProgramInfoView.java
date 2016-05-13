@@ -15,6 +15,10 @@ public class ProgramInfoView implements ViewObject {
         }
     }
 
+    protected ProgramInfoView(){
+        super();
+    }
+
     public String getName() {
         return name;
     }

@@ -68,6 +68,21 @@ public class SenateSiteDumpCtrl extends BaseCtrl {
         return new SimpleResponse(true, "calendar dump received.  Thanks!", "calendar-dump-received");
     }
 
+    /**
+     * nysenate.gov Agenda Dump API
+     *
+     * Posts a fragment of a json agenda data dump
+     *
+     * Usage: (POST) /api/3/senatesite/agendadump
+     */
+    //@RequiresPermissions("senatesite:agendadump:post")
+    @RequestMapping(value = "/agendadump",method = RequestMethod.POST, consumes = "application/json")
+    public BaseResponse sendSenateSiteAgendaDumpFragment(@RequestBody String calFragmentJson) throws IOException{
+        if(!saveDump(calFragmentJson,SpotCheckRefType.SENATE_SITE_AGENDA)){
+            return new SimpleResponse(false, "could not save dump :(", "agenda-dump-failed");
+        }
+        return new SimpleResponse(true, "agenda dump received.  Thanks!", "agenda-dump-received");
+    }
 
     /**
      * This method saves FragmentJson received with appropriate SpotchekRefType

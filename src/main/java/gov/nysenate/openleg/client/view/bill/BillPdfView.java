@@ -27,7 +27,16 @@ public class BillPdfView
     private static final Float billMargin = 10f;
     private static final Float resolutionMargin = 46f;
 
-    public BillPdfView(Bill bill, Version version, OutputStream outputStream) throws IOException, COSVisitorException {
+    /**
+     * Writes bill text in pdf format to the given OutputStream
+     *
+     * @param bill Bill - The bill that contains the text to write
+     * @param version Version - Identifies an amendment in the passed in bill that will have its text converted to pdf
+     * @param outputStream OutputStream - The stream which will accept the pdf data
+     * @throws IOException
+     * @throws COSVisitorException
+     */
+    public static void writeBillPdf(Bill bill, Version version, OutputStream outputStream) throws IOException, COSVisitorException {
         if (bill == null) {
             throw new IllegalArgumentException("Supplied bill cannot be null when converting to pdf!");
         }

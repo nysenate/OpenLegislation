@@ -66,7 +66,7 @@
                              value="{{version}}" class="md-accent md-hue-2">
               <span class="text-medium bold" ng-if="$first">Original</span>
               <span class="text-medium bold" ng-if="!$first">Revision {{version}}</span>
-              <span class="text-medium bold" ng-if="$last"> (Latest)</span>
+              <span class="text-medium bold" ng-if="version === bill.activeVersion"> (Latest)</span>
               <br/>
               <span class="text-small">{{amd.publishDate | moment:'MMM D, YYYY'}}</span>
             </md-radio-button>

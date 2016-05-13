@@ -7,17 +7,22 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 @RestController
@@ -29,9 +34,9 @@ public class BillPdfCtrl
     @Autowired protected BillDataService billData;
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
-    public void getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo,
-                           HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo,
+                                             HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
         try {
             BillId billId = new BillId(printNo, sessionYear);
             Optional<String> alternateUrl = billData.getAlternateBillPdfUrl(billId);
@@ -42,19 +47,20 @@ public class BillPdfCtrl
                     urlString = request.getContextPath() + urlString;
                 }
                 response.sendRedirect(urlString);
-            }
-            else {
+            } else {
                 Bill bill = billData.getBill(BaseBillId.of(billId));
-                new BillPdfView(bill, billId.getVersion(), response.getOutputStream());
-                response.setContentType("application/pdf");
+                ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
+                BillPdfView.writeBillPdf(bill, billId.getVersion(), pdfBytes);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.parseMediaType("application/pdf"));
+                return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
             }
-        }
-        catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
+        } catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
             response.sendError(404, ex.getMessage());
-        }
-        catch (Exception ex) {
+        } catch (IOException | URISyntaxException | COSVisitorException ex) {
             logger.error("Exception in bill pdf viewer.", ex);
             response.sendError(404, "PDF text for " + printNo + " " + sessionYear + " is not available.");
         }
+        return null;
     }
 }
