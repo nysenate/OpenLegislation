@@ -60,6 +60,11 @@ public class DatabaseConfig
         pool.setPassword(dbPass);
         pool.setMinPoolSize(3);
         pool.setMaxPoolSize(10);
+
+        // Test each connection every 30 sec after first check-in
+        pool.setTestConnectionOnCheckout(false);
+        pool.setTestConnectionOnCheckin(true);
+        pool.setIdleConnectionTestPeriod(30);
         return pool;
     }
 
