@@ -75,7 +75,7 @@ public class SenateSiteDumpCtrl extends BaseCtrl {
      *
      * Usage: (POST) /api/3/senatesite/agendadump
      */
-    //@RequiresPermissions("senatesite:agendadump:post")
+    @RequiresPermissions("senatesite:agendadump:post")
     @RequestMapping(value = "/agendadump",method = RequestMethod.POST, consumes = "application/json")
     public BaseResponse sendSenateSiteAgendaDumpFragment(@RequestBody String calFragmentJson) throws IOException{
         if(!saveDump(calFragmentJson,SpotCheckRefType.SENATE_SITE_AGENDA)){

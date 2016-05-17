@@ -22,7 +22,8 @@ public class PublicHearingPdfView
     private static Float top = 740f;
     private static Float margin = 10f;
 
-    public PublicHearingPdfView(PublicHearing publicHearing, OutputStream outputStream) throws IOException, COSVisitorException {
+    public static void writePublicHearingPdf(PublicHearing publicHearing, OutputStream outputStream)
+            throws IOException, COSVisitorException {
         if (publicHearing == null) {
             throw new IllegalArgumentException("Supplied Public Hearing cannot be null when converting to pdf.");
         }
@@ -46,7 +47,7 @@ public class PublicHearingPdfView
         doc.close();
     }
 
-    private void drawPage(PDPageContentStream contentStream, List<String> page) throws IOException {
+    private static void drawPage(PDPageContentStream contentStream, List<String> page) throws IOException {
         for (String line : page) {
             contentStream.drawString(line);
             contentStream.moveTextPositionByAmount(0, -fontSize);

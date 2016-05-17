@@ -9,11 +9,16 @@ import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @RestController
@@ -36,19 +41,24 @@ public class TranscriptPdfCtrl
      * Expected Output: PDF response.
      */
     @RequestMapping("/{filename}")
-    public void getTranscriptPdf(@PathVariable String filename,
-                                 HttpServletResponse response) throws IOException, COSVisitorException {
+    public ResponseEntity<byte[]> getTranscriptPdf(@PathVariable String filename, HttpServletResponse response)
+            throws IOException {
         TranscriptId transcriptId = new TranscriptId(filename);
         try {
             Transcript transcript = transcriptData.getTranscript(transcriptId);
-            new TranscriptPdfView(transcript, response.getOutputStream());
-            response.setContentType("application/pdf");
+            ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
+            TranscriptPdfView.writeTranscriptPdf(transcript, pdfBytes);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
         }
         catch (TranscriptNotFoundEx ex) {
             response.sendError(404, ex.getMessage());
         }
-        catch (Exception ex) {
-            logger.warn("Failed to return transcript PDF", ex);
+        catch (COSVisitorException ex) {
+            logger.error("Failed to return transcript PDF", ex);
+            response.sendError(404, ex.getMessage());
         }
+        return null;
     }
 }

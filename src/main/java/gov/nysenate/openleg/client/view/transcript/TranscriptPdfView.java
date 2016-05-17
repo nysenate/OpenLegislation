@@ -45,7 +45,7 @@ public class TranscriptPdfView
     public static final int NO_LINE_NUM_INDENT = 11;
     public static final int STENOGRAPHER_LINE_NUM = 26;
 
-    public TranscriptPdfView(Transcript transcript, OutputStream outputStream) throws IOException, COSVisitorException {
+    public static void writeTranscriptPdf(Transcript transcript, OutputStream outputStream) throws IOException, COSVisitorException {
         if (transcript == null) {
             throw new IllegalArgumentException("Supplied transcript cannot be null when converting to pdf.");
         }
@@ -135,7 +135,7 @@ public class TranscriptPdfView
         contentStream.moveTextPositionByAmount(-offset, -fontSize * 2);
     }
 
-    private void moveStreamToTopOfPage(PDPageContentStream contentStream) throws IOException {
+    private static void moveStreamToTopOfPage(PDPageContentStream contentStream) throws IOException {
         contentStream.moveTextPositionByAmount(0, top - fontWidth);
     }
 
