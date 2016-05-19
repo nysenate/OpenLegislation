@@ -20,11 +20,15 @@ import gov.nysenate.openleg.service.hearing.data.PublicHearingNotFoundEx;
 import gov.nysenate.openleg.service.hearing.search.PublicHearingSearchService;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
@@ -121,11 +125,14 @@ public class PublicHearingGetCtrl extends BaseCtrl
      * Expected Output: PDF response.
      */
     @RequestMapping(value = "/{filename}.pdf")
-    public void getHearingPdf(@PathVariable String filename, HttpServletResponse response)
+    public ResponseEntity<byte[]> getHearingPdf(@PathVariable String filename)
             throws IOException, COSVisitorException {
         PublicHearing hearing = hearingData.getPublicHearing(new PublicHearingId(filename));
-        new PublicHearingPdfView(hearing, response.getOutputStream());
-        response.setContentType("application/pdf");
+        ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
+        PublicHearingPdfView.writePublicHearingPdf(hearing, pdfBytes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        return new ResponseEntity<>(pdfBytes.toByteArray(), headers, HttpStatus.OK);
     }
 
     /**
