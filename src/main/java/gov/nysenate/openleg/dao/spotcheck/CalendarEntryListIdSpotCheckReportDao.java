@@ -13,7 +13,7 @@ import java.util.Map;
  * Created by PKS on 3/9/16.
  */
 @Repository
-public class SpotcheckCalendarIdSpotCheckReportDao extends AbstractSpotCheckReportDao<CalendarEntryListId> {
+public class CalendarEntryListIdSpotCheckReportDao extends AbstractSpotCheckReportDao<CalendarEntryListId> {
     @Override
     public CalendarEntryListId getKeyFromMap(Map<String, String> keyMap) {
         if (keyMap != null) {

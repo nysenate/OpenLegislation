@@ -6,69 +6,69 @@ import gov.nysenate.openleg.client.view.agenda.AgendaItemView;
  * Created by PKS on 4/28/16.
  */
 public class SenateSiteAgendaBill {
-    protected Integer field_ol_aye_count;
-    protected Integer field_ol_nay_count;
-    protected Integer field_ol_aye_wr_count;
-    protected Integer field_ol_excused_count;
-    protected Integer field_ol_abstained_count;
-    protected String field_ol_bill_message;
-    protected AgendaItemView field_ol_bill_name;
+    protected Integer ayeCount;
+    protected Integer nayCount;
+    protected Integer aye_wrCount;
+    protected Integer excusedCount;
+    protected Integer abstainedCount;
+    protected String billMessage;
+    protected AgendaItemView billName;
 
     /** --- Getters / Setters --- */
 
-    public void setField_ol_aye_count(Integer aye_count){
-        this.field_ol_aye_count = aye_count;
+    public void setAyeCount(Integer ayeCount){
+        this.ayeCount = ayeCount;
     }
 
-    public void setField_ol_nay_count(Integer nay_count){
-        this.field_ol_nay_count = nay_count;
+    public void setNayCount(Integer nayCount){
+        this.nayCount = nayCount;
     }
 
-    public void setField_ol_aye_wr_count(Integer aye_wr_count){
-        this.field_ol_aye_wr_count = aye_wr_count;
+    public void setAyeWrCount(Integer aye_wrCount){
+        this.aye_wrCount = aye_wrCount;
     }
 
-    public void setField_ol_excused_count(Integer excused_count){
-        this.field_ol_excused_count = excused_count;
+    public void setExcusedCount(Integer excusedCount){
+        this.excusedCount = excusedCount;
     }
 
-    public void setField_ol_abstained_count(Integer abstained_count){
-        this.field_ol_abstained_count = abstained_count;
+    public void setAbstainedCount(Integer abstainedCount){
+        this.abstainedCount = abstainedCount;
     }
 
-    public void setField_ol_bill_message(String bill_message){
-        this.field_ol_bill_message = bill_message;
+    public void setBillMessage(String billNessage){
+        this.billMessage = billMessage;
     }
 
-    public void setField_ol_bill_name(AgendaItemView bill_name){
-        this.field_ol_bill_name = bill_name;
+    public void setBillName(AgendaItemView billName){
+        this.billName = billName;
     }
 
-    public Integer getField_ol_aye_count(){
-        return field_ol_aye_count;
+    public Integer getAyeCount(){
+        return ayeCount;
     }
 
-    public Integer getField_ol_nay_count(){
-        return field_ol_nay_count;
+    public Integer getAayCount(){
+        return nayCount;
     }
 
-    public Integer getField_ol_aye_wr_count(){
-        return field_ol_aye_wr_count;
+    public Integer getAyeWrCount(){
+        return aye_wrCount;
     }
 
-    public Integer getField_ol_excused_count(){
-        return field_ol_excused_count;
+    public Integer getExcusedCount(){
+        return excusedCount;
     }
 
-    public Integer getField_ol_abstained_count(){
-        return field_ol_abstained_count;
+    public Integer getAbstainedCount(){
+        return abstainedCount;
     }
 
-    public String getField_ol_bill_message(){
-        return field_ol_bill_message;
+    public String getBillMessage(){
+        return billMessage;
     }
 
-    public AgendaItemView getField_ol_bill_name(){
-        return field_ol_bill_name;
+    public AgendaItemView getBillName(){
+        return billName;
     }
 }

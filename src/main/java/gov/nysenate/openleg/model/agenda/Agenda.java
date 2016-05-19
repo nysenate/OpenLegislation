@@ -2,11 +2,13 @@ package gov.nysenate.openleg.model.agenda;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -181,5 +183,18 @@ public class Agenda extends BaseLegislativeContent implements Serializable
 
     public void setAgendaVoteAddenda(Map<String, AgendaVoteAddendum> agendaVoteAddenda) {
         this.agendaVoteAddenda = agendaVoteAddenda;
+    }
+
+    /** --- Functional Getters --- */
+
+    public List<CommitteeAgendaAddendumId> getCommitteeAgendaAddendumIds(){
+        List<CommitteeAgendaAddendumId> committeeAgendaAddendumIds = new ArrayList<>();
+//        committeeAgendaAddendumIds.add(
+                return agendaInfoAddenda.values().stream()
+                .flatMap(agendaInfoAddendum -> agendaInfoAddendum.getCommitteeInfoMap().values().stream())
+                .map(agendaInfoCommittee -> new CommitteeAgendaAddendumId(agendaInfoCommittee.getAgendaId(),
+                        agendaInfoCommittee.getCommitteeId(),
+                        agendaInfoCommittee.getAddendum())).collect(Collectors.toList());
+//        return committeeAgendaAddendumIds;
     }
 }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.client.view.agenda.AgendaItemView;
 import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgenda;
@@ -57,7 +59,8 @@ public class AgendaJsonParser extends JsonParser {
     private SenateSiteAgenda extractSenSiteAgenda(JsonNode agendaNode, SenateSiteDumpFragment fragment) throws IOException {
         SenateSiteAgenda agenda = new SenateSiteAgenda(DateUtils.endOfDateTimeRange(fragment.getDumpId().getRange()));
         agenda.setAgendaId(new AgendaId(getIntValue(agendaNode,"field_ol_week"),getIntValue(agendaNode,"field_ol_year")));
-        agenda.setCommittee(getValue(agendaNode,"field_ol_committee_name"));
+        agenda.setCommittee(new CommitteeId(Chamber.SENATE, getValue(agendaNode,"field_ol_committee_name")));
+        agenda.setAddendum((getValue(agendaNode,"field_ol_agenda_addendum") != null) ? getValue(agendaNode,"field_ol_agenda_addendum") : "");
         List<String> nodes = getStringListValue(agendaNode,"field_ol_agenda_bills");
         List<SenateSiteAgendaBill> agendaBills = (nodes != null) ? getAgendaBills(nodes) : null;
         agenda.setAgendaBills(agendaBills);
@@ -69,14 +72,14 @@ public class AgendaJsonParser extends JsonParser {
         for (String agendaBill : agendaBillsStrings){
             JsonNode node = objectMapper.readTree(agendaBill);
             SenateSiteAgendaBill ssAgendaBill = new SenateSiteAgendaBill();
-            ssAgendaBill.setField_ol_abstained_count(getIntValue(node,"field_ol_abstained_count"));
-            ssAgendaBill.setField_ol_aye_count(getIntValue(node,"field_ol_aye_count"));
-            ssAgendaBill.setField_ol_aye_wr_count(getIntValue(node,"field_ol_aye_wr_count"));
-            ssAgendaBill.setField_ol_bill_message(getValue(node,"field_ol_bill_message"));
-            ssAgendaBill.setField_ol_excused_count(getIntValue(node,"field_ol_excused_count"));
-            ssAgendaBill.setField_ol_nay_count(getIntValue(node,"field_ol_nay_count"));
+            ssAgendaBill.setAbstainedCount(getIntValue(node,"field_ol_abstained_count"));
+            ssAgendaBill.setAyeCount(getIntValue(node,"field_ol_aye_count"));
+            ssAgendaBill.setAyeWrCount(getIntValue(node,"field_ol_aye_wr_count"));
+            ssAgendaBill.setBillMessage(getValue(node,"field_ol_bill_message"));
+            ssAgendaBill.setExcusedCount(getIntValue(node,"field_ol_excused_count"));
+            ssAgendaBill.setNayCount(getIntValue(node,"field_ol_nay_count"));
             TypeReference<AgendaItemView> type = new TypeReference<AgendaItemView>() {};
-            ssAgendaBill.setField_ol_bill_name(deserializeValue(node,"field_ol_bill_name",type).get());
+            ssAgendaBill.setBillName(deserializeValue(node,"field_ol_bill_name",type).get());
             agendaBills.add(ssAgendaBill);
         }
         return agendaBills;
