@@ -19,7 +19,6 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,12 +169,14 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     public void activateUser(String registrationToken) {
         try {
             ApiUser user = apiUserDao.getApiUserFromToken(registrationToken);
-            user.setActive(true);
-            user.setAuthenticated(true);
-            apiUserDao.updateUser(user);
-            cacheApiUser(user);
+            if (!user.isAuthenticated()) {
+                user.setActive(true);
+                user.setAuthenticated(true);
+                apiUserDao.updateUser(user);
+                cacheApiUser(user);
+                sendNewApiUserNotification(user);
+            }
             sendApikeyEmail(user);
-            sendNewApiUserNotification(user);
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("Invalid registration token supplied!");
         }
