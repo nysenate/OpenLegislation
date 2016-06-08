@@ -83,7 +83,7 @@ public class SobiFile
             return FileUtils.readFileToString(file, encoding);
         }
         catch (IOException e) {
-            throw new RuntimeException("Failed to read text from SobiFile:" + this.toString());
+            throw new UnreadableSobiEx(this, e);
         }
     }
 
