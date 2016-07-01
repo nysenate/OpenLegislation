@@ -293,7 +293,7 @@ To identify which documents have been modified or added to a body of law, use th
 
 List of laws updated during the given date/time range
 ::
-    /api/3/bills/updates/{fromDateTime}/{toDateTime}
+    /api/3/laws/updates/{fromDateTime}/{toDateTime}
 
 .. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
 
