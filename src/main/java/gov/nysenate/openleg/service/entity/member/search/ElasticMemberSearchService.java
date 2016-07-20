@@ -17,8 +17,6 @@ import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.entity.member.event.BulkMemberUpdateEvent;
 import gov.nysenate.openleg.service.entity.member.event.MemberUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
@@ -50,29 +48,36 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     /** {@inheritDoc} */
     @Override
     public SearchResults<SessionMember> searchMembers(SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(),
-                FilterBuilders.termFilter("sessionYear", sessionYear.getYear())), null, sort, limOff);
+        return search(
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.matchAllQuery())
+                        .filter(QueryBuilders.termQuery("sessionYear", sessionYear.getYear())),
+                null, sort, limOff);
     }
 
     @Override
     public SearchResults<SessionMember> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff) throws SearchException {
         String query = "(chamber:" + chamber.toString() + ") AND (sessionYear:" + sessionYear.getYear() + ")";
-        return search(QueryBuilders.queryString(query), null, sort, limOff);
+        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<SessionMember> searchMembers(String query, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryString(query), null, sort, limOff);
+        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<SessionMember> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), FilterBuilders.termFilter("sessionYear", sessionYear.getYear())), null, sort, limOff);
+        return search(
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.queryStringQuery(query))
+                        .filter(QueryBuilders.termQuery("sessionYear", sessionYear.getYear())),
+                null, sort, limOff);
     }
 
-    private SearchResults<SessionMember> search(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
+    private SearchResults<SessionMember> search(QueryBuilder query, QueryBuilder postFilter, String sort, LimitOffset limOff)
             throws SearchException {
         if (limOff == null) limOff = LimitOffset.TWENTY_FIVE;
         try {

@@ -12,7 +12,6 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -34,7 +33,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<SessionMember> searchMembers(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
+    public SearchResults<SessionMember> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(memberIndexName, query, filter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
         logger.debug("Member search result with query {} and filter {} took {} ms", query, filter, response.getTookInMillis());

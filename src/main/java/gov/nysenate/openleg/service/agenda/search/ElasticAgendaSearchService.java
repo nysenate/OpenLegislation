@@ -18,8 +18,6 @@ import gov.nysenate.openleg.service.agenda.event.BulkAgendaUpdateEvent;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
@@ -53,14 +51,16 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     /** {@inheritDoc} */
     @Override
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, String sort, LimitOffset limOff) throws SearchException {
-        return searchCommitteeAgendas(QueryBuilders.queryString(query), null, sort, limOff);
+        return searchCommitteeAgendas(QueryBuilders.queryStringQuery(query), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(int year, String sort, LimitOffset limOff) throws SearchException {
         return searchCommitteeAgendas(
-                QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.termFilter("agenda.id.year", year)),
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.matchAllQuery())
+                        .filter(QueryBuilders.termQuery("agenda.id.year", year)),
                 null, sort, limOff);
     }
 
@@ -68,7 +68,9 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     @Override
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(String query, int year, String sort, LimitOffset limOff) throws SearchException {
         return searchCommitteeAgendas(
-                QueryBuilders.filteredQuery(QueryBuilders.queryString(query), FilterBuilders.termFilter("agenda.id.year", year)),
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.queryStringQuery(query))
+                        .filter(QueryBuilders.termQuery("agenda.id.year", year)),
                 null, sort, limOff);
     }
 
@@ -153,7 +155,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
 
     /** --- Internal Methods --- */
 
-    private SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, FilterBuilder postFilter,
+    private SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, QueryBuilder postFilter,
                                                       String sort, LimitOffset limitOffset) throws SearchException {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;

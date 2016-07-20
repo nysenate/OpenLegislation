@@ -11,7 +11,6 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<Integer> searchLogs(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
+    public SearchResults<Integer> searchLogs(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
             getSearchRequest(logIndexName, query, filter, null, null, sort, limOff, false);
         SearchResponse response = searchBuilder.execute().actionGet();
@@ -44,7 +43,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<ApiLogItemView> searchLogsAndFetchData(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
+    public SearchResults<ApiLogItemView> searchLogsAndFetchData(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
                 getSearchRequest(logIndexName, query, filter, null, null, sort, limOff, true);
         SearchResponse response = searchBuilder.execute().actionGet();

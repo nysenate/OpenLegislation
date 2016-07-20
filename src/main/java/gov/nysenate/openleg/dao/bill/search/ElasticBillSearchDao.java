@@ -12,7 +12,6 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
@@ -42,7 +41,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, RescoreBuilder.Rescorer rescorer,
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescoreBuilder.Rescorer rescorer,
                                                  List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
             getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer , sort, limOff, false);

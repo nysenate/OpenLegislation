@@ -15,11 +15,11 @@ import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import gov.nysenate.openleg.service.transcript.event.BulkTranscriptUpdateEvent;
 import gov.nysenate.openleg.service.transcript.event.TranscriptUpdateEvent;
+import org.apache.lucene.queryparser.xml.builders.RangeFilterBuilder;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeFilterBuilder;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,30 +56,36 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     /** {@inheritDoc} */
     @Override
     public SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff) throws SearchException {
-        RangeFilterBuilder rangeFilter = new RangeFilterBuilder("dateTime")
+        RangeQueryBuilder rangeFilter = new RangeQueryBuilder("dateTime")
                 .from(LocalDate.of(year, 1, 1))
-                .to(LocalDate.of(year, 12, 31))
-                .cache(false);
-        return search(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), rangeFilter), null, sort, limOff);
+                .to(LocalDate.of(year, 12, 31));
+        return search(
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.matchAllQuery())
+                        .filter(rangeFilter),
+                null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<TranscriptId> searchTranscripts(String query, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryString(query), null, sort, limOff);
+        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<TranscriptId> searchTranscripts(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        RangeFilterBuilder rangeFilter = new RangeFilterBuilder("dateTime")
+        RangeQueryBuilder rangeFilter = new RangeQueryBuilder("dateTime")
                 .from(LocalDate.of(year, 1, 1))
-                .to(LocalDate.of(year, 12, 31))
-                .cache(false);
-        return search(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), rangeFilter), null, sort, limOff);
+                .to(LocalDate.of(year, 12, 31));
+        return search(
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.queryStringQuery(query))
+                        .filter(rangeFilter),
+                null, sort, limOff);
     }
 
-    private SearchResults<TranscriptId> search(QueryBuilder query, FilterBuilder postFilter,
+    private SearchResults<TranscriptId> search(QueryBuilder query, QueryBuilder postFilter,
                                                String sort, LimitOffset limOff) throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;
         try {

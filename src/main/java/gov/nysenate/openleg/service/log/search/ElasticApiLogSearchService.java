@@ -44,7 +44,7 @@ public class ElasticApiLogSearchService implements ApiLogSearchService
     @Override
     public SearchResults<ApiLogItemView> searchApiLogs(String query, String sort, LimitOffset limOff) throws SearchException {
         try {
-            return apiLogSearchDao.searchLogsAndFetchData(QueryBuilders.queryString(query), null,
+            return apiLogSearchDao.searchLogsAndFetchData(QueryBuilders.queryStringQuery(query), null,
                     ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
         }
         catch (SearchParseException ex) {

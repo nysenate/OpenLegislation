@@ -4,7 +4,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.SearchResults;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
@@ -26,7 +25,7 @@ public interface PublicHearingSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
+    public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
     /**
      * Updates the public hearing search index with the supplied public hearing.
      * @param publicHearing

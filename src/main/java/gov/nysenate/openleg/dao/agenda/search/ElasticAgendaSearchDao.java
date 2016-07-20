@@ -14,7 +14,6 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -36,7 +35,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<AgendaId> searchAgendas(QueryBuilder query, FilterBuilder postFilter,
+    public SearchResults<AgendaId> searchAgendas(QueryBuilder query, QueryBuilder postFilter,
                                                  List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
@@ -46,7 +45,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, FilterBuilder postFilter,
+    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, QueryBuilder postFilter,
                                                                    List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();

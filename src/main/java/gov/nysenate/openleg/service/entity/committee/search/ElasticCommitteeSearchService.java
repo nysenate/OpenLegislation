@@ -13,8 +13,6 @@ import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
 import gov.nysenate.openleg.service.entity.committee.event.CommitteeUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
@@ -47,13 +45,13 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
     @Override
     public SearchResults<CommitteeVersionId> searchAllCommittees(String query, String sort, LimitOffset limitOffset)
             throws SearchException {
-        return searchCommittees(QueryBuilders.queryString(query), null, sort, limitOffset);
+        return searchCommittees(QueryBuilders.queryStringQuery(query), null, sort, limitOffset);
     }
 
     @Override
     public SearchResults<CommitteeVersionId> searchAllCurrentCommittees(String query, String sort, LimitOffset limitOffset)
             throws SearchException {
-        return searchCommittees(QueryBuilders.queryString(query), getCurrentFilter(), sort, limitOffset);
+        return searchCommittees(QueryBuilders.queryStringQuery(query), getCurrentFilter(), sort, limitOffset);
     }
 
     /**
@@ -62,7 +60,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
     @Override
     public SearchResults<CommitteeVersionId> searchCommitteesForSession(SessionYear sessionYear, String query,
                                                                         String sort, LimitOffset limitOffset) throws SearchException {
-        return searchCommittees(QueryBuilders.queryString(query), getSessionFilter(sessionYear), sort, limitOffset);
+        return searchCommittees(QueryBuilders.queryStringQuery(query), getSessionFilter(sessionYear), sort, limitOffset);
     }
 
     /**
@@ -71,10 +69,10 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
     @Override
     public SearchResults<CommitteeVersionId> searchCurrentCommitteesForSession(SessionYear sessionYear, String query,
                                                                                String sort, LimitOffset limitOffset) throws SearchException {
-        FilterBuilder currentSessionFilter = FilterBuilders.boolFilter()
+        QueryBuilder currentSessionFilter = QueryBuilders.boolQuery()
                 .must(getSessionFilter(sessionYear))
                 .must(getCurrentFilter());
-        return searchCommittees(QueryBuilders.queryString(query), currentSessionFilter, sort, limitOffset);
+        return searchCommittees(QueryBuilders.queryStringQuery(query), currentSessionFilter, sort, limitOffset);
     }
 
     /**
@@ -143,15 +141,15 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
 
     /** --- Internal Methods --- */
 
-    FilterBuilder getCurrentFilter() {
-        return FilterBuilders.missingFilter("reformed");
+    QueryBuilder getCurrentFilter() {
+        return QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("reformed"));
     }
 
-    FilterBuilder getSessionFilter(SessionYear sessionYear) {
-        return FilterBuilders.termFilter("sessionYear", sessionYear.getYear());
+    QueryBuilder getSessionFilter(SessionYear sessionYear) {
+        return QueryBuilders.termQuery("sessionYear", sessionYear.getYear());
     }
 
-    private SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, FilterBuilder postFilter,
+    private SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder postFilter,
                                                                      String sort, LimitOffset limitOffset) throws SearchException {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;

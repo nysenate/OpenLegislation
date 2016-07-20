@@ -9,6 +9,8 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.delete.DeleteAction;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
@@ -16,9 +18,8 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
@@ -76,11 +77,11 @@ public abstract class ElasticBaseDao
 
     /**
      * Generates a typical search request that involves a query, filter, sort string, and a limit + offset
-     * @see #getSearchRequest(String, QueryBuilder, FilterBuilder, List, LimitOffset)
+     * @see #getSearchRequest(String, QueryBuilder, QueryBuilder, List, LimitOffset)
      *
      * Highlighting, rescoring, and full source response are not supported via this method.
      */
-    protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
+    protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
                                                     List<SortBuilder> sort, LimitOffset limitOffset) {
         return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset, false);
     }
@@ -98,7 +99,7 @@ public abstract class ElasticBaseDao
      * @param fetchSource - Will return the indexed source fields when set to true
      * @return SearchRequestBuilder
      */
-    protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, FilterBuilder postFilter,
+    protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
                                                     List<HighlightBuilder.Field> highlightedFields, RescoreBuilder.Rescorer rescorer,
                                                     List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) {
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
@@ -178,10 +179,12 @@ public abstract class ElasticBaseDao
     }
 
     protected void deleteEntry(String indexName, String type, String id) {
-        DeleteRequestBuilder request = new DeleteRequestBuilder(searchClient, indexName);
+        DeleteRequestBuilder request = searchClient.prepareDelete();
+        request.setIndex(indexName);
         request.setType(type);
         request.setId(id);
         request.execute().actionGet();
+
     }
 
     protected boolean indicesExist(String... indices) {
@@ -197,7 +200,7 @@ public abstract class ElasticBaseDao
             logger.info("Deleting search index {}", index);
             searchClient.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
         }
-        catch (IndexMissingException ex) {
+        catch (IndexNotFoundException ex) {
             logger.info("Cannot delete index {} because it doesn't exist.", index);
         }
     }

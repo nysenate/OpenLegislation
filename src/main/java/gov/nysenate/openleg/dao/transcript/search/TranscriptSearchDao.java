@@ -4,7 +4,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
@@ -26,7 +25,7 @@ public interface TranscriptSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, FilterBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
+    public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
 
     /**
      * Update the transcript search index with the supplied transcript.

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
@@ -25,9 +25,9 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.SimpleQueryParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +41,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -101,11 +103,11 @@ public class ApplicationConfig implements CachingConfigurer
     @Bean(destroyMethod = "close")
     public Client elasticSearchNode() {
         logger.info("Connecting to elastic search cluster {}", elasticSearchCluster);
-        Settings settings = ImmutableSettings.settingsBuilder()
+        Settings settings = Settings.settingsBuilder()
             .put("cluster.name", elasticSearchCluster).build();
         try {
-            TransportClient tc =  new TransportClient(settings).addTransportAddress(
-                    new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
+            TransportClient tc = TransportClient.builder().settings(settings).build().addTransportAddress(
+                    new InetSocketTransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
             if (tc.connectedNodes().size() == 0) {
                 tc.close();
                 throw new ElasticsearchException("Failed to connect to elastic search node!");
@@ -150,7 +152,7 @@ public class ApplicationConfig implements CachingConfigurer
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.registerModule(new GuavaModule());
-        objectMapper.registerModule(new JSR310Module());
+        objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }

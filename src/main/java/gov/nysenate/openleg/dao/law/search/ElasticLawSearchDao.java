@@ -11,7 +11,6 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
@@ -40,7 +39,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, FilterBuilder postFilter,
+    public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder postFilter,
                                                  RescoreBuilder.Rescorer rescorer, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
             getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, true);

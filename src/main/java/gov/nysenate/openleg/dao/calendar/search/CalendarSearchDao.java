@@ -4,7 +4,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.search.SearchResults;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
@@ -21,7 +20,7 @@ public interface CalendarSearchDao {
      * @param sort
      * @param limitOffset   @return
      * */
-    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, FilterBuilder postFilter,
+    public SearchResults<CalendarId> searchCalendars(QueryBuilder query, QueryBuilder postFilter,
                                                      List<SortBuilder> sort, LimitOffset limitOffset);
 
     /**

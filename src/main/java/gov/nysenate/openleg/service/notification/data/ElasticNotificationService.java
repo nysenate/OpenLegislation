@@ -14,7 +14,6 @@ import gov.nysenate.openleg.model.search.UnexpectedSearchException;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.util.DateUtils;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
@@ -111,7 +110,7 @@ public class ElasticNotificationService implements NotificationService {
             limitOffset = LimitOffset.ALL;
         }
         try {
-            return notificationDao.searchNotifications(QueryBuilders.queryString(queryString), FilterBuilders.matchAllFilter(),
+            return notificationDao.searchNotifications(QueryBuilders.queryStringQuery(queryString), QueryBuilders.matchAllQuery(),
                     ElasticSearchServiceUtils.extractSortBuilders(sort), limitOffset);
         } catch (SearchParseException ex) {
             throw new SearchException("Invalid query string", ex);

@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.search.SearchResults;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
@@ -19,10 +18,10 @@ public interface AgendaSearchDao
 {
     /**
      * Performs a search on the top level agenda.
-     * @see #searchAgendas(QueryBuilder, FilterBuilder, List, LimitOffset)
+     * @see #searchAgendas(QueryBuilder, QueryBuilder, List, LimitOffset)
      * @returns SearchResults<AgendaId>
      */
-    public SearchResults<AgendaId> searchAgendas(QueryBuilder query, FilterBuilder postFilter,
+    public SearchResults<AgendaId> searchAgendas(QueryBuilder query, QueryBuilder postFilter,
                                                  List<SortBuilder> sort, LimitOffset limOff);
 
     /**
@@ -34,7 +33,7 @@ public interface AgendaSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<AgendaCommitteeId>
      */
-    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, FilterBuilder postFilter,
+    public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, QueryBuilder postFilter,
                                                                    List<SortBuilder> sort, LimitOffset limOff);
 
     /**

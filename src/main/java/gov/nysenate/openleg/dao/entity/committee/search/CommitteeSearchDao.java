@@ -4,7 +4,6 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.entity.CommitteeSessionId;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.search.SearchResults;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
@@ -13,7 +12,7 @@ import java.util.List;
 
 public interface CommitteeSearchDao {
 
-    public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, FilterBuilder filter,
+    public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
                                                               List<SortBuilder> sort, LimitOffset limitOffset);
 
     public void updateCommitteeIndex(CommitteeSessionId committeeSessionId);

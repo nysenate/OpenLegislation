@@ -15,7 +15,6 @@ import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.law.event.BulkLawUpdateEvent;
 import gov.nysenate.openleg.service.law.event.LawUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
@@ -56,9 +55,9 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     /** {@inheritDoc} */
     @Override
     public SearchResults<LawDocId> searchLawDocs(String query, String lawId, String sort, LimitOffset limOff) throws SearchException {
-        QueryBuilder queryBuilder = QueryBuilders.queryString(query);
+        QueryBuilder queryBuilder = QueryBuilders.queryStringQuery(query);
         if (lawId != null) {
-            queryBuilder = QueryBuilders.filteredQuery(queryBuilder, FilterBuilders.typeFilter(lawId));
+            queryBuilder = QueryBuilders.boolQuery().must(queryBuilder).filter(QueryBuilders.typeQuery(lawId));
         }
         try {
             return lawSearchDao.searchLawDocs(queryBuilder, null, null,

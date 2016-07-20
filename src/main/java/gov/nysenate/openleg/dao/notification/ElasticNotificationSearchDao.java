@@ -16,8 +16,7 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
@@ -47,10 +46,10 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, FilterBuilder filter,
+    public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, QueryBuilder filter,
                                                                      List<SortBuilder> sort, LimitOffset limitOffset) {
         // Restrict search to only notifications, excluding the id incrementer
-        FilterBuilder fullFilter = FilterBuilders.andFilter(filter, FilterBuilders.typeFilter(notificationType));
+        QueryBuilder fullFilter = QueryBuilders.boolQuery().filter(filter).must(QueryBuilders.typeQuery(notificationType));
         SearchRequestBuilder request = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, true);
         SearchResponse response = request.execute().actionGet();
         return getSearchResults(response, limitOffset, hit -> getNotificationFromSourceMap(hit.getSource()));

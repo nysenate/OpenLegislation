@@ -56,7 +56,9 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     @Override
     public SearchResults<BaseBillId> searchBills(SessionYear session, String sort, LimitOffset limOff) throws SearchException {
         return searchBills(
-            QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.termFilter("session", session.getYear())),
+            QueryBuilders.boolQuery()
+                    .must(QueryBuilders.matchAllQuery())
+                    .filter(QueryBuilders.termQuery("session", session.getYear())),
             null, null, sort, limOff);
     }
 
@@ -64,7 +66,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     @Override
     public SearchResults<BaseBillId> searchBills(String query, String sort, LimitOffset limOff) throws SearchException {
         query = smartSearch(query);
-        QueryBuilder queryBuilder = QueryBuilders.queryString(query);
+        QueryBuilder queryBuilder = QueryBuilders.queryStringQuery(query);
         return searchBills(queryBuilder, null, null, sort, limOff);
     }
 
@@ -72,15 +74,18 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     @Override
     public SearchResults<BaseBillId> searchBills(String query, SessionYear session, String sort, LimitOffset limOff) throws SearchException {
         query = smartSearch(query);
-        TermFilterBuilder sessionFilter = FilterBuilders.termFilter("session", session.getYear());
+        TermQueryBuilder sessionFilter = QueryBuilders.termQuery("session", session.getYear());
         return searchBills(
-            QueryBuilders.filteredQuery(QueryBuilders.queryString(query), sessionFilter), null, null, sort, limOff);
+            QueryBuilders.boolQuery()
+                    .must(QueryBuilders.queryStringQuery(query))
+                    .filter(sessionFilter),
+                null, null, sort, limOff);
     }
 
     /**
      * Delegates to the underlying bill search dao.
      */
-    private SearchResults<BaseBillId> searchBills(QueryBuilder query, FilterBuilder postFilter, RescoreBuilder.Rescorer rescorer,
+    private SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescoreBuilder.Rescorer rescorer,
                                                   String sort, LimitOffset limOff)
         throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;

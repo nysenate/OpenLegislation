@@ -46,7 +46,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
     /** {@inheritDoc} */
     @Override
     public SearchResults<CalendarId> searchForCalendars(String query, String sort, LimitOffset limitOffset) throws SearchException {
-        return searchCalendars(QueryBuilders.queryString(smartSearch(query)), null, sort, limitOffset);
+        return searchCalendars(QueryBuilders.queryStringQuery(smartSearch(query)), null, sort, limitOffset);
     }
 
     /** {@inheritDoc} */
@@ -138,7 +138,9 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
      * @return
      */
     private QueryBuilder getCalendarYearQuery(Integer year, String query) {
-        return QueryBuilders.filteredQuery(QueryBuilders.queryString(query), FilterBuilders.termFilter("year", year));
+        return QueryBuilders.boolQuery()
+                .must(QueryBuilders.queryStringQuery(query))
+                .filter(QueryBuilders.termQuery("year", year));
     }
 
     /**
@@ -151,7 +153,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
      * @return
      * @throws SearchException
      */
-    private SearchResults<CalendarId> searchCalendars(QueryBuilder query, FilterBuilder postFilter,
+    private SearchResults<CalendarId> searchCalendars(QueryBuilder query, QueryBuilder postFilter,
                                              String sort, LimitOffset limitOffset) throws SearchException {
         if (limitOffset == null) {
             limitOffset = LimitOffset.ALL;

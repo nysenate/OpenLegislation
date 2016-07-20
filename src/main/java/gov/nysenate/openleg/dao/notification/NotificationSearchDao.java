@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
@@ -29,7 +28,7 @@ public interface NotificationSearchDao {
      * @param limitOffset LimitOffset
      * @return SearchResults<RegisteredNotification>
      */
-    public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, FilterBuilder filter,
+    public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, QueryBuilder filter,
                                                                      List<SortBuilder> sort, LimitOffset limitOffset);
 
     /**

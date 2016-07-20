@@ -52,30 +52,36 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(int year, String sort, LimitOffset limOff) throws SearchException {
-        RangeFilterBuilder rangeFilter = FilterBuilders.rangeFilter("date")
+        RangeQueryBuilder rangeFilter = QueryBuilders.rangeQuery("date")
                 .from(LocalDate.of(year, 1, 1))
-                .to(LocalDate.of(year, 12, 31))
-                .cache(false);
-        return search(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), rangeFilter), null, sort, limOff);
+                .to(LocalDate.of(year, 12, 31));
+        return search(
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.matchAllQuery())
+                        .filter(rangeFilter),
+                null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(String query, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryString(query), null, sort, limOff);
+        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        RangeFilterBuilder rangeFilter = FilterBuilders.rangeFilter("date")
+        RangeQueryBuilder rangeFilter = QueryBuilders.rangeQuery("date")
                 .from(LocalDate.of(year, 1, 1))
-                .to(LocalDate.of(year, 12, 31))
-                .cache(false);
-        return search(QueryBuilders.filteredQuery(QueryBuilders.queryString(query), rangeFilter), null, sort, limOff);
+                .to(LocalDate.of(year, 12, 31));
+        return search(
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.queryStringQuery(query))
+                        .filter(rangeFilter),
+                null, sort, limOff);
     }
 
-    private SearchResults<PublicHearingId> search(QueryBuilder query, FilterBuilder postFilter, String sort, LimitOffset limOff)
+    private SearchResults<PublicHearingId> search(QueryBuilder query, QueryBuilder postFilter, String sort, LimitOffset limOff)
             throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;
         try {

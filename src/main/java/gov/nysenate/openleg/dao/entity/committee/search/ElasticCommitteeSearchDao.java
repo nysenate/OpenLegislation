@@ -12,12 +12,11 @@ import gov.nysenate.openleg.model.entity.CommitteeNotFoundEx;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.deletebyquery.DeleteByQueryAction;
 import org.elasticsearch.action.deletebyquery.DeleteByQueryRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -48,7 +47,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     CommitteeDataService committeeDataService;
 
     @Override
-    public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, FilterBuilder filter,
+    public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
                                                               List<SortBuilder> sort, LimitOffset limitOffset) {
         SearchRequestBuilder searchRequest = getSearchRequest(committeeSearchIndexName, query, filter, sort, limitOffset);
         SearchResponse response = searchRequest.execute().actionGet();
@@ -97,12 +96,21 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
      * @return
      */
     protected DeleteByQueryRequestBuilder getCommitteeDeleteRequest(CommitteeSessionId committeeSessionId) {
-        return searchClient.prepareDeleteByQuery(committeeSearchIndexName)
+        DeleteByQueryRequestBuilder builder = new DeleteByQueryRequestBuilder(searchClient, DeleteByQueryAction.INSTANCE);
+        builder.setIndices(committeeSearchIndexName)
+                .setTypes(Integer.toString(committeeSessionId.getSession().getYear()))
+                .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery())
+                        .filter(
+                                QueryBuilders.boolQuery()
+                                .must(QueryBuilders.termQuery("chamber", committeeSessionId.getChamber().toString()))
+                                .must(QueryBuilders.termQuery("name", committeeSessionId.getName())) ) );
+        return builder;
+        /*return searchClient.prepareDeleteByQuery(committeeSearchIndexName)
                 .setTypes(Integer.toString(committeeSessionId.getSession().getYear()))
                 .setQuery(QueryBuilders.filteredQuery( QueryBuilders.matchAllQuery(),
-                        FilterBuilders.boolFilter()
-                            .must(FilterBuilders.termFilter("chamber", committeeSessionId.getChamber().toString()))
-                            .must(FilterBuilders.termFilter("name", committeeSessionId.getName())) ) );
+                        QueryBuilders.boolQuery()
+                            .must(QueryBuilders.termQuery("chamber", committeeSessionId.getChamber().toString()))
+                            .must(QueryBuilders.termQuery("name", committeeSessionId.getName())) ) );*/
     }
 
     /**
