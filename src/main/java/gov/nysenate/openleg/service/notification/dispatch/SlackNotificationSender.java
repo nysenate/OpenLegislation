@@ -4,9 +4,10 @@ import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationTarget;
-import gov.nysenate.openleg.service.slack.SlackAttachment;
-import gov.nysenate.openleg.service.slack.SlackField;
-import gov.nysenate.openleg.service.slack.SlackMessage;
+import gov.nysenate.openleg.model.slack.SlackAddress;
+import gov.nysenate.openleg.model.slack.SlackAttachment;
+import gov.nysenate.openleg.model.slack.SlackField;
+import gov.nysenate.openleg.model.slack.SlackMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -44,9 +45,10 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
                         .setColor(getColor(notification)))
                 .setText("")
                 .setIcon(getIcon(notification));
-        List<String> addresses = subscriptions.stream()
-                        .map(NotificationSubscription::getTargetAddress)
-                        .collect(Collectors.toList());
+        List<SlackAddress> addresses = subscriptions.stream()
+                .map(NotificationSubscription::getTargetAddress)
+                .map(this::parseAddress)
+                .collect(Collectors.toList());
         slackChatService.sendMessage(message, addresses);
     }
 

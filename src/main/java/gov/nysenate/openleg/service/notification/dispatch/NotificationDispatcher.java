@@ -10,6 +10,8 @@ import gov.nysenate.openleg.model.notification.*;
 import gov.nysenate.openleg.service.notification.data.NotificationService;
 import gov.nysenate.openleg.service.notification.subscription.NotificationSubscriptionDataService;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import java.util.Map;
 
 @Service
 public class NotificationDispatcher {
+
+    private static final Logger logger = LoggerFactory.getLogger(NotificationDispatcher.class);
 
     @Autowired
     private EventBus eventBus;
@@ -54,23 +58,32 @@ public class NotificationDispatcher {
      */
     @Async
     public void dispatchNotification(RegisteredNotification notification) {
-        if (environment.isNotificationsEnabled()) {
+        if (!environment.isNotificationsEnabled()) {
+            return;
+        }
+        try {
             Multimap<NotificationTarget, NotificationSubscription> subscriptionMap = ArrayListMultimap.create();
             subscriptionDataService.getSubscriptions(notification.getType())
                     .forEach(subscription -> addSubscription(subscriptionMap, subscription));
 
             subscriptionMap.keySet().forEach(target ->
                     senderMap.get(target).sendNotification(notification, subscriptionMap.get(target)));
+        } catch (Throwable ex) {
+            handleNotificationException(ex);
         }
     }
 
     @Subscribe
     public void handleNotificationEvent(Notification notification) {
-        RegisteredNotification registeredNotification = notificationService.registerNotification(notification);
-        dispatchNotification(registeredNotification);
+        try {
+            RegisteredNotification registeredNotification = notificationService.registerNotification(notification);
+            dispatchNotification(registeredNotification);
+        } catch (Throwable ex) {
+            handleNotificationException(ex);
+        }
     }
 
-    /** --- Internal Methods --- */
+    /* --- Internal Methods --- */
 
     /**
      * Adds a subscription to the specified multimap
@@ -85,5 +98,16 @@ public class NotificationDispatcher {
             }
         }
         subMap.put(subscription.getTarget(), subscription);
+    }
+
+    /**
+     * Handle an exception by logging it
+     * All notification related exceptions should be caught by this method
+     * To prevent an infinite feedback loop
+     *
+     * @param ex Throwable
+     */
+    private static void handleNotificationException(Throwable ex) {
+        logger.error("Caught exception while dispatching notification!", ex);
     }
 }

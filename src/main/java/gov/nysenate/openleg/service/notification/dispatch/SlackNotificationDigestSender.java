@@ -4,11 +4,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import gov.nysenate.openleg.model.notification.NotificationDigest;
 import gov.nysenate.openleg.model.notification.NotificationTarget;
-import gov.nysenate.openleg.service.slack.SlackAttachment;
-import gov.nysenate.openleg.service.slack.SlackChatService;
-import gov.nysenate.openleg.service.slack.SlackField;
-import gov.nysenate.openleg.service.slack.SlackMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import gov.nysenate.openleg.model.slack.SlackAttachment;
+import gov.nysenate.openleg.model.slack.SlackField;
+import gov.nysenate.openleg.model.slack.SlackMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,7 +39,8 @@ public class SlackNotificationDigestSender extends BaseSlackNotificationSender i
                         .setFields(getFields(digest)))
                 .setText("")
                 .setIcon(digestIcon);
-        slackChatService.sendMessage(message, Collections.singleton(digest.getAddress()));
+        slackChatService.sendMessage(message,
+                Collections.singleton(parseAddress(digest.getAddress())));
     }
 
     /** --- Internal Methods --- */

@@ -1,16 +1,17 @@
 package gov.nysenate.openleg.model.entity;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.TreeMultiset;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
-import javafx.collections.transformation.SortedList;
 
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Committee extends BaseLegislativeContent implements Serializable

@@ -1,17 +1,23 @@
 package gov.nysenate.openleg.service.slack;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
 import com.google.gson.JsonObject;
+import gov.nysenate.openleg.model.slack.SlackMessage;
+import org.apache.commons.io.IOUtils;
 
-
+/**
+ * Copied from https://github.com/gpedro/slack-webhook with some customizations
+ * (This done before that api was released via maven)
+ *
+ * Makes http calls to Slack's webhook api when given a {@link SlackMessage}
+ */
 public class SlackApi {
+
+    private static final String channelNotFoundMessage = "channel_not_found";
 
     private String service;
 
@@ -54,24 +60,26 @@ public class SlackApi {
             wr.close ();
 
             //Get Response
-            InputStream is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            StringBuffer response = new StringBuffer();
-            while((line = rd.readLine()) != null) {
-                response.append(line);
-                response.append('\r');
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                InputStream es = connection.getErrorStream();
+                String errorMessage = IOUtils.toString(es);
+                IOUtils.closeQuietly(es);
+
+                if (responseCode == 404 && channelNotFoundMessage.equals(errorMessage)) {
+                    throw new SlackChannelNotFoundException(message.get("channel").getAsString(), errorMessage);
+                }
+
+                throw new SlackApiException(errorMessage, responseCode);
             }
+            InputStream is = connection.getInputStream();
+            String responseMessage = IOUtils.toString(is);
+            IOUtils.closeQuietly(is);
 
-            System.out.println(response.toString());
-            rd.close();
-            return response.toString();
+            return responseMessage;
 
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return null;
-
+        } catch (IOException e) {
+            throw new SlackApiException(e);
         } finally {
 
             if(connection != null) {

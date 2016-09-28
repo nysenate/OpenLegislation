@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.slack;
+package gov.nysenate.openleg.model.slack;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +14,6 @@ public class SlackMessage {
     private List<SlackAttachment> attach = null;
     private String channel  = null;
     private String icon     = null;
-    private JsonObject slackMessage = new JsonObject();
 
     private String text     = null;
     private String username = null;
@@ -63,6 +62,7 @@ public class SlackMessage {
     }
 
     public JsonObject prepare() {
+        JsonObject slackMessage = new JsonObject();
         if(channel != null) {
             slackMessage.addProperty("channel", channel);
         }
@@ -72,6 +72,7 @@ public class SlackMessage {
         }
 
         if(icon != null) {
+
             if(icon.contains("http")) {
                 slackMessage.addProperty("icon_url", icon);
             } else {
@@ -81,9 +82,12 @@ public class SlackMessage {
 
         if(text == null) {
             throw new IllegalArgumentException("Missing Text field @ SlackMessage");
-        } else {
-            slackMessage.addProperty("text", addMentions(text, mentions));
         }
+
+        slackMessage.addProperty("text", addMentions(text, mentions));
+
+        // Allows for '@' mentions
+        slackMessage.addProperty("link_names", 1);
 
         if(attach != null && attach.size() > 0) {
             slackMessage.add("attachments", this.prepareAttach());
@@ -116,42 +120,32 @@ public class SlackMessage {
     }
 
     public SlackMessage setChannel(String channel) {
-        if(channel != null) {
-            this.channel = channel;
-        }
+        this.channel = channel;
 
         return this;
     }
 
     // http://www.emoji-cheat-sheet.com/
     public SlackMessage setIcon(String icon) {
-        if(icon != null) {
-            this.icon = icon;
-        }
+        this.icon = icon;
 
         return this;
     }
 
     public SlackMessage setText(String message) {
-        if(message != null) {
-            this.text = message;
-        }
+        this.text = message;
 
         return this;
     }
 
     public SlackMessage setUsername(String username) {
-        if(username != null) {
-            this.username = username;
-        }
+        this.username = username;
 
         return this;
     }
 
     public SlackMessage setMentions(Collection<String> mentions) {
-        if (mentions != null) {
-            this.mentions = new ArrayList<>(mentions);
-        }
+        this.mentions = mentions == null ? null : new ArrayList<>(mentions);
 
         return this;
     }
@@ -179,7 +173,7 @@ public class SlackMessage {
         }
         String mentionString = mentions.stream()
                 .filter(StringUtils::isNotBlank)
-                .reduce("", (a, b) -> a + "<@" + b + "> ");
+                .reduce("", (a, b) -> a + "@" + b + " ");
         return mentionString + (message != null ? "\n" + message : "");
     }
 }

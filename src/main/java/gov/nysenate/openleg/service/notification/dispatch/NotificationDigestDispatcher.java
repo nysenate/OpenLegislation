@@ -56,13 +56,14 @@ public class NotificationDigestDispatcher {
     @Scheduled(cron = "0 */1 * * * *")
     public void processPendingDigests() {
         Set<NotificationDigestSubscription> pendingDigests = subDao.getPendingDigests();
-        if (!pendingDigests.isEmpty()) {
-            logger.info("processing {} pending notification digests..", pendingDigests.size());
-            pendingDigests.stream()
-                    .peek(this::sendDigest)
-                    .forEach(this::postProcess);
-            logger.info("notification digests sent");
+        if (pendingDigests.isEmpty()) {
+            return;
         }
+        logger.info("processing {} pending notification digests..", pendingDigests.size());
+        pendingDigests.stream()
+                .peek(this::sendDigest)
+                .forEach(this::postProcess);
+        logger.info("notification digests sent");
     }
 
     public void sendDigest(NotificationDigestSubscription subscription) {

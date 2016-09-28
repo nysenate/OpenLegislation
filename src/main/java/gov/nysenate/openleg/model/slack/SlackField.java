@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.slack;
+package gov.nysenate.openleg.model.slack;
 
 import java.util.ArrayList;
 import java.util.List;
