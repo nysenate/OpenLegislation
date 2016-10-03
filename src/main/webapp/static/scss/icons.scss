@@ -1,7 +1,16 @@
-@import "compass";
 
-@include font-face("icomoon", font-files("icomoon.eot?5vwo6d", "icomoon.eot?#iefix5vwo6d", "icomoon.woff?5vwo6d",
-                                         "icomoon.ttf?5vwo6d", "icomoon.svg?5vwo6d#icomoon"));
+$font-dir: '/static/fonts';
+
+@font-face {
+  font-family: icomoon;
+  src: url($font-dir + "/icomoon.eot?5vwo6d&1456241483") format('embedded-opentype'),
+       url($font-dir + "/icomoon.eot?&1456241483#iefix5vwo6d") format('embedded-opentype'),
+       url($font-dir + "/icomoon.woff?5vwo6d&1456241483") format('woff'),
+       url($font-dir + "/icomoon.ttf?5vwo6d&1456241483") format('truetype'),
+       url($font-dir + "/icomoon.svg?5vwo6d&1456241483#icomoon") format('svg')
+}
+
+
 
 [class^="icon-"], [class*=" icon-"] {
   font-family: 'icomoon';

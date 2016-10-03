@@ -5,16 +5,22 @@
     "url": "https://github.com/nysenate/OpenLegislation.git"
   },
   "devDependencies": {
-    "grunt": "~0.4.5",
-    "grunt-beep": "^0.3.2",
-    "grunt-contrib-compass": "^1.0.1",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-copy": "~0.7.0",
-    "grunt-contrib-cssmin": "~0.7.0",
-    "grunt-contrib-jshint": "~0.8.0",
-    "grunt-contrib-nodeunit": "~0.2.0",
-    "grunt-contrib-uglify": "~0.3.1",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-shell": "^1.1.1"
+    "autoprefixer": "^6.5.0",
+    "bower": "^1.7.9",
+    "cssnano": "^3.7.5",
+    "grunt": "^1.0.1",
+    "grunt-beep": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-postcss": "^0.8.0",
+    "grunt-sass": "^1.2.1",
+    "grunt-shell": "^1.1.1",
+    "pixrem": "^3.0.2"
+  },
+  "scripts": {
+    "postinstall": "bower install && grunt"
   }
 }

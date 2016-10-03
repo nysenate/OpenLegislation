@@ -9,7 +9,6 @@
     "angular-resource": "1.4.8",
     "angular-material": "1.0.4",
     "angular-smart-table": "~1.4.8",
-    "amcharts": "3.11.3",
     "moment": "~2.8.2",
     "angular-ui-calendar": "0.8.1",
     "ngInfiniteScroll": "1.0.0",
@@ -19,7 +18,9 @@
     "sockjs": "~0.3.4",
     "stomp-websocket": "2.3.4"
   },
-  "devDependencies": {
-
+  "devDependencies": {},
+  "resolutions": {
+    "angular": "1.5.8",
+    "jquery": ">=1.6"
   }
 }

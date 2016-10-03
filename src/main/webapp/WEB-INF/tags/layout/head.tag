@@ -18,8 +18,11 @@
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="${ctxPath}/static/favicon.ico"/>
 
+    <!-- Third Party CSS -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/dest/lib.min.css"/>
+
     <!-- Main CSS -->
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/dest/main.min.css"/>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/dest/openleg.min.css"/>
 
     <!-- Third Party JS -->
     <script type="application/javascript" src="<%= request.getContextPath()%>/static/js/dest/vendor.min.js"></script>

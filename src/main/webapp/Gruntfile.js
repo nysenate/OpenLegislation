@@ -1,46 +1,63 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        properties: grunt.file.readJSON('grunt.properties.json'),
 
         /** Path locations to be used as templates */
         cssRoot: 'static/css',
         cssSource: '<%= cssRoot %>/src',
         cssDest: '<%= cssRoot %>/dest',
         bowerRoot: 'static/bower_components',
-        scssRoot: 'WEB-INF/scss',
+        scssRoot: 'static/scss',
         jsRoot: 'static/js',
         jsSource: '<%= jsRoot %>/src',
         jsDest: '<%= jsRoot %>/dest',
         jspSource: 'WEB-INF/view',
         tagSource: 'WEB-INF/tags',
-        tomcatWeb: '/usr/share/tomcat/webapps/legislation',  // <-- CHANGE THIS AS NEEDED
+        tomcatWeb: '<%= properties.deployDirectory %>',
         docsSourceRoot: '../../../docs',
         docsDestRoot: 'static/docs',
 
-        /** Compile SCSS files into css and place them into the css source directory */
-        compass: {
-            dev: {
-                /** Configured in config.rb */
+        // Compile sass into css
+        sass: {
+            options: {
+                sourceMap: true
+            },
+            openleg: {
+                files: {
+                    '<%= cssSource %>/openleg.css': '<%= scssRoot %>/app.scss'
+                }
+            }
+        },
+
+        // Run postprocessors on css
+        postcss: {
+            options: {
+                map: true, // inline sourcemaps
+
+                processors: [
+                    require('pixrem')(), // add fallbacks for rem units
+                    require('autoprefixer')({browsers: 'last 2 versions'}), // add vendor prefixes
+                    require('cssnano')() // minify the result
+                ]
+            },
+            openleg: {
+                src: '<%= cssSource %>/openleg.css',
+                dest: '<%= cssDest %>/openleg.min.css'
+            },
+            lib: {
+                src: '<%= cssSource %>/lib.css',
+                dest: '<%= cssDest %>/lib.min.css'
             }
         },
 
         /** Combine all the required css assets into one file. */
         concat: {
-            css: {
+            css_lib: {
                 files: {
-                    '<%= cssDest %>/main.css':
-                        ['<%= cssSource %>/*.css',
-                         '<%= bowerRoot %>/fullcalendar/fullcalendar.css',
+                    '<%= cssSource %>/lib.css':
+                        ['<%= bowerRoot %>/fullcalendar/fullcalendar.css',
                          '<%= bowerRoot %>/angular-material/angular-material.min.css']
-                }
-            }
-        },
-
-        /** Minify the main combined css. */
-        cssmin: {
-            css: {
-                files: {
-                    '<%= cssDest %>/main.min.css': ['<%= cssDest %>/main.css']
                 }
             }
         },
@@ -57,8 +74,7 @@ module.exports = function(grunt) {
                 files: {
                     '<%= jsDest %>/vendor.min.js': [
                         // Much dependencies
-                        '<%= bowerRoot %>/modernizr/modernizr.js',
-                        '<%= bowerRoot %>/jquery/dist/jquery.min.js',
+                        '<%= bowerRoot %>/jquery/jquery.min.js',
                         '<%= bowerRoot %>/angular/angular.js',
                         '<%= bowerRoot %>/angular-route/angular-route.min.js',
                         '<%= bowerRoot %>/angular-resource/angular-resource.min.js',
@@ -70,8 +86,6 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/moment/min/moment.min.js',
                         '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
                         '<%= bowerRoot %>/fullcalendar/fullcalendar.js',
-                        //'<%= bowerRoot %>/amcharts/dist/amcharts/amcharts.js',
-                        //'<%= bowerRoot %>/amcharts/dist/amcharts/serial.js',
                         '<%= bowerRoot %>/sockjs/sockjs.min.js',
                         '<%= bowerRoot %>/stomp-websocket/lib/stomp.min.js',
                         '<%= bowerRoot %>/angular-utils-pagination/dirPagination.js',
@@ -157,7 +171,7 @@ module.exports = function(grunt) {
             css: {
                 files: [{
                     expand:true, cwd: '<%= cssDest %>/', src: ['**'], filter: 'isFile',
-                    dest: '<%= tomcatWeb %>/static/css/dest/'
+                    dest: '<%= tomcatWeb %>/<%= cssDest %>/'
                 }]
             },
             js: {
@@ -174,7 +188,7 @@ module.exports = function(grunt) {
             docs : {
                 files: [{
                     expand:true, cwd: '<%= docsDestRoot %>/', src: ['**'], filter: 'isFile',
-                    dest: '<%= tomcatWeb %>/static/docs/'
+                    dest: '<%= tomcatWeb %>/<%= docsDestRoot %>/'
                 }]
             }
         },
@@ -193,34 +207,47 @@ module.exports = function(grunt) {
 
         /** Automatically run certain tasks based on file changes */
         watch: {
-            css: {
+            scss: {
                 files: ['<%= scssRoot %>/*.scss'],
-                tasks: ['compass', 'concat', 'cssmin', 'copy:css', 'beep']
+                tasks: ['css:openleg', '<%= properties.scssBeep %>']
             },
             jsp: {
                 files: ['<%= jspSource %>/**/*.jsp', '<%= tagSource %>/**/*.tag'],
-                tasks: ['copy:jsp', 'beep']
+                tasks: ['jsp', '<%= properties.jspBeep %>']
             },
             js: {
                 files: ['<%= jsSource %>/**/*.js'],
-                tasks: ['uglify:app', 'copy:js', 'beep']
+                tasks: ['js:app', '<%= properties.jsBeep %>']
             },
             docs: {
                 files: ['<%= docsSourceRoot %>/*.rst', '<%= docsSourceRoot %>/conf.py'],
-                tasks: ['shell:docs', 'copy:docs']
+                tasks: ['docs', '<%= properties.docsBeep %>']
             }
         }
     });
 
-    grunt.loadNpmTasks('grunt-contrib-compass');
+    grunt.loadNpmTasks('grunt-sass');
+    grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-beep');
 
-    grunt.registerTask('default', ['compass', 'concat', 'cssmin', 'uglify', 'copy']);
+    // Tasks that process and copy only one type of source file
+    grunt.registerTask('css:openleg',   ['sass', 'postcss:openleg', 'copy:css']);
+    grunt.registerTask('css:lib',       ['concat', 'postcss:lib', 'copy:css']);
+    grunt.registerTask('js:app',        ['uglify:app', 'copy:js']);
+    grunt.registerTask('js:vendor',     ['uglify:vendor', 'copy:js']);
+    grunt.registerTask('jsp',           ['copy:jsp']);
+    grunt.registerTask('docs',          ['shell:docs', 'copy:docs']);
+
+    // Generate necessary css + js files
+    grunt.registerTask('process',   ['sass', 'concat', 'postcss', 'uglify']);
+    // *DEFAULT* Process and copy only css + js
+    grunt.registerTask('default',   ['process', 'copy', 'beep']);
+    // Process and copy css + js + docs
+    grunt.registerTask('build',     ['process', 'docs', 'copy', 'beep'])
 };

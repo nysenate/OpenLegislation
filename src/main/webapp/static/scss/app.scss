@@ -1,9 +1,9 @@
-@import "compass";
 @import url(//fonts.googleapis.com/css?family=Open+Sans);
 @import url(//fonts.googleapis.com/css?family=Roboto+Slab:300,400);
 @import url(//fonts.googleapis.com/css?family=Inconsolata);
 
 @import "colors";
+@import "icons";
 
 /** --- Reset --- */
 
@@ -76,7 +76,7 @@ md-toolbar {
 }
 
 .md-whiteframe-z0 {
-  @include box-shadow(0 2px 5px 0 rgba(0,0,0,.10));
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.10);
 }
 
 md-card {
@@ -140,7 +140,7 @@ md-dialog {
   opacity: 1;
 }
 .fade.ng-enter, .fade.ng-leave {
-  @include transition(all .25s ease);
+  transition: all .25s ease;
 }
 .fade.ng-enter {
   opacity: 0;
@@ -149,7 +149,7 @@ md-dialog {
   opacity: 1;
 }
 .fade.fade-out.ng-leave {
-  @include transition(all .5s ease);
+  transition: all .5s ease;
 }
 .fade.ng-leave {
   opacity: 1;
@@ -355,7 +355,7 @@ md-dialog {
 
 a.gray-2-blue {
   color: $gray10;
-  @include transition(all .2s linear);
+  transition: all .2s linear;
   &:hover {
     color: $blue2;
   }
@@ -363,7 +363,7 @@ a.gray-2-blue {
 
 a.white-2-blue {
   color: white;
-  @include transition(all .2s linear);
+  transition: all .2s linear;
   &:hover {
     background: transparentize(#fff, 0.9);
   }
@@ -1073,7 +1073,7 @@ a.slogan-link {
 /** --- Law Page Styles --- */
 
 .law-container {
-  @include box-shadow(0 1px 3px #ddd);
+  box-shadow: 0 1px 3px #ddd;
   margin: 10px 0;
 }
 

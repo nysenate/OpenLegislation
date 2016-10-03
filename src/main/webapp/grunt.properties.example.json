@@ -1,0 +1,9 @@
+{
+  "deployDirectory": "/usr/share/tomcat/webapps/legislation",
+
+  "defaultBeep":"beep:*",
+  "scssBeep": "<%= properties.defaultBeep %>",
+  "jsBeep": "<%= properties.defaultBeep %>",
+  "docsBeep": "<%= properties.defaultBeep %>",
+  "jspBeep": "<%= properties.defaultBeep %>"
+}

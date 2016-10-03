@@ -646,34 +646,3 @@ coreModule.factory('BillUtils', [function() {
     };
 }]);
 
-
-/** --- Am Charts --- */
-
-coreModule.directive('amChart', function () {
-    return {
-        restrict: 'E',
-        replace:true,
-        scope: {
-            chartId: '@',
-            chartClass: '@',
-            chartConfig: '=',
-            chartData: '='
-        },
-        template: '<div id="{{chartId}}" class="am-chart {{chartClass}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>',
-        link: function (scope, element, attrs) {
-            console.log("hi");
-            if (!scope.chartId) {scope.chartId = 'am-chart';}
-            scope.chart = false;
-
-            var initChart = function () {
-                if (scope.chart) {
-                    scope.chart.destroy();
-                }
-                scope.chartConfig.dataProvider = scope.chartData;
-                console.log(scope.chartConfig);
-                scope.chart = AmCharts.makeChart(scope.chartId, scope.chartConfig);
-            };
-            scope.$watch(scope.chartData, initChart, true);
-        }
-    }
-});
