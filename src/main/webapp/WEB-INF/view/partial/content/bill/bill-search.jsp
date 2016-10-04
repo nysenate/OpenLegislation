@@ -45,13 +45,10 @@
                     <h3>{{curr.pagination.totalItems}} <span class="text-normal">bills were found.</span></h3>
                   </div>
                   <div class="margin-right-20">
-                    <label class="bold margin-right-10" for="filter-session">Session</label>
-                    <select id="filter-session" name="session" ng-model="curr.billSearch.session" ng-change="sessionChanged()">
+                    <label class="bold margin-right-10" for="filter-session">Session {{activeSessionYears[0]}}</label>
+                    <select id="filter-session" name="session" ng-model="curr.billSearch.session"
+                            ng-options="session as session.toString() for session in activeSessionYears" ng-change="sessionChanged()">
                       <option value="">All Sessions</option>
-                      <option value="2015">2015</option>
-                      <option value="2013">2013</option>
-                      <option value="2011">2011</option>
-                      <option value="2009">2009</option>
                     </select>
                     </div>
                   <div>

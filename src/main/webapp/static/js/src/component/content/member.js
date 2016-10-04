@@ -100,17 +100,27 @@ memberModule.controller('MemberSearchCtrl', ['$scope', '$routeParams', '$locatio
 
     }]);
 
-memberModule.controller('MemberBrowseCtrl', ['$scope', '$routeParams', 'MemberSearchApi',
-    function($scope, $routeParams, MemberSearchApi) {
+memberModule.controller('MemberBrowseCtrl', ['$scope', '$routeParams', '$filter', 'MemberSearchApi',
+    function($scope, $routeParams, $filter, MemberSearchApi) {
 
-        $scope.sessionYears = [2015, 2013, 2011, 2009];
+        $scope.sessionYears = $scope.activeSessionYears;
         $scope.memberBrowse = {
             response: {},
             results: [],
             filter: "",
             chamberSelected: 'SENATE',
-            sessionYear: 2015
+            sessionYear: $scope.activeSession
         };
+
+        $scope.init = function() {
+            $scope.setHeaderVisible(true);
+            $scope.setHeaderText("Browse Members");
+            $scope.filterMembers();
+        };
+
+        $scope.$watch('memberBrowse.sessionYear', function() {
+            $scope.filterMembers();
+        });
 
         $scope.filterMembers = function() {
             $scope.memberBrowse.response = MemberSearchApi.get(
@@ -128,16 +138,6 @@ memberModule.controller('MemberBrowseCtrl', ['$scope', '$routeParams', 'MemberSe
 
         $scope.buildQuery = function() {
             return "chamber:" + $scope.memberBrowse.chamberSelected + " AND sessionYear:" + $scope.memberBrowse.sessionYear;
-        };
-
-        $scope.$watch('memberBrowse.sessionYear', function() {
-            $scope.filterMembers();
-        });
-
-        $scope.init = function() {
-            $scope.setHeaderVisible(true);
-            $scope.setHeaderText("Browse Members");
-            $scope.filterMembers();
         };
 
         $scope.init();

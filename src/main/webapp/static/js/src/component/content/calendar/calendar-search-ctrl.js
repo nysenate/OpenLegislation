@@ -14,14 +14,14 @@ calendarModule.controller('CalendarSearchCtrl', ['$scope', '$routeParams', '$loc
         };
 
         var defaultFields = {
-            year: 2015,
+            year: moment().year(),
             fieldName: 'calendarNumber',
             fieldValue: '',
             activeList: false,
             order: 'DESC'
         };
+
         $scope.searchFields = angular.extend({}, defaultFields);
-        var fieldStorage = angular.extend({}, defaultFields);
 
         $scope.fieldOptions = {calendarNumber:'Calendar No.', printNo: 'Print No.', billCalNo: 'Bill Calendar No.'};
         $scope.orderOptions = {DESC: 'Newest First', ASC: 'Oldest First'};

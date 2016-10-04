@@ -28,9 +28,11 @@ coreModule.filter('moment', ['$filter', function($filter) {
 
 /**
  * Converts a year into it's session year.
+ * Returns the current session if no year is supplied
  */
 coreModule.filter('sessionYear', ['$filter', function ($filter) {
     return function (year) {
+        year = year || moment().year();
         return (year % 2 === 0) ? year - 1 : year;
     };
 }]);
