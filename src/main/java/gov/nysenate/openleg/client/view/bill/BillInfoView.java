@@ -2,10 +2,13 @@ package gov.nysenate.openleg.client.view.bill;
 
 import com.google.common.collect.Iterables;
 import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.BillInfo;
-import gov.nysenate.openleg.model.bill.BillStatus;
 import gov.nysenate.openleg.model.bill.BillStatusType;
+
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -21,6 +24,7 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
     protected BillStatusView status;
     protected ListView<BillStatusView> milestones;
     protected ListView<BillActionView> actions;
+    protected MapView<String, PublishStatusView> publishStatusMap;
     protected ProgramInfoView programInfo;
 
     public BillInfoView(BillInfo billInfo) {
@@ -46,6 +50,11 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
             status = new BillStatusView(billInfo.getStatus());
             milestones = ListView.of(billInfo.getMilestones().stream().map(BillStatusView::new).collect(toList()));
             actions = ListView.of(billInfo.getActions().stream().map(BillActionView::new).collect(toList()));
+            publishStatusMap = billInfo.getAmendPublishStatusMap().entrySet().stream()
+                    .map((pubStatEntry) -> new PublishStatusView(pubStatEntry.getKey().getValue(), pubStatEntry.getValue()))
+                    .collect(Collectors.collectingAndThen(
+                            Collectors.toMap(PublishStatusView::getVersion, Function.identity()),
+                            MapView::of));
         }
     }
 
@@ -83,6 +92,10 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
 
     public ProgramInfoView getProgramInfo() {
         return programInfo;
+    }
+
+    public MapView<String, PublishStatusView> getPublishStatusMap() {
+        return publishStatusMap;
     }
 
     @Override

@@ -1,11 +1,10 @@
 package gov.nysenate.openleg.model.bill;
 
+import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Contains a sample of the fields in {@link gov.nysenate.openleg.model.bill.Bill}.
@@ -24,6 +23,7 @@ public class BillInfo
     protected BillSponsor sponsor;
     protected List<BillStatus> milestones = new ArrayList<>();
     protected List<BillAction> actions = new ArrayList<>();
+    protected Map<Version, PublishStatus> amendPublishStatusMap = new TreeMap<>();
     protected BillId substitutedBy;
     protected ProgramInfo programInfo;
 
@@ -44,6 +44,7 @@ public class BillInfo
         this.programInfo = bill.getProgramInfo();
         this.milestones = bill.getMilestones();
         this.actions = bill.getActions();
+        this.amendPublishStatusMap = new TreeMap<>(bill.getAmendPublishStatusMap());
     }
 
     /** --- Basic Getters/Setters --- */
@@ -130,5 +131,13 @@ public class BillInfo
 
     public void setSubstitutedBy(BillId substitutedBy) {
         this.substitutedBy = substitutedBy;
+    }
+
+    public Map<Version, PublishStatus> getAmendPublishStatusMap() {
+        return amendPublishStatusMap;
+    }
+
+    public void setAmendPublishStatusMap(Map<Version, PublishStatus> amendPublishStatusMap) {
+        this.amendPublishStatusMap = amendPublishStatusMap;
     }
 }
