@@ -3,39 +3,53 @@ package gov.nysenate.openleg.client.view.bill;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
+@Component
 public class BillActionView implements ViewObject {
 
     protected BillIdView billId;
     protected String date;
     protected String chamber;
-    protected int sequenceNo;
+    protected Integer sequenceNo;
     protected String text;
 
     protected BillActionView() {}
 
     public BillActionView(BillAction billAction) {
-        if (billAction != null) {
-            billId = new BillIdView(billAction.getBillId());
-            date = billAction.getDate().toString();
-            chamber = billAction.getChamber().name();
-            sequenceNo = billAction.getSequenceNo();
-            text = billAction.getText();
-        }
+        Optional<BillAction> billActionOpt = Optional.ofNullable(billAction);
+        billId = billActionOpt.map(BillAction::getBillId)
+                .map(BillIdView::new)
+                .orElse(null);
+        date = billActionOpt.map(BillAction::getDate)
+                .map(LocalDate::toString)
+                .orElse(null);
+        chamber = billActionOpt.map(BillAction::getChamber)
+                .map(Chamber::name)
+                .orElse(null);
+        sequenceNo = billActionOpt.map(BillAction::getSequenceNo)
+                .orElse(null);
+        text = billActionOpt.map(BillAction::getText)
+                .orElse(null);
     }
 
     @JsonIgnore
     public BillAction toBillAction() {
-        return new BillAction(
-                LocalDate.parse(date),
-                text,
-                Chamber.getValue(chamber),
-                sequenceNo,
-                billId.toBillId()
-        );
+        LocalDate date = Optional.ofNullable(this.date)
+                .map(LocalDate::parse).orElse(null);
+        Chamber chamber = Optional.ofNullable(this.chamber)
+                .map(Chamber::getValue).orElse(null);
+        BillId billId = null;
+        try {
+            billId = Optional.ofNullable(this.billId)
+                    .map(BillIdView::toBillId).orElse(null);
+        } catch (IllegalArgumentException | NullPointerException ignored) {}
+        return new BillAction( date, text, chamber, sequenceNo, billId);
     }
 
     public BillIdView getBillId() {
@@ -50,7 +64,7 @@ public class BillActionView implements ViewObject {
         return chamber;
     }
 
-    public int getSequenceNo() {
+    public Integer getSequenceNo() {
         return sequenceNo;
     }
 

@@ -2,8 +2,11 @@ package gov.nysenate.openleg.client.view.bill;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
+
+import java.util.Optional;
 
 public class BaseBillIdView implements ViewObject
 {
@@ -16,7 +19,8 @@ public class BaseBillIdView implements ViewObject
     public BaseBillIdView(BillId billId) {
         if (billId != null) {
             this.basePrintNo = billId.getBasePrintNo();
-            this.session = billId.getSession().getYear();
+            this.session = Optional.ofNullable(billId.getSession())
+                    .map(SessionYear::getYear).orElse(null);
             this.basePrintNoStr = BaseBillId.of(billId).toString();
         }
     }

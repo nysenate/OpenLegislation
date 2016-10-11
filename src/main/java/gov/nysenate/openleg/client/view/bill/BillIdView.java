@@ -5,6 +5,8 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 
+import java.util.Optional;
+
 public class BillIdView extends BaseBillIdView implements ViewObject
 {
     protected String printNo;
@@ -16,7 +18,8 @@ public class BillIdView extends BaseBillIdView implements ViewObject
         super(billId);
         if (billId != null) {
             this.printNo = billId.getPrintNo();
-            this.version = billId.getVersion().getValue();
+            this.version = Optional.ofNullable(billId.getVersion())
+                    .map(Version::getValue).orElse(null);
         }
     }
 
