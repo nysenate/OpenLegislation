@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.spotcheck.daybreak;
 
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -26,6 +27,15 @@ public class DaybreakMessage implements DaybreakDocument {
     @Override
     public LocalDateTime getReportDateTime() {
         return reportDateTime;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("message", message)
+                .append("daybreakDocType", daybreakDocType)
+                .append("reportDateTime", reportDateTime)
+                .toString();
     }
 
     public Message getMessage() {

@@ -103,7 +103,7 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
                         Bill bill = billDataService.getBill(id);
                         if (billIsPublished(bill)) {
                             logger.info("Missing Daybreak bill {}", id);
-                            mismatch = new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", "");
+                            mismatch = new SpotCheckMismatch(REFERENCE_DATA_MISSING, id, "");
                             recordMismatch(report, sourceMissingObs, mismatch);
                         }
                     }

@@ -38,6 +38,7 @@ public enum NotificationType {
     private static final ImmutableSet<NotificationType> ALL_NOTIFICATION_TYPES =
             ImmutableSet.copyOf(NotificationType.values());
 
+    @SuppressWarnings("IncompleteCopyConstructor")
     NotificationType(NotificationType parent) {
         this.parent = parent;
         if (parent != null) {

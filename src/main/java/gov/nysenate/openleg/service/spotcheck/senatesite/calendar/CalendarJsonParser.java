@@ -70,7 +70,7 @@ public class CalendarJsonParser extends JsonParser {
         calendar.setCalendarId(getCalendarId(calendarNode,"calendar_id"));
         TypeReference<List<String>> listTypeReference = new TypeReference<List<String>>() {};
         Optional<List<String>> value = deserializeValue(calendarNode,"field_ol_bill",listTypeReference);
-        calendar.setBill(getBillId(value.orElseThrow(() -> new ParseError("Emptylist")),calendar.getCalendarId().getYear()));
+        calendar.setBill(getBillId(value.orElse(Collections.emptyList()), calendar.getCalendarId().getYear()));
 
        return calendar;
     }
@@ -87,10 +87,7 @@ public class CalendarJsonParser extends JsonParser {
     }
 
     private List<BillId> getBillId(List<String> billNos, int year){
-        List<BillId> billId = new ArrayList<BillId>();
-        for (String billNo:billNos) {
-            billId.add(new BillId(billNo, SessionYear.of(year)));
-        }
+        List<BillId> billId = billNos.stream().map(billNo -> new BillId(billNo, SessionYear.of(year))).collect(Collectors.toList());
         return billId;
     }
 

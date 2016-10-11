@@ -121,12 +121,12 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         return text.replaceAll("(?:[^\\w]|_)+", "");
     }
 
-    static String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
-    static String pageMarkerRegex = "^ {7}[A|S]\\. \\d+(--[A-Z])?[ ]+\\d+([ ]+[A|S]\\. \\d+(--[A-Z])?)?$";
-    static String budgetPageMargerRegex = "^[ ]{42,43}\\d+[ ]+\\d+-\\d+-\\d+$";
-    static String explanationRegex = "^[ ]+EXPLANATION--Matter in ITALICS \\(underscored\\) is new; matter in brackets\\n";
-    static String explanationRegex2 = "^[ ]+\\[ ] is old law to be omitted.\\n[ ]+LBD\\d+-\\d+-\\d+$";
-    static String ultraNormalizeRegex = "(?m)" + String.join("|", Arrays.asList(
+    private static final String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
+    private static final String pageMarkerRegex = "^ {7}[A|S]\\. \\d+(--[A-Z])?[ ]+\\d+([ ]+[A|S]\\. \\d+(--[A-Z])?)?$";
+    private static final String budgetPageMargerRegex = "^[ ]{42,43}\\d+[ ]+\\d+-\\d+-\\d+$";
+    private static final String explanationRegex = "^[ ]+EXPLANATION--Matter in ITALICS \\(underscored\\) is new; matter in brackets\\n";
+    private static final String explanationRegex2 = "^[ ]+\\[ ] is old law to be omitted.\\n[ ]+LBD\\d+-\\d+-\\d+$";
+    private static final String ultraNormalizeRegex = "(?m)" + String.join("|", Arrays.asList(
             lineNumberRegex, pageMarkerRegex, budgetPageMargerRegex, explanationRegex, explanationRegex2));
     /**
      * Removes all whitespace, line numbers, and page numbers
