@@ -93,7 +93,7 @@
                           class="margin-10 md-warn md-whiteframe-z0">
               <h3>No search results were found for '{{searchQuery.term}}'</h3>
             </md-subheader>
-            <md-progress-linear class="md-accent md-hue-1" md-mode="{{(searching) ? 'query' : ''}}"></md-progress-linear>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="!searching"></md-progress-linear>
 
             <div ng-show="!searching && searchQuery.term && pagination.totalItems > 0">
               <div>
@@ -243,7 +243,7 @@
               </div>
             </div>
           </div>
-          <md-progress-linear class="md-accent md-hue-1" md-mode="{{(loadingUpdates) ? 'query' : ''}}"></md-progress-linear>
+          <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="!loadingUpdates"></md-progress-linear>
           <div class="padding-20">
             <update-list class="error-toast-parent" ng-show="!loadingUpdates"
                          update-response="updateResponse" pagination="pagination" show-details="updateOptions.detail">

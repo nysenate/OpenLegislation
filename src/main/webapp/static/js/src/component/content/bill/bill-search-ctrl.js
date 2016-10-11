@@ -5,7 +5,6 @@ var billModule = angular.module('open.bill');
 billModule.controller('BillSearchCtrl', ['$scope', '$filter', '$routeParams', '$location', '$sce',
                                          'BillSearchApi', 'PaginationModel',
     function($scope, $filter, $routeParams, $location, $sce, BillSearch, PaginationModel) {
-        console.log('ssss', $scope.activeSessionYears);
         $scope.curr = {
             state: 'initial',
             pagination: angular.extend({}, PaginationModel, { itemsPerPage: 6 }),

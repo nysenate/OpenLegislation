@@ -6,7 +6,7 @@
       <md-toolbar>
         <h4 class="margin-left-16 text-medium">{{cache.cacheName}}</h4>
       </md-toolbar>
-      <md-progress-linear class="md-accent md-hue-1" md-mode="{{(loading[cache.cacheName]) ? 'query' : ''}}"></md-progress-linear>
+      <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="!loading[cache.cacheName]"></md-progress-linear>
       <div class="padding-20">
         <p class="no-margin">Memory Used: {{cache.heapSizeMb}} MB</p>
         <p class="no-margin">Entries: {{cache.size}}</p>

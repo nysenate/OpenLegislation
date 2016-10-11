@@ -143,7 +143,7 @@
             <md-content>
               <p ng-show="mismatchRow.mismatch.issueIds.items.length === 0 && !state.settingIssueId" class="bold">
                 No associated issues</p>
-              <md-progress-linear class="md-hue-2" md-mode="{{state.settingIssueId ? 'indeterminate' : ''}}"></md-progress-linear>
+              <md-progress-linear class="md-hue-2" md-mode="query" ng-disabled="!state.settingIssueId"></md-progress-linear>
               <md-list ng-show="mismatchRow.mismatch.issueIds.items.length > 0">
                 <md-list-item ng-repeat="issueId in mismatchRow.mismatch.issueIds.items" layout="row" layout-align="start center">
                   <md-button class="md-raised" ng-click="removeIssueIdPrompt(mismatchRow, issueId)"

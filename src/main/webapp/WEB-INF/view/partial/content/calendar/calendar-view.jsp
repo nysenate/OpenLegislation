@@ -9,7 +9,7 @@
           <md-tab-label ng-if="previousPage == 'updates'"><i class="icon-flag prefix-icon2"></i>back to updates</md-tab-label>
           <md-tab-label ng-if="!previousPage"><i class="icon-calendar prefix-icon2"></i>browse</md-tab-label>
         </md-tab>
-        <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.state === 'fetching') ? 'query' : ''}}"></md-progress-linear>
+        <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="curr.state !== 'fetching'"></md-progress-linear>
 
         <!-- Active Lists -->
         <md-tab label="Active List" md-on-select="setCalendarHeaderText()"
@@ -98,7 +98,7 @@
                 </div>
                 </div>
               <div class="padding-20">
-                <md-progress-linear md-mode="indeterminate" ng-if="loadingUpdates"></md-progress-linear>
+                <md-progress-linear md-mode="indeterminate" ng-disabled="!loadingUpdates"></md-progress-linear>
                 <update-list ng-if="!loadingUpdates" update-response="updateResponse" ng-init="showId=false" show-id="showId"></update-list>
               </div>
               </div>

@@ -56,7 +56,7 @@
       <md-card ng-controller="NotificationSubCtrl"
           ng-init='init(<%=notifTypeHierarchy%>, <%=notifTargets%>)'>
         <md-toolbar>
-          <h5 class="md-toolbar-tools inline-block">Manage Notification Subscriptions</h5>
+          <h5 class="md-toolbar-tools">Manage Notification Subscriptions</h5>
         </md-toolbar>
         <md-card-content>
           <md-button class="md-primary" aria-label="Add new subscription" ng-click="newSubscriptionShown = !newSubscriptionShown"
@@ -126,7 +126,7 @@
       <md-card ng-controller="ManageAdminUsersCtrl" ng-init="init()">
         <md-card-content id="admin-management">
           <md-toolbar>
-            <h5 class="md-toolbar-tools inline-block">Manage Admin Users</h5>
+            <h5 class="md-toolbar-tools">Manage Admin Users</h5>
           </md-toolbar>
           <md-button ng-click="newAccountShown = !newAccountShown" ng-class="{'md-raised': !newAccountShown}"
               class="md-primary" aria-label="create new account" style="margin-top: 22px; margin-bottom: 22px">

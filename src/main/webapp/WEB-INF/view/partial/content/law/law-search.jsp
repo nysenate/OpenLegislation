@@ -21,7 +21,7 @@
                          ng-change="simpleSearch(true)">
                 </div>
               </form>
-              <md-progress-linear class="md-accent md-hue-1" md-mode="{{(lawSearch.searching) ? 'query' : ''}}">
+              <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="!lawSearch.searching">
               </md-progress-linear>
                 <md-subheader ng-show="lawSearch.term && pagination.totalItems === 0"
                               class="margin-10 md-warn">
@@ -134,7 +134,7 @@
                 </div>
               </div>
             </div>
-            <md-progress-linear class="md-accent md-hue-1" md-mode="{{(lawUpdates.fetching) ? 'query' : ''}}"></md-progress-linear>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="!lawUpdates.fetching"></md-progress-linear>
             <div class="padding-20">
               <update-list ng-show="!lawUpdates.fetching && lawUpdates.response.success === true"
                            update-response="lawUpdates.response"

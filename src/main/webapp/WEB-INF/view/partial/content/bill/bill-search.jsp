@@ -37,7 +37,7 @@
                 </toggle-panel>
               </div>
             </div>
-            <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.state === 'searching') ? 'query' : ''}}"></md-progress-linear>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="curr.state !== 'searching'"></md-progress-linear>
             <div layout-padding>
               <div>
                 <div class="subheader" layout="column" layout-gt-sm="row" layout-align="space-between center">
@@ -228,7 +228,7 @@
                 </div>
               </div>
             </div>
-            <md-progress-linear class="md-accent md-hue-1" md-mode="{{(curr.state === 'searching') ? 'query' : ''}}"></md-progress-linear>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="curr.state !== 'searching'"></md-progress-linear>
             <div class="content-card" ng-if="curr.billUpdates.response.success === true">
               <div class="padding-10 margin-left-16">
                 <h3>{{curr.billUpdates.total}}

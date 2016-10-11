@@ -35,7 +35,7 @@
       </form>
     </div>
 
-    <md-progress-linear class="md-accent md-hue-1" md-mode="{{(transcriptSearch.state === 'searching') ? 'query' : ''}}">
+    <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="transcriptSearch.state !== 'searching'">
     </md-progress-linear>
     <div ng-show="transcriptSearch.state === 'searched'" class="padding-20">
       <div ng-if="transcriptSearch.paginate.totalItems === 0">

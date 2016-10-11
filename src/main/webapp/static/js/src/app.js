@@ -54,10 +54,8 @@ function($scope, $location, $mdSidenav, $mdDialog, $http, $interval, $window, $f
     $scope.header = {text: '', visible: false};
     $scope.firstSession = 2009;
     $scope.activeSession = $filter('sessionYear')();
-    console.log('s', $scope.activeSession);
     // List of session years for which there is data, descending from the current session
     $scope.activeSessionYears = getActiveSessionYears($scope.activeSession, $scope.firstSession);
-    console.log('s', $scope.activeSessionYears);
     $scope.ctxPath = ctxPath;
 
     /**

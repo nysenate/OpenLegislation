@@ -11,7 +11,7 @@
             <p class="text-medium margin-left-10 gray10">
               <i class="prefix-icon2 icon-info"></i>Repeated meetings typically have notes associated with them to indicate changes to the time/location.
             </p>
-            <md-progress-linear ng-if="loading" class="md-accent md-hue-2" md-mode="indeterminate"></md-progress-linear>
+            <md-progress-linear ng-disabled="!loading" class="md-accent md-hue-2" md-mode="indeterminate"></md-progress-linear>
             <md-card class="content-card">
               <md-card-content id="agenda-date-picker" ui-calendar="calendarConfig" ng-model="meetingEventSources"></md-card-content>
             </md-card>
@@ -152,7 +152,7 @@
                 </div>
               </div>
             </div>
-            <md-progress-linear class="md-accent md-hue-1" md-mode="{{(agendaUpdates.fetching) ? 'query' : ''}}"></md-progress-linear>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="query" ng-disabled="!agendaUpdates.fetching"></md-progress-linear>
             <div class="padding-20">
               <update-list ng-show="!agendaUpdates.fetching && agendaUpdates.response.success === true"
                            update-response="agendaUpdates.response"

@@ -74,7 +74,7 @@ module.exports = function(grunt) {
                 files: {
                     '<%= jsDest %>/vendor.min.js': [
                         // Much dependencies
-                        '<%= bowerRoot %>/jquery/jquery.min.js',
+                        '<%= bowerRoot %>/jquery/dist/jquery.min.js',
                         '<%= bowerRoot %>/angular/angular.js',
                         '<%= bowerRoot %>/angular-route/angular-route.min.js',
                         '<%= bowerRoot %>/angular-resource/angular-resource.min.js',
