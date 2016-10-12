@@ -40,7 +40,7 @@
             <p class="no-margin text-small" ng-if="bill.billInfo.status.actionDate">
               {{bill.billInfo.status.actionDate | moment:'MMMM D, YYYY'}} - {{billUtils.getStatusDesc(bill.billInfo.status)}}
             </p>
-            <milestones flex milestone-arr="bill.billInfo.milestones" chamber="bill.billInfo.billType.chamber"></milestones>
+            <milestones milestone-arr="bill.billInfo.milestones" chamber="bill.billInfo.billType.chamber"></milestones>
           </div>
         </div>
       </div>
