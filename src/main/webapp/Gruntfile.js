@@ -65,7 +65,7 @@ module.exports = function(grunt) {
         /** Compress all js into dev and prod files */
         uglify: {
             options: {
-                mangle: false,
+                mangle: true,
                 preserveComments: 'some', // Preserve licensing comments
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */',
                 beautify: false
@@ -75,7 +75,7 @@ module.exports = function(grunt) {
                     '<%= jsDest %>/vendor.min.js': [
                         // Much dependencies
                         '<%= bowerRoot %>/jquery/dist/jquery.min.js',
-                        '<%= bowerRoot %>/angular/angular.js',
+                        '<%= bowerRoot %>/angular/angular.min.js',
                         '<%= bowerRoot %>/angular-route/angular-route.min.js',
                         '<%= bowerRoot %>/angular-resource/angular-resource.min.js',
                         '<%= bowerRoot %>/angular-animate/angular-animate.min.js',
@@ -85,7 +85,7 @@ module.exports = function(grunt) {
                         '<%= bowerRoot %>/ngInfiniteScroll/build/ng-infinite-scroll.js',
                         '<%= bowerRoot %>/moment/min/moment.min.js',
                         '<%= bowerRoot %>/angular-ui-calendar/src/calendar.js',
-                        '<%= bowerRoot %>/fullcalendar/fullcalendar.js',
+                        '<%= bowerRoot %>/fullcalendar/fullcalendar.min.js',
                         '<%= bowerRoot %>/sockjs/sockjs.min.js',
                         '<%= bowerRoot %>/stomp-websocket/lib/stomp.min.js',
                         '<%= bowerRoot %>/angular-utils-pagination/dirPagination.js',
