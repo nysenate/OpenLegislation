@@ -65,7 +65,7 @@ module.exports = function(grunt) {
         /** Compress all js into dev and prod files */
         uglify: {
             options: {
-                mangle: true,
+                mangle: false,
                 preserveComments: 'some', // Preserve licensing comments
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */',
                 beautify: false
