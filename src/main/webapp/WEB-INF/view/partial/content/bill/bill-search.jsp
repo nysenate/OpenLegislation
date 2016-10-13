@@ -45,7 +45,7 @@
                     <h3>{{curr.pagination.totalItems}} <span class="text-normal">bills were found.</span></h3>
                   </div>
                   <div class="margin-right-20">
-                    <label class="bold margin-right-10" for="filter-session">Session {{activeSessionYears[0]}}</label>
+                    <label class="bold margin-right-10" for="filter-session">Session</label>
                     <select id="filter-session" name="session" ng-model="curr.billSearch.session"
                             ng-options="session as session.toString() for session in activeSessionYears" ng-change="sessionChanged()">
                       <option value="">All Sessions</option>
