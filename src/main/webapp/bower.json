@@ -16,13 +16,11 @@
     "angular-utils-pagination": "0.9.3",
     "angular-diff-match-patch": "0.4.0",
     "sockjs": "~0.3.4",
+    "google-diff-match-patch": "^0.1.0",
     "stomp-websocket": "2.3.4"
   },
   "resolutions": {
     "angular": "1.5.8",
-    "jquery": ">=1.6"
-  },
-  "dependencies": {
-    "google-diff-match-patch": "^0.1.0"
+    "jquery": "2.2.4"
   }
 }
