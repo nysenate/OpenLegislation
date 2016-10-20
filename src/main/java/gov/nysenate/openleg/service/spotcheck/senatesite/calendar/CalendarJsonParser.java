@@ -43,9 +43,9 @@ public class CalendarJsonParser extends JsonParser {
     private List<SenateSiteCalendar> extractCalendarsFromFragment(SenateSiteDumpFragment fragment) throws ParseError{
         try {
             JsonNode calendarMap = objectMapper.readTree(fragment.getFragmentFile())
-                    .path("calendars");
+                    .path("nodes");
             if (calendarMap.isMissingNode()) {
-                throw new ParseError("Could not locate \"calendars\" node in senate site calendar dump fragment file: " +
+                throw new ParseError("Could not locate \"nodes\" node in senate site calendar dump fragment file: " +
                         fragment.getFragmentFile().getAbsolutePath());
             }
             List<SenateSiteCalendar> calendars = new LinkedList<>();

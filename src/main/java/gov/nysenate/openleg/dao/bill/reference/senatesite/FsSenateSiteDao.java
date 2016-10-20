@@ -49,14 +49,14 @@ public class FsSenateSiteDao implements SenateSiteDao {
                 FileUtils.listFiles(getIncomingDumpDir(refType), new RegexFileFilter(dumpFragFilenameRegex(refType)), null);
         List<SenateSiteDumpFragment> fragments = new LinkedList<>();
         for(File file : fragmentFiles) {
-            fragments.add(getFragmentFromFile(file, refType));
+            fragments.add(getFragmentFromFile(file));
         }
         return groupFragmentsIntoDumps(fragments);
     }
 
     private Collection<SenateSiteDump> groupFragmentsIntoDumps(Collection<SenateSiteDumpFragment> fragments) {
         Map<SenateSiteDumpId, SenateSiteDump> dumpMap = new HashMap<>();
-        fragments.stream().forEach(fragment -> {
+        fragments.forEach(fragment -> {
             if (!dumpMap.containsKey(fragment.getDumpId())) {
                 SenateSiteDump dump = new SenateSiteDump(fragment.getDumpId());
                 dump.addDumpFragment(fragment);
@@ -99,8 +99,8 @@ public class FsSenateSiteDao implements SenateSiteDao {
     /**
      * Parse dump fragment metadata from a fragment json file
      */
-    private SenateSiteDumpFragment getFragmentFromFile(File fragFile, SpotCheckRefType refType) throws IOException {
-        SenateSiteDumpFragment fragment = parser.parseFragment(FileUtils.readFileToString(fragFile, "UTF-8"), refType);
+    private SenateSiteDumpFragment getFragmentFromFile(File fragFile) throws IOException {
+        SenateSiteDumpFragment fragment = parser.parseFragment(FileUtils.readFileToString(fragFile, "UTF-8"));
         fragment.setFragmentFile(fragFile);
         return fragment;
     }

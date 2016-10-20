@@ -2,17 +2,27 @@ package gov.nysenate.openleg.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckContentType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpRangeId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckDataSource.*;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
 
 /**
  * Parses a {@link SenateSiteDumpFragment} from a json String and {@link SpotCheckRefType}.
@@ -30,22 +40,24 @@ public class SenateSiteDumpFragParser {
      * value will use {@link SenateSiteDumpSessionId}.</p>
      * <p>Throws <code>SenateSiteDumpFragParserException</code> if a required json value is missing.</p>
      * @param json The json string to parse.
-     * @param refType The SpotCheckRefType of this json.
-     * @return
-     * @throws IOException
+     * @return {@link SenateSiteDumpFragment}
+     * @throws IOException If there is an issue parsing the json
      * @see SenateSiteDumpId
      */
-    public SenateSiteDumpFragment parseFragment(String json, SpotCheckRefType refType) throws IOException {
+    public SenateSiteDumpFragment parseFragment(String json) throws IOException {
         JsonNode rootNode = objectMapper.readValue(json, JsonNode.class);
-        LocalDateTime from = parseDateTimeFromNode(getRequiredNode(rootNode, "from"));
-        LocalDateTime to = parseDateTimeFromNode(getRequiredNode(rootNode, "to"));
+
         int part = getRequiredNode(rootNode, "part").asInt();
         int totalParts = getRequiredNode(rootNode, "totalParts").asInt();
 
-        JsonNode sessionNode = getRequiredNode(rootNode, "session");
-        Optional<Integer> sessionYearOpt = sessionNode.isNull() ? Optional.empty() : Optional.of(sessionNode.asInt());
+        LocalDateTime refDatetime = parseDateTimeFromNode(getRequiredNode(rootNode, "refDateTime"));
 
-        SenateSiteDumpId dumpId = createDumpId(from, to, totalParts, sessionYearOpt, refType);
+        int session = getRequiredNode(rootNode, "session").intValue();
+
+        String contentType = getRequiredNode(rootNode, "contentType").textValue();
+        SpotCheckRefType refType = getRefType(contentType);
+
+        SenateSiteDumpId dumpId = createDumpId(refDatetime, totalParts, session, refType);
         return new SenateSiteDumpFragment(dumpId, part);
     }
 
@@ -71,24 +83,31 @@ public class SenateSiteDumpFragParser {
     }
 
     /**
-     * Returns a specific <code>SenateSiteDumpId</code> implementation depending on data in the json.
-     * @see #parseFragment(String, SpotCheckRefType)
+     * Returns a {@link SenateSiteDumpId} based on passed in data
      */
-    private SenateSiteDumpId createDumpId(LocalDateTime from, LocalDateTime to, int totalParts,
-                                          Optional<Integer> sessionYearOpt, SpotCheckRefType refType) {
-        SenateSiteDumpId dumpId = null;
-        if (to == null) {
-            throw SenateSiteDumpFragParserException.nullField("to");
-        }
-        if (sessionYearOpt.isPresent()) {
-            dumpId = new SenateSiteDumpSessionId(refType, totalParts, sessionYearOpt.get(), to);
-        } else if (from != null) {
-            dumpId = new SenateSiteDumpRangeId(refType, totalParts, from, to);
-        } else {
-            throw new SenateSiteDumpFragParserException(
-                    "Invalid senate site dump fragment: both 'from' and 'session' fields are null");
-        }
-        return dumpId;
+    private SenateSiteDumpId createDumpId(LocalDateTime refDateTime, int totalParts,
+                                          int sessionYear, SpotCheckRefType refType) {
+        return new SenateSiteDumpSessionId(refType, totalParts, sessionYear, refDateTime);
+    }
+
+    private static final ImmutableMap<SpotCheckContentType, SpotCheckRefType> refTypeMap =
+            Maps.uniqueIndex(
+                    EnumSet.allOf(SpotCheckRefType.class).stream()
+                            .filter(refType -> NYSENATE_DOT_GOV.equals(refType.getDataSource()))
+                            .collect(Collectors.toList()),
+                    SpotCheckRefType::getContentType
+            );
+
+    /**
+     * Return the relevant ref type for the passed in content type
+     * @param contentTypeString String
+     * @return {@link SpotCheckRefType}
+     */
+    private SpotCheckRefType getRefType(String contentTypeString) {
+        SpotCheckContentType contentType = SpotCheckContentType.valueOf(StringUtils.upperCase(contentTypeString));
+        return Optional.ofNullable(refTypeMap.get(contentType))
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Invalid nysenate.gov content type: " + contentType));
     }
 
     /** Exceptions */

@@ -40,9 +40,9 @@ public class BillJsonParser extends JsonParser{
     private List<SenateSiteBill> extractBillsFromFragment(SenateSiteDumpFragment fragment) throws ParseError {
         try {
             JsonNode billMap = objectMapper.readTree(fragment.getFragmentFile())
-                    .path("bills");
+                    .path("nodes");
             if (billMap.isMissingNode()) {
-                throw new ParseError("Could not locate \"bills\" node in senate site bill dump fragment file: " +
+                throw new ParseError("Could not locate \"nodes\" node in senate site bill dump fragment file: " +
                         fragment.getFragmentFile().getAbsolutePath());
             }
             List<SenateSiteBill> bills = new LinkedList<>();

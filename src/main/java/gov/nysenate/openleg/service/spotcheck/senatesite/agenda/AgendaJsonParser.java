@@ -39,9 +39,9 @@ public class AgendaJsonParser extends JsonParser {
     private List<SenateSiteAgenda> extractAgendasFromFragment(SenateSiteDumpFragment fragment) throws ParseError{
         try {
             JsonNode agendaMap = objectMapper.readTree(fragment.getFragmentFile())
-                    .path("agendas");
+                    .path("nodes");
             if (agendaMap.isMissingNode()) {
-                throw new ParseError("Could not locate \"agendas\" node in senate site agenda dump fragment file: " +
+                throw new ParseError("Could not locate \"nodes\" node in senate site agenda dump fragment file: " +
                         fragment.getFragmentFile().getAbsolutePath());
             }
             List<SenateSiteAgenda> agendas = new LinkedList<>();
