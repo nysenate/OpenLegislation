@@ -43,7 +43,7 @@
 
       <md-content>
         <div layout="row" layout-align="space-between start">
-          <md-card style="border-radius: 10px; background-color: blue; color: white; padding: 5px;">
+          <md-card class="padding-5 mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
             <p>
               {{reportType | contentType}} Number:
               <a ng-href="{{mismatchRow.key | contentUrl:reportType}}" target="_blank">
@@ -54,7 +54,7 @@
               Error Type: {{currentMismatch.mismatchType | mismatchTypeLabel}}
             </p>
           </md-card>
-          <md-card style="border-radius: 10px; border: 1px solid blue; padding: 5px;">
+          <md-card class="padding-5 mismatch-diff-info-border-radius mismatch-diff-info-background-color-border">
             <select ng-model="textControls.whitespace" ng-change="formatDisplayData()"
                     ng-options="value as label for (value, label) in whitespaceOptions"></select>
 
@@ -69,14 +69,14 @@
             </md-checkbox>
           </md-card>
         </div>
-      <!--</md-content>
+      </md-content>
 
-      <md-content> -->
-        <div layout="row" layout-align="space-around none">
-          <div style="background-color: blue; color: white;">
+      <md-content>
+        <div layout="row" layout-align="space-around none" class="white-text-color mismatch-diff-info-background-color">
+          <div>
             <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportDataProvider}}</p>
           </div>
-          <div style="background-color: blue; color: white;">
+          <div>
             <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportReferenceProvider}}</p>
           </div>
         </div>

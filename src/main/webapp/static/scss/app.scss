@@ -1425,8 +1425,26 @@ diff-summary, mismatch-diff {
   }
 }
 
+.mismatch-diff-info-border-radius {
+  border-radius: 10px;
+}
+
 .mismatch-diff-source ins, .mismatch-diff-data del {
   display: none;
+}
+
+$mismatch-menu-color: blue;
+
+.mismatch-diff-info-background-color {
+  background-color: $mismatch-menu-color;
+}
+
+.mismatch-diff-info-background-color-border {
+  border: 1px solid $mismatch-menu-color;
+}
+
+.white-text-color {
+  color: white;
 }
 
 .margin-top-5 {
