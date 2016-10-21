@@ -1425,6 +1425,10 @@ diff-summary, mismatch-diff {
   }
 }
 
+.mismatch-diff-source ins, .mismatch-diff-data del {
+  display: none;
+}
+
 .margin-top-5 {
   margin-top: 5px;
 }
