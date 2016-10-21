@@ -17,6 +17,7 @@ public enum ContentCache
     COMMITTEE,
     MEMBER,
     APIUSER,
+    SHIRO,
     NOTIFICATION_SUBSCRIPTION;
 
     private static final ImmutableSet<ContentCache> allContentCaches = ImmutableSet.copyOf(ContentCache.values());

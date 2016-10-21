@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.config;
 
+import gov.nysenate.openleg.service.shiro.shiroCacheManager;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.config.Ini;
@@ -69,7 +70,7 @@ public class SecurityConfig
     }
 
     /**
-     * Configures the shiro security manager with the instance of the active realm.
+     * Configures the shiroCacheService security manager with the instance of the active realm.
      */
     @Bean(name = "securityManager")
     public DefaultWebSecurityManager securityManager() {
@@ -80,11 +81,11 @@ public class SecurityConfig
 
     @Bean(name = "shiroCacheManager")
     public CacheManager shiroCacheManager() {
-        return new MemoryConstrainedCacheManager();
+        return new shiroCacheManager();
     }
 
     /**
-     * Exposes the shiro.ini configuration file as an Ini instance that is consumed by the
+     * Exposes the shiroCacheService.ini configuration file as an Ini instance that is consumed by the
      * security filter manager when setting up the filter chains.
      */
     public Ini shiroIniConfig() {
