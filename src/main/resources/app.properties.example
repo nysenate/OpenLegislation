@@ -1,0 +1,229 @@
+# --- Api Auth ----------------------------------------------------------------
+
+# A secret key that is used for validating api requests sent via the UI.
+# Set this to something random.
+
+api.secret =
+
+# Whether or not API authentication should be enabled
+api.auth.enable = true
+
+# Ignore these IP Addresses when checking for an API key
+api.auth.ip.whitelist = 127.0.0.1
+
+# --- Admin Auth --------------------------------------------------------------
+
+# The default admin user name.
+# This admin user will be created automatically during deployment.
+
+default.admin.user =
+
+# The default admin password. The password will get updated during each deployment.
+
+default.admin.password =
+
+# A regex that all admin user names must adhere to.  (default ^[A-z0-9._%+-]+@nysenate.gov$)
+
+admin.email.regex = ^[A-z0-9._%+-]+@nysenate.gov$
+
+# --- Google Analytics --- */
+
+ga.tracking.id =
+
+# --- Data Directory Configuration --------------------------------------------
+
+# The directory path that serves as the root of the data environment.
+# Omit any trailing slashes. (Default: /data/openleg)
+
+env.base = /data/openleg
+
+# The directory path where new files can be staged for processing.
+# Omit any trailing slashes. (Default: /data/openleg/staging)
+
+env.staging = /data/openleg/staging
+
+# The directory path where files are archived once they are processed.
+# Omit any trailing slashes. (Default: /data/openleg/archive)
+
+env.archive = /data/openleg/archive
+
+# The database schema where the legislative content is persisted.
+# (Default: master)
+
+env.schema = master
+
+# --- Processing Configuration ------------------------------------------------
+
+# Allow for processing of data
+# (Default: true)
+
+data.process.enabled = true
+
+# Allow persistent logging of all data processing runs
+# (Default: true)
+
+data.process.log.enabled = true
+
+# Enable batch processing of SOBIs to improve performance. The updates to the
+# SOBIs are stored into memory and flushed at a later time to reduce the number
+# of writes.
+# NOTE: Enabling this will make the change log inaccurate. (Default: false)
+
+sobi.batch.process.enabled = false
+
+# The maximum number of SOBIs that can be processed without flushing to the
+# database. However, the data processors may flush before this limit if they need
+# to in order to maintain consistency.
+# NOTE: Don't set this too high if the machine doesn't have a lot of JVM memory! (Default: 100)
+
+sobi.batch.process.size = 100
+
+# --- Elastic Search Configuration --------------------------------------------
+
+# Set to true to allow the application to index processed data into elastic search.
+# (Default: true)
+
+elastic.search.enabled = true
+
+# The host address where the elastic search node is running
+# (Default: localhost)
+
+elastic.search.host = localhost
+
+# The transport client port used to communicate with elastic search from java land
+# Typically this is configured to 9300 while the REST API uses 9200.
+# (Default: 9300)
+
+elastic.search.port = 9300
+
+# If the elastic search cluster has a name, it must be specified here.
+# (Default: elasticsearch)
+
+elastic.search.cluster.name = openleg
+
+# --- Eh Cache Configuration --------------------------------------------------
+
+# The amount of memory to allocate to Eh Cache for all heap based caches (in MB).
+# This value cannot exceed the maximum jvm heap size or the application will fail
+# to startup. (Recommended: 600)
+cache.max.size = 600
+
+# Agenda Cache Size (in MB) (Recommended: 25)
+agenda.cache.size = 25
+
+# Bill Cache Size (in MB) (Recommended: 300)
+bill.cache.size = 300
+
+# Bill Info Cache Size (in MB) (Recommended: 100)
+bill-info.cache.size = 100
+
+# Calendar Cache Size (in MB) (Recommended: 40)
+calendar.cache.size = 40
+
+# Law Cache Size (in MB) (Recommended: 10)
+law.cache.size = 10
+
+# Committee Cache Size (in MB) (Recommended: 10)
+committee.cache.size = 10
+
+# --- Postgres Database Configuration -----------------------------------------
+
+# Database identifier for JDBC.
+# (Default: postgresql:)
+postgresdb.type = postgresql:
+
+# The class that contains the jdbc driver.
+# (Default: org.postgresql.Driver)
+postgresdb.driver = org.postgresql.Driver
+
+# The host address for the database.
+# (Default: localhost)
+postgresdb.host = localhost
+
+# The name of the database used for this app.
+# (Default: openleg)
+postgresdb.name = openleg
+
+# The username for the user that has access to the database named above.
+postgresdb.user =
+
+# And the password..
+postgresdb.pass =
+
+# --- Scheduling Configuration ------------------------------------------------
+
+# Enable scheduled processing of data.
+# (Default: true)
+scheduler.process.enabled = true
+
+# Enable scheduled spot-check reporting.
+# (Default: true)
+scheduler.spotcheck.enabled = true
+
+# Cron expressions that dictate scheduling for scheduled services
+# Format "{second} {minute} {hour} {day of month} {month} {day of week}"
+
+# When to process data. (Default: 0 */5 * * * *)
+scheduler.process.cron = 0 */5 * * * *
+
+# When to run weekly spotcheck reports. (Default: 0 0 0 * * SAT)
+scheduler.spotcheck.weekly.cron = 0 0 0 * * SAT
+
+# --- Spotcheck Configuration -------------------------------------------------
+
+# The amount of time (in minutes) allowed after an alert arrival for data to come in
+# Spotcheck reports in which content was not found corresponding to a reference that
+#   is younger than this grace period will be aborted
+spotcheck.alert.grace.period = 30
+
+# Allows bills to be automatically added to the bill scrape queue in response to
+# text updates and spotcheck mismatches (Default: true)
+bill.scrape.queue.enabled = true
+
+# --- Mail Configuration ------------------------------------------------------
+
+# Connection information for the mail account that receives daybreak emails
+checkmail.host = imap.gmail.com
+checkmail.user = nysenatedev
+checkmail.pass =
+mail.store.protocol = imaps
+mail.imaps.ssl.protocols = TLSv1.2
+
+# Mail directory paths where daybreak emails are stored
+checkmail.receiving = OpenLegislationTest/LRSAutomated
+checkmail.processed = OpenLegislationTest/LRSProcessed
+
+# Connection information for sending emails
+mail.smtp.host = imap.gmail.com
+mail.smtp.port = 587
+mail.smtp.auth = true
+mail.smtp.starttls.enable = true
+mail.smtp.user = nysenatedev
+mail.smtp.password =
+mail.debug = false
+
+# --- Notification Configuration ----------------------------------------------
+
+# Set to true to enable notification sending. (Default false)
+notifications.enabled = false
+
+# --- Slack Configuration -----------------------------------------------------
+
+# The webhook url used to send slack messages.
+# Visit webhook configuration page to get the appropriate Webhook URL
+#   Prod: https://nysstech.slack.com/services/B03BH6D0W
+#   Dev:  https://nysstech.slack.com/services/B0KE63LN6
+slack.webhook.url =
+
+# Limit the number of lines output for slack notifications (default 5)
+slack.notification.line.limit = 5
+
+# --- Domain Configuration ----------------------------------------------------
+
+# The domain url and context path that openleg is hosted on (used for generating links)
+# do not use a trailing slash
+domain.url = http://localhost:8080/legislation
+
+# The url for the 1.9.2 prod server (default http://open.nysenate.gov/legislation)
+# do not use a trailing slash
+old.prod.url = http://open.nysenate.gov/legislation
