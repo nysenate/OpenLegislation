@@ -1433,7 +1433,7 @@ diff-summary, mismatch-diff {
   display: none;
 }
 
-$mismatch-menu-color: blue;
+$mismatch-menu-color: #3e4f62;
 
 .mismatch-diff-info-background-color {
   background-color: $mismatch-menu-color;
@@ -1447,8 +1447,18 @@ $mismatch-menu-color: blue;
   color: white;
 }
 
+#no-text-decoration {
+  text-decoration: none;
+}
+
 .margin-top-5 {
   margin-top: 5px;
+}
+
+.align-text-hor-vert-center {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 70px;
 }
 
 md-dialog.detail-diff-dialog {
