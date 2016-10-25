@@ -52,9 +52,10 @@ public class ApiAuthFilter implements Filter
             if (!StringUtils.isEmpty(key) && apiUserService.validateKey(key)) {
                 subject.login(new ApiKeyLoginToken(key, ipAddress));
                 filterChain.doFilter(servletRequest, servletResponse);
-            } else if (ipAddress.matches(filterAddress) || subject.isPermitted("ui:view")) {
+            } else if (ipAddress.matches(filterAddress)) {
                 filterChain.doFilter(servletRequest, servletResponse);
             } else {
+                subject.logout(); // when user tried WRONG apikey, we should logout current session for security purpose.
                 ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_KEY_REQUIRED);
                 response.getWriter().append(OutputUtils.toJson(errorResponse));
                 response.setContentType("application/json");
