@@ -18,6 +18,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
@@ -108,6 +109,7 @@ public abstract class ElasticBaseDao
                 .setRescorer(rescorer)
                 .setFrom(limitOffset.getOffsetStart() - 1)
                 .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
+                .setScroll(new TimeValue(60000))
                 .setMinScore(0.05f)
                 .setFetchSource(fetchSource);
         if (highlightedFields != null) {
