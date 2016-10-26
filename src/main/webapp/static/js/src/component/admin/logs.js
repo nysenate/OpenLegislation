@@ -31,7 +31,6 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     $scope.now = moment();
     $scope.newApiRequestsCount = 0;
     $scope.newApiRequests = [];
-
     $scope.connectToSocket = function() {
         var socket = new SockJS(window.ctxPath + '/sock');
         $scope.stompClient = Stomp.over(socket);
@@ -48,6 +47,9 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
                 });
             });
         });
+    };
+    $scope.padLeft = function (n) {
+        return (n < 10) ? ("0" + n) : n;
     };
 
     $scope.resetRunningLog = function() {

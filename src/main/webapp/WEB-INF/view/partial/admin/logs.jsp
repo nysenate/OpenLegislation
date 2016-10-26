@@ -34,8 +34,7 @@
             <tbody>
             <tr class="new-request" ng-repeat="event in newApiRequests | filter:logFilter" ng-init="baseRequest = event.apiResponse.baseRequest">
               <td class="time-td">
-                {{baseRequest.requestTime.monthValue}}/{{baseRequest.requestTime.dayOfMonth}}/{{baseRequest.requestTime.year}}
-                {{baseRequest.requestTime.hour}}:{{baseRequest.requestTime.minute}}:{{baseRequest.requestTime.second}}.{{baseRequest.requestTime.nano / 100000}}</td>
+                {{baseRequest.requestTime.year}}-{{baseRequest.requestTime.monthValue}}-{{baseRequest.requestTime.dayOfMonth}} {{padLeft(baseRequest.requestTime.hour)}}:{{padLeft(baseRequest.requestTime.minute)}}:{{padLeft(baseRequest.requestTime.second)}}</td>
               <td>{{baseRequest.ipAddress}}</td>
               <td>{{baseRequest.apiUser.name | default:'None'}}</td>
               <td>{{baseRequest.requestMethod}}</td>
