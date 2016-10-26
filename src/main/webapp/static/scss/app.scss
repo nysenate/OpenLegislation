@@ -1434,9 +1434,14 @@ diff-summary, mismatch-diff {
 }
 
 $mismatch-menu-color: #3e4f62;
+$mismatch-ref-source-color: #465158;
 
 .mismatch-diff-info-background-color {
   background-color: $mismatch-menu-color;
+}
+
+.mismatch-ref-source-color {
+  background-color: $mismatch-ref-source-color;
 }
 
 .mismatch-diff-info-background-color-border {
@@ -1445,10 +1450,6 @@ $mismatch-menu-color: #3e4f62;
 
 .white-text-color {
   color: white;
-}
-
-#no-text-decoration {
-  text-decoration: none;
 }
 
 .margin-top-5 {
