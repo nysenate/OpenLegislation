@@ -68,7 +68,7 @@ module.exports = function(grunt) {
                 mangle: false,
                 preserveComments: 'some', // Preserve licensing comments
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */',
-                beautify: false
+                sourceMap: true
             },
             vendor: {
                 files: {
