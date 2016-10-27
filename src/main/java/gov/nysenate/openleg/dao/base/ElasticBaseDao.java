@@ -109,7 +109,6 @@ public abstract class ElasticBaseDao
                 .setRescorer(rescorer)
                 .setFrom(limitOffset.getOffsetStart() - 1)
                 .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
-                .setScroll(new TimeValue(60000))
                 .setMinScore(0.05f)
                 .setFetchSource(fetchSource);
         if (highlightedFields != null) {
