@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -71,6 +72,9 @@ public class FsSenateSiteDao implements SenateSiteDao {
     public void saveDumpFragment(SenateSiteDumpFragment fragment, String fragmentData) throws IOException {
         File fragmentFile = new File(getIncomingDumpDir(fragment.getDumpId().getRefType()), getDumpFragFilename(fragment));
         logger.info("saving senate site dump fragment {}", fragmentFile.getAbsolutePath());
+        try {  // Delete existing dump if possible
+            FileUtils.forceDelete(fragmentFile);
+        } catch (FileNotFoundException ignored) {}
         FileIOUtils.write(fragmentFile, prettyPrintJson(fragmentData), Charset.forName("UTF-8"));
     }
 

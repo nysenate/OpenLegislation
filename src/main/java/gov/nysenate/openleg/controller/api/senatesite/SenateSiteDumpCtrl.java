@@ -47,9 +47,9 @@ public class SenateSiteDumpCtrl extends BaseCtrl {
     @RequestMapping(value = "/dump", method = RequestMethod.POST, consumes = "application/json")
     public BaseResponse sendSenateSiteDumpFragment(@RequestBody String billFragmentJson) throws IOException {
         if(saveDump(billFragmentJson)){
-            return new SimpleResponse(true, "bill dump received.  Thanks!", "bill-dump-received");
+            return new SimpleResponse(true, "Dump received.  Thanks!", "dump-received");
         }
-        return new SimpleResponse(false, "could not save dump :(", "bill-dump-failed");
+        return new SimpleResponse(false, "could not save dump :(", "dump-failed");
     }
 
     /**
