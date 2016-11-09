@@ -1421,12 +1421,12 @@ $diff-ins-color: #59a007;
   max-height: 60vh;
 }
 
-.scrollable {
-  overflow: auto;
-}
-
 #mismatch-diff-source ins, #mismatch-diff-data del {
   display: none;
+}
+
+#mismatch-diff-data, #mismatch-diff-source {
+  overflow: auto;
 }
 
 $mismatch-ref-source-color: #465158;

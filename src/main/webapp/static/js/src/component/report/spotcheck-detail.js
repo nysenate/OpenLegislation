@@ -1,6 +1,6 @@
 
-angular.module('open.spotcheck')
-    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow',
+var app = angular.module('open.spotcheck');
+    app.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow',
 function($scope, $mdDialog, mismatchRow) {
 
     $scope.iDiffTab = 0;
@@ -90,29 +90,22 @@ function($scope, $mdDialog, mismatchRow) {
 
     function init() {
         $scope.newDetails(mismatchRow);
-        //twoWayScrolling();
-        alert('Entered init');
-    }
-
-    function twoWayScrolling(){
-        var s1 = document.getElementById('mismatch-diff-source');
-        var s2 = document.getElementById('mismatch-diff-data');
-
-        function select_scroll_1() {
-            s2.scrollTop = s1.scrollTop;
-            s2.scrollLeft = s1.scrollLeft;
-        }
-
-        function select_scroll_2() {
-            s1.scrollTop = s2.scrollTop;
-            s1.scrollLeft = s2.scrollLeft;
-        }
-
-        s1.addEventListener('scroll', select_scroll_1, false);
-        s2.addEventListener('scroll', select_scroll_2, false);
-
-        alert('scrolled');
     }
 
     init();
 }]);
+
+app.directive("scrollGroup", function () {
+    return function (scope, element, attrs) {
+        var oldScrollTop = 0;
+
+        element.on("scroll", function () {
+            console.log("scroll");
+
+            $("[scroll-group='" + attrs.scrollGroup + "']").each(function () {
+                console.log($(this).scrollTop() - oldScrollTop, oldScrollTop, $(this).scrollTop());
+                oldScrollTop = $(this).scrollTop();
+            });
+        });
+    };
+});

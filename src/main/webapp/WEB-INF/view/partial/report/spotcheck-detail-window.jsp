@@ -38,7 +38,7 @@
               <span>{{mismatchRow.refType | reportDataProvider}}</span>
             </div>
 
-            <div id="mismatch-diff-source" class="scrollable">
+            <div id="mismatch-diff-source" scroll-group='scroll_grp1'>
               <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
             </div>
           </div>
@@ -48,7 +48,7 @@
               <span>{{mismatchRow.refType | reportReferenceProvider}}</span>
             </div>
 
-            <div id="mismatch-diff-data" class="scrollable">
+            <div id="mismatch-diff-data" scroll-group='scroll_grp1'>
               <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
             </div>
           </div>
