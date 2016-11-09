@@ -120,7 +120,7 @@
                 <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportDataProvider}} Data</p>
                 <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportReferenceProvider}} Data</p>
               </div>
-              <div layout="row" class="diff-side" ng-if="sideDiffOpened || iDiffTab === 1" ng-init="sideDiffOpened=true">
+              <div layout="row" class="diff-side" ng-if="sideDiffOpened || iDiffTab === 1grunt " ng-init="sideDiffOpened=true">
                 <div flex class="mismatch-diff-box" ng-class="{'padding-10': singleLineObs}">
                   <mismatch-diff right="mismatchRow.obsData" left="mismatchRow.obsData"></mismatch-diff>
                 </div>

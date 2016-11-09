@@ -6,21 +6,23 @@
       <span ng-click="cancel()" class="icon-cross" style="font-size: 24px; text-align: right;"></span>
     </div>
     <md-content>
-      <md-content>
+      <md-content class="mismatch-diff-view-top-half">
         <div layout="row" layout-align="space-between start">
-          <md-card class="padding-5 mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+          <md-card class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+            <p>Date Reported: {{}}</p>
+
             <p> {{reportType | contentType}} Number:
-              <a class="white-2-blue inactive-link" ng-href="{{mismatchRow.key | contentUrl:reportType}}" target="_blank">
+              <a class="white-2-blue inactive-link" ng-href="{{mismatchRow.key | contentUrl:reportType}}"
+                 target="_blank">
                 {{mismatchRow.key | contentId:reportType}}
               </a>
             </p>
-            <p>Session Year: {{}}</p>
+            <p>Session Year: {{currentMismatch.key | sessionYear}}</p>
             <p>Error Type: {{currentMismatch.mismatchType | mismatchTypeLabel}}</p>
           </md-card>
           <md-card class="padding-5 mismatch-diff-info-border-radius mismatch-diff-info-background-color-border">
             <select ng-model="textControls.whitespace" ng-change="formatDisplayData()"
                     ng-options="value as label for (value, label) in whitespaceOptions"></select>
-
             <md-checkbox ng-model="textControls.removeLinePageNums" ng-change="formatDisplayData()">
               Strip Line/Page Numbers
             </md-checkbox>
@@ -29,27 +31,26 @@
         </div>
       </md-content>
 
-      <md-content>
-        <div layout="row">
-          <md-toolbar>
-            <div class="md-toolbar-tools white-text-color align-text-hor-vert-center" layout-align="space-between none">
-              <div flex="45" class="mismatch-ref-source-color">
-                <span>{{mismatchRow.refType | reportDataProvider}}</span>
-              </div>
-
-              <div flex="45" class="mismatch-ref-source-color">
-                <span>{{mismatchRow.refType | reportReferenceProvider}}</span>
-              </div>
+      <md-content class="mismatch-diff-box">
+        <div layout="row" layout-align="space-between start">
+          <div layout="column" flex="45" id="mismatch-diff-left-side">
+            <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
+              <span>{{mismatchRow.refType | reportDataProvider}}</span>
             </div>
-          </md-toolbar>
-        </div>
 
-        <div layout="row" class="mismatch-detail-diff-container" ng-class="{'mismatch-diff-box': sideScrollJoin}" layout-align="space-between none">
-          <div flex="45" class="mismatch-diff-box mismatch-diff-source" ng-class="{'multi-line': obsMultiLine, 'scroll-join': sideScrollJoin}">
-            <mismatch-diff left="observedData" right="referenceData"></mismatch-diff>
+            <div id="mismatch-diff-source" class="scrollable">
+              <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
+            </div>
           </div>
-          <div flex="45" class="mismatch-diff-box mismatch-diff-data" ng-class="{'multi-line': refMultiLine, 'scroll-join': sideScrollJoin}">
-            <mismatch-diff left="observedData" right="referenceData"></mismatch-diff>
+
+          <div layout="column" flex="45" id="mismatch-diff-right-side">
+            <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
+              <span>{{mismatchRow.refType | reportReferenceProvider}}</span>
+            </div>
+
+            <div id="mismatch-diff-data" class="scrollable">
+              <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
+            </div>
           </div>
         </div>
       </md-content>

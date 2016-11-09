@@ -90,8 +90,29 @@ function($scope, $mdDialog, mismatchRow) {
 
     function init() {
         $scope.newDetails(mismatchRow);
+        //twoWayScrolling();
+        alert('Entered init');
+    }
+
+    function twoWayScrolling(){
+        var s1 = document.getElementById('mismatch-diff-source');
+        var s2 = document.getElementById('mismatch-diff-data');
+
+        function select_scroll_1() {
+            s2.scrollTop = s1.scrollTop;
+            s2.scrollLeft = s1.scrollLeft;
+        }
+
+        function select_scroll_2() {
+            s1.scrollTop = s2.scrollTop;
+            s1.scrollLeft = s2.scrollLeft;
+        }
+
+        s1.addEventListener('scroll', select_scroll_1, false);
+        s2.addEventListener('scroll', select_scroll_2, false);
+
+        alert('scrolled');
     }
 
     init();
 }]);
-
