@@ -49,13 +49,16 @@ public class ApiAuthFilter implements Filter
         Subject subject = SecurityUtils.getSubject();
 
         if (enabled) {
-            if (!StringUtils.isEmpty(key) && apiUserService.validateKey(key)) {
+            if (ipAddress.matches(filterAddress) || // whitelist
+                    (!StringUtils.isEmpty(key)&& subject.getPrincipal()!=null&&subject.getPrincipal().equals(key))|| // api login ([key] must be provided)
+                            (StringUtils.isEmpty(key)&&subject.isPermitted("ui:view"))) // web login
+                filterChain.doFilter(servletRequest, servletResponse);
+            else if (!StringUtils.isEmpty(key) && apiUserService.validateKey(key)) {
                 subject.login(new ApiKeyLoginToken(key, ipAddress));
                 filterChain.doFilter(servletRequest, servletResponse);
-            } else if (ipAddress.matches(filterAddress)) {
-                filterChain.doFilter(servletRequest, servletResponse);
             } else {
-                subject.logout(); // when user tried WRONG apikey, we should logout current session for security purpose.
+                if (subject.isRemembered())
+                    subject.logout(); // when user tried WRONG apikey, we should logout current session for security purpose.
                 ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_KEY_REQUIRED);
                 response.getWriter().append(OutputUtils.toJson(errorResponse));
                 response.setContentType("application/json");
