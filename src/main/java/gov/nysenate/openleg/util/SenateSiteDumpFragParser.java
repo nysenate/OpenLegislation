@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckContentType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpRangeId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +33,8 @@ public class SenateSiteDumpFragParser {
     @Autowired private ObjectMapper objectMapper;
 
     /**
-     * <p>Parse a json string into a {@link SenateSiteDumpFragment}. Its SenateSiteDumpId implementation
-     * depends on what information is included in the json. A json with valid values for <code>from</code>
-     * and <code>to</code> will use a {@link SenateSiteDumpRangeId} while a json with a valid <code>session</code>
-     * value will use {@link SenateSiteDumpSessionId}.</p>
+     * <p>Parse a json string into a {@link SenateSiteDumpFragment}. Its SenateSiteDumpId is implemented
+     * as a {@link SenateSiteDumpSessionId}.</p>
      * <p>Throws <code>SenateSiteDumpFragParserException</code> if a required json value is missing.</p>
      * @param json The json string to parse.
      * @return {@link SenateSiteDumpFragment}

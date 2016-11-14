@@ -14,7 +14,6 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpRangeId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
@@ -66,7 +65,7 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_BILLS,
                 DateUtils.endOfDateTimeRange(billDump.getDumpId().getRange()), LocalDateTime.now());
         SpotCheckReport<BillId> report = new SpotCheckReport<>(reportId);
-        report.setNotes(getDumpNotes(billDump));
+        report.setNotes(billDump.getDumpId().getNotes());
         try {
 
             logger.info("getting bill updates");
@@ -129,20 +128,11 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
      * @return Set<Bill>
      */
     private Set<BaseBillId> getBillUpdatesDuring(SenateSiteDump billDump) {
-        Range<LocalDateTime> dumpUpdateInterval = billDump.getDumpId().getRange();
         SenateSiteDumpId dumpId = billDump.getDumpId();
-        if (dumpId instanceof SenateSiteDumpSessionId) {
-            logger.info("Getting Openleg Bills for session: {}", ((SenateSiteDumpSessionId) dumpId).getSession());
-            return new TreeSet<>(
-                    billDataService.getBillIds(((SenateSiteDumpSessionId) dumpId).getSession(), LimitOffset.ALL)
-            );
-        }
-        return billUpdatesDao.getUpdates(Range.greaterThan(DateUtils.startOfDateTimeRange(billDump.getDumpId().getRange())),
-                UpdateType.PROCESSED_DATE, null, SortOrder.ASC, LimitOffset.ALL)
-                .getResults().stream()
-                .filter(token -> dumpUpdateInterval.contains(token.getProcessedDateTime()))
-                .map(UpdateToken::getId)
-                .collect(Collectors.toCollection(TreeSet::new));
+        logger.info("Getting Openleg Bills for session: {}", ((SenateSiteDumpSessionId) dumpId).getSession());
+        return new TreeSet<>(
+                billDataService.getBillIds(((SenateSiteDumpSessionId) dumpId).getSession(), LimitOffset.ALL)
+        );
     }
 
     /**
@@ -203,19 +193,5 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
                     return observation;
                 })
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * @param dump SenateSiteDump
-     * @return String - notes that indicate the type of dump and the relevant dates
-     */
-    private String getDumpNotes(SenateSiteDump dump) {
-        SenateSiteDumpId dumpId = dump.getDumpId();
-        if (dumpId instanceof SenateSiteDumpRangeId) {
-            return "Generated from update range dump: " + dumpId.getRange();
-        } else if (dumpId instanceof SenateSiteDumpSessionId) {
-            return "Generated from session year dump: " + ((SenateSiteDumpSessionId) dumpId).getSession();
-        }
-        return "Generated from unknown dump type: " + dumpId.getClass().getSimpleName() + " " + dumpId.getRange();
     }
 }

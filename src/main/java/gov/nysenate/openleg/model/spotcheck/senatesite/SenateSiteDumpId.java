@@ -20,6 +20,9 @@ public abstract class SenateSiteDumpId {
     /** Return the date time range of this dump. */
     public abstract Range<LocalDateTime> getRange();
 
+    /** Description of this dumps time range. */
+    public abstract String getNotes();
+
     /** Basic get/set methods */
 
     public SpotCheckRefType getRefType() {

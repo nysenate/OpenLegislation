@@ -15,8 +15,6 @@ import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpRangeId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.calendar.SenateSiteCalendar;
 import gov.nysenate.openleg.model.updates.UpdateToken;
@@ -67,7 +65,7 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_CALENDAR,
                 DateUtils.endOfDateTimeRange(calendarDump.getDumpId().getRange()), LocalDateTime.now());
         SpotCheckReport<CalendarEntryListId> report = new SpotCheckReport<>(reportId);
-        report.setNotes(getDumpNotes(calendarDump));
+        report.setNotes(calendarDump.getDumpId().getNotes());
         try {
 
             logger.info("getting calendar updates");
@@ -204,19 +202,5 @@ public class CalendarReportServices extends BaseSpotCheckReportService<CalendarE
         allDataObs.addAll(refData);
         allDataObs.addAll(obsData);
         return Tuple.tuple(allDataObs,toRemove);
-    }
-
-    /**
-     * @param dump SenateSiteDump
-     * @return String - notes that indicate the type of dump and the relevant dates
-     */
-    private String getDumpNotes(SenateSiteDump dump) {
-        SenateSiteDumpId dumpId = dump.getDumpId();
-        if (dumpId instanceof SenateSiteDumpRangeId) {
-            return "Generated from update range dump: " + dumpId.getRange();
-        } else if (dumpId instanceof SenateSiteDumpSessionId) {
-            return "Generated from session year dump: " + ((SenateSiteDumpSessionId) dumpId).getSession();
-        }
-        return "Generated from unknown dump type: " + dumpId.getClass().getSimpleName() + " " + dumpId.getRange();
     }
 }

@@ -15,8 +15,6 @@ import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpRangeId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgenda;
 import gov.nysenate.openleg.model.updates.UpdateToken;
@@ -71,7 +69,7 @@ public class AgendaReportServices extends BaseSpotCheckReportService<CommitteeAg
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_AGENDA,
                 DateUtils.endOfDateTimeRange(agendaDump.getDumpId().getRange()), LocalDateTime.now());
         SpotCheckReport<CommitteeAgendaAddendumId> report = new SpotCheckReport<>(reportId);
-        report.setNotes(getDumpNotes(agendaDump));
+        report.setNotes(agendaDump.getDumpId().getNotes());
         try {
 
             logger.info("getting agenda updates");
@@ -208,20 +206,5 @@ public class AgendaReportServices extends BaseSpotCheckReportService<CommitteeAg
         allDataObs.addAll(refData);
         allDataObs.addAll(obsData);
         return Tuple.tuple(allDataObs,toRemove);
-    }
-
-
-    /**
-     * @param dump SenateSiteDump
-     * @return String - notes that indicate the type of dump and the relevant dates
-     */
-    private String getDumpNotes(SenateSiteDump dump) {
-        SenateSiteDumpId dumpId = dump.getDumpId();
-        if (dumpId instanceof SenateSiteDumpRangeId) {
-            return "Generated from update range dump: " + dumpId.getRange();
-        } else if (dumpId instanceof SenateSiteDumpSessionId) {
-            return "Generated from session year dump: " + ((SenateSiteDumpSessionId) dumpId).getSession();
-        }
-        return "Generated from unknown dump type: " + dumpId.getClass().getSimpleName() + " " + dumpId.getRange();
     }
 }

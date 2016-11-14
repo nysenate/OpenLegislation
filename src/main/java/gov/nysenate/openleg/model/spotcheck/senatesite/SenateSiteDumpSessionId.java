@@ -32,6 +32,11 @@ public class SenateSiteDumpSessionId extends SenateSiteDumpId implements Seriali
     }
 
     @Override
+    public String getNotes() {
+        return "Generated from session year dump: " + this.getSession();
+    }
+
+    @Override
     public int compareTo(SenateSiteDumpSessionId o) {
         return ComparisonChain.start()
                               .compare(this.getRange().lowerEndpoint(), o.getRange().lowerBoundType())
