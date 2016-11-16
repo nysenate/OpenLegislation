@@ -1,14 +1,18 @@
+angular.module('open.spotcheck')
+    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow', detailDialogCtrl])
+    .directive('scrollGroup', ['$rootScope', scrollGroupDirective]);
 
-var app = angular.module('open.spotcheck');
-    app.controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow',
-function($scope, $mdDialog, mismatchRow) {
+function detailDialogCtrl($scope, $mdDialog, mismatchRow) {
 
     $scope.iDiffTab = 0;
-
     $scope.reportType = mismatchRow.refType;
 
     $scope.newDetails = function (newMismatchRow) {
         $scope.mismatchRow = newMismatchRow;
+
+        var d = new Date(); //making the date variable
+        $scope.date = ((d.getMonth() + 1) + "/" + d.getDate() + "/" +
+        d.getFullYear()); //formatting the date variable
 
         console.log('loading detail dialog for', newMismatchRow);
         $scope.observation = newMismatchRow.observation;
@@ -17,6 +21,8 @@ function($scope, $mdDialog, mismatchRow) {
 
         setDefaultTextOptions(newMismatchRow.type);
         $scope.formatDisplayData();
+
+        console.log($scope);
     };
 
     $scope.$watchGroup(['referenceData', 'displayData'], function () {
@@ -73,7 +79,7 @@ function($scope, $mdDialog, mismatchRow) {
         }
         switch ($scope.textControls.whitespace) {
             case 'stripNonAlpha':
-                texts = texts.map(function (text) {return text.replace(/(?:[^\w]|_)+/g, '')});
+                texts = texts.map(function (text) {return text.replace(/(?:[^\w\n]|_)+/g, '')});
                 break;
             case 'normalize':
                 texts = texts.map(function (text) {return text.replace(/[ ]+/g, ' ')});
@@ -93,19 +99,30 @@ function($scope, $mdDialog, mismatchRow) {
     }
 
     init();
-}]);
+}
 
-app.directive("scrollGroup", function () {
-    return function (scope, element, attrs) {
-        var oldScrollTop = 0;
+function scrollGroupDirective($rootScope) {
+    var scrollElementIdCounter = 0;
+    var scrollEventName = "scrollGroup scroll";
+
+    return function (scope, element) {
+        var oldScrollTop = $(element).scrollTop();
+        var scrollElementId = scrollElementIdCounter++;
 
         element.on("scroll", function () {
-            console.log("scroll");
+            var scrollTopDelta = $(this).scrollTop() - oldScrollTop;
+            oldScrollTop = $(this).scrollTop();
+            console.log("element on scroll");
+            console.log(oldScrollTop);
 
-            $("[scroll-group='" + attrs.scrollGroup + "']").each(function () {
-                console.log($(this).scrollTop() - oldScrollTop, oldScrollTop, $(this).scrollTop());
-                oldScrollTop = $(this).scrollTop();
-            });
+            $rootScope.$emit(scrollEventName, scrollElementId, scrollTopDelta);
+        });
+
+        $rootScope.$on(scrollEventName, function (callerElementId, scrollTopDelta) {
+            console.log("$on has been called");
+            if(scrollElementId !== callerElementId){
+                $(element).scrollTop($(element).scrollTop() + scrollTopDelta);
+            }
         });
     };
-});
+}

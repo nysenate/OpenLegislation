@@ -9,7 +9,7 @@
       <md-content class="mismatch-diff-view-top-half">
         <div layout="row" layout-align="space-between start">
           <md-card class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
-            <p>Date Reported: {{}}</p>
+            <p>Date Reported: {{date}}</p>
 
             <p> {{reportType | contentType}} Number:
               <a class="white-2-blue inactive-link" ng-href="{{mismatchRow.key | contentUrl:reportType}}"
@@ -32,13 +32,13 @@
       </md-content>
 
       <md-content class="mismatch-diff-box">
-        <div layout="row" layout-align="space-between start">
+        <div layout="row" layout-align="space-around start">
           <div layout="column" flex="45" id="mismatch-diff-left-side">
             <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
               <span>{{mismatchRow.refType | reportDataProvider}}</span>
             </div>
 
-            <div id="mismatch-diff-source" scroll-group='scroll_grp1'>
+            <div id="mismatch-diff-source">
               <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
             </div>
           </div>
@@ -48,7 +48,7 @@
               <span>{{mismatchRow.refType | reportReferenceProvider}}</span>
             </div>
 
-            <div id="mismatch-diff-data" scroll-group='scroll_grp1'>
+            <div id="mismatch-diff-data">
               <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
             </div>
           </div>

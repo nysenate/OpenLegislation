@@ -1381,6 +1381,7 @@ md-dialog.detail-diff-dialog {
 
 .mismatch-diff-view-top-half {
   max-height: 25vh;
+  margin-bottom: 3%;
 }
 
 .mismatch-diff-info-card {
@@ -1418,7 +1419,7 @@ $diff-ins-color: #59a007;
 }
 
 #mismatch-diff-left-side, #mismatch-diff-right-side {
-  max-height: 60vh;
+  max-height: 55vh;
 }
 
 #mismatch-diff-source ins, #mismatch-diff-data del {
