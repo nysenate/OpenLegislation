@@ -33,23 +33,23 @@
 
       <md-content class="mismatch-diff-box">
         <div layout="row" layout-align="space-around start">
-          <div layout="column" flex="45" id="mismatch-diff-left-side">
+          <div layout="column" flex="45" id="mismatch-diff-left-side" class="scrollable">
+             <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
+              <span>{{mismatchRow.refType | reportReferenceProvider}}</span>
+            </div>
+
+            <div id="mismatch-diff-data">
+              <mismatch-diff show-lines="false" left="referenceData" right="observedData"></mismatch-diff>
+            </div>
+          </div>
+
+          <div layout="column" flex="45" id="mismatch-diff-right-side" class="scrollable">
             <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
               <span>{{mismatchRow.refType | reportDataProvider}}</span>
             </div>
 
             <div id="mismatch-diff-source">
-              <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
-            </div>
-          </div>
-
-          <div layout="column" flex="45" id="mismatch-diff-right-side">
-            <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
-              <span>{{mismatchRow.refType | reportReferenceProvider}}</span>
-            </div>
-
-            <div id="mismatch-diff-data">
-              <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
+              <mismatch-diff show-lines="false" left="referenceData" right="observedData"></mismatch-diff>
             </div>
           </div>
         </div>
