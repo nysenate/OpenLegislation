@@ -7,13 +7,10 @@ function detailDialogCtrl($scope, $mdDialog, mismatchRow) {
 
     $scope.newDetails = function (newMismatchRow) {
         $scope.mismatchRow = newMismatchRow;
-
-        var d = new Date(); //making the date variable
-        // $scope.date = ((d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear()); //formatting the date variable
-        $scope.date = ((d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear()); //formatting the date variable
-
+        $scope.date = moment().format('l');
         console.log('loading detail dialog for', newMismatchRow);
         $scope.observation = newMismatchRow.observation;
+        $scope.year2 = $scope.observation.key.session.year + 1;
         $scope.currentMismatch = newMismatchRow.mismatch;
         $scope.allMismatches = newMismatchRow.observation.mismatches.items;
 

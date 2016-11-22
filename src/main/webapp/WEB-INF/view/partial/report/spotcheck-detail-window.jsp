@@ -17,7 +17,7 @@
                 {{mismatchRow.key | contentId:reportType}}
               </a>
             </p>
-            <p>Session Year: {{currentMismatch.key | sessionYear}}</p>
+            <p>Session Year: {{(currentMismatch.key | sessionYear) + " - " + year2}}</p>
             <p>Error Type: {{currentMismatch.mismatchType | mismatchTypeLabel}}</p>
           </md-card>
           <md-card class="padding-5 mismatch-diff-info-border-radius mismatch-diff-info-background-color-border">
