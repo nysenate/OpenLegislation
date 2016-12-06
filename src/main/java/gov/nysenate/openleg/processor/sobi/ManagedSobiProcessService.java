@@ -58,6 +58,8 @@ public class ManagedSobiProcessService implements SobiProcessService
     @Autowired private CalendarProcessor calendarProcessor;
     @Autowired private ActiveListProcessor activeListProcessor;
     @Autowired private CommitteeProcessor committeeProcessor;
+
+    // XML Processors
     @Autowired private BillXMLBillTextProcessor billXMLBillTextProcessor;
     @Autowired private BillXMLBillDigestProcessor billXMLBillDigestProcessor;
 
@@ -115,8 +117,15 @@ public class ManagedSobiProcessService implements SobiProcessService
                 logger.debug((newSobis.isEmpty()) ? "No more sobi files to collate."
                                                   : "Collating {} sobi files.", newSobis.size());
                 for (SobiFile sobiFile : newSobis) {
-                    DataProcessUnit unit =
-                        new DataProcessUnit("SOBI-FILE", sobiFile.getFileName(), LocalDateTime.now(), DataProcessAction.COLLATE);
+                    // Do some slightly different processing for SOBI and XML files
+                    DataProcessUnit unit;
+                    if (sobiFile.getFileName().substring(sobiFile.getFileName().length()-3).toLowerCase().equals("xml")) {
+                        // Create DataProcessUnit specific for XMLs
+                        unit = new DataProcessUnit("XML-FILE", sobiFile.getFileName(), LocalDateTime.now(), DataProcessAction.COLLATE);
+                    } else {
+                        // Create DataProcessUnit specific for SOBIs
+                        unit = new DataProcessUnit("SOBI-FILE", sobiFile.getFileName(), LocalDateTime.now(), DataProcessAction.COLLATE);
+                    }
                     List<SobiFragment> fragments = createFragments(sobiFile);
                     // Record the sobi file in the backing store.
                     sobiDao.updateSobiFile(sobiFile);
@@ -215,6 +224,22 @@ public class ManagedSobiProcessService implements SobiProcessService
      */
     private List<SobiFragment> createFragments(SobiFile sobiFile) throws IOException {
         List<SobiFragment> sobiFragments = new ArrayList<>();
+
+        // If the file passed in is an XML file, return a list containing the one fragment
+        if (sobiFile.getFileName().substring(sobiFile.getFileName().length()-3).toLowerCase().equals("xml")) {
+            SobiFragment fragment;
+            if (sobiFile.getFileName().contains("BILLTEXT")) {
+                // For bill text XML files
+                fragment = new SobiFragment(sobiFile, SobiFragmentType.BILLTEXT, sobiFile.getText(), 1);
+            } else {
+                // For digest summary XML files (will not be the else block when we get more file types)
+                fragment = new SobiFragment(sobiFile, SobiFragmentType.LDSUMM, sobiFile.getText(), 1);
+            }
+            sobiFragments.add(fragment);
+            return sobiFragments;
+        }
+
+        // Else continue with splitting the SOBI file into fragments
         StringBuilder billBuffer = new StringBuilder();
 
         boolean isPatch = false;
