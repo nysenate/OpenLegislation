@@ -72,4 +72,6 @@ public class BillXMLBillTextProcessor extends AbstractDataProcessor implements S
     public void postProcess() {
         flushBillUpdates();
     }
+
+
 }

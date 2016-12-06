@@ -1,4 +1,4 @@
- gov.nysenate.openleg.dao.sobi;
+package gov.nysenate.openleg.dao.sobi;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
