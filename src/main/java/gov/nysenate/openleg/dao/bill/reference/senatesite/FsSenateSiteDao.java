@@ -87,14 +87,12 @@ public class FsSenateSiteDao implements SenateSiteDao {
     public void setProcessed(SenateSiteDump dump) throws IOException {
         for(SenateSiteDumpFragment fragment : dump.getDumpFragments()) {
             File fragFile = fragment.getFragmentFile();
-            try {
-                FileUtils.moveFileToDirectory(fragFile, getArchiveBillDir(dump.getDumpId().getRefType()), true);
-            } catch (FileExistsException ex) {
-                File destFile = new File(getArchiveBillDir(dump.getDumpId().getRefType()), fragFile.getName());
-                logger.warn("attempting to overwrite " + destFile.getAbsolutePath());
-                destFile.delete();
-                FileUtils.moveFileToDirectory(fragFile, getArchiveBillDir(dump.getDumpId().getRefType()), true);
-            }
+            File destFile = new File(getArchiveBillDir(dump.getDumpId().getRefType()), fragFile.getName());
+            try {  // Delete existing fragment file if possible
+                FileUtils.forceDelete(destFile);
+            } catch (FileNotFoundException ignored) {}
+            FileUtils.moveFile(fragFile, destFile);
+            destFile.setReadable(true, false);
         }
     }
 
