@@ -127,6 +127,7 @@ public class ManagedSobiProcessService implements SobiProcessService
                         unit = new DataProcessUnit("SOBI-FILE", sobiFile.getFileName(), LocalDateTime.now(), DataProcessAction.COLLATE);
                     }
                     List<SobiFragment> fragments = createFragments(sobiFile);
+                    logger.info("Created {} fragments", fragments.size());
                     // Record the sobi file in the backing store.
                     sobiDao.updateSobiFile(sobiFile);
                     // Save the extracted fragments. They will be marked as pending processing.
@@ -233,6 +234,7 @@ public class ManagedSobiProcessService implements SobiProcessService
                 fragment = new SobiFragment(sobiFile, SobiFragmentType.BILLTEXT, sobiFile.getText(), 1);
             } else {
                 // For digest summary XML files (will not be the else block when we get more file types)
+                // TODO: make this into a switch based on the file type
                 fragment = new SobiFragment(sobiFile, SobiFragmentType.LDSUMM, sobiFile.getText(), 1);
             }
             sobiFragments.add(fragment);
