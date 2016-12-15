@@ -3,7 +3,9 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -23,15 +25,14 @@ import java.time.LocalDateTime;
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
-
+// TODO : figure out how to get the correct published_date_time to be stored in the bill_change_log table
 @Service
 public class BillXMLBillTextProcessor extends AbstractDataProcessor implements SobiProcessor {
     private static final Logger logger = LoggerFactory.getLogger(BillXMLBillTextProcessor.class);
     @Autowired
     private XmlHelper xmlHelper;
 
-    public BillXMLBillTextProcessor() {
-    }
+    public BillXMLBillTextProcessor() {}
 
     @Override
     public void init() {
@@ -45,24 +46,25 @@ public class BillXMLBillTextProcessor extends AbstractDataProcessor implements S
 
     @Override
     public void process(SobiFragment sobiFragment) {
+        LocalDateTime date = sobiFragment.getPublishedDateTime();
+        logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
+        DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
-            logger.info("XML Processing " + sobiFragment.getFragmentId());
             final Document doc = xmlHelper.parse(sobiFragment.getText());
             final Node billTextNode = xmlHelper.getNode("billtext_html",doc);
             final int sessionYear = xmlHelper.getInteger("@sessyr",billTextNode);
-            final String senhse = xmlHelper.getString("@senhse",billTextNode).replaceAll("\n","");;
-            final String senno = xmlHelper.getString("@senno",billTextNode).replaceAll("\n","");;
-            final String senamd = xmlHelper.getString("@senamd",billTextNode).replaceAll("\n","");;
-            final String asmhse = xmlHelper.getString("@asmhse",billTextNode).replaceAll("\n","");;
-            final String asmno = xmlHelper.getString("@asmno",billTextNode).replaceAll("\n","");;
-            final String asmamd = xmlHelper.getString("@asmamd",billTextNode).replaceAll("\n","");;
-            final String action = xmlHelper.getString("@action",billTextNode).replaceAll("\n","");; //todo wait for LDBC for explaination of action
-            final String billText = billTextNode.getTextContent().replaceAll("\n","");;
+            final String senhse = xmlHelper.getString("@senhse",billTextNode).replaceAll("\n","");
+            final String senno = xmlHelper.getString("@senno",billTextNode).replaceAll("\n","");
+            final String senamd = xmlHelper.getString("@senamd",billTextNode).replaceAll("\n","");
+            final String asmhse = xmlHelper.getString("@asmhse",billTextNode).replaceAll("\n","");
+            final String asmno = xmlHelper.getString("@asmno",billTextNode).replaceAll("\n","");
+            final String asmamd = xmlHelper.getString("@asmamd",billTextNode).replaceAll("\n","");
+            final String action = xmlHelper.getString("@action",billTextNode).replaceAll("\n",""); // TODO: implement actions
+            final String billText = billTextNode.getTextContent().replaceAll("\n","");
             final Version version = Version.of(senamd.isEmpty() ? asmamd:senamd);
-            final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(senhse.isEmpty() ? asmhse+asmno : senhse+senno, new SessionYear(sessionYear),version) ,sobiFragment);
+            final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(senhse.isEmpty() ? asmhse+asmno : senhse+senno, new SessionYear(sessionYear),version), sobiFragment);
             baseBill.getAmendment(version).setFullText(billText);
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
-            System.out.println("abc");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,6 +74,5 @@ public class BillXMLBillTextProcessor extends AbstractDataProcessor implements S
     public void postProcess() {
         flushBillUpdates();
     }
-
 
 }

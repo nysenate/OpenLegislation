@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import java.time.LocalDateTime;
+
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
@@ -25,8 +28,7 @@ public class BillXMLBillDigestProcessor extends AbstractDataProcessor implements
     @Autowired
     private XmlHelper xmlHelper;
 
-    public BillXMLBillDigestProcessor() {
-    }
+    public BillXMLBillDigestProcessor() {}
 
     @Override
     public SobiFragmentType getSupportedType() {
@@ -35,16 +37,18 @@ public class BillXMLBillDigestProcessor extends AbstractDataProcessor implements
 
     @Override
     public void process(SobiFragment sobiFragment) {
+        LocalDateTime date = sobiFragment.getPublishedDateTime();
+        logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
+        DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
-            logger.info("XML Processing " + sobiFragment.getFragmentId());
             final Document doc = xmlHelper.parse(sobiFragment.getText());
             final Node billTextNode = xmlHelper.getNode("digestsummary",doc);
             final int sessionYear = xmlHelper.getInteger("@sessyr",billTextNode);
             final String billhse = xmlHelper.getString("@billhse",billTextNode);
             final String billno = xmlHelper.getString("@billno",billTextNode);
-            final String action = xmlHelper.getString("@action",billTextNode); //todo wait for LDBC  explaination of action
+            final String action = xmlHelper.getString("@action",billTextNode); //todo wait for LBDC explanation of action
             final String summary = xmlHelper.getNode("digestsummary/summary",doc).getTextContent();
-            final String amd = "";//todo wait for LDBC explaination
+            final String amd = "";//todo wait for LBDC explanation
             final Version version = Version.of(amd);
             final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse+billno, new SessionYear(sessionYear),version) ,sobiFragment);
             baseBill.setSummary(summary);
@@ -55,12 +59,12 @@ public class BillXMLBillDigestProcessor extends AbstractDataProcessor implements
             for (int i = 1; i <= totalNumsOfPreBills; i++) {
                 int  sess = xmlHelper.getInteger("digestsummary/oldbill/oldyear["+i+"]",doc);
                 String oldhse = xmlHelper.getString("digestsummary/oldbill/oldhse["+i+"]",doc).replaceAll("\n","");
-                String oldno = xmlHelper.getString("digestsummary/oldbill/oldno["+i+"]",doc).replaceAll("\n","");;
-                String oldamd = xmlHelper.getString("digestsummary/oldbill/oldamd["+i+"]",doc).replaceAll("\n","");;
+                String oldno = xmlHelper.getString("digestsummary/oldbill/oldno["+i+"]",doc).replaceAll("\n","");
+                String oldamd = xmlHelper.getString("digestsummary/oldbill/oldamd["+i+"]",doc).replaceAll("\n","");
                 baseBill.addDirectPreviousVersion(new BillId(oldhse+oldno, SessionYear.of(sess),Version.of(oldamd)));
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
-            System.out.println("abc");
+            logger.info("Put base bill in the ingest cache.");
         } catch (Exception e) {
             e.printStackTrace();
         }

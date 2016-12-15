@@ -177,7 +177,6 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
      * Sponsor           | 1YOUNG               00000 MachiasVolunteerFireDept.100thAnn 00000 91989011
      * -----------------------------------------------------------------------------------------------------------
      * Prev Version      | 1                    00000                                  S07213              2010
-     * -----------------------------------------------------------------------------------------------------------
      *
      * @throws ParseError
      */
