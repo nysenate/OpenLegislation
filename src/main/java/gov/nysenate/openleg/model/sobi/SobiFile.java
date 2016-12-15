@@ -2,7 +2,10 @@ package gov.nysenate.openleg.model.sobi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
+import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,6 +23,9 @@ import java.time.ZoneId;
  */
 public class SobiFile
 {
+
+    private static final Logger logger = LoggerFactory.getLogger(SobiFile.class);
+
     /**
      * SOBI files are (mostly) in a CP850 or similar encoding. This was determined from the byte mapping of
      * paragraph/section characters to 244/245. This can't be 100% correct though because the degree symbol
@@ -32,6 +38,9 @@ public class SobiFile
 
     /** Alternate format for SOBI files with no seconds specified in the filename */
     private static final String sobiDateNoSecsPattern = "'SOBI.D'yyMMdd'.T'HHmm'.TXT'";
+
+    /** The format for the XML files */
+    private static final String xmlPattern = "yyyy'-'MM'-'dd'-'HH'.'mm'.'ss'.'SSS";
 
     /** Reference to the actual sobi file. */
     private File file;
@@ -94,12 +103,15 @@ public class SobiFile
      */
     public LocalDateTime getPublishedDateTime() throws InvalidSobiNameEx {
         String fileName = this.getFileName();
+        if (fileName.substring(fileName.length()-3).toLowerCase().equals("xml")) {
+            fileName = fileName.substring(0, 23);
+        }
         try {
             return LocalDateTime.ofInstant(
-                org.apache.commons.lang3.time.DateUtils.parseDate(
-                        fileName, sobiDateFullPattern, sobiDateNoSecsPattern)
-                        .toInstant(),
-                ZoneId.systemDefault());
+                    org.apache.commons.lang3.time.DateUtils.parseDate(
+                            fileName, sobiDateFullPattern, sobiDateNoSecsPattern, xmlPattern)
+                            .toInstant(),
+                    ZoneId.systemDefault());
         }
         catch (ParseException ex) {
             throw new InvalidSobiNameEx(fileName, ex);
