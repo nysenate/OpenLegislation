@@ -9,7 +9,6 @@ import gov.nysenate.openleg.processor.base.ProcessService;
 import gov.nysenate.openleg.processor.hearing.PublicHearingProcessService;
 import gov.nysenate.openleg.processor.law.LawProcessService;
 import gov.nysenate.openleg.processor.sobi.SobiProcessService;
-import gov.nysenate.openleg.processor.xml.XmlProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
 import gov.nysenate.openleg.service.spotcheck.agenda.AgendaSpotcheckProcessService;
@@ -40,9 +39,6 @@ public class DataProcessor
     @Autowired private Environment env;
     @Autowired private EventBus eventBus;
     @Autowired private DataProcessLogService processLogService;
-
-    //TODO : create and implement this XmlProcessService interface
-    @Autowired private XmlProcessService xmlProcessService;
 
     @Autowired private SobiProcessService sobiProcessService;
 
