@@ -30,42 +30,42 @@ COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- Name: citext; Type: EXTENSION; Schema: -; Owner: 
+-- Name: citext; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
 
 
 --
--- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
@@ -236,7 +236,7 @@ BEGIN
     year := NEW.year;
     new_values := delete(hstore(NEW.*), ignored_columns);
     fragment_id := NEW.last_fragment_id;
-    published_date_time := (substring(fragment_id from 7 for 6) || substring(fragment_id from 14 for 7))::timestamp without time zone;
+    SELECT master.sobi_fragment.published_date_time INTO published_date_time FROM master.sobi_fragment WHERE master.sobi_fragment.fragment_id = NEW.last_fragment_id;
   ELSE
     agenda_no := OLD.agenda_no;
     year := OLD.year;
@@ -8149,4 +8149,3 @@ GRANT ALL ON SEQUENCE session_member_id_seq TO postgres;
 --
 -- PostgreSQL database dump complete
 --
-
