@@ -10,31 +10,20 @@ function ReportCtrl($scope, spotcheckMismatchApi, mismatchSummaryApi) {
     $scope.exampleData = ['New', 'S23', 'Action', '8/11/2016', '#1234', 'Daybreak'];
 
 
-    $scope.datasource = {
-        values: [
-            {
-                value: 'OPENLEG',
-                label: 'LBDC - OpenLegislation'
-            },
-            {
-                value: 'NYSENATE_DOT_GOV',
-                label: 'OpenLegislation - NYSenate.gov'
-            }
-        ],
-        selected: {}
-    };
+    $scope.datasource = 'OPENLEG';
+    $scope.status = 'OPEN'; // TODO: OPEN status = NEW + EXISTING?
 
     $scope.mismatchSummary = {};
     $scope.billMismatches = [];
 
-    $scope.mismatches = [];
-
     $scope.init = function (rtmap, rtDispMap, mtmap) {
-        $scope.datasource.selected = $scope.datasource.values[0];
         // don't think we need rtmap
         // console.log(rtmap);
         // console.log(rtDispMap);
         // console.log(mtmap);
+
+        // TODO: Date will prob be a url search param.
+        $scope.date = moment().format('l');
 
         /** Mismatch Summary API and Testing */
         mismatchSummaryApi.get('OPENLEG')
@@ -50,36 +39,14 @@ function ReportCtrl($scope, spotcheckMismatchApi, mismatchSummaryApi) {
                 $scope.billMismatches = billMismatches;
                 console.log(billMismatches);
             });
-        // spotcheckApi.mismatches('OPENLEG', 'BILL')
-        //     .then(function (r) {
-        //         console.log(r);
-        //         var mo = new MismatchObservations(r);
-        //         $scope.mismatches = mo.getObservations();
-        //         console.log($scope.mismatches);
-        //     });
 
-
-        // spotcheckApi.reportSummaries().then(function (r) {
-        //     console.log(r);
-        // });
-
-
-        $scope.date = moment().format('l');
     };
 
     $scope.onDatasourceChange = function () {
         console.log($scope.datasource.selected);
     };
 
-    $scope.checkBoxOptions = {
-        initial: 'LBDC - OpenLegislation',
-        secondary: 'OpenLegislation - NYSenate.gov'
-    };
-
-    $scope.getSummaries = function () {
-        $scope.mismatches = $scope.mismatchRows;
-        $scope.mismatches.forEach(function (mismatch) {
-            console.log(mismatch);
-        });
+    $scope.onStatusChange = function () {
+        console.log($scope.status);
     }
 }

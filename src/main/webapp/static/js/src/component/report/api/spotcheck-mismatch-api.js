@@ -10,18 +10,19 @@ function spotcheckMismatchApi($resource) {
         this.type = type;
         this.date = date;
         this.issue = issue;
-        this.status = source;
+        this.source = source;
     }
 
     // TODO: Calendar and Agenda Mismatches
-
+    // TODO: Filter by status, ie NEW, EXISTING, RESOLVED.
+    // TODO: date range, limit offset
     function getBills(datasource) {
-        // TODO: date range, limit offset
         return mismatchApi.get({datasource: datasource, contentType: 'BILL', limit: 100}).$promise
             .then(createBillMismatches);
     }
 
     function createBillMismatches(response) {
+        console.log(response);
         var mismatches = [];
         angular.forEach(response.observations, function (observation) {
             mismatches = mismatches.concat(mismatchesInObservation(observation));
