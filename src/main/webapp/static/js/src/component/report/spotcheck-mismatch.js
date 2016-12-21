@@ -13,34 +13,34 @@ function ($scope, $filter, $routeParams, $rootScope, OpenMMAPI, OpenMMSummaryAPI
 
     $scope.filter = angular.copy(defaultFilter);
 
-    $scope.requestCount = 0;
-    $scope.lastReceived = 0;
+            $scope.requestCount = 0;
+            $scope.lastReceived = 0;
 
-    $scope.init = function() {
-        $scope.reportType = $routeParams.reportType || $scope.unselectedReportType;
-        $scope.getOpenMismatches();
-    };
+            $scope.init = function(){
+                $scope.reportType = $routeParams.reportType || $scope.unselectedReportType;
+                $scope.getOpenMismatches();
+            };
 
-    $rootScope.$on('mismatchFilterChange', function() {
-        console.log('mismatch filter change detected', $scope.filter);
-        $scope.getOpenMismatches();
-    });
+            $rootScope.$on('mismatchFilterChange', function(){
+                console.log('mismatch filter change detected', $scope.filter);
+                $scope.getOpenMismatches();
+            });
 
-    function getOpenMismatchParams() {
-        var params = angular.merge({}, $scope.filter);
-        params.reportType = $scope.reportType;
-        params.mismatchType = [];
-        angular.forEach(params.types, function (requested, type) {
-            if (requested) {
-                params.mismatchType.push(type);
+            function getOpenMismatchParams(){
+                var params = angular.merge({}, $scope.filter);
+                params.reportType = $scope.reportType;
+                params.mismatchType = [];
+                angular.forEach(params.types, function(requested, type){
+                    if(requested){
+                        params.mismatchType.push(type);
+                    }
+                });
+                delete params.statuses;
+                delete params.types;
+                delete params.passes;
+                delete params.filterFunction;
+                return params;
             }
-        });
-        delete params.statuses;
-        delete params.types;
-        delete params.passes;
-        delete params.filterFunction;
-        return params;
-    }
 
     $scope.getOpenMismatches = function() {
         $scope.parameterError = $scope.requestError = false;
