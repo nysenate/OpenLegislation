@@ -33,7 +33,7 @@
                  style="padding-bottom: 10px; padding-top: 10px">
               <div flex="10" class="bold">Status</div>
               <div flex="10" class="bold">Bill</div>
-              <div flex="15" class="bold">Type</div>
+              <div flex="15" class="bold">Error</div>
               <div flex="15" class="bold">Date</div>
               <div flex="10" class="bold">Issue</div>
               <div flex="15" class="bold">Source</div>
@@ -43,7 +43,7 @@
               <div layout="row" layout-align="space-between center" flex="75">
                 <div flex="10">{{mismatch.status}}</div>
                 <div flex="10">{{mismatch.bill}}</div>
-                <div flex="15">{{mismatch.type}}</div>
+                <div flex="15">{{mismatch.mismatchType}}</div>
                 <div flex="15">{{mismatch.date}}</div>
                 <div flex="10">{{mismatch.issue}}</div>
                 <div flex="15">{{mismatch.source}}</div>

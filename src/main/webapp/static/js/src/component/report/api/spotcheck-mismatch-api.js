@@ -4,21 +4,34 @@ function spotcheckMismatchApi($resource) {
 
     var mismatchApi = $resource(adminApiPath + "/spotcheck/:datasource/open-mismatches", {datasource: '@datasource'});
 
-    function BillMismatch(status, bill, type, date, issue, source) {
+    function BillMismatch(status, bill, mismatchType, date, issue, source) {
         this.status = status;
         this.bill = bill;
-        this.type = type; // Make pretty with SpotcheckMismatchType map
+        this.mismatchType = mismatchType; // Make pretty with SpotcheckMismatchType map
         this.date = date;
         this.issue = issue;
         this.source = source; // Make pretty with SpotcheckRefType map
     }
 
-    // TODO: Calendar and Agenda Mismatches
-    // TODO: Filter by status, ie NEW, EXISTING, RESOLVED.
+    function CalendarMismatch(status, date, mismatchType, calType, calNum, issue, source) {
+        this.status = status;
+        this.date = date;
+        this.mismatchType = mismatchType;
+        this.calType = calType;
+        this.calNum = calNum;
+        this.issue = issue;
+        this.source = source;
+    }
+
     // TODO: date range, limit offset
     function getBills(datasource) {
-        return mismatchApi.get({datasource: datasource, contentType: 'BILL', limit: 100}).$promise
+        return mismatchApi.get({datasource: datasource, contentType: 'BILL', limit: 1000}).$promise
             .then(createBillMismatches);
+    }
+
+    function getCalendars(datasource) {
+        return mismatchApi.get({datasource: datasource, contentType: 'CALENDAR', limit: 1000}).$promise
+            .then(createCalendarMismatches);
     }
 
     function createBillMismatches(response) {
@@ -38,12 +51,17 @@ function spotcheckMismatchApi($resource) {
         angular.forEach(observation.mismatches.items, function (mismatch) {
             if (mismatch.ignoreStatus === 'NOT_IGNORED') {
                 var status = mismatch.status;
-                var type = mismatch.mismatchType;
+                var mismatchType = mismatch.mismatchType;
                 var issue = extractIssues(mismatch.issueIds.items);
-                mismatches.push(new BillMismatch(status, bill, type, date, issue, source));
+                mismatches.push(new BillMismatch(status, bill, mismatchType, date, issue, source));
             }
         });
         return mismatches;
+    }
+
+    function createCalendarMismatches(response) {
+        console.log(response);
+        // TODO: API needs fixing.
     }
 
     /**
@@ -54,6 +72,7 @@ function spotcheckMismatchApi($resource) {
     }
 
     return {
-        getBills: getBills
+        getBills: getBills,
+        getCalendars: getCalendars
     }
 }

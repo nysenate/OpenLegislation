@@ -1,14 +1,15 @@
 angular.module('open.spotcheck')
     .controller('SpotcheckReportCtrl',
-        ['$scope', 'SpotcheckMismatchApi', 'SpotcheckMismatchSummaryApi', ReportCtrl]);
+        ['$scope', '$location', '$routeParams', 'SpotcheckMismatchApi', 'SpotcheckMismatchSummaryApi', ReportCtrl]);
 
-function ReportCtrl($scope, spotcheckMismatchApi, mismatchSummaryApi) {
+function ReportCtrl($scope, $location, $routeParams, spotcheckMismatchApi, mismatchSummaryApi) {
 
+    const DATE_FORMAT = 'YYYY-MM-DD';
+    $scope.date = {};
     $scope.datasource = 'OPENLEG';
+    $scope.contentType = {}; // TODO init
     $scope.status = 'OPEN';
-
     $scope.mismatchSummary = {};
-
     $scope.billMismatches = {
         matches: [], // A master copy of all mismatches.
         filtered: [] // Mismatches which match the user specified filters.
@@ -21,29 +22,20 @@ function ReportCtrl($scope, spotcheckMismatchApi, mismatchSummaryApi) {
                 $scope.billMismatches.matches = billMismatches;
                 $scope.onStatusChange();
             });
+        spotcheckMismatchApi.getCalendars($scope.datasource)
+            .then(function (calMismatches) {
+
+            })
     };
-
-    ($scope.init = function () {
-        console.log(referenceTypeMap);
-        console.log(referenceTypeDisplayMap);
-        console.log(referenceContentTypeMap);
-        console.log(mismatchMap);
-
-        // TODO: Date will prob be a url search param.
-        $scope.date = moment().format('l');
-
-        mismatchSummaryApi.get($scope.datasource)
-            .then(function (mismatchSummary) {
-                $scope.mismatchSummary = mismatchSummary;
-            });
-
-        $scope.onDatasourceChange();
-    }).call();
-
 
     $scope.onStatusChange = function () {
         // TODO: Filter all mismatch content types?
         $scope.billMismatches.filtered = mismatchesWithStatus($scope.billMismatches.matches, $scope.status);
+    };
+
+    $scope.onDateChange = function () {
+        $location.search('date', $scope.date.format(DATE_FORMAT)).replace();
+        // TODO: reload if necessary.
     };
 
     function mismatchesWithStatus(mismatches, status) {
@@ -55,4 +47,21 @@ function ReportCtrl($scope, spotcheckMismatchApi, mismatchSummaryApi) {
         };
         return mismatches.filter(filterByStatus)
     }
+
+    ($scope.init = function () {
+        if ($routeParams.hasOwnProperty('date')) {
+            $scope.date = moment($routeParams.date, DATE_FORMAT);
+        }
+        else {
+            $scope.date = moment().startOf('day');
+            $scope.onDateChange();
+        }
+
+        mismatchSummaryApi.get($scope.datasource)
+            .then(function (mismatchSummary) {
+                $scope.mismatchSummary = mismatchSummary;
+            });
+
+        $scope.onDatasourceChange();
+    }).call();
 }

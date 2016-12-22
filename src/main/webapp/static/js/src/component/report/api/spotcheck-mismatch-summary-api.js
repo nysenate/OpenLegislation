@@ -24,6 +24,7 @@ function mismatchSummaryApi($resource) {
 
     // TODO: ResolvedCount is not tested.
     function createSummary(response) {
+        console.log(response);
         var openCount = 0;
         var newCount = 0;
         var existingCount = 0;
