@@ -7,10 +7,10 @@ function spotcheckMismatchApi($resource) {
     function BillMismatch(status, bill, type, date, issue, source) {
         this.status = status;
         this.bill = bill;
-        this.type = type;
+        this.type = type; // Make pretty with SpotcheckMismatchType map
         this.date = date;
         this.issue = issue;
-        this.source = source;
+        this.source = source; // Make pretty with SpotcheckRefType map
     }
 
     // TODO: Calendar and Agenda Mismatches
@@ -33,13 +33,13 @@ function spotcheckMismatchApi($resource) {
     function mismatchesInObservation(observation) {
         var mismatches = [];
         var bill = observation.key.printNo;
-        var date = observation.observedDateTime; // TODO formatting.
+        var date = observation.reportId.referenceDateTime; // TODO formatting?
+        var source = observation.reportId.referenceType; // TODO need source from somewhere.
         angular.forEach(observation.mismatches.items, function (mismatch) {
             if (mismatch.ignoreStatus === 'NOT_IGNORED') {
                 var status = mismatch.status;
                 var type = mismatch.mismatchType;
                 var issue = extractIssues(mismatch.issueIds.items);
-                var source = "Stub Reference Type"; // TODO need source from somewhere.
                 mismatches.push(new BillMismatch(status, bill, type, date, issue, source));
             }
         });

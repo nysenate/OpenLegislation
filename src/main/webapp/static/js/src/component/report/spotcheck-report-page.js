@@ -4,49 +4,55 @@ angular.module('open.spotcheck')
 
 function ReportCtrl($scope, spotcheckMismatchApi, mismatchSummaryApi) {
 
-    $scope.billCategories = ['Status', 'Bill', 'Type', 'Date', 'Issue', 'Source'];
-    $scope.calendarCategories = ['Status', 'Date', 'Error', 'Type', 'Nbr', 'Date/Time', 'Issue', 'Source'];
-    $scope.agendaCategories = ['Status', 'Date', 'Error', 'Nbr', 'Committee', 'Date/Time', 'Issue', 'Source'];
-    $scope.exampleData = ['New', 'S23', 'Action', '8/11/2016', '#1234', 'Daybreak'];
-
-
     $scope.datasource = 'OPENLEG';
-    $scope.status = 'OPEN'; // TODO: OPEN status = NEW + EXISTING?
+    $scope.status = 'OPEN';
 
     $scope.mismatchSummary = {};
-    $scope.billMismatches = [];
 
-    $scope.init = function (rtmap, rtDispMap, mtmap) {
-        // don't think we need rtmap
-        // console.log(rtmap);
-        // console.log(rtDispMap);
-        // console.log(mtmap);
+    $scope.billMismatches = {
+        matches: [], // A master copy of all mismatches.
+        filtered: [] // Mismatches which match the user specified filters.
+    };
+
+    $scope.onDatasourceChange = function () {
+        // TODO: re query all content types?
+        spotcheckMismatchApi.getBills($scope.datasource)
+            .then(function (billMismatches) {
+                $scope.billMismatches.matches = billMismatches;
+                $scope.onStatusChange();
+            });
+    };
+
+    ($scope.init = function () {
+        console.log(referenceTypeMap);
+        console.log(referenceTypeDisplayMap);
+        console.log(referenceContentTypeMap);
+        console.log(mismatchMap);
 
         // TODO: Date will prob be a url search param.
         $scope.date = moment().format('l');
 
-        /** Mismatch Summary API and Testing */
-        mismatchSummaryApi.get('OPENLEG')
+        mismatchSummaryApi.get($scope.datasource)
             .then(function (mismatchSummary) {
                 $scope.mismatchSummary = mismatchSummary;
-                console.log(mismatchSummary);
             });
 
-        /** Mismatch Detail API and Testing */
+        $scope.onDatasourceChange();
+    }).call();
 
-        spotcheckMismatchApi.getBills('OPENLEG')
-            .then(function (billMismatches) {
-                $scope.billMismatches = billMismatches;
-                console.log(billMismatches);
-            });
-
-    };
-
-    $scope.onDatasourceChange = function () {
-        console.log($scope.datasource.selected);
-    };
 
     $scope.onStatusChange = function () {
-        console.log($scope.status);
+        // TODO: Filter all mismatch content types?
+        $scope.billMismatches.filtered = mismatchesWithStatus($scope.billMismatches.matches, $scope.status);
+    };
+
+    function mismatchesWithStatus(mismatches, status) {
+        var filterByStatus = function (mismatch) {
+            if (status === 'OPEN') {
+                return mismatch.status === 'NEW' || mismatch.status === 'EXISTING';
+            }
+            return mismatch.status === status;
+        };
+        return mismatches.filter(filterByStatus)
     }
 }
