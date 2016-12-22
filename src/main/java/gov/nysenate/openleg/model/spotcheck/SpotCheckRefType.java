@@ -80,4 +80,9 @@ public enum SpotCheckRefType
                 .collect(Collectors.toMap(SpotCheckRefType::name, SpotCheckRefType::getDisplayName)));
     }
 
+    public static String getRefContentTypeJsonMap() {
+        return OutputUtils.toJson(EnumSet.allOf(SpotCheckRefType.class).stream()
+        .collect(Collectors.toMap(SpotCheckRefType::name, SpotCheckRefType::getContentType)));
+    }
+
 }
