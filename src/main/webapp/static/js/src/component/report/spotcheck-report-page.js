@@ -48,6 +48,10 @@ function ReportCtrl($scope, $location, $routeParams, spotcheckMismatchApi, misma
         return mismatches.filter(filterByStatus)
     }
 
+    $scope.toDate = function (date) {
+        return date.format(DATE_FORMAT);
+    };
+
     ($scope.init = function () {
         if ($routeParams.hasOwnProperty('date')) {
             $scope.date = moment($routeParams.date, DATE_FORMAT);

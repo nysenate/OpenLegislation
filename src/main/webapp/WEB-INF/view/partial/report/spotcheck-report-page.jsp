@@ -4,7 +4,7 @@
          class="padding-20">
   <md-content>
     <div>
-      <h2>Report Date: {{date}}</h2>
+      <h2>Report Date: {{toDate(date)}}</h2>
     </div>
     <div layout="row" layout-align="space-between center">
       <div>
@@ -31,20 +31,20 @@
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
-              <div flex="10" class="bold">Status</div>
+              <div flex="5" class="bold">Status</div>
               <div flex="10" class="bold">Bill</div>
               <div flex="15" class="bold">Error</div>
-              <div flex="15" class="bold">Date</div>
+              <div flex="20" class="bold">Date</div>
               <div flex="10" class="bold">Issue</div>
               <div flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
             <div ng-repeat="mismatch in billMismatches.filtered" layout="row" layout-align="space-around center">
               <div layout="row" layout-align="space-between center" flex="75">
-                <div flex="10">{{mismatch.status}}</div>
+                <div flex="5">{{mismatch.status}}</div>
                 <div flex="10">{{mismatch.bill}}</div>
                 <div flex="15">{{mismatch.mismatchType}}</div>
-                <div flex="15">{{mismatch.date}}</div>
+                <div flex="20">{{mismatch.date}}</div>
                 <div flex="10">{{mismatch.issue}}</div>
                 <div flex="15">{{mismatch.source}}</div>
               </div>

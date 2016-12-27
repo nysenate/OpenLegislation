@@ -2,6 +2,7 @@ angular.module('open.spotcheck').factory('SpotcheckMismatchApi', ['$resource', s
 
 function spotcheckMismatchApi($resource) {
 
+    const DATE_FORMAT = 'YYYY-MM-DD h:mm:ss a';
     var mismatchApi = $resource(adminApiPath + "/spotcheck/:datasource/open-mismatches", {datasource: '@datasource'});
 
     function BillMismatch(status, bill, mismatchType, date, issue, source) {
@@ -25,17 +26,16 @@ function spotcheckMismatchApi($resource) {
 
     // TODO: date range, limit offset
     function getBills(datasource) {
-        return mismatchApi.get({datasource: datasource, contentType: 'BILL', limit: 1000}).$promise
+        return mismatchApi.get({datasource: datasource, contentType: 'BILL', limit: 100}).$promise
             .then(createBillMismatches);
     }
 
     function getCalendars(datasource) {
-        return mismatchApi.get({datasource: datasource, contentType: 'CALENDAR', limit: 1000}).$promise
+        return mismatchApi.get({datasource: datasource, contentType: 'CALENDAR', limit: 100}).$promise
             .then(createCalendarMismatches);
     }
 
     function createBillMismatches(response) {
-        console.log(response);
         var mismatches = [];
         angular.forEach(response.observations, function (observation) {
             mismatches = mismatches.concat(mismatchesInObservation(observation));
@@ -46,12 +46,12 @@ function spotcheckMismatchApi($resource) {
     function mismatchesInObservation(observation) {
         var mismatches = [];
         var bill = observation.key.printNo;
-        var date = observation.reportId.referenceDateTime; // TODO formatting?
-        var source = observation.reportId.referenceType; // TODO need source from somewhere.
+        var date = moment(observation.reportId.referenceDateTime).format(DATE_FORMAT);
+        var source = referenceTypeMap[observation.reportId.referenceType];
         angular.forEach(observation.mismatches.items, function (mismatch) {
             if (mismatch.ignoreStatus === 'NOT_IGNORED') {
                 var status = mismatch.status;
-                var mismatchType = mismatch.mismatchType;
+                var mismatchType = mismatchMap[mismatch.mismatchType];
                 var issue = extractIssues(mismatch.issueIds.items);
                 mismatches.push(new BillMismatch(status, bill, mismatchType, date, issue, source));
             }
@@ -60,7 +60,6 @@ function spotcheckMismatchApi($resource) {
     }
 
     function createCalendarMismatches(response) {
-        console.log(response);
         // TODO: API needs fixing.
     }
 
