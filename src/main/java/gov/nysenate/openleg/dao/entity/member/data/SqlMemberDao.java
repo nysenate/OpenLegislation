@@ -186,6 +186,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setIncumbent(rs.getBoolean("incumbent"));
             member.setPersonId(rs.getInt("person_id"));
             member.setFullName(rs.getString("full_name"));
+            member.setPrefix(rs.getString("prefix"));
             member.setFirstName(rs.getString("first_name"));
             member.setMiddleName(rs.getString("middle_name"));
             member.setLastName(rs.getString("last_name"));
