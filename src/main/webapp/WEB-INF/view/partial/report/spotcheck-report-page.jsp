@@ -44,7 +44,7 @@
                 <div flex="15">{{mismatch.mismatchType}}</div>
                 <div flex="20">{{mismatch.date}}</div>
                 <div flex="10">{{mismatch.issue}}</div>
-                <div flex="15">{{mismatch.source}}</div>
+                <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised">Diff</md-button>
@@ -55,12 +55,33 @@
         </md-tab>
 
         <md-tab label="Calendars ({{mismatchSummary.calendarCount}})" md-on-select="updateMismatches()">
-          <md-content class="md-padding">
-            <md-list>
-              <md-list layout="row">
-                <md-list-item ng-repeat="data in calendarCategories" flex>{{data}}</md-list-item>
-              </md-list>
-            </md-list>
+          <md-content>
+            <div layout="row" layout-align="space-between center" flex="75"
+                 style="padding-bottom: 10px; padding-top: 10px">
+              <div flex="5" class="bold">Status</div>
+              <div flex="15" class="bold">Error</div>
+              <div flex="10" class="bold">Type</div>
+              <div flex="5" class="bold">Number</div>
+              <div flex="15" class="bold">Date</div>
+              <div flex="10" class="bold">Issue</div>
+              <div flex="15" class="bold">Source</div>
+            </div>
+            <md-divider></md-divider>
+            <div ng-repeat="mismatch in mismatches" layout="row" layout-align="space-around center">
+              <div layout="row" layout-align="space-between center" flex="75">
+                <div flex="5">{{mismatch.status}}</div>
+                <div flex="15">{{mismatch.mismatchType}}</div>
+                <div flex="10">{{mismatch.calType}}</div>
+                <div flex="5">{{mismatch.calNo}}</div>
+                <div flex="15">{{mismatch.date}}</div>
+                <div flex="10">{{mismatch.issue}}</div>
+                <div flex="15">{{mismatch.refType}}</div>
+              </div>
+              <div layout="row" layout-align="space-around center" flex="25">
+                <md-button class="md-raised">Diff</md-button>
+                <md-button class="md-accent md-raised">Ignore</md-button>
+              </div>
+            </div>
           </md-content>
         </md-tab>
 

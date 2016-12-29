@@ -28,6 +28,7 @@ function ReportCtrl($scope, $location, $routeParams, spotcheckMismatchApi, misma
     $scope.mismatches = [];
 
     $scope.updateMismatches = function () {
+        $scope.mismatches = [];
         switch (contentTypes[$scope.selectedTab]) {
             case 'BILL':
                 getBillMismatches($scope.datasource.selected.value, toMismatchStatus($scope.status));
@@ -54,7 +55,7 @@ function ReportCtrl($scope, $location, $routeParams, spotcheckMismatchApi, misma
     function getCalendarMismatches(datasource, statuses) {
         spotcheckMismatchApi.getCalendars(datasource, statuses)
             .then(function (calMismatches) {
-
+                $scope.mismatches = calMismatches;
             })
     }
 
@@ -71,6 +72,10 @@ function ReportCtrl($scope, $location, $routeParams, spotcheckMismatchApi, misma
     function onDateChange() {
         $location.search('date', $scope.date.format(dateFormat)).replace();
     }
+
+    $scope.toDate = function (date) {
+        return date.format(dateFormat);
+    };
 
     $scope.init = function () {
         // Init Date
