@@ -8,14 +8,12 @@
     </div>
     <div layout="row" layout-align="space-between center">
       <div>
-        <select ng-model="datasource" ng-change="onDatasourceChange()">
-          <option value="OPENLEG">LBDC - OpenLegislation</option>
-          <option value="NYSENATE_DOT_GOV">OpenLegislation - NYSenate.gov</option>
-        </select>
+        <select ng-model="datasource.selected" ng-change="updateMismatches()"
+                ng-options="datasource as datasource.label for datasource in datasource.values"></select>
       </div>
 
       <div>
-        <select ng-model="status" ng-change="onStatusChange()">
+        <select ng-model="status" ng-change="updateMismatches()">
           <option value="OPEN">Open Issues ({{mismatchSummary.openCount}})</option>
           <option value="NEW">New Issues ({{mismatchSummary.newCount}})</option>
           <option value="RESOLVED">Resolved Issues ({{mismatchSummary.resolvedCount}})</option>
@@ -26,8 +24,8 @@
 
   <div>
     <md-card class="content-card">
-      <md-tabs class="md-hue-2" md-dynamic-height=md-border-bottom>
-        <md-tab label="Bills ({{mismatchSummary.billCount}})">
+      <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
+        <md-tab label="Bills ({{mismatchSummary.billCount}})" md-on-select="updateMismatches()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -39,7 +37,7 @@
               <div flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
-            <div ng-repeat="mismatch in billMismatches.filtered" layout="row" layout-align="space-around center">
+            <div ng-repeat="mismatch in mismatches" layout="row" layout-align="space-around center">
               <div layout="row" layout-align="space-between center" flex="75">
                 <div flex="5">{{mismatch.status}}</div>
                 <div flex="10">{{mismatch.bill}}</div>
@@ -56,7 +54,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Calendars ({{mismatchSummary.calendarCount}})">
+        <md-tab label="Calendars ({{mismatchSummary.calendarCount}})" md-on-select="updateMismatches()">
           <md-content class="md-padding">
             <md-list>
               <md-list layout="row">
@@ -66,7 +64,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Agendas ({{mismatchSummary.agendaCount}})">
+        <md-tab label="Agendas ({{mismatchSummary.agendaCount}})" md-on-select="updateMismatches()">
           <md-content class="md-padding">
             <md-list>
               <md-list layout="row">

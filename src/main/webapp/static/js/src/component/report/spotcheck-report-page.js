@@ -4,68 +4,96 @@ angular.module('open.spotcheck')
 
 function ReportCtrl($scope, $location, $routeParams, spotcheckMismatchApi, mismatchSummaryApi) {
 
-    const DATE_FORMAT = 'YYYY-MM-DD';
+    const dateFormat = 'YYYY-MM-DD';
+    /** Used to look up content types corresponding to tab indexes. */
+    const contentTypes = ['BILL', 'CALENDAR', 'AGENDA'];
+
+    $scope.datasource = {
+        values: [
+            {
+                value: 'OPENLEG',
+                label: 'LBDC - OpenLegislation'
+            },
+            {
+                value: 'NYSENATE_DOT_GOV',
+                label: 'OpenLegislation - NYSenate.gov'
+            }
+        ],
+        selected: {}
+    };
+    $scope.status = 'OPEN'; // Show all open issues by default.
+    $scope.selectedTab = 0; // Select Bills tab by default.
     $scope.date = {};
-    $scope.datasource = 'OPENLEG';
-    $scope.contentType = {}; // TODO init
-    $scope.status = 'OPEN';
     $scope.mismatchSummary = {};
-    $scope.billMismatches = {
-        matches: [], // A master copy of all mismatches.
-        filtered: [] // Mismatches which match the user specified filters.
+    $scope.mismatches = [];
+
+    $scope.updateMismatches = function () {
+        switch (contentTypes[$scope.selectedTab]) {
+            case 'BILL':
+                getBillMismatches($scope.datasource.selected.value, toMismatchStatus($scope.status));
+                break;
+            case 'CALENDAR':
+                getCalendarMismatches($scope.datasource.selected.value, toMismatchStatus($scope.status));
+                break;
+            case 'AGENDA':
+                console.log("agenda");
+                break;
+            default:
+                console.log("default");
+                break;
+        }
     };
 
-    $scope.onDatasourceChange = function () {
-        // TODO: re query all content types?
-        spotcheckMismatchApi.getBills($scope.datasource)
+    function getBillMismatches(datasource, statuses) {
+        spotcheckMismatchApi.getBills(datasource, statuses)
             .then(function (billMismatches) {
-                $scope.billMismatches.matches = billMismatches;
-                $scope.onStatusChange();
+                $scope.mismatches = billMismatches;
             });
-        spotcheckMismatchApi.getCalendars($scope.datasource)
+    }
+
+    function getCalendarMismatches(datasource, statuses) {
+        spotcheckMismatchApi.getCalendars(datasource, statuses)
             .then(function (calMismatches) {
 
             })
-    };
-
-    $scope.onStatusChange = function () {
-        // TODO: Filter all mismatch content types?
-        $scope.billMismatches.filtered = mismatchesWithStatus($scope.billMismatches.matches, $scope.status);
-    };
-
-    $scope.onDateChange = function () {
-        $location.search('date', $scope.date.format(DATE_FORMAT)).replace();
-        // TODO: reload if necessary.
-    };
-
-    function mismatchesWithStatus(mismatches, status) {
-        var filterByStatus = function (mismatch) {
-            if (status === 'OPEN') {
-                return mismatch.status === 'NEW' || mismatch.status === 'EXISTING';
-            }
-            return mismatch.status === status;
-        };
-        return mismatches.filter(filterByStatus)
     }
 
-    $scope.toDate = function (date) {
-        return date.format(DATE_FORMAT);
-    };
+    /**
+     * Returns array of mismatch statuses corresponding to the selected status.
+     */
+    function toMismatchStatus(status) {
+        if (status === 'OPEN') {
+            return ['NEW', 'EXISTING'];
+        }
+        return [status];
+    }
 
-    ($scope.init = function () {
+    function onDateChange() {
+        $location.search('date', $scope.date.format(dateFormat)).replace();
+    }
+
+    $scope.init = function () {
+        // Init Date
         if ($routeParams.hasOwnProperty('date')) {
-            $scope.date = moment($routeParams.date, DATE_FORMAT);
+            $scope.date = moment($routeParams.date, dateFormat);
         }
         else {
             $scope.date = moment().startOf('day');
-            $scope.onDateChange();
+            onDateChange();
         }
 
-        mismatchSummaryApi.get($scope.datasource)
+        // Init Datasource
+        $scope.datasource.selected = $scope.datasource.values[0];
+
+        // Init Summary
+        mismatchSummaryApi.get($scope.datasource.selected.value)
             .then(function (mismatchSummary) {
                 $scope.mismatchSummary = mismatchSummary;
             });
 
-        $scope.onDatasourceChange();
-    }).call();
+        // Init Mismatches
+        $scope.updateMismatches();
+    };
+
+    $scope.init();
 }
