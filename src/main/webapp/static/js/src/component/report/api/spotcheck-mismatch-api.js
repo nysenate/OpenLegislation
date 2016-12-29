@@ -6,20 +6,38 @@ function spotcheckMismatchApi($resource) {
     var mismatchApi = $resource(adminApiPath + "/spotcheck/:datasource/open-mismatches", {datasource: '@datasource'});
 
     // TODO: date range, limit offset
-    function getBills(datasource, statuses) {
+    function getBills(datasource, statuses, limit, offset) {
         // TODO: Add mismatchStatus array to API params.
-        return mismatchApi.get({datasource: datasource, contentType: 'BILL', limit: 10}).$promise
+        var params = {
+            datasource: datasource,
+            contentType: 'BILL',
+            limit: limit,
+            offset: offset
+        };
+        return mismatchApi.get(params).$promise
             .then(createBillMismatches);
     }
 
-    function getCalendars(datasource, statuses) {
+    function getCalendars(datasource, statuses, limit, offset) {
         // TODO: Add mismatchStatus array to API params.
-        return mismatchApi.get({datasource: datasource, contentType: 'CALENDAR', limit: 10}).$promise
+        var params = {
+            datasource: datasource,
+            contentType: 'CALENDAR',
+            limit: limit,
+            offset: offset
+        };
+        return mismatchApi.get(params).$promise
             .then(createCalendarMismatches);
     }
 
     function createBillMismatches(response) {
-        var mismatches = [];
+        var results = {
+            pagination: {
+                total: 0
+            },
+            mismatches: []
+        };
+        results.pagination.total = response.total;
         angular.forEach(response.observations, function (observation) {
             var bill = observation.key.printNo;
             var date = moment(observation.reportId.referenceDateTime).format(DATE_FORMAT);
@@ -29,7 +47,7 @@ function spotcheckMismatchApi($resource) {
                     var status = mismatch.status;
                     var mismatchType = mismatchMap[mismatch.mismatchType];
                     var issue = extractIssues(mismatch.issueIds.items);
-                    mismatches.push({
+                    results.mismatches.push({
                         status: status,
                         bill: bill,
                         mismatchType: mismatchType,
@@ -40,11 +58,17 @@ function spotcheckMismatchApi($resource) {
                 }
             });
         });
-        return mismatches;
+        return results;
     }
 
     function createCalendarMismatches(response) {
-        var mismatches = [];
+        var results = {
+            pagination: {
+                total: 0
+            },
+            mismatches: []
+        };
+        results.pagination.total = response.total;
         angular.forEach(response.observations, function (observation) {
             var calNo = observation.key.calNo;
             var date = moment(observation.refDateTime).format(DATE_FORMAT);
@@ -55,7 +79,7 @@ function spotcheckMismatchApi($resource) {
                     var status = mismatch.status;
                     var mismatchType = mismatchMap[mismatch.mismatchType];
                     var issue = extractIssues(mismatch.issueIds.items);
-                    mismatches.push({
+                    results.mismatches.push({
                         status: status,
                         mismatchType: mismatchType,
                         date: date,
@@ -67,7 +91,7 @@ function spotcheckMismatchApi($resource) {
                 }
             });
         });
-        return mismatches;
+        return results;
     }
 
     /**

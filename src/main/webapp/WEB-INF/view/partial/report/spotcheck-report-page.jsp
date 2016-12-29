@@ -4,7 +4,7 @@
          class="padding-20">
   <md-content>
     <div>
-      <h2>Report Date: {{toDate(date)}}</h2>
+      <h2>Report Date: {{formatDate(date)}}</h2>
     </div>
     <div layout="row" layout-align="space-between center">
       <div>
@@ -25,7 +25,7 @@
   <div>
     <md-card class="content-card">
       <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
-        <md-tab label="Bills ({{mismatchSummary.billCount}})" md-on-select="updateMismatches()">
+        <md-tab ng-cloak label="Bills ({{mismatchSummary.billCount}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -37,7 +37,13 @@
               <div flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
-            <div ng-repeat="mismatch in mismatches" layout="row" layout-align="space-around center">
+            <md-progress-linear class="md-accent md-hue-1" md-mode="query"
+                                ng-show="loading === true"></md-progress-linear>
+            <div dir-paginate="mismatch in mismatches | itemsPerPage: pagination.itemsPerPage"
+                 total-items="pagination.totalItems" current-page="pagination.currPage"
+                 pagination-id="bill-mismatches"
+                 layout="row" layout-align="space-around center"
+                 ng-show="loading === false">
               <div layout="row" layout-align="space-between center" flex="75">
                 <div flex="5">{{mismatch.status}}</div>
                 <div flex="10">{{mismatch.bill}}</div>
@@ -51,10 +57,13 @@
                 <md-button class="md-accent md-raised">Ignore</md-button>
               </div>
             </div>
+            <dir-pagination-controls class="text-align-center" pagination-id="bill-mismatches" boundary-links="true"
+                                     on-page-change="onPageChange(newPageNumber)" max-size="10"
+                                     ng-show="loading === false">
           </md-content>
         </md-tab>
 
-        <md-tab label="Calendars ({{mismatchSummary.calendarCount}})" md-on-select="updateMismatches()">
+        <md-tab label="Calendars ({{mismatchSummary.calendarCount}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -67,7 +76,13 @@
               <div flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
-            <div ng-repeat="mismatch in mismatches" layout="row" layout-align="space-around center">
+            <md-progress-linear class="md-accent md-hue-1" md-mode="query"
+                                ng-show="loading === true"></md-progress-linear>
+            <div dir-paginate="mismatch in mismatches | itemsPerPage: pagination.itemsPerPage"
+                 total-items="pagination.totalItems" current-page="pagination.currPage"
+                 pagination-id="calendar-mismatches"
+                 layout="row" layout-align="space-around center"
+                 ng-show="loading === false">
               <div layout="row" layout-align="space-between center" flex="75">
                 <div flex="5">{{mismatch.status}}</div>
                 <div flex="15">{{mismatch.mismatchType}}</div>
@@ -82,10 +97,13 @@
                 <md-button class="md-accent md-raised">Ignore</md-button>
               </div>
             </div>
+            <dir-pagination-controls class="text-align-center" pagination-id="calendar-mismatches" boundary-links="true"
+                                     on-page-change="onPageChange(newPageNumber)" max-size="10"
+                                     ng-show="loading === false">
           </md-content>
         </md-tab>
 
-        <md-tab label="Agendas ({{mismatchSummary.agendaCount}})" md-on-select="updateMismatches()">
+        <md-tab label="Agendas ({{mismatchSummary.agendaCount}})" md-on-select="onTabChange()">
           <md-content class="md-padding">
             <md-list>
               <md-list layout="row">
