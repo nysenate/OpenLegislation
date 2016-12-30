@@ -68,9 +68,9 @@
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
               <div flex="5" class="bold">Status</div>
-              <div flex="15" class="bold">Error</div>
-              <div flex="10" class="bold">Type</div>
               <div flex="5" class="bold">Number</div>
+              <div flex="10" class="bold">Type</div>
+              <div flex="15" class="bold">Error</div>
               <div flex="15" class="bold">Date</div>
               <div flex="10" class="bold">Issue</div>
               <div flex="15" class="bold">Source</div>
@@ -85,9 +85,9 @@
                  ng-show="loading === false">
               <div layout="row" layout-align="space-between center" flex="75">
                 <div flex="5">{{mismatch.status}}</div>
-                <div flex="15">{{mismatch.mismatchType}}</div>
-                <div flex="10">{{mismatch.calType}}</div>
                 <div flex="5">{{mismatch.calNo}}</div>
+                <div flex="10">{{mismatch.calType}}</div>
+                <div flex="15">{{mismatch.mismatchType}}</div>
                 <div flex="15">{{mismatch.date}}</div>
                 <div flex="10">{{mismatch.issue}}</div>
                 <div flex="15">{{mismatch.refType}}</div>
@@ -105,11 +105,41 @@
 
         <md-tab label="Agendas ({{mismatchSummary.agendaCount}})" md-on-select="onTabChange()">
           <md-content class="md-padding">
-            <md-list>
-              <md-list layout="row">
-                <md-list-item ng-repeat="data in agendaCategories" flex>{{data}}</md-list-item>
-              </md-list>
-            </md-list>
+            <div layout="row" layout-align="space-between center" flex="75"
+                 style="padding-bottom: 10px; padding-top: 10px">
+              <div flex="5" class="bold">Status</div>
+              <div flex="5" class="bold">Number</div>
+              <div flex="15" class="bold">Committee</div>
+              <div flex="10" class="bold">Error</div>
+              <div flex="15" class="bold">Date</div>
+              <div flex="10" class="bold">Issue</div>
+              <div flex="15" class="bold">Source</div>
+            </div>
+            <md-divider></md-divider>
+            <md-progress-linear class="md-accent md-hue-1" md-mode="query"
+                                ng-show="loading === true"></md-progress-linear>
+            <div dir-paginate="mismatch in mismatches | itemsPerPage: pagination.itemsPerPage"
+                 total-items="pagination.totalItems" current-page="pagination.currPage"
+                 pagination-id="agenda-mismatches"
+                 layout="row" layout-align="space-around center"
+                 ng-show="loading === false">
+              <div layout="row" layout-align="space-between center" flex="75">
+                <div flex="5">{{mismatch.status}}</div>
+                <div flex="5">{{mismatch.agendaNo}}</div>
+                <div flex="15">{{mismatch.committee}}</div>
+                <div flex="10">{{mismatch.mismatchType}}</div>
+                <div flex="15">{{mismatch.date}}</div>
+                <div flex="10">{{mismatch.issue}}</div>
+                <div flex="15">{{mismatch.refType}}</div>
+              </div>
+              <div layout="row" layout-align="space-around center" flex="25">
+                <md-button class="md-raised">Diff</md-button>
+                <md-button class="md-accent md-raised">Ignore</md-button>
+              </div>
+            </div>
+            <dir-pagination-controls class="text-align-center" pagination-id="agenda-mismatches" boundary-links="true"
+                                     on-page-change="onPageChange(newPageNumber)" max-size="10"
+                                     ng-show="loading === false">
           </md-content>
         </md-tab>
       </md-tabs>

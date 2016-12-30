@@ -41,22 +41,13 @@ function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckM
     $scope.updateMismatches = function () {
         $scope.loading = true;
         $scope.mismatches = [];
-        switch (contentTypes[$scope.selectedTab]) {
-            case 'BILL':
-                getBillMismatches($scope.datasource.selected.value, toMismatchStatus($scope.status),
-                    $scope.pagination.getLimit(), $scope.pagination.getOffset());
-                break;
-            case 'CALENDAR':
-                getCalendarMismatches($scope.datasource.selected.value, toMismatchStatus($scope.status),
-                    $scope.pagination.getLimit(), $scope.pagination.getOffset());
-                break;
-            case 'AGENDA':
-                console.log("agenda");
-                break;
-            default:
-                console.log("default");
-                break;
-        }
+        spotcheckMismatchApi.getMismatches($scope.datasource.selected.value, contentTypes[$scope.selectedTab],
+            toMismatchStatus($scope.status), $scope.pagination.getLimit(), $scope.pagination.getOffset())
+            .then(function (result) {
+                $scope.pagination.setTotalItems(result.pagination.total);
+                $scope.mismatches = result.mismatches;
+                $scope.loading = false;
+            });
 
         /**
          * Returns array of mismatch statuses corresponding to the selected status.
@@ -68,24 +59,6 @@ function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckM
             return [status];
         }
     };
-
-    function getBillMismatches(datasource, statuses, limit, offset) {
-        spotcheckMismatchApi.getBills(datasource, statuses, limit, offset)
-            .then(function (results) {
-                $scope.pagination.setTotalItems(results.pagination.total);
-                $scope.mismatches = results.mismatches;
-                $scope.loading = false;
-            });
-    }
-
-    function getCalendarMismatches(datasource, statuses, limit, offset) {
-        spotcheckMismatchApi.getCalendars(datasource, statuses, limit, offset)
-            .then(function (results) {
-                $scope.pagination.setTotalItems(results.pagination.total);
-                $scope.mismatches = results.mismatches;
-                $scope.loading = false;
-            })
-    }
 
     $scope.formatDate = function (date) {
         return date.format(dateFormat);

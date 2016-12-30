@@ -17,6 +17,7 @@ function mismatchSummaryApi($resource) {
     }
 
     // TODO: add date as parameter
+    // TODO: Add API filter for mismatchStatus so content type counts can be updated for the selected mismatch statuses.
     function get(datasource) {
         return mismatchSummaryApi.get({datasource: datasource}).$promise
             .then(createSummary)
