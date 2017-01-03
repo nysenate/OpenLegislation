@@ -8,15 +8,15 @@
     </div>
     <div layout="row" layout-align="space-between center">
       <div>
-        <select ng-model="datasource.selected" ng-change="updateMismatches()"
+        <select ng-model="datasource.selected" ng-change="onDatasourceChange()"
                 ng-options="datasource as datasource.label for datasource in datasource.values"></select>
       </div>
 
       <div>
         <select ng-model="status" ng-change="updateMismatches()">
-          <option value="OPEN">Open Issues ({{mismatchSummary.openCount}})</option>
-          <option value="NEW">New Issues ({{mismatchSummary.newCount}})</option>
-          <option value="RESOLVED">Resolved Issues ({{mismatchSummary.resolvedCount}})</option>
+          <option value="OPEN">Open Issues ({{summaryResponse.summary.openCount}})</option>
+          <option value="NEW">New Issues ({{summaryResponse.summary.newCount}})</option>
+          <option value="RESOLVED">Resolved Issues ({{summaryResponse.summary.resolvedCount}})</option>
         </select>
       </div>
     </div>
@@ -25,7 +25,7 @@
   <div>
     <md-card class="content-card">
       <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
-        <md-tab ng-cloak label="Bills ({{mismatchSummary.billCount}})" md-on-select="onTabChange()">
+        <md-tab ng-cloak label="Bills ({{summaryResponse.summary.billCount}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -38,8 +38,13 @@
             </div>
             <md-divider></md-divider>
             <md-progress-linear class="md-accent md-hue-1" md-mode="query"
-                                ng-show="loading === true"></md-progress-linear>
-            <div dir-paginate="mismatch in mismatches | itemsPerPage: pagination.itemsPerPage"
+                                ng-show="loading === true">
+            </md-progress-linear>
+            <md-subheader ng-show="loading === false && pagination.totalItems === 0" class="margin-10 md-warn">
+              <h3>No mismatches were found</h3>
+              <h3 ng-show="mismatchResponse.error === true" class="new-error">{{mismatchResponse.errorMessage}}</h3>
+            </md-subheader>
+            <div dir-paginate="mismatch in mismatchResponse.mismatches | itemsPerPage: pagination.itemsPerPage"
                  total-items="pagination.totalItems" current-page="pagination.currPage"
                  pagination-id="bill-mismatches"
                  layout="row" layout-align="space-around center"
@@ -63,7 +68,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Calendars ({{mismatchSummary.calendarCount}})" md-on-select="onTabChange()">
+        <md-tab label="Calendars ({{summaryResponse.summary.calendarCount}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -78,7 +83,11 @@
             <md-divider></md-divider>
             <md-progress-linear class="md-accent md-hue-1" md-mode="query"
                                 ng-show="loading === true"></md-progress-linear>
-            <div dir-paginate="mismatch in mismatches | itemsPerPage: pagination.itemsPerPage"
+            <md-subheader ng-show="loading === false && pagination.totalItems === 0" class="margin-10 md-warn">
+              <h3>No mismatches were found</h3>
+              <h3 ng-show="mismatchResponse.error === true" class="new-error">{{mismatchResponse.errorMessage}}</h3>
+            </md-subheader>
+            <div dir-paginate="mismatch in mismatchResponse.mismatches | itemsPerPage: pagination.itemsPerPage"
                  total-items="pagination.totalItems" current-page="pagination.currPage"
                  pagination-id="calendar-mismatches"
                  layout="row" layout-align="space-around center"
@@ -103,7 +112,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Agendas ({{mismatchSummary.agendaCount}})" md-on-select="onTabChange()">
+        <md-tab label="Agendas ({{summaryResponse.summary.agendaCount}})" md-on-select="onTabChange()">
           <md-content class="md-padding">
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -117,8 +126,13 @@
             </div>
             <md-divider></md-divider>
             <md-progress-linear class="md-accent md-hue-1" md-mode="query"
-                                ng-show="loading === true"></md-progress-linear>
-            <div dir-paginate="mismatch in mismatches | itemsPerPage: pagination.itemsPerPage"
+                                ng-show="loading === true">
+            </md-progress-linear>
+            <md-subheader ng-show="loading === false && pagination.totalItems === 0" class="margin-10 md-warn">
+              <h3>No mismatches were found</h3>
+              <h3 ng-show="mismatchResponse.error === true" class="new-error">{{mismatchResponse.errorMessage}}</h3>
+            </md-subheader>
+            <div dir-paginate="mismatch in mismatchResponse.mismatches | itemsPerPage: pagination.itemsPerPage"
                  total-items="pagination.totalItems" current-page="pagination.currPage"
                  pagination-id="agenda-mismatches"
                  layout="row" layout-align="space-around center"

@@ -5,7 +5,7 @@ angular.module('open.spotcheck')
 function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckMismatchApi, mismatchSummaryApi) {
 
     const dateFormat = 'YYYY-MM-DD';
-    /** Used to look up content types corresponding to tab indexes. */
+    /** Used to look up content types corresponding to the selected tab. */
     const contentTypes = ['BILL', 'CALENDAR', 'AGENDA'];
 
     $scope.datasource = {
@@ -24,12 +24,24 @@ function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckM
     $scope.status = 'OPEN'; // Show all open issues by default.
     $scope.selectedTab = 0; // Select Bills tab by default.
     $scope.date = {};
-    $scope.mismatchSummary = {};
-    $scope.mismatches = [];
-    $scope.loading = false;
+    $scope.loading = false; // TODO remove this using promises?
     $scope.pagination = angular.extend({}, paginationModel);
 
-    $scope.onPageChange = function (pageNum) {
+    $scope.mismatchResponse = {
+        mismatches: [],
+        error: false,
+        errorMessage: ''
+    };
+
+    $scope.summaryResponse = {
+        summary: {},
+        error: false,
+        errorMessage: ''
+    };
+
+    $scope.onDatasourceChange = function () {
+        resetPagination();
+        $scope.updateMismatchSummary();
         $scope.updateMismatches();
     };
 
@@ -38,15 +50,37 @@ function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckM
         $scope.updateMismatches();
     };
 
+    $scope.onPageChange = function (pageNum) {
+        $scope.updateMismatches();
+    };
+
+    $scope.updateMismatchSummary = function () {
+        $scope.summaryResponse.error = false;
+        mismatchSummaryApi.get($scope.datasource.selected.value)
+            .then(function (mismatchSummary) {
+                $scope.summaryResponse.summary = mismatchSummary;
+            })
+            .catch(function (response) {
+                $scope.summaryResponse.error = true;
+                $scope.summaryResponse.errorMessage = response.statusText;
+            });
+    };
+
     $scope.updateMismatches = function () {
         $scope.loading = true;
-        $scope.mismatches = [];
+        $scope.mismatchResponse.error = false;
+        $scope.mismatchResponse.mismatches = [];
         spotcheckMismatchApi.getMismatches($scope.datasource.selected.value, contentTypes[$scope.selectedTab],
             toMismatchStatus($scope.status), $scope.pagination.getLimit(), $scope.pagination.getOffset())
             .then(function (result) {
                 $scope.pagination.setTotalItems(result.pagination.total);
-                $scope.mismatches = result.mismatches;
+                $scope.mismatchResponse.mismatches = result.mismatches;
                 $scope.loading = false;
+            })
+            .catch(function (response) {
+                $scope.loading = false;
+                $scope.mismatchResponse.error = true;
+                $scope.mismatchResponse.errorMessage = response.statusText;
             });
 
         /**
@@ -67,15 +101,10 @@ function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckM
     function resetPagination() {
         $scope.pagination.reset();
         $scope.pagination.setTotalItems(0);
-    }
-
-    function onDateChange() {
-        $location.search('date', $scope.date.format(dateFormat)).replace();
-    }
-
-    $scope.init = function () {
         $scope.pagination.itemsPerPage = 10;
-        // Init Date
+    }
+
+    function initializeDate() {
         if ($routeParams.hasOwnProperty('date')) {
             $scope.date = moment($routeParams.date, dateFormat);
         }
@@ -83,19 +112,20 @@ function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckM
             $scope.date = moment().startOf('day');
             onDateChange();
         }
+    }
 
-        // Init Datasource
+    function onDateChange() {
+        $location.search('date', $scope.date.format(dateFormat)).replace();
+    }
+
+    $scope.init = function () {
+        resetPagination();
+        initializeDate();
         $scope.datasource.selected = $scope.datasource.values[0];
-
-        // Init Summary
-        mismatchSummaryApi.get($scope.datasource.selected.value)
-            .then(function (mismatchSummary) {
-                $scope.mismatchSummary = mismatchSummary;
-            });
-
-        // Init Mismatches
+        $scope.updateMismatchSummary();
         $scope.updateMismatches();
     };
 
     $scope.init();
+
 }
