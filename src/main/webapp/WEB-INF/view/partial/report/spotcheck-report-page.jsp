@@ -53,7 +53,7 @@
                 <div flex="5">{{mismatch.status}}</div>
                 <div flex="10">{{mismatch.bill}}</div>
                 <div flex="15">{{mismatch.mismatchType}}</div>
-                <div flex="20">{{mismatch.date}}</div>
+                <div flex="20">{{mismatch.observedDate}}</div>
                 <div flex="10">{{mismatch.issue}}</div>
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
@@ -97,7 +97,7 @@
                 <div flex="5">{{mismatch.calNo}}</div>
                 <div flex="10">{{mismatch.calType}}</div>
                 <div flex="15">{{mismatch.mismatchType}}</div>
-                <div flex="15">{{mismatch.date}}</div>
+                <div flex="15">{{mismatch.observedDate}}</div>
                 <div flex="10">{{mismatch.issue}}</div>
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
@@ -142,7 +142,7 @@
                 <div flex="5">{{mismatch.agendaNo}}</div>
                 <div flex="15">{{mismatch.committee}}</div>
                 <div flex="10">{{mismatch.mismatchType}}</div>
-                <div flex="15">{{mismatch.date}}</div>
+                <div flex="15">{{mismatch.observedDate}}</div>
                 <div flex="10">{{mismatch.issue}}</div>
                 <div flex="15">{{mismatch.refType}}</div>
               </div>

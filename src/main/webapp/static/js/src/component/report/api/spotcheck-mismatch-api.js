@@ -42,7 +42,7 @@ function spotcheckMismatchApi($resource) {
         return {
             status: parseStatus(mismatch),
             mismatchType: parseMismatchType(mismatch),
-            date: parseDate(observation),
+            observedDate: parseDate(observation),
             issue: parseIssues(mismatch),
             refType: parseRefType(observation),
             bill: parseBill(observation),
@@ -58,7 +58,7 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseDate(observation) {
-        return moment(observation.refDateTime).format(DATE_FORMAT);
+        return moment(observation.observedDateTime).format(DATE_FORMAT);
     }
 
     function parseRefType(observation) {
