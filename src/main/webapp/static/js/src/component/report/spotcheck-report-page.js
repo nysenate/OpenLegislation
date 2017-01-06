@@ -70,8 +70,9 @@ function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckM
         $scope.loading = true;
         $scope.mismatchResponse.error = false;
         $scope.mismatchResponse.mismatches = [];
-        spotcheckMismatchApi.getMismatches($scope.datasource.selected.value, contentTypes[$scope.selectedTab],
-            toMismatchStatus($scope.status), $scope.pagination.getLimit(), $scope.pagination.getOffset())
+        spotcheckMismatchApi.getMismatches($scope.datasource.selected.value, selectedContentType(),
+            toMismatchStatus($scope.status), $scope.date.endOf('day').format(isoFormat),
+            $scope.pagination.getLimit(), $scope.pagination.getOffset())
             .then(function (result) {
                 $scope.pagination.setTotalItems(result.pagination.total);
                 $scope.mismatchResponse.mismatches = result.mismatches;
@@ -117,6 +118,21 @@ function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckM
     function onDateChange() {
         $location.search('date', $scope.date.format(dateFormat)).replace();
     }
+
+    function selectedContentType() {
+        return contentTypes[$scope.selectedTab];
+    }
+
+    /**
+     * Updates the total mismatch count of each content type's tab
+     * for the selected mismatch status.
+     */
+    $scope.getSummaryCountForContentType = function (contentType) {
+        if ($scope.summaryResponse.summary[contentType] == null) {
+            return '';
+        }
+        return $scope.summaryResponse.summary[contentType][$scope.status] || '';
+    };
 
     $scope.init = function () {
         resetPagination();

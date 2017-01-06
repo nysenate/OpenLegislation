@@ -13,10 +13,10 @@
       </div>
 
       <div>
-        <select ng-model="status" ng-change="updateMismatches()">
-          <option value="OPEN">Open Issues ({{summaryResponse.summary.openCount}})</option>
-          <option value="NEW">New Issues ({{summaryResponse.summary.newCount}})</option>
-          <option value="RESOLVED">Resolved Issues ({{summaryResponse.summary.resolvedCount}})</option>
+        <select ng-model="status" ng-change="onStatusChange()">
+          <option value="OPEN">Open Issues ({{summaryResponse.summary.OPEN}})</option>
+          <option value="NEW">New Issues ({{summaryResponse.summary.NEW}})</option>
+          <option value="RESOLVED">Resolved Issues ({{summaryResponse.summary.RESOLVED}})</option>
         </select>
       </div>
     </div>
@@ -25,7 +25,7 @@
   <div>
     <md-card class="content-card">
       <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
-        <md-tab ng-cloak label="Bills ({{summaryResponse.summary.billCount}})" md-on-select="onTabChange()">
+        <md-tab ng-cloak label="Bills ({{getSummaryCountForContentType('BILL')}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -68,7 +68,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Calendars ({{summaryResponse.summary.calendarCount}})" md-on-select="onTabChange()">
+        <md-tab label="Calendars ({{getSummaryCountForContentType('CALENDAR')}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -112,7 +112,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Agendas ({{summaryResponse.summary.agendaCount}})" md-on-select="onTabChange()">
+        <md-tab label="Agendas ({{getSummaryCountForContentType('AGENDA')}})" md-on-select="onTabChange()">
           <md-content class="md-padding">
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">

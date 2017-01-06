@@ -5,51 +5,64 @@ function mismatchSummaryApi($resource) {
 
     var mismatchSummaryApi = $resource(adminApiPath + "/spotcheck/:datasource/open-mismatches/summary", {datasource: '@datasource'});
 
-    function MismatchSummary(openCount, newCount, existingCount, resolvedCount,
-                             billCount, calendarCount, agendaCount) {
-        this.openCount = openCount;
-        this.newCount = newCount;
-        this.existingCount = existingCount;
-        this.resolvedCount = resolvedCount;
-        this.billCount = billCount;
-        this.calendarCount = calendarCount;
-        this.agendaCount = agendaCount;
-    }
-
-    // TODO: add date as parameter
     // TODO: Add API filter for mismatchStatus so content type counts can be updated for the selected mismatch statuses.
-    function get(datasource) {
-        return mismatchSummaryApi.get({datasource: datasource}).$promise
+    /**
+     * @param datasource
+     * @param date An ISO date time string. Returns summary data for mismatches observed before this date time.
+     */
+    function get(datasource, date) {
+        return mismatchSummaryApi.get({datasource: datasource, observedBefore: date}).$promise
             .then(createSummary)
     }
 
-    // TODO: ResolvedCount is not tested.
+    // TODO: ResolvedCount not in API response.
     function createSummary(response) {
-        var openCount = 0;
-        var newCount = 0;
-        var existingCount = 0;
-        var resolvedCount = 0;
-        var billCount = 0;
-        var calendarCount = 0;
-        var agendaCount = 0;
+        console.log(response);
+        var summary = {
+            NEW: 0,
+            EXISTING: 0,
+            OPEN: 0,
+            BILL: {
+                NEW: 0,
+                EXISTING: 0,
+                OPEN: 0
+            },
+            CALENDAR: {
+                NEW: 0,
+                EXISTING: 0,
+                OPEN: 0
+            },
+            AGENDA: {
+                NEW: 0,
+                EXISTING: 0,
+                OPEN: 0
+            }
+        };
         angular.forEach(response.result.summaryMap, function (refType) {
-            openCount += refType.openMismatches;
-            newCount += refType.mismatchStatuses.NEW || 0;
-            existingCount += refType.mismatchStatuses.EXISTING || 0;
-            resolvedCount += refType.mismatchStatuses.RESOLVED || 0;
-            billCount += countsForContentType('BILL', refType);
-            calendarCount += countsForContentType('CALENDAR', refType);
-            agendaCount += countsForContentType('AGENDA', refType);
+            summary.NEW += refType.mismatchStatuses.NEW || 0;
+            summary.EXISTING += refType.mismatchStatuses.EXISTING || 0;
+            summary.OPEN += refType.openMismatches || 0;
+            switch (referenceContentTypeMap[refType.refType]) {
+                case "BILL":
+                    summary.BILL.NEW += refType.mismatchStatuses.NEW || 0;
+                    summary.BILL.EXISTING += refType.mismatchStatuses.EXISTING || 0;
+                    summary.BILL.OPEN += refType.openMismatches || 0;
+                    break;
+                case "CALENDAR":
+                    summary.CALENDAR.NEW += refType.mismatchStatuses.NEW || 0;
+                    summary.CALENDAR.EXISTING += refType.mismatchStatuses.EXISTING || 0;
+                    summary.CALENDAR.OPEN += refType.openMismatches || 0;
+                    break;
+                case "AGENDA":
+                    summary.AGENDA.NEW += refType.mismatchStatuses.NEW || 0;
+                    summary.AGENDA.EXISTING += refType.mismatchStatuses.EXISTING || 0;
+                    summary.AGENDA.OPEN += refType.openMismatches || 0;
+                    break;
+                default:
+                    break;
+            }
         });
-        return new MismatchSummary(openCount, newCount, existingCount, resolvedCount,
-            billCount, calendarCount, agendaCount);
-    }
-
-    function countsForContentType(contentType, referenceNode) {
-        if (referenceContentTypeMap[referenceNode.refType] === contentType) {
-            return referenceNode.openMismatches;
-        }
-        return 0;
+        return summary;
     }
 
     return {
