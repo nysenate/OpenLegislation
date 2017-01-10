@@ -1,8 +1,10 @@
 angular.module('open.spotcheck')
     .controller('SpotcheckReportCtrl',
-        ['$scope', '$location', '$routeParams', 'PaginationModel', 'SpotcheckMismatchApi', 'SpotcheckMismatchSummaryApi', ReportCtrl]);
+        ['$scope', '$location', '$routeParams', '$mdDialog', 'PaginationModel', 'SpotcheckMismatchApi',
+            'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI', ReportCtrl]);
 
-function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckMismatchApi, mismatchSummaryApi) {
+function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel, spotcheckMismatchApi,
+                    mismatchSummaryApi, mismatchIgnoreApi) {
 
     const dateFormat = 'YYYY-MM-DD';
     /** Used to look up content types corresponding to the selected tab. */
@@ -103,6 +105,29 @@ function ReportCtrl($scope, $location, $routeParams, paginationModel, spotcheckM
         $scope.pagination.reset();
         $scope.pagination.setTotalItems(0);
         $scope.pagination.itemsPerPage = 10;
+    }
+
+    $scope.confirmIgnoreMismatch = function (mismatch) {
+        var confirm = $mdDialog.confirm()
+            .title("Ignore mismatch?")
+            .ok('Yes')
+            .cancel('No');
+
+        $mdDialog.show(confirm).then(function() {
+            ignoreMismatch(mismatch);
+        })
+    };
+
+    function ignoreMismatch(mismatch) {
+        var params = {
+            dataSource: $scope.datasource.selected.value,
+            contentType: selectedContentType(),
+            mismatchId: mismatch.id,
+            ignoreLevel: 'IGNORE_PERMANENTLY'
+        };
+        mismatchIgnoreApi.save(params, function (response) {
+            updateMismatches();
+        })
     }
 
     function initializeDate() {

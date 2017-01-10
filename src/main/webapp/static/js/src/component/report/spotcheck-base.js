@@ -26,9 +26,13 @@ spotcheckModule.factory('SpotcheckOpenMismatchSummaryAPI', ['$resource', functio
     return $resource(adminApiPath + "/spotcheck/open-mismatches/summary");
 }]);
 
-spotcheckModule.factory('SpotcheckMismatchIgnoreAPI', ['$resource', function ($resource) {
-    return $resource(adminApiPath + "/spotcheck/mismatch/:mismatchId/ignore",
-        {mismatchId: '@mismatchId', ignoreLevel: '@ignoreLevel'});
+spotcheckModule.factory('SpotcheckMismatchIgnoreAPI', ['$resource', function($resource){
+    return $resource(adminApiPath + "/spotcheck/:dataSource/:contentType/mismatch/:mismatchId/ignore", {
+        dataSource: '@dataSource',
+        contentType: '@contentType',
+        mismatchId: '@mismatchId',
+        ignoreLevel: '@ignoreLevel'
+    });
 }]);
 
 spotcheckModule.factory('SpotcheckMismatchTrackingAPI', ['$resource', function ($resource) {

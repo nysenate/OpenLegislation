@@ -59,7 +59,7 @@
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised">Diff</md-button>
-                <md-button class="md-accent md-raised">Ignore</md-button>
+                <md-button class="md-accent md-raised" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="bill-mismatches" boundary-links="true"
@@ -103,7 +103,7 @@
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised">Diff</md-button>
-                <md-button class="md-accent md-raised">Ignore</md-button>
+                <md-button class="md-accent md-raised" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="calendar-mismatches" boundary-links="true"
@@ -148,7 +148,7 @@
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised">Diff</md-button>
-                <md-button class="md-accent md-raised">Ignore</md-button>
+                <md-button class="md-accent md-raised" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="agenda-mismatches" boundary-links="true"
