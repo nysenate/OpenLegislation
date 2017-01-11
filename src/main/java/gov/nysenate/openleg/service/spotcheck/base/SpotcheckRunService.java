@@ -16,7 +16,7 @@ import gov.nysenate.openleg.service.spotcheck.calendar.IntervalCalendarReportSer
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
 import gov.nysenate.openleg.service.spotcheck.senatesite.agenda.AgendaReportServices;
 import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillReportService;
-import gov.nysenate.openleg.service.spotcheck.senatesite.calendar.CalendarReportServices;
+import gov.nysenate.openleg.service.spotcheck.senatesite.calendar.SenateSiteCalendarReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class SpotcheckRunService {
 
     /** Nysenate.gov Report Services */
     @Autowired private BillReportService senSiteBillReportService;
-    @Autowired private CalendarReportServices senSiteCalReportService;
+    @Autowired private SenateSiteCalendarReportService senSiteCalReportService;
     @Autowired private AgendaReportServices senSiteAgendaReportService;
 
     @PostConstruct

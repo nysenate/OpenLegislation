@@ -6,10 +6,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -79,6 +76,22 @@ public class Calendar extends BaseLegislativeContent
         else {
             return null;
         }
+    }
+
+    /**
+     * @return {@link List<CalendarEntryListId>} - entry list ids for each active list and supplemental
+     */
+    public Set<CalendarEntryListId> getEntryListIds() {
+        Set<CalendarEntryListId> entryListIds = new HashSet<>();
+        supplementalMap.values().stream()
+                .map(CalendarSupplemental::getCalendarSupplementalId)
+                .map(CalendarEntryListId::new)
+                .forEach(entryListIds::add);
+        activeListMap.values().stream()
+                .map(CalendarActiveList::getCalendarActiveListId)
+                .map(CalendarEntryListId::new)
+                .forEach(entryListIds::add);
+        return entryListIds;
     }
 
     /** --- Overrides --- */

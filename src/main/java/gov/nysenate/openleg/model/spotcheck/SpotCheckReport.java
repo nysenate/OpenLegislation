@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
+
 /**
  * A SpotCheckReport is basically a collection of observations that have 1 or more mismatches associated
  * within them. The ContentKey is templated to allow for reports on specific content types.
@@ -174,6 +177,28 @@ public class SpotCheckReport<ContentKey>
      */
     public Set<ContentKey> getCheckedKeys() {
         return this.getObservations().values().stream().map(SpotCheckObservation::getKey).collect(Collectors.toSet());
+    }
+
+    /**
+     * Add an observation to the report indicating that content is missing from the reference data
+     * @param missingKey ContentKey - id of the missing data
+     */
+    public void addRefMissingObs(ContentKey missingKey) {
+        SpotCheckObservation<ContentKey> observation =
+                new SpotCheckObservation<>(reportId.getReferenceId(), missingKey);
+        observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, missingKey, ""));
+        this.addObservation(observation);
+    }
+
+    /**
+     * Add an observation to the report indicating that content is missing from Openleg data
+     * @param missingKey ContentKey - id of the missing data
+     */
+    public void addObservedDataMissingObs(ContentKey missingKey) {
+        SpotCheckObservation<ContentKey> observation =
+                new SpotCheckObservation<>(reportId.getReferenceId(), missingKey);
+        observation.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, "", missingKey));
+        this.addObservation(observation);
     }
 
     /** --- Delegates --- */

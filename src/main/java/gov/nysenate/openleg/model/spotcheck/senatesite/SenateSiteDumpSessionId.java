@@ -74,4 +74,8 @@ public class SenateSiteDumpSessionId extends SenateSiteDumpId implements Seriali
     public SessionYear getSession() {
         return session;
     }
+
+    public LocalDateTime getDumpTime() {
+        return dumpTime;
+    }
 }

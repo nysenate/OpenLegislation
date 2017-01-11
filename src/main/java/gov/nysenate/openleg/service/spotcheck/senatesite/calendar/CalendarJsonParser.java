@@ -40,7 +40,7 @@ public class CalendarJsonParser extends JsonParser {
                 .collect(Collectors.toList());
     }
 
-    private List<SenateSiteCalendar> extractCalendarsFromFragment(SenateSiteDumpFragment fragment) throws ParseError{
+    private List<SenateSiteCalendar> extractCalendarsFromFragment(SenateSiteDumpFragment fragment) throws ParseError {
         try {
             JsonNode calendarMap = objectMapper.readTree(fragment.getFragmentFile())
                     .path("nodes");
@@ -50,7 +50,11 @@ public class CalendarJsonParser extends JsonParser {
             }
             List<SenateSiteCalendar> calendars = new LinkedList<>();
             for (JsonNode calendarNode : calendarMap) {
-                calendars.add(extractSenSiteCalendar(calendarNode, fragment));
+                CalendarId calendarId = getCalendarId(calendarNode);
+                for (JsonNode subCalNode : calendarNode.path("field_ol_cal")) {
+                    JsonNode subCalNodeValue = subCalNode.elements().next().path("value");
+                    calendars.add(extractSenSiteCalendar(subCalNodeValue, calendarId, fragment));
+                }
             }
             return calendars;
         } catch (IOException | NoSuchElementException ex) {
@@ -60,17 +64,18 @@ public class CalendarJsonParser extends JsonParser {
         }
     }
 
-    private SenateSiteCalendar extractSenSiteCalendar(JsonNode calendarNode, SenateSiteDumpFragment fragment) throws IOException {
+    private SenateSiteCalendar extractSenSiteCalendar(JsonNode subCalNode, CalendarId calendarId,
+                                                      SenateSiteDumpFragment fragment) throws IOException {
         SenateSiteCalendar calendar = new SenateSiteCalendar(DateUtils.endOfDateTimeRange(fragment.getDumpId().getRange()));
 
-        calendar.setBillCalNumbers(getIntListValue(calendarNode, "field_ol_bill_cal_number"));
-        calendar.setCalendarType(getCalendarType(getValue(calendarNode,"field_ol_type")));
-        calendar.setSequenceNo(getIntValue(calendarNode,"field_ol_sequence_no"));
-        calendar.setVersion(getVersion(getValue(calendarNode,"field_ol_version")));
-        calendar.setCalendarId(getCalendarId(calendarNode,"calendar_id"));
+        calendar.setBillCalNumbers(getIntListValue(subCalNode, "field_ol_bill_cal_number"));
+        calendar.setCalendarType(getCalendarType(getValue(subCalNode,"field_ol_type")));
+        calendar.setSequenceNo(getIntValue(subCalNode,"field_ol_sequence_no"));
+        calendar.setVersion(getVersion(getValue(subCalNode,"field_ol_version")));
+        calendar.setCalendarId(calendarId);
         TypeReference<List<String>> listTypeReference = new TypeReference<List<String>>() {};
-        Optional<List<String>> value = deserializeValue(calendarNode,"field_ol_bill",listTypeReference);
-        calendar.setBill(getBillId(value.orElse(Collections.emptyList()), calendar.getCalendarId().getYear()));
+        List<String> printNos = getStringListValue(subCalNode, "field_ol_bill");
+        calendar.setBill(getBillId(printNos, calendar.getCalendarId().getYear()));
 
        return calendar;
     }
@@ -91,9 +96,9 @@ public class CalendarJsonParser extends JsonParser {
         return billId;
     }
 
-    private CalendarId getCalendarId(JsonNode calendarNode, String fieldName){
-        TypeReference<CalendarIdView> calendarIdType = new TypeReference<CalendarIdView>() {};
-        Optional<CalendarIdView> calendarIdViews = deserializeValue(calendarNode, fieldName, calendarIdType);
-        return calendarIdViews.map(CalendarIdView::toCalendarId).orElseThrow(() -> new ParseError("no calendarID"));
+    private CalendarId getCalendarId(JsonNode calendarNode){
+        int calendarYear = getIntValue(calendarNode, "field_ol_year");
+        int calendarNo = getIntValue(calendarNode, "field_ol_cal_no");
+        return new CalendarId(calendarNo, calendarYear);
     }
 }

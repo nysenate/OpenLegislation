@@ -16,12 +16,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckDataSource.*;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckDataSource.NYSENATE;
 
 /**
  * Parses a {@link SenateSiteDumpFragment} from a json String and {@link SpotCheckRefType}.
@@ -90,7 +88,7 @@ public class SenateSiteDumpFragParser {
     private static final ImmutableMap<SpotCheckContentType, SpotCheckRefType> refTypeMap =
             Maps.uniqueIndex(
                     EnumSet.allOf(SpotCheckRefType.class).stream()
-                            .filter(refType -> NYSENATE_DOT_GOV.equals(refType.getDataSource()))
+                            .filter(refType -> NYSENATE.equals(refType.getDataSource()))
                             .collect(Collectors.toList()),
                     SpotCheckRefType::getContentType
             );

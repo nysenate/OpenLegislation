@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Created by PKS on 2/25/16.
@@ -61,38 +62,31 @@ public class JsonParser {
     }
 
     protected List<String> getStringListValue(JsonNode parentNode, String fieldName){
-        JsonNode undNode = parentNode.path(fieldName).path("und");
-        if(!undNode.isArray() || !undNode.elements().hasNext()){
-            return null;
-        }
-        List<String> stringList = new ArrayList<String>();
-        Iterator<JsonNode> iterator = undNode.elements();
-        for (JsonNode node : undNode)
-        {
-            JsonNode valueNode = node.path("value");
-            if (!valueNode.isNull()) {
-                stringList.add(valueNode.asText());
-            }
-        }
-        return stringList;
+        return getListValue(parentNode, fieldName, JsonNode::asText);
     }
 
     protected List<Integer> getIntListValue(JsonNode parentNode, String fieldName){
+        return getListValue(parentNode, fieldName, JsonNode::asInt);
+    }
+
+    protected <T> List<T> getListValue(JsonNode parentNode, String fieldName,
+                                       Function<JsonNode, T> valMapper) {
         JsonNode undNode = parentNode.path(fieldName).path("und");
         if(!undNode.isArray() || !undNode.elements().hasNext()){
-            return null;
+            return new ArrayList<>();
         }
-        List<Integer> integerList = new ArrayList<Integer>();
-        Iterator<JsonNode> iterator = undNode.elements();
+
+        List<T> valueList = new ArrayList<>();
         for (JsonNode node : undNode)
         {
             JsonNode valueNode = node.path("value");
             if (!valueNode.isNull()) {
-                integerList.add(valueNode.asInt());
+                valueList.add(valMapper.apply(valueNode));
             }
         }
-        return integerList;
+        return valueList;
     }
+
 
     protected boolean getBooleanValue(JsonNode parentNode, String fieldName) {
         String rawValue = getValue(parentNode, fieldName);
