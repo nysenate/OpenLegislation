@@ -62,7 +62,7 @@ public class SenateSiteCalendarReportService extends BaseSpotCheckReportService<
     public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         SenateSiteDump calendarDump = getMostRecentDump();
         SenateSiteDumpSessionId dumpId = (SenateSiteDumpSessionId) calendarDump.getDumpId();
-        SpotCheckReportId reportId = new SpotCheckReportId(SENATE_SITE_CALENDAR, dumpId.getDumpTime());
+        SpotCheckReportId reportId = new SpotCheckReportId(SENATE_SITE_CALENDAR, dumpId.getDumpTime(), LocalDateTime.now());
         SpotCheckReport<CalendarEntryListId> report = new SpotCheckReport<>(reportId);
         report.setNotes(dumpId.getNotes());
         try {
