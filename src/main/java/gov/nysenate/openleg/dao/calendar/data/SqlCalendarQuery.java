@@ -46,9 +46,10 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     /** --- Calendar Supplemental --- */
 
     SELECT_CALENDAR_SUPS_BY_YEAR(
-        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " sup" + "\n" +
-        "   JOIN ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + " ent" + "\n" +
-        "       ON sup.id = ent.calendar_sup_id" + "\n" +
+        "SELECT sup.id AS sup_id, ent.id AS ent_id, * \n" +
+        "FROM ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " sup" + "\n" +
+        "LEFT JOIN ${schema}." + SqlTable.CALENDAR_SUP_ENTRY + " ent" + "\n" +
+        "  ON sup.id = ent.calendar_sup_id" + "\n" +
         "WHERE calendar_year = :year"
     ),
     SELECT_CALENDAR_SUP_IDS(
@@ -106,9 +107,10 @@ public enum SqlCalendarQuery implements BasicSqlQuery
     /** --- Calendar Active List --- */
 
     SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR(
-        "SELECT * FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + " al" + "\n" +
-        "   JOIN ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST_ENTRY + " ent" + "\n" +
-        "       ON al.id = ent.calendar_active_list_id" + "\n" +
+        "SELECT al.id AS al_id, calendar_active_list_id AS ent_id, *\n" +
+        "FROM ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST + " al" + "\n" +
+        "LEFT JOIN ${schema}." + SqlTable.CALENDAR_ACTIVE_LIST_ENTRY + " ent" + "\n" +
+        "  ON al.id = ent.calendar_active_list_id" + "\n" +
         "WHERE calendar_year = :year"
     ),
     SELECT_CALENDAR_ACTIVE_LISTS_BY_YEAR_COUNT(

@@ -579,7 +579,7 @@ COMMENT ON TABLE active_list_reference IS 'Table containing spotcheck report for
 
 CREATE TABLE active_list_reference_entry (
     active_list_reference_id smallint NOT NULL,
-    bill_calendar_no smallint NOT NULL,
+    bill_calendar_no integer NOT NULL,
     bill_print_no text,
     bill_amend_version character(1),
     bill_session_year smallint,
@@ -1116,7 +1116,7 @@ ALTER SEQUENCE agenda_vote_committee_vote_id_seq OWNED BY agenda_vote_committee_
 
 CREATE TABLE alert_active_list_entry_reference (
     calendar_active_list_id smallint NOT NULL,
-    bill_calendar_no smallint NOT NULL,
+    bill_calendar_no integer NOT NULL,
     bill_print_no text,
     bill_amend_version character(1),
     bill_session_year smallint,
@@ -1281,7 +1281,7 @@ CREATE TABLE alert_supplemental_entry_reference (
     id integer NOT NULL,
     calendar_sup_id integer,
     section_code smallint,
-    bill_calendar_no smallint,
+    bill_calendar_no integer,
     bill_print_no text,
     bill_amend_version character(1),
     bill_session_year smallint,
@@ -2313,7 +2313,7 @@ COMMENT ON TABLE calendar_active_list IS 'Listing of all calendar active lists';
 
 CREATE TABLE calendar_active_list_entry (
     calendar_active_list_id smallint NOT NULL,
-    bill_calendar_no smallint NOT NULL,
+    bill_calendar_no integer NOT NULL,
     bill_print_no text,
     bill_amend_version character(1),
     bill_session_year smallint,
@@ -2400,7 +2400,7 @@ CREATE TABLE calendar_supplemental_entry (
     id integer NOT NULL,
     calendar_sup_id integer,
     section_code smallint,
-    bill_calendar_no smallint,
+    bill_calendar_no integer,
     bill_print_no text,
     bill_amend_version character(1),
     bill_session_year smallint,

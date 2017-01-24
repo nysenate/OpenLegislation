@@ -199,11 +199,19 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         for (Version supVersion : updateSupVersions) {
             CalendarSupplemental sup = calendar.getSupplemental(supVersion);
             ImmutableParams supParams = ImmutableParams.from(getCalSupplementalParams(sup, fragment));
-            jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP.getSql(schema()), supParams);
+            try {
+                jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP.getSql(schema()), supParams);
+            } catch (Exception e) {
+                throw e;
+            }
             // Insert the calendar entries
             for (CalendarSupplementalEntry entry : sup.getSectionEntries().values()) {
                 ImmutableParams entryParams = ImmutableParams.from(getCalSupEntryParams(sup, entry, fragment));
-                jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP_ENTRY.getSql(schema()), entryParams);
+                try {
+                    jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP_ENTRY.getSql(schema()), entryParams);
+                } catch (Exception e) {
+                    throw e;
+                }
             }
         }
     }
@@ -329,11 +337,14 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {
-            Integer calSupId = rs.getInt("calendar_sup_id");
+            Integer calSupId = rs.getInt("sup_id");
             if (!resultMap.containsKey(calSupId)) {
                 resultMap.put(calSupId, calendarSupRowMapper.mapRow(rs, rs.getRow()));
             }
-            resultMap.get(calSupId).addEntry(calendarSupEntryRowMapper.mapRow(rs, rs.getRow()));
+            Integer supEntryId = rs.getInt("ent_id");
+            if (supEntryId > 0) {
+                resultMap.get(calSupId).addEntry(calendarSupEntryRowMapper.mapRow(rs, rs.getRow()));
+            }
         }
 
         public ArrayList<CalendarSupplemental> getCalendarSupplementals() {
@@ -390,11 +401,14 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {
-            Integer calALId = rs.getInt("calendar_active_list_id");
+            Integer calALId = rs.getInt("al_id");
             if (!resultMap.containsKey(calALId)) {
                 resultMap.put(calALId, calendarActiveListRowMapper.mapRow(rs, rs.getRow()));
             }
-            resultMap.get(calALId).addEntry(calendarActiveListEntryRowMapper.mapRow(rs, rs.getRow()));
+            Integer entId = rs.getInt("ent_id");
+            if (entId > 0) {
+                resultMap.get(calALId).addEntry(calendarActiveListEntryRowMapper.mapRow(rs, rs.getRow()));
+            }
         }
 
         public ArrayList<CalendarActiveList> getActiveLists() {
