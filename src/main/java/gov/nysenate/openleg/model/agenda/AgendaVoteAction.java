@@ -7,6 +7,7 @@ import java.util.Map;
 
 public enum AgendaVoteAction
 {
+    REPORTED("R"),
     FIRST_READING("F"),
     THIRD_READING("3"),
     REFERRED_TO_COMMITTEE("RC"),
