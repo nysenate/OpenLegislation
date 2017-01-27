@@ -199,19 +199,11 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         for (Version supVersion : updateSupVersions) {
             CalendarSupplemental sup = calendar.getSupplemental(supVersion);
             ImmutableParams supParams = ImmutableParams.from(getCalSupplementalParams(sup, fragment));
-            try {
-                jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP.getSql(schema()), supParams);
-            } catch (Exception e) {
-                throw e;
-            }
+            jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP.getSql(schema()), supParams);
             // Insert the calendar entries
             for (CalendarSupplementalEntry entry : sup.getSectionEntries().values()) {
                 ImmutableParams entryParams = ImmutableParams.from(getCalSupEntryParams(sup, entry, fragment));
-                try {
                     jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP_ENTRY.getSql(schema()), entryParams);
-                } catch (Exception e) {
-                    throw e;
-                }
             }
         }
     }
