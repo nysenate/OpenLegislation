@@ -5,11 +5,11 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 
 public enum MismatchOrderBy {
 
-    OBSERVED_DATE("o.observed_date_time"),
-    CONTENT_KEY("o.key"),
-    REFERENCE_DATE("r.reference_date_time"),
-    MISMATCH_TYPE("m.type"),
-    STATUS("m.status")
+    OBSERVED_DATE("observed_date_time"),
+    CONTENT_KEY("key"),
+    REFERENCE_DATE("reference_date_time"),
+    MISMATCH_TYPE("type"),
+    STATUS("status")
     ;
 
     private String colName;
