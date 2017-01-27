@@ -56,6 +56,13 @@ function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, 
             };
             $scope.ignoreStatuses = ignoreStatuses;
 
+            $scope.limitOptions = [10, 25, 100];
+
+            $scope.setLimit = function (limit) {
+                $scope.filter.limit = limit;
+                $scope.onFilterChange(false);
+            };
+
             $scope.setIgnoreStatus = function (mismatchRow, ignoreStatus) {
                 var mismatch = mismatchRow.mismatch;
                 $scope.state.settingIgnoreStatus = true;

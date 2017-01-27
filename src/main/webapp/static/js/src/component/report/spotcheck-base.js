@@ -255,7 +255,7 @@ spotcheckModule.factory('SpotcheckDefaultFilter', function () {
         filterFunction: filterFunction,
         orderBy: 'OBSERVED_DATE',
         sortOrder: 'DESC',
-        limit: 10,
+        limit: 100,
         offset: 1,
         statuses: {},
         types: {},
