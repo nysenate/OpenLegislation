@@ -342,6 +342,28 @@ spotcheckModule.filter('hasIgnoredMismatches', ['$filter', function ($filter) {
     }
 }]);
 
+spotcheckModule.filter('sortMismatches', ['$filter', function($filter) {
+    return function (mismatches, orderBy, sortOrder) {
+        var field = $filter('mismatchOrderByField')(orderBy);
+        return $filter('orderBy')(mismatches, field, sortOrder === 'DESC');
+    }
+}]);
+
+var orderByFields = {
+    OBSERVED_DATE: "observation.observedDateTime",
+    CONTENT_KEY: "keyString",
+    REFERENCE_DATE: "observation.refDateTime",
+    MISMATCH_TYPE: "mismatch.mismatchType",
+    STATUS: "mismatch.status"
+};
+
+spotcheckModule.filter('mismatchOrderByField', [function() {
+  return function (orderByKey) {
+      return orderByFields.hasOwnProperty(orderByKey)
+          ? orderByFields[orderByKey]
+          : "!?";
+  }
+}]);
 
 /** --- Parent Spotcheck Controller --- */
 

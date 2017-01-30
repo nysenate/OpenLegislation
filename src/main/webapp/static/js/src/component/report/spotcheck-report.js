@@ -66,22 +66,8 @@ function ($scope, $element, $filter, $location, $timeout, $routeParams, $rootSco
         var filtered = $filter('filter')($scope.state.mismatches, function (mismatch) {
             return $scope.state.filter.passes(mismatch)
         });
-        var ordered = $filter('orderBy')(filtered, getOrderByField(), $scope.state.filter.sortOrder === 'DESC');
+        var ordered = $filter('sortMismatches')(filtered, $scope.state.filter.orderBy, $scope.state.filter.sortOrder);
         $scope.state.filteredMismatches = $filter('limitTo')(ordered, $scope.state.filter.limit, $scope.state.filter.offset - 1);
         console.log('limited', $scope.state.filter.limit, $scope.state.filter.offset, $scope.state.filteredMismatches);
-    }
-
-
-    var orderByFields = {
-        OBSERVED_DATE: "observation.observedDateTime",
-        CONTENT_KEY: "keyString",
-        REFERENCE_DATE: "observation.refDateTime",
-        MISMATCH_TYPE: "mismatch.mismatchType",
-        STATUS: "mismatch.status"
-    };
-    function getOrderByField() {
-        return orderByFields.hasOwnProperty($scope.state.filter.orderBy)
-            ? orderByFields[$scope.state.filter.orderBy]
-            : "!?";
     }
 }]);
