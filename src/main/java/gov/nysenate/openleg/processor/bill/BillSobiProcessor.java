@@ -211,7 +211,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
             if (!prevSessionYearStr.equals("0000") && !prevPrintNo.equals("00000")) {
                 try {
                     Integer prevSessionYear = Integer.parseInt(prevSessionYearStr);
-                    baseBill.addPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
+                    baseBill.addDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
                     baseBill.setModifiedDateTime(date);
                 }
                 catch (NumberFormatException ex) {

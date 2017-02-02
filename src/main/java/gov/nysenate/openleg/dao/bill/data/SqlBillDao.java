@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -84,8 +83,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         bill.setMilestones(getBillMilestones(baseParams));
         // Get the actions
         bill.setActions(getBillActions(baseParams));
+        // Get direct prev bill version ids
+        bill.setDirectPreviousVersions(getDirectPrevVersions(baseParams));
         // Get the prev bill version ids
-        bill.setPreviousVersions(getAllPreviousVersions(baseParams));
+        bill.setAllPreviousVersions(getAllPreviousVersions(baseParams));
         // Get the associated bill committees
         bill.setPastCommittees(getBillCommittees(baseParams));
         // Get the associated veto memos
@@ -241,7 +242,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get previous session year bill ids for the base bill id in the params.
      */
-    public Set<BillId> getPrevVersions(ImmutableParams baseParams) {
+    public Set<BillId> getDirectPrevVersions(ImmutableParams baseParams) {
         return new TreeSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS.getSql(schema()), baseParams,
                              new BillPreviousVersionRowMapper()));
     }
@@ -439,20 +440,23 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Update the bill's previous version set.
      */
     protected void updatePreviousBillVersions(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
-        Set<BillId> existingPrevBills = getPrevVersions(billParams);
-        if (!existingPrevBills.equals(bill.getPreviousVersions())) {
-            Set<BillId> newPrevBills = new HashSet<>(bill.getPreviousVersions());
-            newPrevBills.removeAll(existingPrevBills);               // New prev bill ids to insert
-            existingPrevBills.removeAll(bill.getPreviousVersions()); // Old prev bill ids to delete
-            existingPrevBills.forEach(billId -> {
-                ImmutableParams prevParams = ImmutableParams.from(getBillPrevVersionParams(bill, billId, sobiFragment));
-                jdbcNamed.update(SqlBillQuery.DELETE_BILL_PREVIOUS_VERSIONS.getSql(schema()), prevParams);
-            });
-            newPrevBills.forEach(billId -> {
-                ImmutableParams prevParams = ImmutableParams.from(getBillPrevVersionParams(bill, billId, sobiFragment));
-                jdbcNamed.update(SqlBillQuery.INSERT_BILL_PREVIOUS_VERSION.getSql(schema()), prevParams);
-            });
+        Set<BillId> existingPrevBills = getDirectPrevVersions(billParams);
+        if (existingPrevBills.equals(bill.getDirectPreviousVersions())) {
+            return;
         }
+        Set<BillId> newPrevBills = new HashSet<>(bill.getDirectPreviousVersions());
+        newPrevBills.removeAll(existingPrevBills);               // New prev bill ids to insert
+        existingPrevBills.removeAll(bill.getDirectPreviousVersions()); // Old prev bill ids to delete
+        existingPrevBills.forEach(billId -> {
+            ImmutableParams prevParams = ImmutableParams.from(getBillPrevVersionParams(bill, billId, sobiFragment));
+            jdbcNamed.update(SqlBillQuery.DELETE_BILL_PREVIOUS_VERSIONS.getSql(schema()), prevParams);
+        });
+        newPrevBills.forEach(billId -> {
+            ImmutableParams prevParams = ImmutableParams.from(getBillPrevVersionParams(bill, billId, sobiFragment));
+            jdbcNamed.update(SqlBillQuery.INSERT_BILL_PREVIOUS_VERSION.getSql(schema()), prevParams);
+        });
+        // Update the bill object to include any indirect previous versions resulting from the new prev version
+        bill.setAllPreviousVersions(getAllPreviousVersions(billParams));
     }
 
     /**

@@ -69,8 +69,14 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** If the bill has been substituted by another, store the reference of that bill's id. */
     protected BaseBillId substitutedBy;
 
-    /** A list of ids for versions of this legislation in previous sessions. */
-    protected Set<BillId> previousVersions =  Collections.synchronizedSortedSet(new TreeSet<>());
+    /** A list of ids for versions of this legislation in previous sessions.
+     *  This set of will contain only previous versions that have been directly linked to this bill*/
+    protected Set<BillId> directPreviousVersions =  Collections.synchronizedSortedSet(new TreeSet<>());
+
+    /** A list of ids for versions of this legislation in previous sessions.
+     *  This set will contain all previous versions, even those that are indirectly linked
+     *  e.g. the previous version of a previous version*/
+    protected Set<BillId> allPreviousVersions =  Collections.synchronizedSortedSet(new TreeSet<>());
 
     /** Designates the type of program bill, if applicable. */
     protected ProgramInfo programInfo;
@@ -324,8 +330,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /**
      * Add the bill id to the previous bill versions set.
      */
-    public void addPreviousVersion(BillId previousVersion) {
-        previousVersions.add(previousVersion);
+    public void addDirectPreviousVersion(BillId previousVersion) {
+        directPreviousVersions.add(previousVersion);
     }
 
     /**
@@ -421,12 +427,20 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.approvalMessage = approvalMessage;
     }
 
-    public Set<BillId> getPreviousVersions() {
-        return previousVersions;
+    public Set<BillId> getDirectPreviousVersions() {
+        return directPreviousVersions;
     }
 
-    public void setPreviousVersions(Set<BillId> previousVersions) {
-        this.previousVersions = previousVersions;
+    public void setDirectPreviousVersions(Set<BillId> directPreviousVersions) {
+        this.directPreviousVersions = directPreviousVersions;
+    }
+
+    public Set<BillId> getAllPreviousVersions() {
+        return allPreviousVersions;
+    }
+
+    public void setAllPreviousVersions(Set<BillId> previousVersions) {
+        this.allPreviousVersions = previousVersions;
     }
 
     public BaseBillId getSubstitutedBy() {

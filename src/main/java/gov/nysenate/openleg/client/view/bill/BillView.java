@@ -9,7 +9,6 @@ import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.Bill;
 
-import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -71,7 +70,7 @@ public class BillView extends BillInfoView implements ViewObject
                 .map(BillActionView::new)
                 .collect(Collectors.toList()));
 
-            this.previousVersions = ListView.of(bill.getPreviousVersions().stream()
+            this.previousVersions = ListView.of(bill.getAllPreviousVersions().stream()
                 .map(BillIdView::new)
                 .sorted((a,b) -> Integer.compareUnsigned(b.getSession(), a.getSession()))
                 .collect(Collectors.toList()));
