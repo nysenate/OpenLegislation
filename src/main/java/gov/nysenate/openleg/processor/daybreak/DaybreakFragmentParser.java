@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.daybreak;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillAction;
@@ -63,7 +64,13 @@ public class DaybreakFragmentParser {
         parseActions(daybreakBill, Arrays.copyOfRange(fragmentParts, 5, fragmentParts.length));
 
         // Convert the page file entries into amendments
-        daybreakBill.setAmendments(parsePageFileEntries(daybreakFragment.getPageFileEntries()));
+        if (daybreakFragment.getPageFileEntries() == null) {
+            // If bill is not in page file. Set it to an empty map.
+            daybreakBill.setAmendments(ImmutableMap.of());
+        } else {
+            // Otherwise include all amendments in the page file.
+            daybreakBill.setAmendments(parsePageFileEntries(daybreakFragment.getPageFileEntries()));
+        }
 
         return daybreakBill;
     }
