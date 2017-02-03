@@ -56,6 +56,8 @@ function ($scope, $filter, $routeParams, $rootScope, OpenMMAPI, OpenMMSummaryAPI
                             $scope.summary = summaries[$scope.reportType];
                         }
                         $scope.mismatchRows = $scope.extractMismatchRows(response.observations, response.query.refTypes[0]);
+                        $scope.mismatchRows = $filter('sortMismatches')(
+                            $scope.mismatchRows, $scope.filter.orderBy, $scope.filter.sortOrder);
                         $scope.lastReceived = reqId;
                         console.log('got it');
                     }

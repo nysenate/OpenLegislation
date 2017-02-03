@@ -242,7 +242,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
 
     /** {@inheritDoc} */
     @Override
-    public int getBillCount(SessionYear sessionYear) {
+    public synchronized int getBillCount(SessionYear sessionYear) {
         if (sessionYear == null) {
             throw new IllegalArgumentException("SessionYear cannot be null");
         }
@@ -251,7 +251,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
 
     /** {@inheritDoc} */
     @Override
-    public void saveBill(Bill bill, SobiFragment fragment, boolean postUpdateEvent) {
+    public synchronized void saveBill(Bill bill, SobiFragment fragment, boolean postUpdateEvent) {
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);
         putStrippedBillInCache(bill);

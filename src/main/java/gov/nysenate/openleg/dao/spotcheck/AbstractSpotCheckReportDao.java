@@ -133,20 +133,10 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         }
         // Set mismatch statuses for the report based on previous reports
         setMismatchStatuses(report);
-        // Insert all observations
-        report.getObservations().forEach((k,v) -> {
-            ImmutableParams observationParams = ImmutableParams.from(getObservationParams(reportParams, v));
-            int observationId = jdbcNamed.queryForObject(INSERT_OBSERVATION_AND_RETURN_ID.getSql(schema()), observationParams,
-                    (rs, row) -> rs.getInt(1));
-            // Insert the mismatches for the observation
-            v.getMismatches().values().forEach(m -> {
-                ImmutableParams mismatchParams = ImmutableParams.from(getMismatchParams(observationId, m));
-                KeyHolder mismatchIdHolder = new GeneratedKeyHolder();
-                jdbcNamed.update(INSERT_MISMATCH.getSql(schema()), mismatchParams, mismatchIdHolder, new String[]{"id"});
-                m.setMismatchId(mismatchIdHolder.getKey().intValue());
-                m.getIssueIds().forEach(issueId -> addIssueId(m.getMismatchId(), issueId));
-            });
-        });
+        // Insert observations that have mismatches
+        report.getObservations().values().stream()
+                .filter(SpotCheckObservation::hasMismatches)
+                .forEach((obs) -> saveObservation(obs, reportParams));
     }
 
     /** {@inheritDoc} */
@@ -224,6 +214,20 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                     }
                 });
             }
+        });
+    }
+
+    private void saveObservation(SpotCheckObservation<ContentKey> obs, ImmutableParams reportParams) {
+        ImmutableParams observationParams = ImmutableParams.from(getObservationParams(reportParams, obs));
+        int observationId = jdbcNamed.queryForObject(INSERT_OBSERVATION_AND_RETURN_ID.getSql(schema()), observationParams,
+                (rs, row) -> rs.getInt(1));
+        // Insert the mismatches for the observation
+        obs.getMismatches().values().forEach(m -> {
+            ImmutableParams mismatchParams = ImmutableParams.from(getMismatchParams(observationId, m));
+            KeyHolder mismatchIdHolder = new GeneratedKeyHolder();
+            jdbcNamed.update(INSERT_MISMATCH.getSql(schema()), mismatchParams, mismatchIdHolder, new String[]{"id"});
+            m.setMismatchId(mismatchIdHolder.getKey().intValue());
+            m.getIssueIds().forEach(issueId -> addIssueId(m.getMismatchId(), issueId));
         });
     }
 

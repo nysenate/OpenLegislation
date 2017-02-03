@@ -192,11 +192,17 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
      * @param daybreakFragment
      */
     private void processFragment(DaybreakFragment daybreakFragment){
-        // Parse the fragment into a bill
-        DaybreakBill daybreakBill = DaybreakFragmentParser.extractDaybreakBill(daybreakFragment);
-        // Update the persistence layer
-        daybreakDao.updateDaybreakBill(daybreakBill);
-        // Set the fragment as processed
-        daybreakDao.setProcessed(daybreakFragment.getDaybreakBillId());
+        // This method is called by the ExecutorService which does not pass exceptions to the calling code.
+        // Log them here so we have visibility into any errors occurring.
+        try {
+            // Parse the fragment into a bill
+            DaybreakBill daybreakBill = DaybreakFragmentParser.extractDaybreakBill(daybreakFragment);
+            // Update the persistence layer
+            daybreakDao.updateDaybreakBill(daybreakBill);
+            // Set the fragment as processed
+            daybreakDao.setProcessed(daybreakFragment.getDaybreakBillId());
+        } catch(Exception ex) {
+            logger.error("An error has occured while processing a daybreak fragment.", ex);
+        }
     }
 }

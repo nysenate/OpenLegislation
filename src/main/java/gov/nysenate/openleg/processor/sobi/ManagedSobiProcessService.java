@@ -14,6 +14,8 @@ import gov.nysenate.openleg.model.sobi.*;
 import gov.nysenate.openleg.processor.agenda.AgendaProcessor;
 import gov.nysenate.openleg.processor.agenda.AgendaVoteProcessor;
 import gov.nysenate.openleg.processor.bill.BillSobiProcessor;
+import gov.nysenate.openleg.processor.bill.BillXMLBillDigestProcessor;
+import gov.nysenate.openleg.processor.bill.BillXMLBillTextProcessor;
 import gov.nysenate.openleg.processor.calendar.ActiveListProcessor;
 import gov.nysenate.openleg.processor.calendar.CalendarProcessor;
 import gov.nysenate.openleg.processor.entity.CommitteeProcessor;
@@ -56,6 +58,8 @@ public class ManagedSobiProcessService implements SobiProcessService
     @Autowired private CalendarProcessor calendarProcessor;
     @Autowired private ActiveListProcessor activeListProcessor;
     @Autowired private CommitteeProcessor committeeProcessor;
+    @Autowired private BillXMLBillTextProcessor billXMLBillTextProcessor;
+    @Autowired private BillXMLBillDigestProcessor billXMLBillDigestProcessor;
 
     /** Register processors to handle a specific SobiFragment via this mapping. */
     private ImmutableMap<SobiFragmentType, SobiProcessor> processorMap;
@@ -70,6 +74,8 @@ public class ManagedSobiProcessService implements SobiProcessService
             .put(SobiFragmentType.CALENDAR, calendarProcessor)
             .put(SobiFragmentType.CALENDAR_ACTIVE, activeListProcessor)
             .put(SobiFragmentType.COMMITTEE, committeeProcessor)
+            .put(SobiFragmentType.BILLTEXT,billXMLBillTextProcessor)
+            .put(SobiFragmentType.LDSUMM,billXMLBillDigestProcessor)
             .build();
     }
 

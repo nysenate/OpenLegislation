@@ -37,16 +37,16 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected BillStatus status;
 
     /** A set of statuses that are considered milestones. */
-    protected List<BillStatus> milestones =  new LinkedList<>();
+    protected List<BillStatus> milestones = Collections.synchronizedList(new LinkedList<>());
 
     /** A mapping of amendment versions to BillAmendment instances (includes base amendment). */
-    protected Map<Version, BillAmendment> amendmentMap = new TreeMap<>();
+    protected Map<Version, BillAmendment> amendmentMap = Collections.synchronizedSortedMap(new TreeMap<>());
 
     /** Publish status mapped by amendment versions. */
-    protected Map<Version, PublishStatus> amendPublishStatusMap = new TreeMap<>();
+    protected Map<Version, PublishStatus> amendPublishStatusMap =Collections.synchronizedSortedMap(new TreeMap<>());
 
     /** A list of veto messages for this bill */
-    protected Map<VetoId, VetoMessage> vetoMessages = new HashMap<>();
+    protected Map<VetoId, VetoMessage> vetoMessages = Collections.synchronizedMap(new HashMap<>());
 
     /** An approval message for the bill, null if non existent */
     protected ApprovalMessage approvalMessage = null;
@@ -58,28 +58,34 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected BillSponsor sponsor;
 
     /** A list of co-sponsors that will be given preferential display treatment. */
-    protected List<SessionMember> additionalSponsors = new ArrayList<>();
+    protected List<SessionMember> additionalSponsors = Collections.synchronizedList(new ArrayList<>());
 
     /** A list of committees this bill has been referred to. */
-    protected SortedSet<CommitteeVersionId> pastCommittees = new TreeSet<>();
+    protected SortedSet<CommitteeVersionId> pastCommittees = Collections.synchronizedSortedSet(new TreeSet<>());
 
     /** A list of actions that have been made on this bill. */
-    protected List<BillAction> actions = new ArrayList<>();
+    protected List<BillAction> actions = Collections.synchronizedList(new ArrayList<>());
 
     /** If the bill has been substituted by another, store the reference of that bill's id. */
     protected BaseBillId substitutedBy;
 
-    /** A list of ids for versions of this legislation in previous sessions. */
-    protected Set<BillId> previousVersions = new TreeSet<>();
+    /** A list of ids for versions of this legislation in previous sessions.
+     *  This set of will contain only previous versions that have been directly linked to this bill*/
+    protected Set<BillId> directPreviousVersions =  Collections.synchronizedSortedSet(new TreeSet<>());
+
+    /** A list of ids for versions of this legislation in previous sessions.
+     *  This set will contain all previous versions, even those that are indirectly linked
+     *  e.g. the previous version of a previous version*/
+    protected Set<BillId> allPreviousVersions =  Collections.synchronizedSortedSet(new TreeSet<>());
 
     /** Designates the type of program bill, if applicable. */
     protected ProgramInfo programInfo;
 
     /** Links to committee agendas that involve this bill. */
-    protected List<CommitteeAgendaId> committeeAgendas = new ArrayList<>();
+    protected List<CommitteeAgendaId> committeeAgendas = Collections.synchronizedList(new ArrayList<>());
 
     /** Associated floor calendar ids. */
-    protected List<CalendarId> calendars = new ArrayList<>();
+    protected List<CalendarId> calendars =  Collections.synchronizedList(new ArrayList<>());
 
     /** Bills that are passed are assigned a chapter number. */
     protected Integer chapterNum;
@@ -191,16 +197,16 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      * Retrieves a list of all amendments stored in this bill.
      */
     public List<BillAmendment> getAmendmentList() {
-        return new ArrayList<>(this.amendmentMap.values());
+        return Collections.synchronizedList(new ArrayList<>(this.amendmentMap.values()));
     }
 
     /**
      * @return a set containing the bill ids of this bill's amendments
      */
-    public TreeSet<BillId> getAmendmentIds() {
-        return this.amendmentMap.values().stream()
+    public SortedSet<BillId> getAmendmentIds() {
+        return Collections.synchronizedSortedSet(this.amendmentMap.values().stream()
                 .map(BillAmendment::getBillId)
-                .collect(Collectors.toCollection(TreeSet::new));
+                .collect(Collectors.toCollection(TreeSet::new)));
     }
 
     /**
@@ -324,8 +330,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /**
      * Add the bill id to the previous bill versions set.
      */
-    public void addPreviousVersion(BillId previousVersion) {
-        previousVersions.add(previousVersion);
+    public void addDirectPreviousVersion(BillId previousVersion) {
+        directPreviousVersions.add(previousVersion);
     }
 
     /**
@@ -421,12 +427,20 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.approvalMessage = approvalMessage;
     }
 
-    public Set<BillId> getPreviousVersions() {
-        return previousVersions;
+    public Set<BillId> getDirectPreviousVersions() {
+        return directPreviousVersions;
     }
 
-    public void setPreviousVersions(Set<BillId> previousVersions) {
-        this.previousVersions = previousVersions;
+    public void setDirectPreviousVersions(Set<BillId> directPreviousVersions) {
+        this.directPreviousVersions = directPreviousVersions;
+    }
+
+    public Set<BillId> getAllPreviousVersions() {
+        return allPreviousVersions;
+    }
+
+    public void setAllPreviousVersions(Set<BillId> previousVersions) {
+        this.allPreviousVersions = previousVersions;
     }
 
     public BaseBillId getSubstitutedBy() {

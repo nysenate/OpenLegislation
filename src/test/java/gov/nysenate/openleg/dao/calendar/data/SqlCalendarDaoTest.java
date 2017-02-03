@@ -25,5 +25,4 @@ public class SqlCalendarDaoTest extends BaseTests {
         logger.info(activeListIds.size());
         activeListIds.forEach(calendarDao::getActiveList);
     }
-
 }

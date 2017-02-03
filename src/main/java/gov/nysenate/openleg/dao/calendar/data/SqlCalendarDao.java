@@ -207,11 +207,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
             // Insert the calendar entries
             for (CalendarSupplementalEntry entry : sup.getSectionEntries().values()) {
                 ImmutableParams entryParams = ImmutableParams.from(getCalSupEntryParams(sup, entry, fragment));
-                try {
-                    jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP_ENTRY.getSql(schema()), entryParams);
-                } catch (Exception e) {
-                    throw e;
-                }
+                jdbcNamed.update(SqlCalendarQuery.INSERT_CALENDAR_SUP_ENTRY.getSql(schema()), entryParams);
             }
         }
     }

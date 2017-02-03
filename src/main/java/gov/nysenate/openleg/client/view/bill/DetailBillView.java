@@ -32,7 +32,7 @@ public class DetailBillView extends BillView implements ViewObject
 
         Map<String, BillInfoView> refs = new HashMap<>();
         // Previous version refs
-        bill.getPreviousVersions().stream().forEach(billId -> addBillInfoRefToMap(billDataService, refs, billId));
+        bill.getAllPreviousVersions().stream().forEach(billId -> addBillInfoRefToMap(billDataService, refs, billId));
         // Same as refs from each amendment
         bill.getAmendmentList().stream().flatMap(a -> a.getSameAs().stream())
             .forEach(billId -> addBillInfoRefToMap(billDataService, refs, billId));

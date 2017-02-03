@@ -46,8 +46,23 @@
   <div class="mismatch-loading-overlay" layout="row" layout-align="center center" ng-show="isLoading()">
     <md-progress-circular class="md-hue-2" md-mode="indeterminate" md-diameter="200"></md-progress-circular>
   </div>
-  <dir-pagination-controls class="text-align-center" pagination-id="spotcheck-mismatch" boundary-links="true" max-size="10">
-  </dir-pagination-controls>
+  <div flex layout="row" layout-align="space-around center">
+    <dir-pagination-controls class="text-align-center" pagination-id="spotcheck-mismatch"
+                             boundary-links="true" max-size="10">
+    </dir-pagination-controls>
+    <span flex="30" layout="row" layout-align="space-around center">
+      <label>Results Per Page</label>
+      <span ng-repeat="limitOption in limitOptions">
+        <a href="" class="mismatch-list-limit-option"
+           ng-hide="filter.limit == limitOption"
+           ng-click="setLimit(limitOption)"
+           ng-bind="limitOption"></a>
+        <a class="mismatch-list-limit-option"
+           ng-show="filter.limit == limitOption"
+           ng-bind="limitOption"></a>
+      </span>
+    </span>
+  </div>
   <md-list class="spotcheck-mismatch-list">
     <div dir-paginate="mismatchRow in mismatches | itemsPerPage:filter.limit"
          pagination-id="spotcheck-mismatch" current-page="state.currentPage" total-items="summary | mismatchCount:filter"

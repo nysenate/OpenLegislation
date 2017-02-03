@@ -20,16 +20,8 @@ public class SobiProcessServiceTest extends BaseTests
     private SobiProcessService sobiProcessService;
 
     @Test
-    public void testCollateSobiFiles() throws Exception {
-        sobiProcessService.collateSobiFiles();
-    }
-
-    @Test
-    public void testGetPendingFragments() throws Exception {
-        List<SobiFragment> fragments = sobiProcessService.getPendingFragments(SortOrder.ASC, LimitOffset.ALL);
-        for (SobiFragment fragment : fragments) {
-            logger.debug(fragment.getFragmentId());
-        }
+    public void ingestTest() {
+        sobiProcessService.ingest();
     }
 
 

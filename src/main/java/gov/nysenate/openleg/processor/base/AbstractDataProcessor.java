@@ -104,7 +104,7 @@ public abstract class AbstractDataProcessor
      * @param billId BillId - The BillId to find a matching Bill for.
      * @return Bill
      */
-    protected final Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId, SobiFragment fragment) {
+    protected  final Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId, SobiFragment fragment) {
         boolean isBaseVersion = BillId.isBaseVersion(billId.getVersion());
         BaseBillId baseBillId = BillId.getBaseId(billId);
         Bill baseBill;
