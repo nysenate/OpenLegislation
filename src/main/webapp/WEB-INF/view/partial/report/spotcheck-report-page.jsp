@@ -65,6 +65,7 @@
             <dir-pagination-controls class="text-align-center" pagination-id="bill-mismatches" boundary-links="true"
                                      on-page-change="onPageChange(newPageNumber)" max-size="10"
                                      ng-show="loading === false">
+            </dir-pagination-controls>
           </md-content>
         </md-tab>
 
@@ -109,6 +110,7 @@
             <dir-pagination-controls class="text-align-center" pagination-id="calendar-mismatches" boundary-links="true"
                                      on-page-change="onPageChange(newPageNumber)" max-size="10"
                                      ng-show="loading === false">
+            </dir-pagination-controls>
           </md-content>
         </md-tab>
 
@@ -154,6 +156,7 @@
             <dir-pagination-controls class="text-align-center" pagination-id="agenda-mismatches" boundary-links="true"
                                      on-page-change="onPageChange(newPageNumber)" max-size="10"
                                      ng-show="loading === false">
+            </dir-pagination-controls>
           </md-content>
         </md-tab>
       </md-tabs>
