@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.spotcheck;
 
 public enum SpotCheckDataSource {
-    OPENLEG,
+    LBDC,
     NYSENATE_DOT_GOV
 }

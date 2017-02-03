@@ -20,13 +20,13 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckContentType.*;
 
 public enum SpotCheckRefType
 {
-    LBDC_DAYBREAK("daybreak", "Daybreak", OPENLEG, BILL, DAYBREAK_SPOTCHECK),
+    LBDC_DAYBREAK("daybreak", "Daybreak", LBDC, BILL, DAYBREAK_SPOTCHECK),
 
-    LBDC_SCRAPED_BILL("scraped-bill", "Scraped Bill", OPENLEG, BILL, BILL_TEXT_SPOTCHECK),
+    LBDC_SCRAPED_BILL("scraped-bill", "Scraped Bill", LBDC, BILL, BILL_TEXT_SPOTCHECK),
 
-    LBDC_CALENDAR_ALERT("floor-alert", "Floor Calendar Alert", OPENLEG, CALENDAR, CALENDAR_SPOTCHECK),
+    LBDC_CALENDAR_ALERT("floor-alert", "Floor Calendar Alert", LBDC, CALENDAR, CALENDAR_SPOTCHECK),
 
-    LBDC_AGENDA_ALERT("agenda-alert", "Agenda Alert", OPENLEG, AGENDA, AGENDA_SPOTCHECK),
+    LBDC_AGENDA_ALERT("agenda-alert", "Agenda Alert", LBDC, AGENDA, AGENDA_SPOTCHECK),
 
     SENATE_SITE_BILLS("senate-site-bills", "Nysenate.gov Bill", NYSENATE_DOT_GOV, BILL, SENSITE_BILL_SPOTCHECK),
 
