@@ -12,12 +12,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.swing.text.AbstractDocument;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
@@ -118,14 +120,9 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     /** {@inheritDoc} */
     @Override
     public void saveReport(SpotCheckReport<ContentKey> report) {
-        if (report == null) {
-            throw new IllegalArgumentException("Supplied report cannot be null.");
-        }
         ImmutableParams reportParams = ImmutableParams.from(getReportIdParams(report));
-        // Delete the report first if it already exists.
-        jdbcNamed.update(DELETE_REPORT.getSql(schema()), reportParams);
         // Insert the report
-        jdbcNamed.update(INSERT_REPORT.getSql(schema()), reportParams);
+        jdbcNamed.update(INSERT_REPORT.getSql(schema()), reportParams); // TODO if 0 rows updated, return and log warning?
         // Return early if the observations have not been set
         if (report.getObservations() == null) {
             logger.warn("The observations have not been set on this report.");
@@ -138,6 +135,31 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .filter(SpotCheckObservation::hasMismatches)
                 .forEach((obs) -> saveObservation(obs, reportParams));
     }
+
+    private Set<DeNormSpotcheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report) {
+        LocalDateTime reportDateTime = report.getReportDateTime();
+        Set<DeNormSpotcheckMismatch> mismatches = new HashSet<>();
+        for (SpotCheckObservation<ContentKey> ob: report.getObservations().values()) {
+            // Skip if no mismatches in the observation
+            if (ob.getMismatches().size() == 0) {
+                continue;
+            }
+            for (SpotCheckMismatch m: ob.getMismatches().values()) {
+                DeNormSpotcheckMismatch mismatch = new DeNormSpotcheckMismatch<>(ob.getKey(), m.getMismatchType());
+                mismatch.setReferenceId(ob.getReferenceId());
+                mismatch.setReferenceData(m.getReferenceData());
+                mismatch.setObservedData(m.getObservedData());
+                mismatch.setNotes(m.getNotes());
+                mismatch.setObservedDateTime(ob.getObservedDateTime());
+                mismatch.setReportDateTime(report.getReportDateTime());
+                mismatch.setIgnoreStatus(m.getIgnoreStatus());
+                mismatch.setIssueIds(new HashSet<>(m.getIssueIds()));
+                mismatches.add(mismatch);
+            }
+        }
+        return mismatches;
+    }
+
 
     /** {@inheritDoc} */
     @Override
