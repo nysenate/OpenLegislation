@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.dao.DataAccessException;
@@ -38,10 +40,11 @@ public interface SpotCheckReportDao<ContentKey>
                                                     LocalDateTime end, SortOrder dateOrder);
 
     /**
-     * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType
-     * @param query OpenMismatchQuery
+     * TODO docs
      * */
-    SpotCheckOpenMismatches<ContentKey> getOpenMismatches(OpenMismatchQuery query);
+    PaginatedList<DeNormSpotcheckMismatch<ContentKey>> getOpenMismatches(SpotCheckDataSource dataSource,
+                                                                         LocalDateTime dateTime,
+                                                                         LimitOffset limitOffset);
 
     /**
      * Get a summary of type/status/ignore counts pertaining to the given query

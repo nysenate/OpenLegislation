@@ -203,6 +203,22 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "WHERE mismatch_id = :mismatchId AND issue_id = :issueId"
     ),
 
+
+    /** --- QA Redesign queries --- */
+
+    OPEN_MISMATCHES(
+        "SELECT *, count(*) OVER () as total_rows FROM \n" +
+        "  (SELECT DISTINCT ON (m.key, m.mismatch_type) m.mismatch_id, m.report_id, hstore_to_array(m.key) as key, m.mismatch_type, m.mismatch_status, \n" +
+        "  m.datasource, m.content_type, m.reference_type, m.reference_active_date_time, m.reference_data, m.observed_data, m.notes, \n" +
+        "  m.observed_date_time, m.report_date_time, m.ignore_level, m.issue_ids \n" +
+        "    FROM ${schema}.spotcheck_mismatch m \n" +
+        "    WHERE m.observed_date_time BETWEEN :sessionStartDateTime AND :dateTime \n" +
+        "      AND m.datasource = :datasource \n" +
+        "    ORDER BY m.key, m.mismatch_type, m.observed_date_time desc \n" +
+        "  ) open_mismatches \n" +
+        "WHERE mismatch_status != 'RESOLVED' \n" +
+        "  OR observed_date_time > :startOfDateTimeDay"
+    )
     ;
 
     private String sql;

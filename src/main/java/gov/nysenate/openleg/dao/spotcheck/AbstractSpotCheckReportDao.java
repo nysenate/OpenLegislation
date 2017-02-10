@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.*;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,14 +14,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import javax.swing.text.AbstractDocument;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
@@ -98,12 +100,18 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckOpenMismatches<ContentKey> getOpenMismatches(OpenMismatchQuery query) {
-        ImmutableParams params = ImmutableParams.from(getOpenObsParams(query));
-        ReportObservationsHandler handler = new ReportObservationsHandler();
-        final String sqlQuery = getLatestOpenObsMismatchesQuery(schema(), query);
-        jdbcNamed.query(sqlQuery, params, handler);
-        return new SpotCheckOpenMismatches<>(query.getRefTypes(), handler.getObsMap(), handler.getMismatchTotal());
+    public PaginatedList<DeNormSpotcheckMismatch<ContentKey>> getOpenMismatches(SpotCheckDataSource dataSource,
+                                                                                LocalDateTime dateTime,
+                                                                                LimitOffset limitOffset) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("datasource", dataSource.name())
+                .addValue("dateTime", dateTime)
+                .addValue("startOfDateTimeDay", dateTime.truncatedTo(ChronoUnit.HOURS))
+                .addValue("sessionStartDateTime", SessionYear.of(dateTime.getYear()).asDateTimeRange().lowerEndpoint());
+        String sql = SqlSpotCheckReportQuery.OPEN_MISMATCHES.getSql(schema(), limitOffset);
+        PaginatedRowHandler<DeNormSpotcheckMismatch<ContentKey>> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new OpenMismatchMapper());
+        jdbcNamed.query(sql, params, handler);
+        return handler.getList();
     }
 
     /** {@inheritDoc} */
@@ -254,6 +262,33 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     }
 
     /** --- Helper Classes --- */
+
+    private class OpenMismatchMapper implements RowMapper<DeNormSpotcheckMismatch<ContentKey>> {
+
+        @Override
+        public DeNormSpotcheckMismatch<ContentKey> mapRow(ResultSet rs, int rowNum) throws SQLException {
+            ContentKey key = getKeyFromMap(getHstoreMap(rs, "key"));
+            SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("mismatch_type"));
+            DeNormSpotcheckMismatch mismatch = new DeNormSpotcheckMismatch<>(key, type);
+            mismatch.setMismatchId(rs.getInt("mismatch_id"));
+            mismatch.setReportId(rs.getInt("report_id"));
+            mismatch.setStatus(SpotCheckMismatchStatus.valueOf(rs.getString("mismatch_status")));
+            mismatch.setDataSource(SpotCheckDataSource.valueOf(rs.getString("datasource")));
+            mismatch.setContentType(SpotCheckContentType.valueOf(rs.getString("content_type")));
+            mismatch.setReferenceData(rs.getString("reference_data"));
+            mismatch.setObservedData(rs.getString("observed_data"));
+            mismatch.setReportDateTime(getLocalDateTimeFromRs(rs, "report_date_time"));
+            mismatch.setObservedDateTime(getLocalDateTimeFromRs(rs, "observed_date_time"));
+            mismatch.setNotes(rs.getString("notes"));
+            mismatch.setIgnoreStatus(SpotCheckMismatchIgnore.valueOf(rs.getString("ignore_level")));
+            mismatch.setIssueIds(Sets.newHashSet(rs.getArray("issue_ids").getArray()));
+
+            SpotCheckRefType refType = SpotCheckRefType.valueOf(rs.getString("reference_type"));
+            LocalDateTime refActiveDateTime = getLocalDateTimeFromRs(rs, "reference_active_date_time");
+            mismatch.setReferenceId(new SpotCheckReferenceId(refType, refActiveDateTime));
+            return mismatch;
+        }
+    }
 
     protected static final RowMapper<SpotCheckReportId> reportIdRowMapper = (rs,row) ->
             new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),

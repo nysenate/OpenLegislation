@@ -2,7 +2,6 @@ package gov.nysenate.openleg.model.spotcheck;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class DeNormSpotcheckMismatch<ContentKey> {
@@ -22,6 +21,10 @@ public class DeNormSpotcheckMismatch<ContentKey> {
     /** The status of the mismatch (new, existing, etc.) */
     private SpotCheckMismatchStatus status = SpotCheckMismatchStatus.NEW;
 
+    private SpotCheckDataSource dataSource;
+
+    private SpotCheckContentType contentType;
+
     /** The source used to compare our data against. */
     private SpotCheckReferenceId referenceId;
 
@@ -39,7 +42,6 @@ public class DeNormSpotcheckMismatch<ContentKey> {
 
     /** The date time when the report that generated this observation was run */
     private LocalDateTime reportDateTime;
-
 
     /** The ignore status of this mismatch. (Optional) */
     private SpotCheckMismatchIgnore ignoreStatus;
@@ -90,6 +92,14 @@ public class DeNormSpotcheckMismatch<ContentKey> {
 
     public void setIgnoreStatus(SpotCheckMismatchIgnore ignoreStatus) {
         this.ignoreStatus = ignoreStatus;
+    }
+
+    public void setDataSource(SpotCheckDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public void setContentType(SpotCheckContentType contentType) {
+        this.contentType = contentType;
     }
 
     public void setIssueIds(Set<String> issueIds) {

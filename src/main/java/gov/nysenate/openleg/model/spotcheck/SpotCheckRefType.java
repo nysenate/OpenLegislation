@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.util.OutputUtils;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -54,6 +52,14 @@ public enum SpotCheckRefType
         this.notificationType = type;
     }
 
+    /** Get a set of SpotCheckMismatchTypes that are checked in this Reference Type. */
+    public Set<SpotCheckMismatchType> checkedMismatchTypes() {
+        return EnumSet.allOf(SpotCheckMismatchType.class)
+                .stream()
+                .filter(t -> t.getRefTypes().contains(this))
+                .collect(Collectors.toSet());
+    }
+
     public String getRefName() {
         return refName;
     }
@@ -71,7 +77,6 @@ public enum SpotCheckRefType
     }
 
     public SpotCheckContentType getContentType() {
-
         return contentType;
     }
 
