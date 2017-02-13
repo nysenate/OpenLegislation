@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DeNormSpotcheckMismatch<ContentKey> {
+public class DeNormSpotCheckMismatch<ContentKey> {
 
     /** An integer id that uniquely identifies this mismatch */
     private int mismatchId;
@@ -49,7 +49,7 @@ public class DeNormSpotcheckMismatch<ContentKey> {
     /** A list of related issue tracker ids */
     private Set<String> issueIds = new HashSet<>();
 
-    public DeNormSpotcheckMismatch(ContentKey key, SpotCheckMismatchType mismatchType) {
+    public DeNormSpotCheckMismatch(ContentKey key, SpotCheckMismatchType mismatchType) {
        this.key = key;
        this.mismatchType = mismatchType;
     }

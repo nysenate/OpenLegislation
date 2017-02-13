@@ -41,8 +41,8 @@ public interface SpotCheckReportDao<ContentKey>
 
     /**
      * TODO docs
-     * */
-    PaginatedList<DeNormSpotcheckMismatch<ContentKey>> getOpenMismatches(SpotCheckDataSource dataSource,
+     */
+    PaginatedList<DeNormSpotCheckMismatch> getOpenMismatches(SpotCheckDataSource dataSource,
                                                                          LocalDateTime dateTime,
                                                                          LimitOffset limitOffset);
 

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.spotcheck.*;
@@ -41,7 +42,7 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query) {
+    public PaginatedList<DeNormSpotCheckMismatch> getOpenObservations(OpenMismatchQuery query) {
 //        return getReportDao().getOpenMismatches(query);
         // TODO refactro this
         return null;

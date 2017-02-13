@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 
@@ -72,7 +73,7 @@ public interface SpotCheckReportService<ContentKey>
      * @param query OpenMismatchQuery
      * @return Map<ContentKey, SpotCheckObservation<ContentKey>>
      */
-    SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query);
+    PaginatedList<DeNormSpotCheckMismatch> getOpenObservations(OpenMismatchQuery query);
 
     /**
      * Get a summary of type/status/ignore counts pertaining to the given query

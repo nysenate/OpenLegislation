@@ -167,9 +167,10 @@ public class SpotCheckCtrl extends BaseCtrl
         LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
         OpenMismatchQuery query = new OpenMismatchQuery(refTypes, mismatchTypes, earliestDateTime,
                 mismatchOrderBy, order, limOff, resolvedShown, ignoredShown, ignoredOnly, trackedShown, untrackedShown);
-        SpotCheckOpenMismatches<?> observations = reportServiceMap.get(refType).getOpenObservations(query);
+//        SpotCheckMismatches<?> observations = reportServiceMap.get(refType).getOpenObservations(query);
         OpenMismatchSummary summary = getAnyReportService().getOpenMismatchSummary(refTypes, earliestDateTime);
-        return new OpenMismatchesResponse<>(observations, summary, query);
+//        return new OpenMismatchesResponse<>(observations, summary, query);
+        return null;
     }
 
     /**

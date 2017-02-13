@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,16 +99,16 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<DeNormSpotcheckMismatch<ContentKey>> getOpenMismatches(SpotCheckDataSource dataSource,
-                                                                                LocalDateTime dateTime,
-                                                                                LimitOffset limitOffset) {
+    public PaginatedList<DeNormSpotCheckMismatch> getOpenMismatches(SpotCheckDataSource dataSource,
+                                                                    LocalDateTime dateTime,
+                                                                    LimitOffset limitOffset) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("datasource", dataSource.name())
                 .addValue("dateTime", dateTime)
                 .addValue("startOfDateTimeDay", dateTime.truncatedTo(ChronoUnit.HOURS))
                 .addValue("sessionStartDateTime", SessionYear.of(dateTime.getYear()).asDateTimeRange().lowerEndpoint());
         String sql = SqlSpotCheckReportQuery.OPEN_MISMATCHES.getSql(schema(), limitOffset);
-        PaginatedRowHandler<DeNormSpotcheckMismatch<ContentKey>> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new OpenMismatchMapper());
+        PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new OpenMismatchMapper());
         jdbcNamed.query(sql, params, handler);
         return handler.getList();
     }
@@ -144,16 +143,16 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .forEach((obs) -> saveObservation(obs, reportParams));
     }
 
-    private Set<DeNormSpotcheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report) {
+    private Set<DeNormSpotCheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report) {
         LocalDateTime reportDateTime = report.getReportDateTime();
-        Set<DeNormSpotcheckMismatch> mismatches = new HashSet<>();
+        Set<DeNormSpotCheckMismatch> mismatches = new HashSet<>();
         for (SpotCheckObservation<ContentKey> ob: report.getObservations().values()) {
             // Skip if no mismatches in the observation
             if (ob.getMismatches().size() == 0) {
                 continue;
             }
             for (SpotCheckMismatch m: ob.getMismatches().values()) {
-                DeNormSpotcheckMismatch mismatch = new DeNormSpotcheckMismatch<>(ob.getKey(), m.getMismatchType());
+                DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(ob.getKey(), m.getMismatchType());
                 mismatch.setReferenceId(ob.getReferenceId());
                 mismatch.setReferenceData(m.getReferenceData());
                 mismatch.setObservedData(m.getObservedData());
@@ -263,13 +262,13 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
 
     /** --- Helper Classes --- */
 
-    private class OpenMismatchMapper implements RowMapper<DeNormSpotcheckMismatch<ContentKey>> {
+    private class OpenMismatchMapper implements RowMapper<DeNormSpotCheckMismatch> {
 
         @Override
-        public DeNormSpotcheckMismatch<ContentKey> mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public DeNormSpotCheckMismatch<ContentKey> mapRow(ResultSet rs, int rowNum) throws SQLException {
             ContentKey key = getKeyFromMap(getHstoreMap(rs, "key"));
             SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("mismatch_type"));
-            DeNormSpotcheckMismatch mismatch = new DeNormSpotcheckMismatch<>(key, type);
+            DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(key, type);
             mismatch.setMismatchId(rs.getInt("mismatch_id"));
             mismatch.setReportId(rs.getInt("report_id"));
             mismatch.setStatus(SpotCheckMismatchStatus.valueOf(rs.getString("mismatch_status")));
