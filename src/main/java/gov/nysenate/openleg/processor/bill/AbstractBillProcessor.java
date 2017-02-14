@@ -319,47 +319,4 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
             }
         });
     }
-
-    /**
-     * Constructs a BillSponsor via the sponsorLine string and applies it to the bill.
-     */
-    protected void setBillSponsorFromSponsorLine(Bill baseBill, String sponsorLine, SessionYear sessionYear) throws ParseError {
-        // Get the chamber from the Bill
-        Chamber chamber = baseBill.getBillType().getChamber();
-        // New Sponsor instance
-        BillSponsor billSponsor = new BillSponsor();
-        // Format the sponsor line
-        sponsorLine = sponsorLine.replace("(MS)", "").toUpperCase().trim();
-        // Check for RULES sponsors
-        if (sponsorLine.startsWith("RULES")) {
-            billSponsor.setRules(true);
-            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
-            if (!"RULES COM".equals(sponsorLine) && rules.matches()) {
-                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
-                billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
-            }
-        }
-        // Budget bills don't have a specific sponsor
-        else if (sponsorLine.startsWith("BUDGET")) {
-            billSponsor.setBudget(true);
-        }
-        // Apply the sponsor by looking up the member
-        else {
-            // In rare cases multiple sponsors can be listed on a single line. We can handle this
-            // by setting the first contact as the sponsor, and subsequent ones as additional sponsors.
-            if (sponsorLine.contains(",")) {
-                List<String> sponsors = Lists.newArrayList(
-                        Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsorLine));
-                if (!sponsors.isEmpty()) {
-                    sponsorLine = sponsors.remove(0);
-                    for (String sponsor : sponsors) {
-                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(sponsor, sessionYear, chamber));
-                    }
-                }
-            }
-            // Set the member into the sponsor instance
-            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
-        }
-        baseBill.setSponsor(billSponsor);
-    }
 }
