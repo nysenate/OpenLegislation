@@ -49,9 +49,10 @@ public class DeNormSpotCheckMismatch<ContentKey> {
     /** A list of related issue tracker ids */
     private Set<String> issueIds = new HashSet<>();
 
-    public DeNormSpotCheckMismatch(ContentKey key, SpotCheckMismatchType mismatchType) {
+    public DeNormSpotCheckMismatch(ContentKey key, SpotCheckMismatchType mismatchType, SpotCheckDataSource dataSource) {
        this.key = key;
        this.mismatchType = mismatchType;
+       this.dataSource = dataSource;
     }
 
     public void setMismatchId(int mismatchId) {
@@ -94,15 +95,91 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         this.ignoreStatus = ignoreStatus;
     }
 
-    public void setDataSource(SpotCheckDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
     public void setContentType(SpotCheckContentType contentType) {
         this.contentType = contentType;
     }
 
     public void setIssueIds(Set<String> issueIds) {
         this.issueIds = issueIds;
+    }
+
+    public int getMismatchId() {
+        return mismatchId;
+    }
+
+    public int getReportId() {
+        return reportId;
+    }
+
+    public ContentKey getKey() {
+        return key;
+    }
+
+    public SpotCheckMismatchType getMismatchType() {
+        return mismatchType;
+    }
+
+    public SpotCheckMismatchStatus getStatus() {
+        return status;
+    }
+
+    public SpotCheckDataSource getDataSource() {
+        return dataSource;
+    }
+
+    public SpotCheckContentType getContentType() {
+        return contentType;
+    }
+
+    public SpotCheckReferenceId getReferenceId() {
+        return referenceId;
+    }
+
+    public String getReferenceData() {
+        return referenceData;
+    }
+
+    public String getObservedData() {
+        return observedData;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public LocalDateTime getObservedDateTime() {
+        return observedDateTime;
+    }
+
+    public LocalDateTime getReportDateTime() {
+        return reportDateTime;
+    }
+
+    public SpotCheckMismatchIgnore getIgnoreStatus() {
+        return ignoreStatus;
+    }
+
+    public Set<String> getIssueIds() {
+        return issueIds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DeNormSpotCheckMismatch<?> mismatch = (DeNormSpotCheckMismatch<?>) o;
+
+        if (key != null ? !key.equals(mismatch.key) : mismatch.key != null) return false;
+        if (mismatchType != mismatch.mismatchType) return false;
+        return dataSource == mismatch.dataSource;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = key != null ? key.hashCode() : 0;
+        result = 31 * result + (mismatchType != null ? mismatchType.hashCode() : 0);
+        result = 31 * result + (dataSource != null ? dataSource.hashCode() : 0);
+        return result;
     }
 }

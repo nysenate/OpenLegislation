@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.service.spotcheck.base.MismatchStatusService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -98,6 +99,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     }
 
     /** {@inheritDoc} */
+    // TODO this is wrong
     @Override
     public PaginatedList<DeNormSpotCheckMismatch> getOpenMismatches(SpotCheckDataSource dataSource,
                                                                     LocalDateTime dateTime,
@@ -111,6 +113,19 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new OpenMismatchMapper());
         jdbcNamed.query(sql, params, handler);
         return handler.getList();
+    }
+
+    /** Gets the most recent version of all mismatches at the given date time. */
+    public List<DeNormSpotCheckMismatch> getUpdatableMismatches(SpotCheckDataSource dataSource, SpotCheckContentType contentType,
+                                                                Set<SpotCheckMismatchType> checkedMismatchTypes, LocalDateTime refDateTime) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("datasource", dataSource.name())
+                .addValue("contentType", contentType.name())
+                .addValue("checkedMismatchTypes", checkedMismatchTypes.stream().map(Enum::name).collect(Collectors.toSet()))
+                .addValue("refDateTime", refDateTime)
+                .addValue("sessionStartDateTime", SessionYear.of(refDateTime.getYear()).asDateTimeRange().lowerEndpoint());
+        String sql = SqlSpotCheckReportQuery.CURRENT_MISMATCHES.getSql(schema());
+        return jdbcNamed.query(sql, params, new OpenMismatchMapper());
     }
 
     /** {@inheritDoc} */
@@ -135,6 +150,18 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             logger.warn("The observations have not been set on this report.");
             return;
         }
+
+        Set<Object> checkedKeys = report.getObservations().values().stream().map(SpotCheckObservation::getKey).collect(Collectors.toSet());
+        Set<SpotCheckMismatchType> checkedTypes = report.getReferenceType().checkedMismatchTypes();
+
+        List<DeNormSpotCheckMismatch> reportMismatches = reportToDeNormMismatches(report);
+        List<DeNormSpotCheckMismatch> currentMismatches = getUpdatableMismatches(report.getReferenceType().getDataSource(),
+                report.getReferenceType().getContentType(), report.getReferenceType().checkedMismatchTypes(), report.getReferenceDateTime());
+
+
+        //TODO:
+//        reportMismatches = MismatchStatusService.deriveStatuses(reportMismatches, currentMismatches, checkedKeys, checkedTypes);
+
         // Set mismatch statuses for the report based on previous reports
         setMismatchStatuses(report);
         // Insert observations that have mismatches
@@ -143,16 +170,18 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .forEach((obs) -> saveObservation(obs, reportParams));
     }
 
-    private Set<DeNormSpotCheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report) {
+    private List<DeNormSpotCheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report) {
         LocalDateTime reportDateTime = report.getReportDateTime();
-        Set<DeNormSpotCheckMismatch> mismatches = new HashSet<>();
+        List<DeNormSpotCheckMismatch> mismatches = new ArrayList<>();
         for (SpotCheckObservation<ContentKey> ob: report.getObservations().values()) {
             // Skip if no mismatches in the observation
             if (ob.getMismatches().size() == 0) {
                 continue;
             }
             for (SpotCheckMismatch m: ob.getMismatches().values()) {
-                DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(ob.getKey(), m.getMismatchType());
+                DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(ob.getKey(), m.getMismatchType(),
+                        report.getReferenceType().getDataSource());
+                mismatch.setContentType(report.getReferenceType().getContentType());
                 mismatch.setReferenceId(ob.getReferenceId());
                 mismatch.setReferenceData(m.getReferenceData());
                 mismatch.setObservedData(m.getObservedData());
@@ -268,11 +297,11 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         public DeNormSpotCheckMismatch<ContentKey> mapRow(ResultSet rs, int rowNum) throws SQLException {
             ContentKey key = getKeyFromMap(getHstoreMap(rs, "key"));
             SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("mismatch_type"));
-            DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(key, type);
+            SpotCheckDataSource dataSource = SpotCheckDataSource.valueOf(rs.getString("datasource"));
+            DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(key, type, dataSource);
             mismatch.setMismatchId(rs.getInt("mismatch_id"));
             mismatch.setReportId(rs.getInt("report_id"));
             mismatch.setStatus(SpotCheckMismatchStatus.valueOf(rs.getString("mismatch_status")));
-            mismatch.setDataSource(SpotCheckDataSource.valueOf(rs.getString("datasource")));
             mismatch.setContentType(SpotCheckContentType.valueOf(rs.getString("content_type")));
             mismatch.setReferenceData(rs.getString("reference_data"));
             mismatch.setObservedData(rs.getString("observed_data"));

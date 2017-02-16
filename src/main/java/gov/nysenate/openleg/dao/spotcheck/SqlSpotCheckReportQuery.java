@@ -206,6 +206,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
 
     /** --- QA Redesign queries --- */
 
+    // TODO This needs work
     OPEN_MISMATCHES(
         "SELECT *, count(*) OVER () as total_rows FROM \n" +
         "  (SELECT DISTINCT ON (m.key, m.mismatch_type) m.mismatch_id, m.report_id, hstore_to_array(m.key) as key, m.mismatch_type, m.mismatch_status, \n" +
@@ -218,7 +219,22 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "  ) open_mismatches \n" +
         "WHERE mismatch_status != 'RESOLVED' \n" +
         "  OR observed_date_time > :startOfDateTimeDay"
-    )
+    ),
+
+    CURRENT_MISMATCHES(
+        "SELECT * FROM \n" +
+        "  (SELECT DISTINCT ON (m.key, m.mismatch_type) m.mismatch_id, m.report_id, hstore_to_array(m.key) as key, m.mismatch_type, m.mismatch_status, \n" +
+        "  m.datasource, m.content_type, m.reference_type, m.reference_active_date_time, m.reference_data, m.observed_data, m.notes, \n" +
+        "  m.observed_date_time, m.report_date_time, m.ignore_level, m.issue_ids \n" +
+        "    FROM ${schema}.spotcheck_mismatch m \n" +
+        "    WHERE m.reference_active_date_time BETWEEN :sessionStartDateTime AND :refDateTime \n" +
+        "      AND m.datasource = :datasource \n" +
+        "      AND m.content_type = :contentType \n" +
+        "      AND m.mismatch_type IN (:checkedMismatchTypes) \n" +
+        "    ORDER BY m.key, m.mismatch_type, m.reference_active_date_time desc \n" +
+        "  ) open_mismatches \n"
+    ),
+
     ;
 
     private String sql;
