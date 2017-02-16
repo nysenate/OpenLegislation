@@ -1,0 +1,58 @@
+<billstatus  sessyr="2017" billhse="A" billno="05226" action="replace">
+<deadtag></deadtag>
+<currentamd></currentamd>
+<sponsor><![CDATA[Dinowitz]]></sponsor>
+<reprint>
+<rprtbillhse></rprtbillhse>
+<rprtbillno></rprtbillno>
+<rprtbillamd></rprtbillamd>
+</reprint>
+<lbdno>00377017</lbdno>
+<introcomm>10</introcomm>
+<curcomm></curcomm>
+<curcommhse></curcommhse>
+<law><![CDATA[General Business Law]]></law>
+<title><![CDATA[Requires lithium batteries of less than one inch in diameter and products containing such batteries to be labeled with warnings related thereto]]></title>
+<billactions><![CDATA[
+02/07/17 referred to consumer affairs and protection
+02/09/17 enacting clause stricken
+]]></billactions>
+<actions>
+<action no="1">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>1</actioncode>
+<actiontype>S</actiontype>
+<actiondata>10</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2017-02-07</actiondate>
+<actiondesc><![CDATA[referred to consumer affairs and protection]]></actiondesc>
+<actionpostdate>2017-02-07</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
+</action>
+<action no="2">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>140</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2017-02-09</actiondate>
+<actiondesc><![CDATA[enacting clause stricken]]></actiondesc>
+<actionpostdate>2017-02-09</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
+</action>
+<action no="2017">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>255</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2017-02-09</actiondate>
+<actiondesc><![CDATA[enacting clause stricken]]></actiondesc>
+<actionpostdate>2017-02-09</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
+</action>
+</actions>
+</billstatus>
