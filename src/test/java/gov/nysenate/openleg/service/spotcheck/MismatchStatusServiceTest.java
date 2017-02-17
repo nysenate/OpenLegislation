@@ -3,10 +3,7 @@ package gov.nysenate.openleg.service.spotcheck;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.spotcheck.DeNormSpotCheckMismatch;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckDataSource;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchStatus;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
+import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.MismatchStatusService;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,11 +34,17 @@ public class MismatchStatusServiceTest {
         reportMismatches = Lists.newArrayList(newMismatch);
     }
 
-    /** --- deriveStatuses() tests --- */
+    private void assertEmpty(List<DeNormSpotCheckMismatch> list) {
+        assertTrue(list.isEmpty());
+    }
+
+    /**
+     * --- deriveStatuses() tests ---
+     */
 
     @Test
     public void givenEmptyLists_returnEmptyList() {
-        assertTrue(MismatchStatusService.deriveStatuses(new ArrayList<>(), new ArrayList<>()).isEmpty());
+        assertEmpty(MismatchStatusService.deriveStatuses(new ArrayList<>(), new ArrayList<>()));
     }
 
     @Test
@@ -54,7 +57,7 @@ public class MismatchStatusServiceTest {
     @Test
     public void givenEmptyReportMismatches_returnEmptyList() {
         List<DeNormSpotCheckMismatch> currentMismatches = Lists.newArrayList(newMismatch);
-        assertTrue(MismatchStatusService.deriveStatuses(new ArrayList<>(), currentMismatches).isEmpty());
+        assertEmpty(MismatchStatusService.deriveStatuses(new ArrayList<>(), currentMismatches));
     }
 
     @Test
@@ -85,29 +88,51 @@ public class MismatchStatusServiceTest {
         assertThat(actual.getStatus(), is(SpotCheckMismatchStatus.REGRESSION));
     }
 
-    /** --- deriveResolved() tests --- */
+    @Test
+    public void givenIgnoredPermanently_returnPermanentlyIgnoredMismatch() {
+        existingMismatch.setIgnoreStatus(SpotCheckMismatchIgnore.IGNORE_PERMANENTLY);
+        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(existingMismatch);
+        DeNormSpotCheckMismatch actual = MismatchStatusService.deriveStatuses(reportMismatches, current).get(0);
+        assertThat(actual.getIgnoreStatus(), is(SpotCheckMismatchIgnore.IGNORE_PERMANENTLY));
+    }
+
+    @Test
+    public void givenIgnoredUntilResolved_returnIgnoredUntilResolvedMismatch() {
+        existingMismatch.setIgnoreStatus(SpotCheckMismatchIgnore.IGNORE_UNTIL_RESOLVED);
+        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(existingMismatch);
+        DeNormSpotCheckMismatch actual = MismatchStatusService.deriveStatuses(reportMismatches, current).get(0);
+        assertThat(actual.getIgnoreStatus(), is(SpotCheckMismatchIgnore.IGNORE_UNTIL_RESOLVED));
+    }
+
+    @Test
+    public void givenIgnoredOnce_returnsNotIgnoredMismatch() {
+        existingMismatch.setIgnoreStatus(SpotCheckMismatchIgnore.IGNORE_ONCE);
+        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(existingMismatch);
+        DeNormSpotCheckMismatch actual = MismatchStatusService.deriveStatuses(reportMismatches, current).get(0);
+        assertThat(actual.getIgnoreStatus(), is(SpotCheckMismatchIgnore.NOT_IGNORED));
+    }
+
+    /**
+     * --- deriveResolved() tests ---
+     */
 
     @Test
     public void givenEmptyCurrentMismatches_returnNoResolved() {
-        assertTrue(MismatchStatusService.deriveResolved(new ArrayList<>(), new ArrayList<>(), new HashSet<>(), new HashSet<>()).isEmpty());
+        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), new ArrayList<>(), new HashSet<>(), new HashSet<>()));
     }
 
     @Test
     public void givenCurrentMismatchNotInCheckedKeys_returnNoResolved() {
         List<DeNormSpotCheckMismatch> current = Lists.newArrayList(newMismatch);
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
-
-        List<DeNormSpotCheckMismatch> resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, new HashSet<>(), types);
-        assertTrue(resolved.isEmpty());
+        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), current, new HashSet<>(), types));
     }
 
     @Test
     public void givenCurrentMismatchNotInCheckedTypes_returnNoResolved() {
         List<DeNormSpotCheckMismatch> current = Lists.newArrayList(newMismatch);
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
-
-        List<DeNormSpotCheckMismatch> resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, new HashSet<>());
-        assertTrue(resolved.isEmpty());
+        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, new HashSet<>()));
     }
 
     @Test
@@ -117,8 +142,16 @@ public class MismatchStatusServiceTest {
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
 
-        List<DeNormSpotCheckMismatch> resolved = MismatchStatusService.deriveResolved(report, current, keys, types);
-        assertTrue(resolved.isEmpty());
+        assertEmpty(MismatchStatusService.deriveResolved(report, current, keys, types));
+    }
+
+    @Test
+    public void givenResolved_returnNoResolved() {
+        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(resolvedMismatch);
+        Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
+        Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
+
+        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types));
     }
 
     @Test
@@ -127,8 +160,41 @@ public class MismatchStatusServiceTest {
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
 
-        List<DeNormSpotCheckMismatch> resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types);
-        assertThat(resolved.get(0).getStatus(), is(SpotCheckMismatchStatus.RESOLVED));
+        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types).get(0);
+        assertThat(resolved.getStatus(), is(SpotCheckMismatchStatus.RESOLVED));
+    }
+
+    @Test
+    public void givenIgnoreOnce_returnNotIgnoredMismatch() {
+        existingMismatch.setIgnoreStatus(SpotCheckMismatchIgnore.IGNORE_ONCE);
+        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(existingMismatch);
+        Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
+        Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
+
+        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types).get(0);
+        assertThat(resolved.getIgnoreStatus(), is(SpotCheckMismatchIgnore.NOT_IGNORED));
+    }
+
+    @Test
+    public void givenIgnoredUntilResolved_returnNotIgnoredMismatch() {
+        existingMismatch.setIgnoreStatus(SpotCheckMismatchIgnore.IGNORE_UNTIL_RESOLVED);
+        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(existingMismatch);
+        Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
+        Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
+
+        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types).get(0);
+        assertThat(resolved.getIgnoreStatus(), is(SpotCheckMismatchIgnore.NOT_IGNORED));
+    }
+
+    @Test
+    public void givenIgnoredPermanently_returnIgnoredPermanentlyResolvedMismatch() {
+        existingMismatch.setIgnoreStatus(SpotCheckMismatchIgnore.IGNORE_PERMANENTLY);
+        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(existingMismatch);
+        Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
+        Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
+
+        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types).get(0);
+        assertThat(resolved.getIgnoreStatus(), is(SpotCheckMismatchIgnore.IGNORE_PERMANENTLY));
     }
 
     private DeNormSpotCheckMismatch createMismatch(SpotCheckMismatchType type, SpotCheckMismatchStatus status) {

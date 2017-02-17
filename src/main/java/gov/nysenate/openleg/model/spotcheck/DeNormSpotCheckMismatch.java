@@ -19,7 +19,7 @@ public class DeNormSpotCheckMismatch<ContentKey> {
     private SpotCheckMismatchType mismatchType;
 
     /** The status of the mismatch (new, existing, etc.) */
-    private SpotCheckMismatchStatus status = SpotCheckMismatchStatus.NEW;
+    private SpotCheckMismatchStatus status;
 
     private SpotCheckDataSource dataSource;
 
@@ -43,7 +43,7 @@ public class DeNormSpotCheckMismatch<ContentKey> {
     /** The date time when the report that generated this observation was run */
     private LocalDateTime reportDateTime;
 
-    /** The ignore status of this mismatch. (Optional) */
+    /** The ignore status of this mismatch. */
     private SpotCheckMismatchIgnore ignoreStatus;
 
     /** A list of related issue tracker ids */
@@ -53,6 +53,8 @@ public class DeNormSpotCheckMismatch<ContentKey> {
        this.key = key;
        this.mismatchType = mismatchType;
        this.dataSource = dataSource;
+       this.status = SpotCheckMismatchStatus.NEW;
+       this.ignoreStatus = SpotCheckMismatchIgnore.NOT_IGNORED;
     }
 
     public void setMismatchId(int mismatchId) {
