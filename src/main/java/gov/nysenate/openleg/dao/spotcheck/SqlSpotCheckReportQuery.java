@@ -148,11 +148,6 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "FROM latest_obs\n" +
         "GROUP BY reference_type, status, type, ignore_level, tracked"
     ),
-    INSERT_MISMATCH(
-        "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_MISMATCH + "\n" +
-        "(observation_id, type, status, reference_data, observed_data, notes)\n" +
-        "VALUES (:observationId, :type, :status, :referenceData, :observedData, :notes)"
-    ),
 
     /** --- Mismatch Ignore queries --- */
 
@@ -235,6 +230,16 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "  ) open_mismatches \n"
     ),
 
+    INSERT_MISMATCH(
+        "INSERT INTO ${schema}.spotcheck_mismatch\n" +
+        "(key, mismatch_type, report_id, datasource, content_type, reference_type,\n" +
+        "mismatch_status, reference_data, observed_data, notes, issue_ids, ignore_level,\n" +
+        "report_date_time, observed_date_time, reference_active_date_time)\n" +
+        "VALUES\n" +
+        "(:key::hstore, :mismatchType, :reportId, :datasource, :contentType, :referenceType, \n" +
+        ":mismatchStatus, :referenceData, :observedData, :notes, :issueIds::text[], :ignoreLevel, \n" +
+        ":reportDateTime, :observedDateTime, :referenceActiveDateTime)\n"
+    )
     ;
 
     private String sql;

@@ -29,11 +29,14 @@ public class SpotCheckReportDaoTests extends BaseTests {
                 SpotCheckRefType.LBDC_DAYBREAK.checkedMismatchTypes(), LocalDateTime.of(2016, 12, 31, 1, 1)).size());
     }
 
-    @Ignore
     @Test
     public void save() {
+        LocalDateTime refDateTime = LocalDateTime.now();
         SpotCheckReport report = new SpotCheckReport();
-        report.setReportId(new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now()));
+        SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, refDateTime, LocalDateTime.now());
+        report.setReportId(reportId);
+        SpotCheckObservation ob = new SpotCheckObservation(new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, refDateTime), new BillId("A1029", 2017));
+        report.addObservation(ob);
         reportDao.saveReport(report);
     }
 

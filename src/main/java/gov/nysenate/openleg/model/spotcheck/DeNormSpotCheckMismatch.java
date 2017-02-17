@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
