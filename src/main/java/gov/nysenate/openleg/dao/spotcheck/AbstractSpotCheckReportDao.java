@@ -101,22 +101,12 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
 //        return handler.getSummaries();
     }
 
+
     /**
      * {@inheritDoc}
      */
-    // TODO this is wrong
     @Override
-    public PaginatedList<DeNormSpotCheckMismatch> getOpenMismatches(SpotCheckDataSource dataSource,
-                                                                    LocalDateTime dateTime,
-                                                                    LimitOffset limitOffset) {
-        // TODO Remove
-        return null;
-    }
-
-    /**
-     * Gets the most recent version of all mismatches at the given date time.
-     */
-    public List<DeNormSpotCheckMismatch> getUpdatableMismatches(MismatchQuery query) {
+    public PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("datasource", query.getDataSource().name())
                 .addValue("contentTypes", query.getContentTypes().stream().map(Enum::name).collect(Collectors.toSet()))
@@ -124,8 +114,10 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("ignoreStatuses", query.getIgnoredStatuses().stream().map(Enum::name).collect(Collectors.toSet()))
                 .addValue("toDate", query.getToDate())
                 .addValue("fromDate", query.getFromDate());
-        String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema());
-        return jdbcNamed.query(sql, params, new OpenMismatchMapper());
+        String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema(), limitOffset);
+        PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new OpenMismatchMapper());
+        jdbcNamed.query(sql, params, handler);
+        return handler.getList();
     }
 
     /**
@@ -161,7 +153,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         List<DeNormSpotCheckMismatch> reportMismatches = reportToDeNormMismatches(report, reportId);
         MismatchQuery query = new MismatchQuery(report.getReferenceType().getDataSource(), Sets.newHashSet(report.getReferenceType().getContentType()));
         query.withToDate(report.getReferenceDateTime());
-        List<DeNormSpotCheckMismatch> currentMismatches = getUpdatableMismatches(query);
+        List<DeNormSpotCheckMismatch> currentMismatches = getMismatches(query, LimitOffset.ALL).getResults();
 
         List<DeNormSpotCheckMismatch> updatedMismatches = MismatchStatusService.deriveStatuses(reportMismatches, currentMismatches);
         updatedMismatches.addAll(MismatchStatusService.deriveResolved(reportMismatches, currentMismatches, checkedKeys, checkedTypes));

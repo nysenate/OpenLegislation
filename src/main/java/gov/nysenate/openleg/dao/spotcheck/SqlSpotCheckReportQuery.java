@@ -202,7 +202,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     /** --- QA Redesign queries --- */
 
     GET_MISMATCHES(
-        "SELECT * FROM \n" +
+        "SELECT *, count(*) OVER() as total_rows FROM \n" +
         "  (SELECT DISTINCT ON (m.key, m.mismatch_type) m.mismatch_id, m.report_id, hstore_to_array(m.key) as key, m.mismatch_type, m.mismatch_status, \n" +
         "  m.datasource, m.content_type, m.reference_type, m.reference_active_date_time, m.reference_data, m.observed_data, m.notes, \n" +
         "  m.observed_date_time, m.report_date_time, m.ignore_level, m.issue_ids \n" +

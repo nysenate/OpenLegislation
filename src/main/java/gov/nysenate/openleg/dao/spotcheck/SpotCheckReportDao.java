@@ -40,11 +40,9 @@ public interface SpotCheckReportDao<ContentKey>
                                                     LocalDateTime end, SortOrder dateOrder);
 
     /**
-     * TODO docs
+     * Get mismatches matching the given query params.
      */
-    PaginatedList<DeNormSpotCheckMismatch> getOpenMismatches(SpotCheckDataSource dataSource,
-                                                                         LocalDateTime dateTime,
-                                                                         LimitOffset limitOffset);
+    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
      * Get a summary of type/status/ignore counts pertaining to the given query

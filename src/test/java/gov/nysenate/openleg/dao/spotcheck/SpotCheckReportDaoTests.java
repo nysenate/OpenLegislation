@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.spotcheck;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class SpotCheckReportDaoTests extends BaseTests {
     @Test
     public void updatableMismatches() {
         MismatchQuery query = new MismatchQuery(SpotCheckDataSource.LBDC, Sets.newHashSet(SpotCheckContentType.BILL));
-        System.out.println(reportDao.getUpdatableMismatches(query).size());
+        System.out.println(reportDao.getMismatches(query, LimitOffset.TEN).getResults().size());
     }
 
     @Test
