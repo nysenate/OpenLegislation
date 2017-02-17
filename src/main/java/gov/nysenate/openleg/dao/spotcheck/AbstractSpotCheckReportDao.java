@@ -2,7 +2,6 @@ package gov.nysenate.openleg.dao.spotcheck;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.*;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.MismatchStatusService;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +11,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -20,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,24 +63,25 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public SpotCheckReport<ContentKey> getReport(SpotCheckReportId id) throws DataAccessException {
-        ImmutableParams reportIdParams = ImmutableParams.from(new MapSqlParameterSource()
-                .addValue("referenceType", id.getReferenceType().name())
-                .addValue("reportDateTime", toDate(id.getReportDateTime())));
-        // Check for the report record or throw a DataAccessException if not present
-        SpotCheckReport<ContentKey> report =
-                jdbcNamed.queryForObject(SELECT_REPORT.getSql(schema()), reportIdParams, (rs, row) ->
-                        new SpotCheckReport<>(
-                                new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
-                                        getLocalDateTimeFromRs(rs, "reference_date_time"),
-                                        getLocalDateTimeFromRs(rs, "report_date_time")),
-                                rs.getString("notes")
-                        )
-                );
-        // Obtain all the current and prior observations/mismatches
-        ReportObservationsHandler handler = new ReportObservationsHandler();
-        jdbcNamed.query(SELECT_OBS_MISMATCHES_BY_REPORT.getSql(schema()), reportIdParams, handler);
-        report.setObservations(handler.getObsMap());
-        return report;
+        return null; // TODO: WIP
+//        ImmutableParams reportIdParams = ImmutableParams.from(new MapSqlParameterSource()
+//                .addValue("referenceType", id.getReferenceType().name())
+//                .addValue("reportDateTime", toDate(id.getReportDateTime())));
+//        // Check for the report record or throw a DataAccessException if not present
+//        SpotCheckReport<ContentKey> report =
+//                jdbcNamed.queryForObject(SELECT_REPORT.getSql(schema()), reportIdParams, (rs, row) ->
+//                        new SpotCheckReport<>(
+//                                new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
+//                                        getLocalDateTimeFromRs(rs, "reference_date_time"),
+//                                        getLocalDateTimeFromRs(rs, "report_date_time")),
+//                                rs.getString("notes")
+//                        )
+//                );
+//        // Obtain all the current and prior observations/mismatches
+//        ReportObservationsHandler handler = new ReportObservationsHandler();
+//        jdbcNamed.query(SELECT_OBS_MISMATCHES_BY_REPORT.getSql(schema()), reportIdParams, handler);
+//        report.setObservations(handler.getObsMap());
+//        return report;
     }
 
     /**
@@ -92,14 +90,15 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     @Override
     public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType refType, LocalDateTime start, LocalDateTime end,
                                                            SortOrder dateOrder) {
-        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
-                .addValue("startDateTime", toDate(start))
-                .addValue("endDateTime", toDate(end))
-                .addValue("getAllRefTypes", refType == null)
-                .addValue("referenceType", refType != null ? refType.toString() : ""));
-        ReportSummaryHandler handler = new ReportSummaryHandler(dateOrder);
-        jdbcNamed.query(SELECT_REPORT_SUMMARIES.getSql(schema()), params, handler);
-        return handler.getSummaries();
+        return null; // TODO: WIP
+//        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
+//                .addValue("startDateTime", toDate(start))
+//                .addValue("endDateTime", toDate(end))
+//                .addValue("getAllRefTypes", refType == null)
+//                .addValue("referenceType", refType != null ? refType.toString() : ""));
+//        ReportSummaryHandler handler = new ReportSummaryHandler(dateOrder);
+//        jdbcNamed.query(SELECT_REPORT_SUMMARIES.getSql(schema()), params, handler);
+//        return handler.getSummaries();
     }
 
     /**
@@ -110,29 +109,22 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     public PaginatedList<DeNormSpotCheckMismatch> getOpenMismatches(SpotCheckDataSource dataSource,
                                                                     LocalDateTime dateTime,
                                                                     LimitOffset limitOffset) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("datasource", dataSource.name())
-                .addValue("dateTime", dateTime)
-                .addValue("startOfDateTimeDay", dateTime.truncatedTo(ChronoUnit.HOURS))
-                .addValue("sessionStartDateTime", SessionYear.of(dateTime.getYear()).asDateTimeRange().lowerEndpoint());
-        String sql = SqlSpotCheckReportQuery.OPEN_MISMATCHES.getSql(schema(), limitOffset);
-        PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new OpenMismatchMapper());
-        jdbcNamed.query(sql, params, handler);
-        return handler.getList();
+        // TODO Remove
+        return null;
     }
 
     /**
      * Gets the most recent version of all mismatches at the given date time.
      */
-    public List<DeNormSpotCheckMismatch> getUpdatableMismatches(SpotCheckDataSource dataSource, SpotCheckContentType contentType,
-                                                                Set<SpotCheckMismatchType> checkedMismatchTypes, LocalDateTime refDateTime) {
+    public List<DeNormSpotCheckMismatch> getUpdatableMismatches(MismatchQuery query) {
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("datasource", dataSource.name())
-                .addValue("contentType", contentType.name())
-                .addValue("checkedMismatchTypes", checkedMismatchTypes.stream().map(Enum::name).collect(Collectors.toSet()))
-                .addValue("refDateTime", refDateTime)
-                .addValue("sessionStartDateTime", SessionYear.of(refDateTime.getYear()).asDateTimeRange().lowerEndpoint());
-        String sql = SqlSpotCheckReportQuery.CURRENT_MISMATCHES.getSql(schema());
+                .addValue("datasource", query.getDataSource().name())
+                .addValue("contentTypes", query.getContentTypes().stream().map(Enum::name).collect(Collectors.toSet()))
+                .addValue("statuses", query.getMismatchStatuses().stream().map(Enum::name).collect(Collectors.toSet()))
+                .addValue("ignoreStatuses", query.getIgnoredStatuses().stream().map(Enum::name).collect(Collectors.toSet()))
+                .addValue("toDate", query.getToDate())
+                .addValue("fromDate", query.getFromDate());
+        String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema());
         return jdbcNamed.query(sql, params, new OpenMismatchMapper());
     }
 
@@ -141,12 +133,14 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public OpenMismatchSummary getOpenMismatchSummary(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter) {
-        OpenMismatchQuery query = new OpenMismatchQuery(refTypes, null, observedAfter, null, null, null, false, true, false, true, true);
-        ImmutableParams params = ImmutableParams.from(getOpenObsParams(query));
-        OpenMismatchSummaryHandler handler = new OpenMismatchSummaryHandler(refTypes, observedAfter);
-        final String sqlQuery = getOpenObsMismatchesSummaryQuery(schema(), query);
-        jdbcNamed.query(sqlQuery, params, handler);
-        return handler.getSummary();
+        // TODO WIP
+        return null;
+//        OpenMismatchQuery query = new OpenMismatchQuery(refTypes, null, observedAfter, null, null, null, false, true, false, true, true);
+//        ImmutableParams params = ImmutableParams.from(getOpenObsParams(query));
+//        OpenMismatchSummaryHandler handler = new OpenMismatchSummaryHandler(refTypes, observedAfter);
+//        final String sqlQuery = getOpenObsMismatchesSummaryQuery(schema(), query);
+//        jdbcNamed.query(sqlQuery, params, handler);
+//        return handler.getSummary();
     }
 
     /**
@@ -165,8 +159,9 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         Set<SpotCheckMismatchType> checkedTypes = report.getReferenceType().checkedMismatchTypes();
 
         List<DeNormSpotCheckMismatch> reportMismatches = reportToDeNormMismatches(report, reportId);
-        List<DeNormSpotCheckMismatch> currentMismatches = getUpdatableMismatches(report.getReferenceType().getDataSource(),
-                report.getReferenceType().getContentType(), report.getReferenceType().checkedMismatchTypes(), report.getReferenceDateTime());
+        MismatchQuery query = new MismatchQuery(report.getReferenceType().getDataSource(), Sets.newHashSet(report.getReferenceType().getContentType()));
+        query.withToDate(report.getReferenceDateTime());
+        List<DeNormSpotCheckMismatch> currentMismatches = getUpdatableMismatches(query);
 
         List<DeNormSpotCheckMismatch> updatedMismatches = MismatchStatusService.deriveStatuses(reportMismatches, currentMismatches);
         updatedMismatches.addAll(MismatchStatusService.deriveResolved(reportMismatches, currentMismatches, checkedKeys, checkedTypes));
@@ -209,7 +204,6 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     }
 
     private List<DeNormSpotCheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report, int reportId) {
-        LocalDateTime reportDateTime = report.getReportDateTime();
         List<DeNormSpotCheckMismatch> mismatches = new ArrayList<>();
         for (SpotCheckObservation<ContentKey> ob : report.getObservations().values()) {
             // Skip if no mismatches in the observation
@@ -241,10 +235,11 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public void deleteReport(SpotCheckReportId reportId) {
-        ImmutableParams reportIdParams = ImmutableParams.from(new MapSqlParameterSource()
-                .addValue("referenceType", reportId.getReferenceType().name())
-                .addValue("reportDateTime", toDate(reportId.getReportDateTime())));
-        jdbcNamed.update(DELETE_REPORT.getSql(schema()), reportIdParams);
+        // TODO WIP
+//        ImmutableParams reportIdParams = ImmutableParams.from(new MapSqlParameterSource()
+//                .addValue("referenceType", reportId.getReferenceType().name())
+//                .addValue("reportDateTime", toDate(reportId.getReportDateTime())));
+//        jdbcNamed.update(DELETE_REPORT.getSql(schema()), reportIdParams);
     }
 
     /**
@@ -252,16 +247,17 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public void setMismatchIgnoreStatus(int mismatchId, SpotCheckMismatchIgnore ignoreStatus) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("mismatchId", mismatchId)
-                .addValue("ignoreLevel", Optional.ofNullable(ignoreStatus).map(SpotCheckMismatchIgnore::getCode).orElse(null));
-        if (ignoreStatus == null || ignoreStatus == SpotCheckMismatchIgnore.NOT_IGNORED) {
-            jdbcNamed.update(DELETE_MISMATCH_IGNORE.getSql(schema()), params);
-        } else {
-            if (jdbcNamed.update(UPDATE_MISMATCH_IGNORE.getSql(schema()), params) == 0) {
-                jdbcNamed.update(INSERT_MISMATCH_IGNORE.getSql(schema()), params);
-            }
-        }
+        // TODO: WIP
+//        MapSqlParameterSource params = new MapSqlParameterSource()
+//                .addValue("mismatchId", mismatchId)
+//                .addValue("ignoreLevel", Optional.ofNullable(ignoreStatus).map(SpotCheckMismatchIgnore::getCode).orElse(null));
+//        if (ignoreStatus == null || ignoreStatus == SpotCheckMismatchIgnore.NOT_IGNORED) {
+//            jdbcNamed.update(DELETE_MISMATCH_IGNORE.getSql(schema()), params);
+//        } else {
+//            if (jdbcNamed.update(UPDATE_MISMATCH_IGNORE.getSql(schema()), params) == 0) {
+//                jdbcNamed.update(INSERT_MISMATCH_IGNORE.getSql(schema()), params);
+//            }
+//        }
     }
 
     /**
@@ -269,8 +265,9 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public void addIssueId(int mismatchId, String issueId) {
-        SqlParameterSource params = getIssueIdParams(mismatchId, issueId);
-        jdbcNamed.update(ADD_ISSUE_ID.getSql(schema()), params);
+        // TODO WIP
+//        SqlParameterSource params = getIssueIdParams(mismatchId, issueId);
+//        jdbcNamed.update(ADD_ISSUE_ID.getSql(schema()), params);
     }
 
     /**
@@ -278,65 +275,9 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public void deleteIssueId(int mismatchId, String issueId) {
-        SqlParameterSource params = getIssueIdParams(mismatchId, issueId);
-        jdbcNamed.update(DELETE_ISSUE_ID.getSql(schema()), params);
-    }
-
-    /** --- Internal Methods --- */
-
-    /**
-     * Looks at past observations for each checked content key and sets mismatch statuses in the current report
-     * according to their presence in previous reports
-     */
-    private void setMismatchStatuses(SpotCheckReport<ContentKey> report) {
-        // Get latest observation for each content key of this report's reference type
-        ReportObservationsHandler obsHandler = new ReportObservationsHandler();
-        MapSqlParameterSource params = new MapSqlParameterSource("referenceTypes", String.valueOf(report.getReferenceType()));
-        jdbcNamed.query(SELECT_LATEST_OBS_MISMATCHES_PARTIAL.getSql(schema()), params, obsHandler);
-        Map<ContentKey, SpotCheckObservation<ContentKey>> latestObs = obsHandler.getObsMap();
-
-        report.getObservations().forEach((contentKey, reportObs) -> {
-            if (latestObs.containsKey(contentKey)) { // Leave mismatch statuses as NEW if no prior occurrence
-                latestObs.get(contentKey).getMismatches().forEach((type, lastMismatch) -> {
-                    if (reportObs.getMismatches().containsKey(type)) { // if a past mismatch has occurred in this report
-                        SpotCheckMismatch currentMismatch = reportObs.getMismatches().get(type);
-                        switch (lastMismatch.getStatus()) {
-                            case RESOLVED:
-                                currentMismatch.setStatus(SpotCheckMismatchStatus.REGRESSION);
-                                break;
-                            default:
-                                currentMismatch.setStatus(SpotCheckMismatchStatus.EXISTING);
-                        }
-                        currentMismatch.setIssueIds(lastMismatch.getIssueIds());
-                    } else if (!SpotCheckMismatchStatus.RESOLVED.equals(lastMismatch.getStatus())) {
-                        // If a past mismatch is not represented for this content in this report, it is resolved
-                        lastMismatch.setStatus(SpotCheckMismatchStatus.RESOLVED);
-                        reportObs.addMismatch(lastMismatch);
-                        // Remove ignore status if the mismatch had a status of 'ignore until resolved'
-                        if (lastMismatch.getIgnoreStatus() == SpotCheckMismatchIgnore.IGNORE_UNTIL_RESOLVED) {
-                            setMismatchIgnoreStatus(lastMismatch.getMismatchId(), SpotCheckMismatchIgnore.NOT_IGNORED);
-                        }
-                    }
-                    if (lastMismatch.getIgnoreStatus() == SpotCheckMismatchIgnore.IGNORE_ONCE) {
-                        setMismatchIgnoreStatus(lastMismatch.getMismatchId(), SpotCheckMismatchIgnore.NOT_IGNORED);
-                    }
-                });
-            }
-        });
-    }
-
-    private void saveObservation(SpotCheckObservation<ContentKey> obs, ImmutableParams reportParams) {
-        ImmutableParams observationParams = ImmutableParams.from(getObservationParams(reportParams, obs));
-        int observationId = jdbcNamed.queryForObject(INSERT_OBSERVATION_AND_RETURN_ID.getSql(schema()), observationParams,
-                (rs, row) -> rs.getInt(1));
-        // Insert the mismatches for the observation
-        obs.getMismatches().values().forEach(m -> {
-            ImmutableParams mismatchParams = ImmutableParams.from(getMismatchParams(observationId, m));
-            KeyHolder mismatchIdHolder = new GeneratedKeyHolder();
-            jdbcNamed.update(INSERT_MISMATCH.getSql(schema()), mismatchParams, mismatchIdHolder, new String[]{"id"});
-            m.setMismatchId(mismatchIdHolder.getKey().intValue());
-            m.getIssueIds().forEach(issueId -> addIssueId(m.getMismatchId(), issueId));
-        });
+        // TODO WIP
+//        SqlParameterSource params = getIssueIdParams(mismatchId, issueId);
+//        jdbcNamed.update(DELETE_ISSUE_ID.getSql(schema()), params);
     }
 
     /**
@@ -567,17 +508,6 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("observedData", mismatch.getObservedData())
                 .addValue("notes", mismatch.getNotes())
                 .addValue("issueIds", issueIds, Types.ARRAY);
-    }
-
-    private MapSqlParameterSource getOpenObsParams(OpenMismatchQuery query) {
-        return new MapSqlParameterSource()
-                .addValue("referenceTypes", query.getRefTypes().stream().map(Enum::name).collect(Collectors.toList()))
-                .addValue("earliest", toDate(query.getObservedAfter()))
-                .addValue("mismatchTypes", query.getMismatchTypes() != null
-                        ? query.getMismatchTypes().stream()
-                        .map(SpotCheckMismatchType::name)
-                        .collect(Collectors.toList())
-                        : null);
     }
 
     private MapSqlParameterSource getIssueIdParams(int mismatchId, String issueId) {

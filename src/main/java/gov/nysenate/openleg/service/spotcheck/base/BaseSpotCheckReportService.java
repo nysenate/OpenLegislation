@@ -42,7 +42,7 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<DeNormSpotCheckMismatch> getOpenObservations(OpenMismatchQuery query) {
+    public PaginatedList<DeNormSpotCheckMismatch> getOpenObservations(MismatchQuery query) {
 //        return getReportDao().getOpenMismatches(query);
         // TODO refactro this
         return null;

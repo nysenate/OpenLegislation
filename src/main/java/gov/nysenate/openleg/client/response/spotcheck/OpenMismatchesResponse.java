@@ -5,7 +5,7 @@ import gov.nysenate.openleg.client.view.spotcheck.ObservationView;
 import gov.nysenate.openleg.client.view.spotcheck.OpenMismatchSummaryView;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.model.spotcheck.DeNormSpotCheckMismatch;
-import gov.nysenate.openleg.model.spotcheck.OpenMismatchQuery;
+import gov.nysenate.openleg.model.spotcheck.MismatchQuery;
 import gov.nysenate.openleg.model.spotcheck.OpenMismatchSummary;
 
 import java.util.TreeMap;
@@ -16,11 +16,11 @@ public class OpenMismatchesResponse<ContentKey> extends PaginationResponse {
 
     protected OpenMismatchSummaryView summary;
 
-    private OpenMismatchQuery query;
+    private MismatchQuery query;
 
     public OpenMismatchesResponse(PaginatedList<DeNormSpotCheckMismatch> openMismatches,
                                   OpenMismatchSummary summary,
-                                  OpenMismatchQuery query) {
+                                  MismatchQuery query) {
         super(openMismatches.getTotal(), openMismatches.getLimOff());
         this.success = true;
         this.observations = new TreeMap<>();
@@ -33,7 +33,7 @@ public class OpenMismatchesResponse<ContentKey> extends PaginationResponse {
         return observations;
     }
 
-    public OpenMismatchQuery getQuery() {
+    public MismatchQuery getQuery() {
         return query;
     }
 

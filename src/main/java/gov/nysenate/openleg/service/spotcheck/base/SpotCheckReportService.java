@@ -73,7 +73,7 @@ public interface SpotCheckReportService<ContentKey>
      * @param query OpenMismatchQuery
      * @return Map<ContentKey, SpotCheckObservation<ContentKey>>
      */
-    PaginatedList<DeNormSpotCheckMismatch> getOpenObservations(OpenMismatchQuery query);
+    PaginatedList<DeNormSpotCheckMismatch> getOpenObservations(MismatchQuery query);
 
     /**
      * Get a summary of type/status/ignore counts pertaining to the given query

@@ -165,8 +165,8 @@ public class SpotCheckCtrl extends BaseCtrl
         SortOrder order = getSortOrder(request, SortOrder.DESC);
         Set<SpotCheckMismatchType> mismatchTypes = getSpotcheckMismatchTypes(mismatchType, "mismatchType", refTypes);
         LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
-        OpenMismatchQuery query = new OpenMismatchQuery(refTypes, mismatchTypes, earliestDateTime,
-                mismatchOrderBy, order, limOff, resolvedShown, ignoredShown, ignoredOnly, trackedShown, untrackedShown);
+//        OpenMismatchQuery query = new OpenMismatchQuery(refTypes, mismatchTypes, earliestDateTime,
+//                mismatchOrderBy, order, limOff, resolvedShown, ignoredShown, ignoredOnly, trackedShown, untrackedShown);
 //        SpotCheckMismatches<?> observations = reportServiceMap.get(refType).getOpenObservations(query);
         OpenMismatchSummary summary = getAnyReportService().getOpenMismatchSummary(refTypes, earliestDateTime);
 //        return new OpenMismatchesResponse<>(observations, summary, query);
