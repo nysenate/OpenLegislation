@@ -24,6 +24,11 @@ public class SpotCheckReportDaoTests extends BaseTests {
     }
 
     @Test
+    public void getSummary() {
+        System.out.println(reportDao.getMismatchSummary(SpotCheckDataSource.LBDC, LocalDateTime.now()));
+    }
+
+    @Test
     public void save() {
         LocalDateTime refDateTime = LocalDateTime.now();
         SpotCheckReport report = new SpotCheckReport();

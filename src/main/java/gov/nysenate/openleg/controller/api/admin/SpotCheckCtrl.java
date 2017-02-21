@@ -7,11 +7,10 @@ import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.client.response.spotcheck.OpenMismatchesResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportDetailResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportSummaryResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
-import gov.nysenate.openleg.client.view.spotcheck.OpenMismatchSummaryView;
+import gov.nysenate.openleg.client.view.spotcheck.MismatchSummaryView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
@@ -168,7 +167,7 @@ public class SpotCheckCtrl extends BaseCtrl
 //        OpenMismatchQuery query = new OpenMismatchQuery(refTypes, mismatchTypes, earliestDateTime,
 //                mismatchOrderBy, order, limOff, resolvedShown, ignoredShown, ignoredOnly, trackedShown, untrackedShown);
 //        SpotCheckMismatches<?> observations = reportServiceMap.get(refType).getOpenObservations(query);
-        OpenMismatchSummary summary = getAnyReportService().getOpenMismatchSummary(refTypes, earliestDateTime);
+//        MismatchSummary summary = getAnyReportService().getOpenMismatchSummary(refTypes, earliestDateTime);
 //        return new OpenMismatchesResponse<>(observations, summary, query);
         return null;
     }
@@ -180,18 +179,19 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Usage: (GET) /api/3/admin/spotcheck/open-mismatches/summary
      *
-     * Request Parameters: reportType - string - the reference type of the mismatches to be retrieved
-     *                     observedAfter - string (ISO date) - optional - only returns observations with mismatches after
-     *                          the given date if present
+     * Request Parameters: datasource - string - The datasource to return summary information on.
+     *                     summaryDateTime - string (ISO date) - optional - returns summary information as of this date time.
+     *                                       Defaults to current date time.
      */
     @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/open-mismatches/summary", method = RequestMethod.GET)
-    public BaseResponse getOpenMismatchSummary(@RequestParam(required = false) String[] reportType,
-                                          @RequestParam(required = false) String observedAfter) {
-        Set<SpotCheckRefType> refTypes = getSpotcheckRefTypes(reportType, "reportType");
-        LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
-        OpenMismatchSummary summary = getAnyReportService().getOpenMismatchSummary(refTypes, earliestDateTime);
-        return new ViewObjectResponse<>(new OpenMismatchSummaryView(summary));
+    @RequestMapping(value = "/mismatches/summary", method = RequestMethod.GET)
+    public BaseResponse getOpenMismatchSummary(@RequestParam String datasource,
+                                               @RequestParam(required = false) String summaryDateTime) {
+        SpotCheckDataSource ds = SpotCheckDataSource.valueOf(datasource);
+        LocalDateTime sumDateTime = parseISODateTime(summaryDateTime, LocalDateTime.now());
+        MismatchSummary summary = getAnyReportService().getMismatchSummary(ds, sumDateTime);
+//        return new ViewObjectResponse<>(new MismatchSummaryView(summary));
+        return null;
     }
 
     /**

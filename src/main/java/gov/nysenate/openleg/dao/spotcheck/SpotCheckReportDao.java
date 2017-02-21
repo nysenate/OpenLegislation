@@ -45,13 +45,11 @@ public interface SpotCheckReportDao<ContentKey>
     PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
-     * Get a summary of type/status/ignore counts pertaining to the given query
+     * Get the daily summary counts for all statuses of content types for the given datasource.
      *
-     * @param refTypes
-     * @param observedAfter
      * @return OpenMismatchesSummary
      */
-    OpenMismatchSummary getOpenMismatchSummary(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter);
+    MismatchSummary getMismatchSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate);
 
     /**
      * Save the report to the backing store. This process may add additional observations to the

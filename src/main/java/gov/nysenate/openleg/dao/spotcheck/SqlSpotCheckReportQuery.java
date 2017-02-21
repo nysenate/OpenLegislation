@@ -225,6 +225,22 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "(:key::hstore, :mismatchType, :reportId, :datasource, :contentType, :referenceType, \n" +
         ":mismatchStatus, :referenceData, :observedData, :notes, :issueIds::text[], :ignoreLevel, \n" +
         ":reportDateTime, :observedDateTime, :referenceActiveDateTime)\n"
+    ),
+
+    MISMATCH_SUMMARY(
+        "SELECT *, count(*) FROM\n"+
+        "  (SELECT content_type, mismatch_status FROM\n"+
+        "    (SELECT DISTINCT ON (m.key, m.mismatch_type, m.datasource) m.content_type, m.mismatch_status, m.reference_active_date_time\n"+
+        "     FROM ${schema}.spotcheck_mismatch m\n"+
+        "     WHERE m.reference_active_date_time BETWEEN :fromDate AND :toDate\n"+
+        "       AND m.datasource = :datasource\n"+
+        "       AND m.ignore_level = 'NOT_IGNORED'\n"+
+        "     ORDER BY m.key, m.mismatch_type, m.datasource, m.observed_date_time desc\n"+
+        "    ) most_recent_mismatches\n"+
+        "  WHERE mismatch_status != 'RESOLVED'\n"+
+        "    OR reference_active_date_time > :startOfToDate\n"+
+        "  ) summary\n"+
+        "GROUP BY content_type, mismatch_status\n"
     )
     ;
 

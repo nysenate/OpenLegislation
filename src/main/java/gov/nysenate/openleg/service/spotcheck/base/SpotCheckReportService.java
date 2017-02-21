@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
@@ -69,20 +70,20 @@ public interface SpotCheckReportService<ContentKey>
                                                     SortOrder dateOrder);
 
     /**
-     * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType
-     * @param query OpenMismatchQuery
-     * @return Map<ContentKey, SpotCheckObservation<ContentKey>>
+     * Get mismatches matching the given MismatchQuery.
+     * Defaults to Not ignored open mismatches for the current session.
+     * @param query Defines parameters to query by.
+     * @return Paginated list of DeNormSpotCheckMismatch's
      */
-    PaginatedList<DeNormSpotCheckMismatch> getOpenObservations(MismatchQuery query);
+    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
-     * Get a summary of type/status/ignore counts pertaining to the given query
-     *
-     * @param refTypes
-     * @param observedAfter
-     * @return OpenMismatchesSummary
+     * Gets mismatch summary information for the given datasource, as of the given summary date time.
+     * @param dataSource
+     * @param summaryDateTime
+     * @return
      */
-    OpenMismatchSummary getOpenMismatchSummary(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter);
+    MismatchSummary getMismatchSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime);
 
     /**
      * Wipe a report as well as all of its associated observations and mismatches from the backing store.
