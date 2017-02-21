@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.controller.api.admin;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
@@ -15,8 +17,10 @@ import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
@@ -127,43 +131,63 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     /**
-     * Spotcheck Open Observations API
+     * Spotcheck Mismatch API
      *
-     * Queries spotcheck observations with open mismatches for a specific report type
+     * Queries for spotcheck mismatches matching the supplied parameters.
      *
-     * Usage: (GET) /api/3/admin/spotcheck/open-mismatches
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches
      *
-     * Request Parameters: reportType - string - the reference type of the mismatches to be retrieved
-     *                     mismatchTypes - string[] - optional - only retrieves mismatches for the specified types if present
-     *                     orderBy - string (ASC|DESC) - optional, default DESC - determines order of returned observations
-     *                     observedAfter - string (ISO date) - optional - only returns observations with mismatches after
-     *                          the given date if present
-     *                     resolvedShown - boolean - optional, default false - will return resolved mismatches if true
-     *                     ignoredShown - boolean - optional, default false - will return ignored mismatches if true
-     *                     ignoredOnly - boolean - optional, default false - returns only ignored mismatches if true
-     *                          will override ignoredShown=false if set to true
-     *                     trackedShown - boolean - optional, default true - will return tracked issues if set to true
-     *                     untrackedShown - boolean - optional, default true - will return untracked issues if set to true
+     * Request Parameters: datasource - string - only mismatches for this datasource will be returned.
+     *                     contentTypes - string[] - retrieves mismatches for the specified content types.
+     *                     mismatchStatuses - string[] - optional, default [NEW, EXISTING, REGRESSION]
+     *                                      - retrieves mismatches with any of the given mismatch status.
+     *                     ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
+     *                     fromDate - string (ISO date) - optional, default start of the session encompassing toDate,
+     *                              - retrieves mismatches after this date.
+     *                     toDate - string (ISO date) - optional, default is now - retrieve mismatches as of this date.
+     *                     limit - int - limit the number of results.
+     *                     offset - int - start results from an offset.
      */
     @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/open-mismatches", method = RequestMethod.GET)
-    public BaseResponse getOpenMismatches(@RequestParam String reportType,
-                                          @RequestParam(required = false) String[] mismatchType,
-                                          @RequestParam(required = false) String orderBy,
-                                          @RequestParam(required = false) String observedAfter,
-                                          @RequestParam(defaultValue = "false") boolean resolvedShown,
-                                          @RequestParam(defaultValue = "false") boolean ignoredShown,
-                                          @RequestParam(defaultValue = "false") boolean ignoredOnly,
-                                          @RequestParam(defaultValue = "true") boolean trackedShown,
-                                          @RequestParam(defaultValue = "true") boolean untrackedShown,
+    @RequestMapping(value = "/mismatches", method = RequestMethod.GET)
+    public BaseResponse getOpenMismatches(@RequestParam String datasource,
+                                          @RequestParam String[] contentTypes,
+                                          @RequestParam(required = false) String[] mismatchStatuses,
+                                          @RequestParam(required = false) String[] ignoredStatuses,
+                                          @RequestParam(required = false) String fromDate,
+                                          @RequestParam(required = false) String toDate,
                                           WebRequest request) {
-        SpotCheckRefType refType = getSpotcheckRefType(reportType, "reportType");
-        Set<SpotCheckRefType> refTypes = Collections.singleton(refType);
-        LimitOffset limOff = getLimitOffset(request, 0);
-        MismatchOrderBy mismatchOrderBy = getEnumParameter(orderBy, MismatchOrderBy.class, MismatchOrderBy.OBSERVED_DATE);
-        SortOrder order = getSortOrder(request, SortOrder.DESC);
-        Set<SpotCheckMismatchType> mismatchTypes = getSpotcheckMismatchTypes(mismatchType, "mismatchType", refTypes);
-        LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
+        SpotCheckDataSource ds = SpotCheckDataSource.valueOf(datasource);
+        // TODO handle invalid enum strings?
+        Set<SpotCheckContentType> cts = Lists.newArrayList(contentTypes).stream().map(SpotCheckContentType::valueOf).collect(Collectors.toSet());
+        Set<SpotCheckMismatchStatus> ms = mismatchStatuses == null
+                ? EnumSet.of(SpotCheckMismatchStatus.NEW, SpotCheckMismatchStatus.EXISTING, SpotCheckMismatchStatus.REGRESSION)
+                : Lists.newArrayList(mismatchStatuses).stream().map(SpotCheckMismatchStatus::valueOf).collect(Collectors.toSet());
+        Set<SpotCheckMismatchIgnore> igs = ignoredStatuses == null
+                ? EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED)
+                : Lists.newArrayList(ignoredStatuses).stream().map(SpotCheckMismatchIgnore::valueOf).collect(Collectors.toSet());
+
+        LocalDateTime toDateTime = parseISODateTime(toDate, LocalDateTime.now());
+        LocalDateTime fromDateTime = parseISODateTime(fromDate, SessionYear.of(toDateTime.getYear()).asDateTimeRange().lowerEndpoint());
+        LimitOffset limitOffset = getLimitOffset(request, 10);
+
+        MismatchQuery query = new MismatchQuery(ds, cts)
+                .withMismatchStatuses(ms)
+                .withIgnoredStatuses(igs)
+                .withFromDate(fromDateTime)
+                .withToDate(toDateTime);
+
+//        PaginatedList<DeNormSpotCheckMismatch> mismatches = reportServiceMap
+
+
+
+//        SpotCheckRefType refType = getSpotcheckRefType(reportType, "reportType");
+//        Set<SpotCheckRefType> refTypes = Collections.singleton(refType);
+//        LimitOffset limOff = getLimitOffset(request, 0);
+//        MismatchOrderBy mismatchOrderBy = getEnumParameter(orderBy, MismatchOrderBy.class, MismatchOrderBy.OBSERVED_DATE);
+//        SortOrder order = getSortOrder(request, SortOrder.DESC);
+//        Set<SpotCheckMismatchType> mismatchTypes = getSpotcheckMismatchTypes(mismatchType, "mismatchType", refTypes);
+//        LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
 //        OpenMismatchQuery query = new OpenMismatchQuery(refTypes, mismatchTypes, earliestDateTime,
 //                mismatchOrderBy, order, limOff, resolvedShown, ignoredShown, ignoredOnly, trackedShown, untrackedShown);
 //        SpotCheckMismatches<?> observations = reportServiceMap.get(refType).getOpenObservations(query);
@@ -173,11 +197,11 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     /**
-     * Spotcheck Open Observations Summary API
+     * Spotcheck Mismatch Summary API
      *
-     * Get a summary of spotcheck observations with open mismatches for a specific report type
+     * Get a summary of mismatch status counts for all content types for a specific datasource.
      *
-     * Usage: (GET) /api/3/admin/spotcheck/open-mismatches/summary
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary
      *
      * Request Parameters: datasource - string - The datasource to return summary information on.
      *                     summaryDateTime - string (ISO date) - optional - returns summary information as of this date time.
