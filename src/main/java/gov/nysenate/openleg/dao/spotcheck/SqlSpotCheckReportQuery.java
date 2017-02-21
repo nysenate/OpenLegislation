@@ -235,7 +235,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "     WHERE m.reference_active_date_time BETWEEN :fromDate AND :toDate\n"+
         "       AND m.datasource = :datasource\n"+
         "       AND m.ignore_level = 'NOT_IGNORED'\n"+
-        "     ORDER BY m.key, m.mismatch_type, m.datasource, m.observed_date_time desc\n"+
+        "     ORDER BY m.key, m.mismatch_type, m.datasource, m.reference_active_date_time desc\n"+
         "    ) most_recent_mismatches\n"+
         "  WHERE mismatch_status != 'RESOLVED'\n"+
         "    OR reference_active_date_time > :startOfToDate\n"+

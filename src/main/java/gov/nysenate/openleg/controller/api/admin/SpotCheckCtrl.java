@@ -190,8 +190,7 @@ public class SpotCheckCtrl extends BaseCtrl
         SpotCheckDataSource ds = SpotCheckDataSource.valueOf(datasource);
         LocalDateTime sumDateTime = parseISODateTime(summaryDateTime, LocalDateTime.now());
         MismatchSummary summary = getAnyReportService().getMismatchSummary(ds, sumDateTime);
-//        return new ViewObjectResponse<>(new MismatchSummaryView(summary));
-        return null;
+        return new ViewObjectResponse<>(new MismatchSummaryView(summary));
     }
 
     /**

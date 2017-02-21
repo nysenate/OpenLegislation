@@ -129,7 +129,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("datasource", datasource.name())
                 .addValue("fromDate", SessionYear.of(summaryDateTime.getYear()).asDateTimeRange().lowerEndpoint())
                 .addValue("toDate", summaryDateTime)
-                .addValue("startOfToDate", summaryDateTime.truncatedTo(ChronoUnit.HOURS));
+                .addValue("startOfToDate", summaryDateTime.truncatedTo(ChronoUnit.DAYS));
         String sql = SqlSpotCheckReportQuery.MISMATCH_SUMMARY.getSql(schema());
         MismatchSummaryHandler summaryHandler = new MismatchSummaryHandler();
         jdbcNamed.query(sql, params, summaryHandler);
