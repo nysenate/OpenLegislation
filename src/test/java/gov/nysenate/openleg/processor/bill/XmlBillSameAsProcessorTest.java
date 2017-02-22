@@ -10,8 +10,8 @@ import static org.junit.Assert.*;
  * Created by uros on 2/16/17.
  */
 public class XmlBillSameAsProcessorTest extends BaseTests {
-    @Autowired
-    XmlBillSameAsProcessor
+
+    @Autowired XmlBillSameAsProcessor sameAsProcessor;
 
     @Test
     public void process() throws Exception {
