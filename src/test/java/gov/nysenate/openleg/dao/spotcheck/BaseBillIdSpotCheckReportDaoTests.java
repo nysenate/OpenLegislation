@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Transactional
-public class SpotCheckReportDaoTests extends BaseTests {
+public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
 
     @Autowired
     private BaseBillIdSpotCheckReportDao reportDao;

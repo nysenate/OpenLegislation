@@ -23,26 +23,6 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckReport<ContentKey> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx {
-        if (reportId == null) {
-            throw new IllegalArgumentException("Supplied reportId cannot be null");
-        }
-        try {
-            return getReportDao().getReport(reportId);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new SpotCheckReportNotFoundEx(reportId);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType,
-                                                           LocalDateTime start, LocalDateTime end, SortOrder dateOrder) {
-        return getReportDao().getReportSummaries(reportType, start, end, dateOrder);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset){
         return getReportDao().getMismatches(query, limitOffset);
     }
@@ -57,15 +37,6 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
     @Override
     public void saveReport(SpotCheckReport<ContentKey> report) {
         getReportDao().saveReport(report);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void deleteReport(SpotCheckReportId reportId) {
-        if (reportId == null) {
-            throw new IllegalArgumentException("Supplied reportId to delete cannot be null");
-        }
-        getReportDao().deleteReport(reportId);
     }
 
     /** {@inheritDoc} */

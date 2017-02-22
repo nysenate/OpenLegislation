@@ -47,29 +47,6 @@ public interface SpotCheckReportService<ContentKey>
     void saveReport(SpotCheckReport<ContentKey> report);
 
     /**
-     * Obtain a SpotCheckReport from the backing store using the report id. The report obtained
-     * by {@link #generateReport} differs from the same report returned via this method in that this
-     * report will only contain observations that have mismatches and will also have data that's been
-     * associated with the context of prior reports that have been saved.
-     *
-     *
-     * @param reportId
-     */
-    SpotCheckReport<ContentKey> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx;
-
-    /**
-     * Return a list of saved report ids with options to filter the result set.
-     *
-     * @param reportType
-     * @param start LocalDateTime - The earliest report date (inclusive)
-     * @param end LocalDateTime - The latest report date (inclusive)
-     * @param dateOrder SortOrder - Order the reports by report date
-     * @return List<SpotCheckReportId> - List of report ids
-     */
-    List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end,
-                                                    SortOrder dateOrder);
-
-    /**
      * Get mismatches matching the given MismatchQuery.
      * Defaults to Not ignored open mismatches for the current session.
      * @param query Defines parameters to query by.
@@ -84,13 +61,6 @@ public interface SpotCheckReportService<ContentKey>
      * @return
      */
     MismatchSummary getMismatchSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime);
-
-    /**
-     * Wipe a report as well as all of its associated observations and mismatches from the backing store.
-     *
-     * @param reportId
-     */
-    void deleteReport(SpotCheckReportId reportId);
 
     /**
      * Sets the ignore status for a spotcheck mismatch

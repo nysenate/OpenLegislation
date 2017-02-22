@@ -19,33 +19,12 @@ import java.util.Set;
 public interface SpotCheckReportDao<ContentKey>
 {
     /**
-     * Retrieve a previously saved report from the backing store. The fetched record will only
-     * contain observations that have mismatches to reduce clutter.
-     *
-     * @param id SpotCheckReportId
-     * @return SpotCheckReport<ContentKey> or DataAccessException if no matching report was found
-     */
-    SpotCheckReport<ContentKey> getReport(SpotCheckReportId id) throws DataAccessException;
-
-    /**
-     * Get a list of the report ids that have been saved with options to filter the result set.
-     *
-     * @param refType
-     * @param start LocalDateTime - Retrieved reports will have been run after/on this date/time.
-     * @param end LocalDateTime - Retrieved reports will have been run before/on this date/time.
-     * @param dateOrder SortOrder - Order the results by the report date/time.
-     * @return List<SpotCheckReportId>
-     */
-    List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType refType, LocalDateTime start,
-                                                    LocalDateTime end, SortOrder dateOrder);
-
-    /**
      * Get mismatches matching the given query params.
      */
     PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
-     * Get the daily summary counts for all statuses of content types for the given datasource.
+     * Get mismatch status summary counts for the given datasource and date.
      *
      * @return OpenMismatchesSummary
      */
@@ -59,13 +38,6 @@ public interface SpotCheckReportDao<ContentKey>
      * @param report SpotCheckReport<ContentKey> - The report to save into the backing store
      */
     void saveReport(SpotCheckReport<ContentKey> report) throws DataAccessException;
-
-    /**
-     * Delete a report via the report id
-     *
-     * @param reportId SpotCheckReportId
-     */
-    void deleteReport(SpotCheckReportId reportId);
 
     /**
      * Sets the ignore status for a spotcheck mismatch

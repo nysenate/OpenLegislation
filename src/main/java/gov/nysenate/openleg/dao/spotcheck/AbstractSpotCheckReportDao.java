@@ -8,7 +8,6 @@ import gov.nysenate.openleg.service.spotcheck.base.MismatchStatusService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -63,49 +62,6 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * {@inheritDoc}
      */
     @Override
-    public SpotCheckReport<ContentKey> getReport(SpotCheckReportId id) throws DataAccessException {
-        return null; // TODO: WIP
-//        ImmutableParams reportIdParams = ImmutableParams.from(new MapSqlParameterSource()
-//                .addValue("referenceType", id.getReferenceType().name())
-//                .addValue("reportDateTime", toDate(id.getReportDateTime())));
-//        // Check for the report record or throw a DataAccessException if not present
-//        SpotCheckReport<ContentKey> report =
-//                jdbcNamed.queryForObject(SELECT_REPORT.getSql(schema()), reportIdParams, (rs, row) ->
-//                        new SpotCheckReport<>(
-//                                new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
-//                                        getLocalDateTimeFromRs(rs, "reference_date_time"),
-//                                        getLocalDateTimeFromRs(rs, "report_date_time")),
-//                                rs.getString("notes")
-//                        )
-//                );
-//        // Obtain all the current and prior observations/mismatches
-//        ReportObservationsHandler handler = new ReportObservationsHandler();
-//        jdbcNamed.query(SELECT_OBS_MISMATCHES_BY_REPORT.getSql(schema()), reportIdParams, handler);
-//        report.setObservations(handler.getObsMap());
-//        return report;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType refType, LocalDateTime start, LocalDateTime end,
-                                                           SortOrder dateOrder) {
-        return null; // TODO: WIP
-//        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
-//                .addValue("startDateTime", toDate(start))
-//                .addValue("endDateTime", toDate(end))
-//                .addValue("getAllRefTypes", refType == null)
-//                .addValue("referenceType", refType != null ? refType.toString() : ""));
-//        ReportSummaryHandler handler = new ReportSummaryHandler(dateOrder);
-//        jdbcNamed.query(SELECT_REPORT_SUMMARIES.getSql(schema()), params, handler);
-//        return handler.getSummaries();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("datasource", query.getDataSource().name())
@@ -115,7 +71,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("toDate", query.getToDate())
                 .addValue("fromDate", query.getFromDate());
         String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema(), limitOffset);
-        PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new OpenMismatchMapper());
+        PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new MismatchMapper());
         jdbcNamed.query(sql, params, handler);
         return handler.getList();
     }
@@ -222,19 +178,6 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         return mismatches;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteReport(SpotCheckReportId reportId) {
-        // TODO WIP
-//        ImmutableParams reportIdParams = ImmutableParams.from(new MapSqlParameterSource()
-//                .addValue("referenceType", reportId.getReferenceType().name())
-//                .addValue("reportDateTime", toDate(reportId.getReportDateTime())));
-//        jdbcNamed.update(DELETE_REPORT.getSql(schema()), reportIdParams);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -277,7 +220,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * --- Helper Classes ---
      */
 
-    private class OpenMismatchMapper implements RowMapper<DeNormSpotCheckMismatch> {
+    private class MismatchMapper implements RowMapper<DeNormSpotCheckMismatch> {
 
         @Override
         public DeNormSpotCheckMismatch<ContentKey> mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -323,36 +266,6 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         }
     }
 
-    protected static final RowMapper<SpotCheckReportId> reportIdRowMapper = (rs, row) ->
-            new SpotCheckReportId(SpotCheckRefType.valueOf(rs.getString("reference_type")),
-                    getLocalDateTimeFromRs(rs, "reference_date_time"),
-                    getLocalDateTimeFromRs(rs, "report_date_time"));
-
-//    protected class ReportSummaryHandler extends SummaryHandler {
-//        private Map<SpotCheckReportId, SpotCheckReportSummary> summaryMap;
-//
-//        public ReportSummaryHandler(SortOrder order) {
-//            summaryMap = new TreeMap<>((a, b) -> a.compareTo(b) * (SortOrder.ASC.equals(order) ? 1 : -1));
-//        }
-//
-//        @Override
-//        protected SpotCheckSummary getRelevantSummary(ResultSet rs) throws SQLException {
-//            SpotCheckReportId id = reportIdRowMapper.mapRow(rs, rs.getRow());
-//            if (!summaryMap.containsKey(id)) {
-//                summaryMap.put(id, new SpotCheckReportSummary(id, rs.getString("notes")));
-//            }
-//            return summaryMap.get(id);
-//        }
-//
-//        public List<SpotCheckReportSummary> getSummaries() {
-//            return new ArrayList<>(summaryMap.values());
-//        }
-//    }
-
-    /**
-     * --- Param Source Methods ---
-     */
-
     private MapSqlParameterSource getReportIdParams(SpotCheckReport<ContentKey> report) {
         return new MapSqlParameterSource()
                 .addValue("referenceType", report.getReferenceType().name())
@@ -361,9 +274,4 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("notes", report.getNotes());
     }
 
-    private MapSqlParameterSource getIssueIdParams(int mismatchId, String issueId) {
-        return new MapSqlParameterSource()
-                .addValue("mismatchId", mismatchId)
-                .addValue("issueId", issueId);
-    }
 }
