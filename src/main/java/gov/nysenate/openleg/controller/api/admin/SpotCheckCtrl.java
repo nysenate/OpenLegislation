@@ -2,8 +2,8 @@ package gov.nysenate.openleg.controller.api.admin;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
@@ -13,18 +13,17 @@ import gov.nysenate.openleg.client.response.spotcheck.ReportDetailResponse;
 import gov.nysenate.openleg.client.response.spotcheck.ReportSummaryResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.spotcheck.MismatchSummaryView;
+import gov.nysenate.openleg.client.view.spotcheck.MismatchView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
 import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
-import gov.nysenate.openleg.util.DateUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,8 +136,8 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Usage: (GET) /api/3/admin/spotcheck/mismatches
      *
-     * Request Parameters: datasource - string - only mismatches for this datasource will be returned.
-     *                     contentTypes - string[] - retrieves mismatches for the specified content types.
+     * Request Parameters: datasource - string - retrieves mismatches for the specified datasource.
+     *                     contentType - string - retrieves mismatches for the specified content type.
      *                     mismatchStatuses - string[] - optional, default [NEW, EXISTING, REGRESSION]
      *                                      - retrieves mismatches with any of the given mismatch status.
      *                     ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
@@ -151,7 +150,7 @@ public class SpotCheckCtrl extends BaseCtrl
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches", method = RequestMethod.GET)
     public BaseResponse getOpenMismatches(@RequestParam String datasource,
-                                          @RequestParam String[] contentTypes,
+                                          @RequestParam String contentType,
                                           @RequestParam(required = false) String[] mismatchStatuses,
                                           @RequestParam(required = false) String[] ignoredStatuses,
                                           @RequestParam(required = false) String fromDate,
@@ -159,7 +158,7 @@ public class SpotCheckCtrl extends BaseCtrl
                                           WebRequest request) {
         SpotCheckDataSource ds = SpotCheckDataSource.valueOf(datasource);
         // TODO handle invalid enum strings?
-        Set<SpotCheckContentType> cts = Lists.newArrayList(contentTypes).stream().map(SpotCheckContentType::valueOf).collect(Collectors.toSet());
+        SpotCheckContentType ct = getEnumParameter("contentType", contentType, SpotCheckContentType.class);
         Set<SpotCheckMismatchStatus> ms = mismatchStatuses == null
                 ? EnumSet.of(SpotCheckMismatchStatus.NEW, SpotCheckMismatchStatus.EXISTING, SpotCheckMismatchStatus.REGRESSION)
                 : Lists.newArrayList(mismatchStatuses).stream().map(SpotCheckMismatchStatus::valueOf).collect(Collectors.toSet());
@@ -171,15 +170,24 @@ public class SpotCheckCtrl extends BaseCtrl
         LocalDateTime fromDateTime = parseISODateTime(fromDate, SessionYear.of(toDateTime.getYear()).asDateTimeRange().lowerEndpoint());
         LimitOffset limitOffset = getLimitOffset(request, 10);
 
-        MismatchQuery query = new MismatchQuery(ds, cts)
+        MismatchQuery query = new MismatchQuery(ds, Collections.singleton(ct))
                 .withMismatchStatuses(ms)
                 .withIgnoredStatuses(igs)
                 .withFromDate(fromDateTime)
                 .withToDate(toDateTime);
 
-//        PaginatedList<DeNormSpotCheckMismatch> mismatches = reportServiceMap
+        // Get any ref type for this datasource and contentType.
+        SpotCheckRefType refType = SpotCheckRefType.get(ds, ct).get(0);
+        PaginatedList<DeNormSpotCheckMismatch> mismatches = reportServiceMap.get(refType).getMismatches(query, limitOffset);
+        List<MismatchView> mismatchViews = new ArrayList<>();
+        for (DeNormSpotCheckMismatch mm : mismatches.getResults()) {
+            mismatchViews.add(new MismatchView(mm));
+        }
 
-
+//        List<MismatchView<Object>> mismatchViews = mismatches.getResults().stream()
+//                .map(MismatchView::new)
+//                .collect(Collectors.toList());
+        return ListViewResponse.of(mismatchViews, mismatches.getTotal(), mismatches.getLimOff());
 
 //        SpotCheckRefType refType = getSpotcheckRefType(reportType, "reportType");
 //        Set<SpotCheckRefType> refTypes = Collections.singleton(refType);
@@ -193,7 +201,6 @@ public class SpotCheckCtrl extends BaseCtrl
 //        SpotCheckMismatches<?> observations = reportServiceMap.get(refType).getOpenObservations(query);
 //        MismatchSummary summary = getAnyReportService().getOpenMismatchSummary(refTypes, earliestDateTime);
 //        return new OpenMismatchesResponse<>(observations, summary, query);
-        return null;
     }
 
     /**

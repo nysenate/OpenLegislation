@@ -10,7 +10,7 @@ public class ReportDetailResponse<ContentKey> extends BaseResponse
 
     public ReportDetailResponse(SpotCheckReport<ContentKey> report) {
         if (report != null) {
-            this.details = new ReportDetailView<>(report);
+//            this.details = new ReportDetailView<>(report);
             this.success = true;
             this.responseType = details.getViewType();
         }
