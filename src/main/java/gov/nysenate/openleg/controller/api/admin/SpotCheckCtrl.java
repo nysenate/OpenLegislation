@@ -9,17 +9,12 @@ import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.client.response.spotcheck.ReportDetailResponse;
-import gov.nysenate.openleg.client.response.spotcheck.ReportSummaryResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.spotcheck.MismatchSummaryView;
 import gov.nysenate.openleg.client.view.spotcheck.MismatchView;
-import gov.nysenate.openleg.client.view.spotcheck.ReportIdView;
-import gov.nysenate.openleg.client.view.spotcheck.ReportInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
@@ -217,16 +212,6 @@ public class SpotCheckCtrl extends BaseCtrl
         return new SimpleResponse(true, "weekly reports run", "report report");
     }
 
-    /** --- Exception Handlers --- */
-
-    /**
-     * Handles cases where a query for a daybreak report that doesn't exist was made.
-     */
-    @ExceptionHandler(SpotCheckReportNotFoundEx.class)
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public ErrorResponse handleSpotCheckReportNotFoundEx(SpotCheckReportNotFoundEx ex) {
-        return new ViewObjectErrorResponse(ErrorCode.SPOTCHECK_REPORT_NOT_FOUND, new ReportIdView(ex.getReportId()));
-    }
 
     /** --- Internal Methods --- */
 
