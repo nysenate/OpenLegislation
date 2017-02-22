@@ -183,24 +183,7 @@ public class SpotCheckCtrl extends BaseCtrl
         for (DeNormSpotCheckMismatch mm : mismatches.getResults()) {
             mismatchViews.add(new MismatchView(mm));
         }
-
-//        List<MismatchView<Object>> mismatchViews = mismatches.getResults().stream()
-//                .map(MismatchView::new)
-//                .collect(Collectors.toList());
         return ListViewResponse.of(mismatchViews, mismatches.getTotal(), mismatches.getLimOff());
-
-//        SpotCheckRefType refType = getSpotcheckRefType(reportType, "reportType");
-//        Set<SpotCheckRefType> refTypes = Collections.singleton(refType);
-//        LimitOffset limOff = getLimitOffset(request, 0);
-//        MismatchOrderBy mismatchOrderBy = getEnumParameter(orderBy, MismatchOrderBy.class, MismatchOrderBy.OBSERVED_DATE);
-//        SortOrder order = getSortOrder(request, SortOrder.DESC);
-//        Set<SpotCheckMismatchType> mismatchTypes = getSpotcheckMismatchTypes(mismatchType, "mismatchType", refTypes);
-//        LocalDateTime earliestDateTime = parseISODateTime(observedAfter, DateUtils.LONG_AGO.atStartOfDay());
-//        OpenMismatchQuery query = new OpenMismatchQuery(refTypes, mismatchTypes, earliestDateTime,
-//                mismatchOrderBy, order, limOff, resolvedShown, ignoredShown, ignoredOnly, trackedShown, untrackedShown);
-//        SpotCheckMismatches<?> observations = reportServiceMap.get(refType).getOpenObservations(query);
-//        MismatchSummary summary = getAnyReportService().getOpenMismatchSummary(refTypes, earliestDateTime);
-//        return new OpenMismatchesResponse<>(observations, summary, query);
     }
 
     /**
