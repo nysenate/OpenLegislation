@@ -65,8 +65,8 @@ public class XmlBillSameAsProcessor extends AbstractDataProcessor implements Sob
                     amd.getSameAs().clear();
                     List<String> sameAsMatches = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2)));
                     for (String sameAs : sameAsMatches) {
-                        amd.getSameAs().add(new BillId(sameAs.replace(" ",""), amd.getSession()));
-
+                        amd.getSameAs().add(new BillId(sameAs.replace(" ", ""), amd.getSession()));
+                    }
                 }
             }
         }
