@@ -60,7 +60,7 @@ public class BillXMLBillTextProcessor extends AbstractDataProcessor implements S
             final String asmno = xmlHelper.getString("@asmno",billTextNode).replaceAll("\n","");
             final String asmamd = xmlHelper.getString("@asmamd",billTextNode).replaceAll("\n","");
             final String action = xmlHelper.getString("@action",billTextNode).replaceAll("\n",""); // TODO: implement actions
-            final String billText = billTextNode.getTextContent().replaceAll("\n","");
+            final String billText = billTextNode.getTextContent().replaceAll("\n"," ");
             final Version version = Version.of(senamd.isEmpty() ? asmamd:senamd);
             final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(senhse.isEmpty() ? asmhse+asmno : senhse+senno, new SessionYear(sessionYear),version), sobiFragment);
             baseBill.getAmendment(version).setFullText(billText);
