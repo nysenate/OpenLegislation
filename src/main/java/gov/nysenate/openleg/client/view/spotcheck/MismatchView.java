@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
-import com.google.common.collect.Lists;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class MismatchView<ContentKey> implements ViewObject
 {

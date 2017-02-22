@@ -156,9 +156,9 @@ public class SpotCheckCtrl extends BaseCtrl
                                           @RequestParam(required = false) String fromDate,
                                           @RequestParam(required = false) String toDate,
                                           WebRequest request) {
-        SpotCheckDataSource ds = SpotCheckDataSource.valueOf(datasource);
-        // TODO handle invalid enum strings?
+        SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
         SpotCheckContentType ct = getEnumParameter("contentType", contentType, SpotCheckContentType.class);
+        // TODO handle invalid enum strings?
         Set<SpotCheckMismatchStatus> ms = mismatchStatuses == null
                 ? EnumSet.of(SpotCheckMismatchStatus.NEW, SpotCheckMismatchStatus.EXISTING, SpotCheckMismatchStatus.REGRESSION)
                 : Lists.newArrayList(mismatchStatuses).stream().map(SpotCheckMismatchStatus::valueOf).collect(Collectors.toSet());

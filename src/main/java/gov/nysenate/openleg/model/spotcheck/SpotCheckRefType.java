@@ -26,11 +26,11 @@ public enum SpotCheckRefType
 
     LBDC_AGENDA_ALERT("agenda-alert", "Agenda Alert", LBDC, AGENDA, AGENDA_SPOTCHECK),
 
-    SENATE_SITE_BILLS("senate-site-bills", "Nysenate.gov Bill", NYSENATE_DOT_GOV, BILL, SENSITE_BILL_SPOTCHECK),
+    SENATE_SITE_BILLS("senate-site-bills", "Nysenate.gov Bill", NYSENATE, BILL, SENSITE_BILL_SPOTCHECK),
 
-    SENATE_SITE_CALENDAR("senate-site-calendar", "Nysenate.gov Calendar", NYSENATE_DOT_GOV, CALENDAR, SENSITE_CALENDAR_SPOTCHECK),
+    SENATE_SITE_CALENDAR("senate-site-calendar", "Nysenate.gov Calendar", NYSENATE, CALENDAR, SENSITE_CALENDAR_SPOTCHECK),
 
-    SENATE_SITE_AGENDA("senate-site-agenda", "Nysenate.gov Agenda", NYSENATE_DOT_GOV, AGENDA, SENSITE_AGENDA_SPOTCHECK)
+    SENATE_SITE_AGENDA("senate-site-agenda", "Nysenate.gov Agenda", NYSENATE, AGENDA, SENSITE_AGENDA_SPOTCHECK)
 
     ;
 
