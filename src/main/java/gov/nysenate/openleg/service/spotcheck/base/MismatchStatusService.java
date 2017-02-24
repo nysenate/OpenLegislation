@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
-import gov.nysenate.openleg.model.spotcheck.DeNormSpotCheckMismatch;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchIgnore;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchStatus;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
+import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,12 +59,16 @@ public class MismatchStatusService {
      * @param currentMismatches All the most recent mismatches for the datasource checked by the report.
      * @param checkedKeys       All contentKey's checked by the report.
      * @param checkedTypes      All SpotCheckMismatchType's checked by the report.
+     * @param reportDateTime      The report date time to set for any resolved mismatches.
+     * @param referenceDateTime      The reference date time to set for any resolved mismatches.
      * @return A list of mismatches resolved by this report.
      */
     public static List<DeNormSpotCheckMismatch> deriveResolved(List<DeNormSpotCheckMismatch> reportMismatches,
                                                                List<DeNormSpotCheckMismatch> currentMismatches,
                                                                Set<Object> checkedKeys,
-                                                               Set<SpotCheckMismatchType> checkedTypes) {
+                                                               Set<SpotCheckMismatchType> checkedTypes,
+                                                               LocalDateTime reportDateTime,
+                                                               LocalDateTime referenceDateTime) {
         return currentMismatches.stream()
                 .filter(m -> !reportMismatches.contains(m))
                 .filter(m -> checkedKeys.contains(m.getKey()))
@@ -74,6 +76,8 @@ public class MismatchStatusService {
                 .filter(m -> m.getStatus() != SpotCheckMismatchStatus.RESOLVED)
                 .peek(m -> m.setStatus(SpotCheckMismatchStatus.RESOLVED))
                 .peek(m -> m.setIgnoreStatus(calculateIgnoreStatusForResolved(m)))
+                .peek(m -> m.setReportDateTime(reportDateTime))
+                .peek(m -> m.setReferenceDateTime(referenceDateTime))
                 .collect(Collectors.toList());
     }
 

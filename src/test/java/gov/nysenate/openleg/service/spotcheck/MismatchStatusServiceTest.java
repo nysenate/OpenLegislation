@@ -8,11 +8,13 @@ import gov.nysenate.openleg.service.spotcheck.base.MismatchStatusService;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
@@ -118,21 +120,24 @@ public class MismatchStatusServiceTest {
 
     @Test
     public void givenEmptyCurrentMismatches_returnNoResolved() {
-        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), new ArrayList<>(), new HashSet<>(), new HashSet<>()));
+        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), new ArrayList<>(), new HashSet<>(),
+                new HashSet<>(), LocalDateTime.now(), LocalDateTime.now()));
     }
 
     @Test
     public void givenCurrentMismatchNotInCheckedKeys_returnNoResolved() {
         List<DeNormSpotCheckMismatch> current = Lists.newArrayList(newMismatch);
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
-        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), current, new HashSet<>(), types));
+        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), current, new HashSet<>(), types,
+                LocalDateTime.now(), LocalDateTime.now()));
     }
 
     @Test
     public void givenCurrentMismatchNotInCheckedTypes_returnNoResolved() {
         List<DeNormSpotCheckMismatch> current = Lists.newArrayList(newMismatch);
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
-        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, new HashSet<>()));
+        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, new HashSet<>(),
+                LocalDateTime.now(), LocalDateTime.now()));
     }
 
     @Test
@@ -142,7 +147,7 @@ public class MismatchStatusServiceTest {
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
 
-        assertEmpty(MismatchStatusService.deriveResolved(report, current, keys, types));
+        assertEmpty(MismatchStatusService.deriveResolved(report, current, keys, types, LocalDateTime.now(), LocalDateTime.now()));
     }
 
     @Test
@@ -151,7 +156,7 @@ public class MismatchStatusServiceTest {
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
 
-        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types));
+        assertEmpty(MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types, LocalDateTime.now(), LocalDateTime.now()));
     }
 
     @Test
@@ -160,8 +165,24 @@ public class MismatchStatusServiceTest {
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
 
-        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types).get(0);
+        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types,
+                LocalDateTime.now(), LocalDateTime.now()).get(0);
         assertThat(resolved.getStatus(), is(SpotCheckMismatchStatus.RESOLVED));
+    }
+
+    @Test
+    public void resolvedMismatchDatesAreUpdated() {
+        List<DeNormSpotCheckMismatch> current = Lists.newArrayList(newMismatch);
+        LocalDateTime originalReferenceDate = newMismatch.getReferenceId().getRefActiveDateTime();
+        LocalDateTime originalReportDateTime = newMismatch.getReportDateTime();
+        Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
+        Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
+
+        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types,
+                originalReportDateTime.plusHours(1), originalReferenceDate.plusHours(1)).get(0);
+        assertThat(resolved.getStatus(), is(SpotCheckMismatchStatus.RESOLVED));
+        assertThat(resolved.getReferenceId().getRefActiveDateTime(), is(greaterThan(originalReferenceDate)));
+        assertThat(resolved.getReportDateTime(), is(greaterThan(originalReportDateTime)));
     }
 
     @Test
@@ -171,7 +192,8 @@ public class MismatchStatusServiceTest {
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
 
-        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types).get(0);
+        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types,
+                LocalDateTime.now(), LocalDateTime.now()).get(0);
         assertThat(resolved.getIgnoreStatus(), is(SpotCheckMismatchIgnore.NOT_IGNORED));
     }
 
@@ -182,7 +204,8 @@ public class MismatchStatusServiceTest {
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
 
-        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types).get(0);
+        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types,
+                LocalDateTime.now(), LocalDateTime.now()).get(0);
         assertThat(resolved.getIgnoreStatus(), is(SpotCheckMismatchIgnore.NOT_IGNORED));
     }
 
@@ -193,13 +216,16 @@ public class MismatchStatusServiceTest {
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
 
-        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types).get(0);
+        DeNormSpotCheckMismatch resolved = MismatchStatusService.deriveResolved(new ArrayList<>(), current, keys, types,
+                LocalDateTime.now(), LocalDateTime.now()).get(0);
         assertThat(resolved.getIgnoreStatus(), is(SpotCheckMismatchIgnore.IGNORE_PERMANENTLY));
     }
 
     private DeNormSpotCheckMismatch createMismatch(SpotCheckMismatchType type, SpotCheckMismatchStatus status) {
         DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch(new BillId(printNo, 2017), type, SpotCheckDataSource.LBDC);
         mismatch.setStatus(status);
+        mismatch.setReferenceId(new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now()));
+        mismatch.setReportDateTime(LocalDateTime.now());
         return mismatch;
     }
 }
