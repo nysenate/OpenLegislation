@@ -22,7 +22,6 @@ public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
     @Autowired
     private BaseBillIdSpotCheckReportDao reportDao;
     private BaseBillId billId = new BaseBillId("S999999", 2017); // A bill that only exists this test world.
-    private int mismatchId = 99999999;
     private LocalDateTime start;
 
     @Before
@@ -123,6 +122,24 @@ public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
         assertThat(actual.getIgnoreStatus(), is(SpotCheckMismatchIgnore.IGNORE_PERMANENTLY));
     }
 
+    /**
+     * Test updating ignore status method.
+     */
+
+    @Test(expected = IllegalArgumentException.class)
+    public void givenNullIgnoreStatus_throwException() {
+        reportDao.setMismatchIgnoreStatus(1, null);
+    }
+
+    @Test
+    public void canUpdateIgnoreStatus() {
+        reportDao.saveReport(createMismatchReport(start));
+        DeNormSpotCheckMismatch mismatch = queryMostRecentMismatch();
+        reportDao.setMismatchIgnoreStatus(mismatch.getMismatchId(), SpotCheckMismatchIgnore.IGNORE_PERMANENTLY);
+        DeNormSpotCheckMismatch actual = queryMostRecentMismatch();
+        assertThat(actual.getIgnoreStatus(), is(SpotCheckMismatchIgnore.IGNORE_PERMANENTLY));
+    }
+
     private DeNormSpotCheckMismatch queryMostRecentMismatch() {
         MismatchQuery query = new MismatchQuery(SpotCheckDataSource.LBDC, Collections.singleton(SpotCheckContentType.BILL))
                 .withFromDate(start)
@@ -142,7 +159,6 @@ public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
         report.setReportId(reportId);
         SpotCheckObservation ob = new SpotCheckObservation(new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, refDateTime), billId);
         SpotCheckMismatch mm = new SpotCheckMismatch(SpotCheckMismatchType.BILL_COSPONSOR, "ObservedSponsor", "ReferenceSponsor");
-        mm.setMismatchId(mismatchId);
         mm.setIgnoreStatus(ignoreStatus);
         ob.addMismatch(mm);
         report.addObservation(ob);
@@ -157,5 +173,4 @@ public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
         report.addObservation(ob);
         return report;
     }
-
 }

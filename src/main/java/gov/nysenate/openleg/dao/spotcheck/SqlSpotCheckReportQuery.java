@@ -9,63 +9,10 @@ import java.util.Map;
 
 public enum SqlSpotCheckReportQuery implements BasicSqlQuery
 {
-    /** --- Reports --- */
     INSERT_REPORT(
         "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_REPORT + " (report_date_time, reference_date_time, reference_type, notes)\n" +
         "VALUES (:reportDateTime, :referenceDateTime, :referenceType, :notes)"
     ),
-
-    /** --- Mismatch Ignore queries --- */
-
-    MISMATCH_ID_SUBQUERY(
-        "WITH mm_id_fields AS (\n" +
-        "   SELECT key, type, reference_type\n" +
-        "   FROM ${schema}." + SqlTable.SPOTCHECK_MISMATCH + " mm\n" +
-        "   JOIN ${schema}." + SqlTable.SPOTCHECK_OBSERVATION + " obs\n" +
-        "       ON mm.observation_id = obs.id\n" +
-        "   WHERE mm.id = :mismatchId\n" +
-        ")\n"
-    ),
-    INSERT_MISMATCH_IGNORE(
-        MISMATCH_ID_SUBQUERY.getSql() +
-        "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + "\n" +
-        "       (key, mismatch_type, reference_type, ignore_level)\n" +
-        "SELECT  key, type, reference_type, :ignoreLevel\n" +
-        "FROM mm_id_fields"
-    ),
-    UPDATE_MISMATCH_IGNORE(
-        MISMATCH_ID_SUBQUERY.getSql() +
-        "UPDATE ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " ig\n" +
-        "SET ignore_level = :ignoreLevel\n" +
-        "FROM mm_id_fields\n" +
-        "WHERE ig.reference_type = mm_id_fields.reference_type\n" +
-        "   AND ig.key = mm_id_fields.key\n" +
-        "   AND ig.mismatch_type = mm_id_fields.type"
-    ),
-    DELETE_MISMATCH_IGNORE(
-        MISMATCH_ID_SUBQUERY.getSql() +
-        "DELETE FROM ${schema}." + SqlTable.SPOTCHECK_MISMATCH_IGNORE + " ig\n" +
-        "USING mm_id_fields\n" +
-        "WHERE ig.reference_type = mm_id_fields.reference_type\n" +
-        "   AND ig.key = mm_id_fields.key\n" +
-        "   AND ig.mismatch_type = mm_id_fields.type"
-    ),
-
-    /** --- Issue Id Queries --- */
-
-    ADD_ISSUE_ID(
-        "INSERT INTO ${schema}." + SqlTable.SPOTCHECK_MISMATCH_ISSUE_ID + "(mismatch_id, issue_id)\n" +
-        "VALUES (:mismatchId, :issueId)\n" +
-        "ON CONFLICT DO NOTHING"
-    ),
-
-    DELETE_ISSUE_ID(
-        "DELETE FROM ${schema}." + SqlTable.SPOTCHECK_MISMATCH_ISSUE_ID + "\n" +
-        "WHERE mismatch_id = :mismatchId AND issue_id = :issueId"
-    ),
-
-
-    /** --- QA Redesign queries --- */
 
     GET_MISMATCHES(
         "SELECT *, count(*) OVER() as total_rows FROM \n" +
@@ -107,6 +54,12 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "    OR reference_active_date_time > :startOfToDate\n"+
         "  ) summary\n"+
         "GROUP BY content_type, mismatch_status\n"
+    ),
+
+    UPDATE_MISMATCH_IGNORE(
+        "UPDATE ${schema}.spotcheck_mismatch\n" +
+        "SET ignore_level = :ignoreStatus\n" +
+        "WHERE mismatch_id = :mismatchId\n"
     )
     ;
 

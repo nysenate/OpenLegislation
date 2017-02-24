@@ -187,17 +187,14 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public void setMismatchIgnoreStatus(int mismatchId, SpotCheckMismatchIgnore ignoreStatus) {
-        // TODO: WIP
-//        MapSqlParameterSource params = new MapSqlParameterSource()
-//                .addValue("mismatchId", mismatchId)
-//                .addValue("ignoreLevel", Optional.ofNullable(ignoreStatus).map(SpotCheckMismatchIgnore::getCode).orElse(null));
-//        if (ignoreStatus == null || ignoreStatus == SpotCheckMismatchIgnore.NOT_IGNORED) {
-//            jdbcNamed.update(DELETE_MISMATCH_IGNORE.getSql(schema()), params);
-//        } else {
-//            if (jdbcNamed.update(UPDATE_MISMATCH_IGNORE.getSql(schema()), params) == 0) {
-//                jdbcNamed.update(INSERT_MISMATCH_IGNORE.getSql(schema()), params);
-//            }
-//        }
+        if (ignoreStatus == null) {
+            throw new IllegalArgumentException("Cannot set mismatch ignore status to null.");
+        }
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("mismatchId", mismatchId)
+                .addValue("ignoreStatus", ignoreStatus.name());
+        String sql = SqlSpotCheckReportQuery.UPDATE_MISMATCH_IGNORE.getSql(schema());
+        jdbcNamed.update(sql, params);
     }
 
     /**
