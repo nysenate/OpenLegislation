@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.stupid;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.client.view.spotcheck.ReportDetailView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
