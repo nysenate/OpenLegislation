@@ -20,10 +20,10 @@ public class DeNormSpotCheckMismatch<ContentKey> {
     /** The type of mismatch that occurred. */
     private SpotCheckMismatchType mismatchType;
 
+    private SpotCheckDataSource dataSource;
+
     /** The status of the mismatch (new, existing, etc.) */
     private SpotCheckMismatchStatus status;
-
-    private SpotCheckDataSource dataSource;
 
     private SpotCheckContentType contentType;
 
@@ -57,6 +57,10 @@ public class DeNormSpotCheckMismatch<ContentKey> {
        this.dataSource = dataSource;
        this.status = SpotCheckMismatchStatus.NEW;
        this.ignoreStatus = SpotCheckMismatchIgnore.NOT_IGNORED;
+    }
+
+    public void setReferenceDateTime(LocalDateTime referenceDateTime) {
+        this.setReferenceId(new SpotCheckReferenceId(this.getReferenceId().getReferenceType(), referenceDateTime));
     }
 
     public void setMismatchId(int mismatchId) {

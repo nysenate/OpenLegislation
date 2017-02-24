@@ -108,12 +108,15 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         Set<SpotCheckMismatchType> checkedTypes = report.getReferenceType().checkedMismatchTypes();
 
         List<DeNormSpotCheckMismatch> reportMismatches = reportToDeNormMismatches(report, reportId);
-        MismatchQuery query = new MismatchQuery(report.getReferenceType().getDataSource(), Sets.newHashSet(report.getReferenceType().getContentType()));
-        query.withToDate(report.getReferenceDateTime());
+        MismatchQuery query = new MismatchQuery(report.getReferenceType().getDataSource(), Sets.newHashSet(report.getReferenceType().getContentType()))
+                .withToDate(report.getReferenceDateTime())
+                .withMismatchStatuses(EnumSet.allOf(SpotCheckMismatchStatus.class))
+                .withIgnoredStatuses(EnumSet.allOf(SpotCheckMismatchIgnore.class));
         List<DeNormSpotCheckMismatch> currentMismatches = getMismatches(query, LimitOffset.ALL).getResults();
 
         List<DeNormSpotCheckMismatch> updatedMismatches = MismatchStatusService.deriveStatuses(reportMismatches, currentMismatches);
-        updatedMismatches.addAll(MismatchStatusService.deriveResolved(reportMismatches, currentMismatches, checkedKeys, checkedTypes));
+        updatedMismatches.addAll(MismatchStatusService.deriveResolved(reportMismatches, currentMismatches, checkedKeys,
+                checkedTypes, report.getReportDateTime(), report.getReferenceDateTime()));
 
         insertMismatches(updatedMismatches);
     }
@@ -170,7 +173,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 mismatch.setNotes(m.getNotes());
                 mismatch.setObservedDateTime(ob.getObservedDateTime());
                 mismatch.setReportDateTime(report.getReportDateTime());
-                mismatch.setIgnoreStatus(m.getIgnoreStatus());
+                if (m.getIgnoreStatus() != null)
+                    mismatch.setIgnoreStatus(m.getIgnoreStatus());
                 mismatch.setIssueIds(new HashSet<>(m.getIssueIds()));
                 mismatches.add(mismatch);
             }
