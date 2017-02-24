@@ -28,12 +28,12 @@ import static org.junit.Assert.assertEquals;
 @Transactional
 public class AnActSobiProcessorTest extends BaseTests{
     @Autowired BillDao billDao;
-    @Autowired  SobiDao sobiDao;
+    @Autowired SobiDao sobiDao;
     @Autowired AnActSobiProcessor anActSobiProcessor;
     private static final Logger logger = LoggerFactory.getLogger(AnActSobiProcessorTest.class);
 
     @Test
-    public void processTest() throws Exception {
+    public void processReplaceTest() throws Exception {
         Bill a=billDao.getBill(new BillId("S08215",2015));
 
         File anactXmlFile = new File(getClass().getClassLoader().getResource(
@@ -49,7 +49,25 @@ public class AnActSobiProcessorTest extends BaseTests{
 
         Bill b=billDao.getBill(new BillId("S08215",2015));
         String expectedS="AN ACT to amend the executive law, in relation to the appointment of\n" +
-                "interpreters to be used in parole board proceedings";
+                "interpreters to be used in parole board proceedings [altered]";
+        String actualClause=b.getAmendment(Version.DEFAULT).getActClause();
+        assertEquals(expectedS,actualClause);
+    }
+
+    @Test
+    public void processRemoveTest() throws Exception {
+        File anactXmlFile = new File(getClass().getClassLoader().getResource(
+                "processor/bill/anact/2017-02-09-12.36.50.736583_ANACT_A05462.XML").getFile());
+        String contents=FileUtils.readFileToString(anactXmlFile);
+        SobiFile sobiFileTester = new SobiFile(anactXmlFile);
+        SobiFragment sobiFragmentTester=new SobiFragment(sobiFileTester, SobiFragmentType.ANACT,contents,1);
+        sobiDao.updateSobiFile(sobiFileTester);
+        sobiDao.updateSobiFragment(sobiFragmentTester);
+        anActSobiProcessor.process(sobiFragmentTester);
+        anActSobiProcessor.postProcess();
+
+        Bill b=billDao.getBill(new BillId("A05462",2017));
+        String expectedS="";
         String actualClause=b.getAmendment(Version.DEFAULT).getActClause();
         assertEquals(expectedS,actualClause);
     }
