@@ -31,9 +31,7 @@ public class AnActSobiProcessor extends AbstractDataProcessor implements SobiPro
 
     private static final Logger logger = LoggerFactory.getLogger(AnActSobiProcessor.class);
     @Autowired private XmlHelper xmlHelper;
-    public AnActSobiProcessor(){
-
-    }
+    public AnActSobiProcessor(){}
 
     @Override
     public void init() {
@@ -64,7 +62,11 @@ public class AnActSobiProcessor extends AbstractDataProcessor implements SobiPro
             final String anactClause = billTextNode.getTextContent().trim();
             final Version version = Version.of(anactamd);
             final Bill baseAnAct = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(new BaseBillId(anacthse+anactno, new SessionYear(sessyr)),Version.of(anactamd)), sobiFragment);
-            baseAnAct.getAmendment(version).setActClause(anactClause);
+            if(action.equals("replace")) {
+                baseAnAct.getAmendment(version).setActClause(anactClause);
+            }else if(action.equals("remove")){
+                baseAnAct.getAmendment(version).setActClause("");
+            }
             billIngestCache.set(baseAnAct.getBaseBillId(), baseAnAct, sobiFragment);
         } catch (IOException | SAXException |XPathExpressionException e) {
             throw new ParseError("Error While Parsing AnActXML", e);
