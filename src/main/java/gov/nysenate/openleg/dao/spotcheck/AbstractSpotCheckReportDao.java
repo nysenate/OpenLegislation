@@ -225,10 +225,9 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     public void addIssueId(int mismatchId, String issueId) {
         DeNormSpotCheckMismatch mismatch = getMismatch(mismatchId);
         mismatch.addIssueId(issueId);
-        String value = toPostgresArray(mismatch.getIssueIds());
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("mismatchId", mismatchId)
-                .addValue("issueIds", value);
+                .addValue("issueIds", toPostgresArray(mismatch.getIssueIds()));
         String sql = SqlSpotCheckReportQuery.UPDATE_ISSUE_IDS.getSql(schema());
         jdbcNamed.update(sql, params);
     }
@@ -238,9 +237,13 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public void deleteIssueId(int mismatchId, String issueId) {
-        // TODO WIP
-//        SqlParameterSource params = getIssueIdParams(mismatchId, issueId);
-//        jdbcNamed.update(DELETE_ISSUE_ID.getSql(schema()), params);
+        DeNormSpotCheckMismatch mismatch = getMismatch(mismatchId);
+        mismatch.deleteIssueId(issueId);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("mismatchId", mismatchId)
+                .addValue("issueIds", toPostgresArray(mismatch.getIssueIds()));
+        String sql = SqlSpotCheckReportQuery.UPDATE_ISSUE_IDS.getSql(schema());
+        jdbcNamed.update(sql, params);
     }
 
     /**
