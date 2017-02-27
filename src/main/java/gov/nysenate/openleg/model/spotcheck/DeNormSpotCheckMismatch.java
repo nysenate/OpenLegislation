@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DeNormSpotCheckMismatch<ContentKey> {
 
@@ -107,8 +108,22 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         this.contentType = contentType;
     }
 
+    /**
+     * Set issue ids to the given values, ignores empty string values.
+     */
     public void setIssueIds(Set<String> issueIds) {
-        this.issueIds = issueIds;
+        this.issueIds = issueIds.stream().filter(i -> i.length() > 0).collect(Collectors.toSet());
+    }
+
+    public void addIssueId(String issueId) {
+        if (issueId == null || issueId == "") {
+            return;
+        }
+        this.issueIds.add(issueId);
+    }
+
+    public void deleteIssueId(String issueId) {
+        this.issueIds.remove(issueId);
     }
 
     public int getMismatchId() {

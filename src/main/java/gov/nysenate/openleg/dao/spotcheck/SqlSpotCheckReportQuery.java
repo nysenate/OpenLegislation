@@ -19,7 +19,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "m.datasource, m.content_type, m.reference_type, m.reference_active_date_time, m.reference_data, m.observed_data, m.notes, \n" +
         "m.observed_date_time, m.report_date_time, m.ignore_level, m.issue_ids \n" +
         "  FROM ${schema}.spotcheck_mismatch m \n" +
-        "  WHERE m.mismatch_id = :mismatch_id \n"
+        "  WHERE m.mismatch_id = :mismatchId \n"
     ),
 
     GET_MISMATCHES(
@@ -70,7 +70,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "WHERE mismatch_id = :mismatchId\n"
     ),
 
-    SET_ISSUE_ID(
+    UPDATE_ISSUE_IDS(
         "UPDATE ${schema}.spotcheck_mismatch\n" +
         "SET issue_ids = :issueIds::text[]\n" +
         "WHERE mismatch_id = :mismatchId\n"

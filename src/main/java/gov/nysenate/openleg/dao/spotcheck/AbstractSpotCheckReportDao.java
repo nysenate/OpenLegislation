@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -164,11 +165,15 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("referenceData", mismatch.getReferenceData())
                 .addValue("observedData", mismatch.getObservedData())
                 .addValue("notes", mismatch.getNotes())
-                .addValue("issueIds", "{" + StringUtils.join(mismatch.getIssueIds(), ',') + "}")
+                .addValue("issueIds", toPostgresArray(mismatch.getIssueIds()))
                 .addValue("ignoreLevel", mismatch.getIgnoreStatus().name())
                 .addValue("reportDateTime", mismatch.getReportDateTime())
                 .addValue("observedDateTime", mismatch.getObservedDateTime())
                 .addValue("referenceActiveDateTime", mismatch.getReferenceId().getRefActiveDateTime());
+    }
+
+    private String toPostgresArray(Set<String> strings) {
+        return "{" + StringUtils.join(strings, ',') + "}";
     }
 
     private List<DeNormSpotCheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report, int reportId) {
@@ -218,10 +223,14 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public void addIssueId(int mismatchId, String issueId) {
+        DeNormSpotCheckMismatch mismatch = getMismatch(mismatchId);
+        mismatch.addIssueId(issueId);
+        String value = toPostgresArray(mismatch.getIssueIds());
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("mismatchId", mismatchId);
-//        SqlParameterSource params = getIssueIdParams(mismatchId, issueId);
-//        jdbcNamed.update(ADD_ISSUE_ID.getSql(schema()), params);
+                .addValue("mismatchId", mismatchId)
+                .addValue("issueIds", value);
+        String sql = SqlSpotCheckReportQuery.UPDATE_ISSUE_IDS.getSql(schema());
+        jdbcNamed.update(sql, params);
     }
 
     /**
@@ -256,7 +265,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             mismatch.setObservedDateTime(getLocalDateTimeFromRs(rs, "observed_date_time"));
             mismatch.setNotes(rs.getString("notes"));
             mismatch.setIgnoreStatus(SpotCheckMismatchIgnore.valueOf(rs.getString("ignore_level")));
-            mismatch.setIssueIds(Sets.newHashSet(rs.getArray("issue_ids").getArray()));
+            String[] issue_idss = getArrayFromPgRs(rs, "issue_ids");
+            mismatch.setIssueIds(Sets.newHashSet(issue_idss));
 
             SpotCheckRefType refType = SpotCheckRefType.valueOf(rs.getString("reference_type"));
             LocalDateTime refActiveDateTime = getLocalDateTimeFromRs(rs, "reference_active_date_time");

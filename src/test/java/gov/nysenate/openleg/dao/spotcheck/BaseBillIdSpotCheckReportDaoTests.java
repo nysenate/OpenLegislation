@@ -1,17 +1,18 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.EnumSet;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -147,16 +148,54 @@ public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
      */
 
     @Test
-    public void canSetIssueId() {
+    public void canAddIssueId() {
         reportDao.saveReport(createMismatchReport(start));
         DeNormSpotCheckMismatch mismatch = queryMostRecentMismatch();
         reportDao.addIssueId(mismatch.getMismatchId(), "10800");
-        assertTrue(queryMostRecentMismatch().getIssueIds().contains("10800"));
+        Set<String> actual = queryMostRecentMismatch().getIssueIds();
+        assertThat(actual, contains("10800"));
     }
 
-    // test can add multile issue id's
+    @Test
+    public void canAddMultipleIssueIds() {
+        reportDao.saveReport(createMismatchReport(start));
+        DeNormSpotCheckMismatch mismatch = queryMostRecentMismatch();
+        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
+        reportDao.addIssueId(mismatch.getMismatchId(), "10899");
+        Set<String> actual = queryMostRecentMismatch().getIssueIds();
+        assertThat(actual, containsInAnyOrder("10800", "10899"));
+    }
 
-    // adding same issue multiple times only shows up once.
+    @Test
+    public void nullIssueIdsAreIgnored() {
+        reportDao.saveReport(createMismatchReport(start));
+        DeNormSpotCheckMismatch mismatch = queryMostRecentMismatch();
+        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
+        reportDao.addIssueId(mismatch.getMismatchId(), null);
+        Set<String> actual = queryMostRecentMismatch().getIssueIds();
+        assertThat(actual, containsInAnyOrder("10800"));
+    }
+
+
+    @Test
+    public void duplicateIssuesNotSaved() {
+        reportDao.saveReport(createMismatchReport(start));
+        DeNormSpotCheckMismatch mismatch = queryMostRecentMismatch();
+        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
+        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
+        Set<String> actual = queryMostRecentMismatch().getIssueIds();
+        assertThat(actual, is(Sets.newHashSet("10800")));
+    }
+
+    @Test
+    public void canDeleteIssueIds() {
+        reportDao.saveReport(createMismatchReport(start));
+        DeNormSpotCheckMismatch mismatch = queryMostRecentMismatch();
+        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
+        reportDao.deleteIssueId(mismatch.getMismatchId(), "10800");
+        Set<String> actual = queryMostRecentMismatch().getIssueIds();
+        assertThat(actual, is(empty()));
+    }
 
     private DeNormSpotCheckMismatch queryMostRecentMismatch() {
         MismatchQuery query = new MismatchQuery(SpotCheckDataSource.LBDC, Collections.singleton(SpotCheckContentType.BILL))

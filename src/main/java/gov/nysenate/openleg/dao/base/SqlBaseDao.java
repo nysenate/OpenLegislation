@@ -277,4 +277,11 @@ public abstract class SqlBaseDao
     public static SessionYear getSessionYearFromRs(ResultSet rs, String column) throws SQLException {
         return new SessionYear(rs.getInt(column));
     }
+
+    public static String[] getArrayFromPgRs(ResultSet rs, String column) throws SQLException {
+        String arrayString = rs.getString(column);
+        arrayString = arrayString.replaceAll("[{}\" ]", "");
+        String[] split = arrayString.split(",");
+        return split;
+    }
 }
