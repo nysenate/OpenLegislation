@@ -17,7 +17,7 @@ public enum SobiFragmentType
     COMMITTEE       (true, "<sencommmem .+", "</sencommmem.+"),
     ANNOTATION      (true, "<senannotated .+", "</senannotated.+"),
 
-    // Newer SOBI types
+    // Bill XML types
 
     ANACT           (true, "<anact.+", "</anact.+"),                              // An act to
     APPRMEMO        (true, "<approval_memorandum .+", "</approval_memorandum.+"), // Approval memo
@@ -28,8 +28,18 @@ public enum SobiFragmentType
     LDSUMM          (true, "<digestsummary .+", "</digestsummary.+"),             // Summary
     SAMEAS          (true, "<sameas .+", "</sameas.+"),                           // Same as
     SENMEMO         (true, "<senate_billmemo .+", "</senate_billmemo.+"),         // Memo
+    VETOMSG         (true, "<veto_message .+", "</veto_message.+"),               // Veto memo
+
+    // Other XML types
+    // TODO: these are likely the same as the xml types from the original sobi spec
+
+    SENAGEN         (true, "<senagenda.+", "</senagenda.+"),                      // Agenda Info
     SENAGENV        (true, "<senagendavote .+", "</senagendavote.+"),             // Agenda Vote
-    VETOMSG         (true, "<veto_message .+", "</veto_message.+");               // Veto memo
+    SENCAL          (true, "<sencalendar .+", "</sencalendar.+"),                 // Floor Calendar
+    SENCALAL        (true, "<sencalendaractive .+", "</sencalendaractive.+"),     // Active List
+    SENCOMM         (true, "<sencommmem .+", "</sencommmem.+"),                   // Committee
+
+    ;
 
     boolean isXml;
     String startPattern;
