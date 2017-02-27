@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.service.spotcheck.base.MismatchNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.MismatchStatusService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -57,6 +58,21 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     public abstract Map<String, String> getMapFromKey(ContentKey key);
 
     /** --- Implemented Methods --- */
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DeNormSpotCheckMismatch getMismatch(int mismatchId) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("mismatchId", mismatchId);
+        String sql = SqlSpotCheckReportQuery.GET_MISMATCH.getSql(schema());
+        List<DeNormSpotCheckMismatch> results = jdbcNamed.query(sql, params, new MismatchMapper());
+        if (results.size() == 0) {
+            throw new MismatchNotFoundEx(mismatchId);
+        }
+        return results.get(0);
+    }
 
     /**
      * {@inheritDoc}
@@ -202,7 +218,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      */
     @Override
     public void addIssueId(int mismatchId, String issueId) {
-        // TODO WIP
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("mismatchId", mismatchId);
 //        SqlParameterSource params = getIssueIdParams(mismatchId, issueId);
 //        jdbcNamed.update(ADD_ISSUE_ID.getSql(schema()), params);
     }

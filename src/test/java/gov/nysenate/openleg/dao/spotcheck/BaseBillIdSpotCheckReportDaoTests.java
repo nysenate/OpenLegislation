@@ -14,7 +14,9 @@ import java.util.Collections;
 import java.util.EnumSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertTrue;
 
 @Transactional
 public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
@@ -123,7 +125,7 @@ public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
     }
 
     /**
-     * Test updating ignore status method.
+     * Test setMismatchIgnoreStatus()
      */
 
     @Test(expected = IllegalArgumentException.class)
@@ -139,6 +141,22 @@ public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
         DeNormSpotCheckMismatch actual = queryMostRecentMismatch();
         assertThat(actual.getIgnoreStatus(), is(SpotCheckMismatchIgnore.IGNORE_PERMANENTLY));
     }
+
+    /**
+     * Test add/delete issue id's
+     */
+
+    @Test
+    public void canSetIssueId() {
+        reportDao.saveReport(createMismatchReport(start));
+        DeNormSpotCheckMismatch mismatch = queryMostRecentMismatch();
+        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
+        assertTrue(queryMostRecentMismatch().getIssueIds().contains("10800"));
+    }
+
+    // test can add multile issue id's
+
+    // adding same issue multiple times only shows up once.
 
     private DeNormSpotCheckMismatch queryMostRecentMismatch() {
         MismatchQuery query = new MismatchQuery(SpotCheckDataSource.LBDC, Collections.singleton(SpotCheckContentType.BILL))

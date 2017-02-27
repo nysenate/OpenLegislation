@@ -18,6 +18,9 @@ import java.util.Set;
  */
 public interface SpotCheckReportDao<ContentKey>
 {
+
+    DeNormSpotCheckMismatch getMismatch(int mismatchId);
+
     /**
      * Get mismatches matching the given query params.
      */
