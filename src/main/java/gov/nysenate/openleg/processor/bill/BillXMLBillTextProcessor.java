@@ -6,10 +6,9 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -81,8 +79,8 @@ public class BillXMLBillTextProcessor extends AbstractDataProcessor implements S
                 baseBill.getAmendment(version).setFullText(billText);
                 billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
             }
-        }catch (IOException | SAXException |XPathExpressionException e) {
-            throw new ParseError("Error While Parsing Bill Text XML", e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
