@@ -31,7 +31,7 @@ public class MismatchView<ContentKey> implements ViewObject
         this.mismatchId = mismatch.getMismatchId();
         this.reportId = mismatch.getReportId();
         this.key = mismatch.getKey();
-        this.mismatchType = mismatch.getMismatchType();
+        this.mismatchType = mismatch.getType();
         this.status = mismatch.getStatus();
         this.dataSource = mismatch.getDataSource();
         this.contentType = mismatch.getContentType();

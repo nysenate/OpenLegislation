@@ -72,7 +72,7 @@ public class MismatchStatusService {
         return currentMismatches.stream()
                 .filter(m -> !reportMismatches.contains(m))
                 .filter(m -> checkedKeys.contains(m.getKey()))
-                .filter(m -> checkedTypes.contains(m.getMismatchType()))
+                .filter(m -> checkedTypes.contains(m.getType()))
                 .filter(m -> m.getStatus() != SpotCheckMismatchStatus.RESOLVED)
                 .peek(m -> m.setStatus(SpotCheckMismatchStatus.RESOLVED))
                 .peek(m -> m.setIgnoreStatus(calculateIgnoreStatusForResolved(m)))

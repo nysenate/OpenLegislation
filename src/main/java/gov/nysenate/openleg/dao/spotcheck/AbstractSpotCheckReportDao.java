@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -156,7 +155,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     private MapSqlParameterSource mismatchParams(DeNormSpotCheckMismatch mismatch) {
         return new MapSqlParameterSource()
                 .addValue("key", toHstoreString(getMapFromKey((ContentKey) mismatch.getKey())))
-                .addValue("mismatchType", mismatch.getMismatchType().name())
+                .addValue("mismatchType", mismatch.getType().name())
                 .addValue("reportId", mismatch.getReportId())
                 .addValue("datasource", mismatch.getDataSource().name())
                 .addValue("contentType", mismatch.getContentType().name())

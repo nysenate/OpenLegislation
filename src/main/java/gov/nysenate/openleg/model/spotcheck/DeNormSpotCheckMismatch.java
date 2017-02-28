@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.model.spotcheck;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +17,7 @@ public class DeNormSpotCheckMismatch<ContentKey> {
     private ContentKey key;
 
     /** The type of mismatch that occurred. */
-    private SpotCheckMismatchType mismatchType;
+    private SpotCheckMismatchType type;
 
     private SpotCheckDataSource dataSource;
 
@@ -54,7 +52,7 @@ public class DeNormSpotCheckMismatch<ContentKey> {
 
     public DeNormSpotCheckMismatch(ContentKey key, SpotCheckMismatchType mismatchType, SpotCheckDataSource dataSource) {
        this.key = key;
-       this.mismatchType = mismatchType;
+       this.type = mismatchType;
        this.dataSource = dataSource;
        this.status = SpotCheckMismatchStatus.NEW;
        this.ignoreStatus = SpotCheckMismatchIgnore.NOT_IGNORED;
@@ -138,8 +136,8 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         return key;
     }
 
-    public SpotCheckMismatchType getMismatchType() {
-        return mismatchType;
+    public SpotCheckMismatchType getType() {
+        return type;
     }
 
     public SpotCheckMismatchStatus getStatus() {
@@ -194,14 +192,14 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         DeNormSpotCheckMismatch<?> mismatch = (DeNormSpotCheckMismatch<?>) o;
 
         if (key != null ? !key.equals(mismatch.key) : mismatch.key != null) return false;
-        if (mismatchType != mismatch.mismatchType) return false;
+        if (type != mismatch.type) return false;
         return dataSource == mismatch.dataSource;
     }
 
     @Override
     public int hashCode() {
         int result = key != null ? key.hashCode() : 0;
-        result = 31 * result + (mismatchType != null ? mismatchType.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (dataSource != null ? dataSource.hashCode() : 0);
         return result;
     }
