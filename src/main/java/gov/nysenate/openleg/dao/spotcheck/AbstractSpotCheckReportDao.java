@@ -254,19 +254,19 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         @Override
         public DeNormSpotCheckMismatch<ContentKey> mapRow(ResultSet rs, int rowNum) throws SQLException {
             ContentKey key = getKeyFromMap(getHstoreMap(rs, "key"));
-            SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("mismatch_type"));
+            SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("type"));
             SpotCheckDataSource dataSource = SpotCheckDataSource.valueOf(rs.getString("datasource"));
             DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(key, type, dataSource);
             mismatch.setMismatchId(rs.getInt("mismatch_id"));
             mismatch.setReportId(rs.getInt("report_id"));
-            mismatch.setStatus(SpotCheckMismatchStatus.valueOf(rs.getString("mismatch_status")));
+            mismatch.setStatus(SpotCheckMismatchStatus.valueOf(rs.getString("status")));
             mismatch.setContentType(SpotCheckContentType.valueOf(rs.getString("content_type")));
             mismatch.setReferenceData(rs.getString("reference_data"));
             mismatch.setObservedData(rs.getString("observed_data"));
             mismatch.setReportDateTime(getLocalDateTimeFromRs(rs, "report_date_time"));
             mismatch.setObservedDateTime(getLocalDateTimeFromRs(rs, "observed_date_time"));
             mismatch.setNotes(rs.getString("notes"));
-            mismatch.setIgnoreStatus(SpotCheckMismatchIgnore.valueOf(rs.getString("ignore_level")));
+            mismatch.setIgnoreStatus(SpotCheckMismatchIgnore.valueOf(rs.getString("ignore_status")));
             String[] issue_idss = getArrayFromPgRs(rs, "issue_ids");
             mismatch.setIssueIds(Sets.newHashSet(issue_idss));
 
@@ -284,7 +284,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         @Override
         public void processRow(ResultSet rs) throws SQLException {
             SpotCheckContentType contentType = SpotCheckContentType.valueOf(rs.getString("content_type"));
-            SpotCheckMismatchStatus status = SpotCheckMismatchStatus.valueOf(rs.getString("mismatch_status"));
+            SpotCheckMismatchStatus status = SpotCheckMismatchStatus.valueOf(rs.getString("status"));
             int count = rs.getInt("count");
 
             SpotCheckMismatchStatusSummary statusSummary = new SpotCheckMismatchStatusSummary(status, contentType, count);
