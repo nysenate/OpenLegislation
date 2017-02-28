@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -16,7 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 /**
@@ -65,8 +69,8 @@ public class BillXMLBillDigestProcessor extends AbstractDataProcessor implements
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
             logger.info("Put base bill in the ingest cache.");
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException | SAXException |XPathExpressionException e) {
+            throw new ParseError("Error While Parsing Bill Digest XML", e);
         }
     }
 
