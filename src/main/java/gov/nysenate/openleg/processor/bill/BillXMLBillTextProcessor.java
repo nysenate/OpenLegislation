@@ -61,10 +61,24 @@ public class BillXMLBillTextProcessor extends AbstractDataProcessor implements S
             final String asmamd = xmlHelper.getString("@asmamd",billTextNode).replaceAll("\n","");
             final String action = xmlHelper.getString("@action",billTextNode).replaceAll("\n",""); // TODO: implement actions
             final String billText = billTextNode.getTextContent().replaceAll("\n"," ");
-            final Version version = Version.of(senamd.isEmpty() ? asmamd:senamd);
-            final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(senhse.isEmpty() ? asmhse+asmno : senhse+senno, new SessionYear(sessionYear),version), sobiFragment);
-            baseBill.getAmendment(version).setFullText(billText);
-            billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+            if (!senhse.isEmpty() && !asmhse.isEmpty()){ // uni bill
+                //update senate
+                final Version version1 = Version.of(senamd);
+                final Bill baseBill1 = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(senhse + senno, new SessionYear(sessionYear), version1), sobiFragment);
+                baseBill1.getAmendment(version1).setFullText(billText);
+                billIngestCache.set(baseBill1.getBaseBillId(), baseBill1, sobiFragment);
+                //update assmbly
+                final Version version2 = Version.of(asmamd);
+                final Bill baseBill2 = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(asmhse+asmno, new SessionYear(sessionYear), version2), sobiFragment);
+                baseBill2.getAmendment(version2).setFullText(billText);
+                billIngestCache.set(baseBill2.getBaseBillId(), baseBill2, sobiFragment);
+            }
+            else {
+                final Version version = Version.of(senamd.isEmpty() ? asmamd : senamd);
+                final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(senhse.isEmpty() ? asmhse + asmno : senhse + senno, new SessionYear(sessionYear), version), sobiFragment);
+                baseBill.getAmendment(version).setFullText(billText);
+                billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
