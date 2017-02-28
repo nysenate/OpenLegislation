@@ -74,13 +74,13 @@ public class SpotCheckCtrl extends BaseCtrl
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches", method = RequestMethod.GET)
-    public BaseResponse getOpenMismatches(@RequestParam String datasource,
-                                          @RequestParam String contentType,
-                                          @RequestParam(required = false) String[] mismatchStatuses,
-                                          @RequestParam(required = false) String[] ignoredStatuses,
-                                          @RequestParam(required = false) String fromDate,
-                                          @RequestParam(required = false) String toDate,
-                                          WebRequest request) {
+    public BaseResponse getMismatches(@RequestParam String datasource,
+                                      @RequestParam String contentType,
+                                      @RequestParam(required = false) String[] mismatchStatuses,
+                                      @RequestParam(required = false) String[] ignoredStatuses,
+                                      @RequestParam(required = false) String fromDate,
+                                      @RequestParam(required = false) String toDate,
+                                      WebRequest request) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
         SpotCheckContentType ct = getEnumParameter("contentType", contentType, SpotCheckContentType.class);
         // TODO handle invalid enum strings?
@@ -124,8 +124,8 @@ public class SpotCheckCtrl extends BaseCtrl
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches/summary", method = RequestMethod.GET)
-    public BaseResponse getOpenMismatchSummary(@RequestParam String datasource,
-                                               @RequestParam(required = false) String summaryDateTime) {
+    public BaseResponse getMismatchSummary(@RequestParam String datasource,
+                                           @RequestParam(required = false) String summaryDateTime) {
         SpotCheckDataSource ds = SpotCheckDataSource.valueOf(datasource);
         LocalDateTime sumDateTime = parseISODateTime(summaryDateTime, LocalDateTime.now());
         MismatchSummary summary = getAnyReportService().getMismatchSummary(ds, sumDateTime);
@@ -137,16 +137,16 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Set the ignore status of a particular mismatch
      *
-     * Usage: (POST) /api/3/admin/spotcheck/mismatch/{mismatchId}/ignore
+     * Usage: (POST) /api/3/admin/spotcheck/mismatches/{mismatchId}/ignore
      *
      * Request Parameters: ignoreLevel - string - specifies desired ignore level or unsets ignore if null or not present
      *                                  @see SpotCheckMismatchIgnore
      */
-    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/ignore", method = RequestMethod.POST)
+    @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/ignore", method = RequestMethod.POST)
     public BaseResponse setIgnoreStatus(@PathVariable int mismatchId, @RequestParam(required = false) String ignoreLevel) {
-        SpotCheckMismatchIgnore ignoreStatus = ignoreLevel != null
-                ? getEnumParameter("ignoreLevel", ignoreLevel, SpotCheckMismatchIgnore.class)
-                : null;
+        SpotCheckMismatchIgnore ignoreStatus = ignoreLevel == null
+                ? SpotCheckMismatchIgnore.NOT_IGNORED
+                : getEnumParameter("ignoreLevel", ignoreLevel, SpotCheckMismatchIgnore.class);
         getAnyReportService().setMismatchIgnoreStatus(mismatchId, ignoreStatus);
         return new SimpleResponse(true, "ignore level set", "ignore-level-set");
     }
@@ -156,9 +156,9 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Adds an issue id to a spotcheck mismatch
      *
-     * Usage: (POST) /api/3/admin/spotcheck/mismatch/{mismatchId}/issue/{issueId}
+     * Usage: (POST) /api/3/admin/spotcheck/mismatches/{mismatchId}/issue/{issueId}
      */
-    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
     public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
         getAnyReportService().addIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id added", "issue-id-added");
