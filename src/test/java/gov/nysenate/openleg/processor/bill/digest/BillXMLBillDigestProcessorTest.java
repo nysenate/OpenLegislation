@@ -32,32 +32,11 @@ public class BillXMLBillDigestProcessorTest  extends BaseXmlProcessorTest {
     }
 
     @Test
-    public void replaceDigestBillTest() {
+    public void DigestBillTest() {
         final String path = "processor/bill/digest/2017-01-05-10.29.46.171044_LDSUMM_S00767.XML";
         processXmlFile(path);
         Bill b = billDao.getBill(new BillId("S00767", 2017));
-        final String expectedSummary = "test digest bill summary";
-        assertEquals(expectedSummary,b.getSummary()); // test summary
-        final String expectedLaw = "test digest bill law";
-        assertEquals(expectedLaw, b.getAmendment(Version.DEFAULT).getLaw()); // test law
         Set<BillId> preBill = b.getAllPreviousVersions();
-        assertTrue(preBill.contains(new BillId("S06883", 2016)));//test pre bill
-    }
-
-    @Test
-    public void removeDigestBillTest() {
-        //create bill
-        final String createBillPath = "processor/bill/digest/2017-01-05-10.29.46.171044_LDSUMM_S00767.XML";
-        processXmlFile(createBillPath);
-        //remove bill
-        final String path = "processor/bill/digest/2017-01-23-12.24.20.161955_LDSUMM_A02830.XML";
-        processXmlFile(path);
-        Bill b = billDao.getBill(new BillId("S00767", 2017));
-        final String expectedSummary = "";
-        assertEquals(expectedSummary,b.getSummary()); // test summary
-        final String expectedLaw = "";
-        assertEquals(expectedLaw, b.getAmendment(Version.DEFAULT).getLaw()); // test law
-        Set<BillId> preBill = b.getAllPreviousVersions();
-        assertTrue(preBill.isEmpty());//test pre bill
+        assertTrue(preBill.contains(new BillId("S06883", 2016)));
     }
 }

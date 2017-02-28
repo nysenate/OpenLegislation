@@ -1,6 +1,11 @@
 <digestsummary sessyr="2017" billhse="S" billno="00767" action="replace">
 <summaryamendment></summaryamendment>
 <oldbill><oldyear>2016</oldyear><oldhse>S</oldhse><oldno>06883</oldno><oldamd></oldamd></oldbill>
-<law><![CDATA[test digest bill law]]></law>
-<summary><![CDATA[test digest bill summary]]></summary>
+<law><![CDATA[test digest bill]]></law>
+<summary><![CDATA[
+Prohibits the termination of tenancy in housing occupied by substantially all
+persons over sixty-five years of age and/or persons with disabilities without
+cause; prohibits increasing rent more than one percent above the percentage
+change.
+]]></summary>
 </digestsummary>
