@@ -5,14 +5,17 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import java.util.regex.Pattern;
 @Service
 public class XmlBillSameAsProcessor extends AbstractDataProcessor implements SobiProcessor {
 
+    @Autowired
     XmlHelper xmlHelper;
 
     protected static final Pattern sameAsPattern =
@@ -53,22 +57,30 @@ public class XmlBillSameAsProcessor extends AbstractDataProcessor implements Sob
 
             final Bill baseBill = getOrCreateBaseBill(date, new BillId(billhse+billno,new SessionYear(sessionYear),version),fragment);
 
-            BillAmendment amd = baseBill.getAmendment(version);
+            BillAmendment amendment = baseBill.getAmendment(version);
 
             if  (action.equals("remove")) {
-                amd.getSameAs().clear();
-                amd.setUniBill(false);
+                amendment.getSameAs().clear();
+                amendment.setUniBill(false);
             }
             else if(action.equals("replace"))    {
                 Matcher sameAsMatcher = sameAsPattern.matcher(sameasBillContext);
                 if (sameAsMatcher.find())   {
-                    amd.getSameAs().clear();
+                    amendment.getSameAs().clear();
                     List<String> sameAsMatches = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2)));
                     for (String sameAs : sameAsMatches) {
-                        amd.getSameAs().add(new BillId(sameAs.replace(" ", ""), amd.getSession()));
+                        amendment.getSameAs().add(new BillId(sameAs.replace(" ", ""), amendment.getSession()));
+                    }
+
+                    // Check for uni-bill and sync
+                    if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty())  {
+                        amendment.setUniBill(true);
+                        syncUniBillText(amendment, fragment);
                     }
                 }
             }
+
+            //billIngestCache.set(baseBill.getBaseBillId(),baseBill,fragment);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -83,5 +95,20 @@ public class XmlBillSameAsProcessor extends AbstractDataProcessor implements Sob
     @Override
     public void init() {
         initBase();
+    }
+
+    protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
+        billAmendment.getSameAs().forEach(uniBillId -> {
+            Bill uniBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), uniBillId, sobiFragment);
+            BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
+            // If this is the senate bill amendment, copy text to the assembly bill amendment
+            if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
+                uniBillAmend.setFullText(billAmendment.getFullText());
+            }
+            // Otherwise copy the text to this assembly bill amendment
+            else if (!uniBillAmend.getFullText().isEmpty()) {
+                billAmendment.setFullText(uniBillAmend.getFullText());
+            }
+        });
     }
 }
