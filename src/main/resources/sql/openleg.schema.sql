@@ -2142,35 +2142,6 @@ COMMENT ON TABLE bill_sponsor_additional IS 'Contains additional sponsor mapping
 
 
 --
--- Name: bill_text_alternate_pdf; Type: TABLE; Schema: master; Owner: postgres
---
-
-CREATE TABLE bill_text_alternate_pdf (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    bill_amend_version character(1) NOT NULL,
-    active boolean,
-    url_path text
-);
-
-
-ALTER TABLE bill_text_alternate_pdf OWNER TO postgres;
-
---
--- Name: TABLE bill_text_alternate_pdf; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON TABLE bill_text_alternate_pdf IS 'Mapping of urls to redirect to for certain budget bills';
-
-
---
--- Name: COLUMN bill_text_alternate_pdf.url_path; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN bill_text_alternate_pdf.url_path IS 'Specify protocol for absolute urls';
-
-
---
 -- Name: bill_text_reference; Type: TABLE; Schema: master; Owner: postgres
 --
 
@@ -5491,14 +5462,6 @@ ALTER TABLE ONLY bill_sponsor
 
 ALTER TABLE ONLY bill_sponsor_additional
     ADD CONSTRAINT bill_sponsor_special_pkey PRIMARY KEY (bill_print_no, bill_session_year, session_member_id);
-
-
---
--- Name: bill_text_external_pdf_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY bill_text_alternate_pdf
-    ADD CONSTRAINT bill_text_external_pdf_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version);
 
 
 --
