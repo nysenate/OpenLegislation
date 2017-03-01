@@ -51,23 +51,31 @@ public class BillXMLBillDigestProcessor extends AbstractDataProcessor implements
             final String billhse = xmlHelper.getString("@billhse",billTextNode);
             final String billno = xmlHelper.getString("@billno",billTextNode);
             final String action = xmlHelper.getString("@action",billTextNode); //todo wait for LBDC explanation of action
-            final String summary = xmlHelper.getNode("digestsummary/summary",doc).getTextContent();
-            final String amd = "";//todo wait for LBDC explanation
+            final String summary = xmlHelper.getNode("digestsummary/summary",doc) == null ? "": xmlHelper.getNode("digestsummary/summary",doc).getTextContent();
+            final String amd = xmlHelper.getString("digestsummary/summaryamendment", doc);
             final Version version = Version.of(amd);
             final String law = xmlHelper.getString("law",billTextNode);
             final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse+billno, new SessionYear(sessionYear),version) ,sobiFragment);
             baseBill.setSummary(summary);
             baseBill.getAmendment(version).setLaw(law);
-            /**
-             * add previous bills
-             */
-            int totalNumsOfPreBills = xmlHelper.getNodeList("digestsummary/oldbill/oldyear",doc).getLength();
-            for (int i = 1; i <= totalNumsOfPreBills; i++) {
-                int  sess = xmlHelper.getInteger("digestsummary/oldbill/oldyear["+i+"]",doc);
-                String oldhse = xmlHelper.getString("digestsummary/oldbill/oldhse["+i+"]",doc).replaceAll("\n","");
-                String oldno = xmlHelper.getString("digestsummary/oldbill/oldno["+i+"]",doc).replaceAll("\n","");
-                String oldamd = xmlHelper.getString("digestsummary/oldbill/oldamd["+i+"]",doc).replaceAll("\n","");
-                baseBill.addDirectPreviousVersion(new BillId(oldhse+oldno, SessionYear.of(sess),Version.of(oldamd)));
+            if (action.equals("replace")) { //replace bill
+                /**
+                 * add previous bills
+                 */
+                int totalNumsOfPreBills = xmlHelper.getNodeList("digestsummary/oldbill/oldyear", doc).getLength();
+                for (int i = 1; i <= totalNumsOfPreBills; i++) {
+                    int sess = xmlHelper.getInteger("digestsummary/oldbill/oldyear[" + i + "]", doc);
+                    String oldhse = xmlHelper.getString("digestsummary/oldbill/oldhse[" + i + "]", doc).replaceAll("\n", "");
+                    String oldno = xmlHelper.getString("digestsummary/oldbill/oldno[" + i + "]", doc).replaceAll("\n", "");
+                    String oldamd = xmlHelper.getString("digestsummary/oldbill/oldamd[" + i + "]", doc).replaceAll("\n", "");
+                    baseBill.addDirectPreviousVersion(new BillId(oldhse + oldno, SessionYear.of(sess), Version.of(oldamd)));
+                }
+            }
+            else { //remove bill
+
+                // clear Set<BillID> pre version
+                baseBill.getAllPreviousVersions().clear();
+                baseBill.getDirectPreviousVersions().clear();
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
             logger.info("Put base bill in the ingest cache.");
