@@ -54,4 +54,29 @@ public class XmlBillSameAsProcessorTest extends BaseXmlProcessorTest {
         assertTrue(amendment.getSameAs().size() == 1);
     }
 
+    @Test
+    public void removeBIll()    {
+        // Initializing with another same as.
+        String xmlPath = "processor/bill/sameas/2017-02-09-12.48.56.095416_SAMEAS_A05457.XML";
+        processXmlFile(xmlPath);
+
+        // Removing same as
+        xmlPath = "processor/bill/sameas/2017-02-09-12.48.35.004442_SAMEAS_A05454-remove.XML";
+        processXmlFile(xmlPath);
+
+        Bill bill = billDao.getBill(new BillId("A5457",2017));
+        BillAmendment amendment = bill.getAmendment(Version.DEFAULT);
+        assertTrue(amendment.getSameAs().size() == 0);
+    }
+
+    @Test
+    public void testUniBill()  {
+        String xmlPath = "processor/bill/sameas/2017-02-07-13.47.57.288703_SAMEAS_S04257.XML";
+        processXmlFile(xmlPath);
+
+        Bill bill = billDao.getBill(new BillId("S4257", 2017));
+        BillAmendment amendment = bill.getAmendment(Version.DEFAULT);
+        assertTrue(amendment.getSameAs().contains(new BillId("A5261", 2017)));
+        assertTrue(amendment.getSameAs().size() == 1);
+    }
 }
