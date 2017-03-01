@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
+import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +79,24 @@ public class XmlBillSameAsProcessorTest extends BaseXmlProcessorTest {
         BillAmendment amendment = bill.getAmendment(Version.DEFAULT);
         assertTrue(amendment.getSameAs().contains(new BillId("A5261", 2017)));
         assertTrue(amendment.getSameAs().size() == 1);
+    }
+
+    @Test
+    public void testMultipleSameAs()    {
+        String xmlPath = "processor/bill/sameas/2017-02-09-12.48.56.095416_SAMEAS_A05457-multiple-sameas.XML";
+        processXmlFile(xmlPath);
+
+        Bill bill = billDao.getBill(new BillId("A5457", 2017));
+        BillAmendment amendment = bill.getAmendment(Version.DEFAULT);
+        assertTrue(amendment.getSameAs().contains(new BillId("S1329", 2017)));
+        assertTrue(amendment.getSameAs().contains(new BillId("S3779",2017)));
+        assertTrue(amendment.getSameAs().size() ==  2);
+    }
+
+    @Test(expected = ParseError.class)
+    public void textExceptions() throws Exception   {
+        String xmlPath = "processor/bill/sameas/2017-02-01-09.31.43.383879_SAMEAS_S03526A-invalid-xml.XML";
+        processXmlFile(xmlPath);
+
     }
 }
