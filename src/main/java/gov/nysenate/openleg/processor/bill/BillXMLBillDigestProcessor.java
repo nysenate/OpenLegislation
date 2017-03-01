@@ -54,8 +54,10 @@ public class BillXMLBillDigestProcessor extends AbstractDataProcessor implements
             final String summary = xmlHelper.getNode("digestsummary/summary",doc).getTextContent();
             final String amd = "";//todo wait for LBDC explanation
             final Version version = Version.of(amd);
+            final String law = xmlHelper.getString("law",billTextNode);
             final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse+billno, new SessionYear(sessionYear),version) ,sobiFragment);
             baseBill.setSummary(summary);
+            baseBill.getAmendment(version).setLaw(law);
             /**
              * add previous bills
              */
