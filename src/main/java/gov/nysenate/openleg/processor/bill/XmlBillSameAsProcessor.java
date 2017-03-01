@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,42 +53,43 @@ public class XmlBillSameAsProcessor extends AbstractDataProcessor implements Sob
             final Node billSameAsNode = xmlHelper.getNode("sameas", doc);
             final String billno = xmlHelper.getString("@billno", billSameAsNode).replaceAll("\n", "");
             final String billhse = xmlHelper.getString("@billhse", billSameAsNode).replaceAll("\n", "");
-            final String billamd = xmlHelper.getString("@billamd", billSameAsNode).replaceAll("\n","");
+            final String billamd = xmlHelper.getString("@billamd", billSameAsNode).replaceAll("\n", "");
             final int sessionYear = xmlHelper.getInteger("@sessyr", billSameAsNode);
             final String action = xmlHelper.getString("@action", billSameAsNode).replaceAll("\n", "");
-            final String sameasBillContext = xmlHelper.getNode("sameas/sameasbill",doc).getTextContent();
-            final Version version = Version.of(billamd);
 
-            final Bill baseBill = getOrCreateBaseBill(date, new BillId(billhse+billno,new SessionYear(sessionYear),version),fragment);
+            final Version version = Version.of(billamd);
+            final Bill baseBill = getOrCreateBaseBill(date, new BillId(billhse + billno, new SessionYear(sessionYear), version), fragment);
 
             BillAmendment amendment = baseBill.getAmendment(version);
 
-            if  (action.equals("remove")) {
-                amendment.getSameAs().clear();
+            amendment.getSameAs().clear();
+
+            if (action.equals("remove")) {
+                //amendment.getSameAs().clear();
                 amendment.setUniBill(false);
             }
-            else if(action.equals("replace"))    {
-                Matcher sameAsMatcher = sameAsPattern.matcher(sameasBillContext);
-                if (sameAsMatcher.find())   {
-                    amendment.getSameAs().clear();
-                    List<String> sameAsMatches = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2)));
-                    for (String sameAs : sameAsMatches) {
-                        amendment.getSameAs().add(new BillId(sameAs.replace(" ", ""), amendment.getSession()));
-                    }
+            else if (action.equals("replace")) {
+                final NodeList nList = xmlHelper.getNodeList("sameas/sameasbill", doc);
+                for (int temp = 0; temp < nList.getLength(); temp++) {
+                    Node node = nList.item(temp);
+                    String sameasBillContext = node.getTextContent();
 
-                    // Check for uni-bill and sync
-                    if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty())  {
-                        amendment.setUniBill(true);
-                        syncUniBillText(amendment, fragment);
+                    Matcher sameAsMatcher = sameAsPattern.matcher(sameasBillContext);
+                    if (sameAsMatcher.find()) {
+
+                        List<String> sameAsMatches = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2)));
+                        for (String sameAs : sameAsMatches) {
+                            amendment.getSameAs().add(new BillId(sameAs.replace(" ", ""), amendment.getSession()));
+                        }
                     }
                 }
             }
 
             //billIngestCache.set(baseBill.getBaseBillId(),baseBill,fragment);
+        } catch (IOException | SAXException |XPathExpressionException e) {
+            throw new ParseError("Error While Parsing AnActXML", e);
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
     @Override
