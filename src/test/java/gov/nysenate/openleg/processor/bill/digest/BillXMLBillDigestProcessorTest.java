@@ -36,7 +36,11 @@ public class BillXMLBillDigestProcessorTest  extends BaseXmlProcessorTest {
         final String path = "processor/bill/digest/2017-01-05-10.29.46.171044_LDSUMM_S00767.XML";
         processXmlFile(path);
         Bill b = billDao.getBill(new BillId("S00767", 2017));
+        final String expectedSummary = "test digest bill summary";
+        assertEquals(expectedSummary,b.getSummary()); // test summary
+        final String expectedLaw = "test digest bill law";
+        assertEquals(expectedLaw, b.getAmendment(Version.DEFAULT).getLaw()); // test law
         Set<BillId> preBill = b.getAllPreviousVersions();
-        assertTrue(preBill.contains(new BillId("S06883", 2016)));
+        assertTrue(preBill.contains(new BillId("S06883", 2016)));//test pre bill
     }
 }
