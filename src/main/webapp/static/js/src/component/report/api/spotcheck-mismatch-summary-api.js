@@ -5,7 +5,6 @@ function mismatchSummaryApi($resource) {
 
     var mismatchSummaryApi = $resource(adminApiPath + "/spotcheck/:datasource/open-mismatches/summary", {datasource: '@datasource'});
 
-    // TODO: Add API filter for mismatchStatus so content type counts can be updated for the selected mismatch statuses.
     /**
      * @param datasource
      * @param date An ISO date time string. Returns summary data for mismatches observed before this date time.
@@ -15,7 +14,6 @@ function mismatchSummaryApi($resource) {
             .then(createSummary)
     }
 
-    // TODO: ResolvedCount not in API response.
     function createSummary(response) {
         console.log(response);
         var summary = {

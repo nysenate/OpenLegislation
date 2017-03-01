@@ -7,6 +7,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
                     mismatchSummaryApi, mismatchIgnoreApi) {
 
     const dateFormat = 'YYYY-MM-DD';
+    const isoFormat = 'YYYY-MM-DDTHH:mm:ss';
     /** Used to look up content types corresponding to the selected tab. */
     const contentTypes = ['BILL', 'CALENDAR', 'AGENDA'];
 
