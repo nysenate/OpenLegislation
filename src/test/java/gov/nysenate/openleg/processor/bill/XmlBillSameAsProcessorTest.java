@@ -97,6 +97,16 @@ public class XmlBillSameAsProcessorTest extends BaseXmlProcessorTest {
     public void textExceptions() throws Exception   {
         String xmlPath = "processor/bill/sameas/2017-02-01-09.31.43.383879_SAMEAS_S03526A-invalid-xml.XML";
         processXmlFile(xmlPath);
+    }
 
+    @Test
+    public void testSameAsWithAmendment()   {
+        String xmlPath = "processor/bill/sameas/2017-02-01-09.31.43.383879_SAMEAS_S03526A-with-amendment.XML";
+        processXmlFile(xmlPath);
+
+        Bill bill = billDao.getBill(new BillId("S3526",2017));
+        BillAmendment amendment = bill.getAmendment(Version.A);
+        assertTrue(amendment.getSameAs().contains(new BillId("A3028A",2017)));
+        assertTrue(amendment.getSameAs().size() ==  1);
     }
 }

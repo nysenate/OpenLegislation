@@ -701,25 +701,6 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
     /** --- Post Process Methods --- */
 
     /**
-     * Uni-bills share text with their counterpart house. Ensure that the full text of bill amendments that
-     * have a uni-bill designator are kept in sync.
-     */
-    protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
-        billAmendment.getSameAs().forEach(uniBillId -> {
-            Bill uniBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), uniBillId, sobiFragment);
-            BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
-            // If this is the senate bill amendment, copy text to the assembly bill amendment
-            if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
-                uniBillAmend.setFullText(billAmendment.getFullText());
-            }
-            // Otherwise copy the text to this assembly bill amendment
-            else if (!uniBillAmend.getFullText().isEmpty()) {
-                billAmendment.setFullText(uniBillAmend.getFullText());
-            }
-        });
-    }
-
-    /**
      * Constructs a BillSponsor via the sponsorLine string and applies it to the bill.
      */
     protected void setBillSponsorFromSponsorLine(Bill baseBill, String sponsorLine, SessionYear sessionYear) throws ParseError {
