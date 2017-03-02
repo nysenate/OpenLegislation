@@ -10,8 +10,8 @@ import gov.nysenate.openleg.model.bill.BillSponsor;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
@@ -29,13 +29,12 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class is responsible for Processing the Sponsor Sobi Fragments
- *
- * Created by Robert Bebber on 2/22/17.
+ * Created by robert on 2/22/17.
  */
 @Service
 public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiProcessor {
@@ -57,12 +56,6 @@ public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiP
         return SobiFragmentType.LDSPON;
     }
 
-    /**
-     * This method gets the specific identifiers for the fragment and then based on the prime tag, the method will
-     * call separate methods depending on if the prime(sponsor) is a Budget Bill, Rule, or a standard sponsor.
-     *
-     * @param sobiFragment This is the fragment being worked on during this process
-     */
     @Override
     public void process(SobiFragment sobiFragment) {
         logger.info("Processing Sponsor...");
@@ -94,6 +87,7 @@ public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiP
                 Matcher rules = rulesSponsorPattern.matcher(prime);
                 rules.find();
                 if (rules.group().contains("BUDGET BILL")) {
+                    budgetSponsorProcess(baseBill);
                     billSponsor.setBudget(true);
                 } else {
                     String sponsor;
@@ -110,24 +104,32 @@ public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiP
                     amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber));
                 }
             }
-            billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
         } catch (IOException | SAXException | XPathExpressionException e) {
-            throw new ParseError("Error While Parsing SponsorSobiProcessorXML", e);
+            throw new ParseError("Error While Parsing AnActXML", e);
         }
     }
 
-    /**
-     * This method is responsible for setting every element regarding the sponsor to empty.
-     *
-     * @param amendment the ammendment of the bill
-     * @param bill the bill in respect to the sponsor fragement
-     */
     public void removeProcess(BillAmendment amendment, Bill bill) {
         bill.setSponsor(null);
         List<SessionMember> empty1 = new ArrayList<>();
         amendment.setCoSponsors(empty1);
         List<SessionMember> empty2 = new ArrayList<>();
         amendment.setMultiSponsors(empty2);
+    }
+
+    public void budgetSponsorProcess(Bill baseBill) {
+        BillSponsor billSponsor = new BillSponsor();
+        billSponsor.setBudget(true);
+    }
+
+    public List<SessionMember> getSessionMember(String sponsors, SessionYear session, Chamber chamber) {
+        List<String> shortNames = Lists.newArrayList(
+                Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsors.toUpperCase()));
+        List<SessionMember> sessionMembers = new ArrayList<>();
+        for (String t : shortNames) {
+            sessionMembers.add(getMemberFromShortName(t, session, chamber));
+        }
+        return sessionMembers;
     }
 
     @Override
