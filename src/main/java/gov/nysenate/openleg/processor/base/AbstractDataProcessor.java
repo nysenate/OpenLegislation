@@ -279,4 +279,23 @@ public abstract class AbstractDataProcessor
         flushAgendaUpdates();
         flushCalendarUpdates();
     }
+
+    /**
+     * Uni-bills share text with their counterpart house. Ensure that the full text of bill amendments that
+     * have a uni-bill designator are kept in sync.
+     */
+    protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
+        billAmendment.getSameAs().forEach(uniBillId -> {
+            Bill uniBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), uniBillId, sobiFragment);
+            BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
+            // If this is the senate bill amendment, copy text to the assembly bill amendment
+            if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
+                uniBillAmend.setFullText(billAmendment.getFullText());
+            }
+            // Otherwise copy the text to this assembly bill amendment
+            else if (!uniBillAmend.getFullText().isEmpty()) {
+                billAmendment.setFullText(uniBillAmend.getFullText());
+            }
+        });
+    }
 }

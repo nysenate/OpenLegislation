@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -65,7 +64,6 @@ public class XmlBillSameAsProcessor extends AbstractDataProcessor implements Sob
             amendment.getSameAs().clear();
 
             if (action.equals("remove")) {
-                //amendment.getSameAs().clear();
                 amendment.setUniBill(false);
             }
             else if (action.equals("replace")) {
@@ -79,17 +77,21 @@ public class XmlBillSameAsProcessor extends AbstractDataProcessor implements Sob
 
                         List<String> sameAsMatches = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2)));
                         for (String sameAs : sameAsMatches) {
-                            amendment.getSameAs().add(new BillId(sameAs.replace(" ", ""), amendment.getSession()));
+                            amendment.getSameAs().add(new BillId(sameAs.replace(" ", "").replace("-",""), amendment.getSession()));
+                        }
+
+                        // Check for uni-bill and sync
+                        if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
+                            amendment.setUniBill(true);
+                            syncUniBillText(amendment, fragment);
                         }
                     }
                 }
             }
-
             //billIngestCache.set(baseBill.getBaseBillId(),baseBill,fragment);
         } catch (IOException | SAXException |XPathExpressionException e) {
             throw new ParseError("Error While Parsing AnActXML", e);
         }
-
     }
 
     @Override
@@ -100,20 +102,5 @@ public class XmlBillSameAsProcessor extends AbstractDataProcessor implements Sob
     @Override
     public void init() {
         initBase();
-    }
-
-    protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
-        billAmendment.getSameAs().forEach(uniBillId -> {
-            Bill uniBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), uniBillId, sobiFragment);
-            BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
-            // If this is the senate bill amendment, copy text to the assembly bill amendment
-            if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
-                uniBillAmend.setFullText(billAmendment.getFullText());
-            }
-            // Otherwise copy the text to this assembly bill amendment
-            else if (!uniBillAmend.getFullText().isEmpty()) {
-                billAmendment.setFullText(uniBillAmend.getFullText());
-            }
-        });
     }
 }
