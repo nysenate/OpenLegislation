@@ -31,10 +31,10 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "    WHERE m.reference_active_date_time BETWEEN :fromDate AND :toDate \n" +
         "      AND m.datasource = :datasource \n" +
         "      AND m.content_type IN (:contentTypes) \n" +
-        "      AND m.status IN (:statuses) \n" +
         "      AND m.ignore_status IN (:ignoreStatuses) \n" +
         "    ORDER BY m.key, m.type, m.reference_active_date_time desc \n" +
-        "  ) open_mismatches \n"
+        "  ) open_mismatches \n" +
+        "WHERE status IN (:statuses)"
     ),
 
     INSERT_MISMATCH(
