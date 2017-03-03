@@ -116,6 +116,5 @@ FROM master.spotcheck_report r
 
 ANALYZE master.spotcheck_mismatch;
 
-CREATE INDEX spotcheck_mismatch_ds_ct_st_igst_refdt_index
-on master.spotcheck_mismatch (datasource, content_type, status, ignore_status, reference_active_date_time);
-
+CREATE INDEX spotcheck_mismatch_datasource_content_type_ref_date_time_index
+on master.spotcheck_mismatch (datasource, content_type, reference_active_date_time);
