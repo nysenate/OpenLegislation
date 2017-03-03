@@ -6,9 +6,6 @@ import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
-import gov.nysenate.openleg.client.response.error.ErrorCode;
-import gov.nysenate.openleg.client.response.error.ErrorResponse;
-import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.spotcheck.MismatchSummaryView;
 import gov.nysenate.openleg.client.view.spotcheck.MismatchView;
@@ -23,7 +20,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -83,16 +79,15 @@ public class SpotCheckCtrl extends BaseCtrl
                                       WebRequest request) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
         SpotCheckContentType ct = getEnumParameter("contentType", contentType, SpotCheckContentType.class);
-        // TODO handle invalid enum strings?
         Set<SpotCheckMismatchStatus> ms = mismatchStatuses == null
                 ? EnumSet.of(SpotCheckMismatchStatus.NEW, SpotCheckMismatchStatus.EXISTING, SpotCheckMismatchStatus.REGRESSION)
-                : Lists.newArrayList(mismatchStatuses).stream().map(SpotCheckMismatchStatus::valueOf).collect(Collectors.toSet());
+                : Lists.newArrayList(mismatchStatuses).stream().map(s -> getEnumParameter("mismatchStatuses", s, SpotCheckMismatchStatus.class)).collect(Collectors.toSet());
         Set<SpotCheckMismatchIgnore> igs = ignoredStatuses == null
                 ? EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED)
-                : Lists.newArrayList(ignoredStatuses).stream().map(SpotCheckMismatchIgnore::valueOf).collect(Collectors.toSet());
+                : Lists.newArrayList(ignoredStatuses).stream().map(i -> getEnumParameter("ignoredStatuses", i, SpotCheckMismatchIgnore.class)).collect(Collectors.toSet());
 
-        LocalDateTime toDateTime = parseISODateTime(toDate, LocalDateTime.now());
-        LocalDateTime fromDateTime = parseISODateTime(fromDate, SessionYear.of(toDateTime.getYear()).asDateTimeRange().lowerEndpoint());
+        LocalDateTime toDateTime = toDate == null ? LocalDateTime.now() : parseISODateTime(toDate, "toDate");
+        LocalDateTime fromDateTime = fromDate == null ? startOfSessionYear(toDateTime) : parseISODateTime(fromDate, "fromDate");
         LimitOffset limitOffset = getLimitOffset(request, 10);
 
         MismatchQuery query = new MismatchQuery(ds, Collections.singleton(ct))
@@ -111,6 +106,10 @@ public class SpotCheckCtrl extends BaseCtrl
         return ListViewResponse.of(mismatchViews, mismatches.getTotal(), mismatches.getLimOff());
     }
 
+    private LocalDateTime startOfSessionYear(LocalDateTime toDateTime) {
+        return SessionYear.of(toDateTime.getYear()).asDateTimeRange().lowerEndpoint();
+    }
+
     /**
      * Spotcheck Mismatch Summary API
      *
@@ -126,8 +125,8 @@ public class SpotCheckCtrl extends BaseCtrl
     @RequestMapping(value = "/mismatches/summary", method = RequestMethod.GET)
     public BaseResponse getMismatchSummary(@RequestParam String datasource,
                                            @RequestParam(required = false) String summaryDateTime) {
-        SpotCheckDataSource ds = SpotCheckDataSource.valueOf(datasource);
-        LocalDateTime sumDateTime = parseISODateTime(summaryDateTime, LocalDateTime.now());
+        SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
+        LocalDateTime sumDateTime = summaryDateTime == null ? LocalDateTime.now() : parseISODateTime(summaryDateTime, "summaryDateTime");
         MismatchSummary summary = getAnyReportService().getMismatchSummary(ds, sumDateTime);
         return new ViewObjectResponse<>(new MismatchSummaryView(summary));
     }
