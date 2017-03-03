@@ -32,14 +32,15 @@ CREATE TABLE master.spotcheck_mismatch (
 
 ALTER TABLE ONLY master.spotcheck_mismatch OWNER TO postgres;
 
-CREATE SEQUENCE spotcheck_mismatch_mismatch_id_seq
+CREATE SEQUENCE master.spotcheck_mismatch_mismatch_id_seq
   START WITH 500000
   INCREMENT BY 1
   NO MINVALUE
   NO MAXVALUE
   CACHE 1;
-ALTER TABLE master.spotcheck_mismatch ALTER COLUMN mismatch_id SET DEFAULT nextval('spotcheck_mismatch_mismatch_id_seq');
-ALTER SEQUENCE spotcheck_mismatch_mismatch_id_seq OWNER TO postgres;
+
+ALTER TABLE master.spotcheck_mismatch ALTER COLUMN mismatch_id SET DEFAULT nextval('master.spotcheck_mismatch_mismatch_id_seq');
+ALTER SEQUENCE master.spotcheck_mismatch_mismatch_id_seq OWNER TO postgres;
 
 ALTER TABLE ONLY master.spotcheck_mismatch
   ADD CONSTRAINT spotcheck_mismatch_mismatch_id_pkey PRIMARY KEY (mismatch_id);

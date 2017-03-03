@@ -3996,6 +3996,64 @@ ALTER SEQUENCE spotcheck_report_id_seq OWNED BY spotcheck_report.id;
 
 
 --
+-- Name: spotcheck_mismatch_mismatch_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE spotcheck_mismatch_mismatch_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE spotcheck_mismatch_mismatch_id_seq OWNER TO postgres;
+
+
+--
+-- Name: spotcheck_mismatch; Type: TABLE; Schema: master; Owner: postgres
+--
+
+CREATE TABLE spotcheck_mismatch (
+    mismatch_id integer DEFAULT nextval('master.spotcheck_mismatch_mismatch_id_seq'::regclass) NOT NULL,
+    key public.hstore NOT NULL,
+    type text NOT NULL,
+    report_id integer NOT NULL,
+    datasource text NOT NULL,
+    content_type text NOT NULL,
+    reference_type text NOT NULL,
+    status text NOT NULL,
+    reference_data text NOT NULL,
+    observed_data text NOT NULL,
+    notes text,
+    issue_ids text[] DEFAULT ARRAY[]::text[] NOT NULL,
+    ignore_status text DEFAULT 'NOT_IGNORED'::text NOT NULL,
+    report_date_time timestamp without time zone NOT NULL,
+    observed_date_time timestamp without time zone NOT NULL,
+    reference_active_date_time timestamp without time zone NOT NULL,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE spotcheck_mismatch OWNER TO postgres;
+
+
+--
+-- Name: spotcheck_mismatch spotcheck_mismatch_mismatch_id_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY spotcheck_mismatch
+    ADD CONSTRAINT spotcheck_mismatch_mismatch_id_pkey PRIMARY KEY (mismatch_id);
+
+
+--
+-- Name: spotcheck_mismatch_datasource_content_type_ref_date_time_index; Type: INDEX; Schema: master; Owner: postgres
+--
+
+CREATE INDEX spotcheck_mismatch_datasource_content_type_ref_date_time_index ON spotcheck_mismatch USING btree (datasource, content_type, reference_active_date_time);
+
+
+--
 -- Name: transcript; Type: TABLE; Schema: master; Owner: postgres
 --
 
@@ -6781,6 +6839,14 @@ ALTER TABLE ONLY transcript
     ADD CONSTRAINT transcript_transcript_file_fkey FOREIGN KEY (transcript_filename) REFERENCES transcript_file(file_name);
 
 
+--
+-- Name: spotcheck_mismatch spotcheck_mismatch_report_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY spotcheck_mismatch
+    ADD CONSTRAINT spotcheck_mismatch_report_id_fkey FOREIGN KEY (report_id) REFERENCES spotcheck_report(id);
+
+
 SET search_path = public, pg_catalog;
 
 --
@@ -7598,6 +7664,24 @@ GRANT ALL ON TABLE spotcheck_report TO postgres;
 REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE spotcheck_report_id_seq TO postgres;
+
+
+--
+-- Name: spotcheck_mismatch; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE spotcheck_mismatch FROM PUBLIC;
+REVOKE ALL ON TABLE spotcheck_mismatch FROM postgres;
+GRANT ALL ON TABLE spotcheck_mismatch TO postgres;
+
+
+--
+-- Name: spotcheck_mismatch_mismatch_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE spotcheck_mismatch_mismatch_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE spotcheck_mismatch_mismatch_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE spotcheck_mismatch_mismatch_id_seq TO postgres;
 
 
 --
