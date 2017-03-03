@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import gov.nysenate.openleg.dao.base.OrderBy;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,7 @@ public class MismatchQuery {
     private Set<SpotCheckMismatchIgnore> ignoredStatuses;
     private LocalDateTime toDate;
     private LocalDateTime fromDate;
+    private OrderBy orderBy;
 
     public MismatchQuery(SpotCheckDataSource dataSource, Set<SpotCheckContentType> contentTypes) {
         this.dataSource = dataSource;
@@ -24,6 +27,7 @@ public class MismatchQuery {
         this.ignoredStatuses = EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED);
         this.toDate = LocalDateTime.now();
         this.fromDate = SessionYear.of(this.toDate.getYear()).asDateTimeRange().lowerEndpoint();
+        this.orderBy = new OrderBy("reference_active_date_time", SortOrder.DESC);
     }
 
     public MismatchQuery withMismatchStatuses(Set<SpotCheckMismatchStatus> mismatchStatuses) {
@@ -43,6 +47,11 @@ public class MismatchQuery {
 
     public MismatchQuery withFromDate(LocalDateTime fromDate) {
         this.fromDate = fromDate;
+        return this;
+    }
+
+    public MismatchQuery withOrderBy(OrderBy orderBy) {
+        this.orderBy = orderBy;
         return this;
     }
 
@@ -68,5 +77,9 @@ public class MismatchQuery {
 
     public LocalDateTime getFromDate() {
         return fromDate;
+    }
+
+    public OrderBy getOrderBy() {
+        return orderBy;
     }
 }

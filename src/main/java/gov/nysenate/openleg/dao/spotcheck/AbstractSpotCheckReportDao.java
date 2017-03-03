@@ -86,7 +86,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("ignoreStatuses", query.getIgnoredStatuses().stream().map(Enum::name).collect(Collectors.toSet()))
                 .addValue("toDate", query.getToDate())
                 .addValue("fromDate", query.getFromDate());
-        String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema(), limitOffset);
+        String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema(), query.getOrderBy(), limitOffset);
         PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new MismatchMapper());
         jdbcNamed.query(sql, params, handler);
         return handler.getList();
