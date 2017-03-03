@@ -31,10 +31,10 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "    WHERE m.reference_active_date_time BETWEEN :fromDate AND :toDate \n" +
         "      AND m.datasource = :datasource \n" +
         "      AND m.content_type IN (:contentTypes) \n" +
-        "      AND m.ignore_status IN (:ignoreStatuses) \n" +
         "    ORDER BY m.key, m.type, m.reference_active_date_time desc \n" +
         "  ) open_mismatches \n" +
-        "WHERE status IN (:statuses)"
+        "WHERE status IN (:statuses)\n" +
+        "AND ignore_status IN (:ignoreStatuses)"
     ),
 
     INSERT_MISMATCH(
@@ -49,17 +49,17 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ),
 
     MISMATCH_SUMMARY(
-        "SELECT *, count(*) FROM\n"+
-        "  (SELECT content_type, status FROM\n"+
-        "    (SELECT DISTINCT ON (m.key, m.type, m.datasource) m.content_type, m.status, m.reference_active_date_time\n"+
+        "SELECT content_type, status, count(*) FROM\n"+
+        "  (SELECT content_type, status, ignore_status FROM\n"+
+        "    (SELECT DISTINCT ON (m.key, m.type, m.datasource) m.content_type, m.status, m.reference_active_date_time, m.ignore_status\n"+
         "     FROM ${schema}.spotcheck_mismatch m\n"+
         "     WHERE m.reference_active_date_time BETWEEN :fromDate AND :toDate\n"+
         "       AND m.datasource = :datasource\n"+
-        "       AND m.ignore_status = 'NOT_IGNORED'\n"+
         "     ORDER BY m.key, m.type, m.datasource, m.reference_active_date_time desc\n"+
         "    ) most_recent_mismatches\n"+
-        "  WHERE status != 'RESOLVED'\n"+
-        "    OR reference_active_date_time > :startOfToDate\n"+
+        "  WHERE (status != 'RESOLVED'\n"+
+        "    OR reference_active_date_time > :startOfToDate)\n"+
+        "    AND ignore_status = 'NOT_IGNORED'\n"+
         "  ) summary\n"+
         "GROUP BY content_type, status\n"
     ),
