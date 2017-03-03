@@ -3,17 +3,20 @@ angular.module('open.spotcheck').factory('SpotcheckMismatchApi', ['$resource', s
 function spotcheckMismatchApi($resource) {
 
     const DATE_FORMAT = 'YYYY-MM-DD h:mm:ss a';
-    var mismatchApi = $resource(adminApiPath + "/spotcheck/:datasource/open-mismatches", {datasource: '@datasource'});
+    var mismatchApi = $resource(adminApiPath + "/spotcheck/mismatches");
 
-    function getMismatches(datasource, contentType, statuses, date, limit, offset) {
+    function getMismatches(datasource, contentType, mismatchStatuses,fromDate, toDate, limit, offset) {
         var params = {
             datasource: datasource,
             contentType: contentType,
+            mismatchStatuses: mismatchStatuses,
             limit: limit,
             offset: offset,
-            observedBefore: date,
-            ignoredShown: false
+            toDate: toDate
         };
+        // for resolve
+        if(mismatchStatuses.indexOf("RESOLVED") != -1)
+            params['fromDate'] = fromDate;
         return mismatchApi.get(params).$promise
             .then(parseMismatches);
     }
@@ -27,29 +30,28 @@ function spotcheckMismatchApi($resource) {
             mismatches: []
         };
         result.pagination.total = response.total;
-        angular.forEach(response.observations, function (observation) {
-            angular.forEach(observation.mismatches.items, function (mismatch) {
-                if (mismatch.ignoreStatus === 'NOT_IGNORED') {
-                    result.mismatches.push(createMismatch(mismatch, observation));
-                }
-            });
+        angular.forEach(response.result.items, function (mismatch) {
+            if (mismatch.ignoreStatus === 'NOT_IGNORED') {
+                result.mismatches.push(createMismatch(mismatch));
+            }
         });
         return result;
     }
 
-    function createMismatch(mismatch, observation) {
+    function createMismatch(mismatch) {
         return {
             id: parseMismatchId(mismatch),
             status: parseStatus(mismatch),
             mismatchType: parseMismatchType(mismatch),
-            observedDate: parseDate(observation),
+            observedDate: parseDate(mismatch),
             issue: parseIssues(mismatch),
-            refType: parseRefType(observation),
-            bill: parseBill(observation),
-            calNo: parseCalNo(observation),
+            refType: parseRefType(mismatch),
+            bill: parseBill(mismatch),
+            source:parseRefType(mismatch),
+            calNo: parseCalNo(mismatch),
             // TODO: Add CalType to API response.
-            agendaNo: parseAgendaNo(observation),
-            committee: parseCommittee(observation)
+            agendaNo: parseAgendaNo(mismatch),
+            committee: parseCommittee(mismatch)
         }
     }
 
@@ -65,38 +67,38 @@ function spotcheckMismatchApi($resource) {
         return mismatchMap[mismatch.mismatchType];
     }
 
-    function parseDate(observation) {
-        return moment(observation.observedDateTime).format(DATE_FORMAT);
+    function parseDate(mismatch) {
+        return moment(mismatch.observedDateTime).format(DATE_FORMAT);
     }
 
     function parseIssues(mismatch) {
         return mismatch.issueIds.items.join(', ')
     }
 
-    function parseRefType(observation) {
-        return referenceTypeMap[observation.reportId.referenceType];
+    function parseRefType(mismatch) {
+        return mismatch.referenceType;
     }
 
-    function parseBill(observation) {
-        return observation.key.printNo || "";
+    function parseBill(mismatch) {
+        return mismatch.key.printNo || "";
     }
 
-    function parseCalNo(observation) {
-        return observation.key.calNo || "";
+    function parseCalNo(mismatch) {
+        return mismatch.key.calNo || "";
     }
 
-    function parseAgendaNo(observation) {
-        if (observation.key.agendaId == null) {
+    function parseAgendaNo(mismatch) {
+        if (mismatch.key.agendaId == null) {
             return "";
         }
-        return observation.key.agendaId.number;
+        return mismatch.key.agendaId.number;
     }
 
-    function parseCommittee(observation) {
-        if (observation.key.committeeId == null) {
+    function parseCommittee(mismatch) {
+        if (mismatch.key.committeeId == null) {
             return "";
         }
-        return observation.key.committeeId.name;
+        return mismatch.key.committeeId.name;
     }
 
     return {

@@ -267,7 +267,6 @@ function mismatchViewDirective($rootScope, $mdDialog, defaultFilter, IgnoreApi, 
 
             // Triggers a detail sheet popup for the mismatch designated by mismatchId
             $scope.showDetailedDiff = function(mismatchRow) {
-                console.log('wtf');
                 $mdDialog.show({
                     templateUrl: 'mismatchDetailWindow',
                     controller: 'detailDialogCtrl',

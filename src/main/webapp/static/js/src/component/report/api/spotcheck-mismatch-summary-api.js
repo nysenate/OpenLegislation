@@ -3,63 +3,145 @@ angular.module('open.spotcheck').factory('SpotcheckMismatchSummaryApi',
 
 function mismatchSummaryApi($resource) {
 
-    var mismatchSummaryApi = $resource(adminApiPath + "/spotcheck/:datasource/open-mismatches/summary", {datasource: '@datasource'});
+    var mismatchSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary");
 
     /**
      * @param datasource
      * @param date An ISO date time string. Returns summary data for mismatches observed before this date time.
      */
     function get(datasource, date) {
-        return mismatchSummaryApi.get({datasource: datasource, observedBefore: date}).$promise
+        return mismatchSummaryApi.get({datasource: datasource, summaryDateTime : date}).$promise
             .then(createSummary)
     }
 
     function createSummary(response) {
-        console.log(response);
+
         var summary = {
-            NEW: 0,
-            EXISTING: 0,
             OPEN: 0,
+            NEW: 0,
+            RESOVLED: 0,
             BILL: {
+                OPEN: 0,
                 NEW: 0,
-                EXISTING: 0,
-                OPEN: 0
+                RESOVLED: 0,
             },
             CALENDAR: {
+                OPEN: 0,
                 NEW: 0,
-                EXISTING: 0,
-                OPEN: 0
+                RESOVLED: 0,
             },
             AGENDA: {
+                OPEN: 0,
                 NEW: 0,
-                EXISTING: 0,
-                OPEN: 0
+                RESOVLED: 0,
             }
         };
-        angular.forEach(response.result.summaryMap, function (refType) {
-            summary.NEW += refType.mismatchStatuses.NEW || 0;
-            summary.EXISTING += refType.mismatchStatuses.EXISTING || 0;
-            summary.OPEN += refType.openMismatches || 0;
-            switch (referenceContentTypeMap[refType.refType]) {
-                case "BILL":
-                    summary.BILL.NEW += refType.mismatchStatuses.NEW || 0;
-                    summary.BILL.EXISTING += refType.mismatchStatuses.EXISTING || 0;
-                    summary.BILL.OPEN += refType.openMismatches || 0;
-                    break;
-                case "CALENDAR":
-                    summary.CALENDAR.NEW += refType.mismatchStatuses.NEW || 0;
-                    summary.CALENDAR.EXISTING += refType.mismatchStatuses.EXISTING || 0;
-                    summary.CALENDAR.OPEN += refType.openMismatches || 0;
-                    break;
-                case "AGENDA":
-                    summary.AGENDA.NEW += refType.mismatchStatuses.NEW || 0;
-                    summary.AGENDA.EXISTING += refType.mismatchStatuses.EXISTING || 0;
-                    summary.AGENDA.OPEN += refType.openMismatches || 0;
-                    break;
-                default:
-                    break;
-            }
-        });
+
+        console.log(response);
+
+        try {
+            summary.OPEN += response.result.summary.items.REGRESSION.total || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.OPEN += response.result.summary.items.EXISTING.total || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.OPEN += response.result.summary.items.NEW.total || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.NEW += response.result.summary.items.NEW.total || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.RESOVLED += response.result.summary.items.RESOVLED.total || 0
+        } catch (e) {
+        }
+        ;
+
+        try {
+            summary.BILL.OPEN += response.result.summary.items.REGRESSION.contentTypeCounts.items.BILL || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.BILL.OPEN += response.result.summary.items.EXISTING.contentTypeCounts.items.BILL || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.BILL.OPEN += response.result.summary.items.NEW.contentTypeCounts.items.BILL || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.BILL.NEW += response.result.summary.items.NEW.contentTypeCounts.items.BILL || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.BILL.RESOVLED += response.result.summary.items.RESOVLED.contentTypeCounts.items.BILL || 0
+        } catch (e) {
+        }
+        ;
+
+        try {
+            summary.CALENDAR.OPEN += response.result.summary.items.REGRESSION.contentTypeCounts.items.CALENDAR || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.CALENDAR.OPEN += response.result.summary.items.EXISTING.contentTypeCounts.items.CALENDAR || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.CALENDAR.OPEN += response.result.summary.items.NEW.contentTypeCounts.items.CALENDAR || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.CALENDAR.NEW += response.result.summary.items.NEW.contentTypeCounts.items.CALENDAR || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.CALENDAR.RESOVLED += response.result.summary.items.RESOVLED.contentTypeCounts.items.CALENDAR || 0
+        } catch (e) {
+        }
+        ;
+
+        try {
+            summary.AGENDA.OPEN += response.result.summary.items.REGRESSION.contentTypeCounts.items.AGENDA || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.AGENDA.OPEN += response.result.summary.items.EXISTING.contentTypeCounts.items.AGENDA || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.AGENDA.OPEN += response.result.summary.items.NEW.contentTypeCounts.items.AGENDA || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.AGENDA.NEW += response.result.summary.items.NEW.contentTypeCounts.items.AGENDA || 0
+        } catch (e) {
+        }
+        ;
+        try {
+            summary.AGENDA.RESOVLED += response.result.summary.items.AGENDA.contentTypeCounts.items.AGENDA || 0
+        } catch (e) {
+        }
+        ;
         return summary;
     }
 

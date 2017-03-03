@@ -14,11 +14,11 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
     $scope.datasource = {
         values: [
             {
-                value: 'OPENLEG',
+                value: 'LBDC',
                 label: 'LBDC - OpenLegislation'
             },
             {
-                value: 'NYSENATE_DOT_GOV',
+                value: 'NYSENATE',
                 label: 'OpenLegislation - NYSenate.gov'
             }
         ],
@@ -59,7 +59,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
 
     $scope.updateMismatchSummary = function () {
         $scope.summaryResponse.error = false;
-        mismatchSummaryApi.get($scope.datasource.selected.value)
+        mismatchSummaryApi.get($scope.datasource.selected.value, $scope.date.endOf('day').format(isoFormat))
             .then(function (mismatchSummary) {
                 $scope.summaryResponse.summary = mismatchSummary;
             })
@@ -74,7 +74,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
         $scope.mismatchResponse.error = false;
         $scope.mismatchResponse.mismatches = [];
         spotcheckMismatchApi.getMismatches($scope.datasource.selected.value, selectedContentType(),
-            toMismatchStatus($scope.status), $scope.date.endOf('day').format(isoFormat),
+            toMismatchStatus($scope.status), $scope.date.startOf('day').format(isoFormat),$scope.date.endOf('day').format(isoFormat),
             $scope.pagination.getLimit(), $scope.pagination.getOffset())
             .then(function (result) {
                 $scope.pagination.setTotalItems(result.pagination.total);
@@ -92,10 +92,21 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
          */
         function toMismatchStatus(status) {
             if (status === 'OPEN') {
-                return ['NEW', 'EXISTING'];
+                return ['NEW', 'EXISTING','REGRESSION'];
             }
-            return [status];
+            else if (status == 'NEW'){
+                return ['NEW'];
+
+            }else {
+                return ['RESOLVED']
+            }
         }
+    };
+
+    $scope.onStatusChange= function () {
+        resetPagination();
+        $scope.updateMismatchSummary();
+        $scope.updateMismatches();
     };
 
     $scope.formatDate = function (date) {
