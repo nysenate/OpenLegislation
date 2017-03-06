@@ -12,6 +12,7 @@ import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,7 +142,9 @@ public class LRSBillTextSobiMaker {
         FileUtils.forceMkdir(scrapedDir);
         for (BaseBillId billId : billIds) {
             logger.info("scraping {}", billId);
-            billTextScraper.scrapeBill(billId, scrapedDir);
+            String url = billTextScraper.constructUrl(billId);
+            HttpResponse res = billTextScraper.makeRequest(url);
+            billTextScraper.saveResponseToFile(res, billTextScraper.getSaveFile(scrapedDir, billId));
         }
     }
 
