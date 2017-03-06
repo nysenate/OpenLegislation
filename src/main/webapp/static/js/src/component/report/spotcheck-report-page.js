@@ -129,7 +129,15 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             ignoreMismatch(mismatch);
         })
     };
-
+    $scope.showDetailedDiff = function(mismatchRow) {
+        $mdDialog.show({
+            templateUrl: 'mismatchDetailWindow',
+            controller: 'detailDialogCtrl',
+            locals: {
+                mismatchRow: mismatchRow
+            }
+        });
+    };
     function ignoreMismatch(mismatch) {
         var params = {
             dataSource: $scope.datasource.selected.value,

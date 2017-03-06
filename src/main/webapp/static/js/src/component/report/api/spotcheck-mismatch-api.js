@@ -20,7 +20,6 @@ function spotcheckMismatchApi($resource) {
         return mismatchApi.get(params).$promise
             .then(parseMismatches);
     }
-
     // TODO: Sort mismatches?
     function parseMismatches(response) {
         var result = {
@@ -43,32 +42,53 @@ function spotcheckMismatchApi($resource) {
             id: parseMismatchId(mismatch),
             status: parseStatus(mismatch),
             mismatchType: parseMismatchType(mismatch),
-            observedDate: parseDate(mismatch),
+            observedDate: parseObservedDate(mismatch),
+            reportDate:parseReportDate(mismatch),
             issue: parseIssues(mismatch),
             refType: parseRefType(mismatch),
             bill: parseBill(mismatch),
             source:parseRefType(mismatch),
             calNo: parseCalNo(mismatch),
+            session:parseSession(mismatch),
+            basePrintNo:parseBasePrintNo(mismatch),
+            referenceData: parseReferenceData(mismatch),
+            observedData: parseObserveredData(mismatch),
+
             // TODO: Add CalType to API response.
             agendaNo: parseAgendaNo(mismatch),
             committee: parseCommittee(mismatch)
         }
     }
-
+    function parseSession(mismatch) {
+        return mismatch.key.session;
+    }
+    function parseBasePrintNo(mismatch) {
+        return mismatch.key.basePrintNo;
+    }
     function parseMismatchId(mismatch) {
         return mismatch.mismatchId;
     }
 
+    function parseReferenceData(mismatch) {
+        return mismatch.referenceData;
+    }
+
     function parseStatus(mismatch) {
         return mismatch.status;
+    }
+    function parseObserveredData(mismatch) {
+        return mismatch.observedData;
     }
 
     function parseMismatchType(mismatch) {
         return mismatchMap[mismatch.mismatchType];
     }
 
-    function parseDate(mismatch) {
+    function parseObservedDate(mismatch) {
         return moment(mismatch.observedDateTime).format(DATE_FORMAT);
+    }
+    function parseReportDate(mismatch) {
+        return moment(mismatch.reportDateTime).format(DATE_FORMAT);
     }
 
     function parseIssues(mismatch) {

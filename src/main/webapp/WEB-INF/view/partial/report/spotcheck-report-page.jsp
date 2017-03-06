@@ -58,7 +58,7 @@
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised">Diff</md-button>
+                <md-button class="md-raised"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
                 <md-button class="md-accent md-raised" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
@@ -103,7 +103,7 @@
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised">Diff</md-button>
+                <md-button class="md-raised"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
                 <md-button class="md-accent md-raised" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
@@ -149,7 +149,7 @@
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised">Diff</md-button>
+                <md-button class="md-raised" ng-click="showDetailedDiff(mismatch)">Diff</md-button>
                 <md-button class="md-accent md-raised" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
@@ -163,3 +163,4 @@
     </md-card>
   </div>
 </section>
+<jsp:include page="spotcheck-detail-window.jsp"/>
