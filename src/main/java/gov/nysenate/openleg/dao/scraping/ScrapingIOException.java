@@ -7,6 +7,10 @@ import java.net.URL;
  */
 public class ScrapingIOException extends RuntimeException {
 
+    public ScrapingIOException(String cause) {
+        super(cause);
+    }
+
     public ScrapingIOException(String url, Throwable cause) {
         super("A IO exception occurred while retrieving " + url + " for scraping.", cause);
     }
