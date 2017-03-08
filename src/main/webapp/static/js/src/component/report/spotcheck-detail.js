@@ -1,20 +1,20 @@
 angular.module('open.spotcheck')
-    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow', detailDialogCtrl]);
+    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow','source','contentType', detailDialogCtrl]);
 
-function detailDialogCtrl($scope, $mdDialog, mismatchRow) {
-    $scope.iDiffTab = 0;
+function detailDialogCtrl($scope, $mdDialog, mismatchRow,source,contentType) {
     $scope.reportType = mismatchRow.refType;
 
-    $scope.newDetails = function (newMismatchRow) {
-        $scope.mismatchRow = newMismatchRow;
+    $scope.newDetails = function (newMismatchRow,source,contentType) {
+        $scope.contentType = contentType;
+        if(source == "LBDC")
+            $scope.com = ["LBDC","OpenLegislation"];
+        else
+            $scope.com = ["OpenLegislation","NYSenate.gov"];
         $scope.date = moment().format('l');
         console.log('loading detail dialog for', newMismatchRow);
-        $scope.observation = newMismatchRow.observation;
-        $scope.year2 = $scope.observation.key.session.year + 1;
-        $scope.currentMismatch = newMismatchRow.mismatch;
-        $scope.allMismatches = newMismatchRow.observation.mismatches.items;
-
-        setDefaultTextOptions(newMismatchRow.type);
+        $scope.observation = newMismatchRow.observedData;
+        $scope.currentMismatch = newMismatchRow;
+        setDefaultTextOptions(newMismatchRow.mismatchType);
         $scope.formatDisplayData();
     };
 
@@ -88,7 +88,7 @@ function detailDialogCtrl($scope, $mdDialog, mismatchRow) {
     };
 
     function init() {
-        $scope.newDetails(mismatchRow);
+        $scope.newDetails(mismatchRow, source,contentType);
     }
 
     init();

@@ -134,7 +134,9 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             templateUrl: 'mismatchDetailWindow',
             controller: 'detailDialogCtrl',
             locals: {
-                mismatchRow: mismatchRow
+                mismatchRow: mismatchRow,
+                source:$scope.datasource.selected.value,
+                contentType:selectedContentType()
             }
         });
     };

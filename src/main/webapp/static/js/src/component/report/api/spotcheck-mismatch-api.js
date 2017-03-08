@@ -111,7 +111,7 @@ function spotcheckMismatchApi($resource) {
         if (mismatch.key.agendaId == null) {
             return "";
         }
-        return mismatch.key.agendaId.number;
+        return mismatch.key.agendaId.number+mismatch.key.addendum;
     }
 
     function parseCommittee(mismatch) {

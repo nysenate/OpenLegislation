@@ -8,18 +8,34 @@
     <md-content>
       <md-content class="mismatch-diff-view-top-half">
         <div layout="row" layout-align="space-between start">
-          <md-card class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+
+
+          <md-card ng-if="contentType == 'BILL' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
             <p>Date Reported: {{date}}</p>
 
             <p> {{reportType | contentType}} Number:
-              <a class="white-2-blue inactive-link" ng-href="{{mismatchRow.key | contentUrl:reportType}}"
-                 target="_blank">
-                {{mismatchRow.key | contentId:reportType}}
+              <a class="white-2-blue inactive-link" target="_blank">
+                {{currentMismatch.id}}
               </a>
             </p>
-            <p>Session Year: {{(currentMismatch.key | sessionYear) + " - " + year2}}</p>
-            <p>Error Type: {{currentMismatch.mismatchType | mismatchTypeLabel}}</p>
+            <p>Session Year: {{currentMismatch.session.year}}</p>
+            <p>Error Type: {{currentMismatch.mismatchType}}</p>
           </md-card>
+
+          <md-card ng-if="contentType == 'CALENDAR' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+            <p>Date Reported: {{date}}</p>
+            <p> Calendar Number: {{currentMismatch.calNo}}</p>
+            <p>Session Date:</p>
+            <p>Error Type: {{currentMismatch.mismatchType}}</p>
+          </md-card>
+
+          <md-card ng-if="contentType == 'AGENDA' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+            <p>Date Reported: {{date}}</p>
+            <p> Week:</p>
+            <p>Agenda: {{currentMismatch.agendaNo}}</p>
+            <p>Error Type: {{currentMismatch.mismatchType}}</p>
+          </md-card>
+
           <md-card class="padding-5 mismatch-diff-info-border-radius mismatch-diff-info-background-color-border">
             <select ng-model="textControls.whitespace" ng-change="formatDisplayData()"
                     ng-options="value as label for (value, label) in whitespaceOptions"></select>
@@ -35,7 +51,7 @@
         <div layout="row" layout-align="space-around start">
           <div layout="column" flex="45" id="mismatch-diff-left-side" class="scrollable">
              <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
-              <span>{{mismatchRow.refType | reportReferenceProvider}}</span>
+              <span>{{com[0]}}</span>
             </div>
 
             <div id="mismatch-diff-data">
@@ -45,7 +61,7 @@
 
           <div layout="column" flex="45" id="mismatch-diff-right-side" class="scrollable">
             <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
-              <span>{{mismatchRow.refType | reportDataProvider}}</span>
+              <span>{{com[1]}}</span>
             </div>
 
             <div id="mismatch-diff-source">

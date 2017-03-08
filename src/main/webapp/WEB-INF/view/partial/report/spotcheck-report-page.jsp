@@ -28,7 +28,7 @@
         <md-tab ng-cloak label="Bills ({{getSummaryCountForContentType('BILL') || 0}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
-                 style="padding-bottom: 10px; padding-top: 10px">
+                 style="padding-bottom: 10px; padding-top: 10px; ">
               <div flex="5" class="bold">Status</div>
               <div flex="10" class="bold">Bill</div>
               <div flex="15" class="bold">Error</div>
@@ -58,8 +58,8 @@
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
-                <md-button class="md-accent md-raised" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
+                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
+                <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="bill-mismatches" boundary-links="true"
@@ -103,8 +103,8 @@
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
-                <md-button class="md-accent md-raised" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
+                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
+                <md-button class="md-accent md-raised rounded-corner-button" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="calendar-mismatches" boundary-links="true"
@@ -149,8 +149,8 @@
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised" ng-click="showDetailedDiff(mismatch)">Diff</md-button>
-                <md-button class="md-accent md-raised" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
+                <md-button class="md-raised rounded-corner-button" ng-click="showDetailedDiff(mismatch)">Diff</md-button>
+                <md-button class="md-accent md-raised rounded-corner-button" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="agenda-mismatches" boundary-links="true"
