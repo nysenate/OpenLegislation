@@ -90,7 +90,7 @@ public class XmlBillSameAsProcessor extends AbstractDataProcessor implements Sob
             }
             //billIngestCache.set(baseBill.getBaseBillId(),baseBill,fragment);
         } catch (IOException | SAXException |XPathExpressionException e) {
-            throw new ParseError("Error While Parsing AnActXML", e);
+            throw new ParseError("Error While Parsing sameAsXML", e);
         }
     }
 
