@@ -15,7 +15,7 @@
 
             <p> {{reportType | contentType}} Number:
               <a class="white-2-blue inactive-link" target="_blank">
-                {{currentMismatch.id}}
+                {{currentMismatch.bill}}
               </a>
             </p>
             <p>Session Year: {{currentMismatch.session.year}}</p>

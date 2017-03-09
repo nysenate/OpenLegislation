@@ -19,21 +19,21 @@ function mismatchSummaryApi($resource) {
         var summary = {
             OPEN: 0,
             NEW: 0,
-            RESOVLED: 0,
+            RESOLVED: 0,
             BILL: {
                 OPEN: 0,
                 NEW: 0,
-                RESOVLED: 0,
+                RESOLVED: 0,
             },
             CALENDAR: {
                 OPEN: 0,
                 NEW: 0,
-                RESOVLED: 0,
+                RESOLVED: 0,
             },
             AGENDA: {
                 OPEN: 0,
                 NEW: 0,
-                RESOVLED: 0,
+                RESOLVED: 0,
             }
         };
 
@@ -60,7 +60,7 @@ function mismatchSummaryApi($resource) {
         }
         ;
         try {
-            summary.RESOVLED += response.result.summary.items.RESOVLED.total || 0
+            summary.RESOLVED += response.result.summary.items.RESOLVED.total || 0
         } catch (e) {
         }
         ;
@@ -86,7 +86,7 @@ function mismatchSummaryApi($resource) {
         }
         ;
         try {
-            summary.BILL.RESOVLED += response.result.summary.items.RESOVLED.contentTypeCounts.items.BILL || 0
+            summary.BILL.RESOLVED += response.result.summary.items.RESOLVED.contentTypeCounts.items.BILL || 0
         } catch (e) {
         }
         ;
@@ -112,7 +112,7 @@ function mismatchSummaryApi($resource) {
         }
         ;
         try {
-            summary.CALENDAR.RESOVLED += response.result.summary.items.RESOVLED.contentTypeCounts.items.CALENDAR || 0
+            summary.CALENDAR.RESOLVED += response.result.summary.items.RESOLVED.contentTypeCounts.items.CALENDAR || 0
         } catch (e) {
         }
         ;
@@ -138,7 +138,7 @@ function mismatchSummaryApi($resource) {
         }
         ;
         try {
-            summary.AGENDA.RESOVLED += response.result.summary.items.AGENDA.contentTypeCounts.items.AGENDA || 0
+            summary.AGENDA.RESOLVED += response.result.summary.items.AGENDA.contentTypeCounts.items.AGENDA || 0
         } catch (e) {
         }
         ;

@@ -27,9 +27,7 @@ spotcheckModule.factory('SpotcheckOpenMismatchSummaryAPI', ['$resource', functio
 }]);
 
 spotcheckModule.factory('SpotcheckMismatchIgnoreAPI', ['$resource', function($resource){
-    return $resource(adminApiPath + "/spotcheck/:dataSource/:contentType/mismatch/:mismatchId/ignore", {
-        dataSource: '@dataSource',
-        contentType: '@contentType',
+    return $resource(adminApiPath + "/spotcheck/mismatches/:mismatchId/ignore", {
         mismatchId: '@mismatchId',
         ignoreLevel: '@ignoreLevel'
     });

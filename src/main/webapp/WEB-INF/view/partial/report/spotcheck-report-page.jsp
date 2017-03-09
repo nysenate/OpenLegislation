@@ -63,7 +63,7 @@
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="bill-mismatches" boundary-links="true"
-                                     on-page-change="onPageChange(newPageNumber)" max-size="10"
+                                     on-page-change="onPageChange(newPageNumber,'BILL')" max-size="10"
                                      ng-show="loading === false">
             </dir-pagination-controls>
           </md-content>
@@ -104,11 +104,11 @@
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
-                <md-button class="md-accent md-raised rounded-corner-button" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
+                <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="calendar-mismatches" boundary-links="true"
-                                     on-page-change="onPageChange(newPageNumber)" max-size="10"
+                                     on-page-change="onPageChange(newPageNumber,'CALENDAR')" max-size="10"
                                      ng-show="loading === false">
             </dir-pagination-controls>
           </md-content>
@@ -150,11 +150,11 @@
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised rounded-corner-button" ng-click="showDetailedDiff(mismatch)">Diff</md-button>
-                <md-button class="md-accent md-raised rounded-corner-button" ng-click="ignoreMismatch(mismatch)">Ignore</md-button>
+                <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="agenda-mismatches" boundary-links="true"
-                                     on-page-change="onPageChange(newPageNumber)" max-size="10"
+                                     on-page-change="onPageChange(newPageNumber,'AGENDA')" max-size="10"
                                      ng-show="loading === false">
             </dir-pagination-controls>
           </md-content>

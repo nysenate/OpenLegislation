@@ -53,8 +53,9 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
         $scope.updateMismatches();
     };
 
-    $scope.onPageChange = function (pageNum) {
-        $scope.updateMismatches();
+    $scope.onPageChange = function (pageNum, contentType) {
+        if(contentType ==selectedContentType())
+            $scope.updateMismatches();
     };
 
     $scope.updateMismatchSummary = function () {
@@ -123,7 +124,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
         var confirm = $mdDialog.confirm()
             .title("Ignore mismatch?")
             .ok('Yes')
-            .cancel('No');
+            .cancel('No')
 
         $mdDialog.show(confirm).then(function() {
             ignoreMismatch(mismatch);
@@ -142,13 +143,12 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
     };
     function ignoreMismatch(mismatch) {
         var params = {
-            dataSource: $scope.datasource.selected.value,
-            contentType: selectedContentType(),
             mismatchId: mismatch.id,
             ignoreLevel: 'IGNORE_PERMANENTLY'
         };
         mismatchIgnoreApi.save(params, function (response) {
-            updateMismatches();
+            $scope.updateMismatchSummary();
+            $scope.updateMismatches();
         })
     }
 
