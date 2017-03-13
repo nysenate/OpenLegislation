@@ -70,9 +70,15 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "WHERE mismatch_id = :mismatchId\n"
     ),
 
-    UPDATE_ISSUE_IDS(
+    ADD_ISSUE_ID(
         "UPDATE ${schema}.spotcheck_mismatch\n" +
-        "SET issue_ids = :issueIds::text[]\n" +
+        "SET issue_ids = array_append(issue_ids, :issueId::text)\n" +
+        "WHERE mismatch_id = :mismatchId\n"
+    ),
+
+    DELETE_ISSUE_ID(
+        "UPDATE ${schema}.spotcheck_mismatch\n" +
+        "SET issue_ids = array_remove(issue_ids, :issueId::text)\n" +
         "WHERE mismatch_id = :mismatchId\n"
     )
     ;

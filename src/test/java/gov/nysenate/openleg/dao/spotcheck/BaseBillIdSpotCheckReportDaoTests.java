@@ -167,17 +167,6 @@ public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
     }
 
     @Test
-    public void nullIssueIdsAreIgnored() {
-        reportDao.saveReport(createMismatchReport(start));
-        DeNormSpotCheckMismatch mismatch = queryMostRecentMismatch();
-        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
-        reportDao.addIssueId(mismatch.getMismatchId(), null);
-        Set<String> actual = queryMostRecentMismatch().getIssueIds();
-        assertThat(actual, containsInAnyOrder("10800"));
-    }
-
-
-    @Test
     public void duplicateIssuesNotSaved() {
         reportDao.saveReport(createMismatchReport(start));
         DeNormSpotCheckMismatch mismatch = queryMostRecentMismatch();
