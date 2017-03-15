@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
@@ -35,7 +34,7 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
     @Autowired
     XmlHelper xmlHelper;
 
-    private VetoMessage vetoMessage;
+    private VetoMessage vetoMessage = new VetoMessage();
 
     /** --- RegEx Patterns ---*/
     private static final Pattern datePattern =
@@ -68,23 +67,29 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
             final String billno = xmlHelper.getNode("veto_message/billno", doc).getTextContent();
             final String action = xmlHelper.getString("@action", vetoMsgNode);
 
-            String textWithHTML = getNodeText(vetoMsgNode);
-            String cleanText = parsedMemoHTML(textWithHTML);
-
-
             final Version version = Version.DEFAULT;
             final Bill baseBill = getOrCreateBaseBill(date, new BillId(billhse + billno, new SessionYear(year), version), fragment);
 
-
-            vetoMessage.setVetoNumber(number);
-            vetoMessage.setYear(year);
-            vetoMessage.setSession(new SessionYear(vetoMessage.getYear()));
-            vetoMessage.setBillId(baseBill.getBaseBillId());
-
-            if (action.equals("replace")) {
-            } else if (action.equals("remove")) {
-
+            if (action.equals("remove"))    {
+                baseBill.getVetoMessages().remove(vetoMessage.getVetoId());
             }
+            else if(action.equals("replace")) {
+                String textWithHTML = getNodeText(vetoMsgNode);
+                String cleanText = parsedMemoHTML(textWithHTML);
+
+                vetoMessage.setMemoText(cleanText);
+                vetoMessage.setVetoNumber(number);
+                vetoMessage.setYear(year);
+                vetoMessage.setSession(baseBill.getSession());
+                vetoMessage.setBillId(baseBill.getBaseBillId());
+                vetoMessage.setModifiedDateTime(date);
+                vetoMessage.setPublishedDateTime(date);
+
+                parseTextContent(cleanText);
+
+                baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
+            }
+
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing vetoMessageXML", e);
         }
@@ -100,6 +105,10 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
         initBase();
     }
 
+    //public boolean isDeleted() {
+    //    return deleted;
+    //}
+
     private String getNodeText(Node node) {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -111,21 +120,21 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
         return "";
     }
 
-    private String parseTextContent(String data) {
-        StringBuilder text = new StringBuilder();
-        text.ensureCapacity(data.length());
-        String fulltext = "";
+    private void parseTextContent(String data) {
+            StringBuilder text = new StringBuilder();
+            text.ensureCapacity(data.length());
+            //String fulltext = "";
 
-        for (String line : data.split("\n")) {
-            fulltext = parseLine(line);
-        }
+            for (String line : data.split("\n")) {
+                parseLine(line);
+            }
 
-        fulltext = text.toString();
+            //fulltext = text.toString();
 
-        return fulltext;
+            //return fulltext;
     }
 
-    private String parseLine (String line) {
+    private void parseLine (String line) {
         Matcher dateMatcher = datePattern.matcher(line);
         Matcher chapterMatcher = chapterPattern.matcher(line);
         Matcher lineRefMatcher = lineReferencePattern.matcher(line);
@@ -151,6 +160,7 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
         } else if (signerMatcher.find()) {
             vetoMessage.setSigner(signerMatcher.group(1));
         }
+        //return "";//TO DO
     }
 }
 
