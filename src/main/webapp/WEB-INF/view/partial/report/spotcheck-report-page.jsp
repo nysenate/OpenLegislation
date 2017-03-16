@@ -54,11 +54,10 @@
                 <div flex="10">{{mismatch.bill}}</div>
                 <div flex="15">{{mismatch.mismatchType}}</div>
                 <div flex="20">{{mismatch.observedDate}}</div>
-                <div flex="10">{{mismatch.issue}}</div>
+                <div flex="10"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
                 <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
@@ -99,7 +98,7 @@
                 <div flex="10">{{mismatch.calType}}</div>
                 <div flex="15">{{mismatch.mismatchType}}</div>
                 <div flex="15">{{mismatch.observedDate}}</div>
-                <div flex="10">{{mismatch.issue}}</div>
+                <div flex="10"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
@@ -145,7 +144,7 @@
                 <div flex="15">{{mismatch.committee}}</div>
                 <div flex="10">{{mismatch.mismatchType}}</div>
                 <div flex="15">{{mismatch.observedDate}}</div>
-                <div flex="10">{{mismatch.issue}}</div>
+                <div flex="10"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">

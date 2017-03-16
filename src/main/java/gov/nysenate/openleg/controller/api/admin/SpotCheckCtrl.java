@@ -150,6 +150,19 @@ public class SpotCheckCtrl extends BaseCtrl
         return new SimpleResponse(true, "ignore level set", "ignore-level-set");
     }
 
+//    /**
+//     * Spotcheck Mismatch Add Issue Id API
+//     *
+//     * Adds an issue id to a spotcheck mismatch
+//     *
+//     * Usage: (POST) /api/3/admin/spotcheck/mismatches/{mismatchId}/issue/{issueId}
+//     */
+//    @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
+//    public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
+//        getAnyReportService().addIssueId(mismatchId, issueId);
+//        return new SimpleResponse(true, "issue id added", "issue-id-added");
+//    }
+
     /**
      * Spotcheck Mismatch Add Issue Id API
      *
@@ -158,9 +171,9 @@ public class SpotCheckCtrl extends BaseCtrl
      * Usage: (POST) /api/3/admin/spotcheck/mismatches/{mismatchId}/issue/{issueId}
      */
     @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
-    public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
-        getAnyReportService().addIssueId(mismatchId, issueId);
-        return new SimpleResponse(true, "issue id added", "issue-id-added");
+    public BaseResponse updateMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
+        getAnyReportService().updateIssueId(mismatchId, issueId);
+        return new SimpleResponse(true, "issue id updated", "issue-id-updated");
     }
 
     /**
@@ -175,6 +188,19 @@ public class SpotCheckCtrl extends BaseCtrl
         getAnyReportService().deleteIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id deleted", "issue-id-deleted");
     }
+    /**
+     * Spotcheck Mismatch Remove All Issue Id API
+     *
+     * Removes an issue id to a spotcheck mismatch
+     *
+     * Usage: (DELETE) /api/3/admin/spotcheck/mismatch/{mismatchId}
+     */
+    @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/delete", method = RequestMethod.DELETE)
+    public BaseResponse deleteMismatchIssueId(@PathVariable int mismatchId) {
+        getAnyReportService().deleteAllIssueId(mismatchId);
+        return new SimpleResponse(true, "issue id deleted", "issue-id-deleted");
+    }
+
 
     /**
      * Spotcheck Report Run API

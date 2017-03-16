@@ -1705,4 +1705,31 @@ button.md-button.md-default-theme.md-primary, button.md-button.md-default-theme.
   color: rgb(255,255,255);
   background-color: rgb(0,140,186);
 }
+md-dialog.issuedialog {
+  width: 40vw;
+  height: 30vh;
+  max-height: 50vh;
+  max-width: 30vw;
+  & > md-content {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0 20px 20px;
+  }
+}
+.md-button.md-fab.md-mini{
+  font-size: x-small;
+  line-height: 25px;
+  width: 50px;
+  height: 25px;
+}
+.report-page-toast{
+  color: red;
+  font-size: 12px;
+  text-align: center;
+  float: right;
+  margin-top: -20px;
+  display: none;
+}
+
 

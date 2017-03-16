@@ -1,10 +1,10 @@
 angular.module('open.spotcheck')
     .controller('SpotcheckReportCtrl',
         ['$scope', '$location', '$routeParams', '$mdDialog', 'PaginationModel', 'SpotcheckMismatchApi',
-            'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI', ReportCtrl]);
+            'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI','SpotcheckMismatchTrackingAPI','SpotcheckMismatchDeleteAllAPI','SpotcheckMismatchDeleteAllAPI', ReportCtrl]);
 
 function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel, spotcheckMismatchApi,
-                    mismatchSummaryApi, mismatchIgnoreApi) {
+                    mismatchSummaryApi, mismatchIgnoreApi,spotcheckMismatchTrackingAPI,spotcheckMismatchDeleteAllAPI) {
 
     const dateFormat = 'YYYY-MM-DD';
     const isoFormat = 'YYYY-MM-DDTHH:mm:ss';
@@ -103,6 +103,25 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             }
         }
     };
+    $scope.updateIssue = function (mismatch) {
+        if (mismatch.issue == "") {
+            var params = {
+                mismatchId: mismatch.id
+            };
+            spotcheckMismatchDeleteAllAPI.delete(params, function (response) {
+            })
+        }
+        else {
+            var params = {
+                mismatchId: mismatch.id,
+                issueId:mismatch.issue
+            };
+            spotcheckMismatchTrackingAPI.save(params, function (response) {
+            })
+        }
+        $('#report-page-toast'+mismatch.id).fadeIn("5000");
+        $('#report-page-toast'+mismatch.id).fadeOut("slow");
+    }
 
     $scope.onStatusChange= function () {
         resetPagination();
@@ -141,10 +160,11 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             }
         });
     };
+
     function ignoreMismatch(mismatch) {
         var params = {
             mismatchId: mismatch.id,
-            ignoreLevel: 'IGNORE_PERMANENTLY'
+            ignoreLevel: 'IGNORE_UNTIL_RESOLVED'
         };
         mismatchIgnoreApi.save(params, function (response) {
             $scope.updateMismatchSummary();

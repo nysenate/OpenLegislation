@@ -76,10 +76,14 @@ public interface SpotCheckReportService<ContentKey>
      */
     void addIssueId(int mismatchId, String issueId);
 
+    void updateIssueId(int mismatchId, String issueId);
+
     /**
      * Removes the given issue id from the tracked issue ids of the mismatch specified by the given mismatch id
      * @param mismatchId int
      * @param issueId String
      */
     void deleteIssueId(int mismatchId, String issueId);
+    void deleteAllIssueId(int mismatchId);
+
 }

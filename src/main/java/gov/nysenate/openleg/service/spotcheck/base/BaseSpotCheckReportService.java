@@ -49,9 +49,18 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
     public void addIssueId(int mismatchId, String issueId) {
         getReportDao().addIssueId(mismatchId, issueId);
     }
+    @Override
+    public void updateIssueId(int mismatchId, String issueId) {
+        getReportDao().updateIssueId(mismatchId, issueId);
+    }
 
     @Override
     public void deleteIssueId(int mismatchId, String issueId) {
         getReportDao().deleteIssueId(mismatchId, issueId);
+    }
+
+    @Override
+    public void deleteAllIssueId(int mismatchId) {
+        getReportDao().deleteAllIssueId(mismatchId);
     }
 }

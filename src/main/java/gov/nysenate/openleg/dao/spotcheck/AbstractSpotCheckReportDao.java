@@ -221,6 +221,18 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * {@inheritDoc}
      */
     @Override
+    public void updateIssueId(int mismatchId, String issueId) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("mismatchId", mismatchId)
+                .addValue("issueId", issueId);
+        String sql = SqlSpotCheckReportQuery.UPDATE_ISSUE_ID.getSql(schema());
+        jdbcNamed.update(sql, params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void addIssueId(int mismatchId, String issueId) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("mismatchId", mismatchId)
@@ -228,6 +240,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         String sql = SqlSpotCheckReportQuery.ADD_ISSUE_ID.getSql(schema());
         jdbcNamed.update(sql, params);
     }
+
 
     /**
      * {@inheritDoc}
@@ -238,6 +251,17 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("mismatchId", mismatchId)
                 .addValue("issueId", issueId);
         String sql = SqlSpotCheckReportQuery.DELETE_ISSUE_ID.getSql(schema());
+        jdbcNamed.update(sql, params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteAllIssueId(int mismatchId) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("mismatchId", mismatchId);
+        String sql = SqlSpotCheckReportQuery.DELETE_ALL_ISSUE_ID.getSql(schema());
         jdbcNamed.update(sql, params);
     }
 
