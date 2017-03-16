@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by robert on 2/15/17.
+ * This class is responsible for testing all the type cases for the Anact Sobi Processor.
+ *
+ * Created by Robert Bebber on 2/15/17.
  */
 @Transactional
 public class AnActSobiProcessorTest extends BaseXmlProcessorTest {
