@@ -160,7 +160,6 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
         } else if (signerMatcher.find()) {
             vetoMessage.setSigner(signerMatcher.group(1));
         }
-        //return "";//TO DO
     }
 }
 
