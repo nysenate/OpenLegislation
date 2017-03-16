@@ -7,8 +7,8 @@ import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
@@ -88,12 +88,12 @@ public class ApprmemoProcessor extends AbstractMemoProcessor implements SobiProc
                         break;
                 }
             }
-            Bill baseBill = null;
+            Bill baseBill=null;
             if (action.equals("remove")) {
                 ApprovalMessage add = approvalDao.getApprovalMessage(new ApprovalId(year, apprno));
                 baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), add.getBillId(), fragment);
                 baseBill.setApprovalMessage(null);
-            } else {
+            }else {
                 baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), new BillId(billhse +
                         billno, year), fragment);
                 applyMemoText(cdata, baseBill, apprno, action);

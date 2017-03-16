@@ -2,7 +2,6 @@ package gov.nysenate.openleg.processor.bill.sponsor;
 
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.dao.sobi.SobiDao;
-import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
@@ -20,10 +19,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
- * Created by robert on 2/22/17.
+ * This class is responsible for testing all the type cases for the Sponsor Sobi Processor.
+ * <p>
+ * Created by Robert Bebber on 2/22/17.
  */
 @Transactional
 public class SponsorSobiProcessorTest extends BaseXmlProcessorTest {
@@ -123,6 +123,16 @@ public class SponsorSobiProcessorTest extends BaseXmlProcessorTest {
                 expectedCoSponsors, expectedMultiSponsors);
     }
 
+    /**
+     * This method is responsible checking each segment of the bill sponsor section. and checks if it asserts equals.
+     *
+     * @param billId                The base id of the bill being effected by the sobifragment
+     * @param expectedSponsor       expected result of the bill being effected by the sobifragment
+     * @param isRules               if the sponsor is also a rule
+     * @param isBudget              if the sponsor is also a budget bill
+     * @param expectedCoSponsors    a list of the expected CoSponsors for the sobifragment
+     * @param expectedMultiSponsors a list of the expected MultiSponsors for the sobifragment
+     */
     private void verifySponsors(BaseBillId billId, String expectedSponsor, boolean isRules, boolean isBudget,
                                 List<String> expectedCoSponsors, List<String> expectedMultiSponsors) {
         Bill bill = billDao.getBill(billId);

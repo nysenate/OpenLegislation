@@ -2,10 +2,9 @@ package gov.nysenate.openleg.processor.bill.apprmemo;
 
 import gov.nysenate.openleg.dao.bill.data.ApprovalDao;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
-import gov.nysenate.openleg.model.bill.ApprovalId;
-import gov.nysenate.openleg.model.bill.ApprovalMessage;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.dao.bill.data.SqlApprovalDao;
+import gov.nysenate.openleg.dao.sobi.SobiDao;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.junit.Test;
@@ -21,9 +20,12 @@ import static org.junit.Assert.assertEquals;
  */
 @Transactional
 public class ApprmemoSobiProcessorTest extends BaseXmlProcessorTest {
-
-    @Autowired private BillDao billDao;
-    @Autowired private ApprmemoProcessor apprmemoProcessor;
+    @Autowired
+    BillDao billDao;
+    @Autowired
+    SobiDao sobiDao;
+    @Autowired
+    ApprmemoProcessor apprmemoProcessor;
 
     @Autowired private ApprovalDao approvalDao;
 
