@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import java.time.LocalDate;
+
 import static org.junit.Assert.*;
 
 /**
@@ -31,7 +33,7 @@ public class XmlVetoMessageProcessorTest extends BaseXmlProcessorTest {
         vetoMessage stored in the map with all its fields
     */
     @Test
-    public void processSimpleVetoMessage()  {
+    public void processStandardVetoMessage()  {
         String xmlPath = "processor/bill/vetomessage/2016-11-29-12.19.46.006100_VETOMSG_2016-00231.XML";
         processXmlFile(xmlPath);
 
@@ -149,7 +151,7 @@ public class XmlVetoMessageProcessorTest extends BaseXmlProcessorTest {
         vetoMessage.setVetoNumber(002);
         vetoMessage.setSigner("ANDREW M. CUOMO");
         vetoMessage.setYear(2016);
-        //vetoMessage.setSignedDate(new LocalDate(2016,4,13));
+        vetoMessage.setSignedDate(LocalDate.of(2016,4,13));
         vetoMessage.setChapter(50);
         vetoMessage.setBillPage(124);
         vetoMessage.setLineStart(31);
@@ -163,11 +165,42 @@ public class XmlVetoMessageProcessorTest extends BaseXmlProcessorTest {
         assertTrue(storedMsgObject.getBillId().equals(vetoMessage.getBillId()));
         assertTrue(storedMsgObject.getSigner().equals(vetoMessage.getSigner()));
         assertTrue(storedMsgObject.getType().equals(vetoMessage.getType()));
-        //assertTrue(storedMsgObject.getSignedDate() == vetoMessage.getSignedDate());
+        assertTrue(storedMsgObject.getSignedDate().equals(vetoMessage.getSignedDate()));
         assertTrue(storedMsgObject.getYear() ==vetoMessage.getYear());
         assertTrue(storedMsgObject.getChapter() == vetoMessage.getChapter());
         assertTrue(storedMsgObject.getBillPage() == vetoMessage.getBillPage());
         assertTrue(storedMsgObject.getLineEnd() == vetoMessage.getLineEnd());
         assertTrue(storedMsgObject.getLineStart() == vetoMessage.getLineStart());
+    }
+
+    @Test
+    public void removeMessage() {
+        //adding Veto message
+        String xmlPath = "processor/bill/vetomessage/2016-11-17-09.59.11.184200_VETOMSG_2016-00002.XML";
+        processXmlFile(xmlPath);
+
+        Bill bill = billDao.getBill(new BillId("A9000", 2016));
+
+        VetoMessage vetoMessage = new VetoMessage();
+        vetoMessage.setBillId(new BaseBillId("A9000",2016));
+        vetoMessage.setYear(2016);
+        vetoMessage.setVetoNumber(002);
+
+
+        VetoId id = new VetoId(vetoMessage.getYear(), vetoMessage.getVetoNumber());
+
+        VetoMessage storedMsgObject = bill.getVetoMessages().get(id);
+
+        //checking if the vetoMessage is in the map
+        assertTrue(storedMsgObject.getBillId().equals(vetoMessage.getBillId()));
+
+        //removing vetoMessage
+        String xmlPath1 = "processor/bill/vetomessage/2016-11-28-23.56.28.935222_VETOMSG_2016-00233.XML";
+        processXmlFile(xmlPath1);
+
+        Bill bill1 = billDao.getBill(new BillId("A9000", 2016));
+        VetoMessage removedMsgObject = bill1.getVetoMessages().get(id);
+
+        assertTrue(removedMsgObject == null);
     }
 }
