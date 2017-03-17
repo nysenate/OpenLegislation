@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill.sponsor;
 
+import gov.nysenate.openleg.dao.bill.data.VetoDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
@@ -34,6 +35,9 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
     @Autowired
     XmlHelper xmlHelper;
 
+    @Autowired
+    private VetoDao vetoDao;
+
     private VetoMessage vetoMessage = new VetoMessage();
 
     /** --- RegEx Patterns ---*/
@@ -63,23 +67,30 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
             final Node vetoMsgNode = xmlHelper.getNode("veto_message", doc);
             final int number = xmlHelper.getInteger("@no", vetoMsgNode);
             final int year = xmlHelper.getInteger("@year", vetoMsgNode);
-            final String billhse = xmlHelper.getNode("veto_message/billhse", doc).getTextContent();
-            final String billno = xmlHelper.getNode("veto_message/billno", doc).getTextContent();
             final String action = xmlHelper.getString("@action", vetoMsgNode);
 
             final Version version = Version.DEFAULT;
-            final Bill baseBill = getOrCreateBaseBill(date, new BillId(billhse + billno, new SessionYear(year), version), fragment);
+            Bill baseBill = null;
 
-            if (action.equals("remove"))    {
-                baseBill.getVetoMessages().remove(vetoMessage.getVetoId());
-            }
-            else if(action.equals("replace")) {
+            vetoMessage.setVetoNumber(number);
+            vetoMessage.setYear(year);
+
+            if (action.equals("remove")) {
+                VetoMessage vetoM = vetoDao.getVetoMessage(new VetoId(year, number));
+                baseBill = getOrCreateBaseBill(date, vetoM.getBillId(), fragment);
+                baseBill.getVetoMessages().remove(vetoM.getVetoId());
+            } else if (action.equals("replace")) {
+                final String billhse = xmlHelper.getNode("veto_message/billhse", doc).getTextContent();
+                final String billno = xmlHelper.getNode("veto_message/billno", doc).getTextContent();
+
+                baseBill = getOrCreateBaseBill(date, new BillId(billhse + billno, new SessionYear(year), version), fragment);
+
                 String textWithHTML = getNodeText(vetoMsgNode);
                 String cleanText = parsedMemoHTML(textWithHTML);
 
-                vetoMessage.setMemoText(cleanText);
                 vetoMessage.setVetoNumber(number);
                 vetoMessage.setYear(year);
+                vetoMessage.setMemoText(cleanText);
                 vetoMessage.setSession(baseBill.getSession());
                 vetoMessage.setBillId(baseBill.getBaseBillId());
                 vetoMessage.setModifiedDateTime(date);
@@ -89,7 +100,7 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
 
                 baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
             }
-
+            billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing vetoMessageXML", e);
         }
@@ -105,10 +116,6 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
         initBase();
     }
 
-    //public boolean isDeleted() {
-    //    return deleted;
-    //}
-
     private String getNodeText(Node node) {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -121,17 +128,12 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
     }
 
     private void parseTextContent(String data) {
-            StringBuilder text = new StringBuilder();
-            text.ensureCapacity(data.length());
-            //String fulltext = "";
+        StringBuilder text = new StringBuilder();
+        text.ensureCapacity(data.length());
 
-            for (String line : data.split("\n")) {
-                parseLine(line);
-            }
-
-            //fulltext = text.toString();
-
-            //return fulltext;
+        for (String line : data.split("\n")) {
+            parseLine(line);
+        }
     }
 
     private void parseLine (String line) {
