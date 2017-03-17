@@ -103,8 +103,9 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             }
         }
     };
+    // update mismatch's issues, issue splits by comma
     $scope.updateIssue = function (mismatch) {
-        if (mismatch.issue == "") {
+        if (mismatch.issue == "") { // if issue is empty, then clear all related issues
             var params = {
                 mismatchId: mismatch.id
             };
@@ -112,7 +113,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             })
         }
         else {
-            var params = {
+            var params = { // update issue
                 mismatchId: mismatch.id,
                 issueId:mismatch.issue
             };
@@ -123,6 +124,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
         $('#report-page-toast'+mismatch.id).fadeOut("slow");
     }
 
+    // update mismatch when user change status
     $scope.onStatusChange= function () {
         resetPagination();
         $scope.updateMismatchSummary();
@@ -149,6 +151,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             ignoreMismatch(mismatch);
         })
     };
+    // show the diff window.
     $scope.showDetailedDiff = function(mismatchRow) {
         $mdDialog.show({
             templateUrl: 'mismatchDetailWindow',
@@ -160,7 +163,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             }
         });
     };
-
+    // ignore a mismatch, the default ignore level is 'IGNORE_UNTIL_RESOLVED'
     function ignoreMismatch(mismatch) {
         var params = {
             mismatchId: mismatch.id,

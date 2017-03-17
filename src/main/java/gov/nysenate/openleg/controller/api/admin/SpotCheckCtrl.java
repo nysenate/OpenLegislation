@@ -189,11 +189,11 @@ public class SpotCheckCtrl extends BaseCtrl
         return new SimpleResponse(true, "issue id deleted", "issue-id-deleted");
     }
     /**
-     * Spotcheck Mismatch Remove All Issue Id API
+     * Spotcheck Mismatch remove All Issue Id API
      *
      * Removes an issue id to a spotcheck mismatch
      *
-     * Usage: (DELETE) /api/3/admin/spotcheck/mismatch/{mismatchId}
+     * Usage: (DELETE) /api/3/admin/spotcheck/mismatch/{mismatchId}/delete
      */
     @RequestMapping(value = "/mismatch/{mismatchId:\\d+}/delete", method = RequestMethod.DELETE)
     public BaseResponse deleteMismatchIssueId(@PathVariable int mismatchId) {
