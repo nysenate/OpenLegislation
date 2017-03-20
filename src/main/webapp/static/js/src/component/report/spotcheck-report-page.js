@@ -20,6 +20,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             {
                 value: 'NYSENATE',
                 label: 'OpenLegislation - NYSenate.gov'
+
             }
         ],
         selected: {}
@@ -29,6 +30,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
     $scope.date = {};
     $scope.loading = false; // TODO remove this using promises?
     $scope.pagination = angular.extend({}, paginationModel);
+    $scope.diffLoading = false;
 
     $scope.mismatchResponse = {
         mismatches: [],
@@ -153,15 +155,19 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
     };
     // show the diff window.
     $scope.showDetailedDiff = function(mismatchRow) {
-        $mdDialog.show({
-            templateUrl: 'mismatchDetailWindow',
-            controller: 'detailDialogCtrl',
-            locals: {
-                mismatchRow: mismatchRow,
-                source:$scope.datasource.selected.value,
-                contentType:selectedContentType()
-            }
-        });
+        mismatchRow.diffLoading = true;
+        setTimeout(function (){
+            $mdDialog.show({
+                templateUrl: 'mismatchDetailWindow',
+                controller: 'detailDialogCtrl',
+                locals: {
+                    mismatchRow: mismatchRow,
+                    source:$scope.datasource.selected.value,
+                    contentType:selectedContentType()
+                }
+            });
+            mismatchRow.diffLoading = false;
+        }, 1000); // delay 1 sec
     };
     // ignore a mismatch, the default ignore level is 'IGNORE_UNTIL_RESOLVED'
     function ignoreMismatch(mismatch) {

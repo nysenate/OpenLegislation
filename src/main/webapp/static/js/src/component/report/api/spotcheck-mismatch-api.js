@@ -53,6 +53,7 @@ function spotcheckMismatchApi($resource) {
             basePrintNo:parseBasePrintNo(mismatch),
             referenceData: parseReferenceData(mismatch),
             observedData: parseObserveredData(mismatch),
+            diffLoading:false,
 
             // TODO: Add CalType to API response.
             agendaNo: parseAgendaNo(mismatch),

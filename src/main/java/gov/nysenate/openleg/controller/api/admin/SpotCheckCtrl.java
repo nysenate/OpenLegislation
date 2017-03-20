@@ -157,7 +157,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Usage: (POST) /api/3/admin/spotcheck/mismatches/{mismatchId}/issue/{issueId}
      */
-    @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.GET)
     public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
         getAnyReportService().addIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id added", "issue-id-added");

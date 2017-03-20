@@ -58,7 +58,11 @@
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
+                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">
+                  <div ng-show="mismatch.diffLoading === false">Diff</div>
+                  <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around" >
+                  <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
+                </div></md-button>
                 <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
@@ -103,7 +107,11 @@
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">Diff</md-button>
+                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">
+                  <div ng-show="mismatch.diffLoading === false">Diff</div>
+                  <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around" >
+                    <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
+                  </div></md-button>
                 <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
@@ -149,7 +157,11 @@
                 <div flex="15">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised rounded-corner-button" ng-click="showDetailedDiff(mismatch)">Diff</md-button>
+                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">
+                  <div ng-show="mismatch.diffLoading === false">Diff</div>
+                  <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around" >
+                    <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
+                  </div></md-button>
                 <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
