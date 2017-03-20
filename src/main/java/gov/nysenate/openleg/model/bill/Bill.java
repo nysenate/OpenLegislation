@@ -36,6 +36,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** The status of the bill which is derived via the actions list. */
     protected BillStatus status;
 
+    /** Holds the contents of the LDBlurb field */
+    protected String ldblurb ="";
+
     /** A set of statuses that are considered milestones. */
     protected List<BillStatus> milestones = Collections.synchronizedList(new LinkedList<>());
 
@@ -170,6 +173,13 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      */
     public Chamber getChamber() {
         return this.baseBillId.getChamber();
+    }
+
+    /**
+     * @return the LDBlurb contents of this bill
+     */
+    public String getLDBlurb() {
+        return this.ldblurb;
     }
 
     /**
@@ -466,6 +476,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     public void setSponsor(BillSponsor sponsor) {
         this.sponsor = sponsor;
     }
+
+    public void setLDBlurb(String blurb){this.ldblurb=blurb;}
 
     public SortedSet<CommitteeVersionId> getPastCommittees() {
         return pastCommittees;
