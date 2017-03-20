@@ -150,19 +150,6 @@ public class SpotCheckCtrl extends BaseCtrl
         return new SimpleResponse(true, "ignore level set", "ignore-level-set");
     }
 
-//    /**
-//     * Spotcheck Mismatch Add Issue Id API
-//     *
-//     * Adds an issue id to a spotcheck mismatch
-//     *
-//     * Usage: (POST) /api/3/admin/spotcheck/mismatches/{mismatchId}/issue/{issueId}
-//     */
-//    @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
-//    public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
-//        getAnyReportService().addIssueId(mismatchId, issueId);
-//        return new SimpleResponse(true, "issue id added", "issue-id-added");
-//    }
-
     /**
      * Spotcheck Mismatch Add Issue Id API
      *
@@ -171,8 +158,22 @@ public class SpotCheckCtrl extends BaseCtrl
      * Usage: (POST) /api/3/admin/spotcheck/mismatches/{mismatchId}/issue/{issueId}
      */
     @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
-    public BaseResponse updateMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
-        getAnyReportService().updateIssueId(mismatchId, issueId);
+    public BaseResponse addMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
+        getAnyReportService().addIssueId(mismatchId, issueId);
+        return new SimpleResponse(true, "issue id added", "issue-id-added");
+    }
+
+    /**
+     * Spotcheck Mismatch update Issue Id API
+     * @param mismatchId  mismatch id
+     * @param issueIds mismatch issues id separate by comma ,e.g 12,3,61
+     * @return true
+     *
+     * Usage: (POST) /api/3/admin/spotcheck/mismatches/{mismatchId}/issue/{issueId}
+     */
+    @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
+    public BaseResponse updateMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueIds) {
+        getAnyReportService().updateIssueId(mismatchId, issueIds);
         return new SimpleResponse(true, "issue id updated", "issue-id-updated");
     }
 

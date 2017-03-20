@@ -56,7 +56,13 @@ public interface SpotCheckReportDao<ContentKey>
      */
     void addIssueId(int mismatchId, String issueId);
 
-    void updateIssueId(int mismatchId, String issueId);
+    /**
+     * Spotcheck Mismatch update Issue Id API
+     * @param mismatchId  mismatch id
+     * @param issueIds mismatch issues id separate by comma ,e.g 12,3,61
+     *
+     */
+    void updateIssueId(int mismatchId, String issueIds);
 
     /**
      * Removes the given issue id from the tracked issue ids of the mismatch specified by the given mismatch id
@@ -65,6 +71,11 @@ public interface SpotCheckReportDao<ContentKey>
      */
     void deleteIssueId(int mismatchId, String issueId);
 
+    /**
+     * Removes all issues corresponding to given mismatch id
+     *
+     * @param mismatchId int mismatch id
+     */
     void deleteAllIssueId(int mismatchId);
 
 }

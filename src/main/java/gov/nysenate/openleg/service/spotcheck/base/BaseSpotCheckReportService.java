@@ -44,21 +44,30 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
     public void setMismatchIgnoreStatus(int mismatchId, SpotCheckMismatchIgnore ignoreStatus) {
         getReportDao().setMismatchIgnoreStatus(mismatchId, ignoreStatus);
     }
+    /** {@inheritDoc} */
 
     @Override
     public void addIssueId(int mismatchId, String issueId) {
         getReportDao().addIssueId(mismatchId, issueId);
     }
+
+    /** {@inheritDoc} */
     @Override
-    public void updateIssueId(int mismatchId, String issueId) {
-        getReportDao().updateIssueId(mismatchId, issueId);
+    public void updateIssueId(int mismatchId, String issueIds) {
+        getReportDao().updateIssueId(mismatchId, issueIds);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deleteIssueId(int mismatchId, String issueId) {
         getReportDao().deleteIssueId(mismatchId, issueId);
     }
 
+    /**
+     * Removes all issues corresponding to given mismatch id
+     *
+     * @param mismatchId int mismatch id
+     */
     @Override
     public void deleteAllIssueId(int mismatchId) {
         getReportDao().deleteAllIssueId(mismatchId);
