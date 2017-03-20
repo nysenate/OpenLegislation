@@ -8,6 +8,10 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,8 +19,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.time.LocalDateTime;
 
 /**
@@ -49,6 +51,7 @@ public class BillTextScraper extends LRSScraper {
 
     /**
      * Attempts to get the LRS html for the first bill in the scrape queue
+     *
      * @return the number of bills scraped
      * @throws IOException If there is an error while downloading or saving the bill html file
      */
@@ -56,9 +59,9 @@ public class BillTextScraper extends LRSScraper {
     protected int doScrape() throws IOException {
         try {
             BaseBillId billId = btrDao.getScrapeQueueHead();
-
-            scrapeBill(billId, billScrapedDir);
-
+            HttpResponse response = makeRequest(constructUrl(billId));
+            File file = getSaveFile(billScrapedDir, billId);
+            saveResponseToFile(response, file);
             btrDao.deleteBillFromScrapeQueue(billId);
         } catch (EmptyResultDataAccessException ex) {
             return 0;
@@ -66,30 +69,37 @@ public class BillTextScraper extends LRSScraper {
         return 1;
     }
 
+    public void saveResponseToFile(HttpResponse response, File file) throws IOException {
+        FileUtils.copyInputStreamToFile(response.getEntity().getContent(), file);
+    }
+
     /**
-     * Attempts to scrape html bill data for the given base bill id, saves the html file to the given directory
-     * @param billId BaseBillId
-     * @param destinationDir File
-     * @throws IOException If there is an error while downloading or saving the bill html file
+     * Returns the HttpResponse received when calling a GET request on the given url.
+     *
+     * @throws ScrapingIOException If response status code != 200
      */
-    public void scrapeBill(BaseBillId billId, File destinationDir) throws IOException {
-        String path = StrSubstitutor.replace(billUrlTemplate,
+    public HttpResponse makeRequest(String url) throws IOException {
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet(url);
+        HttpResponse response = httpClient.execute(request);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new ScrapingIOException("Cannot scrape url " + url + ". Response status code was " + response.getStatusLine().getStatusCode());
+        }
+        return response;
+    }
+
+    public String constructUrl(BaseBillId billId) {
+        return StrSubstitutor.replace(billUrlTemplate,
                 ImmutableMap.of("printNo", billId.getPrintNo(),
                         "sessionYear", Integer.toString(billId.getSession().getYear())));
+    }
 
-        logger.info("FETCHING landing page.");
-        logger.info(path);
-
-        URL billUrl = new URL(path);
-
-        String filename = StrSubstitutor.replace(billFileTemplate, ImmutableMap.<String, String>builder()
+    public File getSaveFile(File dir, BaseBillId billId) {
+        String file = StrSubstitutor.replace(billFileTemplate, ImmutableMap.<String, String>builder()
                 .put("sessionYear", Integer.toString(billId.getSession().getYear()))
                 .put("printNo", billId.getPrintNo())
                 .put("scrapedTime", LocalDateTime.now().format(DateUtils.BASIC_ISO_DATE_TIME))
                 .build());
-
-        File file = new File(destinationDir, filename);
-
-        copyUrlToFile(billUrl, file);
+        return new File(dir, file);
     }
 }

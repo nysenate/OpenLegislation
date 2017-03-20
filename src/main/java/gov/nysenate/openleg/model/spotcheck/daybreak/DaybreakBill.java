@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A DaybreakBill serves as a model to store extracted bill content from the DaybreakFragments.
@@ -62,6 +63,23 @@ public class DaybreakBill
         return new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, this.reportDate.atStartOfDay());
     }
 
+    /**
+     * Handle edge cases in daybreak sponsor name formatting.
+     *
+     * Sponsor names usually match short names, however if the short name contains initials
+     * they are formatted with initials first in the daybreak files.
+     *
+     * E.g. shortname = "MILLER MG"
+     *      daybreak = "G M. MILLER"
+     */
+    private String adjustSponsorsWithInitials(String sponsor) {
+        if (sponsor.equals("G M. MILLER"))
+            return "MILLER MG";
+        if (sponsor.equals("L M. MILLER"))
+            return "MILLER ML";
+        return sponsor;
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public LocalDate getReportDate() {
@@ -93,7 +111,7 @@ public class DaybreakBill
     }
 
     public void setSponsor(String sponsor) {
-        this.sponsor = sponsor;
+        this.sponsor = adjustSponsorsWithInitials(sponsor);
     }
 
     public List<String> getCosponsors() {
@@ -101,7 +119,7 @@ public class DaybreakBill
     }
 
     public void setCosponsors(List<String> cosponsors) {
-        this.cosponsors = cosponsors;
+        this.cosponsors = cosponsors.stream().map(this::adjustSponsorsWithInitials).collect(Collectors.toList());
     }
 
     public List<String> getMultiSponsors() {
@@ -109,7 +127,7 @@ public class DaybreakBill
     }
 
     public void setMultiSponsors(List<String> multiSponsors) {
-        this.multiSponsors = multiSponsors;
+        this.multiSponsors = multiSponsors.stream().map(this::adjustSponsorsWithInitials).collect(Collectors.toList());
     }
 
     public String getLawCodeAndSummary() {
