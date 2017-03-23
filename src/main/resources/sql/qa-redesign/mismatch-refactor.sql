@@ -46,7 +46,8 @@ ALTER TABLE ONLY master.spotcheck_mismatch
   ADD CONSTRAINT spotcheck_mismatch_mismatch_id_pkey PRIMARY KEY (mismatch_id);
 
 ALTER TABLE ONLY master.spotcheck_mismatch
-  ADD CONSTRAINT spotcheck_mismatch_report_id_fkey FOREIGN KEY (report_id) REFERENCES master.spotcheck_report (id);
+  ADD CONSTRAINT spotcheck_mismatch_report_id_fkey FOREIGN KEY (report_id) REFERENCES master.spotcheck_report (id)
+  ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 CREATE TEMP TABLE ref_map (datasource text, content_type text, reference_type text);
