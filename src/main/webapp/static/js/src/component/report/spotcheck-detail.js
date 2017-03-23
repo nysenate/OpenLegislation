@@ -1,21 +1,20 @@
-
 angular.module('open.spotcheck')
-    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow',
-function($scope, $mdDialog, mismatchRow) {
+    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow','source','contentType', detailDialogCtrl]);
 
-    $scope.iDiffTab = 0;
-
+function detailDialogCtrl($scope, $mdDialog, mismatchRow,source,contentType) {
     $scope.reportType = mismatchRow.refType;
 
-    $scope.newDetails = function (newMismatchRow) {
-        $scope.mismatchRow = newMismatchRow;
-
+    $scope.newDetails = function (newMismatchRow,source,contentType) {
+        $scope.contentType = contentType;
+        if(source == "LBDC")
+            $scope.com = ["LBDC","OpenLegislation"];
+        else
+            $scope.com = ["OpenLegislation","NYSenate.gov"];
+        $scope.date = moment().format('l');
         console.log('loading detail dialog for', newMismatchRow);
-        $scope.observation = newMismatchRow.observation;
-        $scope.currentMismatch = newMismatchRow.mismatch;
-        $scope.allMismatches = newMismatchRow.observation.mismatches.items;
-
-        setDefaultTextOptions(newMismatchRow.type);
+        $scope.observation = newMismatchRow.observedData;
+        $scope.currentMismatch = newMismatchRow;
+        setDefaultTextOptions(newMismatchRow.mismatchType);
         $scope.formatDisplayData();
     };
 
@@ -73,7 +72,7 @@ function($scope, $mdDialog, mismatchRow) {
         }
         switch ($scope.textControls.whitespace) {
             case 'stripNonAlpha':
-                texts = texts.map(function (text) {return text.replace(/(?:[^\w]|_)+/g, '')});
+                texts = texts.map(function (text) {return text.replace(/(?:[^\w\n]|_)+/g, '')});
                 break;
             case 'normalize':
                 texts = texts.map(function (text) {return text.replace(/[ ]+/g, ' ')});
@@ -89,9 +88,8 @@ function($scope, $mdDialog, mismatchRow) {
     };
 
     function init() {
-        $scope.newDetails(mismatchRow);
+        $scope.newDetails(mismatchRow, source,contentType);
     }
 
     init();
-}]);
-
+}

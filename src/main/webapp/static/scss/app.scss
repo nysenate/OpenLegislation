@@ -56,7 +56,10 @@ p {
 }
 
 /** --- Angular Material Overrides --- */
-
+.md-toolbar-tools {
+  height: 70px;
+  max-height: 70px;
+}
 md-toolbar {
   min-height: 70px;
   .md-toolbar-tools {
@@ -1363,8 +1366,43 @@ $mmDetailTransTime: 0.5s;
 
 /** --- Styles for Spotcheck diffs --- */
 
-$diff-del-color: #f88;
-$diff-ins-color: #9f9;
+md-dialog.detail-diff-dialog {
+  width: 90vw;
+  height: 90vh;
+  max-height: 100vh;
+  max-width: 100vw;
+  & > md-content {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0 20px 20px;
+  }
+}
+
+.mismatch-diff-view-top-half {
+  max-height: 25vh;
+  margin-bottom: 2.5%;
+}
+
+.mismatch-diff-info-card {
+  padding: 0 10px;
+}
+
+.mismatch-diff-info-card p {
+  line-height: .5em;
+}
+
+.mismatch-diff-info-border-radius {
+  border-radius: 10px;
+}
+
+$mismatch-menu-color: #3e4f62;
+.mismatch-diff-info-background-color {
+  background-color: $mismatch-menu-color;
+}
+
+$diff-del-color: #d0021b;
+$diff-ins-color: #59a007;
 
 .diff-key-color {
   float: left;
@@ -1380,13 +1418,38 @@ $diff-ins-color: #9f9;
   }
 }
 
+#mismatch-diff-left-side, #mismatch-diff-right-side {
+  max-height: 55vh;
+}
+
+#mismatch-diff-source ins, #mismatch-diff-data del {
+  display: none;
+}
+
+#mismatch-diff-data, #mismatch-diff-source {
+  overflow: auto;
+}
+
+$mismatch-ref-source-color: #465158;
+.mismatch-ref-source-color {
+  background-color: $mismatch-ref-source-color;
+}
+
+.mismatch-diff-info-background-color-border {
+  border: 1px solid $mismatch-menu-color;
+}
+
 diff-summary, mismatch-diff {
   ins {
     background-color: $diff-ins-color;
+    @extend .white-text-color;
+    font-weight: bold;
     text-decoration: none;
   }
   del {
     background-color: $diff-del-color;
+    @extend .white-text-color;
+    font-weight: bold;
     text-decoration: none;
   }
 }
@@ -1412,48 +1475,18 @@ diff-summary, mismatch-diff {
   }
 }
 
-.mismatch-diff-box {
-  &:not(.scroll-join) {
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    overflow: auto;
-  }
-  &:not(.multi-line) {
-    padding: 10px;
-    &.scroll-join {
-      width: 50%;
-    }
-  }
+.white-text-color {
+  color: white;
 }
 
 .margin-top-5 {
   margin-top: 5px;
 }
 
-md-dialog.detail-diff-dialog {
-  width: 90vw;
-  height: 90vh;
-  max-height: 100vh;
-  max-width: 100vw;
-  & > md-content {
-    overflow: hidden;
-    height: 100%;
-    margin: 0;
-    padding: 0 20px 20px;
-  }
-  md-tabs {
-    height: calc(100% - 127px);
-    md-tab-content > div {
-      height: 100%;
-      md-content {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        .mismatch-detail-diff-container {
-          height: calc(100% - 1.7em);
-        }
-      }
-    }
-  }
+.align-text-hor-vert-center {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 70px;
 }
 
 .detail-diff-text-controls {
@@ -1653,4 +1686,48 @@ table.api-request-table {
     background: #f5f5f5;
   }
 }
+/**
+Spotcheck report page detail
+ */
+.rounded-corner-button {
+  border-radius: 75px;
+}
 
+#spotcheck-report-page-number select option {
+  border-radius: 75px;
+  background: #73AD21;
+  padding: 20px;
+  width: 200px;
+  height: 150px;
+}
+
+button.md-button.md-default-theme.md-primary, button.md-button.md-default-theme.md-primary.md-focused {
+  color: rgb(255,255,255);
+  background-color: rgb(0,140,186);
+}
+md-dialog.issuedialog {
+  width: 40vw;
+  height: 30vh;
+  max-height: 50vh;
+  max-width: 30vw;
+  & > md-content {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0 20px 20px;
+  }
+}
+.md-button.md-fab.md-mini{
+  font-size: x-small;
+  line-height: 25px;
+  width: 50px;
+  height: 25px;
+}
+.report-page-toast{
+  color: red;
+  font-size: 12px;
+  text-align: center;
+  float: right;
+  margin-top: -20px;
+  display: none;
+}

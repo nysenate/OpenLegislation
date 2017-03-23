@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.dao.DataAccessException;
@@ -16,41 +18,20 @@ import java.util.Set;
  */
 public interface SpotCheckReportDao<ContentKey>
 {
+
+    DeNormSpotCheckMismatch getMismatch(int mismatchId);
+
     /**
-     * Retrieve a previously saved report from the backing store. The fetched record will only
-     * contain observations that have mismatches to reduce clutter.
-     *
-     * @param id SpotCheckReportId
-     * @return SpotCheckReport<ContentKey> or DataAccessException if no matching report was found
+     * Get mismatches matching the given query params.
      */
-    SpotCheckReport<ContentKey> getReport(SpotCheckReportId id) throws DataAccessException;
+    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
-     * Get a list of the report ids that have been saved with options to filter the result set.
+     * Get mismatch status summary counts for the given datasource and date.
      *
-     * @param refType
-     * @param start LocalDateTime - Retrieved reports will have been run after/on this date/time.
-     * @param end LocalDateTime - Retrieved reports will have been run before/on this date/time.
-     * @param dateOrder SortOrder - Order the results by the report date/time.
-     * @return List<SpotCheckReportId>
-     */
-    List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType refType, LocalDateTime start,
-                                                    LocalDateTime end, SortOrder dateOrder);
-
-    /**
-     * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType
-     * @param query OpenMismatchQuery
-     * */
-    SpotCheckOpenMismatches<ContentKey> getOpenMismatches(OpenMismatchQuery query);
-
-    /**
-     * Get a summary of type/status/ignore counts pertaining to the given query
-     *
-     * @param refTypes
-     * @param observedAfter
      * @return OpenMismatchesSummary
      */
-    OpenMismatchSummary getOpenMismatchSummary(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter);
+    MismatchSummary getMismatchSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate);
 
     /**
      * Save the report to the backing store. This process may add additional observations to the
@@ -60,13 +41,6 @@ public interface SpotCheckReportDao<ContentKey>
      * @param report SpotCheckReport<ContentKey> - The report to save into the backing store
      */
     void saveReport(SpotCheckReport<ContentKey> report) throws DataAccessException;
-
-    /**
-     * Delete a report via the report id
-     *
-     * @param reportId SpotCheckReportId
-     */
-    void deleteReport(SpotCheckReportId reportId);
 
     /**
      * Sets the ignore status for a spotcheck mismatch
@@ -83,9 +57,25 @@ public interface SpotCheckReportDao<ContentKey>
     void addIssueId(int mismatchId, String issueId);
 
     /**
+     * Spotcheck Mismatch update Issue Id API
+     * @param mismatchId  mismatch id
+     * @param issueIds mismatch issues id separate by comma ,e.g 12,3,61
+     *
+     */
+    void updateIssueId(int mismatchId, String issueIds);
+
+    /**
      * Removes the given issue id from the tracked issue ids of the mismatch specified by the given mismatch id
      * @param mismatchId int
      * @param issueId String
      */
     void deleteIssueId(int mismatchId, String issueId);
+
+    /**
+     * Removes all issues corresponding to given mismatch id
+     *
+     * @param mismatchId int mismatch id
+     */
+    void deleteAllIssueId(int mismatchId);
+
 }

@@ -2,54 +2,84 @@ package gov.nysenate.openleg.client.view.spotcheck;
 
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchIgnore;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckPriorMismatch;
-import gov.nysenate.openleg.util.StringDiffer;
+import gov.nysenate.openleg.model.spotcheck.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
-public class MismatchView implements ViewObject
+public class MismatchView<ContentKey> implements ViewObject
 {
+
     protected int mismatchId;
-    protected String mismatchType;
-    protected String status;
+    protected int reportId;
+    protected ContentKey key;
+    protected SpotCheckMismatchType mismatchType;
+    protected SpotCheckMismatchStatus status;
+    protected SpotCheckDataSource dataSource;
+    protected SpotCheckContentType contentType;
+    protected SpotCheckRefType referenceType;
+    protected LocalDateTime referenceDateTime;
     protected String referenceData;
     protected String observedData;
     protected String notes;
-    protected ListView<String> issueIds;
-    protected ListView<PriorMismatchView> prior;
+    protected LocalDateTime observedDateTime;
+    protected LocalDateTime reportDateTime;
     protected SpotCheckMismatchIgnore ignoreStatus;
+    protected ListView<String> issueIds;
 
-    public MismatchView(SpotCheckMismatch mismatch, List<SpotCheckPriorMismatch> priorMismatches) {
-        if (mismatch != null) {
-            this.mismatchId = mismatch.getMismatchId();
-            this.mismatchType = mismatch.getMismatchType().name();
-            this.status = mismatch.getStatus().name();
-            this.referenceData = mismatch.getReferenceData();
-            this.observedData = mismatch.getObservedData();
-            this.notes = mismatch.getNotes();
-            this.issueIds = ListView.ofStringList(mismatch.getIssueIds());
-            this.ignoreStatus = mismatch.getIgnoreStatus();
-            this.prior = ListView.of(
-                    priorMismatches.stream().map(PriorMismatchView::new)
-                            .sorted((a, b) -> b.getReportId().compareTo(a.getReportId()))
-                            .collect(Collectors.toList()));
-        }
+    public MismatchView(DeNormSpotCheckMismatch<ContentKey> mismatch) {
+        this.mismatchId = mismatch.getMismatchId();
+        this.reportId = mismatch.getReportId();
+        this.key = mismatch.getKey();
+        this.mismatchType = mismatch.getType();
+        this.status = mismatch.getStatus();
+        this.dataSource = mismatch.getDataSource();
+        this.contentType = mismatch.getContentType();
+        this.referenceType = mismatch.getReferenceId().getReferenceType();
+        this.referenceDateTime = mismatch.getReferenceId().getRefActiveDateTime();
+        this.referenceData = mismatch.getReferenceData();
+        this.observedData = mismatch.getObservedData();
+        this.notes = mismatch.getNotes();
+        this.observedDateTime = mismatch.getObservedDateTime();
+        this.reportDateTime = mismatch.getReportDateTime();
+        this.ignoreStatus = mismatch.getIgnoreStatus();
+        this.issueIds = ListView.ofStringList(new ArrayList<>(mismatch.getIssueIds()));
     }
 
     public int getMismatchId() {
         return mismatchId;
     }
 
-    public String getMismatchType() {
+    public int getReportId() {
+        return reportId;
+    }
+
+    public ContentKey getKey() {
+        return key;
+    }
+
+    public SpotCheckMismatchType getMismatchType() {
         return mismatchType;
     }
 
-    public String getStatus() {
+    public SpotCheckMismatchStatus getStatus() {
         return status;
+    }
+
+    public SpotCheckDataSource getDataSource() {
+        return dataSource;
+    }
+
+    public SpotCheckContentType getContentType() {
+        return contentType;
+    }
+
+    public SpotCheckRefType getReferenceType() {
+        return referenceType;
+    }
+
+    public LocalDateTime getReferenceDateTime() {
+        return referenceDateTime;
     }
 
     public String getReferenceData() {
@@ -64,16 +94,20 @@ public class MismatchView implements ViewObject
         return notes;
     }
 
-    public ListView<String> getIssueIds() {
-        return issueIds;
+    public LocalDateTime getObservedDateTime() {
+        return observedDateTime;
+    }
+
+    public LocalDateTime getReportDateTime() {
+        return reportDateTime;
     }
 
     public SpotCheckMismatchIgnore getIgnoreStatus() {
         return ignoreStatus;
     }
 
-    public ListView<PriorMismatchView> getPrior() {
-        return prior;
+    public ListView<String> getIssueIds() {
+        return issueIds;
     }
 
     @Override

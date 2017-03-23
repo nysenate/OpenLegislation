@@ -26,15 +26,24 @@ spotcheckModule.factory('SpotcheckOpenMismatchSummaryAPI', ['$resource', functio
     return $resource(adminApiPath + "/spotcheck/open-mismatches/summary");
 }]);
 
-spotcheckModule.factory('SpotcheckMismatchIgnoreAPI', ['$resource', function ($resource) {
-    return $resource(adminApiPath + "/spotcheck/mismatch/:mismatchId/ignore",
-        {mismatchId: '@mismatchId', ignoreLevel: '@ignoreLevel'});
+spotcheckModule.factory('SpotcheckMismatchIgnoreAPI', ['$resource', function($resource){
+    return $resource(adminApiPath + "/spotcheck/mismatches/:mismatchId/ignore", {
+        mismatchId: '@mismatchId',
+        ignoreLevel: '@ignoreLevel'
+    });
 }]);
 
 spotcheckModule.factory('SpotcheckMismatchTrackingAPI', ['$resource', function ($resource) {
-    return $resource(adminApiPath + "/spotcheck/mismatch/:mismatchId/issue/:issueId", {
+    return $resource(adminApiPath + "/spotcheck/mismatches/:mismatchId/issue/:issueId", {
         mismatchId: '@mismatchId',
         issueId: '@issueId'
+    });
+}]);
+
+// Delete all issues corresponding to the given mismatch
+spotcheckModule.factory('SpotcheckMismatchDeleteAllAPI', ['$resource', function ($resource) {
+    return $resource(adminApiPath + "/spotcheck/mismatch/:mismatchId/delete", {
+        mismatchId: '@mismatchId'
     });
 }]);
 

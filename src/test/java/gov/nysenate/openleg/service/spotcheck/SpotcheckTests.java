@@ -39,13 +39,13 @@ public class SpotcheckTests extends WebAppBaseTests {
 
     @Test
     public void openObsGetTest() {
-        LocalTime start = LocalTime.now();
-        logger.info("start {}", start);
-        BaseResponse response =
-                spotCheckCtrl.getOpenMismatches("scraped-bill", null, "CONTENT_KEY", null, false, false, false, false, true,
-                        new ServletWebRequest(new MockHttpServletRequest()));
-        LocalTime end = LocalTime.now();
-        logger.info("done {}", end);
-        logger.info("took {}", Duration.between(start, end));
+//        LocalTime start = LocalTime.now();
+//        logger.info("start {}", start);
+//        BaseResponse response =
+//                spotCheckCtrl.getOpenMismatches("scraped-bill", null, "CONTENT_KEY", null, false, false, false, false, true,
+//                        new ServletWebRequest(new MockHttpServletRequest()));
+//        LocalTime end = LocalTime.now();
+//        logger.info("done {}", end);
+//        logger.info("took {}", Duration.between(start, end));
     }
 }

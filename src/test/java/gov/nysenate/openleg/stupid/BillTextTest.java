@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.stupid;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.client.view.spotcheck.ReportDetailView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
@@ -93,8 +92,8 @@ public class BillTextTest extends BaseTests {
     @Test
     public void getReportTest() {
         LocalDateTime reportDateTime = LocalDateTime.parse("2015-04-29T11:11:13");
-        new ReportDetailView<>(
-                report.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_SCRAPED_BILL, reportDateTime)));
+//        new ReportDetailView<>(
+//                report.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_SCRAPED_BILL, reportDateTime)));
     }
 
     @Test

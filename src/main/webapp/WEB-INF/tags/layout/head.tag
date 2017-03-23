@@ -1,9 +1,16 @@
-<%@tag description="Head template" pageEncoding="UTF-8"%>
+<%@tag description="Head template" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ attribute name="title" required="true" description="The title of the page" %>
+<%@ tag import="gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType" %>
+<%@ tag import="gov.nysenate.openleg.model.spotcheck.SpotCheckRefType" %>
 
 <% request.setAttribute("ctxPath", request.getContextPath()); %>
-
+<%
+  String refTypeMap = SpotCheckRefType.getRefJsonMap();
+  String refTypeDisplayMap = SpotCheckRefType.getDisplayJsonMap();
+  String refTypeContentTypeMap = SpotCheckRefType.getRefContentTypeJsonMap();
+  String mismatchMap = SpotCheckMismatchType.getJsonMap();
+%>
 <!doctype html>
 <html id="ng-app" class="no-js" lang="en">
 <head>
@@ -43,6 +50,10 @@
         window.ctxPath = "<%= request.getContextPath() %>";
         window.apiPath = window.ctxPath + "/api/3";
         window.adminApiPath = window.apiPath + "/admin";
+        window.referenceTypeMap = <%= refTypeMap %>;
+        window.referenceTypeDisplayMap = <%= refTypeDisplayMap %>;
+        window.referenceContentTypeMap = <%= refTypeContentTypeMap %>;
+        window.mismatchMap = <%= mismatchMap %>;
     </script>
 
     <!-- Page specific css and pre-load js can be added below by the consumer -->

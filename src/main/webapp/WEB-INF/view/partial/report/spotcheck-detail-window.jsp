@@ -1,4 +1,3 @@
-
 <!-- Detail Template -->
 <script type="text/ng-template" id="mismatchDetailWindow">
   <md-dialog aria-label="Mismatch Detail" class="detail-diff-dialog">
@@ -7,75 +6,70 @@
       <span ng-click="cancel()" class="icon-cross" style="font-size: 24px; text-align: right;"></span>
     </div>
     <md-content>
-      <div id="mismatch-detail-top-section">
-        <div layout="row" layout-align="space-around center">
-          <h2 class="no-margin">
-            {{reportType | contentType}}
-            <a ng-href="{{mismatchRow.key | contentUrl:reportType}}" target="_blank">
-              {{mismatchRow.key | contentId:reportType}}
-            </a>
-          </h2>
-          <h2 class="spotcheck-mismatch-status no-margin">
-            <span class="{{currentMismatch.status}}">
-              {{currentMismatch.status | mismatchStatusLabel}}
-            </span>
-            {{currentMismatch.mismatchType | mismatchTypeLabel}} Mismatch
-          </h2>
-        </div>
-        <md-divider></md-divider>
-        <div layout="row" layout-align="space-around center" layout-wrap class="detail-diff-text-controls">
-          <label>
-            <span class="margin-right-10">Whitespace Formatting</span>
+      <md-content class="mismatch-diff-view-top-half">
+        <div layout="row" layout-align="space-between start">
+
+
+          <md-card ng-if="contentType == 'BILL' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+            <p>Date Reported: {{date}}</p>
+
+            <p> {{reportType | contentType}} Number:
+              <a class="white-2-blue inactive-link" target="_blank">
+                {{currentMismatch.bill}}
+              </a>
+            </p>
+            <p>Session Year: {{currentMismatch.session.year}}</p>
+            <p>Error Type: {{currentMismatch.mismatchType}}</p>
+          </md-card>
+
+          <md-card ng-if="contentType == 'CALENDAR' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+            <p>Date Reported: {{date}}</p>
+            <p> Calendar Number: {{currentMismatch.calNo}}</p>
+            <p>Session Date:</p>
+            <p>Error Type: {{currentMismatch.mismatchType}}</p>
+          </md-card>
+
+          <md-card ng-if="contentType == 'AGENDA' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+            <p>Date Reported: {{date}}</p>
+            <p> Week:</p>
+            <p>Agenda: {{currentMismatch.agendaNo}}</p>
+            <p>Error Type: {{currentMismatch.mismatchType}}</p>
+          </md-card>
+
+          <md-card class="padding-5 mismatch-diff-info-border-radius mismatch-diff-info-background-color-border">
             <select ng-model="textControls.whitespace" ng-change="formatDisplayData()"
                     ng-options="value as label for (value, label) in whitespaceOptions"></select>
-          </label>
-          <md-checkbox ng-model="textControls.removeLinePageNums" ng-change="formatDisplayData()" >
-            Strip Line/Page Numbers
-          </md-checkbox>
-          <md-checkbox ng-model="textControls.capitalize" ng-change="formatDisplayData()" >
-            All Caps
-          </md-checkbox>
-          <md-checkbox ng-model="sideScrollJoin" ng-disabled="iDiffTab !== 1">
-            Side-By-Side: Single Scrollbar
-          </md-checkbox>
+            <md-checkbox ng-model="textControls.removeLinePageNums" ng-change="formatDisplayData()">
+              Strip Line/Page Numbers
+            </md-checkbox>
+            <md-checkbox ng-model="textControls.capitalize" ng-change="formatDisplayData()">All Caps</md-checkbox>
+          </md-card>
         </div>
-      </div>
-      <md-tabs class="md-hue-2" md-selected="iDiffTab">
-        <md-tab label="Diff">
-          <md-content>
-            <div layout="row" layout-align="space-around center">
-              <div>
-                <span class="diff-key-color del"></span>
-                {{mismatchRow.refType | reportDataProvider}} Data
-              </div>
-              <div>
-                <span class="diff-key-color ins"></span>
-                {{mismatchRow.refType | reportReferenceProvider}} Data
-              </div>
+      </md-content>
+
+      <md-content class="mismatch-diff-box">
+        <div layout="row" layout-align="space-around start">
+          <div layout="column" flex="45" id="mismatch-diff-left-side" class="scrollable">
+             <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
+              <span>{{com[0]}}</span>
             </div>
-            <div class="mismatch-detail-diff-container mismatch-diff-box" ng-class="{'padding-10': !multiLine}" ng-if="iDiffTab === 0">
-              <mismatch-diff left="observedData" right="referenceData"></mismatch-diff>
+
+            <div id="mismatch-diff-data">
+              <mismatch-diff show-lines="false" left="referenceData" right="observedData"></mismatch-diff>
             </div>
-          </md-content>
-        </md-tab>
-        <md-tab label="Side By Side">
-          <md-content>
-            <div layout="row">
-              <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportDataProvider}} Data</p>
-              <p flex class="text-align-center no-margin bold">{{mismatchRow.refType | reportReferenceProvider}} Data</p>
+          </div>
+
+          <div layout="column" flex="45" id="mismatch-diff-right-side" class="scrollable">
+            <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
+              <span>{{com[1]}}</span>
             </div>
-            <div layout="row" ng-if="iDiffTab === 1"
-                 class="mismatch-detail-diff-container" ng-class="{'mismatch-diff-box': sideScrollJoin}">
-              <div flex class="mismatch-diff-box" ng-class="{'multi-line': obsMultiLine, 'scroll-join': sideScrollJoin}">
-                <mismatch-diff right="observedData" left="observedData"></mismatch-diff>
-              </div>
-              <div flex class="mismatch-diff-box" ng-class="{'multi-line': refMultiLine, 'scroll-join': sideScrollJoin}">
-                <mismatch-diff right="referenceData" left="referenceData"></mismatch-diff>
-              </div>
+
+            <div id="mismatch-diff-source">
+              <mismatch-diff show-lines="false" left="referenceData" right="observedData"></mismatch-diff>
             </div>
-          </md-content>
-        </md-tab>
-      </md-tabs>
+          </div>
+        </div>
+      </md-content>
     </md-content>
   </md-dialog>
 </script>
