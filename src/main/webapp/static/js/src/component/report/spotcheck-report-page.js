@@ -1,10 +1,10 @@
 angular.module('open.spotcheck')
     .controller('SpotcheckReportCtrl',
         ['$scope', '$location', '$routeParams', '$mdDialog', 'PaginationModel', 'SpotcheckMismatchApi',
-            'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI','SpotcheckMismatchTrackingAPI','SpotcheckMismatchDeleteAllAPI','SpotcheckMismatchDeleteAllAPI', ReportCtrl]);
+            'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI', 'SpotcheckMismatchTrackingAPI', 'SpotcheckMismatchDeleteAllAPI', 'SpotcheckMismatchDeleteAllAPI', ReportCtrl]);
 
 function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel, spotcheckMismatchApi,
-                    mismatchSummaryApi, mismatchIgnoreApi,spotcheckMismatchTrackingAPI,spotcheckMismatchDeleteAllAPI) {
+                    mismatchSummaryApi, mismatchIgnoreApi, spotcheckMismatchTrackingAPI, spotcheckMismatchDeleteAllAPI) {
 
     const dateFormat = 'YYYY-MM-DD';
     const isoFormat = 'YYYY-MM-DDTHH:mm:ss';
@@ -20,7 +20,6 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             {
                 value: 'NYSENATE',
                 label: 'OpenLegislation - NYSenate.gov'
-
             }
         ],
         selected: {}
@@ -56,7 +55,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
     };
 
     $scope.onPageChange = function (pageNum, contentType) {
-        if(contentType ==selectedContentType())
+        if (contentType == selectedContentType())
             $scope.updateMismatches();
     };
 
@@ -77,7 +76,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
         $scope.mismatchResponse.error = false;
         $scope.mismatchResponse.mismatches = [];
         spotcheckMismatchApi.getMismatches($scope.datasource.selected.value, selectedContentType(),
-            toMismatchStatus($scope.status), $scope.date.startOf('day').format(isoFormat),$scope.date.endOf('day').format(isoFormat),
+            toMismatchStatus($scope.status), $scope.date.startOf('day').format(isoFormat), $scope.date.endOf('day').format(isoFormat),
             $scope.pagination.getLimit(), $scope.pagination.getOffset())
             .then(function (result) {
                 $scope.pagination.setTotalItems(result.pagination.total);
@@ -95,16 +94,17 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
          */
         function toMismatchStatus(status) {
             if (status === 'OPEN') {
-                return ['NEW', 'EXISTING','REGRESSION'];
+                return ['NEW', 'EXISTING', 'REGRESSION'];
             }
-            else if (status == 'NEW'){
+            else if (status == 'NEW') {
                 return ['NEW'];
 
-            }else {
+            } else {
                 return ['RESOLVED']
             }
         }
     };
+
     // update mismatch's issues, issue splits by comma
     $scope.updateIssue = function (mismatch) {
         if (mismatch.issue == "") { // if issue is empty, then clear all related issues
@@ -117,17 +117,17 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
         else {
             var params = { // update issue
                 mismatchId: mismatch.id,
-                issueId:mismatch.issue
+                issueId: mismatch.issue
             };
             spotcheckMismatchTrackingAPI.save(params, function (response) {
             })
         }
-        $('#report-page-toast'+mismatch.id).fadeIn("5000");
-        $('#report-page-toast'+mismatch.id).fadeOut("slow");
-    }
+        $('#report-page-toast' + mismatch.id).fadeIn("5000");
+        $('#report-page-toast' + mismatch.id).fadeOut("slow");
+    };
 
     // update mismatch when user change status
-    $scope.onStatusChange= function () {
+    $scope.onStatusChange = function () {
         resetPagination();
         $scope.updateMismatchSummary();
         $scope.updateMismatches();
@@ -149,26 +149,28 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             .ok('Yes')
             .cancel('No')
 
-        $mdDialog.show(confirm).then(function() {
+        $mdDialog.show(confirm).then(function () {
             ignoreMismatch(mismatch);
         })
     };
+
     // show the diff window.
-    $scope.showDetailedDiff = function(mismatchRow) {
+    $scope.showDetailedDiff = function (mismatchRow) {
         mismatchRow.diffLoading = true;
-        setTimeout(function (){
+        setTimeout(function () {
             $mdDialog.show({
                 templateUrl: 'mismatchDetailWindow',
                 controller: 'detailDialogCtrl',
                 locals: {
                     mismatchRow: mismatchRow,
-                    source:$scope.datasource.selected.value,
-                    contentType:selectedContentType()
+                    source: $scope.datasource.selected.value,
+                    contentType: selectedContentType()
                 }
             });
             mismatchRow.diffLoading = false;
-        }, 1000); // delay 1 sec
+        }, 10); // delay 1 sec
     };
+
     // ignore a mismatch, the default ignore level is 'IGNORE_UNTIL_RESOLVED'
     function ignoreMismatch(mismatch) {
         var params = {
