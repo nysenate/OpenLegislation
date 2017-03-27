@@ -14,7 +14,6 @@ import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,12 +30,10 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFEREN
  * This service is used to report the difference of two openleg branches.
  */
 @Service("openlegBillReport")
-
 public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBillId> {
     private static final Logger logger = LoggerFactory.getLogger(OpenlegBillReportService.class);
 
-    @Value("${openleg.apiKey}")
-    private  String apiKey;
+    private static final String apiKey = "cix1d0bCsmFHaSrCg2pZPM1WIN9Khe3n";
 
     @Autowired
     private SpotCheckReportDao<BaseBillId> reportDao;
@@ -106,8 +103,6 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
                         sourceMissingObs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, id, "Missing Data from Openleg XML, ID:" + id.getBasePrintNo()));
                     }
                     diffBill.add(id);
-                    sourceMissingObs.setReferenceId(reportId.getReferenceId());
-                    sourceMissingObs.setObservedDateTime(LocalDateTime.now());
                     numOfMismatches[0] += sourceMissingObs.getMismatches().size();
                     report.addObservation(sourceMissingObs);
                 });
@@ -121,7 +116,6 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
             // one observation consists of multiple mismatches
             SpotCheckReferenceId referenceId = reportId.getReferenceId();
             observation.setReferenceId(referenceId);
-            observation.setObservedDateTime(LocalDateTime.now());
             numOfMismatches[0] += observation.getMismatches().size();
             report.addObservation(observation);
         }
