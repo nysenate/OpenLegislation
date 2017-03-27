@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor.bill.billstat;
 
 import gov.nysenate.openleg.dao.bill.data.BillDao;
+import gov.nysenate.openleg.dao.sobi.SobiDao;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
@@ -21,9 +22,10 @@ import static org.junit.Assert.assertEquals;
  */
 @Transactional
 public class BillStatProcessorTest extends BaseXmlProcessorTest {
-
     @Autowired
     BillDao billDao;
+    @Autowired
+    SobiDao sobiDao;
     @Autowired
     BillStatProcessor BillStatProcessor;
 
