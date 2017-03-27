@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processor.bill.sponsor;
+package gov.nysenate.openleg.processor.bill.ldblurb;
 
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.bill.Bill;
