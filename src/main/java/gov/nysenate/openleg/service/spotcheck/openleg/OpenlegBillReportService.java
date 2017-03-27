@@ -14,6 +14,7 @@ import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,10 +31,12 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFEREN
  * This service is used to report the difference of two openleg branches.
  */
 @Service("openlegBillReport")
+
 public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBillId> {
     private static final Logger logger = LoggerFactory.getLogger(OpenlegBillReportService.class);
 
-    private static final String apiKey = "cix1d0bCsmFHaSrCg2pZPM1WIN9Khe3n";
+    @Value("${openleg.apiKey}")
+    private  String apiKey;
 
     @Autowired
     private SpotCheckReportDao<BaseBillId> reportDao;
