@@ -4,6 +4,7 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -69,6 +70,13 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
 
     public SponsorView getSponsor() {
         return sponsor;
+    }
+    /**
+     * Use by jackson serialization
+     * @param date the date in String form
+     */
+    public void setPublishedDateTime(String date){
+        publishedDateTime = LocalDateTime.parse(date);
     }
 
     @Override

@@ -4,6 +4,9 @@ import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 
 public class CommitteeVersionIdView extends CommitteeSessionIdView implements Comparable<CommitteeVersionIdView>
 {
+    public CommitteeVersionIdView(){
+
+    }
     protected String referenceDate;
 
     public CommitteeVersionIdView(CommitteeVersionId committeeVersionId) {

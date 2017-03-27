@@ -12,6 +12,7 @@ public class ApprovalMessageView implements ViewObject
     protected String signer;
     protected String text;
 
+    public ApprovalMessageView(){}
     public ApprovalMessageView(ApprovalMessage approvalMessage) {
         if (approvalMessage != null) {
             this.billId = new BillIdView(approvalMessage.getBillId());

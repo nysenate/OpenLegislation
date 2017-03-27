@@ -26,7 +26,9 @@ public enum SpotCheckRefType
 
     SENATE_SITE_CALENDAR("senate-site-calendar", "Nysenate.gov Calendar", NotificationType.SENSITE_CALENDAR_SPOTCHECK),
 
-    SENATE_SITE_AGENDA("senate-site-agenda", "Nysenate.gov Agenda", NotificationType.SENSITE_AGENDA_SPOTCHECK)
+    SENATE_SITE_AGENDA("senate-site-agenda", "Nysenate.gov Agenda", NotificationType.SENSITE_AGENDA_SPOTCHECK),
+
+    OPENLEG_DEV ("openleg-dev", "Openleg Dev", NotificationType.OPENLEG_DEV_SPOTCHECK)
 
     ;
 

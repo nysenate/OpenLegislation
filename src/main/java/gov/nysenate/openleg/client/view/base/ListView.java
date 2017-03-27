@@ -1,9 +1,10 @@
 package gov.nysenate.openleg.client.view.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ListView<ViewType> implements ViewObject
 {
     protected ImmutableList<ViewType> items;
@@ -18,7 +19,7 @@ public class ListView<ViewType> implements ViewObject
         return new ListView<>(items);
     }
 
-    protected ListView() {}
+    public ListView() {}
 
     private ListView(List<ViewType> items) {
         if (items != null) {

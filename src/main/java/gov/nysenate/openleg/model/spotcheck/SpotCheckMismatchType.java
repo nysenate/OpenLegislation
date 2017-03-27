@@ -86,6 +86,26 @@ public enum SpotCheckMismatchType
     /** --- Agenda mismatches --- */
     AGENDA_ID("Agenda Id", SENATE_SITE_AGENDA),
 
+    /**
+     *  Openleg xml vs Openleg sobi (in dev branch) mismatches
+     */
+    BILL_TITLE_OPENLEG_DEV("Bill Title", OPENLEG_DEV ),
+    BILL_VIEW_TYPE_OPENLEG_DEV("Bill View Type",  OPENLEG_DEV),
+    BILL_ACTIVE_VERSION_OPENLEG_DEV("Bill Active Version", OPENLEG_DEV),
+    BILL_BASE_PRINT_NO_OPENLEG_DEV("Bill Base Print No", OPENLEG_DEV),
+    BILL_BASE_PRINT_NO_NoStr_OPENLEG_DEV("Bill Base Print No NoStr", OPENLEG_DEV),
+    BILL_SUMMARY_OPENLEG_DEV("Bill Summary", OPENLEG_DEV),
+    BILL_SPONSOR_OPENLEG_DEV("Bill Sponsor", OPENLEG_DEV),
+    BILL_SESSION_YEAR_OPENLEG_DEV("Bill Session Year", OPENLEG_DEV),
+    BILL_AMENDMENT_VERSION_OPENLEG_DEV("Bill Amendment Version", OPENLEG_DEV),
+    BILL_LAST_STATUS_OPENLEG_DEV("Bill Last Status", OPENLEG_DEV),
+    Bill_ADDITIONAL_SPONSOR_OPENLEG_DEV("Bill Additional Sponsor", OPENLEG_DEV),
+    BILL_ACTIVE_AMENDMENT_OPENLEG_DEV("Bill Active Amendment", OPENLEG_DEV),
+    BILL_APPROVE_MESSAGE_OPENLEG_DEV("Bill Approve Message", OPENLEG_DEV),
+    BILL_VOTES_OPENLEG_DEV("Bill Votes", OPENLEG_DEV),
+    CALENDAR_OPENLEG_DEV("Calendar", OPENLEG_DEV),
+    BILL_COMMITTEE_AGENDAS_OPENLEG_DEV("Bill Committee Agendas", OPENLEG_DEV),
+    BILL_PAST_COMMITTEE_OPENLEG_DEV("Bill Past commmittee", OPENLEG_DEV)
     ;
 
     private String displayName;
