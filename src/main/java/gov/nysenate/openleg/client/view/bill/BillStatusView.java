@@ -7,7 +7,6 @@ import gov.nysenate.openleg.model.bill.BillStatus;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.time.LocalDate;
-
 public class BillStatusView implements ViewObject
 {
     protected String statusType;
@@ -67,6 +66,14 @@ public class BillStatusView implements ViewObject
 
     public Integer getBillCalNo() {
         return billCalNo;
+    }
+
+    /**
+     * Use by jackson serialization
+     * @param date the date in String form
+     */
+    public void setActionDate(String date) {
+        actionDate = LocalDate.parse(date);
     }
 
     @Override

@@ -16,6 +16,8 @@ public class CommitteeIdView implements ViewObject {
         }
     }
 
+    public CommitteeIdView(){}
+
     public String getChamber() {
         return chamber;
     }

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
@@ -11,6 +12,7 @@ import gov.nysenate.openleg.util.BillTextUtils;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BillAmendmentView extends BillIdView
 {
     protected LocalDate publishDate;
@@ -25,6 +27,7 @@ public class BillAmendmentView extends BillIdView
     protected boolean uniBill;
     protected boolean isStricken;
 
+    public BillAmendmentView(){}
     public BillAmendmentView(BillAmendment billAmendment, PublishStatus publishStatus) {
         super(billAmendment != null ? billAmendment.getBillId() : null);
         if (billAmendment != null) {
@@ -55,6 +58,10 @@ public class BillAmendmentView extends BillIdView
 
     public LocalDate getPublishDate() {
         return publishDate;
+    }
+
+    public void setPublishDate(String date){
+        publishDate = LocalDate.parse(date);
     }
 
     public ListView<BillIdView> getSameAs() {

@@ -9,6 +9,7 @@ public class CommAgendaIdView implements ViewObject
     private AgendaIdView agendaId;
     private CommitteeIdView committeeId;
 
+    public CommAgendaIdView(){}
     public CommAgendaIdView(CommitteeAgendaId committeeAgendaId) {
         if (committeeAgendaId != null) {
             agendaId = new AgendaIdView(committeeAgendaId.getAgendaId());
