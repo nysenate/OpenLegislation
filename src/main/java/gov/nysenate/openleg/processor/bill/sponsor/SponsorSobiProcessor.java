@@ -130,24 +130,6 @@ public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiP
         amendment.setMultiSponsors(empty2);
     }
 
-    /**
-     * This method is responsible for getting a list of Session Members from a line by parsing it.
-     *
-     * @param sponsors String of the line to be parsed
-     * @param session Bill Session for getting ShortName
-     * @param chamber Bill Chamber for getting ShortName
-     * @return
-     */
-    public List<SessionMember> getSessionMember(String sponsors, SessionYear session, Chamber chamber) {
-        List<String> shortNames = Lists.newArrayList(
-                Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsors.toUpperCase()));
-        List<SessionMember> sessionMembers = new ArrayList<>();
-        for (String t : shortNames) {
-            sessionMembers.add(getMemberFromShortName(t, session, chamber));
-        }
-        return sessionMembers;
-    }
-
     @Override
     public void postProcess() {
         flushBillUpdates();
