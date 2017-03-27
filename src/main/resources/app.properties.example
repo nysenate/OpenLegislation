@@ -227,3 +227,6 @@ domain.url = http://localhost:8080/legislation
 # The url for the 1.9.2 prod server (default http://open.nysenate.gov/legislation)
 # do not use a trailing slash
 old.prod.url = http://open.nysenate.gov/legislation
+
+# --- Openleg Mismatches Checking Service Configuration ----------------------------------------------------
+openleg.apiKey = cix1d0bCsmFHaSrCg2pZPM1WIN9Khe3n
