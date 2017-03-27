@@ -1,0 +1,330 @@
+<billstatus  sessyr="2015" billhse="S" billno="05795" action="replace">
+<deadtag></deadtag>
+<currentamd>A</currentamd>
+<sponsor><![CDATA[MARCELLINO]]></sponsor>
+<reprint>
+<rprtbillhse></rprtbillhse>
+<rprtbillno></rprtbillno>
+<rprtbillamd></rprtbillamd>
+</reprint>
+<lbdno>10879036</lbdno>
+<introcomm>11</introcomm>
+<curcomm></curcomm>
+<curcommhse></curcommhse>
+<law><![CDATA[Education Law]]></law>
+<title><![CDATA[Relates to reporting school finances, reserve funds, final annual budgets and multi-year financial plans]]></title>
+<billactions><![CDATA[
+06/03/15 REFERRED TO EDUCATION
+06/25/15 COMMITTEE DISCHARGED AND COMMITTED TO RULES
+06/25/15 ORDERED TO THIRD READING CAL.1897
+06/25/15 PASSED SENATE
+06/25/15 DELIVERED TO ASSEMBLY
+06/25/15 referred to education
+01/06/16 died in assembly
+01/06/16 returned to senate
+01/06/16 REFERRED TO EDUCATION
+02/24/16 1ST REPORT CAL.225
+02/25/16 2ND REPORT CAL.
+02/29/16 ADVANCED TO THIRD READING
+05/16/16 AMENDED ON THIRD READING 5795A
+05/24/16 PASSED SENATE
+05/24/16 DELIVERED TO ASSEMBLY
+05/24/16 referred to education
+06/08/16 substituted for a7675a
+06/08/16 ordered to third reading rules cal.53
+06/08/16 passed assembly
+06/08/16 returned to senate
+12/20/16 DELIVERED TO GOVERNOR
+12/31/16 SIGNED CHAP.514
+]]></billactions>
+<actions>
+<action no="1">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>1</actioncode>
+<actiontype>S</actiontype>
+<actiondata>11</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2015-06-03</actiondate>
+<actiondesc><![CDATA[REFERRED TO EDUCATION]]></actiondesc>
+<actionpostdate>2015-06-03</actionpostdate>
+<actionactsessyr>2015</actionactsessyr>
+</action>
+<action no="2">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>9</actioncode>
+<actiontype>S</actiontype>
+<actiondata>27</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2015-06-25</actiondate>
+<actiondesc><![CDATA[COMMITTEE DISCHARGED AND COMMITTED TO RULES]]></actiondesc>
+<actionpostdate>2015-06-25</actionpostdate>
+<actionactsessyr>2015</actionactsessyr>
+</action>
+<action no="3">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>17</actioncode>
+<actiontype>F</actiontype>
+<actiondata>1897</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2015-06-25</actiondate>
+<actiondesc><![CDATA[ORDERED TO THIRD READING CAL.1897]]></actiondesc>
+<actionpostdate>2015-06-25</actionpostdate>
+<actionactsessyr>2015</actionactsessyr>
+</action>
+<action no="4">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>40</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2015-06-25</actiondate>
+<actiondesc><![CDATA[PASSED SENATE]]></actiondesc>
+<actionpostdate>2015-06-25</actionpostdate>
+<actionactsessyr>2015</actionactsessyr>
+</action>
+<action no="5">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>53</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2015-06-25</actiondate>
+<actiondesc><![CDATA[DELIVERED TO ASSEMBLY]]></actiondesc>
+<actionpostdate>2015-06-25</actionpostdate>
+<actionactsessyr>2015</actionactsessyr>
+</action>
+<action no="6">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>1</actioncode>
+<actiontype>S</actiontype>
+<actiondata>11</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2015-06-25</actiondate>
+<actiondesc><![CDATA[referred to education]]></actiondesc>
+<actionpostdate>2015-06-25</actionpostdate>
+<actionactsessyr>2015</actionactsessyr>
+</action>
+<action no="7">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>63</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-01-06</actiondate>
+<actiondesc><![CDATA[died in assembly]]></actiondesc>
+<actionpostdate>2016-01-06</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="8">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>61</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-01-06</actiondate>
+<actiondesc><![CDATA[returned to senate]]></actiondesc>
+<actionpostdate>2016-01-06</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="9">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>1</actioncode>
+<actiontype>S</actiontype>
+<actiondata>11</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-01-06</actiondate>
+<actiondesc><![CDATA[REFERRED TO EDUCATION]]></actiondesc>
+<actionpostdate>2016-01-06</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="10">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>18</actioncode>
+<actiontype>F</actiontype>
+<actiondata>225</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-02-24</actiondate>
+<actiondesc><![CDATA[1ST REPORT CAL.225]]></actiondesc>
+<actionpostdate>2016-02-24</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="11">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>19</actioncode>
+<actiontype>F</actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-02-25</actiondate>
+<actiondesc><![CDATA[2ND REPORT CAL.]]></actiondesc>
+<actionpostdate>2016-02-25</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="12">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>32</actioncode>
+<actiontype>F</actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-02-29</actiondate>
+<actiondesc><![CDATA[ADVANCED TO THIRD READING]]></actiondesc>
+<actionpostdate>2016-02-29</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="13">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>75</actioncode>
+<actiontype>B</actiontype>
+<actiondata>5795</actiondata>
+<actiondataamd>A</actiondataamd>
+<actiondate>2016-05-16</actiondate>
+<actiondesc><![CDATA[AMENDED ON THIRD READING 5795A]]></actiondesc>
+<actionpostdate>2016-05-16</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="14">
+<actionbillamd>A</actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>40</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-05-24</actiondate>
+<actiondesc><![CDATA[PASSED SENATE]]></actiondesc>
+<actionpostdate>2016-05-24</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="15">
+<actionbillamd>A</actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>53</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-05-24</actiondate>
+<actiondesc><![CDATA[DELIVERED TO ASSEMBLY]]></actiondesc>
+<actionpostdate>2016-05-24</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="16">
+<actionbillamd>A</actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>1</actioncode>
+<actiontype>S</actiontype>
+<actiondata>11</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-05-24</actiondate>
+<actiondesc><![CDATA[referred to education]]></actiondesc>
+<actionpostdate>2016-05-24</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="17">
+<actionbillamd>A</actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>22</actioncode>
+<actiontype>B</actiontype>
+<actiondata>7675</actiondata>
+<actiondataamd>A</actiondataamd>
+<actiondate>2016-06-08</actiondate>
+<actiondesc><![CDATA[substituted for a7675a]]></actiondesc>
+<actionpostdate>2016-06-08</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="18">
+<actionbillamd>A</actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>162</actioncode>
+<actiontype>R</actiontype>
+<actiondata>53</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-06-08</actiondate>
+<actiondesc><![CDATA[ordered to third reading rules cal.53]]></actiondesc>
+<actionpostdate>2016-06-08</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="19">
+<actionbillamd>A</actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>40</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-06-08</actiondate>
+<actiondesc><![CDATA[passed assembly]]></actiondesc>
+<actionpostdate>2016-06-08</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="20">
+<actionbillamd>A</actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>61</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-06-08</actiondate>
+<actiondesc><![CDATA[returned to senate]]></actiondesc>
+<actionpostdate>2016-06-08</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="21">
+<actionbillamd>A</actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>51</actioncode>
+<actiontype> </actiontype>
+<actiondata></actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-12-20</actiondate>
+<actiondesc><![CDATA[DELIVERED TO GOVERNOR]]></actiondesc>
+<actionpostdate>2016-12-20</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="22">
+<actionbillamd>A</actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>26</actioncode>
+<actiontype>C</actiontype>
+<actiondata>514</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-12-31</actiondate>
+<actiondesc><![CDATA[SIGNED CHAP.514]]></actiondesc>
+<actionpostdate>2016-12-31</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+<action no="2015">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>1100</actioncode>
+<actiontype>S</actiontype>
+<actiondata>11</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2015-06-25</actiondate>
+<actiondesc><![CDATA[referred to committee opposite house]]></actiondesc>
+<actionpostdate>2016-12-31</actionpostdate>
+<actionactsessyr>2015</actionactsessyr>
+</action>
+<action no="2016">
+<actionbillamd>A</actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>3200</actioncode>
+<actiontype>C</actiontype>
+<actiondata>514</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2016-12-31</actiondate>
+<actiondesc><![CDATA[signed or chaptered]]></actiondesc>
+<actionpostdate>2016-12-31</actionpostdate>
+<actionactsessyr>2016</actionactsessyr>
+</action>
+</actions>
+</billstatus>

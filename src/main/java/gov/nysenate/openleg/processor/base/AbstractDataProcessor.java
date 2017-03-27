@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.processor.base;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
@@ -36,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -183,6 +186,24 @@ public abstract class AbstractDataProcessor
      */
     protected SessionMember getMemberFromShortName(String shortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
         return memberService.getMemberByShortNameEnsured(shortName, sessionYear, chamber);
+    }
+
+    /**
+     * This method is responsible for getting a list of Session Members from a line by parsing it.
+     *
+     * @param sponsors String of the line to be parsed
+     * @param session Bill Session for getting ShortName
+     * @param chamber Bill Chamber for getting ShortName
+     * @return
+     */
+    public List<SessionMember> getSessionMember(String sponsors, SessionYear session, Chamber chamber) {
+        List<String> shortNames = Lists.newArrayList(
+                Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsors.toUpperCase()));
+        List<SessionMember> sessionMembers = new ArrayList<>();
+        for (String t : shortNames) {
+            sessionMembers.add(getMemberFromShortName(t, session, chamber));
+        }
+        return sessionMembers;
     }
 
     /** --- Agenda Methods --- */
