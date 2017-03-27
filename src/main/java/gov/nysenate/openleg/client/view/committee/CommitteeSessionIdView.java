@@ -13,6 +13,9 @@ public class CommitteeSessionIdView extends CommitteeIdView {
         }
     }
 
+    public CommitteeSessionIdView() {
+    }
+
     @Override
     public String getViewType() {
         return "committee-session-id";

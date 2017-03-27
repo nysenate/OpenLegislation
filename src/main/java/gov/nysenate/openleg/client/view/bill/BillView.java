@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.nysenate.openleg.client.view.agenda.CommAgendaIdView;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 /**
  * A complete representation of a bill including it's amendments.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BillView extends BillInfoView implements ViewObject
 {
     protected ListView<String> amendmentVersions;
@@ -30,6 +32,7 @@ public class BillView extends BillInfoView implements ViewObject
     protected ListView<CommAgendaIdView> committeeAgendas;
     protected ListView<CalendarIdView> calendars;
 
+    public BillView(){}
     public BillView(Bill bill) {
         super(bill != null ? bill.getBillInfo() : null);
         if (bill != null) {
