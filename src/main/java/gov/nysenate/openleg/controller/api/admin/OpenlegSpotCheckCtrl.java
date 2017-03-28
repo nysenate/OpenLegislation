@@ -47,18 +47,11 @@ public class OpenlegSpotCheckCtrl extends BaseCtrl {
     }
 
     @RequiresPermissions("admin:spotcheck")
-    @RequestMapping(value = "/{sessionYear}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{sessionYear}", method = RequestMethod.POST)
     public BaseResponse performSpotCheck(@PathVariable String sessionYear) {
-        try {
-            logger.info("Running Openleg Spotcheck with session year: " + sessionYear);
-            spotcheckRunService.runReports(openlegBillReportService.getSpotcheckRefType(), Range.closed(LocalDateTime.of(Integer.valueOf(sessionYear),1,1,1,1), LocalDateTime.of(Integer.valueOf(sessionYear),1,1,1,1)));
-            return new SimpleResponse(true, "Successful Running Openleg Spotcheck", " Openleg Spotcheck");
-        }
-         catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return new SimpleResponse(false, "Failed Running Openleg Spotcheck", " Openleg Spotcheck");
+        logger.info("Running Openleg Spotcheck with session year: " + sessionYear);
+        spotcheckRunService.runReports(openlegBillReportService.getSpotcheckRefType(), Range.closed(LocalDateTime.of(Integer.valueOf(sessionYear), 1, 1, 1, 1), LocalDateTime.of(Integer.valueOf(sessionYear), 1, 1, 1, 1)));
+        return new SimpleResponse(true, "Successful Running Openleg Spotcheck", " Openleg Spotcheck");
     }
 
 }
