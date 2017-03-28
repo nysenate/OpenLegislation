@@ -106,6 +106,8 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
                         sourceMissingObs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, id, "Missing Data from Openleg XML, ID:" + id.getBasePrintNo()));
                     }
                     diffBill.add(id);
+                    sourceMissingObs.setReferenceId(reportId.getReferenceId());
+                    sourceMissingObs.setObservedDateTime(LocalDateTime.now());
                     numOfMismatches[0] += sourceMissingObs.getMismatches().size();
                     report.addObservation(sourceMissingObs);
                 });
@@ -119,6 +121,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
             // one observation consists of multiple mismatches
             SpotCheckReferenceId referenceId = reportId.getReferenceId();
             observation.setReferenceId(referenceId);
+            observation.setObservedDateTime(LocalDateTime.now());
             numOfMismatches[0] += observation.getMismatches().size();
             report.addObservation(observation);
         }
