@@ -14,6 +14,7 @@ import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.CalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.IntervalCalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
+import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegBillReportService;
 import gov.nysenate.openleg.service.spotcheck.senatesite.agenda.AgendaReportServices;
 import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillReportService;
 import gov.nysenate.openleg.service.spotcheck.senatesite.calendar.CalendarReportServices;
@@ -72,6 +73,10 @@ public class SpotcheckRunService {
     @Autowired private CalendarReportServices senSiteCalReportService;
     @Autowired private AgendaReportServices senSiteAgendaReportService;
 
+    /** Openleg Check Report Service*/
+
+    @Autowired private OpenlegBillReportService openlegBillReportService;
+
     @PostConstruct
     public void init() {
         eventBus.register(this);
@@ -83,6 +88,7 @@ public class SpotcheckRunService {
                 .put(SENATE_SITE_BILLS, senSiteBillReportService)
                 .put(SENATE_SITE_CALENDAR, senSiteCalReportService)
                 .put(SENATE_SITE_AGENDA,senSiteAgendaReportService)
+                .put(OPENLEG_DEV,openlegBillReportService)
                 .build();
         weeklyReports = ImmutableSet.<SpotCheckReportService>builder()
                 .add(weeklyAgendaReportService)
