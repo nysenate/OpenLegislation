@@ -46,12 +46,9 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements SobiPr
             final String billhse = xmlHelper.getString("@billhse", senMemoNode);
             final int billno = xmlHelper.getInteger("@billno", senMemoNode);
             final String billamd = xmlHelper.getString("@billamd",senMemoNode);
-            final String action = xmlHelper.getString("@action",senMemoNode);
             final Version version = Version.of(billamd);
 
             Bill basebill = getOrCreateBaseBill(date, new BillId(billhse + billno, new SessionYear(year), version), fragment);
-
-            //final String fullText = xmlHelper.getNode("@senate_billmemo", doc).getTextContent();
 
             BillAmendment amendment = basebill.getAmendment(version);
             amendment.setMemo(getNodeText(senMemoNode));
@@ -73,6 +70,12 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements SobiPr
         initBase();
     }
 
+    /*
+    *    Gets text context from a CDATA node
+    *
+    *   @param node - CDATA node
+    *   @return temp.getTextContent() - context of CDATA node
+    */
     private String getNodeText(Node node) {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -83,5 +86,4 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements SobiPr
         }
         return "";
     }
-
 }
