@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import gov.nysenate.openleg.model.base.BaseSourceData;
-import gov.nysenate.openleg.model.sourcefiles.SourceFile;
 
 /**
  * The SobiFragment class represents a portion of a SobiFile file that contains data pertaining

@@ -26,6 +26,8 @@ public enum SobiFragmentType {
     LDSPON(true, "<sponsor_data .+", "</sponsor_data.+"),               // Sponsor
     LDSUMM(true, "<digestsummary .+", "</digestsummary.+"),             // Summary
     SAMEAS(true, "<sameas .+", "</sameas.+"),                           // Same as
+    SENAGENV(true, "<senagendavote .+", "</senagendavote.+"),             // Agenda Vote
+    SENCAL(true, "", ""),
     SENMEMO(true, "<senate_billmemo .+", "</senate_billmemo.+"),         // Memo
     VETOMSG(true, "<veto_message .+", "</veto_message.+");               // Veto memo
     
