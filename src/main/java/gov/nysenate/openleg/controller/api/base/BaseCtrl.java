@@ -9,6 +9,7 @@ import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.error.InvalidParameterView;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -28,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -69,9 +69,20 @@ public abstract class BaseCtrl
     protected SortOrder getSortOrder(WebRequest webRequest, SortOrder defaultSortOrder) {
         String sortOrderParam = Optional.ofNullable(webRequest.getParameter("order"))
                 .orElse(webRequest.getParameter("sortOrder"));
-        if (sortOrderParam != null) {
+        return getSortOrder(sortOrderParam, defaultSortOrder);
+    }
+
+    /**
+     * Returns a sort order extracted from a given string.
+     * Returns the default sort order if sortOrder is null.
+     *
+     * @param sortOrder A string representing the sort order
+     * @param defaultSortOrder Default sort order
+     */
+    protected SortOrder getSortOrder(String sortOrder, SortOrder defaultSortOrder) {
+        if (sortOrder != null) {
             try {
-                return SortOrder.valueOf(sortOrderParam.toUpperCase());
+                return SortOrder.valueOf(sortOrder.toUpperCase());
             } catch (IllegalArgumentException ignored) {}
         }
         return defaultSortOrder;

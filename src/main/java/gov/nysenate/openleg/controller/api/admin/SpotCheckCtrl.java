@@ -11,7 +11,9 @@ import gov.nysenate.openleg.client.view.spotcheck.MismatchSummaryView;
 import gov.nysenate.openleg.client.view.spotcheck.MismatchView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.PaginatedList;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
@@ -76,6 +78,8 @@ public class SpotCheckCtrl extends BaseCtrl
                                       @RequestParam(required = false) String[] ignoredStatuses,
                                       @RequestParam(required = false) String fromDate,
                                       @RequestParam(required = false) String toDate,
+                                      @RequestParam(required = false) String orderBy,
+                                      @RequestParam(required = false) String sort,
                                       WebRequest request) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
         SpotCheckContentType ct = getEnumParameter("contentType", contentType, SpotCheckContentType.class);
@@ -85,16 +89,17 @@ public class SpotCheckCtrl extends BaseCtrl
         Set<SpotCheckMismatchIgnore> igs = ignoredStatuses == null
                 ? EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED)
                 : Lists.newArrayList(ignoredStatuses).stream().map(i -> getEnumParameter("ignoredStatuses", i, SpotCheckMismatchIgnore.class)).collect(Collectors.toSet());
-
         LocalDateTime toDateTime = toDate == null ? LocalDateTime.now() : parseISODateTime(toDate, "toDate");
         LocalDateTime fromDateTime = fromDate == null ? startOfSessionYear(toDateTime) : parseISODateTime(fromDate, "fromDate");
+        OrderBy order = getOrderBy(orderBy, sort);
         LimitOffset limitOffset = getLimitOffset(request, 10);
 
         MismatchQuery query = new MismatchQuery(ds, Collections.singleton(ct))
                 .withMismatchStatuses(ms)
                 .withIgnoredStatuses(igs)
                 .withFromDate(fromDateTime)
-                .withToDate(toDateTime);
+                .withToDate(toDateTime)
+                .withOrderBy(order);
 
         // Get any ref type for this datasource and contentType.
         SpotCheckRefType refType = SpotCheckRefType.get(ds, ct).get(0);
@@ -104,6 +109,15 @@ public class SpotCheckCtrl extends BaseCtrl
             mismatchViews.add(new MismatchView(mm));
         }
         return ListViewResponse.of(mismatchViews, mismatches.getTotal(), mismatches.getLimOff());
+    }
+
+    private OrderBy getOrderBy(String orderBy, String sort) {
+        if (orderBy != null) {
+            SortOrder sortOrder = getSortOrder(sort, SortOrder.DESC);
+            return new OrderBy(orderBy, sortOrder);
+        }
+        // Default
+        return new OrderBy("reference_active_date_time", SortOrder.DESC);
     }
 
     private LocalDateTime startOfSessionYear(LocalDateTime toDateTime) {
