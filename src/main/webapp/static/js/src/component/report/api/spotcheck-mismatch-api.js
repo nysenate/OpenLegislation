@@ -2,17 +2,19 @@ angular.module('open.spotcheck').factory('SpotcheckMismatchApi', ['$resource', s
 
 function spotcheckMismatchApi($resource) {
 
-    const DATE_FORMAT = 'YYYY-MM-DD h:mm:ss a';
+    const DATE_FORMAT = 'MM-DD-YY h:mm a';
     var mismatchApi = $resource(adminApiPath + "/spotcheck/mismatches");
 
-    function getMismatches(datasource, contentType, mismatchStatuses,fromDate, toDate, limit, offset) {
+    function getMismatches(datasource, contentType, mismatchStatuses,fromDate, toDate, limit, offset, orderBy, sort) {
         var params = {
             datasource: datasource,
             contentType: contentType,
             mismatchStatuses: mismatchStatuses,
             limit: limit,
             offset: offset,
-            toDate: toDate
+            toDate: toDate,
+            orderBy:orderBy,
+            sort:sort
         };
         // for resolve
         if(mismatchStatuses.indexOf("RESOLVED") != -1)
@@ -20,7 +22,8 @@ function spotcheckMismatchApi($resource) {
         return mismatchApi.get(params).$promise
             .then(parseMismatches);
     }
-    // TODO: Sort mismatches?
+
+
     function parseMismatches(response) {
         var result = {
             pagination: {
@@ -43,6 +46,7 @@ function spotcheckMismatchApi($resource) {
             status: parseStatus(mismatch),
             mismatchType: parseMismatchType(mismatch),
             observedDate: parseObservedDate(mismatch),
+            referenceDate: parseReferenceDate(mismatch),
             reportDate:parseReportDate(mismatch),
             issue: parseIssues(mismatch),
             refType: parseRefType(mismatch),
@@ -85,6 +89,9 @@ function spotcheckMismatchApi($resource) {
         return mismatchMap[mismatch.mismatchType];
     }
 
+    function parseReferenceDate(mismatch) {
+        return moment(mismatch.referenceDateTime).format(DATE_FORMAT);
+    }
     function parseObservedDate(mismatch) {
         return moment(mismatch.observedDateTime).format(DATE_FORMAT);
     }

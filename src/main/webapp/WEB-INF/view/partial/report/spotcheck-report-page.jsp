@@ -11,7 +11,6 @@
         <select ng-model="datasource.selected" ng-change="onDatasourceChange()"
                 ng-options="datasource as datasource.label for datasource in datasource.values"></select>
       </div>
-
       <div>
         <select ng-model="status" ng-change="onStatusChange()">
           <option value="OPEN">Open Issues ({{summaryResponse.summary.OPEN || 0}})</option>
@@ -29,12 +28,12 @@
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px; ">
-              <div flex="5" class="bold">Status</div>
-              <div flex="10" class="bold">Bill</div>
-              <div flex="15" class="bold">Error</div>
-              <div flex="20" class="bold">Date</div>
-              <div flex="10" class="bold">Issue</div>
-              <div flex="15" class="bold">Source</div>
+              <div ng-click="updateOrder('Status',$event)" flex="5" class="bold">Status</div>
+              <div ng-click="updateOrder('key[array_length(key,1) - 2]',$event)" flex="15" class="bold">Bill</div>
+              <div ng-click="updateOrder('type',$event)" flex="15" class="bold">Error</div>
+              <div ng-click="updateOrder('observed_date_time',$event)"  flex="15" class="bold">Date</div>
+              <div ng-click="updateOrder('array_length(issue_ids,1)',$event)" flex="10" class="bold">Issue</div>
+              <div ng-click="updateOrder('type',$event)" flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
             <md-progress-linear class="md-accent md-hue-1" md-mode="query"
@@ -51,11 +50,11 @@
                  ng-show="loading === false">
               <div layout="row" layout-align="space-between center" flex="75">
                 <div flex="5">{{mismatch.status}}</div>
-                <div flex="10">{{mismatch.bill}}</div>
+                <div flex="15">{{mismatch.bill}}</div>
                 <div flex="15">{{mismatch.mismatchType}}</div>
-                <div flex="20">{{mismatch.observedDate}}</div>
+                <div flex="15">{{mismatch.observedDate}}</div>
                 <div flex="10"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>
-                <div flex="15">{{mismatch.refType}}</div>
+                <div flex="15" style="word-wrap: break-word">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">
@@ -63,7 +62,7 @@
                   <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around" >
                   <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
                 </div></md-button>
-                <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
+                <md-button class="md-accent md-raised rounded-corner-button"  style="background-color: #3E4F62" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="bill-mismatches" boundary-links="true"
@@ -77,13 +76,13 @@
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
-              <div flex="5" class="bold">Status</div>
-              <div flex="5" class="bold">Number</div>
-              <div flex="10" class="bold">Type</div>
-              <div flex="15" class="bold">Error</div>
-              <div flex="15" class="bold">Date</div>
-              <div flex="10" class="bold">Issue</div>
-              <div flex="15" class="bold">Source</div>
+              <div ng-click="updateOrder('Status',$event)" flex="5" class="bold">Status</div>
+              <div ng-click="updateOrder('key[array_length(key,1)]',$event)" flex="5" class="bold">Number</div>
+              <div ng-click="updateOrder('type',$event)" flex="15" class="bold">Error</div>
+              <div ng-click="updateOrder('type',$event)" flex="10" class="bold">Type</div>
+              <div ng-click="updateOrder('observed_date_time',$event)" flex="15" class="bold">Date</div>
+              <div ng-click="updateOrder('array_length(issue_ids,1)',$event)" flex="10" class="bold">Issue</div>
+              <div ng-click="updateOrder('type',$event)"  flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
             <md-progress-linear class="md-accent md-hue-1" md-mode="query"
@@ -100,11 +99,11 @@
               <div layout="row" layout-align="space-between center" flex="75">
                 <div flex="5">{{mismatch.status}}</div>
                 <div flex="5">{{mismatch.calNo}}</div>
-                <div flex="10">{{mismatch.calType}}</div>
                 <div flex="15">{{mismatch.mismatchType}}</div>
+                <div flex="10">{{mismatch.calType}}</div>
                 <div flex="15">{{mismatch.observedDate}}</div>
                 <div flex="10"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>
-                <div flex="15">{{mismatch.refType}}</div>
+                <div flex="15" style="word-wrap: break-word">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">
@@ -112,7 +111,7 @@
                   <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around" >
                     <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
                   </div></md-button>
-                <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
+                <md-button class="md-accent md-raised rounded-corner-button"   style="background-color: #3E4F62" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="calendar-mismatches" boundary-links="true"
@@ -126,13 +125,14 @@
           <md-content class="md-padding">
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
-              <div flex="5" class="bold">Status</div>
-              <div flex="5" class="bold">Number</div>
-              <div flex="15" class="bold">Committee</div>
-              <div flex="10" class="bold">Error</div>
-              <div flex="15" class="bold">Date</div>
-              <div flex="10" class="bold">Issue</div>
-              <div flex="15" class="bold">Source</div>
+              <div ng-click="updateOrder('Status',$event)" flex="5" class="bold">Status</div>
+              <div ng-click="updateOrder('observed_date_time',$event)" flex="15" class="bold">Date</div>
+              <div ng-click="updateOrder('type',$event)" flex="10" class="bold">Error</div>
+              <div ng-click="updateOrder('key[array_length(key,1)-2]',$event)" flex="5" class="bold">Number</div>
+              <div ng-click="updateOrder('key[array_length(key,1)]',$event) "flex="15" class="bold">Committee</div>
+              <div ng-click="updateOrder('report_date_time',$event)" flex="15" class="bold">Date/Time</div>
+              <div ng-click="updateOrder('array_length(issue_ids,1)',$event)" flex="10" class="bold">Issue</div>
+              <div ng-click="updateOrder('type',$event)" flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
             <md-progress-linear class="md-accent md-hue-1" md-mode="query"
@@ -149,12 +149,13 @@
                  ng-show="loading === false">
               <div layout="row" layout-align="space-between center" flex="75">
                 <div flex="5">{{mismatch.status}}</div>
+                <div flex="15">{{mismatch.observedDate}}</div>
+                <div flex="10">{{mismatch.mismatchType}}</div>
                 <div flex="5">{{mismatch.agendaNo}}</div>
                 <div flex="15">{{mismatch.committee}}</div>
-                <div flex="10">{{mismatch.mismatchType}}</div>
-                <div flex="15">{{mismatch.observedDate}}</div>
+                <div flex="15">{{mismatch.referenceDate}}</div>
                 <div flex="10"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>
-                <div flex="15">{{mismatch.refType}}</div>
+                <div flex="15" style="word-wrap: break-word">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">
@@ -162,7 +163,7 @@
                   <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around" >
                     <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
                   </div></md-button>
-                <md-button class="md-accent md-raised rounded-corner-button" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
+                <md-button class="md-accent md-raised rounded-corner-button"   style="background-color: #3E4F62" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
             <dir-pagination-controls class="text-align-center" pagination-id="agenda-mismatches" boundary-links="true"

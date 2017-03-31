@@ -7,9 +7,9 @@ function detailDialogCtrl($scope, $mdDialog, mismatchRow,source,contentType) {
     $scope.newDetails = function (newMismatchRow,source,contentType) {
         $scope.contentType = contentType;
         if(source == "LBDC")
-            $scope.com = ["LBDC","OpenLegislation"];
+            $scope.com = ["LBDC","Open Legislation"];
         else
-            $scope.com = ["OpenLegislation","NYSenate.gov"];
+            $scope.com = ["Open Legislation","NYSenate.gov"];
         $scope.date = moment().format('l');
         console.log('loading detail dialog for', newMismatchRow);
         $scope.observation = newMismatchRow.observedData;

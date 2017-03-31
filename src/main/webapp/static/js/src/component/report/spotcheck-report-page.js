@@ -30,6 +30,8 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
     $scope.loading = false; // TODO remove this using promises?
     $scope.pagination = angular.extend({}, paginationModel);
     $scope.diffLoading = false;
+    $scope.orderby = 'reference_active_date_time';
+    $scope.sort = 'DESC';
 
     $scope.mismatchResponse = {
         mismatches: [],
@@ -71,13 +73,40 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
             });
     };
 
+    $scope.updateOrder = function (column,$event) {
+        if ($scope.orderby == column){
+            if($scope.sort == 'DESC')
+                $scope.sort = 'ASC';
+            else
+                $scope.sort = 'DESC';
+        }
+        else{
+            $scope.orderby = column;
+            $scope.sort = 'DESC';
+        }
+        $scope.updateMismatches();
+        updateOrderIcon($event);
+    }
+    function updateOrderIcon(event) {
+        $("i.icon-arrow-long-down").remove() // remove all down arrows
+        $("i.icon-arrow-long-up").remove()// remove all up arrows
+        var ASC = document.createElement('i');
+        ASC.className = 'icon-arrow-long-up';
+        var DESC = document.createElement('i');
+        DESC.className = 'icon-arrow-long-down';
+        if($scope.sort == "ASC")
+            event.toElement.appendChild(ASC);
+        else
+            event.toElement.appendChild(DESC);
+    }
+
     $scope.updateMismatches = function () {
         $scope.loading = true;
         $scope.mismatchResponse.error = false;
         $scope.mismatchResponse.mismatches = [];
         spotcheckMismatchApi.getMismatches($scope.datasource.selected.value, selectedContentType(),
             toMismatchStatus($scope.status), $scope.date.startOf('day').format(isoFormat), $scope.date.endOf('day').format(isoFormat),
-            $scope.pagination.getLimit(), $scope.pagination.getOffset())
+            $scope.pagination.getLimit(), $scope.pagination.getOffset(),$scope.orderby, $scope.sort)
             .then(function (result) {
                 $scope.pagination.setTotalItems(result.pagination.total);
                 $scope.mismatchResponse.mismatches = result.mismatches;

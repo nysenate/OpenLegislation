@@ -1430,7 +1430,7 @@ $diff-ins-color: #59a007;
   overflow: auto;
 }
 
-$mismatch-ref-source-color: #465158;
+$mismatch-ref-source-color: #3E4F62;
 .mismatch-ref-source-color {
   background-color: $mismatch-ref-source-color;
 }
@@ -1690,7 +1690,7 @@ table.api-request-table {
 Spotcheck report page detail
  */
 .rounded-corner-button {
-  border-radius: 75px;
+  border-radius: 10px;
 }
 
 #spotcheck-report-page-number select option {

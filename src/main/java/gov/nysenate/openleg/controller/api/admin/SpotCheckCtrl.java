@@ -180,14 +180,14 @@ public class SpotCheckCtrl extends BaseCtrl
     /**
      * Spotcheck Mismatch update Issue Id API
      * @param mismatchId  mismatch id
-     * @param issueIds mismatch issues id separate by comma ,e.g 12,3,61
+     * @param issueId mismatch issues id separate by comma ,e.g 12,3,61
      * @return true
      *
      * Usage: (POST) /api/3/admin/spotcheck/mismatches/{mismatchId}/issue/{issueId}
      */
     @RequestMapping(value = "/mismatches/{mismatchId:\\d+}/issue/{issueId}", method = RequestMethod.POST)
-    public BaseResponse updateMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueIds) {
-        getAnyReportService().updateIssueId(mismatchId, issueIds);
+    public BaseResponse updateMismatchIssueId(@PathVariable int mismatchId, @PathVariable String issueId) {
+        getAnyReportService().updateIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id updated", "issue-id-updated");
     }
 
