@@ -126,7 +126,7 @@
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
               <div ng-click="updateOrder('Status',$event)" flex="5" class="bold">Status</div>
-              <div ng-click="updateOrder('observed_date_time',$event)" flex="15" class="bold">Date</div>
+              <div ng-click="updateOrder('observed_date_time',$event)" flex="15" class="bold">Report Date</div>
               <div ng-click="updateOrder('type',$event)" flex="10" class="bold">Error</div>
               <div ng-click="updateOrder('key[array_length(key,1)-2]',$event)" flex="5" class="bold">Number</div>
               <div ng-click="updateOrder('key[array_length(key,1)]',$event) "flex="15" class="bold">Committee</div>

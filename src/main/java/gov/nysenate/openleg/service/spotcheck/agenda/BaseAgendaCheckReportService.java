@@ -127,9 +127,10 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
                 if (LocalDateTime.now().minus(environment.getSpotcheckAlertGracePeriod())
                         .isAfter(reference.getReferenceId().getRefActiveDateTime())) {
                     // Add a missing data observation if the committee meeting info was not found
+                    // if the agenda number  is missing, we set the agenda number to -1
                     AgendaId obsAgId = agenda != null ? agenda.getId()
                             : ex.getAgendaId() != null ? ex.getAgendaId()
-                            : new AgendaId(reference.getMeetingDateTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(), 0);
+                            : new AgendaId(-1, 0);
                     SpotCheckObservation<CommitteeAgendaAddendumId> obs = new SpotCheckObservation<>(reference.getReferenceId(),
                             reference.getAgendaAlertInfoCommId().getCommiteeAgendaAddendumId(obsAgId));
                     obs.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
