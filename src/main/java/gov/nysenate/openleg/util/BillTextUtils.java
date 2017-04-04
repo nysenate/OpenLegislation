@@ -2,6 +2,10 @@ package gov.nysenate.openleg.util;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,9 +131,26 @@ public class BillTextUtils
     /**
      * Checks if the given line matches the new page pattern.
      */
-    private static boolean isFirstLineOfNextPage(String line, int lineNum) {
+    public static boolean isFirstLineOfNextPage(String line, int lineNum) {
         Matcher billTextPageMatcher = billTextPageStartPattern.matcher(line);
         // Ignore erroneous result in first 10 lines.
         return lineNum > 10 && billTextPageMatcher.find();
+    }
+
+
+    /**
+     *  Cleans the HTML from the billText
+     */
+    public static String parseHTMLtext(String htmlText)    {
+        Document doc = Jsoup.parse(htmlText);
+
+        Elements preTag = doc.body().select("pre");
+
+
+        String preTagStr = preTag.toString();
+
+        return "";
+
+
     }
 }
