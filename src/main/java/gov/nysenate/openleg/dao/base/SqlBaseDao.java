@@ -154,6 +154,26 @@ public abstract class SqlBaseDao
     }
 
     /**
+     * Converts a hstore string into a mapping of the hstore key value pairs.
+     * @param hstoreString a String in the format of "print_no"=>"S100", "session_year"=>"2015".
+     *                     This string can be retrieved by calling resultSet.getString("hstore")
+     *                     on the ResultSet from "SELECT 'print_no=>S100,session_year=>2015'::hstore as hstore"
+     * @return A map containing all hstore key value pairs.
+     */
+    public static Map<String, String> hstoreStringToMap(String hstoreString) {
+        Map<String, String> hstoreMap = new HashMap<>();
+        hstoreString = StringUtils.replace(hstoreString, "\"", "");
+        hstoreString = StringUtils.trimAllWhitespace(hstoreString);
+        String[] hstoreEntry = StringUtils.split(hstoreString, ",");
+        for (String entry : hstoreEntry) {
+            String key = StringUtils.split(entry, "=>")[0];
+            String value = StringUtils.split(entry, "=>")[1];
+            hstoreMap.put(key, value);
+        }
+        return hstoreMap;
+    }
+
+    /**
      * Converts the given map into the hstore string format (i.e. 'key1=>val1, key2=>val2, etc')
      */
     public static String toHstoreString(Map<String, String> hstoreMap) {

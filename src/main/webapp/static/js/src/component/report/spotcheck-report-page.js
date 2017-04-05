@@ -30,7 +30,7 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
     $scope.loading = false; // TODO remove this using promises?
     $scope.pagination = angular.extend({}, paginationModel);
     $scope.diffLoading = false;
-    $scope.orderby = 'reference_active_date_time';
+    $scope.orderby = 'OBSERVED_DATE';
     $scope.sort = 'DESC';
 
     $scope.mismatchResponse = {

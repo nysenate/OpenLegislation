@@ -15,7 +15,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ),
 
     GET_MISMATCH(
-        "SELECT m.mismatch_id, m.report_id, hstore_to_array(m.key) as key, m.type, m.status, \n" +
+        "SELECT m.mismatch_id, m.report_id, m.key as key, m.type, m.status, \n" +
         "m.datasource, m.content_type, m.reference_type, m.reference_active_date_time, m.reference_data, m.observed_data, m.notes, \n" +
         "m.observed_date_time, m.report_date_time, m.ignore_status, m.issue_ids \n" +
         "  FROM ${schema}.spotcheck_mismatch m \n" +
@@ -24,7 +24,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
 
     GET_MISMATCHES(
         "SELECT *, count(*) OVER() as total_rows FROM \n" +
-        "  (SELECT DISTINCT ON (m.key, m.type) m.mismatch_id, m.report_id, hstore_to_array(m.key) as key, m.type, m.status, \n" +
+        "  (SELECT DISTINCT ON (m.key, m.type) m.mismatch_id, m.report_id, m.key as key, m.type, m.status, \n" +
         "  m.datasource, m.content_type, m.reference_type, m.reference_active_date_time, m.reference_data, m.observed_data, m.notes, \n" +
         "  m.observed_date_time, m.report_date_time, m.ignore_status, m.issue_ids \n" +
         "    FROM ${schema}.spotcheck_mismatch m \n" +
