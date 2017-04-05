@@ -21,6 +21,8 @@ import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gov.nysenate.openleg.util.BillTextUtils.processTextNode;
+
 /**
  * Created by kyle on 3/10/15.
  */
@@ -151,25 +153,6 @@ public class ScrapedBillTextParser {
             return memoBuilder.toString();
         }
         return "";
-    }
-
-    /**
-     * Extracts bill/memo text from an element recursively
-     */
-    private void processTextNode(Element ele, StringBuilder stringBuilder) {
-        for (Node t : ele.childNodes()) {
-            if (t instanceof Element) {
-                Element e = (Element) t;
-                // TEXT IN <U> TAGS IS REPRESENTED IN CAPS FOR SOBI BILL TEXT
-                if ("u".equals(e.tag().getName())) {
-                    stringBuilder.append(e.text().toUpperCase());
-                } else {
-                    processTextNode(e, stringBuilder);
-                }
-            } else if (t instanceof TextNode) {
-                stringBuilder.append(((TextNode) t).getWholeText());
-            }
-        }
     }
 
     /**

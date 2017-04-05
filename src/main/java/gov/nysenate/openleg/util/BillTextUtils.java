@@ -5,6 +5,8 @@ import com.google.common.base.Strings;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
@@ -142,15 +144,46 @@ public class BillTextUtils
      *  Cleans the HTML from the billText
      */
     public static String parseHTMLtext(String htmlText)    {
+
         Document doc = Jsoup.parse(htmlText);
+        Elements preTag = doc.select("pre");
 
-        Elements preTag = doc.body().select("pre");
+        StringBuilder textBuilder = new StringBuilder();
 
+        for (Element element : preTag) {
+            processTextNode(element, textBuilder);
+        }
 
-        String preTagStr = preTag.toString();
+        String text = textBuilder.toString();
 
-        return "";
+        text = text.replaceFirst("(?<=\\n)[ ]{16}STATE OF NEW YORK(?=\\n)",
+                "                           S T A T E   O F   N E W   Y O R K");
+        text = text.replaceFirst("(?<=\\n)[ ]{20}IN SENATE(?=\\n)",
+                "                                   I N  S E N A T E");
+        text = text.replaceFirst("(?<=\\n)[ ]{19}IN ASSEMBLY(?=\\n)",
+                "                                 I N  A S S E M B L Y");
+        text = text.replaceFirst("(?<=\\n)[ ]{16}SENATE - ASSEMBLY(?=\\n)",
+                "                             S E N A T E - A S S E M B L Y");
 
+        return text;
+    }
 
+    /**
+     * Extracts bill/memo text from an element recursively
+     */
+    public static void processTextNode(Element element, StringBuilder stringBuilder) {
+        for (Node t : element.childNodes()) {
+            if (t instanceof Element) {
+                Element e = (Element) t;
+                // TEXT IN <U> TAGS IS REPRESENTED IN CAPS FOR SOBI AND XML BILL TEXT
+                if ("u".equals(e.tag().getName())) {
+                    stringBuilder.append(e.text().toUpperCase());
+                } else {
+                    processTextNode(e, stringBuilder);
+                }
+            } else if (t instanceof TextNode) {
+                stringBuilder.append(((TextNode) t).getWholeText());
+            }
+        }
     }
 }
