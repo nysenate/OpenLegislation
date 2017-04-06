@@ -2,7 +2,7 @@ angular.module('open.spotcheck').factory('SpotcheckMismatchApi', ['$resource', s
 
 function spotcheckMismatchApi($resource) {
 
-    const DATE_FORMAT = 'MM-DD-YY h:mm a';
+    const DATE_FORMAT = 'M-D-YY h:mm a';
     var mismatchApi = $resource(adminApiPath + "/spotcheck/mismatches");
 
     function getMismatches(datasource, contentType, mismatchStatuses,fromDate, toDate, limit, offset, orderBy, sort) {
