@@ -102,7 +102,7 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseRefType(mismatch) {
-        return mismatch.referenceType;
+        return referenceTypeDisplayMap[mismatch.referenceType];
     }
 
     function parseBill(mismatch) {
