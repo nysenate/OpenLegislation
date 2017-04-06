@@ -15,6 +15,7 @@ public enum MismatchOrderBy {
     STATUS("status"),
     MISMATCH_TYPE("type"),
     DATASOURCE("datasource"),
+    REFERENCE_TYPE("reference_type"),
     REFERENCE_DATE("reference_active_date_time"),
     OBSERVED_DATE("observed_date_time"),
     ISSUE("issue_ids"),
