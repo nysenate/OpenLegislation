@@ -14,6 +14,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
@@ -55,20 +56,25 @@ public class SpotCheckCtrl extends BaseCtrl
     /**
      * Spotcheck Mismatch API
      *
-     * Queries for spotcheck mismatches matching the supplied parameters.
+     * <p>Queries for spotcheck mismatches matching the supplied parameters.
      *
-     * Usage: (GET) /api/3/admin/spotcheck/mismatches
+     * <p>Usage: (GET) /api/3/admin/spotcheck/mismatches
      *
-     * Request Parameters: datasource - string - retrieves mismatches for the specified datasource.
-     *                     contentType - string - retrieves mismatches for the specified content type.
-     *                     mismatchStatuses - string[] - optional, default [NEW, EXISTING, REGRESSION]
+     * <p>Request Parameters: <ul>
+     *                     <li>datasource - string - retrieves mismatches for the specified datasource.
+     *                     <li>contentType - string - retrieves mismatches for the specified content type.
+     *                     <li>mismatchStatuses - string[] - optional, default [NEW, EXISTING, REGRESSION]
      *                                      - retrieves mismatches with any of the given mismatch status.
-     *                     ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
-     *                     fromDate - string (ISO date) - optional, default start of the session encompassing toDate,
+     *                     <li>ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
+     *                     <li>fromDate - string (ISO date) - optional, default start of the session encompassing toDate,
      *                              - retrieves mismatches after this date.
-     *                     toDate - string (ISO date) - optional, default is now - retrieve mismatches as of this date.
-     *                     limit - int - limit the number of results.
-     *                     offset - int - start results from an offset.
+     *                     <li>toDate - string (ISO date) - optional, default is now - retrieve mismatches as of this date.
+     *                     <li>orderBy - string - optional, order results by the specified field, must be a valid {@link MismatchOrderBy} value.
+     *                              - Defaults to REFERENCE_DATE.
+     *                     <li>sort - string - optional, a SortOrder value representing the sort order. Defaults to DESC
+     *                     <li>limit - int - limit the number of results.
+     *                     <li>offset - int - start results from an offset.
+     *                     </ul>
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches", method = RequestMethod.GET)
@@ -111,17 +117,38 @@ public class SpotCheckCtrl extends BaseCtrl
         return ListViewResponse.of(mismatchViews, mismatches.getTotal(), mismatches.getLimOff());
     }
 
-    private OrderBy getOrderBy(String orderBy, String sort) {
-        if (orderBy != null) {
-            SortOrder sortOrder = getSortOrder(sort, SortOrder.DESC);
-            return new OrderBy(orderBy, sortOrder);
-        }
-        // Default
-        return new OrderBy("reference_active_date_time", SortOrder.DESC);
-    }
-
     private LocalDateTime startOfSessionYear(LocalDateTime toDateTime) {
         return SessionYear.of(toDateTime.getYear()).asDateTimeRange().lowerEndpoint();
+    }
+
+    /**
+     * Used to convert orderBy and sort request parameters into an OrderBy object.
+     * Defaults to ordering by REFERENCE_DATE descending if orderByString and sortString are null.
+     * When ordering by a field other than REFERENCE_DATE, a secondary order by on
+     * REFERENCE_DATE desc is added so the most recent results are always displayed first.
+     *
+     * @param orderByString String representing a MismatchOrderBy value.
+     * @param sortString String representing a SortOrder value.
+     * @return An OrderBy representing the supplied orderByString and sortString, potentially
+     * with a secondary order by of REFERENCE_DATE desc.
+     * @throws gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx if orderByString or sortString
+     * are not valid values.
+     */
+    private OrderBy getOrderBy(String orderByString, String sortString) {
+        MismatchOrderBy orderBy = orderByString == null
+                ? MismatchOrderBy.REFERENCE_DATE
+                : getEnumParameter("orderBy", orderByString, MismatchOrderBy.class);
+
+        SortOrder sortOrder = sortString == null
+                ? SortOrder.DESC
+                : getEnumParameter("sort", sortString, SortOrder.class);
+
+        if (orderBy != MismatchOrderBy.REFERENCE_DATE) {
+            // Add secondary order by reference date
+            return new OrderBy(orderBy.getColumnName(), sortOrder,
+                    MismatchOrderBy.REFERENCE_DATE.getColumnName(), SortOrder.DESC);
+        }
+        return new OrderBy(orderBy.getColumnName(), sortOrder);
     }
 
     /**

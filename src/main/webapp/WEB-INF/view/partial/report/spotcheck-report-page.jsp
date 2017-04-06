@@ -28,12 +28,12 @@
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px; ">
-              <div ng-click="updateOrder('Status',$event)" flex="5" class="bold">Status</div>
-              <div ng-click="updateOrder('key[array_length(key,1) - 2]',$event)" flex="15" class="bold">Bill</div>
-              <div ng-click="updateOrder('type',$event)" flex="15" class="bold">Error</div>
-              <div ng-click="updateOrder('observed_date_time',$event)"  flex="15" class="bold">Date</div>
-              <div ng-click="updateOrder('array_length(issue_ids,1)',$event)" flex="10" class="bold">Issue</div>
-              <div ng-click="updateOrder('type',$event)" flex="15" class="bold">Source</div>
+              <div ng-click="updateOrder('STATUS',$event)" flex="5" class="bold">Status</div>
+              <div ng-click="updateOrder('PRINT_NO',$event)" flex="15" class="bold">Bill</div>
+              <div ng-click="updateOrder('MISMATCH_TYPE',$event)" flex="15" class="bold">Error</div>
+              <div ng-click="updateOrder('OBSERVED_DATE',$event)"  flex="15" class="bold">Date</div>
+              <div ng-click="updateOrder('ISSUE',$event)" flex="10" class="bold">Issue</div>
+              <div ng-click="updateOrder('DATASOURCE',$event)" flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
             <md-progress-linear class="md-accent md-hue-1" md-mode="query"
@@ -76,13 +76,13 @@
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
-              <div ng-click="updateOrder('Status',$event)" flex="5" class="bold">Status</div>
-              <div ng-click="updateOrder('key[array_length(key,1)]',$event)" flex="5" class="bold">Number</div>
-              <div ng-click="updateOrder('type',$event)" flex="15" class="bold">Error</div>
-              <div ng-click="updateOrder('type',$event)" flex="10" class="bold">Type</div>
-              <div ng-click="updateOrder('observed_date_time',$event)" flex="15" class="bold">Date</div>
-              <div ng-click="updateOrder('array_length(issue_ids,1)',$event)" flex="10" class="bold">Issue</div>
-              <div ng-click="updateOrder('type',$event)"  flex="15" class="bold">Source</div>
+              <div ng-click="updateOrder('STATUS',$event)" flex="5" class="bold">Status</div>
+              <div ng-click="updateOrder('CAL_NO',$event)" flex="5" class="bold">Number</div>
+              <div ng-click="updateOrder('MISMATCH_TYPE',$event)" flex="15" class="bold">Error</div>
+              <div ng-click="updateOrder('CAL_TYPE',$event)" flex="10" class="bold">Type</div>
+              <div ng-click="updateOrder('OBSERVED_DATE',$event)" flex="15" class="bold">Date</div>
+              <div ng-click="updateOrder('ISSUE',$event)" flex="10" class="bold">Issue</div>
+              <div ng-click="updateOrder('DATASOURCE',$event)"  flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
             <md-progress-linear class="md-accent md-hue-1" md-mode="query"
@@ -125,14 +125,14 @@
           <md-content class="md-padding">
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
-              <div ng-click="updateOrder('Status',$event)" flex="5" class="bold">Status</div>
-              <div ng-click="updateOrder('observed_date_time',$event)" flex="15" class="bold">Report Date</div>
-              <div ng-click="updateOrder('type',$event)" flex="10" class="bold">Error</div>
-              <div ng-click="updateOrder('key[array_length(key,1)-2]',$event)" flex="5" class="bold">Number</div>
-              <div ng-click="updateOrder('key[array_length(key,1)]',$event) "flex="15" class="bold">Committee</div>
-              <div ng-click="updateOrder('report_date_time',$event)" flex="15" class="bold">Date/Time</div>
-              <div ng-click="updateOrder('array_length(issue_ids,1)',$event)" flex="10" class="bold">Issue</div>
-              <div ng-click="updateOrder('type',$event)" flex="15" class="bold">Source</div>
+              <div ng-click="updateOrder('STATUS',$event)" flex="5" class="bold">Status</div>
+              <div ng-click="updateOrder('REFERENCE_DATE',$event)" flex="15" class="bold">Report Date</div>
+              <div ng-click="updateOrder('MISMATCH_TYPE',$event)" flex="10" class="bold">Error</div>
+              <div ng-click="updateOrder('AGENDA_NO',$event)" flex="5" class="bold">Number</div>
+              <div ng-click="updateOrder('AGENDA_COMMITTEE',$event) "flex="15" class="bold">Committee</div>
+              <div ng-click="updateOrder('OBSERVE_DATE',$event)" flex="15" class="bold">Date/Time</div>
+              <div ng-click="updateOrder('ISSUE',$event)" flex="10" class="bold">Issue</div>
+              <div ng-click="updateOrder('DATASOURCE',$event)" flex="15" class="bold">Source</div>
             </div>
             <md-divider></md-divider>
             <md-progress-linear class="md-accent md-hue-1" md-mode="query"

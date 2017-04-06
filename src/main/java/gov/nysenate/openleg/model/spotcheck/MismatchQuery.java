@@ -2,13 +2,17 @@ package gov.nysenate.openleg.model.spotcheck;
 
 import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
 import gov.nysenate.openleg.model.base.SessionYear;
 
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Set;
 
-/** Contains query parameters used to query for spotcheck mismatches */
+/**
+ * Contains query parameters used to query for spotcheck mismatches.
+ * Provides reasonable defaults for non required parameters.
+ */
 public class MismatchQuery {
 
     private SpotCheckDataSource dataSource;
@@ -27,7 +31,7 @@ public class MismatchQuery {
         this.ignoredStatuses = EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED);
         this.toDate = LocalDateTime.now();
         this.fromDate = SessionYear.of(this.toDate.getYear()).asDateTimeRange().lowerEndpoint();
-        this.orderBy = new OrderBy("reference_active_date_time", SortOrder.DESC);
+        this.orderBy = new OrderBy(MismatchOrderBy.REFERENCE_DATE.getColumnName(), SortOrder.DESC);
     }
 
     public MismatchQuery withMismatchStatuses(Set<SpotCheckMismatchStatus> mismatchStatuses) {

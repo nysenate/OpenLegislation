@@ -20,7 +20,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 
 @Transactional
-public class BaseBillIdSpotCheckReportDaoTests extends BaseTests {
+public class SpotcheckReportDaoTests extends BaseTests {
 
     @Autowired
     private BaseBillIdSpotCheckReportDao reportDao;
