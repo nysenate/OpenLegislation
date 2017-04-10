@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.spotcheck;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportSummary;
@@ -24,7 +25,7 @@ public class DaybreakSpotCheckReportServiceTests extends BaseTests
 
     @Test
     public void testGenerateReport() throws Exception {
-        SpotCheckReport<BaseBillId> report =
+        SpotCheckReport<BillId> report =
             daybreakReportService.generateReport(DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now());
         daybreakReportService.saveReport(report);
     }

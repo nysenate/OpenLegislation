@@ -5,10 +5,7 @@ import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAction;
-import gov.nysenate.openleg.model.bill.BillSponsor;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.spotcheck.*;
@@ -34,7 +31,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 
 @Service("daybreak")
-public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, DaybreakBill>
+public class DaybreakCheckService implements SpotCheckService<BillId, Bill, DaybreakBill>
 {
     private static final Logger logger = LoggerFactory.getLogger(DaybreakCheckService.class);
 
@@ -54,13 +51,13 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /** {@inheritDoc}
      *  Just use the latest daybreak files we have. */
     @Override
-    public SpotCheckObservation<BaseBillId> check(Bill bill) throws ReferenceDataNotFoundEx {
+    public SpotCheckObservation<BillId> check(Bill bill) throws ReferenceDataNotFoundEx {
         return check(bill, DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now());
     }
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckObservation<BaseBillId> check(Bill bill, LocalDateTime start, LocalDateTime end)
+    public SpotCheckObservation<BillId> check(Bill bill, LocalDateTime start, LocalDateTime end)
                                                   throws ReferenceDataNotFoundEx {
         if (bill == null) {
             throw new IllegalArgumentException("Supplied bill cannot be null");
@@ -77,13 +74,13 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckObservation<BaseBillId> check(Bill bill, DaybreakBill daybreakBill) {
+    public SpotCheckObservation<BillId> check(Bill bill, DaybreakBill daybreakBill) {
         if (daybreakBill == null) {
             throw new IllegalArgumentException("DaybreakBill cannot be null when performing spot check");
         }
-        BaseBillId baseBillId = bill.getBaseBillId();
+        BillId billId = daybreakBill.getActiveVersionBillId();
         SpotCheckReferenceId referenceId = daybreakBill.getReferenceId();
-        final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(referenceId, baseBillId);
+        final SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(referenceId, billId);
         // Perform the checks
         checkBillTitle(bill, daybreakBill, observation);
         checkBillLawAndSummary(bill, daybreakBill, observation);
@@ -96,7 +93,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         // Some friendly logging
         int mismatchCount = observation.getMismatches().size();
         if (mismatchCount > 0) {
-            logger.info("Bill {} | {} mismatch(es). | {}", baseBillId, mismatchCount, observation.getMismatchTypes(false));
+            logger.info("Bill {} | {} mismatch(es). | {}", billId, mismatchCount, observation.getMismatchTypes(false));
         }
         return observation;
     }
@@ -107,7 +104,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Check that the active version matches and also that only amendments before and including the active version
      * are published.
      */
-    protected void checkActiveVersions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    protected void checkActiveVersions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BillId> obsrv) {
         Version daybreakActiveVersion = daybreakBill.getActiveVersion();
         if (!daybreakActiveVersion.equals(bill.getActiveVersion())) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT, ((bill.getActiveVersion() != null) ? bill.getActiveVersion().name() : "NULL"), daybreakActiveVersion.name()
@@ -125,7 +122,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Checks the full text page counts for each amendment version. The page count for the daybreak comes from
      * the page file.
      */
-    protected void checkFullTextPageCounts(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    protected void checkFullTextPageCounts(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BillId> obsrv) {
         Map<Version, Integer> billPageCounts = new HashMap<>();
         Map<Version, Integer> daybreakPageCounts = new HashMap<>();
         daybreakBill.getAmendments().forEach((k, v) -> daybreakPageCounts.put(k, v.getPageCount()));
@@ -146,7 +143,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Compare the actions in the daybreak with the bill's actions.
      */
-    protected void checkBillActions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    protected void checkBillActions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BillId> obsrv) {
         if (daybreakBill.getActions() != null && !daybreakBill.getActions().equals(bill.getActions())) {
             // There are cases when the daybreak actions list stops upon substitution of the bill. Ignore those cases
             if (!daybreakBill.getActions().isEmpty()) {
@@ -165,7 +162,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Check the active bill amendment's multisponsor list. Order and case do not matter.
      */
-    protected void checkMultiSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    protected void checkMultiSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BillId> obsrv) {
         List<SessionMember> billMuSponsors = bill.hasActiveAmendment() ? bill.getActiveAmendment().getMultiSponsors()
                                                                 : new ArrayList<>();
         Set<String> daybreakMuSponsorSet =
@@ -185,7 +182,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Check the active bill amendment's cosponsor list. Order and case do not matter.
      */
-    protected void checkCoSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    protected void checkCoSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BillId> obsrv) {
         List<SessionMember> billCoSponsors = bill.hasActiveAmendment() ? bill.getActiveAmendment().getCoSponsors()
                                                                 : new ArrayList<>();
         Set<String> daybreakCoSponsorSet =
@@ -206,7 +203,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Check the BillSponsor by comparing the string representation. The toString method for BillSponsor should
      * produce the same formatting as the sponsor string found in the DaybreakBill.
      */
-    protected void checkBillSponsor(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    protected void checkBillSponsor(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BillId> obsrv) {
         String billSponsorStr = sponsorString(bill.getSponsor());
         if (!stringEquals(daybreakBill.getSponsor(), billSponsorStr, true, true)) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_SPONSOR, billSponsorStr, daybreakBill.getSponsor()));
@@ -217,7 +214,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * The daybreaks concatenate the law code and the summary. Since it's not trivial to parse this out, we simply
      * concatenate our own law and summary and just compare the strings.
      */
-    protected void checkBillLawAndSummary(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    protected void checkBillLawAndSummary(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BillId> obsrv) {
         String billLawSummary = (Strings.nullToEmpty(bill.getAmendment(bill.getActiveVersion()).getLaw()) + " " +
                                  Strings.nullToEmpty(bill.getSummary())).trim();
         billLawSummary = billLawSummary.replace('§', 'S').replace('¶', 'P');
@@ -230,7 +227,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Compare the bill title with the daybreak title.
      */
-    protected void checkBillTitle(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    protected void checkBillTitle(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BillId> obsrv) {
         if (!stringEquals(daybreakBill.getTitle(), bill.getTitle(), false, true)) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_TITLE, bill.getTitle(), daybreakBill.getTitle()));
         }
