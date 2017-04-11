@@ -1386,6 +1386,7 @@ md-dialog.detail-diff-dialog {
 
 .mismatch-diff-info-card {
   padding: 0 10px;
+  margin-left: 2.5%;
 }
 
 .mismatch-diff-info-card p {
@@ -1437,6 +1438,7 @@ $mismatch-ref-source-color: #3E4F62;
 
 .mismatch-diff-info-background-color-border {
   border: 1px solid $mismatch-menu-color;
+  margin-right: 2.5%;
 }
 
 diff-summary, mismatch-diff {

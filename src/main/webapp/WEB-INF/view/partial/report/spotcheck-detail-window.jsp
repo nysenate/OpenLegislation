@@ -7,10 +7,10 @@
     </div>
     <md-content>
       <md-content class="mismatch-diff-view-top-half">
-        <div layout="row" layout-align="space-between start">
+        <div layout="row" layout-align="space-between center">
 
 
-          <md-card ng-if="contentType == 'BILL' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+          <md-card  ng-if="contentType == 'BILL' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
             <p>Date Reported: {{date}}</p>
 
             <p> {{reportType | contentType}} Number:
@@ -29,7 +29,7 @@
             <p>Error Type: {{currentMismatch.mismatchType}}</p>
           </md-card>
 
-          <md-card ng-if="contentType == 'AGENDA' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
+          <md-card  ng-if="contentType == 'AGENDA' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
             <p>Date Reported: {{date}}</p>
             <p> Week:</p>
             <p>Agenda: {{currentMismatch.agendaNo}}</p>
