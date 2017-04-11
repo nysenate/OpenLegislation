@@ -134,6 +134,12 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
         }
     };
 
+    $scope.numberWithCommas = function(x) {
+        if(x == undefined || x == "" )
+            return null;
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
     // update mismatch's issues, issue splits by comma
     $scope.updateIssue = function (mismatch) {
         if (mismatch.issue == "") { // if issue is empty, then clear all related issues

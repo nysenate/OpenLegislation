@@ -13,9 +13,9 @@
       </div>
       <div>
         <select ng-model="status" ng-change="onStatusChange()">
-          <option value="OPEN">Open Issues ({{summaryResponse.summary.OPEN || 0}})</option>
-          <option value="NEW">New Issues ({{summaryResponse.summary.NEW || 0}})</option>
-          <option value="RESOLVED">Resolved Issues ({{summaryResponse.summary.RESOLVED || 0}})</option>
+          <option value="OPEN">Open Issues ({{numberWithCommas(summaryResponse.summary.OPEN) || 0}})</option>
+          <option value="NEW">New Issues ({{numberWithCommas(summaryResponse.summary.NEW) || 0}})</option>
+          <option value="RESOLVED">Resolved Issues ({{numberWithCommas(summaryResponse.summary.RESOLVED) || 0}})</option>
         </select>
       </div>
     </div>
@@ -24,7 +24,7 @@
   <div>
     <md-card class="content-card">
       <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
-        <md-tab ng-cloak label="Bills ({{getSummaryCountForContentType('BILL') || 0}})" md-on-select="onTabChange()">
+        <md-tab ng-cloak label="Bills ({{numberWithCommas(getSummaryCountForContentType('BILL')) || 0}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px; ">
@@ -72,7 +72,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Calendars ({{getSummaryCountForContentType('CALENDAR') || 0}})" md-on-select="onTabChange()">
+        <md-tab label="Calendars ({{numberWithCommas(getSummaryCountForContentType('CALENDAR')) || 0}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -121,7 +121,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Agendas ({{getSummaryCountForContentType('AGENDA') || 0}})" md-on-select="onTabChange()">
+        <md-tab label="Agendas ({{numberWithCommas(getSummaryCountForContentType('AGENDA')) || 0}})" md-on-select="onTabChange()">
           <md-content class="md-padding">
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
