@@ -1,0 +1,49 @@
+<sencalendar no="00009" sessyr="2017" year="2017" action="replace">
+<supplemental id="A">
+<caldate>2017-02-06</caldate>
+<releasedate>2017-02-06</releasedate>
+<releasetime>T16.15.00Z</releasetime>
+<sections>
+<section name="BILLS ON THIRD READING" type="C" cd="0400">
+<calnos>
+<calno no="0000000144">
+<bill no="S02956A" />
+<sponsor><![CDATA[BOYLE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000145">
+<bill no="S03505" />
+<sponsor><![CDATA[YOUNG]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000146">
+<bill no="S03550" />
+<sponsor><![CDATA[HAMILTON]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000147">
+<bill no="S04067" />
+<sponsor><![CDATA[AMEDORE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000148">
+<bill no="S04158" />
+<sponsor><![CDATA[FELDER]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000149">
+<bill no="S04159" />
+<sponsor><![CDATA[SEWARD]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+</calnos>
+</section>
+</sections>
+</supplemental>
+</sencalendar>

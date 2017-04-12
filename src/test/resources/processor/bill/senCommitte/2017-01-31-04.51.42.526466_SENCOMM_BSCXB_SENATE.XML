@@ -1,0 +1,2688 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<sencommmem sessyr="2017" year="2017" action="replace">
+<committees>
+<committee>
+<name><![CDATA[Aging]]></name>
+<location><![CDATA[Room 813 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[10:00 AM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Serino]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Alcantara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Felder]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Funke]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Golden]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[LaValle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Marchione]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Diaz]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Addabbo]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Brooks]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Serrano]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Agriculture]]></name>
+<location><![CDATA[Room 412 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:00 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Ritchie]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Funke]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[O'Mara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Ranzenhofer]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Seward]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Valesky]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Brooks]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Comrie]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Montgomery]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Serrano]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Alcoholism and Drug Abuse]]></name>
+<location><![CDATA[Room 801 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:30 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Amedore]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Bonacic]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Carlucci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Phillips]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Parker]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Kaminsky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Banks]]></name>
+<location><![CDATA[Room 915 LOB]]></location>
+<meetday><![CDATA[Wednesday]]></meetday>
+<meettime><![CDATA[09:30 AM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Hamilton]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Akshar]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Amedore]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Bonacic]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Helming]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Jacobs]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Marcellino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Marchione]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Murphy]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[O'Mara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Peralta]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Savino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Tedisco]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Sanders]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Bailey]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Breslin]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0017">
+<name><![CDATA[Diaz]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0018">
+<name><![CDATA[Kennedy]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0019">
+<name><![CDATA[Latimer]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0020">
+<name><![CDATA[Parker]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Children and Families]]></name>
+<location><![CDATA[Room 901 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:30 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Avella]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Bonacic]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Helming]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Savino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Serino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Montgomery]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Persaud]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Cities]]></name>
+<location><![CDATA[Room 945 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:30 PM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Felder]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Akshar]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Funke]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Jacobs]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Persaud]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Civil Service and Pensions]]></name>
+<location><![CDATA[Room 410 LOB]]></location>
+<meetday><![CDATA[Monday]]></meetday>
+<meettime><![CDATA[01:00 PM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Golden]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Croci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Lanza]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Ortt]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Phillips]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Savino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Sanders]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Addabbo]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Persaud]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Stavisky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Codes]]></name>
+<location><![CDATA[Room 124 CAP]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[01:00 PM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Lanza]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Savino]]></name>
+<title>Vice-Chair</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Akshar]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Boyle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Croci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Golden]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Griffo]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[O'Mara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Peralta]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Tedisco]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Squadron]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Bailey]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Hoylman]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Kaminsky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Krueger]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0017">
+<name><![CDATA[Perkins]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Commerce, Economic Development and Small Business]]></name>
+<location><![CDATA[Room 813 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[10:30 AM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Boyle]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Felder]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Funke]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Griffo]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Hamilton]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Robach]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Kennedy]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Bailey]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Persaud]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Sanders]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Consumer Protection]]></name>
+<location><![CDATA[Room 510 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[10:00 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Carlucci]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Amedore]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Boyle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Funke]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Hamilton]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Helming]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Robach]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Comrie]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Latimer]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Serrano]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Corporations, Authorities and Commissions]]></name>
+<location><![CDATA[Room 610 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[12:30 PM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Ranzenhofer]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Alcantara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Amedore]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Larkin]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Ortt]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Perkins]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Squadron]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Crime Victims, Crime and Correction]]></name>
+<location><![CDATA[Room 123 CAP]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:30 AM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Gallivan]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Akshar]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Griffo]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Hamilton]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Helming]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Jacobs]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Little]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Tedisco]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Bailey]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Montgomery]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Rivera]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Cultural Affairs, Tourism, Parks and Recreation]]></name>
+<location><![CDATA[Room 904 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:30 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Funke]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Alcantara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Helming]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Little]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Marcellino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Marchione]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Serino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Serrano]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Hoylman]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Kennedy]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Persaud]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Education]]></name>
+<location><![CDATA[Room 810 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[10:00 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Marcellino]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Gallivan]]></name>
+<title>Vice-Chair</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Croci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Hamilton]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Lanza]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[LaValle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Little]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Peralta]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Ranzenhofer]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Robach]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Serino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Seward]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Latimer]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Addabbo]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Breslin]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0017">
+<name><![CDATA[Brooks]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0018">
+<name><![CDATA[Montgomery]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0019">
+<name><![CDATA[Stavisky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Elections]]></name>
+<location><![CDATA[Room 805 LOB]]></location>
+<meetday><![CDATA[Monday]]></meetday>
+<meettime><![CDATA[01:00 PM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Akshar]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Amedore]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Marchione]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Tedisco]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Comrie]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Dilan]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Krueger]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Energy and Telecommunications]]></name>
+<location><![CDATA[Room 611 LOB]]></location>
+<meetday><![CDATA[Wednesday]]></meetday>
+<meettime><![CDATA[09:30 AM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Griffo]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Carlucci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Croci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Little]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[O'Mara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Ortt]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Parker]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Comrie]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Dilan]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Kennedy]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Environmental Conservation]]></name>
+<location><![CDATA[Room 307 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[11:00 AM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[O'Mara]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Funke]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[LaValle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Little]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Marcellino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Ortt]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Phillips]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Tedisco]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Kaminsky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Addabbo]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Hoylman]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Latimer]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Ethics]]></name>
+<location></location>
+<meetday></meetday>
+<meettime></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Phillips]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Carlucci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Croci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Lanza]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Savino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Valesky]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Gianaris]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Rivera]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Persaud]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Finance]]></name>
+<location><![CDATA[Room 124 CAP]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[11:00 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Young]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Savino]]></name>
+<title>Vice-Chair</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Bonacic]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Boyle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Carlucci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Felder]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Golden]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Griffo]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Hannon]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Lanza]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Larkin]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[LaValle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Little]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Marcellino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0017">
+<name><![CDATA[Marchione]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0018">
+<name><![CDATA[O'Mara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0019">
+<name><![CDATA[Peralta]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0020">
+<name><![CDATA[Ranzenhofer]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0021">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0022">
+<name><![CDATA[Robach]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0023">
+<name><![CDATA[Seward]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0024">
+<name><![CDATA[Valesky]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0025">
+<name><![CDATA[Krueger]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0026">
+<name><![CDATA[Breslin]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0027">
+<name><![CDATA[Comrie]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0028">
+<name><![CDATA[Diaz]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0029">
+<name><![CDATA[Dilan]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0030">
+<name><![CDATA[Kaminsky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0031">
+<name><![CDATA[Kennedy]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0032">
+<name><![CDATA[Montgomery]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0033">
+<name><![CDATA[Parker]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0034">
+<name><![CDATA[Perkins]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0035">
+<name><![CDATA[Rivera]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0036">
+<name><![CDATA[Squadron]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0037">
+<name><![CDATA[Stavisky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Health]]></name>
+<location><![CDATA[Room 124 CAP]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[12:00 PM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Hannon]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Valesky]]></name>
+<title>Vice-Chair</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Felder]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Golden]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Jacobs]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Larkin]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Little]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Murphy]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Seward]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Tedisco]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Rivera]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Hoylman]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Kaminsky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Montgomery]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Persaud]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Stavisky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Higher Education]]></name>
+<location><![CDATA[Room 807 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[12:30 PM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[LaValle]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Alcantara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Croci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Funke]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Griffo]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Helming]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Ortt]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Peralta]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Robach]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Serino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Seward]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Stavisky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Bailey]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Breslin]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0017">
+<name><![CDATA[Krueger]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0018">
+<name><![CDATA[Parker]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0019">
+<name><![CDATA[Rivera]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Housing, Construction and Community Development]]></name>
+<location><![CDATA[Room 309 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:45 AM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Little]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Bonacic]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Boyle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Young]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Bailey]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Brooks]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Krueger]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Infrastructure and Capital Investment]]></name>
+<location><![CDATA[Room 801 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[12:00 PM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Phillips]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Alcantara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Croci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Felder]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Robach]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Kennedy]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Comrie]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Dilan]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Insurance]]></name>
+<location><![CDATA[Room 124 CAP]]></location>
+<meetday><![CDATA[Monday]]></meetday>
+<meettime><![CDATA[12:30 PM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Seward]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Golden]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Hamilton]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Jacobs]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Lanza]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Larkin]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[LaValle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Murphy]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[O'Mara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Phillips]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Savino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Serino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Breslin]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Brooks]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Kennedy]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Latimer]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0017">
+<name><![CDATA[Rivera]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0018">
+<name><![CDATA[Parker]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0019">
+<name><![CDATA[Sanders]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Investigations and Government Operations]]></name>
+<location><![CDATA[Room 816 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[12:30 PM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Murphy]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Carlucci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Golden]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Lanza]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[O'Mara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Phillips]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Hoylman]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Diaz]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Squadron]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Judiciary]]></name>
+<location><![CDATA[Room 123 CAP]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[11:30 AM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Bonacic]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Amedore]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Boyle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Croci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Hamilton]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Hannon]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Jacobs]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Lanza]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[LaValle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[O'Mara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Phillips]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Ranzenhofer]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Savino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Serino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Hoylman]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0017">
+<name><![CDATA[Bailey]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0018">
+<name><![CDATA[Breslin]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0019">
+<name><![CDATA[Diaz]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0020">
+<name><![CDATA[Dilan]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0021">
+<name><![CDATA[Kaminsky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0022">
+<name><![CDATA[Perkins]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0023">
+<name><![CDATA[Stavisky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Labor]]></name>
+<location><![CDATA[Room 123 CAP]]></location>
+<meetday><![CDATA[Monday]]></meetday>
+<meettime><![CDATA[12:00 PM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Alcantara]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Akshar]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Hannon]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Marcellino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Murphy]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Ortt]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Robach]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Savino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Addabbo]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Dilan]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Rivera]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Sanders]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Local Government]]></name>
+<location><![CDATA[Room 946A LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:30 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Marchione]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Boyle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Carlucci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Murphy]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Ortt]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Kaminsky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Brooks]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Latimer]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Mental Health and Developmental Disabilities]]></name>
+<location><![CDATA[Room 816 LOB]]></location>
+<meetday><![CDATA[Monday]]></meetday>
+<meettime><![CDATA[11:00 AM]]></meettime>
+<meetaltweek>Yes</meetaltweek>
+<meetaltweektext>
+<![CDATA[* This committee will meet on alternate weeks pursuant to the notice of the Chairman *]]>
+</meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Ortt]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Carlucci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Felder]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Hamilton]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Hannon]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Murphy]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Serino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Brooks]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Bailey]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Krueger]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Rivera]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Racing, Gaming and Wagering]]></name>
+<location><![CDATA[Room 124 CAP]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:30 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Bonacic]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Akshar]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Boyle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Griffo]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Marchione]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Ranzenhofer]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Valesky]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Addabbo]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Comrie]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Latimer]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Sanders]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Rules]]></name>
+<location></location>
+<meetday></meetday>
+<meettime></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Flanagan]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[DeFrancisco]]></name>
+<title>Vice-Chair</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Bonacic]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Carlucci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Griffo]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Hannon]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Lanza]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Larkin]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[LaValle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Little]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Marcellino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Ranzenhofer]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Robach]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Savino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Seward]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Valesky]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0017">
+<name><![CDATA[Stewart-Cousins]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0018">
+<name><![CDATA[Breslin]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0019">
+<name><![CDATA[Dilan]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0020">
+<name><![CDATA[Gianaris]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0021">
+<name><![CDATA[Krueger]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0022">
+<name><![CDATA[Montgomery]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0023">
+<name><![CDATA[Parker]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0024">
+<name><![CDATA[Perkins]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0025">
+<name><![CDATA[Squadron]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Social Services]]></name>
+<location><![CDATA[Room 801 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[10:30 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Tedisco]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Alcantara]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Amedore]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Helming]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[LaValle]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Persaud]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Squadron]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Transportation]]></name>
+<location><![CDATA[Room 803 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[10:30 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Robach]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[O'Mara]]></name>
+<title>Vice-Chair</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Croci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Gallivan]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Griffo]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Larkin]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Marcellino]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Peralta]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Ranzenhofer]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Ritchie]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Valesky]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Young]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0014">
+<name><![CDATA[Dilan]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0015">
+<name><![CDATA[Diaz]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0016">
+<name><![CDATA[Kaminsky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0017">
+<name><![CDATA[Kennedy]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0018">
+<name><![CDATA[Perkins]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0019">
+<name><![CDATA[Squadron]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0020">
+<name><![CDATA[Stavisky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[Veterans, Homeland Security and Military Affairs]]></name>
+<location><![CDATA[Room 124 CAP]]></location>
+<meetday><![CDATA[Monday]]></meetday>
+<meettime><![CDATA[11:30 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Croci]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Amedore]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Carlucci]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Felder]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Golden]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Jacobs]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0007">
+<name><![CDATA[Larkin]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0008">
+<name><![CDATA[Marchione]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0009">
+<name><![CDATA[Ortt]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0010">
+<name><![CDATA[Addabbo]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0011">
+<name><![CDATA[Comrie]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0012">
+<name><![CDATA[Kaminsky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0013">
+<name><![CDATA[Sanders]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+<committee>
+<name><![CDATA[New York City Education Subcommittee]]></name>
+<location></location>
+<meetday></meetday>
+<meettime></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Felder]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Avella]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0003">
+<name><![CDATA[Golden]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0004">
+<name><![CDATA[Lanza]]></name>
+<title></title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0005">
+<name><![CDATA[Perkins]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+<member seqno="0006">
+<name><![CDATA[Stavisky]]></name>
+<title></title>
+<memberlist>Minority</memberlist>
+</member>
+</membership>
+</committee>
+</committees>
+</sencommmem>

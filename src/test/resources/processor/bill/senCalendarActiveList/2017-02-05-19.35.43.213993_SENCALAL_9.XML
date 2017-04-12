@@ -1,0 +1,53 @@
+<sencalendaractive no="00009" sessyr="2017" year="2017" action="replace">
+<supplemental id="">
+<sequence no="">
+<actcaldate>2017-02-06</actcaldate>
+<releasedate>2017-02-05</releasedate>
+<releasetime>T19.35.43Z</releasetime>
+<notes><![CDATA[
+]]></notes>
+<calnos>
+<calno no="4">
+<bill no="S00971" />
+<idc req="" />
+</calno>
+<calno no="25">
+<bill no="S01214" />
+<idc req="" />
+</calno>
+<calno no="46">
+<bill no="S00733" />
+<idc req="" />
+</calno>
+<calno no="47">
+<bill no="S00829" />
+<idc req="" />
+</calno>
+<calno no="55">
+<bill no="S01379B" />
+<idc req="" />
+</calno>
+<calno no="63">
+<bill no="S00196" />
+<idc req="" />
+</calno>
+<calno no="76">
+<bill no="S01109" />
+<idc req="" />
+</calno>
+<calno no="84">
+<bill no="S00027" />
+<idc req="" />
+</calno>
+<calno no="87">
+<bill no="S00902" />
+<idc req="" />
+</calno>
+<calno no="88">
+<bill no="S01568" />
+<idc req="" />
+</calno>
+</calnos>
+</sequence>
+</supplemental>
+</sencalendaractive>
