@@ -18,6 +18,380 @@
 <subbill no="" />
 <subsponsor></subsponsor>
 </calno>
+<calno no="0000000098">
+<bill no="S01787" />
+<sponsor><![CDATA[KLEIN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000099">
+<bill no="S00155" />
+<sponsor><![CDATA[YOUNG]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000100">
+<bill no="S01110" />
+<sponsor><![CDATA[FELDER]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000101">
+<bill no="S02210" />
+<sponsor><![CDATA[LAVALLE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000102">
+<bill no="S02212" />
+<sponsor><![CDATA[LAVALLE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000103">
+<bill no="S03026" />
+<sponsor><![CDATA[RANZENHOFER]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000104">
+<bill no="S03520A" />
+<sponsor><![CDATA[FLANAGAN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+</calnos>
+</section>
+<section name="BILLS ON ORDER OF SECOND REPORT" type="C" cd="0200">
+<calnos>
+<calno no="0000000084">
+<bill no="S00027" />
+<sponsor><![CDATA[GOLDEN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000085">
+<bill no="S00241" />
+<sponsor><![CDATA[DEFRANCISCO]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000086">
+<bill no="S00898" />
+<sponsor><![CDATA[AMEDORE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000087">
+<bill no="S00902" />
+<sponsor><![CDATA[CROCI]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000088">
+<bill no="S01568" />
+<sponsor><![CDATA[AVELLA]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000089">
+<bill no="S02317" />
+<sponsor><![CDATA[RANZENHOFER]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000090">
+<bill no="S02536" />
+<sponsor><![CDATA[RANZENHOFER]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000091">
+<bill no="S00625" />
+<sponsor><![CDATA[BOYLE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000092">
+<bill no="S00626" />
+<sponsor><![CDATA[BOYLE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000093">
+<bill no="S00631" />
+<sponsor><![CDATA[BOYLE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000094">
+<bill no="S01989" />
+<sponsor><![CDATA[KLEIN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000095">
+<bill no="S02254" />
+<sponsor><![CDATA[LITTLE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+</calnos>
+</section>
+<section name="BILLS ON THIRD READING" type="C" cd="0400">
+<calnos>
+<calno no="0000000004">
+<bill no="S00971" />
+<sponsor><![CDATA[RIVERA]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000006">
+<bill no="S00973" />
+<sponsor><![CDATA[AMEDORE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000020">
+<bill no="S01066" />
+<sponsor><![CDATA[SEWARD]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000022">
+<bill no="S01068" />
+<sponsor><![CDATA[KLEIN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000023">
+<bill no="S01069" />
+<sponsor><![CDATA[KLEIN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000025">
+<bill no="S01214" />
+<sponsor><![CDATA[LANZA]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000026">
+<bill no="S01264" />
+<sponsor><![CDATA[SEWARD]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000029">
+<bill no="S00415" />
+<sponsor><![CDATA[CROCI]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000031">
+<bill no="S00894" />
+<sponsor><![CDATA[AMEDORE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000033">
+<bill no="S01726" />
+<sponsor><![CDATA[CARLUCCI]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000044">
+<bill no="S00678" />
+<sponsor><![CDATA[ORTT]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000045">
+<bill no="S00723" />
+<sponsor><![CDATA[ORTT]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000046">
+<bill no="S00733" />
+<sponsor><![CDATA[ORTT]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000047">
+<bill no="S00829" />
+<sponsor><![CDATA[FUNKE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000048">
+<bill no="S00938" />
+<sponsor><![CDATA[CROCI]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000049">
+<bill no="S00939" />
+<sponsor><![CDATA[CROCI]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000050">
+<bill no="S00946" />
+<sponsor><![CDATA[CROCI]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000051">
+<bill no="S00959" />
+<sponsor><![CDATA[CROCI]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000052">
+<bill no="S01011" />
+<sponsor><![CDATA[ROBACH]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000053">
+<bill no="S01724" />
+<sponsor><![CDATA[CARLUCCI]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000055">
+<bill no="S01379A" high="true" />
+<sponsor><![CDATA[LITTLE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000063">
+<bill no="S00196" />
+<sponsor><![CDATA[MARCHIONE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000064">
+<bill no="S00227" />
+<sponsor><![CDATA[GOLDEN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000065">
+<bill no="S00258" />
+<sponsor><![CDATA[ORTT]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000066">
+<bill no="S00297" />
+<sponsor><![CDATA[ROBACH]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000067">
+<bill no="S00301" />
+<sponsor><![CDATA[MURPHY]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000068">
+<bill no="S00310" />
+<sponsor><![CDATA[ROBACH]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000069">
+<bill no="S00457" />
+<sponsor><![CDATA[YOUNG]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000070">
+<bill no="S00463" />
+<sponsor><![CDATA[PERALTA]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000071">
+<bill no="S00508" />
+<sponsor><![CDATA[DIAZ]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000072">
+<bill no="S00607" />
+<sponsor><![CDATA[BOYLE]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000073">
+<bill no="S00671" />
+<sponsor><![CDATA[KENNEDY]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000074">
+<bill no="S00711" />
+<sponsor><![CDATA[CARLUCCI]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000075">
+<bill no="S00814" />
+<sponsor><![CDATA[GOLDEN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000076">
+<bill no="S01109" />
+<sponsor><![CDATA[FELDER]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000077">
+<bill no="S01302" />
+<sponsor><![CDATA[AVELLA]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000078">
+<bill no="S01741" />
+<sponsor><![CDATA[GOLDEN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000079">
+<bill no="S01785" />
+<sponsor><![CDATA[KLEIN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000080">
+<bill no="S02159" />
+<sponsor><![CDATA[SERINO]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000081">
+<bill no="S02591" />
+<sponsor><![CDATA[LANZA]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000082">
+<bill no="S02616" />
+<sponsor><![CDATA[LANZA]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000083">
+<bill no="S02650" />
+<sponsor><![CDATA[KLEIN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
 </calnos>
 </section>
 </sections>

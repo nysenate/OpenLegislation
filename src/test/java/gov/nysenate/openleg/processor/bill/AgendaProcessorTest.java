@@ -1,25 +1,19 @@
 package gov.nysenate.openleg.processor.bill;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.dao.agenda.data.AgendaDao;
-import gov.nysenate.openleg.model.agenda.*;
-
+import gov.nysenate.openleg.model.agenda.Agenda;
+import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.agenda.AgendaInfoAddendum;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.agenda.AgendaVoteAddendum;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.agenda.AgendaProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
-import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
 import static org.junit.Assert.*;
 
 
@@ -29,7 +23,6 @@ import static org.junit.Assert.*;
 @Transactional
 public class AgendaProcessorTest extends BaseXmlProcessorTest {
 
-    ObjectMapper mapper = new ObjectMapper();
     @Autowired private AgendaDao agendaDao;
     @Autowired private AgendaProcessor agendaProcessor;
 
@@ -39,51 +32,27 @@ public class AgendaProcessorTest extends BaseXmlProcessorTest {
     }
 
     @Test
-    public void processSenAgenda() throws JsonProcessingException {
-
-        AgendaId agendaId = new AgendaId(20,2016);
-        agendaDao.deleteAgenda(agendaId);
-
+    public void processSenAgenda()  {
         String xmlPath ="processor/bill/senAgenda/2016-11-21-09.38.03.307472_SENAGEN_00020.XML";
         processXmlFile(xmlPath);
 
-        Agenda actual = agendaDao.getAgenda(new AgendaId(20,2016));
+        Agenda processedAgendaObject = agendaDao.getAgenda(new AgendaId(20,2016));
 
-        Agenda excepted = new Agenda(agendaId);
-
+        Agenda agendaTest = new Agenda();
+        AgendaId agendaId = new AgendaId(20,2016);
         LocalDate weekOf = LocalDate.of(2016,6,13);
-        LocalDateTime pubDateTime = DateUtils.getLrsDateTime("2016-06-21T10.35.54Z");
+        LocalDateTime time = LocalDateTime.of(2016,6,21,15,23);
 
-        AgendaInfoAddendum agendaInfoAddendum = new AgendaInfoAddendum(agendaId,"",weekOf,pubDateTime);
+        AgendaInfoAddendum agendaInfoAddendum = new AgendaInfoAddendum(agendaId,"",weekOf,time);
+        AgendaVoteAddendum agendaVoteAddendum = new AgendaVoteAddendum(agendaId, "", time);
 
-        CommitteeId committeeId = new CommitteeId(Chamber.SENATE, "Rules");
-        String notes = "\nThis meeting will be called off the floor.||ALL BILLS REPORT DIRECT TO THIRD READING\n";
-        LocalDateTime meetDateTime = DateUtils.getLrsDateTime("2016-06-14T00.00.00Z");
+        agendaTest.setYear(2016);
+        agendaTest.setId(agendaId);
+        agendaTest.setPublishedDateTime();
 
-        AgendaInfoCommittee agendaInfoCommittee = new AgendaInfoCommittee(committeeId,agendaId, Version.of(""),"John J. Flanagan","332 CAP",notes,meetDateTime);
+        agendaTest.putAgendaInfoAddendum(agendaInfoAddendum);
+        agendaTest.putAgendaVoteAddendum(agendaVoteAddendum);
 
-        BillId billid = new BillId("S01706A",2015);
-        AgendaInfoCommitteeItem agendaInfoCommitteeItem1 = new AgendaInfoCommitteeItem(billid,"");
-
-        BillId billid1 = new BillId("S01983A", 2015);
-        AgendaInfoCommitteeItem agendaInfoCommitteeItem2 = new AgendaInfoCommitteeItem(billid1,"");
-
-
-        agendaInfoCommittee.addCommitteeItem(agendaInfoCommitteeItem1);
-        agendaInfoCommittee.addCommitteeItem(agendaInfoCommitteeItem2);
-        agendaInfoAddendum.putCommittee(agendaInfoCommittee);
-
-        excepted.putAgendaInfoAddendum(agendaInfoAddendum);
-
-        agendaInfoAddendum.putCommittee(agendaInfoCommittee);
-
-
-        assertEquals(excepted.getId(),actual.getId());
-        assertEquals(excepted.getAgendaVoteAddenda(),actual.getAgendaVoteAddenda());
-        assertEquals(mapper.writeValueAsString(excepted.getAgendaInfoAddenda()),mapper.writeValueAsString(actual.getAgendaInfoAddenda()));
-        assertEquals(mapper.writeValueAsString(excepted.getAgendaVoteAddenda()),mapper.writeValueAsString(actual.getAgendaVoteAddenda()));
-        assertEquals(mapper.writeValueAsString(excepted.getCommitteeAgendaAddendumIds()),mapper.writeValueAsString(actual.getCommitteeAgendaAddendumIds()));
-        assertEquals(mapper.writeValueAsString(excepted.getCommittees()),mapper.writeValueAsString(actual.getCommittees()));
-
+        assertTrue(processedAgendaObject.equals(agendaTest));
     }
 }
