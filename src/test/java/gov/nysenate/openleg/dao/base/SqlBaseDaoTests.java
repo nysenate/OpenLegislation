@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.dao.spotcheck.BillIdSpotCheckReportDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
@@ -13,8 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class SqlBaseDaoTests extends BaseTests
 {
@@ -22,6 +26,9 @@ public class SqlBaseDaoTests extends BaseTests
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private BillIdSpotCheckReportDao billIdSpotCheckReportDao;
 
     @Test
     public void testOrdinalMapTests() throws Exception {
@@ -55,8 +62,27 @@ public class SqlBaseDaoTests extends BaseTests
 //                SqlBaseDao.getOridinalMapFromList(Lists.newArrayList("loser", "moose", "cow", "sheep"), 1);
 //        MapDifference<Integer, String> mapDiff = Maps.difference(map1, map2);
 //        logger.info("{}", mapDiff.entriesOnlyOnRight());
+    }
 
+    @Test
+    public void testHstoreStringToMap() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("print_no", "S100");
+        Map<String, String> actual = billIdSpotCheckReportDao.hstoreStringToMap("\"print_no\"=>\"S100\"");
+        assertEquals(expected, actual);
 
+        expected.put("session_year", "2017");
+        actual = billIdSpotCheckReportDao.hstoreStringToMap("\"print_no\"=>\"S100\", \"session_year\"=>\"2017\"");
+        assertEquals(expected, actual);
 
+        expected = new HashMap<>();
+        expected.put("year", "2016");
+        expected.put("chamber", "senate");
+        expected.put("addendum", "DEFAULT");
+        expected.put("agenda_no", "5");
+        expected.put("committee_name", "Social Services");
+        String agendaHstore = "\"year\"=>\"2016\", \"chamber\"=>\"senate\", \"addendum\"=>\"DEFAULT\", \"agenda_no\"=>\"5\", \"committee_name\"=>\"Social Services\"";
+        actual = billIdSpotCheckReportDao.hstoreStringToMap(agendaHstore);
+        assertEquals(expected, actual);
     }
 }
