@@ -265,21 +265,6 @@ public class SpotCheckCtrl extends BaseCtrl
                 "spotcheck reports run");
     }
 
-    /**
-     * Spotcheck Weekly Report Run API
-     *
-     * Attempts to run all spotcheck reports designated as weekly reports
-     *
-     * Usage: (GET) /api/3/admin/spotcheck/run/weekly
-     */
-    @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/run/weekly")
-    public BaseResponse runWeeklyReports() {
-        spotcheckRunService.runWeeklyReports();
-        return new SimpleResponse(true, "weekly reports run", "report report");
-    }
-
-
     /** --- Internal Methods --- */
 
     private SpotCheckReportService<?> getAnyReportService() {

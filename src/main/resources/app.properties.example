@@ -166,9 +166,6 @@ scheduler.spotcheck.enabled = true
 # When to process data. (Default: 0 */5 * * * *)
 scheduler.process.cron = 0 */5 * * * *
 
-# When to run weekly spotcheck reports. (Default: 0 0 0 * * SAT)
-scheduler.spotcheck.weekly.cron = 0 0 0 * * SAT
-
 # --- Spotcheck Configuration -------------------------------------------------
 
 # The amount of time (in minutes) allowed after an alert arrival for data to come in
