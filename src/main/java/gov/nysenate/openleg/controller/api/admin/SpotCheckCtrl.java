@@ -7,7 +7,9 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.view.base.ListView;
-import gov.nysenate.openleg.client.view.spotcheck.MismatchSummaryView;
+import gov.nysenate.openleg.client.view.spotcheck.MismatchContentTypeSummaryView;
+import gov.nysenate.openleg.client.view.spotcheck.MismatchStatusSummaryView;
+import gov.nysenate.openleg.client.view.spotcheck.MismatchTypeSummaryView;
 import gov.nysenate.openleg.client.view.spotcheck.MismatchView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -86,6 +88,7 @@ public class SpotCheckCtrl extends BaseCtrl
                                       @RequestParam(required = false) String toDate,
                                       @RequestParam(required = false) String orderBy,
                                       @RequestParam(required = false) String sort,
+                                      @RequestParam(required = false) String error,
                                       WebRequest request) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
         SpotCheckContentType ct = getEnumParameter("contentType", contentType, SpotCheckContentType.class);
@@ -98,6 +101,7 @@ public class SpotCheckCtrl extends BaseCtrl
         LocalDateTime toDateTime = toDate == null ? LocalDateTime.now() : parseISODateTime(toDate, "toDate");
         LocalDateTime fromDateTime = fromDate == null ? startOfSessionYear(toDateTime) : parseISODateTime(fromDate, "fromDate");
         OrderBy order = getOrderBy(orderBy, sort);
+        SpotCheckMismatchType  spotCheckMismatchType = getSpotCheckMismatchType(error);
         LimitOffset limitOffset = getLimitOffset(request, 10);
 
         MismatchQuery query = new MismatchQuery(ds, Collections.singleton(ct))
@@ -105,7 +109,8 @@ public class SpotCheckCtrl extends BaseCtrl
                 .withIgnoredStatuses(igs)
                 .withFromDate(fromDateTime)
                 .withToDate(toDateTime)
-                .withOrderBy(order);
+                .withOrderBy(order)
+                .withSpotCheckMismatchType(spotCheckMismatchType);
 
         // Get any ref type for this datasource and contentType.
         SpotCheckRefType refType = SpotCheckRefType.get(ds, ct).get(0);
@@ -151,8 +156,16 @@ public class SpotCheckCtrl extends BaseCtrl
         return new OrderBy(orderBy.getColumnName(), sortOrder);
     }
 
+    private SpotCheckMismatchType getSpotCheckMismatchType(String error) {
+        if (error.equals("ALL"))
+           return null;
+        else{
+            return SpotCheckMismatchType.getSpotCheckMismatchByDisplayName(error);
+        }
+    }
+
     /**
-     * Spotcheck Mismatch Summary API
+     * Spotcheck Mismatch Status Summary API
      *
      * Get a summary of mismatch status counts for all content types for a specific datasource.
      *
@@ -161,16 +174,65 @@ public class SpotCheckCtrl extends BaseCtrl
      * Request Parameters: datasource - string - The datasource to return summary information on.
      *                     summaryDateTime - string (ISO date) - optional - returns summary information as of this date time.
      *                                       Defaults to current date time.
+     *                      Errror -- error filter
      */
     @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/mismatches/summary", method = RequestMethod.GET)
-    public BaseResponse getMismatchSummary(@RequestParam String datasource,
+    @RequestMapping(value = "/mismatches/summary/status", method = RequestMethod.GET)
+    public BaseResponse getMismatchStatusSummary(@RequestParam String datasource,
                                            @RequestParam(required = false) String summaryDateTime) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
         LocalDateTime sumDateTime = summaryDateTime == null ? LocalDateTime.now() : parseISODateTime(summaryDateTime, "summaryDateTime");
-        MismatchSummary summary = getAnyReportService().getMismatchSummary(ds, sumDateTime);
-        return new ViewObjectResponse<>(new MismatchSummaryView(summary));
+        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(ds, sumDateTime);
+        return new ViewObjectResponse<>(new MismatchStatusSummaryView(summary));
     }
+
+    /**
+     * Spotcheck Mismatch Type Summary API
+     *
+     * Get a summary of mismatch type counts for all content types for a specific datasource.
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary
+     *
+     * Request Parameters: datasource - string - The datasource to return summary information on.
+     *                     summaryDateTime - string (ISO date) - optional - returns summary information as of this date time.
+     *                                       Defaults to current date time.
+     *                      Errror -- error filter
+     */
+    @RequiresPermissions("admin:view")
+    @RequestMapping(value = "/mismatches/summary/type", method = RequestMethod.GET)
+    public BaseResponse getMismatchTypeSummary(@RequestParam String datasource,
+                                           @RequestParam(required = false) String summaryDateTime,
+                                                    @RequestParam(required = false) String status) {
+        SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
+        LocalDateTime sumDateTime = summaryDateTime == null ? LocalDateTime.now() : parseISODateTime(summaryDateTime, "summaryDateTime");
+        MismatchTypeSummary summary = getAnyReportService().getMismatchTypeSummary(ds, sumDateTime, getSpotCheckMismatchStatus(status));
+        return new ViewObjectResponse<>(new MismatchTypeSummaryView(summary));
+    }
+
+    /**
+     * Spotcheck Mismatch Content Type Summary API
+     *
+     * Get a summary of mismatch Content type counts for all content types for a specific datasource.
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary
+     *
+     * Request Parameters: datasource - string - The datasource to return summary information on.
+     *                     summaryDateTime - string (ISO date) - optional - returns summary information as of this date time.
+     *                                       Defaults to current date time.
+     *                      Errror -- error filter
+     */
+    @RequiresPermissions("admin:view")
+    @RequestMapping(value = "/mismatches/summary/contenttype", method = RequestMethod.GET)
+    public BaseResponse getMismatchContenttypeSummary(@RequestParam String datasource,
+                                                    @RequestParam(required = false) String summaryDateTime,
+                                                    @RequestParam(required = false) String status,
+                                                    @RequestParam(required = false) String type) {
+        SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
+        LocalDateTime sumDateTime = summaryDateTime == null ? LocalDateTime.now() : parseISODateTime(summaryDateTime, "summaryDateTime");
+        MismatchContentTypeSummary summary = getAnyReportService().getMismatchContentTypeSummary(ds, sumDateTime, getSpotCheckMismatchStatus(status), getSpotCheckMismatchType(type));
+        return new ViewObjectResponse<>(new MismatchContentTypeSummaryView(summary));
+    }
+
 
     /**
      * Spotcheck Mismatch Ignore API
@@ -279,6 +341,10 @@ public class SpotCheckCtrl extends BaseCtrl
                     SpotCheckRefType::getRefName, paramName, parameter);
         }
         return result;
+    }
+
+    private SpotCheckMismatchStatus getSpotCheckMismatchStatus(String status) {
+        return getEnumParameter(status,SpotCheckMismatchStatus.class,null);
     }
 
     private Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {
