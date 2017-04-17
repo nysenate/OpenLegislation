@@ -3,149 +3,42 @@ angular.module('open.spotcheck').factory('SpotcheckMismatchSummaryApi',
 
 function mismatchSummaryApi($resource) {
 
-    var mismatchSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary");
+    var mismatchStatusSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary/status");
+    var mismatchTypeSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary/type");
+    var mismatchContentTypeSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary/contenttype");
 
     /**
-     * @param datasource
+     * @param datasource datasource filter
      * @param date An ISO date time string. Returns summary data for mismatches observed before this date time.
      */
-    function get(datasource, date) {
-        return mismatchSummaryApi.get({datasource: datasource, summaryDateTime : date}).$promise
-            .then(createSummary)
+    function getMismatchStatusSummary(datasource, date) {
+        return mismatchStatusSummaryApi.get({datasource: datasource, summaryDateTime : date}).$promise
+            .then(createStatusSummary)
     }
 
-    function createSummary(response) {
+    function getMismatchTypeSummary(datasource, date, status) {
+        return mismatchTypeSummaryApi.get({datasource: datasource, summaryDateTime : date, status: status}).$promise
+            .then(createMismatchTypeSummary)
+    }
 
-        var summary = {
-            OPEN: 0,
-            NEW: 0,
-            RESOLVED: 0,
-            BILL: {
-                OPEN: 0,
-                NEW: 0,
-                RESOLVED: 0,
-            },
-            CALENDAR: {
-                OPEN: 0,
-                NEW: 0,
-                RESOLVED: 0,
-            },
-            AGENDA: {
-                OPEN: 0,
-                NEW: 0,
-                RESOLVED: 0,
-            }
-        };
+    function getMismatchContentTypeSummary(datasource, date, status, type) {
+        return mismatchContentTypeSummaryApi.get({datasource: datasource, summaryDateTime : date, status: status, type:type}).$promise
+            .then(createContentTypeSummary)
+    }
 
-        console.log(response);
-
-        try {
-            summary.OPEN += response.result.summary.items.REGRESSION.total || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.OPEN += response.result.summary.items.EXISTING.total || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.OPEN += response.result.summary.items.NEW.total || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.NEW += response.result.summary.items.NEW.total || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.RESOLVED += response.result.summary.items.RESOLVED.total || 0
-        } catch (e) {
-        }
-        ;
-
-        try {
-            summary.BILL.OPEN += response.result.summary.items.REGRESSION.contentTypeCounts.items.BILL || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.BILL.OPEN += response.result.summary.items.EXISTING.contentTypeCounts.items.BILL || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.BILL.OPEN += response.result.summary.items.NEW.contentTypeCounts.items.BILL || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.BILL.NEW += response.result.summary.items.NEW.contentTypeCounts.items.BILL || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.BILL.RESOLVED += response.result.summary.items.RESOLVED.contentTypeCounts.items.BILL || 0
-        } catch (e) {
-        }
-        ;
-
-        try {
-            summary.CALENDAR.OPEN += response.result.summary.items.REGRESSION.contentTypeCounts.items.CALENDAR || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.CALENDAR.OPEN += response.result.summary.items.EXISTING.contentTypeCounts.items.CALENDAR || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.CALENDAR.OPEN += response.result.summary.items.NEW.contentTypeCounts.items.CALENDAR || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.CALENDAR.NEW += response.result.summary.items.NEW.contentTypeCounts.items.CALENDAR || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.CALENDAR.RESOLVED += response.result.summary.items.RESOLVED.contentTypeCounts.items.CALENDAR || 0
-        } catch (e) {
-        }
-        ;
-
-        try {
-            summary.AGENDA.OPEN += response.result.summary.items.REGRESSION.contentTypeCounts.items.AGENDA || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.AGENDA.OPEN += response.result.summary.items.EXISTING.contentTypeCounts.items.AGENDA || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.AGENDA.OPEN += response.result.summary.items.NEW.contentTypeCounts.items.AGENDA || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.AGENDA.NEW += response.result.summary.items.NEW.contentTypeCounts.items.AGENDA || 0
-        } catch (e) {
-        }
-        ;
-        try {
-            summary.AGENDA.RESOLVED += response.result.summary.items.AGENDA.contentTypeCounts.items.AGENDA || 0
-        } catch (e) {
-        }
-        ;
-        return summary;
+    function createStatusSummary(response) {
+        return response;
+    }
+    function createMismatchTypeSummary(response) {
+        return response;
+    }
+    function createContentTypeSummary(response) {
+        return response;
     }
 
     return {
-        get: get
+        getMismatchStatusSummary: getMismatchStatusSummary,
+        getMismatchTypeSummary:getMismatchTypeSummary,
+        getMismatchContentTypeSummary:getMismatchContentTypeSummary
     }
 }

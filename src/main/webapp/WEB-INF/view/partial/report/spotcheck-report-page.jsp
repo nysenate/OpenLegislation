@@ -18,6 +18,12 @@
           <option value="RESOLVED">Resolved Issues ({{numberWithCommas(summaryResponse.summary.RESOLVED) || 0}})</option>
         </select>
       </div>
+
+      <div>
+        <select ng-model="selectedMismatchType" ng-change="onMismatchTypeChange()">
+          <option ng-repeat="option in mismatchTypes" ng-value="option">{{option}} ({{mismatchesTypeCount[option]}})</option>
+        </select>
+      </div>
     </div>
   </md-content>
 

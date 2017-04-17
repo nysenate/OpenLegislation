@@ -17,6 +17,7 @@ public enum SpotCheckContentType {
         this.contentKeyClass = contentKeyClass;
     }
 
+
     public Class getContentKeyClass() {
         return contentKeyClass;
     }

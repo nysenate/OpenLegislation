@@ -116,6 +116,20 @@ public enum SpotCheckMismatchType
         return refTypeMismatchMap.get(refType);
     }
 
+    public static SpotCheckMismatchType getSpotCheckMismatchByDisplayName(String displayName) {
+        for (SpotCheckMismatchType spotCheckMismatchType : SpotCheckMismatchType.values()){
+            if (spotCheckMismatchType.displayName.equals(displayName))
+                return spotCheckMismatchType;
+        }
+        return null;
+    }
+
+    public static String getName(SpotCheckMismatchType spotCheckMismatchType) {
+        if (spotCheckMismatchType == null) // if the filter set to ALL then disable the filter by passing ''%' to where statement
+            return "%";
+        return spotCheckMismatchType.name();
+    }
+
     public static String getJsonMap() {
         return OutputUtils.toJson(EnumSet.allOf(SpotCheckMismatchType.class).stream()
                 .collect(Collectors.toMap(SpotCheckMismatchType::name, SpotCheckMismatchType::getDisplayName)));

@@ -85,7 +85,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("statuses", query.getMismatchStatuses().stream().map(Enum::name).collect(Collectors.toSet()))
                 .addValue("ignoreStatuses", query.getIgnoredStatuses().stream().map(Enum::name).collect(Collectors.toSet()))
                 .addValue("toDate", query.getToDate())
-                .addValue("fromDate", query.getFromDate());
+                .addValue("fromDate", query.getFromDate())
+                .addValue("mismatchtype", SpotCheckMismatchType.getName(query.getSpotCheckMismatchType()));
         String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema(), query.getOrderBy(), limitOffset);
         PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new MismatchMapper());
         jdbcNamed.query(sql, params, handler);
@@ -96,14 +97,48 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * {@inheritDoc}
      */
     @Override
-    public MismatchSummary getMismatchSummary(SpotCheckDataSource datasource, LocalDateTime summaryDateTime) {
+    public MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource datasource, LocalDateTime summaryDateTime) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("datasource", datasource.name())
                 .addValue("fromDate", SessionYear.of(summaryDateTime.getYear()).asDateTimeRange().lowerEndpoint())
                 .addValue("toDate", summaryDateTime)
                 .addValue("startOfToDate", summaryDateTime.truncatedTo(ChronoUnit.DAYS));
-        String sql = SqlSpotCheckReportQuery.MISMATCH_SUMMARY.getSql(schema());
-        MismatchSummaryHandler summaryHandler = new MismatchSummaryHandler();
+        String sql = SqlSpotCheckReportQuery.MISMATCH_STATUS_SUMMARY.getSql(schema());
+        MismatchStatusSummaryHandler summaryHandler = new MismatchStatusSummaryHandler();
+        jdbcNamed.query(sql, params, summaryHandler);
+        return summaryHandler.getSummary();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource datasource, LocalDateTime summaryDateTime, SpotCheckMismatchStatus spotCheckMismatchStatus) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("datasource", datasource.name())
+                .addValue("fromDate", SessionYear.of(summaryDateTime.getYear()).asDateTimeRange().lowerEndpoint())
+                .addValue("toDate", summaryDateTime)
+                .addValue("statuses", spotCheckMismatchStatus)
+                .addValue("startOfToDate", summaryDateTime.truncatedTo(ChronoUnit.DAYS));
+        String sql = SqlSpotCheckReportQuery.MISMATCH_TYPE_SUMMARY.getSql(schema());
+        MismatchTypeSummaryHandler summaryHandler = new MismatchTypeSummaryHandler();
+        jdbcNamed.query(sql, params, summaryHandler);
+        return summaryHandler.getSummary();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate, SpotCheckMismatchStatus spotCheckMismatchStatus, SpotCheckMismatchType spotCheckMismatchType){
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("datasource", datasource.name())
+                .addValue("fromDate", SessionYear.of(summaryDate.getYear()).asDateTimeRange().lowerEndpoint())
+                .addValue("toDate", summaryDate)
+                .addValue("statuses", spotCheckMismatchStatus)
+                .addValue("mismatchtype",spotCheckMismatchType)
+                .addValue("startOfToDate", summaryDate.truncatedTo(ChronoUnit.DAYS));
+        String sql = SqlSpotCheckReportQuery.MISMATCH_CONTENTTYPE_SUMMARY.getSql(schema());
+        MismatchContentTypeSummaryHandler summaryHandler = new MismatchContentTypeSummaryHandler();
         jdbcNamed.query(sql, params, summaryHandler);
         return summaryHandler.getSummary();
     }
@@ -297,24 +332,54 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         }
     }
 
-    private class MismatchSummaryHandler implements RowCallbackHandler {
+    private class MismatchStatusSummaryHandler implements RowCallbackHandler {
 
-        private MismatchSummary summary = new MismatchSummary();
+        private MismatchStatusSummary summary = new MismatchStatusSummary();
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {
-            SpotCheckContentType contentType = SpotCheckContentType.valueOf(rs.getString("content_type"));
             SpotCheckMismatchStatus status = SpotCheckMismatchStatus.valueOf(rs.getString("status"));
             int count = rs.getInt("count");
-
-            SpotCheckMismatchStatusSummary statusSummary = new SpotCheckMismatchStatusSummary(status, contentType, count);
-            summary.addStatusSummary(statusSummary);
+            summary.addSpotCheckStatusSummary(status, count);
         }
 
-        protected MismatchSummary getSummary() {
+        protected MismatchStatusSummary getSummary() {
             return summary;
         }
     }
+
+    private class MismatchTypeSummaryHandler implements RowCallbackHandler {
+
+        private MismatchTypeSummary summary = new MismatchTypeSummary();
+
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            SpotCheckMismatchType spotCheckMismatchType = SpotCheckMismatchType.valueOf(rs.getString("type"));
+            int count = rs.getInt("count");
+            summary.addSpotCheckMismatchTypeCount(spotCheckMismatchType, count);
+        }
+
+        protected MismatchTypeSummary getSummary() {
+            return summary;
+        }
+    }
+
+    private class MismatchContentTypeSummaryHandler implements RowCallbackHandler {
+
+        private MismatchContentTypeSummary summary = new MismatchContentTypeSummary();
+
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            SpotCheckContentType spotCheckContentType = SpotCheckContentType.valueOf(rs.getString("type"));
+            int count = rs.getInt("count");
+            summary.addSpotCheckMismatchContentTypeCount(spotCheckContentType, count);
+        }
+
+        protected MismatchContentTypeSummary getSummary() {
+            return summary;
+        }
+    }
+
 
     private MapSqlParameterSource getReportIdParams(SpotCheckReport<ContentKey> report) {
         return new MapSqlParameterSource()

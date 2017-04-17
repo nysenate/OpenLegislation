@@ -2,13 +2,10 @@ package gov.nysenate.openleg.dao.spotcheck;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Dao interface for retrieving, saving, and deleting spot check reports. The interface is templated
@@ -31,7 +28,22 @@ public interface SpotCheckReportDao<ContentKey>
      *
      * @return OpenMismatchesSummary
      */
-    MismatchSummary getMismatchSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate);
+    MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate);
+
+    /**
+     * Get mismatch type summary counts for the given datasource and date.
+     *
+     * @return MismatchTypeSummary
+     */
+    MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate, SpotCheckMismatchStatus spotCheckMismatchStatus);
+
+
+    /**
+     * Get mismatch type summary counts for the given datasource and date.
+     *
+     * @return MismatchContentTypeSummary
+     */
+    MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate, SpotCheckMismatchStatus spotCheckMismatchStatus, SpotCheckMismatchType spotCheckMismatchType);
 
     /**
      * Save the report to the backing store. This process may add additional observations to the

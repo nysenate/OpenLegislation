@@ -2,12 +2,9 @@ package gov.nysenate.openleg.service.spotcheck.base;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 /**
  * The SpotCheckReportService specifies the various methods that are available for use when
@@ -53,14 +50,32 @@ public interface SpotCheckReportService<ContentKey>
      * @return Paginated list of DeNormSpotCheckMismatch's
      */
     PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
+    /**
+     * Gets mismatch content type summary information for the given datasource, as of the given summary date time.
+     * @param dataSource
+     * @param summaryDateTime
+     * @param spotCheckMismatchStatus
+     * @param spotCheckMismatchType
+     * @return mismatchStatusSummary
+     */
+
+    MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, SpotCheckMismatchStatus spotCheckMismatchStatus, SpotCheckMismatchType spotCheckMismatchType);
+    /**
+     * Gets mismatch type  summary information for the given datasource, as of the given summary date time.
+     * @param dataSource
+     * @param summaryDateTime
+     * @param spotCheckMismatchStatus
+     * @return mismatchStatusSummary
+     */
+    MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, SpotCheckMismatchStatus spotCheckMismatchStatus);
 
     /**
-     * Gets mismatch summary information for the given datasource, as of the given summary date time.
+     * Gets mismatch status summary information for the given datasource, as of the given summary date time.
      * @param dataSource
      * @param summaryDateTime
      * @return
      */
-    MismatchSummary getMismatchSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime);
+    MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime);
 
     /**
      * Sets the ignore status for a spotcheck mismatch

@@ -22,6 +22,7 @@ public class MismatchQuery {
     private LocalDateTime toDate;
     private LocalDateTime fromDate;
     private OrderBy orderBy;
+    private SpotCheckMismatchType spotCheckMismatchType;
 
     public MismatchQuery(SpotCheckDataSource dataSource, Set<SpotCheckContentType> contentTypes) {
         this.dataSource = dataSource;
@@ -59,12 +60,20 @@ public class MismatchQuery {
         return this;
     }
 
+    public MismatchQuery withSpotCheckMismatchType(SpotCheckMismatchType spotCheckMismatchType){
+        this.spotCheckMismatchType = spotCheckMismatchType;
+        return this;
+    }
     public SpotCheckDataSource getDataSource() {
         return dataSource;
     }
 
     public Set<SpotCheckContentType> getContentTypes() {
         return contentTypes;
+    }
+
+    public SpotCheckMismatchType getSpotCheckMismatchType(){
+        return spotCheckMismatchType;
     }
 
     public Set<SpotCheckMismatchStatus> getMismatchStatuses() {

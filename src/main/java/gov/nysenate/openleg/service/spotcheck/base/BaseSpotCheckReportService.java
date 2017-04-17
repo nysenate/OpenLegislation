@@ -2,14 +2,10 @@ package gov.nysenate.openleg.service.spotcheck.base;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.spotcheck.*;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Provides base functionality for implementors of SpotCheckReportService
@@ -29,9 +25,22 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
 
     /** {@inheritDoc} */
     @Override
-    public MismatchSummary getMismatchSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime){
-        return getReportDao().getMismatchSummary(dataSource, summaryDateTime);
+    public MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime){
+        return getReportDao().getMismatchStatusSummary(dataSource, summaryDateTime);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, SpotCheckMismatchStatus spotCheckMismatchStatus){
+        return getReportDao().getMismatchTypeSummary(dataSource, summaryDateTime, spotCheckMismatchStatus);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, SpotCheckMismatchStatus spotCheckMismatchStatus, SpotCheckMismatchType spotCheckMismatchType){
+        return getReportDao().getMismatchContentTypeSummary(dataSource, summaryDateTime,spotCheckMismatchStatus, spotCheckMismatchType);
+    }
+
 
     /** {@inheritDoc} */
     @Override

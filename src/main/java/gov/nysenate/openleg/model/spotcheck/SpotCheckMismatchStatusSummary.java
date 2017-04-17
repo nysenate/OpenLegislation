@@ -16,22 +16,14 @@ public class SpotCheckMismatchStatusSummary {
     private int total;
 
     /**
-     * Map of content types to their mismatch count with this status.
-     */
-    private Map<SpotCheckContentType, Integer> contentTypeCounts;
-
-    /**
      * Initialize with a single content type with the intention of adding other content types later.
      *
      * @param status
-     * @param contentType
      * @param count
      */
-    public SpotCheckMismatchStatusSummary(SpotCheckMismatchStatus status, SpotCheckContentType contentType, int count) {
+    public SpotCheckMismatchStatusSummary(SpotCheckMismatchStatus status, int count) {
         this.status = status;
         this.total = count;
-        this.contentTypeCounts = new HashMap<>();
-        this.contentTypeCounts.put(contentType, count);
     }
 
     /**
@@ -45,12 +37,6 @@ public class SpotCheckMismatchStatusSummary {
             // cannot add summaries of different statuses.
             return;
         }
-        for (Map.Entry<SpotCheckContentType, Integer> entry : statusSummary.getContentTypeCounts().entrySet()) {
-            if (!this.contentTypeCounts.containsKey(entry.getKey())) {
-                this.contentTypeCounts.put(entry.getKey(), entry.getValue());
-                this.total += entry.getValue();
-            }
-        }
     }
 
     public SpotCheckMismatchStatus getStatus() {
@@ -61,7 +47,4 @@ public class SpotCheckMismatchStatusSummary {
         return total;
     }
 
-    public Map<SpotCheckContentType, Integer> getContentTypeCounts() {
-        return contentTypeCounts;
-    }
 }
