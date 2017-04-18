@@ -27,13 +27,13 @@ function mismatchSummaryApi($resource) {
     }
 
     function createStatusSummary(response) {
-        return response;
+        return response.result;
     }
     function createMismatchTypeSummary(response) {
-        return response;
+        return response.result;
     }
     function createContentTypeSummary(response) {
-        return response;
+        return response.result;
     }
 
     return {
