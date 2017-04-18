@@ -20,7 +20,7 @@ public enum SpotCheckMismatchType
     /** --- General --- */
 
     REFERENCE_DATA_MISSING("Ref. Missing", SpotCheckRefType.values()),
-    OBSERVE_DATA_MISSING("Data Missing", SpotCheckRefType.values()),
+    OBSERVE_DATA_MISSING("Openleg Data Missing", SpotCheckRefType.values()),
 
     /** --- Bill data mismatches --- */
 
