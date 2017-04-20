@@ -57,7 +57,7 @@
                 <div flex="10" style="word-wrap: break-word;min-width: 50px;">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">
+                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)" ng-disabled ="mismatch.disableDiff">
                   <div ng-show="mismatch.diffLoading === false">Diff</div>
                   <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around" >
                   <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
@@ -106,7 +106,7 @@
                 <div flex="15" style="word-wrap: break-word;min-width: 50px;">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">
+                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)" ng-disabled ="mismatch.disableDiff">
                   <div ng-show="mismatch.diffLoading === false">Diff</div>
                   <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around" >
                     <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
@@ -158,7 +158,7 @@
                 <div flex="15" style="word-wrap: break-word;min-width: 50px;">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
-                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)">
+                <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)" ng-disabled ="mismatch.disableDiff">
                   <div ng-show="mismatch.diffLoading === false">Diff</div>
                   <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around" >
                     <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
