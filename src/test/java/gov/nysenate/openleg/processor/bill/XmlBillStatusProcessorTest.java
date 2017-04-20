@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import org.junit.Test;
 
 /**

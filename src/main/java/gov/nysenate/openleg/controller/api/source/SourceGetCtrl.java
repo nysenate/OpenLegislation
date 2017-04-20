@@ -12,9 +12,10 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.sobi.SobiDao;
-import gov.nysenate.openleg.model.sobi.SobiFile;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,22 +36,25 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(value = BASE_API_PATH + "/sources", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-public class SourceGetCtrl extends BaseCtrl
-{
+public class SourceGetCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(SourceGetCtrl.class);
 
-    @Autowired private SobiDao sobiDao;
+    @Autowired
+    private SobiDao sobiDao;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
+    private SobiFragmentDao sobiFragmentDao;
 
     /**
      * SOBI File API
      * -------------
-     *
+     * <p>
      * Retrieve a list of sobi files that were published between the given date range.
      * Usage: (GET) /api/3/sources/sobi/{from datetime}/{to datetime}
-     *
+     * <p>
      * Params: order (string) - Order the results
-     *         limit, offset (int) - Pagination
-     *
+     * limit, offset (int) - Pagination
+     * <p>
      * Expected Output: List of SourceViewIds
      */
     @RequestMapping("/sobi/{from}/{to:.+}")
@@ -62,48 +66,50 @@ public class SourceGetCtrl extends BaseCtrl
         Range<LocalDateTime> dateTimeRange = getClosedOpenRange(fromDateTime, toDateTime, "from", "to");
         PaginatedList<SobiFile> sobiFiles = sobiDao.getSobiFilesDuring(dateTimeRange, order, limOff);
         return ListViewResponse.of(
-            sobiFiles.getResults().stream()
-                .map(sobiFile -> new SourceIdView("SOBI File", sobiFile.getFileName(), sobiFile.getPublishedDateTime()))
-                .collect(Collectors.toList()), sobiFiles.getTotal(), limOff);
+                sobiFiles.getResults().stream()
+                        .map(sobiFile -> new SourceIdView("SOBI File", sobiFile.getFileName(), sobiFile.getPublishedDateTime()))
+                        .collect(Collectors.toList()), sobiFiles.getTotal(), limOff);
     }
 
     /**
      * SOBI Fragment API
      * -----------------
-     *
+     * <p>
      * Retrieve sobi fragments given a sobi file name.
      * Usage: (GET) /api/3/sources/sobi/{sobiFileName}
-     *
+     * <p>
      * Expected Output: List of SourceFileView containing the fragments
      */
     @RequestMapping("/sobi/{sobiFileName:.+}")
     public BaseResponse getSobiSource(@PathVariable String sobiFileName) {
         SobiFile sobiFile = sobiDao.getSobiFile(sobiFileName);
-        List<SourceFileView> fragList = sobiDao.getSobiFragments(sobiFile, SortOrder.ASC).stream()
-            .map(sf -> new SourceFileView(sf.getType().name(), sf.getFragmentId(),
-                                          sf.getPublishedDateTime(), sf.getText()))
-            .collect(Collectors.toList());
+        List<SourceFileView> fragList = sobiFragmentDao.getSobiFragments(sobiFile, SortOrder.ASC).stream()
+                .map(sf -> new SourceFileView(sf.getType().name(), sf.getFragmentId(),
+                        sf.getPublishedDateTime(), sf.getText()))
+                .collect(Collectors.toList());
         return ListViewResponse.of(fragList, fragList.size(), LimitOffset.ALL);
     }
 
     /**
      * SOBI Fragment API
      * -----------------
-     *
+     * <p>
      * Retrieve a sobi fragment given a fragment id.
      * Usage: (GET) /api/3/sources/sobi/fragment/{fragmentId}
-     *
+     * <p>
      * Expected Output: SourceFileView
      */
     @RequestMapping("/sobi/fragment/{fragmentId:.+}")
     public BaseResponse getSobiFragmentSource(@PathVariable String fragmentId) {
-        SobiFragment fragment = sobiDao.getSobiFragment(fragmentId);
+        SobiFragment fragment = sobiFragmentDao.getSobiFragment(fragmentId);
         return new ViewObjectResponse<>(
-            new SourceFileView(fragment.getType().name(), fragment.getFragmentId(),
-                               fragment.getPublishedDateTime(), fragment.getText()));
+                new SourceFileView(fragment.getType().name(), fragment.getFragmentId(),
+                        fragment.getPublishedDateTime(), fragment.getText()));
     }
 
-    /** --- Exception Handlers --- */
+    /**
+     * --- Exception Handlers ---
+     */
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)

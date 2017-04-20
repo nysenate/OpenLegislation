@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.sourcefiles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 
+import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +15,12 @@ import java.time.LocalDateTime;
 
 import gov.nysenate.openleg.model.sourcefiles.sobi.InvalidSobiNameEx;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFileNotFoundEx;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SourceFile;
 import gov.nysenate.openleg.model.sourcefiles.sobi.UnreadableSobiEx;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class BaseSourceFile implements SourceFile {
-    
+public abstract class BaseSourceFile implements SourceFile {
+    @Autowired
+    SqlBaseDao sqlBaseDao;
     /**
      * SOBI and XML files are (mostly) in a CP850 or similar encoding. This was determined from the
      * byte mapping of
@@ -39,6 +41,8 @@ public class BaseSourceFile implements SourceFile {
     
     /** Indicates if the underlying 'file' reference has been moved into an archive directory. */
     private boolean archived;
+
+    protected File standingDir;
     
     /** --- Constructors --- */
     
@@ -46,16 +50,16 @@ public class BaseSourceFile implements SourceFile {
         this(sobiFile, DEFAULT_ENCODING);
     }
     
-    public BaseSourceFile(File file, String encoding) throws IOException, SobiFileNotFoundEx{
-        if(file.exists()){
-            this.file = file;
+    public BaseSourceFile(File infile, String encoding) throws IOException, SobiFileNotFoundEx{
+        if(infile.exists()){
+            this.file = infile;
             this.encoding = encoding;
             archived = false;
             // Attempt to parse the file name, raising an exception if the name is invalid
             getPublishedDateTime();
         }
         else{
-            throw new FileNotFoundException(file.getAbsolutePath());
+            throw new FileNotFoundException(infile.getAbsolutePath());
         }
     }
     
