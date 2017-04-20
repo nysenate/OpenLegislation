@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.entity.committee.data;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;

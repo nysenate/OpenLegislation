@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.model.bill.BillStatus;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;

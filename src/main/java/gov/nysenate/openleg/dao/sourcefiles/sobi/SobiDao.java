@@ -2,8 +2,10 @@ package gov.nysenate.openleg.dao.sourcefiles.sobi;
 
 import com.google.common.collect.Range;
 
+import gov.nysenate.openleg.model.sourcefiles.SourceFile;
 import org.springframework.dao.DataAccessException;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,17 +35,7 @@ public interface SobiDao {
      * @throws DataAccessException - If there was an error while retrieving the SobiFile.
      */
     SobiFile getSobiFile(String fileName) throws DataAccessException;
-    
-    /**
-     * Retrieves a collection of archived SobiFiles that match the list of file names.
-     * The map will contain a key-value pair for only the file names that were found.
-     *
-     * @param fileNames List<String> - File names to get SobiFiles for.
-     *
-     * @return Map<String, SobiFile> - Map of file name to SobiFile
-     */
-    Map<String, SobiFile> getSobiFiles(List<String> fileNames);
-    
+
     /**
      * Retrieve a list of archived SobiFiles during the given date/time range.
      *
@@ -68,25 +60,10 @@ public interface SobiDao {
      * @throws IOException - If there was a problem with handling the files.
      */
     List<SobiFile> getIncomingSobiFiles(SortOrder sortByFileName, LimitOffset limOff) throws IOException;
-    
-    /** --- Update/Insert Methods --- */
-    
-    /**
-     * Moves the underlying file in the SobiFile instance into the archive directory. This will
-     * ensure that subsequent calls to getIncomingSobiFiles will not return this sobiFile. The
-     * {@link #updateSobiFile(SobiFile)} method is invoked as part of this process to ensure consistency.
-     *
-     * @param sobiFile SobiFile - The SobiFile instance to be archived.
-     *
-     * @throws IOException - If there was a problem in moving the underlying file.
-     */
-    void archiveAndUpdateSobiFile(SobiFile sobiFile) throws IOException;
-    
-    /**
-     * Updates an existing SobiFile in the backing store with the given instance or inserts it if
-     * the record doesn't already exist.
-     *
-     * @param sobiFile SobiFile - The SobiFile instance to be updated.
-     */
-    void updateSobiFile(SobiFile sobiFile);
+
+    void archiveSobiFile(SourceFile sobiFile) throws IOException;
+
+    File getFileInIncomingDir(String fileName);
+
+    File getFileInArchiveDir(String fileName, LocalDateTime publishedDateTime);
 }

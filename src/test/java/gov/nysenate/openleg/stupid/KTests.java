@@ -8,7 +8,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillInfo;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.CachedBillDataService;

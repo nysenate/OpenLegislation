@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.bill.data;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.Map;

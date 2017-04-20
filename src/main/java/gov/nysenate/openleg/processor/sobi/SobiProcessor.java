@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processor.sobi;
 
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 
 /**
  * Classes that implement functionality for processing a particular type of data
