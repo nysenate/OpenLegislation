@@ -6,11 +6,15 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.sobi.SobiDao;
+import gov.nysenate.openleg.dao.sourcefiles.SourceFileDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.dao.sourcefiles.xml.XmlDao;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
-import gov.nysenate.openleg.model.sobi.*;
+import gov.nysenate.openleg.model.sourcefiles.SourceFile;
+import gov.nysenate.openleg.model.sourcefiles.sobi.*;
 import gov.nysenate.openleg.processor.agenda.AgendaProcessor;
 import gov.nysenate.openleg.processor.agenda.AgendaVoteProcessor;
 import gov.nysenate.openleg.processor.bill.BillSobiProcessor;
@@ -40,56 +44,80 @@ import java.util.regex.Pattern;
  * This SobiProcessService implementation processes every type of sobi fragment.
  */
 @Service
-public class ManagedSobiProcessService implements SobiProcessService
-{
+public class ManagedSobiProcessService implements SobiProcessService {
     private static final Logger logger = LoggerFactory.getLogger(ManagedSobiProcessService.class);
 
     private static final Pattern patchTagPattern = Pattern.compile("^\\s*</?PATCH>\\s*$");
 
-    @Autowired private SobiDao sobiDao;
-    @Autowired private EventBus eventBus;
-    @Autowired private Environment env;
+    @Autowired
+    private SobiDao sobiDao;
+    @Autowired
+    private XmlDao xmlDao;
+    @Autowired
+    private SourceFileDao sourceFileDao;
+    @Autowired
+    private SobiFragmentDao sobiFragmentDao;
+    @Autowired
+    private EventBus eventBus;
+    @Autowired
+    private Environment env;
 
-    /** --- Processor Dependencies --- */
+    /**
+     * --- Processor Dependencies ---
+     */
 
-    @Autowired private AgendaProcessor agendaProcessor;
-    @Autowired private AgendaVoteProcessor agendaVoteProcessor;
-    @Autowired private BillSobiProcessor billSobiProcessor;
-    @Autowired private CalendarProcessor calendarProcessor;
-    @Autowired private ActiveListProcessor activeListProcessor;
-    @Autowired private CommitteeProcessor committeeProcessor;
+    @Autowired
+    private AgendaProcessor agendaProcessor;
+    @Autowired
+    private AgendaVoteProcessor agendaVoteProcessor;
+    @Autowired
+    private BillSobiProcessor billSobiProcessor;
+    @Autowired
+    private CalendarProcessor calendarProcessor;
+    @Autowired
+    private ActiveListProcessor activeListProcessor;
+    @Autowired
+    private CommitteeProcessor committeeProcessor;
 
     // XML Processors
-    @Autowired private BillXMLBillTextProcessor billXMLBillTextProcessor;
-    @Autowired private BillXMLBillDigestProcessor billXMLBillDigestProcessor;
+    @Autowired
+    private BillXMLBillTextProcessor billXMLBillTextProcessor;
+    @Autowired
+    private BillXMLBillDigestProcessor billXMLBillDigestProcessor;
 
-    /** Register processors to handle a specific SobiFragment via this mapping. */
+    /**
+     * Register processors to handle a specific SobiFragment via this mapping.
+     */
     private ImmutableMap<SobiFragmentType, SobiProcessor> processorMap;
 
     @PostConstruct
     protected void init() {
         eventBus.register(this);
         processorMap = ImmutableMap.<SobiFragmentType, SobiProcessor>builder()
-            .put(SobiFragmentType.AGENDA, agendaProcessor)
-            .put(SobiFragmentType.AGENDA_VOTE, agendaVoteProcessor)
-            .put(SobiFragmentType.BILL, billSobiProcessor)
-            .put(SobiFragmentType.CALENDAR, calendarProcessor)
-            .put(SobiFragmentType.CALENDAR_ACTIVE, activeListProcessor)
-            .put(SobiFragmentType.COMMITTEE, committeeProcessor)
-            .put(SobiFragmentType.BILLTEXT,billXMLBillTextProcessor)
-            .put(SobiFragmentType.LDSUMM,billXMLBillDigestProcessor)
-            .build();
+                .put(SobiFragmentType.AGENDA, agendaProcessor)
+                .put(SobiFragmentType.AGENDA_VOTE, agendaVoteProcessor)
+                .put(SobiFragmentType.BILL, billSobiProcessor)
+                .put(SobiFragmentType.CALENDAR, calendarProcessor)
+                .put(SobiFragmentType.CALENDAR_ACTIVE, activeListProcessor)
+                .put(SobiFragmentType.COMMITTEE, committeeProcessor)
+                .put(SobiFragmentType.BILLTEXT, billXMLBillTextProcessor)
+                .put(SobiFragmentType.LDSUMM, billXMLBillDigestProcessor)
+                .build();
     }
 
     /** --- Implemented Methods --- */
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int collate() {
         return collateSobiFiles();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int ingest() {
         return processPendingFragments(SobiProcessOptions.builder().build());
@@ -105,7 +133,9 @@ public class ManagedSobiProcessService implements SobiProcessService
         return "sobi fragment";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int collateSobiFiles() {
         try {
@@ -115,30 +145,38 @@ public class ManagedSobiProcessService implements SobiProcessService
                 // Iterate through all the new sobi files in small batches to avoid saturating memory.
                 newSobis = sobiDao.getIncomingSobiFiles(SortOrder.ASC, new LimitOffset(env.getSobiBatchSize()));
                 logger.debug((newSobis.isEmpty()) ? "No more sobi files to collate."
-                                                  : "Collating {} sobi files.", newSobis.size());
+                        : "Collating {} sobi files.", newSobis.size());
                 for (SobiFile sobiFile : newSobis) {
                     // Do some slightly different processing for SOBI and XML files
                     DataProcessUnit unit;
-                    if (sobiFile.getFileName().substring(sobiFile.getFileName().length()-3).toLowerCase().equals("xml")) {
+                    boolean isSobi;
+                    if (sobiFile.getFileName().substring(sobiFile.getFileName().length() - 3).toLowerCase().equals("xml")) {
                         // Create DataProcessUnit specific for XMLs
+                        isSobi = false;
                         unit = new DataProcessUnit("XML-FILE", sobiFile.getFileName(), LocalDateTime.now(), DataProcessAction.COLLATE);
                     } else {
                         // Create DataProcessUnit specific for SOBIs
+                        isSobi = true;
                         unit = new DataProcessUnit("SOBI-FILE", sobiFile.getFileName(), LocalDateTime.now(), DataProcessAction.COLLATE);
                     }
                     List<SobiFragment> fragments = createFragments(sobiFile);
                     logger.info("Created {} fragments", fragments.size());
                     // Record the sobi file in the backing store.
-                    sobiDao.updateSobiFile(sobiFile);
+                    sourceFileDao.updateSourceFile(sobiFile);
                     // Save the extracted fragments. They will be marked as pending processing.
                     for (SobiFragment fragment : fragments) {
                         logger.info("Saving fragment {}", fragment.getFragmentId());
                         fragment.setPendingProcessing(true);
-                        sobiDao.updateSobiFragment(fragment);
+                        sobiFragmentDao.updateSobiFragment(fragment);
                         unit.addMessage("Saved " + fragment.getFragmentId());
                     }
                     // Done with this sobi file so let's archive it.
-                    sobiDao.archiveAndUpdateSobiFile(sobiFile);
+                    if (isSobi) {
+                        sobiDao.archiveSobiFile(sobiFile);
+                    } else {
+                        xmlDao.archiveXmlFile((SourceFile)sobiFile);
+                    }
+                    sourceFileDao.updateSourceFile(sobiFile);
                     totalCollated++;
                     unit.setEndDateTime(LocalDateTime.now());
                     eventBus.post(new DataProcessUnitEvent(unit));
@@ -146,30 +184,32 @@ public class ManagedSobiProcessService implements SobiProcessService
             }
             while (!newSobis.isEmpty() && env.isProcessingEnabled());
             return totalCollated;
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             String errMessage = "Error encountered during collation of sobi files.";
             throw new DataIntegrityViolationException(errMessage, ex);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<SobiFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset) {
-        return sobiDao.getPendingSobiFragments(sortByPubDate, limitOffset);
+        return sobiFragmentDao.getPendingSobiFragments(sortByPubDate, limitOffset);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int processFragments(List<SobiFragment> fragments, SobiProcessOptions options) {
         logger.debug((fragments.isEmpty()) ? "No more fragments to process"
-                                          : "Iterating through {} fragments", fragments.size());
+                : "Iterating through {} fragments", fragments.size());
         for (SobiFragment fragment : fragments) {
             // Hand off processing to specific implementations based on fragment type.
             if (processorMap.containsKey(fragment.getType())) {
                 processorMap.get(fragment.getType()).process(fragment);
-            }
-            else {
+            } else {
                 logger.error("No processors have been registered to handle: " + fragment);
             }
             fragment.setProcessedCount(fragment.getProcessedCount() + 1);
@@ -180,15 +220,16 @@ public class ManagedSobiProcessService implements SobiProcessService
         // Set the fragments as processed and update
         fragments.forEach(f -> {
             f.setPendingProcessing(false);
-            sobiDao.updateSobiFragment(f);
+            sobiFragmentDao.updateSobiFragment(f);
         });
 
         return fragments.size();
     }
 
-    /** {@inheritDoc}
-     *
-     *  Perform the operation in small batches so memory is not saturated.
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Perform the operation in small batches so memory is not saturated.
      */
     @Override
     public int processPendingFragments(SobiProcessOptions options) {
@@ -197,23 +238,24 @@ public class ManagedSobiProcessService implements SobiProcessService
         do {
             ImmutableSet<SobiFragmentType> allowedTypes = options.getAllowedFragmentTypes();
             LimitOffset limOff = (env.isSobiBatchEnabled()) ? new LimitOffset(env.getSobiBatchSize()) : LimitOffset.ONE;
-            fragments = sobiDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, limOff);
+            fragments = sobiFragmentDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, limOff);
             processCount += processFragments(fragments, options);
         }
         while (!fragments.isEmpty() && env.isProcessingEnabled());
         return processCount;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updatePendingProcessing(String fragmentId, boolean pendingProcessing)
-                                        throws SobiFragmentNotFoundEx {
+            throws SobiFragmentNotFoundEx {
         try {
-            SobiFragment fragment = sobiDao.getSobiFragment(fragmentId);
+            SobiFragment fragment = sobiFragmentDao.getSobiFragment(fragmentId);
             fragment.setPendingProcessing(pendingProcessing);
-            sobiDao.updateSobiFragment(fragment);
-        }
-        catch (DataAccessException ex) {
+            sobiFragmentDao.updateSobiFragment(fragment);
+        } catch (DataAccessException ex) {
             throw new SobiFragmentNotFoundEx();
         }
     }
@@ -227,7 +269,7 @@ public class ManagedSobiProcessService implements SobiProcessService
         List<SobiFragment> sobiFragments = new ArrayList<>();
 
         // If the file passed in is an XML file, return a list containing the one fragment
-        if (sobiFile.getFileName().substring(sobiFile.getFileName().length()-3).toLowerCase().equals("xml")) {
+        if (sobiFile.getFileName().substring(sobiFile.getFileName().length() - 3).toLowerCase().equals("xml")) {
             SobiFragment fragment;
             if (sobiFile.getFileName().contains("BILLTEXT")) {
                 // For bill text XML files
@@ -270,7 +312,7 @@ public class ManagedSobiProcessService implements SobiProcessService
                     if (line.charAt(11) == SobiLineType.SPONSOR_MEMO.getTypeCode()) {
                         line = new String(line.getBytes(sobiFile.getEncoding()), "latin1");
                     }
-                    line = line.replace((char)193, '°');
+                    line = line.replace((char) 193, '°');
                     billBuffer.append(line).append("\n");
                 }
                 // Other fragment types are in XML format. The iterator moves past the closing xml
@@ -315,11 +357,12 @@ public class ManagedSobiProcessService implements SobiProcessService
 
     /**
      * Gets a patch sobi message from within a set of patch tags, appending it to the given string builder
+     *
      * @param lineIterator Iterator<String>
      * @param patchMessage StringBuilder
      */
     private void extractPatchMessage(Iterator<String> lineIterator, StringBuilder patchMessage) {
-        while(lineIterator.hasNext()) {
+        while (lineIterator.hasNext()) {
             String line = lineIterator.next();
             if (patchTagPattern.matcher(line).matches()) {
                 return;
@@ -337,17 +380,16 @@ public class ManagedSobiProcessService implements SobiProcessService
      * we'll get malformed XML docs.
      *
      * @param fragmentType SobiFragmentType
-     * @param line String - The starting line of the document
-     * @param iterator Iterator<String> - Current iterator from the sobi file's text body
-     *
+     * @param line         String - The starting line of the document
+     * @param iterator     Iterator<String> - Current iterator from the sobi file's text body
      * @return String - The resulting XML string.
      * @throws java.io.IOException
      */
     private String extractXmlText(SobiFragmentType fragmentType, String line, Iterator<String> iterator) throws IOException {
         String endPattern = fragmentType.getEndPattern();
         StringBuffer xmlBuffer = new StringBuffer(
-            "<?xml version='1.0' encoding='UTF-8'?>&newl;" +
-                "<SENATEDATA>&newl;" + line + "&newl;"
+                "<?xml version='1.0' encoding='UTF-8'?>&newl;" +
+                        "<SENATEDATA>&newl;" + line + "&newl;"
         );
         String in = null;
         while (iterator.hasNext()) {
@@ -367,13 +409,13 @@ public class ManagedSobiProcessService implements SobiProcessService
         // TODO: Figure out this magic.
         xmlBuffer = new StringBuffer();
         Matcher m = Pattern.compile("<\\!\\[CDATA\\[(.*?)\\]\\]>").matcher(xmlString);
-        while(m.find()) {
-            m.appendReplacement(xmlBuffer, Matcher.quoteReplacement(m.group(0).replaceAll("&newl;", "").replaceAll("\\\\n","\n")));
+        while (m.find()) {
+            m.appendReplacement(xmlBuffer, Matcher.quoteReplacement(m.group(0).replaceAll("&newl;", "").replaceAll("\\\\n", "\n")));
         }
         m.appendTail(xmlBuffer);
 
         // TODO: Figure out this magic as well.
-        xmlString = xmlBuffer.toString().replaceAll("&newl;", "\n").replaceAll("(?!\n)\\p{Cntrl}","").replaceAll("(?!\\.{2})[ ]{2,}"," ");
+        xmlString = xmlBuffer.toString().replaceAll("&newl;", "\n").replaceAll("(?!\n)\\p{Cntrl}", "").replaceAll("(?!\\.{2})[ ]{2,}", " ");
         return xmlString;
     }
 }

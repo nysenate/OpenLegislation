@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.agenda.data;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;

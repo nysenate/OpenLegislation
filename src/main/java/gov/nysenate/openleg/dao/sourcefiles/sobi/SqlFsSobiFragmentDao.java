@@ -22,10 +22,12 @@ import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SourceFile;
+import gov.nysenate.openleg.model.sourcefiles.SourceFile;
+import org.springframework.stereotype.Repository;
 
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
+@Repository
 public class SqlFsSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
     
     @Autowired

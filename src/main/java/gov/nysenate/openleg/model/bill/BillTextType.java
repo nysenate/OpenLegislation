@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.Maps;
-import gov.nysenate.openleg.model.sobi.SobiLineType;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiLineType;
 
 import java.util.Arrays;
 import java.util.Map;

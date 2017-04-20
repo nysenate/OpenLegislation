@@ -2,8 +2,8 @@ package gov.nysenate.openleg.processor.entity;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
