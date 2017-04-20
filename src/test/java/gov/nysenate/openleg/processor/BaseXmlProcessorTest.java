@@ -1,8 +1,11 @@
 package gov.nysenate.openleg.processor;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
+import gov.nysenate.openleg.dao.sourcefiles.SourceFileDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiDao;
 import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.dao.sourcefiles.xml.XmlDao;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
@@ -20,11 +23,10 @@ import java.io.IOException;
 @Transactional
 public abstract class BaseXmlProcessorTest extends BaseTests {
 
-    @Autowired
-    private SourceFileRefDao sourceFileRefDao;
-    @Autowired
-    private SobiFragmentDao sobiFragmentDao;
-
+    @Autowired private SobiDao sobiDao;
+    @Autowired private XmlDao xmlDao;
+    @Autowired private SourceFileDao sourceFileDao;
+    @Autowired private SobiFragmentDao sobiFragmentDao;
     /**
      * @return {@link SobiProcessor} the processor implementation associated with this test
      */
@@ -32,23 +34,22 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
 
     /**
      * Generates a dummy sobi fragment from an xml file
-     *
      * @param xmlFilePath String - relative path to the xml file
      * @return {@link SobiFragment}
      */
     protected SobiFragment generateXmlSobiFragment(String xmlFilePath) {
         try {
             String absolutePath = getClass().getClassLoader().getResource(xmlFilePath).getFile();
-            File file = new File(absolutePath);
+            File xmlFile = new File(absolutePath);
 
-            String contents = FileUtils.readFileToString(file);
+            String contents = FileUtils.readFileToString(xmlFile);
 
-            XmlFile xmlFile = new XmlFile(file);
+            XmlFile xmlFile1 = new XmlFile(xmlFile);
 
             SobiFragmentType type = getSobiProcessor().getSupportedType();
-            SobiFragment sobiFragment = new SobiFragment(xmlFile, type, contents, 0);
+            SobiFragment sobiFragment = new SobiFragment(xmlFile1, type, contents, 0);
 
-            sourceFileRefDao.updateSourceFile(xmlFile);
+            //xmlDao.getXmlFile(xmlFile1);
             sobiFragmentDao.updateSobiFragment(sobiFragment);
 
             return sobiFragment;
@@ -60,7 +61,6 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
 
     /**
      * Processes the given {@link SobiFragment} using the test's {@link SobiProcessor}
-     *
      * @param fragment {@link SobiFragment}
      */
     protected void processFragment(SobiFragment fragment) {
@@ -72,7 +72,6 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     /**
      * Process the given xml file using this test's {@link SobiProcessor}
      * This will perform all of the overhead steps to generate a {@link SobiFragment} and process it
-     *
      * @param xmlFilePath String - relative path to xml file
      */
     protected void processXmlFile(String xmlFilePath) {

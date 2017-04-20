@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processor.bill.billstat;
 
 import gov.nysenate.openleg.dao.bill.data.BillDao;
-import gov.nysenate.openleg.dao.sobi.SobiDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiDao;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
