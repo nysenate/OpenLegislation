@@ -210,6 +210,10 @@ md-dialog {
 .thin-300 {
   font-weight: 300;
 }
+.columnWord{
+  word-wrap: break-word;
+  min-width: 50px;
+}
 
 .text-normal {
   font-weight: normal;
