@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.dao.sourcefiles.xml;
 
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sourcefiles.SqlSourceFileDao;
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
@@ -14,8 +16,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static gov.nysenate.openleg.util.FileIOUtils.getSortedFiles;
 
 /**
  * Created by Robert Bebber on 4/12/17.
@@ -41,6 +48,24 @@ public class FsXmlDao implements XmlDao {
     protected void init() {
         incomingSourceDir = new File(environment.getStagingDir(), "xmls");
         archiveSourceDir = new File(environment.getArchiveDir(), "xmls");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<XmlFile> getIncomingXmlFiles(SortOrder sortByFileName,
+                                               LimitOffset limitOffset) throws IOException {
+        List<File> files = new ArrayList<>(getSortedFiles(incomingSourceDir, false, null));
+        if (sortByFileName == SortOrder.DESC) {
+            Collections.reverse(files);
+        }
+        files = LimitOffset.limitList(files, limitOffset);
+        List<XmlFile> xmlFile = new ArrayList<>();
+        for (File file : files) {
+            xmlFile.add(new XmlFile(file));
+        }
+        return xmlFile;
     }
 
     /**
