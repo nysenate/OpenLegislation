@@ -40,7 +40,7 @@ import static gov.nysenate.openleg.util.FileIOUtils.getSortedFiles;
  * for the files are stored in the database. The returned SobiFile instances are constructed
  * utilizing both data sources.
  */
-//@Repository
+@Repository
 public class SqlFsSobiDao extends SqlBaseDao implements SobiDao {
     @Autowired
     SqlSourceFileDao sqlSourceFileDao;
