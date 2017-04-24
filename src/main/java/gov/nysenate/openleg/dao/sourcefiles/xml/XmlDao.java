@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.dao.sourcefiles.xml;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
 import org.springframework.dao.DataAccessException;
 
@@ -8,6 +10,7 @@ import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface XmlDao {
 
@@ -20,6 +23,8 @@ public interface XmlDao {
      */
     XmlFile getFile(String filename) throws DataAccessException;
 
+    List<XmlFile> getIncomingXmlFiles(SortOrder sortByFileName,
+                                        LimitOffset limitOffset) throws IOException;
     /**
      * Method archives XMLFile. Moves SourceFile from staging to archive.
      *
