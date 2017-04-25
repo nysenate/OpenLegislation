@@ -12,7 +12,7 @@ import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.service.entity.committee.event.CommitteeUpdateEvent;
 import net.sf.ehcache.Cache;

@@ -7,8 +7,8 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
@@ -51,7 +51,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             Document doc = xml.parse(sobiFragment.getText());
-            Node xmlAgendaVote = xml.getNode("SENATEDATA/senagendavote", doc);
+            Node xmlAgendaVote = xml.getNode("senagendavote", doc);
             Integer agendaNo = xml.getInteger("@no", xmlAgendaVote);
             SessionYear session = new SessionYear(xml.getInteger("@sessyr", xmlAgendaVote));
             Integer year = xml.getInteger("@year", xmlAgendaVote);
