@@ -1,0 +1,105 @@
+package gov.nysenate.openleg.annotation;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
+public class CreateTestFiles {
+    
+    private static final Pattern INTEGRATION_PATTERN = Pattern.compile("@Autowired|extends BaseTest");
+    private static final Pattern UNIT_PATTERN = Pattern.compile("assert");
+    private static final String ANNOTATION_PACKAGE = "gov.nysenate.openleg.annotation";
+    
+    private static int count = 0;
+    
+    /**
+     * The main program that calls the recursion
+     *
+     * @param args command-line arguments
+     */
+    public static void main(String[] args){
+        String testDirName = "src/test/java/gov/nysenate/openleg";
+        File testDir = new File(testDirName);
+        recursion(testDir);
+        
+        System.out.println(count);
+    }
+    
+    /**
+     * Goes through the package "dir" and lists all files
+     * If the file is a Java file and not a test file,
+     * it sees if it contains an @Test, if it does, it
+     * creates a tester file for it
+     *
+     * @param dir the package
+     */
+    private static void recursion(File dir){
+        File[] files = dir.listFiles();
+        Arrays.sort(files, Collections.reverseOrder());
+        
+        for(File file : files){
+            if(file.isDirectory()){
+                recursion(file);
+            }
+            else{
+                String name = file.getName();
+                
+                if(name.endsWith("java")){
+                    name = name.substring(0, name.indexOf(".java"));
+                    
+                    if(!name.endsWith("Test") && !name.endsWith("IT")){
+                        try(Scanner scanner = new Scanner(file).useDelimiter("\\Z")){
+                            String contents = scanner.next();
+                            if(contents.contains("@Test")){
+                                count++;
+                                makeFile(dir, name, contents);
+                            }
+                        }
+                        catch(FileNotFoundException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * It determines the file suffix (Test or IT) based on the contents
+     * It then creates a outline for the file and prints it out.
+     *
+     * @param dir      the package
+     * @param name     the filename
+     * @param contents the contents of the file
+     */
+    private static void makeFile(File dir, String name, String contents){
+        String dirAbsolute = dir.getAbsolutePath();
+        String pack = dirAbsolute.substring(dirAbsolute.indexOf("gov")).replace("/", ".");
+        
+        CategoryTypes category = CategoryTypes.SillyTest;
+        
+        // Integration Test
+        if(INTEGRATION_PATTERN.matcher(contents).find()){
+            category = CategoryTypes.IntegrationTest;
+        }
+        
+        // Unit Test
+        else if(UNIT_PATTERN.matcher(contents).find()){
+            category = CategoryTypes.UnitTest;
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb = sb.append("package " + pack + ";\n")
+                .append("import " + ANNOTATION_PACKAGE + '.' + category + ";\n")
+                .append("import org.junit.Assert;\n")
+                .append("import org.junit.Test;\n")
+                .append("import org.junit.experimental.categories.Category;\n")
+                .append("\n")
+                .append("@Category(" + category + ".class)\n")
+                .append("public class " + name + category.getSuffix() + " {}\n");
+        System.out.println(sb);
+    }
+}
