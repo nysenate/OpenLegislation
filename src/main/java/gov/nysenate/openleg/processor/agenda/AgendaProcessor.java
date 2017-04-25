@@ -53,7 +53,7 @@ public class AgendaProcessor extends AbstractDataProcessor implements SobiProces
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             Document doc = xml.parse(sobiFragment.getText());
-            Node xmlAgenda = xml.getNode("SENATEDATA/senagenda", doc);
+            Node xmlAgenda = xml.getNode("senagenda", doc);
             Integer agendaNo = xml.getInteger("@no", xmlAgenda);
             Integer year = xml.getInteger("@year", xmlAgenda);
             AgendaId agendaId = new AgendaId(agendaNo, year);

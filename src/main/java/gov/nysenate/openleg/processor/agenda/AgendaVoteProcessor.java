@@ -51,7 +51,7 @@ public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiPr
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             Document doc = xml.parse(sobiFragment.getText());
-            Node xmlAgendaVote = xml.getNode("SENATEDATA/senagendavote", doc);
+            Node xmlAgendaVote = xml.getNode("senagendavote", doc);
             Integer agendaNo = xml.getInteger("@no", xmlAgendaVote);
             SessionYear session = new SessionYear(xml.getInteger("@sessyr", xmlAgendaVote));
             Integer year = xml.getInteger("@year", xmlAgendaVote);
