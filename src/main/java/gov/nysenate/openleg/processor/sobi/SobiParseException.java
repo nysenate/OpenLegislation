@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.processor.sobi;
 
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.base.ParseError;
 
 import java.time.LocalDateTime;

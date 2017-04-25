@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.6
--- Dumped by pg_dump version 9.5.6
+-- Dumped from database version 9.5.0
+-- Dumped by pg_dump version 9.5.0
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -30,42 +30,42 @@ COMMENT ON SCHEMA master IS 'Processed legislative data';
 
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- Name: citext; Type: EXTENSION; Schema: -; Owner: 
+-- Name: citext; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
 
 
 --
--- Name: hstore; Type: EXTENSION; Schema: -; Owner: 
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
@@ -236,7 +236,7 @@ BEGIN
     year := NEW.year;
     new_values := delete(hstore(NEW.*), ignored_columns);
     fragment_id := NEW.last_fragment_id;
-    published_date_time := (substring(fragment_id from 7 for 6) || substring(fragment_id from 14 for 7))::timestamp without time zone;
+    SELECT master.sobi_fragment.published_date_time INTO published_date_time FROM master.sobi_fragment WHERE master.sobi_fragment.fragment_id = NEW.last_fragment_id;
   ELSE
     agenda_no := OLD.agenda_no;
     year := OLD.year;
@@ -580,7 +580,7 @@ COMMENT ON TABLE active_list_reference IS 'Table containing spotcheck report for
 
 CREATE TABLE active_list_reference_entry (
     active_list_reference_id smallint NOT NULL,
-    bill_calendar_no smallint NOT NULL,
+    bill_calendar_no integer NOT NULL,
     bill_print_no text,
     bill_amend_version character(1),
     bill_session_year smallint,
@@ -1117,7 +1117,7 @@ ALTER SEQUENCE agenda_vote_committee_vote_id_seq OWNED BY agenda_vote_committee_
 
 CREATE TABLE alert_active_list_entry_reference (
     calendar_active_list_id smallint NOT NULL,
-    bill_calendar_no smallint NOT NULL,
+    bill_calendar_no integer NOT NULL,
     bill_print_no text,
     bill_amend_version character(1),
     bill_session_year smallint,
@@ -1282,7 +1282,7 @@ CREATE TABLE alert_supplemental_entry_reference (
     id integer NOT NULL,
     calendar_sup_id integer,
     section_code smallint,
-    bill_calendar_no smallint,
+    bill_calendar_no integer,
     bill_print_no text,
     bill_amend_version character(1),
     bill_session_year smallint,
@@ -3288,6 +3288,53 @@ COMMENT ON COLUMN law_tree.created_date_time IS 'Date/time this record was creat
 
 COMMENT ON COLUMN law_tree.law_file IS 'Reference to the source law file';
 
+CREATE TABLE bill_text_alternate_pdf (
+    bill_print_no text NOT NULL,
+    bill_session_year smallint NOT NULL,
+    bill_amend_version character(1) NOT NULL,
+    active boolean,
+    url_path text
+);
+
+
+ALTER TABLE master.bill_text_alternate_pdf OWNER TO postgres;
+
+--
+-- Name: TABLE bill_text_alternate_pdf; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON TABLE bill_text_alternate_pdf IS 'Mapping of urls to redirect to for certain budget bills';
+
+
+--
+-- Name: COLUMN bill_text_alternate_pdf.url_path; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill_text_alternate_pdf.url_path IS 'Specify protocol for absolute urls';
+
+
+--
+-- Data for Name: bill_text_alternate_pdf; Type: TABLE DATA; Schema: master; Owner: postgres
+--
+
+INSERT INTO bill_text_alternate_pdf VALUES ('S6401', 2015, ' ', true, '/static/pdf/S6401-A9001.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9001', 2015, ' ', true, '/static/pdf/S6401-A9001.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('S6402', 2015, ' ', true, '/static/pdf/S6402-A9002.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9002', 2015, ' ', true, '/static/pdf/S6402-A9002.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('S6403', 2015, ' ', true, '/static/pdf/S6403-A9003.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9003', 2015, ' ', true, '/static/pdf/S6403-A9003.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('S6404', 2015, ' ', true, '/static/pdf/S6404-A9004.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9004', 2015, ' ', true, '/static/pdf/S6404-A9004.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('S6400', 2015, ' ', true, '/static/pdf/S6400-A9000.pdf');
+INSERT INTO bill_text_alternate_pdf VALUES ('A9000', 2015, ' ', true, '/static/pdf/S6400-A9000.pdf');
+
+
+--
+-- Name: bill_text_external_pdf_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY bill_text_alternate_pdf
+    ADD CONSTRAINT bill_text_external_pdf_pkey PRIMARY KEY (bill_print_no, bill_session_year, bill_amend_version);
 
 --
 -- Name: notification; Type: TABLE; Schema: master; Owner: postgres
@@ -7237,33 +7284,6 @@ GRANT ALL ON TABLE agenda TO postgres;
 
 
 --
--- Name: agenda_alert_info_committee; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_alert_info_committee FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_alert_info_committee FROM postgres;
-GRANT ALL ON TABLE agenda_alert_info_committee TO postgres;
-
-
---
--- Name: agenda_alert_info_committee_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE agenda_alert_info_committee_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE agenda_alert_info_committee_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE agenda_alert_info_committee_id_seq TO postgres;
-
-
---
--- Name: agenda_alert_info_committee_item; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_alert_info_committee_item FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_alert_info_committee_item FROM postgres;
-GRANT ALL ON TABLE agenda_alert_info_committee_item TO postgres;
-
-
---
 -- Name: agenda_change_log_seq; Type: ACL; Schema: master; Owner: postgres
 --
 
@@ -7390,93 +7410,12 @@ GRANT ALL ON SEQUENCE agenda_vote_committee_vote_id_seq TO postgres;
 
 
 --
--- Name: alert_active_list_entry_reference; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE alert_active_list_entry_reference FROM PUBLIC;
-REVOKE ALL ON TABLE alert_active_list_entry_reference FROM postgres;
-GRANT ALL ON TABLE alert_active_list_entry_reference TO postgres;
-
-
---
--- Name: alert_active_list_reference; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE alert_active_list_reference FROM PUBLIC;
-REVOKE ALL ON TABLE alert_active_list_reference FROM postgres;
-GRANT ALL ON TABLE alert_active_list_reference TO postgres;
-
-
---
--- Name: alert_active_list_reference_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE alert_active_list_reference_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE alert_active_list_reference_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE alert_active_list_reference_id_seq TO postgres;
-
-
---
--- Name: alert_calendar_file; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE alert_calendar_file FROM PUBLIC;
-REVOKE ALL ON TABLE alert_calendar_file FROM postgres;
-GRANT ALL ON TABLE alert_calendar_file TO postgres;
-
-
---
--- Name: alert_calendar_reference; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE alert_calendar_reference FROM PUBLIC;
-REVOKE ALL ON TABLE alert_calendar_reference FROM postgres;
-GRANT ALL ON TABLE alert_calendar_reference TO postgres;
-
-
---
--- Name: alert_supplemental_entry_reference; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE alert_supplemental_entry_reference FROM PUBLIC;
-REVOKE ALL ON TABLE alert_supplemental_entry_reference FROM postgres;
-GRANT ALL ON TABLE alert_supplemental_entry_reference TO postgres;
-
-
---
--- Name: alert_supplemental_entry_reference_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE alert_supplemental_entry_reference_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE alert_supplemental_entry_reference_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE alert_supplemental_entry_reference_id_seq TO postgres;
-
-
---
 -- Name: calendar_supplemental; Type: ACL; Schema: master; Owner: postgres
 --
 
 REVOKE ALL ON TABLE calendar_supplemental FROM PUBLIC;
 REVOKE ALL ON TABLE calendar_supplemental FROM postgres;
 GRANT ALL ON TABLE calendar_supplemental TO postgres;
-
-
---
--- Name: alert_supplemental_reference_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE alert_supplemental_reference_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE alert_supplemental_reference_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE alert_supplemental_reference_id_seq TO postgres;
-
-
---
--- Name: alert_supplemental_reference; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE alert_supplemental_reference FROM PUBLIC;
-REVOKE ALL ON TABLE alert_supplemental_reference FROM postgres;
-GRANT ALL ON TABLE alert_supplemental_reference TO postgres;
 
 
 --
@@ -7624,15 +7563,6 @@ GRANT ALL ON TABLE bill_previous_version TO postgres;
 
 
 --
--- Name: bill_scrape_queue; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_scrape_queue FROM PUBLIC;
-REVOKE ALL ON TABLE bill_scrape_queue FROM postgres;
-GRANT ALL ON TABLE bill_scrape_queue TO postgres;
-
-
---
 -- Name: bill_sponsor; Type: ACL; Schema: master; Owner: postgres
 --
 
@@ -7648,24 +7578,6 @@ GRANT ALL ON TABLE bill_sponsor TO postgres;
 REVOKE ALL ON TABLE bill_sponsor_additional FROM PUBLIC;
 REVOKE ALL ON TABLE bill_sponsor_additional FROM postgres;
 GRANT ALL ON TABLE bill_sponsor_additional TO postgres;
-
-
---
--- Name: bill_text_alternate_pdf; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_text_alternate_pdf FROM PUBLIC;
-REVOKE ALL ON TABLE bill_text_alternate_pdf FROM postgres;
-GRANT ALL ON TABLE bill_text_alternate_pdf TO postgres;
-
-
---
--- Name: bill_text_reference; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_text_reference FROM PUBLIC;
-REVOKE ALL ON TABLE bill_text_reference FROM postgres;
-GRANT ALL ON TABLE bill_text_reference TO postgres;
 
 
 --
@@ -7982,7 +7894,6 @@ REVOKE ALL ON TABLE law_tree FROM PUBLIC;
 REVOKE ALL ON TABLE law_tree FROM postgres;
 GRANT ALL ON TABLE law_tree TO postgres;
 
-
 --
 -- Name: notification; Type: ACL; Schema: master; Owner: postgres
 --
@@ -7990,24 +7901,6 @@ GRANT ALL ON TABLE law_tree TO postgres;
 REVOKE ALL ON TABLE notification FROM PUBLIC;
 REVOKE ALL ON TABLE notification FROM postgres;
 GRANT ALL ON TABLE notification TO postgres;
-
-
---
--- Name: notification_digest_subscription; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE notification_digest_subscription FROM PUBLIC;
-REVOKE ALL ON TABLE notification_digest_subscription FROM postgres;
-GRANT ALL ON TABLE notification_digest_subscription TO postgres;
-
-
---
--- Name: notification_digest_subscription_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE notification_digest_subscription_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE notification_digest_subscription_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE notification_digest_subscription_id_seq TO postgres;
 
 
 --
@@ -8119,42 +8012,6 @@ GRANT ALL ON SEQUENCE spotcheck_mismatch_id_seq TO postgres;
 
 
 --
--- Name: spotcheck_mismatch_ignore; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE spotcheck_mismatch_ignore FROM PUBLIC;
-REVOKE ALL ON TABLE spotcheck_mismatch_ignore FROM postgres;
-GRANT ALL ON TABLE spotcheck_mismatch_ignore TO postgres;
-
-
---
--- Name: spotcheck_mismatch_ignore_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE spotcheck_mismatch_ignore_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE spotcheck_mismatch_ignore_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE spotcheck_mismatch_ignore_id_seq TO postgres;
-
-
---
--- Name: spotcheck_mismatch_issue_id; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE spotcheck_mismatch_issue_id FROM PUBLIC;
-REVOKE ALL ON TABLE spotcheck_mismatch_issue_id FROM postgres;
-GRANT ALL ON TABLE spotcheck_mismatch_issue_id TO postgres;
-
-
---
--- Name: spotcheck_mismatch_issue_id_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE spotcheck_mismatch_issue_id_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE spotcheck_mismatch_issue_id_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE spotcheck_mismatch_issue_id_id_seq TO postgres;
-
-
---
 -- Name: spotcheck_observation; Type: ACL; Schema: master; Owner: postgres
 --
 
@@ -8229,24 +8086,6 @@ GRANT ALL ON TABLE apiuser TO postgres;
 
 
 --
--- Name: apiuser_roles; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE apiuser_roles FROM PUBLIC;
-REVOKE ALL ON TABLE apiuser_roles FROM postgres;
-GRANT ALL ON TABLE apiuser_roles TO postgres;
-
-
---
--- Name: apiuser_roles_id_seq; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE apiuser_roles_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE apiuser_roles_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE apiuser_roles_id_seq TO postgres;
-
-
---
 -- Name: member; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -8292,33 +8131,6 @@ GRANT ALL ON SEQUENCE person_id_seq TO postgres;
 
 
 --
--- Name: request; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE request FROM PUBLIC;
-REVOKE ALL ON TABLE request FROM postgres;
-GRANT ALL ON TABLE request TO postgres;
-
-
---
--- Name: request_request_id_seq; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE request_request_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE request_request_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE request_request_id_seq TO postgres;
-
-
---
--- Name: response; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE response FROM PUBLIC;
-REVOKE ALL ON TABLE response FROM postgres;
-GRANT ALL ON TABLE response TO postgres;
-
-
---
 -- Name: session_member; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -8339,4 +8151,3 @@ GRANT ALL ON SEQUENCE session_member_id_seq TO postgres;
 --
 -- PostgreSQL database dump complete
 --
-

@@ -1,10 +1,14 @@
 package gov.nysenate.openleg.processor;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.sobi.SobiDao;
-import gov.nysenate.openleg.model.sobi.SobiFile;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.dao.sourcefiles.SourceFileDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.dao.sourcefiles.xml.XmlDao;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +24,9 @@ import java.io.IOException;
 public abstract class BaseXmlProcessorTest extends BaseTests {
 
     @Autowired private SobiDao sobiDao;
-
+    @Autowired private XmlDao xmlDao;
+    @Autowired private SourceFileDao sourceFileDao;
+    @Autowired private SobiFragmentDao sobiFragmentDao;
     /**
      * @return {@link SobiProcessor} the processor implementation associated with this test
      */
@@ -38,12 +44,13 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
 
             String contents = FileUtils.readFileToString(xmlFile);
 
-            SobiFile sobiFile = new SobiFile(xmlFile);
-            SobiFragmentType type = getSobiProcessor().getSupportedType();
-            SobiFragment sobiFragment = new SobiFragment(sobiFile, type, contents, 0);
+            XmlFile xmlFile1 = new XmlFile(xmlFile);
 
-            sobiDao.updateSobiFile(sobiFile);
-            sobiDao.updateSobiFragment(sobiFragment);
+            SobiFragmentType type = getSobiProcessor().getSupportedType();
+            SobiFragment sobiFragment = new SobiFragment(xmlFile1, type, contents, 0);
+
+            //xmlDao.getXmlFile(xmlFile1);
+            sobiFragmentDao.updateSobiFragment(sobiFragment);
 
             return sobiFragment;
 
