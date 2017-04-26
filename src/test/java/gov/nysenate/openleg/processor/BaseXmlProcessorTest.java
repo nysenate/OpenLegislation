@@ -23,10 +23,15 @@ import java.io.IOException;
 @Transactional
 public abstract class BaseXmlProcessorTest extends BaseTests {
 
-    @Autowired private SobiDao sobiDao;
-    @Autowired private XmlDao xmlDao;
-    @Autowired private SourceFileDao sourceFileDao;
-    @Autowired private SobiFragmentDao sobiFragmentDao;
+    @Autowired
+    private SobiDao sobiDao;
+    @Autowired
+    private XmlDao xmlDao;
+    @Autowired
+    private SourceFileDao sourceFileDao;
+    @Autowired
+    private SobiFragmentDao sobiFragmentDao;
+
     /**
      * @return {@link SobiProcessor} the processor implementation associated with this test
      */
@@ -34,22 +39,23 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
 
     /**
      * Generates a dummy sobi fragment from an xml file
+     *
      * @param xmlFilePath String - relative path to the xml file
      * @return {@link SobiFragment}
      */
     protected SobiFragment generateXmlSobiFragment(String xmlFilePath) {
         try {
             String absolutePath = getClass().getClassLoader().getResource(xmlFilePath).getFile();
-            File xmlFile = new File(absolutePath);
+            File file = new File(absolutePath);
 
-            String contents = FileUtils.readFileToString(xmlFile);
+            String contents = FileUtils.readFileToString(file);
 
-            XmlFile xmlFile1 = new XmlFile(xmlFile);
+            XmlFile xmlFile = new XmlFile(file);
 
             SobiFragmentType type = getSobiProcessor().getSupportedType();
-            SobiFragment sobiFragment = new SobiFragment(xmlFile1, type, contents, 0);
+            SobiFragment sobiFragment = new SobiFragment(xmlFile, type, contents, 0);
 
-            //xmlDao.getXmlFile(xmlFile1);
+            sourceFileDao.updateSourceFile(xmlFile);
             sobiFragmentDao.updateSobiFragment(sobiFragment);
 
             return sobiFragment;
@@ -61,6 +67,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
 
     /**
      * Processes the given {@link SobiFragment} using the test's {@link SobiProcessor}
+     *
      * @param fragment {@link SobiFragment}
      */
     protected void processFragment(SobiFragment fragment) {
@@ -72,6 +79,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     /**
      * Process the given xml file using this test's {@link SobiProcessor}
      * This will perform all of the overhead steps to generate a {@link SobiFragment} and process it
+     *
      * @param xmlFilePath String - relative path to xml file
      */
     protected void processXmlFile(String xmlFilePath) {
