@@ -50,7 +50,7 @@ public class CalendarProcessor extends AbstractDataProcessor implements SobiProc
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             Document doc = xml.parse(sobiFragment.getText());
-            Node xmlCalendar = xml.getNode("SENATEDATA/sencalendar", doc);
+            Node xmlCalendar = xml.getNode("sencalendar", doc);
             Integer calendarNo = xml.getInteger("@no", xmlCalendar);
             Integer sessionYear = xml.getInteger("@sessyr", xmlCalendar);
             Integer year = xml.getInteger("@year", xmlCalendar);

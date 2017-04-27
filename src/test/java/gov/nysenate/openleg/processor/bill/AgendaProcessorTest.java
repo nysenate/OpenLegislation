@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 
@@ -85,8 +84,6 @@ public class AgendaProcessorTest extends BaseXmlProcessorTest {
         //assertTrue(processedAgendaObject.getSession() == agendaTest.getSession());
         //assertTrue(processedAgendaObject.getYear() == agendaTest.getYear());
         assertTrue(processedAgendaObject.getId().equals(agendaTest.getId()));
-        //assertTrue(processedAgendaObject.getPublishedDateTime().equals(agendaTest.getPublishedDateTime()));
-        //assertTrue(processedAgendaObject.getAgendaInfoAddenda().equals(agendaTest.getAgendaInfoAddenda()));
         assertTrue(processedAgendaObject.getAgendaVoteAddenda().equals(agendaTest.getAgendaVoteAddenda()));
     }
 }
