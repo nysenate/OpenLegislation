@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.sourcefiles.sobi;
 
 import com.google.common.collect.ImmutableSet;
 
+import gov.nysenate.openleg.model.sourcefiles.SourceFile;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public interface SobiFragmentDao {
      *
      * @return List<SobiFragment>
      */
-    List<SobiFragment> getSobiFragments(SobiFile sobiFile, SortOrder sortById);
+    List<SobiFragment> getSobiFragments(SourceFile sobiFile, SortOrder sortById);
     
     /**
      * Retrieve the SobiFragments of a specific type associated with a given SobiFile.
@@ -48,7 +49,7 @@ public interface SobiFragmentDao {
      *
      * @return List<SobiFragment>
      */
-    List<SobiFragment> getSobiFragments(SobiFile sobiFile, SobiFragmentType fragmentType, SortOrder sortById);
+    List<SobiFragment> getSobiFragments(SourceFile sobiFile, SobiFragmentType fragmentType, SortOrder sortById);
     
     /**
      * Retrieves all SobiFragments that are awaiting processing.

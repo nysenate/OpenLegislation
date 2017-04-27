@@ -34,7 +34,7 @@ public class SqlFsSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao 
     private SobiDao sobiDao;
     
     @Override
-    public List<SobiFragment> getSobiFragments(SobiFile sobiFile, SobiFragmentType fragmentType,
+    public List<SobiFragment> getSobiFragments(SourceFile sobiFile, SobiFragmentType fragmentType,
                                                SortOrder sortById){
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("sobiFileName", sobiFile.getFileName());
@@ -97,7 +97,7 @@ public class SqlFsSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao 
      * {@inheritDoc}
      */
     @Override
-    public List<SobiFragment> getSobiFragments(SobiFile sobiFile, SortOrder sortById){
+    public List<SobiFragment> getSobiFragments(SourceFile sobiFile, SortOrder sortById){
         MapSqlParameterSource params = new MapSqlParameterSource("sobiFileName",
                 sobiFile.getFileName());
         OrderBy orderBy = new OrderBy("fragment_id", sortById);
@@ -130,19 +130,19 @@ public class SqlFsSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao 
      */
     protected class SobiFragmentRowMapper implements RowMapper<SobiFragment> {
         private String pfx = "";
-        private Map<String, SobiFile> sobiFileMap = new HashMap<>();
+        private Map<String, SourceFile> sobiFileMap = new HashMap<>();
         
         public SobiFragmentRowMapper(){
             this("", Collections.emptyList());
         }
         
-        public SobiFragmentRowMapper(SobiFile sobiFile){
+        public SobiFragmentRowMapper(SourceFile sobiFile){
             this("", Arrays.asList(sobiFile));
         }
         
-        public SobiFragmentRowMapper(String pfx, List<SobiFile> sobiFiles){
+        public SobiFragmentRowMapper(String pfx, List<SourceFile> sobiFiles){
             this.pfx = pfx;
-            for(SobiFile sobiFile : sobiFiles){
+            for(SourceFile sobiFile : sobiFiles){
                 sobiFileMap.put(sobiFile.getFileName(), sobiFile);
             }
         }
