@@ -52,8 +52,6 @@ public class SqlSourceFileDaoTester extends BaseTests {
     }
 
     /**
-     * Be Cautious of using this test if the file holding the XML multiple children
-     * as this method deletes the parent director.
      *
      * @throws IOException
      */
