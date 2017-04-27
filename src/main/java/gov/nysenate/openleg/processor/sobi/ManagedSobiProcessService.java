@@ -143,7 +143,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
             int totalCollated = 0;
             List<SourceFile> newSources = new ArrayList<>();
             do {
-                // Iterate through all the new sobi files in small batches to avoid saturating memory.
+                // Iterate through all the new source files in small batches to avoid saturating memory.
                 newSources.addAll(sobiDao.getIncomingSobiFiles(SortOrder.ASC, new LimitOffset(env.getSobiBatchSize())));
                 newSources.addAll(xmlDao.getIncomingXmlFiles(SortOrder.ASC, new LimitOffset(env.getSobiBatchSize())));
                 logger.debug((newSources.isEmpty()) ? "No more sobi files to collate."
@@ -163,7 +163,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
                     }
                     List<SobiFragment> fragments = createFragments(sourceFile);
                     logger.info("Created {} fragments", fragments.size());
-                    // Record the sobi file in the backing store.
+                    // Record the source file in the backing store.
                     sourceFileDao.updateSourceFile(sourceFile);
                     // Save the extracted fragments. They will be marked as pending processing.
                     for (SobiFragment fragment : fragments) {
@@ -183,11 +183,12 @@ public class ManagedSobiProcessService implements SobiProcessService {
                     unit.setEndDateTime(LocalDateTime.now());
                     eventBus.post(new DataProcessUnitEvent(unit));
                 }
+                newSources.clear();
             }
             while (!newSources.isEmpty() && env.isProcessingEnabled());
             return totalCollated;
         } catch (IOException ex) {
-            String errMessage = "Error encountered during collation of sobi files.";
+            String errMessage = "Error encountered during collation of source files.";
             throw new DataIntegrityViolationException(errMessage, ex);
         }
     }

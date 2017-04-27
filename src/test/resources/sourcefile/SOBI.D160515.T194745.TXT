@@ -1,0 +1,123 @@
+<?xml version= '1.0' encoding='UTF-8'?>
+<DATAPROCESS TIME="2016-05-15-19.47.45">
+No data to process on 15/05/2016 at 19:47:45
+</DATAPROCESS>
+<SENATEDATA TIME="2016-05-15-19.47.45">
+<sencalendaractive no="00041" sessyr="2015" year="2016" action="replace">
+<supplemental id="">
+<sequence no="">
+<actcaldate>2016-05-16</actcaldate>
+<releasedate>2016-05-15</releasedate>
+<releasetime>T19.45.40Z</releasetime>
+<notes><![CDATA[
+]]></notes>
+<calnos>
+<calno no="62">
+<bill no="S04233C" />
+<idc req="" />
+</calno>
+<calno no="226">
+<bill no="S06514" />
+<idc req="" />
+</calno>
+<calno no="301">
+<bill no="S01356" />
+<idc req="" />
+</calno>
+<calno no="372">
+<bill no="S04945" />
+<idc req="" />
+</calno>
+<calno no="378">
+<bill no="S00422" />
+<idc req="" />
+</calno>
+<calno no="427">
+<bill no="S02720" />
+<idc req="" />
+</calno>
+<calno no="442">
+<bill no="S06088A" />
+<idc req="" />
+</calno>
+<calno no="443">
+<bill no="S06849" />
+<idc req="" />
+</calno>
+<calno no="472">
+<bill no="S02099" />
+<idc req="" />
+</calno>
+<calno no="478">
+<bill no="S03104" />
+<idc req="" />
+</calno>
+<calno no="527">
+<bill no="S04879C" />
+<idc req="" />
+</calno>
+<calno no="585">
+<bill no="S03316A" />
+<idc req="" />
+</calno>
+<calno no="604">
+<bill no="S04778A" />
+<idc req="" />
+</calno>
+<calno no="634">
+<bill no="S07197" />
+<idc req="" />
+</calno>
+<calno no="635">
+<bill no="S07222" />
+<idc req="" />
+</calno>
+<calno no="676">
+<bill no="S00783" />
+<idc req="" />
+</calno>
+<calno no="687">
+<bill no="S03013" />
+<idc req="" />
+</calno>
+<calno no="701">
+<bill no="S07109" />
+<idc req="" />
+</calno>
+<calno no="704">
+<bill no="S07332" />
+<idc req="" />
+</calno>
+<calno no="711">
+<bill no="S01963" />
+<idc req="" />
+</calno>
+<calno no="717">
+<bill no="S06259" />
+<idc req="" />
+</calno>
+<calno no="718">
+<bill no="S02544" />
+<idc req="" />
+</calno>
+<calno no="719">
+<bill no="S03391" />
+<idc req="" />
+</calno>
+<calno no="729">
+<bill no="S06818" />
+<idc req="" />
+</calno>
+<calno no="730">
+<bill no="S06833A" />
+<idc req="" />
+</calno>
+<calno no="739">
+<bill no="S06309" />
+<idc req="" />
+</calno>
+</calnos>
+</sequence>
+</supplemental>
+</sencalendaractive>
+</SENATEDATA>
