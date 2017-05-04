@@ -48,31 +48,74 @@ public class ApiAuthFilter implements Filter
 
         Subject subject = SecurityUtils.getSubject();
 
-        if (enabled) {
-            if (ipAddress.matches(filterAddress) || // whitelist
-                    (!StringUtils.isEmpty(key)&& subject.getPrincipal()!=null&&subject.getPrincipal().equals(key))|| // api login ([key] must be provided)
-                            (StringUtils.isEmpty(key)&&subject.isPermitted("ui:view"))) // web login
-                filterChain.doFilter(servletRequest, servletResponse);
-            else if (!StringUtils.isEmpty(key) && apiUserService.validateKey(key)) {
-                subject.login(new ApiKeyLoginToken(key, ipAddress));
-                filterChain.doFilter(servletRequest, servletResponse);
-            } else {
-                if (subject.isRemembered())
-                    subject.logout(); // when user tried WRONG apikey, we should logout current session for security purpose.
-                ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_KEY_REQUIRED);
-                response.getWriter().append(OutputUtils.toJson(errorResponse));
-                response.setContentType("application/json");
-                response.setStatus(401);
-                response.flushBuffer();
-                logger.info("Invalid key used in API request.");
-            }
-        } else {
+        if (!enabled || authenticate(subject, ipAddress, key)) {
             filterChain.doFilter(servletRequest, servletResponse);
+        } else {
+            logger.warn("Invalid key used in API request. ip: [{}] key: [{}]", ipAddress, key);
+            if (subject.isRemembered()) {
+                // when user tried WRONG apikey, we should logout current session for security purpose.
+                subject.logout();
+            }
+            writeErrorResponse(response);
         }
     }
 
     @Override
     public void destroy() {
 
+    }
+
+    /**
+     * Authenticate the subject using one of two authentication methods
+     *  - API key authentication if a key is provided
+     *  - test for ip whitelist match or existing session from ui login
+     * @param subject Subject
+     * @param ipAddress String
+     * @param key String
+     * @return boolean - true iff user was successfully authenticated
+     */
+    private boolean authenticate(Subject subject, String ipAddress, String key) {
+        // Authenticate based on a key, if one is provided
+        if (!StringUtils.isEmpty(key)) {
+            return authenticateKey(subject, ipAddress, key);
+        }
+
+        // Grant access if user is in ip whitelist, or authenticated via the ui
+        return !StringUtils.isEmpty(ipAddress) && ipAddress.matches(filterAddress) ||
+                subject.isPermitted("ui:view");
+
+    }
+
+    /**
+     * Authenticate the subject using the given api key
+     * @param subject Subject
+     * @param ipAddress String
+     * @param key String
+     * @return boolean - true iff the passed in key is valid
+     */
+    private boolean authenticateKey(Subject subject, String ipAddress, String key) {
+        // Return true if the user is already authenticated using the same key
+        if (key.equals(subject.getPrincipal())) {
+            return true;
+        }
+        // Validate the key and login if it is valid
+        if (apiUserService.validateKey(key)) {
+            subject.login(new ApiKeyLoginToken(key, ipAddress));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Write an error json response
+     * @param response HttpServletResponse
+     * @throws IOException
+     */
+    private void writeErrorResponse(HttpServletResponse response) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_KEY_REQUIRED);
+        response.getWriter().append(OutputUtils.toJson(errorResponse));
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.flushBuffer();
     }
 }
