@@ -1,16 +1,14 @@
 package gov.nysenate.openleg.processor.bill;
 
-import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.dao.agenda.data.AgendaDao;
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.*;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.agenda.AgendaVoteProcessor;
-import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.DateUtils;
@@ -19,15 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertTrue;
 
 
 /**
  * Created by uros on 4/12/17.
  */
 @Transactional
-public class AgendaVoteProcessorTest extends BaseXmlProcessorTest implements MemberService {
+public class AgendaVoteProcessorTest extends BaseXmlProcessorTest {
 
     @Autowired private AgendaDao agendaDao;
     @Autowired private AgendaVoteProcessor agendaVoteProcessor;
@@ -80,45 +78,5 @@ public class AgendaVoteProcessorTest extends BaseXmlProcessorTest implements Mem
         assertTrue(agendaVoteAddendum.getId().equals(agendaVoteTest.getId()));
         assertTrue(agendaVoteAddendum.getModifiedDateTime().equals(agendaVoteTest.getModifiedDateTime()));
         assertTrue(agendaVoteAddendum.getPublishedDateTime().equals(agendaVoteTest.getPublishedDateTime()));
-    }
-
-    @Override
-    public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
-        return null;
-    }
-
-    @Override
-    public TreeMultimap<SessionYear, SessionMember> getMemberById(int id) throws MemberNotFoundEx {
-        return null;
-    }
-
-    @Override
-    public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
-        return null;
-    }
-
-    @Override
-    public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
-        return null;
-    }
-
-    @Override
-    public SessionMember getMemberByShortNameEnsured(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws ParseError {
-        return null;
-    }
-
-    @Override
-    public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
-        return null;
-    }
-
-    @Override
-    public List<FullMember> getAllFullMembers() {
-        return null;
-    }
-
-    @Override
-    public void updateMembers(List<SessionMember> members) {
-
     }
 }
