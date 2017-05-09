@@ -57,8 +57,7 @@ public class CommitteeProcessor extends AbstractDataProcessor implements SobiPro
         String xmlString = sobiFragment.getText();
         try {
             Document doc = xml.parse(xmlString);
-            Node dataRoot = xml.getNode("SENATEDATA",doc);
-            Node committeeRoot = xml.getNode("sencommmem", dataRoot);
+            Node committeeRoot = xml.getNode("sencommmem", doc);
             SessionYear sessionYear = new SessionYear(Integer.parseInt(xml.getString("@sessyr", committeeRoot)));
             int year = Integer.parseInt(xml.getString("@year", committeeRoot));
             Chamber chamber = Chamber.SENATE;

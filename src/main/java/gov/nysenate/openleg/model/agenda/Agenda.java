@@ -42,8 +42,6 @@ public class Agenda extends BaseLegislativeContent implements Serializable
     public Agenda(AgendaId id) {
         this();
         this.setId(id);
-        this.setYear(id.getYear());
-        this.setSession(SessionYear.of(this.getYear()));
     }
 
     /** --- Overrides --- */
@@ -159,14 +157,15 @@ public class Agenda extends BaseLegislativeContent implements Serializable
             .collect(Collectors.toSet());
     }
 
+    public void setId(AgendaId id) {
+        this.id = id;
+        this.setYear(id.getYear());
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public AgendaId getId() {
         return id;
-    }
-
-    public void setId(AgendaId id) {
-        this.id = id;
     }
 
     public Map<String, AgendaInfoAddendum> getAgendaInfoAddenda() {

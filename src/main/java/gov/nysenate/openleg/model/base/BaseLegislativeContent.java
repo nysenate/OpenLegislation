@@ -57,6 +57,11 @@ abstract public class BaseLegislativeContent
         return this.getPublishedDateTime() != null;
     }
 
+    public void  setYear(int year) {
+        this.year = year;
+        setSession(SessionYear.of(year));
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public LocalDateTime getPublishedDateTime() {
@@ -87,7 +92,4 @@ abstract public class BaseLegislativeContent
         return this.year;
     }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
 }
