@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.processor.bill;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.dao.agenda.data.AgendaDao;
 import gov.nysenate.openleg.model.agenda.*;
 
@@ -27,6 +29,7 @@ import static org.junit.Assert.*;
 @Transactional
 public class AgendaProcessorTest extends BaseXmlProcessorTest {
 
+    ObjectMapper mapper = new ObjectMapper();
     @Autowired private AgendaDao agendaDao;
     @Autowired private AgendaProcessor agendaProcessor;
 
@@ -36,7 +39,7 @@ public class AgendaProcessorTest extends BaseXmlProcessorTest {
     }
 
     @Test
-    public void processSenAgenda()  {
+    public void processSenAgenda() throws JsonProcessingException {
 
         AgendaId agendaId = new AgendaId(20,2016);
         agendaDao.deleteAgenda(agendaId);
@@ -44,9 +47,9 @@ public class AgendaProcessorTest extends BaseXmlProcessorTest {
         String xmlPath ="processor/bill/senAgenda/2016-11-21-09.38.03.307472_SENAGEN_00020.XML";
         processXmlFile(xmlPath);
 
-        Agenda processedAgendaObject = agendaDao.getAgenda(new AgendaId(20,2016));
+        Agenda actual = agendaDao.getAgenda(new AgendaId(20,2016));
 
-        Agenda agendaTest = new Agenda(agendaId);
+        Agenda excepted = new Agenda(agendaId);
 
         LocalDate weekOf = LocalDate.of(2016,6,13);
         LocalDateTime pubDateTime = DateUtils.getLrsDateTime("2016-06-21T10.35.54Z");
@@ -55,7 +58,7 @@ public class AgendaProcessorTest extends BaseXmlProcessorTest {
 
         CommitteeId committeeId = new CommitteeId(Chamber.SENATE, "Rules");
         String notes = "\nThis meeting will be called off the floor.||ALL BILLS REPORT DIRECT TO THIRD READING\n";
-        LocalDateTime meetDateTime = DateUtils.getLrsDateTime("2016-06-15T00.00.00Z");
+        LocalDateTime meetDateTime = DateUtils.getLrsDateTime("2016-06-14T00.00.00Z");
 
         AgendaInfoCommittee agendaInfoCommittee = new AgendaInfoCommittee(committeeId,agendaId, Version.of(""),"John J. Flanagan","332 CAP",notes,meetDateTime);
 
@@ -70,20 +73,17 @@ public class AgendaProcessorTest extends BaseXmlProcessorTest {
         agendaInfoCommittee.addCommitteeItem(agendaInfoCommitteeItem2);
         agendaInfoAddendum.putCommittee(agendaInfoCommittee);
 
-        agendaTest.putAgendaInfoAddendum(agendaInfoAddendum);
+        excepted.putAgendaInfoAddendum(agendaInfoAddendum);
 
         agendaInfoAddendum.putCommittee(agendaInfoCommittee);
 
 
-        /*
-            Year and a session for the agenda object are stored in the database
-            However, session is set to null and year to 0 when retrieved from database.
+        assertEquals(excepted.getId(),actual.getId());
+        assertEquals(excepted.getAgendaVoteAddenda(),actual.getAgendaVoteAddenda());
+        assertEquals(mapper.writeValueAsString(excepted.getAgendaInfoAddenda()),mapper.writeValueAsString(actual.getAgendaInfoAddenda()));
+        assertEquals(mapper.writeValueAsString(excepted.getAgendaVoteAddenda()),mapper.writeValueAsString(actual.getAgendaVoteAddenda()));
+        assertEquals(mapper.writeValueAsString(excepted.getCommitteeAgendaAddendumIds()),mapper.writeValueAsString(actual.getCommitteeAgendaAddendumIds()));
+        assertEquals(mapper.writeValueAsString(excepted.getCommittees()),mapper.writeValueAsString(actual.getCommittees()));
 
-            it makes tests for year, session and agendaInfoAddenda fail
-         */
-        //assertTrue(processedAgendaObject.getSession() == agendaTest.getSession());
-        //assertTrue(processedAgendaObject.getYear() == agendaTest.getYear());
-        assertTrue(processedAgendaObject.getId().equals(agendaTest.getId()));
-        assertTrue(processedAgendaObject.getAgendaVoteAddenda().equals(agendaTest.getAgendaVoteAddenda()));
     }
 }

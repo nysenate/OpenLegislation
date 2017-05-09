@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.dao.calendar.data.CalendarDao;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.calendar.CalendarProcessor;
@@ -16,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.TreeMap;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by uros on 4/26/17.
@@ -42,19 +46,29 @@ public class CalendarProcessorTest extends BaseXmlProcessorTest {
 
         CalendarId calendarId = new CalendarId(8,2017);
 
-        Calendar calendar = calendarDao.getCalendar(calendarId);
+        Calendar actual = calendarDao.getCalendar(calendarId);
 
-        Calendar testObject = new Calendar();
-        testObject.setModifiedDateTime(modifiedDate);
-        LocalDate caldate = DateUtils.getLrsLocalDate("2017-01-31");
-        LocalDateTime releaseDateTime = DateUtils.getLrsDateTime("2017-01-30" + "T17.47.00Z");
-        Version supVersion = Version.of("");
+        Calendar except = new Calendar();
+        except.setId(new CalendarId(8,2017));
+        except.setYear(2017);
+        except.setSession(SessionYear.of(2017));
+        TreeMap<Version, CalendarSupplemental> supplementalTreeMap = new TreeMap<>();
+        CalendarSupplemental calendarSupplemental = new CalendarSupplemental(new CalendarId(8,2017), Version.DEFAULT, LocalDate.of(2017,1,31), LocalDateTime.parse("2017-01-30T17:47"));
+        calendarSupplemental.addEntry(new CalendarSupplementalEntry(96, CalendarSectionType.ORDER_OF_THE_FIRST_REPORT, new BillId("S249",2017),null,false));
+        calendarSupplemental.addEntry(new CalendarSupplementalEntry(97, CalendarSectionType.ORDER_OF_THE_FIRST_REPORT, new BillId("S1635",2017),null,false));
+        supplementalTreeMap.put(Version.DEFAULT,calendarSupplemental);
+        except.setSupplementalMap(supplementalTreeMap);
 
-        CalendarSupplemental calSupp = new CalendarSupplemental(calendarId,supVersion,caldate,releaseDateTime);
-        calSupp.setModifiedDateTime(modifiedDate);
-        calSupp.setPublishedDateTime(modifiedDate);
+        /**
+         * Comparsion
+         */
+        assertEquals(except.getId(), actual.getId());
+        assertEquals(except.getCalDate(), actual.getCalDate());
+        assertEquals(except.getActiveListMap(), actual.getActiveListMap());
+        assertEquals(except.getSupplementalMap().get(Version.DEFAULT).getCalDate(),actual.getSupplementalMap().get(Version.DEFAULT).getCalDate());
+        assertEquals(except.getSupplementalMap().get(Version.DEFAULT).getCalendarId(),actual.getSupplementalMap().get(Version.DEFAULT).getCalendarId());
+        assertEquals(except.getSupplementalMap().get(Version.DEFAULT).getSectionEntries(),actual.getSupplementalMap().get(Version.DEFAULT).getSectionEntries());
+        assertEquals(except.getSupplementalMap().get(Version.DEFAULT).getAllEntries(),actual.getSupplementalMap().get(Version.DEFAULT).getAllEntries());
 
-        //still few things to add to testObject in order to compare it with
-        //processed fragment
     }
 }
