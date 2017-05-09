@@ -26,7 +26,7 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
     ),
     SELECT_COMMITTEE_CURRENT_SQL(
             SELECT_COMMITTEE_VERSION_HISTORY.sql + "\n" +
-            "WHERE cv.reformed = 'infinity'::timestamp without time zone"
+            "AND cv.reformed = 'infinity'::timestamp without time zone"
     ),
     SELECT_COMMITTEE_AT_DATE_SQL(
             SELECT_COMMITTEE_VERSION_HISTORY.sql + "\n" +

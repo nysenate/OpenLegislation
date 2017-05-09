@@ -176,7 +176,7 @@ public class DataProcessor
     }
 
     public Optional<DataProcessRun> getCurrentRun() {
-        return Optional.of(currentRun);
+        return Optional.ofNullable(currentRun);
     }
 
     private void logCounts(Map<String, Integer> counts) {
