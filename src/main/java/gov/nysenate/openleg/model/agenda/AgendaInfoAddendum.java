@@ -90,6 +90,7 @@ public class AgendaInfoAddendum extends BaseLegislativeContent implements Serial
 
     public void setAgendaId(AgendaId agendaId) {
         this.agendaId = agendaId;
+        setYear(agendaId.getYear());
     }
 
     public String getId() {
