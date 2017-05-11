@@ -8,6 +8,10 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
     SELECT_COMMITTEE_ID(
             "SELECT chamber, name FROM ${schema}." + SqlTable.COMMITTEE
     ),
+    TEST_COMMITTEE_ID(
+            "SELECT * FROM ${schema}." + SqlTable.COMMITTEE +
+                    " WHERE name=:committeeName::citext AND chamber=CAST(:chamber AS chamber)"
+    ),
     SELECT_SESSION_YEARS(
             "SELECT DISTINCT session_year FROM ${schema}." + SqlTable.COMMITTEE_VERSION
     ),
