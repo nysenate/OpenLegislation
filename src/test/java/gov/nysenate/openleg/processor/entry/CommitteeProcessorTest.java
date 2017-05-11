@@ -15,10 +15,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Chenguang He on 5/8/2017.
@@ -36,10 +39,46 @@ public class CommitteeProcessorTest  extends BaseXmlProcessorTest {
     @Test
     public void processCommittee() throws ParseError {
         CommitteeId committeeId = new CommitteeId(Chamber.SENATE,"Agriculture");
-//        CommitteeVersionId committeeVersionId = new CommitteeVersionId(new CommitteeSessionId(committeeId,SessionYear.of(2017)), LocalDateTime.of(2017,2,1,0,0));
         processXmlFile(path);
         Committee actual = committeeDao.getCommittee(committeeId);
-        System.out.println();
+        Committee expected = new Committee("Agriculture", Chamber.SENATE);
+        expected.setPublishedDateTime(LocalDateTime.of(2017,1,31,4,51));
+        expected.setMeetDay(DayOfWeek.TUESDAY);
+        expected.setMeetTime(LocalTime.of(9,00));
+        expected.setLocation("Room 412 LOB");
+        expected.setSession(SessionYear.of(2017));
+        CommitteeMember committeeMember = new CommitteeMember();
+        SessionMember sessionMember = new SessionMember();
+        sessionMember.setAlternate(false);
+        sessionMember.setIncumbent(true);
+        sessionMember.setDistrictCode(0);
+        sessionMember.setLbdcShortName("RITCHIE");
+        sessionMember.setSessionMemberId(1413);
+        sessionMember.setSessionYear(SessionYear.of(2017));
+        sessionMember.setPersonId(1237);
+        sessionMember.setFullName("RITCHIE");
+        sessionMember.setMemberId(1415);
+        sessionMember.setVerified(false);
+        committeeMember.setMember(sessionMember);
+        committeeMember.setMajority(true);
+        committeeMember.setTitle(CommitteeMemberTitle.CHAIR_PERSON);
+        expected.addMember(committeeMember);
+
+        /**
+         * Comparision
+         */
+        assertEquals(expected.getChamber(),actual.getChamber());
+        assertEquals(expected.getId(),actual.getId());
+        assertEquals(expected.getMeetDay(),actual.getMeetDay());
+        assertEquals(expected.getName(),actual.getName());
+        assertEquals(expected.getReformed(),actual.getReformed());
+        assertEquals(expected.getSessionId().getChamber(),actual.getSessionId().getChamber());
+        assertEquals(expected.getSessionId().getSession(),actual.getSessionId().getSession());
+        assertEquals(expected.getLocation(),actual.getLocation());
+        assertEquals(expected.getVersionId().getChamber(),actual.getVersionId().getChamber());
+        assertEquals(expected.getVersionId().getName(),actual.getVersionId().getName());
+        assertEquals(expected.getVersionId().getSession(),actual.getVersionId().getSession());
+
     }
 
     @Override
