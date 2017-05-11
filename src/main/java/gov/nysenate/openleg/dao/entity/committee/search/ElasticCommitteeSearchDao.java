@@ -56,7 +56,6 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     @Override
     public void updateCommitteeIndex(CommitteeSessionId committeeSessionId) {
-        deleteCommitteeFromIndex(committeeSessionId);
         BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
         committeeHistoryIndexBulkAdd(committeeSessionId, bulkRequest);
         bulkRequest.execute().actionGet();
