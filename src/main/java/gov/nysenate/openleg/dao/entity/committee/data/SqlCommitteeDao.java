@@ -128,13 +128,14 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
     public void updateCommittee(Committee committee, SobiFragment sobiFragment) {
         logger.info("Updating committee " + committee.getChamber() + " " + committee.getName());
         // Try to create a new committee
-        if (insertCommittee(committee.getId())) {
+        if (!testCommittee(committee.getId())) { // if the committee does not exists
+            insertCommittee(committee.getId());
             insertCommitteeVersion(committee, sobiFragment);
             updateCommitteeCurrentVersion(committee.getVersionId());
         }
         else {  // if that fails perform updates to an existing committee
             // delete all committee versions with a creation date after this one
-            deleteFutureCommitteeVersions(committee.getVersionId());
+            //deleteFutureCommitteeVersions(committee.getVersionId());
             try {
                 Committee existingCommittee = getCommittee(committee.getVersionId());
                 updateExistingCommittee(committee, existingCommittee, sobiFragment);
@@ -164,19 +165,24 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
      * @param committeeId
      * @return true if a new committee was created, false if the committee already exists
      */
-    private boolean insertCommittee(CommitteeId committeeId) {
+    private void insertCommittee(CommitteeId committeeId) {
+        // Create the committees
         logger.debug("Creating new committee " + committeeId);
-        // Create the committee
         MapSqlParameterSource params = getCommitteeIdParams(committeeId);
-        try {
-            jdbcNamed.update(INSERT_COMMITTEE.getSql(schema()), params);
-            logger.info("Created new committee " + committeeId);
-        }
-        catch(DuplicateKeyException e) {
-            logger.debug("\tCommittee " + committeeId + " already exists");
-            return false;
-        }
-        return true;
+        jdbcNamed.update(INSERT_COMMITTEE.getSql(schema()), params);
+    }
+
+    /**
+     *  Test if the committee exists in database
+     * @param committeeId the committee id
+     * @return return true if exists. otherwise return false;
+     */
+    private boolean testCommittee(CommitteeId committeeId) {
+        logger.debug("Testing whether committee exists " + committeeId);
+        MapSqlParameterSource params = getCommitteeIdParams(committeeId);
+        SimpleCommitteeRowHandler rowHandler = new SimpleCommitteeRowHandler();
+        jdbcNamed.query(TEST_COMMITTEE_ID.getSql(schema()), params, rowHandler);
+        return rowHandler.getSize() != 0;
     }
 
     /**
@@ -460,6 +466,23 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
 
         public List<Committee> getCommitteeList() {
             return new ArrayList<>(committeeMap.values());
+        }
+    }
+
+    protected class SimpleCommitteeRowHandler implements RowCallbackHandler
+    {
+        protected int size;
+
+        public SimpleCommitteeRowHandler() {
+
+        }
+
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            this.size++;
+        }
+        public int getSize() {
+            return size;
         }
     }
 
