@@ -77,7 +77,7 @@ public class CalendarHTMLParser {
                     break;
                 case "AUGUST":  monthNum = "08";
                     break;
-                case "SEPTEMBER":  monthNum = "08";
+                case "SEPTEMBER":  monthNum = "09";
                     break;
                 case "OCTOBER": monthNum = "10";
                     break;
