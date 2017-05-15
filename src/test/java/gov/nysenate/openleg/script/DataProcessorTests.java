@@ -21,6 +21,16 @@ public class DataProcessorTests extends BaseTests
     }
 
     @Test
+    public void collateTest() throws Exception {
+        dataProcessor.collate();
+    }
+
+    @Test
+    public void ingestTest() throws Exception {
+        dataProcessor.ingest();
+    }
+
+    @Test
     public void testSomething() throws Exception {
         String s = "";
         System.out.print(s.compareTo("A"));

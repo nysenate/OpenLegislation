@@ -54,6 +54,7 @@ function spotcheckMismatchApi($resource) {
             bill: parseBill(mismatch),
             source: parseRefType(mismatch),
             calNo: parseCalNo(mismatch),
+            calType:parseCalType(mismatch),
             session: parseSession(mismatch),
             basePrintNo: parseBasePrintNo(mismatch),
             referenceData: parseReferenceData(mismatch),
@@ -71,6 +72,11 @@ function spotcheckMismatchApi($resource) {
         else{
             return false;
         }
+    }
+
+    function parseCalType(mismatch) {
+        if (mismatch.key.type != undefined)
+            return mismatch.key.type.replace('_',' ');
     }
 
     function parseSession(mismatch) {
