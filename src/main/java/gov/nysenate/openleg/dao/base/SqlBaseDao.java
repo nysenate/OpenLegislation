@@ -174,7 +174,7 @@ public abstract class SqlBaseDao
             }
             else {
                 hstoreMap.remove(key);
-                value +=","+hstoreEntry[i];
+                value +=","+StringUtils.trimLeadingWhitespace(hstoreEntry[i]);
                 hstoreMap.put(key,value);
             }
         }
