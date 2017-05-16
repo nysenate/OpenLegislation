@@ -161,6 +161,7 @@ public abstract class SqlBaseDao
      * @return A map containing all hstore key value pairs.
      */
     public static Map<String, String> hstoreStringToMap(String hstoreString) {
+        logger.info("hstore string: {}", hstoreString);
         Map<String, String> hstoreMap = new HashMap<>();
         hstoreString = StringUtils.replace(hstoreString, "\"", "");
         String[] hstoreEntry = hstoreString.contains(",") ? StringUtils.commaDelimitedListToStringArray(hstoreString) : new String[]{hstoreString};
