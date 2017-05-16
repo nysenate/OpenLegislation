@@ -22,7 +22,6 @@ public class CalendarEntryListIdSpotCheckReportDao extends AbstractSpotCheckRepo
     @Override
     public CalendarEntryListId getKeyFromMap(Map<String, String> keyMap) {
         if (keyMap != null) {
-            logger.info("Loading KeyMap: calNo" +keyMap.get("calNo")+"year"+keyMap.get("year")+"seqNo"+keyMap.get("sequenceNo")+"&&&&&&");
             return new CalendarEntryListId(
                     new CalendarId(Integer.parseInt(keyMap.get("calNo")), Integer.parseInt(keyMap.get("year"))),
                     CalendarType.valueOf(keyMap.get("type")),
