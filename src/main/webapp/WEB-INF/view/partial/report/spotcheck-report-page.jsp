@@ -151,7 +151,7 @@
                 <div flex="10" class="columnWord">{{mismatch.status}}</div>
                 <div flex="10"  class="columnWord">{{mismatch.observedDate}}</div>
                 <div flex="10"  class="columnWord">{{mismatch.mismatchType}}</div>
-                <div flex="5"  class="columnWord"{{mismatch.agendaNo}}</div>
+                <div flex="5"  class="columnWord">{{mismatch.agendaNo}}</div>
                 <div flex="15" class="columnWord">{{mismatch.committee}}</div>
                 <div flex="15"  class="columnWord">{{mismatch.referenceDate}}</div>
                 <div flex="10"  class="columnWord"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>

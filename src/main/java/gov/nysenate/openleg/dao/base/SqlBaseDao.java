@@ -164,10 +164,19 @@ public abstract class SqlBaseDao
         Map<String, String> hstoreMap = new HashMap<>();
         hstoreString = StringUtils.replace(hstoreString, "\"", "");
         String[] hstoreEntry = hstoreString.contains(",") ? StringUtils.commaDelimitedListToStringArray(hstoreString) : new String[]{hstoreString};
-        for (String entry : hstoreEntry) {
-            String key = StringUtils.trimLeadingWhitespace(StringUtils.split(entry, "=>")[0]);
-            String value = StringUtils.trimLeadingWhitespace(StringUtils.split(entry, "=>")[1]);
-            hstoreMap.put(key, value);
+        String key="";
+        String value="";
+        for (int i = 0; i < hstoreEntry.length; i++) {
+            if (hstoreEntry[i].contains("=>")){
+                key = StringUtils.trimLeadingWhitespace(StringUtils.split(hstoreEntry[i], "=>")[0]);
+                value = StringUtils.trimLeadingWhitespace(StringUtils.split(hstoreEntry[i], "=>")[1]);
+                hstoreMap.put(key, value);
+            }
+            else {
+                hstoreMap.remove(key);
+                value +=","+hstoreEntry[i];
+                hstoreMap.put(key,value);
+            }
         }
         return hstoreMap;
     }
