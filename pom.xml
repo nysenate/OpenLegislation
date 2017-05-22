@@ -18,6 +18,7 @@
   <build>
     <finalName>${project.artifactId}##${project.version}</finalName>
     <plugins>
+      <!-- Compiler Plugin -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
@@ -27,6 +28,33 @@
           <!-- avoid possible encoding issues -->
           <encoding>utf-8</encoding>
         </configuration>
+      </plugin>
+      <!-- Surefire Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19</version>
+        <configuration>
+          <skipTests>false</skipTests>
+          <groups>gov.nysenate.openleg.annotation.UnitTest</groups>
+        </configuration>
+      </plugin>
+      <!-- Failsafe Plugin -->
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.19</version>
+        <configuration>
+          <groups>gov.nysenate.openleg.annotation.IntegrationTest</groups>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

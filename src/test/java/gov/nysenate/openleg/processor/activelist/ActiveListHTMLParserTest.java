@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.processor.activelist;
 
-import gov.nysenate.openleg.model.spotcheck.ActiveListSpotcheckReference;
+import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.model.spotcheck.ActiveListHTMLParser;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +12,7 @@ import java.io.File;
 /**
  * Created by kyle on 10/29/14.
  */
+@Category(SillyTest.class)
 public class ActiveListHTMLParserTest {
     private static final Logger logger = LoggerFactory.getLogger(ActiveListHTMLParserTest.class);
 

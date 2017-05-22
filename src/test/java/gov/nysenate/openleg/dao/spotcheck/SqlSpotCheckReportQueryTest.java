@@ -1,10 +1,13 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
+import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Category(SillyTest.class)
 public class SqlSpotCheckReportQueryTest {
 
     private static final Logger logger = LoggerFactory.getLogger(SqlSpotCheckReportQueryTest.class);

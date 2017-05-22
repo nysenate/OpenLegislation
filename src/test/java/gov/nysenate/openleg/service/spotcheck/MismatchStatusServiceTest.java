@@ -2,11 +2,13 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.MismatchStatusService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
+@Category(UnitTest.class)
 public class MismatchStatusServiceTest {
 
     private static final String printNo = "S100";
