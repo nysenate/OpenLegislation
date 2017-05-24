@@ -65,7 +65,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
         if (reference.getSupplementalMap().containsKey(Version.DEFAULT)) // if it has the default version then it is floor
             return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.FLOOR_CALENDAR,reference.getSupplemental(Version.DEFAULT).getVersion(),0));
         else// otherwise it is supplemental
-            return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.SUPPLEMENTAL_CALENDAR,reference.getSupplemental(Version.DEFAULT).getVersion(),0));
+            return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.SUPPLEMENTAL_CALENDAR,reference.getSupplementalMap().firstEntry().getKey(),0));
     }
 
     private SpotCheckObservation<CalendarEntryListId> initializeActivelistObservation(Calendar reference) {
