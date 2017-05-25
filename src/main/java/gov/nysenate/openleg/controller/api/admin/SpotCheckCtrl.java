@@ -65,8 +65,8 @@ public class SpotCheckCtrl extends BaseCtrl
      * <p>Request Parameters: <ul>
      *                     <li>datasource - string - retrieves mismatches for the specified datasource.
      *                     <li>contentType - string - retrieves mismatches for the specified content type.
-     *                     <li>mismatchStatuses - string[] - optional, default [NEW, EXISTING, REGRESSION]
-     *                                      - retrieves mismatches with any of the given mismatch status.
+     *                     <li>mismatchState - string[] - optional, default [OPEN, CLOSED]
+     *                                      - retrieves mismatches with any of the given mismatch states.
      *                     <li>ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
      *                     <li>fromDate - string (ISO date) - optional, default start of the session encompassing toDate,
      *                              - retrieves mismatches after this date.
@@ -82,7 +82,7 @@ public class SpotCheckCtrl extends BaseCtrl
     @RequestMapping(value = "/mismatches", method = RequestMethod.GET)
     public BaseResponse getMismatches(@RequestParam String datasource,
                                       @RequestParam String contentType,
-                                      @RequestParam(required = false) String[] mismatchStatuses,
+                                      @RequestParam(required = false) String[] mismatchState,
                                       @RequestParam(required = false) String[] ignoredStatuses,
                                       @RequestParam(required = false) String fromDate,
                                       @RequestParam(required = false) String toDate,
@@ -92,9 +92,9 @@ public class SpotCheckCtrl extends BaseCtrl
                                       WebRequest request) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
         SpotCheckContentType ct = getEnumParameter("contentType", contentType, SpotCheckContentType.class);
-        Set<SpotCheckMismatchStatus> ms = mismatchStatuses == null
-                ? EnumSet.of(SpotCheckMismatchStatus.NEW, SpotCheckMismatchStatus.EXISTING, SpotCheckMismatchStatus.REGRESSION)
-                : Lists.newArrayList(mismatchStatuses).stream().map(s -> getEnumParameter("mismatchStatuses", s, SpotCheckMismatchStatus.class)).collect(Collectors.toSet());
+        Set<MismatchState> ms = mismatchState == null
+                ? EnumSet.of(MismatchState.OPEN)
+                : Lists.newArrayList(mismatchState).stream().map(s -> getEnumParameter("mismatchStatuses", s, MismatchState.class)).collect(Collectors.toSet());
         Set<SpotCheckMismatchIgnore> igs = ignoredStatuses == null
                 ? EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED)
                 : Lists.newArrayList(ignoredStatuses).stream().map(i -> getEnumParameter("ignoredStatuses", i, SpotCheckMismatchIgnore.class)).collect(Collectors.toSet());
@@ -105,7 +105,7 @@ public class SpotCheckCtrl extends BaseCtrl
         LimitOffset limitOffset = getLimitOffset(request, 10);
 
         MismatchQuery query = new MismatchQuery(ds, Collections.singleton(ct))
-                .withMismatchStatuses(ms)
+                .withMismatchStates(ms)
                 .withIgnoredStatuses(igs)
                 .withFromDate(fromDateTime)
                 .withToDate(toDateTime)
@@ -182,8 +182,10 @@ public class SpotCheckCtrl extends BaseCtrl
                                            @RequestParam(required = false) String summaryDateTime) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
         LocalDateTime sumDateTime = summaryDateTime == null ? LocalDateTime.now() : parseISODateTime(summaryDateTime, "summaryDateTime");
-        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(ds, sumDateTime);
-        return new ViewObjectResponse<>(new MismatchStatusSummaryView(summary));
+//        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(ds, sumDateTime);
+//        return new ViewObjectResponse<>(new MismatchStatusSummaryView(summary));
+        // TODO
+        return null;
     }
 
     /**
@@ -343,8 +345,8 @@ public class SpotCheckCtrl extends BaseCtrl
         return result;
     }
 
-    private SpotCheckMismatchStatus getSpotCheckMismatchStatus(String status) {
-        return getEnumParameter(status,SpotCheckMismatchStatus.class,null);
+    private MismatchState getSpotCheckMismatchStatus(String status) {
+        return getEnumParameter(status,MismatchState.class,null);
     }
 
     private Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {

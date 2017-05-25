@@ -4,19 +4,16 @@ import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MismatchStatusSummaryView implements ViewObject {
 
-    protected MapView<SpotCheckMismatchStatus, Integer> summary;
+    protected MapView<MismatchStatus, Integer> summary;
 
 
     public MismatchStatusSummaryView(MismatchStatusSummary summary) {
         this.summary = MapView.ofIntMap(summary.getSummary());
     }
 
-    public MapView<SpotCheckMismatchStatus, Integer> getSummary() {
+    public MapView<MismatchStatus, Integer> getSummary() {
         return summary;
     }
 

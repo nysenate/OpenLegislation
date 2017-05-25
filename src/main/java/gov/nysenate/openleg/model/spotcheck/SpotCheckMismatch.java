@@ -17,7 +17,7 @@ public class SpotCheckMismatch
     protected SpotCheckMismatchType mismatchType;
 
     /** The status of the mismatch (new, existing, etc.) */
-    protected SpotCheckMismatchStatus status = SpotCheckMismatchStatus.NEW;
+    protected MismatchState state = MismatchState.OPEN;
 
     /** String representation of the reference data. (e.g. lbdc daybreak content) */
     protected String referenceData;
@@ -98,7 +98,7 @@ public class SpotCheckMismatch
         if (obj == null || getClass() != obj.getClass()) return false;
         final SpotCheckMismatch other = (SpotCheckMismatch) obj;
         return Objects.equals(this.mismatchType, other.mismatchType) &&
-               Objects.equals(this.status, other.status) &&
+               Objects.equals(this.state, other.state) &&
                Objects.equals(this.referenceData, other.referenceData) &&
                Objects.equals(this.observedData, other.observedData) &&
                Objects.equals(this.notes, other.notes);
@@ -106,7 +106,7 @@ public class SpotCheckMismatch
 
     @Override
     public int hashCode() {
-        return Objects.hash(mismatchType, status, referenceData, observedData, notes);
+        return Objects.hash(mismatchType, state, referenceData, observedData, notes);
     }
 
     /** --- Basic Getters / Setters --- */
@@ -115,12 +115,12 @@ public class SpotCheckMismatch
         return mismatchType;
     }
 
-    public SpotCheckMismatchStatus getStatus() {
-        return status;
+    public MismatchState getState() {
+        return state;
     }
 
-    public void setStatus(SpotCheckMismatchStatus status) {
-        this.status = status;
+    public void setState(MismatchState state) {
+        this.state = state;
     }
 
     public String getReferenceData() {

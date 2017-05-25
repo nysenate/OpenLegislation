@@ -17,7 +17,7 @@ public class MismatchQuery {
 
     private SpotCheckDataSource dataSource;
     private Set<SpotCheckContentType> contentTypes;
-    private Set<SpotCheckMismatchStatus> mismatchStatuses;
+    private Set<MismatchState> states;
     private Set<SpotCheckMismatchIgnore> ignoredStatuses;
     private LocalDateTime toDate;
     private LocalDateTime fromDate;
@@ -28,15 +28,15 @@ public class MismatchQuery {
         this.dataSource = dataSource;
         this.contentTypes = contentTypes;
         // Default values
-        this.mismatchStatuses = EnumSet.of(SpotCheckMismatchStatus.NEW, SpotCheckMismatchStatus.EXISTING, SpotCheckMismatchStatus.REGRESSION);
+        this.states = EnumSet.of(MismatchState.OPEN);
         this.ignoredStatuses = EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED);
         this.toDate = LocalDateTime.now();
         this.fromDate = SessionYear.of(this.toDate.getYear()).asDateTimeRange().lowerEndpoint();
         this.orderBy = new OrderBy(MismatchOrderBy.REFERENCE_DATE.getColumnName(), SortOrder.DESC);
     }
 
-    public MismatchQuery withMismatchStatuses(Set<SpotCheckMismatchStatus> mismatchStatuses) {
-        this.mismatchStatuses = mismatchStatuses;
+    public MismatchQuery withMismatchStates(Set<MismatchState> mismatchStatuses) {
+        this.states = mismatchStatuses;
         return this;
     }
 
@@ -76,8 +76,8 @@ public class MismatchQuery {
         return spotCheckMismatchType;
     }
 
-    public Set<SpotCheckMismatchStatus> getMismatchStatuses() {
-        return mismatchStatuses;
+    public Set<MismatchState> getStates() {
+        return states;
     }
 
     public Set<SpotCheckMismatchIgnore> getIgnoredStatuses() {

@@ -25,20 +25,21 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
 
     /** {@inheritDoc} */
     @Override
-    public MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime){
-        return getReportDao().getMismatchStatusSummary(dataSource, summaryDateTime);
+    public MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, MismatchStatus status, LocalDateTime reportEndDateTime){
+//        return getReportDao().getMismatchStatusSummary(dataSource, reportEndDateTime);
+        return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, SpotCheckMismatchStatus spotCheckMismatchStatus){
-        return getReportDao().getMismatchTypeSummary(dataSource, summaryDateTime, spotCheckMismatchStatus);
+    public MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, MismatchState mismatchState){
+        return getReportDao().getMismatchTypeSummary(dataSource, summaryDateTime, mismatchState);
     }
 
     /** {@inheritDoc} */
     @Override
-    public MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, SpotCheckMismatchStatus spotCheckMismatchStatus, SpotCheckMismatchType spotCheckMismatchType){
-        return getReportDao().getMismatchContentTypeSummary(dataSource, summaryDateTime,spotCheckMismatchStatus, spotCheckMismatchType);
+    public MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, MismatchState mismatchState, SpotCheckMismatchType spotCheckMismatchType){
+        return getReportDao().getMismatchContentTypeSummary(dataSource, summaryDateTime, mismatchState, spotCheckMismatchType);
     }
 
 

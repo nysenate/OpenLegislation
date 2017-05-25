@@ -57,7 +57,7 @@ public class SpotCheckReport<ContentKey>
         return observations.values().stream()
                 .map(obs -> obs.getMismatches().values().stream()
                         .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
-                        .filter(mismatch -> mismatch.getStatus() != SpotCheckMismatchStatus.RESOLVED)
+                        .filter(mismatch -> mismatch.getState() == MismatchState.OPEN)
                         .count()
                 )
                 .reduce(0L, (a, b) -> a + b);
@@ -68,10 +68,10 @@ public class SpotCheckReport<ContentKey>
      * @param ignored boolean - get the status count of ignored mismatches if true, which are not included if false
      * @return Map<SpotCheckMismatchStatus, Long>
      */
-    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts(boolean ignored) {
+    public Map<MismatchState, Long> getMismatchStatusCounts(boolean ignored) {
         if (observations != null) {
-            Map<SpotCheckMismatchStatus, Long> counts = new HashMap<>();
-            for (SpotCheckMismatchStatus status : SpotCheckMismatchStatus.values()) {
+            Map<MismatchState, Long> counts = new HashMap<>();
+            for (MismatchState status : MismatchState.values()) {
                 counts.put(status, 0L);
             }
             observations.values().stream()
@@ -87,9 +87,9 @@ public class SpotCheckReport<ContentKey>
      * @param ignored boolean - get type/status counts of ignored mismatches if true, which are not included if false
      * @return Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>>
      */
-    public Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> getMismatchTypeStatusCounts(boolean ignored) {
+    public Map<SpotCheckMismatchType, Map<MismatchState, Long>> getMismatchTypeStatusCounts(boolean ignored) {
         if (observations != null) {
-            Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>> counts = new HashMap<>();
+            Map<SpotCheckMismatchType, Map<MismatchState, Long>> counts = new HashMap<>();
             observations.values().stream()
                 .flatMap(e -> e.getMismatchStatusTypes(ignored).entrySet().stream())
                 .forEach(e -> {
@@ -108,9 +108,9 @@ public class SpotCheckReport<ContentKey>
      * @param ignored boolean - get status/type counts of ignored mismatches if true, which are not included if false
      * @return Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>>
      */
-    public Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>> getMismatchStatusTypeCounts(boolean ignored) {
+    public Map<MismatchState, Map<SpotCheckMismatchType, Long>> getMismatchStatusTypeCounts(boolean ignored) {
         if (observations != null) {
-            Table<SpotCheckMismatchStatus, SpotCheckMismatchType, Long> countTable = HashBasedTable.create();
+            Table<MismatchState, SpotCheckMismatchType, Long> countTable = HashBasedTable.create();
             observations.values().stream()
                     .flatMap(obs -> obs.getMismatchStatusTypes(ignored).entrySet().stream())
                     .forEach(entry -> {

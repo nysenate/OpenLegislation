@@ -4,9 +4,6 @@ import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.MismatchContentTypeSummary;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckContentType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchStatus;
-
-import java.util.Map;
 
 /**
  * Created by senateuser on 2017/4/13.

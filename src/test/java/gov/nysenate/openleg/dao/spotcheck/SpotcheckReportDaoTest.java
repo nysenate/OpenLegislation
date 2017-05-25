@@ -15,7 +15,9 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
+import java.time.temporal.ChronoUnit;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 
@@ -40,11 +42,6 @@ public class SpotcheckReportDaoTest extends BaseTests {
        start = LocalDateTime.now();
     }
 
-    @Test
-    public void simpleSummaryTest() {
-        reportDao.getMismatchStatusSummary(SpotCheckDataSource.LBDC, LocalDateTime.now());
-    }
-
     /**
      * Test status updates when saving new mismatches
      */
@@ -54,10 +51,11 @@ public class SpotcheckReportDaoTest extends BaseTests {
         reportDao.saveReport(createMismatchReport(start));
 
         DeNormSpotCheckMismatch actual = queryMostRecentMismatch();
-        assertEquals(billId, actual.getKey());
-        assertEquals(SpotCheckMismatchStatus.NEW, actual.getStatus());
+        assertThat(actual.getKey(), is(billId));
+        assertThat(actual.getState(), is(MismatchState.OPEN));
     }
 
+    // TODO not necessary?
     @Test
     public void testSaveExistingMismatch() {
         // Save new mismatch
@@ -66,9 +64,8 @@ public class SpotcheckReportDaoTest extends BaseTests {
         reportDao.saveReport(createMismatchReport(start.plusMinutes(1)));
 
         DeNormSpotCheckMismatch actual = queryMostRecentMismatch();
-        assertNotNull(actual);
-        assertEquals(billId, actual.getKey());
-        assertEquals(SpotCheckMismatchStatus.EXISTING, actual.getStatus());
+        assertThat(actual.getKey(), is(billId));
+        assertThat(actual.getState(), is(MismatchState.OPEN));
     }
 
     @Test
@@ -78,11 +75,11 @@ public class SpotcheckReportDaoTest extends BaseTests {
         reportDao.saveReport(createEmptyReport(start.plusMinutes(1)));
 
         DeNormSpotCheckMismatch actual = queryMostRecentMismatch();
-        assertNotNull(actual);
-        assertEquals(billId, actual.getKey());
-        assertEquals(SpotCheckMismatchStatus.RESOLVED, actual.getStatus());
+        assertThat(actual.getKey(), is(billId));
+        assertThat(actual.getState(), is(MismatchState.CLOSED));
     }
 
+    // TODO necessary?
     @Test
     public void testSaveRegressionMismatch() throws InterruptedException {
         // Save new mismatch
@@ -93,51 +90,8 @@ public class SpotcheckReportDaoTest extends BaseTests {
         reportDao.saveReport(createMismatchReport(start.plusMinutes(2)));
 
         DeNormSpotCheckMismatch actual = queryMostRecentMismatch();
-        assertNotNull(actual);
-        assertEquals(billId, actual.getKey());
-        assertEquals(SpotCheckMismatchStatus.REGRESSION, actual.getStatus());
-    }
-
-    /**
-     * Test ignore status updates when saving new mismatches
-     */
-
-    @Test
-    public void givenIgnoreOnce_setToNotIgnoredOnNextOccurance() {
-        reportDao.saveReport(createMismatchReport(start, SpotCheckMismatchIgnore.IGNORE_ONCE));
-        DeNormSpotCheckMismatch actual = queryMostRecentMismatch();
-        assertNotNull(actual);
-        assertEquals(SpotCheckMismatchIgnore.IGNORE_ONCE, actual.getIgnoreStatus());
-        reportDao.saveReport(createMismatchReport(start.plusMinutes(1)));
-        actual = queryMostRecentMismatch();
-        assertNotNull(actual);
-        assertEquals(SpotCheckMismatchIgnore.NOT_IGNORED, actual.getIgnoreStatus());
-    }
-
-    @Test
-    public void givenIgnoreUntilResolved_keepIgnoredUntilResolved() {
-        // Create mismatch with ignore until resolved status.
-        reportDao.saveReport(createMismatchReport(start, SpotCheckMismatchIgnore.IGNORE_UNTIL_RESOLVED));
-        // Repeat the same mismatch
-        reportDao.saveReport(createMismatchReport(start.plusMinutes(1)));
-        // Resolve it
-        reportDao.saveReport(createEmptyReport(start.plusMinutes(2)));
-        DeNormSpotCheckMismatch actual = queryMostRecentMismatch();
-        assertNotNull(actual);
-        assertEquals(SpotCheckMismatchIgnore.NOT_IGNORED, actual.getIgnoreStatus());
-    }
-
-    @Test
-    public void givenIgnorePermanently_neverUnIgnore() {
-        // Create mismatch with ignored permanently status.
-        reportDao.saveReport(createMismatchReport(start, SpotCheckMismatchIgnore.IGNORE_PERMANENTLY));
-        // Repeat the same mismatch
-        reportDao.saveReport(createMismatchReport(start.plusMinutes(1)));
-        // Resolve it
-        reportDao.saveReport(createEmptyReport(start.plusMinutes(2)));
-        DeNormSpotCheckMismatch actual = queryMostRecentMismatch();
-        assertNotNull(actual);
-        assertEquals(SpotCheckMismatchIgnore.IGNORE_PERMANENTLY, actual.getIgnoreStatus());
+        assertThat(actual.getKey(), is(billId));
+        assertThat(actual.getState(), is(MismatchState.OPEN));
     }
 
     /**
@@ -213,11 +167,18 @@ public class SpotcheckReportDaoTest extends BaseTests {
         assertTrue(actual.isEmpty());
     }
 
+    /** Summary query tests */
+
+    @Test
+    public void canGetStatusSummary() {
+        MismatchStatusSummary summary = reportDao.getMismatchStatusSummary(SpotCheckDataSource.LBDC, LocalDateTime.now().truncatedTo(ChronoUnit.DAYS), LocalDateTime.now());
+    }
+
     private DeNormSpotCheckMismatch queryMostRecentMismatch() {
         MismatchQuery query = new MismatchQuery(SpotCheckDataSource.LBDC, Collections.singleton(SpotCheckContentType.BILL))
                 .withFromDate(start)
                 .withToDate(start.plusHours(1))
-                .withMismatchStatuses(EnumSet.allOf(SpotCheckMismatchStatus.class))
+                .withMismatchStates(EnumSet.allOf(MismatchState.class))
                 .withIgnoredStatuses(EnumSet.allOf(SpotCheckMismatchIgnore.class));
         return reportDao.getMismatches(query, LimitOffset.ALL).getResults().get(0);
     }

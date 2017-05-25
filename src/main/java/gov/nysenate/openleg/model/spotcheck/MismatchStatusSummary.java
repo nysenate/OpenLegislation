@@ -9,19 +9,19 @@ import java.util.Map;
  */
 public class MismatchStatusSummary {
 
-    private Map<SpotCheckMismatchStatus, Integer> summary;
+    private Map<MismatchStatus, Integer> summary;
 
 
     public MismatchStatusSummary() {
         summary = new HashMap<>();
     }
 
-    public Map<SpotCheckMismatchStatus, Integer> getSummary() {
+    public Map<MismatchStatus, Integer> getSummary() {
         return summary;
     }
 
-    public void addSpotCheckStatusSummary(SpotCheckMismatchStatus spotCheckMismatchStatus,Integer count) {
-        summary.computeIfPresent(spotCheckMismatchStatus, (k,v) -> v+count);
+    public void putSummary(MismatchStatus mismatchStatus, Integer count) {
+        summary.put(mismatchStatus, count);
     }
 
 }

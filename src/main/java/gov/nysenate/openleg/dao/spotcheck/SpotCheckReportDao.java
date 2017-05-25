@@ -24,18 +24,22 @@ public interface SpotCheckReportDao<ContentKey>
     PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
-     * Get mismatch status summary counts for the given datasource and date.
+     * Get mismatch status summary counts for given datasource and report time period.
+     * Report date time period is used to determine NEW and RESOLVED mismatches.
+     * Any mismatches opened in this period are considered new, any closed are considered resolved.
      *
+     * @param reportStartDateTime The beginning date time of the 'report' period.
+     * @param reportEndDateTime The ending date time of the 'report' period.
      * @return OpenMismatchesSummary
      */
-    MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate);
+    MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource datasource, LocalDateTime reportStartDateTime, LocalDateTime reportEndDateTime);
 
     /**
      * Get mismatch type summary counts for the given datasource and date.
      *
      * @return MismatchTypeSummary
      */
-    MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate, SpotCheckMismatchStatus spotCheckMismatchStatus);
+    MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate, MismatchState mismatchState);
 
 
     /**
@@ -43,7 +47,7 @@ public interface SpotCheckReportDao<ContentKey>
      *
      * @return MismatchContentTypeSummary
      */
-    MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate, SpotCheckMismatchStatus spotCheckMismatchStatus, SpotCheckMismatchType spotCheckMismatchType);
+    MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource datasource, LocalDateTime summaryDate, MismatchState mismatchState, SpotCheckMismatchType spotCheckMismatchType);
 
     /**
      * Save the report to the backing store. This process may add additional observations to the

@@ -18,7 +18,7 @@ public class PriorMismatchView implements ViewObject
         if (priorMismatch != null) {
             this.mismatchId = priorMismatch.getMismatchId();
             this.reportId = priorMismatch.getReportId();
-            this.status = priorMismatch.getStatus().name();
+            this.status = priorMismatch.getState().name();
             this.diff = priorMismatch.getDiff(true);
         }
     }

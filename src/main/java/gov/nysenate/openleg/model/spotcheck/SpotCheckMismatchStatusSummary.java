@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.model.spotcheck;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class SpotCheckMismatchStatusSummary {
 
     /**
      * The status this summary represents.
      */
-    private SpotCheckMismatchStatus status;
+    private MismatchState status;
 
     /**
      * The total count of mismatches with this status.
@@ -21,7 +18,7 @@ public class SpotCheckMismatchStatusSummary {
      * @param status
      * @param count
      */
-    public SpotCheckMismatchStatusSummary(SpotCheckMismatchStatus status, int count) {
+    public SpotCheckMismatchStatusSummary(MismatchState status, int count) {
         this.status = status;
         this.total = count;
     }
@@ -39,7 +36,7 @@ public class SpotCheckMismatchStatusSummary {
         }
     }
 
-    public SpotCheckMismatchStatus getStatus() {
+    public MismatchState getStatus() {
         return status;
     }
 

@@ -14,7 +14,7 @@ public class MismatchView<ContentKey> implements ViewObject
     protected int reportId;
     protected ContentKey key;
     protected SpotCheckMismatchType mismatchType;
-    protected SpotCheckMismatchStatus status;
+    protected MismatchState status;
     protected SpotCheckDataSource dataSource;
     protected SpotCheckContentType contentType;
     protected SpotCheckRefType referenceType;
@@ -32,7 +32,7 @@ public class MismatchView<ContentKey> implements ViewObject
         this.reportId = mismatch.getReportId();
         this.key = mismatch.getKey();
         this.mismatchType = mismatch.getType();
-        this.status = mismatch.getStatus();
+        this.status = mismatch.getState();
         this.dataSource = mismatch.getDataSource();
         this.contentType = mismatch.getContentType();
         this.referenceType = mismatch.getReferenceId().getReferenceType();
@@ -62,7 +62,7 @@ public class MismatchView<ContentKey> implements ViewObject
         return mismatchType;
     }
 
-    public SpotCheckMismatchStatus getStatus() {
+    public MismatchState getStatus() {
         return status;
     }
 

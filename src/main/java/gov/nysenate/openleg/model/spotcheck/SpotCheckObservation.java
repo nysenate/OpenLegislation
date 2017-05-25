@@ -76,11 +76,11 @@ public class SpotCheckObservation<ContentKey>
      * @param ignored boolean - if true, will return counts for ignored mismatches, which are left out if false
      * @return Map<SpotCheckMismatchStatus, Long>
      */
-    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts(boolean ignored) {
+    public Map<MismatchState, Long> getMismatchStatusCounts(boolean ignored) {
         if (mismatches != null) {
             return mismatches.values().stream()
                     .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
-                    .collect(Collectors.groupingBy(SpotCheckMismatch::getStatus, Collectors.counting()));
+                    .collect(Collectors.groupingBy(SpotCheckMismatch::getState, Collectors.counting()));
         }
         else {
             throw new IllegalStateException("Collection of mismatches is null");
@@ -92,11 +92,11 @@ public class SpotCheckObservation<ContentKey>
      *
      * @return Map<SpotCheckMismatchType, SpotCheckMismatchStatus>
      */
-    public Map<SpotCheckMismatchType, SpotCheckMismatchStatus> getMismatchStatusTypes(boolean ignored) {
+    public Map<SpotCheckMismatchType, MismatchState> getMismatchStatusTypes(boolean ignored) {
         if (mismatches != null) {
             return mismatches.values().stream()
                     .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
-                    .collect(Collectors.toMap(SpotCheckMismatch::getMismatchType, SpotCheckMismatch::getStatus));
+                    .collect(Collectors.toMap(SpotCheckMismatch::getMismatchType, SpotCheckMismatch::getState));
         }
         else {
             throw new IllegalStateException("Collection of mismatches is null");

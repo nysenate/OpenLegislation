@@ -177,6 +177,12 @@ spotcheck.alert.grace.period = 30
 # text updates and spotcheck mismatches (Default: true)
 bill.scrape.queue.enabled = true
 
+# The number of days to be used as a report length, inclusive.
+# Mismatches opened in the report time period are considered NEW, closed are considered RESOLVED.
+# A value of 1 will consider any mismatches opened today as NEW and any closed today as RESOLVED.
+# A value of 2 will consider any mismatches opened today or yesterday as NEW and any closed as RESOLVED.
+spotcheck.report.period.length = 1
+
 # --- Mail Configuration ------------------------------------------------------
 
 # Connection information for the mail account that receives daybreak emails

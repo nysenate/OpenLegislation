@@ -112,6 +112,22 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
                             LocalDateTime.of(getSessionEndYear(), 12, 31, 23, 59, 59));
     }
 
+    /**
+     * @return The LocalDateTime representing the start of this session year.
+     */
+    @JsonIgnore
+    public LocalDateTime getStartDateTime() {
+        return this.asDateTimeRange().lowerEndpoint();
+    }
+
+    /**
+     * @return The LocalDateTime representing the end of this session year.
+     */
+    @JsonIgnore
+    public LocalDateTime getEndDateTime() {
+        return this.asDateTimeRange().upperEndpoint();
+    }
+
     /** --- Overrides --- */
 
     @Override

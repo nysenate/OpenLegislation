@@ -54,28 +54,23 @@ public interface SpotCheckReportService<ContentKey>
      * Gets mismatch content type summary information for the given datasource, as of the given summary date time.
      * @param dataSource
      * @param summaryDateTime
-     * @param spotCheckMismatchStatus
+     * @param mismatchState
      * @param spotCheckMismatchType
      * @return mismatchStatusSummary
      */
 
-    MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, SpotCheckMismatchStatus spotCheckMismatchStatus, SpotCheckMismatchType spotCheckMismatchType);
+    MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, MismatchState mismatchState, SpotCheckMismatchType spotCheckMismatchType);
+
     /**
      * Gets mismatch type  summary information for the given datasource, as of the given summary date time.
-     * @param dataSource
-     * @param summaryDateTime
-     * @param spotCheckMismatchStatus
-     * @return mismatchStatusSummary
      */
-    MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, SpotCheckMismatchStatus spotCheckMismatchStatus);
+    MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, MismatchState mismatchState);
 
     /**
      * Gets mismatch status summary information for the given datasource, as of the given summary date time.
-     * @param dataSource
-     * @param summaryDateTime
      * @return
      */
-    MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime);
+    MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, MismatchStatus stautus, LocalDateTime reportEndDateTime);
 
     /**
      * Sets the ignore status for a spotcheck mismatch

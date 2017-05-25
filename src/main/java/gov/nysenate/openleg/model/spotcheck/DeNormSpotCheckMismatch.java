@@ -22,7 +22,7 @@ public class DeNormSpotCheckMismatch<ContentKey> {
     private SpotCheckDataSource dataSource;
 
     /** The status of the mismatch (new, existing, etc.) */
-    private SpotCheckMismatchStatus status;
+    private MismatchState state;
 
     private SpotCheckContentType contentType;
 
@@ -54,7 +54,7 @@ public class DeNormSpotCheckMismatch<ContentKey> {
        this.key = key;
        this.type = mismatchType;
        this.dataSource = dataSource;
-       this.status = SpotCheckMismatchStatus.NEW;
+       this.state = MismatchState.OPEN;
        this.ignoreStatus = SpotCheckMismatchIgnore.NOT_IGNORED;
     }
 
@@ -70,8 +70,8 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         this.reportId = reportId;
     }
 
-    public void setStatus(SpotCheckMismatchStatus status) {
-        this.status = status;
+    public void setState(MismatchState state) {
+        this.state = state;
     }
 
     public void setReferenceId(SpotCheckReferenceId referenceId) {
@@ -140,8 +140,8 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         return type;
     }
 
-    public SpotCheckMismatchStatus getStatus() {
-        return status;
+    public MismatchState getState() {
+        return state;
     }
 
     public SpotCheckDataSource getDataSource() {
