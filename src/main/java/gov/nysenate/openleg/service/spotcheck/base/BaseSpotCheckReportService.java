@@ -5,7 +5,9 @@ import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.spotcheck.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 
 /**
  * Provides base functionality for implementors of SpotCheckReportService
@@ -25,23 +27,21 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
 
     /** {@inheritDoc} */
     @Override
-    public MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, MismatchStatus status, LocalDateTime reportEndDateTime){
-//        return getReportDao().getMismatchStatusSummary(dataSource, reportEndDateTime);
-        return null;
+    public MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, LocalDate reportDate) {
+        return getReportDao().getMismatchStatusSummary(dataSource, reportDate);
     }
 
     /** {@inheritDoc} */
     @Override
-    public MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, MismatchState mismatchState){
-        return getReportDao().getMismatchTypeSummary(dataSource, summaryDateTime, mismatchState);
+    public MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDate reportDate, MismatchStatus mismatchStatus) {
+        return getReportDao().getMismatchTypeSummary(dataSource, reportDate, mismatchStatus);
     }
 
     /** {@inheritDoc} */
     @Override
-    public MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDateTime summaryDateTime, MismatchState mismatchState, SpotCheckMismatchType spotCheckMismatchType){
-        return getReportDao().getMismatchContentTypeSummary(dataSource, summaryDateTime, mismatchState, spotCheckMismatchType);
+    public MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDate reportDate, MismatchStatus mismatchStatus, EnumSet mismatchTypes) {
+        return getReportDao().getMismatchContentTypeSummary(dataSource, reportDate, mismatchStatus, mismatchTypes);
     }
-
 
     /** {@inheritDoc} */
     @Override

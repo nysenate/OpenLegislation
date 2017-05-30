@@ -8,10 +8,8 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by senateuser on 2017/4/13.
- */
 public class MismatchTypeSummaryView  implements ViewObject {
+
     protected MapView<SpotCheckMismatchType, Integer> typeCount;
 
     public MismatchTypeSummaryView(MismatchTypeSummary summary) {
@@ -26,5 +24,4 @@ public class MismatchTypeSummaryView  implements ViewObject {
     public String getViewType() {
         return "mismatch-type-summary";
     }
-
 }

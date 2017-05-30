@@ -13,6 +13,8 @@ public class MismatchStatusUtils {
 
     private int reportLength;
 
+    private MismatchStatusUtils() {}
+
     public MismatchStatusUtils(@Value("${spotcheck.report.period.length:1}") final int reportLength) {
         this.reportLength = reportLength;
     }

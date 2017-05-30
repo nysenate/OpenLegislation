@@ -5,9 +5,6 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.spotcheck.MismatchContentTypeSummary;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckContentType;
 
-/**
- * Created by senateuser on 2017/4/13.
- */
 public class MismatchContentTypeSummaryView implements ViewObject{
 
     protected MapView<SpotCheckContentType, Integer> summary;
@@ -21,7 +18,7 @@ public class MismatchContentTypeSummaryView implements ViewObject{
     }
     @Override
     public String getViewType() {
-        return "mismatch-contenttype-summary";
+        return "mismatch-content-type-summary";
     }
 
 }

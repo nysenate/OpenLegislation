@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -165,49 +166,48 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     /**
-     * Spotcheck Mismatch Status Summary API
+     * SpotCheck Mismatch Status Summary API
      *
-     * Get a summary of mismatch status counts for all content types for a specific datasource.
+     * Get a summary of mismatch status counts for a report.
      *
-     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary/status
      *
      * Request Parameters: datasource - string - The datasource to return summary information on.
-     *                     summaryDateTime - string (ISO date) - optional - returns summary information as of this date time.
-     *                                       Defaults to current date time.
-     *                      Errror -- error filter
+     *                     reportDate - string (ISO date) - optional - returns summary information for this date.
+     *                                       Defaults to current date.
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches/summary/status", method = RequestMethod.GET)
     public BaseResponse getMismatchStatusSummary(@RequestParam String datasource,
-                                           @RequestParam(required = false) String summaryDateTime) {
+                                                 @RequestParam(required = false) String reportDate) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
-        LocalDateTime sumDateTime = summaryDateTime == null ? LocalDateTime.now() : parseISODateTime(summaryDateTime, "summaryDateTime");
-//        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(ds, sumDateTime);
-//        return new ViewObjectResponse<>(new MismatchStatusSummaryView(summary));
-        // TODO
-        return null;
+        LocalDate rDate = reportDate == null ? LocalDate.now() : parseISODate(reportDate, "reportDate");
+        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(ds, rDate);
+        return new ViewObjectResponse<>(new MismatchStatusSummaryView(summary));
     }
 
     /**
-     * Spotcheck Mismatch Type Summary API
+     * SpotCheck Mismatch Type Summary API
      *
-     * Get a summary of mismatch type counts for all content types for a specific datasource.
+     * Get a summary of mismatch type counts for a given datasource and mismatch status.
      *
-     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary/type
      *
      * Request Parameters: datasource - string - The datasource to return summary information on.
-     *                     summaryDateTime - string (ISO date) - optional - returns summary information as of this date time.
-     *                                       Defaults to current date time.
-     *                      Errror -- error filter
+     *                     reportDate - string (ISO date) - optional - returns summary information for this date.
+     *                                       Defaults to current date.
+     *                     mismatchStatus - string - optional - only includes counts for mismatches with this {@link MismatchStatus}.
+     *                                       Defaults to OPEN
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches/summary/type", method = RequestMethod.GET)
     public BaseResponse getMismatchTypeSummary(@RequestParam String datasource,
-                                           @RequestParam(required = false) String summaryDateTime,
-                                                    @RequestParam(required = false) String status) {
+                                               @RequestParam(required = false) String reportDate,
+                                               @RequestParam(required = false) String mismatchStatus) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
-        LocalDateTime sumDateTime = summaryDateTime == null ? LocalDateTime.now() : parseISODateTime(summaryDateTime, "summaryDateTime");
-        MismatchTypeSummary summary = getAnyReportService().getMismatchTypeSummary(ds, sumDateTime, getSpotCheckMismatchStatus(status));
+        LocalDate rDate = reportDate == null ? LocalDate.now() : parseISODate(reportDate, "reportDate");
+        MismatchStatus status = mismatchStatus == null ? MismatchStatus.OPEN : getEnumParameter("mismatchStatus", mismatchStatus, MismatchStatus.class);
+        MismatchTypeSummary summary = getAnyReportService().getMismatchTypeSummary(ds, rDate, status);
         return new ViewObjectResponse<>(new MismatchTypeSummaryView(summary));
     }
 
@@ -216,22 +216,27 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Get a summary of mismatch Content type counts for all content types for a specific datasource.
      *
-     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary/contentType
      *
      * Request Parameters: datasource - string - The datasource to return summary information on.
-     *                     summaryDateTime - string (ISO date) - optional - returns summary information as of this date time.
-     *                                       Defaults to current date time.
-     *                      Errror -- error filter
+     *                     reportDate - string (ISO date) - optional - returns summary information for this date.
+     *                                       Defaults to current date.
+     *                     mismatchStatus - string - optional - only include counts for mismatches with this {@link MismatchStatus}.
+     *                                       Defaults to OPEN
+     *                     mismatchType - string - optional - only include counts for mismatches of this {@link SpotCheckMismatchType}.
+     *                                       Defaults to ALL mismatch types. Set this value to filter for a single mismatch type.
      */
     @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/mismatches/summary/contenttype", method = RequestMethod.GET)
-    public BaseResponse getMismatchContenttypeSummary(@RequestParam String datasource,
-                                                    @RequestParam(required = false) String summaryDateTime,
-                                                    @RequestParam(required = false) String status,
-                                                    @RequestParam(required = false) String type) {
+    @RequestMapping(value = "/mismatches/summary/contentType", method = RequestMethod.GET)
+    public BaseResponse getMismatchContentTypeSummary(@RequestParam String datasource,
+                                                      @RequestParam(required = false) String reportDate,
+                                                      @RequestParam(required = false) String mismatchStatus,
+                                                      @RequestParam(required = false) String mismatchType) {
         SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
-        LocalDateTime sumDateTime = summaryDateTime == null ? LocalDateTime.now() : parseISODateTime(summaryDateTime, "summaryDateTime");
-        MismatchContentTypeSummary summary = getAnyReportService().getMismatchContentTypeSummary(ds, sumDateTime, getSpotCheckMismatchStatus(status), getSpotCheckMismatchType(type));
+        LocalDate rDate = reportDate == null ? LocalDate.now() : parseISODate(reportDate, "reportDate");
+        MismatchStatus status = mismatchStatus == null ? MismatchStatus.OPEN : getEnumParameter("mismatchStatus", mismatchStatus, MismatchStatus.class);
+        EnumSet<SpotCheckMismatchType> types = mismatchType == null ? EnumSet.allOf(SpotCheckMismatchType.class) : EnumSet.of(getEnumParameter("mismatchType", mismatchType, SpotCheckMismatchType.class));
+        MismatchContentTypeSummary summary = getAnyReportService().getMismatchContentTypeSummary(ds, rDate, status, types);
         return new ViewObjectResponse<>(new MismatchContentTypeSummaryView(summary));
     }
 
@@ -345,10 +350,6 @@ public class SpotCheckCtrl extends BaseCtrl
         return result;
     }
 
-    private MismatchState getSpotCheckMismatchStatus(String status) {
-        return getEnumParameter(status,MismatchState.class,null);
-    }
-
     private Set<SpotCheckRefType> getSpotcheckRefTypes(String[] parameters, String paramName) {
         return parameters == null
                 ? EnumSet.allOf(SpotCheckRefType.class)
@@ -356,16 +357,4 @@ public class SpotCheckCtrl extends BaseCtrl
                         .map(param -> getSpotcheckRefType(param, paramName))
                         .collect(Collectors.toSet());
     }
-
-    private Set<SpotCheckMismatchType> getSpotcheckMismatchTypes(String[] parameters, String paramName,
-                                                                 Set<SpotCheckRefType> refTypes) {
-        return parameters == null
-                ? refTypes.stream()
-                        .flatMap(refType -> SpotCheckMismatchType.getMismatchTypes(refType).stream())
-                        .collect(Collectors.toSet())
-                : Arrays.asList(parameters).stream()
-                        .map(paramValue -> getEnumParameter(paramName, paramValue, SpotCheckMismatchType.class))
-                        .collect(Collectors.toSet());
-    }
-
 }

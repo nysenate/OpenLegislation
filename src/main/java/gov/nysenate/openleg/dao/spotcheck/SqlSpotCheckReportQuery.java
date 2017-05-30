@@ -1,16 +1,11 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
-import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.dao.base.*;
-import gov.nysenate.openleg.model.spotcheck.MismatchQuery;
-import org.apache.commons.lang3.text.StrSubstitutor;
-
-import java.util.Map;
 
 public enum SqlSpotCheckReportQuery implements BasicSqlQuery
 {
-    /** Partial query used to get all the most recent mismatches as of :toDateTime. */
-    ACTIVE_MISMATCHS(
+    /** Partial query used to get all the most recent mismatches as of :reportEndDateTime. */
+    ACTIVE_MISMATCHES(
             "SELECT DISTINCT ON (key, type) * \n" +
             "FROM ${schema}.spotcheck_mismatch \n" +
             "WHERE reference_active_date_time BETWEEN :sessionStartDateTime AND :reportEndDateTime \n" +
@@ -59,48 +54,36 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
 
     MISMATCH_STATUS_SUMMARY(
             "SELECT 'NEW' as status, count(*) as count \n" +
-                    "FROM (" + ACTIVE_MISMATCHS.getSql() + ") active_mismatches \n" +
-                    "WHERE observed_date_time BETWEEN :reportStartDateTime AND :reportEndDateTime \n" +
-                    "AND state = 'OPEN'\n" +
-                    "UNION ALL \n" +
-                    "SELECT 'RESOLVED', count(*) \n" +
-                    "FROM (" + ACTIVE_MISMATCHS.getSql() + ") active_mismatches \n" +
-                    "WHERE observed_date_time BETWEEN :reportStartDateTime AND :reportEndDateTime \n" +
-                    "AND state = 'CLOSED'\n" +
-                    "UNION ALL \n" +
-                    "SELECT 'EXISTING', count(*) \n" +
-                    "FROM (" + ACTIVE_MISMATCHS.getSql() + ") active_mismatches \n" +
-                    "WHERE observed_date_time BETWEEN :sessionStartDateTime AND :reportStartDateTime \n" +
-                    "AND state = 'OPEN'\n"
+            "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
+            "WHERE observed_date_time BETWEEN :reportStartDateTime AND :reportEndDateTime \n" +
+            "AND state = 'OPEN'\n" +
+            "UNION ALL \n" +
+            "SELECT 'RESOLVED', count(*) \n" +
+            "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
+            "WHERE observed_date_time BETWEEN :reportStartDateTime AND :reportEndDateTime \n" +
+            "AND state = 'CLOSED'\n" +
+            "UNION ALL \n" +
+            "SELECT 'EXISTING', count(*) \n" +
+            "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
+            "WHERE observed_date_time BETWEEN :sessionStartDateTime AND :reportStartDateTime \n" +
+            "AND state = 'OPEN'\n"
     ),
 
     MISMATCH_TYPE_SUMMARY(
-            "SELECT type, count(type) FROM\n" +
-            "    (SELECT DISTINCT ON (m.key, m.type, m.datasource) m.type, m.state, m.reference_active_date_time, m.ignore_status\n" +
-            "     FROM  ${schema}.spotcheck_mismatch m\n" +
-            "     WHERE m.reference_active_date_time BETWEEN :fromDate AND :toDate\n" +
-            "       AND m.datasource =  :datasource\n" +
-            "     ORDER BY m.key, m.type, m.datasource, m.reference_active_date_time desc\n" +
-            "    ) most_recent_mismatches\n" +
-            "  WHERE (state = :states\n" +
-                    "    AND reference_active_date_time > :startOfToDate)\n"+
-                    "    AND ignore_status = 'NOT_IGNORED'\n"+
-            "    GROUP BY most_recent_mismatches.type\n"
+            "SELECT type, count(*) as count \n" +
+            "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
+            "WHERE observed_date_time BETWEEN :statusStartDateTime AND :statusEndDateTime \n" +
+            "AND state = :state \n" +
+            "GROUP BY type"
     ),
 
-    MISMATCH_CONTENTTYPE_SUMMARY(
-            "SELECT type, count(type) FROM\n" +
-                    "    (SELECT DISTINCT ON (m.key, m.type, m.datasource) m.type, m.state, m.reference_active_date_time, m.ignore_status\n" +
-                    "     FROM  ${schema}.spotcheck_mismatch m\n" +
-                    "     WHERE m.reference_active_date_time BETWEEN :fromDate AND :toDate\n" +
-                    "       AND m.datasource =  :datasource\n" +
-                    "       AND m.type like :mismatchtype\n" +
-                    "     ORDER BY m.key, m.type, m.datasource, m.reference_active_date_time desc\n" +
-                    "    ) most_recent_mismatches\n" +
-                    "  WHERE (state = :states\n" +
-                    "    AND reference_active_date_time > :startOfToDate)\n"+
-                    "    AND ignore_status = 'NOT_IGNORED'\n"+
-                    "    GROUP BY most_recent_mismatches.type\n"
+    MISMATCH_CONTENT_TYPE_SUMMARY(
+            "SELECT content_type, count(*) as count \n" +
+            "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
+            "WHERE observed_date_time BETWEEN :statusStartDateTime AND :statusEndDateTime \n" +
+            "AND state = :state \n" +
+            "AND type IN (:mismatchTypes) \n" +
+            "GROUP BY content_type"
     ),
 
     UPDATE_MISMATCH_IGNORE(

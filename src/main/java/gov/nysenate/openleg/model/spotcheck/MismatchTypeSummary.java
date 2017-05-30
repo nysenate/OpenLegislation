@@ -3,10 +3,8 @@ package gov.nysenate.openleg.model.spotcheck;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by senateuser on 2017/4/13.
- */
 public class MismatchTypeSummary {
+
     private Map<SpotCheckMismatchType, Integer> typeCount;
 
     public MismatchTypeSummary(){

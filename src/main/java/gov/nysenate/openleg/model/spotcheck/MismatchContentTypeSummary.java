@@ -3,14 +3,15 @@ package gov.nysenate.openleg.model.spotcheck;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by senateuser on 2017/4/13.
- */
 public class MismatchContentTypeSummary {
+
     private Map<SpotCheckContentType, Integer> summary;
 
     public MismatchContentTypeSummary() {
         summary = new HashMap<>();
+        for (SpotCheckContentType type : SpotCheckContentType.values()) {
+            summary.put(type, 0);
+        }
     }
 
     public Map<SpotCheckContentType, Integer> getSummary(){
