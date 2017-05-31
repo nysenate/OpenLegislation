@@ -176,13 +176,13 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseAgendaNo(mismatch) {
-        if (mismatch.key.agendaId == undefined || mismatch.key.agendaId == null) {
+        if (mismatch.key.agendaId == undefined || mismatch.key.agendaId == null)
             return "";
-        }
         if (mismatch.key.agendaId.number == -1) // if the missing data is the agenda number, we set it to -1
             return "N/A";
-        else
-            return mismatch.key.agendaId.number + mismatch.key.addendum;
+        if (mismatch.key.addendum == 'DEFAULT')
+            return mismatch.key.agendaId.number;
+         return mismatch.key.agendaId.number + mismatch.key.addendum;
     }
 
     function parseCommittee(mismatch) {
