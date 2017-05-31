@@ -76,7 +76,7 @@ function spotcheckMismatchApi($resource) {
 
     function parseCalType(mismatch) {
         if (mismatch.key.type != undefined)
-            return mismatch.key.type.replace('_',' ');
+            return patternWords(mismatch.key.type.replace('_',' '));
     }
 
     function parseSession(mismatch) {
@@ -96,7 +96,7 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseStatus(mismatch) {
-        return mismatch.status;
+        return patternWords(mismatch.status);
     }
 
     function parseObserveredData(mismatch) {
@@ -182,7 +182,7 @@ function spotcheckMismatchApi($resource) {
             return "N/A";
         if (mismatch.key.addendum == 'DEFAULT')
             return mismatch.key.agendaId.number;
-         return mismatch.key.agendaId.number + mismatch.key.addendum;
+         return mismatch.key.agendaId.number + patternWords(mismatch.key.addendum);
     }
 
     function parseCommittee(mismatch) {
@@ -194,5 +194,10 @@ function spotcheckMismatchApi($resource) {
 
     return {
         getMismatches: getMismatches
+    }
+
+    function patternWords(input) {
+        var lower =  input.toLowerCase();
+        return lower.charAt(0).toUpperCase()+lower.slice(1);
     }
 }
