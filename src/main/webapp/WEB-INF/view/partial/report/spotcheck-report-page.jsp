@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <section ng-controller="SpotcheckReportCtrl"
-         class="padding-20">
+         class="padding-20" style="overflow: scroll">
   <md-content>
     <div>
       <h2>Report Date: {{formatDate(date)}}</h2>
@@ -21,7 +21,7 @@
     </div>
   </md-content>
 
-  <div>
+  <div style="min-width: 960px;">
     <md-card class="content-card">
       <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
         <md-tab ng-cloak label="Bills ({{numberWithCommas(getSummaryCountForContentType('BILL')) || 0}})" md-on-select="onTabChange()">
@@ -102,7 +102,7 @@
                 <div flex="15" class="columnWord">{{mismatch.mismatchType}}</div>
                 <div flex="10"  class="columnWord">{{mismatch.calType}}</div>
                 <div flex="15"  class="columnWord">{{mismatch.observedDate}}</div>
-                <div flex="10"  class="columnWord"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>
+                <div flex="10"  class="columnWord"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}"  class="report-page-toast">Saved</div></div>
                 <div flex="15"  class="columnWord">{{mismatch.refType}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">

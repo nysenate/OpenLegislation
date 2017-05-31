@@ -22,7 +22,7 @@ public enum SpotCheckRefType
 
     LBDC_SCRAPED_BILL("scraped-bill", "Scraped Bill", LBDC, BILL, BILL_TEXT_SPOTCHECK),
 
-    LBDC_CALENDAR_ALERT("floor-alert", "Floor Calendar Alert", LBDC, CALENDAR, CALENDAR_SPOTCHECK),
+    LBDC_CALENDAR_ALERT("floor-alert", "LBDC Calendar Alert", LBDC, CALENDAR, CALENDAR_SPOTCHECK),
 
     LBDC_AGENDA_ALERT("agenda-alert", "Agenda Alert", LBDC, AGENDA, AGENDA_SPOTCHECK),
 
