@@ -2,10 +2,15 @@ package gov.nysenate.openleg.model.calendar.spotcheck;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ComparisonChain;
+import gov.nysenate.openleg.dao.calendar.data.SqlCalendarDao;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
+import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
 
 /**
  * Created by PKS on 3/9/16.
@@ -15,6 +20,7 @@ public class CalendarEntryListId extends CalendarId {
     protected CalendarType type;
     protected Version version;
     protected Integer sequenceNo;
+    protected LocalDate calDate;
 
     @Override
     public boolean equals(Object o) {
@@ -84,8 +90,12 @@ public class CalendarEntryListId extends CalendarId {
         this.sequenceNo = sequenceNo;
     }
 
-    public static CalendarEntryListId getActiveListId(CalendarId id, Integer sequenceNo) {
-        return new CalendarEntryListId(id, CalendarType.ACTIVE_LIST, null, sequenceNo);
+    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo, LocalDate calDate) {
+        super(calendarId);
+        this.type = type;
+        this.version = version;
+        this.sequenceNo = sequenceNo;
+        this.calDate = calDate;
     }
 
     @JsonIgnore
@@ -108,6 +118,10 @@ public class CalendarEntryListId extends CalendarId {
     public void setType(CalendarType type){
         this.type = type;
     }
+
+    public void setCalDate(LocalDate localDate){this.calDate = localDate;}
+
+    public LocalDate getCalDate(){return calDate;}
 
     public void setVersion(Version version){
         this.version = version;

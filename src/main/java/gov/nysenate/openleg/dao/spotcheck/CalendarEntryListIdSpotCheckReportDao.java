@@ -5,8 +5,10 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
+import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -18,15 +20,19 @@ import java.util.Map;
 @Repository
 public class CalendarEntryListIdSpotCheckReportDao extends AbstractSpotCheckReportDao<CalendarEntryListId> {
     private static final Logger logger = LoggerFactory.getLogger(CalendarEntryListIdSpotCheckReportDao.class);
+    @Autowired
+    private CalendarDataService calendarDataService;
 
     @Override
     public CalendarEntryListId getKeyFromMap(Map<String, String> keyMap) {
         if (keyMap != null) {
+            CalendarId calendarId = new CalendarId(Integer.parseInt(keyMap.get("calNo")), Integer.parseInt(keyMap.get("year")));
             return new CalendarEntryListId(
-                    new CalendarId(Integer.parseInt(keyMap.get("calNo")), Integer.parseInt(keyMap.get("year"))),
+                    calendarId,
                     CalendarType.valueOf(keyMap.get("type")),
                     Version.of(keyMap.get("version")),
-                    Integer.parseInt(keyMap.get("sequenceNo")));
+                    Integer.parseInt(keyMap.get("sequenceNo")),
+                    calendarDataService.getCalendar(calendarId).getCalDate());
         }
         return null;
     }

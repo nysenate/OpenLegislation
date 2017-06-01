@@ -25,7 +25,7 @@
           <md-card ng-if="contentType == 'CALENDAR' " class="mismatch-diff-info-card mismatch-diff-info-border-radius mismatch-diff-info-background-color white-text-color">
             <p>Date Reported: {{date}}</p>
             <p> Calendar Number: {{currentMismatch.calNo}}</p>
-            <p>Session Date:</p>
+            <p>Session Date: {{currentMismatch.key.calDate}}</p>
             <p>Error Type: {{currentMismatch.mismatchType}}</p>
           </md-card>
 
