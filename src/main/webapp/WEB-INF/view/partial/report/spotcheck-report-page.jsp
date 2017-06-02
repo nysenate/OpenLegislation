@@ -4,7 +4,7 @@
          class="padding-20" style="overflow: scroll">
   <md-content>
     <div>
-      <h2>Report Date: {{formatDate(date)}}</h2>
+      <h2>Report Date:   <md-datepicker ng-model="pickedDate"  datepicker-popup="YYYY-MM-DD" md-placeholder="Select Report Date"  md-max-date="maxDate" ng-change="onDateChange()"></md-datepicker></h2>
     </div>
     <div layout="row" layout-align="space-between center">
       <div>

@@ -1,9 +1,9 @@
 angular.module('open.spotcheck')
     .controller('SpotcheckReportCtrl',
-        ['$scope', '$location', '$routeParams', '$mdDialog', 'PaginationModel', 'SpotcheckMismatchApi',
+        ['$scope', '$route','$location', '$routeParams', '$mdDialog', '$mdDateLocale','PaginationModel', 'SpotcheckMismatchApi',
             'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI', 'SpotcheckMismatchTrackingAPI', 'SpotcheckMismatchDeleteAllAPI', 'SpotcheckMismatchDeleteAllAPI', ReportCtrl]);
 
-function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel, spotcheckMismatchApi,
+function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLocale,paginationModel, spotcheckMismatchApi,
                     mismatchSummaryApi, mismatchIgnoreApi, spotcheckMismatchTrackingAPI, spotcheckMismatchDeleteAllAPI) {
 
     const dateFormat = 'YYYY-MM-DD';
@@ -218,19 +218,29 @@ function ReportCtrl($scope, $location, $routeParams, $mdDialog, paginationModel,
         })
     }
 
+    $scope.onDateChange = function () {
+        $scope.date = moment(  $scope.pickedDate);
+        $location.search('date', $scope.date.format(dateFormat)).replace();
+        $route.reload();
+    }
+
     function initializeDate() {
         if ($routeParams.hasOwnProperty('date')) {
             $scope.date = moment($routeParams.date, dateFormat);
+            $scope.pickedDate = new Date($scope.date);
         }
         else {
             $scope.date = moment().startOf('day');
-            onDateChange();
+            $location.search('date', $scope.date.format(dateFormat)).replace();
+            $scope.pickedDate = new Date(moment().startOf('day'));
         }
+        $scope.maxDate = new Date(moment().startOf('day'));
+
+        $mdDateLocale.formatDate = function (date) {
+            return moment(date).format(dateFormat);
+        };
     }
 
-    function onDateChange() {
-        $location.search('date', $scope.date.format(dateFormat)).replace();
-    }
 
     function selectedContentType() {
         return contentTypes[$scope.selectedTab];
