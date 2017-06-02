@@ -75,8 +75,16 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseCalType(mismatch) {
-        if (mismatch.key.type != undefined)
-            return patternWords(mismatch.key.type.replace('_',' '));
+        if (mismatch.key.type != undefined){
+            var result = "";
+            if (mismatch.key.type == "ACTIVE_LIST")
+                result = "Active";
+            if (mismatch.key.type == "FLOOR_CALENDAR")
+                result = "Floor";
+            if (mismatch.key.type == "SUPPLEMENTAL_CALENDAR")
+                result = "Suppl";
+            return result;
+        }
     }
 
     function parseSession(mismatch) {
