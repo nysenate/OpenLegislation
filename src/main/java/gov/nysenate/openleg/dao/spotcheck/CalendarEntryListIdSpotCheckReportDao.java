@@ -2,10 +2,12 @@ package gov.nysenate.openleg.dao.spotcheck;
 
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
+import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,22 @@ public class CalendarEntryListIdSpotCheckReportDao extends AbstractSpotCheckRepo
     public CalendarEntryListId getKeyFromMap(Map<String, String> keyMap) {
         if (keyMap != null) {
             CalendarId calendarId = new CalendarId(Integer.parseInt(keyMap.get("calNo")), Integer.parseInt(keyMap.get("year")));
-            return new CalendarEntryListId(
-                    calendarId,
-                    CalendarType.valueOf(keyMap.get("type")),
-                    Version.of(keyMap.get("version")),
-                    Integer.parseInt(keyMap.get("sequenceNo")),
-                    calendarDataService.getCalendar(calendarId).getCalDate());
+           try{
+               Calendar calendar = calendarDataService.getCalendar(calendarId);
+               CalendarEntryListId result = new CalendarEntryListId(
+                       calendarId,
+                       CalendarType.valueOf(keyMap.get("type")),
+                       Version.of(keyMap.get("version")),
+                       Integer.parseInt(keyMap.get("sequenceNo")),calendar.getCalDate());
+                       return result;
+           }catch (CalendarNotFoundEx calendarNotFoundEx){
+               CalendarEntryListId result = new CalendarEntryListId(
+                       calendarId,
+                       CalendarType.valueOf(keyMap.get("type")),
+                       Version.of(keyMap.get("version")),
+                       Integer.parseInt(keyMap.get("sequenceNo")));
+               return result;
+           }
         }
         return null;
     }
