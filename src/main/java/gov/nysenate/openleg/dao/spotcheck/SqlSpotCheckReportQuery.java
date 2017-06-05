@@ -10,6 +10,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
             "FROM ${schema}.spotcheck_mismatch \n" +
             "WHERE reference_active_date_time BETWEEN :sessionStartDateTime AND :reportEndDateTime \n" +
             "  AND datasource = :datasource \n" +
+            "  AND ignore_status IN (:ignoreStatuses)\n" +
             "ORDER BY key, type, reference_active_date_time desc"
     ),
 
@@ -37,8 +38,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "      AND m.content_type IN (:contentTypes) \n" +
         "    ORDER BY m.key, m.type, m.reference_active_date_time desc \n" +
         "  ) open_mismatches \n" +
-        "WHERE state IN (:states)\n" +
-        "AND ignore_status IN (:ignoreStatuses) AND type like :mismatchtype"
+        "WHERE state = :state\n" +
+        "AND ignore_status IN (:ignoreStatuses) AND type IN (:mismatchTypes)"
     ),
 
     INSERT_MISMATCH(

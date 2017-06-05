@@ -66,12 +66,11 @@ public class SpotCheckCtrl extends BaseCtrl
      * <p>Request Parameters: <ul>
      *                     <li>datasource - string - retrieves mismatches for the specified datasource.
      *                     <li>contentType - string - retrieves mismatches for the specified content type.
-     *                     <li>mismatchState - string[] - optional, default [OPEN, CLOSED]
-     *                                      - retrieves mismatches with any of the given mismatch states.
+     *                     <li>mismatchStatus - string[] - retrieves mismatches of the specified status.
+     *                     <li>reportDate - string (ISO date) - optional - returns summary information for this date.
+     *                                       Defaults to current date.
+     *                     <li>mismatchType - string - optional, default all mismatch types. - retrieves mismatches of the specified type.
      *                     <li>ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
-     *                     <li>fromDate - string (ISO date) - optional, default start of the session encompassing toDate,
-     *                              - retrieves mismatches after this date.
-     *                     <li>toDate - string (ISO date) - optional, default is now - retrieve mismatches as of this date.
      *                     <li>orderBy - string - optional, order results by the specified field, must be a valid {@link MismatchOrderBy} value.
      *                              - Defaults to REFERENCE_DATE.
      *                     <li>sort - string - optional, a SortOrder value representing the sort order. Defaults to DESC
@@ -83,35 +82,26 @@ public class SpotCheckCtrl extends BaseCtrl
     @RequestMapping(value = "/mismatches", method = RequestMethod.GET)
     public BaseResponse getMismatches(@RequestParam String datasource,
                                       @RequestParam String contentType,
-                                      @RequestParam(required = false) String[] mismatchState,
+                                      @RequestParam String mismatchStatus,
+                                      @RequestParam(required = false) String reportDate,
+                                      @RequestParam(required = false) String mismatchType,
                                       @RequestParam(required = false) String[] ignoredStatuses,
-                                      @RequestParam(required = false) String fromDate,
-                                      @RequestParam(required = false) String toDate,
                                       @RequestParam(required = false) String orderBy,
                                       @RequestParam(required = false) String sort,
-                                      @RequestParam(required = false) String error,
                                       WebRequest request) {
-        SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
-        SpotCheckContentType ct = getEnumParameter("contentType", contentType, SpotCheckContentType.class);
-        Set<MismatchState> ms = mismatchState == null
-                ? EnumSet.of(MismatchState.OPEN)
-                : Lists.newArrayList(mismatchState).stream().map(s -> getEnumParameter("mismatchStatuses", s, MismatchState.class)).collect(Collectors.toSet());
-        Set<SpotCheckMismatchIgnore> igs = ignoredStatuses == null
-                ? EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED)
-                : Lists.newArrayList(ignoredStatuses).stream().map(i -> getEnumParameter("ignoredStatuses", i, SpotCheckMismatchIgnore.class)).collect(Collectors.toSet());
-        LocalDateTime toDateTime = toDate == null ? LocalDateTime.now() : parseISODateTime(toDate, "toDate");
-        LocalDateTime fromDateTime = fromDate == null ? startOfSessionYear(toDateTime) : parseISODateTime(fromDate, "fromDate");
+        SpotCheckDataSource ds = getDatasource(datasource);
+        SpotCheckContentType ct = getContentType(contentType);
+        MismatchStatus status = getMismatchStatus(mismatchStatus);
+        LocalDate rDate = getReportDate(reportDate);
+        EnumSet<SpotCheckMismatchType> type = getMismatchTypes(mismatchType);
+        Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
         OrderBy order = getOrderBy(orderBy, sort);
-        SpotCheckMismatchType  spotCheckMismatchType = getSpotCheckMismatchType(error);
         LimitOffset limitOffset = getLimitOffset(request, 10);
 
-        MismatchQuery query = new MismatchQuery(ds, Collections.singleton(ct))
-                .withMismatchStates(ms)
+        MismatchQuery query = new MismatchQuery(rDate, ds, status, Collections.singleton(ct))
                 .withIgnoredStatuses(igs)
-                .withFromDate(fromDateTime)
-                .withToDate(toDateTime)
                 .withOrderBy(order)
-                .withSpotCheckMismatchType(spotCheckMismatchType);
+                .withMismatchTypes(type);
 
         // Get any ref type for this datasource and contentType.
         SpotCheckRefType refType = SpotCheckRefType.get(ds, ct).get(0);
@@ -121,48 +111,6 @@ public class SpotCheckCtrl extends BaseCtrl
             mismatchViews.add(new MismatchView(mm));
         }
         return ListViewResponse.of(mismatchViews, mismatches.getTotal(), mismatches.getLimOff());
-    }
-
-    private LocalDateTime startOfSessionYear(LocalDateTime toDateTime) {
-        return SessionYear.of(toDateTime.getYear()).asDateTimeRange().lowerEndpoint();
-    }
-
-    /**
-     * Used to convert orderBy and sort request parameters into an OrderBy object.
-     * Defaults to ordering by REFERENCE_DATE descending if orderByString and sortString are null.
-     * When ordering by a field other than REFERENCE_DATE, a secondary order by on
-     * REFERENCE_DATE desc is added so the most recent results are always displayed first.
-     *
-     * @param orderByString String representing a MismatchOrderBy value.
-     * @param sortString String representing a SortOrder value.
-     * @return An OrderBy representing the supplied orderByString and sortString, potentially
-     * with a secondary order by of REFERENCE_DATE desc.
-     * @throws gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx if orderByString or sortString
-     * are not valid values.
-     */
-    private OrderBy getOrderBy(String orderByString, String sortString) {
-        MismatchOrderBy orderBy = orderByString == null
-                ? MismatchOrderBy.REFERENCE_DATE
-                : getEnumParameter("orderBy", orderByString, MismatchOrderBy.class);
-
-        SortOrder sortOrder = sortString == null
-                ? SortOrder.DESC
-                : getEnumParameter("sort", sortString, SortOrder.class);
-
-        if (orderBy != MismatchOrderBy.REFERENCE_DATE) {
-            // Add secondary order by reference date
-            return new OrderBy(orderBy.getColumnName(), sortOrder,
-                    MismatchOrderBy.REFERENCE_DATE.getColumnName(), SortOrder.DESC);
-        }
-        return new OrderBy(orderBy.getColumnName(), sortOrder);
-    }
-
-    private SpotCheckMismatchType getSpotCheckMismatchType(String error) {
-        if (error.equals("ALL"))
-           return null;
-        else{
-            return SpotCheckMismatchType.getSpotCheckMismatchByDisplayName(error);
-        }
     }
 
     /**
@@ -175,14 +123,17 @@ public class SpotCheckCtrl extends BaseCtrl
      * Request Parameters: datasource - string - The datasource to return summary information on.
      *                     reportDate - string (ISO date) - optional - returns summary information for this date.
      *                                       Defaults to current date.
+     *                     ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches/summary/status", method = RequestMethod.GET)
     public BaseResponse getMismatchStatusSummary(@RequestParam String datasource,
-                                                 @RequestParam(required = false) String reportDate) {
-        SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
-        LocalDate rDate = reportDate == null ? LocalDate.now() : parseISODate(reportDate, "reportDate");
-        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(ds, rDate);
+                                                 @RequestParam(required = false) String reportDate,
+                                                 @RequestParam(required = false) String[] ignoredStatuses) {
+        SpotCheckDataSource ds = getDatasource(datasource);
+        LocalDate rDate = getReportDate(reportDate);
+        Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
+        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(rDate, ds, igs);
         return new ViewObjectResponse<>(new MismatchStatusSummaryView(summary));
     }
 
@@ -198,16 +149,19 @@ public class SpotCheckCtrl extends BaseCtrl
      *                                       Defaults to current date.
      *                     mismatchStatus - string - optional - only includes counts for mismatches with this {@link MismatchStatus}.
      *                                       Defaults to OPEN
+     *                     ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches/summary/type", method = RequestMethod.GET)
     public BaseResponse getMismatchTypeSummary(@RequestParam String datasource,
                                                @RequestParam(required = false) String reportDate,
-                                               @RequestParam(required = false) String mismatchStatus) {
-        SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
-        LocalDate rDate = reportDate == null ? LocalDate.now() : parseISODate(reportDate, "reportDate");
-        MismatchStatus status = mismatchStatus == null ? MismatchStatus.OPEN : getEnumParameter("mismatchStatus", mismatchStatus, MismatchStatus.class);
-        MismatchTypeSummary summary = getAnyReportService().getMismatchTypeSummary(ds, rDate, status);
+                                               @RequestParam(required = false) String mismatchStatus,
+                                               @RequestParam(required = false) String[] ignoredStatuses) {
+        SpotCheckDataSource ds = getDatasource(datasource);
+        LocalDate rDate = getReportDate(reportDate);
+        MismatchStatus status = mismatchStatus == null ? MismatchStatus.OPEN : getMismatchStatus(mismatchStatus);
+        Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
+        MismatchTypeSummary summary = getAnyReportService().getMismatchTypeSummary(rDate, ds, status, igs);
         return new ViewObjectResponse<>(new MismatchTypeSummaryView(summary));
     }
 
@@ -225,21 +179,23 @@ public class SpotCheckCtrl extends BaseCtrl
      *                                       Defaults to OPEN
      *                     mismatchType - string - optional - only include counts for mismatches of this {@link SpotCheckMismatchType}.
      *                                       Defaults to ALL mismatch types. Set this value to filter for a single mismatch type.
+     *                     ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches/summary/contentType", method = RequestMethod.GET)
     public BaseResponse getMismatchContentTypeSummary(@RequestParam String datasource,
                                                       @RequestParam(required = false) String reportDate,
                                                       @RequestParam(required = false) String mismatchStatus,
-                                                      @RequestParam(required = false) String mismatchType) {
-        SpotCheckDataSource ds = getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
-        LocalDate rDate = reportDate == null ? LocalDate.now() : parseISODate(reportDate, "reportDate");
-        MismatchStatus status = mismatchStatus == null ? MismatchStatus.OPEN : getEnumParameter("mismatchStatus", mismatchStatus, MismatchStatus.class);
-        EnumSet<SpotCheckMismatchType> types = mismatchType == null ? EnumSet.allOf(SpotCheckMismatchType.class) : EnumSet.of(getEnumParameter("mismatchType", mismatchType, SpotCheckMismatchType.class));
-        MismatchContentTypeSummary summary = getAnyReportService().getMismatchContentTypeSummary(ds, rDate, status, types);
+                                                      @RequestParam(required = false) String mismatchType,
+                                                      @RequestParam(required = false) String[] ignoredStatuses) {
+        SpotCheckDataSource ds = getDatasource(datasource);
+        LocalDate rDate = getReportDate(reportDate);
+        MismatchStatus status = mismatchStatus == null ? MismatchStatus.OPEN : getMismatchStatus(mismatchStatus);
+        EnumSet<SpotCheckMismatchType> types = getMismatchTypes(mismatchType);
+        Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
+        MismatchContentTypeSummary summary = getAnyReportService().getMismatchContentTypeSummary(rDate, ds, status, types, igs);
         return new ViewObjectResponse<>(new MismatchContentTypeSummaryView(summary));
     }
-
 
     /**
      * Spotcheck Mismatch Ignore API
@@ -259,6 +215,7 @@ public class SpotCheckCtrl extends BaseCtrl
         getAnyReportService().setMismatchIgnoreStatus(mismatchId, ignoreStatus);
         return new SimpleResponse(true, "ignore level set", "ignore-level-set");
     }
+
 
     /**
      * Spotcheck Mismatch Add Issue Id API
@@ -299,6 +256,7 @@ public class SpotCheckCtrl extends BaseCtrl
         getAnyReportService().deleteIssueId(mismatchId, issueId);
         return new SimpleResponse(true, "issue id deleted", "issue-id-deleted");
     }
+
     /**
      * Spotcheck Mismatch remove All Issue Id API
      *
@@ -311,8 +269,6 @@ public class SpotCheckCtrl extends BaseCtrl
         getAnyReportService().deleteAllIssueId(mismatchId);
         return new SimpleResponse(true, "issue id deleted", "issue-id-deleted");
     }
-
-
     /**
      * Spotcheck Report Run API
      *
@@ -336,9 +292,67 @@ public class SpotCheckCtrl extends BaseCtrl
 
     /** --- Internal Methods --- */
 
+    private SpotCheckDataSource getDatasource(String datasource) {
+        return getEnumParameter("datasource", datasource, SpotCheckDataSource.class);
+    }
+
+    private SpotCheckContentType getContentType(String contentType) {
+        return getEnumParameter("contentType", contentType, SpotCheckContentType.class);
+    }
+
+    private MismatchStatus getMismatchStatus(String mismatchStatus) {
+        return getEnumParameter("mismatchStatus", mismatchStatus, MismatchStatus.class);
+    }
+
+    private LocalDate getReportDate(String reportDate) {
+        return reportDate == null ? LocalDate.now() : parseISODate(reportDate, "reportDate");
+    }
+
+    private EnumSet<SpotCheckMismatchType> getMismatchTypes(@RequestParam(required = false) String mismatchType) {
+        return mismatchType == null ? EnumSet.allOf(SpotCheckMismatchType.class) : EnumSet.of(getEnumParameter("mismatchType", mismatchType, SpotCheckMismatchType.class));
+    }
+
+    private Set<SpotCheckMismatchIgnore> getIgnoredStatuses(@RequestParam(required = false) String[] ignoredStatuses) {
+        return ignoredStatuses == null
+                ? EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED)
+                : Lists.newArrayList(ignoredStatuses).stream()
+                       .map(i -> getEnumParameter("ignoredStatuses", i, SpotCheckMismatchIgnore.class))
+                       .collect(Collectors.toSet());
+    }
+
+    /**
+     * Used to convert orderBy and sort request parameters into an OrderBy object.
+     * Defaults to ordering by REFERENCE_DATE descending if orderByString and sortString are null.
+     * When ordering by a field other than REFERENCE_DATE, a secondary order by on
+     * REFERENCE_DATE desc is added so the most recent results are always displayed first.
+     *
+     * @param orderByString String representing a MismatchOrderBy value.
+     * @param sortString String representing a SortOrder value.
+     * @return An OrderBy representing the supplied orderByString and sortString, potentially
+     * with a secondary order by of REFERENCE_DATE desc.
+     * @throws gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx if orderByString or sortString
+     * are not valid values.
+     */
+    private OrderBy getOrderBy(String orderByString, String sortString) {
+        MismatchOrderBy orderBy = orderByString == null
+                ? MismatchOrderBy.REFERENCE_DATE
+                : getEnumParameter("orderBy", orderByString, MismatchOrderBy.class);
+
+        SortOrder sortOrder = sortString == null
+                ? SortOrder.DESC
+                : getEnumParameter("sort", sortString, SortOrder.class);
+
+        if (orderBy != MismatchOrderBy.REFERENCE_DATE) {
+            // Add secondary order by reference date
+            return new OrderBy(orderBy.getColumnName(), sortOrder,
+                               MismatchOrderBy.REFERENCE_DATE.getColumnName(), SortOrder.DESC);
+        }
+        return new OrderBy(orderBy.getColumnName(), sortOrder);
+    }
+
     private SpotCheckReportService<?> getAnyReportService() {
         return reportServices.stream().findAny()
-                .orElseThrow(() -> new IllegalStateException("No spotcheck report services found"));
+                             .orElseThrow(() -> new IllegalStateException("No spotcheck report services found"));
     }
 
     private SpotCheckRefType getSpotcheckRefType(String parameter, String paramName) {

@@ -83,11 +83,11 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("datasource", query.getDataSource().name())
                 .addValue("contentTypes", query.getContentTypes().stream().map(Enum::name).collect(Collectors.toSet()))
-                .addValue("states", query.getStates().stream().map(Enum::name).collect(Collectors.toSet()))
+                .addValue("state", query.getState().name())
+                .addValue("toDate", query.getEndDateTime())
+                .addValue("fromDate", query.getStartDateTime())
                 .addValue("ignoreStatuses", query.getIgnoredStatuses().stream().map(Enum::name).collect(Collectors.toSet()))
-                .addValue("toDate", query.getToDate())
-                .addValue("fromDate", query.getFromDate())
-                .addValue("mismatchtype", SpotCheckMismatchType.getName(query.getSpotCheckMismatchType()));
+                .addValue("mismatchTypes", extractEnumSetParams(query.getMismatchTypes()));
         String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema(), query.getOrderBy(), limitOffset);
         PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new MismatchMapper());
         jdbcNamed.query(sql, params, handler);
@@ -98,8 +98,9 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * {@inheritDoc}
      */
     @Override
-    public MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource datasource, LocalDate reportDate) {
-        MapSqlParameterSource params = activeMismatchParams(SpotCheckReportUtils.getReportEndDateTime(reportDate))
+    public MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource datasource,
+                                                          Set<SpotCheckMismatchIgnore> ignoreStatuses) {
+        MapSqlParameterSource params = activeMismatchParams(SpotCheckReportUtils.getReportEndDateTime(reportDate), ignoreStatuses)
                 .addValue("datasource", datasource.name())
                 .addValue("reportStartDateTime", SpotCheckReportUtils.getReportStartDateTime(reportDate))
                 .addValue("reportEndDateTime", SpotCheckReportUtils.getReportEndDateTime(reportDate));
@@ -113,8 +114,9 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * {@inheritDoc}
      */
     @Override
-    public MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource datasource, LocalDate reportDate, MismatchStatus mismatchStatus) {
-        MapSqlParameterSource params = activeMismatchParams(SpotCheckReportUtils.getReportEndDateTime(reportDate))
+    public MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate, SpotCheckDataSource datasource,
+                                                      MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses) {
+        MapSqlParameterSource params = activeMismatchParams(SpotCheckReportUtils.getReportEndDateTime(reportDate), ignoreStatuses)
                 .addValue("datasource", datasource.name())
                 .addValue("statusStartDateTime", mismatchStatus.getStartDateTime(reportDate))
                 .addValue("statusEndDateTime", mismatchStatus.getEndDateTime(reportDate))
@@ -129,8 +131,10 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * {@inheritDoc}
      */
     @Override
-    public MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource datasource, LocalDate reportDate, MismatchStatus mismatchStatus, EnumSet mismatchTypes) {
-          MapSqlParameterSource params = activeMismatchParams(SpotCheckReportUtils.getReportEndDateTime(reportDate))
+    public MismatchContentTypeSummary getMismatchContentTypeSummary(LocalDate reportDate, SpotCheckDataSource datasource,
+                                                                    MismatchStatus mismatchStatus, EnumSet mismatchTypes,
+                                                                    Set<SpotCheckMismatchIgnore> ignoreStatuses) {
+          MapSqlParameterSource params = activeMismatchParams(SpotCheckReportUtils.getReportEndDateTime(reportDate), ignoreStatuses)
                   .addValue("datasource", datasource.name())
                   .addValue("statusStartDateTime", mismatchStatus.getStartDateTime(reportDate))
                   .addValue("statusEndDateTime", mismatchStatus.getEndDateTime(reportDate))
@@ -169,9 +173,10 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     }
 
     private List<DeNormSpotCheckMismatch> getCurrentMismatches(SpotCheckReport<ContentKey> report) {
-        MismatchQuery query = new MismatchQuery(report.getReferenceType().getDataSource(), Sets.newHashSet(report.getReferenceType().getContentType()))
-                .withToDate(report.getReferenceDateTime())
-                .withMismatchStates(EnumSet.allOf(MismatchState.class))
+        MismatchQuery query = new MismatchQuery(report.getReportDateTime().toLocalDate(),
+                                                report.getReferenceType().getDataSource(),
+                                                MismatchStatus.OPEN,
+                                                Sets.newHashSet(report.getReferenceType().getContentType()))
                 .withIgnoredStatuses(EnumSet.allOf(SpotCheckMismatchIgnore.class));
         return getMismatches(query, LimitOffset.ALL).getResults();
     }
@@ -194,10 +199,11 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     /**
      * Parameters used in the {@link SqlSpotCheckReportQuery} ACTIVE_MISMATCHES query.
      */
-    private MapSqlParameterSource activeMismatchParams(LocalDateTime toDateTime) {
+    private MapSqlParameterSource activeMismatchParams(LocalDateTime toDateTime, Set<SpotCheckMismatchIgnore> ignoreStatuses) {
         return new MapSqlParameterSource()
                 .addValue("sessionStartDateTime", SessionYear.of(toDateTime.getYear()).getStartDateTime())
-                .addValue("reportEndDateTime", toDateTime);
+                .addValue("reportEndDateTime", toDateTime)
+                .addValue("ignoreStatuses", extractEnumSetParams(ignoreStatuses));
     }
 
     private MapSqlParameterSource mismatchParams(DeNormSpotCheckMismatch mismatch) {
@@ -313,9 +319,9 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         jdbcNamed.update(sql, params);
     }
 
-    /** Convert an EnumSet into a Set containing each enum's name. */
-    private Set<String> extractEnumSetParams(EnumSet<SpotCheckMismatchType> types) {
-        return types.stream().map(Enum::name).collect(Collectors.toSet());
+    /** Convert a Set containing enums into a Set containing each enum's name. */
+    private <E extends Enum<E>> Set<String> extractEnumSetParams(Set<E> enumSet) {
+        return enumSet.stream().map(Enum::name).collect(Collectors.toSet());
     }
 
     /**

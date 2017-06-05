@@ -6,8 +6,8 @@ import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Dao interface for retrieving, saving, and deleting spot check reports. The interface is templated
@@ -31,15 +31,26 @@ public interface SpotCheckReportDao<ContentKey>
      * @param reportDate The date of the report
      * @return OpenMismatchesSummary
      */
-    MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource datasource, LocalDate reportDate);
+    MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource datasource,
+                                                   Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
      * Get mismatch type summary counts for the given datasource and date.
      *
      * @return MismatchTypeSummary
      */
-    MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource datasource, LocalDate reportDate, MismatchStatus mismatchStatus);
+    MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate, SpotCheckDataSource datasource,
+                                               MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
+
+    /**
+     * Get mismatch type summary counts for the given datasource, date, mismatch status, and mismatch types.
+     *
+     * @return MismatchContentTypeSummary
+     */
+    MismatchContentTypeSummary getMismatchContentTypeSummary(LocalDate reportDate, SpotCheckDataSource datasource,
+                                                             MismatchStatus mismatchStatus, EnumSet mismatchTypes,
+                                                             Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
      * Save the report to the backing store. This process may add additional observations to the
@@ -49,13 +60,6 @@ public interface SpotCheckReportDao<ContentKey>
      * @param report SpotCheckReport<ContentKey> - The report to save into the backing store
      */
     void saveReport(SpotCheckReport<ContentKey> report) throws DataAccessException;
-
-    /**
-     * Get mismatch type summary counts for the given datasource, date, mismatch status, and mismatch types.
-     *
-     * @return MismatchContentTypeSummary
-     */
-    MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource datasource, LocalDate reportDate, MismatchStatus mismatchStatus, EnumSet mismatchTypes);
 
     /**
      * Sets the ignore status for a spotcheck mismatch

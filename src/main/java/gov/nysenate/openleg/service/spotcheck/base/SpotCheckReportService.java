@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.spotcheck.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * The SpotCheckReportService specifies the various methods that are available for use when
@@ -54,20 +55,23 @@ public interface SpotCheckReportService<ContentKey>
     PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
-     * Gets mismatch content type summary information for the given datasource, reportDate, mismatch status, and mismatch types.
+     * Gets mismatch status summary information for the given datasource, as of the given summary date time.
+     * @return
      */
-    MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDate reportDate, MismatchStatus mismatchStatus, EnumSet mismatchTypes);
+    MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource dataSource, Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
      * Gets mismatch type summary information for the given datasource and mismatch status for the report on reportDate.
      */
-    MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDate reportDate, MismatchStatus mismatchStatus);
+    MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
+                                               MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
-     * Gets mismatch status summary information for the given datasource, as of the given summary date time.
-     * @return
+     * Gets mismatch content type summary information for the given datasource, reportDate, mismatch status, and mismatch types.
      */
-    MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, LocalDate reportDate);
+    MismatchContentTypeSummary getMismatchContentTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
+                                                             MismatchStatus mismatchStatus, EnumSet mismatchTypes,
+                                                             Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
      * Sets the ignore status for a spotcheck mismatch

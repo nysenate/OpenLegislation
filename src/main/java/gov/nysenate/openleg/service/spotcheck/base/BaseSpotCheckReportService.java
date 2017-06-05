@@ -6,8 +6,8 @@ import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Provides base functionality for implementors of SpotCheckReportService
@@ -27,20 +27,24 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
 
     /** {@inheritDoc} */
     @Override
-    public MismatchStatusSummary getMismatchStatusSummary(SpotCheckDataSource dataSource, LocalDate reportDate) {
-        return getReportDao().getMismatchStatusSummary(dataSource, reportDate);
+    public MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
+                                                          Set<SpotCheckMismatchIgnore> ignoreStatuses) {
+        return getReportDao().getMismatchStatusSummary(reportDate, dataSource, ignoreStatuses);
     }
 
     /** {@inheritDoc} */
     @Override
-    public MismatchTypeSummary getMismatchTypeSummary(SpotCheckDataSource dataSource, LocalDate reportDate, MismatchStatus mismatchStatus) {
-        return getReportDao().getMismatchTypeSummary(dataSource, reportDate, mismatchStatus);
+    public MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
+                                                      MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses) {
+        return getReportDao().getMismatchTypeSummary(reportDate, dataSource, mismatchStatus, ignoreStatuses);
     }
 
     /** {@inheritDoc} */
     @Override
-    public MismatchContentTypeSummary getMismatchContentTypeSummary(SpotCheckDataSource dataSource, LocalDate reportDate, MismatchStatus mismatchStatus, EnumSet mismatchTypes) {
-        return getReportDao().getMismatchContentTypeSummary(dataSource, reportDate, mismatchStatus, mismatchTypes);
+    public MismatchContentTypeSummary getMismatchContentTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
+                                                                    MismatchStatus mismatchStatus, EnumSet mismatchTypes,
+                                                                    Set<SpotCheckMismatchIgnore> ignoreStatuses) {
+        return getReportDao().getMismatchContentTypeSummary(reportDate, dataSource, mismatchStatus, mismatchTypes, ignoreStatuses);
     }
 
     /** {@inheritDoc} */

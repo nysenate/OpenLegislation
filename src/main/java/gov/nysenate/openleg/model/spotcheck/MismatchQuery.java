@@ -3,8 +3,8 @@ package gov.nysenate.openleg.model.spotcheck;
 import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
-import gov.nysenate.openleg.model.base.SessionYear;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Set;
@@ -15,43 +15,42 @@ import java.util.Set;
  */
 public class MismatchQuery {
 
+    private LocalDate reportDate;
     private SpotCheckDataSource dataSource;
     private Set<SpotCheckContentType> contentTypes;
-    private Set<MismatchState> states;
+    private MismatchStatus status;
+    private Set<SpotCheckMismatchType> mismatchTypes;
     private Set<SpotCheckMismatchIgnore> ignoredStatuses;
-    private LocalDateTime toDate;
-    private LocalDateTime fromDate;
     private OrderBy orderBy;
-    private SpotCheckMismatchType spotCheckMismatchType;
 
-    public MismatchQuery(SpotCheckDataSource dataSource, Set<SpotCheckContentType> contentTypes) {
+    public MismatchQuery(LocalDate reportDate, SpotCheckDataSource dataSource,
+                         MismatchStatus status, Set<SpotCheckContentType> contentTypes) {
+        this.reportDate = reportDate;
         this.dataSource = dataSource;
         this.contentTypes = contentTypes;
+        this.status = status;
         // Default values
-        this.states = EnumSet.of(MismatchState.OPEN);
+        this.mismatchTypes = EnumSet.allOf(SpotCheckMismatchType.class);
         this.ignoredStatuses = EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED);
-        this.toDate = LocalDateTime.now();
-        this.fromDate = SessionYear.of(this.toDate.getYear()).asDateTimeRange().lowerEndpoint();
         this.orderBy = new OrderBy(MismatchOrderBy.REFERENCE_DATE.getColumnName(), SortOrder.DESC);
     }
 
-    public MismatchQuery withMismatchStates(Set<MismatchState> mismatchStatuses) {
-        this.states = mismatchStatuses;
-        return this;
+    public MismatchState getState() {
+        return status.getState();
     }
+
+    public LocalDateTime getEndDateTime() {
+        return status.getEndDateTime(reportDate);
+    }
+
+    public LocalDateTime getStartDateTime() {
+        return status.getStartDateTime(reportDate);
+    }
+
+    /** --- Setters and Getters --- */
 
     public MismatchQuery withIgnoredStatuses(Set<SpotCheckMismatchIgnore> ignoredStatuses) {
         this.ignoredStatuses = ignoredStatuses;
-        return this;
-    }
-
-    public MismatchQuery withToDate(LocalDateTime toDate) {
-        this.toDate = toDate;
-        return this;
-    }
-
-    public MismatchQuery withFromDate(LocalDateTime fromDate) {
-        this.fromDate = fromDate;
         return this;
     }
 
@@ -60,10 +59,15 @@ public class MismatchQuery {
         return this;
     }
 
-    public MismatchQuery withSpotCheckMismatchType(SpotCheckMismatchType spotCheckMismatchType){
-        this.spotCheckMismatchType = spotCheckMismatchType;
+    public MismatchQuery withMismatchTypes(EnumSet<SpotCheckMismatchType> mismatchTypes){
+        this.mismatchTypes = mismatchTypes;
         return this;
     }
+
+    public LocalDate getReportDate() {
+        return reportDate;
+    }
+
     public SpotCheckDataSource getDataSource() {
         return dataSource;
     }
@@ -72,27 +76,20 @@ public class MismatchQuery {
         return contentTypes;
     }
 
-    public SpotCheckMismatchType getSpotCheckMismatchType(){
-        return spotCheckMismatchType;
+    public MismatchStatus getStatus() {
+        return status;
     }
 
-    public Set<MismatchState> getStates() {
-        return states;
+    public Set<SpotCheckMismatchType> getMismatchTypes() {
+        return mismatchTypes;
     }
 
     public Set<SpotCheckMismatchIgnore> getIgnoredStatuses() {
         return ignoredStatuses;
     }
 
-    public LocalDateTime getToDate() {
-        return toDate;
-    }
-
-    public LocalDateTime getFromDate() {
-        return fromDate;
-    }
-
     public OrderBy getOrderBy() {
         return orderBy;
     }
+
 }
