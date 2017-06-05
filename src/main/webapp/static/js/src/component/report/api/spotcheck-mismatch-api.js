@@ -113,7 +113,7 @@ function spotcheckMismatchApi($resource) {
 
     function parseMismatchType(mismatch) {
         if (mismatch.mismatchType == "OBSERVE_DATA_MISSING") {
-            if (mismatch.source == 'LBDC') {
+            if (mismatch.dataSource == 'LBDC') {
                 if (mismatch.contentType == "BILL")
                     mismatch.mismatchType = 'Missing LBDC Bill';
                 if (mismatch.contentType == "CALENDAR")
@@ -132,7 +132,7 @@ function spotcheckMismatchApi($resource) {
             return mismatch.mismatchType;
         }
         else if (mismatch.mismatchType == "REFERENCE_DATA_MISSING") {
-            if (mismatch.source == 'LBDC') {
+            if (mismatch.dataSource == 'LBDC') {
                 if (mismatch.contentType == "BILL")
                     mismatch.mismatchType = 'Missing OpenLeg  Bill';
                 if (mismatch.contentType == "CALENDAR")

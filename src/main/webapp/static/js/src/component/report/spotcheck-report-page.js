@@ -32,6 +32,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
     $scope.diffLoading = false;
     $scope.orderby = 'OBSERVED_DATE';
     $scope.sort = 'DESC';
+    $scope.currentPage = 1;
 
     $scope.mismatchResponse = {
         mismatches: [],
