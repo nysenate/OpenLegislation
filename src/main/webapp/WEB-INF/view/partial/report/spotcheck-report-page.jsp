@@ -65,10 +65,13 @@
                 <md-button class="md-accent md-raised rounded-corner-button"  style="background-color: #3E4F62" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
-            <dir-pagination-controls class="text-align-center" pagination-id="bill-mismatches" boundary-links="true"
+            <dir-pagination-controls pagination-id="bill-mismatches" boundary-links="true"
                                      on-page-change="onPageChange(newPageNumber,'BILL')" max-size="10"
                                      ng-show="loading === false">
             </dir-pagination-controls>
+            <div style="float: right; margin-top: -35px;margin-right: 300px;" ng-show="showGoto">
+              Go to: <input ng-model="currentPage" ng-change="onGotoChange()" type="text" style="width: 30px; text-align: center" >
+            </div>
           </md-content>
         </md-tab>
 
@@ -114,10 +117,13 @@
                 <md-button class="md-accent md-raised rounded-corner-button"   style="background-color: #3E4F62" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
-            <dir-pagination-controls class="text-align-center" pagination-id="calendar-mismatches" boundary-links="true"
+            <dir-pagination-controls pagination-id="calendar-mismatches" boundary-links="true"
                                      on-page-change="onPageChange(newPageNumber,'CALENDAR')" max-size="10"
                                      ng-show="loading === false">
             </dir-pagination-controls>
+            <div style="float: right; margin-top: -35px;margin-right: 300px;" ng-show="showGoto">
+              Go to: <input ng-model="currentPage" ng-change="onGotoChange()" type="text" style="width: 30px; text-align: center" >
+            </div>
           </md-content>
         </md-tab>
 
@@ -166,10 +172,13 @@
                 <md-button class="md-accent md-raised rounded-corner-button"   style="background-color: #3E4F62" ng-click="confirmIgnoreMismatch(mismatch)">Ignore</md-button>
               </div>
             </div>
-            <dir-pagination-controls class="text-align-center" pagination-id="agenda-mismatches" boundary-links="true"
+            <dir-pagination-controls pagination-id="agenda-mismatches" boundary-links="true"
                                      on-page-change="onPageChange(newPageNumber,'AGENDA')" max-size="10"
                                      ng-show="loading === false">
             </dir-pagination-controls>
+            <div style="float: right; margin-top: -35px;margin-right: 300px;" ng-show="showGoto">
+              Go to: <input ng-model="currentPage" ng-change="onGotoChange()" type="text" style="width: 30px; text-align: center" >
+            </div>
           </md-content>
         </md-tab>
       </md-tabs>

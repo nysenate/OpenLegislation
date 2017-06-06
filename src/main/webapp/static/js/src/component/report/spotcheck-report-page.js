@@ -33,6 +33,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
     $scope.orderby = 'OBSERVED_DATE';
     $scope.sort = 'DESC';
     $scope.currentPage = 1;
+    $scope.showGoto = false;
 
     $scope.mismatchResponse = {
         mismatches: [],
@@ -112,6 +113,8 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
                 $scope.pagination.setTotalItems(result.pagination.total);
                 $scope.mismatchResponse.mismatches = result.mismatches;
                 $scope.loading = false;
+                $scope.currentPage =  $scope.pagination.currPage;
+                $scope.showGoto = (result.pagination.total > $scope.pagination.getLimit())
             })
             .catch(function (response) {
                 $scope.loading = false;
@@ -133,6 +136,10 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
                 return ['RESOLVED']
             }
         }
+    };
+
+    $scope.onGotoChange = function () {
+        $scope.pagination.currPage = $scope.currentPage;
     };
 
     $scope.numberWithCommas = function(x) {
