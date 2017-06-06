@@ -142,7 +142,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Get a summary of mismatch type counts for a given datasource and mismatch status.
      *
-     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary/type
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary/mismatchType
      *
      * Request Parameters: datasource - string - The datasource to return summary information on.
      *                     reportDate - string (ISO date) - optional - returns summary information for this date.
@@ -152,7 +152,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *                     ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
      */
     @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/mismatches/summary/type", method = RequestMethod.GET)
+    @RequestMapping(value = "/mismatches/summary/mismatchType", method = RequestMethod.GET)
     public BaseResponse getMismatchTypeSummary(@RequestParam String datasource,
                                                @RequestParam(required = false) String reportDate,
                                                @RequestParam(required = false) String mismatchStatus,
