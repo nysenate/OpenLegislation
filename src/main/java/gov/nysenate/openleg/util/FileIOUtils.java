@@ -2,7 +2,6 @@ package gov.nysenate.openleg.util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
-import org.springframework.core.io.UrlResource;
 
 import java.io.*;
 import java.util.*;
@@ -82,6 +81,16 @@ public class FileIOUtils
         File directory = new File(parent, folderName);
         FileUtils.forceMkdir(directory);
         return directory;
+    }
+
+    /**
+     * Moves the file into the destination quietly.
+     */
+    public static void moveFile(File sourceFile, File destFile) throws IOException {
+        if (destFile.exists()) {
+            FileUtils.deleteQuietly(destFile);
+        }
+        FileUtils.moveFile(sourceFile, destFile);
     }
 
     /**

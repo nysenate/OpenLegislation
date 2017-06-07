@@ -68,7 +68,7 @@ public class SqlFsTranscriptFileDao extends SqlBaseDao implements TranscriptFile
         File stagedFile = transcriptFile.getFile();
         if (stagedFile.getParentFile().compareTo(incomingTranscriptDir) == 0) {
             File archiveFile = new File(archiveTranscriptDir, transcriptFile.getFileName());
-            moveFile(stagedFile, archiveFile);
+            FileIOUtils.moveFile(stagedFile, archiveFile);
             transcriptFile.setFile(archiveFile);
             transcriptFile.setArchived(true);
             updateTranscriptFile(transcriptFile);

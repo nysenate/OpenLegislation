@@ -1,7 +1,10 @@
 package gov.nysenate.openleg.dao.sourcefiles.sobi;
 
 import com.google.common.collect.ImmutableSet;
-
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,32 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
-
-public class SqlFsSobiDaoTest /*extends BaseTests */ {
-    private static final Logger logger = LoggerFactory.getLogger(SqlFsSobiDaoTest.class);
+public class FsSobiDaoTest /*extends BaseTests */ {
+    private static final Logger logger = LoggerFactory.getLogger(FsSobiDaoTest.class);
     
     @Autowired
-    private SqlFsSobiDao sobiDao;
+    private FsSobiDao sobiDao;
     
     @Autowired
     private SobiFragmentDao fragmentDao;
-    
-    @Test
-    public void testMisc() throws Exception{
-//        List<SobiFile> sobiFiles = sobiDao.getIncomingSobiFiles(SortOrder.ASC, LimitOffset.ALL);
-//        for (SobiFile sobiFile : sobiFiles) {
-//            sobiDao.archiveAndUpdateSobiFile(sobiFile);
-//            sobiDao.updateSobiFile(sobiFile);
-//            logger.info("{}", sobiFile);
-//        }
-        SobiFile sobiFile = sobiDao.getSobiFile("SOBI.D090609.T040500.TXT");
-    }
-    
+
     @Test
     public void testGetSobiFile() throws Exception{
         

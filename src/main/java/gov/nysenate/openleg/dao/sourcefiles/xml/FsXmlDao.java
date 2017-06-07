@@ -3,12 +3,11 @@ package gov.nysenate.openleg.dao.sourcefiles.xml;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.sourcefiles.SqlSourceFileDao;
-import gov.nysenate.openleg.model.sourcefiles.SourceFile;
+import gov.nysenate.openleg.dao.sourcefiles.SourceFileFsDao;
+import gov.nysenate.openleg.model.sourcefiles.SourceType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
-import org.apache.commons.io.FileUtils;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -28,10 +27,8 @@ import static gov.nysenate.openleg.util.FileIOUtils.getSortedFiles;
  * Created by Robert Bebber on 4/12/17.
  */
 @Repository
-public class FsXmlDao implements XmlDao {
+public class FsXmlDao implements SourceFileFsDao<XmlFile> {
 
-    @Autowired
-    SqlSourceFileDao sqlSourceFileDao;
     /**
      * Reference to the environment in which the data is stored
      */
@@ -50,11 +47,16 @@ public class FsXmlDao implements XmlDao {
         archiveSourceDir = new File(environment.getArchiveDir(), "xmls");
     }
 
+    @Override
+    public SourceType getSourceType() {
+        return SourceType.XML;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<XmlFile> getIncomingXmlFiles(SortOrder sortByFileName,
+    public List<XmlFile> getIncomingSourceFiles(SortOrder sortByFileName,
                                                LimitOffset limitOffset) throws IOException {
         List<File> files = new ArrayList<>(getSortedFiles(incomingSourceDir, false, null));
         if (sortByFileName == SortOrder.DESC) {
@@ -72,37 +74,19 @@ public class FsXmlDao implements XmlDao {
      * {@inheritDoc}
      */
     @Override
-    public XmlFile getFile(String fileName) throws DataAccessException {
-        return (XmlFile) sqlSourceFileDao.getSourceFile(fileName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void archiveXmlFile(SourceFile xmlFile) throws IOException {
+    public void archiveSourceFile(XmlFile xmlFile) throws IOException {
         File stageFile = xmlFile.getFile();
         // Archive the file only if the current one is residing in the incoming xmls directory.
         if (stageFile.getParentFile().compareTo(incomingSourceDir) == 0) {
             File archiveFile = getFileInArchiveDir(xmlFile.getFileName(),
                     xmlFile.getPublishedDateTime());
-            moveFile(stageFile, archiveFile);
+            FileIOUtils.moveFile(stageFile, archiveFile);
             xmlFile.setFile(archiveFile);
             xmlFile.setArchived(true);
         } else {
             throw new FileNotFoundException("XmlFile " + stageFile + " must be in the incoming xmls directory in " +
                     "order to be archived.");
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    private void moveFile(File sourceFile, File destFile) throws IOException {
-        if (destFile.exists()) {
-            FileUtils.deleteQuietly(destFile);
-        }
-        FileUtils.moveFile(sourceFile, destFile);
     }
 
     /**
