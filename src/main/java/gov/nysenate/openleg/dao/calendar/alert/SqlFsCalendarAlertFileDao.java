@@ -101,7 +101,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
 
     private CalendarAlertFile archive(File stagedFile) throws IOException {
         File archivedFile = new File(archiveCalendarAlertDir, stagedFile.getName());
-        moveFile(stagedFile, archivedFile);
+        FileIOUtils.moveFile(stagedFile, archivedFile);
 
         CalendarAlertFile calendarAlertFile = new CalendarAlertFile(archivedFile);
         calendarAlertFile.setArchived(true);

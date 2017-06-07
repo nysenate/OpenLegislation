@@ -2,9 +2,9 @@ package gov.nysenate.openleg.sourcefiles;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.dao.sourcefiles.SourceFileDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiDao;
-import gov.nysenate.openleg.dao.sourcefiles.xml.XmlDao;
+import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.FsSobiDao;
+import gov.nysenate.openleg.dao.sourcefiles.xml.FsXmlDao;
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,11 +29,10 @@ import static org.junit.Assert.assertTrue;
 public class SqlSourceFileDaoTester extends BaseTests {
 
     @Autowired
-    SourceFileDao sourceFileDao;
-    @Autowired
-    SobiDao sobiDao;
-    @Autowired
-    XmlDao xmlDao;
+    SourceFileRefDao sourceFileRefDao;
+
+    @Autowired private FsSobiDao sobiDao;
+    @Autowired private FsXmlDao xmlDao;
 
     @Autowired Environment environment;
     private static final Logger logger = LoggerFactory.getLogger(SqlSourceFileDaoTester.class);
@@ -64,10 +61,10 @@ public class SqlSourceFileDaoTester extends BaseTests {
         File expectedArchiveFile = new File(archiveDir,fileName);
         File retrievedArchiveFile = null;
         try {
-            SourceFile sourceFile = new XmlFile(stagingFile);
-            xmlDao.archiveXmlFile(sourceFile);
-            sourceFileDao.updateSourceFile(sourceFile);
-            retrievedArchiveFile = sourceFileDao.getSourceFile(fileName).getFile();
+            XmlFile sourceFile = new XmlFile(stagingFile);
+            xmlDao.archiveSourceFile(sourceFile);
+            sourceFileRefDao.updateSourceFile(sourceFile);
+            retrievedArchiveFile = sourceFileRefDao.getSourceFile(fileName).getFile();
             assertEquals("XML File Insert Retrieval",
                     expectedArchiveFile.getAbsolutePath(), retrievedArchiveFile.getAbsolutePath());
         } finally {
@@ -84,10 +81,10 @@ public class SqlSourceFileDaoTester extends BaseTests {
         File expectedArchiveFile = new File(archiveDir,fileName);
         File retrievedArchiveFile = null;
         try {
-            SourceFile sourceFile = new SobiFile(stagingFile);
-            sobiDao.archiveSobiFile(sourceFile);
-            sourceFileDao.updateSourceFile(sourceFile);
-            retrievedArchiveFile = sourceFileDao.getSourceFile(fileName).getFile();
+            SobiFile sourceFile = new SobiFile(stagingFile);
+            sobiDao.archiveSourceFile(sourceFile);
+            sourceFileRefDao.updateSourceFile(sourceFile);
+            retrievedArchiveFile = sourceFileRefDao.getSourceFile(fileName).getFile();
             assertEquals("Sobi File Insert Retrieval",
                     expectedArchiveFile.getAbsolutePath(), retrievedArchiveFile.getAbsolutePath());
         } finally {
@@ -104,8 +101,8 @@ public class SqlSourceFileDaoTester extends BaseTests {
         try {
             SourceFile sourceFile = new XmlFile(archiveFile);
             sourceFile.setArchived(true);
-            sourceFileDao.updateSourceFile(sourceFile);
-            retrievedArchiveFile = sourceFileDao.getSourceFile(fileName);
+            sourceFileRefDao.updateSourceFile(sourceFile);
+            retrievedArchiveFile = sourceFileRefDao.getSourceFile(fileName);
             assertEquals("Xml File Insert Retrieval",
                     sourceFile.getPublishedDateTime(), retrievedArchiveFile.getPublishedDateTime());
         } finally {
@@ -122,8 +119,8 @@ public class SqlSourceFileDaoTester extends BaseTests {
         try {
             SourceFile sourceFile = new SobiFile(archiveFile);
             sourceFile.setArchived(true);
-            sourceFileDao.updateSourceFile(sourceFile);
-            retrievedArchiveFile = sourceFileDao.getSourceFile(fileName);
+            sourceFileRefDao.updateSourceFile(sourceFile);
+            retrievedArchiveFile = sourceFileRefDao.getSourceFile(fileName);
             assertEquals("Sobi File Insert Retrieval",
                     sourceFile.getPublishedDateTime(), retrievedArchiveFile.getPublishedDateTime());
         } finally {

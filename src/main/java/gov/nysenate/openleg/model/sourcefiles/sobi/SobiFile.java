@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.sourcefiles.sobi;
 
+import gov.nysenate.openleg.model.sourcefiles.BaseSourceFile;
+import gov.nysenate.openleg.model.sourcefiles.SourceType;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.File;
@@ -7,8 +9,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-
-import gov.nysenate.openleg.model.sourcefiles.BaseSourceFile;
 
 /**
  * The SobiFile class wraps the sobi files sent from LBDC and retains some basic meta data.
@@ -41,6 +41,11 @@ public class SobiFile extends BaseSourceFile {
 
     public SobiFile(File sobiFile, String encoding) throws IOException, SobiFileNotFoundEx {
         super(sobiFile, encoding);
+    }
+
+    @Override
+    public SourceType getSourceType() {
+        return SourceType.SOBI;
     }
 
     /**

@@ -25,7 +25,7 @@ public class ManagedSobiProcessServiceTest extends BaseTests
 
     @Test
     public void testCollateSobiFiles() throws Exception {
-        int collated = sobiProcessService.collateSobiFiles();
+        int collated = sobiProcessService.collateSourceFiles();
         logger.info("Collated {} sobis", collated);
     }
 

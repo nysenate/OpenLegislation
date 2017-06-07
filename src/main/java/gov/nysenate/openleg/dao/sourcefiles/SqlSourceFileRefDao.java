@@ -1,12 +1,14 @@
 package gov.nysenate.openleg.dao.sourcefiles;
 
-import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SqlSobiQuery;
-import gov.nysenate.openleg.dao.sourcefiles.xml.XmlDao;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
+import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
+import gov.nysenate.openleg.model.sourcefiles.SourceType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
+import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,18 +35,25 @@ import static gov.nysenate.openleg.util.DateUtils.toDate;
  * Created by Robert Bebber on 4/3/17.
  */
 @Repository
-public class SqlSourceFileDao extends SqlBaseDao implements SourceFileDao {
+public class SqlSourceFileRefDao extends SqlBaseDao implements SourceFileRefDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(SqlSourceFileDao.class);
-    @Autowired private SobiDao sobiDao;
-    @Autowired private XmlDao xmlDao;
+    private static final Logger logger = LoggerFactory.getLogger(SqlSourceFileRefDao.class);
+
+    @Autowired private List<SourceFileFsDao> sourceFileFsDaos;
+
+    private ImmutableMap<SourceType, SourceFileFsDao> sourceFileDaoMap;
+
+    @PostConstruct
+    protected void init() {
+        sourceFileDaoMap = Maps.uniqueIndex(sourceFileFsDaos, SourceFileFsDao::getSourceType);
+    }
 
     @Override
     public SourceFile getSourceFile(String fileName) {
         MapSqlParameterSource params = new MapSqlParameterSource("fileNames",
                 Collections.singletonList(fileName));
         return jdbcNamed.queryForObject(
-                SqlSobiQuery.GET_SOBI_FILES_BY_FILE_NAMES.getSql(schema()), params,
+                SqlSourceFileQuery.GET_SOBI_FILES_BY_FILE_NAMES.getSql(schema()), params,
                 new SourceFileRowMapper());
     }
 
@@ -54,10 +63,41 @@ public class SqlSourceFileDao extends SqlBaseDao implements SourceFileDao {
     @Override
     public void updateSourceFile(SourceFile sourceFile) {
         MapSqlParameterSource params = getSourceFileParams(sourceFile);
-        if (jdbcNamed.update(SqlSobiQuery.UPDATE_SOBI_FILE.getSql(schema()), params) == 0) {
-            jdbcNamed.update(SqlSobiQuery.INSERT_SOBI_FILE.getSql(schema()), params);
+        if (jdbcNamed.update(SqlSourceFileQuery.UPDATE_SOBI_FILE.getSql(schema()), params) == 0) {
+            jdbcNamed.update(SqlSourceFileQuery.INSERT_SOBI_FILE.getSql(schema()), params);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, SourceFile> getSourceFiles(List<String> fileNames) {
+        MapSqlParameterSource params = new MapSqlParameterSource("fileNames", fileNames);
+        Map<String, SourceFile> sourceFileMap = new HashMap<>();
+        List<SourceFile> sourceList = jdbcNamed.query(
+                SqlSourceFileQuery.GET_SOBI_FILES_BY_FILE_NAMES.getSql(schema()),
+                params, new SourceFileRowMapper());
+        for (SourceFile sourceFile : sourceList) {
+            sourceFileMap.put(sourceFile.getFileName(), sourceFile);
+        }
+        return sourceFileMap;
+    }
+
+    @Override
+    public PaginatedList<SourceFile> getSobiFilesDuring(Range<LocalDateTime> dateTimeRange, SortOrder sortByPubDate, LimitOffset limOff) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("startDate", toDate(DateUtils.startOfDateTimeRange(dateTimeRange)));
+        params.addValue("endDate", toDate(DateUtils.endOfDateTimeRange(dateTimeRange)));
+        OrderBy orderBy = new OrderBy("published_date_time", sortByPubDate);
+        PaginatedRowHandler<SourceFile> handler = new PaginatedRowHandler<>(limOff,
+                "total_count", new SourceFileRowMapper());
+        final String query = SqlSourceFileQuery.GET_SOBI_FILES_DURING.getSql(schema(), orderBy, limOff);
+        jdbcNamed.query(query, params, handler);
+        return handler.getList();
+    }
+
+    /* --- Internal Methods --- */
 
     private MapSqlParameterSource getSourceFileParams(SourceFile sourceFile) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -69,22 +109,6 @@ public class SqlSourceFileDao extends SqlBaseDao implements SourceFileDao {
         return params;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Map<String, SourceFile> getSourceFiles(List<String> fileNames) {
-        MapSqlParameterSource params = new MapSqlParameterSource("fileNames", fileNames);
-        Map<String, SourceFile> sourceFileMap = new HashMap<>();
-        List<SourceFile> sourceList = jdbcNamed.query(
-                SqlSobiQuery.GET_SOBI_FILES_BY_FILE_NAMES.getSql(schema()),
-                params, new SourceFileRowMapper());
-        for (SourceFile sourceFile : sourceList) {
-            sourceFileMap.put(sourceFile.getFileName(), sourceFile);
-        }
-        return sourceFileMap;
-    }
-
     private class SourceFileRowMapper implements RowMapper<SourceFile> {
         @Override
         public SourceFile mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -93,13 +117,20 @@ public class SqlSourceFileDao extends SqlBaseDao implements SourceFileDao {
             boolean archived = rs.getBoolean("archived");
             String extension = FilenameUtils.getExtension(fileName);
             File file;
-            if (extension.toLowerCase().equals("xml")) {
-                file= archived ? xmlDao.getFileInArchiveDir(fileName, publishedDateTime)
-                        : xmlDao.getFileInIncomingDir(fileName);
-            } else {
-                file= archived ? sobiDao.getFileInArchiveDir(fileName, publishedDateTime)
-                        : sobiDao.getFileInIncomingDir(fileName);
+
+            SourceType sourceType = SourceType.ofFile(fileName);
+
+            if (sourceType == null) {
+                throw new IllegalStateException(
+                        "Could not determine " + SourceType.class.getSimpleName() +
+                        " for filename: " + fileName);
             }
+
+            SourceFileFsDao fsDao = sourceFileDaoMap.get(sourceType);
+
+            file = archived
+                    ? fsDao.getFileInArchiveDir(fileName, publishedDateTime)
+                    : fsDao.getFileInIncomingDir(fileName);
 
             String encoding = rs.getString("encoding");
             try {

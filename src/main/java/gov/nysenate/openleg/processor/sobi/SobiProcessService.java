@@ -24,7 +24,7 @@ public interface SobiProcessService extends ProcessService
      *
      * @return int - The number of sobi files that have been collated.
      */
-    public int collateSobiFiles();
+    public int collateSourceFiles();
 
     /**
      * Retrieves the SobiFragments that are awaiting processing.

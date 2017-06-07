@@ -3,31 +3,8 @@ package gov.nysenate.openleg.dao.sourcefiles.sobi;
 import gov.nysenate.openleg.dao.base.BasicSqlQuery;
 import gov.nysenate.openleg.dao.base.SqlTable;
 
-public enum SqlSobiQuery implements BasicSqlQuery
+public enum SqlSobiFragmentQuery implements BasicSqlQuery
 {
-    /** --- Sobi Files --- */
-
-    GET_SOBI_FILES_BY_FILE_NAMES(
-        "SELECT * FROM ${schema}." + SqlTable.SOBI_FILE + "\n" +
-        "WHERE file_name IN (:fileNames)"
-    ),
-    GET_SOBI_FILES_DURING(
-        "SELECT file_name, published_date_time, staged_date_time, encoding, archived, COUNT(*) OVER () AS total_count\n" +
-        "FROM ${schema}." + SqlTable.SOBI_FILE + "\n" +
-        "WHERE (published_date_time BETWEEN :startDate AND :endDate)"
-    ),
-    INSERT_SOBI_FILE(
-        "INSERT INTO ${schema}." + SqlTable.SOBI_FILE + "\n" +
-        "(file_name, published_date_time, encoding, archived) " +
-        "VALUES (:fileName, :publishedDateTime, :encoding, :archived)"
-    ),
-    UPDATE_SOBI_FILE(
-        "UPDATE ${schema}." + SqlTable.SOBI_FILE + "\n" +
-        "SET published_date_time = :publishedDateTime," +
-        "    encoding = :encoding," +
-        "    archived = :archived " +
-        "WHERE file_name = :fileName"
-    ),
 
     /** --- Sobi Fragments --- */
 
@@ -75,7 +52,7 @@ public enum SqlSobiQuery implements BasicSqlQuery
 
     private String sql;
 
-    SqlSobiQuery(String sql) {
+    SqlSobiFragmentQuery(String sql) {
         this.sql = sql;
     }
 
