@@ -1,5 +1,9 @@
 package gov.nysenate.openleg.model.sourcefiles.xml;
 
+import gov.nysenate.openleg.model.sourcefiles.BaseSourceFile;
+import gov.nysenate.openleg.model.sourcefiles.SourceType;
+import gov.nysenate.openleg.model.sourcefiles.sobi.InvalidSobiNameEx;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -7,9 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import gov.nysenate.openleg.model.sourcefiles.BaseSourceFile;
-import gov.nysenate.openleg.model.sourcefiles.sobi.InvalidSobiNameEx;
 
 /**
  * Represents the 'newer' source files that LBDC sends.
@@ -21,7 +22,7 @@ public class XmlFile extends BaseSourceFile {
     private static final String xmlPattern = "yyyy'-'MM'-'dd'T'HH'.'mm'.'ss'.'SSSSSS";
 
     private static final Pattern fileNamePattern = Pattern.compile(
-            "(?<date>[0-9-]{10})-(?<time>[0-9.]{15})_(?<type>[A-Z]+)_(?<target>.+)\\.XML");
+            "(?<date>[0-9-]{10})-(?<time>[0-9.]{15})_(?<type>[A-Z]+)_(?<target>.*)\\.XML");
     private final String stagingDir="/data/openleg/staging/xmls/";
 
     /**
@@ -39,6 +40,11 @@ public class XmlFile extends BaseSourceFile {
     }
 
     /** --- Overrides --- */
+
+    @Override
+    public SourceType getSourceType() {
+        return SourceType.XML;
+    }
 
     /**
      * Get the published date time from the file name.

@@ -1,11 +1,8 @@
 package gov.nysenate.openleg.processor;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.sourcefiles.SourceFileDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiDao;
+import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
 import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
-import gov.nysenate.openleg.dao.sourcefiles.xml.XmlDao;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
@@ -24,11 +21,7 @@ import java.io.IOException;
 public abstract class BaseXmlProcessorTest extends BaseTests {
 
     @Autowired
-    private SobiDao sobiDao;
-    @Autowired
-    private XmlDao xmlDao;
-    @Autowired
-    private SourceFileDao sourceFileDao;
+    private SourceFileRefDao sourceFileRefDao;
     @Autowired
     private SobiFragmentDao sobiFragmentDao;
 
@@ -55,7 +48,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
             SobiFragmentType type = getSobiProcessor().getSupportedType();
             SobiFragment sobiFragment = new SobiFragment(xmlFile, type, contents, 0);
 
-            sourceFileDao.updateSourceFile(xmlFile);
+            sourceFileRefDao.updateSourceFile(xmlFile);
             sobiFragmentDao.updateSobiFragment(sobiFragment);
 
             return sobiFragment;
