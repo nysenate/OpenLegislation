@@ -142,7 +142,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Get a summary of mismatch type counts for a given datasource and mismatch status.
      *
-     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary/mismatchType
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary/mismatchtype
      *
      * Request Parameters: datasource - string - The datasource to return summary information on.
      *                     reportDate - string (ISO date) - optional - returns summary information for this date.
@@ -170,7 +170,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *
      * Get a summary of mismatch Content type counts for all content types for a specific datasource.
      *
-     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary/contentType
+     * Usage: (GET) /api/3/admin/spotcheck/mismatches/summary/contenttype
      *
      * Request Parameters: datasource - string - The datasource to return summary information on.
      *                     reportDate - string (ISO date) - optional - returns summary information for this date.
@@ -309,7 +309,7 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     private EnumSet<SpotCheckMismatchType> getMismatchTypes(@RequestParam(required = false) String mismatchType) {
-        return mismatchType.equals("All") ? EnumSet.allOf(SpotCheckMismatchType.class) : EnumSet.of(getEnumParameter("mismatchType", mismatchType, SpotCheckMismatchType.class));
+        return (mismatchType == null || mismatchType.equals("All")) ? EnumSet.allOf(SpotCheckMismatchType.class) : EnumSet.of(getEnumParameter("mismatchType", mismatchType, SpotCheckMismatchType.class));
     }
 
     private Set<SpotCheckMismatchIgnore> getIgnoredStatuses(@RequestParam(required = false) String[] ignoredStatuses) {
