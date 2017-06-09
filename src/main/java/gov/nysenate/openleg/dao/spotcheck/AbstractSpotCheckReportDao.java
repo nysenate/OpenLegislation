@@ -368,6 +368,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         }
 
         protected MismatchStatusSummary getSummary() {
+            summary.putSummary(MismatchStatus.OPEN, summary.getSummary().get(MismatchStatus.NEW)+summary.getSummary().get(MismatchStatus.EXISTING));
             return summary;
         }
     }
@@ -384,6 +385,11 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         }
 
         protected MismatchTypeSummary getSummary() {
+            int all = 0;
+            for (Map.Entry<SpotCheckMismatchType, Integer> entry:summary.getSummary().entrySet()){
+                all += entry.getValue();
+            }
+            summary.getSummary().put(SpotCheckMismatchType.All,all);
             return summary;
         }
     }

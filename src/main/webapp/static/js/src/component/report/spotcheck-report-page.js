@@ -24,7 +24,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         ],
         selected: {}
     };
-    $scope.status = 'OPEN'; // Show all open issues by default.
+    $scope.selectedStatue = 'NEW'; // Show all open issues by default.
     $scope.selectedTab = 0; // Select Bills tab by default.
     $scope.date = {};
     $scope.loading = false; // TODO remove this using promises?
@@ -34,6 +34,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
     $scope.sort = 'DESC';
     $scope.currentPage = 1;
     $scope.showGoto = false;
+    $scope.selectedMismatchType = "All";
 
     $scope.mismatchResponse = {
         mismatches: [],
@@ -41,7 +42,17 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         errorMessage: ''
     };
 
-    $scope.summaryResponse = {
+    $scope.mismatchStatusSummary = {
+        summary: {},
+        error: false,
+        errorMessage: ''
+    };
+    $scope.mismatchTypeSummary = {
+        summary: {},
+        error: false,
+        errorMessage: ''
+    };
+    $scope.mismatchContentTypeSummary = {
         summary: {},
         error: false,
         errorMessage: ''
@@ -50,13 +61,15 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
     $scope.onDatasourceChange = function () {
         resetPagination();
         $scope.updateMismatchStatusSummary();
+        $scope.updateMismatchContentTypeSummary()
+        $scope.updateMismatchTypeSummary()
         $scope.updateMismatches();
     };
 
     $scope.onTabChange = function () {
         resetPagination();
-        $scope.updateMismatchContentTypeSummary();
         $scope.updateMismatches();
+        $scope.updateMismatchContentTypeSummary();
     };
 
     $scope.onPageChange = function (pageNum, contentType) {
@@ -65,45 +78,47 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
     };
 
     $scope.updateMismatchStatusSummary = function () {
-        $scope.summaryResponse.error = false;
-        mismatchSummaryApi.getMismatchStatusSummary($scope.datasource.selected.value, $scope.date.endOf('day').format(isoFormat)).then(function (mismatchSummary) {
-            $scope.summaryResponse.summary = mismatchSummary;
+        $scope.mismatchStatusSummary.error = false;
+        mismatchSummaryApi.getMismatchStatusSummary($scope.datasource.selected.value, $scope.date._i).then(function (mismatchSummary) {
+            $scope.mismatchStatusSummary.summary = mismatchSummary.summary;
         })
             .catch(function (response) {
-                $scope.summaryResponse.error = true;
-                $scope.summaryResponse.errorMessage = response.statusText;
+                $scope.mismatchStatusSummary.error = true;
+                $scope.mismatchStatusSummary.errorMessage = response.statusText;
             });
     };
 
     $scope.updateMismatchTypeSummary = function () {
-        $scope.summaryResponse.error = false;
-        mismatchSummaryApi.getMismatchTypeSummary($scope.datasource.selected.value, $scope.date.endOf('day').format(isoFormat), $scope.status)
+        $scope.mismatchTypeSummary.error = false;
+        mismatchSummaryApi.getMismatchTypeSummary($scope.datasource.selected.value, $scope.date._i,  $scope.selectedStatue)
             .then(function (mismatchSummary) {
-                $scope.summaryResponse.summary = mismatchSummary;
+                $scope.mismatchTypeSummary.summary = mismatchSummary;
             })
             .catch(function (response) {
-                $scope.summaryResponse.error = true;
-                $scope.summaryResponse.errorMessage = response.statusText;
+                $scope.mismatchTypeSummary.error = true;
+                $scope.mismatchTypeSummary.errorMessage = response.statusText;
             });
     };
 
     $scope.updateMismatchContentTypeSummary = function () {
-        $scope.summaryResponse.error = false;
-        mismatchSummaryApi.getMismatchContentTypeSummary($scope.datasource.selected.value, $scope.date.endOf('day').format(isoFormat), $scope.status, $scope.selectedMismatchType)
+        $scope.mismatchContentTypeSummary.error = false;
+        mismatchSummaryApi.getMismatchContentTypeSummary($scope.datasource.selected.value,$scope.date._i,  $scope.selectedStatue, formatSelectedMismatchType($scope.selectedMismatchType))
             .then(function (mismatchSummary) {
-                $scope.summaryResponse.summary = mismatchSummary;
+                $scope.mismatchContentTypeSummary.summary = mismatchSummary.summary;
             })
             .catch(function (response) {
-                $scope.summaryResponse.error = true;
-                $scope.summaryResponse.errorMessage = response.statusText;
+                $scope.mismatchContentTypeSummary.error = true;
+                $scope.mismatchContentTypeSummary.errorMessage = response.statusText;
             });
     };
 
     $scope.onMismatchTypeChange = function () {
         resetPagination();
         $scope.updateMismatches();
-        $scope.updateMismatchTypeSummary();
+        $scope.updateMismatchContentTypeSummary()
+        $scope.updateMismatchTypeSummary()
     }
+
     $scope.updateOrder = function (column, $event) {
         if ($scope.orderby == column) {
             if ($scope.sort == 'DESC')
@@ -135,9 +150,17 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         $scope.loading = true;
         $scope.mismatchResponse.error = false;
         $scope.mismatchResponse.mismatches = [];
-        spotcheckMismatchApi.getMismatches($scope.datasource.selected.value, selectedContentType(),
-            toMismatchStatus($scope.status), $scope.date.startOf('day').format(isoFormat), $scope.date.endOf('day').format(isoFormat),
-            $scope.pagination.getLimit(), $scope.pagination.getOffset(), $scope.orderby, $scope.sort, $scope.selectedMismatchType)
+        spotcheckMismatchApi.getMismatches(
+            $scope.datasource.selected.value,
+            selectedContentType(),
+            $scope.selectedStatue,
+            formatSelectedMismatchType($scope.selectedMismatchType),
+            $scope.formatDate($scope.date),
+            $scope.pagination.getLimit(),
+            $scope.pagination.getOffset(),
+            $scope.orderby,
+            $scope.sort
+        )
             .then(function (result) {
                 $scope.pagination.setTotalItems(result.pagination.total);
                 $scope.mismatchResponse.mismatches = result.mismatches;
@@ -151,22 +174,14 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
                 $scope.mismatchResponse.errorMessage = response.statusText;
             });
 
-        /**
-         * Returns array of mismatch statuses corresponding to the selected status.
-         */
-        function toMismatchStatus(status) {
-            if (status === 'OPEN') {
-                return ['NEW', 'EXISTING', 'REGRESSION'];
-            }
-            else if (status == 'NEW') {
-                return ['NEW'];
-
-            } else {
-                return ['RESOLVED']
-            }
-        }
     };
 
+    function formatSelectedMismatchType(mismatchType) {
+        if(mismatchType == undefined || mismatchType.split("(")[0].trim() == "")
+            return undefined;
+        else
+            return $scope.inverseMismatchTypeMap[mismatchType.split("(")[0].trim()];
+    }
     $scope.onGotoChange = function () {
         $scope.pagination.currPage = $scope.currentPage;
     };
@@ -202,6 +217,8 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
     $scope.onStatusChange = function () {
         resetPagination();
         $scope.updateMismatchTypeSummary();
+        $scope.updateMismatches();
+        $scope.updateMismatchContentTypeSummary()
         $scope.updateMismatches();
     };
 
@@ -285,26 +302,34 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         return contentTypes[$scope.selectedTab];
     }
 
+    var inverseMismatchTypeMap = function(obj) {
+        var map = new Map();
+        angular.forEach(Object.keys(obj), function (k) {
+            map[obj[k]] = k;
+        });
+        return map;
+    };
+
     /**
      * Updates the total mismatch count of each content type's tab
      * for the selected mismatch status.
      */
     $scope.getSummaryCountForContentType = function (contentType) {
-        if ($scope.summaryResponse.summary[contentType] == null) {
+        if ($scope.mismatchContentTypeSummary.summary[contentType] == null) {
             return '';
         }
-        return $scope.summaryResponse.summary[contentType][$scope.status] || '';
+        return $scope.mismatchContentTypeSummary.summary[contentType][ $scope.selectedStatue] || '';
     };
-
     $scope.init = function () {
         resetPagination();
         initializeDate();
         $scope.datasource.selected = $scope.datasource.values[0];
+        $scope.mismatchTypes = Object.values(window.mismatchMap);
+        $scope.inverseMismatchTypeMap = inverseMismatchTypeMap(window.mismatchMap);
         $scope.updateMismatchStatusSummary();
         $scope.updateMismatchContentTypeSummary();
         $scope.updateMismatchTypeSummary();
         $scope.updateMismatches();
-        $scope.mismatchTypes = Object.values(window.mismatchMap);
     };
 
     $scope.init();

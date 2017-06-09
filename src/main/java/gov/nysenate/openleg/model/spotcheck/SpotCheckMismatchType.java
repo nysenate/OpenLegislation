@@ -19,6 +19,7 @@ public enum SpotCheckMismatchType
 {
     /** --- General --- */
 
+    All("All", SpotCheckRefType.values()),
     REFERENCE_DATA_MISSING("Ref. Missing", SpotCheckRefType.values()),
     OBSERVE_DATA_MISSING("Source Missing", SpotCheckRefType.values()),
 
@@ -59,7 +60,7 @@ public enum SpotCheckMismatchType
 
     LIST_CAL_DATE("Cal Date", LBDC_CALENDAR_ALERT),
     LIST_RELEASE_DATE_TIME("Release Time", LBDC_CALENDAR_ALERT),
-    LIST_CALENDAR_MISMATCH("Calendar?", LBDC_CALENDAR_ALERT),
+    LIST_CALENDAR_MISMATCH("Calendar Data", LBDC_CALENDAR_ALERT),
     LIST_ENTRY_MISMATCH("Cal Entry", LBDC_CALENDAR_ALERT),
 
     /** --- Agenda Committee Meeting info mismatches --- */

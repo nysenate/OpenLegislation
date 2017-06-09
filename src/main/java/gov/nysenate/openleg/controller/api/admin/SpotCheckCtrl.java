@@ -152,7 +152,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *                     ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
      */
     @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/mismatches/summary/mismatchType", method = RequestMethod.GET)
+    @RequestMapping(value = "/mismatches/summary/mismatchtype", method = RequestMethod.GET)
     public BaseResponse getMismatchTypeSummary(@RequestParam String datasource,
                                                @RequestParam(required = false) String reportDate,
                                                @RequestParam(required = false) String mismatchStatus,
@@ -182,7 +182,7 @@ public class SpotCheckCtrl extends BaseCtrl
      *                     ignoredStatuses - string[] - optional, default [NOT_IGNORED] - retrieves mismatches with the given ignore status.
      */
     @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/mismatches/summary/contentType", method = RequestMethod.GET)
+    @RequestMapping(value = "/mismatches/summary/contenttype", method = RequestMethod.GET)
     public BaseResponse getMismatchContentTypeSummary(@RequestParam String datasource,
                                                       @RequestParam(required = false) String reportDate,
                                                       @RequestParam(required = false) String mismatchStatus,
@@ -309,7 +309,7 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     private EnumSet<SpotCheckMismatchType> getMismatchTypes(@RequestParam(required = false) String mismatchType) {
-        return mismatchType == null ? EnumSet.allOf(SpotCheckMismatchType.class) : EnumSet.of(getEnumParameter("mismatchType", mismatchType, SpotCheckMismatchType.class));
+        return mismatchType.equals("All") ? EnumSet.allOf(SpotCheckMismatchType.class) : EnumSet.of(getEnumParameter("mismatchType", mismatchType, SpotCheckMismatchType.class));
     }
 
     private Set<SpotCheckMismatchIgnore> getIgnoredStatuses(@RequestParam(required = false) String[] ignoredStatuses) {

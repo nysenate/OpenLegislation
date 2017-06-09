@@ -4,25 +4,25 @@ angular.module('open.spotcheck').factory('SpotcheckMismatchSummaryApi',
 function mismatchSummaryApi($resource) {
 
     var mismatchStatusSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary/status");
-    var mismatchTypeSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary/type");
+    var mismatchTypeSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary/mismatchtype");
     var mismatchContentTypeSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary/contenttype");
 
     /**
      * @param datasource datasource filter
      * @param date An ISO date time string. Returns summary data for mismatches observed before this date time.
      */
-    function getMismatchStatusSummary(datasource, date) {
-        return mismatchStatusSummaryApi.get({datasource: datasource, summaryDateTime : date}).$promise
+    function getMismatchStatusSummary(datasource, reportDate) {
+        return mismatchStatusSummaryApi.get({datasource: datasource, reportDate : reportDate}).$promise
             .then(createStatusSummary)
     }
 
-    function getMismatchTypeSummary(datasource, date, status) {
-        return mismatchTypeSummaryApi.get({datasource: datasource, summaryDateTime : date, status: status}).$promise
+    function getMismatchTypeSummary(datasource, reportDate, mismatchStatus) {
+        return mismatchTypeSummaryApi.get({datasource: datasource, reportDate : reportDate, mismatchStatus: mismatchStatus}).$promise
             .then(createMismatchTypeSummary)
     }
 
-    function getMismatchContentTypeSummary(datasource, date, status, type) {
-        return mismatchContentTypeSummaryApi.get({datasource: datasource, summaryDateTime : date, status: status, type:type}).$promise
+    function getMismatchContentTypeSummary(datasource, reportDate, mismatchStatus, mismatchType) {
+        return mismatchContentTypeSummaryApi.get({datasource: datasource, reportDate : reportDate, mismatchStatus: mismatchStatus, mismatchType:mismatchType}).$promise
             .then(createContentTypeSummary)
     }
 

@@ -12,16 +12,16 @@
                 ng-options="datasource as datasource.label for datasource in datasource.values"></select>
       </div>
       <div>
-        <select ng-model="status" ng-change="onStatusChange()">
-          <option value="OPEN">Open Issues ({{numberWithCommas(summaryResponse.summary.OPEN) || 0}})</option>
-          <option value="NEW">New Issues ({{numberWithCommas(summaryResponse.summary.NEW) || 0}})</option>
-          <option value="RESOLVED">Resolved Issues ({{numberWithCommas(summaryResponse.summary.RESOLVED) || 0}})</option>
+        <select ng-model="selectedStatue" ng-change="onStatusChange()">
+          <option value="NEW">New Issues ({{mismatchStatusSummary.summary.items.NEW}})</option>
+          <option value="OPEN">Open Issues ({{mismatchStatusSummary.summary.items.OPEN}})</option>
+          <option value="RESOLVED">Resolved Issues ({{mismatchStatusSummary.summary.items.RESOLVED}})</option>
         </select>
       </div>
 
       <div>
-        <select ng-model="selectedMismatchType" ng-change="onMismatchTypeChange()">
-          <option ng-repeat="option in mismatchTypes" ng-value="option">{{option}} ({{mismatchesTypeCount[option]}})</option>
+        <select  ng-model="selectedMismatchType" ng-change="onMismatchTypeChange()">
+          <option  ng-repeat="option in mismatchTypes" value= "{{option}}" >{{option}} ({{mismatchTypeSummary.summary.typeCount.items[inverseMismatchTypeMap[option]] || 0}})</option>
         </select>
       </div>
     </div>
@@ -30,11 +30,11 @@
   <div style="min-width: 960px;">
     <md-card class="content-card">
       <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
-        <md-tab ng-cloak label="Bills ({{numberWithCommas(getSummaryCountForContentType('BILL')) || 0}})" md-on-select="onTabChange()">
+        <md-tab ng-cloak label="Bills ({{mismatchContentTypeSummary.summary.items.BILL}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px; ">
-              <div ng-click="updateOrder('STATUS',$event)" flex="10" class="bold">Status</div>
+              <div ng-click="updateOrder('STATUS',$event)" flex="10" class="bold">State</div>
               <div ng-click="updateOrder('PRINT_NO',$event)" flex="15" class="bold">Bill</div>
               <div ng-click="updateOrder('MISMATCH_TYPE',$event)" flex="15" class="bold">Error</div>
               <div ng-click="updateOrder('OBSERVED_DATE',$event)"  flex="15" class="bold">Date</div>
@@ -81,11 +81,11 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Calendars ({{numberWithCommas(getSummaryCountForContentType('CALENDAR')) || 0}})" md-on-select="onTabChange()">
+        <md-tab label="Calendars ({{mismatchContentTypeSummary.summary.items.CALENDAR}})" md-on-select="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
-              <div ng-click="updateOrder('STATUS',$event)" flex="5" class="bold">Status</div>
+              <div ng-click="updateOrder('STATUS',$event)" flex="5" class="bold">State</div>
               <div ng-click="updateOrder('CAL_NO',$event)" flex="5" class="bold">Num</div>
               <div ng-click="updateOrder('MISMATCH_TYPE',$event)" flex="15" class="bold">Error</div>
               <div ng-click="updateOrder('CAL_TYPE',$event)" flex="10" class="bold">Type</div>
@@ -133,11 +133,11 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Agendas ({{numberWithCommas(getSummaryCountForContentType('AGENDA')) || 0}})" md-on-select="onTabChange()">
+        <md-tab label="Agendas ({{mismatchContentTypeSummary.summary.items.AGENDA}})" md-on-select="onTabChange()">
           <md-content class="md-padding">
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
-              <div ng-click="updateOrder('STATUS',$event)" flex="10" class="bold">Status</div>
+              <div ng-click="updateOrder('STATUS',$event)" flex="10" class="bold">State</div>
               <div ng-click="updateOrder('REFERENCE_DATE',$event)" flex="10" class="bold">Report Date</div>
               <div ng-click="updateOrder('MISMATCH_TYPE',$event)" flex="10" class="bold">Error</div>
               <div ng-click="updateOrder('AGENDA_NO',$event)" flex="5" class="bold">Num</div>
