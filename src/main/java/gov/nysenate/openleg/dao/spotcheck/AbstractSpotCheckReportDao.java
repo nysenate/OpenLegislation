@@ -157,19 +157,28 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             logger.warn("The observations have not been set on this report.");
             return;
         }
-        // Get the Keys and MismatchTypes checked in this report. (Used in calculating resolved mismatches)
-        Set<Object> checkedKeys = report.getObservations().values().stream().map(SpotCheckObservation::getKey).collect(Collectors.toSet());
-        Set<SpotCheckMismatchType> checkedTypes = report.getReferenceType().checkedMismatchTypes();
 
         List<DeNormSpotCheckMismatch> reportMismatches = reportToDeNormMismatches(report, reportId);
         List<DeNormSpotCheckMismatch> currentMismatches = getCurrentMismatches(report);
 
-        reportMismatches.addAll(MismatchUtils.deriveClosedMismatches(reportMismatches, currentMismatches, checkedKeys,
-                checkedTypes, report.getReportDateTime(), report.getReferenceDateTime()));
+        reportMismatches.addAll(closedMismatches(report, reportMismatches, currentMismatches));
         reportMismatches = MismatchUtils.copyIgnoreStatuses(currentMismatches, reportMismatches);
         reportMismatches = MismatchUtils.updateIgnoreStatus(reportMismatches);
+        reportMismatches = MismatchUtils.updateFirstSeenDateTime(reportMismatches, currentMismatches);
 
         insertMismatches(reportMismatches);
+    }
+
+    private List<DeNormSpotCheckMismatch> closedMismatches(SpotCheckReport<ContentKey> report,
+                                                           List<DeNormSpotCheckMismatch> reportMismatches,
+                                                           List<DeNormSpotCheckMismatch> currentMismatches) {
+        // All mismatch keys checked by this report.
+        Set<Object> checkedKeys = report.getObservations().values().stream().map(SpotCheckObservation::getKey).collect(Collectors.toSet());
+        // All mismatch types checked in this report.
+        Set<SpotCheckMismatchType> checkedTypes = report.getReferenceType().checkedMismatchTypes();
+
+        return MismatchUtils.deriveClosedMismatches(reportMismatches, currentMismatches, checkedKeys,
+                checkedTypes, report.getReportDateTime(), report.getReferenceDateTime());
     }
 
     private List<DeNormSpotCheckMismatch> getCurrentMismatches(SpotCheckReport<ContentKey> report) {
@@ -222,6 +231,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("ignoreLevel", mismatch.getIgnoreStatus().name())
                 .addValue("reportDateTime", mismatch.getReportDateTime())
                 .addValue("observedDateTime", mismatch.getObservedDateTime())
+                .addValue("firstSeenDateTime", mismatch.getFirstSeenDateTime())
                 .addValue("referenceActiveDateTime", mismatch.getReferenceId().getRefActiveDateTime());
     }
 
@@ -229,6 +239,10 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         return "{" + StringUtils.join(strings, ',') + "}";
     }
 
+    /**
+     * Converts SpotCheckMismatches in a SpotCheckReport into DeNormSpotCheckMismaches.
+     * Initializes firstSeenDateTime to the observedDateTime.
+     */
     private List<DeNormSpotCheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report, int reportId) {
         List<DeNormSpotCheckMismatch> mismatches = new ArrayList<>();
         for (SpotCheckObservation<ContentKey> ob : report.getObservations().values()) {
@@ -344,6 +358,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             mismatch.setObservedData(rs.getString("observed_data"));
             mismatch.setReportDateTime(getLocalDateTimeFromRs(rs, "report_date_time"));
             mismatch.setObservedDateTime(getLocalDateTimeFromRs(rs, "observed_date_time"));
+            mismatch.setFirstSeenDateTime(getLocalDateTimeFromRs(rs, "first_seen_date_time"));
             mismatch.setNotes(rs.getString("notes"));
             mismatch.setIgnoreStatus(SpotCheckMismatchIgnore.valueOf(rs.getString("ignore_status")));
             String[] issue_idss = getArrayFromPgRs(rs, "issue_ids");

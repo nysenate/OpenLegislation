@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 public class MismatchUtils {
 
 
+    /**
+     * If a mismatch has been ignored we want that to be applied to new equivalent mismatches as well.
+     * The logic for determining if the ignore status should be changes is in updateIgnoreStatus.
+     */
     public static List<DeNormSpotCheckMismatch> copyIgnoreStatuses(List<DeNormSpotCheckMismatch> from, List<DeNormSpotCheckMismatch> to) {
         for (DeNormSpotCheckMismatch mismatch : to) {
             if (from.contains(mismatch)) {
@@ -86,5 +90,25 @@ public class MismatchUtils {
                 .collect(Collectors.toList());
     }
 
-
+    /**
+     * Copies the firstSeenDateTime from current mismatches to the report mismatches unless
+     * the report mismatch is new or the current mismatch has been CLOSED, in which case
+     * we create a new firstSeenDateTime.
+     * A new firstSeenDateTime is set equal to its observedDateTime.
+     */
+    public static List<DeNormSpotCheckMismatch> updateFirstSeenDateTime(List<DeNormSpotCheckMismatch> reportMismatches,
+                                                                        List<DeNormSpotCheckMismatch> currentMismatches) {
+        for (DeNormSpotCheckMismatch rm : reportMismatches) {
+            if (currentMismatches.contains(rm)) {
+                DeNormSpotCheckMismatch cm = currentMismatches.get(currentMismatches.indexOf(rm));
+                if (cm.getState() != MismatchState.CLOSED) {
+                    rm.setFirstSeenDateTime(cm.getFirstSeenDateTime());
+                }
+            }
+            else {
+                rm.setFirstSeenDateTime(rm.getObservedDateTime());
+            }
+        }
+        return reportMismatches;
+    }
 }

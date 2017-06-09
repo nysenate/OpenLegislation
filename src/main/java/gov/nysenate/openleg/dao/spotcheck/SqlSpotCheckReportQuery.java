@@ -31,9 +31,9 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "SELECT *, count(*) OVER() as total_rows FROM \n" +
         "  (SELECT DISTINCT ON (m.key, m.type) m.mismatch_id, m.report_id, m.key as key, m.type, m.state, \n" +
         "  m.datasource, m.content_type, m.reference_type, m.reference_active_date_time, m.reference_data, m.observed_data, m.notes, \n" +
-        "  m.observed_date_time, m.report_date_time, m.ignore_status, m.issue_ids \n" +
+        "  m.observed_date_time, m.first_seen_date_time, m.report_date_time, m.ignore_status, m.issue_ids \n" +
         "    FROM ${schema}.spotcheck_mismatch m \n" +
-        "    WHERE m.reference_active_date_time BETWEEN :fromDate AND :toDate \n" +
+        "    WHERE m.first_seen_date_time BETWEEN :fromDate AND :toDate \n" +
         "      AND m.datasource = :datasource \n" +
         "      AND m.content_type IN (:contentTypes) \n" +
         "    ORDER BY m.key, m.type, m.reference_active_date_time desc \n" +
@@ -46,17 +46,17 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "INSERT INTO ${schema}.spotcheck_mismatch\n" +
         "(key, type, report_id, datasource, content_type, reference_type,\n" +
         "state, reference_data, observed_data, notes, issue_ids, ignore_status,\n" +
-        "report_date_time, observed_date_time, reference_active_date_time)\n" +
+        "report_date_time, observed_date_time, reference_active_date_time, first_seen_date_time)\n" +
         "VALUES\n" +
         "(:key::hstore, :mismatchType, :reportId, :datasource, :contentType, :referenceType, \n" +
         ":mismatchStatus, :referenceData, :observedData, :notes, :issueIds::text[], :ignoreLevel, \n" +
-        ":reportDateTime, :observedDateTime, :referenceActiveDateTime)\n"
+        ":reportDateTime, :observedDateTime, :referenceActiveDateTime, :firstSeenDateTime)\n"
     ),
 
     MISMATCH_STATUS_SUMMARY(
             "SELECT 'NEW' as status, count(*) as count \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-            "WHERE observed_date_time BETWEEN :reportStartDateTime AND :reportEndDateTime \n" +
+            "WHERE first_seen_date_time BETWEEN :reportStartDateTime AND :reportEndDateTime \n" +
             "AND state = 'OPEN'\n" +
             "UNION ALL \n" +
             "SELECT 'RESOLVED', count(*) \n" +
@@ -66,14 +66,14 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
             "UNION ALL \n" +
             "SELECT 'EXISTING', count(*) \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-            "WHERE observed_date_time BETWEEN :sessionStartDateTime AND :reportStartDateTime \n" +
+            "WHERE first_seen_date_time BETWEEN :sessionStartDateTime AND :reportStartDateTime \n" +
             "AND state = 'OPEN'\n"
     ),
 
     MISMATCH_TYPE_SUMMARY(
             "SELECT type, count(*) as count \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-            "WHERE observed_date_time BETWEEN :statusStartDateTime AND :statusEndDateTime \n" +
+            "WHERE first_seen_date_time BETWEEN :statusStartDateTime AND :statusEndDateTime \n" +
             "AND state = :state \n" +
             "GROUP BY type"
     ),
@@ -81,7 +81,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     MISMATCH_CONTENT_TYPE_SUMMARY(
             "SELECT content_type, count(*) as count \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-            "WHERE observed_date_time BETWEEN :statusStartDateTime AND :statusEndDateTime \n" +
+            "WHERE first_seen_date_time BETWEEN :statusStartDateTime AND :statusEndDateTime \n" +
             "AND state = :state \n" +
             "AND type IN (:mismatchTypes) \n" +
             "GROUP BY content_type"

@@ -41,6 +41,9 @@ public class DeNormSpotCheckMismatch<ContentKey> {
     /** The datetime this observation was made. */
     private LocalDateTime observedDateTime;
 
+    /** The first time this mismatch has been seen. This value resets once a mismatch is closed. */
+    private LocalDateTime firstSeenDateTime;
+
     /** The date time when the report that generated this observation was run */
     private LocalDateTime reportDateTime;
 
@@ -92,6 +95,10 @@ public class DeNormSpotCheckMismatch<ContentKey> {
 
     public void setObservedDateTime(LocalDateTime observedDateTime) {
         this.observedDateTime = observedDateTime;
+    }
+
+    public void setFirstSeenDateTime(LocalDateTime firstSeenDateTime) {
+        this.firstSeenDateTime = firstSeenDateTime;
     }
 
     public void setReportDateTime(LocalDateTime reportDateTime) {
@@ -164,6 +171,10 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         return observedData;
     }
 
+    public LocalDateTime getFirstSeenDateTime() {
+        return firstSeenDateTime;
+    }
+
     public String getNotes() {
         return notes;
     }
@@ -188,12 +199,11 @@ public class DeNormSpotCheckMismatch<ContentKey> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        DeNormSpotCheckMismatch<?> mismatch = (DeNormSpotCheckMismatch<?>) o;
-
-        if (key != null ? !key.equals(mismatch.key) : mismatch.key != null) return false;
-        if (type != mismatch.type) return false;
-        return dataSource == mismatch.dataSource;
+        DeNormSpotCheckMismatch<?> that = (DeNormSpotCheckMismatch<?>) o;
+        if (key != null ? !key.equals(that.key) : that.key != null) return false;
+        if (type != that.type) return false;
+        if (dataSource != that.dataSource) return false;
+        return contentType == that.contentType;
     }
 
     @Override
@@ -201,6 +211,7 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         int result = key != null ? key.hashCode() : 0;
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (dataSource != null ? dataSource.hashCode() : 0);
+        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
         return result;
     }
 }
