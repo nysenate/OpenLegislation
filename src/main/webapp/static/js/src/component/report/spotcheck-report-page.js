@@ -93,6 +93,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         mismatchSummaryApi.getMismatchTypeSummary($scope.datasource.selected.value, $scope.date._i,  $scope.selectedStatue)
             .then(function (mismatchSummary) {
                 $scope.mismatchTypeSummary.summary = mismatchSummary;
+                $scope.mismatchTypesSummaryShow = Object.keys($scope.mismatchTypeSummary.summary.typeCount.items);
             })
             .catch(function (response) {
                 $scope.mismatchTypeSummary.error = true;
@@ -180,7 +181,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         if(mismatchType == undefined || mismatchType.split("(")[0].trim() == "")
             return undefined;
         else
-            return $scope.inverseMismatchTypeMap[mismatchType.split("(")[0].trim()];
+            return mismatchType;
     }
     $scope.onGotoChange = function () {
         $scope.pagination.currPage = $scope.currentPage;
@@ -310,6 +311,10 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         return map;
     };
 
+    $scope.mismatchTypeSortFunction = function (option) {
+        return $scope.mismatchTypeSummary.summary.typeCount.items[option];
+    }
+
     /**
      * Updates the total mismatch count of each content type's tab
      * for the selected mismatch status.
@@ -325,6 +330,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         initializeDate();
         $scope.datasource.selected = $scope.datasource.values[0];
         $scope.mismatchTypes = Object.values(window.mismatchMap);
+        $scope.mismatchTypesShow = window.mismatchMap;
         $scope.inverseMismatchTypeMap = inverseMismatchTypeMap(window.mismatchMap);
         $scope.updateMismatchStatusSummary();
         $scope.updateMismatchContentTypeSummary();

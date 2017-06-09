@@ -21,7 +21,7 @@
 
       <div>
         <select  ng-model="selectedMismatchType" ng-change="onMismatchTypeChange()">
-          <option  ng-repeat="option in mismatchTypes" value= "{{option}}" >{{option}} ({{mismatchTypeSummary.summary.typeCount.items[inverseMismatchTypeMap[option]] || 0}})</option>
+          <option  ng-repeat="option in mismatchTypesSummaryShow  | orderBy:mismatchTypeSortFunction:true" value= "{{option}}" >{{mismatchTypesShow[option]}} ({{mismatchTypeSummary.summary.typeCount.items[option] || 0}})</option>
         </select>
       </div>
     </div>
