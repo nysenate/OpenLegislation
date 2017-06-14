@@ -22,7 +22,7 @@ public class SobiProcessServiceTest extends BaseTests
     @Test
     public void fullTest() {
         sobiProcessService.collate();
-        sobiProcessService.ingest();
+         sobiProcessService.ingest();
     }
 
 
