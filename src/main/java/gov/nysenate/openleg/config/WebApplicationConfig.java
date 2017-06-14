@@ -4,6 +4,8 @@ import gov.nysenate.openleg.util.AsciiArt;
 import gov.nysenate.openleg.util.OpenlegThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,6 +24,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -33,9 +36,6 @@ import javax.annotation.PostConstruct;
 import javax.xml.transform.Source;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 @Configuration
 @EnableWebMvc
@@ -102,23 +102,32 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter implements Sch
         return converter;
     }
 
-    @Bean(name = "openlegScheduler", destroyMethod = "shutdownNow")
-    public ScheduledExecutorService schedulerThreadPool() {
-        return Executors.newScheduledThreadPool(4, new OpenlegThreadFactory("scheduler"));
+    @Bean(name = "taskScheduler", destroyMethod = "shutdown")
+    public ThreadPoolTaskScheduler getTaskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setThreadFactory(new OpenlegThreadFactory("scheduler"));
+        scheduler.setPoolSize(8);
+        scheduler.initialize();
+        return scheduler;
     }
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        taskRegistrar.setScheduler(schedulerThreadPool());
+        taskRegistrar.setScheduler(getTaskScheduler());
     }
 
     @Override
     @Bean(name = "openlegAsync", destroyMethod = "shutdown")
-    public Executor getAsyncExecutor() {
+    public ThreadPoolTaskExecutor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadFactory(new OpenlegThreadFactory("spring-async"));
         executor.setCorePoolSize(10);
         executor.initialize();
         return executor;
+    }
+
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return new SimpleAsyncUncaughtExceptionHandler();
     }
 }
