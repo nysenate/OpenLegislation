@@ -360,18 +360,12 @@ public class ManagedSobiProcessService implements SobiProcessService {
         StringBuffer xmlBuffer = new StringBuffer(
                 "<?xml version='1.0' encoding='UTF-8'?>&newl;" + line + "&newl;"
         );
-        String in = null;
         while (iterator.hasNext()) {
-            in = iterator.next();
-            xmlBuffer.append(in.replaceAll("\\xb9", "&sect;")).append("&newl;");
-            if (in.matches(endPattern)) {
+            String next = iterator.next();
+            xmlBuffer.append(next.replaceAll("\\xb9", "&sect;")).append("&newl;");
+            if (next.matches(endPattern)) {
                 break;
             }
-        }
-        if (in == null) {
-            // This is bad, but don't throw an exception. If the resulting XML document
-            // is malformed we'll throw the exception during ingest.
-            logger.error("Unterminated XML document: " + line);
         }
         String xmlString = xmlBuffer.toString();
 
