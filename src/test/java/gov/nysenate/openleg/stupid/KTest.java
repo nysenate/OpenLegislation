@@ -1,19 +1,35 @@
 package gov.nysenate.openleg.stupid;
 
-import gov.nysenate.openleg.annotation.SillyTest;
+import com.google.common.base.Utf8;
+import com.google.common.collect.Range;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillInfo;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
+import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.CachedBillDataService;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+
+import java.io.File;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by kyle on 10/8/14.
  */
-@Category(SillyTest.class)
-public class KTest {
+public class KTests{
     @Autowired
     private CachedBillDataService billDataService;
 

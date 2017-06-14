@@ -4,60 +4,44 @@ import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.util.OutputUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static gov.nysenate.openleg.model.notification.NotificationType.*;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckDataSource.*;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckContentType.*;
 
 /**
  * Enumeration of the types of sources that can provide data for QA purposes.
  */
-
 public enum SpotCheckRefType
 {
-    LBDC_DAYBREAK("daybreak", "Daybreak", LBDC, BILL, DAYBREAK_SPOTCHECK),
+    LBDC_DAYBREAK("daybreak", "Daybreak", NotificationType.DAYBREAK_SPOTCHECK),
 
-    LBDC_SCRAPED_BILL("scraped-bill", "Scraped Bill", LBDC, BILL, BILL_TEXT_SPOTCHECK),
+    LBDC_SCRAPED_BILL("scraped-bill", "Scraped Bill", NotificationType.BILL_TEXT_SPOTCHECK),
 
-    LBDC_CALENDAR_ALERT("floor-alert", "LBDC Calendar Alert", LBDC, CALENDAR, CALENDAR_SPOTCHECK),
+    LBDC_CALENDAR_ALERT("floor-alert", "Floor Calendar Alert", NotificationType.CALENDAR_SPOTCHECK),
 
-    LBDC_AGENDA_ALERT("agenda-alert", "Agenda Alert", LBDC, AGENDA, AGENDA_SPOTCHECK),
+    LBDC_AGENDA_ALERT("agenda-alert", "Agenda Alert", NotificationType.AGENDA_SPOTCHECK),
 
-    SENATE_SITE_BILLS("senate-site-bills", "Nysenate.gov Bill", NYSENATE, BILL, SENSITE_BILL_SPOTCHECK),
+    SENATE_SITE_BILLS("senate-site-bills", "Nysenate.gov Bill", NotificationType.SENSITE_BILL_SPOTCHECK),
 
-    SENATE_SITE_CALENDAR("senate-site-calendar", "Nysenate.gov Calendar", NYSENATE, CALENDAR, SENSITE_CALENDAR_SPOTCHECK),
+    SENATE_SITE_CALENDAR("senate-site-calendar", "Nysenate.gov Calendar", NotificationType.SENSITE_CALENDAR_SPOTCHECK),
 
-    SENATE_SITE_AGENDA("senate-site-agenda", "Nysenate.gov Agenda", NYSENATE, AGENDA, SENSITE_AGENDA_SPOTCHECK)
+    SENATE_SITE_AGENDA("senate-site-agenda", "Nysenate.gov Agenda", NotificationType.SENSITE_AGENDA_SPOTCHECK),
+
+    OPENLEG_DEV ("openleg-dev", "Openleg Dev", NotificationType.OPENLEG_DEV_SPOTCHECK)
 
     ;
 
     private String refName;
     private String displayName;
 
-    private SpotCheckDataSource dataSource;
-    private SpotCheckContentType contentType;
-
     /** A notification type that is used to send notifications for this type of report */
     private NotificationType notificationType;
 
-    private SpotCheckRefType(String refName, String displayName,
-                             SpotCheckDataSource dataSource, SpotCheckContentType contentType, NotificationType type) {
+    private SpotCheckRefType(String refName, String displayName, NotificationType type) {
         this.refName = refName;
         this.displayName = displayName;
-        this.dataSource = dataSource;
-        this.contentType = contentType;
         this.notificationType = type;
-    }
-
-    /** Get a set of SpotCheckMismatchTypes that are checked in this Reference Type. */
-    public Set<SpotCheckMismatchType> checkedMismatchTypes() {
-        return EnumSet.allOf(SpotCheckMismatchType.class)
-                .stream()
-                .filter(t -> t.getRefTypes().contains(this))
-                .collect(Collectors.toSet());
     }
 
     public String getRefName() {
@@ -72,14 +56,6 @@ public enum SpotCheckRefType
         return notificationType;
     }
 
-    public SpotCheckDataSource getDataSource() {
-        return dataSource;
-    }
-
-    public SpotCheckContentType getContentType() {
-        return contentType;
-    }
-
     private static final ImmutableMap<String, SpotCheckRefType> refNameMap = ImmutableMap.copyOf(
             Arrays.asList(SpotCheckRefType.values()).stream()
                     .collect(Collectors.toMap(SpotCheckRefType::getRefName, Function.identity()))
@@ -87,13 +63,6 @@ public enum SpotCheckRefType
 
     public static SpotCheckRefType getByRefName(String refName) {
         return refNameMap.get(refName);
-    }
-
-    public static List<SpotCheckRefType> get(SpotCheckDataSource dataSource, SpotCheckContentType contentType){
-        return Arrays.stream(SpotCheckRefType.values())
-                .filter(
-                        refType -> refType.getDataSource().equals(dataSource) && refType.getContentType().equals(contentType))
-                .collect(Collectors.toList());
     }
 
     /**
@@ -111,11 +80,6 @@ public enum SpotCheckRefType
     public static String getDisplayJsonMap() {
         return OutputUtils.toJson(EnumSet.allOf(SpotCheckRefType.class).stream()
                 .collect(Collectors.toMap(SpotCheckRefType::name, SpotCheckRefType::getDisplayName)));
-    }
-
-    public static String getRefContentTypeJsonMap() {
-        return OutputUtils.toJson(EnumSet.allOf(SpotCheckRefType.class).stream()
-                .collect(Collectors.toMap(SpotCheckRefType::name, SpotCheckRefType::getContentType)));
     }
 
 }
