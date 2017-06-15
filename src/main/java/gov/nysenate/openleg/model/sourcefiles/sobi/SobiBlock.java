@@ -80,12 +80,12 @@ public class SobiBlock
      * assumed to be valid sobi file and is NOT checked for performance reasons.
      */
     public SobiBlock(String line) {
-        this.setBillHeader(line.substring(0, 11));
-        this.setBillId(line.substring(4,10), line.substring(10,11), Integer.parseInt(line.substring(0,4)));
-        this.setType(SobiLineType.valueOfCode(line.charAt(11)));
-        this.setHeader(line.substring(0,12));
-        this.setData(line.substring(12));
-        this.multiline = !oneLineBlocks.contains(this.getType()) && !this.getData().trim().equals("DELETE");
+        setBillHeader(line.substring(0, 11));
+        setBillId(line.substring(4,10), line.substring(10,11), Integer.parseInt(line.substring(0,4)));
+        setType(SobiLineType.valueOfCode(line.charAt(11)));
+        setHeader(line.substring(0,12));
+        setData(line.substring(12));
+        multiline = !oneLineBlocks.contains(getType()) && !getData().trim().equals("DELETE");
     }
 
     /**
@@ -96,8 +96,8 @@ public class SobiBlock
     public SobiBlock(String fragmentFileName, SobiFragmentType type, int startLineNo, String line) {
         this(line);
         this.fragmentFileName = fragmentFileName;
-        this.fragmentType = type;
-        this.setStartLineNo(startLineNo);
+        fragmentType = type;
+        setStartLineNo(startLineNo);
     }
 
     /** --- Methods --- */
@@ -110,9 +110,9 @@ public class SobiBlock
      * to check before extending.
      */
     public void extend(String line) {
-        if (!this.isMultiline())
+        if (!isMultiline())
             throw new RuntimeException("Only multi-line blocks may be extended");
-        this.dataBuffer.append("\n"+line.substring(12));
+        dataBuffer.append("\n"+line.substring(12));
     }
 
     /**
@@ -121,12 +121,12 @@ public class SobiBlock
      */
     public boolean equals(Object obj) {
         return obj!= null && obj instanceof SobiBlock
-           && ((SobiBlock)obj).getHeader().equals(this.getHeader())
-           && ((SobiBlock)obj).getData().trim().equals(this.getData().trim());
+           && ((SobiBlock)obj).getHeader().equals(getHeader())
+           && ((SobiBlock)obj).getData().trim().equals(getData().trim());
     }
 
     public String toString() {
-        return this.getLocation()+":"+this.getHeader();
+        return getLocation()+":"+ getHeader();
     }
 
     /** --- Functional Getters/Setters */
@@ -135,7 +135,7 @@ public class SobiBlock
      * Returns a representation of the location of the block: fileName:lineNumber.
      */
     public String getLocation() {
-        return (this.fragmentFileName + ":" + this.getStartLineNo() + "-" + this.getEndLineNo());
+        return fragmentFileName + ":" + getStartLineNo() + "-" + getEndLineNo();
     }
 
     /**
@@ -150,7 +150,7 @@ public class SobiBlock
      * Replaces the block data with the input string.
      */
     public void setData(String data) {
-        this.dataBuffer = new StringBuffer(data);
+        dataBuffer = new StringBuffer(data);
     }
 
     /**
@@ -159,7 +159,7 @@ public class SobiBlock
      * @throws NumberFormatException on malformed print numbers
      */
     public void setBillId(String printNo, String version, int session) {
-        this.billId = new BillId(printNo, session, version);
+        billId = new BillId(printNo, session, version);
     }
 
     /**

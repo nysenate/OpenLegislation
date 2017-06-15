@@ -296,7 +296,8 @@ BEGIN
     bill_session_year := NEW.bill_session_year;
     new_values := delete(hstore(NEW.*), ignored_columns);
     fragment_id := NEW.last_fragment_id;
-    published_date_time := (substring(fragment_id from 7 for 6) || substring(fragment_id from 14 for 7))::timestamp without time zone;
+    SELECT master.sobi_fragment.published_date_time INTO published_date_time FROM master.sobi_fragment WHERE master.sobi_fragment.fragment_id = NEW.last_fragment_id;
+    RAISE NOTICE 'published_date_time is currently: %', published_date_time;
   ELSE
     bill_print_no := OLD.bill_print_no;
     bill_session_year := OLD.bill_session_year;
@@ -1449,7 +1450,8 @@ CREATE TABLE bill (
     created_date_time timestamp without time zone DEFAULT now(),
     modified_date_time timestamp without time zone,
     published_date_time timestamp without time zone,
-    last_fragment_id text
+    last_fragment_id text,
+    blurb text
 );
 
 
