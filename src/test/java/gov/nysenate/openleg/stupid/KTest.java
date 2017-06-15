@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 /**
  * Created by kyle on 10/8/14.
  */
-public class KTests{
+public class KTest {
     @Autowired
     private CachedBillDataService billDataService;
 
