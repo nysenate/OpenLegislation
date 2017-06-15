@@ -111,10 +111,10 @@ public class ManagedSobiProcessService implements SobiProcessService {
     public int collateSourceFiles() {
         try {
             int totalCollated = 0;
-            List<SourceFile> newSources;
+            List<SobiFile> newSources;
             do {
                 newSources = getIncomingSourceFiles();
-                for (SourceFile sourceFile : newSources) {
+                for (SobiFile sourceFile : newSources) {
                     collateSourceFile(sourceFile);
                     totalCollated++;
                 }
@@ -204,8 +204,8 @@ public class ManagedSobiProcessService implements SobiProcessService {
      * @return {@link List<SourceFile>}
      * @throws IOException
      */
-    private List<SourceFile> getIncomingSourceFiles() throws IOException {
-        List<SourceFile> incomingSourceFiles = new ArrayList<>();
+    private List<SobiFile> getIncomingSourceFiles() throws IOException {
+        List<SobiFile> incomingSourceFiles = new ArrayList<>();
         final int batchSize = env.getSobiBatchSize();
 
         for (SourceFileFsDao sourceFsDao : sourceFileFsDaos) {
@@ -221,7 +221,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
      * @param sourceFile
      * @throws IOException
      */
-    private void collateSourceFile(SourceFile sourceFile) throws IOException {
+    private void collateSourceFile(SobiFile sourceFile) throws IOException {
         // Do some slightly different processing for SOBI and XML files
         DataProcessUnit unit = new DataProcessUnit(
                 sourceFile.getSourceType().name(), sourceFile.getFileName(),
@@ -250,7 +250,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
     /**
      * Extracts a list of SobiFragments from the given SobiFile.
      */
-    private List<SobiFragment> createFragments(SourceFile sourceFile) throws IOException {
+    private List<SobiFragment> createFragments(SobiFile sourceFile) throws IOException {
         List<SobiFragment> sobiFragments = new ArrayList<>();
 
         // Else continue with splitting the SOBI file into fragments

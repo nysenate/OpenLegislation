@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.bill.apprmemo;
 
 import gov.nysenate.openleg.dao.bill.data.ApprovalDao;
-import gov.nysenate.openleg.dao.bill.data.SqlApprovalDao;
 import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.Bill;

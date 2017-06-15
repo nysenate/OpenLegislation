@@ -1,12 +1,8 @@
 package gov.nysenate.openleg.processor.bill;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import gov.nysenate.openleg.model.base.PublishStatus;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
-import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;

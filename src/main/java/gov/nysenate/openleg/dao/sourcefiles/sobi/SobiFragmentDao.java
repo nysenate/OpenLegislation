@@ -3,15 +3,15 @@ package gov.nysenate.openleg.dao.sourcefiles.sobi;
 import com.google.common.collect.ImmutableSet;
 
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 
 /**
  * The SobiFragmentDao interface exposes methods for retrieving and modifying SobiFragments.
@@ -49,7 +49,7 @@ public interface SobiFragmentDao {
      *
      * @return List<SobiFragment>
      */
-    List<SobiFragment> getSobiFragments(SourceFile sobiFile, SobiFragmentType fragmentType, SortOrder sortById);
+    List<SobiFragment> getSobiFragments(SobiFile sobiFile, SobiFragmentType fragmentType, SortOrder sortById);
     
     /**
      * Retrieves all SobiFragments that are awaiting processing.

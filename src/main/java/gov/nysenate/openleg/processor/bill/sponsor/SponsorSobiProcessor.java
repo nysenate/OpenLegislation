@@ -1,8 +1,5 @@
 package gov.nysenate.openleg.processor.bill.sponsor;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;

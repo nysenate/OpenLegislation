@@ -5,7 +5,7 @@ import gov.nysenate.openleg.processor.DataProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class DataProcessorTests extends BaseTests
+public class DataProcessorTest extends BaseTests
 {
     @Autowired
     protected DataProcessor dataProcessor;

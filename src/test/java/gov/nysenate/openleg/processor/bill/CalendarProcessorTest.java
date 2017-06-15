@@ -9,7 +9,6 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.calendar.CalendarProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
-import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;

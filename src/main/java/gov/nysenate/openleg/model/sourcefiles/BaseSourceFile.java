@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
+import gov.nysenate.openleg.model.sourcefiles.sobi.UnreadableSobiEx;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ import java.time.LocalDateTime;
 
 import gov.nysenate.openleg.model.sourcefiles.sobi.InvalidSobiNameEx;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFileNotFoundEx;
-import gov.nysenate.openleg.model.sourcefiles.sobi.UnreadableSobiEx;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class BaseSourceFile implements SourceFile {
@@ -64,7 +64,7 @@ public abstract class BaseSourceFile implements SourceFile {
     }
     
     /** --- Functional Getters/Setters --- */
-    
+
     /** The file name serves as the unique identifier for the Sobi or XML files. */
     @Override
     public String getFileName(){

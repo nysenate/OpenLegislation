@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * DAO interface for retrieving and persisting calendar data.

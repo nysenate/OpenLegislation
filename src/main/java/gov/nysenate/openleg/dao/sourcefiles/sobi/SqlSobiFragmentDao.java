@@ -7,6 +7,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
     @Autowired private SourceFileRefDao sourceFileRefDao;
 
     @Override
-    public List<SobiFragment> getSobiFragments(SourceFile sobiFile, SobiFragmentType fragmentType,
+    public List<SobiFragment> getSobiFragments(SobiFile sobiFile, SobiFragmentType fragmentType,
                                                SortOrder sortById) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("sobiFileName", sobiFile.getFileName());
@@ -104,7 +105,7 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
     private MapSqlParameterSource getSobiFragmentParams(SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fragmentId", fragment.getFragmentId());
-        params.addValue("sobiFileName", fragment.getParentSourceFile().getFileName());
+        params.addValue("sobiFileName", fragment.getParentSobiFile().getFileName());
         params.addValue("publishedDateTime", toDate(fragment.getPublishedDateTime()));
         params.addValue("fragmentType", fragment.getType().name());
         params.addValue("sequenceNo", fragment.getSequenceNo());

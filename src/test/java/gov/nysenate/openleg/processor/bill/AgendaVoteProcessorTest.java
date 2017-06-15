@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.dao.agenda.data.AgendaDao;
 import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteType;

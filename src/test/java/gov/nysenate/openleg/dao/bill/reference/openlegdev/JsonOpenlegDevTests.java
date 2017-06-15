@@ -2,7 +2,6 @@ package gov.nysenate.openleg.dao.bill.reference.openlegdev;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.bill.reference.daybreak.SqlFsDaybreakDao;
-import gov.nysenate.openleg.dao.bill.reference.daybreak.SqlFsDaybreakDaoTests;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegBillReportService;

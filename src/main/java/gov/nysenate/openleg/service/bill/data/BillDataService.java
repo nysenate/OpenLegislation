@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 import java.util.Optional;
