@@ -114,7 +114,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
             List<SobiFile> newSources;
             do {
                 newSources = getIncomingSourceFiles();
-                for (SobiFile sourceFile : newSources) {
+                for (SourceFile sourceFile : newSources) {
                     collateSourceFile(sourceFile);
                     totalCollated++;
                 }
@@ -221,7 +221,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
      * @param sourceFile
      * @throws IOException
      */
-    private void collateSourceFile(SobiFile sourceFile) throws IOException {
+    private void collateSourceFile(SourceFile sourceFile) throws IOException {
         // Do some slightly different processing for SOBI and XML files
         DataProcessUnit unit = new DataProcessUnit(
                 sourceFile.getSourceType().name(), sourceFile.getFileName(),
@@ -250,7 +250,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
     /**
      * Extracts a list of SobiFragments from the given SobiFile.
      */
-    private List<SobiFragment> createFragments(SobiFile sourceFile) throws IOException {
+    private List<SobiFragment> createFragments(SourceFile sourceFile) throws IOException {
         List<SobiFragment> sobiFragments = new ArrayList<>();
 
         // Else continue with splitting the SOBI file into fragments
