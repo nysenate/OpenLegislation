@@ -6,11 +6,15 @@ pipeline {
     }
     stages {
         stage('Start') {
-            bat 'mvn clean'
+            steps {
+                bat 'mvn clean'
+            }
         }
         stage('Unit tests') {
-            bat 'mvn org.jacoco:jacoco-maven-plugin:prepare-agent'
-            bat 'mvn test'
+            steps {
+                bat 'mvn org.jacoco:jacoco-maven-plugin:prepare-agent'
+                bat 'mvn test'
+            }
         }
         stage('Integration tests') {
             steps {
