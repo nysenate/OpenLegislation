@@ -386,6 +386,12 @@
       <version>2.3.1</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.jacoco</groupId>
+      <artifactId>jacoco-maven-plugin</artifactId>
+      <version>0.7.9</version>
+    </dependency>
+
   </dependencies>
 
   <pluginRepositories>
