@@ -11,14 +11,17 @@ pipeline {
           bat 'mvn clean'
           bat 'mvn org.jacoco:jacoco-maven-plugin:prepare-agent'
           bat 'verify'
-          bat 'mvn sonar:sonar'
+          withSonarQubeEnv {
+            bat 'mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL'
+          }
         }
       }
     }
   }
   post {
     success {
-      junit 'target/surefire-reports/**/*.xml'
+      junit 'target/*-reports/**/*.xml'
+      jacoco execPattern: 'target/jacoco.exec'
     }
   }
 }
