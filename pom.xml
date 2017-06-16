@@ -35,7 +35,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.20</version>
         <configuration>
-          <skipTests>false</skipTests>
+          <excludedGroups>gov.nysenate.openleg.annotation.SillyTest</excludedGroups>
+          <excludedGroups>gov.nysenate.openleg.annotation.IntegrationTest</excludedGroups>
           <groups>gov.nysenate.openleg.annotation.UnitTest</groups>
         </configuration>
         <executions>
@@ -52,6 +53,8 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>2.20</version>
         <configuration>
+          <excludedGroups>gov.nysenate.openleg.annotation.SillyTest</excludedGroups>
+          <excludedGroups>gov.nysenate.openleg.annotation.UnitTest</excludedGroups>
           <groups>gov.nysenate.openleg.annotation.IntegrationTest</groups>
         </configuration>
         <executions>
