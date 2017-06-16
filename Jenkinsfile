@@ -5,21 +5,13 @@ pipeline {
     jdk 'jdk8'
   }
   stages {
-    stage ('Initialize') {
-      steps {
-        sh '''
-            echo"PATH = ${PATH}"
-            echo"M2_HOME = ${M2_HOME}"
-        '''
-      }
-    }
     stage('Test') {
-      steps{
-        sh 'mvn clean verify'
+      steps {
+        bat 'mvn clean verify'
       }
       post {
         success {
-              junit 'target/surefire-reports/**/*.xml'
+          junit 'target/surefire-reports/**/*.xml'
         }
       }
     }
