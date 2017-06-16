@@ -11,7 +11,7 @@ pipeline {
           bat 'mvn clean'
           bat 'mvn org.jacoco:jacoco-maven-plugin:prepare-agent'
           bat 'verify'
-          withSonarQubeEnv {
+          withSonarQubeEnv('sonarqube') {
             bat 'mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL'
           }
         }
