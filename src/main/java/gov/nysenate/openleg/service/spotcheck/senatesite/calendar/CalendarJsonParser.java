@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.calendar;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.nysenate.openleg.client.view.bill.BillIdView;
-import gov.nysenate.openleg.client.view.calendar.CalendarIdView;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -12,17 +9,18 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
-import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.model.spotcheck.senatesite.calendar.SenateSiteCalendar;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
 import gov.nysenate.openleg.util.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
@@ -51,8 +49,9 @@ public class CalendarJsonParser extends JsonParser {
             List<SenateSiteCalendar> calendars = new LinkedList<>();
             for (JsonNode calendarNode : calendarMap) {
                 CalendarId calendarId = getCalendarId(calendarNode);
-                for (JsonNode subCalNode : calendarNode.path("field_ol_cal")) {
-                    JsonNode subCalNodeValue = subCalNode.elements().next().path("value");
+                JsonNode subCalList = calendarNode.path("field_ol_cal").path("und");
+                for (JsonNode subCalNode : subCalList) {
+                    JsonNode subCalNodeValue = subCalNode.path("value");
                     calendars.add(extractSenSiteCalendar(subCalNodeValue, calendarId, fragment));
                 }
             }
@@ -73,7 +72,6 @@ public class CalendarJsonParser extends JsonParser {
         calendar.setSequenceNo(getIntValue(subCalNode,"field_ol_sequence_no"));
         calendar.setVersion(getVersion(getValue(subCalNode,"field_ol_version")));
         calendar.setCalendarId(calendarId);
-        TypeReference<List<String>> listTypeReference = new TypeReference<List<String>>() {};
         List<String> printNos = getStringListValue(subCalNode, "field_ol_bill");
         calendar.setBill(getBillId(printNos, calendar.getCalendarId().getYear()));
 
