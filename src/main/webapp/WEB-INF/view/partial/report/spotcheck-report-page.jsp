@@ -12,7 +12,7 @@
                 ng-options="datasource as datasource.label for datasource in datasource.values"></select>
       </div>
       <div>
-        <select ng-model="selectedStatue" ng-change="onStatusChange()">
+        <select ng-model="selectedStatus" ng-change="onStatusChange()">
           <option value="NEW">New Issues ({{mismatchStatusSummary.summary.items.NEW}})</option>
           <option value="OPEN">Open Issues ({{mismatchStatusSummary.summary.items.OPEN}})</option>
           <option value="RESOLVED">Resolved Issues ({{mismatchStatusSummary.summary.items.RESOLVED}})</option>
