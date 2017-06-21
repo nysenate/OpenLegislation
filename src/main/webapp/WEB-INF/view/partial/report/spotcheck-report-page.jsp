@@ -30,7 +30,7 @@
   <div style="min-width: 960px;">
     <md-card class="content-card">
       <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
-        <md-tab ng-cloak label="Bills ({{mismatchContentTypeSummary.summary.items.BILL}})" md-on-select="onTabChange()">
+        <md-tab ng-cloak label="Bills ({{mismatchContentTypeSummary.summary.items.BILL}})" md-on-deselect="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px; ">
@@ -81,7 +81,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Calendars ({{mismatchContentTypeSummary.summary.items.CALENDAR}})" md-on-select="onTabChange()">
+        <md-tab label="Calendars ({{mismatchContentTypeSummary.summary.items.CALENDAR}})" md-on-deselect="onTabChange()">
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -133,7 +133,7 @@
           </md-content>
         </md-tab>
 
-        <md-tab label="Agendas ({{mismatchContentTypeSummary.summary.items.AGENDA}})" md-on-select="onTabChange()">
+        <md-tab label="Agendas ({{mismatchContentTypeSummary.summary.items.AGENDA}})" md-on-deselect="onTabChange()">
           <md-content class="md-padding">
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
