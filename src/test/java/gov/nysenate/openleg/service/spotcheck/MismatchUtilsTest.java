@@ -2,13 +2,11 @@ package gov.nysenate.openleg.service.spotcheck;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.MismatchUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -18,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
@@ -155,9 +153,40 @@ public class MismatchUtilsTest {
         assertThat(resolved.getReportDateTime(), is(greaterThan(originalReportDateTime)));
     }
 
-    private DeNormSpotCheckMismatch createMismatch(SpotCheckMismatchType type, MismatchState status) {
+    /**
+     * --- First Seen Date Time Tests ---
+     */
+
+    @Test
+    public void newMismatchGetsNewFirstSeenDateTime() {
+        openMismatch.setObservedDateTime(LocalDateTime.now());
+        DeNormSpotCheckMismatch newMismatch = MismatchUtils.updateFirstSeenDateTime(Lists.newArrayList(openMismatch), new ArrayList<>()).get(0);
+        assertThat(newMismatch.getFirstSeenDateTime(), is(newMismatch.getObservedDateTime()));
+    }
+
+    @Test
+    public void reoccurringMismatchCopiesFirstSeenDateTime() {
+        openMismatch.setObservedDateTime(LocalDateTime.now());
+        DeNormSpotCheckMismatch reoccurringMismatch = createMismatch(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT, MismatchState.OPEN);
+        reoccurringMismatch.setObservedDateTime(LocalDateTime.now().plusHours(1));
+        reoccurringMismatch = MismatchUtils.updateFirstSeenDateTime(Lists.newArrayList(reoccurringMismatch), Lists.newArrayList(openMismatch)).get(0);
+        assertThat(reoccurringMismatch.getFirstSeenDateTime(), is(openMismatch.getFirstSeenDateTime()));
+    }
+
+    @Test
+    public void regressionMismatchResetsFirstSeenDateTime() {
+        LocalDateTime dt = LocalDateTime.now();
+        closedMismatch.setFirstSeenDateTime(dt);
+        closedMismatch.setObservedDateTime(dt);
+        openMismatch.setObservedDateTime(dt.plusHours(1));
+        openMismatch = MismatchUtils.updateFirstSeenDateTime(Lists.newArrayList(openMismatch), Lists.newArrayList(closedMismatch)).get(0);
+        assertThat(openMismatch.getFirstSeenDateTime(), is(greaterThan(closedMismatch.getFirstSeenDateTime())));
+        assertThat(openMismatch.getFirstSeenDateTime(), is(openMismatch.getObservedDateTime()));
+    }
+
+    private DeNormSpotCheckMismatch createMismatch(SpotCheckMismatchType type, MismatchState state) {
         DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch(new BillId(printNo, 2017), type, SpotCheckDataSource.LBDC);
-        mismatch.setState(status);
+        mismatch.setState(state);
         mismatch.setReferenceId(new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now()));
         mismatch.setReportDateTime(LocalDateTime.now());
         return mismatch;

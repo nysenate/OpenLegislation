@@ -103,11 +103,10 @@ public class MismatchUtils {
                 DeNormSpotCheckMismatch cm = currentMismatches.get(currentMismatches.indexOf(rm));
                 if (cm.getState() != MismatchState.CLOSED) {
                     rm.setFirstSeenDateTime(cm.getFirstSeenDateTime());
+                    break;
                 }
             }
-            else {
-                rm.setFirstSeenDateTime(rm.getObservedDateTime());
-            }
+            rm.setFirstSeenDateTime(rm.getObservedDateTime());
         }
         return reportMismatches;
     }
