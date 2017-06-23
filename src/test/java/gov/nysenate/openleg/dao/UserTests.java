@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.dao;
 
+import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.controller.api.admin.AdminAccountCtrl;
 import gov.nysenate.openleg.dao.auth.AdminUserDao;
 import gov.nysenate.openleg.dao.auth.SqlAdminUserDao;
 import gov.nysenate.openleg.util.RandomUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
+import org.junit.experimental.categories.Category;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Created by jameldelafuente on 17-06-17.
- */
+import static org.junit.Assert.assertEquals;
+
+@Category(UnitTest.class)
 public class UserTests {
 
 
@@ -30,7 +30,7 @@ public class UserTests {
     @Autowired
     private AdminUserDao adminUserDao;
 
-    @InjectMocks
+    @Mock
     @Autowired
     private SqlAdminUserDao sqlAdminUserDao;
 
@@ -54,7 +54,7 @@ public class UserTests {
     public void existsInDb() {
 
         boolean exists = sqlAdminUserDao.getAdminUser(existingUser)!=null;
-        Assert.assertEquals(true,exists);
+        assertEquals(true, exists);
         logger.info("The result of the test, user exists:", exists);
     }
 
@@ -67,7 +67,7 @@ public class UserTests {
     public void existsNotInDb() {
 
         boolean exists = sqlAdminUserDao.getAdminUser(newUser)!=null;
-        Assert.assertEquals(false,exists);
+        assertEquals(false, exists);
         logger.info("The result of the test, user exists not:", exists);
     }
 
