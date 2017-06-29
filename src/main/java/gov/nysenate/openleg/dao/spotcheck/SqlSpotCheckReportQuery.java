@@ -8,7 +8,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ACTIVE_MISMATCHES(
             "SELECT DISTINCT ON (key, type) * \n" +
             "FROM ${schema}.spotcheck_mismatch \n" +
-            "WHERE reference_active_date_time BETWEEN :sessionStartDateTime AND :reportEndDateTime \n" +
+            "WHERE observed_date_time BETWEEN :sessionStartDateTime AND :reportEndDateTime \n" +
             "  AND datasource = :datasource \n" +
             "  AND ignore_status IN (:ignoreStatuses)\n" +
             "ORDER BY key, type, reference_active_date_time desc"
