@@ -143,6 +143,7 @@ public class MismatchUtilsTest {
         List<DeNormSpotCheckMismatch> current = Lists.newArrayList(openMismatch);
         LocalDateTime originalReferenceDate = openMismatch.getReferenceId().getRefActiveDateTime();
         LocalDateTime originalReportDateTime = openMismatch.getReportDateTime();
+        LocalDateTime originalObservedDateTime = openMismatch.getObservedDateTime();
         Set<Object> keys = Sets.newHashSet(new BillId(printNo, 2017));
         Set<SpotCheckMismatchType> types = Sets.newHashSet(SpotCheckMismatchType.BILL_ACTIVE_AMENDMENT);
 
@@ -151,6 +152,7 @@ public class MismatchUtilsTest {
         assertThat(resolved.getState(), is(MismatchState.CLOSED));
         assertThat(resolved.getReferenceId().getRefActiveDateTime(), is(greaterThan(originalReferenceDate)));
         assertThat(resolved.getReportDateTime(), is(greaterThan(originalReportDateTime)));
+        assertThat(resolved.getObservedDateTime(), is(greaterThan(originalObservedDateTime)));
     }
 
     /**
@@ -189,6 +191,7 @@ public class MismatchUtilsTest {
         mismatch.setState(state);
         mismatch.setReferenceId(new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now()));
         mismatch.setReportDateTime(LocalDateTime.now());
+        mismatch.setObservedDateTime(LocalDateTime.now());
         return mismatch;
     }
 }

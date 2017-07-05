@@ -87,6 +87,7 @@ public class MismatchUtils {
                 .peek(m -> m.setState(MismatchState.CLOSED))
                 .peek(m -> m.setReportDateTime(reportDateTime))
                 .peek(m -> m.setReferenceDateTime(referenceDateTime))
+                .peek(m -> m.setObservedDateTime(reportDateTime))
                 .collect(Collectors.toList());
     }
 
