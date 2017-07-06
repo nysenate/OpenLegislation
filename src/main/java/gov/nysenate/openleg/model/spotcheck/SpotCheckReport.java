@@ -4,10 +4,8 @@ import com.google.common.collect.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A SpotCheckReport is basically a collection of observations that have 1 or more mismatches associated
@@ -18,6 +16,9 @@ import java.util.Optional;
  */
 public class SpotCheckReport<ContentKey>
 {
+    /** Auto increment id */
+    private int id;
+
     /** Identifier for this report. */
     protected SpotCheckReportId reportId;
 
@@ -167,6 +168,14 @@ public class SpotCheckReport<ContentKey>
         return Optional.ofNullable(this.observations).map(Map::size).orElse(0);
     }
 
+    /**
+     * Get ContentKey's that were checked by this report.
+     * @return
+     */
+    public Set<ContentKey> getCheckedKeys() {
+        return this.getObservations().values().stream().map(SpotCheckObservation::getKey).collect(Collectors.toSet());
+    }
+
     /** --- Delegates --- */
 
     public LocalDateTime getReportDateTime() {
@@ -182,6 +191,14 @@ public class SpotCheckReport<ContentKey>
     }
 
     /** --- Basic Getters/Setters --- */
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public SpotCheckReportId getReportId() {
         return reportId;

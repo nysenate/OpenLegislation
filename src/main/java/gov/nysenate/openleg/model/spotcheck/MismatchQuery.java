@@ -27,8 +27,8 @@ public class MismatchQuery {
                          MismatchStatus status, Set<SpotCheckContentType> contentTypes) {
         this.reportDate = reportDate;
         this.dataSource = dataSource;
-        this.contentTypes = contentTypes;
         this.status = status;
+        this.contentTypes = contentTypes;
         // Default values
         this.mismatchTypes = EnumSet.allOf(SpotCheckMismatchType.class);
         this.ignoredStatuses = EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED);

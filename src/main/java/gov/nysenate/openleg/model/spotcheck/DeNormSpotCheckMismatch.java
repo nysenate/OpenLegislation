@@ -61,6 +61,23 @@ public class DeNormSpotCheckMismatch<ContentKey> {
        this.ignoreStatus = SpotCheckMismatchIgnore.NOT_IGNORED;
     }
 
+    public DeNormSpotCheckMismatch copy() {
+        DeNormSpotCheckMismatch copy = new DeNormSpotCheckMismatch(key, type, dataSource);
+        copy.setReportId(reportId);
+        copy.setState(state);
+        copy.setContentType(contentType);
+        copy.setReferenceId(referenceId);
+        copy.setReferenceData(referenceData);
+        copy.setObservedData(observedData);
+        copy.setNotes(notes);
+        copy.setObservedDateTime(observedDateTime);
+        copy.setFirstSeenDateTime(firstSeenDateTime);
+        copy.setReportDateTime(reportDateTime);
+        copy.setIgnoreStatus(ignoreStatus);
+        copy.setIssueIds(issueIds);
+        return copy;
+    }
+
     public void setReferenceDateTime(LocalDateTime referenceDateTime) {
         this.setReferenceId(new SpotCheckReferenceId(this.getReferenceId().getReferenceType(), referenceDateTime));
     }

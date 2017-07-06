@@ -152,13 +152,14 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     @Override
     public void saveReport(SpotCheckReport<ContentKey> report) {
         int reportId = insertReport(report);
+        report.setId(reportId);
         // Return early if the observations have not been set
         if (report.getObservations() == null) {
             logger.warn("The observations have not been set on this report.");
             return;
         }
 
-        List<DeNormSpotCheckMismatch> reportMismatches = reportToDeNormMismatches(report, reportId);
+        List<DeNormSpotCheckMismatch> reportMismatches = reportToDeNormMismatches(report);
         List<DeNormSpotCheckMismatch> currentMismatches = getCurrentMismatches(report);
 
         reportMismatches.addAll(closedMismatches(report, reportMismatches, currentMismatches));
@@ -172,13 +173,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
     private List<DeNormSpotCheckMismatch> closedMismatches(SpotCheckReport<ContentKey> report,
                                                            List<DeNormSpotCheckMismatch> reportMismatches,
                                                            List<DeNormSpotCheckMismatch> currentMismatches) {
-        // All mismatch keys checked by this report.
-        Set<Object> checkedKeys = report.getObservations().values().stream().map(SpotCheckObservation::getKey).collect(Collectors.toSet());
-        // All mismatch types checked in this report.
-        Set<SpotCheckMismatchType> checkedTypes = report.getReferenceType().checkedMismatchTypes();
-
-        return MismatchUtils.deriveClosedMismatches(reportMismatches, currentMismatches, checkedKeys,
-                checkedTypes, report.getReportDateTime(), report.getReferenceDateTime());
+        return MismatchUtils.deriveClosedMismatches(reportMismatches, currentMismatches, report);
     }
 
     private List<DeNormSpotCheckMismatch> getCurrentMismatches(SpotCheckReport<ContentKey> report) {
@@ -243,7 +238,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * Converts SpotCheckMismatches in a SpotCheckReport into DeNormSpotCheckMismaches.
      * Initializes firstSeenDateTime to the observedDateTime.
      */
-    private List<DeNormSpotCheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report, int reportId) {
+    private List<DeNormSpotCheckMismatch> reportToDeNormMismatches(SpotCheckReport<ContentKey> report) {
         List<DeNormSpotCheckMismatch> mismatches = new ArrayList<>();
         for (SpotCheckObservation<ContentKey> ob : report.getObservations().values()) {
             // Skip if no mismatches in the observation
@@ -253,7 +248,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             for (SpotCheckMismatch m : ob.getMismatches().values()) {
                 DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(ob.getKey(), m.getMismatchType(),
                         report.getReferenceType().getDataSource());
-                mismatch.setReportId(reportId);
+                mismatch.setReportId(report.getId());
                 mismatch.setContentType(report.getReferenceType().getContentType());
                 mismatch.setReferenceId(ob.getReferenceId());
                 mismatch.setReferenceData(m.getReferenceData());
