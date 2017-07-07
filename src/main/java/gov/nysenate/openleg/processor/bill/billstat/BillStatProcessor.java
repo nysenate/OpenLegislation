@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Robert Bebber on 3/20/17.
@@ -70,8 +72,9 @@ public class BillStatProcessor extends AbstractDataProcessor implements SobiProc
             String lawSec = xmlHelper.getString("law", billTextNode).trim();
             String title = xmlHelper.getString("title", billTextNode).trim();
             String billactions = xmlHelper.getString("billactions", billTextNode).trim();
+            billactions = reformatBillActions(billactions);
             Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse +
-                    billno, sessyr), sobiFragment);
+                    billno, sessyr,version), sobiFragment);
             BillAmendment billAmendment = baseBill.getActiveAmendment();
             BillSponsor billSponsor = baseBill.getSponsor();
             Chamber chamber = baseBill.getBillType().getChamber();
@@ -130,6 +133,16 @@ public class BillStatProcessor extends AbstractDataProcessor implements SobiProc
         billAmendment.setLawSection(null);
         baseBill.setSponsor(null);
         baseBill.setTitle(null);
+    }
+
+    /**
+     *  This method is used to reformat billaction, adding the space between lines in CDATA
+     * @param str bill action string
+     */
+    private String reformatBillActions(String str) {
+        if (str.isEmpty())
+            return str;
+        return str.replaceAll("(\\d\\d)/(\\d\\d)/(\\d\\d)","\n$0").substring(1);
     }
 
     @Override

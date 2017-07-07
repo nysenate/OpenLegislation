@@ -16,13 +16,13 @@ public class SobiProcessServiceTest extends BaseTests
 
     @Test
     public void ingestTest() {
-        sobiProcessService.ingest();
+            sobiProcessService.ingest();
     }
 
     @Test
     public void fullTest() {
-        sobiProcessService.collate();
-         sobiProcessService.ingest();
+            sobiProcessService.collate();
+            sobiProcessService.ingest();
     }
 
 

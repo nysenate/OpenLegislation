@@ -58,6 +58,8 @@ public class LDBlurbProcessor extends AbstractDataProcessor implements SobiProce
             final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
             final String action = xmlHelper.getString("@action", billTextNode).trim(); // TODO: implement actions
             final String blurb = billTextNode.getTextContent().trim();
+            if (billno == 0) // if it is a LDBC error
+                return;
             final Bill baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), new BillId(billhse +
                     billno, sessyr), fragment);
             if (action.equals("replace")) {

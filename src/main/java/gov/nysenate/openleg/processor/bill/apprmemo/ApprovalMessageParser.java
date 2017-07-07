@@ -51,8 +51,8 @@ public class ApprovalMessageParser {
 
     private String getSigner() {
         Matcher matt = approvalSignerPattern.matcher(memoText);
-        if (!matt.find()) {
-            throw new ParseError("No Signature found with the Approval Memorandum.");
+        if (!matt.find()) { // noone sign
+            return "";
         }
         return matt.group(1);
     }

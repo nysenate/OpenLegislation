@@ -77,6 +77,8 @@ public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiP
             final String coprime = xmlHelper.getString("co-prime", billTextNode).trim();
             final String multi = xmlHelper.getString("multi", billTextNode).trim();
 
+            if (sponsorno == 0) // if it is a LDBC error
+                return;
             Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(sponsorhse +
                     sponsorno, sessyr), sobiFragment);
             BillSponsor billSponsor = baseBill.getSponsor();
@@ -86,25 +88,29 @@ public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiP
             if (action.equals("remove")) {
                 removeProcess(amendment, baseBill);
             } else {
-                Pattern rulesSponsorPattern =
-                        Pattern.compile("(RULES (?:COM ))|(BUDGET BILL)?\\(?([a-zA-Z-' ]+)\\)?(.*)");
-                Matcher rules = rulesSponsorPattern.matcher(prime);
-                rules.find();
-                if (rules.group().contains("BUDGET BILL")) {
-                    billSponsor.setBudget(true);
+                if (prime.contains("BUDGET BILL")) {
+                        BillSponsor billSponsor1 = new BillSponsor();
+                    billSponsor1.setBudget(true);
+                    baseBill.setSponsor(billSponsor1);
                 } else {
-                    String sponsor;
-                    if (rules.group().contains("RULES ")) {
-                        rules.find();
-                        sponsor = rules.group().trim();
-                        billSponsor.setRules(true);
+                    String sponsor = "";
+                    if (prime.contains("RULES ")) {
+                        BillSponsor billSponsor1 = new BillSponsor();
+                        billSponsor1.setRules(true);
+                        baseBill.setSponsor(billSponsor1);
                     } else {
                         sponsor = prime;
+                        List<SessionMember> sessionMembers = getSessionMember(sponsor, baseBill.getSession(), chamber);
+                        if (billSponsor != null && !sessionMembers.isEmpty()) { // if noone support the bill, but it contains the session member, it maybe means that the member added in another bill. so add her/him as the sponsor
+                            baseBill.setSponsor(new BillSponsor(sessionMembers.get(0)));
+                            baseBill.getSponsor().setMember(sessionMembers.get(0));
+                        }
+                        else if (billSponsor == null && !sessionMembers.isEmpty()){
+                            baseBill.setSponsor(new BillSponsor(sessionMembers.get(0)));
+                        }
+                        amendment.setCoSponsors(getSessionMember(coprime, baseBill.getSession(), chamber));
+                        amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber));
                     }
-                    List<SessionMember> sessionMembers = getSessionMember(sponsor, baseBill.getSession(), chamber);
-                    billSponsor.setMember(sessionMembers.get(0));
-                    amendment.setCoSponsors(getSessionMember(coprime, baseBill.getSession(), chamber));
-                    amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber));
                 }
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);

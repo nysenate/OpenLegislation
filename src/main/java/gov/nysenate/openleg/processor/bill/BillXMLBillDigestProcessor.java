@@ -69,6 +69,8 @@ public class BillXMLBillDigestProcessor extends AbstractDataProcessor implements
                     String oldhse = xmlHelper.getString("digestsummary/oldbill/oldhse[" + i + "]", doc).replaceAll("\n", "");
                     String oldno = xmlHelper.getString("digestsummary/oldbill/oldno[" + i + "]", doc).replaceAll("\n", "");
                     String oldamd = xmlHelper.getString("digestsummary/oldbill/oldamd[" + i + "]", doc).replaceAll("\n", "");
+                    if (oldamd.isEmpty() || oldno.isEmpty() || oldhse.isEmpty())
+                        break;// we dont know what to do that a digestsummary contains oldbill field but has no information related to oldbill
                     baseBill.addDirectPreviousVersion(new BillId(oldhse + oldno, SessionYear.of(sess), Version.of(oldamd)));
                 }
             } else { //remove bill

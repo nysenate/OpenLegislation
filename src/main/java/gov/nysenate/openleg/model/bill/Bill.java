@@ -118,13 +118,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     @Override
     public void setPublishedDateTime(LocalDateTime publishDateTime) {
         super.setPublishedDateTime(publishDateTime);
-        if (this.publishedDateTime != null) {
-            // Sometimes bills are pre-filed before the session actually starts so we account for this.
-            super.setYear(Integer.max(this.session.getYear(), publishDateTime.getYear()));
-        }
-        else {
-            super.setYear(this.session.getYear());
-        }
+
     }
 
     @Override

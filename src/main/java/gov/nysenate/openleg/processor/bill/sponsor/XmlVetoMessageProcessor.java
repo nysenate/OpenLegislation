@@ -11,6 +11,7 @@ import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -76,9 +77,14 @@ public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements So
             vetoMessage.setYear(year);
 
             if (action.equals("remove")) {
-                VetoMessage vetoM = vetoDao.getVetoMessage(new VetoId(year, number));
-                baseBill = getOrCreateBaseBill(date, vetoM.getBillId(), fragment);
-                baseBill.getVetoMessages().remove(vetoM.getVetoId());
+                try { // try to remove throw exception if it does not exists
+                    VetoMessage vetoM = vetoDao.getVetoMessage(new VetoId(year, number));
+                    baseBill = getOrCreateBaseBill(date, vetoM.getBillId(), fragment);
+                    baseBill.getVetoMessages().remove(vetoM.getVetoId());
+                }
+                catch (EmptyResultDataAccessException emptyResultDataAccessException){
+                    return;
+                }
             } else if (action.equals("replace")) {
                 final String billhse = xmlHelper.getNode("veto_message/billhse", doc).getTextContent();
                 final String billno = xmlHelper.getNode("veto_message/billno", doc).getTextContent();

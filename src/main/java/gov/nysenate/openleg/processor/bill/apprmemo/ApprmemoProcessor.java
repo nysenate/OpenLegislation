@@ -15,6 +15,7 @@ import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -89,9 +90,13 @@ public class ApprmemoProcessor extends AbstractMemoProcessor implements SobiProc
             }
             Bill baseBill = null;
             if (action.equals("remove")) {
-                ApprovalMessage add = approvalDao.getApprovalMessage(new ApprovalId(year, apprno));
-                baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), add.getBillId(), fragment);
-                baseBill.setApprovalMessage(null);
+                try { //try to remove
+                    ApprovalMessage add = approvalDao.getApprovalMessage(new ApprovalId(year, apprno));
+                    baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), add.getBillId(), fragment);
+                    baseBill.setApprovalMessage(null);
+                }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+                    return;
+                }
             } else {
                 baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), new BillId(billhse +
                         billno, year), fragment);
