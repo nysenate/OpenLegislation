@@ -20,6 +20,10 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
             {
                 value: 'NYSENATE',
                 label: 'OpenLegislation - NYSenate.gov'
+            },
+            {
+                value:'OPENLEGDEV',
+                label: 'SOBI - XML'
             }
         ],
         selected: {}
