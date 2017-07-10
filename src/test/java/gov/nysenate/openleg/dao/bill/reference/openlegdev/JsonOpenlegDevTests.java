@@ -20,8 +20,10 @@ public class JsonOpenlegDevTests  extends BaseTests {
 
     @Autowired
     OpenlegBillReportService openlegBillReportService;
+
     @Test
     public void testgetBillView() throws Exception {
-        SpotCheckReport<BaseBillId> spotCheckReport = openlegBillReportService.generateReport(LocalDateTime.parse("2015-12-03T10:15:30"),null);
+        SpotCheckReport<BaseBillId> spotCheckReport = openlegBillReportService.generateReport(LocalDateTime.parse("2017-12-03T10:15:30"),null);
+        System.out.println();
     }
 }

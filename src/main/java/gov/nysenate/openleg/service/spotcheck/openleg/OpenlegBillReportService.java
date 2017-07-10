@@ -96,6 +96,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
         // Check for differences between the set of daybreak and openleg base bill ids.
         logger.info("Fetching Missing Bill");
         final long[] numOfMismatches = {0};
+        System.out.println("Found " + refBill.size()+" bills in Openleg-dev(SOBI) and " + localBill.size()+" bills in local (XML)" );
         Sets.symmetricDifference(refBill, localBill).stream()
                 .forEach(id -> {
                     SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), id);

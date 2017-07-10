@@ -47,7 +47,7 @@ public class OpenlegSpotCheckCtrl extends BaseCtrl {
     }
 
     @RequiresPermissions("admin:spotcheck")
-    @RequestMapping(value = "/{sessionYear}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{sessionYear}", method = RequestMethod.GET)
     public BaseResponse performSpotCheck(@PathVariable String sessionYear) {
         logger.info("Running Openleg Spotcheck with session year: " + sessionYear);
         spotcheckRunService.runReports(openlegBillReportService.getSpotcheckRefType(), Range.closed(LocalDateTime.of(Integer.valueOf(sessionYear), 1, 1, 1, 1), LocalDateTime.of(Integer.valueOf(sessionYear), 1, 1, 1, 1)));
