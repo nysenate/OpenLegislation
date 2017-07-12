@@ -373,7 +373,10 @@ public class ManagedSobiProcessService implements SobiProcessService {
         xmlBuffer = new StringBuffer();
         Matcher m = Pattern.compile("<\\!\\[CDATA\\[(.*?)\\]\\]>").matcher(xmlString);
         while (m.find()) {
-            m.appendReplacement(xmlBuffer, Matcher.quoteReplacement(m.group(0).replaceAll("&newl;", "").replaceAll("\\\\n", "\n")));
+            String tmp1 = Matcher.quoteReplacement(m.group(0).replaceAll("&newl;", " ").replaceAll("\\\\n", "\n"));
+            StringBuffer sb = new StringBuffer(tmp1.replaceFirst(" ",""));
+            StringBuffer sb1 = new StringBuffer(sb.reverse().toString().replaceFirst(" ",""));
+            m.appendReplacement(xmlBuffer, sb1.reverse().toString());
         }
         m.appendTail(xmlBuffer);
 

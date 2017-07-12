@@ -90,7 +90,7 @@ public enum SpotCheckMismatchType
     /**
      *  Openleg xml vs Openleg sobi (in dev branch) mismatches
      */
-    BILL_TITLE_OPENLEG_DEV("Bill Title", OPENLEG_DEV ),
+    BILL_TITLE_OPENLEG_DEV("Bill Title", OPENLEG_DEV),
     BILL_VIEW_TYPE_OPENLEG_DEV("Bill View Type",  OPENLEG_DEV),
     BILL_ACTIVE_VERSION_OPENLEG_DEV("Bill Active Version", OPENLEG_DEV),
     BILL_BASE_PRINT_NO_OPENLEG_DEV("Bill Base Print No", OPENLEG_DEV),
