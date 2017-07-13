@@ -74,7 +74,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
         logger.info("Start generating new report of difference between Openleg Dev and XML branch ");
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.OPENLEG_DEV,
-                start,
+                LocalDateTime.now(),
                 LocalDateTime.now());
         report.setReportId(reportId);
         logger.info("Loading BillView from Openleg Dev ");
