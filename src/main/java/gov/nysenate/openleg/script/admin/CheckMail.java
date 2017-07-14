@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.script.admin;
 
 import gov.nysenate.openleg.script.BaseScript;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
@@ -75,7 +75,7 @@ public class CheckMail extends BaseScript
                     if (Part.ATTACHMENT.equals(part.getDisposition())) {
                         System.out.println("Saving "+part.getFileName()+" to "+filename);
                         String attachment = IOUtils.toString(part.getInputStream());
-                        FileUtils.write(new File(lrsFileDir, filename), attachment);
+                        FileIOUtils.write(new File(lrsFileDir, filename), attachment);
                     }
                 }
             }

@@ -71,7 +71,7 @@ public class FsSenateSiteDao implements SenateSiteDao {
     public void saveDumpFragment(SenateSiteDumpFragment fragment, String fragmentData) throws IOException {
         File fragmentFile = new File(getIncomingDumpDir(fragment.getDumpId().getRefType()), getDumpFragFilename(fragment));
         logger.info("saving senate site dump fragment {}", fragmentFile.getAbsolutePath());
-        FileUtils.write(fragmentFile, prettyPrintJson(fragmentData), Charset.forName("UTF-8"));
+        FileIOUtils.write(fragmentFile, prettyPrintJson(fragmentData), Charset.forName("UTF-8"));
     }
 
     private String prettyPrintJson(String fragmentData) throws IOException {
