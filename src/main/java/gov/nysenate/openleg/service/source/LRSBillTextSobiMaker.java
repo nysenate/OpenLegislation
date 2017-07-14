@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -178,6 +179,6 @@ public class LRSBillTextSobiMaker {
         FileUtils.forceMkdir(destinationDir);
         File sobiFile = new File(destinationDir, pubDateTime.format(sobiFileNameFormat));
         logger.info("writing {}", sobiFile);
-        FileUtils.write(sobiFile, fileContents, "UTF-8");
+        FileIOUtils.write(sobiFile, fileContents, Charset.forName("UTF-8"));
     }
 }
