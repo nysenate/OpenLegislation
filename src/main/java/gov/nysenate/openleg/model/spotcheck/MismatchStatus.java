@@ -21,10 +21,19 @@ public enum MismatchStatus {
         return state;
     }
 
-    public LocalDateTime getStartDateTime(LocalDate date) {
+    public LocalDateTime getObservedStartDateTime(LocalDate date) {
         switch(this) {
             case NEW:
             case RESOLVED:
+                return date.atStartOfDay();
+            default:
+                return SessionYear.of(date.getYear()).getStartDateTime();
+        }
+    }
+
+    public LocalDateTime getFirstSeenStartDateTime(LocalDate date) {
+        switch(this) {
+            case NEW:
                 return date.atStartOfDay();
             default:
                 return SessionYear.of(date.getYear()).getStartDateTime();
