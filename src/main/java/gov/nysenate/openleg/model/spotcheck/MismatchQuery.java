@@ -47,8 +47,12 @@ public class MismatchQuery {
         return status.getFirstSeenStartDateTime(reportDate);
     }
 
-    public LocalDateTime getEndDateTime() {
-        return status.getEndDateTime(reportDate);
+    public LocalDateTime getFirstSeenEndDateTime() {
+        return status.getFirstSeenEndDateTime(reportDate);
+    }
+
+    public LocalDateTime getObservedEndDateTime() {
+        return status.getObservedEndDateTime(reportDate);
     }
 
     /** --- Setters and Getters --- */

@@ -40,12 +40,16 @@ public enum MismatchStatus {
         }
     }
 
-    public LocalDateTime getEndDateTime(LocalDate date) {
+    public LocalDateTime getFirstSeenEndDateTime(LocalDate date) {
         switch(this) {
             case EXISTING:
                 return date.minusDays(1).atTime(23, 59, 59);
             default:
                 return date.atTime(23, 59, 59);
         }
+    }
+
+    public LocalDateTime getObservedEndDateTime(LocalDate date) {
+        return date.atTime(23, 59, 59);
     }
 }

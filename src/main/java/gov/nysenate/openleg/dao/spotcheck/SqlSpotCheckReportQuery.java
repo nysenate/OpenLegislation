@@ -32,8 +32,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "  observed_date_time, first_seen_date_time, report_date_time, ignore_status, issue_ids, \n" +
         "  count(*) OVER() as total_rows \n" +
         "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-        "WHERE first_seen_date_time BETWEEN :firstSeenStartDateTime AND :endDateTime \n" +
-        "  AND observed_date_time BETWEEN :observedStartDateTime AND :endDateTime \n" +
+        "WHERE first_seen_date_time BETWEEN :firstSeenStartDateTime AND :firstSeenEndDateTime \n" +
+        "  AND observed_date_time BETWEEN :observedStartDateTime AND :observedEndDateTime \n" +
         "  AND state = :state \n" +
         "  AND content_type IN (:contentTypes) \n" +
         "  AND type IN (:mismatchTypes) \n" +
@@ -74,8 +74,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     MISMATCH_TYPE_SUMMARY(
             "SELECT type, count(*) as count \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-            "WHERE first_seen_date_time BETWEEN :firstSeenStartDateTime AND :endDateTime \n" +
-            "  AND observed_date_time BETWEEN :observedStartDateTime AND :endDateTime \n" +
+            "WHERE first_seen_date_time BETWEEN :firstSeenStartDateTime AND :firstSeenEndDateTime \n" +
+            "  AND observed_date_time BETWEEN :observedStartDateTime AND :observedEndDateTime \n" +
             "  AND state = :state \n" +
             "  AND ignore_status IN (:ignoreStatuses) \n" +
             "GROUP BY type"
@@ -84,8 +84,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     MISMATCH_CONTENT_TYPE_SUMMARY(
             "SELECT content_type, count(*) as count \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-            "WHERE first_seen_date_time BETWEEN :firstSeenStartDateTime AND :endDateTime \n" +
-            "  AND observed_date_time BETWEEN :observedStartDateTime AND :endDateTime \n" +
+            "WHERE first_seen_date_time BETWEEN :firstSeenStartDateTime AND :firstSeenEndDateTime \n" +
+            "  AND observed_date_time BETWEEN :observedStartDateTime AND :observedEndDateTime \n" +
             "  AND state = :state \n" +
             "  AND type IN (:mismatchTypes) \n" +
             "  AND ignore_status IN (:ignoreStatuses) \n" +

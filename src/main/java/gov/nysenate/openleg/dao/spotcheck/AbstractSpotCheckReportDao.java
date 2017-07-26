@@ -85,7 +85,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("state", query.getState().name())
                 .addValue("observedStartDateTime", query.getObservedStartDateTime())
                 .addValue("firstSeenStartDateTime", query.getFirstSeenStartDateTime())
-                .addValue("endDateTime", query.getEndDateTime())
+                .addValue("firstSeenEndDateTime", query.getFirstSeenEndDateTime())
+                .addValue("observedEndDateTime", query.getObservedEndDateTime())
                 .addValue("ignoreStatuses", query.getIgnoredStatuses().stream().map(Enum::name).collect(Collectors.toSet()))
                 .addValue("mismatchTypes", extractEnumSetParams(query.getMismatchTypes()));
         String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema(), query.getOrderBy(), limitOffset);
@@ -120,7 +121,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("ignoreStatuses", extractEnumSetParams(ignoreStatuses))
                 .addValue("observedStartDateTime", mismatchStatus.getObservedStartDateTime(reportDate))
                 .addValue("firstSeenStartDateTime", mismatchStatus.getFirstSeenStartDateTime(reportDate))
-                .addValue("endDateTime", mismatchStatus.getEndDateTime(reportDate))
+                .addValue("firstSeenEndDateTime", mismatchStatus.getFirstSeenEndDateTime(reportDate))
+                .addValue("observedEndDateTime", mismatchStatus.getObservedEndDateTime(reportDate))
                 .addValue("state", mismatchStatus.getState().name());
         String sql = SqlSpotCheckReportQuery.MISMATCH_TYPE_SUMMARY.getSql(schema());
         MismatchTypeSummaryHandler summaryHandler = new MismatchTypeSummaryHandler();
@@ -139,7 +141,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                   .addValue("ignoreStatuses", extractEnumSetParams(ignoreStatuses))
                   .addValue("observedStartDateTime", mismatchStatus.getObservedStartDateTime(reportDate))
                   .addValue("firstSeenStartDateTime", mismatchStatus.getFirstSeenStartDateTime(reportDate))
-                  .addValue("endDateTime", mismatchStatus.getEndDateTime(reportDate))
+                  .addValue("firstSeenEndDateTime", mismatchStatus.getFirstSeenEndDateTime(reportDate))
+                  .addValue("observedEndDateTime", mismatchStatus.getObservedEndDateTime(reportDate))
                   .addValue("state", mismatchStatus.getState().name())
                   .addValue("mismatchTypes", extractEnumSetParams(mismatchTypes));
         String sql = SqlSpotCheckReportQuery.MISMATCH_CONTENT_TYPE_SUMMARY.getSql(schema());
