@@ -4047,11 +4047,15 @@ ALTER TABLE ONLY spotcheck_mismatch
 
 
 --
--- Name: spotcheck_mismatch_datasource_content_type_ref_date_time_index; Type: INDEX; Schema: master; Owner: postgres
+-- Name: spotcheck_mismatch_observed_date_time_index; Type: INDEX; Schema: master; Owner: postgres
 --
 
-CREATE INDEX spotcheck_mismatch_datasource_content_type_ref_date_time_index ON spotcheck_mismatch USING btree (datasource, content_type, reference_active_date_time);
+CREATE INDEX spotcheck_mismatch_observed_date_time_index on master.spotcheck_mismatch(observed_date_time);
 
+--
+-- Name: spotcheck_mismatch_first_seen_date_time_index; Type: INDEX; Schema: master; Owner: postgres
+--
+CREATE INDEX spotcheck_mismatch_first_seen_date_time_index on master.spotcheck_mismatch(first_seen_date_time);
 
 --
 -- Name: transcript; Type: TABLE; Schema: master; Owner: postgres

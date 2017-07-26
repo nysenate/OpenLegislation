@@ -118,5 +118,5 @@ FROM master.spotcheck_report r
 
 ANALYZE master.spotcheck_mismatch;
 
-CREATE INDEX spotcheck_mismatch_datasource_content_type_ref_date_time_index
-on master.spotcheck_mismatch (datasource, content_type, reference_active_date_time);
+CREATE INDEX spotcheck_mismatch_observed_date_time_index on master.spotcheck_mismatch(observed_date_time);
+CREATE INDEX spotcheck_mismatch_first_seen_date_time_index on master.spotcheck_mismatch(first_seen_date_time);
