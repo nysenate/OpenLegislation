@@ -1,29 +1,39 @@
 package gov.nysenate.openleg.model.spotcheck.senatesite;
 
-import com.google.common.collect.Range;
+import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDateTime;
 
-public abstract class SenateSiteDumpId {
+public class SenateSiteDumpId implements Comparable<SenateSiteDumpId> {
 
-    protected final SpotCheckRefType refType;
-    protected final int fragmentCount;
+    private final SpotCheckRefType refType;
+    private final int fragmentCount;
+    private final int year;
+    private final LocalDateTime dumpTime;
 
-    protected SenateSiteDumpId(SpotCheckRefType refType, int fragmentCount) {
+    public SenateSiteDumpId(SpotCheckRefType refType, int fragmentCount, int year, LocalDateTime dumpTime) {
         this.refType = refType;
         this.fragmentCount = fragmentCount;
+        this.year = year;
+        this.dumpTime = dumpTime;
     }
 
-    /** Abstract Methods */
+    /* --- Functional Getters --- */
 
-    /** Return the date time range of this dump. */
-    public abstract Range<LocalDateTime> getRange();
+    public SessionYear getSession() {
+        return SessionYear.of(year);
+    }
 
     /** Description of this dumps time range. */
-    public abstract String getNotes();
+    public String getNotes() {
+        return "Generated from year dump: " + year;
+    }
 
-    /** Basic get/set methods */
+    /* --- Getters --- */
 
     public SpotCheckRefType getRefType() {
         return refType;
@@ -33,29 +43,48 @@ public abstract class SenateSiteDumpId {
         return fragmentCount;
     }
 
+    public int getYear() {
+        return year;
+    }
+
+    public LocalDateTime getDumpTime() {
+        return dumpTime;
+    }
+
+    /* --- Overrides --- */
+
     @Override
     public String toString() {
-        return "SenateSiteDumpId{" +
-               "refType=" + refType +
-               ", fragmentCount=" + fragmentCount +
-               '}';
+        return new ToStringBuilder(this)
+                .append("refType", refType)
+                .append("fragmentCount", fragmentCount)
+                .append("year", year)
+                .append("dumpTime", dumpTime)
+                .toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SenateSiteDumpId dumpId = (SenateSiteDumpId) o;
-
-        if (fragmentCount != dumpId.fragmentCount) return false;
-        return refType == dumpId.refType;
+        if (!(o instanceof SenateSiteDumpId)) return false;
+        SenateSiteDumpId that = (SenateSiteDumpId) o;
+        return fragmentCount == that.fragmentCount &&
+                year == that.year &&
+                refType == that.refType &&
+                Objects.equal(dumpTime, that.dumpTime);
     }
 
     @Override
     public int hashCode() {
-        int result = refType != null ? refType.hashCode() : 0;
-        result = 31 * result + fragmentCount;
-        return result;
+        return Objects.hashCode(refType, fragmentCount, year, dumpTime);
     }
+
+    @Override
+    public int compareTo(SenateSiteDumpId o) {
+        return ComparisonChain.start()
+                .compare(this.dumpTime, o.dumpTime)
+                .compare(this.year, o.year)
+                .result();
+    }
+
 }

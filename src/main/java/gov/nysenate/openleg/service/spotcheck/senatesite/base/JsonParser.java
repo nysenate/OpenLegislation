@@ -19,6 +19,8 @@ import java.util.function.Function;
  */
 public class JsonParser {
 
+    private static final String LANGUAGE_NONE = "und";
+
     @Autowired
     ObjectMapper objectMapper;
 
@@ -37,7 +39,7 @@ public class JsonParser {
 
     protected String getValue(JsonNode parentNode, String fieldName) {
         JsonNode undNode = parentNode.path(fieldName)
-                .path("und");
+                .path(LANGUAGE_NONE);
         if (!undNode.isArray() || !undNode.elements().hasNext()) {
             return null;
         }
@@ -71,7 +73,7 @@ public class JsonParser {
 
     protected <T> List<T> getListValue(JsonNode parentNode, String fieldName,
                                        Function<JsonNode, T> valMapper) {
-        JsonNode undNode = parentNode.path(fieldName).path("und");
+        JsonNode undNode = parentNode.path(fieldName).path(LANGUAGE_NONE);
         if(!undNode.isArray() || !undNode.elements().hasNext()){
             return new ArrayList<>();
         }

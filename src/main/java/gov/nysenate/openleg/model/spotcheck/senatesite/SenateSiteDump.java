@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.model.spotcheck.senatesite;
 
 import com.google.common.collect.ComparisonChain;
-import gov.nysenate.openleg.util.DateUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.TreeMap;
 import java.util.stream.IntStream;
 
 public class SenateSiteDump implements Comparable<SenateSiteDump> {
@@ -45,11 +45,8 @@ public class SenateSiteDump implements Comparable<SenateSiteDump> {
     @Override
     public int compareTo(SenateSiteDump o) {
         return ComparisonChain.start()
-                              .compare(DateUtils.startOfDateTimeRange(this.getDumpId().getRange()),
-                                       DateUtils.startOfDateTimeRange(o.getDumpId().getRange()))
-                              .compare(DateUtils.endOfDateTimeRange(this.getDumpId().getRange()),
-                                       DateUtils.endOfDateTimeRange(o.getDumpId().getRange()))
-                              .result();
+                .compare(this.dumpId, o.dumpId)
+                .result();
     }
 
     /** --- Getters --- */

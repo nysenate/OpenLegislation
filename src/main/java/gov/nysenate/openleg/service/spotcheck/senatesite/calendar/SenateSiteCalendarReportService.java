@@ -13,7 +13,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.calendar.SenateSiteCalendar;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
@@ -55,7 +55,7 @@ public class SenateSiteCalendarReportService extends BaseSpotCheckReportService<
     @Override
     public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         SenateSiteDump calendarDump = getMostRecentDump();
-        SenateSiteDumpSessionId dumpId = (SenateSiteDumpSessionId) calendarDump.getDumpId();
+        SenateSiteDumpId dumpId = calendarDump.getDumpId();
         SpotCheckReportId reportId = new SpotCheckReportId(SENATE_SITE_CALENDAR, dumpId.getDumpTime(), LocalDateTime.now());
         SpotCheckReport<CalendarEntryListId> report = new SpotCheckReport<>(reportId);
         report.setNotes(dumpId.getNotes());

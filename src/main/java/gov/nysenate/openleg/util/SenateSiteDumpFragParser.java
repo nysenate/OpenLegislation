@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckContentType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,7 @@ public class SenateSiteDumpFragParser {
     @Autowired private ObjectMapper objectMapper;
 
     /**
-     * <p>Parse a json string into a {@link SenateSiteDumpFragment}. Its SenateSiteDumpId is implemented
-     * as a {@link SenateSiteDumpSessionId}.</p>
+     * <p>Parse a json string into a {@link SenateSiteDumpFragment}
      * <p>Throws <code>SenateSiteDumpFragParserException</code> if a required json value is missing.</p>
      * @param json The json string to parse.
      * @return {@link SenateSiteDumpFragment}
@@ -47,12 +45,12 @@ public class SenateSiteDumpFragParser {
 
         LocalDateTime refDatetime = parseDateTimeFromNode(getRequiredNode(rootNode, "refDateTime"));
 
-        int session = getRequiredNode(rootNode, "session").intValue();
+        int year = getRequiredNode(rootNode, "year").intValue();
 
         String contentType = getRequiredNode(rootNode, "contentType").textValue();
         SpotCheckRefType refType = getRefType(contentType);
 
-        SenateSiteDumpId dumpId = createDumpId(refDatetime, totalParts, session, refType);
+        SenateSiteDumpId dumpId = createDumpId(refDatetime, totalParts, year, refType);
         return new SenateSiteDumpFragment(dumpId, part);
     }
 
@@ -81,8 +79,8 @@ public class SenateSiteDumpFragParser {
      * Returns a {@link SenateSiteDumpId} based on passed in data
      */
     private SenateSiteDumpId createDumpId(LocalDateTime refDateTime, int totalParts,
-                                          int sessionYear, SpotCheckRefType refType) {
-        return new SenateSiteDumpSessionId(refType, totalParts, sessionYear, refDateTime);
+                                          int year, SpotCheckRefType refType) {
+        return new SenateSiteDumpId(refType, totalParts, year, refDateTime);
     }
 
     private static final ImmutableMap<SpotCheckContentType, SpotCheckRefType> refTypeMap =

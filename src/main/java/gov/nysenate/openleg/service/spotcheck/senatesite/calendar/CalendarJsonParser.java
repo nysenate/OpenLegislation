@@ -12,7 +12,6 @@ import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.calendar.SenateSiteCalendar;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
-import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,7 +64,7 @@ public class CalendarJsonParser extends JsonParser {
 
     private SenateSiteCalendar extractSenSiteCalendar(JsonNode subCalNode, CalendarId calendarId,
                                                       SenateSiteDumpFragment fragment) throws IOException {
-        SenateSiteCalendar calendar = new SenateSiteCalendar(DateUtils.endOfDateTimeRange(fragment.getDumpId().getRange()));
+        SenateSiteCalendar calendar = new SenateSiteCalendar(fragment.getDumpId().getDumpTime());
 
         calendar.setBillCalNumbers(getIntListValue(subCalNode, "field_ol_bill_cal_number"));
         calendar.setCalendarType(getCalendarType(getValue(subCalNode,"field_ol_type")));

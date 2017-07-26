@@ -7,10 +7,8 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
-import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
 import gov.nysenate.openleg.util.SenateSiteDumpFragParser;
-import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -26,8 +24,8 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Pattern;
 
-
-import static gov.nysenate.openleg.util.DateUtils.*;
+import static gov.nysenate.openleg.util.DateUtils.BASIC_ISO_DATE_TIME;
+import static gov.nysenate.openleg.util.DateUtils.BASIC_ISO_DATE_TIME_REGEX;
 
 @Repository
 public class FsSenateSiteDao implements SenateSiteDao {
@@ -38,8 +36,11 @@ public class FsSenateSiteDao implements SenateSiteDao {
     @Autowired private SenateSiteDumpFragParser parser;
     @Autowired private ObjectMapper objectMapper;
 
+    /** Establishes the fixed number of digits in the sequence No portion of the file name */
+    private static final String seqNoFormat = "%03d";
+
     public static final String SENSITE_DUMP_DIRNAME = "sensite-dump";
-    private static final String DUMP_FRAG_FILENAME_PREFIX_TEMPL = "_dump-${fromDateTime}-${toDateTime}-";
+    private static final String DUMP_FRAG_FILENAME_PREFIX_TEMPL = "_dump-${year}-${refDateTime}-";
     private static final String DUMP_FRAG_FILENAME_TEMPL = "${seqNo}.json";
 
     /** --- Implemented Methods --- */
@@ -125,14 +126,14 @@ public class FsSenateSiteDao implements SenateSiteDao {
 
     private static ImmutableMap<String, String> getDumpIdSubMap(SenateSiteDumpId dumpId) {
         return ImmutableMap.of(
-                "fromDateTime", DateUtils.startOfDateTimeRange(dumpId.getRange()).format(BASIC_ISO_DATE_TIME),
-                "toDateTime", DateUtils.endOfDateTimeRange(dumpId.getRange()).format(BASIC_ISO_DATE_TIME));
+                "year", Integer.toString(dumpId.getYear()),
+                "refDateTime", dumpId.getDumpTime().format(BASIC_ISO_DATE_TIME));
     }
 
     private static ImmutableMap<String, String> getDumpFragSubMap(SenateSiteDumpFragment fragment) {
         return ImmutableMap.<String, String>builder()
                 .putAll(getDumpIdSubMap(fragment.getDumpId()))
-                .put("seqNo", Integer.toString(fragment.getSequenceNo()))
+                .put("seqNo", String.format(seqNoFormat, fragment.getSequenceNo()))
                 .build();
     }
 
@@ -160,8 +161,8 @@ public class FsSenateSiteDao implements SenateSiteDao {
     private static Pattern dumpFragFilenameRegex(SpotCheckRefType refType) {
              return Pattern.compile(
                      StrSubstitutor.replace(dumpFragFilename(refType), ImmutableMap.of(
-                    "fromDateTime", "(" + BASIC_ISO_DATE_TIME_REGEX.toString() + ")",
-                    "toDateTime", "(" + BASIC_ISO_DATE_TIME_REGEX.toString() + ")",
+                    "year", "(\\d{4})",
+                    "refDateTime", "(" + BASIC_ISO_DATE_TIME_REGEX.toString() + ")",
                     "seqNo", "(\\d+)")));
     }
 }

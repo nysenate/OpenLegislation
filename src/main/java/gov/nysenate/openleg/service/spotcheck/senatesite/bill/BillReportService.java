@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.PaginatedList;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillUpdatesDao;
 import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.dao.spotcheck.BillIdSpotCheckReportDao;
@@ -13,18 +13,12 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.*;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpSessionId;
-import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
-import gov.nysenate.openleg.model.updates.UpdateToken;
-import gov.nysenate.openleg.model.updates.UpdateType;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
+import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
-import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillCheckService;
-import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillJsonParser;
-import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +56,9 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
     @Override
     public synchronized SpotCheckReport<BillId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         SenateSiteDump billDump = getMostRecentDump();
+        SenateSiteDumpId dumpId = billDump.getDumpId();
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_BILLS,
-                DateUtils.endOfDateTimeRange(billDump.getDumpId().getRange()), LocalDateTime.now());
+                dumpId.getDumpTime(), LocalDateTime.now());
         SpotCheckReport<BillId> report = new SpotCheckReport<>(reportId);
         report.setNotes(billDump.getDumpId().getNotes());
         try {
@@ -90,8 +85,6 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
             Multimap<BaseBillId, SenateSiteBill> dumpedBills = ArrayListMultimap.create();
             billJsonParser.parseBills(billDump).forEach(b -> dumpedBills.put(b.getBaseBillId(), b));
             logger.info("parsed {} dumped bills", dumpedBills.size());
-
-            prunePostDumpBills(billDump, report, dumpedBills, updatedBills);
 
             logger.info("comparing bills present");
             // Add observations for any missing bills that should have been in the dump
@@ -129,41 +122,10 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
      */
     private Set<BaseBillId> getBillUpdatesDuring(SenateSiteDump billDump) {
         SenateSiteDumpId dumpId = billDump.getDumpId();
-        logger.info("Getting Openleg Bills for session: {}", ((SenateSiteDumpSessionId) dumpId).getSession());
+        logger.info("Getting Openleg Bills for session: {}", dumpId.getSession());
         return new TreeSet<>(
-                billDataService.getBillIds(((SenateSiteDumpSessionId) dumpId).getSession(), LimitOffset.ALL)
+                billDataService.getBillIds(dumpId.getSession(), LimitOffset.ALL)
         );
-    }
-
-    /**
-     * Get the base bill ids of all bills updated after the update interval specified by the dump
-     * Remove these bills from the openleg and senate site bill references
-     * Store a string list of these bill ids in the report notes
-     *
-     * @param billDump SenateSiteBillDump
-     * @param senSiteBills Multimap<BaseBillId, SenateSiteBill>
-     * @param openlegBills Map<BaseBillId, Bill>
-     */
-    private void prunePostDumpBills(SenateSiteDump billDump, SpotCheckReport report,
-                                    Multimap<BaseBillId, SenateSiteBill> senSiteBills, Map<BaseBillId, Bill> openlegBills) {
-        Range<LocalDateTime> billDumpRange = billDump.getDumpId().getRange();
-        Range<LocalDateTime> postDumpRange =  Range.downTo(DateUtils.endOfDateTimeRange(billDumpRange),
-                billDumpRange.upperBoundType() == BoundType.OPEN ? BoundType.CLOSED : BoundType.OPEN);
-        PaginatedList<UpdateToken<BaseBillId>> postDumpUpdates =
-                billUpdatesDao.getUpdates(postDumpRange, UpdateType.PROCESSED_DATE, null, SortOrder.NONE, LimitOffset.ALL);
-        Set<BaseBillId> postDumpUpdatedBills = postDumpUpdates.stream()
-                .map(UpdateToken::getId)
-                .collect(Collectors.toSet());
-
-        if (!postDumpUpdatedBills.isEmpty()) {
-            // Iterate over bills updated after the update interval, removing them from the references and
-            //  collecting them in a list to add to the report notes
-            String notes = postDumpUpdatedBills.stream()
-                    .peek(senSiteBills::removeAll)
-                    .peek(openlegBills::remove)
-                    .reduce("Ignored Bills:", (str, billId) -> str + " " + billId, (a, b) -> a + " " + b);
-            report.setNotes(report.getNotes() + "\n" + notes);
-        }
     }
 
     /**
