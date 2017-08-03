@@ -22,7 +22,7 @@ public class SpotcheckTest extends WebAppBaseTests {
 
     @Test
     public void runWeeklyReports() {
-        spotcheckRunService.runWeeklyReports();
+        spotcheckRunService.runIntervalReports();
     }
 
     @Test

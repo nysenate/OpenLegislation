@@ -17,7 +17,6 @@ import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
@@ -30,7 +29,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -291,17 +289,17 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     /**
-     * Spotcheck Weekly Report Run API
+     * Spotcheck Interval Report Run API
      *
-     * Attempts to run all spotcheck reports designated as weekly reports
+     * Attempts to run all spotcheck reports designated as interval reports
      *
-     * Usage: (GET) /api/3/admin/spotcheck/run/weekly
+     * Usage: (GET) /api/3/admin/spotcheck/run/interval
      */
     @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/run/weekly")
+    @RequestMapping(value = "/run/interval")
     public BaseResponse runWeeklyReports() {
-        spotcheckRunService.runWeeklyReports();
-        return new SimpleResponse(true, "weekly reports run", "report report");
+        spotcheckRunService.runIntervalReports();
+        return new SimpleResponse(true, "interval reports run", "report report");
     }
 
 
