@@ -9,8 +9,10 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceEvent;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.service.spotcheck.agenda.AgendaReportService;
+import gov.nysenate.openleg.service.spotcheck.agenda.IntervalAgendaReportService;
 import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.CalendarReportService;
+import gov.nysenate.openleg.service.spotcheck.calendar.IntervalCalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
 import gov.nysenate.openleg.service.spotcheck.senatesite.agenda.AgendaReportServices;
 import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillReportService;
@@ -20,11 +22,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
 
@@ -45,10 +50,14 @@ public class SpotcheckRunService {
     /** A multimap of reports that run whenever pertinent references are generated */
     SetMultimap<SpotCheckRefType, SpotCheckReportService> eventTriggeredReports;
 
+    /** A set of reports that automatically run weekly */
+    Set<SpotCheckReportService> weeklyReports;
+
     /** --- Report Services --- */
 
     /** Agenda Report Services */
     @Autowired private AgendaReportService agendaReportService;
+    @Autowired private IntervalAgendaReportService weeklyAgendaReportService;
 
     /** Bill Report Services */
     @Autowired private DaybreakReportService daybreakReportService;
@@ -56,6 +65,7 @@ public class SpotcheckRunService {
 
     /** Calendar Report Services */
     @Autowired private CalendarReportService calendarReportService;
+    @Autowired private IntervalCalendarReportService weeklyCalendarReportService;
 
     /** Nysenate.gov Report Services */
     @Autowired private BillReportService senSiteBillReportService;
@@ -74,6 +84,19 @@ public class SpotcheckRunService {
                 .put(SENATE_SITE_CALENDAR, senSiteCalReportService)
                 .put(SENATE_SITE_AGENDA,senSiteAgendaReportService)
                 .build();
+        weeklyReports = ImmutableSet.<SpotCheckReportService>builder()
+                .add(weeklyAgendaReportService)
+                .add(weeklyCalendarReportService)
+                .build();
+    }
+
+    /**
+     * Runs all weekly reports according to the cron in app.properties
+     */
+    @Scheduled(cron = "${scheduler.spotcheck.weekly.cron}")
+    public synchronized void runWeeklyReports() {
+        Range<LocalDateTime> weekRange = Range.closed(LocalDateTime.now().minus(Duration.ofDays(7)), LocalDateTime.now());
+        weeklyReports.forEach(reportService -> runReport(reportService, weekRange));
     }
 
     /**
