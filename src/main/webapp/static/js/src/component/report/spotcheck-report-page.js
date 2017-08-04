@@ -1,9 +1,10 @@
 angular.module('open.spotcheck')
     .controller('SpotcheckReportCtrl',
-        ['$scope', '$route','$location', '$routeParams', '$mdDialog', '$mdDateLocale','PaginationModel', 'SpotcheckMismatchApi',
-            'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI', 'SpotcheckMismatchTrackingAPI', 'SpotcheckMismatchDeleteAllAPI', 'SpotcheckMismatchDeleteAllAPI', ReportCtrl]);
+        ['$scope', '$route', '$location', '$routeParams', '$mdDialog', '$mdDateLocale', 'PaginationModel', 'SpotcheckMismatchApi',
+            'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI', 'SpotcheckMismatchTrackingAPI', 'SpotcheckMismatchDeleteAllAPI',
+            'SpotcheckMismatchDeleteAllAPI', ReportCtrl]);
 
-function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLocale,paginationModel, spotcheckMismatchApi,
+function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateLocale, paginationModel, spotcheckMismatchApi,
                     mismatchSummaryApi, mismatchIgnoreApi, spotcheckMismatchTrackingAPI, spotcheckMismatchDeleteAllAPI) {
 
     const dateFormat = 'YYYY-MM-DD';
@@ -70,7 +71,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
     /* --- Input callbacks --- */
 
     $scope.onDateChange = function () {
-        $scope.date = moment(  $scope.pickedDate);
+        $scope.date = moment($scope.pickedDate);
         $location.search(searchParams.date, $scope.date.format(dateFormat)).replace();
         $route.reload();
     };
@@ -135,7 +136,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
 
     $scope.updateMismatchTypeSummary = function () {
         $scope.mismatchTypeSummary.error = false;
-        mismatchSummaryApi.getMismatchTypeSummary($scope.datasource.selected.value, $scope.date._i,  $scope.selectedStatus)
+        mismatchSummaryApi.getMismatchTypeSummary($scope.datasource.selected.value, $scope.date._i, $scope.selectedStatus)
             .then(function (mismatchSummary) {
                 $scope.mismatchTypeSummary.summary = mismatchSummary;
                 $scope.mismatchTypesSummaryShow = Object.keys($scope.mismatchTypeSummary.summary.typeCount.items);
@@ -148,7 +149,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
 
     $scope.updateMismatchContentTypeSummary = function () {
         $scope.mismatchContentTypeSummary.error = false;
-        mismatchSummaryApi.getMismatchContentTypeSummary($scope.datasource.selected.value,$scope.date._i,  $scope.selectedStatus, formatSelectedMismatchType($scope.selectedMismatchType))
+        mismatchSummaryApi.getMismatchContentTypeSummary($scope.datasource.selected.value, $scope.date._i, $scope.selectedStatus, formatSelectedMismatchType($scope.selectedMismatchType))
             .then(function (mismatchSummary) {
                 $scope.mismatchContentTypeSummary.summary = mismatchSummary.summary;
             })
@@ -204,7 +205,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
                 $scope.pagination.setTotalItems(result.pagination.total);
                 $scope.mismatchResponse.mismatches = result.mismatches;
                 $scope.loading = false;
-                $scope.currentPage =  $scope.pagination.currPage;
+                $scope.currentPage = $scope.pagination.currPage;
                 $scope.showGoto = (result.pagination.total > $scope.pagination.getLimit())
             })
             .catch(function (response) {
@@ -216,14 +217,14 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
     };
 
     function formatSelectedMismatchType(mismatchType) {
-        if(mismatchType == undefined || mismatchType.split("(")[0].trim() == "")
+        if (mismatchType == undefined || mismatchType.split("(")[0].trim() == "")
             return undefined;
         else
             return mismatchType;
     }
 
-    $scope.numberWithCommas = function(x) {
-        if(x == undefined || x == "" )
+    $scope.numberWithCommas = function (x) {
+        if (x == undefined || x == "")
             return null;
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
@@ -263,7 +264,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         var confirm = $mdDialog.confirm()
             .title("Ignore mismatch?")
             .ok('Yes')
-            .cancel('No')
+            .cancel('No');
 
         $mdDialog.show(confirm).then(function () {
             ignoreMismatch(mismatch);
@@ -318,7 +319,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         };
     }
 
-    var inverseMismatchTypeMap = function(obj) {
+    var inverseMismatchTypeMap = function (obj) {
         var map = new Map();
         angular.forEach(Object.keys(obj), function (k) {
             map[obj[k]] = k;
@@ -338,7 +339,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         if ($scope.mismatchContentTypeSummary.summary[contentType] == null) {
             return '';
         }
-        return $scope.mismatchContentTypeSummary.summary[contentType][ $scope.selectedStatus] || '';
+        return $scope.mismatchContentTypeSummary.summary[contentType][$scope.selectedStatus] || '';
     };
 
     function selectedContentType() {
@@ -347,7 +348,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
 
     /* --- Parameter initialization --- */
 
-    function initDatasource () {
+    function initDatasource() {
         $scope.datasource.selected = $scope.datasource.values[0];
         if ($routeParams.hasOwnProperty(searchParams.datasource)) {
             $scope.datasource.values.forEach(function (datasource) {
@@ -383,7 +384,7 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
         }
     }
 
-    function initializeParameters () {
+    function initializeParameters() {
         initializeDate();
         initDatasource();
         initContentType();

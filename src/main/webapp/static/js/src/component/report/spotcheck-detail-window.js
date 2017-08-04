@@ -1,15 +1,15 @@
 angular.module('open.spotcheck')
-    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow','source','contentType', detailDialogCtrl]);
+    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow', 'source', 'contentType', detailDialogCtrl]);
 
-function detailDialogCtrl($scope, $mdDialog, mismatchRow,source,contentType) {
+function detailDialogCtrl($scope, $mdDialog, mismatchRow, source, contentType) {
     $scope.reportType = mismatchRow.refType;
 
-    $scope.newDetails = function (newMismatchRow,source,contentType) {
+    $scope.newDetails = function (newMismatchRow, source, contentType) {
         $scope.contentType = contentType;
-        if(source == "LBDC")
-            $scope.com = ["LBDC","Open Legislation"];
+        if (source == "LBDC")
+            $scope.com = ["LBDC", "Open Legislation"];
         else
-            $scope.com = ["Open Legislation","NYSenate.gov"];
+            $scope.com = ["Open Legislation", "NYSenate.gov"];
         $scope.date = moment().format('l');
         console.log('loading detail dialog for', newMismatchRow);
         $scope.observation = newMismatchRow.observedData;
@@ -65,22 +65,30 @@ function detailDialogCtrl($scope, $mdDialog, mismatchRow,source,contentType) {
             .replace(/\n+/, '\n');
     }
 
-    $scope.formatDisplayData = function() {
+    $scope.formatDisplayData = function () {
         var texts = [$scope.currentMismatch.referenceData, $scope.currentMismatch.observedData];
         if ($scope.textControls.removeLinePageNums) {
             texts = texts.map(removeLinePageNumbers);
         }
         switch ($scope.textControls.whitespace) {
             case 'stripNonAlpha':
-                texts = texts.map(function (text) {return text.replace(/(?:[^\w\n]|_)+/g, '')});
+                texts = texts.map(function (text) {
+                    return text.replace(/(?:[^\w\n]|_)+/g, '')
+                });
                 break;
             case 'normalize':
-                texts = texts.map(function (text) {return text.replace(/[ ]+/g, ' ')});
-                texts = texts.map(function (text) {return text.replace(/^[ ]+|[ ]+$/gm, '')});
+                texts = texts.map(function (text) {
+                    return text.replace(/[ ]+/g, ' ')
+                });
+                texts = texts.map(function (text) {
+                    return text.replace(/^[ ]+|[ ]+$/gm, '')
+                });
                 break;
         }
         if ($scope.textControls.capitalize) {
-            texts = texts.map(function(text) { return text.toUpperCase();});
+            texts = texts.map(function (text) {
+                return text.toUpperCase();
+            });
         }
 
         $scope.referenceData = texts[0];
@@ -88,7 +96,7 @@ function detailDialogCtrl($scope, $mdDialog, mismatchRow,source,contentType) {
     };
 
     function init() {
-        $scope.newDetails(mismatchRow, source,contentType);
+        $scope.newDetails(mismatchRow, source, contentType);
     }
 
     init();
