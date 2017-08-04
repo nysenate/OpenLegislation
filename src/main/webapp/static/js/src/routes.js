@@ -40,11 +40,6 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
             templateUrl: ctxPath + '/partial/report/spotcheck-report-page',
             reloadOnSearch: false
         })
-        .when(ctxPath + '/admin/report/spotcheck/open', { templateUrl: ctxPath + '/partial/report/spotcheck-open-summary'})
-        .when(ctxPath + '/admin/report/spotcheck/open/:reportType',
-            { templateUrl: ctxPath + '/partial/report/spotcheck-mismatch', reloadOnSearch: false})
-        .when(ctxPath + '/admin/report/spotcheck/:type/:runTime',
-                { templateUrl: ctxPath + '/partial/report/spotcheck-report', reloadOnSearch: false })
 
         /** --- Admin --- */
 
