@@ -29,9 +29,11 @@ function mismatchSummaryApi($resource) {
     function createStatusSummary(response) {
         return response.result;
     }
+
     function createMismatchTypeSummary(response) {
-        return response.result;
+        return response.result.typeCount.items;
     }
+
     function createContentTypeSummary(response) {
         return response.result;
     }

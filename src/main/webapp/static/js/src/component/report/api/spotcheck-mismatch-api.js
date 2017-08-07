@@ -42,6 +42,7 @@ function spotcheckMismatchApi($resource) {
         return {
             id: parseMismatchId(mismatch),
             status: parseStatus(mismatch),
+            datasource: mismatch.dataSource,
             disableDiff: parseDisableDiff(mismatch),
             mismatchType: parseMismatchType(mismatch),
             observedDate: parseObservedDate(mismatch),

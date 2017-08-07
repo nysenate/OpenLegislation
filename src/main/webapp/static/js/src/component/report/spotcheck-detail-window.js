@@ -1,22 +1,9 @@
 angular.module('open.spotcheck')
-    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow', 'source', 'contentType', detailDialogCtrl]);
+    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatch', 'source', 'contentType', detailDialogCtrl]);
 
-function detailDialogCtrl($scope, $mdDialog, mismatchRow, source, contentType) {
-    $scope.reportType = mismatchRow.refType;
+function detailDialogCtrl($scope, $mdDialog, mismatch, source, contentType) {
 
-    $scope.newDetails = function (newMismatchRow, source, contentType) {
-        $scope.contentType = contentType;
-        if (source == "LBDC")
-            $scope.com = ["LBDC", "Open Legislation"];
-        else
-            $scope.com = ["Open Legislation", "NYSenate.gov"];
-        $scope.date = moment().format('l');
-        console.log('loading detail dialog for', newMismatchRow);
-        $scope.observation = newMismatchRow.observedData;
-        $scope.currentMismatch = newMismatchRow;
-        setDefaultTextOptions(newMismatchRow.mismatchType);
-        $scope.formatDisplayData();
-    };
+    $scope.reportType = mismatch.refType;
 
     $scope.$watchGroup(['referenceData', 'displayData'], function () {
         $scope.obsMultiLine = $scope.observedData && $scope.observedData.indexOf('\n') > -1;
@@ -96,7 +83,17 @@ function detailDialogCtrl($scope, $mdDialog, mismatchRow, source, contentType) {
     };
 
     function init() {
-        $scope.newDetails(mismatchRow, source, contentType);
+        $scope.contentType = contentType;
+        if (source == "LBDC")
+            $scope.com = ["LBDC", "Open Legislation"];
+        else
+            $scope.com = ["Open Legislation", "NYSenate.gov"];
+        $scope.date = moment().format('l');
+        console.log('loading detail dialog for', mismatch);
+        $scope.observation = mismatch.observedData;
+        $scope.currentMismatch = mismatch;
+        setDefaultTextOptions(mismatch.mismatchType);
+        $scope.formatDisplayData();
     }
 
     init();
