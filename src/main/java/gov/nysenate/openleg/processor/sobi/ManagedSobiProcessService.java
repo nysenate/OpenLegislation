@@ -111,7 +111,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
     public int collateSourceFiles() {
         try {
             int totalCollated = 0;
-            List<SobiFile> newSources;
+            List<SourceFile> newSources;
             do {
                 newSources = getIncomingSourceFiles();
                 for (SourceFile sourceFile : newSources) {
@@ -204,11 +204,11 @@ public class ManagedSobiProcessService implements SobiProcessService {
      * @return {@link List<SourceFile>}
      * @throws IOException
      */
-    private List<SobiFile> getIncomingSourceFiles() throws IOException {
-        List<SobiFile> incomingSourceFiles = new ArrayList<>();
+    private List<SourceFile> getIncomingSourceFiles() throws IOException {
+        List<SourceFile> incomingSourceFiles = new ArrayList<>();
         final int batchSize = env.getSobiBatchSize();
 
-        for (SourceFileFsDao sourceFsDao : sourceFileFsDaos) {
+        for (SourceFileFsDao<?> sourceFsDao : sourceFileFsDaos) {
             LimitOffset remainingLimit = new LimitOffset(batchSize - incomingSourceFiles.size());
             incomingSourceFiles.addAll(sourceFsDao.getIncomingSourceFiles(SortOrder.ASC, remainingLimit));
         }
