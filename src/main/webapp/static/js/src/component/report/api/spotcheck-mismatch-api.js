@@ -41,6 +41,8 @@ function spotcheckMismatchApi($resource) {
     function createMismatch(mismatch) {
         return {
             id: parseMismatchId(mismatch),
+            key: mismatch.key,
+            contentType: mismatch.contentType,
             status: parseStatus(mismatch),
             datasource: mismatch.dataSource,
             disableDiff: parseDisableDiff(mismatch),
@@ -49,9 +51,9 @@ function spotcheckMismatchApi($resource) {
             referenceDate: parseReferenceDate(mismatch),
             reportDate: parseReportDate(mismatch),
             issue: parseIssues(mismatch),
+            refTypeLabel: parseRefTypeLabel(mismatch),
             refType: parseRefType(mismatch),
             bill: parseBill(mismatch),
-            source: parseRefType(mismatch),
             calNo: parseCalNo(mismatch),
             calType:parseCalType(mismatch),
             session: parseSession(mismatch),
@@ -170,8 +172,12 @@ function spotcheckMismatchApi($resource) {
         return mismatch.issueIds.items.join(', ')
     }
 
-    function parseRefType(mismatch) {
+    function parseRefTypeLabel(mismatch) {
         return referenceTypeDisplayMap[mismatch.referenceType];
+    }
+
+    function parseRefType(mismatch) {
+        return mismatch.referenceType;
     }
 
     function parseBill(mismatch) {

@@ -70,7 +70,7 @@
                 <div flex="15" class="columnWord">{{mismatch.mismatchType}}</div>
                 <div flex="15"  class="columnWord">{{mismatch.observedDate}}</div>
                 <div flex="10" class="columnWord"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>
-                <div flex="10"  class="columnWord">{{mismatch.refType}}</div>
+                <div flex="10"  class="columnWord">{{mismatch.refTypeLabel}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)" ng-disabled ="mismatch.disableDiff">
@@ -123,7 +123,7 @@
                 <div flex="10"  class="columnWord">{{mismatch.calType}}</div>
                 <div flex="15"  class="columnWord">{{mismatch.observedDate}}</div>
                 <div flex="10"  class="columnWord"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}"  class="report-page-toast">Saved</div></div>
-                <div flex="15"  class="columnWord">{{mismatch.refType}}</div>
+                <div flex="15"  class="columnWord">{{mismatch.refTypeLabel}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)" ng-disabled ="mismatch.disableDiff">
@@ -179,7 +179,7 @@
                 <div flex="15" class="columnWord">{{mismatch.committee}}</div>
                 <div flex="15"  class="columnWord">{{mismatch.referenceDate}}</div>
                 <div flex="10"  class="columnWord"><md-input-container class="md-block" style="padding: 0px;margin: 0px;  margin-bottom: -25px;"><label></label><input type="text" ng-model="mismatch.issue"  ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)" ng-blur="updateIssue(mismatch)"></md-input-container><div id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div></div>
-                <div flex="15"  class="columnWord">{{mismatch.refType}}</div>
+                <div flex="15"  class="columnWord">{{mismatch.refTypeLabel}}</div>
               </div>
               <div layout="row" layout-align="space-around center" flex="25">
                 <md-button class="md-raised rounded-corner-button"  ng-click="showDetailedDiff(mismatch)" ng-disabled ="mismatch.disableDiff">

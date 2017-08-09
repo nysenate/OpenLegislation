@@ -113,3 +113,22 @@ spotcheckModule.filter('contentUrl', function() {
         return "";
     }
 });
+
+spotcheckModule.filter('referenceUrl', function() {
+    return function(key, contentType) {
+        console.log(key);
+        console.log(contentType);
+        if (contentType === 'BILL') {
+            return "https://www.nysenate.gov/legislation/bills/" + key.session.year + "/" + key.printNo;
+        }
+        if (contentType === 'AGENDA') {
+            // TODO Need meeting date time to create link.
+            // Example: https://www.nysenate.gov/calendar/meetings/codes/january-23-2017/codes-meeting
+            return "http://nysenate.gov/calendar/meetings/" + key.committeeId.name + "/"
+        }
+        if (contentType === 'CALENDAR') {
+            // TODO Need session date time to create link.
+            // Example: https://www.nysenate.gov/calendar/sessions/june-05-2017/session-6-5-17
+        }
+    }
+});
