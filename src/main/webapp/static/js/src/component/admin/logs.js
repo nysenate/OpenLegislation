@@ -16,12 +16,25 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     'DataProcessRunsAPI', 'DataProcessRunsDetailsAPI',
     function($scope, $routeParams, $timeout, PaginationModel, LogSearchAPI, DataProcessRunsAPI, DataProcessRunsDetailsAPI) {
 
+    const TAB = {
+        API_MONITOR: 0,
+        API_LOG_SEARCH: 1,
+        DATA_PROCESS_LOG: 2
+    };
+
     $scope.view = (parseInt($routeParams.view, 10) || 0);
 
     /** Watch for changes to the current view. */
     $scope.$watch('view', function(n, o) {
         if (n !== o && $routeParams.view !== n) {
             $scope.setSearchParam('view', $scope.view);
+        }
+        if (n === TAB.API_MONITOR) {
+            $scope.resetRunningLog();
+            $scope.connectToSocket();
+        }
+        if (n !== TAB.API_MONITOR) {
+            $scope.disconnect();
         }
     });
 
@@ -163,7 +176,6 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     $scope.init = function() {
         $scope.setHeaderText("View Logs");
         $scope.setHeaderVisible(true);
-        $scope.connectToSocket();
         $scope.searchLogs();
         $scope.getRuns();
     };
