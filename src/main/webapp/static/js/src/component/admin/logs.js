@@ -48,6 +48,7 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
             });
         });
     };
+
     $scope.padLeft = function (n) {
         return (n < 10) ? ("0" + n) : n;
     };
@@ -57,6 +58,11 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
         $scope.newApiRequests = [];
         $scope.newApiRequestsCount = 0;
     };
+
+    // Disconnect when leaving this template.
+    $scope.$on("$destroy", function() {
+        $scope.disconnect();
+    });
 
     $scope.disconnect = function() {
         if ($scope.stompClient != null) {
