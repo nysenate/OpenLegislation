@@ -227,7 +227,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
                 sourceFile.getSourceType().name(), sourceFile.getFileName(),
                 LocalDateTime.now(), DataProcessAction.COLLATE);
 
-        List<SobiFragment> fragments = createFragments(sourceFile);
+        List<SobiFragment> fragments = createFragments(sourceFile); //When Switching to XML Only we can get rid of the list and save some memory
         logger.info("Created {} fragments", fragments.size());
 
         // Record the source file in the backing store.
@@ -262,7 +262,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
         // Incrementing sequenceNo maintains the order in which the sobi fragments were
         // found in the source sobiFile. However the sequence number for the bill fragment
         // is always set to 0 to ensure that they are always processed first.
-        int sequenceNo = 1;
+        int sequenceNo = 1; //TODO verify this is supposed to be 1
 
         // Replace the null characters with spaces and split by newline.
         List<String> lines = Arrays.asList(sourceFile.getText().replace('\0', ' ').split("\\r?\\n"));
@@ -369,19 +369,12 @@ public class ManagedSobiProcessService implements SobiProcessService {
         }
         String xmlString = xmlBuffer.toString();
 
-        // TODO: Figure out this magic.
-        xmlBuffer = new StringBuffer();
-        Matcher m = Pattern.compile("<\\!\\[CDATA\\[(.*?)\\]\\]>").matcher(xmlString);
-        while (m.find()) {
-            String tmp1 = Matcher.quoteReplacement(m.group(0).replaceAll("&newl;", " ").replaceAll("\\\\n", "\n"));
-            StringBuffer sb = new StringBuffer(tmp1.replaceFirst(" ",""));
-            StringBuffer sb1 = new StringBuffer(sb.reverse().toString().replaceFirst(" ",""));
-            m.appendReplacement(xmlBuffer, sb1.reverse().toString());
-        }
-        m.appendTail(xmlBuffer);
-
-        // TODO: Figure out this magic as well.
-        xmlString = xmlBuffer.toString().replaceAll("&newl;", "\n").replaceAll("(?!\n)\\p{Cntrl}", "").replaceAll("(?!\\.{2})[ ]{2,}", " ");
+        /*
+        This code searches and replaces new lines with \n for consistent formatting
+        Other excess newlines .
+        The xmlString contains the entire document when this method parses through the whole document
+         */
+        xmlString = xmlString.replaceAll("&newl;", "\n");//.replaceAll("(?!\n)\\p{Cntrl}", "");
         return xmlString;
     }
 }
