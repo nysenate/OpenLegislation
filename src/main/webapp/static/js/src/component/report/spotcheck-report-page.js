@@ -250,6 +250,7 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
         $scope.pagination.reset();
         $scope.pagination.setTotalItems(0);
         $scope.pagination.itemsPerPage = 10;
+        $location.search(searchParams.currentPage, 1);
     }
 
     $scope.confirmIgnoreMismatch = function (mismatch) {
