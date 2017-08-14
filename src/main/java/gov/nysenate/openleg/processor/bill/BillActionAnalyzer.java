@@ -171,7 +171,7 @@ public class BillActionAnalyzer
      *
      * @param action BillAction
      */
-    protected void updatePublishStatus(BillAction action) {
+    protected void updatePublishStatus(BillAction action) { //TODO look at this method closer as two files run through it
         boolean foundPublishPattern = false;
         Version publishVersion = this.activeVersion;
         // Check if the action matches a publish event

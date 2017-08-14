@@ -1,0 +1,45 @@
+<billstatus  sessyr="2017" billhse="S" billno="00609" action="replace">
+<deadtag></deadtag>
+<currentamd></currentamd>
+<sponsor><![CDATA[BOYLE]]></sponsor>
+<reprint>
+<rprtbillhse></rprtbillhse>
+<rprtbillno></rprtbillno>
+<rprtbillamd></rprtbillamd>
+</reprint>
+<lbdno>05447017</lbdno>
+<introcomm>19</introcomm>
+<curcomm>19</curcomm>
+<curcommhse>S</curcommhse>
+<law><![CDATA[Real Property Law]]></law>
+<title><![CDATA[Relates to training and continuing education requirements for home inspector licensing]]></title>
+<billactions><![CDATA[
+01/04/17 REFERRED TO JUDICIARY
+]]></billactions>
+<actions>
+<action no="1">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>1</actioncode>
+<actiontype>S</actiontype>
+<actiondata>19</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2017-01-04</actiondate>
+<actiondesc><![CDATA[REFERRED TO JUDICIARY]]></actiondesc>
+<actionpostdate>2017-01-04</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
+</action>
+<action no="2017">
+<actionbillamd></actionbillamd>
+<actionhouse>S</actionhouse>
+<actioncode>250</actioncode>
+<actiontype>S</actiontype>
+<actiondata>19</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>2017-01-04</actiondate>
+<actiondesc><![CDATA[intro committee]]></actiondesc>
+<actionpostdate>2017-01-04</actionpostdate>
+<actionactsessyr>2017</actionactsessyr>
+</action>
+</actions>
+</billstatus>

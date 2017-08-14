@@ -75,10 +75,10 @@ public class BillStatProcessor extends AbstractDataProcessor implements SobiProc
             billactions = reformatBillActions(billactions);
             Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse +
                     billno, sessyr,version), sobiFragment);
-            BillAmendment billAmendment = baseBill.getActiveAmendment();
             BillSponsor billSponsor = baseBill.getSponsor();
             Chamber chamber = baseBill.getBillType().getChamber();
 
+            BillAmendment billAmendment;
             if (version == null || version.equals("")) {
                 billAmendment = baseBill.getAmendment(Version.DEFAULT);
             } else {
@@ -87,6 +87,14 @@ public class BillStatProcessor extends AbstractDataProcessor implements SobiProc
             if (action.equals("remove")) {
                 removeCase(baseBill, billAmendment);
                 return;
+            } else {
+                //todo add default amend publishing logic
+                if (billAmendment.isBaseVersion() ) {
+                    Optional<PublishStatus> pubStatus = baseBill.getPublishStatus( billAmendment.getVersion() );
+                    if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
+                        baseBill.updatePublishStatus( billAmendment.getVersion() , new PublishStatus(true, date, false, action));
+                    }
+                }
             }
             if (billSponsor == null) {
                 billSponsor = new BillSponsor();
@@ -133,6 +141,7 @@ public class BillStatProcessor extends AbstractDataProcessor implements SobiProc
         billAmendment.setLawSection(null);
         baseBill.setSponsor(null);
         baseBill.setTitle(null);
+        baseBill.setPublishedDateTime(null);
     }
 
     /**
