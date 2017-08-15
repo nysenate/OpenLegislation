@@ -19,6 +19,14 @@ public class ListViewResponse<ViewType> extends PaginationResponse
         }
     }
 
+    protected ListViewResponse(ListView<ViewType> result) {
+        this(result, result.getSize(), LimitOffset.ALL);
+    }
+
+    public static <ViewType extends ViewObject> ListViewResponse<ViewType> of(List<ViewType> items) {
+        return new ListViewResponse<>(ListView.of(items));
+    }
+
     public static <ViewType extends ViewObject> ListViewResponse<ViewType> of(List<ViewType> items, int total, LimitOffset limitOffset) {
         return new ListViewResponse<>(ListView.of(items), total, limitOffset);
     }

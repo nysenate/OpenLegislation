@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.law;
 
+import com.google.common.base.Objects;
+
 import java.time.LocalDate;
 
 public class LawDocId
@@ -17,7 +19,7 @@ public class LawDocId
     /** The 3 letter law id, e.g ABC, EDN, etc. */
     protected String lawId;
 
-    /** --- Constructors --- */
+    /* --- Constructors --- */
 
     public LawDocId() {}
 
@@ -28,7 +30,25 @@ public class LawDocId
         this.publishedDate = publishedDate;
     }
 
-    /** --- Basic Getters/Setters --- */
+    /* --- Overrides --- */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LawDocId)) return false;
+        LawDocId lawDocId = (LawDocId) o;
+        return Objects.equal(documentId, lawDocId.documentId) &&
+                Objects.equal(publishedDate, lawDocId.publishedDate) &&
+                Objects.equal(locationId, lawDocId.locationId) &&
+                Objects.equal(lawId, lawDocId.lawId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(documentId, publishedDate, locationId, lawId);
+    }
+
+    /* --- Basic Getters/Setters --- */
 
     public String getDocumentId() {
         return documentId;
