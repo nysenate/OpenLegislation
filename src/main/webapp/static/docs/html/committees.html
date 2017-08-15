@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
         <link rel="next" title="NYS Laws API" href="laws.html"/>
         <link rel="prev" title="Senate Agenda API" href="agendas.html"/> 
@@ -41,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -81,12 +87,15 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Senate Committee API</strong></a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Senate Committee API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-current-committee-version">Get a current committee version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-committee-version-at-specific-time">Get a committee version at specific time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-committee-history">Get committee history</a></li>
@@ -112,8 +121,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="reference.html">Open Legislation</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="reference.html">Open Legislation</a>
+        
       </nav>
 
 
@@ -126,19 +137,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="reference.html">Docs</a> &raquo;</li>
-      
-    <li><strong>Senate Committee API</strong></li>
+    
+      <li><a href="reference.html">Docs</a> &raquo;</li>
+        
+      <li><strong>Senate Committee API</strong></li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/committees.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/committees.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -157,12 +185,12 @@ information on where and when the committee meets, and the dates when the commit
 <p class="last">Assembly committee data is currently not sent to us at this time. chamber must be &#8216;senate&#8217;.</p>
 </div>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}/{committeeName}
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate/Cultural%20Affairs,%20Tourism,%20Parks%20and%20Recreation
-(Get the current version of the Cultural Affairs, Tourism, Parks and Recreation committee)
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">senate</span><span class="o">/</span><span class="n">Cultural</span><span class="o">%</span><span class="mi">20</span><span class="n">Affairs</span><span class="p">,</span><span class="o">%</span><span class="mi">20</span><span class="n">Tourism</span><span class="p">,</span><span class="o">%</span><span class="mi">20</span><span class="n">Parks</span><span class="o">%</span><span class="mi">20</span><span class="ow">and</span><span class="o">%</span><span class="mi">20</span><span class="n">Recreation</span>
+<span class="p">(</span><span class="n">Get</span> <span class="n">the</span> <span class="n">current</span> <span class="n">version</span> <span class="n">of</span> <span class="n">the</span> <span class="n">Cultural</span> <span class="n">Affairs</span><span class="p">,</span> <span class="n">Tourism</span><span class="p">,</span> <span class="n">Parks</span> <span class="ow">and</span> <span class="n">Recreation</span> <span class="n">committee</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Sample Response</strong></p>
@@ -173,16 +201,16 @@ information on where and when the committee meets, and the dates when the commit
 <p>This request will return a committee version (if one exists) corresponding to the given committee that was created
 before or on the given time and reformed after the given time.</p>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/{ISODateTime}
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ISODateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate/Finance/2014-03-01T09:30:00
-(Get the codes committee at 9:30 AM on March 1st, 2014)
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="mi">2013</span><span class="o">/</span><span class="n">senate</span><span class="o">/</span><span class="n">Finance</span><span class="o">/</span><span class="mi">2014</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">01</span><span class="n">T09</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mi">00</span>
+<span class="p">(</span><span class="n">Get</span> <span class="n">the</span> <span class="n">codes</span> <span class="n">committee</span> <span class="n">at</span> <span class="mi">9</span><span class="p">:</span><span class="mi">30</span> <span class="n">AM</span> <span class="n">on</span> <span class="n">March</span> <span class="mi">1</span><span class="n">st</span><span class="p">,</span> <span class="mi">2014</span><span class="p">)</span>
 </pre></div>
 </div>
 <p id="committee-version-response"><strong>Sample Response</strong></p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;committee&quot;</span><span class="p">,</span>
@@ -226,7 +254,7 @@ before or on the given time and reformed after the given time.</p>
 <div class="section" id="get-committee-history">
 <h2>Get committee history<a class="headerlink" href="#get-committee-history" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}/{committeeName}/history
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span><span class="o">/</span><span class="n">history</span>
 </pre></div>
 </div>
 <p id="comm-history-params"><strong>Optional Params</strong></p>
@@ -262,7 +290,7 @@ before or on the given time and reformed after the given time.</p>
 </tbody>
 </table>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/committees/2013/senate/Aging/history  (Get 2013 history for the aging committee)
 /api/3/committees/2013/senate/Aging/history?limit=1&amp;order=ASC&amp;full=true
 (Get the first version of the Aging committee from 2013)
 </pre></div>
@@ -271,7 +299,7 @@ before or on the given time and reformed after the given time.</p>
 <div class="section" id="get-all-current-committees">
 <h2>Get all current committees<a class="headerlink" href="#get-all-current-committees" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/{session}/{chamber}
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">committees</span><span class="o">/</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">chamber</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -295,24 +323,24 @@ before or on the given time and reformed after the given time.</p>
 </tbody>
 </table>
 <p><strong>Example</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/committees/2013/senate?&amp;full=true
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/committees/2013/senate?&amp;full=true
 (Get full responses for all current senate committees for session 2013)
 </pre></div>
 </div>
 </div>
 <div class="section" id="search-for-committees">
 <h2>Search for committees<a class="headerlink" href="#search-for-committees" title="Permalink to this headline">¶</a></h2>
-<p>Read our <a class="reference internal" href="search_api.html"><em>search API docs</em></a> for info on how to construct search terms.
+<p>Read our <a class="reference internal" href="search_api.html"><span class="doc">search API docs</span></a> for info on how to construct search terms.
 The committee search index is comprised of full committee responses
 (i.e. the json response returned when requesting a single committee)
 so query and sort strings will be based on that response structure.</p>
 <p><strong>Usage</strong></p>
 <p>Search across all session years</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/committees/search?term=YOUR_TERM
+<div class="highlight-default"><div class="highlight"><pre><span></span>(GET) /api/3/committees/search?term=YOUR_TERM
 </pre></div>
 </div>
 <p>Search within a session year</p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/committees/{sessionYear}/search?term=YOUR_TERM
+<div class="highlight-default"><div class="highlight"><pre><span></span>(GET) /api/3/committees/{sessionYear}/search?term=YOUR_TERM
 </pre></div>
 </div>
 <p><strong>Required Params</strong></p>
@@ -331,7 +359,7 @@ so query and sort strings will be based on that response structure.</p>
 <tbody valign="top">
 <tr class="row-even"><td>term</td>
 <td>string</td>
-<td><a class="reference internal" href="search_api.html#search-term"><span>ElasticSearch query string</span></a></td>
+<td><a class="reference internal" href="search_api.html#search-term"><span class="std std-ref">ElasticSearch query string</span></a></td>
 </tr>
 </tbody>
 </table>
@@ -351,7 +379,7 @@ so query and sort strings will be based on that response structure.</p>
 <tbody valign="top">
 <tr class="row-even"><td>sort</td>
 <td>string</td>
-<td><a class="reference internal" href="search_api.html#search-sort"><span>ElasticSearch sort string</span></a></td>
+<td><a class="reference internal" href="search_api.html#search-sort"><span class="std std-ref">ElasticSearch sort string</span></a></td>
 </tr>
 <tr class="row-odd"><td>current</td>
 <td>boolean</td>
@@ -359,21 +387,24 @@ so query and sort strings will be based on that response structure.</p>
 </tr>
 </tbody>
 </table>
-<p>Also takes all <a class="reference internal" href="#comm-history-params"><span>committee history optional params</span></a> with the exception of order</p>
+<p>Also takes all <a class="reference internal" href="#comm-history-params"><span class="std std-ref">committee history optional params</span></a> with the exception of order</p>
 </div>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="laws.html" class="btn btn-neutral float-right" title="NYS Laws API" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="laws.html" class="btn btn-neutral float-right" title="NYS Laws API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="agendas.html" class="btn btn-neutral" title="Senate Agenda API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="agendas.html" class="btn btn-neutral" title="Senate Agenda API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -407,7 +438,8 @@ so query and sort strings will be based on that response structure.</p>
             VERSION:'2.0-alpha',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
