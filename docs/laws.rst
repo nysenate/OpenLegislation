@@ -388,9 +388,24 @@ Detailed law doc updates
             },
 
 
+Get repealed laws
+-----------------
 
+Gets a list of law documents that have been repealed with the option of restricting to a specified date/time range.
+The date/time range applies to the processed date of the law document, not the official repeal date.
 
+**Usage**
 
+List of laws repealed during the given date/time range
+::
+    /api/3/laws/repealed
 
+**Optional Params**
 
-
++--------------+----------------------+---------------------------------------------------------------------------+
+| Parameter    | Values               | Description                                                               |
++==============+======================+===========================================================================+
+| fromDateTime | ISO 8601 datetime    | default 1970-01-01 - The inclusive start time of the specified time range |
++--------------+----------------------+---------------------------------------------------------------------------+
+| toDateTime   | ISO 8601 datetime    | default now - The inclusive end time of the specified time period         |
++--------------+----------------------+---------------------------------------------------------------------------+

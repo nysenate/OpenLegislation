@@ -63,19 +63,26 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "     ON t.doc_id = d1.document_id AND t.doc_published_date = d1.published_date\n" +
         "WHERE t.law_id = :lawId AND t.published_date = max_date.pub_date"
     ),
+
+    SELECT_REPEALED_LAWS(
+        "SELECT t.law_id, t.doc_id AS document_id, t.published_date, t.repealed_date\n" +
+        "FROM master.law_tree t\n" +
+        "JOIN (\n" +
+        "  SELECT law_id, doc_id, MAX(published_date) AS max_published_date\n" +
+        "  FROM master.law_tree\n" +
+        "  GROUP BY law_id, doc_id\n" +
+        ") tm\n" +
+        "ON tm.law_id = t.law_id AND tm.doc_id = t.doc_id\n" +
+        "  AND tm.max_published_date = t.published_date\n" +
+        "WHERE t.repealed_date IS NOT NULL" +
+        "  AND created_date_time BETWEEN :startDateTime AND :endDateTime"
+    ),
     INSERT_LAW_TREE(
         "INSERT INTO ${schema}." + SqlTable.LAW_TREE + "\n" +
         "(law_id, published_date, doc_id, doc_published_date, parent_doc_id, parent_doc_published_date, is_root, " +
         " sequence_no, repealed_date, law_file)\n" +
         "VALUES (:lawId, :publishedDate, :docId, :docPublishedDate, :parentDocId, :parentDocPublishedDate, :isRoot, " +
         "        :sequenceNo, :repealedDate, :lawFileName)"
-    ),
-    UPDATE_LAW_TREE(
-        "UPDATE ${schema}." + SqlTable.LAW_TREE + "\n" +
-        "SET parent_doc_id = :parentDocId, parent_doc_published_date = :parentDocPublishedDate, is_root = :isRoot, " +
-        "    sequence_no = :sequenceNo, repealed_date = :repealedDate, law_file = :lawFileName \n" +
-        "WHERE law_id = :lawId AND published_date = :publishedDate AND \n" +
-        "      doc_id = :docId AND doc_published_date = :docPublishedDate"
     ),
     DELETE_TREE(
         "DELETE FROM ${schema}." + SqlTable.LAW_TREE + "\n" +

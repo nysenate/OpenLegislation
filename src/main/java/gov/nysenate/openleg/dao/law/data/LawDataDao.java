@@ -1,12 +1,11 @@
 package gov.nysenate.openleg.dao.law.data;
 
-import gov.nysenate.openleg.model.law.LawDocument;
-import gov.nysenate.openleg.model.law.LawFile;
-import gov.nysenate.openleg.model.law.LawInfo;
-import gov.nysenate.openleg.model.law.LawTree;
+import com.google.common.collect.Range;
+import gov.nysenate.openleg.model.law.*;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +50,14 @@ public interface LawDataDao
      * @throws DataAccessException - If there was an error while trying to retrieve the given law.
      */
     public LawTree getLawTree(String lawId, LocalDate endPublishDate) throws DataAccessException;
+
+    /**
+     * Get law documents that were repealed during the given date time range
+     *
+     * @param dateRange Range<LocalDateTime>
+     * @return {@link List<LawDocId>}
+     */
+    public List<LawDocId> getRepealedLaws(Range<LocalDateTime> dateRange);
 
     /**
      * Retrieve a LawDocument using the given document id and end published date. The most recent law document

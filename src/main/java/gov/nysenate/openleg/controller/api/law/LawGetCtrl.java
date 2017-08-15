@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.controller.api.law;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
@@ -9,29 +10,25 @@ import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.law.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.law.LawDocument;
-import gov.nysenate.openleg.model.law.LawInfo;
-import gov.nysenate.openleg.model.law.LawTree;
-import gov.nysenate.openleg.model.law.LawTreeNode;
+import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.data.LawDocumentNotFoundEx;
 import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -125,6 +122,39 @@ public class LawGetCtrl extends BaseCtrl
         ViewObjectResponse<LawDocWithRefsView> response = new ViewObjectResponse<>(new LawDocWithRefsView(doc, lawTreeNodeOpt));
         response.setMessage("Law document for location " + locationId + " in " + lawId + " law ");
         return response;
+    }
+
+    /**
+     * Repealed Law API
+     * ----------------
+     *
+     * Gets a list of law documents repealed during a specific time period.
+     *
+     * Usage:
+     * (GET) /api/3/laws/repealed
+     *
+     * Request Params:
+     * @param fromDateTime iso datetime - default 1970-01-01 - The inclusive start time of the specified time period
+     * @param toDateTime iso datetime - default today - The inclusive end time of the specified time period
+     * @return {@link ListViewResponse<LawDocIdView>}
+     */
+    @RequestMapping("/repealed")
+    public ListViewResponse<LawDocIdView> getRepealedLaws(
+            @RequestParam(defaultValue = "1970-01-01") String fromDateTime,
+            @RequestParam(required = false) String toDateTime) {
+        LocalDateTime parsedStartDate = parseISODateTime(fromDateTime, "fromDateTime");
+        LocalDateTime parsedEndDate = Optional.ofNullable(toDateTime)
+                .map(date -> parseISODateTime(date, "toDateTime"))
+                .orElse(LocalDateTime.now());
+
+        Range<LocalDateTime> dateRange = getClosedRange(parsedStartDate, parsedEndDate,
+                "fromDateTime", "toDateTime");
+
+        Set<LawDocId> repealedLawDocs = lawDataService.getRepealedLawDocs(dateRange);
+
+        return repealedLawDocs.stream()
+                .map(LawDocIdView::new)
+                .collect(collectingAndThen(toList(), ListViewResponse::of));
     }
 
     /** --- Exception Handlers --- */
