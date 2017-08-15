@@ -3,8 +3,6 @@ package gov.nysenate.openleg.model.process;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents basic information about a single data processing job that was run.
@@ -18,13 +16,13 @@ public class DataProcessRun
     private LocalDateTime startDateTime;
 
     /** When this data processing run ended. */
-    private LocalDateTime endDateTime;
+    private volatile LocalDateTime endDateTime;
 
     /** Describes how this process run was invoked, e.g. CLI Script, Cron Job */
     private String invokedBy;
 
     /** Preserve any exception messages here. */
-    private StringBuilder exceptions = new StringBuilder();
+    private StringBuffer exceptions = new StringBuffer();
 
     /** --- Constructors --- */
 
@@ -86,7 +84,7 @@ public class DataProcessRun
         this.invokedBy = invokedBy;
     }
 
-    public StringBuilder getExceptions() {
+    public StringBuffer getExceptions() {
         return exceptions;
     }
 }

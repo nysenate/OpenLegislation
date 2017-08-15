@@ -59,9 +59,9 @@ public class DataProcessCtrl extends BaseCtrl
     @RequestMapping(value = "/run", method = RequestMethod.POST)
     public BaseResponse triggerDataProcess() {
         try {
-            DataProcessRun run = dataProcessor.run("api");
+            DataProcessRun run = dataProcessor.run("api", true);
             if (run != null) {
-                return new ViewObjectResponse<>(new DataProcessRunView(run), "run was successful");
+                return new ViewObjectResponse<>(new DataProcessRunView(run), "run started");
             }
             return new ErrorResponse(ErrorCode.DATA_PROCESS_RUN_FAILED);
         } catch (Exception ex) {

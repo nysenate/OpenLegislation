@@ -11,8 +11,8 @@ import gov.nysenate.openleg.processor.law.LawProcessService;
 import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
-import gov.nysenate.openleg.service.spotcheck.agenda.AgendaSpotcheckProcessService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
+import gov.nysenate.openleg.util.AsyncRunner;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +39,7 @@ public class DataProcessor
     @Autowired private Environment env;
     @Autowired private EventBus eventBus;
     @Autowired private DataProcessLogService processLogService;
+    @Autowired private AsyncRunner asyncRunner;
 
     @Autowired private SobiProcessService sobiProcessService;
     @Autowired private TranscriptProcessService transcriptProcessService;
@@ -50,7 +51,7 @@ public class DataProcessor
     private List<ProcessService> processServices;
 
     /** Hold a reference to the current data process run instance for event-based logging purposes. */
-    private DataProcessRun currentRun;
+    private volatile DataProcessRun currentRun;
 
     @PostConstruct
     public void init() {
@@ -64,34 +65,46 @@ public class DataProcessor
             .build();
     }
 
-    /** --- Main Methods --- */
+    /* --- Main Methods --- */
 
     /**
      * Simple entry point to process new data for all supported data types.
-     * @throws Exception
+     *
+     * @param invoker String - describes method of invocation
+     * @param async boolean - if true, processing will occur asynchronously.
+     *              The unfinished {@link DataProcessRun} will be returned.
+     * @return {@link DataProcessRun}
+     * @throws Exception - If unhandled exceptions occur during processing
      */
-    public synchronized DataProcessRun run(String invoker) throws Exception {
+    public synchronized DataProcessRun run(String invoker, boolean async) throws Exception {
         if (env.isProcessingEnabled()) {
             logger.info("Starting data processor...");
             currentRun = processLogService.startNewRun(LocalDateTime.now(), invoker);
-            try {
-                collate();
-                ingest();
+
+            if (async) {
+                asyncRunner.run(this::doRun);
+            } else {
+                doRun();
             }
-            catch (Exception ex) {
-                eventBus.post(new DataProcessErrorEvent("Unexpected Processing Error", ex, currentRun.getProcessId()));
-                logger.error("Unexpected Processing Error:\n{}", ExceptionUtils.getStackTrace(ex));
-            }
-            processLogService.finishRun(currentRun);
-            DataProcessRun finishedRun = currentRun;
-            currentRun = null;
+
             logger.info("Exiting data processor.");
-            return finishedRun;
+            return currentRun;
         }
         else {
             logger.debug("Data processing is disabled!");
             return null;
         }
+    }
+
+    /**
+     * Overload of {@link #run(String, boolean)} that defaults to not process asynchronously
+     *
+     * @param invoker String - describes method of invocation
+     * @return {@link DataProcessRun}
+     * @throws Exception - If unhandled exceptions occur during processing
+     */
+    public synchronized DataProcessRun run(String invoker) throws Exception {
+        return run(invoker, false);
     }
 
     /**
@@ -111,7 +124,7 @@ public class DataProcessor
         }
     }
 
-    /** --- Event Handlers --- */
+    /* --- Event Handlers --- */
 
     @Subscribe
     public void handleDataProcessErrorEvent(DataProcessErrorEvent ev) {
@@ -131,7 +144,7 @@ public class DataProcessor
         }
     }
 
-    /** --- Processing methods --- */
+    /* --- Processing methods --- */
 
     public synchronized void collate() {
         logger.debug("Begin collating data");
@@ -176,6 +189,23 @@ public class DataProcessor
 
     public Optional<DataProcessRun> getCurrentRun() {
         return Optional.of(currentRun);
+    }
+
+    /* --- Internal Methods --- */
+
+    /**
+     * Performs a data process run, recording any errors to the current {@link DataProcessRun}
+     */
+    private synchronized void doRun() {
+        try {
+            collate();
+            ingest();
+        }
+        catch (Exception ex) {
+            eventBus.post(new DataProcessErrorEvent("Unexpected Processing Error", ex, currentRun.getProcessId()));
+            logger.error("Unexpected Processing Error:\n{}", ExceptionUtils.getStackTrace(ex));
+        }
+        processLogService.finishRun(currentRun);
     }
 
     private void logCounts(Map<String, Integer> counts) {
