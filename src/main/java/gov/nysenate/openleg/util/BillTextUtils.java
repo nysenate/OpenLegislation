@@ -16,30 +16,11 @@ import java.util.regex.Pattern;
 
 public class BillTextUtils
 {
-    protected static Pattern startPagePattern =
-        Pattern.compile("(^\\s+\\w\\.\\s\\d+(--\\w)?\\s+\\d+(\\s+\\w\\.\\s\\d+(--\\w)?)?$|^\\s+\\d+\\s+\\d+\\-\\d+\\-\\d$|^\\s+\\d{1,4}$)");
-
-    protected static Pattern endPagePattern = Pattern.compile("^\\s*(EXPLANATION--Matter|LBD[0-9-]+$)");
-
-    protected static Pattern textLinePattern = Pattern.compile("^ {1,5}[0-9]+ ");
 
     protected static Pattern billTextPageStartPattern =
         Pattern.compile("^(\\s+\\w.\\s\\d+(--\\w)?)?\\s{10,}(\\d+)(\\s{10,}(\\w.\\s\\d+(--\\w)?)?(\\d+-\\d+-\\d(--\\w)?)?)?$");
 
     protected static Integer MAX_LINES_RES_PAGE = 60;
-
-    /**
-     * Extracts a list of numbers which represent the line indices in which a
-     * page break occurs. The indices start at 0 since they are extracted
-     * from an array of lines.
-     *
-     * @param fullText String - Bill full text
-     * @return List<Integer>
-     */
-    public static List<Integer> getNewPageLines(String fullText) {
-        List<String> lines = Splitter.on("\n").splitToList(fullText);
-        return getNewPageLines(lines);
-    }
 
     /**
      * Uses the new page lines to generate a list of pages from the bill text.
@@ -88,10 +69,7 @@ public class BillTextUtils
     }
 
     /**
-     * Returns the number of pages contained within the supplied bill text. Although
-     * we could have just used the {@link #getNewPageLines(String)} method, iterating
-     * though the lines in reverse looking for the page number in the pattern is a few
-     * times more efficient.
+     * Returns the number of pages contained within the supplied bill text.
      *
      * @param fullText String - Bill full text
      * @return int
@@ -156,14 +134,14 @@ public class BillTextUtils
 
         String text = textBuilder.toString();
 
-        text = text.replaceFirst("(?<=\\n)[ ]{16}STATE OF NEW YORK(?=\\n)",
-                "                           S T A T E   O F   N E W   Y O R K");
-        text = text.replaceFirst("(?<=\\n)[ ]{20}IN SENATE(?=\\n)",
-                "                                   I N  S E N A T E");
-        text = text.replaceFirst("(?<=\\n)[ ]{19}IN ASSEMBLY(?=\\n)",
-                "                                 I N  A S S E M B L Y");
-        text = text.replaceFirst("(?<=\\n)[ ]{16}SENATE - ASSEMBLY(?=\\n)",
-                "                             S E N A T E - A S S E M B L Y");
+        text = text.replaceFirst("STATE OF NEW YORK",
+                "            S T A T E   O F   N E W   Y O R K");
+        text = text.replaceFirst("IN SENATE",
+                "              I N  S E N A T E");
+        text = text.replaceFirst("IN ASSEMBLY",
+                "               I N  A S S E M B L Y");
+        text = text.replaceFirst("SENATE - ASSEMBLY",
+                "            S E N A T E - A S S E M B L Y");
 
         return text;
     }
@@ -178,7 +156,8 @@ public class BillTextUtils
                 // TEXT IN <U> TAGS IS REPRESENTED IN CAPS FOR SOBI AND XML BILL TEXT
                 if ("u".equals(e.tag().getName())) {
                     stringBuilder.append(e.text().toUpperCase());
-                } else {
+                }
+                else {
                     processTextNode(e, stringBuilder);
                 }
             } else if (t instanceof TextNode) {

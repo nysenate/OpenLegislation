@@ -1,10 +1,16 @@
 package gov.nysenate.openleg.processor.bill.text;
 
 import gov.nysenate.openleg.util.BillTextUtils;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 /**
@@ -13,9 +19,12 @@ import static org.junit.Assert.assertTrue;
 @Transactional
 public class BillHTMLparserTest extends BillTextUtils {
 
-    /**
-     * Text XML BillTEXT files
-     */
+    private final File testFileDir = new File(
+           getClass().getClassLoader().getResource("sourcefile/").getFile());
+
+            /**
+             * Text XML BillTEXT files
+             */
     @Test
     public void billTextHTMLparse() {
         String hText = "\n" +
@@ -151,8 +160,42 @@ public class BillHTMLparserTest extends BillTextUtils {
                 "     5  GENERAL SERVICES.\n" +
                 "     6    § 2. This act shall take effect on the ninetieth day  after  it  shall\n" +
                 "     7  have become a law.\n";
-        assertTrue(preTagContext.equals(sample));
+        assertEquals("The files are the same",preTagContext,sample);
     }
+
+    @Test
+    public void BudgetBillTextHTMLparseTest() {
+        String htmlText = "Filler";
+        String parsedText;
+        String expectedAnswer = "AlsoFiller";
+
+        File htmlEnhancedFile = new File(testFileDir, "BudgetBillTextHTMLParse.txt");
+        File expectedAnswerFile = new File(testFileDir, "BudgetBillTextExpected.txt");
+
+        try {
+            htmlText = FileUtils.readFileToString(htmlEnhancedFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("Could not convert BudgetBillTextHTMLParse to a string");
+        }
+        try {
+            expectedAnswer = FileUtils.readFileToString(expectedAnswerFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("Could not convert BudgetBillTextExpected to a string");
+        }
+
+        long startTime = System.nanoTime();
+
+
+        parsedText = parseHTMLtext(htmlText);
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime) / 1000000;
+        System.out.println("It took " + duration + "ms");
+        assertEquals("The texts are the same", expectedAnswer,parsedText);
+
+    }
+
 
     /**
      * Tests XML SENMEMO files
