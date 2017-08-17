@@ -1,13 +1,22 @@
 package gov.nysenate.openleg.processor.bill.text;
 
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.BILL_TEXT_CONTENT;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.BILL_TEXT_LINE_OFFSET;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -167,33 +176,41 @@ public class BillHTMLparserTest extends BillTextUtils {
     public void BudgetBillTextHTMLparseTest() {
         String htmlText = "Filler";
         String parsedText;
-        String expectedAnswer = "AlsoFiller";
+        String expectedAnswerText = "AlsoFiller";
 
         File htmlEnhancedFile = new File(testFileDir, "BudgetBillTextHTMLParse.txt");
         File expectedAnswerFile = new File(testFileDir, "BudgetBillTextExpected.txt");
 
-        try {
-            htmlText = FileUtils.readFileToString(htmlEnhancedFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail("Could not convert BudgetBillTextHTMLParse to a string");
-        }
-        try {
-            expectedAnswer = FileUtils.readFileToString(expectedAnswerFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail("Could not convert BudgetBillTextExpected to a string");
-        }
+        htmlText = readInFileToString(htmlEnhancedFile);
+        expectedAnswerText = readInFileToString(expectedAnswerFile);
 
         long startTime = System.nanoTime();
-
-
         parsedText = parseHTMLtext(htmlText);
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1000000;
-        System.out.println("It took " + duration + "ms");
-        assertEquals("The texts are the same", expectedAnswer,parsedText);
+        //Check to see the process is efficient
+        assertTrue("It took less than half a second to parse the file",duration < 500);
+        //Spot check style comparison
+        checkBillText(expectedAnswerText,parsedText);
+        //Are the texts exactly the same? Note: This should fail because of differences between sobi and XML formats
+        assertEquals("The texts are the same", expectedAnswerText,parsedText);
+    }
 
+    @Test
+    public void senMemoHTMLparseTestTwo() {
+        String htmlText = "filler";
+        String parsedText;
+        String expectedAnswerText = "expectedFiller";
+
+        File htmlEnhancedFile = new File(testFileDir, "SenMemoTextHTMLParse");
+        File expectedAnswerFile = new File(testFileDir, "SenMemoTextExpected");
+
+        htmlText = readInFileToString(htmlEnhancedFile);
+        parsedText = parseHTMLtext(htmlText);
+        expectedAnswerText = readInFileToString(expectedAnswerFile);
+        //checkBillText(expectedAnswerText,parsedText);
+        //Are the texts exactly the same? Note: This should fail because of differences between sobi and XML formats
+        assertEquals("The texts are the same", expectedAnswerText,parsedText);
     }
 
 
@@ -330,6 +347,53 @@ public class BillHTMLparserTest extends BillTextUtils {
                 "EFFECTIVE DATE:\n" +
                 "This ACT shall take effect on the 180th Day\n";
 
-        assertTrue(preTagContext.equals(output));
+        assertEquals("The Sen Memos are the same",preTagContext, output);
+    }
+
+    //Set up spot check style comparison
+    /**
+     * Removes all non alpha characters
+     */
+    private String stripNonAlpha(String text) {
+        return text.replaceAll("(?:[^\\w]|_)+", "");
+    }
+
+    private static final String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
+    private static final String pageMarkerRegex = "^ {7}[A|S]\\. \\d+(--[A-Z])?[ ]+\\d+([ ]+[A|S]\\. \\d+(--[A-Z])?)?$";
+    private static final String budgetPageMargerRegex = "^[ ]{42,43}\\d+[ ]+\\d+-\\d+-\\d+$";
+    private static final String explanationRegex = "^[ ]+EXPLANATION--Matter in ITALICS \\(underscored\\) is new; matter in brackets\\n";
+    private static final String explanationRegex2 = "^[ ]+\\[ ] is old law to be omitted.\\n[ ]+LBD\\d+-\\d+-\\d+$";
+    private static final String ultraNormalizeRegex = "(?m)" + String.join("|", Arrays.asList(
+            lineNumberRegex, pageMarkerRegex, budgetPageMargerRegex, explanationRegex, explanationRegex2));
+    /**
+     * Removes all whitespace, line numbers, and page numbers
+     */
+    private String stripNonContent(String text) {
+        String stripped = text.replaceAll(ultraNormalizeRegex, "");
+        return stripNonAlpha(stripped);
+    }
+
+    private void checkBillText(String expectedAnswerText, String parsedText){
+        String strippedExpectedText = stripNonAlpha(expectedAnswerText);
+        String strippedParsedText = stripNonAlpha(parsedText);
+        // Check normalized text and report on non-normalized text as well if there is a mismatch
+        if (!StringUtils.equals(strippedParsedText, strippedExpectedText)) {
+            String pureContentParsedText = stripNonContent(parsedText);
+            String pureContentExpectedText = stripNonContent(strippedExpectedText);
+
+            if (!StringUtils.equals(pureContentParsedText, pureContentExpectedText)) {
+                fail("The pure content was not the same between both files");
+            }
+        }
+    }
+
+    private String readInFileToString(File file) {
+        try {
+            return FileUtils.readFileToString(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("Could not convert BudgetBillTextHTMLParse to a string");
+        }
+        return "";
     }
 }

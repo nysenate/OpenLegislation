@@ -134,13 +134,13 @@ public class BillTextUtils
 
         String text = textBuilder.toString();
 
-        text = text.replaceFirst("STATE OF NEW YORK",
+        text = text.replaceFirst("[ ]{3,}STATE OF NEW YORK",
                 "            S T A T E   O F   N E W   Y O R K");
-        text = text.replaceFirst("IN SENATE",
+        text = text.replaceFirst("[ ]{3,}IN SENATE",
                 "              I N  S E N A T E");
-        text = text.replaceFirst("IN ASSEMBLY",
+        text = text.replaceFirst("[ ]{3,}IN ASSEMBLY",
                 "               I N  A S S E M B L Y");
-        text = text.replaceFirst("SENATE - ASSEMBLY",
+        text = text.replaceFirst("[ ]{3,}SENATE - ASSEMBLY",
                 "            S E N A T E - A S S E M B L Y");
 
         return text;
