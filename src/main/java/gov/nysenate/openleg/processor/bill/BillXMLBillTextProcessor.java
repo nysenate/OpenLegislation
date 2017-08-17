@@ -62,7 +62,7 @@ public class BillXMLBillTextProcessor extends AbstractDataProcessor implements S
             final String asmno = xmlHelper.getString("@asmno",billTextNode).replaceAll("\n","");
             final String asmamd = xmlHelper.getString("@asmamd",billTextNode).replaceAll("\n","");
             final String action = xmlHelper.getString("@action",billTextNode).replaceAll("\n",""); // TODO: implement actions
-            final String billText = billTextNode.getTextContent().replaceAll("\n"," ");
+            final String billText = billTextNode.getTextContent();//.replaceAll("\n"," ");
             if (!senhse.isEmpty() && !asmhse.isEmpty()){ // uni bill
                 //update senate
                 final Version version1 = Version.of(senamd);
