@@ -88,7 +88,6 @@ public class BillStatProcessor extends AbstractDataProcessor implements SobiProc
                 removeCase(baseBill, billAmendment);
                 return;
             } else {
-                //todo add default amend publishing logic
                 if (billAmendment.isBaseVersion() ) {
                     Optional<PublishStatus> pubStatus = baseBill.getPublishStatus( billAmendment.getVersion() );
                     if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
