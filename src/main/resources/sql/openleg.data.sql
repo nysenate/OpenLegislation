@@ -1938,7 +1938,7 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 \.
 
 
-SET search_path = master, pg_catalog;
+SET search_path = public, master, pg_catalog;
 
 --
 -- Data for Name: bill_sponsor_additional; Type: TABLE DATA; Schema: master; Owner: postgres
