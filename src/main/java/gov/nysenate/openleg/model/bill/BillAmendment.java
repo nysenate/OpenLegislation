@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.SessionMember;
+import gov.nysenate.openleg.util.BillTextUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -95,6 +96,14 @@ public class BillAmendment implements Serializable, Cloneable
     }
 
     /** --- Functional Getters/Setters --- */
+
+    public String getStrippedFullText() {
+        return BillTextUtils.parseHTMLtext(fullText);
+    }
+
+    public String getStrippedMemo() {
+        return BillTextUtils.parseHTMLtext(memo);
+    }
 
     public String getBasePrintNo() {
         return baseBillId.getBasePrintNo();

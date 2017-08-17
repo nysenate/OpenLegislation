@@ -35,11 +35,11 @@ public class BillAmendmentView extends BillIdView
             this.sameAs = ListView.of(billAmendment.getSameAs().stream()
                 .map(BillIdView::new)
                 .collect(Collectors.toList()));
-            this.memo = billAmendment.getMemo();
+            this.memo = billAmendment.getStrippedMemo();
             this.lawSection = billAmendment.getLawSection();
             this.lawCode = billAmendment.getLaw();
             this.actClause = billAmendment.getActClause();
-            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText());
+            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getStrippedFullText() );
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
                 .map(MemberView::new)
                 .collect(Collectors.toList()));

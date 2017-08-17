@@ -50,10 +50,10 @@ public class BillPdfView
             pages = Arrays.asList(Arrays.asList("No full text available for " + bill.getBaseBillId().withVersion(version)));
         }
         else if (bill.isResolution()) {
-            pages = BillTextUtils.getResolutionPages(ba.getFullText());
+            pages = BillTextUtils.getResolutionPages(ba.getStrippedFullText());
         }
         else {
-            pages = BillTextUtils.getBillPages(ba.getFullText());
+            pages = BillTextUtils.getBillPages(ba.getStrippedFullText());
         }
 
         try (PDDocument doc = new PDDocument()) {
