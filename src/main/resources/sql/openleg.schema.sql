@@ -4022,7 +4022,7 @@ CREATE TABLE spotcheck_mismatch (
     datasource text NOT NULL,
     content_type text NOT NULL,
     reference_type text NOT NULL,
-    status text NOT NULL,
+    state text NOT NULL,
     reference_data text NOT NULL,
     observed_data text NOT NULL,
     notes text,
@@ -4030,6 +4030,7 @@ CREATE TABLE spotcheck_mismatch (
     ignore_status text DEFAULT 'NOT_IGNORED'::text NOT NULL,
     report_date_time timestamp without time zone NOT NULL,
     observed_date_time timestamp without time zone NOT NULL,
+    first_seen_date_time timestamp without time zone NOT NULL,
     reference_active_date_time timestamp without time zone NOT NULL,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
