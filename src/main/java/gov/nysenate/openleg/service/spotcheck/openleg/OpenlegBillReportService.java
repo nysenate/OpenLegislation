@@ -2,12 +2,12 @@ package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.bill.reference.openlegdev.OpenlegDevDao;
+import gov.nysenate.openleg.dao.bill.reference.openlegdev.OpenlegBillDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
@@ -35,14 +35,14 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFEREN
 public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBillId> {
     private static final Logger logger = LoggerFactory.getLogger(OpenlegBillReportService.class);
 
-    @Value("${openleg.apiKey}")
-    private  String apiKey;
+    @Value("api.secret") //change from api key to api secret
+    private  String apiSecret;
 
     @Autowired
     private SpotCheckReportDao<BaseBillId> reportDao;
 
     @Autowired
-    private OpenlegDevDao openlegDevDao;
+    private OpenlegBillDao openlegBillDao;
 
     @Autowired
     private BillDataService billDataService;
@@ -71,18 +71,21 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
     @Override
     public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         // Create a new report instance
-        logger.info("Start generating new report of difference between Openleg Dev and XML branch ");
+        logger.info("Start generating new report of difference between Openleg Ref and XML branch ");
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.OPENLEG_DEV,
                 LocalDateTime.now(),
                 LocalDateTime.now());
         report.setReportId(reportId);
-        logger.info("Loading BillView from Openleg Dev ");
-        List<BillView> referenceBillViews = openlegDevDao.getOpenlegBillView(String.valueOf(start.getYear()), apiKey);
-        if (referenceBillViews.isEmpty())
+        logger.info("Loading BillView from Openleg reference");
+        logger.info("The current session year is " + SessionYear.of( start.getYear() ) );
+        List<BillView> referenceBillViews = openlegBillDao.getOpenlegBillView(String.valueOf(start.getYear()), apiSecret);
+        if (referenceBillViews.isEmpty()) {
             throw new ReferenceDataNotFoundEx("The collection of sobi bills with the given session year is empty.");
-        //Fetching Bill from Openleg xml-data-processing branch by iterating BaseBillId of BillView from Openleg Dev
-        logger.info("Check the sym diff...");
+        }
+        //Fetching Bill from Openleg xml-data-processing branch
+        // by iterating BaseBillId of BillView from Openleg reference
+        logger.info("Check the symmetric diff...");
         Set<BaseBillId> refBill = new HashSet<>();
         Set<BaseBillId> localBill = new HashSet<>();
         for (BillView sobiBill : referenceBillViews) {
@@ -94,14 +97,12 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
         }
         Set<BaseBillId> diffBill = new HashSet<>(); // the collection of bills which only appears in either dev or xml
         // Check for differences between the set of daybreak and openleg base bill ids.
-        logger.info("Fetching Missing Bill");
-        final long[] numOfMismatches = {0};
-        System.out.println("Found " + refBill.size()+" bills in Openleg-dev(SOBI) and " + localBill.size()+" bills in local (XML)" );
-        Sets.symmetricDifference(refBill, localBill).stream()
+        logger.info("Found " + refBill.size()+" bills in Openleg-ref(SOBI) and " + localBill.size()+" bills in local (XML)" );
+        Sets.symmetricDifference(refBill, localBill).stream() //19216 vs 19234
                 .forEach(id -> {
                     SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), id);
                     if (localBill.contains(id)) {
-                        sourceMissingObs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, id, "Missing Data from Openleg Dev, ID:" + id.getBasePrintNo()));
+                        sourceMissingObs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, id, "Missing Data from Openleg Ref, ID:" + id.getBasePrintNo()));
 
                     } else {
                         sourceMissingObs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, id, "Missing Data from Openleg XML, ID:" + id.getBasePrintNo()));
@@ -109,12 +110,11 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
                     diffBill.add(id);
                     sourceMissingObs.setReferenceId(reportId.getReferenceId());
                     sourceMissingObs.setObservedDateTime(LocalDateTime.now());
-                    numOfMismatches[0] += sourceMissingObs.getMismatches().size();
                     report.addObservation(sourceMissingObs);
                 });
-        logger.info("Found " + numOfMismatches[0] +" missing bills mismatches");
-        numOfMismatches[0] = 0; //reset to 0
-        logger.info("Fetching Bill from Openleg xml-data-processing branch by iterating BaseBillId of BillView from Openleg Dev");
+        logger.info("Found " + report.getOpenMismatchCount(true) +" missing bills mismatches");
+
+        logger.info("Fetching Bill from Openleg xml-data-processing branch by iterating BaseBillId of BillView from Openleg Ref");
         for (BillView sobiBill : referenceBillViews) {
             if (diffBill.contains(sobiBill.toBaseBillId())) // if current bill appears in both dev and xml.
                 continue;
@@ -123,11 +123,10 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
             SpotCheckReferenceId referenceId = reportId.getReferenceId();
             observation.setReferenceId(referenceId);
             observation.setObservedDateTime(LocalDateTime.now());
-            numOfMismatches[0] += observation.getMismatches().size();
             report.addObservation(observation);
         }
-        logger.info("Found total number of "+numOfMismatches[0] +" mismatches");
-        logger.info("Fetching Bill from Openleg xml-data-processing branch by iterating BaseBillId of BillView from Openleg Dev");
+        logger.info("Found total number of " + report.getOpenMismatchCount(true) + " mismatches");
+        logger.info("Fetching Bill from Openleg xml-data-processing branch by iterating BaseBillId of BillView from Openleg Ref");
         return report;
     }
 

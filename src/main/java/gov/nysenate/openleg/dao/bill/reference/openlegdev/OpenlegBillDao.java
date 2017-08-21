@@ -5,11 +5,11 @@ import gov.nysenate.openleg.client.view.bill.BillView;
 import java.util.List;
 
 /**
- * Created by Chenguang He on 2017/3/21.
+ * Gets bills from an openleg api
  */
-public interface OpenlegDevDao {
+public interface OpenlegBillDao {
     /**
-     * Given a session year and apiKey, return the list of BillView from openleg dev.
+     * Given a session year and apiKey, return the list of BillView from openleg.
      * @param sessionYear
      * @return List of BillView
      */

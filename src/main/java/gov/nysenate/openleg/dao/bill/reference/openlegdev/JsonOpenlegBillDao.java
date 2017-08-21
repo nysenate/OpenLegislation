@@ -20,8 +20,8 @@ import java.util.List;
  * Created by Chenguang He on 2017/3/21.
  */
 @Repository
-public class JsonOpenlegDev implements OpenlegDevDao {
-    private static final Logger logger = LoggerFactory.getLogger(JsonOpenlegDev.class);
+public class JsonOpenlegBillDao implements OpenlegBillDao {
+    private static final Logger logger = LoggerFactory.getLogger(JsonOpenlegBillDao.class);
 
     String callHeader = "http://legislation.nysenate.gov/api/3/bills/";
     HttpURLConnection connection = null;
@@ -31,7 +31,6 @@ public class JsonOpenlegDev implements OpenlegDevDao {
 
         List<BillView> billViews = new LinkedList<>();
         StringBuilder response = new StringBuilder();
-        String testBillId = "s44";
         try {
             // request json
             URL url = new URL(callHeader + sessionYear  + "?full=true&limit=1000&key=" + apiKey);
@@ -54,7 +53,7 @@ public class JsonOpenlegDev implements OpenlegDevDao {
             //   if it is a large request, then get rest of bill
             int offset = node.get("offsetEnd").asInt();
             int total = node.get("total").asInt();
-            logger.info("Fetching bill from openleg dev with offset " + offset);
+            logger.info("Fetching bill from openleg ref with offset " + offset);
             while (offset < total) {
                 //get next page of bill
                 StringBuffer sb = new StringBuffer();
