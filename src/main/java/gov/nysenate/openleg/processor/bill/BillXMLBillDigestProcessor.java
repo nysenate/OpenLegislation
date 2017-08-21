@@ -52,7 +52,7 @@ public class BillXMLBillDigestProcessor extends AbstractDataProcessor implements
             final String billhse = xmlHelper.getString("@billhse", billTextNode);
             final String billno = xmlHelper.getString("@billno", billTextNode);
             final String action = xmlHelper.getString("@action", billTextNode); //todo wait for LBDC explanation of action
-            final String summary = xmlHelper.getNode("digestsummary/summary", doc) == null ? "" : xmlHelper.getNode("digestsummary/summary", doc).getTextContent();
+            final String summary = xmlHelper.getNode("digestsummary/summary", doc) == null ? "" : xmlHelper.getNode("digestsummary/summary", doc).getTextContent().replaceAll("\n"," ");
             final String amd = xmlHelper.getString("digestsummary/summaryamendment", doc);
             final Version version = Version.of(amd);
             final String law = xmlHelper.getString("law", billTextNode).replaceAll("�", "§").replaceAll("º","§");
