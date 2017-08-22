@@ -136,4 +136,8 @@ public class BillView extends BillInfoView implements ViewObject
     public ListView<CalendarIdView> getCalendars() {
         return calendars;
     }
+
+    public String getActiveVersion() {
+        return activeVersion;
+    }
 }

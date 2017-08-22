@@ -1,0 +1,220 @@
+{
+  "success" : true,
+  "message" : "Data for bill S609-2017",
+  "responseType" : "bill",
+  "result" : {
+    "basePrintNo" : "S609",
+    "session" : 2017,
+    "basePrintNoStr" : "S609-2017",
+    "printNo" : "S609A",
+    "billType" : {
+      "chamber" : "SENATE",
+      "desc" : "Senate",
+      "resolution" : false
+    },
+    "title" : "@Relates to training requirements for home inspector licensing",
+    "activeVersion" : "A",
+    "year" : 2017,
+    "publishedDateTime" : "2017-01-04T10:45:46",
+    "substitutedBy" : null,
+    "sponsor" : {
+      "member" : {
+        "memberId" : 433,
+        "sessionMemberId" : 944,
+        "shortName" : "BOYLE",
+        "sessionYear" : 2017,
+        "chamber" : "SENATE",
+        "fullName" : "Phil Boyle",
+        "districtCode" : 4,
+        "imgName" : "433_phil_boyle.jpg"
+      },
+      "budget" : false,
+      "rules" : false
+    },
+    "summary" : "Relates to training requirements for home inspector licensing and requires the secretary to establish rules and regulations pertaining to the number and manner of hours of required training needed to obtain a license.",
+    "signed" : false,
+    "adopted" : false,
+    "vetoed" : false,
+    "status" : {
+      "statusType" : "IN_SENATE_COMM",
+      "statusDesc" : "In Senate Committee",
+      "actionDate" : "2017-01-18",
+      "committeeName" : "Judiciary",
+      "billCalNo" : null
+    },
+    "milestones" : {
+      "items" : [ {
+        "statusType" : "IN_SENATE_COMM",
+        "statusDesc" : "In Senate Committee",
+        "actionDate" : "2017-01-18",
+        "committeeName" : "Judiciary",
+        "billCalNo" : null
+      } ],
+      "size" : 1
+    },
+    "actions" : {
+      "items" : [ {
+        "billId" : {
+          "basePrintNo" : "S609",
+          "session" : 2017,
+          "basePrintNoStr" : "S609-2017",
+          "printNo" : "S609",
+          "version" : ""
+        },
+        "date" : "2017-01-04",
+        "chamber" : "SENATE",
+        "sequenceNo" : 1,
+        "text" : "REFERRED TO JUDICIARY"
+      }, {
+        "billId" : {
+          "basePrintNo" : "S609",
+          "session" : 2017,
+          "basePrintNoStr" : "S609-2017",
+          "printNo" : "S609A",
+          "version" : "A"
+        },
+        "date" : "2017-01-18",
+        "chamber" : "SENATE",
+        "sequenceNo" : 2,
+        "text" : "AMEND (T) AND RECOMMIT TO JUDICIARY"
+      }, {
+        "billId" : {
+          "basePrintNo" : "S609",
+          "session" : 2017,
+          "basePrintNoStr" : "S609-2017",
+          "printNo" : "S609A",
+          "version" : "A"
+        },
+        "date" : "2017-01-18",
+        "chamber" : "SENATE",
+        "sequenceNo" : 3,
+        "text" : "PRINT NUMBER 609A"
+      } ],
+      "size" : 3
+    },
+    "publishStatusMap" : {
+      "items" : {
+        "" : {
+          "version" : "",
+          "published" : true,
+          "effectDateTime" : "2017-01-04T10:45:46"
+        },
+        "A" : {
+          "version" : "A",
+          "published" : true,
+          "effectDateTime" : "2017-01-18T00:00"
+        }
+      },
+      "size" : 2
+    },
+    "programInfo" : null,
+    "amendmentVersions" : {
+      "items" : [ "", "A" ],
+      "size" : 2
+    },
+    "amendments" : {
+      "items" : {
+        "" : {
+          "basePrintNo" : "S609",
+          "session" : 2017,
+          "basePrintNoStr" : "S609-2017",
+          "printNo" : "S609",
+          "version" : "",
+          "publishDate" : "2017-01-04",
+          "sameAs" : {
+            "items" : [ ],
+            "size" : 0
+          },
+          "memo" : " BILL NUMBER:  S609\n\n TITLE OF BILL :  An act to amend the real property law, in relation\nto training and continuing education requirements for home inspector\nlicensing\n\n PURPOSE :  The purpose of this bill is to update required training\nand continuing education requirements for home inspectors.\n\n SUMMARY OF PROVISIONS :\n\nThis bill will increase the number of required training hours from one\nhundred and forty to two hundred hours and increase the required\namount of unpaid field training from forty to eighty hours.\n\nThe bill also clarifies that the required continuing education course\nshould be at least thirty two hours, up to which eight hours may be\ncompleted through online education.\n\nFinally, this legislation directs the Secretary of State to review and\nestablish rules and regulations pertaining to the number and manner of\nunpaid field-based training and the manner and hours of continuing\neducation courses, including those for online education.\n\n JUSTIFICATION :\n\nThis bill, supported by the New York State Association of Home\nInspectors, will increase the required training to become a licensed\nhome inspector. This increase will strengthen training for new home\ninspectors and ensure more effective inspections. The present 140\nhours of initial training for licensure are insufficient to ensure an\nadequate understanding of the significance, condition, and failure\nmodes of the numerous electrical, mechanical, and structural systems\nwithin a home, resulting in significant missed or misinterpreted\nconditions during home inspections. This increase in hours will ensure\nthat new home inspectors are trained to the highest standard and fully\nequipped to protect home buyers.\n\nThe bill also asks the Secretary of State to review and establish\nrules and regulations regarding the manner and number of hours\nrequired for unpaid field-based inspections as part of the training.\nThe 40 hour on-site training portion of the existing initial training\nrequirements do not allow enough time for trainees to learn to\nsuccessfully identify essential components and to properly explain the\nrelative significance of observed deficiencies to clients. Modern\nresidential construction and remodeling are constantly undergoing\nmajor changes in methods and materials, as well as energy conservation\nmeasures and techniques, requiring significant continuing education\nand training.\n\nThe Secretary will also review and establish rules and regulations\nregarding the number of hours required for continuing education and\nhow to establish an online education component of the required\ncontinuing education. The present 24 hours of continuing education\ncredits required per two year renewal period are insufficient to\nensure that licensed inspectors are fully aware of new construction\ncodes and practices, and able to effectively communicate any observed\nconcerns regarding these systems to clients. This will not only make\nthe continuing education more accessible, but also ensure that home\ninspectors are receiving the most up to date training available.\n\n LEGISLATIVE HISTORY :\n\nNew bill.\n\n FISCAL IMPLICATIONS :\nNone.\n\n EFFECTIVE DATE :\nThis act shall take effect immediately.\n",
+          "lawSection" : "Real Property Law",
+          "lawCode" : "Amd §§444-e & 444-l, RP L",
+          "actClause" : "AN ACT to amend the real property law, in relation to training and continuing education requirements for home inspector licensing",
+          "fullText" : "\n                    S T A T E   O F   N E W   Y O R K\n________________________________________________________________________\n\n                                   609\n\n                       2017-2018 Regular Sessions\n\n                            I N  S E N A T E\n\n                             January 4, 2017\n                               ___________\n\nIntroduced  by  Sen.  BOYLE  -- read twice and ordered printed, and when\n  printed to be committed to the Committee on Judiciary\n\nAN ACT to amend the real property  law,  in  relation  to  training  and\n  continuing education requirements for home inspector licensing\n\n  THE  PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND ASSEM-\nBLY, DO ENACT AS FOLLOWS:\n\n  Section 1. Subparagraph (i) of  paragraph  (b)  of  subdivision  1  of\nsection 444-e of the real property law, as amended by section 59 of part\nD of chapter 60 of the laws of 2012, is amended to read as follows:\n  (i)  have  successfully  completed  a course of study of not less than\n[one] TWO hundred [forty] hours approved by the secretary, of  which  at\nleast  [forty]  EIGHTY hours shall have been in the form of unpaid field\nbased inspections in the presence of and under the direct supervision of\na home inspector licensed by the state of New  York  or  a  professional\nengineer  or  architect  regulated by the state of New York who oversees\nand takes full responsibility for the inspection and any report provided\nto a client; or\n  S 2. Subdivision 1 of section 444-f  of  the  real  property  law,  as\namended  by  section  60 of part D of chapter 60 of the laws of 2012, is\namended to read as follows:\n  1. Home inspector licenses and renewals thereof shall be issued for  a\nperiod  of two years, except that the secretary may, in order to stagger\nthe expiration date thereof, provide that those licenses first issued or\nrenewed after the effective date of this section shall expire or  become\nvoid  on  a  date fixed by the secretary, not sooner than six months nor\nlater than twenty-nine months after the date of issue. No renewal  of  a\nlicense  shall be issued unless the applicant has successfully completed\n[a course] AT LEAST THIRTY-TWO HOURS of continuing education approved by\nthe secretary WITHIN THE  TWO-YEAR  PERIOD  IMMEDIATELY  PRECEDING  SUCH\nRENEWAL,  UP  TO  EIGHT  HOURS  OF WHICH MAY BE COMPLETED THROUGH ONLINE\nEDUCATION THAT ADHERES TO THE REQUIREMENTS SET FORTH BY THE SECRETARY.\n\n EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets\n                      [ ] is old law to be omitted.\n                                                           LBD05447-01-7\n\nS. 609                              2\n\n  S 3. Section 444-l of the real property law, as amended by section  62\nof  part  D  of  chapter  60  of the laws of 2012, is amended to read as\nfollows:\n  S  444-l.  Duties  of  the secretary. 1. The secretary shall establish\nsuch rules and regulations  as  shall  be  necessary  to  implement  the\nprovisions of this article.\n  2.  THE  SECRETARY SHALL ESTABLISH RULES AND REGULATIONS PERTAINING TO\nTHE NUMBER AND MANNER OF HOURS OF UNPAID FIELD-BASED  TRAINING  REQUIRED\nPURSUANT  TO  SUBPARAGRAPH  (I)  OF  PARAGRAPH (B) OF SUBDIVISION ONE OF\nSECTION FOUR HUNDRED FORTY-FOUR-E OF THIS ARTICLE.\n  3. THE SECRETARY SHALL ESTABLISH RULES AND REGULATIONS  PERTAINING  TO\nTHE NUMBER AND MANNER OF HOURS OF CONTINUING EDUCATION REQUIRED PURSUANT\nTO SUBDIVISION ONE OF SECTION FOUR HUNDRED FORTY-FOUR-F OF THIS ARTICLE.\nSUCH  RULES AND REGULATIONS SHALL INCLUDE STANDARDS AND REQUIREMENTS FOR\nCOMPUTER BASED DISTANCE LEARNING PROGRAMS.\n  S 4. This act shall take effect immediately.\n\n",
+          "coSponsors" : {
+            "items" : [ ],
+            "size" : 0
+          },
+          "multiSponsors" : {
+            "items" : [ ],
+            "size" : 0
+          },
+          "uniBill" : false,
+          "stricken" : false
+        },
+        "A" : {
+          "basePrintNo" : "S609",
+          "session" : 2017,
+          "basePrintNoStr" : "S609-2017",
+          "printNo" : "S609A",
+          "version" : "A",
+          "publishDate" : "2017-01-18",
+          "sameAs" : {
+            "items" : [ ],
+            "size" : 0
+          },
+          "memo" : " BILL NUMBER:  S609A\n\n TITLE OF BILL :  An act to amend the real property law, in relation\nto training requirements for home inspector licensing\n\n PURPOSE :\n\nThe purpose of this bill is to update training requirements for home\ninspectors.\n\n SUMMARY OF PROVISIONS :\n\nThis bill will increase the number of required training hours from one\nhundred and forty to two hundred hours and increase the required\namount of unpaid field training from forty to eighty hours.\n\nThis legislation also directs the Secretary of State to review and\nestablish rules and regulations pertaining to the number and manner of\nunpaid field-based training.\n\n JUSTIFICATION :\n\nThis bill, supported by the New York State Association of Home\nInspectors, will increase the required training to become a licensed\nhome inspector. This increase will strengthen training for new home\ninspectors and ensure more effective inspections. The present 140\nhours of initial training for licensure are insufficient to ensure an\nadequate understanding of the significance, condition, and failure\nmodes of the numerous electrical, mechanical, and structural systems\nwithin a home, resulting in significant missed or misinterpreted\nconditions during home inspections. This increase in hours will ensure\nthat new home inspectors are trained to the highest standard and fully\nequipped to protect home buyers.\n\nThe bill also asks the Secretary of State to review and establish\nrules and regulations regarding the manner and number of hours\nrequired for unpaid field-based inspections as part of the training.\nThe 40 hour on-site training portion of the existing initial training\nrequirements does not allow enough time for trainees to learn to\nsuccessfully identify essential components and to properly explain the\nrelative significance of observed deficiencies to clients. Modern\nresidential construction and remodeling are constantly undergoing\nmajor changes in methods and materials, as well as energy conservation\nmeasures and techniques, requiring significant continuing education\nand training.\n\n LEGISLATIVE HISTORY :\n\n2015 - Referred to Judiciary\n2016 - Referred to Judiciary\n\n FISCAL IMPLICATIONS :\n\nNone.\n\n EFFECTIVE DATE :\nThis act shall take effect immediately.\n",
+          "lawSection" : "Real Property Law",
+          "lawCode" : "Amd §§444-e & 444-l, RP L",
+          "actClause" : "AN ACT to amend the real property law, in relation to training requirements for home inspector licensing",
+          "fullText" : "\n                    S T A T E   O F   N E W   Y O R K\n________________________________________________________________________\n\n                                 609--A\n\n                       2017-2018 Regular Sessions\n\n                            I N  S E N A T E\n\n                             January 4, 2017\n                               ___________\n\nIntroduced  by  Sen.  BOYLE  -- read twice and ordered printed, and when\n  printed to be committed to the Committee  on  Judiciary  --  committee\n  discharged, bill amended, ordered reprinted as amended and recommitted\n  to said committee\n\nAN  ACT to amend the real property law, in relation to training require-\n  ments for home inspector licensing\n\n  THE PEOPLE OF THE STATE OF NEW YORK, REPRESENTED IN SENATE AND  ASSEM-\nBLY, DO ENACT AS FOLLOWS:\n\n  Section  1.  Subparagraph  (i)  of  paragraph  (b) of subdivision 1 of\nsection 444-e of the real property law, as amended by section 59 of part\nD of chapter 60 of the laws of 2012, is amended to read as follows:\n  (i) have successfully completed a course of study  of  not  less  than\n[one]  TWO  hundred [forty] hours approved by the secretary, of which at\nleast [forty] EIGHTY hours shall have been in the form of  unpaid  field\nbased inspections in the presence of and under the direct supervision of\na  home  inspector  licensed  by the state of New York or a professional\nengineer or architect regulated by the state of New  York  who  oversees\nand takes full responsibility for the inspection and any report provided\nto a client; or\n  S  2. Section 444-l of the real property law, as amended by section 62\nof part D of chapter 60 of the laws of  2012,  is  amended  to  read  as\nfollows:\n  S  444-l.  Duties  of  the secretary. 1. The secretary shall establish\nsuch rules and regulations  as  shall  be  necessary  to  implement  the\nprovisions of this article.\n  2.  THE  SECRETARY SHALL ESTABLISH RULES AND REGULATIONS PERTAINING TO\nTHE NUMBER AND MANNER OF HOURS OF UNPAID FIELD-BASED  TRAINING  REQUIRED\nPURSUANT  TO  SUBPARAGRAPH  (I)  OF  PARAGRAPH (B) OF SUBDIVISION ONE OF\nSECTION FOUR HUNDRED FORTY-FOUR-E OF THIS ARTICLE.\n  S 3. This act shall take effect immediately.\n\n EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets\n                      [ ] is old law to be omitted.\n                                                           LBD05447-03-7\n\n",
+          "coSponsors" : {
+            "items" : [ ],
+            "size" : 0
+          },
+          "multiSponsors" : {
+            "items" : [ ],
+            "size" : 0
+          },
+          "uniBill" : false,
+          "stricken" : false
+        }
+      },
+      "size" : 2
+    },
+    "votes" : {
+      "items" : [ ],
+      "size" : 0
+    },
+    "vetoMessages" : {
+      "items" : [ ],
+      "size" : 0
+    },
+    "approvalMessage" : null,
+    "additionalSponsors" : {
+      "items" : [ ],
+      "size" : 0
+    },
+    "pastCommittees" : {
+      "items" : [ {
+        "chamber" : "SENATE",
+        "name" : "Judiciary",
+        "sessionYear" : 2017,
+        "referenceDate" : "2017-01-04T00:00"
+      }, {
+        "chamber" : "SENATE",
+        "name" : "Judiciary",
+        "sessionYear" : 2017,
+        "referenceDate" : "2017-01-18T00:00"
+      } ],
+      "size" : 2
+    },
+    "previousVersions" : {
+      "items" : [ {
+        "basePrintNo" : "S5027",
+        "session" : 2015,
+        "basePrintNoStr" : "S5027-2015",
+        "printNo" : "S5027",
+        "version" : ""
+      } ],
+      "size" : 1
+    },
+    "committeeAgendas" : {
+      "items" : [ ],
+      "size" : 0
+    },
+    "calendars" : {
+      "items" : [ ],
+      "size" : 0
+    }
+  }
+}

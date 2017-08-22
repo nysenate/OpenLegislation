@@ -25,59 +25,25 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
 
     String callHeader = "http://legislation.nysenate.gov/api/3/bills/";
     HttpURLConnection connection = null;
+    int offset = 0;
+    int total = 0;
 
     @Override
     public List<BillView> getOpenlegBillView(String sessionYear, String apiKey) {
-
         List<BillView> billViews = new LinkedList<>();
-        StringBuilder response = new StringBuilder();
-        try {
-            // request json
-            URL url = new URL(callHeader + sessionYear  + "?full=true&limit=1000&key=" + apiKey);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setUseCaches(false);
-            connection.setDoOutput(true);
-            InputStream is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = rd.readLine()) != null) {
-                response.append(line);
-            }
-            rd.close();
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new GuavaModule());
-            JsonNode node = mapper.readTree(response.toString());
-            billViews.addAll(toBillView(node));
+        StringBuffer response = new StringBuffer();
+
+        setConnection(callHeader + sessionYear  + "?full=true&limit=1000&key=" + apiKey, "GET", false, true);
+        readInputStream(connection, response);
+        mapJSONToBillView(response, billViews);
+        connection.disconnect();
+
+        while (offset < total) {
+            StringBuffer restOfBill = new StringBuffer();
+            setConnection(callHeader + sessionYear + "?full=true&key=" + apiKey + "&limit=1000&offset=" + (offset + 1),"GET",false,true );
+            readInputStream(connection, restOfBill);
+            mapJSONToBillView(restOfBill, billViews);
             connection.disconnect();
-            //   if it is a large request, then get rest of bill
-            int offset = node.get("offsetEnd").asInt();
-            int total = node.get("total").asInt();
-            logger.info("Fetching bill from openleg ref with offset " + offset);
-            while (offset < total) {
-                //get next page of bill
-                StringBuffer sb = new StringBuffer();
-                URL next = new URL(callHeader + sessionYear + "?full=true&key=" + apiKey + "&limit=1000&offset=" + (offset + 1));
-                connection = (HttpURLConnection) next.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setUseCaches(false);
-                connection.setDoOutput(true);
-                InputStream inputStream_next = connection.getInputStream();
-                BufferedReader reader_next = new BufferedReader(new InputStreamReader(inputStream_next));
-                String line_next;
-                while ((line_next = reader_next.readLine()) != null) {
-                    sb.append(line_next);
-                }
-                reader_next.close();
-                JsonNode node_next = mapper.readTree(sb.toString());
-                billViews.addAll(toBillView(node_next));
-                connection.disconnect();
-                //update variables
-                offset = node_next.get("offsetEnd").asInt();
-                logger.info("Fetching bill from openleg dev with offset " + offset);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return billViews;
     }
@@ -96,6 +62,64 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
             }
         }
         return billViewList;
+    }
+
+    private void setConnection(String URL, String requestMethod, boolean useCaches, boolean doOutput) {
+
+        try {
+            URL url = new URL(URL);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(requestMethod);
+            connection.setUseCaches(useCaches);
+            connection.setDoOutput(doOutput);
+        } catch (Exception e) {
+            logger.error("A connection could not be made to URL " + URL);
+            e.printStackTrace();
+        }
+    }
+
+    private void readInputStream(HttpURLConnection connection,StringBuffer response) {
+        InputStream is = null;
+        try {
+            is = connection.getInputStream();
+
+        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+        String line;
+        while ((line = rd.readLine()) != null) {
+            response.append(line);
+        }
+        rd.close();
+        } catch (IOException e) {
+            logger.error("The StringBuffer could not read the incoming stream");
+            e.printStackTrace();
+        }
+    }
+
+    private void mapJSONToBillView(StringBuffer response, List<BillView> billViews) {
+        try {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new GuavaModule());
+
+        JsonNode node = null;
+        node = mapper.readTree(response.toString());
+
+        logger.info("Fetching bill from openleg ref with offset " + offset);
+        setOffset( node.get("offsetEnd").asInt() );
+        setTotal( node.get("total").asInt() );
+
+        billViews.addAll(toBillView(node));
+        } catch (IOException e) {
+            logger.error("The JSON Object could not be mapped to a bill view");
+            e.printStackTrace();
+        }
+    }
+
+    private void setOffset(int update) {
+        offset = update;
+    }
+
+    private void setTotal(int total) {
+        this.total = total;
     }
 
 }
