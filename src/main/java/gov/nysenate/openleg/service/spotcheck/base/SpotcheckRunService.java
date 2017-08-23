@@ -117,7 +117,7 @@ public class SpotcheckRunService {
         logger.info("Attempting to run a {} report..", reportService.getSpotcheckRefType());
         try {
             SpotCheckReport<T> report = reportService.generateReport(
-                    DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange)); //this start year is wrong
+                    DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange));
             int notesCutoff = 140; // Cut off the notes in the display after this many characters
             logger.info("Saving report: {} {} {}", report.getReportDateTime(), report.getReferenceType(),
                     report.getNotes() != null
