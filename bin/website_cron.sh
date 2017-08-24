@@ -15,6 +15,7 @@
 # Revised: 2016-12-22 - Added --disqus option to run Disqus integration
 # Revised: 2017-01-12 - Added safe_cache_form_clear drush command
 # Revised: 2017-02-09 - Added --maint option to run Drupal maintenance tasks
+# Revised: 2017-08-14 - Added --update-statutes to update all statutes
 #
 
 PATH=$PATH:/usr/local/bin
@@ -24,7 +25,7 @@ prog=`basename $0`
 penv=$DEFAULT_ENV
 
 usage() {
-  echo "Usage: $prog [--qa | --disqus] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
+  echo "Usage: $prog [--qa | --maint | --update-statutes | --disqus] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
   echo "  where 'environ' is typically one of: live, test, dev" >&2
 }
 
@@ -42,8 +43,9 @@ drush_args=
 while [ $# -gt 0 ]; do
   case "$1" in
     --qa) mode=qa ;;
-    --disqus) mode=disqus ;;
     --maint) mode=maint ;;
+    --update-statutes|--uas) mode=uas ;;
+    --disqus) mode=disqus ;;
     --arg) shift; drush_args="$drush_args $1" ;;
     --help|-h) usage; exit 0 ;;
     -*) echo "$prog: $1: Invalid option" >&2; exit 1 ;;
@@ -70,7 +72,7 @@ elif [ "$mode" = "disqus" ]; then
 
 elif [ "$mode" = "maint" ]; then
 
-  echo "About to run Drupal maintenance tasks (module crons):"
+  echo "About to run Drupal maintenance tasks (module crons)"
   run_module_cron $penv captcha
   run_module_cron $penv ctools
   run_module_cron $penv feeds
@@ -99,6 +101,11 @@ elif [ "$mode" = "maint" ]; then
   run_module_cron $penv xmlsitemap
   run_module_cron $penv xmlsitemap_engines
   run_module_cron $penv rules
+
+elif [ "$mode" = "uas" ]; then
+
+  echo "About to update all statutes"
+  pdrush @$penv update-all-statutes $drush_args
 
 else
 
