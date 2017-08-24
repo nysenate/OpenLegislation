@@ -112,7 +112,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
                     sourceMissingObs.setObservedDateTime(LocalDateTime.now());
                     report.addObservation(sourceMissingObs);
                 });
-        logger.info("Found " + report.getOpenMismatchCount(true) +" missing bills mismatches");
+        logger.info("Found " + report.getOpenMismatchCount(false) +" missing bills mismatches");
 
         logger.info("Fetching Bill from Openleg xml-data-processing branch by iterating BaseBillId of BillView from Openleg Ref");
         for (BillView sobiBill : referenceBillViews) {
@@ -125,7 +125,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
             observation.setObservedDateTime(LocalDateTime.now());
             report.addObservation(observation);
         }
-        logger.info("Found total number of " + report.getOpenMismatchCount(true) + " mismatches");
+        logger.info("Found total number of " + report.getOpenMismatchCount(false) + " mismatches");
         logger.info("Fetching Bill from Openleg xml-data-processing branch by iterating BaseBillId of BillView from Openleg Ref");
         return report;
     }
