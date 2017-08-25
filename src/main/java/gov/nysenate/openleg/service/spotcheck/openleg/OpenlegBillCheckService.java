@@ -97,21 +97,21 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
 
     protected void checkBillActions(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getActions(), true);
-        String reference_str = serialize(content.getActions(), true);
+        String reference_str = serialize(reference.getActions(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_SPONSOR_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkBillSponsor(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getSponsor(), true);
-        String reference_str = serialize(content.getSponsor(), true);
+        String reference_str = serialize(reference.getSponsor(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_SPONSOR_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkBillYear(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getYear(), true);
-        String reference_str = serialize(content.getYear(), true);
+        String reference_str = serialize(reference.getYear(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_SESSION_YEAR_OPENLEG_DEV, content_str, reference_str));
     }
@@ -119,63 +119,63 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
 
     protected void checkBillStatus(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getStatus(), true);
-        String reference_str = serialize(content.getStatus(), true);
+        String reference_str = serialize(reference.getStatus(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_LAST_STATUS_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkAdditionalSponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getAdditionalSponsors(), true);
-        String reference_str = serialize(content.getAdditionalSponsors(), true);
+        String reference_str = serialize(reference.getAdditionalSponsors(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(Bill_ADDITIONAL_SPONSOR_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkAmendment(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getAmendments(), true);
-        String reference_str = serialize(content.getAmendments(), true);
+        String reference_str = serialize(reference.getAmendments(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkAmendmentVersions(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getAmendmentVersions(), true);
-        String reference_str = serialize(content.getAmendmentVersions(), true);
+        String reference_str = serialize(reference.getAmendmentVersions(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_AMENDMENT_VERSION_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkBillApproveMessage(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getApprovalMessage(), true);
-        String reference_str = serialize(content.getApprovalMessage(), true);
+        String reference_str = serialize(reference.getApprovalMessage(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_APPROVE_MESSAGE_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkVotes(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getVotes(), true);
-        String reference_str = serialize(content.getVotes(), true);
+        String reference_str = serialize(reference.getVotes(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_VOTES_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkCalendars(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getCalendars(), true);
-        String reference_str = serialize(content.getCalendars(), true);
+        String reference_str = serialize(reference.getCalendars(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(CALENDAR_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkBillCommitteeAgendas(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getCommitteeAgendas(), true);
-        String reference_str = serialize(content.getCommitteeAgendas(), true);
+        String reference_str = serialize(reference.getCommitteeAgendas(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_COMMITTEE_AGENDAS_OPENLEG_DEV, content_str, reference_str));
     }
 
     protected void checkBillPastCommmittee(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = serialize(content.getPastCommittees(), true);
-        String reference_str = serialize(content.getPastCommittees(), true);
+        String reference_str = serialize(reference.getPastCommittees(), true);
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_PAST_COMMITTEE_OPENLEG_DEV, content_str, reference_str));
     }
