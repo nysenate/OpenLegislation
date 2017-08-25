@@ -75,9 +75,20 @@ public class XmlBillSameAsProcessor extends AbstractDataProcessor implements Sob
                     Matcher sameAsMatcher = sameAsPattern.matcher(sameasBillContext);
                     if (sameAsMatcher.find()) {
 
-                        List<String> sameAsMatches = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2)));
-                        for (String sameAs : sameAsMatches) {
-                            amendment.getSameAs().add(new BillId(sameAs.replace(" ", "").replace("-",""), amendment.getSession()));
+                        List<String> sameAsMatchesBeforeSplit = new ArrayList<>(Arrays.asList(sameAsMatcher.group(2)));
+                        for (String sameAs : sameAsMatchesBeforeSplit) {
+                            if (sameAs.contains(",")) {
+                                for( String splitSameAs: sameAs.split(",") ) {
+                                    amendment.getSameAs().add(new BillId(splitSameAs.replace(" ", "").replace("-",""), amendment.getSession()));
+                                }
+                            }
+                            else if (sameAs.contains("/")) {
+                                for( String splitSameAs: sameAs.split("/") ) {
+                                    amendment.getSameAs().add(new BillId(splitSameAs.replace(" ", "").replace("-",""), amendment.getSession()));
+                                }                            }
+                            else {
+                                amendment.getSameAs().add(new BillId(sameAs.replace(" ", "").replace("-",""), amendment.getSession()));
+                            }
                         }
 
                         // Check for uni-bill and sync
