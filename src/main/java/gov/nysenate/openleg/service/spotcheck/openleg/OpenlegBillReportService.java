@@ -2,7 +2,6 @@ package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.bill.BillView;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.reference.openlegdev.OpenlegBillDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
@@ -81,7 +80,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
         logger.info("The current session year is " + SessionYear.of( start.getYear() ) );
         List<BillView> referenceBillViews = openlegBillDao.getOpenlegBillView(String.valueOf(start.getYear()), apiSecret);
         if (referenceBillViews.isEmpty()) {
-            throw new ReferenceDataNotFoundEx("The collection of sobi bills with the given session year is empty.");
+            throw new ReferenceDataNotFoundEx("The collection of sobi bills with the given session year " + SessionYear.of( start.getYear() )  + " is empty.");
         }
         //Fetching Bill from Openleg xml-data-processing branch
         // by iterating BaseBillId of BillView from Openleg reference
