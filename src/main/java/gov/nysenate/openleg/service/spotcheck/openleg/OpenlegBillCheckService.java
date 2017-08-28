@@ -51,17 +51,13 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     public SpotCheckObservation<BaseBillId>  check(BillView content, BillView reference) {
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<BaseBillId>(reference.toBaseBillId());
         checkBillTitle(reference, content, observation);
-        checkViewType(reference, content, observation);
         checkActiveVersion(reference, content, observation);
-        checkBillBasePrintNo(reference, content, observation);
-        checkBillBasePrintNoNoStr(reference, content, observation);
         checkBillSummary(reference, content, observation);
         checkBillActions(reference, content, observation);
         checkBillSponsor(reference, content, observation);
         checkBillYear(reference, content, observation);
         checkBillStatus(reference, content, observation);
         checkAdditionalSponsors(reference, content, observation);
-        checkAmendmentVersions(reference, content, observation);
         checkBillApproveMessage(reference, content, observation);
         checkVotes(reference, content, observation);
         checkCalendars(reference, content, observation);
@@ -72,53 +68,38 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
 
     protected void checkBillTitle(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         if (!stringEquals(content.getTitle(), reference.getTitle(), false, true))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_TITLE_OPENLEG_DEV, content.getTitle(), reference.getTitle()));
-    }
-
-    protected void checkViewType(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
-        if (!stringEquals(content.getViewType(), reference.getViewType(), false, true))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_VIEW_TYPE_OPENLEG_DEV, content.getViewType(), reference.getViewType()));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_TITLE, content.getTitle(), reference.getTitle()));
     }
 
     protected void checkActiveVersion(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         if ( !content.getActiveVersion().equals(reference.getActiveVersion() )  )
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT_OPENLEG_DEV, content.getActiveVersion(), reference.getActiveVersion()));
-    }
-
-    protected void checkBillBasePrintNo(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
-        if (!stringEquals(content.getBasePrintNo(), reference.getBasePrintNo(), false, true))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_BASE_PRINT_NO_OPENLEG_DEV, content.getBasePrintNo(), reference.getBasePrintNo()));
-    }
-
-    protected void checkBillBasePrintNoNoStr(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
-        if (!stringEquals(content.getBasePrintNoStr(), reference.getBasePrintNoStr(), false, true))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_BASE_PRINT_NO_NoStr_OPENLEG_DEV, content.getBasePrintNoStr(), reference.getBasePrintNoStr()));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT, content.getActiveVersion(), reference.getActiveVersion()));
     }
 
     protected void checkBillSummary(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         if (!stringEquals(content.getSummary(), reference.getSummary(), false, true))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_SUMMARY_OPENLEG_DEV, content.getSummary(), reference.getSummary()));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_SUMMARY, content.getSummary(), reference.getSummary()));
     }/**/
 
     protected void checkBillActions(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = OutputUtils.toJson(content.getActions());
         String reference_str = OutputUtils.toJson(reference.getActions());
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_SPONSOR_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, content_str, reference_str));
     }
 
     protected void checkBillSponsor(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = OutputUtils.toJson(content.getSponsor());
         String reference_str = OutputUtils.toJson(reference.getSponsor());
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_SPONSOR_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_SPONSOR, content_str, reference_str));
     }
 
     protected void checkBillYear(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = String.valueOf( content.getSession() );
         String reference_str = String.valueOf( reference.getSession() );
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_SESSION_YEAR_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_SESSION_YEAR, content_str, reference_str));
     }
 
 
@@ -126,56 +107,49 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
         String content_str = OutputUtils.toJson(content.getStatus());
         String reference_str = OutputUtils.toJson(reference.getStatus());
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_LAST_STATUS_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_LAST_STATUS, content_str, reference_str));
     }
 
     protected void checkAdditionalSponsors(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = OutputUtils.toJson(content.getAdditionalSponsors());
         String reference_str = OutputUtils.toJson(reference.getAdditionalSponsors());
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(Bill_ADDITIONAL_SPONSOR_OPENLEG_DEV, content_str, reference_str));
-    }
-
-    protected void checkAmendmentVersions(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
-        String content_str = OutputUtils.toJson(content.getAmendmentVersions());
-        String reference_str = OutputUtils.toJson(reference.getAmendmentVersions());
-        if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_AMENDMENT_VERSION_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(Bill_ADDITIONAL_SPONSOR_OPENLEG, content_str, reference_str));
     }
 
     protected void checkBillApproveMessage(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = OutputUtils.toJson(content.getApprovalMessage());
         String reference_str = OutputUtils.toJson(reference.getApprovalMessage());
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_APPROVE_MESSAGE_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_APPROVE_MESSAGE_OPENLEG, content_str, reference_str));
     }
 
     protected void checkVotes(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = OutputUtils.toJson(content.getVotes());
         String reference_str = OutputUtils.toJson(reference.getVotes());
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_VOTES_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_VOTES_OPENLEG, content_str, reference_str));
     }
 
     protected void checkCalendars(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = OutputUtils.toJson(content.getCalendars());
         String reference_str = OutputUtils.toJson(reference.getCalendars());
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(CALENDAR_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(CALENDAR_OPENLEG, content_str, reference_str));
     }
 
     protected void checkBillCommitteeAgendas(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = OutputUtils.toJson(content.getCommitteeAgendas());
         String reference_str = OutputUtils.toJson(reference.getCommitteeAgendas());
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_COMMITTEE_AGENDAS_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_COMMITTEE_AGENDAS_OPENLEG, content_str, reference_str));
     }
 
     protected void checkBillPastCommmittee(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         String content_str = OutputUtils.toJson(content.getPastCommittees());
         String reference_str = OutputUtils.toJson(reference.getPastCommittees());
         if (!content_str.equals(reference_str))
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_PAST_COMMITTEE_OPENLEG_DEV, content_str, reference_str));
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_PAST_COMMITTEE_OPENLEG, content_str, reference_str));
     }
 
 
