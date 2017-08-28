@@ -28,7 +28,7 @@ public class SobiFile
     public static final String DEFAULT_ENCODING = "CP850";
 
     /** The format required for the SOBI file name. e.g. SOBI.D130323.T065432.TXT */
-    private static final String sobiDateFullPattern = "'SOBI.D'yyMMdd'.T'HHmmss'.TXT'";
+    public static final String sobiDateFullPattern = "'SOBI.D'yyMMdd'.T'HHmmss'.TXT'";
 
     /** Alternate format for SOBI files with no seconds specified in the filename */
     private static final String sobiDateNoSecsPattern = "'SOBI.D'yyMMdd'.T'HHmm'.TXT'";
