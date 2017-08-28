@@ -78,7 +78,7 @@ public class SpotcheckRunService {
                 .put(SENATE_SITE_BILLS, senSiteBillReportService)
                 .put(SENATE_SITE_CALENDAR, senSiteCalReportService)
                 .put(SENATE_SITE_AGENDA,senSiteAgendaReportService)
-                .put(OPENLEG_DEV,openlegBillReportService)
+                .put(OPENLEG_BILL,openlegBillReportService)
                 .build();
     }
 

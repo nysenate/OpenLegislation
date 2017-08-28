@@ -56,7 +56,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
 
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
-        return SpotCheckRefType.OPENLEG_DEV;
+        return SpotCheckRefType.OPENLEG_BILL;
     }
 
     /**
@@ -72,7 +72,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
         // Create a new report instance
         logger.info("Start generating new report of difference between Openleg Ref and XML branch ");
         SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
-        SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.OPENLEG_DEV,
+        SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.OPENLEG_BILL,
                 LocalDateTime.now(),
                 LocalDateTime.now());
         report.setReportId(reportId);
