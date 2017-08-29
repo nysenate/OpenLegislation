@@ -279,13 +279,12 @@ Search for law documents
           }
         }, .... (more results)
 
-Get law updates
----------------
+Get law document updates
+------------------------
 
 To identify which documents have been modified or added to a body of law, use the law updates API.
 
-.. note:: Currently only updates and modifications to law documents are tracked. Structural modifications to a body
-          of law are not reported yet (such as repeals, removal of an article), but may be implemented in the future.
+To detect updates to the structure of the law document tree, see `Get law tree updates`_.
 
 .. note:: Law updates are received in a batch update on a weekly basis, so updates that occur during the week will only be visible at the end of that week.
 
@@ -387,6 +386,65 @@ Detailed law doc updates
                 fieldCount: 0
             },
 
+Get law tree updates
+--------------------
+
+Gets a list of laws which have had structural changes over a specified date/time range.
+
+To see updates to the content of law documents, see `Get law document updates`_.
+
+**Usage**
+
+List of laws with tree updates during the given date/time range
+::
+    /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}
+
+.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
+
+
+**Optional Params**
+
++-----------+----------------------+--------------------------------------------------------+
+| Parameter | Values               | Description                                            |
++===========+======================+========================================================+
+| type      | (processed|published)| The type of law update                                 |
++-----------+----------------------+--------------------------------------------------------+
+| order     | string (asc|desc)    | Order the results by update date/time                  |
++-----------+----------------------+--------------------------------------------------------+
+| limit     | 1 - 1000             | Number of results to return (high limits take longer)  |
++-----------+----------------------+--------------------------------------------------------+
+| offset    | >= 1                 | Result number to start from                            |
++-----------+----------------------+--------------------------------------------------------+
+
+**Response**
+
+Get law tree updates by published date
+::
+    e.g. /api/3/laws/tree/updates/2016-10-06/2016-10-08?type=published
+
+.. code-block:: javascript
+
+    {
+        success: true,
+        message: "",
+        responseType: "update-token list",
+        total: 23,
+        offsetStart: 1,
+        offsetEnd: 23,
+        limit: 50,
+        result: {
+            items: [
+                {
+                    id: {
+                        lawId: "PAR",                   // Location id of doc that was updated
+                        activeDate: "2016-10-07"        // Published date of this doc
+                    },
+                    contentType: "LAW",
+                    sourceId: "20161007.UPDATE",
+                    sourceDateTime: "2016-10-07T00:00",
+                    processedDateTime: "2017-08-15T12:40:02.271155"
+                },
+                (truncated)
 
 Get repealed laws
 -----------------
