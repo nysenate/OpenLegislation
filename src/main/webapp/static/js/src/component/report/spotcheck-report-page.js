@@ -22,8 +22,8 @@ function ReportCtrl($scope, $route,$location, $routeParams, $mdDialog, $mdDateLo
                 label: 'OpenLegislation - NYSenate.gov'
             },
             {
-                value:'OPENLEGDEV',
-                label: 'SOBI - XML'
+                value:'OPENLEG',
+                label: 'Openleg - Openleg'
             }
         ],
         selected: {}

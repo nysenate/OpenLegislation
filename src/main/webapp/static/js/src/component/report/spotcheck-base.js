@@ -108,7 +108,7 @@ spotcheckModule.filter('contentType', function() {
         LBDC_SCRAPED_BILL: "Bill",
         SENATE_SITE_BILLS: "Bill",
         SENATE_SITE_CALENDAR: "Calendar",
-        OPENLEG_DEV: "Openleg-Dev"
+        OPENLEG_BILL: "Openleg"
     };
     return function(reportType) {
         if (contentTypeMap.hasOwnProperty(reportType)) {
@@ -133,7 +133,7 @@ spotcheckModule.filter('reportReferenceProvider', function () {
         SENATE_SITE_CALENDAR: 'NYsenate.gov',
         LBDC_AGENDA_ALERT: 'LBDC',
         LBDC_CALENDAR_ALERT: 'LBDC',
-        OPENLEG_DEV: "Openleg-Dev"
+        OPENLEG_BIll: "Openleg"
     };
     return function (refType) {
         if (refProviderMap.hasOwnProperty(refType)) {
@@ -151,7 +151,7 @@ spotcheckModule.filter('refTypeLabel', function () {
         LBDC_AGENDA_ALERT: 'alert',
         LBDC_CALENDAR_ALERT: 'alert',
         SENATE_SITE_CALENDAR: 'node dump',
-        OPENLEG_DEV: "Openleg-Dev"
+        OPENLEG_BIll: "Openleg"
     };
     return function (refType) {
         if (refTypeLabelMap.hasOwnProperty(refType)) {
@@ -209,7 +209,7 @@ spotcheckModule.filter('contentId', function () {
         LBDC_AGENDA_ALERT: getAgendaId,
         LBDC_CALENDAR_ALERT: getCalendarId,
         SENATE_SITE_CALENDAR: getCalListId,
-        OPENLEG_DEV:getBillId
+        OPENLEG_BIll: getBillId
     };
     function getBaseBillId(key) {
         return key.basePrintNo;
@@ -368,7 +368,7 @@ var orderByFields = {
     REFERENCE_DATE: "observation.refDateTime",
     MISMATCH_TYPE: "mismatch.mismatchType",
     STATUS: "mismatch.status",
-    OPENLEG_DEV: "Openleg-Dev"
+    OPENLEG_BILL: "Openleg"
 };
 
 spotcheckModule.filter('mismatchOrderByField', [function() {
