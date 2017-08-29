@@ -72,7 +72,7 @@ public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiP
             final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
             final String sponsorhse = xmlHelper.getString("@billhse", billTextNode).trim();
             final Integer sponsorno = xmlHelper.getInteger("@billno", billTextNode);
-            final String action = xmlHelper.getString("@action", billTextNode).trim(); // TODO: implement actions
+            final String action = xmlHelper.getString("@action", billTextNode).trim();
             final String prime = xmlHelper.getString("prime", billTextNode).trim();
             final String coprime = xmlHelper.getString("co-prime", billTextNode).trim();
             final String multi = xmlHelper.getString("multi", billTextNode).trim();
@@ -89,12 +89,12 @@ public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiP
                 removeProcess(amendment, baseBill);
             } else {
                 if (prime.contains("BUDGET BILL")) {
-                        BillSponsor billSponsor1 = new BillSponsor();
+                    BillSponsor billSponsor1 = new BillSponsor();
                     billSponsor1.setBudget(true);
                     baseBill.setSponsor(billSponsor1);
                 } else {
                     String sponsor = "";
-                    if (prime.contains("RULES ")) {
+                    if (prime.contains("RULES")) {
                         BillSponsor billSponsor1 = new BillSponsor();
                         billSponsor1.setRules(true);
                         baseBill.setSponsor(billSponsor1);
