@@ -91,6 +91,9 @@ public class DaybreakCheckMailService extends BaseCheckMailService implements Ch
             if (DaybreakDocType.getMessageDocType(message.getSubject()) != null) {
                 reports.insertDaybreakDocument(new DaybreakMessage(message));
             }
+            else {
+                logger.warn("Email could not be identified as a daybreak email: " + message.getSubject());
+            }
         }
         return reports;
     }
