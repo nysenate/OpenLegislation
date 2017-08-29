@@ -21,13 +21,11 @@ import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 import static java.util.stream.Collectors.toList;
@@ -70,6 +68,26 @@ public class LawUpdatesCtrl extends BaseCtrl
     @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getAllUpdates(@PathVariable String from, @PathVariable String to, WebRequest request) {
         return getAllUpdates(parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
+    }
+
+    @RequestMapping(value = "/tree/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
+    public BaseResponse getLawTreeUpdates(@PathVariable String from,
+                                          @PathVariable String to,
+                                          WebRequest request) {
+
+        LocalDateTime parsedFromDateTime = Optional.ofNullable(from)
+                .map(tdt -> parseISODateTime(tdt, "from"))
+                .orElse(DateUtils.LONG_AGO.atStartOfDay());
+        LocalDateTime parsedToDateTime = Optional.ofNullable(to)
+                .map(tdt -> parseISODateTime(tdt, "to"))
+                .orElse(LocalDateTime.now());
+
+        BaseLawUpdatesParams params = getBaseParams(parsedFromDateTime, parsedToDateTime, request);
+
+        PaginatedList<UpdateToken<LawVersionId>> lawTreeUpdates =
+                lawUpdatesDao.getLawTreeUpdates(params.updateRange, params.updateType, params.sortOrder, params.limOff);
+
+        return getTokenListResponse(params, lawTreeUpdates);
     }
 
     /**

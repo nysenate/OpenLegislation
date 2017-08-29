@@ -15,8 +15,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 import static gov.nysenate.openleg.dao.law.data.SqlLawUpdatesQuery.*;
 
@@ -27,15 +25,10 @@ public class SqlLawUpdatesDao extends SqlBaseDao implements LawUpdatesDao
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<UpdateToken<LawVersionId>> getUpdates(
-        Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        addDateTimeRangeParams(params, dateTimeRange);
-        String sql = getQuery(SELECT_LAW_UPDATE_TOKENS, type, dateOrder, limitOffset);
-        PaginatedRowHandler<UpdateToken<LawVersionId>> handler =
-            new PaginatedRowHandler<>(limitOffset, "total_updated", lawIdUpdateTokenMapper);
-        jdbcNamed.query(sql, params, handler);
-        return handler.getList();
+    public PaginatedList<UpdateToken<LawVersionId>> getUpdates(Range<LocalDateTime> dateTimeRange,
+                                                               UpdateType type, SortOrder dateOrder,
+                                                               LimitOffset limitOffset) {
+        return getLawUpdateTokens(SELECT_LAW_TREE_UPDATES, dateTimeRange, type, dateOrder, limitOffset);
     }
 
     /** {@inheritDoc} */
@@ -79,6 +72,12 @@ public class SqlLawUpdatesDao extends SqlBaseDao implements LawUpdatesDao
         return handler.getList();
     }
 
+    @Override
+    public PaginatedList<UpdateToken<LawVersionId>> getLawTreeUpdates(Range<LocalDateTime> dateTimeRange, UpdateType type,
+                                                                      SortOrder dateOrder, LimitOffset limitOffset) {
+        return getLawUpdateTokens(SELECT_LAW_TREE_UPDATES, dateTimeRange, type, dateOrder, limitOffset);
+    }
+
     /** --- Internal --- */
 
     private String getQuery(SqlLawUpdatesQuery query, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset) {
@@ -108,4 +107,20 @@ public class SqlLawUpdatesDao extends SqlBaseDao implements LawUpdatesDao
         digest.setAction(rs.getString("action"));
         return digest;
     };
+
+    /**
+     * Generalized method to retrieve law update tokens from a query
+     */
+    private PaginatedList<UpdateToken<LawVersionId>> getLawUpdateTokens(SqlLawUpdatesQuery query,
+                                                                        Range<LocalDateTime> dateTimeRange,
+                                                                        UpdateType type,
+                                                                        SortOrder dateOrder, LimitOffset limitOffset) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        addDateTimeRangeParams(params, dateTimeRange);
+        String sql = getQuery(query, type, dateOrder, limitOffset);
+        PaginatedRowHandler<UpdateToken<LawVersionId>> handler =
+                new PaginatedRowHandler<>(limitOffset, "total_updated", lawIdUpdateTokenMapper);
+        jdbcNamed.query(sql, params, handler);
+        return handler.getList();
+    }
 }

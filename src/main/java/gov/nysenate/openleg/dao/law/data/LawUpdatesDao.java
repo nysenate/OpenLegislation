@@ -23,16 +23,16 @@ public interface LawUpdatesDao
      * @param limitOffset LimitOffset - Restrict the result set
      * @return PaginatedList<UpdateToken<LawVersionId>>
      */
-    public PaginatedList<UpdateToken<LawVersionId>> getUpdates(
-        Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
+    PaginatedList<UpdateToken<LawVersionId>> getUpdates(
+            Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
 
     /**
      * Returns a list of law doc id digests that have been updated during the given date range.
      * @see #getUpdates for param details.
      * @return PaginatedList<UpdateDigest<LawDocId>>
      */
-    public PaginatedList<UpdateDigest<LawDocId>> getDetailedUpdates(
-        Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
+    PaginatedList<UpdateDigest<LawDocId>> getDetailedUpdates(
+            Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
 
     /**
      * Returns a list of update digests for law documents that have been updated for a given law.
@@ -41,8 +41,8 @@ public interface LawUpdatesDao
      * @see #getUpdates for the other params.
      * @return PaginatedList<UpdateDigest<LawDocId>>
      */
-    public PaginatedList<UpdateDigest<LawDocId>> getDetailedUpdatesForLaw(
-        String lawId, Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
+    PaginatedList<UpdateDigest<LawDocId>> getDetailedUpdatesForLaw(
+            String lawId, Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
 
     /**
      * Returns a list of law doc id digests for a given law document. This is basically a history of updates for
@@ -52,7 +52,18 @@ public interface LawUpdatesDao
      * @see #getUpdates for other param details
      * @return PaginatedList<UpdateDigest<LawDocId>>
      */
-    public PaginatedList<UpdateDigest<LawDocId>> getDetailedUpdatesForDocument(
-        String documentId, Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
+    PaginatedList<UpdateDigest<LawDocId>> getDetailedUpdatesForDocument(
+            String documentId, Range<LocalDateTime> dateTimeRange, UpdateType type, SortOrder dateOrder, LimitOffset limitOffset);
 
+    /**
+     * Get a list of law ids that have had law tree updates in the given date time range
+     *
+     * @param dateTimeRange Range<LocalDateTime>
+     * @param type {@link UpdateType}
+     * @param dateOrder {@link SortOrder}
+     * @param limitOffset {@link LimitOffset}
+     * @return {@link PaginatedList<UpdateToken<LawVersionId>>} list of law ids that have had tree updates
+     */
+    PaginatedList<UpdateToken<LawVersionId>> getLawTreeUpdates(Range<LocalDateTime> dateTimeRange, UpdateType type,
+                                                               SortOrder dateOrder, LimitOffset limitOffset);
 }
