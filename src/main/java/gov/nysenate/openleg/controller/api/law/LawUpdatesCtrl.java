@@ -40,7 +40,7 @@ public class LawUpdatesCtrl extends BaseCtrl
     @Autowired private LawUpdatesDao lawUpdatesDao;
 
     /**
-     * Law Updates API (for all laws)
+     * Law Document Updates API (for all laws)
      * ------------------------------
      *
      * Usages:
@@ -68,6 +68,34 @@ public class LawUpdatesCtrl extends BaseCtrl
     @RequestMapping(value = "/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
     public BaseResponse getAllUpdates(@PathVariable String from, @PathVariable String to, WebRequest request) {
         return getAllUpdates(parseISODateTime(from, "from"), parseISODateTime(to, "to"), request);
+    }
+
+    /**
+     * Law Tree Updates API
+     * ------------------------------
+     *
+     * Usages:
+     * (GET) /api/3/laws/tree/updates
+     * (GET) /api/3/laws/tree/updates/{from date-time}
+     * (GET) /api/3/laws/tree/updates/{from date-time}/{to date-time}
+     *
+     * date parameters default to 1970-01-01 and now respectively
+     *
+     * Request Params: type (string) - Update type (processed, published) Default: published
+     *                 limit, offset (int) - Paginate
+     *                 order (string) - Order by update date
+     *
+     * Expected Response: List of UpdateTokenView<LawVersionId>
+     */
+    @RequestMapping(value = "/tree/updates")
+    public BaseResponse getLawTreeUpdates(WebRequest request) {
+        return getLawTreeUpdates(null, null, request);
+    }
+
+    @RequestMapping(value = "/tree/updates/{from:.*\\.?.*}")
+    public BaseResponse getLawTreeUpdates(@PathVariable String from,
+                                          WebRequest request) {
+        return getLawTreeUpdates(from, null, request);
     }
 
     @RequestMapping(value = "/tree/updates/{from:.*\\.?.*}/{to:.*\\.?.*}")
