@@ -397,9 +397,14 @@ To see updates to the content of law documents, see `Get law document updates`_.
 
 List of laws with tree updates during the given date/time range
 ::
+    /api/3/laws/tree/updates
+    /api/3/laws/tree/updates/{fromDateTime}
     /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}
 
-.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
+The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
+For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
+The fromDateTime and toDateTime range is exclusive.
+If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the current datetime
 
 
 **Optional Params**

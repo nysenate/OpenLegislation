@@ -629,13 +629,15 @@ You can discover the locationId when you make an API request for the law structu
 <p>To see updates to the content of law documents, see <a class="reference internal" href="#get-law-document-updates">Get law document updates</a>.</p>
 <p><strong>Usage</strong></p>
 <p>List of laws with tree updates during the given date/time range</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span>
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.</p>
-</div>
+<p>The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
+For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
+The fromDateTime and toDateTime range is exclusive.
+If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the current datetime</p>
 <p><strong>Optional Params</strong></p>
 <table border="1" class="docutils">
 <colgroup>
