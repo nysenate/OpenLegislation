@@ -18,10 +18,10 @@ import static org.junit.Assert.*;
  * Created by uros on 2/16/17.
  */
 @Transactional
-public class XmlBillSameAsProcessorTest extends BaseXmlProcessorTest {
+public class XmlSameAsProcessorTest extends BaseXmlProcessorTest {
 
     @Autowired private BillDao billDao;
-    @Autowired private XmlBillSameAsProcessor sameAsProcessor;
+    @Autowired private XmlSameAsProcessor sameAsProcessor;
 
     @Override
     protected SobiProcessor getSobiProcessor() {

@@ -1,20 +1,15 @@
 package gov.nysenate.openleg.processor.entry;
 
-import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.dao.entity.committee.data.CommitteeDao;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.entity.CommitteeProcessor;
+import gov.nysenate.openleg.processor.entity.XmlSenCommProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
-import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Chenguang He on 5/8/2017.
  */
-public class CommitteeProcessorTest  extends BaseXmlProcessorTest {
+public class XmlSenCommProcessorTest extends BaseXmlProcessorTest {
     @Autowired
-    private CommitteeProcessor process;
+    private XmlSenCommProcessor process;
 
     @Autowired
     private CommitteeDao committeeDao;

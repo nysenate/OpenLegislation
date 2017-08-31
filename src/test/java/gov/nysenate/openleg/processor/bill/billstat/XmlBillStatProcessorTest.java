@@ -20,18 +20,18 @@ import static org.junit.Assert.assertEquals;
  * Created by Robert Bebber on 3/20/17.
  */
 @Transactional
-public class BillStatProcessorTest extends BaseXmlProcessorTest {
+public class XmlBillStatProcessorTest extends BaseXmlProcessorTest {
 
     @Autowired
     BillDao billDao;
     @Autowired
-    BillStatProcessor BillStatProcessor;
+    XmlBillStatProcessor XmlBillStatProcessor;
 
-    private static final Logger logger = LoggerFactory.getLogger(BillStatProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlBillStatProcessor.class);
 
     @Override
     protected SobiProcessor getSobiProcessor() {
-        return BillStatProcessor;
+        return XmlBillStatProcessor;
     }
 
     @Test

@@ -4,8 +4,7 @@ import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.bill.anact.AnActSobiProcessorTest;
-import gov.nysenate.openleg.processor.bill.ldblurb.LDBlurbProcessor;
+import gov.nysenate.openleg.processor.bill.anact.XmlAnActProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -19,18 +18,18 @@ import static org.junit.Assert.assertEquals;
  * Created by Robert Bebber on 3/16/17.
  */
 @Transactional
-public class LDBlurbProcessorTest extends BaseXmlProcessorTest {
+public class XmlLDBlurbProcessorTest extends BaseXmlProcessorTest {
 
     @Autowired
     BillDao billDao;
     @Autowired
-    LDBlurbProcessor ldBlurbProcessor;
+    XmlLDBlurbProcessor xmlLdBlurbProcessor;
 
-    private static final Logger logger = LoggerFactory.getLogger(AnActSobiProcessorTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlAnActProcessorTest.class);
 
     @Override
     protected SobiProcessor getSobiProcessor() {
-        return ldBlurbProcessor;
+        return xmlLdBlurbProcessor;
     }
 
     @Test

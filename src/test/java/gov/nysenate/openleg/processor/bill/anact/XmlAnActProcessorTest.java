@@ -20,16 +20,17 @@ import static org.junit.Assert.assertEquals;
  * Created by Robert Bebber on 2/15/17.
  */
 @Transactional
-public class AnActSobiProcessorTest extends BaseXmlProcessorTest {
+public class XmlAnActProcessorTest extends BaseXmlProcessorTest {
 
     @Autowired BillDao billDao;
-    @Autowired AnActSobiProcessor anActSobiProcessor;
+    @Autowired
+    XmlAnActProcessor xmlAnActProcessor;
 
-    private static final Logger logger = LoggerFactory.getLogger(AnActSobiProcessorTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlAnActProcessorTest.class);
 
     @Override
     protected SobiProcessor getSobiProcessor() {
-        return anActSobiProcessor;
+        return xmlAnActProcessor;
     }
 
     @Test

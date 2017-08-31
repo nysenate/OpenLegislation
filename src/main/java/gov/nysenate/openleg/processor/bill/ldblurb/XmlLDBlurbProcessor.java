@@ -24,13 +24,13 @@ import java.time.LocalDateTime;
  * Created by Robert Bebber on 3/16/17.
  */
 @Service
-public class LDBlurbProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlLDBlurbProcessor extends AbstractDataProcessor implements SobiProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(LDBlurbProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlLDBlurbProcessor.class);
     @Autowired
     private XmlHelper xmlHelper;
 
-    public LDBlurbProcessor() {
+    public XmlLDBlurbProcessor() {
     }
 
     @Override

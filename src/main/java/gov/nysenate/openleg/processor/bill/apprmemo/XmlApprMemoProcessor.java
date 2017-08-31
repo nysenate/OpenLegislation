@@ -32,16 +32,16 @@ import java.time.LocalDateTime;
  * Created by Robert Bebber on 3/6/17.
  */
 @Service
-public class ApprmemoProcessor extends AbstractMemoProcessor implements SobiProcessor {
+public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApprmemoProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlApprMemoProcessor.class);
     @Autowired
     private XmlHelper xmlHelper;
 
     @Autowired
     private ApprovalDao approvalDao;
 
-    public ApprmemoProcessor() {
+    public XmlApprMemoProcessor() {
     }
 
     @Override

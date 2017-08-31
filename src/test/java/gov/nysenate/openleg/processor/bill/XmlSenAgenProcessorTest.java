@@ -13,7 +13,7 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.agenda.AgendaProcessor;
+import gov.nysenate.openleg.processor.agenda.XmlSenAgenProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
@@ -27,15 +27,15 @@ import static org.junit.Assert.*;
  * Created by uros on 4/12/17.
  */
 @Transactional
-public class AgendaProcessorTest extends BaseXmlProcessorTest {
+public class XmlSenAgenProcessorTest extends BaseXmlProcessorTest {
 
     ObjectMapper mapper = new ObjectMapper();
     @Autowired private AgendaDao agendaDao;
-    @Autowired private AgendaProcessor agendaProcessor;
+    @Autowired private XmlSenAgenProcessor xmlSenAgenProcessor;
 
     @Override
     protected SobiProcessor getSobiProcessor() {
-        return agendaProcessor;
+        return xmlSenAgenProcessor;
     }
 
     @Test

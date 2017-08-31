@@ -28,20 +28,18 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Robert Bebber on 3/20/17.
  */
 @Service
-public class BillStatProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(BillStatProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlBillStatProcessor.class);
     @Autowired
     private XmlHelper xmlHelper;
 
-    public BillStatProcessor() {
+    public XmlBillStatProcessor() {
     }
 
     @Override

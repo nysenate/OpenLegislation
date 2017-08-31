@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CommitteeProcessor extends AbstractDataProcessor implements SobiProcessor
+public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiProcessor
 {
-    private static final Logger logger = Logger.getLogger(CommitteeProcessor.class);
+    private static final Logger logger = Logger.getLogger(XmlSenCommProcessor.class);
 
     private static final DateTimeFormatter meetTimeSDF = DateTimeFormatter.ofPattern("hh:mm a");
 

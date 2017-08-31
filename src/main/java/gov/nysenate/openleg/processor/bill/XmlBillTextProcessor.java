@@ -3,7 +3,6 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
@@ -29,12 +28,12 @@ import java.time.LocalDateTime;
  */
 // TODO : figure out how to get the correct published_date_time to be stored in the bill_change_log table
 @Service
-public class BillXMLBillTextProcessor extends AbstractDataProcessor implements SobiProcessor {
-    private static final Logger logger = LoggerFactory.getLogger(BillXMLBillTextProcessor.class);
+public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(XmlBillTextProcessor.class);
     @Autowired
     private XmlHelper xmlHelper;
 
-    public BillXMLBillTextProcessor() {}
+    public XmlBillTextProcessor() {}
 
     @Override
     public void init() {

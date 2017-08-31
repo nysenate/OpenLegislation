@@ -7,7 +7,7 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.calendar.CalendarProcessor;
+import gov.nysenate.openleg.processor.calendar.XmlSenCalProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +24,14 @@ import static org.junit.Assert.fail;
  * Created by uros on 4/26/17.
  */
 @Transactional
-public class CalendarProcessorTest extends BaseXmlProcessorTest {
+public class XmlSenCalProcessorTest extends BaseXmlProcessorTest {
 
-    @Autowired private CalendarProcessor calendarProcessor;
+    @Autowired private XmlSenCalProcessor xmlSenCalProcessor;
     @Autowired private CalendarDao calendarDao;
 
     @Override
     protected SobiProcessor getSobiProcessor() {
-        return calendarProcessor;
+        return xmlSenCalProcessor;
     }
 
     @Test

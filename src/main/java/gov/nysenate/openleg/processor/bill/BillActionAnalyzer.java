@@ -70,7 +70,7 @@ public class BillActionAnalyzer
     private static final List<Pattern> publishBillEventPatterns = Arrays.asList(
         Pattern.compile("PRINT NUMBER " + simpleBillRegex),
         Pattern.compile("AMEND(?:ED)? (?:ON THIRD READING )?(?:\\(T\\) )?" + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? (?:\\(T\\) )?AND RECOMMIT(?:TED)? TO RULES " + simpleBillRegex)
+        Pattern.compile("AMEND(?:ED)? (?:\\(T\\) )?AND RECOMMIT(?:TED)? TO RULES " + simpleBillRegex) //TODO investigate regex
     );
 
     /** Patterns for bill actions indicating that the specified version should be the new active version. */
@@ -171,7 +171,7 @@ public class BillActionAnalyzer
      *
      * @param action BillAction
      */
-    protected void updatePublishStatus(BillAction action) { //TODO look at this method closer as two files run through it
+    protected void updatePublishStatus(BillAction action) {
         boolean foundPublishPattern = false;
         Version publishVersion = this.activeVersion;
         // Check if the action matches a publish event

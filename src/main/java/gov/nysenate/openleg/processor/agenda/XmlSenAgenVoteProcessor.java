@@ -29,9 +29,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Service
-public class AgendaVoteProcessor extends AbstractDataProcessor implements SobiProcessor
+public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements SobiProcessor
 {
-    private static final Logger logger = LoggerFactory.getLogger(AgendaVoteProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlSenAgenVoteProcessor.class);
 
     @Autowired private XmlHelper xml;
 

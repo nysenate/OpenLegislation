@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This class is responsible for Processing the Sponsor Sobi Fragments
@@ -35,13 +33,13 @@ import java.util.regex.Pattern;
  * Created by Robert Bebber on 2/22/17.
  */
 @Service
-public class SponsorSobiProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(SponsorSobiProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessor.class);
     @Autowired
     private XmlHelper xmlHelper;
 
-    public SponsorSobiProcessor() {
+    public XmlLDSponProcessor() {
     }
 
     @Override

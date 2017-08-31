@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * Created by uros on 3/2/17.
  */
 @Service
-public class XmlVetoMessageProcessor extends AbstractMemoProcessor implements SobiProcessor {
+public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiProcessor {
 
     @Autowired
     XmlHelper xmlHelper;

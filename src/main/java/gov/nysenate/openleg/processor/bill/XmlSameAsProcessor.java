@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * Created by uros on 2/16/17.
  */
 @Service
-public class XmlBillSameAsProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlSameAsProcessor extends AbstractDataProcessor implements SobiProcessor {
 
     @Autowired
     XmlHelper xmlHelper;

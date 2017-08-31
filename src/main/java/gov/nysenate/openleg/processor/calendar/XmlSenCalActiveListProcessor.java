@@ -29,9 +29,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
-public class ActiveListProcessor extends AbstractDataProcessor implements SobiProcessor
+public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implements SobiProcessor
 {
-    private static final Logger logger = LoggerFactory.getLogger(ActiveListProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlSenCalActiveListProcessor.class);
 
     @Autowired protected XmlHelper xml;
 

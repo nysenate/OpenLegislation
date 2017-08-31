@@ -13,7 +13,7 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.agenda.AgendaVoteProcessor;
+import gov.nysenate.openleg.processor.agenda.XmlSenAgenVoteProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.DateUtils;
@@ -36,17 +36,17 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @Transactional
-public class AgendaVoteProcessorTest extends BaseXmlProcessorTest {
+public class XmlSenAgenVoteProcessorTest extends BaseXmlProcessorTest {
 
     ObjectMapper mapper = new ObjectMapper();
     @Autowired private AgendaDao agendaDao;
-    @Autowired private AgendaVoteProcessor agendaVoteProcessor;
+    @Autowired private XmlSenAgenVoteProcessor xmlSenAgenVoteProcessor;
     @Autowired private MemberService memberService;
 
 
     @Override
     protected SobiProcessor getSobiProcessor() {
-        return agendaVoteProcessor;
+        return xmlSenAgenVoteProcessor;
     }
 
     @Test

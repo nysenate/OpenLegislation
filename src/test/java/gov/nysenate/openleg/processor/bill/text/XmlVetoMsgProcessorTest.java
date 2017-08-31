@@ -3,7 +3,7 @@ package gov.nysenate.openleg.processor.bill.text;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.bill.sponsor.XmlVetoMessageProcessor;
+import gov.nysenate.openleg.processor.bill.sponsor.XmlVetoMsgProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +18,10 @@ import static org.junit.Assert.*;
  * Created by uros on 3/7/17.
  */
 @Transactional
-public class XmlVetoMessageProcessorTest extends BaseXmlProcessorTest {
+public class XmlVetoMsgProcessorTest extends BaseXmlProcessorTest {
 
     @Autowired private BillDao billDao;
-    @Autowired private XmlVetoMessageProcessor vetoMessageProcessor;
+    @Autowired private XmlVetoMsgProcessor vetoMessageProcessor;
 
     @Override
     protected SobiProcessor getSobiProcessor() {

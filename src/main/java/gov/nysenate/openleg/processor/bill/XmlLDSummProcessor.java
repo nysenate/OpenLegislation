@@ -27,12 +27,12 @@ import java.time.LocalDateTime;
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
 @Service
-public class BillXMLBillDigestProcessor extends AbstractDataProcessor implements SobiProcessor {
-    private static final Logger logger = LoggerFactory.getLogger(BillXMLBillDigestProcessor.class);
+public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(XmlLDSummProcessor.class);
     @Autowired
     private XmlHelper xmlHelper;
 
-    public BillXMLBillDigestProcessor() {
+    public XmlLDSummProcessor() {
     }
 
     @Override

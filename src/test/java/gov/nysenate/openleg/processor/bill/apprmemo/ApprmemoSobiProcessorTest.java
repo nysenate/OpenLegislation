@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 public class ApprmemoSobiProcessorTest extends BaseXmlProcessorTest {
 
     @Autowired private BillDao billDao;
-    @Autowired private ApprmemoProcessor apprmemoProcessor;
+    @Autowired private XmlApprMemoProcessor xmlApprMemoProcessor;
 
     @Autowired private ApprovalDao approvalDao;
 
@@ -31,7 +31,7 @@ public class ApprmemoSobiProcessorTest extends BaseXmlProcessorTest {
 
     @Override
     protected SobiProcessor getSobiProcessor() {
-        return apprmemoProcessor;
+        return xmlApprMemoProcessor;
     }
 
     @Test

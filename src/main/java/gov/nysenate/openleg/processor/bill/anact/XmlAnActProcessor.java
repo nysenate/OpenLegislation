@@ -30,13 +30,13 @@ import java.time.LocalDateTime;
  * Created by Robert Bebber on 2/15/17.
  */
 @Service
-public class AnActSobiProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlAnActProcessor extends AbstractDataProcessor implements SobiProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(AnActSobiProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlAnActProcessor.class);
     @Autowired
     private XmlHelper xmlHelper;
 
-    public AnActSobiProcessor() {
+    public XmlAnActProcessor() {
     }
 
     @Override

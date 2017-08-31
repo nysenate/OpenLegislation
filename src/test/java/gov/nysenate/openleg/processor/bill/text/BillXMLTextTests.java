@@ -5,8 +5,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.bill.BillXMLBillTextProcessor;
-import gov.nysenate.openleg.processor.bill.anact.AnActSobiProcessor;
+import gov.nysenate.openleg.processor.bill.XmlBillTextProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,11 @@ public class BillXMLTextTests extends BaseXmlProcessorTest {
     @Autowired
     BillDao billDao;
     @Autowired
-    BillXMLBillTextProcessor billXMLBillTextProcessor;
+    XmlBillTextProcessor xmlBillTextProcessor;
     @Override
 
     protected SobiProcessor getSobiProcessor() {
-        return billXMLBillTextProcessor;
+        return xmlBillTextProcessor;
     }
 
     @Test
