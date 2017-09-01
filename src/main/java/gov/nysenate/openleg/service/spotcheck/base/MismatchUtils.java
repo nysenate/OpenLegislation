@@ -101,27 +101,34 @@ public class MismatchUtils {
     }
 
     /**
-     * Copies the firstSeenDateTime from current mismatches to the report mismatches unless
-     * the report mismatch is new or the current mismatch has been CLOSED, in which case
-     * we create a new firstSeenDateTime.
-     * A new firstSeenDateTime is set equal to its observedDateTime.
+     * Sets the first seen date time for a mismatch.
+     * Copies the firstSeenDateTime from the current mismatch to the report mismatches unless the report mismatch
+     * is new or a regression, in which case the first seen date time is set to the observed date time.
      */
     public static List<DeNormSpotCheckMismatch> updateFirstSeenDateTime(List<DeNormSpotCheckMismatch> reportMismatches,
                                                                         List<DeNormSpotCheckMismatch> currentMismatches) {
         for (DeNormSpotCheckMismatch rm : reportMismatches) {
-            if (currentMismatches.contains(rm)) {
-                DeNormSpotCheckMismatch cm = currentMismatches.get(currentMismatches.indexOf(rm));
-                if (cm.getState() != MismatchState.CLOSED) {
-                    copyFirstSeenDateTime(rm, cm);
-                    break;
-                }
+            if (isNewMismatch(rm, currentMismatches) || isRegression(rm, currentMismatches)) {
+                resetFirstSeenDateTime(rm);
             }
-            resetFirstSeenDateTime(rm);
+            else {
+                copyFirstSeenDateTime(rm, currentMismatches);
+            }
         }
         return reportMismatches;
     }
 
-    private static void copyFirstSeenDateTime(DeNormSpotCheckMismatch rm, DeNormSpotCheckMismatch cm) {
+    private static boolean isNewMismatch(DeNormSpotCheckMismatch reportMismatch, List<DeNormSpotCheckMismatch> currentMismatches) {
+        return !currentMismatches.contains(reportMismatch);
+    }
+
+    private static boolean isRegression(DeNormSpotCheckMismatch reportMismatch, List<DeNormSpotCheckMismatch> currentMismatches) {
+        DeNormSpotCheckMismatch cm = currentMismatches.get(currentMismatches.indexOf(reportMismatch));
+        return cm.getState() == MismatchState.CLOSED;
+    }
+
+    private static void copyFirstSeenDateTime(DeNormSpotCheckMismatch rm, List<DeNormSpotCheckMismatch> currentMismatches) {
+        DeNormSpotCheckMismatch cm = currentMismatches.get(currentMismatches.indexOf(rm));
         rm.setFirstSeenDateTime(cm.getFirstSeenDateTime());
     }
 
