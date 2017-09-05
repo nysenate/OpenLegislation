@@ -70,7 +70,7 @@ public class BillActionAnalyzer
     private static final List<Pattern> publishBillEventPatterns = Arrays.asList(
         Pattern.compile("PRINT NUMBER " + simpleBillRegex),
         Pattern.compile("AMEND(?:ED)? (?:ON THIRD READING )?(?:\\(T\\) )?" + simpleBillRegex),
-        Pattern.compile("AMEND(?:ED)? (?:\\(T\\) )?AND RECOMMIT(?:TED)? TO RULES " + simpleBillRegex) //TODO investigate regex
+        Pattern.compile("AMEND(?:ED)? (?:\\(T\\) )?AND RECOMMIT(?:TED)? TO RULES " + simpleBillRegex)
     );
 
     /** Patterns for bill actions indicating that the specified version should be the new active version. */
@@ -159,6 +159,10 @@ public class BillActionAnalyzer
         });
     }
 
+    protected void matchPublishVersion( List<BillAction> actions, BaseBillId baseBillId ) {
+        
+    }
+
     /**
      * The BillActions dictate which non-base versions of an amendment (e.g. 'A','B') should be published.
      * There are certain actions that indicate a version should be published (e.g print number 1234a) and other
@@ -205,6 +209,7 @@ public class BillActionAnalyzer
             }
         }
         this.activeVersion = publishVersion;
+        action.setBillId(BaseBillId.of(billId).withVersion(activeVersion));
     }
 
     /**
