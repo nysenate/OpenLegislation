@@ -152,16 +152,6 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
         return str.replaceAll("(\\d\\d)/(\\d\\d)/(\\d\\d)","\n$0").substring(1);
     }
 
-    private void addAnyMissingAmendments(Bill baseBill, List<BillAction> billActions ) {
-        for (BillAction action: billActions) {
-            Version actionVersion = action.getBillId().getVersion();
-            if (!baseBill.hasAmendment(actionVersion)) {
-                BillAmendment baseAmendment = new BillAmendment(baseBill.getBaseBillId(), actionVersion);
-                baseBill.addAmendment(baseAmendment);
-            }
-        }
-    }
-
     @Override
     public void postProcess() {
         flushBillUpdates();

@@ -8,10 +8,8 @@ import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -318,5 +316,21 @@ public abstract class AbstractDataProcessor
                 billAmendment.setFullText(uniBillAmend.getFullText());
             }
         });
+    }
+
+    /**
+     * After the BillActionAnalyzer updates the actions with the proper amendment version, the baseBill must be updated
+     * with those changes
+     * @param baseBill
+     * @param billActions
+     */
+    protected void addAnyMissingAmendments(Bill baseBill, List<BillAction> billActions ) {
+        for (BillAction action: billActions) {
+            Version actionVersion = action.getBillId().getVersion();
+            if (!baseBill.hasAmendment(actionVersion)) {
+                BillAmendment baseAmendment = new BillAmendment(baseBill.getBaseBillId(), actionVersion);
+                baseBill.addAmendment(baseAmendment);
+            }
+        }
     }
 }

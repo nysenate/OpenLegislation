@@ -289,6 +289,8 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
         BillActionAnalyzer analyzer = new BillActionAnalyzer(specifiedAmendment.getBillId(), billActions, defaultPubStatus);
         analyzer.analyze();
 
+        addAnyMissingAmendments(baseBill, billActions);
+
         // Apply the results to the bill
         baseBill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
         baseBill.setActiveVersion(analyzer.getActiveVersion());
