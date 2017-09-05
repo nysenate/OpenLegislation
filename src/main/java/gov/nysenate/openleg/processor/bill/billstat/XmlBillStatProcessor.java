@@ -108,6 +108,7 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             BillActionAnalyzer analyzer = new BillActionAnalyzer(billAmendment.getBillId(), billActions, defaultPubStatus);
             analyzer.analyze();
 
+            addAnyMissingAmendments(baseBill, billActions);
             // Apply the results to the bill
             baseBill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
             baseBill.setActiveVersion(analyzer.getActiveVersion());
@@ -149,6 +150,16 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
         if (str.isEmpty())
             return str;
         return str.replaceAll("(\\d\\d)/(\\d\\d)/(\\d\\d)","\n$0").substring(1);
+    }
+
+    private void addAnyMissingAmendments(Bill baseBill, List<BillAction> billActions ) {
+        for (BillAction action: billActions) {
+            Version actionVersion = action.getBillId().getVersion();
+            if (!baseBill.hasAmendment(actionVersion)) {
+                BillAmendment baseAmendment = new BillAmendment(baseBill.getBaseBillId(), actionVersion);
+                baseBill.addAmendment(baseAmendment);
+            }
+        }
     }
 
     @Override
