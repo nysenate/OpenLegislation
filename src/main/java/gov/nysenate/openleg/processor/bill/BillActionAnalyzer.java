@@ -159,9 +159,6 @@ public class BillActionAnalyzer
         });
     }
 
-    protected void matchPublishVersion( List<BillAction> actions, BaseBillId baseBillId ) {
-        
-    }
 
     /**
      * The BillActions dictate which non-base versions of an amendment (e.g. 'A','B') should be published.
