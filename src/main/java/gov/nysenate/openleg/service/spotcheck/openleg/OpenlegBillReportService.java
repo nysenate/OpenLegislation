@@ -3,7 +3,7 @@ package gov.nysenate.openleg.service.spotcheck.openleg;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.bill.reference.openlegdev.OpenlegBillDao;
+import gov.nysenate.openleg.dao.bill.reference.openleg.OpenlegBillDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;

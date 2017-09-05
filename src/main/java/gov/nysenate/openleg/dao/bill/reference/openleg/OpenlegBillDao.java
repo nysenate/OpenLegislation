@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.bill.reference.openlegdev;
+package gov.nysenate.openleg.dao.bill.reference.openleg;
 
 import gov.nysenate.openleg.client.view.bill.BillView;
 

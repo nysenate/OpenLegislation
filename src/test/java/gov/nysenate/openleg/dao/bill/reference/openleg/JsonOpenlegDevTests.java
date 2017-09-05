@@ -1,7 +1,6 @@
-package gov.nysenate.openleg.dao.bill.reference.openlegdev;
+package gov.nysenate.openleg.dao.bill.reference.openleg;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.bill.reference.daybreak.SqlFsDaybreakDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegBillReportService;
@@ -25,6 +24,5 @@ public class JsonOpenlegDevTests  extends BaseTests {
     public void testgetBillView() throws Exception {
         SpotCheckReport<BaseBillId> spotCheckReport = openlegBillReportService.generateReport(LocalDateTime.parse("2017-01-01T00:00:00"),null);
         openlegBillReportService.saveReport(spotCheckReport);
-        System.out.println();
     }
 }

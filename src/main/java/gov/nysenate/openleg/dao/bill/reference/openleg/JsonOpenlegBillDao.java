@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.bill.reference.openlegdev;
+package gov.nysenate.openleg.dao.bill.reference.openleg;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *  This Repository is used to provide json data from Openleg Dev and use Jackson to convert json string to BillView.
+ *  This Repository is used to provide json data from Openleg and use Jackson to convert json string to BillView.
  * Created by Chenguang He on 2017/3/21.
  */
 @Repository

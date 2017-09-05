@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.client.view.bill.BillView;
-import gov.nysenate.openleg.dao.bill.reference.openlegdev.JsonOpenlegBillDao;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
