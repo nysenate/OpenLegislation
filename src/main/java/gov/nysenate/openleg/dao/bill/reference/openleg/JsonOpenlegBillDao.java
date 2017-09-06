@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -33,15 +34,15 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
         List<BillView> billViews = new LinkedList<>();
         StringBuffer response = new StringBuffer();
 
-        setConnection(callHeader + sessionYear  + "?full=true&limit=1000&key=" + apiKey, "GET", false, true);
-        readInputStream(connection, response);
+        connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear  + "?full=true&limit=1000&key=" + apiKey, "GET", false, true);
+        JsonOpenlegDaoUtils.readInputStream(connection, response);
         mapJSONToBillView(response, billViews);
         connection.disconnect();
 
         while (offset < total) {
             StringBuffer restOfBill = new StringBuffer();
-            setConnection(callHeader + sessionYear + "?full=true&key=" + apiKey + "&limit=1000&offset=" + (offset + 1),"GET",false,true );
-            readInputStream(connection, restOfBill);
+            connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear + "?full=true&key=" + apiKey + "&limit=1000&offset=" + (offset + 1),"GET",false,true );
+            JsonOpenlegDaoUtils.readInputStream(connection, restOfBill);
             mapJSONToBillView(restOfBill, billViews);
             connection.disconnect();
         }
@@ -62,37 +63,6 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
             }
         }
         return billViewList;
-    }
-
-    private void setConnection(String URL, String requestMethod, boolean useCaches, boolean doOutput) {
-
-        try {
-            URL url = new URL(URL);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(requestMethod);
-            connection.setUseCaches(useCaches);
-            connection.setDoOutput(doOutput);
-        } catch (Exception e) {
-            logger.error("A connection could not be made to URL " + URL);
-            e.printStackTrace();
-        }
-    }
-
-    private void readInputStream(HttpURLConnection connection,StringBuffer response) {
-        InputStream is = null;
-        try {
-            is = connection.getInputStream();
-
-        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = rd.readLine()) != null) {
-            response.append(line);
-        }
-        rd.close();
-        } catch (IOException e) {
-            logger.error("The StringBuffer could not read the incoming stream");
-            e.printStackTrace();
-        }
     }
 
     private void mapJSONToBillView(StringBuffer response, List<BillView> billViews) {
