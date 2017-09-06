@@ -37,12 +37,6 @@ public class DaybreakFragmentParser {
     private static Pattern billActionPattern = Pattern.compile("(\\d{2}/\\d{2}/\\d{2}) (.*)");
     private static SimpleDateFormat billActionDateFormat = new SimpleDateFormat("MM/dd/yy");
 
-    /** Pattern for detecting short names that contain the member's first initial */
-    private static String shortNameInitialRegex = "([A-Z])\\. ([A-Za-z\\-' ]*)";
-
-    /** Pattern for extracting sponsors from Rules sponsors */
-    private static Pattern rulesSponsorPattern = Pattern.compile("RULES COM \\(Request of ([A-Za-z\\-\\.', ]*)\\)");
-
     /**
      * Parses the text of a daybreak fragment into the fields of a daybreak bill
      * @param daybreakFragment
@@ -57,7 +51,7 @@ public class DaybreakFragmentParser {
         String[] fragmentParts = daybreakFragment.getDaybreakText().split("\\n");
 
         // Parse each fragment line accordingly
-        parseSponsors(daybreakBill, fragmentParts[1]);
+        DaybreakFragmentSponsorParser.parseSponsors(daybreakBill, fragmentParts[1]);
         daybreakBill.setTitle(fragmentParts[2]);
         daybreakBill.setLawSection(fragmentParts[3]);
         daybreakBill.setLawCodeAndSummary(fragmentParts[4].replaceAll("BILL SUMMARY NOT FOUND", ""));
@@ -73,95 +67,6 @@ public class DaybreakFragmentParser {
         }
 
         return daybreakBill;
-    }
-
-    /**
-     * Given a line containing sponsor data, calls the correct parser depending on the bill's chamber
-     * @param daybreakBill
-     * @param sponsorLine
-     */
-    private static void parseSponsors(DaybreakBill daybreakBill, String sponsorLine){
-        if(sponsorLine.startsWith("RULES")){
-            parseRulesSponsors(daybreakBill, sponsorLine);
-        }
-        else {
-            switch (daybreakBill.getBaseBillId().getChamber()) {
-                case SENATE:
-                    parseSenateSponsors(daybreakBill, sponsorLine); break;
-                case ASSEMBLY:
-                    parseAssemblySponsors(daybreakBill, sponsorLine); break;
-            }
-        }
-    }
-
-    /**
-     * Parses sponsors for senate data, which is divided into primary sponsor and cosponsors
-     * @param daybreakBill
-     * @param sponsorLine
-     */
-    private static void parseSenateSponsors(DaybreakBill daybreakBill, String sponsorLine) {
-        String[] sponsorsByType = sponsorLine.split("CO:");
-
-        daybreakBill.setSponsor(formatShortName(sponsorsByType[0]));
-        if(sponsorsByType.length > 1) {
-            daybreakBill.setCosponsors(parseCSVSponsors(sponsorsByType[1]));
-        }
-    }
-
-    /**
-     * Parses sponsors for assembly data, which consists of a primary sponsor, cosponsors and multisponsors
-     * @param daybreakBill
-     * @param sponsorLine
-     */
-    private static void parseAssemblySponsors(DaybreakBill daybreakBill, String sponsorLine){
-        String[] sponsorsByType = sponsorLine.split("; M-S:");
-
-        // Get the primary sponsor and co sponsors as one list
-        List<String> sponsors = parseCSVSponsors(sponsorsByType[0]);
-
-        daybreakBill.setSponsor(sponsors.remove(0));    // remove the primary sponsor and set it as the daybreak bill sponsor
-        daybreakBill.setCosponsors(sponsors);
-
-        if(sponsorsByType.length > 1){
-            daybreakBill.setMultiSponsors(parseCSVSponsors(sponsorsByType[1]));
-        }
-    }
-
-    /**
-     * Parses sponsors when the sponsor is a Rules committee
-     * @param daybreakBill
-     * @param sponsorLine
-     */
-    private static void parseRulesSponsors(DaybreakBill daybreakBill, String sponsorLine){
-        Matcher rulesSponsorMatcher = rulesSponsorPattern.matcher(sponsorLine);
-        if(rulesSponsorMatcher.matches()){
-            List<String> sponsors = parseCSVSponsors(rulesSponsorMatcher.group(1));
-            daybreakBill.setSponsor("RULES (" + sponsors.remove(0) + ")");  //Set the first sponsor as the main sponsor
-            daybreakBill.setCosponsors(sponsors);
-        }
-        else {
-            daybreakBill.setSponsor("RULES");
-        }
-    }
-
-    /**
-     * Ensures that certain sponsors' shortnames are stored in the proper format.  Im looking at you P.�Lopez
-     * @param rawShortName
-     * @return
-     */
-    private static String formatShortName(String rawShortName){
-        return rawShortName.trim().replaceAll(shortNameInitialRegex, "$2 $1");
-    }
-
-    /**
-     * Parses a comma separated value string, used to extract sponsors from a csv list
-     * @param csvString
-     * @return
-     */
-    private static List<String> parseCSVSponsors(String csvString){
-        return Arrays.asList(csvString.split(",")).stream()
-                .map(DaybreakFragmentParser::formatShortName)
-                .collect(Collectors.toList());
     }
 
     /**
