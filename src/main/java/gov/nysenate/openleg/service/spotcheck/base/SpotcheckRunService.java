@@ -13,6 +13,7 @@ import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.CalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
 import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegBillReportService;
+import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegCalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.senatesite.agenda.AgendaReportServices;
 import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillReportService;
 import gov.nysenate.openleg.service.spotcheck.senatesite.calendar.CalendarReportServices;
@@ -66,6 +67,7 @@ public class SpotcheckRunService {
     /** Openleg Check Report Service*/
 
     @Autowired private OpenlegBillReportService openlegBillReportService;
+    @Autowired private OpenlegCalendarReportService openlegCalendarReportService;
 
     @PostConstruct
     public void init() {
@@ -79,6 +81,7 @@ public class SpotcheckRunService {
                 .put(SENATE_SITE_CALENDAR, senSiteCalReportService)
                 .put(SENATE_SITE_AGENDA,senSiteAgendaReportService)
                 .put(OPENLEG_BILL,openlegBillReportService)
+                .put(OPENLEG_CAL,openlegCalendarReportService)
                 .build();
     }
 
