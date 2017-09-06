@@ -1,9 +1,9 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.bill.BillActionView;
 import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
@@ -12,12 +12,15 @@ import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.TreeMap;
 
+import static gov.nysenate.openleg.model.base.Version.after;
+import static gov.nysenate.openleg.model.base.Version.before;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 /**
@@ -28,8 +31,6 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
  */
 @Service("openlegBillCheck")
 public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, BillView, BillView> {
-
-    Logger logger = LoggerFactory.getLogger(OpenlegBillCheckService.class);
 
     @Override
     public SpotCheckObservation<BaseBillId> check(BillView content) throws ReferenceDataNotFoundEx {
@@ -82,10 +83,36 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }/**/
 
     protected void checkBillActions(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
-        String content_str = OutputUtils.toJson(content.getActions());
-        String reference_str = OutputUtils.toJson(reference.getActions());
+        TreeMap<String, String> contentActionVersionDateMap = getActionVersionDateMap(content.getActions());
+        TreeMap<String, String> referenceActionVersionDateMap = getActionVersionDateMap(reference.getActions());
+
+        String content_str = contentActionVersionDateMap.toString();
+        String reference_str = referenceActionVersionDateMap.toString();
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, content_str, reference_str));
+        //TODO Add check of bill action text
+    }
+
+    private TreeMap<String, String> getActionVersionDateMap(ListView<BillActionView> billActions) {
+        TreeMap<String, String> actionVersionDateMap = new TreeMap<>();
+
+        for (BillActionView billAction: billActions.getItems()) {
+            String version = billAction.getBillId().getVersion();
+            String date = billAction.getDate();
+
+            if (!actionVersionDateMap.containsKey(date)) {
+                actionVersionDateMap.put(date, version);
+            }
+            else if (actionVersionDateMap.containsKey(date) ) {
+                List<Version> versionsAfter = after( Version.of( actionVersionDateMap.get(date) ) );
+
+                if (  versionsAfter.contains( Version.of(version) )  ) {
+                    actionVersionDateMap.replace(date,version);
+                }
+            }
+
+        }
+        return actionVersionDateMap;
     }
 
     protected void checkBillSponsor(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
