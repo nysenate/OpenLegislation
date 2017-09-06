@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
-import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.bill.BillActionView;
 import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.model.base.Version;
@@ -15,12 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.TreeMap;
 
 import static gov.nysenate.openleg.model.base.Version.after;
-import static gov.nysenate.openleg.model.base.Version.before;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 /**
@@ -83,20 +80,32 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }/**/
 
     protected void checkBillActions(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
-        TreeMap<String, String> contentActionVersionDateMap = getActionVersionDateMap(content.getActions());
-        TreeMap<String, String> referenceActionVersionDateMap = getActionVersionDateMap(reference.getActions());
+        TreeMap<String, String> contentActionVersionDateMap = getActionVersionDateMap(content.getActions().getItems());
+        TreeMap<String, String> referenceActionVersionDateMap = getActionVersionDateMap(reference.getActions().getItems());
 
         String content_str = contentActionVersionDateMap.toString();
         String reference_str = referenceActionVersionDateMap.toString();
         if (!content_str.equals(reference_str))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, content_str, reference_str));
-        //TODO Add check of bill action text
+
+        List<BillActionView> contentBillActions = content.getActions().getItems();
+        List<BillActionView> referenceBillActions = content.getActions().getItems();
+        if ( contentBillActions.size() == referenceBillActions.size() ) {
+            for (int index = 0; index < contentBillActions.size(); index++) {
+                if (!contentBillActions.get(index).equals(referenceBillActions.get(index))) {
+                    obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, contentBillActions.get(index), referenceBillActions.get(index)));
+                }
+            }
+        }
+        else {
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, contentBillActions.size(), referenceBillActions.size()));
+        }
     }
 
-    private TreeMap<String, String> getActionVersionDateMap(ListView<BillActionView> billActions) {
+    private TreeMap<String, String> getActionVersionDateMap(List<BillActionView> billActions) {
         TreeMap<String, String> actionVersionDateMap = new TreeMap<>();
 
-        for (BillActionView billAction: billActions.getItems()) {
+        for (BillActionView billAction: billActions) {
             String version = billAction.getBillId().getVersion();
             String date = billAction.getDate();
 
