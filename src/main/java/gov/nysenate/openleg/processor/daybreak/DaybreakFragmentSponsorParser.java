@@ -10,8 +10,12 @@ import java.util.stream.Collectors;
 
 public class DaybreakFragmentSponsorParser {
 
-    /** Pattern for detecting short names that contain the member's first initial */
-    private static String shortNameInitialRegex = "([A-Z])\\. ([A-Za-z\\-' ]*)";
+    /**
+     * Pattern for detecting short names that contain the member's initials
+     * Examples: P. LOPEZ -> LOPEZ P
+     *           M. G. MILLER -> MILLER MG
+     */
+    private static String shortNameInitialRegex = "((?<firstInitial>[A-Z])\\. )?(?<secondInitial>[A-Z])\\. (?<shortName>[A-Za-z\\-' ]*)";
     /** Pattern for extracting sponsors from Rules sponsors */
     private static Pattern rulesSponsorPattern = Pattern.compile("RULES COM \\(Request of ([A-Za-z\\-\\.', ]*)\\)");
 
@@ -82,11 +86,12 @@ public class DaybreakFragmentSponsorParser {
 
     /**
      * Ensures that certain sponsors' shortnames are stored in the proper format.  Im looking at you P.�Lopez
+     * Also handles M. G. MILLER and M. L. MILLER edge cases.
      * @param rawShortName
      * @return
      */
     private static String formatShortName(String rawShortName){
-        return rawShortName.trim().replaceAll(shortNameInitialRegex, "$2 $1");
+        return rawShortName.trim().replaceAll(shortNameInitialRegex, "${shortName} ${firstInitial}${secondInitial}");
     }
 
     /**
