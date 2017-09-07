@@ -84,11 +84,11 @@ public class DaybreakFragmentSponsorParserTest {
     }
 
     @Test
-    public void parsesMillers() {
+    public void parsesMillers(){
         String sponsorsLine = "M. G. MILLER, M. L. MILLER; M-S: M. G. Miller";
         String expectedSponsor = "MILLER MG";
         List<String> expectedCoSponsor = Arrays.asList("MILLER ML");
-        List<String> expectedMultiSponsor = Arrays.asList("MILLER MG");
+        List<String> expectedMultiSponsor = Arrays.asList("Miller MG");
         DaybreakFragmentSponsorParser.parseSponsors(assemblyBill, sponsorsLine);
         assertEquals(expectedSponsor, assemblyBill.getSponsor());
         assertEquals(expectedCoSponsor, assemblyBill.getCosponsors());
