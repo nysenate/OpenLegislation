@@ -100,7 +100,7 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
             } else {
                 baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), new BillId(billhse +
                         billno, year), fragment);
-                applyMemoText(cdata, baseBill, apprno, action);
+                applyMemoText(cdata, baseBill, apprno, action, year);
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
         } catch (IOException | SAXException | XPathExpressionException e) {
@@ -115,12 +115,13 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
      * @param baseBill
      * @throws ParseError
      */
-    private void applyMemoText(String data, Bill baseBill, int apprno, String action) throws ParseError {
+    private void applyMemoText(String data, Bill baseBill, int apprno, String action, Integer year) throws ParseError {
         BillId BillId = baseBill.getActiveAmendment().getBillId();
         ApprovalMessageParser approvalMessageParser = new ApprovalMessageParser(data, BillId, apprno, action);
         approvalMessageParser.extractText();
         ApprovalMessage approvalMessage = approvalMessageParser.getApprovalMessage();
         approvalMessage.setBillId(BillId);
+        approvalMessage.setYear(year);
         baseBill.setApprovalMessage(approvalMessage);
     }
 
