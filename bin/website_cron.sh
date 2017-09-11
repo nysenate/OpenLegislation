@@ -66,6 +66,9 @@ if [ "$mode" = "qa" ]; then
   echo "About to generate QA report for all calendars during the current year"
   pdrush @$penv spotcheck-dump calendar
 
+  echo "About to generate QA report for all agendas during the current year"
+  pdrush @$penv spotcheck-dump agenda
+
 elif [ "$mode" = "disqus" ]; then
 
   echo "About to run Disqus integration"
