@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import gov.nysenate.openleg.client.view.bill.BillActionView;
+import gov.nysenate.openleg.client.view.bill.BillAmendmentView;
 import gov.nysenate.openleg.client.view.bill.BillView;
-import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TreeMap;
 
-import static gov.nysenate.openleg.model.base.Version.after;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 /**
@@ -51,6 +50,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
         checkBillTitle(reference, content, observation);
         checkActiveVersion(reference, content, observation);
         checkBillSummary(reference, content, observation);
+        checkBillLawSection(reference, content, observation);
         checkBillActions(reference, content, observation);
         checkBillSponsor(reference, content, observation);
         checkBillYear(reference, content, observation);
@@ -77,7 +77,20 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     protected void checkBillSummary(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         if (!stringEquals(content.getSummary(), reference.getSummary(), false, true))
             obsrv.addMismatch(new SpotCheckMismatch(BILL_SUMMARY, content.getSummary(), reference.getSummary()));
-    }/**/
+    }
+
+    protected void checkBillLawSection(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
+        BillAmendmentView contentLatestAmendment = content.getAmendments().getItems().get(content.getActiveVersion());
+        BillAmendmentView referenceLatestAmendment = reference.getAmendments().getItems().get(reference.getActiveVersion());
+        if (referenceLatestAmendment != null && contentLatestAmendment != null) {
+            if (!contentLatestAmendment.getLawCode().trim().equals(referenceLatestAmendment.getLawCode().trim())){
+                obsrv.addMismatch(new SpotCheckMismatch(BILL_LAW_CODE, contentLatestAmendment.getLawCode(), referenceLatestAmendment.getLawCode()));
+            }
+            if (!contentLatestAmendment.getLawSection().trim().equals(referenceLatestAmendment.getLawSection().trim())) {
+                obsrv.addMismatch(new SpotCheckMismatch(BILL_LAW_SECTION, contentLatestAmendment.getLawSection(), referenceLatestAmendment.getLawSection()));
+            }
+        }
+    }
 
     protected void checkBillActions(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
         TreeMap<String, String> contentActionVersionDateMap = getActionVersionDateMap(content.getActions().getItems());
@@ -100,24 +113,6 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
         else {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, contentBillActions.size(), referenceBillActions.size()));
         }
-    }
-
-    private TreeMap<String, String> getActionVersionDateMap(List<BillActionView> billActions) {
-        TreeMap<String, String> actionVersionDateMap = new TreeMap<>();
-
-        for (BillActionView billAction: billActions) {
-            String version = billAction.getBillId().getVersion();
-            String date = billAction.getDate();
-
-            if (!actionVersionDateMap.containsKey(date)) {
-                actionVersionDateMap.put(date, version);
-            }
-            else if (actionVersionDateMap.containsKey(date) ) {
-                actionVersionDateMap.replace(date,version);
-            }
-
-        }
-        return actionVersionDateMap;
     }
 
     protected void checkBillSponsor(BillView reference, BillView content, SpotCheckObservation<BaseBillId> obsrv) {
@@ -195,5 +190,23 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
             b = b.replaceAll("\\s+", " ");
         }
         return (ignoreCase) ? StringUtils.equalsIgnoreCase(a, b) : StringUtils.equals(a, b);
+    }
+
+    private TreeMap<String, String> getActionVersionDateMap(List<BillActionView> billActions) {
+        TreeMap<String, String> actionVersionDateMap = new TreeMap<>();
+
+        for (BillActionView billAction: billActions) {
+            String version = billAction.getBillId().getVersion();
+            String date = billAction.getDate();
+
+            if (!actionVersionDateMap.containsKey(date)) {
+                actionVersionDateMap.put(date, version);
+            }
+            else if (actionVersionDateMap.containsKey(date) ) {
+                actionVersionDateMap.replace(date,version);
+            }
+
+        }
+        return actionVersionDateMap;
     }
 }
