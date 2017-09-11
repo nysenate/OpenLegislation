@@ -113,11 +113,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
                 actionVersionDateMap.put(date, version);
             }
             else if (actionVersionDateMap.containsKey(date) ) {
-                List<Version> versionsAfter = after( Version.of( actionVersionDateMap.get(date) ) );
-
-                if (  versionsAfter.contains( Version.of(version) )  ) {
-                    actionVersionDateMap.replace(date,version);
-                }
+                actionVersionDateMap.replace(date,version);
             }
 
         }
