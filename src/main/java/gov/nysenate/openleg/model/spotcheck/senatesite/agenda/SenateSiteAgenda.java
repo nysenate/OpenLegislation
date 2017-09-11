@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.model.spotcheck.senatesite.agenda;
 
-import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
@@ -37,10 +35,6 @@ public class SenateSiteAgenda {
     public CommitteeAgendaAddendumId getcommitteeAgendaAddendumId(){
         return new CommitteeAgendaAddendumId(agendaId,committeeId, Version.of(addendum));
     }
-
-    /*public CalendarEntryListId getCalendarEntryListId() {
-        return new CalendarEntryListId(calendarId, calendarType, version, sequenceNo);
-    }*/
 
     public SpotCheckReferenceId getReferenceId() {
         return new SpotCheckReferenceId(SpotCheckRefType.SENATE_SITE_AGENDA, referenceDateTime);

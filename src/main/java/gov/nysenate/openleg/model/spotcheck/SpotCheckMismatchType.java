@@ -70,6 +70,7 @@ public enum SpotCheckMismatchType
     AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT),
     AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT),
     AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT),
+    AGENDA_VOTES("Votes", LBDC_AGENDA_ALERT),
 
     /** --- Supplemental mismatches --- */
     SUPPLEMENTAL_CAL_DATE("Supplemental Calendar Date", LBDC_CALENDAR_ALERT),

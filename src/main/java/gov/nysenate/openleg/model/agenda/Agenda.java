@@ -2,13 +2,12 @@ package gov.nysenate.openleg.model.agenda;
 
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -188,13 +187,28 @@ public class Agenda extends BaseLegislativeContent implements Serializable
     /** --- Functional Getters --- */
 
     public List<CommitteeAgendaAddendumId> getCommitteeAgendaAddendumIds(){
-        List<CommitteeAgendaAddendumId> committeeAgendaAddendumIds = new ArrayList<>();
-//        committeeAgendaAddendumIds.add(
-                return agendaInfoAddenda.values().stream()
+        return agendaInfoAddenda.values().stream()
                 .flatMap(agendaInfoAddendum -> agendaInfoAddendum.getCommitteeInfoMap().values().stream())
                 .map(agendaInfoCommittee -> new CommitteeAgendaAddendumId(agendaInfoCommittee.getAgendaId(),
                         agendaInfoCommittee.getCommitteeId(),
                         agendaInfoCommittee.getAddendum())).collect(Collectors.toList());
-//        return committeeAgendaAddendumIds;
+    }
+
+    /**
+     * Gets a flat mapping of {@link CommitteeAgendaAddendumId} to {@link AgendaVoteCommittee}
+     * which contains all votes in this agenda
+     *
+     * @return {@link Map<CommitteeAgendaAddendumId, AgendaVoteCommittee>}
+     */
+    public Map<CommitteeAgendaAddendumId, AgendaVoteCommittee> getVotes() {
+        Map<CommitteeAgendaAddendumId, AgendaVoteCommittee> votes = new HashMap<>();
+        for (AgendaVoteAddendum addendum : agendaVoteAddenda.values()) {
+            for (AgendaVoteCommittee voteComm : addendum.getCommitteeVoteMap().values()) {
+                CommitteeAgendaAddendumId voteId = new CommitteeAgendaAddendumId(
+                        id, voteComm.getCommitteeId(), Version.of(addendum.getId()));
+                votes.put(voteId, voteComm);
+            }
+        }
+        return votes;
     }
 }
