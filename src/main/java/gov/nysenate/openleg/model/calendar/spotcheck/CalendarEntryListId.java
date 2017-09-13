@@ -2,15 +2,13 @@ package gov.nysenate.openleg.model.calendar.spotcheck;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ComparisonChain;
-import gov.nysenate.openleg.dao.calendar.data.SqlCalendarDao;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
-import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+
+import static gov.nysenate.openleg.model.calendar.CalendarType.*;
 
 /**
  * Created by PKS on 3/9/16.
@@ -21,6 +19,21 @@ public class CalendarEntryListId extends CalendarId {
     protected Version version;
     protected Integer sequenceNo;
     protected LocalDate calDate;
+
+    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo) {
+        super(calendarId);
+        this.version = version;
+        this.sequenceNo = sequenceNo;
+        this.type = type;
+    }
+
+    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo, LocalDate calDate) {
+        super(calendarId);
+        this.version = version;
+        this.sequenceNo = sequenceNo;
+        this.calDate = calDate;
+        this.type = type;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -83,29 +96,12 @@ public class CalendarEntryListId extends CalendarId {
         }
     }
 
-    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo) {
-        super(calendarId);
-        this.type = type;
-        this.version = version;
-        this.sequenceNo = sequenceNo;
-    }
-
-    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo, LocalDate calDate) {
-        super(calendarId);
-        this.type = type;
-        this.version = version;
-        this.sequenceNo = sequenceNo;
-        this.calDate = calDate;
-    }
-
     @JsonIgnore
     public CalendarId getCalendarId(){
         return this;
     }
 
-    public CalendarType getType(){
-        return type;
-    }
+    public CalendarType getType() { return type; }
 
     public Version getVersion(){
         return version;
@@ -129,5 +125,19 @@ public class CalendarEntryListId extends CalendarId {
 
     public void setSequenceNo(Integer sequenceNo){
         this.sequenceNo = sequenceNo;
+    }
+
+    /*Functional getter */
+    public CalendarType functionalGetType() {
+        if (this.sequenceNo != 0 ) {
+            return ACTIVE_LIST;
+        }
+        else if (!this.version.equals(Version.DEFAULT) && this.version != null) {
+            return SUPPLEMENTAL_CALENDAR;
+        }
+        else if (this.version.equals(Version.DEFAULT) ) {
+            return FLOOR_CALENDAR;
+        }
+        return ALL;
     }
 }
