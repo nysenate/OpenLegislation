@@ -3,16 +3,12 @@ package gov.nysenate.openleg.client.view.calendar;
 import gov.nysenate.openleg.client.view.bill.SimpleBillInfoView;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.calendar.Calendar;
-import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 
 import java.util.Comparator;
-
-import static gov.nysenate.openleg.model.base.Version.of;
 
 public class CalendarSupEntryView extends CalendarEntryView implements CalendarEntryList {
 
