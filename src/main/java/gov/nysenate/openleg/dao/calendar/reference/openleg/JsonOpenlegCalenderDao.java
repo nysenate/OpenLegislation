@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.dao.calendar.reference.openleg;
 
+import gov.nysenate.openleg.client.view.calendar.CalendarEntryView;
+import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -48,7 +50,7 @@ public class JsonOpenlegCalenderDao implements OpenlegCalenderDao {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new GuavaModule());
         List<CalendarView> calendarViewList = new LinkedList<>();
-        if (node.get("result").get("items") == null) { // if there is only 1 available bill
+        if (node.get("result").get("items") == null) {
             calendarViewList.add(mapper.readValue(node.get("result").toString(), CalendarView.class));
         } else { // if there are many available bills.
             Iterator<JsonNode> nodeIterator = node.get("result").get("items").iterator();
