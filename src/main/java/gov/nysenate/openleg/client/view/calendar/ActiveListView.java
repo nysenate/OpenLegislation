@@ -36,6 +36,6 @@ public class ActiveListView extends SimpleActiveListView implements CalendarEntr
 
     @Override
     public CalendarEntryListId getCalendarEntryListId() {
-        return null;
+        return calendarEntryListId;
     }
 }
