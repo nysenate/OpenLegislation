@@ -43,6 +43,14 @@ public class Calendar extends BaseLegislativeContent
         this.setSession(new SessionYear(getYear()));
     }
 
+    //Added for Json deserialization
+    public Calendar(int calendarNumber,int year) {
+        this();
+        this.setId(calendarNumber,year);
+        this.setYear(id.getYear());
+        this.setSession(new SessionYear(getYear()));
+    }
+
     /** --- Functional Getters/Setters --- */
 
     public CalendarActiveList getActiveList(Integer id) {
@@ -123,6 +131,12 @@ public class Calendar extends BaseLegislativeContent
         return calendarEntryListIds;
     }
 
+    //Added for Json deserialization
+    public void setId(int calenderNumber, int year) {
+        this.id = new CalendarId(calenderNumber, year);
+    }
+
+    //Added for Json deserialization
     public void setId(CalendarId id) {
         this.id = id;
     }

@@ -11,6 +11,14 @@ public class CalendarActiveListIdView extends CalendarIdView{
         this.sequenceNumber = calendarActiveListId.getSequenceNo();
     }
 
+    //Added for Json deserialization
+    public CalendarActiveListIdView() {}
+
+    //Added for Json deserialization
+    public void setSequenceNumber(int sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
+    }
+
     public int getSequenceNumber() {
         return sequenceNumber;
     }

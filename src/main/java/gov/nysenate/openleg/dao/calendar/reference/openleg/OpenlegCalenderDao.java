@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.calendar.reference.openleg;
 
 import gov.nysenate.openleg.client.view.calendar.CalendarView;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 
 import java.util.List;
 
@@ -10,5 +11,5 @@ public interface OpenlegCalenderDao {
      * @param sessionYear
      * @return List of CalendarView
      */
-    public List<CalendarView> getOpenlegCalenderView(String sessionYear, String apiKey);
+    public List<CalendarView> getOpenlegCalendarView(String sessionYear, String apiKey);
 }

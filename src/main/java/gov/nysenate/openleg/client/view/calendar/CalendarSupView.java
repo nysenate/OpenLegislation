@@ -25,8 +25,16 @@ public class CalendarSupView extends SimpleCalendarSupView {
         );
     }
 
+    //Added for Json deserialization
+    public CalendarSupView() {}
+
     public MapView<String, ListView<CalendarSupEntryView>> getEntriesBySection() {
         return entriesBySection;
+    }
+
+    //Added for Json deserialization
+    public void setEntriesBySection(MapView<String, ListView<CalendarSupEntryView>> entriesBySection) {
+        this.entriesBySection = entriesBySection;
     }
 
     @Override

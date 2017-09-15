@@ -19,6 +19,16 @@ public class CalendarIdView implements ViewObject {
         this.calendarNumber = calendarId.getCalNo();
     }
 
+    //Added for Json deserialization
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    //Added for Json deserialization
+    public void setCalendarNumber(int calendarNumber) {
+        this.calendarNumber = calendarNumber;
+    }
+
     public int getYear() {
         return year;
     }

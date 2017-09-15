@@ -1,7 +1,8 @@
 package gov.nysenate.openleg.dao.calendar.reference.openleg;
 
-import gov.nysenate.openleg.client.view.calendar.CalendarEntryView;
-import gov.nysenate.openleg.model.calendar.CalendarEntry;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import gov.nysenate.openleg.model.calendar.Calendar;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,18 +29,18 @@ public class JsonOpenlegCalenderDao implements OpenlegCalenderDao {
     private int offset = 0;
     private int total = 0;
 
-    public List<CalendarView> getOpenlegCalenderView(String sessionYear, String apiKey) {
+    public List<CalendarView> getOpenlegCalendarView(String sessionYear, String apiKey) {
         List<CalendarView> calendarViews = new LinkedList<>();
         StringBuffer response = new StringBuffer();
 
-        connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear  + "?full=true&limit=1000&key=" + apiKey, "GET", false, true);
+        connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear  + "?full=true&limit=10&key=" + apiKey, "GET", false, true);
         JsonOpenlegDaoUtils.readInputStream(connection, response);
         mapJSONToCalendarView(response, calendarViews);
         connection.disconnect();
 
         while (offset < total) {
             StringBuffer restOfCalender = new StringBuffer();
-            connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear + "?full=true&key=" + apiKey + "&limit=1000&offset=" + (offset + 1),"GET",false,true );
+            connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear + "?full=true&key=" + apiKey + "&limit=10&offset=" + (offset + 1),"GET",false,true );
             JsonOpenlegDaoUtils.readInputStream(connection, restOfCalender);
             mapJSONToCalendarView(restOfCalender, calendarViews);
             connection.disconnect();
@@ -48,6 +50,7 @@ public class JsonOpenlegCalenderDao implements OpenlegCalenderDao {
 
     private List<CalendarView> toCalendarView(JsonNode node) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.registerModule(new GuavaModule());
         List<CalendarView> calendarViewList = new LinkedList<>();
         if (node.get("result").get("items") == null) {
@@ -70,13 +73,13 @@ public class JsonOpenlegCalenderDao implements OpenlegCalenderDao {
             JsonNode node = null;
             node = mapper.readTree(response.toString());
 
-            logger.info("Fetching calender from openleg ref with offset " + offset);
+            logger.info("Fetching calendar from Openleg ref with offset " + offset);
             setOffset( node.get("offsetEnd").asInt() );
             setTotal( node.get("total").asInt() );
 
             calendarViews.addAll(toCalendarView(node));
         } catch (IOException e) {
-            logger.error("The JSON Object could not be mapped to a bill view");
+            logger.error("The JSON Object could not be mapped to a calendar view");
             e.printStackTrace();
         }
     }

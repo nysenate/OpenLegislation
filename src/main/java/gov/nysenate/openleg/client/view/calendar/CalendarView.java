@@ -15,7 +15,7 @@ public class CalendarView extends CalendarIdView {
     protected CalendarSupView floorCalendar;
     protected MapView<String, CalendarSupView> supplementalCalendars;
     protected MapView<Integer, ActiveListView> activeLists;
-    protected LocalDate calDate;
+    protected String calDate;
 
     public CalendarView(Calendar calendar, BillDataService billDataService) {
         super(calendar !=null ? calendar.getId() : null);
@@ -36,9 +36,12 @@ public class CalendarView extends CalendarIdView {
                             .collect(Collectors.toMap(ActiveListView::getSequenceNumber, Function.identity(),
                                     (a, b) -> b, TreeMap::new))
             );
-            calDate = calendar.getCalDate();
+            calDate = calendar.getCalDate().toString();
         }
     }
+
+    //Added for Json deserialization
+    public CalendarView() {}
 
     public CalendarSupView getFloorCalendar() {
         return floorCalendar;
@@ -52,8 +55,28 @@ public class CalendarView extends CalendarIdView {
         return activeLists;
     }
 
-    public LocalDate getCalDate() {
+    public String getCalDate() {
         return calDate;
+    }
+
+    //Added for Json deserialization
+    public void setFloorCalendar(CalendarSupView floorCalendar) {
+        this.floorCalendar = floorCalendar;
+    }
+
+    //Added for Json deserialization
+    public void setSupplementalCalendars(MapView<String, CalendarSupView> supplementalCalendars) {
+        this.supplementalCalendars = supplementalCalendars;
+    }
+
+    //Added for Json deserialization
+    public void setActiveLists(MapView<Integer, ActiveListView> activeLists) {
+        this.activeLists = activeLists;
+    }
+
+    //Added for Json deserialization
+    public void setCalDate(String calDate) {
+        this.calDate = calDate;
     }
 
     @Override

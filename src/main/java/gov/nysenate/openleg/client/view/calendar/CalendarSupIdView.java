@@ -21,6 +21,14 @@ public class CalendarSupIdView extends CalendarIdView {
         }
     }
 
+    //Added for Json deserialization
+    public CalendarSupIdView() {}
+
+    //Added for Json deserialization
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     public String getVersion() {
         return version;
     }

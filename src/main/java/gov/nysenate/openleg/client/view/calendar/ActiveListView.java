@@ -25,6 +25,19 @@ public class ActiveListView extends SimpleActiveListView implements CalendarEntr
         calendarEntryListId = new CalendarActiveListId(activeList.getCalendarId(),activeList.getSequenceNo()).toCalendarEntryListId();
     }
 
+    //Added for Json deserialization
+    public ActiveListView() {}
+
+    //Added for Json deserialization
+    public void setEntries(ListView<CalendarEntryView> entries) {
+        this.entries = entries;
+    }
+
+    //Added for Json deserialization
+    public void setCalendarEntryListId(CalendarActiveList activeList) {
+        calendarEntryListId = new CalendarActiveListId(activeList.getCalendarId(),activeList.getSequenceNo()).toCalendarEntryListId();
+    }
+
     public ListView<CalendarEntryView> getEntries() {
         return entries;
     }

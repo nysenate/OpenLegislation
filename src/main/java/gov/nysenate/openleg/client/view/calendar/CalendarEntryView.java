@@ -26,6 +26,19 @@ public class CalendarEntryView extends BillInfoView
         }
     }
 
+    //Added for Json deserialization
+    public CalendarEntryView() {}
+
+    //Added for Json deserialization
+    public void setBillCalNo(int billCalNo) {
+        this.billCalNo = billCalNo;
+    }
+
+    //Added for Json deserialization
+    public void setSelectedVersion(String selectedVersion) {
+        this.selectedVersion = selectedVersion;
+    }
+
     public int getBillCalNo() {
         return billCalNo;
     }

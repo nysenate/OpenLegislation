@@ -34,6 +34,27 @@ public class CalendarSupEntryView extends CalendarEntryView implements CalendarE
         }
     }
 
+    //Added for Json deserialization
+    public CalendarSupEntryView() {}
+
+    //Added for Json deserialization
+    public void setSectionType(String sectionType) {
+        this.sectionType = sectionType;
+    }
+
+    //Added for Json deserialization
+    public void setSubBillInfo(SimpleBillInfoView subBillInfo) {
+        this.subBillInfo = subBillInfo;
+    }
+
+    public void setBillHigh(boolean billHigh) {
+        this.billHigh = billHigh;
+    }
+
+    public void setCalendarEntryListId(CalendarSupplementalEntry supEntry) {
+        calendarEntryListId = new CalendarSupplementalId(supEntry.getBillCalNo(),this.subBillInfo.getYear(),Version.of(this.subBillInfo.getActiveVersion())).toCalendarEntryListId();
+    }
+
     public String getSectionType() {
         return sectionType;
     }

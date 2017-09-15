@@ -87,7 +87,7 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
         logger.info("The current session year is " + SessionYear.of( start.getYear() ) );
 
         //Retrieve Openleg Ref Calendar data
-        List<CalendarView> referenceCalendarViews = openlegCalendarDao.getOpenlegCalenderView(String.valueOf(start.getYear()),apiSecret);
+        List<CalendarView> referenceCalendarViews = openlegCalendarDao.getOpenlegCalendarView(String.valueOf(start.getYear()),apiSecret);
         if (referenceCalendarViews.isEmpty()) {
             throw new ReferenceDataNotFoundEx("The collection of sobi calendars with the given session year " + SessionYear.of( start.getYear() ) + " is empty");
         }
