@@ -30,7 +30,13 @@ public class CalendarSupEntryView extends CalendarEntryView implements CalendarE
                     : null;
             this.billHigh = supEntry.getBillHigh();
 
-            calendarEntryListId = new CalendarSupplementalId(supEntry.getBillCalNo(),this.subBillInfo.getYear(),Version.of(this.subBillInfo.getActiveVersion())).toCalendarEntryListId();
+            if (subBillInfo != null) {
+                calendarEntryListId = new CalendarSupplementalId(supEntry.getBillCalNo(), this.subBillInfo.getYear(), Version.of(this.subBillInfo.getActiveVersion())).toCalendarEntryListId();
+            }
+            else {
+                SimpleBillInfoView billInfoView = new SimpleBillInfoView( billDataService.getBillInfo( BillId.getBaseId( supEntry.getBillId() )));
+                calendarEntryListId = new CalendarSupplementalId(supEntry.getBillCalNo(), billInfoView.getYear(), Version.of(billInfoView.getActiveVersion())).toCalendarEntryListId();
+            }
         }
     }
 
