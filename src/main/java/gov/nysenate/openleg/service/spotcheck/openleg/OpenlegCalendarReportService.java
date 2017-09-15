@@ -100,11 +100,11 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
         Set<CalendarEntryListId> sourceActiveListCalIdSet = new HashSet<>();
 
         //Collections of the actual data
-        List<CalendarSupEntryView> refFloorCal = new ArrayList<>();
-        Collection<ActiveListView> refActiveListCal= new ArrayList<>();
+        List<CalendarSupEntryView> refFloorCalData = new ArrayList<>();
+        Collection<ActiveListView> refActiveListCalData = new ArrayList<>();
 
-        List<CalendarSupEntryView> sourceFloorCal = new ArrayList<>();
-        ArrayList<ActiveListView> sourceActiveListCal = new ArrayList<>();
+        List<CalendarSupEntryView> sourceFloorCalData = new ArrayList<>();
+        ArrayList<ActiveListView> sourceActiveListCalData = new ArrayList<>();
 
 
         //********************************************
@@ -115,14 +115,14 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
             //GET REFERENCE CALENDARS AND ID's
 
             //Get CalendarSupEntryViews from reference calendar
-            refFloorCal.addAll( calendarView.getFloorCalendar()
+            refFloorCalData.addAll(calendarView.getFloorCalendar()
                     .getEntriesBySection()
                     .getItems()
                     .values()
                     .stream()
                     .map(listViewOfCalendarSupEntryView -> listViewOfCalendarSupEntryView.getItems())
                     .flatMap(calendarSupEntryViews -> calendarSupEntryViews.stream())
-                    .collect( Collectors.toList() ) );
+                    .collect(Collectors.toList()));
 
             //Get CalendarSupViews from reference calendar
             Collection<CalendarSupView> refSupViewCal = calendarView.getSupplementalCalendars()
@@ -130,51 +130,52 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
                     .values();
 
             //Get correct CalendarSupEntryViews of the supplemental calendars and add it to refFloorCal
-            for (CalendarSupView calendarSupView:refSupViewCal) {
-                refFloorCal.addAll(calendarSupView.getEntriesBySection()
+            for (CalendarSupView calendarSupView : refSupViewCal) {
+                refFloorCalData.addAll(calendarSupView.getEntriesBySection()
                         .getItems()
                         .values()
                         .stream()
                         .map(listViewOfCalendarSupEntryView -> listViewOfCalendarSupEntryView.getItems())
                         .flatMap(calendarSupEntryViews -> calendarSupEntryViews.stream())
-                        .collect( Collectors.toList() ) );
+                        .collect(Collectors.toList()));
             }
 
             //Add ID's from CalendarSupEntryView to refFloorCalIdSet
-            for (CalendarSupEntryView calendarSupEntryView: refFloorCal) {
-                refFloorCalIdSet.add( calendarSupEntryView.getCalendarEntryListId() );
+            for (CalendarSupEntryView calendarSupEntryView : refFloorCalData) {
+                refFloorCalIdSet.add(calendarSupEntryView.getCalendarEntryListId());
             }
 
             //Get Active list calendars from reference calendarView
-            refActiveListCal.addAll(calendarView.getActiveLists()
+            refActiveListCalData.addAll(calendarView.getActiveLists()
                     .getItems()
                     .values());
 
             //Add ID's from activelistView to refActiveListCalIdSet
-            for (ActiveListView activeListView: refActiveListCal) {
-                refActiveListCalIdSet.add( activeListView.getCalendarEntryListId() );
+            for (ActiveListView activeListView : refActiveListCalData) {
+                refActiveListCalIdSet.add(activeListView.getCalendarEntryListId());
             }
+        }
 
             //**********************************
             // GET SOURCE CALENDARS AND ID's
 
-            List<CalendarSupplementalEntry> calendarSupplementalEntryList = new ArrayList<>();
+            List<CalendarSupplementalEntry> sourceCalendarSupplementalEntryList = new ArrayList<>();
 
             //Get CalendarSupplementals from the calendarDataService
-            List<CalendarSupplemental> sourceCalSupplemental = calendarDataService.getCalendarSupplementals(start.getYear(),SortOrder.ASC, LimitOffset.ALL);
+            List<CalendarSupplemental> sourceCalSupplementals = calendarDataService.getCalendarSupplementals(start.getYear(),SortOrder.ASC, LimitOffset.ALL);
 
             //Retrieve the CalendarSupplementalEntries from the CalendarSupplementals, and add them to calendarSupplementalEntryList
-            for (CalendarSupplemental calendarSupplemental: sourceCalSupplemental) {
-                calendarSupplementalEntryList.addAll( calendarSupplemental.getAllEntries() );
+            for (CalendarSupplemental calendarSupplemental: sourceCalSupplementals) {
+                sourceCalendarSupplementalEntryList.addAll( calendarSupplemental.getAllEntries() );
             }
 
             //Convert CalendarSupplementalEntries to CalendarSupEntryViews and add them to sourceFloorCal
-            for (CalendarSupplementalEntry calendarSupplementalEntry: calendarSupplementalEntryList) {
-                sourceFloorCal.add( new CalendarSupEntryView( calendarSupplementalEntry, billDataService ) );
+            for (CalendarSupplementalEntry calendarSupplementalEntry: sourceCalendarSupplementalEntryList) {
+                sourceFloorCalData.add( new CalendarSupEntryView( calendarSupplementalEntry, billDataService ) );
             }
 
             //Add CalendarEntryListID's to sourceFloorCalIdSet
-            for (CalendarSupEntryView calendarSupEntryView: sourceFloorCal) {
+            for (CalendarSupEntryView calendarSupEntryView: sourceFloorCalData) {
                 sourceFloorCalIdSet.add( calendarSupEntryView.getCalendarEntryListId() );
             }
 
@@ -183,14 +184,13 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
 
             //Convert CalendarActiveList to ActiveListView
             for(CalendarActiveList calendarActiveList: sourceCalActiveLists) {
-                sourceActiveListCal.add( new ActiveListView(calendarActiveList,billDataService) );
+                sourceActiveListCalData.add( new ActiveListView(calendarActiveList,billDataService) );
             }
 
             //Add CalendarEntryListId's to sourceActiveListCalIdSet
-            for(ActiveListView activeListView: sourceActiveListCal) {
+            for(ActiveListView activeListView: sourceActiveListCalData) {
                 sourceActiveListCalIdSet.add( activeListView.getCalendarEntryListId() );
             }
-        }
         //ALL DATA HAS BEEN RETRIEVED
         //******************************
 
@@ -214,20 +214,20 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
         //PASS DATA SOURCE AND REF HAVE TO THE CHECK SERVICE
 
         //Pass floor calenders in symmetric difference to the calendar check service
-        for(CalendarSupEntryView refCalendarSupEntryView: refFloorCal) {
+        for(CalendarSupEntryView refCalendarSupEntryView: refFloorCalData) {
             if ( symmDiffFloorCals.contains( refCalendarSupEntryView.getCalendarEntryListId() ) )
                 continue;
             SpotCheckObservation<CalendarEntryListId> observation = checkService.checkFloorCals(refCalendarSupEntryView,
-                    sourceFloorCal.get( sourceFloorCal.indexOf(refCalendarSupEntryView) ) );
+                    sourceFloorCalData.get( sourceFloorCalData.indexOf(refCalendarSupEntryView) ) );
             addObservationData(observation,report,reportId);
         }
 
         //Pass active lists in symmetric difference to the calendar check service
-        for(ActiveListView refActiveListView: refActiveListCal) {
+        for(ActiveListView refActiveListView: refActiveListCalData) {
             if ( symmDiffActiveLists.contains( refActiveListView.getCalendarEntryListId() ) )
                 continue;
             SpotCheckObservation<CalendarEntryListId> observation = checkService.checkActiveLists(refActiveListView,
-                    sourceActiveListCal.get( sourceActiveListCal.indexOf(refActiveListView) ) );
+                    sourceActiveListCalData.get( sourceActiveListCalData.indexOf(refActiveListView) ) );
             addObservationData(observation,report,reportId);
         }
         logger.info("Found total number of " + report.getOpenMismatchCount(false) + " mismatches");
