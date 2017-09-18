@@ -2,13 +2,16 @@ package gov.nysenate.openleg.client.view.calendar;
 
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
+import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
+import gov.nysenate.openleg.model.calendar.CalendarType;
+import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class CalendarSupView extends SimpleCalendarSupView {
+public class CalendarSupView extends SimpleCalendarSupView implements CalendarEntryList{
 
     protected MapView<String, ListView<CalendarSupEntryView>> entriesBySection;
 
@@ -43,5 +46,9 @@ public class CalendarSupView extends SimpleCalendarSupView {
             return "calendar-floor";
         }
         return "calendar-supplemental";
+    }
+
+    public CalendarEntryListId getCalendarEntryListId() {
+        return this.toCalendarEntryListId();
     }
 }

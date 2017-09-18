@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import gov.nysenate.openleg.client.view.calendar.ActiveListView;
 import gov.nysenate.openleg.client.view.calendar.CalendarSupEntryView;
+import gov.nysenate.openleg.client.view.calendar.CalendarSupView;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
@@ -30,7 +31,7 @@ public class OpenlegCalendarCheckService {
      * @param reference ReferenceType - The reference content to use for comparison
      * @return The mismatches
      */
-    public SpotCheckObservation<CalendarEntryListId>  checkFloorCals(CalendarSupEntryView reference, CalendarSupEntryView content) {
+    public SpotCheckObservation<CalendarEntryListId>  checkFloorCals(CalendarSupView reference, CalendarSupView content) {
         final SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reference.getCalendarEntryListId());
         return observation;
     }

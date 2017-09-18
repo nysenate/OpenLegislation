@@ -12,8 +12,6 @@ public class ActiveListView extends SimpleActiveListView implements CalendarEntr
 {
     ListView<CalendarEntryView> entries;
 
-    CalendarEntryListId calendarEntryListId;
-
     public ActiveListView(CalendarActiveList activeList, BillDataService billDataService) {
         super(activeList);
         this.entries = ListView.of(
@@ -22,7 +20,6 @@ public class ActiveListView extends SimpleActiveListView implements CalendarEntr
                         .sorted(CalendarEntryView.calEntryViewComparator)
                         .collect(Collectors.toList())
         );
-        calendarEntryListId = new CalendarActiveListId(activeList.getCalendarId(),activeList.getSequenceNo()).toCalendarEntryListId();
     }
 
     //Added for Json deserialization
@@ -33,9 +30,8 @@ public class ActiveListView extends SimpleActiveListView implements CalendarEntr
         this.entries = entries;
     }
 
-    //Added for Json deserialization
-    public void setCalendarEntryListId(CalendarActiveList activeList) {
-        calendarEntryListId = new CalendarActiveListId(activeList.getCalendarId(),activeList.getSequenceNo()).toCalendarEntryListId();
+    public CalendarEntryListId getCalendarEntryListId() {
+        return this.toCalendarEntryListId();
     }
 
     public ListView<CalendarEntryView> getEntries() {
@@ -45,10 +41,5 @@ public class ActiveListView extends SimpleActiveListView implements CalendarEntr
     @Override
     public String getViewType() {
         return "calendar-activelist";
-    }
-
-    @Override
-    public CalendarEntryListId getCalendarEntryListId() {
-        return calendarEntryListId;
     }
 }

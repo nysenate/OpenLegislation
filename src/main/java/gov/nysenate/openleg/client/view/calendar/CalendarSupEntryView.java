@@ -10,15 +10,13 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 
 import java.util.Comparator;
 
-public class CalendarSupEntryView extends CalendarEntryView implements CalendarEntryList {
+public class CalendarSupEntryView extends CalendarEntryView {
 
     protected String sectionType;
 
     protected SimpleBillInfoView subBillInfo;
 
     protected boolean billHigh;
-
-    protected CalendarEntryListId calendarEntryListId;
 
     public CalendarSupEntryView(CalendarSupplementalEntry supEntry, BillDataService billDataService) {
         super(supEntry, billDataService);
@@ -29,14 +27,6 @@ public class CalendarSupEntryView extends CalendarEntryView implements CalendarE
                     ? new SimpleBillInfoView(billDataService.getBillInfo(BillId.getBaseId(supEntry.getSubBillId())))
                     : null;
             this.billHigh = supEntry.getBillHigh();
-
-            if (subBillInfo != null) {
-                calendarEntryListId = new CalendarSupplementalId(supEntry.getBillCalNo(), this.subBillInfo.getYear(), Version.of(this.subBillInfo.getActiveVersion())).toCalendarEntryListId();
-            }
-            else {
-                SimpleBillInfoView billInfoView = new SimpleBillInfoView( billDataService.getBillInfo( BillId.getBaseId( supEntry.getBillId() )));
-                calendarEntryListId = new CalendarSupplementalId(supEntry.getBillCalNo(), billInfoView.getYear(), Version.of(billInfoView.getActiveVersion())).toCalendarEntryListId();
-            }
         }
     }
 
@@ -55,10 +45,6 @@ public class CalendarSupEntryView extends CalendarEntryView implements CalendarE
 
     public void setBillHigh(boolean billHigh) {
         this.billHigh = billHigh;
-    }
-
-    public void setCalendarEntryListId(CalendarSupplementalEntry supEntry) {
-        calendarEntryListId = new CalendarSupplementalId(supEntry.getBillCalNo(),this.subBillInfo.getYear(),Version.of(this.subBillInfo.getActiveVersion())).toCalendarEntryListId();
     }
 
     public String getSectionType() {
@@ -81,8 +67,4 @@ public class CalendarSupEntryView extends CalendarEntryView implements CalendarE
         return "calendar-floor-entry";
     }
 
-    @Override
-    public CalendarEntryListId getCalendarEntryListId() {
-        return calendarEntryListId;
-    }
 }

@@ -126,18 +126,4 @@ public class CalendarEntryListId extends CalendarId {
     public void setSequenceNo(Integer sequenceNo){
         this.sequenceNo = sequenceNo;
     }
-
-    /*Functional getter */
-    public CalendarType functionalGetType() {
-        if (this.sequenceNo != 0 ) {
-            return ACTIVE_LIST;
-        }
-        else if (!this.version.equals(Version.DEFAULT) && this.version != null) {
-            return SUPPLEMENTAL_CALENDAR;
-        }
-        else if (this.version.equals(Version.DEFAULT) ) {
-            return FLOOR_CALENDAR;
-        }
-        return ALL;
-    }
 }
