@@ -133,10 +133,10 @@ public class BillUpdatesTest extends BaseTests {
 
     @Test
     public void newPrevVersionTest() {
-        testBill.addDirectPreviousVersion(new BaseBillId("S123", 2017));
+        testBill.setDirectPreviousVersion(new BaseBillId("S123", 2017));
 
         billDao.updateBill(testBill, testFragment);
-        testBill.addDirectPreviousVersion(new BaseBillId("S1234", 2017));
+        testBill.setDirectPreviousVersion(new BaseBillId("S1234", 2017));
 
         updateBillAndLogUpdates();
     }

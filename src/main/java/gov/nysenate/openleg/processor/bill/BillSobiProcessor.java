@@ -208,14 +208,26 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
             }
             String prevPrintNo = billData.group(4).trim();
             String prevSessionYearStr = billData.group(6).trim();
-            if (!prevSessionYearStr.equals("0000") && !prevPrintNo.equals("00000")) {
-                try {
-                    Integer prevSessionYear = Integer.parseInt(prevSessionYearStr);
-                    baseBill.addDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
+            String blurb = billData.group(3).trim();
+            // Prev version info always comes separate from sponsor and blurb info.
+            // Only apply prev version info if sponsor and blurb info is not included.
+            if (StringUtils.isEmpty(sponsor) && StringUtils.isEmpty(blurb)) {
+                // If the prev session year and prev base print no is empty remove prev version.
+                // Do not check amendment because print number of 00000A should still trigger removal.
+                if (prevSessionYearStr.equals("0000") && prevPrintNo.startsWith("00000")) {
+                    // Remove prev version.
+                    baseBill.setDirectPreviousVersion(null);
                     baseBill.setModifiedDateTime(date);
                 }
-                catch (NumberFormatException ex) {
-                    unit.addMessage("Failed to parse previous session year from Bill Info line: " + prevSessionYearStr);
+                else {
+                    // Set prev version
+                    try {
+                        Integer prevSessionYear = Integer.parseInt(prevSessionYearStr);
+                        baseBill.setDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
+                        baseBill.setModifiedDateTime(date);
+                    } catch (NumberFormatException ex) {
+                        unit.addMessage("Failed to parse previous session year from Bill Info line: " + prevSessionYearStr);
+                    }
                 }
             }
         }

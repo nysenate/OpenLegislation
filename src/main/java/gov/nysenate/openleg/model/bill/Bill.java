@@ -71,7 +71,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** A list of ids for versions of this legislation in previous sessions.
      *  This set of will contain only previous versions that have been directly linked to this bill*/
-    protected Set<BillId> directPreviousVersions =  Collections.synchronizedSortedSet(new TreeSet<>());
+    protected BillId directPreviousVersion;
 
     /** A list of ids for versions of this legislation in previous sessions.
      *  This set will contain all previous versions, even those that are indirectly linked
@@ -328,13 +328,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /**
-     * Add the bill id to the previous bill versions set.
-     */
-    public void addDirectPreviousVersion(BillId previousVersion) {
-        directPreviousVersions.add(previousVersion);
-    }
-
-    /**
      * Add an action to the list of actions.
      */
     public void addAction(BillAction action) {
@@ -427,12 +420,12 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.approvalMessage = approvalMessage;
     }
 
-    public Set<BillId> getDirectPreviousVersions() {
-        return directPreviousVersions;
+    public BillId getDirectPreviousVersion() {
+        return directPreviousVersion;
     }
 
-    public void setDirectPreviousVersions(Set<BillId> directPreviousVersions) {
-        this.directPreviousVersions = directPreviousVersions;
+    public void setDirectPreviousVersion(BillId directPreviousVersion) {
+        this.directPreviousVersion = directPreviousVersion;
     }
 
     public Set<BillId> getAllPreviousVersions() {
