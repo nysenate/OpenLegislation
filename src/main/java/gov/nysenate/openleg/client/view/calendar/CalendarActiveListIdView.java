@@ -26,6 +26,10 @@ public class CalendarActiveListIdView extends CalendarIdView{
         return new CalendarEntryListId(this.toCalendarId(), CalendarType.ACTIVE_LIST, Version.DEFAULT,sequenceNumber);
     }
 
+    public CalendarActiveListId toCalendarActiveListId() {
+        return new CalendarActiveListId(this.calendarNumber,this.year,this.sequenceNumber);
+    }
+
     public int getSequenceNumber() {
         return sequenceNumber;
     }

@@ -48,4 +48,8 @@ public class CalendarSupIdView extends CalendarIdView {
         return new CalendarEntryListId(this.toCalendarId(),this.version.equals("floor") ? CalendarType.FLOOR_CALENDAR : CalendarType.SUPPLEMENTAL_CALENDAR,
                 this.version.equals("floor") ? Version.DEFAULT : Version.of(this.version),0);
     }
+
+    public CalendarSupplementalId getCalendarSupplementalId() {
+        return new CalendarSupplementalId(this.calendarNumber,this.year,this.version.equals("floor") ? Version.DEFAULT : Version.of(this.version));
+    }
 }

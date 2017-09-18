@@ -182,7 +182,7 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
         logger.info("Found " + refActiveListCalIdSet.size()+" active lists in Openleg-ref(SOBI) and " + sourceActiveListCalIdSet.size()+" active lists in local (XML)" );
         symmDiffActiveLists = getSymmetricDifference(refActiveListCalIdSet, sourceActiveListCalIdSet, report, reportId);
 
-        logger.info("Found " + report.getOpenMismatchCount(false) + "missing calendar entries");
+        logger.info("Found " + report.getOpenMismatchCount(false) + " missing calendar entries");
 
         //*************************************************
         //PASS DATA SOURCE AND REF BOTH HAVE TO THE CHECK SERVICE
@@ -192,7 +192,7 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
             if ( symmDiffFloorCals.contains( refCalendarSupView.getCalendarEntryListId() ) )
                 continue;
             SpotCheckObservation<CalendarEntryListId> observation = checkService.checkFloorCals(refCalendarSupView,
-                    sourceFloorCalData.get( sourceFloorCalData.indexOf(refCalendarSupView) ) );
+                   new CalendarSupView(calendarDataService.getCalendarSupplemental(refCalendarSupView.getCalendarSupplementalId()), billDataService)  );
             addObservationData(observation,report,reportId);
         }
 
@@ -201,7 +201,7 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
             if ( symmDiffActiveLists.contains( refActiveListView.getCalendarEntryListId() ) )
                 continue;
             SpotCheckObservation<CalendarEntryListId> observation = checkService.checkActiveLists(refActiveListView,
-                    sourceActiveListCalData.get( sourceActiveListCalData.indexOf(refActiveListView) ) );
+                    new ActiveListView(calendarDataService.getActiveList(refActiveListView.toCalendarActiveListId()), billDataService) );
             addObservationData(observation,report,reportId);
         }
         logger.info("Found total number of " + report.getOpenMismatchCount(false) + " mismatches");
