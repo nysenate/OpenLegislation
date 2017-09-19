@@ -55,13 +55,20 @@ public enum SpotCheckMismatchType
     BILL_LAW_CODE("Law Code", SENATE_SITE_BILLS),
     BILL_TEXT("Full Text", SENATE_SITE_BILLS),
 
+    /**
+     *  Openleg xml vs Openleg sobi mismatches
+     */
+    Bill_ADDITIONAL_SPONSOR_OPENLEG("Bill Additional Sponsor", OPENLEG_BILL),
+    BILL_ACTIVE_AMENDMENT_OPENLEG("Bill Active Amendment", OPENLEG_BILL),
+    BILL_APPROVE_MESSAGE_OPENLEG("Bill Approve Message", OPENLEG_BILL),
+    BILL_VOTES_OPENLEG("Bill Votes", OPENLEG_BILL),
+    CALENDAR_OPENLEG("Calendar", OPENLEG_BILL),
+    BILL_COMMITTEE_AGENDAS_OPENLEG("Bill Committee Agendas", OPENLEG_BILL),
+    BILL_PAST_COMMITTEE_OPENLEG("Bill Past commmittee", OPENLEG_BILL),
 
-    /** --- Active List data mismatches --- */
 
-    LIST_CAL_DATE("Cal Date", LBDC_CALENDAR_ALERT),
-    LIST_RELEASE_DATE_TIME("Release Time", LBDC_CALENDAR_ALERT),
-    LIST_CALENDAR_MISMATCH("Calendar Data", LBDC_CALENDAR_ALERT),
-    LIST_ENTRY_MISMATCH("Cal Entry", LBDC_CALENDAR_ALERT),
+    /** --- Agenda mismatches --- */
+    AGENDA_ID("Agenda Id", SENATE_SITE_AGENDA),
 
     /** --- Agenda Committee Meeting info mismatches --- */
 
@@ -71,32 +78,33 @@ public enum SpotCheckMismatchType
     AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT),
     AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT),
 
-    /** --- Supplemental mismatches --- */
-    SUPPLEMENTAL_CAL_DATE("Supplemental Calendar Date", LBDC_CALENDAR_ALERT),
-    SUPPLEMENTAL_SECTION_TYPE("Supplemental Section", LBDC_CALENDAR_ALERT),
+    /** --- Calendar mismatches --- */
+    CALENDAR_ID("Calendar Id", SENATE_SITE_CALENDAR),
+
+    /** --- Floor / Supplemental mismatches --- */
     SUPPLEMENTAL_ENTRY("Supplemental Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_CALENDAR),
     FLOOR_ENTRY("Floor Entry", SENATE_SITE_CALENDAR),
+
+    FLOOR_CAL_DATE("Floor Calendar Date", LBDC_CALENDAR_ALERT,OPENLEG_CAL),
+    FLOOR_CAL_YEAR("Floor Calendar Year", OPENLEG_CAL),
+    FLOOR_RELEASE_DATE_TIME("Floor Release Date Time", OPENLEG_CAL),
+    FLOOR_SECTION_TYPE("Floor Section", LBDC_CALENDAR_ALERT,OPENLEG_CAL),
+    FLOOR_BILL_HIGH("Floor Bill High",OPENLEG_CAL),
+    FLOOR_VIEW_TYPE("Floor View Type",OPENLEG_CAL),
+    FLOOR_SUB_BILL_INFO_VIEW("Floor Sub Bill Info View",OPENLEG_CAL),
+    FLOOR_BILL_CAL_NO("Floor Bill Cal Number", OPENLEG_CAL),
+    FLOOR_SELECTED_VERSION("Floor Selected Version",OPENLEG_CAL),
+
+
 
     /** --- Active list mismatches --- */
     ACTIVE_LIST_CAL_DATE("Active List Calendar Date", LBDC_CALENDAR_ALERT),
     ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_BILLS),
 
-    /** --- Calendar mismatches --- */
-    CALENDAR_ID("Calendar Id", SENATE_SITE_CALENDAR),
-
-    /** --- Agenda mismatches --- */
-    AGENDA_ID("Agenda Id", SENATE_SITE_AGENDA),
-
-    /**
-     *  Openleg xml vs Openleg sobi (in dev branch) mismatches
-     */
-    Bill_ADDITIONAL_SPONSOR_OPENLEG("Bill Additional Sponsor", OPENLEG_BILL),
-    BILL_ACTIVE_AMENDMENT_OPENLEG("Bill Active Amendment", OPENLEG_BILL),
-    BILL_APPROVE_MESSAGE_OPENLEG("Bill Approve Message", OPENLEG_BILL),
-    BILL_VOTES_OPENLEG("Bill Votes", OPENLEG_BILL),
-    CALENDAR_OPENLEG("Calendar", OPENLEG_BILL),
-    BILL_COMMITTEE_AGENDAS_OPENLEG("Bill Committee Agendas", OPENLEG_BILL),
-    BILL_PAST_COMMITTEE_OPENLEG("Bill Past commmittee", OPENLEG_BILL)
+    /** --- Active List data mismatches --- */
+    LIST_RELEASE_DATE_TIME("Active List Release Time", LBDC_CALENDAR_ALERT),
+    LIST_CALENDAR_MISMATCH("Active List Calendar Data", LBDC_CALENDAR_ALERT),
+    LIST_ENTRY_MISMATCH("Active List Cal Entry", LBDC_CALENDAR_ALERT)
     ;
 
     private String displayName;

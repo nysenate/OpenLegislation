@@ -74,7 +74,7 @@ public class ActiveListSpotCheckService<ContentKey, ContentType, ReferenceType> 
     public void checkCalDate(CalendarActiveList content, ActiveListSpotcheckReference reference,
                              SpotCheckObservation<CalendarActiveListId> obsrv){
         if (!content.getCalDate().equals(reference.getCalDate())){
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.LIST_CAL_DATE,
+            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE,
                     content.getCalDate().toString(), reference.getCalDate().toString()));
         }
     }
