@@ -43,6 +43,9 @@ public class CalendarSupEntryView extends CalendarEntryView {
         this.subBillInfo = subBillInfo;
     }
 
+    //Added for spotcheck
+    public boolean getBillHigh() {return billHigh;}
+
     public void setBillHigh(boolean billHigh) {
         this.billHigh = billHigh;
     }
