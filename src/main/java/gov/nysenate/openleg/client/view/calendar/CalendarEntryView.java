@@ -54,4 +54,8 @@ public class CalendarEntryView extends BillInfoView
     public String getViewType() {
         return "calendar-activelist-entry";
     }
+
+    public String toString() {
+        return " Bill Cal No: " + this.getBillCalNo() + " Selected Version: " + this.getSelectedVersion() +"\n\n";
+    }
 }

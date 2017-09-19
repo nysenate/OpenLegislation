@@ -1,12 +1,9 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
-import com.google.common.collect.ImmutableList;
-import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.calendar.ActiveListView;
 import gov.nysenate.openleg.client.view.calendar.CalendarEntryView;
 import gov.nysenate.openleg.client.view.calendar.CalendarSupEntryView;
 import gov.nysenate.openleg.client.view.calendar.CalendarSupView;
-import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
@@ -19,8 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,16 +42,15 @@ public class OpenlegCalendarCheckService {
         checkFloorCalDate(reference,content, observation);
         checkFloorCalYear(reference,content, observation);
         checkFloorReleaseDateTime(reference,content,observation);
-        List<CalendarSupEntryView> referenceCalSupEntryViews = getCalendarSupEntryViews(reference);
-        List<CalendarSupEntryView> contentCalSupEntryViews = getCalendarSupEntryViews(content);
-        for (int index = 0; index < referenceCalSupEntryViews.size(); index++) {
-            checkFloorSectionType(referenceCalSupEntryViews.get(index), contentCalSupEntryViews.get(index), observation);
-            checkFloorIsBillHigh(referenceCalSupEntryViews.get(index), contentCalSupEntryViews.get(index),  observation);
-            checkFloorViewType(referenceCalSupEntryViews.get(index), contentCalSupEntryViews.get(index),  observation);
-            checkFloorSubBillInfoView(referenceCalSupEntryViews.get(index), contentCalSupEntryViews.get(index),  observation);
-            checkFloorBillCalNo(referenceCalSupEntryViews.get(index), contentCalSupEntryViews.get(index),  observation);
-            checkFloorSelectedVersion(referenceCalSupEntryViews.get(index), contentCalSupEntryViews.get(index), observation);
+        StringBuffer referenceEntryViewsAsString = new StringBuffer();
+        StringBuffer contentEntryViewsAsString = new StringBuffer();
+        for(CalendarSupEntryView calendarSupEntryView: getCalendarSupEntryViews(reference)) {
+            referenceEntryViewsAsString.append(calendarSupEntryView.toString());
         }
+        for(CalendarSupEntryView calendarSupEntryView: getCalendarSupEntryViews(content)) {
+            contentEntryViewsAsString.append(calendarSupEntryView.toString());
+        }
+        checkFloorCalendarSupEntryViews(referenceEntryViewsAsString.toString(), contentEntryViewsAsString.toString(), observation);
         return observation;
     }
 
@@ -73,13 +67,16 @@ public class OpenlegCalendarCheckService {
         checkActiveListNotes(reference,content,observation);
         checkActiveListViewtype(reference,content,observation);
         checkActiveListSequenceNumber(reference,content,observation);
-
-        ImmutableList<CalendarEntryView> referenceCalEntryViews = reference.getEntries().getItems();
-        ImmutableList<CalendarEntryView> contentCalEntryViews = content.getEntries().getItems();
-        for (int index = 0; index < referenceCalEntryViews.size(); index++) {
-            checkActiveListBillCalNo(referenceCalEntryViews.get(index), contentCalEntryViews.get(index), observation);
-            checkActiveListSelectedVersion(referenceCalEntryViews.get(index),contentCalEntryViews.get(index), observation);
+        StringBuffer referenceEntryViewsAsString = new StringBuffer();
+        StringBuffer contentEntryViewsAsString = new StringBuffer();
+        for(CalendarEntryView calendarEntryView: reference.getEntries().getItems()) {
+            referenceEntryViewsAsString.append(calendarEntryView.toString());
         }
+
+        for(CalendarEntryView calendarEntryView: content.getEntries().getItems()) {
+            contentEntryViewsAsString.append(calendarEntryView.toString());
+        }
+        checkActiveListCalendarEntryViews(referenceEntryViewsAsString.toString(), contentEntryViewsAsString.toString(),observation);
         return observation;
     }
 
@@ -110,51 +107,9 @@ public class OpenlegCalendarCheckService {
         }
     }
 
-    protected void checkFloorSectionType(CalendarSupEntryView referenceView, CalendarSupEntryView contentView, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(referenceView.getSectionType());
-        String contentStr = OutputUtils.toJson(contentView.getSectionType());
+    protected void checkFloorCalendarSupEntryViews(String referenceStr, String contentStr, SpotCheckObservation<CalendarEntryListId> observation) {
         if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_SECTION_TYPE, contentStr, referenceStr));
-        }
-    }
-
-    protected void checkFloorIsBillHigh(CalendarSupEntryView referenceView, CalendarSupEntryView contentView, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(referenceView.getBillHigh());
-        String contentStr = OutputUtils.toJson(contentView.getBillHigh());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_BILL_HIGH, contentStr, referenceStr));
-        }
-    }
-
-    protected void checkFloorViewType(CalendarSupEntryView referenceView, CalendarSupEntryView contentView, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(referenceView.getViewType());
-        String contentStr = OutputUtils.toJson(contentView.getViewType());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_VIEW_TYPE, contentStr, referenceStr));
-        }
-    }
-
-    protected void checkFloorSubBillInfoView(CalendarSupEntryView referenceView, CalendarSupEntryView contentView, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(referenceView.getSubBillInfo());
-        String contentStr = OutputUtils.toJson(contentView.getSubBillInfo());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_SUB_BILL_INFO_VIEW, contentStr, referenceStr));
-        }
-    }
-
-    protected void checkFloorBillCalNo(CalendarSupEntryView referenceView, CalendarSupEntryView contentView, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(referenceView.getBillCalNo());
-        String contentStr = OutputUtils.toJson(contentView.getBillCalNo());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_BILL_CAL_NO, contentStr, referenceStr));
-        }
-    }
-
-    protected void checkFloorSelectedVersion(CalendarSupEntryView referenceView, CalendarSupEntryView contentView, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(referenceView.getSelectedVersion());
-        String contentStr = OutputUtils.toJson(contentView.getSelectedVersion());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_SELECTED_VERSION, contentStr, referenceStr));
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_ENTRY, contentStr, referenceStr));
         }
     }
 
@@ -213,19 +168,9 @@ public class OpenlegCalendarCheckService {
         }
     }
 
-    protected void checkActiveListBillCalNo(CalendarEntryView reference, CalendarEntryView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getBillCalNo());
-        String contentStr = OutputUtils.toJson(content.getBillCalNo());
+    protected void checkActiveListCalendarEntryViews(String referenceStr, String contentStr, SpotCheckObservation<CalendarEntryListId> observation) {
         if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_BILL_CAL_NUMBER, contentStr, referenceStr));
-        }
-    }
-
-    protected void checkActiveListSelectedVersion(CalendarEntryView reference, CalendarEntryView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getSelectedVersion());
-        String contentStr = OutputUtils.toJson(content.getSelectedVersion());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_SELECTED_VERSION, contentStr, referenceStr));
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_ENTRY, contentStr, referenceStr));
         }
     }
 

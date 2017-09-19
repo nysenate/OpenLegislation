@@ -89,13 +89,6 @@ public enum SpotCheckMismatchType
     FLOOR_CAL_YEAR("Floor Calendar Year", OPENLEG_CAL),
     FLOOR_RELEASE_DATE_TIME("Floor Release Date Time", OPENLEG_CAL),
     FLOOR_SECTION_TYPE("Floor Section", LBDC_CALENDAR_ALERT,OPENLEG_CAL),
-    FLOOR_BILL_HIGH("Floor Bill High",OPENLEG_CAL),
-    FLOOR_VIEW_TYPE("Floor View Type",OPENLEG_CAL),
-    FLOOR_SUB_BILL_INFO_VIEW("Floor Sub Bill Info View",OPENLEG_CAL),
-    FLOOR_BILL_CAL_NO("Floor Bill Cal Number", OPENLEG_CAL),
-    FLOOR_SELECTED_VERSION("Floor Selected Version",OPENLEG_CAL),
-
-
 
     /** --- Active list mismatches --- */
     ACTIVE_LIST_CAL_DATE("Active List Calendar Date", LBDC_CALENDAR_ALERT, OPENLEG_CAL),

@@ -70,4 +70,9 @@ public class CalendarSupEntryView extends CalendarEntryView {
         return "calendar-floor-entry";
     }
 
+    public String toString() {
+        return " Bill Cal No: " + this.getBillCalNo() +" Selected Version: " + this.getSelectedVersion() +
+                " Section Type: " + this.getSectionType() + " BillHigh: " + this.getBillHigh() + " View Type: " + this.getViewType() + "\n\n";
+    }
+
 }
