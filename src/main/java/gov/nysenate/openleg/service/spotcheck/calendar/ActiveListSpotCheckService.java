@@ -81,21 +81,21 @@ public class ActiveListSpotCheckService<ContentKey, ContentType, ReferenceType> 
     public void checkReleaseDateTime(CalendarActiveList content, ActiveListSpotcheckReference reference,
                                      SpotCheckObservation<CalendarActiveListId> obsrv) {
         if (!content.getReleaseDateTime().equals(reference.getReleaseDateTime())) {
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.LIST_RELEASE_DATE_TIME,
+            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_RELEASE_DATE_TIME,
                     content.getReleaseDateTime().toString(), reference.getReleaseDateTime().toString()));
         }
     }
     public void checkCalendarMismatch(CalendarActiveList content, ActiveListSpotcheckReference reference,
                                    SpotCheckObservation<CalendarActiveListId> obsrv) {
         if (!content.getCalendarId().equals(reference.getCalendarId())) {
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.LIST_CALENDAR_MISMATCH,
+            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_CALENDAR_MISMATCH,
                     content.getCalendarId().toString(), reference.getCalendarId().toString()));
         }
     }
     public void checkEntryMismatch(TreeSet referenceSet, TreeSet contentSet,
                                    SpotCheckObservation<CalendarActiveListId> obsrv){
         if (!contentSet.equals(referenceSet)){
-            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.LIST_ENTRY_MISMATCH,
+            obsrv.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_ENTRY_MISMATCH,
                     contentSet.toString(), referenceSet.toString()));
         }
     }

@@ -98,13 +98,20 @@ public enum SpotCheckMismatchType
 
 
     /** --- Active list mismatches --- */
-    ACTIVE_LIST_CAL_DATE("Active List Calendar Date", LBDC_CALENDAR_ALERT),
+    ACTIVE_LIST_CAL_DATE("Active List Calendar Date", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
     ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_BILLS),
 
     /** --- Active List data mismatches --- */
-    LIST_RELEASE_DATE_TIME("Active List Release Time", LBDC_CALENDAR_ALERT),
-    LIST_CALENDAR_MISMATCH("Active List Calendar Data", LBDC_CALENDAR_ALERT),
-    LIST_ENTRY_MISMATCH("Active List Cal Entry", LBDC_CALENDAR_ALERT)
+    ACTIVE_LIST_RELEASE_DATE_TIME("Active List Release Time", LBDC_CALENDAR_ALERT),
+    ACTIVE_LIST_NOTES("Active List Notes",OPENLEG_CAL),
+    ACTIVE_LIST_VIEW_TYPE("Active List View Type", OPENLEG_CAL),
+    ACTIVE_LIST_SEQUENCE_NUMBER("Active List Sequence Number",OPENLEG_CAL),
+    ACTIVE_LIST_BILL_CAL_NUMBER("Active List Bill Cal Number",OPENLEG_CAL),
+    ACTIVE_LIST_SELECTED_VERSION("Active List Selected Version",OPENLEG_CAL),
+
+
+    ACTIVE_LIST_CALENDAR_MISMATCH("Active List Calendar Data", LBDC_CALENDAR_ALERT),
+    ACTIVE_LIST_ENTRY_MISMATCH("Active List Cal Entry", LBDC_CALENDAR_ALERT)
     ;
 
     private String displayName;
