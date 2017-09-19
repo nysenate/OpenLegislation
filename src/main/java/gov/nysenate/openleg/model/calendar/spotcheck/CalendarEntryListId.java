@@ -2,25 +2,50 @@ package gov.nysenate.openleg.model.calendar.spotcheck;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ComparisonChain;
-import gov.nysenate.openleg.dao.calendar.data.SqlCalendarDao;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.calendar.CalendarType;
-import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import gov.nysenate.openleg.model.calendar.*;
 
-import java.time.LocalDate;
+import static gov.nysenate.openleg.model.calendar.CalendarType.ACTIVE_LIST;
+import static gov.nysenate.openleg.model.calendar.CalendarType.SUPPLEMENTAL_CALENDAR;
 
 /**
- * Created by PKS on 3/9/16.
+ * Identifies a data type that contains a calendar entry list
+ * Can be either a {@link CalendarActiveListId} or {@link CalendarSupplementalId}
  */
 public class CalendarEntryListId extends CalendarId {
 
+    /** Indicates type of calendar entry list */
     protected CalendarType type;
+    /** Indicates Version if the entry list is for a supplemental calendar */
     protected Version version;
+    /** Indicates sequence number if the entry list is for an active list */
     protected Integer sequenceNo;
-    protected LocalDate calDate;
+
+    /* --- Constructors --- */
+
+    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo) {
+        super(calendarId);
+        this.type = type;
+        this.version = version;
+        this.sequenceNo = sequenceNo;
+    }
+
+    public CalendarEntryListId(CalendarActiveListId activeListId) {
+        this(activeListId, ACTIVE_LIST, null, activeListId.getSequenceNo());
+    }
+
+    public CalendarEntryListId(CalendarSupplementalId calSupId) {
+        this(calSupId, SUPPLEMENTAL_CALENDAR, calSupId.getVersion(), null);
+    }
+
+    /* --- Functional Getters --- */
+
+    @JsonIgnore
+    public CalendarId getCalendarId(){
+        return this;
+    }
+
+    /* --- Overridden Methods --- */
 
     @Override
     public boolean equals(Object o) {
@@ -83,25 +108,7 @@ public class CalendarEntryListId extends CalendarId {
         }
     }
 
-    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo) {
-        super(calendarId);
-        this.type = type;
-        this.version = version;
-        this.sequenceNo = sequenceNo;
-    }
-
-    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo, LocalDate calDate) {
-        super(calendarId);
-        this.type = type;
-        this.version = version;
-        this.sequenceNo = sequenceNo;
-        this.calDate = calDate;
-    }
-
-    @JsonIgnore
-    public CalendarId getCalendarId(){
-        return this;
-    }
+    /* --- Basic Getters --- */
 
     public CalendarType getType(){
         return type;
@@ -113,21 +120,5 @@ public class CalendarEntryListId extends CalendarId {
 
     public Integer getSequenceNo(){
         return sequenceNo;
-    }
-
-    public void setType(CalendarType type){
-        this.type = type;
-    }
-
-    public void setCalDate(LocalDate localDate){this.calDate = localDate;}
-
-    public LocalDate getCalDate(){return calDate;}
-
-    public void setVersion(Version version){
-        this.version = version;
-    }
-
-    public void setSequenceNo(Integer sequenceNo){
-        this.sequenceNo = sequenceNo;
     }
 }

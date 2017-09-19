@@ -7,12 +7,15 @@ import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.SessionMember;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The BillVote class is used to store vote information pertaining to a specific bill.
@@ -106,6 +109,16 @@ public class BillVote extends BaseLegislativeContent implements Serializable, Co
      */
     public int count() {
         return memberVotes.size();
+    }
+
+    /**
+     * Get a map of vote code -> int indicating the number of votes for each vote type
+     * @return
+     */
+    public Map<BillVoteCode, Integer> getVoteCounts() {
+        return memberVotes.asMap().entrySet().stream()
+                .map(entry -> Pair.of(entry.getKey(), entry.getValue().size()))
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     /** --- Overrides --- */

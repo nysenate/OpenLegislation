@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
-import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
@@ -35,7 +34,7 @@ public class CalendarEntryListIdSpotCheckReportDao extends AbstractSpotCheckRepo
                        calendarId,
                        CalendarType.valueOf(keyMap.get("type")),
                        Version.of(keyMap.get("version")),
-                       Integer.parseInt(keyMap.get("sequenceNo")),calendar.getCalDate());
+                       Integer.parseInt(keyMap.get("sequenceNo")));
                        return result;
            }catch (CalendarNotFoundEx calendarNotFoundEx){
                CalendarEntryListId result = new CalendarEntryListId(
