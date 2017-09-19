@@ -56,6 +56,6 @@ public class CalendarEntryView extends BillInfoView
     }
 
     public String toString() {
-        return " Bill Cal No: " + this.getBillCalNo() + " Selected Version: " + this.getSelectedVersion() +"\n\n";
+        return " Bill Cal No: " + this.getBillCalNo() + "\n" + " Selected Version: " + this.getSelectedVersion() +"\n\n";
     }
 }

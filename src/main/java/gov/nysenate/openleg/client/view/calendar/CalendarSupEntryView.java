@@ -71,8 +71,8 @@ public class CalendarSupEntryView extends CalendarEntryView {
     }
 
     public String toString() {
-        return " Bill Cal No: " + this.getBillCalNo() +" Selected Version: " + this.getSelectedVersion() +
-                " Section Type: " + this.getSectionType() + " BillHigh: " + this.getBillHigh() + " View Type: " + this.getViewType() + "\n\n";
+        return " Bill Cal No: " + this.getBillCalNo()  +"\n"+ " Selected Version: " + this.getSelectedVersion() +"\n"+
+                " Section Type: " + this.getSectionType() +"\n"+ " BillHigh: " + this.getBillHigh() +"\n"+ " View Type: " + this.getViewType() + "\n\n";
     }
 
 }
