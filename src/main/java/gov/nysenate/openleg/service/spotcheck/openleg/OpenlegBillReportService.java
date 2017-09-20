@@ -117,7 +117,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
         for (BillView sobiBill : referenceBillViews) {
             if (diffBill.contains(sobiBill.toBaseBillId())) // if current bill appears in both dev and xml.
                 continue;
-            SpotCheckObservation<BaseBillId> observation = checkService.check(sobiBill, new BillView(billDataService.getBill(sobiBill.toBaseBillId())));
+            SpotCheckObservation<BaseBillId> observation = checkService.check(new BillView(billDataService.getBill(sobiBill.toBaseBillId())),sobiBill);
             // one observation consists of multiple mismatches
             SpotCheckReferenceId referenceId = reportId.getReferenceId();
             observation.setReferenceId(referenceId);
@@ -125,7 +125,6 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
             report.addObservation(observation);
         }
         logger.info("Found total number of " + report.getOpenMismatchCount(false) + " mismatches");
-        logger.info("Fetching Bill from Openleg xml-data-processing branch by iterating BaseBillId of BillView from Openleg Ref");
         return report;
     }
 
