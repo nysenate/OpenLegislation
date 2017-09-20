@@ -124,7 +124,7 @@ public class OpenlegCalendarCheckService
 
 
     //*************************************************
-    //METHODS TO CHECK FLOOR AND SUPPLEMENTAL CALENDARS
+    //METHODS TO CHECK ACTIVE LISTS
 
     protected void checkActiveListCalDate(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
         checkString(OutputUtils.toJson(content.getCalDate()),OutputUtils.toJson(reference.getCalDate()),observation,SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE);
@@ -147,7 +147,7 @@ public class OpenlegCalendarCheckService
     }
 
     protected void checkActiveListCalendarEntryViews(String content, String reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(OutputUtils.toJson(content),OutputUtils.toJson(reference),observation,SpotCheckMismatchType.ACTIVE_LIST_ENTRY);
+        checkString(content,reference,observation,SpotCheckMismatchType.ACTIVE_LIST_ENTRY);
     }
 
 }
