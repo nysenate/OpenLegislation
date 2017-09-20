@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
-import gov.nysenate.openleg.client.view.calendar.ActiveListView;
-import gov.nysenate.openleg.client.view.calendar.CalendarEntryView;
-import gov.nysenate.openleg.client.view.calendar.CalendarSupEntryView;
-import gov.nysenate.openleg.client.view.calendar.CalendarSupView;
+import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
@@ -19,16 +16,31 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service("openlegCalendarCheck")
-public class OpenlegCalendarCheckService {
+@Service
+public class OpenlegCalendarCheckService
+        extends BaseSpotCheckService<CalendarEntryListId, CalendarEntryList, CalendarEntryList> {
     Logger logger = LoggerFactory.getLogger(OpenlegBillCheckService.class);
 
-    public SpotCheckObservation<CalendarEntryListId> check(CalendarSupEntryView content) throws ReferenceDataNotFoundEx {
+
+    @Override
+    public SpotCheckObservation<CalendarEntryListId> check(CalendarEntryList content) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException("");
     }
 
-    public SpotCheckObservation<CalendarEntryListId> check(CalendarSupEntryView content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
+    @Override
+    public SpotCheckObservation<CalendarEntryListId> check(CalendarEntryList content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException("");
+    }
+
+    @Override
+    public SpotCheckObservation<CalendarEntryListId> check(CalendarEntryList content, CalendarEntryList reference) {
+        if(content instanceof CalendarSupView) {
+            return checkFloorCals((CalendarSupView) content,(CalendarSupView) reference);
+        }
+        else if (content instanceof ActiveListView) {
+            return checkActiveLists( (ActiveListView) content,(ActiveListView) reference );
+        }
+        return null;
     }
 
     /**
@@ -37,11 +49,11 @@ public class OpenlegCalendarCheckService {
      * @param reference ReferenceType - The reference content to use for comparison
      * @return The mismatches
      */
-    public SpotCheckObservation<CalendarEntryListId>  checkFloorCals(CalendarSupView reference, CalendarSupView content) {
+    private SpotCheckObservation<CalendarEntryListId>  checkFloorCals(CalendarSupView content, CalendarSupView reference) {
         final SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reference.getCalendarEntryListId());
-        checkFloorCalDate(reference,content, observation);
-        checkFloorCalYear(reference,content, observation);
-        checkFloorReleaseDateTime(reference,content,observation);
+        checkFloorCalDate(content,reference, observation);
+        checkFloorCalYear(content,reference, observation);
+        checkFloorReleaseDateTime(content,reference,observation);
         StringBuffer referenceEntryViewsAsString = new StringBuffer();
         StringBuffer contentEntryViewsAsString = new StringBuffer();
         for(CalendarSupEntryView calendarSupEntryView: getCalendarSupEntryViews(reference)) {
@@ -50,7 +62,7 @@ public class OpenlegCalendarCheckService {
         for(CalendarSupEntryView calendarSupEntryView: getCalendarSupEntryViews(content)) {
             contentEntryViewsAsString.append(calendarSupEntryView.toString());
         }
-        checkFloorCalendarSupEntryViews(referenceEntryViewsAsString.toString(), contentEntryViewsAsString.toString(), observation);
+        checkFloorCalendarSupEntryViews(contentEntryViewsAsString.toString(), referenceEntryViewsAsString.toString(), observation);
         return observation;
     }
 
@@ -60,13 +72,13 @@ public class OpenlegCalendarCheckService {
      * @param reference ReferenceType - The reference content to use for comparison
      * @return The mismatches
      */
-    public SpotCheckObservation<CalendarEntryListId>  checkActiveLists(ActiveListView reference, ActiveListView content) {
+    private SpotCheckObservation<CalendarEntryListId>  checkActiveLists(ActiveListView content, ActiveListView reference) {
         final SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reference.getCalendarEntryListId());
-        checkActiveListCalDate(reference,content,observation);
-        checkActiveListReleaseDateTime(reference,content,observation);
-        checkActiveListNotes(reference,content,observation);
-        checkActiveListViewtype(reference,content,observation);
-        checkActiveListSequenceNumber(reference,content,observation);
+        checkActiveListCalDate(content,reference,observation);
+        checkActiveListReleaseDateTime(content,reference,observation);
+        checkActiveListNotes(content,reference,observation);
+        checkActiveListViewtype(content,reference,observation);
+        checkActiveListSequenceNumber(content,reference,observation);
         StringBuffer referenceEntryViewsAsString = new StringBuffer();
         StringBuffer contentEntryViewsAsString = new StringBuffer();
         for(CalendarEntryView calendarEntryView: reference.getEntries().getItems()) {
@@ -76,41 +88,27 @@ public class OpenlegCalendarCheckService {
         for(CalendarEntryView calendarEntryView: content.getEntries().getItems()) {
             contentEntryViewsAsString.append(calendarEntryView.toString());
         }
-        checkActiveListCalendarEntryViews(referenceEntryViewsAsString.toString(), contentEntryViewsAsString.toString(),observation);
+        checkActiveListCalendarEntryViews(contentEntryViewsAsString.toString(), referenceEntryViewsAsString.toString(),observation);
         return observation;
     }
 
     //*************************************************
     //METHODS TO CHECK FLOOR AND SUPPLEMENTAL CALENDARS
 
-    protected void checkFloorCalDate(CalendarSupView reference, CalendarSupView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getCalDate());
-        String contentStr = OutputUtils.toJson(content.getCalDate());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_CAL_DATE, contentStr, referenceStr));
-        }
+    protected void checkFloorCalDate(CalendarSupView content, CalendarSupView reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(OutputUtils.toJson(content.getCalDate()),OutputUtils.toJson(reference.getCalDate()),observation,SpotCheckMismatchType.FLOOR_CAL_DATE);
     }
 
-    protected void checkFloorCalYear(CalendarSupView reference, CalendarSupView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getYear());
-        String contentStr = OutputUtils.toJson(content.getYear());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_CAL_YEAR, contentStr, referenceStr));
-        }
+    protected void checkFloorCalYear(CalendarSupView content, CalendarSupView reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(OutputUtils.toJson(content.getYear()),OutputUtils.toJson(reference.getYear()),observation,SpotCheckMismatchType.FLOOR_CAL_YEAR);
     }
 
-    protected void checkFloorReleaseDateTime(CalendarSupView reference, CalendarSupView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getReleaseDateTime());
-        String contentStr = OutputUtils.toJson(content.getReleaseDateTime());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_RELEASE_DATE_TIME, contentStr, referenceStr));
-        }
+    protected void checkFloorReleaseDateTime(CalendarSupView content, CalendarSupView reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(OutputUtils.toJson(content.getReleaseDateTime()),OutputUtils.toJson(reference.getReleaseDateTime()),observation,SpotCheckMismatchType.FLOOR_RELEASE_DATE_TIME);
     }
 
-    protected void checkFloorCalendarSupEntryViews(String referenceStr, String contentStr, SpotCheckObservation<CalendarEntryListId> observation) {
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_ENTRY, contentStr, referenceStr));
-        }
+    protected void checkFloorCalendarSupEntryViews(String content, String reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(content,reference,observation,SpotCheckMismatchType.FLOOR_ENTRY);
     }
 
     //HELPER METHODS FOR FLOOR AND SUPPLEMENTAL CALENDARS
@@ -128,50 +126,28 @@ public class OpenlegCalendarCheckService {
     //*************************************************
     //METHODS TO CHECK FLOOR AND SUPPLEMENTAL CALENDARS
 
-    protected void checkActiveListCalDate(ActiveListView reference, ActiveListView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getCalDate());
-        String contentStr = OutputUtils.toJson(content.getCalDate());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE, contentStr, referenceStr));
-        }
+    protected void checkActiveListCalDate(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(OutputUtils.toJson(content.getCalDate()),OutputUtils.toJson(reference.getCalDate()),observation,SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE);
     }
 
-    protected void checkActiveListReleaseDateTime(ActiveListView reference, ActiveListView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getReleaseDateTime());
-        String contentStr = OutputUtils.toJson(content.getReleaseDateTime());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_RELEASE_DATE_TIME, contentStr, referenceStr));
-        }
+    protected void checkActiveListReleaseDateTime(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(OutputUtils.toJson(content.getReleaseDateTime()),OutputUtils.toJson(reference.getReleaseDateTime()),observation,SpotCheckMismatchType.ACTIVE_LIST_RELEASE_DATE_TIME);
     }
 
-    protected void checkActiveListNotes(ActiveListView reference, ActiveListView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getNotes());
-        String contentStr = OutputUtils.toJson(content.getNotes());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_NOTES, contentStr, referenceStr));
-        }
+    protected void checkActiveListNotes(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(OutputUtils.toJson(content.getNotes()),OutputUtils.toJson(reference.getNotes()),observation,SpotCheckMismatchType.ACTIVE_LIST_NOTES);
     }
 
-    protected void checkActiveListViewtype(ActiveListView reference, ActiveListView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getViewType());
-        String contentStr = OutputUtils.toJson(content.getViewType());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_VIEW_TYPE, contentStr, referenceStr));
-        }
+    protected void checkActiveListViewtype(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(OutputUtils.toJson(content.getViewType()),OutputUtils.toJson(reference.getViewType()),observation,SpotCheckMismatchType.ACTIVE_LIST_VIEW_TYPE);
     }
 
-    protected void checkActiveListSequenceNumber(ActiveListView reference, ActiveListView content, SpotCheckObservation<CalendarEntryListId> observation) {
-        String referenceStr = OutputUtils.toJson(reference.getSequenceNumber());
-        String contentStr = OutputUtils.toJson(content.getSequenceNumber());
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_SEQUENCE_NUMBER, contentStr, referenceStr));
-        }
+    protected void checkActiveListSequenceNumber(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(OutputUtils.toJson(content.getSequenceNumber()),OutputUtils.toJson(reference.getSequenceNumber()),observation,SpotCheckMismatchType.ACTIVE_LIST_SEQUENCE_NUMBER);
     }
 
-    protected void checkActiveListCalendarEntryViews(String referenceStr, String contentStr, SpotCheckObservation<CalendarEntryListId> observation) {
-        if (!contentStr.equals(referenceStr)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.ACTIVE_LIST_ENTRY, contentStr, referenceStr));
-        }
+    protected void checkActiveListCalendarEntryViews(String content, String reference, SpotCheckObservation<CalendarEntryListId> observation) {
+        checkString(OutputUtils.toJson(content),OutputUtils.toJson(reference),observation,SpotCheckMismatchType.ACTIVE_LIST_ENTRY);
     }
 
 }

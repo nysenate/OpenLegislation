@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.calendar.ActiveListView;
+import gov.nysenate.openleg.client.view.calendar.CalendarEntryList;
 import gov.nysenate.openleg.client.view.calendar.CalendarSupView;
 import gov.nysenate.openleg.client.view.calendar.CalendarView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -37,7 +38,7 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
     private static final Logger logger = LoggerFactory.getLogger(OpenlegCalendarReportService.class);
 
     @Value("api.secret")
-    private  String apiSecret;
+    private String apiSecret;
 
     @Autowired
     private SpotCheckReportDao<CalendarEntryListId> reportDao;
@@ -66,8 +67,9 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
 
     /**
      * This service finds discrepencies between two calendars in two different instances of Openleg
+     *
      * @param start LocalDateTime - The reference data will be active after (or on) this date/time.
-     * @param end LocalDateTime - The reference data will be active prior to (or on) this date/time.
+     * @param end   LocalDateTime - The reference data will be active prior to (or on) this date/time.
      * @return report - A SpotcheckReport keyed with CalendarEntryListId
      * @throws Exception
      */
@@ -81,177 +83,90 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
         report.setReportId(reportId);
 
         logger.info("Loading Calendars from Openleg Ref");
-        logger.info("The current session year is " + SessionYear.of( start.getYear() ) );
+        logger.info("The current session year is " + SessionYear.of(start.getYear()));
 
         //Retrieve Openleg Ref Calendar data
-        List<CalendarView> referenceCalendarViews = openlegCalendarDao.getOpenlegCalendarView(String.valueOf(start.getYear()),apiSecret);
+        List<CalendarView> referenceCalendarViews = openlegCalendarDao.getOpenlegCalendarView(String.valueOf(start.getYear()), apiSecret);
         if (referenceCalendarViews.isEmpty()) {
-            throw new ReferenceDataNotFoundEx("The collection of sobi calendars with the given session year " + SessionYear.of( start.getYear() ) + " is empty");
+            throw new ReferenceDataNotFoundEx("The collection of sobi calendars with the given session year " + SessionYear.of(start.getYear()) + " is empty");
         }
 
-        //Sets of CalendarEntryListId's for both sources of openleg, and both true types of calendars
-        Set<CalendarEntryListId> refFloorCalIdSet = new HashSet<>();
-        Set<CalendarEntryListId> refActiveListCalIdSet = new HashSet<>();
+        //Create Maps of content and source entry lists
+        Map<CalendarEntryListId, CalendarEntryList> referenceEntryLists = new HashMap<>();
+        Map<CalendarEntryListId, CalendarEntryList> contentEntryLists = new HashMap<>();
 
-        Set<CalendarEntryListId> sourceFloorCalIdSet = new HashSet<>();
-        Set<CalendarEntryListId> sourceActiveListCalIdSet = new HashSet<>();
+        //Populate contentEntryLists with ActiveListViews
+        calendarDataService.getActiveLists(start.getYear(), SortOrder.NONE, LimitOffset.ALL).stream()
+                .map(al -> new ActiveListView(al, billDataService))
+                .forEach(alv -> contentEntryLists.put(alv.getCalendarEntryListId(), alv));
 
-        //Collections of the actual data
-        List<CalendarSupView> refFloorCalData = new ArrayList<>();
-        Collection<ActiveListView> refActiveListCalData = new ArrayList<>();
+        //Populate contentEntryLists with floor / supplemental calendars
+        calendarDataService.getCalendarSupplementals(start.getYear(), SortOrder.NONE, LimitOffset.ALL).stream()
+                .map(sup -> new CalendarSupView(sup, billDataService))
+                .forEach(sup -> contentEntryLists.put(sup.getCalendarEntryListId(), sup));
 
-        List<CalendarSupView> sourceFloorCalData = new ArrayList<>();
-        ArrayList<ActiveListView> sourceActiveListCalData = new ArrayList<>();
+        //Populate referenceEntryLists with active lists and floor / supplemental calendars
+        for (CalendarView refCal : referenceCalendarViews) {
+            refCal.getActiveLists().getItems().values()
+                    .forEach(alv -> referenceEntryLists.put(alv.getCalendarEntryListId(), alv));
+            CalendarSupView refFloor = refCal.getFloorCalendar();
+            referenceEntryLists.put(refFloor.getCalendarEntryListId(), refFloor);
 
-
-        //********************************************
-        // GET REFERENCE / SOURCE CALENDARS AND ID's
-        for (CalendarView calendarView: referenceCalendarViews) {
-
-            //**************************************
-            //GET REFERENCE CALENDARS AND ID's
-
-            //Get CalendarSupEntryViews from reference calendar
-            refFloorCalData.add(calendarView.getFloorCalendar());
-
-            //Get CalendarSupViews from reference calendar
-            refFloorCalData.addAll(calendarView.getSupplementalCalendars()
+            refCal.getSupplementalCalendars()
                     .getItems()
-                    .values());
-
-            //Add ID's from CalendarSupEntryView to refFloorCalIdSet
-            for (CalendarSupView calendarSupView : refFloorCalData) {
-                refFloorCalIdSet.add(calendarSupView.getCalendarEntryListId());
-            }
-
-            //Get Active list calendars from reference calendarView
-            refActiveListCalData.addAll(calendarView.getActiveLists()
-                    .getItems()
-                    .values());
-
-            //Add ID's from activelistView to refActiveListCalIdSet
-            for (ActiveListView activeListView : refActiveListCalData) {
-                refActiveListCalIdSet.add(activeListView.getCalendarEntryListId());
-            }
+                    .values()
+                    .stream()
+                    .forEach(calendarSupView ->
+                            referenceEntryLists.put(calendarSupView.getCalendarEntryListId(), calendarSupView));
         }
 
-            //**********************************
-            // GET SOURCE CALENDARS AND ID's
-
-
-            //Get CalendarSupplementals from the calendarDataService
-            List<CalendarSupplemental> sourceCalSupplementals = calendarDataService.getCalendarSupplementals(start.getYear(),SortOrder.ASC, LimitOffset.ALL);
-
-            //Retrieve the CalendarSupplementalEntries from the CalendarSupplementals, and add them to calendarSupplementalEntryList
-            for (CalendarSupplemental calendarSupplemental: sourceCalSupplementals) {
-                sourceFloorCalData.add( new CalendarSupView( calendarSupplemental, billDataService ) );
-            }
-
-            //Add CalendarEntryListID's to sourceFloorCalIdSet
-            for (CalendarSupView calendarSupView: sourceFloorCalData) {
-                sourceFloorCalIdSet.add( calendarSupView.getCalendarEntryListId() );
-            }
-
-            //Get CalendarActiveLists from the calendarDataService
-            List<CalendarActiveList> sourceCalActiveLists = calendarDataService.getActiveLists( start.getYear() , SortOrder.ASC, LimitOffset.ALL);
-
-            //Convert CalendarActiveList to ActiveListView
-            for(CalendarActiveList calendarActiveList: sourceCalActiveLists) {
-                sourceActiveListCalData.add( new ActiveListView(calendarActiveList,billDataService) );
-            }
-
-            //Add CalendarEntryListId's to sourceActiveListCalIdSet
-            for(ActiveListView activeListView: sourceActiveListCalData) {
-                sourceActiveListCalIdSet.add( activeListView.getCalendarEntryListId() );
-            }
-
-        //ALL DATA HAS BEEN RETRIEVED
-        //******************************
-
+        logger.info("Found " + referenceEntryLists.size()+" calendar entries in Openleg-ref(SOBI) and " + contentEntryLists.size()+" calendar entries in local (XML)" );
         logger.info("Check the symmetric diff...");
 
-        //Create symmetric difference sets
-        Set<CalendarEntryListId> symmDiffFloorCals;
-        Set<CalendarEntryListId> symmDiffActiveLists;
+        //Put content Id's a set
+        Set<CalendarEntryListId> remainingContentIds = new HashSet<>(contentEntryLists.keySet());
 
-        //Get the symmetric difference between ref and source floor calendars
-        logger.info("Found " + refFloorCalIdSet.size()+" floor calendar entries in Openleg-ref(SOBI) and " + sourceFloorCalIdSet.size()+" floor calendar entries in local (XML)" );
-        symmDiffFloorCals = getSymmetricDifference(refFloorCalIdSet, sourceFloorCalIdSet, report, reportId);
+        //Find symmetric difference between content and reference id's
+        referenceEntryLists.forEach((id, refEntryList) -> {
+            if (contentEntryLists.containsKey(id)) {
+                //Both Calendars have the same EntryList item
+                CalendarEntryList contentEntryList = contentEntryLists.get(id);
+                SpotCheckObservation<CalendarEntryListId> observation = checkService.check(contentEntryList, refEntryList);
+                addObservationData(observation, report, reportId);
+            } else {
+                //add data missing
+                SpotCheckObservation<CalendarEntryListId> sourceMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), id);
+                sourceMissingObs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, id, "Missing Data from Openleg XML, ID:" + id.toString()));
+                addObservationData(sourceMissingObs,report,reportId);
+            }
+            remainingContentIds.remove(id);
+        });
 
-        //Get the symmetric difference between ref and source active lists
-        logger.info("Found " + refActiveListCalIdSet.size()+" active lists in Openleg-ref(SOBI) and " + sourceActiveListCalIdSet.size()+" active lists in local (XML)" );
-        symmDiffActiveLists = getSymmetricDifference(refActiveListCalIdSet, sourceActiveListCalIdSet, report, reportId);
+        remainingContentIds.forEach(id -> {
+            // add ref missing
+            SpotCheckObservation<CalendarEntryListId> refMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), id);
+            refMissingObs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, id, "Missing Data from Openleg Ref, ID:" + id.toString()));
+            addObservationData(refMissingObs,report,reportId);
+        });
 
-        logger.info("Found " + report.getOpenMismatchCount(false) + " missing calendar entries");
-
-        //*************************************************
-        //PASS DATA SOURCE AND REF BOTH HAVE TO THE CHECK SERVICE
-
-        //Pass floor calenders in symmetric difference to the calendar check service
-        for(CalendarSupView refCalendarSupView: refFloorCalData) {
-            if ( symmDiffFloorCals.contains( refCalendarSupView.getCalendarEntryListId() ) )
-                continue;
-            SpotCheckObservation<CalendarEntryListId> observation = checkService.checkFloorCals(refCalendarSupView,
-                   new CalendarSupView(calendarDataService.getCalendarSupplemental(refCalendarSupView.getCalendarSupplementalId()), billDataService)  );
-            addObservationData(observation,report,reportId);
-        }
-
-        //Pass active lists in symmetric difference to the calendar check service
-        for(ActiveListView refActiveListView: refActiveListCalData) {
-            if ( symmDiffActiveLists.contains( refActiveListView.getCalendarEntryListId() ) )
-                continue;
-            SpotCheckObservation<CalendarEntryListId> observation = checkService.checkActiveLists(refActiveListView,
-                    new ActiveListView(calendarDataService.getActiveList(refActiveListView.toCalendarActiveListId()), billDataService) );
-            addObservationData(observation,report,reportId);
-        }
         logger.info("Found total number of " + report.getOpenMismatchCount(false) + " mismatches");
 
         return report;
     }
 
-
     /**
      * This method adds ID data to obervations inside the spotcheck report,
      * and then adds the observation to the spot check report
+     *
      * @param observation errors from comparing two floor calendars or active lists
-     * @param report The spotcheck report
-     * @param reportId the ID of the spotcheck report
+     * @param report      The spotcheck report
+     * @param reportId    the ID of the spotcheck report
      */
     private void addObservationData(SpotCheckObservation<CalendarEntryListId> observation,
-                                    SpotCheckReport<CalendarEntryListId> report, SpotCheckReportId reportId ) {
+                                    SpotCheckReport<CalendarEntryListId> report, SpotCheckReportId reportId) {
         SpotCheckReferenceId referenceId = reportId.getReferenceId();
         observation.setReferenceId(referenceId);
         observation.setObservedDateTime(LocalDateTime.now());
         report.addObservation(observation);
-    }
-
-    /**
-     * This method determines and returns the symmetric difference between two sets
-     * @param refIdSet - Set of reference CalendarEntryListsId's
-     * @param sourceIdSet - Set of source CalendarEntryListId's
-     * @param report - The spotcheck report itself
-     * @param reportId - The Id of the spotcheck report
-     * @return difference - The symmetric difference between refIdSet & sourceIdSet
-     */
-    private Set<CalendarEntryListId> getSymmetricDifference(Set<CalendarEntryListId> refIdSet, Set<CalendarEntryListId> sourceIdSet,
-                                                            SpotCheckReport<CalendarEntryListId> report, SpotCheckReportId reportId ) {
-        Set<CalendarEntryListId> difference = new HashSet<>();
-
-        Sets.symmetricDifference(refIdSet, sourceIdSet).stream()
-                .forEach(entryListId -> {
-                    SpotCheckObservation<CalendarEntryListId> sourceMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), entryListId);
-                    if (sourceIdSet.contains(entryListId)) {
-                        sourceMissingObs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, entryListId, "Missing Data from Openleg Ref, ID:" + entryListId.toString() ));
-
-                    } else {
-                        sourceMissingObs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, entryListId, "Missing Data from Openleg XML, ID:" + entryListId.toString() ));
-                    }
-                    difference.add(entryListId);
-                    sourceMissingObs.setReferenceId(reportId.getReferenceId());
-                    sourceMissingObs.setObservedDateTime(LocalDateTime.now());
-                    report.addObservation(sourceMissingObs);
-                });
-
-        return difference;
     }
 }
