@@ -81,12 +81,12 @@ public class OpenlegCalendarCheckService
         checkActiveListSequenceNumber(content,reference,observation);
         StringBuffer referenceEntryViewsAsString = new StringBuffer();
         StringBuffer contentEntryViewsAsString = new StringBuffer();
-        for(CalendarEntryView calendarEntryView: reference.getEntries().getItems()) {
-            referenceEntryViewsAsString.append(calendarEntryView.toString());
-        }
-
         for(CalendarEntryView calendarEntryView: content.getEntries().getItems()) {
             contentEntryViewsAsString.append(calendarEntryView.toString());
+        }
+
+        for(CalendarEntryView calendarEntryView: reference.getEntries().getItems()) {
+            referenceEntryViewsAsString.append(calendarEntryView.toString());
         }
         checkActiveListCalendarEntryViews(contentEntryViewsAsString.toString(), referenceEntryViewsAsString.toString(),observation);
         return observation;
