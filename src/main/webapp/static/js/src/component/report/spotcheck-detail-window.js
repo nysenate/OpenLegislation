@@ -11,7 +11,7 @@ function detailDialogCtrl($scope, $mdDialog, mismatchRow,source,contentType) {
         else if(source == "NYSENATE")
             $scope.com = ["Open Legislation","NYSenate.gov"];
         else
-            $scope.com = ["SOBI","XML"];
+            $scope.com = ["XML","SOBI"];
         $scope.date = moment().format('l');
         console.log('loading detail dialog for', newMismatchRow);
         $scope.observation = newMismatchRow.observedData;
