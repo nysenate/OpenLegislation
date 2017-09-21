@@ -567,7 +567,6 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
                         scope.menu = {sections: []};
                         var $sections = $($elem.context).children('menu-section');
                         angular.forEach($sections, function(_s) {
-                            console.log(_s);
                             var section = {title: _s.title, url: $(_s).attr('url'), items: []};
                             angular.forEach($(_s).children('menu-item'), function(_i) {
                                 var item = {
