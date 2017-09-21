@@ -36,7 +36,9 @@ public enum SpotCheckRefType
 
     OPENLEG_BILL ("openleg-bill", "Openleg Bill", OPENLEG, BILL,OPENLEG_SPOTCHECK),
 
-    OPENLEG_CAL ("openleg-cal", "Openleg Cal", OPENLEG, CALENDAR ,OPENLEG_SPOTCHECK)
+    OPENLEG_CAL ("openleg-cal", "Openleg Cal", OPENLEG, CALENDAR ,OPENLEG_SPOTCHECK),
+
+    OPENLEG_AGENDA ("openleg-agenda", "Openleg Agenda", OPENLEG, AGENDA ,OPENLEG_SPOTCHECK)
     ;
 
     private String refName;
