@@ -374,6 +374,8 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
         $scope.updateMismatchContentTypeSummary();
         $scope.updateMismatchTypeSummary();
         $scope.updateMismatches();
+        $scope.setHeaderVisible(true);
+        $scope.setHeaderText("Spotcheck Reports");
     };
 
     $scope.init();
