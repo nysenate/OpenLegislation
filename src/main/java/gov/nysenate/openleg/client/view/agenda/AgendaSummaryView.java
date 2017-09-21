@@ -28,6 +28,9 @@ public class AgendaSummaryView implements ViewObject
         }
     }
 
+    //Added for Json Deserialization
+    public AgendaSummaryView() {}
+
     public AgendaIdView getId() {
         return id;
     }
@@ -60,4 +63,22 @@ public class AgendaSummaryView implements ViewObject
     public String getViewType() {
         return "agenda-summary";
     }
+
+    //Added for Json Deserialization
+    public void setWeekOf(String weekOf) {this.weekOf = LocalDate.parse(weekOf);}
+
+    //Added for Json Deserialization
+    public void setPublishedDateTime(String publishedDateTime) {this.publishedDateTime = LocalDateTime.parse(publishedDateTime);}
+
+    //Added for Json Deserialization
+    public void setTotalAddendum(int totalAddendum) {this.totalAddendum = totalAddendum;}
+
+    //Added for Json Deserialization
+    public void setTotalBillsConsidered(int totalBillsConsidered) {this.totalBillsConsidered = totalBillsConsidered;}
+
+    //Added for Json Deserialization
+    public void setTotalBillsVotedOn(int totalBillsVotedOn) {this.totalBillsVotedOn = totalBillsVotedOn;}
+
+    //Added for Json Deserialization
+    public void setTotalCommittees(int totalCommittees) {this.totalCommittees = totalCommittees;}
 }

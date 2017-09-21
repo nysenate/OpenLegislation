@@ -45,6 +45,9 @@ public class AgendaCommAddendumView implements ViewObject
         }
     }
 
+    //Added for Json Deserialization
+    public AgendaCommAddendumView() {}
+
     public String getAddendumId() {
         return addendumId;
     }
@@ -97,4 +100,7 @@ public class AgendaCommAddendumView implements ViewObject
     public String getViewType() {
         return "agenda-addendum";
     }
+
+    //Added for Json Deserialization
+    public void setModifiedDateTime(String modifiedDateTime) {this.modifiedDateTime = LocalDateTime.parse(modifiedDateTime);}
 }

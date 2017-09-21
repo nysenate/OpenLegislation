@@ -25,6 +25,9 @@ public class AgendaVoteBillView implements ViewObject
         }
     }
 
+    //Added for Json Deserialization
+    public AgendaVoteBillView() {}
+
     public BillIdView getBill() {
         return bill;
     }

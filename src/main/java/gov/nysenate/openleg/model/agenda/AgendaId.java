@@ -30,6 +30,9 @@ public class AgendaId implements Serializable, Comparable<AgendaId>
         this.year = year;
     }
 
+    //Added for Json Deserialization
+    public AgendaId() {}
+
     /** --- Overrides --- */
 
     @Override
@@ -68,4 +71,10 @@ public class AgendaId implements Serializable, Comparable<AgendaId>
     public int getYear() {
         return year;
     }
+
+    //Added for Json Deserialization
+    public void setNumber(String number) {this.number = Long.parseLong(number);}
+
+    //Added for Json Deserialization
+    public void setYear(String year) { this.year = Integer.parseInt(year);}
 }

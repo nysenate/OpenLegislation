@@ -42,6 +42,8 @@ public class AgendaCommView implements ViewObject
         }
     }
 
+    public AgendaCommView() {}
+
     public CommitteeId getCommitteeId() {
         return committeeId;
     }

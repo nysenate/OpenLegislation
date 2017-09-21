@@ -41,9 +41,9 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new GuavaModule());
         List<AgendaView> agendaViewList = new LinkedList<>();
-        if (node.get("result").get("items") == null) { // if there is only 1 available bill
+        if (node.get("result").get("items") == null) { // if there is only 1 available agenda
             agendaViewList.add(mapper.readValue(node.get("result").toString(), AgendaView.class));
-        } else { // if there are many available bills.
+        } else { // if there are many available agendas
             Iterator<JsonNode> nodeIterator = node.get("result").get("items").iterator();
             while (nodeIterator.hasNext()) {
                 JsonNode node1 = nodeIterator.next();
@@ -62,7 +62,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
             node = mapper.readTree(response.toString());
             agendaViews.addAll(toAgendaView(node));
         } catch (IOException e) {
-            logger.error("The JSON Object could not be mapped to a bill view");
+            logger.error("The JSON Object could not be mapped to a  AgendaView");
             e.printStackTrace();
         }
     }
@@ -74,12 +74,12 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new GuavaModule());
         List<AgendaId> agendaIdList = new LinkedList<>();
-        if (node.get("result").get("items") == null) { // if there is only 1 available bill
+        if (node.get("result").get("items") == null) { // if there is only 1 available agendaId
             agendaIdList.add(mapper.readValue(node.get("result").toString(), AgendaId.class));
-        } else { // if there are many available bills.
+        } else { // if there are many available agendaId.
             Iterator<JsonNode> nodeIterator = node.get("result").get("items").iterator();
             while (nodeIterator.hasNext()) {
-                JsonNode node1 = nodeIterator.next();
+                JsonNode node1 = nodeIterator.next().get("id");
                 agendaIdList.add(mapper.readValue(node1.toString(), AgendaId.class));
             }
         }
@@ -95,7 +95,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
             node = mapper.readTree(response.toString());
             agendaIds.addAll(toAgendaId(node));
         } catch (IOException e) {
-            logger.error("The JSON Object could not be mapped to a bill view");
+            logger.error("The JSON Object could not be mapped to a AgendaId");
             e.printStackTrace();
         }
     }

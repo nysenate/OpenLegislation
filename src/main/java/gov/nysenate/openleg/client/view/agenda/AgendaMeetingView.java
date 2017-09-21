@@ -28,6 +28,9 @@ public class AgendaMeetingView implements ViewObject
         this.notes = notes;
     }
 
+    //Added for Json Deserialization
+    public AgendaMeetingView() {}
+
     public String getChair() {
         return chair;
     }
@@ -48,4 +51,7 @@ public class AgendaMeetingView implements ViewObject
     public String getViewType() {
         return "agenda-meeting";
     }
+
+    //Added for Json Deserialization
+    public void setMeetingDateTime(String meetingDateTime) {this.meetingDateTime = LocalDateTime.parse(meetingDateTime);}
 }

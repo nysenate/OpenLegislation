@@ -21,6 +21,9 @@ public class AgendaAttendanceView implements ViewObject
         }
     }
 
+    //Added for Json Deserialization
+    public AgendaAttendanceView() {}
+
     public MemberView getMember() {
         return member;
     }

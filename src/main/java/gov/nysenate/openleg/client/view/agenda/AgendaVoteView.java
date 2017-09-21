@@ -22,6 +22,9 @@ public class AgendaVoteView implements ViewObject
         }
     }
 
+    //Added for Json Deserialization
+    public AgendaVoteView() {}
+
     public ListView<AgendaAttendanceView> getAttendanceList() {
         return attendanceList;
     }
