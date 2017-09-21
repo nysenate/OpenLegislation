@@ -28,6 +28,7 @@ import java.util.*;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
+import static gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils.addObservationData;
 
 /*
 Created by Anthony Calabrese 2017/9/6
@@ -154,19 +155,5 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
         return report;
     }
 
-    /**
-     * This method adds ID data to obervations inside the spotcheck report,
-     * and then adds the observation to the spot check report
-     *
-     * @param observation errors from comparing two floor calendars or active lists
-     * @param report      The spotcheck report
-     * @param reportId    the ID of the spotcheck report
-     */
-    private void addObservationData(SpotCheckObservation<CalendarEntryListId> observation,
-                                    SpotCheckReport<CalendarEntryListId> report, SpotCheckReportId reportId) {
-        SpotCheckReferenceId referenceId = reportId.getReferenceId();
-        observation.setReferenceId(referenceId);
-        observation.setObservedDateTime(LocalDateTime.now());
-        report.addObservation(observation);
-    }
+
 }
