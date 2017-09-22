@@ -2,8 +2,12 @@ package gov.nysenate.openleg.client.view.agenda;
 
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
+import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
 import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
+import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
+import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 
 import java.time.LocalDateTime;
@@ -18,6 +22,8 @@ public class AgendaCommAddendumView implements ViewObject
     private AgendaMeetingView meeting;
     private ListView<AgendaItemView> bills;
     private AgendaVoteView voteInfo;
+    private AgendaId agendaId;
+    private CommitteeId committeeId;
 
     public AgendaCommAddendumView(String addendumId, LocalDateTime modDateTime, AgendaInfoCommittee infoComm,
                                   AgendaVoteCommittee voteComm, BillDataService billDataService) {
@@ -33,6 +39,8 @@ public class AgendaCommAddendumView implements ViewObject
             if (this.hasVotes) {
                 this.voteInfo = new AgendaVoteView(voteComm);
             }
+            this.agendaId = infoComm.getAgendaId();
+            this.committeeId = infoComm.getCommitteeId();
         }
     }
 
@@ -61,6 +69,26 @@ public class AgendaCommAddendumView implements ViewObject
 
     public AgendaVoteView getVoteInfo() {
         return voteInfo;
+    }
+
+    public AgendaId getAgendaId() {
+        return agendaId;
+    }
+
+    public void setAgendaId(AgendaId agendaId) {
+        this.agendaId = agendaId;
+    }
+
+    public CommitteeId getCommitteeId() {
+        return committeeId;
+    }
+
+    public void setCommitteeId(CommitteeId committeeId) {
+        this.committeeId = committeeId;
+    }
+
+    public CommitteeAgendaAddendumId getCommitteeAgendaAddendumId() {
+        return new CommitteeAgendaAddendumId(this.agendaId, this.committeeId, Version.of(this.addendumId) );
     }
 
     @Override
