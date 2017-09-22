@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
-import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.calendar.ActiveListView;
 import gov.nysenate.openleg.client.view.calendar.CalendarEntryList;
 import gov.nysenate.openleg.client.view.calendar.CalendarSupView;
@@ -10,8 +9,6 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.reference.openleg.OpenlegCalenderDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.calendar.CalendarActiveList;
-import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
@@ -28,7 +25,6 @@ import java.util.*;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
-import static gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils.addObservationData;
 
 /*
 Created by Anthony Calabrese 2017/9/6
@@ -133,12 +129,12 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
                 //Both Calendars have the same EntryList item
                 CalendarEntryList contentEntryList = contentEntryLists.get(id);
                 SpotCheckObservation<CalendarEntryListId> observation = checkService.check(contentEntryList, refEntryList);
-                addObservationData(observation, report, reportId);
+                report.addObservation(observation);
             } else {
                 //add data missing
                 SpotCheckObservation<CalendarEntryListId> sourceMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), id);
                 sourceMissingObs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, id, "Missing Data from Openleg XML, ID:" + id.toString()));
-                addObservationData(sourceMissingObs,report,reportId);
+                report.addObservation(sourceMissingObs);
             }
             remainingContentIds.remove(id);
         });
@@ -147,7 +143,7 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
             // add ref missing
             SpotCheckObservation<CalendarEntryListId> refMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), id);
             refMissingObs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, id, "Missing Data from Openleg Ref, ID:" + id.toString()));
-            addObservationData(refMissingObs,report,reportId);
+            report.addObservation(refMissingObs);
         });
 
         logger.info("Found total number of " + report.getOpenMismatchCount(false) + " mismatches");

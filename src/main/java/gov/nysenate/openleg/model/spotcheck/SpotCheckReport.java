@@ -146,8 +146,9 @@ public class SpotCheckReport<ContentKey>
         if (observation == null) {
             throw new IllegalArgumentException("Supplied observation cannot be null");
         }
+        observation.setReferenceId(reportId.getReferenceId());
+        observation.setObservedDateTime(LocalDateTime.now());
         this.observations.put(observation.getKey(), observation);
-
     }
 
     /**
