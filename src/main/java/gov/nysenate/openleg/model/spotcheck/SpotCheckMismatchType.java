@@ -58,7 +58,7 @@ public enum SpotCheckMismatchType
     /**
      *  Openleg xml vs Openleg sobi mismatches
      */
-    Bill_ADDITIONAL_SPONSOR_OPENLEG("Bill Additional Sponsor", OPENLEG_BILL),
+    BILL_ADDITIONAL_SPONSOR_OPENLEG("Bill Additional Sponsor", OPENLEG_BILL),
     BILL_ACTIVE_AMENDMENT_OPENLEG("Bill Active Amendment", OPENLEG_BILL),
     BILL_APPROVE_MESSAGE_OPENLEG("Bill Approve Message", OPENLEG_BILL),
     BILL_VOTES_OPENLEG("Bill Votes", OPENLEG_BILL),
@@ -72,11 +72,15 @@ public enum SpotCheckMismatchType
 
     /** --- Agenda Committee Meeting info mismatches --- */
 
-    AGENDA_BILL_LISTING("Bill List", LBDC_AGENDA_ALERT),
-    AGENDA_CHAIR("Chair", LBDC_AGENDA_ALERT),
-    AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT),
-    AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT),
-    AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT),
+    AGENDA_BILL_LISTING("Bill List", LBDC_AGENDA_ALERT, OPENLEG_AGENDA),
+    AGENDA_CHAIR("Chair", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
+    AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
+    AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
+    AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
+    AGENDA_MODIFIED_DATE_TIME("Modified Date Time", OPENLEG_AGENDA),
+    AGENDA_HAS_VOTES("Has Votes", OPENLEG_AGENDA),
+    AGENDA_ATTENDANCE_LIST("Agenda Attendance List",OPENLEG_AGENDA),
+    AGENDA_VOTES_LIST("Agenda Votes List", OPENLEG_AGENDA),
 
     /** --- Calendar mismatches --- */
     CALENDAR_ID("Calendar Id", SENATE_SITE_CALENDAR),
