@@ -33,6 +33,11 @@ public class AgendaVoteView implements ViewObject
         return votesList;
     }
 
+    //Added for Json Deserialization
+    public void setAttendanceList(ListView<AgendaAttendanceView> attendanceList) {this.attendanceList = attendanceList;}
+
+    public void setVotesList(ListView<AgendaVoteBillView> votesList) {this.votesList = votesList;}
+
     @Override
     public String getViewType() {
         return "agenda-vote";

@@ -52,6 +52,12 @@ public class AgendaCommView implements ViewObject
         return addenda;
     }
 
+    //Added for Json Deserialization
+    public void setAddenda(ListView<AgendaCommAddendumView> addenda) {this.addenda = addenda;}
+
+    //Added for Json Deserialization
+    public void setCommitteeId(CommitteeId committeeId) { this.committeeId = committeeId;}
+
     @Override
     public String getViewType() {
         return "agenda-committee";
