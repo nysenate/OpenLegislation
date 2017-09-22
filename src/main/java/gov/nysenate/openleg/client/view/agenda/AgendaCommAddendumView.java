@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
 import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 
@@ -23,7 +24,6 @@ public class AgendaCommAddendumView implements ViewObject
     private AgendaVoteView voteInfo;
     private AgendaId agendaId;
     private CommitteeId committeeId;
-    private CommitteeAgendaAddendumId committeeAgendaAddendumId;
 
     public AgendaCommAddendumView(String addendumId, LocalDateTime modDateTime, AgendaInfoCommittee infoComm,
                                   AgendaVoteCommittee voteComm, BillDataService billDataService) {
@@ -41,7 +41,6 @@ public class AgendaCommAddendumView implements ViewObject
             }
             this.agendaId = infoComm.getAgendaId();
             this.committeeId = infoComm.getCommitteeId();
-            this.committeeAgendaAddendumId = new CommitteeAgendaAddendumId(this.agendaId, this.committeeId,infoComm.getAddendum());
         }
     }
 
@@ -89,11 +88,7 @@ public class AgendaCommAddendumView implements ViewObject
     }
 
     public CommitteeAgendaAddendumId getCommitteeAgendaAddendumId() {
-        return committeeAgendaAddendumId;
-    }
-
-    public void setCommitteeAgendaAddendumId(CommitteeAgendaAddendumId committeeAgendaAddendumId) {
-        this.committeeAgendaAddendumId = committeeAgendaAddendumId;
+        return new CommitteeAgendaAddendumId(this.agendaId, this.committeeId, Version.of(this.addendumId) );
     }
 
     @Override
