@@ -23,6 +23,8 @@ public class CommitteeAgendaId implements Serializable, Comparable<CommitteeAgen
         this.committeeId = committeeId;
     }
 
+    public CommitteeAgendaId() {}
+
     @Override
     public String toString() {
         return agendaId + "-" + committeeId;

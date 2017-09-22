@@ -18,6 +18,8 @@ public class CommitteeAgendaAddendumId extends CommitteeAgendaId implements Seri
         this.addendum = addendum;
     }
 
+    public CommitteeAgendaAddendumId() {}
+
     /** --- Overridden Methods --- */
 
     @Override

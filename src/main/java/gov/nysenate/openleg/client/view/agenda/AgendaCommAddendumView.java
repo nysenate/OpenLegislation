@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.client.view.agenda;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.agenda.AgendaId;
@@ -24,6 +25,7 @@ public class AgendaCommAddendumView implements ViewObject
     private AgendaVoteView voteInfo;
     private AgendaId agendaId;
     private CommitteeId committeeId;
+    private CommitteeAgendaAddendumId committeeAgendaAddendumId;
 
     public AgendaCommAddendumView(String addendumId, LocalDateTime modDateTime, AgendaInfoCommittee infoComm,
                                   AgendaVoteCommittee voteComm, BillDataService billDataService) {
@@ -41,6 +43,7 @@ public class AgendaCommAddendumView implements ViewObject
             }
             this.agendaId = infoComm.getAgendaId();
             this.committeeId = infoComm.getCommitteeId();
+            this.committeeAgendaAddendumId = new CommitteeAgendaAddendumId(this.agendaId, this.committeeId, Version.of(addendumId));
         }
     }
 
@@ -87,6 +90,7 @@ public class AgendaCommAddendumView implements ViewObject
         this.committeeId = committeeId;
     }
 
+    @JsonIgnore
     public CommitteeAgendaAddendumId getCommitteeAgendaAddendumId() {
         return new CommitteeAgendaAddendumId(this.agendaId, this.committeeId, Version.of(this.addendumId) );
     }
