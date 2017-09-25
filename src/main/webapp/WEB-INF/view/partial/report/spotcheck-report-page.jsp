@@ -2,44 +2,27 @@
 
 <section ng-controller="SpotcheckReportCtrl"
          class="padding-20" style="overflow: scroll">
-  <md-content>
-    <div>
-      <h2>Report Date:   <md-datepicker ng-model="pickedDate"  datepicker-popup="YYYY-MM-DD" md-placeholder="Select Report Date"  md-max-date="maxDate" ng-change="onDateChange()"></md-datepicker></h2>
-    </div>
-    <div layout="row" layout-align="space-between center">
-      <div>
-        <select ng-model="datasource.selected" ng-change="onDatasourceChange()"
-                ng-options="datasource as datasource.label for datasource in datasource.values"></select>
-      </div>
-      <div>
-        <select ng-model="mismatchStatusSummary.selected" ng-change="onStatusChange()">
-          <option value="NEW" ng-disabled="mismatchStatusSummary.summary.items.NEW == 0">
-            New Issues ({{mismatchStatusSummary.summary.items.NEW}})
-          </option>
-          <option value="OPEN" ng-disabled="mismatchStatusSummary.summary.items.OPEN == 0">
-            Open Issues ({{mismatchStatusSummary.summary.items.OPEN}})
-          </option>
-          <option value="RESOLVED" ng-disabled="mismatchStatusSummary.summary.items.RESOLVED == 0">
-            Resolved Issues ({{mismatchStatusSummary.summary.items.RESOLVED}})
-          </option>
-        </select>
-      </div>
-
-      <div>
-        <select  ng-model="mismatchTypeSummary.selected"
-                 ng-change="onMismatchTypeChange()"
-                 ng-options="type as mismatchTypeLabel(type, count) disable when count == 0 for (type, count) in mismatchTypeSummary.summary"></select>
-        </select>
-      </div>
-    </div>
+  <md-content class="spotcheck-report-control-bar spotcheck-report-top-controls">
+    <h2>Report Date:</h2>
+    <md-datepicker ng-model="pickedDate"
+                   datepicker-popup="YYYY-MM-DD"
+                   md-placeholder="Select Report Date"
+                   md-max-date="maxDate"
+                   ng-change="onDateChange()">
+    </md-datepicker>
+    <h2>Report Type:</h2>
+    <select ng-model="datasource.selected" ng-change="onDatasourceChange()"
+            ng-options="datasource as datasource.label for datasource in datasource.values"></select>
   </md-content>
 
   <div style="min-width: 960px;">
     <md-card class="content-card">
       <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
-        <md-tab ng-cloak md-on-deselect="onTabChange()"
         <md-tab ng-cloak label="Bills ({{mismatchContentTypeSummary.summary.items.BILL}})" md-on-deselect="onTabChange()"
                 ng-disabled="mismatchContentTypeSummary.summary.items.BILL == 0">
+
+          <spotcheck-report-inner-controls></spotcheck-report-inner-controls>
+
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px; ">
@@ -93,6 +76,7 @@
 
         <md-tab label="Calendars ({{mismatchContentTypeSummary.summary.items.CALENDAR}})" md-on-deselect="onTabChange()"
           ng-disabled="mismatchContentTypeSummary.summary.items.CALENDAR == 0">
+          <spotcheck-report-inner-controls></spotcheck-report-inner-controls>
           <md-content>
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">
@@ -146,6 +130,7 @@
 
         <md-tab label="Agendas ({{mismatchContentTypeSummary.summary.items.AGENDA}})" md-on-deselect="onTabChange()"
           ng-disabled="mismatchContentTypeSummary.summary.items.AGENDA == 0">
+          <spotcheck-report-inner-controls></spotcheck-report-inner-controls>
           <md-content class="md-padding">
             <div layout="row" layout-align="space-between center" flex="75"
                  style="padding-bottom: 10px; padding-top: 10px">

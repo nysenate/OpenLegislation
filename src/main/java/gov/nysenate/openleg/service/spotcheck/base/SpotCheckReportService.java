@@ -6,7 +6,6 @@ import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.EnumSet;
 import java.util.Set;
 
 /**
@@ -58,19 +57,18 @@ public interface SpotCheckReportService<ContentKey>
      * Gets mismatch status summary information for the given datasource, as of the given summary date time.
      * @return
      */
-    MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource dataSource, Set<SpotCheckMismatchIgnore> ignoreStatuses);
+    MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource dataSource, SpotCheckContentType contentType, Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
      * Gets mismatch type summary information for the given datasource and mismatch status for the report on reportDate.
      */
     MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
-                                               MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses);
+                                               SpotCheckContentType contentType, MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
      * Gets mismatch content type summary information for the given datasource, reportDate, mismatch status, and mismatch types.
      */
     MismatchContentTypeSummary getMismatchContentTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
-                                                             MismatchStatus mismatchStatus, EnumSet mismatchTypes,
                                                              Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**

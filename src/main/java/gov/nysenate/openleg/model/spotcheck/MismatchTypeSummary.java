@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,10 +8,11 @@ public class MismatchTypeSummary {
 
     private Map<SpotCheckMismatchType, Integer> typeCount;
 
-    public MismatchTypeSummary(){
+    public MismatchTypeSummary(SpotCheckContentType contentType){
         typeCount = new HashMap<>();
-        for (SpotCheckMismatchType spotCheckMismatchType : SpotCheckMismatchType.values())
-            typeCount.put(spotCheckMismatchType, 0);
+        Arrays.stream(SpotCheckMismatchType.values())
+                .filter(mt -> mt.possibleForContentType(contentType))
+                .forEach(mt -> typeCount.put(mt, 0));
     }
 
     public Map<SpotCheckMismatchType, Integer> getSummary(){

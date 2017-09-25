@@ -16,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Set;
-import java.time.temporal.ChronoUnit;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -169,20 +167,22 @@ public class SpotcheckReportDaoTest extends BaseTests {
     @Test
     public void canGetStatusSummary() {
         MismatchStatusSummary summary = reportDao.getMismatchStatusSummary(LocalDate.now(), SpotCheckDataSource.LBDC,
-                                                                           Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
+                SpotCheckContentType.BILL,
+                Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
     }
 
     @Test
     public void canGetMismatchTypeSummary() {
         MismatchTypeSummary summary = reportDao.getMismatchTypeSummary(LocalDate.now(), SpotCheckDataSource.LBDC,
-                                                                       MismatchStatus.EXISTING, Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
+                                                                       SpotCheckContentType.BILL,
+                                                                       MismatchStatus.EXISTING,
+                                                                       Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
     }
 
     @Test
     public void canGetContentTypeSummary() {
         MismatchContentTypeSummary summary = reportDao.getMismatchContentTypeSummary(LocalDate.now(), SpotCheckDataSource.LBDC,
-                                                                                     MismatchStatus.EXISTING, EnumSet.of(SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE),
-                                                                                     Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
+                Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
     }
 
     private DeNormSpotCheckMismatch queryMostRecentOpenMismatch() {

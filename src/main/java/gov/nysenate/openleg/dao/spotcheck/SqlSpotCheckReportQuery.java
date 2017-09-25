@@ -55,19 +55,22 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
             "SELECT 'NEW' as status, count(*) as count \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
             "WHERE first_seen_date_time BETWEEN :reportStartDateTime AND :reportEndDateTime \n" +
-            "  AND ignore_status IN (:ignoreStatuses)\n" +
             "  AND state = 'OPEN'\n" +
+            "  AND content_type = :contentType\n" +
+            "  AND ignore_status IN (:ignoreStatuses)\n" +
             "UNION ALL \n" +
             "SELECT 'RESOLVED', count(*) \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
             "WHERE observed_date_time BETWEEN :reportStartDateTime AND :reportEndDateTime \n" +
             "  AND state = 'CLOSED'\n" +
+            "  AND content_type = :contentType\n" +
             "  AND ignore_status IN (:ignoreStatuses)\n" +
             "UNION ALL \n" +
             "SELECT 'EXISTING', count(*) \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-            "WHERE first_seen_date_time BETWEEN :sessionStartDateTime AND :reportStartDateTime \n" +
+            "WHERE observed_date_time BETWEEN :sessionStartDateTime AND :reportStartDateTime \n" +
             "  AND state = 'OPEN' \n" +
+            "  AND content_type = :contentType\n" +
             "  AND ignore_status IN (:ignoreStatuses) \n"
     ),
 
@@ -77,6 +80,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
             "WHERE first_seen_date_time BETWEEN :firstSeenStartDateTime AND :firstSeenEndDateTime \n" +
             "  AND observed_date_time BETWEEN :observedStartDateTime AND :observedEndDateTime \n" +
             "  AND state = :state \n" +
+            "  AND content_type = :contentType\n" +
             "  AND ignore_status IN (:ignoreStatuses) \n" +
             "GROUP BY type"
     ),
@@ -84,10 +88,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     MISMATCH_CONTENT_TYPE_SUMMARY(
             "SELECT content_type, count(*) as count \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-            "WHERE first_seen_date_time BETWEEN :firstSeenStartDateTime AND :firstSeenEndDateTime \n" +
-            "  AND observed_date_time BETWEEN :observedStartDateTime AND :observedEndDateTime \n" +
-            "  AND state = :state \n" +
-            "  AND type IN (:mismatchTypes) \n" +
+            "WHERE observed_date_time BETWEEN :sessionStartDateTime AND :reportEndDateTime \n" +
+            "  AND state = 'OPEN' \n" +
             "  AND ignore_status IN (:ignoreStatuses) \n" +
             "GROUP BY content_type"
     ),

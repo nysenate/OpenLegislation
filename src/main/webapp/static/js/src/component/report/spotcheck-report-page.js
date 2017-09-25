@@ -2,7 +2,9 @@ angular.module('open.spotcheck')
     .controller('SpotcheckReportCtrl',
         ['$scope', '$route', '$location', '$routeParams', '$mdDialog', '$mdDateLocale', 'PaginationModel', 'SpotcheckMismatchApi',
             'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI', 'SpotcheckMismatchTrackingAPI', 'SpotcheckMismatchDeleteAllAPI',
-            'SpotcheckMismatchDeleteAllAPI', ReportCtrl]);
+            'SpotcheckMismatchDeleteAllAPI', ReportCtrl])
+    .directive('spotcheckReportInnerControls', spotcheckReportInnerControls)
+;
 
 function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateLocale, paginationModel, spotcheckMismatchApi,
                     mismatchSummaryApi, mismatchIgnoreApi, spotcheckMismatchTrackingAPI, spotcheckMismatchDeleteAllAPI) {
@@ -78,8 +80,8 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     $scope.onDatasourceChange = function () {
         resetPagination();
-        $scope.updateMismatchStatusSummary();
         $scope.updateMismatchContentTypeSummary();
+        $scope.updateMismatchStatusSummary();
         $scope.updateMismatchTypeSummary();
         $scope.updateMismatches();
         $location.search(searchParams.datasource, $scope.datasource.selected.value)
@@ -87,17 +89,15 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     $scope.onTabChange = function () {
         resetPagination();
+        $scope.updateMismatchStatusSummary();
+        $scope.updateMismatchTypeSummary();
         $scope.updateMismatches();
-        $scope.updateMismatchContentTypeSummary();
         $location.search(searchParams.contentType, contentTypes[$scope.selectedTab]);
     };
 
-    // update mismatch when user change status
     $scope.onStatusChange = function () {
         resetPagination();
         $scope.updateMismatchTypeSummary();
-        $scope.updateMismatches();
-        $scope.updateMismatchContentTypeSummary();
         $scope.updateMismatches();
         $location.search(searchParams.mismatchStatus, $scope.mismatchStatusSummary.selected);
     };
@@ -105,7 +105,6 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
     $scope.onMismatchTypeChange = function () {
         resetPagination();
         $scope.updateMismatches();
-        $scope.updateMismatchContentTypeSummary();
         $location.search(searchParams.mismatchType, $scope.mismatchTypeSummary.selected);
     };
 
@@ -124,7 +123,7 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     $scope.updateMismatchStatusSummary = function () {
         $scope.mismatchStatusSummary.error = false;
-        mismatchSummaryApi.getMismatchStatusSummary($scope.datasource.selected.value, $scope.date._i)
+        mismatchSummaryApi.getMismatchStatusSummary($scope.date._i, $scope.datasource.selected.value, selectedContentType())
             .then(function (mismatchSummary) {
                 $scope.mismatchStatusSummary.summary = mismatchSummary.summary;
             })
@@ -136,9 +135,17 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     $scope.updateMismatchTypeSummary = function () {
         $scope.mismatchTypeSummary.error = false;
-        mismatchSummaryApi.getMismatchTypeSummary($scope.datasource.selected.value, $scope.date._i, $scope.mismatchStatusSummary.selected)
+        mismatchSummaryApi.getMismatchTypeSummary($scope.date._i, $scope.datasource.selected.value,
+                                                  selectedContentType(), $scope.mismatchStatusSummary.selected)
             .then(function (mismatchSummary) {
                 $scope.mismatchTypeSummary.summary = mismatchSummary;
+                if (!mismatchSummary.hasOwnProperty($scope.mismatchTypeSummary.selected)) {
+                    var keys = Object.keys(mismatchSummary);
+                    if (keys.length > 0) {
+                        $scope.mismatchTypeSummary.selected = keys[0];
+                        $scope.onMismatchTypeChange();
+                    }
+                }
             })
             .catch(function (response) {
                 $scope.mismatchTypeSummary.error = true;
@@ -148,7 +155,7 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     $scope.updateMismatchContentTypeSummary = function () {
         $scope.mismatchContentTypeSummary.error = false;
-        mismatchSummaryApi.getMismatchContentTypeSummary($scope.datasource.selected.value, $scope.date._i, $scope.mismatchStatusSummary.selected, $scope.mismatchTypeSummary.selected)
+        mismatchSummaryApi.getMismatchContentTypeSummary($scope.date._i, $scope.datasource.selected.value)
             .then(function (mismatchSummary) {
                 $scope.mismatchContentTypeSummary.summary = mismatchSummary.summary;
             })
@@ -380,4 +387,11 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     $scope.init();
 
+}
+
+function spotcheckReportInnerControls () {
+    return {
+        restrict: 'E',
+        templateUrl: ctxPath + '/partial/report/spotcheck-report-page-inner-controls'
+    }
 }

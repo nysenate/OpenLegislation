@@ -6,7 +6,6 @@ import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.spotcheck.*;
 
 import java.time.LocalDate;
-import java.util.EnumSet;
 import java.util.Set;
 
 /**
@@ -28,23 +27,23 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
     /** {@inheritDoc} */
     @Override
     public MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
-                                                          Set<SpotCheckMismatchIgnore> ignoreStatuses) {
-        return getReportDao().getMismatchStatusSummary(reportDate, dataSource, ignoreStatuses);
+                                                          SpotCheckContentType contentType, Set<SpotCheckMismatchIgnore> ignoreStatuses) {
+        return getReportDao().getMismatchStatusSummary(reportDate, dataSource, contentType, ignoreStatuses);
     }
 
     /** {@inheritDoc} */
     @Override
     public MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
-                                                      MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses) {
-        return getReportDao().getMismatchTypeSummary(reportDate, dataSource, mismatchStatus, ignoreStatuses);
+                                                      SpotCheckContentType contentType, MismatchStatus mismatchStatus,
+                                                      Set<SpotCheckMismatchIgnore> ignoreStatuses) {
+        return getReportDao().getMismatchTypeSummary(reportDate, dataSource, contentType, mismatchStatus, ignoreStatuses);
     }
 
     /** {@inheritDoc} */
     @Override
     public MismatchContentTypeSummary getMismatchContentTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
-                                                                    MismatchStatus mismatchStatus, EnumSet mismatchTypes,
                                                                     Set<SpotCheckMismatchIgnore> ignoreStatuses) {
-        return getReportDao().getMismatchContentTypeSummary(reportDate, dataSource, mismatchStatus, mismatchTypes, ignoreStatuses);
+        return getReportDao().getMismatchContentTypeSummary(reportDate, dataSource, ignoreStatuses);
     }
 
     /** {@inheritDoc} */

@@ -4,10 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.util.OutputUtils;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
@@ -96,6 +93,13 @@ public enum SpotCheckMismatchType
     SpotCheckMismatchType(String displayName, SpotCheckRefType... refTypes) {
         this.displayName = displayName;
         this.refTypes = new HashSet<>(Arrays.asList(refTypes));
+    }
+
+    public boolean possibleForContentType(SpotCheckContentType contentType) {
+        Objects.requireNonNull(contentType);
+        return this.getRefTypes().stream()
+                .map(SpotCheckRefType::getContentType)
+                .anyMatch(contentType::equals);
     }
 
     public String getDisplayName() {

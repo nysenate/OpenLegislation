@@ -1576,3 +1576,26 @@ md-dialog.issuedialog {
   margin-top: -20px;
   display: none;
 }
+
+.spotcheck-report-control-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.spotcheck-report-top-controls {
+  select {
+    margin-left: 20px;
+  }
+  h2:not(:first-child) {
+    margin-left:40px;
+  }
+}
+
+.spotcheck-report-inner-controls {
+  margin-top: 20px;
+  > * {
+    margin-left: 20px;
+  }
+}
