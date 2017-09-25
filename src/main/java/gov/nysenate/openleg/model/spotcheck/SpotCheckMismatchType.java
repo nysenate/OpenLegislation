@@ -73,8 +73,6 @@ public enum SpotCheckMismatchType
     /** --- Agenda Committee Meeting info mismatches --- */
 
     AGENDA_BILL_LISTING("Bill List", LBDC_AGENDA_ALERT, OPENLEG_AGENDA),
-    AGENDA_OBSRV_BILL_MISSING("Source Bill Missing", OPENLEG_AGENDA),
-    AGENDA_REF_BILL_MISSING("Reference Bill Missing", OPENLEG_AGENDA),
     AGENDA_CHAIR("Chair", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
     AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
     AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
