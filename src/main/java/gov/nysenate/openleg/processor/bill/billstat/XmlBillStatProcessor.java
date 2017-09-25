@@ -36,6 +36,7 @@ import java.util.Optional;
 public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlBillStatProcessor.class);
+
     @Autowired
     private XmlHelper xmlHelper;
 
@@ -71,6 +72,7 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             String title = xmlHelper.getString("title", billTextNode).trim();
             String billactions = xmlHelper.getString("billactions", billTextNode).trim();
             billactions = reformatBillActions(billactions);
+            Node xmlActions = xmlHelper.getNode("billstatus/actions",doc);
             Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse +
                     billno, sessyr,version), sobiFragment);
             BillSponsor billSponsor = baseBill.getSponsor();
@@ -103,6 +105,9 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
 
             List<BillAction> billActions = BillActionParser.parseActionsList(billAmendment.getBillId(), billactions);
             baseBill.setActions(billActions);
+
+            baseBill.setYear( BillActionParser.getCalendarYear(xmlActions, xmlHelper) );
+
             // Use the BillActionAnalyzer to derive other data from the actions list.
             Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.DEFAULT);
             BillActionAnalyzer analyzer = new BillActionAnalyzer(billAmendment.getBillId(), billActions, defaultPubStatus);
