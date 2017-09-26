@@ -105,7 +105,8 @@ elif [ "$mode" = "maint" ]; then
 elif [ "$mode" = "uas" ]; then
 
   echo "About to update all statutes"
-  pdrush @$penv update-all-statutes $drush_args
+  pdrush @$penv structure-clear-range-statutes -y $drush_args
+  pdrush @$penv update-all-statutes --force -y $drush_args
 
 else
 
