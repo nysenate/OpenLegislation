@@ -16,21 +16,9 @@
 
   <md-card class="content-card spotcheck-report-content-tabs">
     <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
-
-      <spotcheck-report-content-tab title="Bills" type="BILL">
-        <id-column name="Bill" order-id="PRINT_NO" field="billId" class="spotcheck-col-bill-id"></id-column>
-      </spotcheck-report-content-tab>
-
-      <spotcheck-report-content-tab title="Calendars" type="CALENDAR">
-        <id-column name="Num" order-id="CAL_NO" field="calNo" class="spotcheck-col-cal-no"></id-column>
-        <id-column name="Type" order-id="CAL_TYPE" field="calType" class="spotcheck-col-cal-type"></id-column>
-      </spotcheck-report-content-tab>
-
-      <spotcheck-report-content-tab title="Agendas" type="AGENDA">
-        <id-column name="Num" order-id="AGENDA_NO" field="agendaNo" class="spotcheck-col-agenda-no"></id-column>
-        <id-column name="Committee" order-id="AGENDA_COMMITTEE"
-                   field="committee" class="spotcheck-col-agenda-comm"></id-column>
-      </spotcheck-report-content-tab>
+      <spotcheck-report-content-tab title="Bills" type="BILL"></spotcheck-report-content-tab>
+      <spotcheck-report-content-tab title="Calendars" type="CALENDAR"></spotcheck-report-content-tab>
+      <spotcheck-report-content-tab title="Agendas" type="AGENDA"></spotcheck-report-content-tab>
     </md-tabs>
   </md-card>
 </section>
