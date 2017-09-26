@@ -3,7 +3,6 @@ angular.module('open.spotcheck')
         ['$scope', '$route', '$location', '$routeParams', '$mdDialog', '$mdDateLocale', 'PaginationModel', 'SpotcheckMismatchApi',
             'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI', 'SpotcheckMismatchTrackingAPI', 'SpotcheckMismatchDeleteAllAPI',
             'SpotcheckMismatchDeleteAllAPI', ReportCtrl])
-    .directive('spotcheckReportInnerControls', spotcheckReportInnerControls)
 ;
 
 function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateLocale, paginationModel, spotcheckMismatchApi,
@@ -36,6 +35,50 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
         ],
         selected: {}
     };
+
+    /**
+     * Defines unique id columns that are used for each content type
+     */
+    $scope.idColumns = {
+        BILL: [
+            {
+                name: "Bill",
+                orderId: "PRINT_NO",
+                field: "billId",
+                class: "spotcheck-col-bill-id"
+            }
+        ],
+        CALENDAR: [
+            {
+                name: "Num",
+                orderId: "CAL_NO",
+                field: "calNo",
+                class: "spotcheck-col-cal-no"
+            },
+            {
+                name: "Type",
+                orderId: "CAL_TYPE",
+                field: "calType",
+                class: "spotcheck-col-cal-type"
+            }
+        ],
+        AGENDA: [
+            {
+                name: "Num",
+                orderId: "AGENDA_NO",
+                field: "agendaNo",
+                class: "spotcheck-col-agenda-no"
+            },
+            {
+                name: "Committee",
+                orderId: "AGENDA_COMMITTEE",
+                field: "committee",
+                class: "spotcheck-col-agenda-comm"
+            }
+        ]
+    };
+
+
     $scope.selectedTab = 0; // Select Bills tab by default.
     $scope.date = {};
     $scope.loading = false; // TODO remove this using promises?
@@ -389,9 +432,3 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
 }
 
-function spotcheckReportInnerControls () {
-    return {
-        restrict: 'E',
-        templateUrl: ctxPath + '/partial/report/spotcheck-report-page-inner-controls'
-    }
-}

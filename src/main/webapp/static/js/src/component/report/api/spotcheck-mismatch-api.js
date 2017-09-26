@@ -54,6 +54,7 @@ function spotcheckMismatchApi($resource) {
             refTypeLabel: parseRefTypeLabel(mismatch),
             refType: parseRefType(mismatch),
             bill: parseBill(mismatch),
+            billId: parseBillId(mismatch),
             calNo: parseCalNo(mismatch),
             calType:parseCalType(mismatch),
             session: parseSession(mismatch),
@@ -89,7 +90,7 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseSession(mismatch) {
-        return mismatch.key.session;
+        return mismatch.key.session || {};
     }
 
     function parseBasePrintNo(mismatch) {
@@ -182,6 +183,10 @@ function spotcheckMismatchApi($resource) {
 
     function parseBill(mismatch) {
         return mismatch.key.printNo || "";
+    }
+
+    function parseBillId(mismatch) {
+        return parseBill(mismatch) + '-' + parseSession(mismatch).year;
     }
 
     function parseCalNo(mismatch) {
