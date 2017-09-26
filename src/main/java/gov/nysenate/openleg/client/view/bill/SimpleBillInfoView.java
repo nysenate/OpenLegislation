@@ -2,6 +2,7 @@ package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillInfo;
 
 import java.time.LocalDate;
@@ -20,6 +21,8 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
     protected LocalDateTime publishedDateTime;
     protected BaseBillIdView substitutedBy;
     protected SponsorView sponsor;
+    protected BaseBillIdView reprintOf;
+
 
     public SimpleBillInfoView(BillInfo billInfo) {
         super(billInfo != null ? billInfo.getBillId() : null);
@@ -33,6 +36,7 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
             sponsor = billInfo.getSponsor() != null ? new SponsorView(billInfo.getSponsor()) : null;
             billType = billInfo.getBillId() != null && billInfo.getBillId().getBillType() != null
                     ? new BillTypeView(billInfo.getBillId().getBillType()) : null;
+            reprintOf = billInfo.getReprintOf() != null ? new BaseBillIdView( billInfo.getReprintOf() ): null;
         }
     }
 

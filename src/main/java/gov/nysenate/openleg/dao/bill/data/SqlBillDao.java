@@ -680,6 +680,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             if (rs.getString("sub_bill_print_no") != null) {
                 bill.setSubstitutedBy(new BaseBillId(rs.getString("sub_bill_print_no"), bill.getSession()));
             }
+            if (rs.getString("reprint_of_bill") != null) {
+                bill.setReprintOf(new BaseBillId(rs.getString("reprint_of_bill"),bill.getSession()));
+            }
             bill.setLDBlurb(rs.getString("blurb"));
             setModPubDatesFromResultSet(bill, rs);
             return bill;
@@ -840,6 +843,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                         ? bill.getStatus().getCommitteeId().getChamber().asSqlEnum() : null)
                 .addValue("billCalNo", bill.getStatus() != null ? bill.getStatus().getCalendarNo() : null)
                 .addValue("blurb", bill.getLDBlurb())
+                .addValue("reprintOf", bill.getReprintOf() != null ? bill.getReprintOf().getBasePrintNo() : null)
                 .addValue("subPrintNo", bill.getSubstitutedBy() != null ? bill.getSubstitutedBy().getBasePrintNo() : null);
 
         addModPubDateParams(bill.getModifiedDateTime(), bill.getPublishedDateTime(), params);

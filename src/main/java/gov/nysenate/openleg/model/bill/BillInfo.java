@@ -26,6 +26,7 @@ public class BillInfo
     protected Map<Version, PublishStatus> amendPublishStatusMap = new TreeMap<>();
     protected BillId substitutedBy;
     protected ProgramInfo programInfo;
+    protected BillId reprintOf;
 
     /** --- Constructors --- */
 
@@ -45,6 +46,7 @@ public class BillInfo
         this.milestones = bill.getMilestones();
         this.actions = bill.getActions();
         this.amendPublishStatusMap = new TreeMap<>(bill.getAmendPublishStatusMap());
+        this.reprintOf = bill.getReprintOf();
     }
 
     /** --- Basic Getters/Setters --- */
@@ -140,4 +142,8 @@ public class BillInfo
     public void setAmendPublishStatusMap(Map<Version, PublishStatus> amendPublishStatusMap) {
         this.amendPublishStatusMap = amendPublishStatusMap;
     }
+
+    public BillId getReprintOf() {return reprintOf;}
+
+    public void setReprintOf(BillId reprintOf) {this.reprintOf = reprintOf;}
 }

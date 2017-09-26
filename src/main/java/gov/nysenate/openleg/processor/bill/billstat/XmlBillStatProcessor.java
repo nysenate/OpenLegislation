@@ -62,10 +62,18 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
         try {
             final Document doc = xmlHelper.parse(sobiFragment.getText());
             final Node billTextNode = xmlHelper.getNode("billstatus", doc);
+            //Reprint number
+            boolean reprinted = false;
+            final String reprintBillhse = xmlHelper.getString("reprint/rprtbillhse", doc);
+            final Integer rprtBillno = xmlHelper.getInteger("reprint/rprtbillno",doc);
+            final String rprtVersion = xmlHelper.getString("reprint/rprtbillamd", doc);
+            if ( !reprintBillhse.isEmpty() ) {reprinted = true;}
+            //File Print number
             final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
             final String billhse = xmlHelper.getString("@billhse", billTextNode).trim();
             final Integer billno = xmlHelper.getInteger("@billno", billTextNode);
             final String action = xmlHelper.getString("@action", billTextNode).trim();
+
             final String sponsor = xmlHelper.getString("sponsor", billTextNode).trim();
             final String version = xmlHelper.getString("currentamd", billTextNode).trim();
             String lawSec = xmlHelper.getString("law", billTextNode).trim();
@@ -73,8 +81,20 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             String billactions = xmlHelper.getString("billactions", billTextNode).trim();
             billactions = reformatBillActions(billactions);
             Node xmlActions = xmlHelper.getNode("billstatus/actions",doc);
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse +
-                    billno, sessyr,version), sobiFragment);
+
+            //SET the proper basebill
+            Bill baseBill;
+            if(reprinted) {
+                baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(reprintBillhse +
+                        rprtBillno, sessyr,rprtVersion), sobiFragment);
+                baseBill.setReprintOf( new BaseBillId(billhse + billno, sessyr));
+            }
+            else {
+                baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse +
+                        billno, sessyr,version), sobiFragment);
+                baseBill.setReprintOf(null);
+            }
+
             BillSponsor billSponsor = baseBill.getSponsor();
             Chamber chamber = baseBill.getBillType().getChamber();
 

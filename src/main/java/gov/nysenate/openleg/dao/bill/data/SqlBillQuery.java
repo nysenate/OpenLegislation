@@ -27,17 +27,18 @@ public enum SqlBillQuery implements BasicSqlQuery
         "    active_year = :activeYear, program_info = :programInfo, program_info_num = :programInfoNum, " +
         "    status = :status, status_date = :statusDate, committee_name = :committeeName, " +
         "    committee_chamber = :committeeChamber::chamber, bill_cal_no = :billCalNo, blurb = :blurb, "  +
-        "    modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId\n" +
+        "    modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId" +
+        "    reprint_of_bill =: reprintOf\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     INSERT_BILL(
         "INSERT INTO ${schema}." + SqlTable.BILL + "\n" +
         "(bill_print_no, bill_session_year, title, summary, active_version, active_year, sub_bill_print_no, " +
         " program_info, program_info_num, status, status_date, committee_name, committee_chamber, bill_cal_no, blurb," +
-        " modified_date_time, published_date_time, last_fragment_id) \n" +
+        " modified_date_time, published_date_time, last_fragment_id, reprint_of_bill) \n" +
         "VALUES (:printNo, :sessionYear, :title, :summary, :activeVersion, :activeYear, :subPrintNo, " +
         "        :programInfo, :programInfoNum, :status, :statusDate, :committeeName, :committeeChamber::chamber, :billCalNo, :blurb," +
-        "        :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
+        "        :modifiedDateTime, :publishedDateTime, :lastFragmentId :reprintOf)"
     ),
     ACTIVE_SESSION_YEARS(
         "SELECT min(bill_session_year) as min, max(bill_session_year) as max\n" +

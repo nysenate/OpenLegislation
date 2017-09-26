@@ -72,6 +72,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     /** If the bill has been substituted by another, store the reference of that bill's id. */
     protected BaseBillId substitutedBy;
 
+    /** If this bill was a reprint of another bill*/
+    protected BaseBillId reprintOf;
+
     /** A list of ids for versions of this legislation in previous sessions.
      *  This set of will contain only previous versions that have been directly linked to this bill*/
     protected Set<BillId> directPreviousVersions =  Collections.synchronizedSortedSet(new TreeSet<>());
@@ -528,4 +531,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     public void setChapterYear(Integer chapterYear) {
         this.chapterYear = chapterYear;
     }
+
+    public void setReprintOf(BaseBillId reprintOf) {this.reprintOf = reprintOf;}
+
+    public BaseBillId getReprintOf() {return reprintOf;}
 }
