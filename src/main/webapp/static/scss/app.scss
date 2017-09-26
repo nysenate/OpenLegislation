@@ -1577,6 +1577,15 @@ md-dialog.issuedialog {
   display: none;
 }
 
+#spotcheck-report-page {
+  overflow: scroll;
+  padding: 20px;
+}
+
+.spotcheck-report-content-tabs {
+  min-width: 960px;
+}
+
 .spotcheck-report-control-bar {
   display: flex;
   flex-direction: row;
@@ -1597,5 +1606,128 @@ md-dialog.issuedialog {
   margin-top: 20px;
   > * {
     margin-left: 20px;
+  }
+}
+
+.spotcheck-table-header {
+  padding-bottom: 10px;
+  padding-top: 10px;
+
+  @extend .spotcheck-table-mismatch-row;
+  margin-right: 25%;
+  float: none !important;
+
+  & > * {
+    @extend .bold;
+  }
+}
+
+.spotcheck-table-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spotcheck-table-mismatch-row {
+  float:left;
+  width: 75%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spotcheck-table-column {
+  word-wrap: break-word;
+  min-width: 50px;
+}
+
+.spotcheck-col-state {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+}
+
+.spotcheck-col-id {
+  @extend .spotcheck-table-column;
+  flex-basis: 15%;
+}
+
+.spotcheck-col-type {
+  @extend .spotcheck-table-column;
+  flex-basis: 15%;
+}
+
+.spotcheck-col-date {
+  @extend .spotcheck-table-column;
+  flex-basis: 15%;
+}
+
+.spotcheck-col-issue {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+
+  md-input-container {
+    padding: 0;
+    margin: 0 0 -25px;
+  }
+}
+
+.spotcheck-col-source {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+}
+
+.spotcheck-col-cal-state {
+  @extend .spotcheck-table-column;
+  flex-basis: 5%;
+}
+
+.spotcheck-col-cal-no {
+  @extend .spotcheck-table-column;
+  flex-basis: 5%;
+}
+
+.spotcheck-col-cal-type {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+}
+
+.spotcheck-col-agenda-obs-date {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+}
+
+.spotcheck-col-agenda-no {
+  @extend .spotcheck-table-column;
+  flex-basis: 5%;
+}
+
+.spotcheck-col-agenda-comm {
+  @extend .spotcheck-table-column;
+  flex-basis: 15%;
+}
+
+.spotcheck-table-buttons {
+  width: 25%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+
+  .md-button.ignore-button {
+    background-color: #3E4F62;
+  }
+}
+
+.spotcheck-table-goto {
+  float: right;
+  margin-top: -35px;
+  margin-right: 300px;
+
+  input {
+    width: 30px;
+    text-align: center
   }
 }
