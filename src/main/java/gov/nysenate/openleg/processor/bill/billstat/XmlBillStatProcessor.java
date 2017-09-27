@@ -64,9 +64,9 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             final Node billTextNode = xmlHelper.getNode("billstatus", doc);
             //Reprint number
             boolean reprinted = false;
-            final String reprintBillhse = xmlHelper.getString("reprint/rprtbillhse", doc);
-            final Integer rprtBillno = xmlHelper.getInteger("reprint/rprtbillno",doc);
-            final String rprtVersion = xmlHelper.getString("reprint/rprtbillamd", doc);
+            final String reprintBillhse = xmlHelper.getString("reprint/rprtbillhse", billTextNode);
+            final Integer rprtBillno = xmlHelper.getInteger("reprint/rprtbillno",billTextNode);
+            final String rprtVersion = xmlHelper.getString("reprint/rprtbillamd", billTextNode);
             if ( !reprintBillhse.isEmpty() ) {reprinted = true;}
             //File Print number
             final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
