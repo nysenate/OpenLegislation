@@ -1574,7 +1574,22 @@ md-dialog.issuedialog {
   text-align: center;
   float: right;
   margin-top: -20px;
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  $alert-info-saved-transition-in: visibility 2s, opacity 2s cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  -webkit-transition: $alert-info-saved-transition-in;
+  -moz-transition: $alert-info-saved-transition-in;
+  -o-transition: $alert-info-saved-transition-in;
+  transition: $alert-info-saved-transition-in;
+  &.saved {
+    opacity:1;
+    visibility: visible;
+    $alert-info-saved-transition-out: opacity 0s;
+    -webkit-transition: $alert-info-saved-transition-out;
+    -moz-transition: $alert-info-saved-transition-out;
+    -o-transition: $alert-info-saved-transition-out;
+    transition: $alert-info-saved-transition-out;
+  }
 }
 
 #spotcheck-report-page {

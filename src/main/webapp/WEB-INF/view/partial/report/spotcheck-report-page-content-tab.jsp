@@ -68,8 +68,8 @@
                    ng-model="mismatch.issueInput"
                    ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)"
                    ng-blur="updateIssue(mismatch)">
+            <div class="report-page-toast" ng-class="{'saved': mismatch.issueSaved}">Saved</div>
           </md-input-container>
-          <div ng-attr-id="report-page-toast{{mismatch.id}}" class="report-page-toast">Saved</div>
         </div>
         <div class="spotcheck-col-source">{{mismatch.refTypeLabel}}</div>
       </div>

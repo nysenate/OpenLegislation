@@ -1,12 +1,15 @@
 angular.module('open.spotcheck')
     .controller('SpotcheckReportCtrl',
-        ['$scope', '$route', '$location', '$routeParams', '$mdDialog', '$mdDateLocale', 'PaginationModel', 'SpotcheckMismatchApi',
-            'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI', 'SpotcheckMismatchTrackingAPI', 'SpotcheckMismatchDeleteAllAPI',
+        ['$scope', '$route', '$location', '$routeParams', '$mdDialog', '$mdDateLocale', '$timeout',
+            'PaginationModel', 'SpotcheckMismatchApi',
+            'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI',
+            'SpotcheckMismatchTrackingAPI', 'SpotcheckMismatchDeleteAllAPI',
             'SpotcheckMismatchDeleteAllAPI', ReportCtrl])
 ;
 
-function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateLocale, paginationModel, spotcheckMismatchApi,
-                    mismatchSummaryApi, mismatchIgnoreApi, spotcheckMismatchTrackingAPI, spotcheckMismatchDeleteAllAPI) {
+function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateLocale, $timeout,
+                    paginationModel, spotcheckMismatchApi, mismatchSummaryApi, mismatchIgnoreApi,
+                    spotcheckMismatchTrackingAPI, spotcheckMismatchDeleteAllAPI) {
 
     const dateFormat = 'YYYY-MM-DD';
     const isoFormat = 'YYYY-MM-DDTHH:mm:ss';
@@ -304,10 +307,10 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
             promise = spotcheckMismatchTrackingAPI.save(params).$promise;
         }
         function onSuccess () {
-            console.log('saved');
-            var toastSel = '#report-page-toast' + mismatch.id;
-            $(toastSel).fadeIn("5000");
-            $(toastSel).fadeOut("slow");
+            mismatch.issueSaved = true;
+            $timeout(function () {  // toggle the saved flag to trigger css transition
+                mismatch.issueSaved = false;
+            });
             mismatch.issue = mismatch.issueInput;
         }
         function onFail (resp) {
