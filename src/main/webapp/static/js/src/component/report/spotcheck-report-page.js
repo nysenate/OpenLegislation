@@ -162,6 +162,15 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
         $scope.pagination.currPage = $scope.currentPage;
     };
 
+    $scope.currentDay = function () {
+        return !(moment($scope.date).isValid && moment().isAfter($scope.date, 'day'));
+    };
+
+    $scope.jumpToToday = function () {
+        $scope.pickedDate = new Date();
+        $scope.onDateChange();
+    };
+
     /* --- Content update functions --- */
 
     $scope.updateMismatchStatusSummary = function () {
