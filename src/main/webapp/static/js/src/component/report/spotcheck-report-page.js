@@ -282,23 +282,39 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     // update mismatch's issues, issue splits by comma
     $scope.updateIssue = function (mismatch) {
-        if (mismatch.issue == "") { // if issue is empty, then clear all related issues
-            var params = {
-                mismatchId: mismatch.id
-            };
-            spotcheckMismatchDeleteAllAPI.delete(params, function (response) {
-            })
+        var strippedInput = (mismatch.issueInput || '').replace(/\s/g, '');
+        var strippedIssue = (mismatch.issue || '').replace(/\s/g, '');
+
+        if (strippedInput === strippedIssue) {
+            // do nothing if the input issue id is not different from the existing issue id
+            return;
+        }
+
+        var params = {
+            mismatchId: mismatch.id,
+            issueId: mismatch.issueInput
+        };
+        var promise = null;
+        if (strippedInput.length === 0) {
+            // if issue is empty, then clear all related issues
+            promise = spotcheckMismatchDeleteAllAPI.delete(params).$promise;
         }
         else {
-            var params = { // update issue
-                mismatchId: mismatch.id,
-                issueId: mismatch.issue
-            };
-            spotcheckMismatchTrackingAPI.save(params, function (response) {
-            })
+            // otherwise save the issue id
+            promise = spotcheckMismatchTrackingAPI.save(params).$promise;
         }
-        $('#report-page-toast' + mismatch.id).fadeIn("5000");
-        $('#report-page-toast' + mismatch.id).fadeOut("slow");
+        function onSuccess () {
+            console.log('saved');
+            var toastSel = '#report-page-toast' + mismatch.id;
+            $(toastSel).fadeIn("5000");
+            $(toastSel).fadeOut("slow");
+            mismatch.issue = mismatch.issueInput;
+        }
+        function onFail (resp) {
+            console.error('Error updating issue id:', resp)
+        }
+
+        promise.then(onSuccess, onFail);
     };
 
     $scope.formatDate = function (date) {

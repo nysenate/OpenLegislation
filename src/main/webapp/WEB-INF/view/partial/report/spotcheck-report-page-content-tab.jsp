@@ -65,7 +65,7 @@
             <input type="text"
                    title="Assign an issue id to this mismatch"
                    aria-label="Assign an issue id to this mismatch"
-                   ng-model="mismatch.issue"
+                   ng-model="mismatch.issueInput"
                    ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)"
                    ng-blur="updateIssue(mismatch)">
           </md-input-container>

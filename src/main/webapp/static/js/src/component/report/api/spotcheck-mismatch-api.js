@@ -51,6 +51,7 @@ function spotcheckMismatchApi($resource) {
             referenceDate: parseReferenceDate(mismatch),
             reportDate: parseReportDate(mismatch),
             issue: parseIssues(mismatch),
+            issueInput: parseIssues(mismatch),
             refTypeLabel: parseRefTypeLabel(mismatch),
             refType: parseRefType(mismatch),
             bill: parseBill(mismatch),
