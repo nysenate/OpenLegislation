@@ -75,6 +75,11 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
     public SponsorView getSponsor() {
         return sponsor;
     }
+
+    public BaseBillIdView getReprintOf() {
+        return reprintOf;
+    }
+
     /**
      * Use by jackson serialization
      * @param date the date in String form
