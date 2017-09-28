@@ -49,7 +49,7 @@ public enum AssemblyCommitteeCode {
 
     public String getCommittee() {return this.committee;}
 
-    public AssemblyCommitteeCode findSenateCommittee(int committeeNumber) {
+    public AssemblyCommitteeCode findAssemblyCommittee(int committeeNumber) {
         AssemblyCommitteeCode requestedCommittee;
         switch(committeeNumber) {
             case 3: requestedCommittee = BANKS;
