@@ -68,7 +68,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
             "UNION ALL \n" +
             "SELECT 'EXISTING', count(*) \n" +
             "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
-            "WHERE observed_date_time BETWEEN :sessionStartDateTime AND :reportStartDateTime \n" +
+            "WHERE first_seen_date_time < :reportStartDateTime \n" +
             "  AND state = 'OPEN' \n" +
             "  AND content_type = :contentType\n" +
             "  AND ignore_status IN (:ignoreStatuses) \n"
