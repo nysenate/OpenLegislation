@@ -113,7 +113,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
                     case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
                     case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment); break;
+                    case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment, sobiFragment); break;
                     case SAME_AS: applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
                     case SPONSOR: applySponsor(data, baseBill, specifiedAmendment, date); break;
                     case CO_SPONSOR: applyCosponsors(data, baseBill); break;
@@ -279,7 +279,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
      * @see BillActionParser
      * @throws ParseError
      */
-    private void applyBillActions(String data, Bill baseBill, BillAmendment specifiedAmendment)
+    private void applyBillActions(String data, Bill baseBill, BillAmendment specifiedAmendment, SobiFragment fragment)
                                 throws ParseError {
         // Use the BillActionParser to convert the actions string into objects.
         List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
@@ -298,6 +298,13 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
         baseBill.setMilestones(analyzer.getMilestones());
         baseBill.setPastCommittees(analyzer.getPastCommittees());
         baseBill.setPublishStatuses(analyzer.getPublishStatusMap());
+        // Ensure that amendments exist for all versions in the publish status map
+        baseBill.getAmendPublishStatusMap().keySet().forEach(version ->
+                getOrCreateBaseBill(
+                        fragment.getPublishedDateTime(),
+                        baseBill.getBaseBillId().withVersion(version),
+                        fragment)
+        );
         analyzer.getSameAsMap().forEach((k, v) -> {
             if (baseBill.hasAmendment(k)) {
                 baseBill.getAmendment(k).setSameAs(Sets.newHashSet(v));
