@@ -191,7 +191,23 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseCalNo(mismatch) {
-        return mismatch.key.calNo || "";
+        var calNo = mismatch.key.calNo;
+        if(!calNo) {
+            return "";
+        }
+
+        switch (mismatch.key.type) {
+            case 'FLOOR_CALENDAR':
+                return calNo + 'Floor';
+            case 'SUPPLEMENTAL_CALENDAR':
+                return calNo + mismatch.key.version;
+            case 'ACTIVE_LIST':
+                return calNo + '-' + mismatch.key.sequenceNo;
+            default:
+                console.error('Could not parse calendar no for mismatch:', mismatch);
+                return 'Error';
+        }
+
     }
 
     function parseAgendaNo(mismatch) {
