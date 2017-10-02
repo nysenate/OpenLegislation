@@ -124,6 +124,9 @@ public class BillTextUtils
     public static String parseHTMLtext(String htmlText)    {
 
         Document doc = Jsoup.parse(htmlText);
+        if (doc.select("pre").size() == 0) {
+            return htmlText;
+        }
         Elements preTag = doc.select("pre");
 
         StringBuilder textBuilder = new StringBuilder();
