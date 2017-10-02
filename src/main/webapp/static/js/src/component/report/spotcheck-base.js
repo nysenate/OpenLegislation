@@ -75,20 +75,12 @@ spotcheckModule.directive('mismatchDiff', ['$timeout', function($timeout){
 }]);
 
 spotcheckModule.filter('contentUrl', function() {
-    var contentTypeUrlMap = {
-        LBDC_DAYBREAK: getBaseBillUrl,
-        LBDC_SCRAPED_BILL: getBaseBillUrl,
-        SENATE_SITE_BILLS: getBillAmendmentUrl,
-        LBDC_AGENDA_ALERT: getAgendaUrl,
-        LBDC_CALENDAR_ALERT: getCalendarUrl,
-        SENATE_SITE_CALENDAR: getCalListUrl
+    var contentTypeUrlFns = {
+        'AGENDA': getAgendaUrl,
+        'BILL': getBillUrl,
+        'CALENDAR': getCalendarUrl
     };
-    function getBaseBillUrl(key) {
-        return ctxPath + "/bills/" + key.session.year + "/" + key.basePrintNo;
-    }
-    function getBillAmendmentUrl(key) {
-        return getBaseBillUrl(key) + "?version=" + key.version;
-    }
+
     function getAgendaUrl(key) {
         if (key.agendaId.year > 0) {
             return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
@@ -99,16 +91,32 @@ spotcheckModule.filter('contentUrl', function() {
         }
         return "";
     }
+    function getBillUrl(key) {
+        var url = ctxPath + "/bills/" + key.session.year + "/" + key.basePrintNo;
+        if (key.hasOwnProperty('version')) {
+            url += '?version=';
+        }
+        return url;
+    }
     function getCalendarUrl(key) {
-        return ctxPath + "/calendars/" +  key.year + "/" + key.calNo;
+        var url = ctxPath + "/calendars/" +  key.year + "/" + key.calNo;
+        if (key.hasOwnProperty('type')) {
+            switch (key.type) {
+                case 'ACTIVE_LIST':
+                    url += '?view=active-list';
+                    break;
+                case 'FLOOR_CALENDAR':
+                case 'SUPPLEMENTAL_CALENDAR':
+                    url += '?view=floor';
+                    break;
+            }
+        }
+        return url;
     }
 
-    function getCalListUrl(key){
-        return getCalendarUrl(key)+ (key.type==='ALL' ? "?view=" + (key.type==='ACTIVE_LIST' ? "active-list": "floor") : "");
-    }
-    return function(key, reportType) {
-        if (contentTypeUrlMap.hasOwnProperty(reportType)) {
-            return contentTypeUrlMap[reportType](key);
+    return function(key, contentType) {
+        if (contentTypeUrlFns.hasOwnProperty(contentType)) {
+            return contentTypeUrlFns[contentType](key);
         }
         return "";
     }

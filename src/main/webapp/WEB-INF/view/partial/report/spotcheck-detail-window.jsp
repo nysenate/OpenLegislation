@@ -55,7 +55,7 @@
                  <span>{{com[0]}}</span>
                </a>
                <a ng-if="currentMismatch.datasource === 'NYSENATE'"
-                  ng-href="{{currentMismatch.key | contentUrl:currentMismatch.refType}}" target="_blank" style="color: lightblue;">
+                  ng-href="{{currentMismatch.key | contentUrl:currentMismatch.contentType}}" target="_blank" style="color: lightblue;">
                  <span>{{com[0]}}</span>
                </a>
             </div>
@@ -68,7 +68,7 @@
           <div layout="column" flex="45" id="mismatch-diff-right-side" class="scrollable">
             <div class="mismatch-ref-source-color align-text-hor-vert-center white-text-color">
               <a ng-if="currentMismatch.datasource === 'LBDC'"
-                 ng-href="{{currentMismatch.key | contentUrl:currentMismatch.refType}}" target="_blank" style="color: lightblue;">
+                 ng-href="{{currentMismatch.key | contentUrl:currentMismatch.contentType}}" target="_blank" style="color: lightblue;">
                 <span>{{com[1]}}</span>
               </a>
                <a ng-if="currentMismatch.datasource === 'NYSENATE'"
