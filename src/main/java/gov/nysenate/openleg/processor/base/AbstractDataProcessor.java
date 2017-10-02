@@ -24,6 +24,7 @@ import gov.nysenate.openleg.service.agenda.event.BulkAgendaUpdateEvent;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
+import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
@@ -307,13 +308,20 @@ public abstract class AbstractDataProcessor
         billAmendment.getSameAs().forEach(uniBillId -> {
             Bill uniBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), uniBillId, sobiFragment);
             BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
+            BaseBillId updatedBillId = null;
             // If this is the senate bill amendment, copy text to the assembly bill amendment
             if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
                 uniBillAmend.setFullText(billAmendment.getFullText());
+                updatedBillId = uniBillAmend.getBaseBillId();
             }
             // Otherwise copy the text to this assembly bill amendment
             else if (!uniBillAmend.getFullText().isEmpty()) {
                 billAmendment.setFullText(uniBillAmend.getFullText());
+                updatedBillId = billAmendment.getBaseBillId();
+            }
+            if (updatedBillId != null) {
+                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
+                        updatedBillId, BillUpdateField.FULLTEXT));
             }
         });
     }
