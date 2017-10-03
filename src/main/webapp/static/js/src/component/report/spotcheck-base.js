@@ -85,10 +85,6 @@ spotcheckModule.filter('contentUrl', function() {
         if (key.agendaId.year > 0) {
             return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
         }
-        if (key.agendaId.year == -1) {
-            return "http://open.nysenate.gov/legislation/meeting/" + key.committeeId.name.replace(/[ ,]+/g, '-') + '-' +
-                moment(key.agendaId.number).format('MM-DD-YYYY');
-        }
         return "";
     }
     function getBillUrl(key) {
@@ -123,24 +119,52 @@ spotcheckModule.filter('contentUrl', function() {
 });
 
 spotcheckModule.filter('referenceUrl', function() {
+    // multi-map of url generating functions by datasource and content type
+    var refUrlFns = {
+        LBDC: {
+            BILL: getLrsBillUrl
+        },
+        NYSENATE: {
+            AGENDA: getSenSiteAgendaUrl,
+            BILL: getSenSiteBillUrl,
+            CALENDAR: getSenSiteCalendarUrl
+        }
+    };
+
     return function(key, datasource, contentType) {
-        if (datasource === 'LBDC') {
-            return "http://leginfo.state.ny.us";
+        // Get a url function for the given datasource and content type, if it exists
+        var refUrlFn = (refUrlFns[datasource] || {})[contentType];
+        if (refUrlFn) {
+            return refUrlFn(key);
         }
-        else {
-            // NYSenate datasource
-            if (contentType === 'BILL') {
-                return "https://www.nysenate.gov/legislation/bills/" + key.session.year + "/" + key.printNo;
-            }
-            if (contentType === 'AGENDA') {
-                // TODO Need meeting date time to create link.
-                // Example: https://www.nysenate.gov/calendar/meetings/codes/january-23-2017/codes-meeting
-                return "http://nysenate.gov/calendar/meetings/" + key.committeeId.name + "/";
-            }
-            if (contentType === 'CALENDAR') {
-                // TODO Need session date time to create link.
-                // Example: https://www.nysenate.gov/calendar/sessions/june-05-2017/session-6-5-17
-            }
+        return null;
+    };
+
+    function getLrsBillUrl(key) {
+        return "http://public.leginfo.state.ny.us/navigate.cgi" +
+            "?NVDTO:=&QUERYTYPE=BILLNO&CBTEXT=Y&CBSPONMEMO=Y" +
+            "&SESSYR=" + key.session.year +
+            "&QUERYDATA=" + key.printNo;
+    }
+
+    function getSenSiteAgendaUrl(key) {
+        // TODO Need meeting date time to create link.
+        // Example: https://www.nysenate.gov/calendar/meetings/codes/january-23-2017/codes-meeting
+        // return senSitePath + "/calendar/meetings/" + key.committeeId.name + "/";
+        return null;
+    }
+
+    function getSenSiteBillUrl(key) {
+        var billType = "bills";
+        if (!/^[SA]/i.test(key.printNo)) {
+            billType = "resolutions";
         }
+        return senSitePath + "/legislation/" + billType + "/" + key.session.year + "/" + key.printNo;
+    }
+
+    function getSenSiteCalendarUrl(key) {
+        // TODO Need session date time to create link.
+        // Example: https://www.nysenate.gov/calendar/sessions/june-05-2017/session-6-5-17
+        return null;
     }
 });
