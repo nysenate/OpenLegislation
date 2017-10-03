@@ -45,7 +45,6 @@ function spotcheckMismatchApi($resource) {
             contentType: mismatch.contentType,
             status: parseStatus(mismatch),
             datasource: mismatch.dataSource,
-            disableDiff: parseDisableDiff(mismatch),
             mismatchType: parseMismatchType(mismatch),
             observedDate: parseObservedDate(mismatch),
             referenceDate: parseReferenceDate(mismatch),
@@ -65,15 +64,6 @@ function spotcheckMismatchApi($resource) {
             diffLoading: false,
             agendaNo: parseAgendaNo(mismatch),
             committee: parseCommittee(mismatch)
-        }
-    }
-
-    function parseDisableDiff(mismatch) {
-        if (mismatch.mismatchType == "REFERENCE_DATA_MISSING" || mismatch.mismatchType == "OBSERVE_DATA_MISSING") {
-            return true;
-        }
-        else{
-            return false;
         }
     }
 

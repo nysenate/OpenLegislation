@@ -75,8 +75,7 @@
       </div>
       <div class="spotcheck-table-buttons">
         <md-button class="md-raised rounded-corner-button"
-                   ng-click="showDetailedDiff(mismatch)"
-                   ng-disabled ="mismatch.disableDiff">
+                   ng-click="showDetailedDiff(mismatch)">
           <div ng-show="mismatch.diffLoading === false">Diff</div>
           <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around">
             <md-progress-circular  md-diameter="25px" md-mode="indeterminate" class="md-accent"></md-progress-circular>
