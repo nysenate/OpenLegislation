@@ -81,6 +81,13 @@ spotcheckModule.filter('contentUrl', function() {
         'CALENDAR': getCalendarUrl
     };
 
+    return function(key, contentType) {
+        if (contentTypeUrlFns.hasOwnProperty(contentType)) {
+            return contentTypeUrlFns[contentType](key);
+        }
+        return "";
+    };
+
     function getAgendaUrl(key) {
         if (key.agendaId.year > 0) {
             return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
@@ -90,7 +97,7 @@ spotcheckModule.filter('contentUrl', function() {
     function getBillUrl(key) {
         var url = ctxPath + "/bills/" + key.session.year + "/" + key.basePrintNo;
         if (key.hasOwnProperty('version')) {
-            url += '?version=';
+            url += '?version=' + key.version;
         }
         return url;
     }
@@ -108,13 +115,6 @@ spotcheckModule.filter('contentUrl', function() {
             }
         }
         return url;
-    }
-
-    return function(key, contentType) {
-        if (contentTypeUrlFns.hasOwnProperty(contentType)) {
-            return contentTypeUrlFns[contentType](key);
-        }
-        return "";
     }
 });
 
