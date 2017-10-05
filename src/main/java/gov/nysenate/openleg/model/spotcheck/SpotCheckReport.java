@@ -1,14 +1,12 @@
 package gov.nysenate.openleg.model.spotcheck;
 
-import com.google.common.collect.*;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
 
 /**
  * A SpotCheckReport is basically a collection of observations that have 1 or more mismatches associated
@@ -184,10 +182,7 @@ public class SpotCheckReport<ContentKey>
      * @param missingKey ContentKey - id of the missing data
      */
     public void addRefMissingObs(ContentKey missingKey) {
-        SpotCheckObservation<ContentKey> observation =
-                new SpotCheckObservation<>(reportId.getReferenceId(), missingKey);
-        observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, missingKey, ""));
-        this.addObservation(observation);
+        this.addObservation(SpotCheckObservation.getRefMissingObs(reportId.getReferenceId(), missingKey));
     }
 
     /**
@@ -195,10 +190,7 @@ public class SpotCheckReport<ContentKey>
      * @param missingKey ContentKey - id of the missing data
      */
     public void addObservedDataMissingObs(ContentKey missingKey) {
-        SpotCheckObservation<ContentKey> observation =
-                new SpotCheckObservation<>(reportId.getReferenceId(), missingKey);
-        observation.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, "", missingKey));
-        this.addObservation(observation);
+        this.addObservation(SpotCheckObservation.getObserveDataMissingObs(reportId.getReferenceId(), missingKey));
     }
 
     /** --- Delegates --- */

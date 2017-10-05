@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
+
 /**
  * A SpotCheckObservation is the result of performing a SpotCheck against some reference data. It contains
  * any mismatches that were detected between the reference content and the observed content.
@@ -44,6 +47,34 @@ public class SpotCheckObservation<ContentKey>
         this.referenceId = referenceId;
         this.key = key;
         this.observedDateTime = LocalDateTime.now();
+    }
+
+    /**
+     * Generates an observation with a reference data missing observation
+     * @param referenceId {@link SpotCheckReferenceId}
+     * @param key {@link ContentKey}
+     * @param <ContentKey>
+     * @return {@link SpotCheckObservation}
+     */
+    public static <ContentKey> SpotCheckObservation<ContentKey> getRefMissingObs(
+            SpotCheckReferenceId referenceId, ContentKey key) {
+        SpotCheckObservation<ContentKey> obs = new SpotCheckObservation<>(referenceId, key);
+        obs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, key, ""));
+        return obs;
+    }
+
+    /**
+     * Generates an observation with an observed data missing observation
+     * @param referenceId {@link SpotCheckReferenceId}
+     * @param key {@link ContentKey}
+     * @param <ContentKey>
+     * @return {@link SpotCheckObservation}
+     */
+    public static <ContentKey> SpotCheckObservation<ContentKey> getObserveDataMissingObs(
+            SpotCheckReferenceId referenceId, ContentKey key) {
+        SpotCheckObservation<ContentKey> obs = new SpotCheckObservation<>(referenceId, key);
+        obs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, "", key));
+        return obs;
     }
 
     /** --- Methods --- */
