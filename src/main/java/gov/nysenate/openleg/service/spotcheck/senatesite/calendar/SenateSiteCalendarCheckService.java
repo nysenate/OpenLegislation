@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.calendar;
 
+import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.calendar.CalendarEntryView;
+import gov.nysenate.openleg.client.view.calendar.CalendarSupView;
 import gov.nysenate.openleg.client.view.calendar.CalendarView;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -80,15 +83,16 @@ public class SenateSiteCalendarCheckService
 
     private void checkSupplemental(CalendarView content, SenateSiteCalendar reference,
                                    SpotCheckObservation<CalendarEntryListId> observation) {
-        List<CalendarEntryView> calendarSupEntryViews = content
-                .getSupplementalCalendars()
+        String version = reference.getVersion().getValue();
+        CalendarSupView calendarSupView = content.getSupplementalCalendars().getItems().get(version);
+        List<CalendarEntryView> calendarEntryViews = calendarSupView.getEntriesBySection()
                 .getItems().values().stream()
-                .flatMap(calendarSupView -> calendarSupView.getEntriesBySection().getItems().values().stream())
-                .flatMap(contents -> contents.getItems().stream())
-                .map(calendarSupEntryView -> (CalendarEntryView) calendarSupEntryView).collect(Collectors.toList());
+                .map(ListView::getItems)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
 
         List<CalendarEntryView> refcalendarEntryViews = getCalEntryViews(reference);
-        checkCollection(calendarSupEntryViews, refcalendarEntryViews,
+        checkCollection(calendarEntryViews, refcalendarEntryViews,
                 observation, SpotCheckMismatchType.SUPPLEMENTAL_ENTRY,
                 this::calEntryViewDiffString, "\n");
     }
