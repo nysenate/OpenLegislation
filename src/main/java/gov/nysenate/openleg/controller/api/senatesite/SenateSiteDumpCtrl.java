@@ -8,10 +8,9 @@ import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceEvent;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
-import gov.nysenate.openleg.util.AsyncRunner;
+import gov.nysenate.openleg.util.AsyncUtils;
 import gov.nysenate.openleg.util.SenateSiteDumpFragParser;
 import gov.nysenate.openleg.util.SenateSiteDumpFragParser.SenateSiteDumpFragParserException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -32,7 +31,7 @@ public class SenateSiteDumpCtrl extends BaseCtrl {
     private static final Logger logger = LoggerFactory.getLogger(SenateSiteDumpCtrl.class);
 
     @Autowired private SenateSiteDao senateSiteDao;
-    @Autowired private AsyncRunner asyncRunner;
+    @Autowired private AsyncUtils asyncUtils;
     @Autowired private EventBus eventBus;
     @Autowired private SenateSiteDumpFragParser parser;
 
@@ -66,7 +65,7 @@ public class SenateSiteDumpCtrl extends BaseCtrl {
             logger.error("Error while saving senate site dump fragment " + fragment.toString(), ex);
             return false;
         }
-        asyncRunner.run(() ->
+        asyncUtils.run(() ->
                 eventBus.post(new SpotCheckReferenceEvent(fragment.getDumpId().getRefType())));
         return true;
     }

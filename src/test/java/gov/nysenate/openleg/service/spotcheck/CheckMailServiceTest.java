@@ -4,7 +4,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.service.spotcheck.base.CheckMailService;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakCheckMailService;
-import gov.nysenate.openleg.util.AsyncRunner;
+import gov.nysenate.openleg.util.AsyncUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,8 @@ public class CheckMailServiceTest extends BaseTests{
     private DaybreakCheckMailService daybreakCheckMailService;
 
     @Autowired private List<CheckMailService> checkMailServices;
-    @Autowired AsyncRunner asyncRunner;
+    @Autowired
+    AsyncUtils asyncUtils;
 
     @Test
     public void checkMailTest() {

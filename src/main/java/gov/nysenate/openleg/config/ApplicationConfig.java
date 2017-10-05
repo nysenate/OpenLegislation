@@ -27,6 +27,8 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
@@ -35,15 +37,18 @@ import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.interceptor.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import java.net.InetSocketAddress;
 import java.util.Calendar;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Configuration
 @EnableCaching
-public class ApplicationConfig implements CachingConfigurer
+public class ApplicationConfig implements CachingConfigurer, SchedulingConfigurer, AsyncConfigurer
 {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
@@ -143,8 +148,38 @@ public class ApplicationConfig implements CachingConfigurer
             logger.error("Async Event Bus Exception thrown during event handling within {}: {}, {}",
                     context.getSubscriberMethod(), exception, ExceptionUtils.getStackTrace(exception));
         };
-        ExecutorService executor = Executors.newCachedThreadPool(new OpenlegThreadFactory("async-eventbus"));
-        return new AsyncEventBus(executor, errorHandler);
+        return new AsyncEventBus(getAsyncExecutor(), errorHandler);
+    }
+
+    /* --- Threadpool/Async/Scheduling Configuration --- */
+
+    @Bean(name = "taskScheduler", destroyMethod = "shutdown")
+    public ThreadPoolTaskScheduler getTaskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setThreadFactory(new OpenlegThreadFactory("scheduler"));
+        scheduler.setPoolSize(8);
+        scheduler.initialize();
+        return scheduler;
+    }
+
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        taskRegistrar.setScheduler(getTaskScheduler());
+    }
+
+    @Override
+    @Bean(name = "openlegAsync", destroyMethod = "shutdown")
+    public ThreadPoolTaskExecutor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setThreadFactory(new OpenlegThreadFactory("spring-async"));
+        executor.setCorePoolSize(10);
+        executor.initialize();
+        return executor;
+    }
+
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return new SimpleAsyncUncaughtExceptionHandler();
     }
 
     /** --- Object Mapper --- */
