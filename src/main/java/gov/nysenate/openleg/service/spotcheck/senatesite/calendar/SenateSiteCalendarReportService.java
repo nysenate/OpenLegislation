@@ -41,7 +41,7 @@ public class SenateSiteCalendarReportService extends BaseSpotCheckReportService<
     private static final Logger logger = LoggerFactory.getLogger(SenateSiteCalendarReportService.class);
 
     @Autowired private SenateSiteDao senateSiteDao;
-    @Autowired private CalendarCheckServices calendarCheckServices;
+    @Autowired private SenateSiteCalendarCheckService senateSiteCalendarCheckService;
     @Autowired private CalendarJsonParser calendarJsonParser;
     @Autowired private CalendarUpdatesDao calendarUpdatesDao;
     @Autowired private CalendarDataService calendarDataService;
@@ -112,7 +112,7 @@ public class SenateSiteCalendarReportService extends BaseSpotCheckReportService<
                 }
                 // Remove calendar from senate site calendar map and check
                 SenateSiteCalendar senateSiteCalendar = senSiteCalMap.remove(entryListId);
-                report.addObservation(calendarCheckServices.check(olCalendar, senateSiteCalendar));
+                report.addObservation(senateSiteCalendarCheckService.check(olCalendar, senateSiteCalendar));
             }
         }
 
