@@ -63,10 +63,10 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         report.setNotes(billDump.getDumpId().getNotes());
         try {
 
-            logger.info("getting bill updates");
+            logger.info("getting openleg billids for session {}", dumpId.getSession());
 
-            // Get reference bills using the bill dump update interval
-            Set<BaseBillId> updatedBillIds = getBillUpdatesDuring(billDump);
+            // Get reference billids
+            Set<BaseBillId> updatedBillIds = getBillIdsForSession(billDump);
             logger.info("got {} updated bill ids", updatedBillIds.size());
             Map<BaseBillId, Bill> updatedBills = new LinkedHashMap<>();
             logger.info("retrieving bills");
@@ -115,14 +115,13 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
     }
 
     /**
-     * Gets a set of bill ids that were updated during the update interval specified by the bill dump
+     * Gets a set of all openleg bill ids for the session of the given dump
      *
      * @param billDump SenateSiteBillDump
      * @return Set<Bill>
      */
-    private Set<BaseBillId> getBillUpdatesDuring(SenateSiteDump billDump) {
+    private Set<BaseBillId> getBillIdsForSession(SenateSiteDump billDump) {
         SenateSiteDumpId dumpId = billDump.getDumpId();
-        logger.info("Getting Openleg Bills for session: {}", dumpId.getSession());
         return new TreeSet<>(
                 billDataService.getBillIds(dumpId.getSession(), LimitOffset.ALL)
         );
