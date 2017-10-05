@@ -1,8 +1,7 @@
 
 <%-- Intended for use within SpotcheckReportCtrl --%>
 <md-tab ng-cloak label="{{title}} ({{mismatchContentTypeSummary.summary.items[type]}})"
-        md-on-deselect="onTabChange()"
-        ng-disabled="mismatchContentTypeSummary.summary.items[type] == 0">
+        md-on-deselect="onTabChange()">
 
   <div class="spotcheck-report-control-bar spotcheck-report-inner-controls">
     <select ng-model="mismatchStatusSummary.selected" ng-change="onStatusChange()">
