@@ -159,7 +159,10 @@ spotcheckModule.filter('referenceUrl', function() {
         if (!/^[SA]/i.test(key.printNo)) {
             billType = "resolutions";
         }
-        return senSitePath + "/legislation/" + billType + "/" + key.session.year + "/" + key.printNo;
+        var amendment = key.version === "DEFAULT"
+            ? "original" : key.version;
+        return senSitePath + "/legislation/" + billType + "/" +
+            key.session.year + "/" + key.basePrintNo + "/amendment/" + amendment;
     }
 
     function getSenSiteCalendarUrl(key) {
