@@ -180,6 +180,10 @@ spotcheck.alert.grace.period = 30
 # text updates and spotcheck mismatches (Default: true)
 bill.scrape.queue.enabled = true
 
+# Enables periodic checking for email spotcheck references
+# e.g. Daybreaks, agenda/calendar alerts
+spotcheck.checkmail.enabled = true
+
 # --- Mail Configuration ------------------------------------------------------
 
 # Connection information for the mail account that receives daybreak emails

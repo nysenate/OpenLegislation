@@ -87,6 +87,9 @@ public class Environment
     /** Allows bills to be automatically added to the scrape queue if true */
     @Value("${bill.scrape.queue.enabled}") private boolean billScrapeQueueEnabled;
 
+    /** Enables periodic checking for email spotcheck references */
+    @Value("${spotcheck.checkmail.enabled:true}") private boolean checkmailEnabled;
+
     /** --- Email Settings --- */
 
     /** Imaps host, username, and password for the application's email account*/
@@ -341,5 +344,13 @@ public class Environment
 
     public void setSenSiteUrl(String senSiteUrl) {
         this.senSiteUrl = senSiteUrl;
+    }
+
+    public boolean isCheckmailEnabled() {
+        return checkmailEnabled;
+    }
+
+    public void setCheckmailEnabled(boolean checkmailEnabled) {
+        this.checkmailEnabled = checkmailEnabled;
     }
 }
