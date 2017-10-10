@@ -87,7 +87,6 @@ public class DataProcessor
                 doRun();
             }
 
-            logger.info("Exiting data processor.");
             return currentRun;
         }
         else {
@@ -206,6 +205,7 @@ public class DataProcessor
             logger.error("Unexpected Processing Error:\n{}", ExceptionUtils.getStackTrace(ex));
         }
         processLogService.finishRun(currentRun);
+        logger.info("Exiting data processor.");
     }
 
     private void logCounts(Map<String, Integer> counts) {
