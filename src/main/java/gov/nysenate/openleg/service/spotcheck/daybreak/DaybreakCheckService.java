@@ -2,15 +2,19 @@ package gov.nysenate.openleg.service.spotcheck.daybreak;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
-import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.*;
-import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillSponsor;
 import gov.nysenate.openleg.model.entity.SessionMember;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
-import gov.nysenate.openleg.service.spotcheck.base.SpotcheckMismatchEvent;
 import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -21,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -37,14 +40,6 @@ public class DaybreakCheckService implements SpotCheckService<BillId, Bill, Dayb
 
     @Autowired
     protected DaybreakDao daybreakDao;
-
-    @Autowired
-    protected EventBus eventBus;
-
-    @PostConstruct
-    public void init() {
-        eventBus.register(this);
-    }
 
     /** --- Implemented Methods --- */
 
@@ -136,7 +131,6 @@ public class DaybreakCheckService implements SpotCheckService<BillId, Bill, Dayb
             SpotCheckMismatch pageCountMismatch = new SpotCheckMismatch(BILL_FULLTEXT_PAGE_COUNT, billPageCounts.toString(), daybreakPageCounts.toString()
             );
             obsrv.addMismatch(pageCountMismatch);
-            eventBus.post(new SpotcheckMismatchEvent<>(LocalDateTime.now(), bill.getBaseBillId(), pageCountMismatch));
         }
     }
 
