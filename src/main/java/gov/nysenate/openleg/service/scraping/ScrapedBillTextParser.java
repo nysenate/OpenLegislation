@@ -50,17 +50,18 @@ public class ScrapedBillTextParser {
             Document document = Jsoup.parse(file, "UTF-8");
             // If the scraped page indicates the bill was not found, return a "not found" bill text reference
             if (billNotFound(document)) {
-                return new BillTextReference(baseBillId, referenceDateTime, FileUtils.readFileToString(file), "", true);
+                return BillTextReference.getErrorBtr(baseBillId, referenceDateTime,
+                        FileUtils.readFileToString(file));
             }
             try {
                 // Get the active amendment id, full text and memo
                 BillId billId = getBillId(document, baseBillId.getSession());
                 String text = getText(document, baseBillId);
                 String memo = getMemo(document, baseBillId);
-                return new BillTextReference(billId, referenceDateTime, text, memo, false);
+                return new BillTextReference(billId, referenceDateTime, text, memo);
             } catch (ParseError ex) {
-//                throw new ParseError("Error while parsing scraped bill: " + file.getName(), ex);
-                return new BillTextReference(baseBillId, referenceDateTime, "", "", true);
+                return BillTextReference.getErrorBtr(baseBillId, referenceDateTime,
+                        FileUtils.readFileToString(file));
             }
         }
         throw new ParseError("Could not parse scraped bill filename: " + file.getName());
