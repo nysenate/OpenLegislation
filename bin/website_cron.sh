@@ -17,6 +17,7 @@
 # Revised: 2017-02-09 - Added --maint option to run Drupal maintenance tasks
 # Revised: 2017-08-14 - Added --update-statutes to update all statutes
 # Revised: 2017-08-24 - Modified --qa option to use spotcheck-dump drush command
+# Revised: 2017-10-10 - Added --accum option to run Drupal accumulator integrity
 #
 
 PATH=$PATH:/usr/local/bin
@@ -26,7 +27,7 @@ prog=`basename $0`
 penv=$DEFAULT_ENV
 
 usage() {
-  echo "Usage: $prog [--qa | --maint | --update-statutes | --disqus] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
+  echo "Usage: $prog [--qa | --maint | --accum | --update-statutes | --disqus] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
   echo "  where 'environ' is typically one of: live, test, dev" >&2
 }
 
@@ -45,6 +46,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --qa) mode=qa ;;
     --maint) mode=maint ;;
+    --accum) mode=accum ;;
     --update-statutes|--uas) mode=uas ;;
     --disqus) mode=disqus ;;
     --arg) shift; drush_args="$drush_args $1" ;;
@@ -105,6 +107,11 @@ elif [ "$mode" = "maint" ]; then
   run_module_cron $penv xmlsitemap
   run_module_cron $penv xmlsitemap_engines
   run_module_cron $penv rules
+
+elif [ "$mode" = "accum" ]; then
+
+  echo "About to run website accumulator integrity check"
+  pdrush @$penv accumulator-integrity all
 
 elif [ "$mode" = "uas" ]; then
 
