@@ -155,6 +155,9 @@ public abstract class SqlBaseDao
 
     /**
      * Converts a hstore string into a mapping of the hstore key value pairs.
+     * FIXME This method seems to have the potential to alter hstore values that contain commas
+     * FIXME e.g. "Veterans, Homeland Security and Military Affairs" becomes "Veterans,Homeland Security and Military Affairs"
+     * FIXME       note missing space after comma
      * @param hstoreString a String in the format of "print_no"=>"S100", "session_year"=>"2015".
      *                     This string can be retrieved by calling resultSet.getString("hstore")
      *                     on the ResultSet from "SELECT 'print_no=>S100,session_year=>2015'::hstore as hstore"

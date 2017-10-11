@@ -27,7 +27,7 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
     ),
 
     GET_MISMATCHES(
-        "SELECT mismatch_id, report_id, key, type, state, datasource, content_type, \n" +
+        "SELECT mismatch_id, report_id, hstore_to_array(key) key_arr, type, state, datasource, content_type, \n" +
         "  reference_type, reference_active_date_time, reference_data, observed_data, notes, \n" +
         "  observed_date_time, first_seen_date_time, report_date_time, ignore_status, issue_ids, \n" +
         "  count(*) OVER() as total_rows \n" +

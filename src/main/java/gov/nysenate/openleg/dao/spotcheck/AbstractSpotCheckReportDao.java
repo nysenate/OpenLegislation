@@ -344,10 +344,10 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
 
         @Override
         public DeNormSpotCheckMismatch<ContentKey> mapRow(ResultSet rs, int rowNum) throws SQLException {
-            ContentKey key = getKeyFromMap(hstoreStringToMap(rs.getString("key")));
+            ContentKey key = getKeyFromMap(getHstoreMap(rs, "key_arr"));
             SpotCheckMismatchType type = SpotCheckMismatchType.valueOf(rs.getString("type"));
             SpotCheckDataSource dataSource = SpotCheckDataSource.valueOf(rs.getString("datasource"));
-            DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(key, type, dataSource);
+            DeNormSpotCheckMismatch<ContentKey> mismatch = new DeNormSpotCheckMismatch<>(key, type, dataSource);
             mismatch.setMismatchId(rs.getInt("mismatch_id"));
             mismatch.setReportId(rs.getInt("report_id"));
             mismatch.setState(MismatchState.valueOf(rs.getString("state")));

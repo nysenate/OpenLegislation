@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import com.google.common.base.MoreObjects;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -78,9 +80,63 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         return copy;
     }
 
+    /* --- Overrides --- */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DeNormSpotCheckMismatch<?> that = (DeNormSpotCheckMismatch<?>) o;
+        if (key != null ? !key.equals(that.key) : that.key != null) return false;
+        if (type != that.type) return false;
+        if (dataSource != that.dataSource) return false;
+        return contentType == that.contentType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = key != null ? key.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (dataSource != null ? dataSource.hashCode() : 0);
+        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("dataSource", dataSource)
+                .add("key", key)
+                .add("type", type)
+                .add("state", state)
+                .toString();
+    }
+
+   /* --- Functional Getters/Setters --- */
+
     public void setReferenceDateTime(LocalDateTime referenceDateTime) {
         this.setReferenceId(new SpotCheckReferenceId(this.getReferenceId().getReferenceType(), referenceDateTime));
     }
+
+    /**
+     * Set issue ids to the given values, ignores empty string values.
+     */
+    public void setIssueIds(Set<String> issueIds) {
+        this.issueIds = issueIds.stream().filter(i -> i.length() > 0).collect(Collectors.toSet());
+    }
+
+    public void addIssueId(String issueId) {
+        if (issueId == null || issueId == "") {
+            return;
+        }
+        this.issueIds.add(issueId);
+    }
+
+    public void deleteIssueId(String issueId) {
+        this.issueIds.remove(issueId);
+    }
+
+    /* --- Getters / Setters --- */
 
     public void setMismatchId(int mismatchId) {
         this.mismatchId = mismatchId;
@@ -128,24 +184,6 @@ public class DeNormSpotCheckMismatch<ContentKey> {
 
     public void setContentType(SpotCheckContentType contentType) {
         this.contentType = contentType;
-    }
-
-    /**
-     * Set issue ids to the given values, ignores empty string values.
-     */
-    public void setIssueIds(Set<String> issueIds) {
-        this.issueIds = issueIds.stream().filter(i -> i.length() > 0).collect(Collectors.toSet());
-    }
-
-    public void addIssueId(String issueId) {
-        if (issueId == null || issueId == "") {
-            return;
-        }
-        this.issueIds.add(issueId);
-    }
-
-    public void deleteIssueId(String issueId) {
-        this.issueIds.remove(issueId);
     }
 
     public int getMismatchId() {
@@ -210,25 +248,5 @@ public class DeNormSpotCheckMismatch<ContentKey> {
 
     public Set<String> getIssueIds() {
         return issueIds;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeNormSpotCheckMismatch<?> that = (DeNormSpotCheckMismatch<?>) o;
-        if (key != null ? !key.equals(that.key) : that.key != null) return false;
-        if (type != that.type) return false;
-        if (dataSource != that.dataSource) return false;
-        return contentType == that.contentType;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = key != null ? key.hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (dataSource != null ? dataSource.hashCode() : 0);
-        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
-        return result;
     }
 }
