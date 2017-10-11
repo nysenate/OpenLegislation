@@ -2,7 +2,6 @@ package gov.nysenate.openleg.service.spotcheck.senatesite.agenda;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.client.view.agenda.AgendaItemView;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -13,7 +12,6 @@ import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgenda;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgendaBill;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,8 +26,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AgendaJsonParser extends JsonParser {
-    @Autowired
-    ObjectMapper objectMapper;
 
     public List<SenateSiteAgenda> parseAgendas(SenateSiteDump agendaDump) throws ParseError {
         return agendaDump.getDumpFragments().stream()
@@ -64,8 +60,11 @@ public class AgendaJsonParser extends JsonParser {
         agenda.setAgendaId(new AgendaId(week, year));
         agenda.setCommittee(new CommitteeId(Chamber.SENATE, getValue(agendaNode,"field_ol_committee_name")));
         String addendum = Optional.ofNullable(getValue(agendaNode, "field_ol_agenda_addendum"))
-                .orElse(null);
+                .orElse("");
         agenda.setAddendum(addendum);
+        agenda.setLocation(getValue(agendaNode, "field_ol_agenda_location"));
+        agenda.setNotes(getValue(agendaNode, "field_ol_agenda_notes"));
+        agenda.setMeetingDateTime(getDateTimeValue(agendaNode, "field_ol_meeting_date"));
         List<SenateSiteAgendaBill> agendaBills =
                 getListValue(agendaNode, "field_ol_agenda_bills", this::parseBillNode);
         agenda.setAgendaBills(agendaBills);

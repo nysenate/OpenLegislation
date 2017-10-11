@@ -1,11 +1,12 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.agenda;
 
+import gov.nysenate.openleg.model.agenda.Agenda;
+import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
 import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgenda;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgendaBill;
@@ -17,45 +18,81 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.AGENDA_LOCATION;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.AGENDA_NOTES;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.AGENDA_VOTES;
 
 /**
  * Created by PKS on 4/28/16.
  */
 @Service
 public class SenateSiteAgendaCheckService
-        extends BaseSpotCheckService<CommitteeAgendaAddendumId, AgendaVoteCommittee, SenateSiteAgenda> {
+        extends BaseSpotCheckService<CommitteeAgendaAddendumId, Agenda, SenateSiteAgenda> {
 
     @Override
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaVoteCommittee content)
+    public SpotCheckObservation<CommitteeAgendaAddendumId> check(Agenda content)
             throws ReferenceDataNotFoundEx {
         throw new NotImplementedException(":P");
     }
 
     @Override
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaVoteCommittee content,
-                                                                 LocalDateTime start, LocalDateTime end)
+    public SpotCheckObservation<CommitteeAgendaAddendumId> check(Agenda content, LocalDateTime start, LocalDateTime end)
             throws ReferenceDataNotFoundEx {
         throw new NotImplementedException(":P");
     }
 
     @Override
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaVoteCommittee content, SenateSiteAgenda reference) {
+    public SpotCheckObservation<CommitteeAgendaAddendumId> check(Agenda content, SenateSiteAgenda reference) {
+        Optional<AgendaInfoCommittee> openlegInfoCommOpt = getOLInfoCommittee(content, reference);
+        Optional<AgendaVoteCommittee> openlegVoteCommOpt = getOLVoteCommittee(content, reference);
+
+        // Return an observe data missing observation if there is no info or votes for the given reference
+        if (!(openlegInfoCommOpt.isPresent() || openlegVoteCommOpt.isPresent())) {
+            return SpotCheckObservation.getObserveDataMissingObs(
+                    reference.getReferenceId(), reference.getcommitteeAgendaAddendumId());
+        }
+
         SpotCheckObservation<CommitteeAgendaAddendumId> observation =
                 new SpotCheckObservation<>(reference.getReferenceId(),
                         reference.getcommitteeAgendaAddendumId());
-        checkVotes(content, reference, observation);
+
+        // Use blank values if either votes or info is not present in openleg
+        AgendaInfoCommittee openlegInfoComm = openlegInfoCommOpt.orElse(new AgendaInfoCommittee());
+        AgendaVoteCommittee openlegVoteComm = openlegVoteCommOpt.orElse(new AgendaVoteCommittee());
+
+        checkLocation(openlegInfoComm, reference, observation);
+        checkNotes(openlegInfoComm, reference, observation);
+        checkMeetingTime(openlegInfoComm, reference, observation);
+        checkVotes(openlegVoteComm, reference, observation);
         return observation;
     }
 
     /* --- Internal Methods --- */
+
+    private void checkLocation(AgendaInfoCommittee content, SenateSiteAgenda reference,
+                               SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
+        checkString(content.getLocation(), reference.getLocation(), observation, AGENDA_LOCATION);
+    }
+
+    private void checkNotes(AgendaInfoCommittee content, SenateSiteAgenda reference,
+                               SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
+        checkString(content.getNotes(), reference.getNotes(), observation, AGENDA_NOTES);
+    }
+
+    private void checkMeetingTime(AgendaInfoCommittee content, SenateSiteAgenda reference,
+                            SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
+        checkObject(content.getMeetingDateTime(), reference.getMeetingDateTime(), observation, AGENDA_LOCATION);
+    }
 
     private void checkVotes(AgendaVoteCommittee content, SenateSiteAgenda reference,
                             SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
         StringBuffer contentVotes = getFullVoteString(content);
         StringBuffer refVotes = getFullVoteString(reference);
 
-        checkObject(contentVotes, refVotes, observation, SpotCheckMismatchType.AGENDA_VOTES);
+        checkObject(contentVotes, refVotes, observation, AGENDA_VOTES);
     }
 
     private StringBuffer getFullVoteString(AgendaVoteCommittee agendaVoteCommittee) {
@@ -95,6 +132,16 @@ public class SenateSiteAgendaCheckService
                     .append(voteCounts.getOrDefault(voteCode, 0));
         }
         return voteString;
+    }
+
+    private Optional<AgendaVoteCommittee> getOLVoteCommittee(Agenda content, SenateSiteAgenda reference) {
+        return Optional.ofNullable(content.getAgendaVoteAddendum(reference.getAddendum()))
+                        .map(addendum -> addendum.getCommittee(reference.getCommitteeId()));
+    }
+
+    private Optional<AgendaInfoCommittee> getOLInfoCommittee(Agenda content, SenateSiteAgenda reference) {
+        return Optional.ofNullable(content.getAgendaInfoAddendum(reference.getAddendum()))
+                .map(addendum -> addendum.getCommittee(reference.getCommitteeId()));
     }
 
 }

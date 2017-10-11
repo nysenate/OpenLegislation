@@ -15,11 +15,15 @@ import java.util.List;
  * Created by PKS on 4/28/16.
  */
 public class SenateSiteAgenda {
+
     protected LocalDateTime referenceDateTime;
     protected AgendaId agendaId;
     protected LocalDate weekof;
     protected CommitteeId committeeId;
     protected String addendum;
+    protected String location;
+    protected String notes;
+    protected LocalDateTime meetingDateTime;
     protected List<SenateSiteAgendaBill> agendaBills;
 
     public SenateSiteAgenda(LocalDateTime referenceDateTime) {
@@ -76,5 +80,29 @@ public class SenateSiteAgenda {
 
     public String getAddendum(){
         return addendum;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public LocalDateTime getMeetingDateTime() {
+        return meetingDateTime;
+    }
+
+    public void setMeetingDateTime(LocalDateTime meetingDateTime) {
+        this.meetingDateTime = meetingDateTime;
     }
 }

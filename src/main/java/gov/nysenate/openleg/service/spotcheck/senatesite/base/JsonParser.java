@@ -21,8 +21,7 @@ public class JsonParser {
 
     private static final String LANGUAGE_NONE = "und";
 
-    @Autowired
-    ObjectMapper objectMapper;
+    @Autowired protected ObjectMapper objectMapper;
 
     protected <T> Optional<T> deserializeValue(JsonNode jsonNode, String fieldName, TypeReference<T> resultType) {
         String jsonValue = getValue(jsonNode, fieldName);

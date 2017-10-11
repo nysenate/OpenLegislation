@@ -5,6 +5,7 @@ import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.dao.spotcheck.CommitteeAgendaAddendumIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.agenda.Agenda;
+import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.spotcheck.*;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +65,7 @@ public class SenSiteAgendaReportService extends BaseSpotCheckReportService<Commi
 
             logger.info("Loading agendas for year {} ...", dumpId.getYear());
 
-            Map<CommitteeAgendaAddendumId, AgendaVoteCommittee> voteData = getVotesForYear(dumpId.getYear());
+            Map<AgendaId, Agenda> openlegAgendas = getOpenlegAgendas(dumpId.getYear());
 
             logger.info("Extracting agenda references ...");
 
@@ -71,7 +73,7 @@ public class SenSiteAgendaReportService extends BaseSpotCheckReportService<Commi
 
             logger.info("Checking agendas ... ");
 
-            checkAgendaVotes(report, voteData, senateSiteAgendas);
+            checkAgendas(report, openlegAgendas, senateSiteAgendas);
 
             return report;
         }
@@ -92,50 +94,51 @@ public class SenSiteAgendaReportService extends BaseSpotCheckReportService<Commi
     }
 
     /**
-     * Load all {@link AgendaVoteCommittee} for the given year from openleg
+     * Get all stored agendas for the given year
      */
-    private Map<CommitteeAgendaAddendumId, AgendaVoteCommittee> getVotesForYear(int year) {
-        return agendaDataService.getAgendaIds(year, SortOrder.NONE).stream()
+    private Map<AgendaId, Agenda> getOpenlegAgendas(int year) {
+        List<AgendaId> agendaIds = agendaDataService.getAgendaIds(year, SortOrder.ASC);
+        return agendaIds.stream()
                 .map(agendaDataService::getAgenda)
-                .map(Agenda::getVotes)
-                .map(Map::entrySet)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Agenda::getId, Function.identity()));
     }
 
     /**
      * Checks a set of reference agenda votes against agenda votes loaded from openleg,
      * saving the result in the given spotcheck report.
-     *
-     * @param report {@link SpotCheckReport<CommitteeAgendaAddendumId>}
-     * @param dataVotes {@link Map<CommitteeAgendaAddendumId, AgendaVoteCommittee>}
+     *  @param report {@link SpotCheckReport<CommitteeAgendaAddendumId>}
+     * @param openlegAgendas {@link Map<CommitteeAgendaAddendumId, AgendaVoteCommittee>}
      * @param refAgendas {@link List<SenateSiteAgenda>}
      */
-    private void checkAgendaVotes(SpotCheckReport<CommitteeAgendaAddendumId> report,
-                                  Map<CommitteeAgendaAddendumId, AgendaVoteCommittee> dataVotes,
-                                  List<SenateSiteAgenda> refAgendas) {
+    private void checkAgendas(SpotCheckReport<CommitteeAgendaAddendumId> report,
+                              Map<AgendaId, Agenda> openlegAgendas,
+                              List<SenateSiteAgenda> refAgendas) {
 
         // Tracks the data agendas that have not been checked from the given ref agendas
         // The remaining ids can be considered to be missing from the reference set
-        Set<CommitteeAgendaAddendumId> uncheckedDataVotes = new HashSet<>(dataVotes.keySet());
+        Set<CommitteeAgendaAddendumId> uncheckedOpenlegMeetings = openlegAgendas.values().stream()
+                .map(Agenda::getCommitteeAgendaAddendumIds)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(HashSet::new));
 
         // Check the reference agendas against the data agendas
         for (SenateSiteAgenda refAgenda : refAgendas) {
-            CommitteeAgendaAddendumId id = refAgenda.getcommitteeAgendaAddendumId();
+            CommitteeAgendaAddendumId meetingId = refAgenda.getcommitteeAgendaAddendumId();
+            AgendaId agendaId = meetingId.getAgendaId();
+            uncheckedOpenlegMeetings.remove(meetingId);
 
-            if (dataVotes.containsKey(id)) {
-                AgendaVoteCommittee dataAgenda = dataVotes.get(id);
+            if (openlegAgendas.containsKey(agendaId)) {
+                Agenda openlegAgenda = openlegAgendas.get(agendaId);
                 SpotCheckObservation<CommitteeAgendaAddendumId> obs =
-                        senateSiteAgendaCheckService.check(dataAgenda, refAgenda);
+                        senateSiteAgendaCheckService.check(openlegAgenda, refAgenda);
                 report.addObservation(obs);
-                uncheckedDataVotes.remove(id);
             } else {
-                report.addObservedDataMissingObs(id);
+                report.addObservedDataMissingObs(meetingId);
             }
         }
 
-        // Save the remaining data votes as ref data missing mismatches
-        uncheckedDataVotes.forEach(report::addRefMissingObs);
+        // Save the remaining data meetings as ref data missing mismatches
+        uncheckedOpenlegMeetings.forEach(report::addRefMissingObs);
     }
 
 }
