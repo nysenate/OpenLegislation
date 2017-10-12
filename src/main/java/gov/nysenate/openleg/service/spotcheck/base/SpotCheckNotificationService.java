@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
-import com.google.common.collect.MapMaker;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckAbortException;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import gov.nysenate.openleg.service.scraping.LrsOutageScrapingEx;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -16,7 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+
+import static gov.nysenate.openleg.model.notification.NotificationType.LRS_OUTAGE;
 
 @Service
 public class SpotCheckNotificationService {
@@ -102,6 +102,18 @@ public class SpotCheckNotificationService {
         Notification notification =
                 new Notification(type, daybreakReport.getReportDateTime(), summary, messageBuilder.toString());
 
+        eventBus.post(notification);
+    }
+
+    /* --- Scraping Exceptions --- */
+
+    public void handleLrsOutageScrapingEx(LrsOutageScrapingEx ex) {
+        Notification notification = new Notification(
+                LRS_OUTAGE,
+                LocalDateTime.now(),
+                "LRS appears to be down",
+                ex.getMessage()
+        );
         eventBus.post(notification);
     }
 }

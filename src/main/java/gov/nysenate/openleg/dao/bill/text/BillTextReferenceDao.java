@@ -6,6 +6,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
+import gov.nysenate.openleg.model.spotcheck.billtext.ScrapeQueuePriority;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by kyle on 2/19/15.
@@ -86,6 +88,17 @@ public interface BillTextReferenceDao {
      * Adds a bill to the scrape queue
      */
     void addBillToScrapeQueue(BaseBillId baseBillId, int priority);
+
+    /**
+     * Overload of {@link #addBillToScrapeQueue(BaseBillId, int)}
+     * uses the priority value of a {@link ScrapeQueuePriority}
+     *
+     * @param baseBillId {@link BaseBillId}
+     * @param priority {@link ScrapeQueuePriority}
+     */
+    default void addBillToScrapeQueue(BaseBillId baseBillId, ScrapeQueuePriority priority) {
+        addBillToScrapeQueue(baseBillId, Objects.requireNonNull(priority).getPriority());
+    }
 
     /**
      * Removes all instances of a bill from the scrape queue
