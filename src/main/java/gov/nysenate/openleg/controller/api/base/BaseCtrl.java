@@ -9,7 +9,6 @@ import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
 import gov.nysenate.openleg.client.view.error.InvalidParameterView;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -465,7 +464,6 @@ public abstract class BaseCtrl
         return new ErrorResponse(ErrorCode.UNAUTHORIZED);
     }
 
-    @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT, reason = "Client abort")
     @ExceptionHandler(ClientAbortException.class)
     public void handleClientAbortException(ClientAbortException ex) {
         logger.debug("Client aborted", ex);
