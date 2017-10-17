@@ -6,7 +6,10 @@ import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.bill.*;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillStatusType;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
@@ -45,10 +48,12 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
     /** {@inheritDoc} */
     @Override
     public SpotCheckObservation<BillId> check(Bill content, SenateSiteBill reference) {
-        SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), reference.getBillId());
+
+        BillId billId = reference.getBillId();
+
+        SpotCheckObservation<BillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), billId);
 
         BillView contentBillView = new BillView(content);
-
         BillAmendmentView amendment;
         try {
             Version refVersion = reference.getBillId().getVersion();
@@ -57,8 +62,13 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
                     .map(amendments -> amendments.get(refVersion.toString()))
                     .orElseThrow(() -> new BillAmendNotFoundEx(reference.getBillId()));
         } catch (IllegalArgumentException | BillAmendNotFoundEx ex) {
-            observation.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, null, reference.getBillId()));
-            return observation;
+            if (isUnpublished(billId, content)) {
+                observation.addMismatch(new SpotCheckMismatch(BILL_AMENDMENT_PUBLISH,
+                        "not published", "published"));
+                return observation;
+            } else {
+                return SpotCheckObservation.getObserveDataMissingObs(reference.getReferenceId(), billId);
+            }
         }
 
         checkBasePrintNo(contentBillView, reference, observation);
@@ -268,5 +278,15 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
 
     private void checkLawSection(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
         checkString(content.getLawSection(), reference.getLawSection(), observation, BILL_LAW_SECTION);
+    }
+
+    /**
+     * Return true if an amendment exists for the given bill id and it is unpublished
+     */
+    private boolean isUnpublished(BillId billId, Bill content) {
+        return Optional.ofNullable(content)
+                .map(bill -> bill.getAmendPublishStatusMap().get(billId.getVersion()))
+                .map(pubStatus -> !pubStatus.isPublished())
+                .orElse(false);
     }
 }
