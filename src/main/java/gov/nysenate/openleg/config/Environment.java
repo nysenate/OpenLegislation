@@ -60,6 +60,9 @@ public class Environment
     /** --- Processing settings --- */
 
     /** Enable processing of data. */
+    @Value("${sobi.process.enabled}")
+    private boolean sobiProcessEnabled;
+
     @Value("${data.process.enabled}") private boolean processingEnabled;
 
     /** Allows for the option to enable/disable logging. */
@@ -341,5 +344,9 @@ public class Environment
 
     public LocalDateTime getDeployedDateTime() {
         return deployedDateTime;
+    }
+
+    public boolean getSobiProcessEnabled() {
+        return sobiProcessEnabled;
     }
 }

@@ -54,6 +54,8 @@ env.schema = master
 
 # --- Processing Configuration ------------------------------------------------
 
+sobi.process.enabled = false
+
 # Allow for processing of data
 # (Default: true)
 

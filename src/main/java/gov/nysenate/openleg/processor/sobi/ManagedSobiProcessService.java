@@ -9,7 +9,9 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileFsDao;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.FsSobiDao;
 import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.dao.sourcefiles.xml.FsXmlDao;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
@@ -53,6 +55,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
     @Autowired
     private Environment env;
 
+    private boolean sobiProcessEnabled = true;
     /**
      * Map of source file types to daos.
      */
@@ -207,10 +210,12 @@ public class ManagedSobiProcessService implements SobiProcessService {
     private List<SourceFile> getIncomingSourceFiles() throws IOException {
         List<SourceFile> incomingSourceFiles = new ArrayList<>();
         final int batchSize = env.getSobiBatchSize();
-
+        sobiProcessEnabled = env.getSobiProcessEnabled();
         for (SourceFileFsDao<?> sourceFsDao : sourceFileFsDaos) {
-            LimitOffset remainingLimit = new LimitOffset(batchSize - incomingSourceFiles.size());
-            incomingSourceFiles.addAll(sourceFsDao.getIncomingSourceFiles(SortOrder.ASC, remainingLimit));
+            if ( (sourceFsDao instanceof FsXmlDao) || (sobiProcessEnabled) ) {
+                LimitOffset remainingLimit = new LimitOffset(batchSize - incomingSourceFiles.size());
+                incomingSourceFiles.addAll(sourceFsDao.getIncomingSourceFiles(SortOrder.ASC, remainingLimit));
+            }
         }
 
         return incomingSourceFiles;
