@@ -152,14 +152,14 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
                         .findAny())
                 .isPresent();
         boolean refIsAmended = reference.isAmended();
-        checkObject(olIsAmended, refIsAmended, observation, BILL_IS_AMENDED);
+        checkBoolean(olIsAmended, refIsAmended, "Amended", observation, BILL_IS_AMENDED);
     }
 
     private void checkHasSameAs(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
         boolean contentHasSameAs = Optional.ofNullable(content.getSameAs())
                 .map(ListView::getSize)
                 .orElse(0) > 0;
-        checkObject(contentHasSameAs, reference.isHasSameAs(), observation, BILL_HAS_SAME_AS);
+        checkBoolean(contentHasSameAs, reference.isHasSameAs(), "Has SameAs", observation, BILL_HAS_SAME_AS);
     }
 
     private void checkPublishDate(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
