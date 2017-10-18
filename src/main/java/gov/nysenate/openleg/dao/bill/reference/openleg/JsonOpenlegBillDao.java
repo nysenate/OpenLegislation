@@ -59,7 +59,7 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
             Iterator<JsonNode> nodeIterator = node.get("result").get("items").iterator();
             while (nodeIterator.hasNext()) {
                 JsonNode node1 = nodeIterator.next();
-                billViewList.add(mapper.readValue(node1.toString(), BillView.class));
+                billViewList.add(mapper.readValue(new String(node1.toString().getBytes("UTF-8")), BillView.class));
             }
         }
         return billViewList;
