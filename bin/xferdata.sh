@@ -15,6 +15,7 @@
 # Revised: 2016-06-24 - prevent copying hidden files
 # Revised: 2016-07-05 - removed SSH key file, since it's no longer used
 # Revised: 2017-08-10 - re-enabled multiple targets
+# Revised: 2017-10-18 - added transfer of XML files and control over file types
 #
 
 prog=`basename $0`
@@ -23,13 +24,24 @@ sobi_file_glob="SOBI.*"
 nyslaw_file_glob="*.UPDATE DATABASE.LAW*"
 
 usage() {
-  echo "Usage: $prog [-h] [-f config_file] [-i incoming_dir] [-o archive_dir] [--keep-empty] [--no-get] [--no-remove] [--no-send] [--no-archive] [--no-symlink] [--local-only] [--remote-only]" >&2
+  echo "Usage: $prog [-h] [-f config_file] [-i incoming_dir] [-o archive_dir] [--keep-empty] [--skip-xml] [--skip-sobi] [--skip-law] [--skip-sess] [--skip-hear] [--no-remove] [--no-send] [--no-archive] [--no-symlink] [--local-only] [--remote-only]" >&2
 }
 
 read_config() {
   fpath="$1"
   sect="$2"
   sed -n -e "/^\[$sect\]/,/^\[/p" "$fpath" | egrep -v "(^[[;#]|^$)"
+}
+
+array_key_exists() {
+  # Create local reference to orignial array.
+  local -n a="$1"
+  k="$2"
+  if [ ${a[$k]+isset} ]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 # Return 0 ("ok") if the argument references a local path.
@@ -43,6 +55,7 @@ is_local() {
 }
 
 cfg_file=/etc/xferdata.cfg
+ftp_prot=ftp
 ftp_host=
 ftp_user=
 ftp_pass=
@@ -51,13 +64,16 @@ arc_data_dir=
 opt_inc_data_dir=
 opt_arc_data_dir=
 keep_empty=0
-no_get=0
 no_remove=0
 no_send=0
 no_archive=0
 no_symlink=0
 local_only=0
 remote_only=0
+
+# There are five types of files that can be transferred:
+# XML, SOBI, NYSLAW, session transcripts, and public hearing transcripts
+declare -A xfer_filetypes=([xml]= [sobi]= [law]= [sess]= [hear]=)
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -66,7 +82,11 @@ while [ $# -gt 0 ]; do
     -i) shift; opt_inc_data_dir="$1" ;;
     -o) shift; opt_arc_data_dir="$1" ;;
     --keep-empty) keep_empty=1 ;;
-    --no-get) no_get=1 ;;
+    --skip-xml) unset xfer_filetypes[xml] ;;
+    --skip-sobi) unset xfer_filetypes[sobi] ;;
+    --skip-law) unset xfer_filetypes[law] ;;
+    --skip-sess) unset xfer_filetypes[sess] ;;
+    --skip-hear) unset xfer_filetypes[hear] ;;
     --no-remove) no_remove=1 ;;
     --no-send) no_send=1 ;;
     --no-archive) no_archive=1 ;;
@@ -86,6 +106,9 @@ elif [ $local_only -eq 1 -a $remote_only -eq 1 ]; then
   exit 1
 elif [ $no_symlink -ne 1 -a $no_archive -eq 1 ]; then
   echo "$prog: --no-archive cannot be used unless --no-symlink is also specified" >&2
+  exit 1
+elif [ ${#xfer_filetypes[*]} -eq 0 ]; then
+  echo "$prog: At least one file type must be active" >&2
   exit 1
 fi
 
@@ -111,9 +134,6 @@ if [ ! "$ftp_host" ]; then
 elif [ ! "$ftp_user" ]; then
   echo "$prog: FTP user (ftp_user) must be specified in config file" >&2
   exit 1
-elif [ ! "$ftp_pass" ]; then
-  echo "$prog: FTP password (ftp_pass) must be specified in config file" >&2
-  exit 1
 elif [ ! "$inc_data_dir" ]; then
   echo "$prog: Incoming data directory (inc_data_dir) must be specified in config file or on command line" >&2
   exit 1
@@ -132,25 +152,21 @@ elif [ "$inc_data_dir" = "$arc_data_dir" ]; then
 fi
 
 # Files are transferred through three locations:  incoming, archive, and
-# target.  Incoming is the location where files are FTP'd from LBDC.
+# target.  Incoming is the location where files are FTP'd by LBDC to us (SOBI
+# and law files), or FTP'd by us from LBDC (XML files), or FTP'd by Maria to
+# us (hearing and session transcripts).
 # Archive is where they are placed after being processed by this script.
-# Target is the one or more locations where files are copied for further
-# processing by OpenLegislation.
-#
-# There are four types of files that are transferred:
-# SOBI files, NYSLAW files, session transcripts, and public hearing transcripts
+# Target is the one or more locations (either local or remote) where files
+# are copied for further processing by OpenLegislation.
 
-file_types="sobi law sess hear"
-#file_types="sobi law"
-
-declare -A inc_dirs=([sobi]=lbdc/sobi [law]=lbdc/nyslaw [sess]=transcripts/session [hear]=transcripts/public_hearing)
-declare -A arc_dirs=([sobi]=sobis [law]=nyslaws [sess]=session_transcripts [hear]=pubhear_transcripts)
-declare -A tgt_dirs=([sobi]=sobis [law]=laws [sess]=session_transcripts [hear]=hearing_transcripts)
+declare -A inc_dirs=([xml]=lbdc/xml [sobi]=lbdc/sobi [law]=lbdc/nyslaw [sess]=transcripts/session [hear]=transcripts/public_hearing)
+declare -A arc_dirs=([xml]=xmls [sobi]=sobis [law]=nyslaws [sess]=session_transcripts [hear]=pubhear_transcripts)
+declare -A tgt_dirs=([xml]=xmls [sobi]=sobis [law]=laws [sess]=session_transcripts [hear]=hearing_transcripts)
 declare -A file_lists file_counts
 
 # Create the archive directory and subdirectories
 mkdir -p $arc_data_dir/
-for f in $file_types; do
+for f in ${!xfer_filetypes[@]}; do
   mkdir -p $arc_data_dir/${arc_dirs[$f]} || exit 1
 done
 
@@ -159,27 +175,28 @@ cd "$inc_data_dir/" || exit 1
 
 echo "Starting data transfer at `date`"
 
-if [ $no_get -ne 1 ]; then
+# All files are transferred by other entities (LBDC, STS) into the incoming/
+# directory except for XML files, which must be pulled from LBDC.
+
+if array_key_exists xfer_filetypes xml; then
   if [ $no_remove -ne 1 ]; then
     remove_text="and removing"
-    remove_opt="--Remove-source-files"
+    remove_opt="-E"
   else
     remove_text="but not deleting"
     remove_opt=""
   fi
 
-  echo "Retrieving $remove_text latest data from $ftp_host"
-  lftp "$ftp_host" <<END_SCRIPT
-user $ftp_user $ftp_pass
+  echo "Retrieving $remove_text latest XML data from $ftp_host"
+  lftp "$ftp_prot://$ftp_host" <<END_SCRIPT
+user "$ftp_user" "$ftp_pass"
 cache off
-lcd $inc_data_dir/${inc_dirs[sobi]}
-mirror -r -v -I SOBI.D*.T*.TXT -I CMS.TEXT $remove_opt
-cd nyslaw
-lcd $inc_data_dir/${inc_dirs[law]}
-mirror -r -v -I *.UPDATE -I DATABASE.LAW* $remove_opt
+lcd $inc_data_dir/${inc_dirs[xml]}
+cd DATA
+mget $remove_opt *.XML
 END_SCRIPT
 else
-  echo "Skipping the retrieval of SOBI files from $ftp_host"
+  echo "Skipping the retrieval of XML files from $ftp_host"
 fi
 
 if [ $keep_empty -ne 1 ]; then
@@ -189,7 +206,7 @@ else
   echo "Keeping empty SOBI files"
 fi
 
-for f in $file_types; do
+for f in ${!xfer_filetypes[@]}; do
   pushd ${inc_dirs[$f]} >/dev/null
   file_lists[$f]=`find . -maxdepth 1 -type f -not -name ".??*"`
   if [ "${file_lists[$f]}" ]; then
@@ -201,7 +218,7 @@ for f in $file_types; do
   popd >/dev/null
 done
 
-for f in $file_types; do
+for f in ${!xfer_filetypes[@]}; do
   echo "Copying ${file_counts[$f]} $f files from ${inc_dirs[$f]} to ${tgt_dirs[$f]}"
   for tgt in $targets; do
     if is_local "$tgt"; then
