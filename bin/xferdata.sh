@@ -24,7 +24,7 @@ sobi_file_glob="SOBI.*"
 nyslaw_file_glob="*.UPDATE DATABASE.LAW*"
 
 usage() {
-  echo "Usage: $prog [-h] [-f config_file] [-i incoming_dir] [-o archive_dir] [--keep-empty] [--skip-xml] [--skip-sobi] [--skip-law] [--skip-sess] [--skip-hear] [--no-remove] [--no-send] [--no-archive] [--no-symlink] [--local-only] [--remote-only]" >&2
+  echo "Usage: $prog [-h] [-f config_file] [-i incoming_dir] [-o archive_dir] [--keep-empty] [--skip-xml] [--skip-sobi] [--skip-law] [--skip-sess] [--skip-hear] [--no-remove] [--no-send] [--no-archive] [--no-symlink] [--local-only] [--remote-only] [--debug-scp]" >&2
 }
 
 read_config() {
@@ -70,6 +70,7 @@ no_archive=0
 no_symlink=0
 local_only=0
 remote_only=0
+scp_opt=
 
 # There are five types of files that can be transferred:
 # XML, SOBI, NYSLAW, session transcripts, and public hearing transcripts
@@ -93,6 +94,7 @@ while [ $# -gt 0 ]; do
     --no-symlink) no_symlink=1 ;;
     --local*) local_only=1 ;;
     --remote*) remote_only=1 ;;
+    --debug-scp) scp_opt="-v" ;;
     *) echo "$prog: $1: Invalid option" >&2; usage; exit 1 ;;
   esac
   shift
@@ -233,7 +235,7 @@ for f in ${!xfer_filetypes[@]}; do
       # The current target is a remote destination
       if [ $local_only -ne 1 ]; then
         echo "=> Copying $f files to remote destination: $tgt/${tgt_dirs[$f]}"
-        echo "${file_lists[$f]}" | xargs -L1 -I{} scp -v "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
+        echo "${file_lists[$f]}" | xargs -L1 -I{} scp $scp_opt "${inc_dirs[$f]}/{}" "$tgt/${tgt_dirs[$f]}"
       else
         echo "Skipping remote destination: $tgt"
       fi
