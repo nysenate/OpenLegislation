@@ -59,7 +59,7 @@ public class JsonOpenlegCalenderDao implements OpenlegCalenderDao {
             Iterator<JsonNode> nodeIterator = node.get("result").get("items").iterator();
             while (nodeIterator.hasNext()) {
                 JsonNode node1 = nodeIterator.next();
-                calendarViewList.add(mapper.readValue(new String(node1.toString().getBytes("UTF-8")), CalendarView.class));
+                calendarViewList.add(mapper.readValue(node1.toString(), CalendarView.class));
             }
         }
         return calendarViewList;

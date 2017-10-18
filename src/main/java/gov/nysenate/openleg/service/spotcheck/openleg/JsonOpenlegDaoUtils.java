@@ -27,6 +27,7 @@ public class JsonOpenlegDaoUtils {
             java.net.URL url = new URL(URL);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(requestMethod);
+            connection.setRequestProperty("Content-Type",  "application/json; charset=utf-8");
             connection.setUseCaches(useCaches);
             connection.setDoOutput(doOutput);
             return connection;

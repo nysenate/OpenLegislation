@@ -47,7 +47,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
             Iterator<JsonNode> nodeIterator = node.get("result").get("items").iterator();
             while (nodeIterator.hasNext()) {
                 JsonNode node1 = nodeIterator.next();
-                agendaViewList.add(mapper.readValue(new String(node1.toString().getBytes("UTF-8")), AgendaView.class));
+                agendaViewList.add(mapper.readValue(node1.toString(), AgendaView.class));
             }
         }
         return agendaViewList;
