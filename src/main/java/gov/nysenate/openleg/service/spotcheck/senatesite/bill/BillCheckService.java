@@ -145,12 +145,7 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
         String amendVersion = Optional.ofNullable(reference.getBillId())
                 .map(billid -> billid.getVersion().toString())
                 .orElse("");
-        boolean olIsAmended = Optional.ofNullable(content.getAmendmentVersions())
-                .map(ListView::getItems)
-                .flatMap(items -> items.stream()
-                        .filter(version -> version.compareTo(amendVersion) > 0)
-                        .findAny())
-                .isPresent();
+        boolean olIsAmended = !amendVersion.equals(content.getActiveVersion());
         boolean refIsAmended = reference.isAmended();
         checkBoolean(olIsAmended, refIsAmended, "Amended", observation, BILL_IS_AMENDED);
     }
