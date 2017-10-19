@@ -24,8 +24,7 @@ import java.util.*;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
 
-@Service
-
+@Service("openlegAgendaReport")
 public class OpenlegAgendaReportService extends BaseSpotCheckReportService<CommitteeAgendaAddendumId> {
     private static final Logger logger = LoggerFactory.getLogger(OpenlegAgendaReportService.class);
 
