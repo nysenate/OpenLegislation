@@ -1,29 +1,24 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.agenda;
 
-import gov.nysenate.openleg.model.agenda.Agenda;
-import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
-import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
-import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
+import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgenda;
-import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgendaBill;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.AGENDA_LOCATION;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.AGENDA_NOTES;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.AGENDA_VOTES;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 /**
  * Created by PKS on 4/28/16.
@@ -66,7 +61,7 @@ public class SenateSiteAgendaCheckService
         checkLocation(openlegInfoComm, reference, observation);
         checkNotes(openlegInfoComm, reference, observation);
         checkMeetingTime(openlegInfoComm, reference, observation);
-        checkVotes(openlegVoteComm, reference, observation);
+        checkBills(openlegVoteComm, openlegInfoComm, reference, observation);
         return observation;
     }
 
@@ -87,37 +82,56 @@ public class SenateSiteAgendaCheckService
         checkObject(content.getMeetingDateTime(), reference.getMeetingDateTime(), observation, AGENDA_LOCATION);
     }
 
-    private void checkVotes(AgendaVoteCommittee content, SenateSiteAgenda reference,
+    private void checkBills(AgendaVoteCommittee contentVotes, AgendaInfoCommittee contentInfo, SenateSiteAgenda reference,
                             SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        StringBuffer contentVotes = getFullVoteString(content);
-        StringBuffer refVotes = getFullVoteString(reference);
+        StringBuffer contentVoteString = getFullVoteString(contentVotes, contentInfo);
+        StringBuffer refVoteString = getFullVoteString(reference);
 
-        checkObject(contentVotes, refVotes, observation, AGENDA_VOTES);
+        checkObject(contentVoteString, refVoteString, observation, AGENDA_BILLS);
     }
 
-    private StringBuffer getFullVoteString(AgendaVoteCommittee agendaVoteCommittee) {
-        Map<BillId, Map<BillVoteCode, Integer>> voteCountMap =
-                agendaVoteCommittee.getVotedBills().entrySet().stream()
-                        .map(entry -> Pair.of(entry.getKey(),
-                                entry.getValue().getBillVote().getVoteCounts()))
-                        .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    private static final ImmutableMap<BillVoteCode, Integer> emptyVoteCountMap = ImmutableMap.copyOf(
+            Maps.toMap(Arrays.asList(BillVoteCode.values()), (bvc) -> 0)
+    );
 
-        return getFullVoteString(voteCountMap);
+    private StringBuffer getFullVoteString(AgendaVoteCommittee voteComm, AgendaInfoCommittee infoComm) {
+        Map<BillId, AgendaVoteBill> votedBills = voteComm.getVotedBills();
+
+        Set<BillId> billIds = new HashSet<>();
+
+        billIds.addAll(votedBills.keySet());
+        infoComm.getItems().stream()
+                .map(AgendaInfoCommitteeItem::getBillId)
+                .forEach(billIds::add);
+
+        Table<BillId, BillVoteCode, Integer> voteCountTable = HashBasedTable.create();
+
+        for (BillId billId : billIds) {
+            // Some bills do not have votes, use an empty vote count map for these
+            Map<BillVoteCode, Integer> voteCountMap =
+                    Optional.ofNullable(votedBills.get(billId))
+                            .map(AgendaVoteBill::getBillVote)
+                            .map(BillVote::getVoteCounts)
+                            .orElse(emptyVoteCountMap);
+
+            voteCountTable.row(billId).putAll(voteCountMap);
+        }
+
+        return getFullVoteString(voteCountTable);
     }
 
     private StringBuffer getFullVoteString(SenateSiteAgenda senateSiteAgenda) {
-        Map<BillId, Map<BillVoteCode, Integer>> voteCountMap =
-                senateSiteAgenda.getAgendaBills().stream()
-                        .collect(Collectors.toMap(
-                                SenateSiteAgendaBill::getBillId, SenateSiteAgendaBill::getVoteCounts));
+        Table<BillId, BillVoteCode, Integer> voteCountTable = HashBasedTable.create();
+        senateSiteAgenda.getAgendaBills().forEach(bill ->
+                voteCountTable.row(bill.getBillId()).putAll(bill.getVoteCounts()));
 
-        return getFullVoteString(voteCountMap);
+        return getFullVoteString(voteCountTable);
     }
 
-    private StringBuffer getFullVoteString(Map<BillId, Map<BillVoteCode, Integer>> billVotes) {
-        return billVotes.entrySet().stream()
-                .sorted(Comparator.comparing(Map.Entry::getKey))
-                .map(entry -> getVoteLine(entry.getKey(), entry.getValue()))
+    private StringBuffer getFullVoteString(Table<BillId, BillVoteCode, Integer> billVoteTable) {
+        return billVoteTable.rowKeySet().stream()
+                .sorted()
+                .map(billId -> getVoteLine(billId, billVoteTable.row(billId)))
                 .reduce((sb1, sb2) -> sb1.append("\n").append(sb2))
                 .orElseGet(StringBuffer::new);
     }
