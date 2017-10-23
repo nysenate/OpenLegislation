@@ -54,7 +54,7 @@ public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implemen
         String docPath = FilenameUtils.getExtension(sobiFragment.getParentSobiFile().getFileName()).equals("XML") ? "sencalendaractive" : "SENATEDATA/sencalendaractive" ;
         try {
             Document doc = xml.parse(sobiFragment.getText());
-            Node xmlCalendarActive = xml.getNode(docPath, doc);
+            Node xmlCalendarActive = xml.getNode("sencalendaractive", doc);
             Integer calendarNo = xml.getInteger("@no", xmlCalendarActive);
             Integer sessionYear = xml.getInteger("@sessyr", xmlCalendarActive);
             Integer year = xml.getInteger("@year", xmlCalendarActive);
