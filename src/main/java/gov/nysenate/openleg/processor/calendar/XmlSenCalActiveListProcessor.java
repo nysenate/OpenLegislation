@@ -51,7 +51,6 @@ public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implemen
         logger.info("Processing Senate Calendar Active List... {}", sobiFragment.getFragmentId());
         LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
         DataProcessUnit unit = createProcessUnit(sobiFragment);
-        String docPath = FilenameUtils.getExtension(sobiFragment.getParentSobiFile().getFileName()).equals("XML") ? "sencalendaractive" : "SENATEDATA/sencalendaractive" ;
         try {
             Document doc = xml.parse(sobiFragment.getText());
             Node xmlCalendarActive = xml.getNode("sencalendaractive", doc);
