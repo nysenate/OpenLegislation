@@ -29,7 +29,8 @@ public enum SobiFragmentType
     SAMEAS          (true, "<sameas .+", "</sameas>.+"),                           // Same as
     SENMEMO         (true, "<senate_billmemo .+", "</senate_billmemo.+"),         // Memo
     SENAGENV        (true, "<senagendavote .+", "</senagendavote.+"),             // Agenda Vote
-    VETOMSG         (true, "<veto_message .+", "</veto_message.+");               // Veto memo
+    VETOMSG         (true, "<veto_message .+", "</veto_message.+"),               // Veto memo
+    SENFLVOTE       (true, "<senfloorvote .+","</senfloorvote>.+");
 
     boolean isXml;
     String startPattern;
