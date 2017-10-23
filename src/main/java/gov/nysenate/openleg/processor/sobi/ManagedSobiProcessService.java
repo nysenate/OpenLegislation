@@ -212,10 +212,8 @@ public class ManagedSobiProcessService implements SobiProcessService {
         final int batchSize = env.getSobiBatchSize();
         sobiProcessEnabled = env.getSobiProcessEnabled();
         for (SourceFileFsDao<?> sourceFsDao : sourceFileFsDaos) {
-            if ( (sourceFsDao instanceof FsXmlDao) || (sobiProcessEnabled) ) {
-                LimitOffset remainingLimit = new LimitOffset(batchSize - incomingSourceFiles.size());
-                incomingSourceFiles.addAll(sourceFsDao.getIncomingSourceFiles(SortOrder.ASC, remainingLimit));
-            }
+            LimitOffset remainingLimit = new LimitOffset(batchSize - incomingSourceFiles.size());
+            incomingSourceFiles.addAll(sourceFsDao.getIncomingSourceFiles(SortOrder.ASC, remainingLimit));
         }
 
         return incomingSourceFiles;
