@@ -47,36 +47,27 @@
       <md-content>
         <div class="mismatch-diff-side">
            <div class="mismatch-diff-source-label">
-             <a ng-if="currentMismatch.datasource === 'LBDC'"
-                ng-href="{{currentMismatch.key | referenceUrl:currentMismatch.datasource:currentMismatch.contentType}}"
+             <a ng-href="{{currentMismatch.key | referenceUrl:currentMismatch.datasource:currentMismatch.contentType}}"
                 target="_blank">
-               <span>{{com[0]}}</span>
-             </a>
-             <a ng-if="currentMismatch.datasource === 'NYSENATE'"
-                ng-href="{{currentMismatch.key | contentUrl:currentMismatch.contentType}}" target="_blank">
-               <span>{{com[0]}}</span>
+               <span ng-bind="currentMismatch.datasource | dataSourceRef"></span>
              </a>
           </div>
 
-          <div id="mismatch-diff-data" class="mismatch-diff-container">
-            <mismatch-diff show-lines="false" left="referenceData" right="observedData"></mismatch-diff>
+          <div id="mismatch-diff-reference" class="mismatch-diff-container">
+            <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
           </div>
         </div>
 
         <div class="mismatch-diff-side">
           <div class="mismatch-diff-source-label">
-            <a ng-if="currentMismatch.datasource === 'LBDC'"
-               ng-href="{{currentMismatch.key | contentUrl:currentMismatch.contentType}}" target="_blank">
-              <span>{{com[1]}}</span>
-            </a>
-             <a ng-if="currentMismatch.datasource === 'NYSENATE'" target="_blank"
-               ng-href="{{currentMismatch.key | referenceUrl:currentMismatch.datasource:currentMismatch.contentType}}">
-              <span>{{com[1]}}</span>
+            <a ng-href="{{currentMismatch.key | contentUrl:currentMismatch.datasource:currentMismatch.contentType}}"
+               target="_blank">
+              <span ng-bind="currentMismatch.datasource | dataSourceData"></span>
             </a>
           </div>
 
-          <div id="mismatch-diff-source" class="mismatch-diff-container">
-            <mismatch-diff show-lines="false" left="referenceData" right="observedData"></mismatch-diff>
+          <div id="mismatch-diff-observed" class="mismatch-diff-container">
+            <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
           </div>
         </div>
       </md-content>

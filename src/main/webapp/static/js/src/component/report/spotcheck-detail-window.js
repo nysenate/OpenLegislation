@@ -1,7 +1,8 @@
 angular.module('open.spotcheck')
-    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatch', 'source', 'contentType', detailDialogCtrl]);
+    .controller('detailDialogCtrl', ['$scope', '$mdDialog', '$filter',
+                                     'mismatch', 'source', 'contentType', detailDialogCtrl]);
 
-function detailDialogCtrl($scope, $mdDialog, mismatch, source, contentType) {
+function detailDialogCtrl($scope, $mdDialog, $filter, mismatch, source, contentType) {
 
     $scope.reportType = mismatch.refType;
 
@@ -78,16 +79,26 @@ function detailDialogCtrl($scope, $mdDialog, mismatch, source, contentType) {
             });
         }
 
-        $scope.referenceData = texts[0];
-        $scope.observedData = texts[1];
+        // Swap source and ref if openleg is viewed as the ref
+        if (isOpenlegRef()) {
+            $scope.referenceData = texts[1];
+            $scope.observedData = texts[0];
+        } else {
+            $scope.referenceData = texts[0];
+            $scope.observedData = texts[1];
+        }
     };
+
+    /**
+     * Return true if openleg is the reference in this comparison
+     * @return {boolean}
+     */
+    function isOpenlegRef() {
+        return $filter('isOLRef')(source);
+    }
 
     function init() {
         $scope.contentType = contentType;
-        if (source == "LBDC")
-            $scope.com = ["LBDC", "Open Legislation"];
-        else
-            $scope.com = ["Open Legislation", "NYSenate.gov"];
         $scope.date = moment().format('l');
         console.log('loading detail dialog for', mismatch);
         $scope.observation = mismatch.observedData;

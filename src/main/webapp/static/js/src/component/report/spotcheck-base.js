@@ -1,26 +1,66 @@
-var spotcheckModule = angular.module('open.spotcheck', ['open.core', 'smart-table', 'diff-match-patch']);
+/**
+ * Defines utilities that are used throughout the spotcheck pages
+ */
+angular.module('open.spotcheck', ['open.core', 'smart-table', 'diff-match-patch'])
+    .factory('SpotcheckMismatchIgnoreAPI', ['$resource', mismatchIgnoreApi])
+    .factory('SpotcheckMismatchTrackingAPI', ['$resource', mismatchTrackingApi])
+    .factory('SpotcheckMismatchDeleteAllAPI', ['$resource', mismatchDeleteAllApi])
+    .filter('contentType', contentTypefilter)
+    .filter('dataSourceRef', dataSourceRefFilter)
+    .filter('dataSourceData', dataSourceDataFilter)
+    .filter('contentUrl', contentUrlFilter)
+    .filter('referenceUrl', referenceUrlFilter)
+    .filter('isOLRef', isOLRefFilter)
+    .directive('mismatchDiff', ['$timeout', mismatchDiffDirective])
+;
 
-spotcheckModule.factory('SpotcheckMismatchIgnoreAPI', ['$resource', function ($resource) {
+/* --- Constants --- */
+
+/**
+ * Maps datasource to relevant labels
+ * todo integrate into spotcheck-report-page.js
+ * todo add labels to datasource java enum and pull from there
+ */
+var dataSourceMap = {
+    LBDC: {
+        comparisonLabel: 'LBDC - OpenLegislation',
+        refLabel: 'LBDC',
+        dataLabel: 'Open Legislation'
+    },
+    NYSENATE: {
+        comparisonLabel: 'OpenLegislation - NYSenate.gov',
+        refLabel: 'Open Legislation',
+        dataLabel: 'NYSenate.gov',
+        olRef: true
+    }
+};
+
+/* --- Api Methods --- */
+
+function mismatchIgnoreApi($resource) {
     return $resource(adminApiPath + "/spotcheck/mismatches/:mismatchId/ignore", {
         mismatchId: '@mismatchId',
         ignoreLevel: '@ignoreLevel'
     });
-}]);
+}
 
-spotcheckModule.factory('SpotcheckMismatchTrackingAPI', ['$resource', function ($resource) {
+function mismatchTrackingApi($resource) {
     return $resource(adminApiPath + "/spotcheck/mismatches/:mismatchId/issue/:issueId", {
         mismatchId: '@mismatchId',
         issueId: '@issueId'
     });
-}]);
+}
+
 // Delete all issues corresponding to the given mismatch
-spotcheckModule.factory('SpotcheckMismatchDeleteAllAPI', ['$resource', function ($resource) {
+function mismatchDeleteAllApi($resource) {
     return $resource(adminApiPath + "/spotcheck/mismatch/:mismatchId/delete", {
         mismatchId: '@mismatchId'
     });
-}]);
+}
 
-spotcheckModule.filter('contentType', function() {
+/* --- Filters --- */
+
+function contentTypefilter() {
     var contentTypeMap = {
         LBDC_AGENDA_ALERT: "Agenda",
         LBDC_DAYBREAK: "Bill",
@@ -35,9 +75,69 @@ spotcheckModule.filter('contentType', function() {
         }
         return "Content";
     };
-});
+}
 
-spotcheckModule.directive('mismatchDiff', ['$timeout', function($timeout){
+function dataSourceRefFilter() {
+    return function (dataSource) {
+        if (!dataSourceMap.hasOwnProperty(dataSource)) {
+            return "Unknown DataSource"
+        }
+        return dataSourceMap[dataSource].refLabel;
+    }
+}
+
+function dataSourceDataFilter() {
+    return function (dataSource) {
+        if (!dataSourceMap.hasOwnProperty(dataSource)) {
+            return "Unknown DataSource"
+        }
+        return dataSourceMap[dataSource].dataLabel;
+    }
+}
+
+function contentUrlFilter() {
+    var contentTypeUrlFns = {
+        LBDC: localOpenlegUrlFns,
+        NYSENATE: senateSiteUrlFns
+    };
+
+    return function(key, dataSource, contentType) {
+        var contentUrlFn = (contentTypeUrlFns[dataSource] || {})[contentType];
+        if (contentUrlFn) {
+            return contentUrlFn(key);
+        }
+        return null;
+    };
+}
+
+function referenceUrlFilter() {
+    // multi-map of url generating functions by datasource and content type
+    var refUrlFns = {
+        LBDC: lbdcUrlFns,
+        NYSENATE: localOpenlegUrlFns
+    };
+
+    return function(key, datasource, contentType) {
+        // Get a url function for the given datasource and content type, if it exists
+        var refUrlFn = (refUrlFns[datasource] || {})[contentType];
+        if (refUrlFn) {
+            return refUrlFn(key);
+        }
+        return null;
+    };
+}
+
+function isOLRefFilter() {
+    return function (dataSource) {
+        return dataSourceMap.hasOwnProperty(dataSource) &&
+            (dataSourceMap[dataSource].olRef === true);
+    }
+}
+
+
+/* --- Directives --- */
+
+function mismatchDiffDirective($timeout){
     return {
         restrict: 'E',
         scope: {
@@ -72,102 +172,85 @@ spotcheckModule.directive('mismatchDiff', ['$timeout', function($timeout){
             $scope.$watchGroup(['left', 'right'], $scope.adjustLineCount);
         }
     };
-}]);
+}
 
-spotcheckModule.filter('contentUrl', function() {
-    var contentTypeUrlFns = {
-        'AGENDA': getAgendaUrl,
-        'BILL': getBillUrl,
-        'CALENDAR': getCalendarUrl
-    };
+/* --- Mismatch Url Methods --- */
 
-    return function(key, contentType) {
-        if (contentTypeUrlFns.hasOwnProperty(contentType)) {
-            return contentTypeUrlFns[contentType](key);
-        }
-        return "";
-    };
 
-    function getAgendaUrl(key) {
-        if (key.agendaId.year > 0) {
-            return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
-        }
-        return "";
+var localOpenlegUrlFns = {
+    'AGENDA': getLocalAgendaUrl,
+    'BILL': getLocalBillUrl,
+    'CALENDAR': getLocalCalendarUrl
+};
+
+var lbdcUrlFns = {
+    BILL: getLrsBillUrl
+};
+
+var senateSiteUrlFns = {
+    AGENDA: getSenSiteAgendaUrl,
+    BILL: getSenSiteBillUrl,
+    CALENDAR: getSenSiteCalendarUrl
+};
+
+function getLocalAgendaUrl(key) {
+    if (key.agendaId.year > 0) {
+        return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
     }
-    function getBillUrl(key) {
-        var url = ctxPath + "/bills/" + key.session.year + "/" + key.basePrintNo;
-        if (key.hasOwnProperty('version')) {
-            url += '?version=' + key.version;
+    return "";
+}
+
+function getLocalBillUrl(key) {
+    var url = ctxPath + "/bills/" + key.session.year + "/" + key.basePrintNo;
+    if (key.hasOwnProperty('version')) {
+        url += '?version=' + key.version;
+    }
+    return url;
+}
+
+function getLocalCalendarUrl(key) {
+    var url = ctxPath + "/calendars/" +  key.year + "/" + key.calNo;
+    if (key.hasOwnProperty('type')) {
+        switch (key.type) {
+            case 'ACTIVE_LIST':
+                url += '?view=active-list';
+                break;
+            case 'FLOOR_CALENDAR':
+            case 'SUPPLEMENTAL_CALENDAR':
+                url += '?view=floor';
+                break;
         }
-        return url;
     }
-    function getCalendarUrl(key) {
-        var url = ctxPath + "/calendars/" +  key.year + "/" + key.calNo;
-        if (key.hasOwnProperty('type')) {
-            switch (key.type) {
-                case 'ACTIVE_LIST':
-                    url += '?view=active-list';
-                    break;
-                case 'FLOOR_CALENDAR':
-                case 'SUPPLEMENTAL_CALENDAR':
-                    url += '?view=floor';
-                    break;
-            }
-        }
-        return url;
+    return url;
+}
+
+function getLrsBillUrl(key) {
+    return "http://public.leginfo.state.ny.us/navigate.cgi" +
+        "?NVDTO:=&QUERYTYPE=BILLNO&CBTEXT=Y&CBSPONMEMO=Y" +
+        "&SESSYR=" + key.session.year +
+        "&QUERYDATA=" + key.printNo;
+}
+
+function getSenSiteAgendaUrl(key) {
+    // TODO Need meeting date time to create link.
+    // Example: https://www.nysenate.gov/calendar/meetings/codes/january-23-2017/codes-meeting
+    // return senSitePath + "/calendar/meetings/" + key.committeeId.name + "/";
+    return null;
+}
+
+function getSenSiteBillUrl(key) {
+    var billType = "bills";
+    if (!/^[SA]/i.test(key.printNo)) {
+        billType = "resolutions";
     }
-});
+    var amendment = key.version === "DEFAULT"
+        ? "original" : key.version;
+    return senSitePath + "/legislation/" + billType + "/" +
+        key.session.year + "/" + key.basePrintNo + "/amendment/" + amendment;
+}
 
-spotcheckModule.filter('referenceUrl', function() {
-    // multi-map of url generating functions by datasource and content type
-    var refUrlFns = {
-        LBDC: {
-            BILL: getLrsBillUrl
-        },
-        NYSENATE: {
-            AGENDA: getSenSiteAgendaUrl,
-            BILL: getSenSiteBillUrl,
-            CALENDAR: getSenSiteCalendarUrl
-        }
-    };
-
-    return function(key, datasource, contentType) {
-        // Get a url function for the given datasource and content type, if it exists
-        var refUrlFn = (refUrlFns[datasource] || {})[contentType];
-        if (refUrlFn) {
-            return refUrlFn(key);
-        }
-        return null;
-    };
-
-    function getLrsBillUrl(key) {
-        return "http://public.leginfo.state.ny.us/navigate.cgi" +
-            "?NVDTO:=&QUERYTYPE=BILLNO&CBTEXT=Y&CBSPONMEMO=Y" +
-            "&SESSYR=" + key.session.year +
-            "&QUERYDATA=" + key.printNo;
-    }
-
-    function getSenSiteAgendaUrl(key) {
-        // TODO Need meeting date time to create link.
-        // Example: https://www.nysenate.gov/calendar/meetings/codes/january-23-2017/codes-meeting
-        // return senSitePath + "/calendar/meetings/" + key.committeeId.name + "/";
-        return null;
-    }
-
-    function getSenSiteBillUrl(key) {
-        var billType = "bills";
-        if (!/^[SA]/i.test(key.printNo)) {
-            billType = "resolutions";
-        }
-        var amendment = key.version === "DEFAULT"
-            ? "original" : key.version;
-        return senSitePath + "/legislation/" + billType + "/" +
-            key.session.year + "/" + key.basePrintNo + "/amendment/" + amendment;
-    }
-
-    function getSenSiteCalendarUrl(key) {
-        // TODO Need session date time to create link.
-        // Example: https://www.nysenate.gov/calendar/sessions/june-05-2017/session-6-5-17
-        return null;
-    }
-});
+function getSenSiteCalendarUrl(key) {
+    // TODO Need session date time to create link.
+    // Example: https://www.nysenate.gov/calendar/sessions/june-05-2017/session-6-5-17
+    return null;
+}

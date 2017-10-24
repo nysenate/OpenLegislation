@@ -1342,7 +1342,7 @@ $diff-source-label-height: 70px;
   }
 }
 
-#mismatch-diff-source ins, #mismatch-diff-data del {
+#mismatch-diff-observed ins, #mismatch-diff-reference del {
   display: none;
 }
 
