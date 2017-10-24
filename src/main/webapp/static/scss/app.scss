@@ -1275,6 +1275,8 @@ a.slogan-link {
 
 /** --- Styles for Spotcheck diffs --- */
 
+$mismatch-menu-color: #3e4f62;
+
 md-dialog.detail-diff-dialog {
   width: 90vw;
   height: 90vh;
@@ -1284,8 +1286,15 @@ md-dialog.detail-diff-dialog {
     overflow: hidden;
     height: 100%;
     margin: 0;
-    padding: 0 20px 20px;
+    padding: 20px;
   }
+}
+
+.mismatch-diff-view-exit {
+  font-size: 25px;
+  position: fixed;
+  right: 0;
+  z-index: 1;
 }
 
 .mismatch-diff-view-top-half {
@@ -1296,39 +1305,57 @@ md-dialog.detail-diff-dialog {
 .mismatch-diff-info-card {
   padding: 0 10px;
   margin-left: 2.5%;
-}
-
-.mismatch-diff-info-card p {
-  line-height: .5em;
-}
-
-.mismatch-diff-info-border-radius {
   border-radius: 10px;
+  background-color: $mismatch-menu-color;
+  color: #fafafa;
+
+  p {
+    line-height: .5em;
+  }
 }
 
-$mismatch-menu-color: #3e4f62;
-.mismatch-diff-info-background-color {
-  background-color: $mismatch-menu-color;
+.mismatch-diff-text-controls {
+  padding: 5px;
+  margin-right: 2.5%;
+  border: 1px solid $mismatch-menu-color;
+  border-radius: 10px;
+
+  select {
+    margin-bottom: 10px;
+  }
 }
 
 $diff-del-color: #d0021b;
 $diff-ins-color: #59a007;
 
-#mismatch-diff-left-side, #mismatch-diff-right-side {
-  max-height: 55vh;
+$diff-side-height: 55vh;
+$diff-source-label-height: 70px;
+
+.mismatch-diff-side {
+  float: left;
+  height: $diff-side-height;
+  width: 45%;
+  margin: 0 2.5%;
+
+  a {
+    color: lightblue;
+  }
 }
 
 #mismatch-diff-source ins, #mismatch-diff-data del {
   display: none;
 }
 
-#mismatch-diff-data, #mismatch-diff-source {
+.mismatch-diff-container {
   overflow: auto;
+  height: calc(#{$diff-side-height} - #{$diff-source-label-height});
 }
 
-$mismatch-ref-source-color: #3E4F62;
-.mismatch-ref-source-color {
-  background-color: $mismatch-ref-source-color;
+.mismatch-diff-source-label {
+  background-color: $mismatch-menu-color;
+  text-align: center;
+  vertical-align: middle;
+  line-height: $diff-source-label-height;
 }
 
 .mismatch-diff-info-background-color-border {
@@ -1337,17 +1364,16 @@ $mismatch-ref-source-color: #3E4F62;
 }
 
 diff-summary, mismatch-diff {
-  ins {
-    background-color: $diff-ins-color;
-    @extend .white-text-color;
+  ins, del {
+    color: white;
     font-weight: bold;
     text-decoration: none;
   }
+  ins {
+    background-color: $diff-ins-color;
+  }
   del {
     background-color: $diff-del-color;
-    @extend .white-text-color;
-    font-weight: bold;
-    text-decoration: none;
   }
 }
 
@@ -1357,12 +1383,6 @@ diff-summary, mismatch-diff {
 
 .margin-top-5 {
   margin-top: 5px;
-}
-
-.align-text-hor-vert-center {
-  text-align: center;
-  vertical-align: middle;
-  line-height: 70px;
 }
 
 /** --- Admin Account Settings --- */
