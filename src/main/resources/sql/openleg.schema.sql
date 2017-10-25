@@ -5925,6 +5925,11 @@ CREATE INDEX law_tree_doc_id_idx ON law_tree USING btree (doc_id);
 CREATE INDEX law_tree_published_date_idx ON law_tree USING btree (published_date);
 
 
+--
+-- Name: law_tree_published_date_idx; Type: INDEX; Schema: master; Owner: postgres
+--
+
+CREATE INDEX law_tree_law_id_doc_id_idx ON law_tree USING btree (law_id, doc_id);
 
 --
 -- Name: notification_digest_subscription_next_digest_index; Type: INDEX; Schema: master; Owner: postgres
