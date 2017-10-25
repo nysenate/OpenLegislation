@@ -243,8 +243,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
      * Get previous session year bill id for the base bill id in the params.
      */
     public BillId getDirectPrevVersion(ImmutableParams baseParams) {
-        List<BillId> billIds = jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS.getSql(schema()), baseParams,
-                new BillPreviousVersionRowMapper());
+        List<BillId> billIds = jdbcNamed.query(
+                SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS.getSql(
+                        schema(), new OrderBy("bill_session_year", SortOrder.DESC)),
+                baseParams, new BillPreviousVersionRowMapper());
         if (billIds.size() == 0) {
             return null;
         }
