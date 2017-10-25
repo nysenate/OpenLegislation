@@ -18,7 +18,7 @@ public class ApprovalMessageParser {
     private String action;
     ApprovalMessage approvalMessage;
     private static final Pattern approvalTitlePattern =
-            Pattern.compile("\\s+APPROVAL MEMORANDUM\\s+-\\s+No\\.\\s+\\d+\\s+Chapter\\s+?(\\d+)");
+            Pattern.compile("\\s+APPROVAL MEMORANDUM\\s+-\\s+No\\.\\s?+\\d+\\s+Chapter\\s+?(\\d+)");
     private static final Pattern approvalSignerPattern =
             Pattern.compile("\\s+(?:(?:The|This) bill is|These bills are) approved\\.\\s*\\(signed\\)\\s*([a-zA-Z.'\\- ]*[a-zA-Z.])");
 
