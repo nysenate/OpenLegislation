@@ -277,7 +277,7 @@ public class BillActionAnalyzer
             currStatus = new BillStatus(STRICKEN, action.getDate());
             this.stricken = true;
         }
-        else if (text.contains("LOST")) {
+        else if (text.trim().equals("LOST")) {
             currStatus = new BillStatus(LOST, action.getDate());
         }
 
