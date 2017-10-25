@@ -113,7 +113,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
                     case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
                     case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment); break;
+                    case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment, sobiFragment); break;
                     case SAME_AS: applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
                     case SPONSOR: applySponsor(data, baseBill, specifiedAmendment, date); break;
                     case CO_SPONSOR: applyCosponsors(data, baseBill); break;
@@ -208,14 +208,26 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
             }
             String prevPrintNo = billData.group(4).trim();
             String prevSessionYearStr = billData.group(6).trim();
-            if (!prevSessionYearStr.equals("0000") && !prevPrintNo.equals("00000")) {
-                try {
-                    Integer prevSessionYear = Integer.parseInt(prevSessionYearStr);
-                    baseBill.addDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
+            String blurb = billData.group(3).trim();
+            // Prev version info always comes separate from sponsor and blurb info.
+            // Only apply prev version info if sponsor and blurb info is not included.
+            if (StringUtils.isEmpty(sponsor) && StringUtils.isEmpty(blurb)) {
+                // If the prev session year and prev base print no is empty remove prev version.
+                // Do not check amendment because print number of 00000A should still trigger removal.
+                if (prevSessionYearStr.equals("0000") && prevPrintNo.startsWith("00000")) {
+                    // Remove prev version.
+                    baseBill.setDirectPreviousVersion(null);
                     baseBill.setModifiedDateTime(date);
                 }
-                catch (NumberFormatException ex) {
-                    unit.addMessage("Failed to parse previous session year from Bill Info line: " + prevSessionYearStr);
+                else {
+                    // Set prev version
+                    try {
+                        Integer prevSessionYear = Integer.parseInt(prevSessionYearStr);
+                        baseBill.setDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
+                        baseBill.setModifiedDateTime(date);
+                    } catch (NumberFormatException ex) {
+                        unit.addMessage("Failed to parse previous session year from Bill Info line: " + prevSessionYearStr);
+                    }
                 }
             }
         }
@@ -280,7 +292,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
      * @see BillActionParser
      * @throws ParseError
      */
-    private void applyBillActions(String data, Bill baseBill, BillAmendment specifiedAmendment)
+    private void applyBillActions(String data, Bill baseBill, BillAmendment specifiedAmendment, SobiFragment fragment)
                                 throws ParseError {
         // Use the BillActionParser to convert the actions string into objects.
         List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
@@ -297,6 +309,13 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
         baseBill.setMilestones(analyzer.getMilestones());
         baseBill.setPastCommittees(analyzer.getPastCommittees());
         baseBill.setPublishStatuses(analyzer.getPublishStatusMap());
+        // Ensure that amendments exist for all versions in the publish status map
+        baseBill.getAmendPublishStatusMap().keySet().forEach(version ->
+                getOrCreateBaseBill(
+                        fragment.getPublishedDateTime(),
+                        baseBill.getBaseBillId().withVersion(version),
+                        fragment)
+        );
         analyzer.getSameAsMap().forEach((k, v) -> {
             if (baseBill.hasAmendment(k)) {
                 baseBill.getAmendment(k).setSameAs(Sets.newHashSet(v));

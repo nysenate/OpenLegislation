@@ -121,7 +121,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * @param fragment SobiFragment
      */
     protected void addPreviousBillId(Bill baseBill, String prevPrintNo, Integer prevSessionYear, SobiFragment fragment) {
-        baseBill.addDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
+        baseBill.setDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
         setModifiedDateTime(baseBill, fragment);
     }
 

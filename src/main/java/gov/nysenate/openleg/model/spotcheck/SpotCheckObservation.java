@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
+
 /**
  * A SpotCheckObservation is the result of performing a SpotCheck against some reference data. It contains
  * any mismatches that were detected between the reference content and the observed content.
@@ -46,6 +49,34 @@ public class SpotCheckObservation<ContentKey>
         this.observedDateTime = LocalDateTime.now();
     }
 
+    /**
+     * Generates an observation with a reference data missing observation
+     * @param referenceId {@link SpotCheckReferenceId}
+     * @param key {@link ContentKey}
+     * @param <ContentKey>
+     * @return {@link SpotCheckObservation}
+     */
+    public static <ContentKey> SpotCheckObservation<ContentKey> getRefMissingObs(
+            SpotCheckReferenceId referenceId, ContentKey key) {
+        SpotCheckObservation<ContentKey> obs = new SpotCheckObservation<>(referenceId, key);
+        obs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, key, ""));
+        return obs;
+    }
+
+    /**
+     * Generates an observation with an observed data missing observation
+     * @param referenceId {@link SpotCheckReferenceId}
+     * @param key {@link ContentKey}
+     * @param <ContentKey>
+     * @return {@link SpotCheckObservation}
+     */
+    public static <ContentKey> SpotCheckObservation<ContentKey> getObserveDataMissingObs(
+            SpotCheckReferenceId referenceId, ContentKey key) {
+        SpotCheckObservation<ContentKey> obs = new SpotCheckObservation<>(referenceId, key);
+        obs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, "", key));
+        return obs;
+    }
+
     /** --- Methods --- */
 
     public boolean hasMismatches() {
@@ -76,11 +107,11 @@ public class SpotCheckObservation<ContentKey>
      * @param ignored boolean - if true, will return counts for ignored mismatches, which are left out if false
      * @return Map<SpotCheckMismatchStatus, Long>
      */
-    public Map<SpotCheckMismatchStatus, Long> getMismatchStatusCounts(boolean ignored) {
+    public Map<MismatchState, Long> getMismatchStatusCounts(boolean ignored) {
         if (mismatches != null) {
             return mismatches.values().stream()
                     .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
-                    .collect(Collectors.groupingBy(SpotCheckMismatch::getStatus, Collectors.counting()));
+                    .collect(Collectors.groupingBy(SpotCheckMismatch::getState, Collectors.counting()));
         }
         else {
             throw new IllegalStateException("Collection of mismatches is null");
@@ -92,11 +123,11 @@ public class SpotCheckObservation<ContentKey>
      *
      * @return Map<SpotCheckMismatchType, SpotCheckMismatchStatus>
      */
-    public Map<SpotCheckMismatchType, SpotCheckMismatchStatus> getMismatchStatusTypes(boolean ignored) {
+    public Map<SpotCheckMismatchType, MismatchState> getMismatchStatusTypes(boolean ignored) {
         if (mismatches != null) {
             return mismatches.values().stream()
                     .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
-                    .collect(Collectors.toMap(SpotCheckMismatch::getMismatchType, SpotCheckMismatch::getStatus));
+                    .collect(Collectors.toMap(SpotCheckMismatch::getMismatchType, SpotCheckMismatch::getState));
         }
         else {
             throw new IllegalStateException("Collection of mismatches is null");

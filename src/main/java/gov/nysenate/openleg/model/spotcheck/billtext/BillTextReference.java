@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.model.spotcheck.billtext;
 
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -37,7 +36,8 @@ public class BillTextReference {
      * @param memo
      * @param notFound
      */
-    public BillTextReference(BillId billId, LocalDateTime referenceDate, String text, String memo, boolean notFound){
+    private BillTextReference(BillId billId, LocalDateTime referenceDate, String text, String memo,
+                             boolean notFound){
         this.baseBillId = BillId.getBaseId(billId);
         this.activeVersion = billId.getVersion();
 
@@ -47,22 +47,16 @@ public class BillTextReference {
         this.notFound = notFound;
     }
 
-    /**
-     *
-     * @param printNo, bill type and bill number
-     * @param sessionYear, session year that the bill was presented in
-     * @param referenceDate, DateTime that the reference was generated
-     * @param text
-     * @param memo
-     * @param activeVersion
-     */
-    public BillTextReference(String printNo, SessionYear sessionYear, LocalDateTime referenceDate, String text, String memo, Version activeVersion) {
-        this.baseBillId = new BaseBillId(printNo, sessionYear);
-        this.referenceDate = referenceDate;
-        this.text = text;
-        this.memo = memo;
-        this.activeVersion = activeVersion;
+    public BillTextReference(BillId billId, LocalDateTime referenceDate, String text, String memo) {
+        this(billId, referenceDate, text, memo, false);
     }
+
+    public static BillTextReference getErrorBtr(BillId billId, LocalDateTime referenceDate,
+                                                String text) {
+        return new BillTextReference(billId, referenceDate, text, "", true);
+    }
+
+    /* --- Functional Getters --- */
 
     public SpotCheckReferenceId getReferenceId() {
         return new SpotCheckReferenceId(SpotCheckRefType.LBDC_SCRAPED_BILL, this.referenceDate);
@@ -75,6 +69,8 @@ public class BillTextReference {
     public String getPrintNo() {
         return baseBillId.getPrintNo();
     }
+
+    /* --- Getters / Setters --- */
 
     public BaseBillId getBaseBillId() {
         return baseBillId;

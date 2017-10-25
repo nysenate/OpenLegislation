@@ -3,7 +3,6 @@ package gov.nysenate.openleg.model.spotcheck;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.stream.Collectors;
 public abstract class SpotCheckSummary {
 
     /** The number of occurrences for each mismatch type in the report, divided by mismatch status */
-    protected Table<SpotCheckMismatchType, SpotCheckMismatchStatus,
+    protected Table<SpotCheckMismatchType, MismatchState,
             Table<SpotCheckMismatchIgnore, SpotCheckMismatchTracked, Long>> mismatchCounts;
 
     public SpotCheckSummary() {
@@ -23,7 +22,7 @@ public abstract class SpotCheckSummary {
     /** --- Functional Getters / Setters --- */
 
     /** Record a type/status count */
-    public void addMismatchTypeCount(SpotCheckMismatchType type, SpotCheckMismatchStatus status,
+    public void addMismatchTypeCount(SpotCheckMismatchType type, MismatchState status,
                                      SpotCheckMismatchIgnore ignoreStatus, boolean tracked, long count) {
         if (!mismatchCounts.contains(type, status)) {
             mismatchCounts.put(type, status, HashBasedTable.create());
@@ -36,11 +35,11 @@ public abstract class SpotCheckSummary {
         observations.stream()
                 .flatMap(obs -> obs.getMismatches().values().stream())
                 .forEach(mismatch -> {
-                    if (!mismatchCounts.contains(mismatch.getMismatchType(), mismatch.getStatus())) {
-                        mismatchCounts.put(mismatch.getMismatchType(), mismatch.getStatus(), HashBasedTable.create());
+                    if (!mismatchCounts.contains(mismatch.getMismatchType(), mismatch.getState())) {
+                        mismatchCounts.put(mismatch.getMismatchType(), mismatch.getState(), HashBasedTable.create());
                     }
                     Table<SpotCheckMismatchIgnore, SpotCheckMismatchTracked, Long> ignoreTrackedTable =
-                            mismatchCounts.get(mismatch.getMismatchType(), mismatch.getStatus());
+                            mismatchCounts.get(mismatch.getMismatchType(), mismatch.getState());
                     long existingValue = Optional.ofNullable(
                             ignoreTrackedTable.get(mismatch.getIgnoreStatus(), mismatch.getTracked()))
                             .orElse(0L);
@@ -48,7 +47,7 @@ public abstract class SpotCheckSummary {
                 });
     }
 
-    public Map<SpotCheckMismatchStatus, Long> getMismatchStatuses() {
+    public Map<MismatchState, Long> getMismatchStatuses() {
         return mismatchCounts.cellSet().stream()
                 .map(cell -> ImmutablePair.of(cell.getColumnKey(), cell.getValue().values().stream().reduce(0L, Long::sum)))
                 .collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight, Long::sum));
@@ -56,7 +55,7 @@ public abstract class SpotCheckSummary {
 
     /** --- Getters --- */
 
-    public Table<SpotCheckMismatchType, SpotCheckMismatchStatus,
+    public Table<SpotCheckMismatchType, MismatchState,
             Table<SpotCheckMismatchIgnore, SpotCheckMismatchTracked, Long>> getMismatchCounts() {
         return mismatchCounts;
     }

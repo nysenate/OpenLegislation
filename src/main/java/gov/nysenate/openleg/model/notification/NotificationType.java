@@ -17,6 +17,7 @@ public enum NotificationType {
     WARNING                 (ALL),
     PROCESS_WARNING         (WARNING),
     SCRAPING_EXCEPTION      (WARNING),
+    LRS_OUTAGE              (WARNING),
     UNVERIFIED_MEMBER       (ALL),
     SPOTCHECK               (ALL),
     SPOTCHECK_MISMATCH      (SPOTCHECK),

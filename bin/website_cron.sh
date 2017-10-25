@@ -16,6 +16,7 @@
 # Revised: 2017-01-12 - Added safe_cache_form_clear drush command
 # Revised: 2017-02-09 - Added --maint option to run Drupal maintenance tasks
 # Revised: 2017-08-14 - Added --update-statutes to update all statutes
+# Revised: 2017-08-24 - Modified --qa option to use spotcheck-dump drush command
 # Revised: 2017-10-10 - Added --accum option to run Drupal accumulator integrity
 #
 
@@ -62,10 +63,13 @@ echo "$ts - Running $mode website cron tasks for [$penv] environment"
 
 if [ "$mode" = "qa" ]; then
   echo "About to generate QA report for all bills during the current session"
-  pdrush @$penv bill-qa --session-to-date
+  pdrush @$penv spotcheck-dump bill
 
   echo "About to generate QA report for all calendars during the current year"
-  pdrush @$penv calendar-qa --year-to-date
+  pdrush @$penv spotcheck-dump calendar
+
+  echo "About to generate QA report for all agendas during the current year"
+  pdrush @$penv spotcheck-dump agenda
 
 elif [ "$mode" = "disqus" ]; then
 

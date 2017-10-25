@@ -159,6 +159,10 @@ public class BillActionAnalyzer
         });
     }
 
+    protected void matchPublishVersion( List<BillAction> actions, BaseBillId baseBillId ) {
+        
+    }
+
     /**
      * The BillActions dictate which non-base versions of an amendment (e.g. 'A','B') should be published.
      * There are certain actions that indicate a version should be published (e.g print number 1234a) and other
@@ -205,6 +209,7 @@ public class BillActionAnalyzer
             }
         }
         this.activeVersion = publishVersion;
+        action.setBillId(BaseBillId.of(billId).withVersion(activeVersion));
     }
 
     /**
@@ -272,7 +277,7 @@ public class BillActionAnalyzer
             currStatus = new BillStatus(STRICKEN, action.getDate());
             this.stricken = true;
         }
-        else if (text.contains("LOST")) {
+        else if (text.trim().equals("LOST")) {
             currStatus = new BillStatus(LOST, action.getDate());
         }
 

@@ -64,8 +64,9 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
 
     public List<Calendar> getCalendarAlertsByDateRange(LocalDateTime start, LocalDateTime end) {
         MapSqlParameterSource params = getDateRangeParams(start, end);
-        List<Calendar> calendars = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_CALENDAR_RANGE.getSql(schema()), params, new CalendarListRowMapper());
-        return populateCalendars(calendars);
+        CalendarListHandler calendarHandler = new CalendarListHandler();
+        jdbcNamed.query(SqlCalendarAlertQuery.SELECT_CALENDAR_RANGE.getSql(schema()), params, calendarHandler);
+        return calendarHandler.getCalendars();
     }
 
     public void markAsChecked(CalendarId id) {
@@ -93,15 +94,6 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
     }
 
     /** --- Internal Methods --- */
-
-    private List<Calendar> populateCalendars(List<Calendar> calendars) {
-        for (Calendar cal: calendars) {
-            ImmutableParams calParams = ImmutableParams.from(getCalendarIdParams(cal.getId()));
-            cal.setSupplementalMap(getCalSupplementals(calParams));
-            cal.setActiveListMap(getActiveListMap(calParams));
-        }
-        return calendars;
-    }
 
     /**
      * Retrieves all the supplementals for a particular calendar.
@@ -183,27 +175,29 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
 
     /** --- Helper Classes --- */
 
-    private RowMapper<Calendar> CalendarRowMapper = (rs, rowNum) -> {
+    private RowMapper<Calendar> CalendarRowMapper = (rs, rowNum) -> createCalendarFromRs(rs);
+
+    private class CalendarListHandler implements RowCallbackHandler {
+
+        private List<Calendar> calendars = new ArrayList<>();
+
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            calendars.add(createCalendarFromRs(rs));
+        }
+
+        public List<Calendar> getCalendars() {
+            return calendars;
+        }
+    }
+
+    private Calendar createCalendarFromRs(ResultSet rs) throws SQLException {
         Calendar calendar = setCalendarIdFromResultSet(rs);
         setModPubDatesFromResultSet(calendar, rs);
         ImmutableParams calParams = ImmutableParams.from(getCalendarIdParams(calendar.getId()));
         calendar.setSupplementalMap(getCalSupplementals(calParams));
         calendar.setActiveListMap(getActiveListMap(calParams));
         return calendar;
-    };
-
-    private class CalendarListRowMapper implements RowMapper<List<Calendar>> {
-
-        @Override
-        public List<Calendar> mapRow(ResultSet rs, int rowNum) throws SQLException {
-            List<Calendar> calendars = new ArrayList<>();
-            while(rs.next()) {
-                Calendar calendar = setCalendarIdFromResultSet(rs);
-                setModPubDatesFromResultSet(calendar, rs);
-                calendars.add(calendar);
-            }
-            return calendars;
-        }
     }
 
     private Calendar setCalendarIdFromResultSet(ResultSet rs) throws SQLException {

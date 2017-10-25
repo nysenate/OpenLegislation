@@ -2,18 +2,21 @@ package gov.nysenate.openleg.dao.sobi;
 
 import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+@Category(SillyTest.class)
 public class SqlFsSobiDaoTest extends BaseTests
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlFsSobiDaoTest.class);

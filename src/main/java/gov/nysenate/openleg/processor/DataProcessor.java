@@ -12,7 +12,7 @@ import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
-import gov.nysenate.openleg.util.AsyncRunner;
+import gov.nysenate.openleg.util.AsyncUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class DataProcessor
     @Autowired private Environment env;
     @Autowired private EventBus eventBus;
     @Autowired private DataProcessLogService processLogService;
-    @Autowired private AsyncRunner asyncRunner;
+    @Autowired private AsyncUtils asyncUtils;
 
     @Autowired private SobiProcessService sobiProcessService;
     @Autowired private TranscriptProcessService transcriptProcessService;
@@ -82,12 +82,11 @@ public class DataProcessor
             currentRun = processLogService.startNewRun(LocalDateTime.now(), invoker);
 
             if (async) {
-                asyncRunner.run(this::doRun);
+                asyncUtils.run(this::doRun);
             } else {
                 doRun();
             }
 
-            logger.info("Exiting data processor.");
             return currentRun;
         }
         else {
@@ -206,6 +205,7 @@ public class DataProcessor
             logger.error("Unexpected Processing Error:\n{}", ExceptionUtils.getStackTrace(ex));
         }
         processLogService.finishRun(currentRun);
+        logger.info("Exiting data processor.");
     }
 
     private void logCounts(Map<String, Integer> counts) {

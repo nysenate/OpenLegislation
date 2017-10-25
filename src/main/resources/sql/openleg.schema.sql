@@ -3945,209 +3945,6 @@ ALTER SEQUENCE sobi_fragment_process_id_seq OWNED BY data_process_run.id;
 
 
 --
--- Name: spotcheck_mismatch; Type: TABLE; Schema: master; Owner: postgres
---
-
-CREATE TABLE spotcheck_mismatch (
-    id integer NOT NULL,
-    observation_id integer NOT NULL,
-    type text NOT NULL,
-    status text NOT NULL,
-    reference_data text NOT NULL,
-    observed_data text NOT NULL,
-    notes text,
-    issue_ids text[] DEFAULT ARRAY[]::text[] NOT NULL
-);
-
-
-ALTER TABLE spotcheck_mismatch OWNER TO postgres;
-
---
--- Name: TABLE spotcheck_mismatch; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON TABLE spotcheck_mismatch IS 'Listing of all spot check mismatches ';
-
-
---
--- Name: COLUMN spotcheck_mismatch.issue_ids; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN spotcheck_mismatch.issue_ids IS 'Issue tracker ids that are relevant to this mismatch';
-
-
---
--- Name: spotcheck_mismatch_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
---
-
-CREATE SEQUENCE spotcheck_mismatch_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE spotcheck_mismatch_id_seq OWNER TO postgres;
-
---
--- Name: spotcheck_mismatch_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
---
-
-ALTER SEQUENCE spotcheck_mismatch_id_seq OWNED BY spotcheck_mismatch.id;
-
-
---
--- Name: spotcheck_mismatch_ignore; Type: TABLE; Schema: master; Owner: postgres
---
-
-CREATE TABLE spotcheck_mismatch_ignore (
-    id integer NOT NULL,
-    key public.hstore NOT NULL,
-    mismatch_type text NOT NULL,
-    ignore_level smallint NOT NULL,
-    reference_type text NOT NULL
-);
-
-
-ALTER TABLE spotcheck_mismatch_ignore OWNER TO postgres;
-
---
--- Name: TABLE spotcheck_mismatch_ignore; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON TABLE spotcheck_mismatch_ignore IS 'A list of mismatches that are marked as ignored.';
-
-
---
--- Name: COLUMN spotcheck_mismatch_ignore.key; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN spotcheck_mismatch_ignore.key IS 'The content id of the targeted mismatch';
-
-
---
--- Name: COLUMN spotcheck_mismatch_ignore.mismatch_type; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN spotcheck_mismatch_ignore.mismatch_type IS 'The type of the targeted mismatch';
-
-
---
--- Name: COLUMN spotcheck_mismatch_ignore.ignore_level; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN spotcheck_mismatch_ignore.ignore_level IS 'A flag that determines how long the mismatch will be ignored';
-
-
---
--- Name: COLUMN spotcheck_mismatch_ignore.reference_type; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON COLUMN spotcheck_mismatch_ignore.reference_type IS 'The report type of the targeted mismatch';
-
-
---
--- Name: spotcheck_mismatch_ignore_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
---
-
-CREATE SEQUENCE spotcheck_mismatch_ignore_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE spotcheck_mismatch_ignore_id_seq OWNER TO postgres;
-
---
--- Name: spotcheck_mismatch_ignore_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
---
-
-ALTER SEQUENCE spotcheck_mismatch_ignore_id_seq OWNED BY spotcheck_mismatch_ignore.id;
-
-
---
--- Name: spotcheck_mismatch_issue_id; Type: TABLE; Schema: master; Owner: postgres
---
-
-CREATE TABLE spotcheck_mismatch_issue_id (
-    id integer NOT NULL,
-    mismatch_id integer NOT NULL,
-    issue_id text NOT NULL
-);
-
-
-ALTER TABLE spotcheck_mismatch_issue_id OWNER TO postgres;
-
---
--- Name: spotcheck_mismatch_issue_id_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
---
-
-CREATE SEQUENCE spotcheck_mismatch_issue_id_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE spotcheck_mismatch_issue_id_id_seq OWNER TO postgres;
-
---
--- Name: spotcheck_mismatch_issue_id_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
---
-
-ALTER SEQUENCE spotcheck_mismatch_issue_id_id_seq OWNED BY spotcheck_mismatch_issue_id.id;
-
-
---
--- Name: spotcheck_observation; Type: TABLE; Schema: master; Owner: postgres
---
-
-CREATE TABLE spotcheck_observation (
-    id integer NOT NULL,
-    report_id integer NOT NULL,
-    reference_type text NOT NULL,
-    reference_active_date timestamp without time zone NOT NULL,
-    key public.hstore NOT NULL,
-    observed_date_time timestamp without time zone NOT NULL,
-    created_date_time timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
-ALTER TABLE spotcheck_observation OWNER TO postgres;
-
---
--- Name: TABLE spotcheck_observation; Type: COMMENT; Schema: master; Owner: postgres
---
-
-COMMENT ON TABLE spotcheck_observation IS 'Spot check observations associate a report to a specific piece of content which may have mismatches';
-
-
---
--- Name: spotcheck_observation_id_seq; Type: SEQUENCE; Schema: master; Owner: postgres
---
-
-CREATE SEQUENCE spotcheck_observation_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE spotcheck_observation_id_seq OWNER TO postgres;
-
---
--- Name: spotcheck_observation_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
---
-
-ALTER SEQUENCE spotcheck_observation_id_seq OWNED BY spotcheck_observation.id;
-
-
---
 -- Name: spotcheck_report; Type: TABLE; Schema: master; Owner: postgres
 --
 
@@ -4197,6 +3994,69 @@ ALTER TABLE spotcheck_report_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE spotcheck_report_id_seq OWNED BY spotcheck_report.id;
 
+
+--
+-- Name: spotcheck_mismatch_mismatch_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE spotcheck_mismatch_mismatch_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE spotcheck_mismatch_mismatch_id_seq OWNER TO postgres;
+
+
+--
+-- Name: spotcheck_mismatch; Type: TABLE; Schema: master; Owner: postgres
+--
+
+CREATE TABLE spotcheck_mismatch (
+    mismatch_id integer DEFAULT nextval('master.spotcheck_mismatch_mismatch_id_seq'::regclass) NOT NULL,
+    key public.hstore NOT NULL,
+    type text NOT NULL,
+    report_id integer NOT NULL,
+    datasource text NOT NULL,
+    content_type text NOT NULL,
+    reference_type text NOT NULL,
+    state text NOT NULL,
+    reference_data text NOT NULL,
+    observed_data text NOT NULL,
+    notes text,
+    issue_ids text[] DEFAULT ARRAY[]::text[] NOT NULL,
+    ignore_status text DEFAULT 'NOT_IGNORED'::text NOT NULL,
+    report_date_time timestamp without time zone NOT NULL,
+    observed_date_time timestamp without time zone NOT NULL,
+    first_seen_date_time timestamp without time zone NOT NULL,
+    reference_active_date_time timestamp without time zone NOT NULL,
+    created_date_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE spotcheck_mismatch OWNER TO postgres;
+
+
+--
+-- Name: spotcheck_mismatch spotcheck_mismatch_mismatch_id_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY spotcheck_mismatch
+    ADD CONSTRAINT spotcheck_mismatch_mismatch_id_pkey PRIMARY KEY (mismatch_id);
+
+
+--
+-- Name: spotcheck_mismatch_observed_date_time_index; Type: INDEX; Schema: master; Owner: postgres
+--
+
+CREATE INDEX spotcheck_mismatch_observed_date_time_index on master.spotcheck_mismatch(observed_date_time);
+
+--
+-- Name: spotcheck_mismatch_first_seen_date_time_index; Type: INDEX; Schema: master; Owner: postgres
+--
+CREATE INDEX spotcheck_mismatch_first_seen_date_time_index on master.spotcheck_mismatch(first_seen_date_time);
 
 --
 -- Name: transcript; Type: TABLE; Schema: master; Owner: postgres
@@ -5035,34 +4895,6 @@ ALTER TABLE ONLY notification_subscription ALTER COLUMN id SET DEFAULT nextval('
 -- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
 --
 
-ALTER TABLE ONLY spotcheck_mismatch ALTER COLUMN id SET DEFAULT nextval('spotcheck_mismatch_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_mismatch_ignore ALTER COLUMN id SET DEFAULT nextval('spotcheck_mismatch_ignore_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_mismatch_issue_id ALTER COLUMN id SET DEFAULT nextval('spotcheck_mismatch_issue_id_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_observation ALTER COLUMN id SET DEFAULT nextval('spotcheck_observation_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: master; Owner: postgres
---
-
 ALTER TABLE ONLY spotcheck_report ALTER COLUMN id SET DEFAULT nextval('spotcheck_report_id_seq'::regclass);
 
 
@@ -5793,54 +5625,6 @@ ALTER TABLE ONLY sobi_file
 
 
 --
--- Name: spotcheck_mismatch_ignore_key_mismatch_type_report_type_key; Type: CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_mismatch_ignore
-    ADD CONSTRAINT spotcheck_mismatch_ignore_key_mismatch_type_report_type_key UNIQUE (key, mismatch_type, reference_type);
-
-
---
--- Name: spotcheck_mismatch_ignore_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_mismatch_ignore
-    ADD CONSTRAINT spotcheck_mismatch_ignore_pkey PRIMARY KEY (id);
-
-
---
--- Name: spotcheck_mismatch_issue_id_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_mismatch_issue_id
-    ADD CONSTRAINT spotcheck_mismatch_issue_id_pkey PRIMARY KEY (id);
-
-
---
--- Name: spotcheck_mismatch_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_mismatch
-    ADD CONSTRAINT spotcheck_mismatch_pkey PRIMARY KEY (id);
-
-
---
--- Name: spotcheck_observation_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_observation
-    ADD CONSTRAINT spotcheck_observation_pkey PRIMARY KEY (id);
-
-
---
--- Name: spotcheck_observation_report_id_reference_type_key_key; Type: CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_observation
-    ADD CONSTRAINT spotcheck_observation_report_id_reference_type_key_key UNIQUE (report_id, reference_type, key);
-
-
---
 -- Name: spotcheck_report_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -6142,11 +5926,10 @@ CREATE INDEX law_tree_published_date_idx ON law_tree USING btree (published_date
 
 
 --
--- Name: mismatch_type_index; Type: INDEX; Schema: master; Owner: postgres
+-- Name: law_tree_published_date_idx; Type: INDEX; Schema: master; Owner: postgres
 --
 
-CREATE INDEX mismatch_type_index ON spotcheck_mismatch USING btree (type);
-
+CREATE INDEX law_tree_law_id_doc_id_idx ON law_tree USING btree (law_id, doc_id);
 
 --
 -- Name: notification_digest_subscription_next_digest_index; Type: INDEX; Schema: master; Owner: postgres
@@ -6160,69 +5943,6 @@ CREATE INDEX notification_digest_subscription_next_digest_index ON notification_
 --
 
 CREATE INDEX sobi_fragment_published_date_time_idx ON sobi_fragment USING btree (published_date_time);
-
-
---
--- Name: spotcheck_mismatch_issue_id_mismatch_id_issue_id_idx; Type: INDEX; Schema: master; Owner: postgres
---
-
-CREATE UNIQUE INDEX spotcheck_mismatch_issue_id_mismatch_id_issue_id_idx ON spotcheck_mismatch_issue_id USING btree (mismatch_id, issue_id);
-
-
---
--- Name: spotcheck_mismatch_observation_id_index; Type: INDEX; Schema: master; Owner: postgres
---
-
-CREATE INDEX spotcheck_mismatch_observation_id_index ON spotcheck_mismatch USING btree (observation_id);
-
-
---
--- Name: spotcheck_observation_key_index; Type: INDEX; Schema: master; Owner: postgres
---
-
-CREATE INDEX spotcheck_observation_key_index ON spotcheck_observation USING gin (key);
-
-
---
--- Name: spotcheck_observation_observed_index; Type: INDEX; Schema: master; Owner: postgres
---
-
-CREATE INDEX spotcheck_observation_observed_index ON spotcheck_observation USING btree (observed_date_time);
-
-
---
--- Name: spotcheck_observation_ref_type_index; Type: INDEX; Schema: master; Owner: postgres
---
-
-CREATE INDEX spotcheck_observation_ref_type_index ON spotcheck_observation USING btree (reference_type);
-
-
---
--- Name: spotcheck_observation_ref_type_key_index; Type: INDEX; Schema: master; Owner: postgres
---
-
-CREATE INDEX spotcheck_observation_ref_type_key_index ON spotcheck_observation USING btree (reference_type, key, observed_date_time);
-
-
---
--- Name: spotcheck_observation_report_id_index; Type: INDEX; Schema: master; Owner: postgres
---
-
-CREATE INDEX spotcheck_observation_report_id_index ON spotcheck_observation USING btree (report_id);
-
-
---
--- Name: spotcheck_report_reference_type_idx; Type: INDEX; Schema: master; Owner: postgres
---
-
-CREATE INDEX spotcheck_report_reference_type_idx ON spotcheck_report USING btree (reference_type);
-
-
---
--- Name: spotcheck_report_report_date_time_index; Type: INDEX; Schema: master; Owner: postgres
---
-
-CREATE INDEX spotcheck_report_report_date_time_index ON spotcheck_report USING btree (report_date_time);
 
 
 --
@@ -7122,35 +6842,19 @@ ALTER TABLE ONLY sobi_fragment
 
 
 --
--- Name: spotcheck_mismatch_issue_id_mismatch_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_mismatch_issue_id
-    ADD CONSTRAINT spotcheck_mismatch_issue_id_mismatch_id_fkey FOREIGN KEY (mismatch_id) REFERENCES spotcheck_mismatch(id);
-
-
---
--- Name: spotcheck_mismatch_observation_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_mismatch
-    ADD CONSTRAINT spotcheck_mismatch_observation_id_fkey FOREIGN KEY (observation_id) REFERENCES spotcheck_observation(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: spotcheck_observation_spotcheck_report_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY spotcheck_observation
-    ADD CONSTRAINT spotcheck_observation_spotcheck_report_id_fkey FOREIGN KEY (report_id) REFERENCES spotcheck_report(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: transcript_transcript_file_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
 --
 
 ALTER TABLE ONLY transcript
     ADD CONSTRAINT transcript_transcript_file_fkey FOREIGN KEY (transcript_filename) REFERENCES transcript_file(file_name);
+
+
+--
+-- Name: spotcheck_mismatch spotcheck_mismatch_report_id_fkey; Type: FK CONSTRAINT; Schema: master; Owner: postgres
+--
+
+ALTER TABLE ONLY spotcheck_mismatch
+    ADD CONSTRAINT spotcheck_mismatch_report_id_fkey FOREIGN KEY (report_id) REFERENCES spotcheck_report(id);
 
 
 SET search_path = public, pg_catalog;
@@ -7955,42 +7659,6 @@ GRANT ALL ON SEQUENCE sobi_fragment_process_id_seq TO postgres;
 
 
 --
--- Name: spotcheck_mismatch; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE spotcheck_mismatch FROM PUBLIC;
-REVOKE ALL ON TABLE spotcheck_mismatch FROM postgres;
-GRANT ALL ON TABLE spotcheck_mismatch TO postgres;
-
-
---
--- Name: spotcheck_mismatch_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE spotcheck_mismatch_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE spotcheck_mismatch_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE spotcheck_mismatch_id_seq TO postgres;
-
-
---
--- Name: spotcheck_observation; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE spotcheck_observation FROM PUBLIC;
-REVOKE ALL ON TABLE spotcheck_observation FROM postgres;
-GRANT ALL ON TABLE spotcheck_observation TO postgres;
-
-
---
--- Name: spotcheck_observation_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE spotcheck_observation_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE spotcheck_observation_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE spotcheck_observation_id_seq TO postgres;
-
-
---
 -- Name: spotcheck_report; Type: ACL; Schema: master; Owner: postgres
 --
 
@@ -8006,6 +7674,24 @@ GRANT ALL ON TABLE spotcheck_report TO postgres;
 REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE spotcheck_report_id_seq TO postgres;
+
+
+--
+-- Name: spotcheck_mismatch; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON TABLE spotcheck_mismatch FROM PUBLIC;
+REVOKE ALL ON TABLE spotcheck_mismatch FROM postgres;
+GRANT ALL ON TABLE spotcheck_mismatch TO postgres;
+
+
+--
+-- Name: spotcheck_mismatch_mismatch_id_seq; Type: ACL; Schema: master; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE spotcheck_mismatch_mismatch_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE spotcheck_mismatch_mismatch_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE spotcheck_mismatch_mismatch_id_seq TO postgres;
 
 
 --

@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.stupid;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.dao.activelist.ActiveListReferenceDAO;
 import gov.nysenate.openleg.dao.activelist.SqlActiveListReferenceDAO;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -8,6 +9,7 @@ import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.spotcheck.ActiveListSpotcheckReference;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +22,7 @@ import java.util.List;
 /**
  * Created by kyle on 11/21/14.
  */
+@Category(SillyTest.class)
 public class ActiveListDAOTest extends BaseTests {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SqlActiveListReferenceDAO.class);
 

@@ -21,6 +21,6 @@
     "pixrem": "^3.0.2"
   },
   "scripts": {
-    "postinstall": "bower install && grunt"
+    "postinstall": "bower update && grunt"
   }
 }

@@ -87,6 +87,9 @@ public class Environment
     /** Allows bills to be automatically added to the scrape queue if true */
     @Value("${bill.scrape.queue.enabled}") private boolean billScrapeQueueEnabled;
 
+    /** Enables periodic checking for email spotcheck references */
+    @Value("${spotcheck.checkmail.enabled:true}") private boolean checkmailEnabled;
+
     /** --- Email Settings --- */
 
     /** Imaps host, username, and password for the application's email account*/
@@ -110,8 +113,8 @@ public class Environment
     /** The domain and the context path of the application */
     @Value ("${domain.url}") private String url;
 
-    /** The domain and context path for the 1.9.2 prod server */
-    @Value ("${old.prod.url}") private String oldProdUrl;
+    /** The base url of the NYSenate.gov public website */
+    @Value ("${nysenate.gov.url:https://www.NYSenate.gov}") private String senSiteUrl;
 
     /** --- Constructors --- */
 
@@ -299,14 +302,6 @@ public class Environment
         this.spotcheckAlertGracePeriod = spotcheckAlertGracePeriod;
     }
 
-    public String getOldProdUrl() {
-        return oldProdUrl;
-    }
-
-    public void setOldProdUrl(String oldProdUrl) {
-        this.oldProdUrl = oldProdUrl;
-    }
-
     public File getScrapedStagingDir() {
         return scrapedStagingDir;
     }
@@ -341,5 +336,21 @@ public class Environment
 
     public LocalDateTime getDeployedDateTime() {
         return deployedDateTime;
+    }
+
+    public String getSenSiteUrl() {
+        return senSiteUrl;
+    }
+
+    public void setSenSiteUrl(String senSiteUrl) {
+        this.senSiteUrl = senSiteUrl;
+    }
+
+    public boolean isCheckmailEnabled() {
+        return checkmailEnabled;
+    }
+
+    public void setCheckmailEnabled(boolean checkmailEnabled) {
+        this.checkmailEnabled = checkmailEnabled;
     }
 }

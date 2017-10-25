@@ -27,6 +27,8 @@ public class MapView<KeyType, ViewType> implements ViewObject
         }
     }
 
+    private MapView() {}
+
     public Map<KeyType, ViewType> getItems() {
         return items;
     }

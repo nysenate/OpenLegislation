@@ -33,6 +33,8 @@ public class ScrapedBillTextParser {
 
     private static final Pattern resolutionStartPattern = Pattern.compile("^\\s+([A-z]{2,})");
 
+    private static final String lrsOutageText = "404 - Processing Error";
+
     /**
      * Parses a scraped bill file into a bill text reference containing an active amendment, full text, and a sponsor memo
      * @param file File
@@ -40,33 +42,49 @@ public class ScrapedBillTextParser {
      * @throws IOException if there are troubles reading the file
      * @throws ParseError if there are troubles while parsing the file
      */
-    public BillTextReference parseReference(File file) throws IOException, ParseError{
+    public BillTextReference parseReference(File file) throws IOException, ParseError, LrsOutageScrapingEx {
+        BaseBillId baseBillId = getBaseBillIdFromFileName(file);
+        LocalDateTime referenceDateTime = getRefDateTimeFromFileName(file);
+
+        Document document = Jsoup.parse(file, "UTF-8");
+        // If the scraped page indicates the bill was not found, return a "not found" bill text reference
+        if (billNotFound(document)) {
+            return BillTextReference.getErrorBtr(baseBillId, referenceDateTime,
+                    FileUtils.readFileToString(file));
+        }
+        if (lrsOutage(document)) {
+            throw new LrsOutageScrapingEx(baseBillId);
+        }
+        try {
+            // Get the active amendment id, full text and memo
+            BillId billId = getBillId(document, baseBillId.getSession());
+            String text = getText(document, baseBillId);
+            String memo = getMemo(document, baseBillId);
+            return new BillTextReference(billId, referenceDateTime, text, memo);
+        } catch (ParseError ex) {
+            return BillTextReference.getErrorBtr(baseBillId, referenceDateTime,
+                    FileUtils.readFileToString(file));
+        }
+    }
+
+    public BaseBillId getBaseBillIdFromFileName(File file) {
         Matcher filenameMatcher = scrapedBillFilePattern.matcher(file.getName());
         if (filenameMatcher.matches()) {
             // Parse metadata from the file name
-            BaseBillId baseBillId = new BaseBillId(filenameMatcher.group(2), Integer.parseInt(filenameMatcher.group(1)));
-            LocalDateTime referenceDateTime = LocalDateTime.parse(filenameMatcher.group(3), DateUtils.BASIC_ISO_DATE_TIME);
-
-            Document document = Jsoup.parse(file, "UTF-8");
-            // If the scraped page indicates the bill was not found, return a "not found" bill text reference
-            if (billNotFound(document)) {
-                return new BillTextReference(baseBillId, referenceDateTime, FileUtils.readFileToString(file), "", true);
-            }
-            try {
-                // Get the active amendment id, full text and memo
-                BillId billId = getBillId(document, baseBillId.getSession());
-                String text = getText(document, baseBillId);
-                String memo = getMemo(document, baseBillId);
-                return new BillTextReference(billId, referenceDateTime, text, memo, false);
-            } catch (ParseError ex) {
-//                throw new ParseError("Error while parsing scraped bill: " + file.getName(), ex);
-                return new BillTextReference(baseBillId, referenceDateTime, "", "", true);
-            }
+            return new BaseBillId(filenameMatcher.group(2), Integer.parseInt(filenameMatcher.group(1)));
         }
-        throw new ParseError("Could not parse scraped bill filename: " + file.getName());
+        throw new ParseError("Could not parse billid from scraped bill filename: " + file.getName());
     }
 
-    /** --- Internal Methods --- */
+    /* --- Internal Methods --- */
+
+    private LocalDateTime getRefDateTimeFromFileName(File file) {
+        Matcher filenameMatcher = scrapedBillFilePattern.matcher(file.getName());
+        if (filenameMatcher.matches()) {
+            return LocalDateTime.parse(filenameMatcher.group(3), DateUtils.BASIC_ISO_DATE_TIME);
+        }
+        throw new ParseError("Could not parse ref date from  scraped bill filename: " + file.getName());
+    }
 
     /**
      * Parses the amendment bill id from one of the first header lines
@@ -178,9 +196,24 @@ public class ScrapedBillTextParser {
      */
     private boolean billNotFound(Document document) {
         Element botContents = document.getElementById("nv_bot_contents");
-        if (botContents == null) return true;
+        if (botContents == null) {
+            return false;
+        }
         Elements redFonts = botContents.select("font[color=\"red\"]");
         Element notFoundText = redFonts.first();
         return notFoundText != null && "Bill Status Information Not Found".equals(notFoundText.text());
+    }
+
+    /**
+     * Detects if the document indicates an lrs outage
+     * returns true if so
+     */
+    private boolean lrsOutage(Document document) {
+        Elements h2Eles = document.getElementsByTag("h2");
+        if (h2Eles.isEmpty()) {
+            return false;
+        }
+        Element firstH2 = h2Eles.first();
+        return firstH2.text().startsWith(lrsOutageText);
     }
 }

@@ -154,6 +154,37 @@ public abstract class SqlBaseDao
     }
 
     /**
+     * Converts a hstore string into a mapping of the hstore key value pairs.
+     * FIXME This method seems to have the potential to alter hstore values that contain commas
+     * FIXME e.g. "Veterans, Homeland Security and Military Affairs" becomes "Veterans,Homeland Security and Military Affairs"
+     * FIXME       note missing space after comma
+     * @param hstoreString a String in the format of "print_no"=>"S100", "session_year"=>"2015".
+     *                     This string can be retrieved by calling resultSet.getString("hstore")
+     *                     on the ResultSet from "SELECT 'print_no=>S100,session_year=>2015'::hstore as hstore"
+     * @return A map containing all hstore key value pairs.
+     */
+    public static Map<String, String> hstoreStringToMap(String hstoreString) {
+        Map<String, String> hstoreMap = new HashMap<>();
+        hstoreString = StringUtils.replace(hstoreString, "\"", "");
+        String[] hstoreEntry = hstoreString.contains(",") ? StringUtils.commaDelimitedListToStringArray(hstoreString) : new String[]{hstoreString};
+        String key="";
+        String value="";
+        for (int i = 0; i < hstoreEntry.length; i++) {
+            if (hstoreEntry[i].contains("=>")){
+                key = StringUtils.trimLeadingWhitespace(StringUtils.split(hstoreEntry[i], "=>")[0]);
+                value = StringUtils.trimLeadingWhitespace(StringUtils.split(hstoreEntry[i], "=>")[1]);
+                hstoreMap.put(key, value);
+            }
+            else {
+                hstoreMap.remove(key);
+                value +=","+StringUtils.trimLeadingWhitespace(hstoreEntry[i]);
+                hstoreMap.put(key,value);
+            }
+        }
+        return hstoreMap;
+    }
+
+    /**
      * Converts the given map into the hstore string format (i.e. 'key1=>val1, key2=>val2, etc')
      */
     public static String toHstoreString(Map<String, String> hstoreMap) {
@@ -276,5 +307,12 @@ public abstract class SqlBaseDao
      */
     public static SessionYear getSessionYearFromRs(ResultSet rs, String column) throws SQLException {
         return new SessionYear(rs.getInt(column));
+    }
+
+    public static String[] getArrayFromPgRs(ResultSet rs, String column) throws SQLException {
+        String arrayString = rs.getString(column);
+        arrayString = arrayString.replaceAll("[{}\" ]", "");
+        String[] split = arrayString.split(",");
+        return split;
     }
 }

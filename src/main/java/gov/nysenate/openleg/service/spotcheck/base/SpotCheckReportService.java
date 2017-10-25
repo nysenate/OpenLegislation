@@ -1,10 +1,11 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
-import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.model.spotcheck.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,50 +46,30 @@ public interface SpotCheckReportService<ContentKey>
     void saveReport(SpotCheckReport<ContentKey> report);
 
     /**
-     * Obtain a SpotCheckReport from the backing store using the report id. The report obtained
-     * by {@link #generateReport} differs from the same report returned via this method in that this
-     * report will only contain observations that have mismatches and will also have data that's been
-     * associated with the context of prior reports that have been saved.
-     *
-     *
-     * @param reportId
+     * Get mismatches matching the given MismatchQuery.
+     * Defaults to Not ignored open mismatches for the current session.
+     * @param query Defines parameters to query by.
+     * @return Paginated list of DeNormSpotCheckMismatch's
      */
-    SpotCheckReport<ContentKey> getReport(SpotCheckReportId reportId) throws SpotCheckReportNotFoundEx;
+    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
-     * Return a list of saved report ids with options to filter the result set.
-     *
-     * @param reportType
-     * @param start LocalDateTime - The earliest report date (inclusive)
-     * @param end LocalDateTime - The latest report date (inclusive)
-     * @param dateOrder SortOrder - Order the reports by report date
-     * @return List<SpotCheckReportId> - List of report ids
+     * Gets mismatch status summary information for the given datasource, as of the given summary date time.
+     * @return
      */
-    List<SpotCheckReportSummary> getReportSummaries(SpotCheckRefType reportType, LocalDateTime start, LocalDateTime end,
-                                                    SortOrder dateOrder);
+    MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource dataSource, SpotCheckContentType contentType, Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
-     * Get a map of all unresolved or recently resolved observations spanning all reports of the given refType
-     * @param query OpenMismatchQuery
-     * @return Map<ContentKey, SpotCheckObservation<ContentKey>>
+     * Gets mismatch type summary information for the given datasource and mismatch status for the report on reportDate.
      */
-    SpotCheckOpenMismatches<ContentKey> getOpenObservations(OpenMismatchQuery query);
+    MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
+                                               SpotCheckContentType contentType, MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
-     * Get a summary of type/status/ignore counts pertaining to the given query
-     *
-     * @param refTypes
-     * @param observedAfter
-     * @return OpenMismatchesSummary
+     * Gets mismatch content type summary information for the given datasource, reportDate, mismatch status, and mismatch types.
      */
-    OpenMismatchSummary getOpenMismatchSummary(Set<SpotCheckRefType> refTypes, LocalDateTime observedAfter);
-
-    /**
-     * Wipe a report as well as all of its associated observations and mismatches from the backing store.
-     *
-     * @param reportId
-     */
-    void deleteReport(SpotCheckReportId reportId);
+    MismatchContentTypeSummary getMismatchContentTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
+                                                             Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
      * Sets the ignore status for a spotcheck mismatch
@@ -105,9 +86,25 @@ public interface SpotCheckReportService<ContentKey>
     void addIssueId(int mismatchId, String issueId);
 
     /**
+     * Spotcheck Mismatch update Issue Id API
+     * @param mismatchId  mismatch id
+     * @param issueIds mismatch issues id separate by comma ,e.g 12,3,61
+     *
+     */
+    void updateIssueId(int mismatchId, String issueIds);
+
+    /**
      * Removes the given issue id from the tracked issue ids of the mismatch specified by the given mismatch id
      * @param mismatchId int
      * @param issueId String
      */
     void deleteIssueId(int mismatchId, String issueId);
+
+    /**
+ * Removes all issues corresponding to given mismatch id
+ *
+ * @param mismatchId int mismatch id
+ */
+    void deleteAllIssueId(int mismatchId);
+
 }

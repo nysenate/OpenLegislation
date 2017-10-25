@@ -18,8 +18,6 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -64,7 +62,9 @@ public class SqlFsBillTextReferenceDao extends SqlBaseDao implements BillTextRef
 
     @Override
     public void archiveScrapedBill(File scrapedBill) throws IOException {
-        FileUtils.moveFileToDirectory(scrapedBill, scrapedBillArchiveDir, true);
+        File archivedScrapedBill = new File(scrapedBillArchiveDir, scrapedBill.getName());
+        FileUtils.deleteQuietly(archivedScrapedBill);
+        FileUtils.moveFile(scrapedBill, archivedScrapedBill);
     }
 
     @Override

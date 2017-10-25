@@ -4,10 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.util.OutputUtils;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
@@ -19,14 +16,15 @@ public enum SpotCheckMismatchType
 {
     /** --- General --- */
 
+    All("All", SpotCheckRefType.values()),
     REFERENCE_DATA_MISSING("Ref. Missing", SpotCheckRefType.values()),
-    OBSERVE_DATA_MISSING("Data Missing", SpotCheckRefType.values()),
+    OBSERVE_DATA_MISSING("Source Missing", SpotCheckRefType.values()),
 
     /** --- Bill data mismatches --- */
 
     BILL_ACTION("Action", LBDC_DAYBREAK, SENATE_SITE_BILLS),
     BILL_ACTIVE_AMENDMENT("Active Amendment", LBDC_DAYBREAK, LBDC_SCRAPED_BILL, SENATE_SITE_BILLS),
-    BILL_AMENDMENT_PUBLISH("Published Status", LBDC_DAYBREAK),
+    BILL_AMENDMENT_PUBLISH("Published Status", LBDC_DAYBREAK, SENATE_SITE_BILLS),
     BILL_COSPONSOR("Co Sponsor", LBDC_DAYBREAK, SENATE_SITE_BILLS),
     BILL_FULLTEXT_PAGE_COUNT("Page Count", LBDC_DAYBREAK),
     BILL_TEXT_LINE_OFFSET("Text Line Offset", LBDC_SCRAPED_BILL, SENATE_SITE_BILLS),
@@ -59,16 +57,17 @@ public enum SpotCheckMismatchType
 
     LIST_CAL_DATE("Cal Date", LBDC_CALENDAR_ALERT),
     LIST_RELEASE_DATE_TIME("Release Time", LBDC_CALENDAR_ALERT),
-    LIST_CALENDAR_MISMATCH("Calendar?", LBDC_CALENDAR_ALERT),
+    LIST_CALENDAR_MISMATCH("Calendar Data", LBDC_CALENDAR_ALERT),
     LIST_ENTRY_MISMATCH("Cal Entry", LBDC_CALENDAR_ALERT),
 
     /** --- Agenda Committee Meeting info mismatches --- */
 
-    AGENDA_BILL_LISTING("Bill List", LBDC_AGENDA_ALERT),
+    AGENDA_BILL_LISTING("Bill List", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
     AGENDA_CHAIR("Chair", LBDC_AGENDA_ALERT),
-    AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT),
-    AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT),
-    AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT),
+    AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
+    AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
+    AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
+    AGENDA_BILLS("Bills", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
 
     /** --- Supplemental mismatches --- */
     SUPPLEMENTAL_CAL_DATE("Supplemental Calendar Date", LBDC_CALENDAR_ALERT),
@@ -96,6 +95,13 @@ public enum SpotCheckMismatchType
         this.refTypes = new HashSet<>(Arrays.asList(refTypes));
     }
 
+    public boolean possibleForContentType(SpotCheckContentType contentType) {
+        Objects.requireNonNull(contentType);
+        return this.getRefTypes().stream()
+                .map(SpotCheckRefType::getContentType)
+                .anyMatch(contentType::equals);
+    }
+
     public String getDisplayName() {
         return displayName;
     }
@@ -114,6 +120,20 @@ public enum SpotCheckMismatchType
 
     public static Set<SpotCheckMismatchType> getMismatchTypes(SpotCheckRefType refType) {
         return refTypeMismatchMap.get(refType);
+    }
+
+    public static SpotCheckMismatchType getSpotCheckMismatchByDisplayName(String displayName) {
+        for (SpotCheckMismatchType spotCheckMismatchType : SpotCheckMismatchType.values()){
+            if (spotCheckMismatchType.displayName.equals(displayName))
+                return spotCheckMismatchType;
+        }
+        return null;
+    }
+
+    public static String getName(SpotCheckMismatchType spotCheckMismatchType) {
+        if (spotCheckMismatchType == null) // if the filter set to ALL then disable the filter by passing ''%' to where statement
+            return "%";
+        return spotCheckMismatchType.name();
     }
 
     public static String getJsonMap() {

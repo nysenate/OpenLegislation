@@ -1,6 +1,15 @@
 package gov.nysenate.openleg.model.spotcheck.senatesite.agenda;
 
+import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.client.view.agenda.AgendaItemView;
+import gov.nysenate.openleg.client.view.bill.BillIdView;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillVoteCode;
+
+import java.util.Map;
+import java.util.Optional;
+
+import static gov.nysenate.openleg.model.bill.BillVoteCode.*;
 
 /**
  * Created by PKS on 4/28/16.
@@ -13,6 +22,29 @@ public class SenateSiteAgendaBill {
     protected Integer abstainedCount;
     protected String billMessage;
     protected AgendaItemView billName;
+
+    /* --- Functional Getters --- */
+
+    public BillId getBillId() {
+        return Optional.ofNullable(billName)
+                .map(AgendaItemView::getBillId)
+                .map(BillIdView::toBillId)
+                .orElse(null);
+    }
+
+    /**
+     * Get a map of vote code -> int indicating the number of votes for each vote type
+     * @return
+     */
+    public Map<BillVoteCode, Integer> getVoteCounts() {
+        return ImmutableMap.<BillVoteCode, Integer>builder()
+                .put(AYE, getCountValue(ayeCount))
+                .put(NAY, getCountValue(nayCount))
+                .put(AYEWR, getCountValue(aye_wrCount))
+                .put(EXC, getCountValue(excusedCount))
+                .put(ABD, getCountValue(abstainedCount))
+                .build();
+    }
 
     /** --- Getters / Setters --- */
 
@@ -36,7 +68,7 @@ public class SenateSiteAgendaBill {
         this.abstainedCount = abstainedCount;
     }
 
-    public void setBillMessage(String billNessage){
+    public void setBillMessage(String billMessage){
         this.billMessage = billMessage;
     }
 
@@ -71,4 +103,12 @@ public class SenateSiteAgendaBill {
     public AgendaItemView getBillName(){
         return billName;
     }
+
+    /* --- Internal Methods --- */
+
+    private int getCountValue(Integer count) {
+        return Optional.ofNullable(count)
+                .orElse(0);
+    }
+
 }

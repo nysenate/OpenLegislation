@@ -2,9 +2,13 @@ package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.spotcheck.CalendarAlertReportDao;
+import gov.nysenate.openleg.dao.spotcheck.CalendarEntryListIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.calendar.CalendarType;
+import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import gov.nysenate.openleg.util.DateUtils;
@@ -19,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public abstract class BaseCalendarReportService extends BaseSpotCheckReportService<CalendarId> {
+public abstract class BaseCalendarReportService extends BaseSpotCheckReportService<CalendarEntryListId> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseCalendarReportService.class);
 
     @Autowired
-    private CalendarAlertReportDao reportDao;
+    private CalendarEntryListIdSpotCheckReportDao reportDao;
 
     @Autowired
     private CalendarCheckService checkService;
@@ -51,18 +55,18 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
     }
 
     @Override
-    protected SpotCheckReportDao<CalendarId> getReportDao() {
+    protected SpotCheckReportDao<CalendarEntryListId> getReportDao() {
         return reportDao;
     }
 
     @Override
-    public SpotCheckReport<CalendarId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
+    public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
         List<Calendar> references = retrieveReferences(start, end);
         LocalDateTime referenceDateTime = getMostRecentReference(references);
         SpotCheckReportId reportId = new SpotCheckReportId(getSpotcheckRefType(),
                                                            referenceDateTime,
                                                            LocalDateTime.now());
-        SpotCheckReport<CalendarId> report = new SpotCheckReport<>(reportId);
+        SpotCheckReport<CalendarEntryListId> report = new SpotCheckReport<>(reportId);
         report.setNotes(getNotes());
         report.addObservations(createObservations(references));
         return report;
@@ -77,8 +81,8 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
         return references;
     }
 
-    private List<SpotCheckObservation<CalendarId>> createObservations(List<Calendar> references) {
-        List<SpotCheckObservation<CalendarId>> observations = new ArrayList<>();
+    private List<SpotCheckObservation<CalendarEntryListId>> createObservations(List<Calendar> references) {
+        List<SpotCheckObservation<CalendarEntryListId>> observations = new ArrayList<>();
         for (Calendar reference : references) {
             CalendarId id = reference.getId();
             Calendar actual = getActualCalendar(id, reference.getCalDate());
@@ -90,7 +94,7 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
                 }
                 recordMismatch(observations, reference, id);
             } else {
-                observations.add(checkService.check(actual, reference));
+                observations.addAll(checkService.checkAll(actual, reference));
             }
             markAsChecked(id);
         }
@@ -101,11 +105,11 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
         return observations;
     }
 
-    private void recordMismatch(List<SpotCheckObservation<CalendarId>> observations, Calendar reference, CalendarId id) {
+    private void recordMismatch(List<SpotCheckObservation<CalendarEntryListId>> observations, Calendar reference, CalendarId id) {
         SpotCheckReferenceId obsRefId = new SpotCheckReferenceId(
                 getSpotcheckRefType(), reference.getPublishedDateTime());
 
-        SpotCheckObservation<CalendarId> observation = new SpotCheckObservation<>(obsRefId, id);
+        SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(obsRefId, new CalendarEntryListId(id, CalendarType.ALL, Version.DEFAULT, Integer.MAX_VALUE)); // dummy observation for unfound mismatch
         observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
                 "", id.toString()));
         observations.add(observation);

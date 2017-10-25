@@ -1,11 +1,12 @@
 package gov.nysenate.openleg.processor.hearing;
 
-import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.hearing.PublicHearingCommittee;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -14,7 +15,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class PublicHearingCommitteeParserTest extends BaseTests
+@Category(UnitTest.class)
+public class PublicHearingCommitteeParserTest
 {
     private PublicHearingCommitteeParser committeeParser;
 

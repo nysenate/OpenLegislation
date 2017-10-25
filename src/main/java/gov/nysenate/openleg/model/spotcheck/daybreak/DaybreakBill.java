@@ -3,6 +3,7 @@ package gov.nysenate.openleg.model.spotcheck.daybreak;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 
@@ -61,6 +62,10 @@ public class DaybreakBill
 
     public SpotCheckReferenceId getReferenceId() {
         return new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, this.reportDate.atStartOfDay());
+    }
+
+    public BillId getActiveVersionBillId() {
+        return new BillId(baseBillId, activeVersion);
     }
 
     /** --- Basic Getters/Setters --- */

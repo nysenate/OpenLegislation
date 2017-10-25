@@ -1,32 +1,44 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
-import gov.nysenate.openleg.dao.base.OrderBy;
-import gov.nysenate.openleg.dao.base.SortOrder;
-
+/**
+ * An Enumeration of spotcheck mismatch fields that can be ordered by.
+ *
+ * <p>Provides a consistent user friendly constant which maps to
+ * columns in SqlSpotCheckReportQuery queries.
+ *
+ * <p>Sql queries in SqlSpotCheckReportQuery return mismatch contentKey's
+ * as an hstore value. To order by keys of an hstore you have to access
+ * the key like: <code>key->'print_no'</code>.
+ */
 public enum MismatchOrderBy {
-
-    OBSERVED_DATE("observed_date_time"),
-    CONTENT_KEY("key"),
-    REFERENCE_DATE("reference_date_time"),
+    /** Common fields */
+    STATUS("status"),
     MISMATCH_TYPE("type"),
-    STATUS("status")
+    DATASOURCE("datasource"),
+    REFERENCE_TYPE("reference_type"),
+    REFERENCE_DATE("reference_active_date_time"),
+    OBSERVED_DATE("observed_date_time"),
+    ISSUE("issue_ids"),
+
+    /** Bill fields */
+    PRINT_NO("key->'print_no'"),
+
+    /** Calendar Fields */
+    CAL_NO("key->'calNo'"),
+    CAL_TYPE("key->'type'"),
+
+    /** Agenda Fields */
+    AGENDA_NO("(key->'agendaNo')::smallint"),
+    AGENDA_COMMITTEE("key->'committee_name'")
     ;
 
-    private String colName;
+    private String columnName;
 
     MismatchOrderBy(String colName) {
-        this.colName = colName;
+        this.columnName = colName;
     }
 
-    public OrderBy toOrderBy(SortOrder order) {
-        // Always use content key as a secondary order
-        if (CONTENT_KEY.equals(this)) {
-            return new OrderBy(CONTENT_KEY.colName, order);
-        }
-        return new OrderBy(colName, order, CONTENT_KEY.colName, order);
-    }
-
-    public String getColName() {
-        return colName;
+    public String getColumnName() {
+        return columnName;
     }
 }

@@ -56,7 +56,10 @@ p {
 }
 
 /** --- Angular Material Overrides --- */
-
+.md-toolbar-tools {
+  height: 70px;
+  max-height: 70px;
+}
 md-toolbar {
   min-height: 70px;
   .md-toolbar-tools {
@@ -201,10 +204,15 @@ md-dialog {
 
 .bold {
   font-weight: 600 !important;
+  min-width: 50px;
 }
 
 .thin-300 {
   font-weight: 300;
+}
+.columnWord{
+  word-wrap: break-word;
+  min-width: 50px;
 }
 
 .text-normal {
@@ -1212,43 +1220,6 @@ a.slogan-link {
 
 /** --- Styles for Report Summary page --- */
 
-.spotcheck-report-list {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-}
-
-.open-mismatch-total {
-  justify-content: center;
-  text-align: center;
-  .open-mismatch-total-count {
-    font-size: 28px;
-  }
-  .open-mismatch-total-label {
-    font-size: 14px;
-    line-height: 1.5;
-    width: 5.5em;
-  }
-}
-
-$sptchk-notes-font-sz: 14px;
-$sptchk-notes-line-height: 1.5;
-$sptchk-notes-lines-shown: 1;
-
-.spotcheck-summary-notes-container {
-  flex: 1 1 75% !important;
-  max-width: 75%;
-  .spotcheck-summary-notes {
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-.blue-title-icon {
-  color: #006b80;
-  margin-right: 20px;
-}
-
 .prefix-icon {
   margin-right: 5px;
 }
@@ -1273,33 +1244,7 @@ $sptchk-notes-lines-shown: 1;
   color:#aaa;
 }
 
-/** --- Styles for Spotcheck Report Page --- */
-
-.spotcheck-report-notes {
-  margin-top: 10px;
-  &.closed {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
 /** --- Styles for Spotcheck Mismatch Viewer --- */
-
-$spotcheckMismatchListBlur: 2px;
-.spotcheck-mismatch-list-container {
-  min-height: 200px;
-  position: relative;
-}
-.spotcheck-mismatch-list {
-  .loading {
-    filter: blur($spotcheckMismatchListBlur);
-    -o-filter: blur($spotcheckMismatchListBlur);
-    -ms-filter: blur($spotcheckMismatchListBlur);
-    -moz-filter: blur($spotcheckMismatchListBlur);
-    -webkit-filter: blur($spotcheckMismatchListBlur);
-  }
-}
 
 .spotcheck-mismatch {
   border: 1px solid rgba(0, 0, 0, 0.12);
@@ -1328,106 +1273,9 @@ $spotcheckMismatchListBlur: 2px;
   }
 }
 
-$mmDetailTransTime: 0.5s;
-.spotcheck-mismatch-details {
-  border: 2px solid rgba(22,91,129,0.24);
-  border-top: none;
-  &.ng-enter {
-    -webkit-transition: $mmDetailTransTime linear all;
-    -moz-transition: $mmDetailTransTime linear all;
-    -ms-transition: $mmDetailTransTime linear all;
-    -o-transition: $mmDetailTransTime linear all;
-    transition: $mmDetailTransTime linear all;
-  }
-  &.ng-enter, &.ng-leave.ng-leave-active {
-    max-height: 0;
-    opacity: 0;
-  }
-  &.ng-enter.ng-enter-active, &.ng-leave {
-    max-height: none;
-    opacity: 1;
-  }
-}
-
-.mismatch-loading-overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  background-color: rgba(0, 0, 0, 0.1);
-  z-index: 10;
-}
-
 /** --- Styles for Spotcheck diffs --- */
 
-$diff-del-color: #f88;
-$diff-ins-color: #9f9;
-
-.diff-key-color {
-  float: left;
-  height: 15px;
-  width: 20px;
-  margin: 4px;
-  border: 1px solid rgba(0,0,0,0.12);
-  &.del {
-    background-color: $diff-del-color;
-  }
-  &.ins {
-    background-color: $diff-ins-color;
-  }
-}
-
-diff-summary, mismatch-diff {
-  ins {
-    background-color: $diff-ins-color;
-    text-decoration: none;
-  }
-  del {
-    background-color: $diff-del-color;
-    text-decoration: none;
-  }
-}
-
-.diff-summary-header {
-  background: black;
-  color: white;
-  font-weight: bold;
-}
-
-.diff-tabs {
-  md-content {
-    margin: 0;
-    padding: 30px;
-    border-top: 1px solid rgba(0,0,0,0.12);
-    & > div {
-      overflow-y: auto;
-      max-height: 40vh;
-    }
-  }
-  .mismatch-ignore-conf {
-    height: 3.1em;
-  }
-}
-
-.mismatch-diff-box {
-  &:not(.scroll-join) {
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    overflow: auto;
-  }
-  &:not(.multi-line) {
-    padding: 10px;
-    &.scroll-join {
-      width: 50%;
-    }
-  }
-}
-
-.margin-top-5 {
-  margin-top: 5px;
-}
+$mismatch-menu-color: #3e4f62;
 
 md-dialog.detail-diff-dialog {
   width: 90vw;
@@ -1438,53 +1286,103 @@ md-dialog.detail-diff-dialog {
     overflow: hidden;
     height: 100%;
     margin: 0;
-    padding: 0 20px 20px;
-  }
-  md-tabs {
-    height: calc(100% - 127px);
-    md-tab-content > div {
-      height: 100%;
-      md-content {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        .mismatch-detail-diff-container {
-          height: calc(100% - 1.7em);
-        }
-      }
-    }
+    padding: 20px;
   }
 }
 
-.detail-diff-text-controls {
-  @extend .gray2-bg;
-  @extend .text-medium;
-  padding: 20px;
-  margin-top: 10px;
-  md-checkbox {
-    margin: 0;
+.mismatch-diff-view-exit {
+  font-size: 25px;
+  position: fixed;
+  right: 0;
+  z-index: 1;
+}
+
+.mismatch-diff-view-top-half {
+  max-height: 25vh;
+  margin-bottom: 2.5%;
+}
+
+.mismatch-diff-info-card {
+  padding: 0 10px;
+  margin-left: 2.5%;
+  border-radius: 10px;
+  background-color: $mismatch-menu-color;
+  color: #fafafa;
+
+  p {
+    line-height: .5em;
   }
 }
 
-.stats-block-container {
-  margin-bottom: 10px;
+.mismatch-diff-text-controls {
+  padding: 5px;
+  margin-right: 2.5%;
+  border: 1px solid $mismatch-menu-color;
+  border-radius: 10px;
+
+  select {
+    margin-bottom: 10px;
+  }
 }
 
-.stats-block-title {
-  font-weight: 600;
+$diff-del-color: #d0021b;
+$diff-ins-color: #59a007;
+
+$diff-side-height: 55vh;
+$diff-source-label-height: 70px;
+
+.mismatch-diff-side {
+  float: left;
+  height: $diff-side-height;
+  width: 45%;
+  margin: 0 2.5%;
+
+  a {
+    color: lightblue;
+  }
+}
+
+#mismatch-diff-observed ins, #mismatch-diff-reference del {
+  display: none;
+}
+
+.mismatch-diff-container {
+  overflow: auto;
+  height: calc(#{$diff-side-height} - #{$diff-source-label-height});
+}
+
+.mismatch-diff-source-label {
+  background-color: $mismatch-menu-color;
   text-align: center;
-  padding: 5px;
-  background: $gray3;
-  margin-bottom: 0;
-  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+  line-height: $diff-source-label-height;
 }
 
-.stats-block-number {
-  font-weight: 600;
-  font-size: 1.5rem;
-  background: $gray1;
-  display: block;
-  padding: 5px;
+.mismatch-diff-info-background-color-border {
+  border: 1px solid $mismatch-menu-color;
+  margin-right: 2.5%;
+}
+
+diff-summary, mismatch-diff {
+  ins, del {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  ins {
+    background-color: $diff-ins-color;
+  }
+  del {
+    background-color: $diff-del-color;
+  }
+}
+
+.white-text-color {
+  color: white;
+}
+
+.margin-top-5 {
+  margin-top: 5px;
 }
 
 /** --- Admin Account Settings --- */
@@ -1653,4 +1551,222 @@ table.api-request-table {
     background: #f5f5f5;
   }
 }
+/**
+Spotcheck report page detail
+ */
+.rounded-corner-button {
+  border-radius: 10px;
+}
 
+#spotcheck-report-page-number select option {
+  border-radius: 75px;
+  background: #73AD21;
+  padding: 20px;
+  width: 200px;
+  height: 150px;
+}
+
+button.md-button.md-default-theme.md-primary, button.md-button.md-default-theme.md-primary.md-focused {
+  color: rgb(255,255,255);
+  background-color: rgb(0,140,186);
+}
+md-dialog.issuedialog {
+  width: 40vw;
+  height: 30vh;
+  max-height: 50vh;
+  max-width: 30vw;
+  & > md-content {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0 20px 20px;
+  }
+}
+.md-button.md-fab.md-mini{
+  font-size: x-small;
+  line-height: 25px;
+  width: 50px;
+  height: 25px;
+}
+.report-page-toast{
+  color: red;
+  font-size: 12px;
+  text-align: center;
+  float: right;
+  margin-top: -20px;
+  opacity: 0;
+  visibility: hidden;
+  $alert-info-saved-transition-in: visibility 2s, opacity 2s cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  -webkit-transition: $alert-info-saved-transition-in;
+  -moz-transition: $alert-info-saved-transition-in;
+  -o-transition: $alert-info-saved-transition-in;
+  transition: $alert-info-saved-transition-in;
+  &.saved {
+    opacity:1;
+    visibility: visible;
+    $alert-info-saved-transition-out: opacity 0s;
+    -webkit-transition: $alert-info-saved-transition-out;
+    -moz-transition: $alert-info-saved-transition-out;
+    -o-transition: $alert-info-saved-transition-out;
+    transition: $alert-info-saved-transition-out;
+  }
+}
+
+#spotcheck-report-page {
+  overflow: scroll;
+  padding: 20px;
+}
+
+.spotcheck-report-content-tabs {
+  min-width: 960px;
+}
+
+.spotcheck-report-control-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.spotcheck-report-top-controls {
+  select {
+    margin-left: 20px;
+  }
+  h2:not(:first-child) {
+    margin-left:40px;
+  }
+}
+
+.spotcheck-jump-button {
+  margin-left: 20px;
+}
+
+.spotcheck-report-inner-controls {
+  margin-top: 20px;
+  > * {
+    margin-left: 20px;
+  }
+}
+
+.spotcheck-table-header {
+  padding-bottom: 10px;
+  padding-top: 10px;
+
+  @extend .spotcheck-table-mismatch-row;
+  margin-right: 25%;
+  float: none !important;
+
+  & > * {
+    @extend .bold;
+  }
+}
+
+.spotcheck-table-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spotcheck-table-mismatch-row {
+  float:left;
+  width: 75%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spotcheck-table-column {
+  word-wrap: break-word;
+  min-width: 50px;
+}
+
+.spotcheck-col-state {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+}
+
+.spotcheck-col-bill-id {
+  @extend .spotcheck-table-column;
+  flex-basis: 15%;
+}
+
+.spotcheck-col-type {
+  @extend .spotcheck-table-column;
+  flex-basis: 15%;
+}
+
+.spotcheck-col-date {
+  @extend .spotcheck-table-column;
+  flex-basis: 15%;
+}
+
+.spotcheck-col-issue {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+
+  md-input-container {
+    padding: 0;
+    margin: 0 0 -25px;
+  }
+}
+
+.spotcheck-col-source {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+}
+
+.spotcheck-col-cal-state {
+  @extend .spotcheck-table-column;
+  flex-basis: 5%;
+}
+
+.spotcheck-col-cal-no {
+  @extend .spotcheck-table-column;
+  flex-basis: 5%;
+}
+
+.spotcheck-col-cal-type {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+}
+
+.spotcheck-col-agenda-obs-date {
+  @extend .spotcheck-table-column;
+  flex-basis: 10%;
+}
+
+.spotcheck-col-agenda-no {
+  @extend .spotcheck-table-column;
+  flex-basis: 5%;
+}
+
+.spotcheck-col-agenda-comm {
+  @extend .spotcheck-table-column;
+  flex-basis: 15%;
+}
+
+.spotcheck-table-buttons {
+  width: 25%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+
+  .md-button.ignore-button {
+    background-color: #3E4F62;
+  }
+}
+
+.spotcheck-table-goto {
+  float: right;
+  margin-top: -35px;
+  margin-right: 300px;
+
+  input {
+    width: 30px;
+    text-align: center
+  }
+}

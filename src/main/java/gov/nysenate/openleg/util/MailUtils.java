@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.config.Environment;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -80,7 +79,7 @@ public class MailUtils {
      * @return Store
      * @throws MessagingException if a connection cannot be established
      */
-    public Store getStore(String host, String user, String password)
+    private Store getStore(String host, String user, String password)
             throws MessagingException {
         Store store = getImapsSession().getStore(storeProtocol);
         try {

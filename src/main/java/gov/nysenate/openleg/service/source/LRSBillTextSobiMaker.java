@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
+import gov.nysenate.openleg.service.scraping.LrsOutageScrapingEx;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
@@ -160,7 +161,7 @@ public class LRSBillTextSobiMaker {
                 logger.info("parsing {}", scrapedFile);
                 btrs.add(billTextParser.parseReference(scrapedFile));
                 scrapedFile.delete();
-            } catch (ParseError ex) {
+            } catch (ParseError | LrsOutageScrapingEx ex) {
                 logger.error("error parsing scraped bill file {}:\n{}", scrapedFile, ex);
             }
         }

@@ -6,6 +6,7 @@
 .project
 .settings/*
 .idea/**
+!.idea/codeStyleSettings.xml
 *.iml
 src/main/webapp/.sass-cache/**
 src/main/webapp/static/bower_components/**

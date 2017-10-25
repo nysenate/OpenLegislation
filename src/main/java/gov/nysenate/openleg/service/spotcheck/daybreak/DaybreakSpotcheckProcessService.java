@@ -5,7 +5,7 @@ import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.daybreak.DaybreakProcessService;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotcheckMailProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DaybreakSpotcheckProcessService extends BaseSpotcheckProcessService {
+public class DaybreakSpotcheckProcessService extends SpotcheckMailProcessService {
 
     private static final Logger logger = LoggerFactory.getLogger(DaybreakSpotcheckProcessService.class);
 

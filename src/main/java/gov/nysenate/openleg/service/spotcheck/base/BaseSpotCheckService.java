@@ -33,6 +33,14 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
         checkString(Objects.toString(content), Objects.toString(reference), observation, mismatchType);
     }
 
+    protected void checkBoolean(boolean content, boolean reference, String condition,
+                                SpotCheckObservation<ContentKey> observation,
+                                SpotCheckMismatchType mismatchType) {
+        checkString(getBooleanString(content, condition),
+                getBooleanString(reference, condition),
+                observation, mismatchType);
+    }
+
     protected <T> void checkCollection(Collection<T> content, Collection<T> reference,
                                             SpotCheckObservation<ContentKey> observation,
                                             SpotCheckMismatchType mismatchType,
@@ -43,10 +51,15 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
         checkString(stringify.apply(content), stringify.apply(reference), observation, mismatchType);
     }
 
-
     protected <T> void checkCollection(Collection<T> content, Collection<T> reference,
                                        SpotCheckObservation<ContentKey> observation,
                                        SpotCheckMismatchType mismatchType) {
         checkCollection(content, reference, observation, mismatchType, Objects::toString, " ");
+    }
+
+    /* --- Internal Methods --- */
+
+    private String getBooleanString(boolean value, String condition) {
+        return condition + ": " + (value ? "YES" : "NO");
     }
 }

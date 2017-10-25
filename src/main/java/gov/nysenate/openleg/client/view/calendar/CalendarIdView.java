@@ -28,6 +28,7 @@ public class CalendarIdView implements ViewObject {
     }
 
     @JsonIgnore
+
     public CalendarId toCalendarId() {
         return new CalendarId(calendarNumber,year);
     }

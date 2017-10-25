@@ -1,14 +1,13 @@
 package gov.nysenate.openleg.stupid;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.client.view.spotcheck.ReportDetailView;
+import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.model.spotcheck.billtext.ScrapeQueuePriority;
@@ -24,6 +23,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 
 /**
  */
+@Category(SillyTest.class)
 public class BillTextTest extends BaseTests {
 
     private static final Logger logger = LoggerFactory.getLogger(BillTextTest.class);
@@ -93,8 +94,8 @@ public class BillTextTest extends BaseTests {
     @Test
     public void getReportTest() {
         LocalDateTime reportDateTime = LocalDateTime.parse("2015-04-29T11:11:13");
-        new ReportDetailView<>(
-                report.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_SCRAPED_BILL, reportDateTime)));
+//        new ReportDetailView<>(
+//                report.getReport(new SpotCheckReportId(SpotCheckRefType.LBDC_SCRAPED_BILL, reportDateTime)));
     }
 
     @Test

@@ -1,8 +1,9 @@
 package gov.nysenate.openleg.processor.hearing;
 
-import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.annotation.UnitTest;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -11,7 +12,8 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class PublicHearingAddressParserTest extends BaseTests
+@Category(UnitTest.class)
+public class PublicHearingAddressParserTest
 {
 
     private PublicHearingAddressParser addressParser;

@@ -95,6 +95,13 @@ apiModule.factory('CalendarUpdatesApi', ['$resource', function ($resource) {
     });
 }]);
 
+apiModule.factory('CalendarGetApi', ['$resource', function ($resource) {
+    return $resource(apiPath + '/calendars/:year/:calNo', {
+        year: '@year',
+        calNo: '@calNo'
+    });
+}]);
+
 apiModule.factory('CalendarFullUpdatesApi', ['$resource', function ($resource) {
     return $resource(apiPath + '/calendars/updates/:fromDateTime/:toDateTime/', {
         fromDateTime: '@fromDateTime', toDateTime: '@toDateTime'

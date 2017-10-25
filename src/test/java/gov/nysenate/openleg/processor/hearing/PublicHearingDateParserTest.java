@@ -1,22 +1,22 @@
 package gov.nysenate.openleg.processor.hearing;
 
-import gov.nysenate.openleg.BaseTests;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import gov.nysenate.openleg.annotation.UnitTest;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class PublicHearingDateParserTest extends BaseTests {
+@Category(UnitTest.class)
+public class PublicHearingDateParserTest {
 
     private PublicHearingDateParser dateParser;
 
