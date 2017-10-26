@@ -60,15 +60,13 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
             //File Print number
             final Integer sessyr = xmlHelper.getInteger("@sessyr", senFloorVote);
             final Integer seqno = xmlHelper.getInteger("@bill_seqno", senFloorVote);
-            String printNo = xmlHelper.getString("@no", senFloorVote).trim();
-            String version = Character.isLetter(printNo.charAt(printNo.length() - 1)) ? String.valueOf( printNo.charAt(printNo.length() - 1) ): "";
-            if ( !version.equals("") ) { //If this isn't the default version
-                printNo = printNo.substring(0, printNo.length()-1);
-            }
+            final String printNo = xmlHelper.getString("@no", senFloorVote).trim();
+            BillId billId = new BillId(printNo, sessyr);
+            String version = billId.getVersion().getValue();
             final String action = xmlHelper.getString("@action", senFloorVote).trim();
             final String dateofvote = xmlHelper.getString("@dateofvote", senFloorVote).trim();
 
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(printNo, sessyr, version), sobiFragment);
+            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billId.getBasePrintNo(), sessyr, version), sobiFragment);
             BillAmendment billAmendment;
             if (!baseBill.hasAmendment( Version.of(version) )) {
                 billAmendment = new BillAmendment(baseBill.getBaseBillId(), Version.of(version));
@@ -80,10 +78,10 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
 
             LocalDate voteDate;
             BillVote vote;
-            BillId billId = billAmendment.getBillId();
+            BillId billAemndId = billAmendment.getBillId();
             try {
                 voteDate = LocalDate.from(voteDateFormat.parse(dateofvote));
-                vote = new BillVote(billId, voteDate, BillVoteType.FLOOR, seqno);
+                vote = new BillVote(billAemndId, voteDate, BillVoteType.FLOOR, seqno);
                 vote.setModifiedDateTime(date);
                 vote.setPublishedDateTime(date);
 
@@ -111,7 +109,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
                     throw new ParseError("No vote code mapping for " + howMemberVoted);
                 }
                 // Only senator votes are received. A valid member mapping is required.
-                SessionMember voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE);
+                SessionMember voter = getMemberFromShortName(shortName, billAemndId.getSession(), Chamber.SENATE);
                 vote.addMemberVote(voteCode, voter);
             }
             billAmendment.updateVote(vote);
@@ -127,7 +125,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
     }
 
     private void removeCase(BillAmendment billAmendment, BillVote vote) {
-        billAmendment.updateVote(vote);
+        billAmendment.getVotesMap().remove(vote.getVoteId(), vote);
     }
 
 }
