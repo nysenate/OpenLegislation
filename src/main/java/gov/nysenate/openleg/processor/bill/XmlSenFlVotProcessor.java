@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill;
 
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
@@ -9,6 +10,7 @@ import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,46 +60,46 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
             //File Print number
             final Integer sessyr = xmlHelper.getInteger("@sessyr", senFloorVote);
             final Integer seqno = xmlHelper.getInteger("@bill_seqno", senFloorVote);
-            final String printNo = xmlHelper.getString("@no", senFloorVote).trim();
+            String printNo = xmlHelper.getString("@no", senFloorVote).trim();
+            String version = Character.isLetter(printNo.charAt(printNo.length() - 1)) ? String.valueOf( printNo.charAt(printNo.length() - 1) ): "";
+            if ( !version.equals("") ) { //If this isn't the default version
+                printNo = printNo.substring(0, printNo.length()-1);
+            }
             final String action = xmlHelper.getString("@action", senFloorVote).trim();
             final String dateofvote = xmlHelper.getString("@dateofvote", senFloorVote).trim();
 
-
-            //TODO: Verify version logic with LBDC
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(printNo, sessyr), sobiFragment);
+            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(printNo, sessyr, version), sobiFragment);
             BillAmendment billAmendment;
-            if (!baseBill.hasAmendment(baseBill.getActiveVersion())) {
-                billAmendment = new BillAmendment(baseBill.getBaseBillId(), baseBill.getActiveVersion());
+            if (!baseBill.hasAmendment( Version.of(version) )) {
+                billAmendment = new BillAmendment(baseBill.getBaseBillId(), Version.of(version));
                 baseBill.addAmendment(billAmendment);
             }
             else {
-                billAmendment = baseBill.getAmendment(baseBill.getActiveVersion());
-            }
-
-            //TODO: Handle action equals remove
-            if (action.equals("remove")) {
-                removeCase(billAmendment);
-                return;
+                billAmendment = baseBill.getAmendment(Version.of(version));
             }
 
             LocalDate voteDate;
-            BillVote vote = null;
+            BillVote vote;
             BillId billId = billAmendment.getBillId();
             try {
                 voteDate = LocalDate.from(voteDateFormat.parse(dateofvote));
                 vote = new BillVote(billId, voteDate, BillVoteType.FLOOR, seqno);
                 vote.setModifiedDateTime(date);
                 vote.setPublishedDateTime(date);
+
+                if (action.equals("remove")) {
+                    removeCase(billAmendment, vote);
+                    return;
+                }
             }
             catch (DateTimeParseException ex) {
                 throw new ParseError("voteDateFormat not matched: " + ex);
             }
 
             //loop through xml vote list
-            final Node voteDoc = xmlHelper.getNode( "votes" , senFloorVote);
-            NodeList memberVotes = voteDoc.getChildNodes();
-            for (int iterator = 0; iterator < memberVotes.getLength(); iterator++) {
-                Node member = memberVotes.item(iterator);
+            NodeList memberVotes = doc.getElementsByTagName("member");
+            for (int index = 0; index < memberVotes.getLength(); index++) {
+                Node member = memberVotes.item(index);
                 final String howMemberVoted = xmlHelper.getString("vote",member);
                 final String shortName = xmlHelper.getString("name",member);
 
@@ -112,8 +114,9 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
                 SessionMember voter = getMemberFromShortName(shortName, billId.getSession(), Chamber.SENATE);
                 vote.addMemberVote(voteCode, voter);
             }
+            billAmendment.updateVote(vote);
         }
-        catch (IOException | SAXException | XPathExpressionException e) {
+        catch (IOException | SAXException | XPathExpressionException | NullPointerException e) {
             throw new ParseError("Error While Parsing XmlSenFlVotProcessor", e);
         }
     }
@@ -123,8 +126,8 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
         flushBillUpdates();
     }
 
-    private void removeCase(BillAmendment billAmendment) {
-
+    private void removeCase(BillAmendment billAmendment, BillVote vote) {
+        billAmendment.updateVote(vote);
     }
 
 }
