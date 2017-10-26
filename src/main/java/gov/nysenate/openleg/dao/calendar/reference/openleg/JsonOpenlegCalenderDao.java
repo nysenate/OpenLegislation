@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.calendar.reference.openleg;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import gov.nysenate.openleg.client.view.calendar.CalendarView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -24,7 +26,9 @@ import java.util.List;
 public class JsonOpenlegCalenderDao implements OpenlegCalenderDao {
     private static final Logger logger = LoggerFactory.getLogger(JsonOpenlegCalenderDao.class);
 
-    private String callHeader = "http://legislation.nysenate.gov/api/3/calendars/";
+    @Autowired
+    Environment env;
+
     private HttpURLConnection connection = null;
     private int offset = 0;
     private int total = 0;
@@ -33,14 +37,14 @@ public class JsonOpenlegCalenderDao implements OpenlegCalenderDao {
         List<CalendarView> calendarViews = new LinkedList<>();
         StringBuffer response = new StringBuffer();
 
-        connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear  + "?full=true&limit=10&key=" + apiKey, "GET", false, true);
+        connection = JsonOpenlegDaoUtils.setConnection(env.getRefUrl()+"api/3/calendars/" + sessionYear  + "?full=true&limit=10&key=" + apiKey, "GET", false, true);
         JsonOpenlegDaoUtils.readInputStream(connection, response);
         mapJSONToCalendarView(response, calendarViews);
         connection.disconnect();
 
         while (offset < total) {
             StringBuffer restOfCalender = new StringBuffer();
-            connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear + "?full=true&key=" + apiKey + "&limit=10&offset=" + (offset + 1),"GET",false,true );
+            connection = JsonOpenlegDaoUtils.setConnection(env.getRefUrl()+"api/3/calendars/" + sessionYear + "?full=true&key=" + apiKey + "&limit=10&offset=" + (offset + 1),"GET",false,true );
             JsonOpenlegDaoUtils.readInputStream(connection, restOfCalender);
             mapJSONToCalendarView(restOfCalender, calendarViews);
             connection.disconnect();

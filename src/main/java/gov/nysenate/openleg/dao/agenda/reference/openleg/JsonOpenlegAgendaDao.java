@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import gov.nysenate.openleg.client.view.agenda.AgendaView;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -20,7 +22,9 @@ import java.util.List;
 public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
     private static final Logger logger = LoggerFactory.getLogger(JsonOpenlegAgendaDao.class);
 
-    String callHeader = "http://legislation.nysenate.gov/api/3/agendas/";
+    @Autowired
+    Environment env;
+
     HttpURLConnection connection = null;
 
     @Override
@@ -29,7 +33,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
         StringBuffer response = new StringBuffer();
 
         for (AgendaId agendaId: getAgendaIds(sessionYear)) {
-            connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear  + "/" + agendaId.getNumber() + "?key=" + apiKey, "GET", false, true);
+            connection = JsonOpenlegDaoUtils.setConnection(env.getRefUrl()+"/api/3/agendas/" + sessionYear  + "/" + agendaId.getNumber() + "?key=" + apiKey, "GET", false, true);
             JsonOpenlegDaoUtils.readInputStream(connection, response);
             mapJSONToAgendaView(response, agendaViews);
             connection.disconnect();
@@ -103,7 +107,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
     private List<AgendaId> getAgendaIds(String sessionYear) {
         List<AgendaId> agendaIds = new LinkedList<>();
         StringBuffer idResponse = new StringBuffer();
-        connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear,"GET", false, true);
+        connection = JsonOpenlegDaoUtils.setConnection(env.getRefUrl()+"/api/3/agendas/" + sessionYear,"GET", false, true);
         JsonOpenlegDaoUtils.readInputStream(connection, idResponse);
         mapJSONToAgendaId(idResponse, agendaIds);
         connection.disconnect();

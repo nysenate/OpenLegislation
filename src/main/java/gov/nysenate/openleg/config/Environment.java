@@ -116,6 +116,12 @@ public class Environment
     /** The domain and context path for the 1.9.2 prod server */
     @Value ("${old.prod.url}") private String oldProdUrl;
 
+    /** ---- Openleg Reference ---*/
+
+    @Value ("${ref.api.key}") private String refApiKey;
+
+    @Value ("${ref.url}") private String refUrl;
+
     /** --- Constructors --- */
 
     public Environment() {}
@@ -348,5 +354,21 @@ public class Environment
 
     public boolean getSobiProcessEnabled() {
         return sobiProcessEnabled;
+    }
+
+    public String getRefApiKey() {
+        return refApiKey;
+    }
+
+    public void setRefApiKey(String refApiKey) {
+        this.refApiKey = refApiKey;
+    }
+
+    public String getRefUrl() {
+        return refUrl;
+    }
+
+    public void setRefUrl(String refUrl) {
+        this.refUrl = refUrl;
     }
 }

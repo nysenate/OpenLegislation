@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -24,7 +26,9 @@ import java.util.List;
 public class JsonOpenlegBillDao implements OpenlegBillDao {
     private static final Logger logger = LoggerFactory.getLogger(JsonOpenlegBillDao.class);
 
-    String callHeader = "http://legislation.nysenate.gov/api/3/bills/";
+    @Autowired
+    Environment env;
+
     HttpURLConnection connection = null;
     int offset = 0;
     int total = 0;
@@ -34,14 +38,14 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
         List<BillView> billViews = new LinkedList<>();
         StringBuffer response = new StringBuffer();
 
-        connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear  + "?full=true&limit=1000&key=" + apiKey, "GET", false, true);
+        connection = JsonOpenlegDaoUtils.setConnection(env.getRefUrl()+"/api/3/bills/" + sessionYear  + "?full=true&limit=1000&key=" + apiKey, "GET", false, true);
         JsonOpenlegDaoUtils.readInputStream(connection, response);
         mapJSONToBillView(response, billViews);
         connection.disconnect();
 
         while (offset < total) {
             StringBuffer restOfBill = new StringBuffer();
-            connection = JsonOpenlegDaoUtils.setConnection(callHeader + sessionYear + "?full=true&key=" + apiKey + "&limit=1000&offset=" + (offset + 1),"GET",false,true );
+            connection = JsonOpenlegDaoUtils.setConnection(env.getRefUrl()+"/api/3/bills/" + sessionYear + "?full=true&key=" + apiKey + "&limit=1000&offset=" + (offset + 1),"GET",false,true );
             JsonOpenlegDaoUtils.readInputStream(connection, restOfBill);
             mapJSONToBillView(restOfBill, billViews);
             connection.disconnect();

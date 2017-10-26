@@ -4,6 +4,7 @@ import gov.nysenate.openleg.client.view.calendar.ActiveListView;
 import gov.nysenate.openleg.client.view.calendar.CalendarEntryList;
 import gov.nysenate.openleg.client.view.calendar.CalendarSupView;
 import gov.nysenate.openleg.client.view.calendar.CalendarView;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.reference.openleg.OpenlegCalenderDao;
@@ -34,9 +35,6 @@ This service is used to report the difference between two calendars in two insta
 public class OpenlegCalendarReportService extends BaseSpotCheckReportService<CalendarEntryListId> {
     private static final Logger logger = LoggerFactory.getLogger(OpenlegCalendarReportService.class);
 
-    @Value("api.secret")
-    private String apiSecret;
-
     @Autowired
     private SpotCheckReportDao<CalendarEntryListId> reportDao;
 
@@ -51,6 +49,9 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
 
     @Autowired
     OpenlegCalendarCheckService checkService;
+
+    @Autowired
+    Environment env;
 
     @Override
     protected SpotCheckReportDao<CalendarEntryListId> getReportDao() {
@@ -83,7 +84,7 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
         logger.info("The current session year is " + SessionYear.of(start.getYear()));
 
         //Retrieve Openleg Ref Calendar data
-        List<CalendarView> referenceCalendarViews = openlegCalendarDao.getOpenlegCalendarView(String.valueOf(start.getYear()), apiSecret);
+        List<CalendarView> referenceCalendarViews = openlegCalendarDao.getOpenlegCalendarView(String.valueOf(start.getYear()), env.getRefApiKey());
         if (referenceCalendarViews.isEmpty()) {
             throw new ReferenceDataNotFoundEx("The collection of sobi calendars with the given session year " + SessionYear.of(start.getYear()) + " is empty");
         }

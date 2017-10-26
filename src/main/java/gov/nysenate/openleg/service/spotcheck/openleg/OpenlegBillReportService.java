@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.reference.openleg.OpenlegBillDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
@@ -34,9 +35,6 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFEREN
 public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBillId> {
     private static final Logger logger = LoggerFactory.getLogger(OpenlegBillReportService.class);
 
-    @Value("api.secret") //change from api key to api secret
-    private  String apiSecret;
-
     @Autowired
     private SpotCheckReportDao<BaseBillId> reportDao;
 
@@ -48,6 +46,9 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
 
     @Autowired
     OpenlegBillCheckService checkService;
+
+    @Autowired
+    Environment env;
 
     @Override
     protected SpotCheckReportDao<BaseBillId> getReportDao() {
@@ -78,7 +79,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
         report.setReportId(reportId);
         logger.info("Loading BillView from Openleg reference");
         logger.info("The current session year is " + SessionYear.of( start.getYear() ) );
-        List<BillView> referenceBillViews = openlegBillDao.getOpenlegBillView(String.valueOf(start.getYear()), apiSecret);
+        List<BillView> referenceBillViews = openlegBillDao.getOpenlegBillView(String.valueOf(start.getYear()), env.getRefApiKey());
         if (referenceBillViews.isEmpty()) {
             throw new ReferenceDataNotFoundEx("The collection of sobi bills with the given session year " + SessionYear.of( start.getYear() )  + " is empty.");
         }

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import gov.nysenate.openleg.client.view.agenda.AgendaCommAddendumView;
 import gov.nysenate.openleg.client.view.agenda.AgendaView;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.agenda.reference.openleg.OpenlegAgendaDao;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
@@ -28,9 +29,6 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFEREN
 public class OpenlegAgendaReportService extends BaseSpotCheckReportService<CommitteeAgendaAddendumId> {
     private static final Logger logger = LoggerFactory.getLogger(OpenlegAgendaReportService.class);
 
-    @Value("api.secret")
-    private  String apiSecret;
-
     @Autowired
     private SpotCheckReportDao<CommitteeAgendaAddendumId> reportDao;
 
@@ -45,6 +43,9 @@ public class OpenlegAgendaReportService extends BaseSpotCheckReportService<Commi
 
     @Autowired
     OpenlegAgendaCheckService checkService;
+
+    @Autowired
+    Environment env;
 
     @Override
     protected SpotCheckReportDao<CommitteeAgendaAddendumId> getReportDao() {
@@ -69,7 +70,7 @@ public class OpenlegAgendaReportService extends BaseSpotCheckReportService<Commi
         logger.info("The current session year is " + SessionYear.of(start.getYear()));
 
         //Retrieve Openleg Ref Agenda data
-        List<AgendaView> referenceAgendaViews = openlegAgendaDao.getOpenlegAgendaView(String.valueOf(start.getYear()), apiSecret);
+        List<AgendaView> referenceAgendaViews = openlegAgendaDao.getOpenlegAgendaView(String.valueOf(start.getYear()), env.getRefApiKey());
         if (referenceAgendaViews.isEmpty()) {
             throw new ReferenceDataNotFoundEx("The collection of reference agendas with the given session year " + SessionYear.of(start.getYear()) + " is empty");
         }
