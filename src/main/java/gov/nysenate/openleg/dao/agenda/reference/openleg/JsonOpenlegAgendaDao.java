@@ -6,7 +6,9 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import gov.nysenate.openleg.client.view.agenda.AgendaView;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.openleg.JsonOpenlegDaoUtils;
+import gov.nysenate.openleg.util.OutputUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +27,17 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
     @Autowired
     Environment env;
 
+    @Autowired
+    BillDataService billDataService;
+
     HttpURLConnection connection = null;
 
     @Override
     public List<AgendaView> getOpenlegAgendaView(String sessionYear, String apiKey) {
         List<AgendaView> agendaViews = new LinkedList<>();
-        StringBuffer response = new StringBuffer();
 
         for (AgendaId agendaId: getAgendaIds(sessionYear)) {
+            StringBuffer response = new StringBuffer();
             connection = JsonOpenlegDaoUtils.setConnection(env.getRefUrl()+"/api/3/agendas/" + sessionYear  + "/" + agendaId.getNumber() + "?key=" + apiKey, "GET", false, true);
             JsonOpenlegDaoUtils.readInputStream(connection, response);
             mapJSONToAgendaView(response, agendaViews);
@@ -41,20 +46,14 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
         return agendaViews;
     }
 
-    private List<AgendaView> toAgendaView(JsonNode node) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new GuavaModule());
-        List<AgendaView> agendaViewList = new LinkedList<>();
-        if (node.get("result").get("items") == null) { // if there is only 1 available agenda
-            agendaViewList.add(mapper.readValue(node.get("result").toString(), AgendaView.class));
-        } else { // if there are many available agendas
-            Iterator<JsonNode> nodeIterator = node.get("result").get("items").iterator();
-            while (nodeIterator.hasNext()) {
-                JsonNode node1 = nodeIterator.next();
-                agendaViewList.add(mapper.readValue(node1.toString(), AgendaView.class));
-            }
+    private AgendaView toAgendaView(JsonNode node) throws IOException {
+        ObjectMapper mapper = OutputUtils.getJsonMapper();
+        AgendaView agendaView = null;
+        if (node.get("result") != null) { //Convert the 1 agenda
+            JsonNode agenda = node.get("result");
+            agendaView = mapper.readValue(agenda.toString(), AgendaView.class);
         }
-        return agendaViewList;
+        return agendaView;
     }
 
     private void mapJSONToAgendaView(StringBuffer response, List<AgendaView> agendaViews) {
@@ -64,7 +63,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
 
             JsonNode node = null;
             node = mapper.readTree(response.toString());
-            agendaViews.addAll(toAgendaView(node));
+            agendaViews.add(toAgendaView(node));
         } catch (IOException e) {
             logger.error("The JSON Object could not be mapped to a  AgendaView");
             e.printStackTrace();
