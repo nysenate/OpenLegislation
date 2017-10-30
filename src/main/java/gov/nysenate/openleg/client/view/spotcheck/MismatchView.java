@@ -24,6 +24,7 @@ public class MismatchView<ContentKey> implements ViewObject
     protected String notes;
     protected LocalDateTime observedDateTime;
     protected LocalDateTime reportDateTime;
+    protected LocalDateTime firstSeenDateTime;
     protected SpotCheckMismatchIgnore ignoreStatus;
     protected ListView<String> issueIds;
 
@@ -41,6 +42,7 @@ public class MismatchView<ContentKey> implements ViewObject
         this.observedData = mismatch.getObservedData();
         this.notes = mismatch.getNotes();
         this.observedDateTime = mismatch.getObservedDateTime();
+        this.firstSeenDateTime = mismatch.getFirstSeenDateTime();
         this.reportDateTime = mismatch.getReportDateTime();
         this.ignoreStatus = mismatch.getIgnoreStatus();
         this.issueIds = ListView.ofStringList(new ArrayList<>(mismatch.getIssueIds()));
@@ -108,6 +110,10 @@ public class MismatchView<ContentKey> implements ViewObject
 
     public ListView<String> getIssueIds() {
         return issueIds;
+    }
+
+    public LocalDateTime getFirstSeenDateTime() {
+        return firstSeenDateTime;
     }
 
     @Override

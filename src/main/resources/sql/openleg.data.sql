@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.3
--- Dumped by pg_dump version 9.6.3
+-- Dumped from database version 9.6.5
+-- Dumped by pg_dump version 9.6.5
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -13,6 +13,350 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
+
+SET search_path = public, master, pg_catalog;
+
+--
+-- Data for Name: bill_sponsor_additional; Type: TABLE DATA; Schema: master; Owner: postgres
+--
+
+COPY bill_sponsor_additional (bill_print_no, bill_session_year, session_member_id, sequence_no, created_date_time, last_fragment_id) FROM stdin;
+R314	2013	145	1	2015-03-03 16:30:28.199822	\N
+J375	2013	184	1	2015-03-03 16:30:28.210309	\N
+J375	2013	145	2	2015-03-03 16:30:28.21162	\N
+R633	2013	145	1	2015-03-03 16:30:28.212107	\N
+J694	2013	145	1	2015-03-03 16:30:28.21296	\N
+J758	2013	184	1	2015-03-03 16:30:28.214068	\N
+R818	2013	145	1	2015-03-03 16:30:28.21498	\N
+J844	2013	145	1	2015-03-03 16:30:28.215516	\N
+J860	2013	184	1	2015-03-03 16:30:28.216512	\N
+J1608	2013	145	1	2015-03-03 16:30:28.21752	\N
+J1608	2013	152	2	2015-03-03 16:30:28.219962	\N
+J1938	2013	145	1	2015-03-03 16:30:28.221426	\N
+J1938	2013	152	2	2015-03-03 16:30:28.222308	\N
+J3100	2013	180	1	2015-03-03 16:30:28.222815	\N
+S2107	2013	145	1	2015-03-03 16:30:28.223623	\N
+S3953	2013	140	1	2015-03-03 16:30:28.224692	\N
+S5441	2013	154	1	2015-03-03 16:30:28.225734	\N
+S5441	2013	162	2	2015-03-03 16:30:28.226764	\N
+S5441	2013	182	3	2015-03-03 16:30:28.227291	\N
+S5656	2013	185	1	2015-03-03 16:30:28.228377	\N
+S5657	2013	144	1	2015-03-03 16:30:28.229151	\N
+S5657	2013	126	2	2015-03-03 16:30:28.230516	\N
+S5683	2013	171	1	2015-03-03 16:30:28.231299	\N
+J2885	2013	145	1	2015-03-03 16:30:28.232144	\N
+J2885	2013	152	2	2015-03-03 16:30:28.23284	\N
+J3307	2013	145	1	2015-03-03 16:30:28.233828	\N
+J3307	2013	184	2	2015-03-03 16:30:28.234813	\N
+J3743	2013	145	1	2015-03-03 16:30:28.235557	\N
+J3743	2013	152	2	2015-03-03 16:30:28.236867	\N
+J3908	2013	145	1	2015-03-03 16:30:28.237699	\N
+J3908	2013	152	2	2015-03-03 16:30:28.238727	\N
+R4036	2013	145	1	2015-03-03 16:30:28.239476	\N
+S6966	2013	149	1	2015-03-03 16:30:28.240254	\N
+J4904	2013	145	1	2015-03-03 16:30:28.241537	\N
+J4904	2013	152	2	2015-03-03 16:30:28.242505	\N
+J5165	2013	145	1	2015-03-03 16:30:28.243363	\N
+\.
+
+
+--
+-- Data for Name: committee; Type: TABLE DATA; Schema: master; Owner: postgres
+--
+
+COPY committee (name, id, current_version, chamber, current_session, full_name) FROM stdin;
+Aging	24	2017-01-18 10:52:04	senate	2017	\N
+Agriculture	14	2017-01-18 10:52:04	senate	2017	\N
+Alcoholism and Drug Abuse	12	2017-01-18 10:52:04	senate	2017	\N
+Children and Families	27	2017-01-18 10:52:04	senate	2017	\N
+Commerce, Economic Development and Small Business	19	2017-01-18 10:52:04	senate	2017	\N
+Cultural Affairs, Tourism, Parks and Recreation	20	2017-01-18 10:52:04	senate	2017	\N
+Education	9	2017-01-18 10:52:04	senate	2017	\N
+Elections	32	2017-01-18 10:52:04	senate	2017	\N
+Energy and Telecommunications	31	2017-01-18 10:52:04	senate	2017	\N
+Environmental Conservation	17	2017-01-18 10:52:04	senate	2017	\N
+Ethics	4	2017-01-18 10:52:04	senate	2017	\N
+Ethics and Internal Governance Committee	1865	2017-05-18 10:12:14	senate	2017	\N
+Higher Education	23	2017-01-18 10:52:04	senate	2017	\N
+Housing, Construction and Community Development	28	2017-01-18 10:52:04	senate	2017	\N
+Infrastructure and Capital Investment	58	2017-01-18 10:52:04	senate	2017	\N
+Mental Health and Developmental Disabilities	26	2017-01-18 10:52:04	senate	2017	\N
+Racing, Gaming and Wagering	7	2017-01-18 10:52:04	senate	2017	\N
+Veterans, Homeland Security and Military Affairs	8	2017-01-18 10:52:04	senate	2017	\N
+New York City Education Subcommittee	63	2017-01-18 10:52:04	senate	2017	\N
+Ethics and Internal Governance	1899	2017-05-18 10:57:17	senate	2017	\N
+Codes	29	2017-08-25 14:31:55	senate	2017	\N
+Corporations, Authorities and Commissions	3	2017-08-25 14:31:55	senate	2017	\N
+Finance	21	2017-08-25 14:31:55	senate	2017	\N
+Investigations and Government Operations	2	2017-08-25 14:31:55	senate	2017	\N
+Rules	18	2017-08-25 14:31:55	senate	2017	\N
+Social Services	13	2017-08-25 14:31:55	senate	2017	\N
+Health	6	2017-02-07 15:16:10	senate	2017	\N
+Civil Service and Pensions	15	2017-06-06 20:46:33	senate	2017	\N
+Banks	30	2017-02-13 16:36:21	senate	2017	\N
+Cities	25	2017-02-13 16:36:21	senate	2017	\N
+Judiciary	5	2017-03-02 12:36:47	senate	2017	\N
+Consumer Protection	16	2017-02-13 16:36:21	senate	2017	\N
+Crime Victims, Crime and Correction	33	2017-02-13 16:36:21	senate	2017	\N
+Insurance	34	2017-02-13 16:36:21	senate	2017	\N
+Labor	11	2017-02-13 16:36:21	senate	2017	\N
+Local Government	22	2017-02-14 09:46:16	senate	2017	\N
+Transportation	10	2017-08-25 14:31:55	senate	2017	\N
+\.
+
+
+--
+-- Name: committee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+--
+
+SELECT pg_catalog.setval('committee_id_seq', 3015, true);
+
+
+--
+-- Data for Name: committee_version; Type: TABLE DATA; Schema: master; Owner: postgres
+--
+
+COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, meettime, session_year, created, reformed, committee_name, chamber, last_fragment_id) FROM stdin;
+2	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Investigations and Government Operations	senate	\N
+3	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Corporations, Authorities and Commissions	senate	\N
+4	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Ethics	senate	\N
+5	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Judiciary	senate	\N
+6	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Health	senate	\N
+7	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Racing, Gaming and Wagering	senate	\N
+8	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Veterans, Homeland Security and Military Affairs	senate	\N
+9	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Education	senate	\N
+10	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Transportation	senate	\N
+11	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Labor	senate	\N
+12	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Alcoholism and Drug Abuse	senate	\N
+13	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Social Services	senate	\N
+14	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Agriculture	senate	\N
+15	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Civil Service and Pensions	senate	\N
+16	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Consumer Protection	senate	\N
+17	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Environmental Conservation	senate	\N
+18	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Rules	senate	\N
+19	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Commerce, Economic Development and Small Business	senate	\N
+20	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
+21	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Finance	senate	\N
+22	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Local Government	senate	\N
+23	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Higher Education	senate	\N
+24	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Aging	senate	\N
+25	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Cities	senate	\N
+26	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Mental Health and Developmental Disabilities	senate	\N
+27	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Children and Families	senate	\N
+28	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Housing, Construction and Community Development	senate	\N
+29	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Codes	senate	\N
+30	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Banks	senate	\N
+31	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Energy and Telecommunications	senate	\N
+32	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Elections	senate	\N
+33	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Crime Victims, Crime and Correction	senate	\N
+34	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Insurance	senate	\N
+57	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Aging	senate	\N
+71	Room 411 LOB	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Agriculture	senate	\N
+47	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Agriculture	senate	\N
+72	Room 813 LOB	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Alcoholism and Drug Abuse	senate	\N
+45	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Alcoholism and Drug Abuse	senate	\N
+65	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Banks	senate	\N
+74	Room 944 LOB	MONDAY	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Children and Families	senate	\N
+61	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Children and Families	senate	\N
+59	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Cities	senate	\N
+73	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Banks	senate	\N
+70	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Aging	senate	\N
+75	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Cities	senate	\N
+48	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Civil Service and Pensions	senate	\N
+64	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Codes	senate	\N
+52	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Commerce, Economic Development and Small Business	senate	\N
+49	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Consumer Protection	senate	\N
+80	Room 801 LOB	MONDAY	f		13:30:00	2013	2014-02-28 11:25:44	infinity	Corporations, Authorities and Commissions	senate	\N
+36	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Corporations, Authorities and Commissions	senate	\N
+81	Room 123 CAP	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	infinity	Crime Victims, Crime and Correction	senate	\N
+68	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Crime Victims, Crime and Correction	senate	\N
+82	Room 309 LOB	WEDNESDAY	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
+53	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
+42	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Education	senate	\N
+84	Room 813 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2013	2014-02-28 11:25:44	infinity	Elections	senate	\N
+67	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Elections	senate	\N
+66	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Energy and Telecommunications	senate	\N
+50	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Environmental Conservation	senate	\N
+87		\N	f		\N	2013	2014-02-28 11:25:44	infinity	Ethics	senate	\N
+37	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Ethics	senate	\N
+54	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Finance	senate	\N
+39	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Health	senate	\N
+90	Room 807 LOB	TUESDAY	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Higher Education	senate	\N
+56	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Higher Education	senate	\N
+62	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Housing, Construction and Community Development	senate	\N
+92	Room 804 LOB	TUESDAY	f		12:00:00	2013	2014-02-28 11:25:44	infinity	Infrastructure and Capital Investment	senate	\N
+58	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Infrastructure and Capital Investment	senate	\N
+69	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Insurance	senate	\N
+94	Room 810 LOB	TUESDAY	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Investigations and Government Operations	senate	\N
+35	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Investigations and Government Operations	senate	\N
+38	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Judiciary	senate	\N
+96	Room 511 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	infinity	Labor	senate	\N
+44	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Labor	senate	\N
+97	Room 945 LOB	TUESDAY	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Local Government	senate	\N
+55	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Local Government	senate	\N
+98	Room 816 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	infinity	Mental Health and Developmental Disabilities	senate	\N
+60	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Mental Health and Developmental Disabilities	senate	\N
+40	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Racing, Gaming and Wagering	senate	\N
+51	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Rules	senate	\N
+101	Room 946A LOB	TUESDAY	f		10:00:00	2013	2014-02-28 11:25:44	infinity	Social Services	senate	\N
+46	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Social Services	senate	\N
+43	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Transportation	senate	\N
+41	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Veterans, Homeland Security and Military Affairs	senate	\N
+63	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	New York City Education Subcommittee	senate	\N
+76	Room 410 LOB	MONDAY	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Civil Service and Pensions	senate	\N
+77	Room 124 CAP	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Codes	senate	\N
+79	Room 801 LOB	MONDAY	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Consumer Protection	senate	\N
+86	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Environmental Conservation	senate	\N
+99	Room 510 LOB	TUESDAY	f		09:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Racing, Gaming and Wagering	senate	\N
+103	Room 816 LOB	TUESDAY	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Veterans, Homeland Security and Military Affairs	senate	\N
+78	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Commerce, Economic Development and Small Business	senate	\N
+83	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Education	senate	\N
+95	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Judiciary	senate	\N
+102	Room 124 CAP	TUESDAY	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Transportation	senate	\N
+104		\N	f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	New York City Education Subcommittee	senate	\N
+85	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Energy and Telecommunications	senate	\N
+88	Room 124 CAP	TUESDAY	f		11:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Finance	senate	\N
+89	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Health	senate	\N
+91	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Housing, Construction and Community Development	senate	\N
+93	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Insurance	senate	\N
+100		\N	f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Rules	senate	\N
+128	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2015	2015-01-22 16:58:51	infinity	Aging	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+129	Room 411 LOB	TUESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Agriculture	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+130	Room 813 LOB	TUESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Alcoholism and Drug Abuse	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+131	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2015	2015-01-22 16:58:51	infinity	Banks	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+132	Room 944 LOB	MONDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Children and Families	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+133	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2015	2015-01-22 16:58:51	infinity	Cities	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+134	Room 410 LOB	MONDAY	f		13:30:00	2015	2015-01-22 16:58:51	infinity	Civil Service and Pensions	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+135	Room 124 CAP	TUESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Codes	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+136	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2015	2015-01-22 16:58:51	infinity	Commerce, Economic Development and Small Business	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+137	Room 801 LOB	MONDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Consumer Protection	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+138	Room 801 LOB	MONDAY	f		13:30:00	2015	2015-01-22 16:58:51	infinity	Corporations, Authorities and Commissions	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+139	Room 123 CAP	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2015	2015-01-22 16:58:51	infinity	Crime Victims, Crime and Correction	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+140	Room 309 LOB	WEDNESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+141	Room 124 CAP	TUESDAY	f		10:00:00	2015	2015-01-22 16:58:51	infinity	Education	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+142	Room 813 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2015	2015-01-22 16:58:51	infinity	Elections	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+143	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2015	2015-01-22 16:58:51	infinity	Energy and Telecommunications	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+144	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2015	2015-01-22 16:58:51	infinity	Environmental Conservation	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+145		\N	f		\N	2015	2015-01-22 16:58:51	infinity	Ethics	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+146	Room 124 CAP	TUESDAY	f		11:00:00	2015	2015-01-22 16:58:51	infinity	Finance	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+147	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2015	2015-01-22 16:58:51	infinity	Health	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+148	Room 807 LOB	TUESDAY	f		12:30:00	2015	2015-01-22 16:58:51	infinity	Higher Education	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+149	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2015	2015-01-22 16:58:51	infinity	Housing, Construction and Community Development	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+150	Room 804 LOB	TUESDAY	f		12:00:00	2015	2015-01-22 16:58:51	infinity	Infrastructure and Capital Investment	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+151	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2015	2015-01-22 16:58:51	infinity	Insurance	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+152	Room 810 LOB	TUESDAY	f		12:30:00	2015	2015-01-22 16:58:51	infinity	Investigations and Government Operations	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+153	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2015	2015-01-22 16:58:51	infinity	Judiciary	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+154	Room 511 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2015	2015-01-22 16:58:51	infinity	Labor	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+155	Room 945 LOB	TUESDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Local Government	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+156	Room 816 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2015	2015-01-22 16:58:51	infinity	Mental Health and Developmental Disabilities	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+157	Room 510 LOB	TUESDAY	f		09:30:00	2015	2015-01-22 16:58:51	infinity	Racing, Gaming and Wagering	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+158		\N	f		\N	2015	2015-01-22 16:58:51	infinity	Rules	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+159	Room 946A LOB	TUESDAY	f		10:00:00	2015	2015-01-22 16:58:51	infinity	Social Services	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+160	Room 124 CAP	TUESDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Transportation	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+161	Room 816 LOB	TUESDAY	f		13:30:00	2015	2015-01-22 16:58:51	infinity	Veterans, Homeland Security and Military Affairs	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+162		\N	f		\N	2015	2015-01-22 16:58:51	infinity	New York City Education Subcommittee	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
+368	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Codes	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
+380	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-06-06 20:46:33	infinity	Civil Service and Pensions	senate	SOBI.D170606.T204633.TXT-1-COMMITTEE
+381	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-08-25 14:31:55	infinity	Codes	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+374	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-03-02 12:36:47	2017-08-25 14:31:55	Codes	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+382	Room 610 LOB	TUESDAY	f		12:30:00	2017	2017-08-25 14:31:55	infinity	Corporations, Authorities and Commissions	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+255	Room 813 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2017	2017-01-18 10:52:04	infinity	Aging	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
+289		\N	f		\N	2017	2017-01-18 10:52:04	infinity	New York City Education Subcommittee	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
+257	Room 801 LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	infinity	Alcoholism and Drug Abuse	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+258	Room 511 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Banks	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+288	Room 124 CAP	MONDAY	f		11:30:00	2017	2017-01-18 10:52:04	infinity	Veterans, Homeland Security and Military Affairs	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
+264	Room 945 LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Consumer Protection	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+369	Room 610 LOB	TUESDAY	f		12:30:00	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Corporations, Authorities and Commissions	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
+372		\N	f		\N	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Rules	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
+375	Room 610 LOB	TUESDAY	f		12:30:00	2017	2017-03-02 12:36:47	2017-08-25 14:31:55	Corporations, Authorities and Commissions	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+273	Room 124 CAP	TUESDAY	f		11:00:00	2017	2017-01-18 10:52:04	2017-02-24 09:54:05	Finance	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
+285		\N	f		\N	2017	2017-01-18 10:52:04	2017-02-24 09:54:05	Rules	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
+263	Room 813 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2017	2017-01-18 10:52:04	infinity	Commerce, Economic Development and Small Business	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
+268	Room 810 LOB	TUESDAY	f		10:00:00	2017	2017-01-18 10:52:04	infinity	Education	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
+269	Room 805 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2017	2017-01-18 10:52:04	infinity	Elections	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
+272		\N	f		\N	2017	2017-01-18 10:52:04	infinity	Ethics	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
+275	Room 807 LOB	TUESDAY	f		12:30:00	2017	2017-01-18 10:52:04	infinity	Higher Education	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
+383	Room 124 CAP	TUESDAY	f		11:00:00	2017	2017-08-25 14:31:55	infinity	Finance	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+260	Room 944 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Cities	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+262	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Codes	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+266	Room 123 CAP	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Crime Victims, Crime and Correction	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+385		\N	f		\N	2017	2017-08-25 14:31:55	infinity	Rules	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+386	Room 801 LOB	TUESDAY	f		10:30:00	2017	2017-08-25 14:31:55	infinity	Social Services	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+286	Room 801 LOB	TUESDAY	f		10:30:00	2017	2017-01-18 10:52:04	2017-08-25 14:31:55	Social Services	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+281	Room 123 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Labor	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+287	Room 804 LOB	TUESDAY	f		10:30:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Transportation	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+274	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-01-18 10:52:04	2017-02-07 15:16:10	Health	senate	SOBI.D170207.T151610.TXT-1-COMMITTEE
+278	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2017	2017-01-18 10:52:04	2017-02-07 15:16:10	Insurance	senate	SOBI.D170207.T151610.TXT-1-COMMITTEE
+370	Room 124 CAP	TUESDAY	f		11:00:00	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Finance	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
+377	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2017	2017-03-02 12:36:47	infinity	Judiciary	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
+379	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-06-06 18:26:24	2017-06-06 20:46:33	Civil Service and Pensions	senate	SOBI.D170606.T204633.TXT-1-COMMITTEE
+376	Room 124 CAP	TUESDAY	f		11:00:00	2017	2017-03-02 12:36:47	2017-08-25 14:31:55	Finance	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+384	Room 816 LOB	TUESDAY	f		12:30:00	2017	2017-08-25 14:31:55	infinity	Investigations and Government Operations	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+378		\N	f		\N	2017	2017-03-02 12:36:47	2017-08-25 14:31:55	Rules	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+387	Room 803 LOB	TUESDAY	f		10:30:00	2017	2017-08-25 14:31:55	infinity	Transportation	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+321		\N	f		\N	2017	2017-05-18 10:12:14	infinity	Ethics and Internal Governance Committee	senate	SOBI.D170518.T101214.TXT-1-COMMITTEE
+322		\N	f		\N	2017	2017-05-18 10:57:17	infinity	Ethics and Internal Governance	senate	SOBI.D170518.T105717.TXT-1-COMMITTEE
+326	Room 410 LOB	MONDAY	f		13:30:00	2013	2014-03-03 17:09:09	infinity	Civil Service and Pensions	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+327	Room 124 CAP	TUESDAY	f		09:00:00	2013	2014-03-03 17:09:09	infinity	Codes	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+329	Room 801 LOB	MONDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Consumer Protection	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+331	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-03-03 17:09:09	infinity	Energy and Telecommunications	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+332	Room 124 CAP	TUESDAY	f		11:00:00	2013	2014-03-03 17:09:09	infinity	Finance	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+333	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-03-03 17:09:09	infinity	Health	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+334	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Housing, Construction and Community Development	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+335	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-03 17:09:09	infinity	Insurance	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+336	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Judiciary	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+337		\N	f		\N	2013	2014-03-03 17:09:09	infinity	Rules	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+338	Room 124 CAP	TUESDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Transportation	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+339		\N	f		\N	2013	2014-03-03 17:09:09	infinity	New York City Education Subcommittee	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
+340	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-03-13 14:48:16	infinity	Aging	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+343	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-13 14:48:16	infinity	Education	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+330	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Education	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+346	Room 816 LOB	TUESDAY	f		13:30:00	2013	2014-03-13 14:48:16	infinity	Veterans, Homeland Security and Military Affairs	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+256	Room 412 LOB	TUESDAY	f		09:00:00	2017	2017-01-18 10:52:04	infinity	Agriculture	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+259	Room 901 LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	infinity	Children and Families	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+341	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-13 14:48:16	infinity	Banks	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+325	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Banks	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+342	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-13 14:48:16	infinity	Cities	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+344	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-03-13 14:48:16	infinity	Environmental Conservation	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+345	Room 510 LOB	TUESDAY	f		09:30:00	2013	2014-03-13 14:48:16	infinity	Racing, Gaming and Wagering	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
+261	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-01-18 10:52:04	2017-02-13 16:36:21	Civil Service and Pensions	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+270	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-18 10:52:04	infinity	Energy and Telecommunications	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+371	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Judiciary	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
+373	Room 803 LOB	TUESDAY	f		10:30:00	2017	2017-02-24 09:54:05	2017-08-25 14:31:55	Transportation	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+347	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-17 18:43:42	infinity	Commerce, Economic Development and Small Business	senate	SOBI.D140317.T184342.TXT-1-COMMITTEE
+328	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-03 17:09:09	2014-03-17 18:43:42	Commerce, Economic Development and Small Business	senate	SOBI.D140317.T184342.TXT-1-COMMITTEE
+265	Room 610 LOB	TUESDAY	f		12:30:00	2017	2017-01-18 10:52:04	2017-02-24 09:54:05	Corporations, Authorities and Commissions	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+267	Room 904 LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+276	Room 309 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:45:00	2017	2017-01-18 10:52:04	infinity	Housing, Construction and Community Development	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+277	Room 801 LOB	TUESDAY	f		12:00:00	2017	2017-01-18 10:52:04	infinity	Infrastructure and Capital Investment	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+282	Room 946A LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	2017-02-13 16:36:21	Local Government	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+352	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Crime Victims, Crime and Correction	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+271	Room 307 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:00:00	2017	2017-01-18 10:52:04	infinity	Environmental Conservation	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+283	Room 816 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:00:00	2017	2017-01-18 10:52:04	infinity	Mental Health and Developmental Disabilities	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+279	Room 816 LOB	TUESDAY	f		12:30:00	2017	2017-01-18 10:52:04	2017-08-25 14:31:55	Investigations and Government Operations	senate	SOBI.D170825.T143155.TXT-1-COMMITTEE
+280	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2017	2017-01-18 10:52:04	2017-02-24 09:54:05	Judiciary	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+284	Room 124 CAP	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	infinity	Racing, Gaming and Wagering	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
+360	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-02-13 16:36:21	2017-02-24 09:54:05	Codes	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
+355	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-02-07 15:16:10	infinity	Health	senate	SOBI.D170207.T151610.TXT-1-COMMITTEE
+357	Room 915 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-02-13 16:36:21	infinity	Banks	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+348	Room 915 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Banks	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+358	Room 945 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-02-13 16:36:21	infinity	Cities	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+349	Room 945 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Cities	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+350	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Codes	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+361	Room 510 LOB	TUESDAY	f		10:00:00	2017	2017-02-13 16:36:21	infinity	Consumer Protection	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+351	Room 510 LOB	TUESDAY	f		10:00:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Consumer Protection	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+362	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-02-13 16:36:21	infinity	Crime Victims, Crime and Correction	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+363	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2017	2017-02-13 16:36:21	infinity	Insurance	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+356	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2017	2017-02-07 15:16:10	2017-02-13 16:36:21	Insurance	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+364	Room 123 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-02-13 16:36:21	infinity	Labor	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+353	Room 123 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Labor	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
+359	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-02-13 16:36:21	2017-02-14 09:46:16	Civil Service and Pensions	senate	SOBI.D170214.T094616.TXT-1-COMMITTEE
+367	Room 946A LOB	TUESDAY	f		09:30:00	2017	2017-02-14 09:46:16	infinity	Local Government	senate	SOBI.D170214.T094616.TXT-1-COMMITTEE
+365	Room 946A LOB	TUESDAY	f		09:30:00	2017	2017-02-13 16:36:21	2017-02-14 09:46:16	Local Government	senate	SOBI.D170214.T094616.TXT-1-COMMITTEE
+354	Room 803 LOB	TUESDAY	f		10:30:00	2017	2017-01-30 16:39:21	2017-02-24 09:54:05	Transportation	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
+366	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-02-14 09:46:16	2017-06-06 18:26:24	Civil Service and Pensions	senate	SOBI.D170606.T182624.TXT-2-COMMITTEE
+\.
+
 
 SET search_path = public, pg_catalog;
 
@@ -56,7 +400,6 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 955	Monica P. Wallace	Monica	P.	Wallace		Assembly Member		t	no_image.jpg
 956	Tremaine Wright	Tremaine		Wright	wrightt@nyassembly.gov	Assembly Member		t	no_image.jpg
 958	Brian Benjamin	Brian		Benjamin		Senator		t	no_image.jpg
-959	PELLEGRINO	\N		PELLEGRINO				f	\N
 237	Hugh T. Farley	Hugh	T.	Farley	farley@senate.state.ny.us	Senator	\N	t	418_hugh_t._farley.jpg
 209	Jeffrey D. Klein	Jeffrey	D.	Klein	jdklein@senate.state.ny.us	Senator	\N	t	390_jeffrey_d._klein.jpg
 216	Jack M. Martins	Jack	M.	Martins	martins@nysenate.gov	Senator	\N	t	397_jack_m._martins.jpg
@@ -89,6 +432,7 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 947	Brian D. Miller	Brian	D.	Miller	millerb@nyassembly.gov	Assembly Member		t	no_image.jpg
 362	Nelson Castro	Nelson	\N	Castro	\N	Assembly Member	\N	t	no_image.jpg
 365	Robert Castelli	Robert	\N	Castelli	\N	Assembly Member	\N	t	no_image.jpg
+298	Thomas Alfano 	Thomas	\N	Alfano	\N	Assembly Member	\N	t	no_image.jpg
 368	Richard Brodsky 	Richard	\N	Brodsky	\N	Assembly Member	\N	t	no_image.jpg
 369	Mike Spano	Mike	\N	Spano	\N	Assembly Member	\N	t	no_image.jpg
 372	Nancy Calhoun	Nancy	\N	Calhoun	\N	Assembly Member	\N	t	no_image.jpg
@@ -169,7 +513,6 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 288	Robert Sweeney	Robert	\N	Sweeney	\N	Assembly Member	\N	t	no_image.jpg
 291	Robert Barra 	Robert	\N	Barra	\N	Assembly Member	\N	t	no_image.jpg
 297	Harvey Weisenberg	Harvey	\N	Weisenberg	\N	Assembly Member	\N	t	no_image.jpg
-298	Thomas Alfano 	Thomas	\N	Alfano	\N	Assembly Member	\N	t	no_image.jpg
 300	Audrey Pheffer	Audrey	\N	Pheffer	\N	Assembly Member	\N	t	no_image.jpg
 302	Rory Lancman	Rory	\N	Lancman	\N	Assembly Member	\N	t	no_image.jpg
 303	Ann-Margaret Carrozza 	Ann-Margaret	\N	Carrozza	\N	Assembly Member	\N	t	no_image.jpg
@@ -402,6 +745,7 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 247	José Peralta	José	\N	Peralta	jperalta@nysenate.gov	Senator	\N	t	428_josé_peralta.jpg
 377	Kevin Cahill	Kevin	\N	Cahill	\N	Assembly Member	\N	t	551_kevin_cahill.jpg
 255	George Latimer	George	\N	Latimer	latimer@nysenate.gov	Senator	\N	t	434_george_latimer.jpg
+959	Christine Pellegrino	Christine		Pellegrino	pellegrinoc@nyassembly.gov	Assembly Member		t	no_image.jpg
 \.
 
 
@@ -744,7 +1088,6 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 1134	956	assembly	t	Tremaine Wright
 1135	957	assembly	f	Angelo J. Morinello
 1136	958	senate	f	Brian Benjamin
-1137	959	assembly	t	PELLEGRINO
 1122	944	assembly	f	Robert C. Carroll
 1125	947	assembly	f	Brian D. Miller
 1126	948	assembly	f	Michael J. Norris
@@ -798,6 +1141,7 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 576	402	assembly	t	Donna Lupardo
 579	405	assembly	t	Brian Kolb
 582	408	assembly	t	Joseph Morelle
+1137	959	assembly	t	Christine Pellegrino
 \.
 
 
@@ -1934,346 +2278,11 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1132	1135	MORINELLO	2017	145	f
 1050	1134	WRIGHT	2017	56	f
 1133	1136	BENJAMIN	2017	30	f
-1134	1137	PELLEGRINO	2017	\N	f
+1134	1137	PELLEGRINO	2017	9	f
 \.
 
 
-SET search_path = master, pg_catalog;
-
---
--- Data for Name: bill_sponsor_additional; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY bill_sponsor_additional (bill_print_no, bill_session_year, session_member_id, sequence_no, created_date_time, last_fragment_id) FROM stdin;
-R314	2013	145	1	2015-03-03 16:30:28.199822	\N
-J375	2013	184	1	2015-03-03 16:30:28.210309	\N
-J375	2013	145	2	2015-03-03 16:30:28.21162	\N
-R633	2013	145	1	2015-03-03 16:30:28.212107	\N
-J694	2013	145	1	2015-03-03 16:30:28.21296	\N
-J758	2013	184	1	2015-03-03 16:30:28.214068	\N
-R818	2013	145	1	2015-03-03 16:30:28.21498	\N
-J844	2013	145	1	2015-03-03 16:30:28.215516	\N
-J860	2013	184	1	2015-03-03 16:30:28.216512	\N
-J1608	2013	145	1	2015-03-03 16:30:28.21752	\N
-J1608	2013	152	2	2015-03-03 16:30:28.219962	\N
-J1938	2013	145	1	2015-03-03 16:30:28.221426	\N
-J1938	2013	152	2	2015-03-03 16:30:28.222308	\N
-J3100	2013	180	1	2015-03-03 16:30:28.222815	\N
-S2107	2013	145	1	2015-03-03 16:30:28.223623	\N
-S3953	2013	140	1	2015-03-03 16:30:28.224692	\N
-S5441	2013	154	1	2015-03-03 16:30:28.225734	\N
-S5441	2013	162	2	2015-03-03 16:30:28.226764	\N
-S5441	2013	182	3	2015-03-03 16:30:28.227291	\N
-S5656	2013	185	1	2015-03-03 16:30:28.228377	\N
-S5657	2013	144	1	2015-03-03 16:30:28.229151	\N
-S5657	2013	126	2	2015-03-03 16:30:28.230516	\N
-S5683	2013	171	1	2015-03-03 16:30:28.231299	\N
-J2885	2013	145	1	2015-03-03 16:30:28.232144	\N
-J2885	2013	152	2	2015-03-03 16:30:28.23284	\N
-J3307	2013	145	1	2015-03-03 16:30:28.233828	\N
-J3307	2013	184	2	2015-03-03 16:30:28.234813	\N
-J3743	2013	145	1	2015-03-03 16:30:28.235557	\N
-J3743	2013	152	2	2015-03-03 16:30:28.236867	\N
-J3908	2013	145	1	2015-03-03 16:30:28.237699	\N
-J3908	2013	152	2	2015-03-03 16:30:28.238727	\N
-R4036	2013	145	1	2015-03-03 16:30:28.239476	\N
-S6966	2013	149	1	2015-03-03 16:30:28.240254	\N
-J4904	2013	145	1	2015-03-03 16:30:28.241537	\N
-J4904	2013	152	2	2015-03-03 16:30:28.242505	\N
-J5165	2013	145	1	2015-03-03 16:30:28.243363	\N
-\.
-
-
---
--- Data for Name: committee; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY committee (name, id, current_version, chamber, current_session, full_name) FROM stdin;
-Aging	24	2017-01-18 10:52:04	senate	2017	\N
-Agriculture	14	2017-01-18 10:52:04	senate	2017	\N
-Alcoholism and Drug Abuse	12	2017-01-18 10:52:04	senate	2017	\N
-Banks	30	2017-02-13 16:36:21	senate	2017	\N
-Children and Families	27	2017-01-18 10:52:04	senate	2017	\N
-Cities	25	2017-02-13 16:36:21	senate	2017	\N
-Local Government	22	2017-02-14 09:46:16	senate	2017	\N
-Civil Service and Pensions	15	2017-06-06 20:46:33	senate	2017	\N
-Codes	29	2017-03-02 12:36:47	senate	2017	\N
-Commerce, Economic Development and Small Business	19	2017-01-18 10:52:04	senate	2017	\N
-Consumer Protection	16	2017-02-13 16:36:21	senate	2017	\N
-Corporations, Authorities and Commissions	3	2017-03-02 12:36:47	senate	2017	\N
-Crime Victims, Crime and Correction	33	2017-02-13 16:36:21	senate	2017	\N
-Cultural Affairs, Tourism, Parks and Recreation	20	2017-01-18 10:52:04	senate	2017	\N
-Education	9	2017-01-18 10:52:04	senate	2017	\N
-Elections	32	2017-01-18 10:52:04	senate	2017	\N
-Energy and Telecommunications	31	2017-01-18 10:52:04	senate	2017	\N
-Environmental Conservation	17	2017-01-18 10:52:04	senate	2017	\N
-Ethics	4	2017-01-18 10:52:04	senate	2017	\N
-Ethics and Internal Governance Committee	1865	2017-05-18 10:12:14	senate	2017	\N
-Finance	21	2017-03-02 12:36:47	senate	2017	\N
-Higher Education	23	2017-01-18 10:52:04	senate	2017	\N
-Housing, Construction and Community Development	28	2017-01-18 10:52:04	senate	2017	\N
-Infrastructure and Capital Investment	58	2017-01-18 10:52:04	senate	2017	\N
-Insurance	34	2017-02-13 16:36:21	senate	2017	\N
-Investigations and Government Operations	2	2017-01-18 10:52:04	senate	2017	\N
-Judiciary	5	2017-03-02 12:36:47	senate	2017	\N
-Labor	11	2017-02-13 16:36:21	senate	2017	\N
-Mental Health and Developmental Disabilities	26	2017-01-18 10:52:04	senate	2017	\N
-Racing, Gaming and Wagering	7	2017-01-18 10:52:04	senate	2017	\N
-Rules	18	2017-03-02 12:36:47	senate	2017	\N
-Social Services	13	2017-01-18 10:52:04	senate	2017	\N
-Veterans, Homeland Security and Military Affairs	8	2017-01-18 10:52:04	senate	2017	\N
-New York City Education Subcommittee	63	2017-01-18 10:52:04	senate	2017	\N
-Ethics and Internal Governance	1899	2017-05-18 10:57:17	senate	2017	\N
-Health	6	2017-02-07 15:16:10	senate	2017	\N
-Transportation	10	2017-02-24 09:54:05	senate	2017	\N
-\.
-
-
---
--- Name: committee_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('committee_id_seq', 2051, true);
-
-
---
--- Data for Name: committee_version; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, meettime, session_year, created, reformed, committee_name, chamber, last_fragment_id) FROM stdin;
-2	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Investigations and Government Operations	senate	\N
-3	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Corporations, Authorities and Commissions	senate	\N
-4	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Ethics	senate	\N
-5	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Judiciary	senate	\N
-6	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Health	senate	\N
-7	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Racing, Gaming and Wagering	senate	\N
-8	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Veterans, Homeland Security and Military Affairs	senate	\N
-9	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Education	senate	\N
-10	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Transportation	senate	\N
-11	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Labor	senate	\N
-12	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Alcoholism and Drug Abuse	senate	\N
-13	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Social Services	senate	\N
-14	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Agriculture	senate	\N
-15	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Civil Service and Pensions	senate	\N
-16	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Consumer Protection	senate	\N
-17	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Environmental Conservation	senate	\N
-18	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Rules	senate	\N
-19	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Commerce, Economic Development and Small Business	senate	\N
-20	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
-21	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Finance	senate	\N
-22	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Local Government	senate	\N
-23	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Higher Education	senate	\N
-24	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Aging	senate	\N
-25	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Cities	senate	\N
-26	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Mental Health and Developmental Disabilities	senate	\N
-27	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Children and Families	senate	\N
-28	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Housing, Construction and Community Development	senate	\N
-29	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Codes	senate	\N
-30	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Banks	senate	\N
-31	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Energy and Telecommunications	senate	\N
-32	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Elections	senate	\N
-33	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Crime Victims, Crime and Correction	senate	\N
-34	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Insurance	senate	\N
-57	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Aging	senate	\N
-71	Room 411 LOB	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Agriculture	senate	\N
-47	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Agriculture	senate	\N
-72	Room 813 LOB	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Alcoholism and Drug Abuse	senate	\N
-45	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Alcoholism and Drug Abuse	senate	\N
-65	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Banks	senate	\N
-74	Room 944 LOB	MONDAY	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Children and Families	senate	\N
-61	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Children and Families	senate	\N
-59	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Cities	senate	\N
-73	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Banks	senate	\N
-70	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Aging	senate	\N
-75	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Cities	senate	\N
-48	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Civil Service and Pensions	senate	\N
-64	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Codes	senate	\N
-52	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Commerce, Economic Development and Small Business	senate	\N
-49	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Consumer Protection	senate	\N
-80	Room 801 LOB	MONDAY	f		13:30:00	2013	2014-02-28 11:25:44	infinity	Corporations, Authorities and Commissions	senate	\N
-36	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Corporations, Authorities and Commissions	senate	\N
-81	Room 123 CAP	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-02-28 11:25:44	infinity	Crime Victims, Crime and Correction	senate	\N
-68	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Crime Victims, Crime and Correction	senate	\N
-82	Room 309 LOB	WEDNESDAY	f		09:00:00	2013	2014-02-28 11:25:44	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
-53	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
-42	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Education	senate	\N
-84	Room 813 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2013	2014-02-28 11:25:44	infinity	Elections	senate	\N
-67	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Elections	senate	\N
-66	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Energy and Telecommunications	senate	\N
-50	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Environmental Conservation	senate	\N
-87		\N	f		\N	2013	2014-02-28 11:25:44	infinity	Ethics	senate	\N
-37	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Ethics	senate	\N
-54	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Finance	senate	\N
-39	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Health	senate	\N
-90	Room 807 LOB	TUESDAY	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Higher Education	senate	\N
-56	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Higher Education	senate	\N
-62	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Housing, Construction and Community Development	senate	\N
-92	Room 804 LOB	TUESDAY	f		12:00:00	2013	2014-02-28 11:25:44	infinity	Infrastructure and Capital Investment	senate	\N
-58	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Infrastructure and Capital Investment	senate	\N
-69	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Insurance	senate	\N
-94	Room 810 LOB	TUESDAY	f		12:30:00	2013	2014-02-28 11:25:44	infinity	Investigations and Government Operations	senate	\N
-35	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Investigations and Government Operations	senate	\N
-38	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Judiciary	senate	\N
-96	Room 511 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	infinity	Labor	senate	\N
-44	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Labor	senate	\N
-97	Room 945 LOB	TUESDAY	f		13:00:00	2013	2014-02-28 11:25:44	infinity	Local Government	senate	\N
-55	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Local Government	senate	\N
-98	Room 816 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-02-28 11:25:44	infinity	Mental Health and Developmental Disabilities	senate	\N
-60	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Mental Health and Developmental Disabilities	senate	\N
-40	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Racing, Gaming and Wagering	senate	\N
-51	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Rules	senate	\N
-101	Room 946A LOB	TUESDAY	f		10:00:00	2013	2014-02-28 11:25:44	infinity	Social Services	senate	\N
-46	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Social Services	senate	\N
-43	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Transportation	senate	\N
-41	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	Veterans, Homeland Security and Military Affairs	senate	\N
-63	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	2014-02-28 11:25:44	New York City Education Subcommittee	senate	\N
-76	Room 410 LOB	MONDAY	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Civil Service and Pensions	senate	\N
-77	Room 124 CAP	TUESDAY	f		09:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Codes	senate	\N
-79	Room 801 LOB	MONDAY	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Consumer Protection	senate	\N
-86	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Environmental Conservation	senate	\N
-99	Room 510 LOB	TUESDAY	f		09:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Racing, Gaming and Wagering	senate	\N
-103	Room 816 LOB	TUESDAY	f		13:30:00	2013	2014-02-28 11:25:44	2014-03-13 14:48:16	Veterans, Homeland Security and Military Affairs	senate	\N
-78	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Commerce, Economic Development and Small Business	senate	\N
-83	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Education	senate	\N
-95	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Judiciary	senate	\N
-102	Room 124 CAP	TUESDAY	f		13:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Transportation	senate	\N
-104		\N	f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	New York City Education Subcommittee	senate	\N
-85	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Energy and Telecommunications	senate	\N
-88	Room 124 CAP	TUESDAY	f		11:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Finance	senate	\N
-89	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Health	senate	\N
-91	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Housing, Construction and Community Development	senate	\N
-93	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Insurance	senate	\N
-100		\N	f		\N	2013	2014-02-28 11:25:44	2014-03-03 17:09:09	Rules	senate	\N
-128	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2015	2015-01-22 16:58:51	infinity	Aging	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-129	Room 411 LOB	TUESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Agriculture	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-130	Room 813 LOB	TUESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Alcoholism and Drug Abuse	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-131	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2015	2015-01-22 16:58:51	infinity	Banks	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-132	Room 944 LOB	MONDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Children and Families	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-133	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2015	2015-01-22 16:58:51	infinity	Cities	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-134	Room 410 LOB	MONDAY	f		13:30:00	2015	2015-01-22 16:58:51	infinity	Civil Service and Pensions	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-135	Room 124 CAP	TUESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Codes	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-136	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2015	2015-01-22 16:58:51	infinity	Commerce, Economic Development and Small Business	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-137	Room 801 LOB	MONDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Consumer Protection	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-138	Room 801 LOB	MONDAY	f		13:30:00	2015	2015-01-22 16:58:51	infinity	Corporations, Authorities and Commissions	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-139	Room 123 CAP	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2015	2015-01-22 16:58:51	infinity	Crime Victims, Crime and Correction	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-140	Room 309 LOB	WEDNESDAY	f		09:00:00	2015	2015-01-22 16:58:51	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-141	Room 124 CAP	TUESDAY	f		10:00:00	2015	2015-01-22 16:58:51	infinity	Education	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-142	Room 813 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2015	2015-01-22 16:58:51	infinity	Elections	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-143	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2015	2015-01-22 16:58:51	infinity	Energy and Telecommunications	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-144	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2015	2015-01-22 16:58:51	infinity	Environmental Conservation	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-145		\N	f		\N	2015	2015-01-22 16:58:51	infinity	Ethics	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-146	Room 124 CAP	TUESDAY	f		11:00:00	2015	2015-01-22 16:58:51	infinity	Finance	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-147	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2015	2015-01-22 16:58:51	infinity	Health	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-148	Room 807 LOB	TUESDAY	f		12:30:00	2015	2015-01-22 16:58:51	infinity	Higher Education	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-149	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2015	2015-01-22 16:58:51	infinity	Housing, Construction and Community Development	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-150	Room 804 LOB	TUESDAY	f		12:00:00	2015	2015-01-22 16:58:51	infinity	Infrastructure and Capital Investment	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-151	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2015	2015-01-22 16:58:51	infinity	Insurance	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-152	Room 810 LOB	TUESDAY	f		12:30:00	2015	2015-01-22 16:58:51	infinity	Investigations and Government Operations	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-153	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2015	2015-01-22 16:58:51	infinity	Judiciary	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-154	Room 511 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2015	2015-01-22 16:58:51	infinity	Labor	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-155	Room 945 LOB	TUESDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Local Government	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-156	Room 816 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2015	2015-01-22 16:58:51	infinity	Mental Health and Developmental Disabilities	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-157	Room 510 LOB	TUESDAY	f		09:30:00	2015	2015-01-22 16:58:51	infinity	Racing, Gaming and Wagering	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-158		\N	f		\N	2015	2015-01-22 16:58:51	infinity	Rules	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-159	Room 946A LOB	TUESDAY	f		10:00:00	2015	2015-01-22 16:58:51	infinity	Social Services	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-160	Room 124 CAP	TUESDAY	f		13:00:00	2015	2015-01-22 16:58:51	infinity	Transportation	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-161	Room 816 LOB	TUESDAY	f		13:30:00	2015	2015-01-22 16:58:51	infinity	Veterans, Homeland Security and Military Affairs	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-162		\N	f		\N	2015	2015-01-22 16:58:51	infinity	New York City Education Subcommittee	senate	SOBI.D150122.T165851.TXT-1-COMMITTEE
-233	Room 410 LOB	MONDAY	f		13:30:00	2013	2014-03-03 17:09:09	infinity	Civil Service and Pensions	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-234	Room 124 CAP	TUESDAY	f		09:00:00	2013	2014-03-03 17:09:09	infinity	Codes	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-236	Room 801 LOB	MONDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Consumer Protection	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-238	Room 709 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:30:00	2013	2014-03-03 17:09:09	infinity	Energy and Telecommunications	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-239	Room 124 CAP	TUESDAY	f		11:00:00	2013	2014-03-03 17:09:09	infinity	Finance	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-240	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2013	2014-03-03 17:09:09	infinity	Health	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-241	Room 308 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Housing, Construction and Community Development	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-242	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-03 17:09:09	infinity	Insurance	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-243	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2013	2014-03-03 17:09:09	infinity	Judiciary	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-244		\N	f		\N	2013	2014-03-03 17:09:09	infinity	Rules	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-245	Room 124 CAP	TUESDAY	f		13:00:00	2013	2014-03-03 17:09:09	infinity	Transportation	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-246		\N	f		\N	2013	2014-03-03 17:09:09	infinity	New York City Education Subcommittee	senate	SOBI.D140303.T170909.TXT-1-COMMITTEE
-247	Room 816 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2013	2014-03-13 14:48:16	infinity	Aging	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
-248	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-13 14:48:16	infinity	Banks	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
-232	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Banks	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
-249	Room 916 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2013	2014-03-13 14:48:16	infinity	Cities	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
-250	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-13 14:48:16	infinity	Education	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
-237	Room 124 CAP	TUESDAY	f		10:00:00	2013	2014-03-03 17:09:09	2014-03-13 14:48:16	Education	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
-251	Room 901 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:00:00	2013	2014-03-13 14:48:16	infinity	Environmental Conservation	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
-252	Room 510 LOB	TUESDAY	f		09:30:00	2013	2014-03-13 14:48:16	infinity	Racing, Gaming and Wagering	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
-253	Room 816 LOB	TUESDAY	f		13:30:00	2013	2014-03-13 14:48:16	infinity	Veterans, Homeland Security and Military Affairs	senate	SOBI.D140313.T144816.TXT-1-COMMITTEE
-254	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-17 18:43:42	infinity	Commerce, Economic Development and Small Business	senate	SOBI.D140317.T184342.TXT-1-COMMITTEE
-235	Room 511 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2013	2014-03-03 17:09:09	2014-03-17 18:43:42	Commerce, Economic Development and Small Business	senate	SOBI.D140317.T184342.TXT-1-COMMITTEE
-255	Room 813 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2017	2017-01-18 10:52:04	infinity	Aging	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
-257	Room 801 LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	infinity	Alcoholism and Drug Abuse	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-289		\N	f		\N	2017	2017-01-18 10:52:04	infinity	New York City Education Subcommittee	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
-258	Room 511 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Banks	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-265	Room 610 LOB	TUESDAY	f		12:30:00	2017	2017-01-18 10:52:04	2017-02-24 09:54:05	Corporations, Authorities and Commissions	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
-286	Room 801 LOB	TUESDAY	f		10:30:00	2017	2017-01-18 10:52:04	infinity	Social Services	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
-288	Room 124 CAP	MONDAY	f		11:30:00	2017	2017-01-18 10:52:04	infinity	Veterans, Homeland Security and Military Affairs	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
-259	Room 901 LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	infinity	Children and Families	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-264	Room 945 LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Consumer Protection	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-267	Room 904 LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-279	Room 816 LOB	TUESDAY	f		12:30:00	2017	2017-01-18 10:52:04	infinity	Investigations and Government Operations	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-284	Room 124 CAP	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	infinity	Racing, Gaming and Wagering	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-261	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-01-18 10:52:04	2017-02-13 16:36:21	Civil Service and Pensions	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-273	Room 124 CAP	TUESDAY	f		11:00:00	2017	2017-01-18 10:52:04	2017-02-24 09:54:05	Finance	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
-285		\N	f		\N	2017	2017-01-18 10:52:04	2017-02-24 09:54:05	Rules	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
-263	Room 813 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:30:00	2017	2017-01-18 10:52:04	infinity	Commerce, Economic Development and Small Business	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
-268	Room 810 LOB	TUESDAY	f		10:00:00	2017	2017-01-18 10:52:04	infinity	Education	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
-269	Room 805 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	13:00:00	2017	2017-01-18 10:52:04	infinity	Elections	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
-272		\N	f		\N	2017	2017-01-18 10:52:04	infinity	Ethics	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
-275	Room 807 LOB	TUESDAY	f		12:30:00	2017	2017-01-18 10:52:04	infinity	Higher Education	senate	SOBI.D170118.T105204.TXT-1-COMMITTEE
-256	Room 412 LOB	TUESDAY	f		09:00:00	2017	2017-01-18 10:52:04	infinity	Agriculture	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-260	Room 944 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Cities	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-262	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Codes	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-266	Room 123 CAP	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	10:00:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Crime Victims, Crime and Correction	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-270	Room 611 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-18 10:52:04	infinity	Energy and Telecommunications	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-271	Room 307 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:00:00	2017	2017-01-18 10:52:04	infinity	Environmental Conservation	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-276	Room 309 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:45:00	2017	2017-01-18 10:52:04	infinity	Housing, Construction and Community Development	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-277	Room 801 LOB	TUESDAY	f		12:00:00	2017	2017-01-18 10:52:04	infinity	Infrastructure and Capital Investment	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-296	Room 803 LOB	TUESDAY	f		10:30:00	2017	2017-01-30 16:39:21	2017-02-24 09:54:05	Transportation	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
-281	Room 123 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Labor	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-301	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-02-13 16:36:21	2017-02-14 09:46:16	Civil Service and Pensions	senate	SOBI.D170214.T094616.TXT-1-COMMITTEE
-283	Room 816 LOB	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:00:00	2017	2017-01-18 10:52:04	infinity	Mental Health and Developmental Disabilities	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-287	Room 804 LOB	TUESDAY	f		10:30:00	2017	2017-01-18 10:52:04	2017-01-30 16:39:21	Transportation	senate	SOBI.D170130.T163921.TXT-1-COMMITTEE
-297	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-02-07 15:16:10	infinity	Health	senate	SOBI.D170207.T151610.TXT-1-COMMITTEE
-274	Room 124 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-01-18 10:52:04	2017-02-07 15:16:10	Health	senate	SOBI.D170207.T151610.TXT-1-COMMITTEE
-278	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2017	2017-01-18 10:52:04	2017-02-07 15:16:10	Insurance	senate	SOBI.D170207.T151610.TXT-1-COMMITTEE
-299	Room 915 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-02-13 16:36:21	infinity	Banks	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-290	Room 915 LOB	WEDNESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Banks	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-300	Room 945 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-02-13 16:36:21	infinity	Cities	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-291	Room 945 LOB	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Cities	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-292	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Codes	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-303	Room 510 LOB	TUESDAY	f		10:00:00	2017	2017-02-13 16:36:21	infinity	Consumer Protection	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-293	Room 510 LOB	TUESDAY	f		10:00:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Consumer Protection	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-304	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-02-13 16:36:21	infinity	Crime Victims, Crime and Correction	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-294	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	09:30:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Crime Victims, Crime and Correction	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-305	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2017	2017-02-13 16:36:21	infinity	Insurance	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-298	Room 124 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:30:00	2017	2017-02-07 15:16:10	2017-02-13 16:36:21	Insurance	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-306	Room 123 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-02-13 16:36:21	infinity	Labor	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-295	Room 123 CAP	MONDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	12:00:00	2017	2017-01-30 16:39:21	2017-02-13 16:36:21	Labor	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-309	Room 946A LOB	TUESDAY	f		09:30:00	2017	2017-02-14 09:46:16	infinity	Local Government	senate	SOBI.D170214.T094616.TXT-1-COMMITTEE
-310	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Codes	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-312	Room 124 CAP	TUESDAY	f		11:00:00	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Finance	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-320		\N	f		\N	2017	2017-03-02 12:36:47	infinity	Rules	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-282	Room 946A LOB	TUESDAY	f		09:30:00	2017	2017-01-18 10:52:04	2017-02-13 16:36:21	Local Government	senate	SOBI.D170213.T163621.TXT-1-COMMITTEE
-315	Room 803 LOB	TUESDAY	f		10:30:00	2017	2017-02-24 09:54:05	infinity	Transportation	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
-313	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Judiciary	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-314		\N	f		\N	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Rules	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-308	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-02-14 09:46:16	2017-06-06 18:26:24	Civil Service and Pensions	senate	SOBI.D170606.T182624.TXT-2-COMMITTEE
-307	Room 946A LOB	TUESDAY	f		09:30:00	2017	2017-02-13 16:36:21	2017-02-14 09:46:16	Local Government	senate	SOBI.D170214.T094616.TXT-1-COMMITTEE
-302	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-02-13 16:36:21	2017-02-24 09:54:05	Codes	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
-280	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2017	2017-01-18 10:52:04	2017-02-24 09:54:05	Judiciary	senate	SOBI.D170224.T095405.TXT-1-COMMITTEE
-316	Room 124 CAP	TUESDAY	f		13:00:00	2017	2017-03-02 12:36:47	infinity	Codes	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-317	Room 610 LOB	TUESDAY	f		12:30:00	2017	2017-03-02 12:36:47	infinity	Corporations, Authorities and Commissions	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-311	Room 610 LOB	TUESDAY	f		12:30:00	2017	2017-02-24 09:54:05	2017-03-02 12:36:47	Corporations, Authorities and Commissions	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-318	Room 124 CAP	TUESDAY	f		11:00:00	2017	2017-03-02 12:36:47	infinity	Finance	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-319	Room 123 CAP	TUESDAY	t	\n* This committee will meet on alternate weeks pursuant to the notice of the Chairman *\n	11:30:00	2017	2017-03-02 12:36:47	infinity	Judiciary	senate	SOBI.D170302.T123647.TXT-1-COMMITTEE
-321		\N	f		\N	2017	2017-05-18 10:12:14	infinity	Ethics and Internal Governance Committee	senate	SOBI.D170518.T101214.TXT-1-COMMITTEE
-322		\N	f		\N	2017	2017-05-18 10:57:17	infinity	Ethics and Internal Governance	senate	SOBI.D170518.T105717.TXT-1-COMMITTEE
-324	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-06-06 20:46:33	infinity	Civil Service and Pensions	senate	SOBI.D170606.T204633.TXT-1-COMMITTEE
-323	Room 410 LOB	MONDAY	f		13:00:00	2017	2017-06-06 18:26:24	2017-06-06 20:46:33	Civil Service and Pensions	senate	SOBI.D170606.T204633.TXT-1-COMMITTEE
-\.
-
+SET search_path = public, master, pg_catalog;
 
 --
 -- Data for Name: committee_member; Type: TABLE DATA; Schema: master; Owner: postgres
@@ -4065,360 +4074,167 @@ t	2137	3	member	New York City Education Subcommittee	2015-01-22 16:58:51	2015	69
 t	2138	4	member	New York City Education Subcommittee	2015-01-22 16:58:51	2015	730	senate
 f	2139	5	member	New York City Education Subcommittee	2015-01-22 16:58:51	2015	708	senate
 f	2140	6	member	New York City Education Subcommittee	2015-01-22 16:58:51	2015	710	senate
-t	3203	1	chair_person	Banks	2014-03-03 17:09:09	2013	149	senate
-t	3204	2	vice_chair	Banks	2014-03-03 17:09:09	2013	151	senate
-t	3205	3	member	Banks	2014-03-03 17:09:09	2013	169	senate
-t	3206	4	member	Banks	2014-03-03 17:09:09	2013	132	senate
-t	3207	5	member	Banks	2014-03-03 17:09:09	2013	178	senate
-t	3208	6	member	Banks	2014-03-03 17:09:09	2013	144	senate
-t	3209	7	member	Banks	2014-03-03 17:09:09	2013	153	senate
-t	3210	8	member	Banks	2014-03-03 17:09:09	2013	163	senate
-t	3211	9	member	Banks	2014-03-03 17:09:09	2013	183	senate
-t	3212	10	member	Banks	2014-03-03 17:09:09	2013	162	senate
-t	3213	11	member	Banks	2014-03-03 17:09:09	2013	171	senate
-t	3214	12	member	Banks	2014-03-03 17:09:09	2013	147	senate
-f	3215	13	member	Banks	2014-03-03 17:09:09	2013	148	senate
-f	3216	14	member	Banks	2014-03-03 17:09:09	2013	174	senate
-f	3217	15	member	Banks	2014-03-03 17:09:09	2013	177	senate
-f	3218	16	member	Banks	2014-03-03 17:09:09	2013	172	senate
-f	3219	17	member	Banks	2014-03-03 17:09:09	2013	134	senate
-f	3220	18	member	Banks	2014-03-03 17:09:09	2013	158	senate
-t	3221	1	chair_person	Civil Service and Pensions	2014-03-03 17:09:09	2013	178	senate
-t	3222	2	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	180	senate
-t	3223	3	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	165	senate
-t	3224	4	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	153	senate
-t	3225	5	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	179	senate
-t	3226	6	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	159	senate
-t	3227	7	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	167	senate
-f	3228	8	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	134	senate
-f	3229	9	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	139	senate
-f	3230	10	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	137	senate
-f	3231	11	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	131	senate
-t	3232	1	chair_person	Codes	2014-03-03 17:09:09	2013	150	senate
-t	3233	2	member	Codes	2014-03-03 17:09:09	2013	141	senate
-t	3234	3	member	Codes	2014-03-03 17:09:09	2013	132	senate
-t	3235	4	member	Codes	2014-03-03 17:09:09	2013	155	senate
-t	3236	5	member	Codes	2014-03-03 17:09:09	2013	182	senate
-t	3237	6	member	Codes	2014-03-03 17:09:09	2013	178	senate
-t	3238	7	member	Codes	2014-03-03 17:09:09	2013	165	senate
-t	3239	8	member	Codes	2014-03-03 17:09:09	2013	183	senate
-t	3240	9	member	Codes	2014-03-03 17:09:09	2013	149	senate
-t	3241	10	member	Codes	2014-03-03 17:09:09	2013	147	senate
-f	3242	11	member	Codes	2014-03-03 17:09:09	2013	157	senate
-f	3243	12	member	Codes	2014-03-03 17:09:09	2013	131	senate
-f	3244	13	member	Codes	2014-03-03 17:09:09	2013	140	senate
-f	3245	14	member	Codes	2014-03-03 17:09:09	2013	176	senate
-f	3246	15	member	Codes	2014-03-03 17:09:09	2013	148	senate
-f	3247	16	member	Codes	2014-03-03 17:09:09	2013	129	senate
-t	3248	1	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	171	senate
-t	3249	2	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	141	senate
-t	3250	3	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	182	senate
-t	3251	4	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	181	senate
-t	3252	5	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	149	senate
-t	3253	6	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	173	senate
-t	3254	7	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	135	senate
-f	3255	8	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	146	senate
-f	3256	9	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	136	senate
-f	3257	10	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	134	senate
-f	3258	11	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	148	senate
-t	3259	1	chair_person	Consumer Protection	2014-03-03 17:09:09	2013	160	senate
-t	3260	2	member	Consumer Protection	2014-03-03 17:09:09	2013	141	senate
-t	3261	3	member	Consumer Protection	2014-03-03 17:09:09	2013	135	senate
-t	3262	4	member	Consumer Protection	2014-03-03 17:09:09	2013	144	senate
-t	3263	5	member	Consumer Protection	2014-03-03 17:09:09	2013	167	senate
-t	3264	6	member	Consumer Protection	2014-03-03 17:09:09	2013	159	senate
-t	3265	7	member	Consumer Protection	2014-03-03 17:09:09	2013	173	senate
-f	3266	8	member	Consumer Protection	2014-03-03 17:09:09	2013	176	senate
-f	3267	9	member	Consumer Protection	2014-03-03 17:09:09	2013	142	senate
-f	3268	10	member	Consumer Protection	2014-03-03 17:09:09	2013	158	senate
-f	3269	11	member	Consumer Protection	2014-03-03 17:09:09	2013	143	senate
-t	3270	1	chair_person	Education	2014-03-03 17:09:09	2013	155	senate
-t	3271	2	member	Education	2014-03-03 17:09:09	2013	151	senate
-t	3272	3	member	Education	2014-03-03 17:09:09	2013	165	senate
-t	3273	4	member	Education	2014-03-03 17:09:09	2013	175	senate
-t	3274	5	member	Education	2014-03-03 17:09:09	2013	135	senate
-t	3275	6	member	Education	2014-03-03 17:09:09	2013	163	senate
-t	3276	7	member	Education	2014-03-03 17:09:09	2013	167	senate
-t	3277	8	member	Education	2014-03-03 17:09:09	2013	162	senate
-t	3278	9	member	Education	2014-03-03 17:09:09	2013	173	senate
-t	3279	10	member	Education	2014-03-03 17:09:09	2013	127	senate
-t	3280	11	member	Education	2014-03-03 17:09:09	2013	171	senate
-t	3281	12	member	Education	2014-03-03 17:09:09	2013	147	senate
-f	3282	13	member	Education	2014-03-03 17:09:09	2013	143	senate
-f	3283	14	member	Education	2014-03-03 17:09:09	2013	139	senate
-f	3284	15	member	Education	2014-03-03 17:09:09	2013	174	senate
-f	3285	16	member	Education	2014-03-03 17:09:09	2013	168	senate
-f	3286	17	member	Education	2014-03-03 17:09:09	2013	156	senate
-f	3287	18	member	Education	2014-03-03 17:09:09	2013	128	senate
-t	3288	1	chair_person	Energy and Telecommunications	2014-03-03 17:09:09	2013	167	senate
-t	3289	2	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	126	senate
-t	3290	3	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	149	senate
-t	3291	4	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	183	senate
-t	3293	6	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	173	senate
-f	3295	8	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	172	senate
-f	3297	10	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	137	senate
-t	3299	1	chair_person	Finance	2014-03-03 17:09:09	2013	132	senate
-t	3309	11	member	Finance	2014-03-03 17:09:09	2013	175	senate
-t	3310	12	member	Finance	2014-03-03 17:09:09	2013	135	senate
-t	3312	14	member	Finance	2014-03-03 17:09:09	2013	150	senate
-t	3314	16	member	Finance	2014-03-03 17:09:09	2013	162	senate
-t	3316	18	member	Finance	2014-03-03 17:09:09	2013	159	senate
-t	3319	21	member	Finance	2014-03-03 17:09:09	2013	171	senate
-f	3321	23	member	Finance	2014-03-03 17:09:09	2013	129	senate
-f	3323	25	member	Finance	2014-03-03 17:09:09	2013	137	senate
-f	3325	27	member	Finance	2014-03-03 17:09:09	2013	138	senate
-f	3327	29	member	Finance	2014-03-03 17:09:09	2013	168	senate
-f	3329	31	member	Finance	2014-03-03 17:09:09	2013	187	senate
-f	3332	34	member	Finance	2014-03-03 17:09:09	2013	157	senate
-f	3335	37	member	Finance	2014-03-03 17:09:09	2013	136	senate
-t	3390	10	member	Judiciary	2014-03-03 17:09:09	2013	159	senate
-t	3391	11	member	Judiciary	2014-03-03 17:09:09	2013	162	senate
-t	3392	12	member	Judiciary	2014-03-03 17:09:09	2013	160	senate
-t	3393	13	member	Judiciary	2014-03-03 17:09:09	2013	154	senate
-f	3395	15	member	Judiciary	2014-03-03 17:09:09	2013	136	senate
-f	3397	17	member	Judiciary	2014-03-03 17:09:09	2013	137	senate
-f	3399	19	member	Judiciary	2014-03-03 17:09:09	2013	131	senate
-f	3401	21	member	Judiciary	2014-03-03 17:09:09	2013	176	senate
-f	3403	23	member	Judiciary	2014-03-03 17:09:09	2013	157	senate
-t	3404	1	chair_person	Rules	2014-03-03 17:09:09	2013	184	senate
-t	3406	3	member	Rules	2014-03-03 17:09:09	2013	169	senate
-t	3408	5	member	Rules	2014-03-03 17:09:09	2013	151	senate
-t	3413	10	member	Rules	2014-03-03 17:09:09	2013	163	senate
-t	3415	12	member	Rules	2014-03-03 17:09:09	2013	150	senate
-f	3420	17	member	Rules	2014-03-03 17:09:09	2013	174	senate
-f	3422	19	member	Rules	2014-03-03 17:09:09	2013	136	senate
-f	3424	21	member	Rules	2014-03-03 17:09:09	2013	168	senate
-f	3426	23	member	Rules	2014-03-03 17:09:09	2013	131	senate
-f	3428	25	member	Rules	2014-03-03 17:09:09	2013	138	senate
-t	3429	1	chair_person	Transportation	2014-03-03 17:09:09	2013	173	senate
-t	3430	2	vice_chair	Transportation	2014-03-03 17:09:09	2013	163	senate
-t	3431	3	member	Transportation	2014-03-03 17:09:09	2013	126	senate
-t	3433	5	member	Transportation	2014-03-03 17:09:09	2013	130	senate
-t	3435	7	member	Transportation	2014-03-03 17:09:09	2013	150	senate
-f	3444	16	member	Transportation	2014-03-03 17:09:09	2013	131	senate
-f	3445	17	member	Transportation	2014-03-03 17:09:09	2013	157	senate
-f	3447	19	member	Transportation	2014-03-03 17:09:09	2013	158	senate
-t	3448	1	chair_person	New York City Education Subcommittee	2014-03-03 17:09:09	2013	181	senate
-t	3449	2	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	165	senate
-t	3450	3	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	178	senate
-t	3451	4	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	147	senate
-f	3452	5	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	131	senate
-t	3292	5	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	179	senate
-t	3294	7	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	155	senate
-f	3296	9	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	146	senate
-f	3298	11	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	187	senate
-t	3300	2	member	Finance	2014-03-03 17:09:09	2013	169	senate
-t	3301	3	member	Finance	2014-03-03 17:09:09	2013	151	senate
-t	3302	4	member	Finance	2014-03-03 17:09:09	2013	155	senate
-t	3303	5	member	Finance	2014-03-03 17:09:09	2013	178	senate
-t	3304	6	member	Finance	2014-03-03 17:09:09	2013	149	senate
-t	3305	7	member	Finance	2014-03-03 17:09:09	2013	154	senate
-t	3306	8	member	Finance	2014-03-03 17:09:09	2013	180	senate
-t	3307	9	member	Finance	2014-03-03 17:09:09	2013	165	senate
-t	3308	10	member	Finance	2014-03-03 17:09:09	2013	130	senate
-t	3311	13	member	Finance	2014-03-03 17:09:09	2013	163	senate
-t	3313	15	member	Finance	2014-03-03 17:09:09	2013	183	senate
-t	3315	17	member	Finance	2014-03-03 17:09:09	2013	173	senate
-t	3317	19	member	Finance	2014-03-03 17:09:09	2013	127	senate
-f	3331	33	member	Finance	2014-03-03 17:09:09	2013	156	senate
-f	3333	35	member	Finance	2014-03-03 17:09:09	2013	146	senate
-t	3410	7	member	Rules	2014-03-03 17:09:09	2013	180	senate
-t	3412	9	member	Rules	2014-03-03 17:09:09	2013	175	senate
-t	3414	11	member	Rules	2014-03-03 17:09:09	2013	167	senate
-t	3416	13	member	Rules	2014-03-03 17:09:09	2013	127	senate
-t	3418	15	member	Rules	2014-03-03 17:09:09	2013	135	senate
-t	3318	20	member	Finance	2014-03-03 17:09:09	2013	170	senate
-t	3320	22	member	Finance	2014-03-03 17:09:09	2013	153	senate
-f	3322	24	member	Finance	2014-03-03 17:09:09	2013	177	senate
-f	3324	26	member	Finance	2014-03-03 17:09:09	2013	133	senate
-f	3326	28	member	Finance	2014-03-03 17:09:09	2013	174	senate
-f	3328	30	member	Finance	2014-03-03 17:09:09	2013	172	senate
-f	3330	32	member	Finance	2014-03-03 17:09:09	2013	131	senate
-f	3334	36	member	Finance	2014-03-03 17:09:09	2013	140	senate
-t	3336	1	chair_person	Health	2014-03-03 17:09:09	2013	180	senate
-t	3337	2	member	Health	2014-03-03 17:09:09	2013	164	senate
-t	3339	4	member	Health	2014-03-03 17:09:09	2013	181	senate
-t	3340	5	member	Health	2014-03-03 17:09:09	2013	178	senate
-t	3341	6	member	Health	2014-03-03 17:09:09	2013	130	senate
-t	3342	7	member	Health	2014-03-03 17:09:09	2013	159	senate
-t	3343	8	member	Health	2014-03-03 17:09:09	2013	127	senate
-t	3344	9	member	Health	2014-03-03 17:09:09	2013	170	senate
-f	3346	11	member	Health	2014-03-03 17:09:09	2013	133	senate
-f	3348	13	member	Health	2014-03-03 17:09:09	2013	136	senate
-f	3350	15	member	Health	2014-03-03 17:09:09	2013	148	senate
-f	3352	17	member	Health	2014-03-03 17:09:09	2013	142	senate
-t	3354	2	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	169	senate
-t	3356	4	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	182	senate
-t	3357	5	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	150	senate
-f	3359	7	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	140	senate
-f	3361	9	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	129	senate
-t	3362	1	chair_person	Insurance	2014-03-03 17:09:09	2013	127	senate
-t	3363	2	member	Insurance	2014-03-03 17:09:09	2013	126	senate
-t	3364	3	member	Insurance	2014-03-03 17:09:09	2013	155	senate
-t	3365	4	member	Insurance	2014-03-03 17:09:09	2013	178	senate
-t	3366	5	member	Insurance	2014-03-03 17:09:09	2013	154	senate
-t	3367	6	member	Insurance	2014-03-03 17:09:09	2013	165	senate
-t	3368	7	member	Insurance	2014-03-03 17:09:09	2013	130	senate
-t	3369	8	member	Insurance	2014-03-03 17:09:09	2013	175	senate
-t	3370	9	member	Insurance	2014-03-03 17:09:09	2013	153	senate
-t	3371	10	member	Insurance	2014-03-03 17:09:09	2013	183	senate
-t	3372	11	member	Insurance	2014-03-03 17:09:09	2013	170	senate
-t	3373	12	member	Insurance	2014-03-03 17:09:09	2013	147	senate
-f	3374	13	member	Insurance	2014-03-03 17:09:09	2013	174	senate
-f	3375	14	member	Insurance	2014-03-03 17:09:09	2013	140	senate
-f	3376	15	member	Insurance	2014-03-03 17:09:09	2013	146	senate
-f	3377	16	member	Insurance	2014-03-03 17:09:09	2013	172	senate
-f	3378	17	member	Insurance	2014-03-03 17:09:09	2013	156	senate
-f	3379	18	member	Insurance	2014-03-03 17:09:09	2013	148	senate
-f	3380	19	member	Insurance	2014-03-03 17:09:09	2013	187	senate
-t	3382	2	member	Judiciary	2014-03-03 17:09:09	2013	132	senate
-t	3384	4	member	Judiciary	2014-03-03 17:09:09	2013	180	senate
-t	3386	6	member	Judiciary	2014-03-03 17:09:09	2013	175	senate
-t	3387	7	member	Judiciary	2014-03-03 17:09:09	2013	135	senate
-t	3388	8	member	Judiciary	2014-03-03 17:09:09	2013	150	senate
-t	3394	14	member	Judiciary	2014-03-03 17:09:09	2013	147	senate
-f	3396	16	member	Judiciary	2014-03-03 17:09:09	2013	174	senate
-f	3398	18	member	Judiciary	2014-03-03 17:09:09	2013	140	senate
-f	3400	20	member	Judiciary	2014-03-03 17:09:09	2013	156	senate
-f	3402	22	member	Judiciary	2014-03-03 17:09:09	2013	139	senate
-t	3405	2	vice_chair	Rules	2014-03-03 17:09:09	2013	166	senate
-t	3407	4	member	Rules	2014-03-03 17:09:09	2013	126	senate
-t	3338	3	member	Health	2014-03-03 17:09:09	2013	151	senate
-t	3345	10	member	Health	2014-03-03 17:09:09	2013	153	senate
-f	3347	12	member	Health	2014-03-03 17:09:09	2013	168	senate
-f	3349	14	member	Health	2014-03-03 17:09:09	2013	187	senate
-f	3351	16	member	Health	2014-03-03 17:09:09	2013	176	senate
-t	3353	1	chair_person	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	170	senate
-t	3355	3	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	141	senate
-t	3358	6	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	147	senate
-f	3360	8	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	177	senate
-t	3381	1	chair_person	Judiciary	2014-03-03 17:09:09	2013	169	senate
-t	3383	3	member	Judiciary	2014-03-03 17:09:09	2013	155	senate
-t	3385	5	member	Judiciary	2014-03-03 17:09:09	2013	165	senate
-t	3389	9	member	Judiciary	2014-03-03 17:09:09	2013	183	senate
-t	3409	6	member	Rules	2014-03-03 17:09:09	2013	155	senate
-t	3411	8	member	Rules	2014-03-03 17:09:09	2013	130	senate
-t	3417	14	member	Rules	2014-03-03 17:09:09	2013	171	senate
-f	3419	16	member	Rules	2014-03-03 17:09:09	2013	152	senate
-f	3421	18	member	Rules	2014-03-03 17:09:09	2013	137	senate
-f	3423	20	member	Rules	2014-03-03 17:09:09	2013	129	senate
-f	3425	22	member	Rules	2014-03-03 17:09:09	2013	172	senate
-f	3427	24	member	Rules	2014-03-03 17:09:09	2013	140	senate
-t	3432	4	member	Transportation	2014-03-03 17:09:09	2013	182	senate
-t	3434	6	member	Transportation	2014-03-03 17:09:09	2013	167	senate
-t	3436	8	member	Transportation	2014-03-03 17:09:09	2013	183	senate
-t	3437	9	member	Transportation	2014-03-03 17:09:09	2013	162	senate
-t	3438	10	member	Transportation	2014-03-03 17:09:09	2013	170	senate
-t	3439	11	member	Transportation	2014-03-03 17:09:09	2013	160	senate
-t	3440	12	member	Transportation	2014-03-03 17:09:09	2013	147	senate
-f	3441	13	member	Transportation	2014-03-03 17:09:09	2013	137	senate
-f	3442	14	member	Transportation	2014-03-03 17:09:09	2013	177	senate
-f	3443	15	member	Transportation	2014-03-03 17:09:09	2013	146	senate
-f	3446	18	member	Transportation	2014-03-03 17:09:09	2013	156	senate
-f	3453	6	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	156	senate
-t	3454	1	chair_person	Aging	2014-03-13 14:48:16	2013	171	senate
-t	3455	2	member	Aging	2014-03-13 14:48:16	2013	178	senate
-t	3456	3	member	Aging	2014-03-13 14:48:16	2013	181	senate
-t	3457	4	member	Aging	2014-03-13 14:48:16	2013	175	senate
-t	3458	5	member	Aging	2014-03-13 14:48:16	2013	144	senate
-t	3459	6	member	Aging	2014-03-13 14:48:16	2013	160	senate
-f	3460	7	member	Aging	2014-03-13 14:48:16	2013	177	senate
-f	3461	8	member	Aging	2014-03-13 14:48:16	2013	139	senate
-f	3462	9	member	Aging	2014-03-13 14:48:16	2013	156	senate
-f	3463	10	member	Aging	2014-03-13 14:48:16	2013	134	senate
-t	3464	1	chair_person	Banks	2014-03-13 14:48:16	2013	149	senate
-t	3465	2	vice_chair	Banks	2014-03-13 14:48:16	2013	151	senate
-t	3466	3	member	Banks	2014-03-13 14:48:16	2013	169	senate
-t	3467	4	member	Banks	2014-03-13 14:48:16	2013	132	senate
-t	3468	5	member	Banks	2014-03-13 14:48:16	2013	178	senate
-t	3469	6	member	Banks	2014-03-13 14:48:16	2013	144	senate
-t	3470	7	member	Banks	2014-03-13 14:48:16	2013	153	senate
-t	3471	8	member	Banks	2014-03-13 14:48:16	2013	163	senate
-t	3472	9	member	Banks	2014-03-13 14:48:16	2013	183	senate
-t	3473	10	member	Banks	2014-03-13 14:48:16	2013	162	senate
-t	3474	11	member	Banks	2014-03-13 14:48:16	2013	171	senate
-t	3475	12	member	Banks	2014-03-13 14:48:16	2013	147	senate
-f	3476	13	member	Banks	2014-03-13 14:48:16	2013	148	senate
-f	3477	14	member	Banks	2014-03-13 14:48:16	2013	174	senate
-f	3478	15	member	Banks	2014-03-13 14:48:16	2013	177	senate
-f	3479	16	member	Banks	2014-03-13 14:48:16	2013	172	senate
-f	3480	17	member	Banks	2014-03-13 14:48:16	2013	134	senate
-f	3481	18	member	Banks	2014-03-13 14:48:16	2013	158	senate
-f	3482	19	member	Banks	2014-03-13 14:48:16	2013	146	senate
-t	3483	1	chair_person	Cities	2014-03-13 14:48:16	2013	165	senate
-t	3484	2	member	Cities	2014-03-13 14:48:16	2013	164	senate
-t	3485	3	member	Cities	2014-03-13 14:48:16	2013	132	senate
-t	3486	4	member	Cities	2014-03-13 14:48:16	2013	154	senate
-f	3487	5	member	Cities	2014-03-13 14:48:16	2013	157	senate
-f	3488	6	member	Cities	2014-03-13 14:48:16	2013	174	senate
-t	3489	1	chair_person	Education	2014-03-13 14:48:16	2013	155	senate
-t	3490	2	member	Education	2014-03-13 14:48:16	2013	151	senate
-t	3491	3	member	Education	2014-03-13 14:48:16	2013	165	senate
-t	3492	4	member	Education	2014-03-13 14:48:16	2013	175	senate
-t	3493	5	member	Education	2014-03-13 14:48:16	2013	135	senate
-t	3494	6	member	Education	2014-03-13 14:48:16	2013	163	senate
-t	3495	7	member	Education	2014-03-13 14:48:16	2013	167	senate
-t	3496	8	member	Education	2014-03-13 14:48:16	2013	162	senate
-t	3497	9	member	Education	2014-03-13 14:48:16	2013	173	senate
-t	3498	10	member	Education	2014-03-13 14:48:16	2013	127	senate
-t	3499	11	member	Education	2014-03-13 14:48:16	2013	171	senate
-t	3500	12	member	Education	2014-03-13 14:48:16	2013	147	senate
-f	3501	13	member	Education	2014-03-13 14:48:16	2013	143	senate
-f	3502	14	member	Education	2014-03-13 14:48:16	2013	139	senate
-f	3503	15	member	Education	2014-03-13 14:48:16	2013	174	senate
-f	3504	16	member	Education	2014-03-13 14:48:16	2013	168	senate
-f	3505	17	member	Education	2014-03-13 14:48:16	2013	156	senate
-f	3506	18	member	Education	2014-03-13 14:48:16	2013	128	senate
-f	3507	19	member	Education	2014-03-13 14:48:16	2013	187	senate
-t	3508	1	chair_person	Environmental Conservation	2014-03-13 14:48:16	2013	154	senate
-t	3509	2	vice_chair	Environmental Conservation	2014-03-13 14:48:16	2013	147	senate
-t	3510	3	member	Environmental Conservation	2014-03-13 14:48:16	2013	175	senate
-t	3511	4	member	Environmental Conservation	2014-03-13 14:48:16	2013	135	senate
-t	3512	5	member	Environmental Conservation	2014-03-13 14:48:16	2013	163	senate
-t	3513	6	member	Environmental Conservation	2014-03-13 14:48:16	2013	167	senate
-t	3514	7	member	Environmental Conservation	2014-03-13 14:48:16	2013	183	senate
-t	3515	8	member	Environmental Conservation	2014-03-13 14:48:16	2013	170	senate
-f	3516	9	member	Environmental Conservation	2014-03-13 14:48:16	2013	148	senate
-f	3517	10	member	Environmental Conservation	2014-03-13 14:48:16	2013	140	senate
-f	3518	11	member	Environmental Conservation	2014-03-13 14:48:16	2013	142	senate
-f	3519	12	member	Environmental Conservation	2014-03-13 14:48:16	2013	143	senate
-f	3520	13	member	Environmental Conservation	2014-03-13 14:48:16	2013	128	senate
-t	3521	1	chair_person	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	169	senate
-t	3522	2	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	141	senate
-t	3523	3	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	126	senate
-t	3524	4	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	149	senate
-t	3525	5	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	144	senate
-t	3526	6	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	150	senate
-t	3527	7	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	162	senate
-f	3528	8	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	139	senate
-f	3529	9	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	143	senate
-f	3530	10	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	134	senate
-f	3531	11	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	128	senate
-t	3532	1	chair_person	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	164	senate
-t	3533	2	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	126	senate
-t	3534	3	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	155	senate
-t	3535	4	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	178	senate
-t	3537	6	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	154	senate
-t	3539	8	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	160	senate
-f	3541	10	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	158	senate
-f	3543	12	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	128	senate
-f	3554	10	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	136	senate
-f	3555	11	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	134	senate
-f	3556	12	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	148	senate
-t	3536	5	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	149	senate
-t	3538	7	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	130	senate
-f	3540	9	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	139	senate
-f	3542	11	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	134	senate
-f	3544	13	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	143	senate
-t	3545	1	chair_person	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	153	senate
-t	3546	2	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	171	senate
-t	3547	3	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	141	senate
-t	3548	4	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	182	senate
-t	3549	5	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	181	senate
-t	3550	6	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	149	senate
-t	3551	7	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	173	senate
-t	3552	8	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	135	senate
-f	3553	9	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	146	senate
+t	5017	1	chair_person	Health	2017-02-07 15:16:10	2017	1011	senate
+t	5019	3	member	Health	2017-02-07 15:16:10	2017	949	senate
+f	5031	15	member	Health	2017-02-07 15:16:10	2017	943	senate
+f	5033	17	member	Health	2017-02-07 15:16:10	2017	924	senate
+t	5034	1	chair_person	Insurance	2017-02-07 15:16:10	2017	950	senate
+t	5018	2	vice_chair	Health	2017-02-07 15:16:10	2017	951	senate
+t	5020	4	member	Health	2017-02-07 15:16:10	2017	1013	senate
+t	5022	6	member	Health	2017-02-07 15:16:10	2017	1095	senate
+t	5024	8	member	Health	2017-02-07 15:16:10	2017	947	senate
+t	5026	10	member	Health	2017-02-07 15:16:10	2017	950	senate
+f	5028	12	member	Health	2017-02-07 15:16:10	2017	926	senate
+f	5030	14	member	Health	2017-02-07 15:16:10	2017	918	senate
+t	5043	10	member	Insurance	2017-02-07 15:16:10	2017	941	senate
+t	5046	13	member	Insurance	2017-02-07 15:16:10	2017	1018	senate
+f	5048	15	member	Insurance	2017-02-07 15:16:10	2017	1097	senate
+f	5050	17	member	Insurance	2017-02-07 15:16:10	2017	922	senate
+f	5052	19	member	Insurance	2017-02-07 15:16:10	2017	925	senate
+t	5188	6	member	Local Government	2017-02-14 09:46:16	2017	949	senate
+f	5190	8	member	Local Government	2017-02-14 09:46:16	2017	918	senate
+t	5021	5	member	Health	2017-02-07 15:16:10	2017	938	senate
+t	5023	7	member	Health	2017-02-07 15:16:10	2017	1012	senate
+t	5025	9	member	Health	2017-02-07 15:16:10	2017	1014	senate
+t	5027	11	member	Health	2017-02-07 15:16:10	2017	1099	senate
+f	5029	13	member	Health	2017-02-07 15:16:10	2017	921	senate
+f	5032	16	member	Health	2017-02-07 15:16:10	2017	1086	senate
+f	5067	14	member	Banks	2017-02-13 16:36:21	2017	932	senate
+f	5071	18	member	Banks	2017-02-13 16:36:21	2017	922	senate
+t	5192	1	chair_person	Codes	2017-02-24 09:54:05	2017	1084	senate
+t	5194	3	member	Codes	2017-02-24 09:54:05	2017	952	senate
+t	5196	5	member	Codes	2017-02-24 09:54:05	2017	955	senate
+t	5198	7	member	Codes	2017-02-24 09:54:05	2017	938	senate
+t	5250	2	member	Judiciary	2017-02-24 09:54:05	2017	954	senate
+t	5252	4	member	Judiciary	2017-02-24 09:54:05	2017	944	senate
+t	5255	7	member	Judiciary	2017-02-24 09:54:05	2017	1011	senate
+t	5258	10	member	Judiciary	2017-02-24 09:54:05	2017	1010	senate
+t	5261	13	member	Judiciary	2017-02-24 09:54:05	2017	948	senate
+f	5264	16	member	Judiciary	2017-02-24 09:54:05	2017	921	senate
+f	5268	20	member	Judiciary	2017-02-24 09:54:05	2017	927	senate
+t	5273	3	member	Rules	2017-02-24 09:54:05	2017	1016	senate
+t	5276	6	member	Rules	2017-02-24 09:54:05	2017	1011	senate
+t	5279	9	member	Rules	2017-02-24 09:54:05	2017	1010	senate
+t	5282	12	member	Rules	2017-02-24 09:54:05	2017	948	senate
+t	5285	15	member	Rules	2017-02-24 09:54:05	2017	950	senate
+f	5288	18	member	Rules	2017-02-24 09:54:05	2017	946	senate
+f	5291	21	member	Rules	2017-02-24 09:54:05	2017	935	senate
+f	5294	24	member	Rules	2017-02-24 09:54:05	2017	923	senate
+t	5296	2	vice_chair	Transportation	2017-02-24 09:54:05	2017	941	senate
+t	5300	6	member	Transportation	2017-02-24 09:54:05	2017	1017	senate
+t	5304	10	member	Transportation	2017-02-24 09:54:05	2017	948	senate
+t	5307	13	member	Transportation	2017-02-24 09:54:05	2017	942	senate
+f	5309	15	member	Transportation	2017-02-24 09:54:05	2017	1085	senate
+f	5311	17	member	Transportation	2017-02-24 09:54:05	2017	929	senate
+f	5313	19	member	Transportation	2017-02-24 09:54:05	2017	924	senate
+t	5035	2	member	Insurance	2017-02-07 15:16:10	2017	938	senate
+t	5037	4	member	Insurance	2017-02-07 15:16:10	2017	952	senate
+t	5039	6	member	Insurance	2017-02-07 15:16:10	2017	1084	senate
+t	5041	8	member	Insurance	2017-02-07 15:16:10	2017	1010	senate
+t	5044	11	member	Insurance	2017-02-07 15:16:10	2017	1096	senate
+f	5047	14	member	Insurance	2017-02-07 15:16:10	2017	946	senate
+f	5049	16	member	Insurance	2017-02-07 15:16:10	2017	929	senate
+f	5051	18	member	Insurance	2017-02-07 15:16:10	2017	926	senate
+f	5053	20	member	Insurance	2017-02-07 15:16:10	2017	932	senate
+t	5055	2	member	Banks	2017-02-13 16:36:21	2017	952	senate
+t	5057	4	member	Banks	2017-02-13 16:36:21	2017	1016	senate
+t	5059	6	member	Banks	2017-02-13 16:36:21	2017	1095	senate
+t	5061	8	member	Banks	2017-02-13 16:36:21	2017	940	senate
+t	5063	10	member	Banks	2017-02-13 16:36:21	2017	941	senate
+t	5065	12	member	Banks	2017-02-13 16:36:21	2017	933	senate
+f	5069	16	member	Banks	2017-02-13 16:36:21	2017	1085	senate
+t	5074	2	member	Cities	2017-02-13 16:36:21	2017	952	senate
+t	5076	4	member	Cities	2017-02-13 16:36:21	2017	953	senate
+f	5078	6	member	Cities	2017-02-13 16:36:21	2017	1086	senate
+t	5081	2	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	955	senate
+t	5083	4	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	957	senate
+t	5085	6	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	949	senate
+f	5087	8	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	934	senate
+f	5089	10	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	1086	senate
+t	5093	4	member	Codes	2017-02-13 16:36:21	2017	944	senate
+t	5095	6	member	Codes	2017-02-13 16:36:21	2017	956	senate
+t	5098	9	member	Codes	2017-02-13 16:36:21	2017	941	senate
+f	5101	12	member	Codes	2017-02-13 16:36:21	2017	923	senate
+f	5105	16	member	Codes	2017-02-13 16:36:21	2017	931	senate
+t	5131	2	member	Insurance	2017-02-13 16:36:21	2017	938	senate
+t	5134	5	member	Insurance	2017-02-13 16:36:21	2017	1095	senate
+t	5137	8	member	Insurance	2017-02-13 16:36:21	2017	1010	senate
+t	5139	10	member	Insurance	2017-02-13 16:36:21	2017	941	senate
+f	5143	14	member	Insurance	2017-02-13 16:36:21	2017	946	senate
+f	5145	16	member	Insurance	2017-02-13 16:36:21	2017	922	senate
+t	5150	2	member	Labor	2017-02-13 16:36:21	2017	952	senate
+t	5154	6	member	Labor	2017-02-13 16:36:21	2017	1014	senate
+t	5155	7	member	Labor	2017-02-13 16:36:21	2017	957	senate
+t	5157	9	member	Labor	2017-02-13 16:36:21	2017	1015	senate
+f	5159	11	member	Labor	2017-02-13 16:36:21	2017	932	senate
+f	5161	13	member	Labor	2017-02-13 16:36:21	2017	927	senate
+t	5164	1	chair_person	Local Government	2017-02-13 16:36:21	2017	940	senate
+t	5166	3	member	Local Government	2017-02-13 16:36:21	2017	1072	senate
+t	5168	5	member	Local Government	2017-02-13 16:36:21	2017	957	senate
+f	5170	7	member	Local Government	2017-02-13 16:36:21	2017	1097	senate
+t	5314	1	chair_person	Codes	2017-03-02 12:36:47	2017	1084	senate
+t	5316	3	member	Codes	2017-03-02 12:36:47	2017	952	senate
+t	5319	6	member	Codes	2017-03-02 12:36:47	2017	956	senate
+t	5333	4	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	1012	senate
+f	5335	6	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	923	senate
+t	5338	2	vice_chair	Finance	2017-03-02 12:36:47	2017	933	senate
+t	5340	4	member	Finance	2017-03-02 12:36:47	2017	1016	senate
+t	5344	8	member	Finance	2017-03-02 12:36:47	2017	956	senate
+t	5347	11	member	Finance	2017-03-02 12:36:47	2017	1011	senate
+t	5349	13	member	Finance	2017-03-02 12:36:47	2017	1012	senate
+t	5351	15	member	Finance	2017-03-02 12:36:47	2017	947	senate
+t	5354	18	member	Finance	2017-03-02 12:36:47	2017	941	senate
+t	5357	21	member	Finance	2017-03-02 12:36:47	2017	949	senate
+f	5361	25	member	Finance	2017-03-02 12:36:47	2017	935	senate
+f	5364	28	member	Finance	2017-03-02 12:36:47	2017	936	senate
+f	5367	31	member	Finance	2017-03-02 12:36:47	2017	918	senate
+f	5370	34	member	Finance	2017-03-02 12:36:47	2017	925	senate
+f	5373	37	member	Finance	2017-03-02 12:36:47	2017	924	senate
+t	5375	2	member	Judiciary	2017-03-02 12:36:47	2017	954	senate
+t	5378	5	member	Judiciary	2017-03-02 12:36:47	2017	955	senate
+t	5381	8	member	Judiciary	2017-03-02 12:36:47	2017	1095	senate
+t	5384	11	member	Judiciary	2017-03-02 12:36:47	2017	941	senate
+t	5398	2	vice_chair	Rules	2017-03-02 12:36:47	2017	939	senate
+t	5401	5	member	Rules	2017-03-02 12:36:47	2017	1017	senate
+t	5404	8	member	Rules	2017-03-02 12:36:47	2017	1012	senate
+t	5407	11	member	Rules	2017-03-02 12:36:47	2017	1088	senate
+t	5409	13	member	Rules	2017-03-02 12:36:47	2017	1015	senate
+t	5412	16	member	Rules	2017-03-02 12:36:47	2017	951	senate
+f	5415	19	member	Rules	2017-03-02 12:36:47	2017	927	senate
+f	5418	22	member	Rules	2017-03-02 12:36:47	2017	935	senate
+f	5420	24	member	Rules	2017-03-02 12:36:47	2017	925	senate
+t	5036	3	member	Insurance	2017-02-07 15:16:10	2017	937	senate
+t	5038	5	member	Insurance	2017-02-07 15:16:10	2017	1095	senate
+t	5040	7	member	Insurance	2017-02-07 15:16:10	2017	1012	senate
+t	5042	9	member	Insurance	2017-02-07 15:16:10	2017	1014	senate
+t	5045	12	member	Insurance	2017-02-07 15:16:10	2017	933	senate
+t	5173	2	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	955	senate
+t	5175	4	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	957	senate
+t	5177	6	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	949	senate
+f	5179	8	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	934	senate
+f	5181	10	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	1086	senate
+t	5183	1	chair_person	Local Government	2017-02-14 09:46:16	2017	940	senate
+t	5185	3	member	Local Government	2017-02-14 09:46:16	2017	1072	senate
+t	5187	5	member	Local Government	2017-02-14 09:46:16	2017	957	senate
+f	5191	9	member	Local Government	2017-02-14 09:46:16	2017	922	senate
+t	5315	2	vice_chair	Codes	2017-03-02 12:36:47	2017	933	senate
+t	5318	5	member	Codes	2017-03-02 12:36:47	2017	955	senate
+t	5321	8	member	Codes	2017-03-02 12:36:47	2017	1017	senate
+t	5323	10	member	Codes	2017-03-02 12:36:47	2017	930	senate
+f	5325	12	member	Codes	2017-03-02 12:36:47	2017	923	senate
+f	5327	14	member	Codes	2017-03-02 12:36:47	2017	918	senate
+f	5329	16	member	Codes	2017-03-02 12:36:47	2017	934	senate
+t	5387	14	member	Judiciary	2017-03-02 12:36:47	2017	933	senate
+f	5391	18	member	Judiciary	2017-03-02 12:36:47	2017	946	senate
+f	5394	21	member	Judiciary	2017-03-02 12:36:47	2017	918	senate
+f	5396	23	member	Judiciary	2017-03-02 12:36:47	2017	924	senate
+t	5399	3	member	Rules	2017-03-02 12:36:47	2017	1016	senate
+t	5403	7	member	Rules	2017-03-02 12:36:47	2017	1084	senate
+t	5405	9	member	Rules	2017-03-02 12:36:47	2017	1010	senate
+t	5411	15	member	Rules	2017-03-02 12:36:47	2017	950	senate
+f	5414	18	member	Rules	2017-03-02 12:36:47	2017	946	senate
+f	5417	21	member	Rules	2017-03-02 12:36:47	2017	929	senate
+f	5419	23	member	Rules	2017-03-02 12:36:47	2017	943	senate
 t	3557	1	chair_person	Aging	2017-01-18 10:52:04	2017	1018	senate
 t	3558	2	member	Aging	2017-01-18 10:52:04	2017	1090	senate
 t	3559	3	member	Aging	2017-01-18 10:52:04	2017	1013	senate
@@ -4881,510 +4697,250 @@ t	4014	2	member	New York City Education Subcommittee	2017-01-18 10:52:04	2017	92
 t	4015	3	member	New York City Education Subcommittee	2017-01-18 10:52:04	2017	938	senate
 t	4016	4	member	New York City Education Subcommittee	2017-01-18 10:52:04	2017	1084	senate
 f	4018	6	member	New York City Education Subcommittee	2017-01-18 10:52:04	2017	924	senate
-t	4019	1	chair_person	Banks	2017-01-30 16:39:21	2017	937	senate
-t	4020	2	member	Banks	2017-01-30 16:39:21	2017	952	senate
-t	4021	3	member	Banks	2017-01-30 16:39:21	2017	954	senate
-t	4022	4	member	Banks	2017-01-30 16:39:21	2017	1016	senate
-t	4023	5	member	Banks	2017-01-30 16:39:21	2017	945	senate
-t	4024	6	member	Banks	2017-01-30 16:39:21	2017	1095	senate
-t	4025	7	member	Banks	2017-01-30 16:39:21	2017	1088	senate
-t	4026	8	member	Banks	2017-01-30 16:39:21	2017	940	senate
-t	4027	9	member	Banks	2017-01-30 16:39:21	2017	1014	senate
-t	4028	10	member	Banks	2017-01-30 16:39:21	2017	941	senate
-t	4029	11	member	Banks	2017-01-30 16:39:21	2017	930	senate
-t	4030	12	member	Banks	2017-01-30 16:39:21	2017	933	senate
-t	4031	13	member	Banks	2017-01-30 16:39:21	2017	1099	senate
-f	4032	14	member	Banks	2017-01-30 16:39:21	2017	932	senate
-f	4033	15	member	Banks	2017-01-30 16:39:21	2017	1098	senate
-f	4034	16	member	Banks	2017-01-30 16:39:21	2017	946	senate
-f	4035	17	member	Banks	2017-01-30 16:39:21	2017	1085	senate
-f	4036	18	member	Banks	2017-01-30 16:39:21	2017	929	senate
-f	4037	19	member	Banks	2017-01-30 16:39:21	2017	922	senate
-f	4038	20	member	Banks	2017-01-30 16:39:21	2017	925	senate
-t	4039	1	chair_person	Cities	2017-01-30 16:39:21	2017	1013	senate
-t	4040	2	member	Cities	2017-01-30 16:39:21	2017	952	senate
-t	4041	3	member	Cities	2017-01-30 16:39:21	2017	920	senate
-t	4042	4	member	Cities	2017-01-30 16:39:21	2017	953	senate
-t	4043	5	member	Cities	2017-01-30 16:39:21	2017	1095	senate
-f	4044	6	member	Cities	2017-01-30 16:39:21	2017	1086	senate
-t	4045	1	chair_person	Codes	2017-01-30 16:39:21	2017	1084	senate
-t	4046	2	vice_chair	Codes	2017-01-30 16:39:21	2017	933	senate
-t	4047	3	member	Codes	2017-01-30 16:39:21	2017	952	senate
-t	4048	4	member	Codes	2017-01-30 16:39:21	2017	944	senate
-t	4049	5	member	Codes	2017-01-30 16:39:21	2017	955	senate
-t	4050	6	member	Codes	2017-01-30 16:39:21	2017	956	senate
-t	4051	7	member	Codes	2017-01-30 16:39:21	2017	938	senate
-t	4052	8	member	Codes	2017-01-30 16:39:21	2017	1017	senate
-t	4053	9	member	Codes	2017-01-30 16:39:21	2017	941	senate
-t	4054	10	member	Codes	2017-01-30 16:39:21	2017	930	senate
-t	4055	11	member	Codes	2017-01-30 16:39:21	2017	1099	senate
-f	4056	12	member	Codes	2017-01-30 16:39:21	2017	923	senate
-f	4057	13	member	Codes	2017-01-30 16:39:21	2017	1098	senate
-f	4058	14	member	Codes	2017-01-30 16:39:21	2017	921	senate
-f	4059	15	member	Codes	2017-01-30 16:39:21	2017	918	senate
-f	4060	16	member	Codes	2017-01-30 16:39:21	2017	935	senate
-f	4061	17	member	Codes	2017-01-30 16:39:21	2017	931	senate
-t	4062	1	chair_person	Consumer Protection	2017-01-30 16:39:21	2017	1072	senate
-t	4063	2	member	Consumer Protection	2017-01-30 16:39:21	2017	954	senate
-t	4064	3	member	Consumer Protection	2017-01-30 16:39:21	2017	944	senate
-t	4065	4	member	Consumer Protection	2017-01-30 16:39:21	2017	953	senate
-f	4097	14	member	Labor	2017-01-30 16:39:21	2017	932	senate
-t	4066	5	member	Consumer Protection	2017-01-30 16:39:21	2017	937	senate
-t	4067	6	member	Consumer Protection	2017-01-30 16:39:21	2017	945	senate
-t	4068	7	member	Consumer Protection	2017-01-30 16:39:21	2017	1015	senate
-f	4069	8	member	Consumer Protection	2017-01-30 16:39:21	2017	936	senate
-f	4070	9	member	Consumer Protection	2017-01-30 16:39:21	2017	922	senate
-f	4071	10	member	Consumer Protection	2017-01-30 16:39:21	2017	934	senate
-t	4072	1	chair_person	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	956	senate
-t	4073	2	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	952	senate
-f	4083	12	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	926	senate
-t	4084	1	chair_person	Labor	2017-01-30 16:39:21	2017	1090	senate
-t	4086	3	member	Labor	2017-01-30 16:39:21	2017	956	senate
-t	4088	5	member	Labor	2017-01-30 16:39:21	2017	1088	senate
-t	4090	7	member	Labor	2017-01-30 16:39:21	2017	957	senate
-t	4092	9	member	Labor	2017-01-30 16:39:21	2017	1015	senate
-f	4095	12	member	Labor	2017-01-30 16:39:21	2017	927	senate
-t	4100	3	member	Transportation	2017-01-30 16:39:21	2017	920	senate
-t	4101	4	member	Transportation	2017-01-30 16:39:21	2017	955	senate
-t	4103	6	member	Transportation	2017-01-30 16:39:21	2017	1017	senate
-t	4105	8	member	Transportation	2017-01-30 16:39:21	2017	1088	senate
-t	4107	10	member	Transportation	2017-01-30 16:39:21	2017	948	senate
-t	4109	12	member	Transportation	2017-01-30 16:39:21	2017	951	senate
-f	4111	14	member	Transportation	2017-01-30 16:39:21	2017	927	senate
-f	4113	16	member	Transportation	2017-01-30 16:39:21	2017	918	senate
-f	4115	18	member	Transportation	2017-01-30 16:39:21	2017	931	senate
-f	4117	20	member	Transportation	2017-01-30 16:39:21	2017	924	senate
-t	4074	3	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	1017	senate
-t	4075	4	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	937	senate
-t	4076	5	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	945	senate
-t	4077	6	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	1095	senate
-t	4078	7	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	947	senate
-t	4079	8	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	949	senate
-t	4080	9	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	1099	senate
-f	4081	10	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	1098	senate
-f	4082	11	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	943	senate
-t	4085	2	member	Labor	2017-01-30 16:39:21	2017	952	senate
-f	4094	11	member	Labor	2017-01-30 16:39:21	2017	919	senate
-t	4098	1	chair_person	Transportation	2017-01-30 16:39:21	2017	1015	senate
-t	4087	4	member	Labor	2017-01-30 16:39:21	2017	1011	senate
-t	4089	6	member	Labor	2017-01-30 16:39:21	2017	1014	senate
-t	4091	8	member	Labor	2017-01-30 16:39:21	2017	949	senate
-t	4093	10	member	Labor	2017-01-30 16:39:21	2017	933	senate
-f	4096	13	member	Labor	2017-01-30 16:39:21	2017	926	senate
-t	4099	2	vice_chair	Transportation	2017-01-30 16:39:21	2017	941	senate
-t	4102	5	member	Transportation	2017-01-30 16:39:21	2017	956	senate
-t	4104	7	member	Transportation	2017-01-30 16:39:21	2017	1012	senate
-t	4106	9	member	Transportation	2017-01-30 16:39:21	2017	930	senate
-t	4108	11	member	Transportation	2017-01-30 16:39:21	2017	949	senate
-t	4110	13	member	Transportation	2017-01-30 16:39:21	2017	942	senate
-f	4112	15	member	Transportation	2017-01-30 16:39:21	2017	1085	senate
-f	4114	17	member	Transportation	2017-01-30 16:39:21	2017	929	senate
-f	4116	19	member	Transportation	2017-01-30 16:39:21	2017	923	senate
-t	4118	1	chair_person	Health	2017-02-07 15:16:10	2017	1011	senate
-t	4119	2	vice_chair	Health	2017-02-07 15:16:10	2017	951	senate
-t	4120	3	member	Health	2017-02-07 15:16:10	2017	949	senate
-t	4121	4	member	Health	2017-02-07 15:16:10	2017	1013	senate
-t	4122	5	member	Health	2017-02-07 15:16:10	2017	938	senate
-t	4123	6	member	Health	2017-02-07 15:16:10	2017	1095	senate
-t	4124	7	member	Health	2017-02-07 15:16:10	2017	1012	senate
-t	4125	8	member	Health	2017-02-07 15:16:10	2017	947	senate
-t	4126	9	member	Health	2017-02-07 15:16:10	2017	1014	senate
-t	4127	10	member	Health	2017-02-07 15:16:10	2017	950	senate
-t	4128	11	member	Health	2017-02-07 15:16:10	2017	1099	senate
-f	4129	12	member	Health	2017-02-07 15:16:10	2017	926	senate
-f	4130	13	member	Health	2017-02-07 15:16:10	2017	921	senate
-f	4131	14	member	Health	2017-02-07 15:16:10	2017	918	senate
-f	4132	15	member	Health	2017-02-07 15:16:10	2017	943	senate
-f	4133	16	member	Health	2017-02-07 15:16:10	2017	1086	senate
-f	4134	17	member	Health	2017-02-07 15:16:10	2017	924	senate
-t	4135	1	chair_person	Insurance	2017-02-07 15:16:10	2017	950	senate
-t	4136	2	member	Insurance	2017-02-07 15:16:10	2017	938	senate
-t	4137	3	member	Insurance	2017-02-07 15:16:10	2017	937	senate
-t	4138	4	member	Insurance	2017-02-07 15:16:10	2017	952	senate
-t	4139	5	member	Insurance	2017-02-07 15:16:10	2017	1095	senate
-t	4140	6	member	Insurance	2017-02-07 15:16:10	2017	1084	senate
-t	4141	7	member	Insurance	2017-02-07 15:16:10	2017	1012	senate
-t	4142	8	member	Insurance	2017-02-07 15:16:10	2017	1010	senate
-t	4143	9	member	Insurance	2017-02-07 15:16:10	2017	1014	senate
-t	4144	10	member	Insurance	2017-02-07 15:16:10	2017	941	senate
-t	4145	11	member	Insurance	2017-02-07 15:16:10	2017	1096	senate
-t	4146	12	member	Insurance	2017-02-07 15:16:10	2017	933	senate
-t	4147	13	member	Insurance	2017-02-07 15:16:10	2017	1018	senate
-f	4148	14	member	Insurance	2017-02-07 15:16:10	2017	946	senate
-f	4149	15	member	Insurance	2017-02-07 15:16:10	2017	1097	senate
-f	4150	16	member	Insurance	2017-02-07 15:16:10	2017	929	senate
-f	4151	17	member	Insurance	2017-02-07 15:16:10	2017	922	senate
-f	4152	18	member	Insurance	2017-02-07 15:16:10	2017	926	senate
-f	4153	19	member	Insurance	2017-02-07 15:16:10	2017	925	senate
-f	4154	20	member	Insurance	2017-02-07 15:16:10	2017	932	senate
-t	4155	1	chair_person	Banks	2017-02-13 16:36:21	2017	937	senate
-t	4156	2	member	Banks	2017-02-13 16:36:21	2017	952	senate
-t	4157	3	member	Banks	2017-02-13 16:36:21	2017	954	senate
-t	4158	4	member	Banks	2017-02-13 16:36:21	2017	1016	senate
-t	4159	5	member	Banks	2017-02-13 16:36:21	2017	945	senate
-t	4160	6	member	Banks	2017-02-13 16:36:21	2017	1095	senate
-t	4161	7	member	Banks	2017-02-13 16:36:21	2017	1088	senate
-t	4162	8	member	Banks	2017-02-13 16:36:21	2017	940	senate
-t	4163	9	member	Banks	2017-02-13 16:36:21	2017	1014	senate
-t	4164	10	member	Banks	2017-02-13 16:36:21	2017	941	senate
-t	4165	11	member	Banks	2017-02-13 16:36:21	2017	930	senate
-t	4166	12	member	Banks	2017-02-13 16:36:21	2017	933	senate
-t	4167	13	member	Banks	2017-02-13 16:36:21	2017	1099	senate
-f	4168	14	member	Banks	2017-02-13 16:36:21	2017	932	senate
-f	4169	15	member	Banks	2017-02-13 16:36:21	2017	946	senate
-f	4170	16	member	Banks	2017-02-13 16:36:21	2017	1085	senate
-f	4171	17	member	Banks	2017-02-13 16:36:21	2017	929	senate
-f	4172	18	member	Banks	2017-02-13 16:36:21	2017	922	senate
-f	4173	19	member	Banks	2017-02-13 16:36:21	2017	925	senate
-t	4174	1	chair_person	Cities	2017-02-13 16:36:21	2017	1013	senate
-t	4175	2	member	Cities	2017-02-13 16:36:21	2017	952	senate
-t	4176	3	member	Cities	2017-02-13 16:36:21	2017	920	senate
-t	4177	4	member	Cities	2017-02-13 16:36:21	2017	953	senate
-t	4178	5	member	Cities	2017-02-13 16:36:21	2017	1095	senate
-f	4179	6	member	Cities	2017-02-13 16:36:21	2017	1086	senate
-f	4180	7	member	Cities	2017-02-13 16:36:21	2017	934	senate
-t	4181	1	chair_person	Civil Service and Pensions	2017-02-13 16:36:21	2017	938	senate
-t	4182	2	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	955	senate
-t	4183	3	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	1084	senate
-t	4184	4	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	957	senate
-t	4185	5	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	1096	senate
-t	4186	6	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	949	senate
-t	4187	7	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	933	senate
-f	4188	8	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	934	senate
-f	4189	9	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	919	senate
-f	4190	10	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	1086	senate
-t	4191	1	chair_person	Codes	2017-02-13 16:36:21	2017	1084	senate
-t	4192	2	vice_chair	Codes	2017-02-13 16:36:21	2017	933	senate
-t	4193	3	member	Codes	2017-02-13 16:36:21	2017	952	senate
-t	4194	4	member	Codes	2017-02-13 16:36:21	2017	944	senate
-t	4195	5	member	Codes	2017-02-13 16:36:21	2017	955	senate
-t	4196	6	member	Codes	2017-02-13 16:36:21	2017	956	senate
-t	4197	7	member	Codes	2017-02-13 16:36:21	2017	938	senate
-t	4198	8	member	Codes	2017-02-13 16:36:21	2017	1017	senate
-t	4199	9	member	Codes	2017-02-13 16:36:21	2017	941	senate
-t	4200	10	member	Codes	2017-02-13 16:36:21	2017	930	senate
-t	4201	11	member	Codes	2017-02-13 16:36:21	2017	1099	senate
-f	4202	12	member	Codes	2017-02-13 16:36:21	2017	923	senate
-f	4203	13	member	Codes	2017-02-13 16:36:21	2017	921	senate
-f	4204	14	member	Codes	2017-02-13 16:36:21	2017	918	senate
-f	4205	15	member	Codes	2017-02-13 16:36:21	2017	935	senate
-t	4257	8	member	Labor	2017-02-13 16:36:21	2017	949	senate
-f	4260	11	member	Labor	2017-02-13 16:36:21	2017	932	senate
-f	4261	12	member	Labor	2017-02-13 16:36:21	2017	919	senate
-f	4262	13	member	Labor	2017-02-13 16:36:21	2017	927	senate
-f	4264	15	member	Labor	2017-02-13 16:36:21	2017	926	senate
-t	4266	2	member	Local Government	2017-02-13 16:36:21	2017	944	senate
-f	4206	16	member	Codes	2017-02-13 16:36:21	2017	931	senate
-t	4207	1	chair_person	Consumer Protection	2017-02-13 16:36:21	2017	1072	senate
-t	4209	3	member	Consumer Protection	2017-02-13 16:36:21	2017	944	senate
-t	4210	4	member	Consumer Protection	2017-02-13 16:36:21	2017	953	senate
-t	4211	5	member	Consumer Protection	2017-02-13 16:36:21	2017	937	senate
-t	4213	7	member	Consumer Protection	2017-02-13 16:36:21	2017	1015	senate
-f	4215	9	member	Consumer Protection	2017-02-13 16:36:21	2017	936	senate
-f	4216	10	member	Consumer Protection	2017-02-13 16:36:21	2017	922	senate
-f	4217	11	member	Consumer Protection	2017-02-13 16:36:21	2017	934	senate
-t	4218	1	chair_person	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	956	senate
-t	4221	4	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	937	senate
-t	4223	6	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	1095	senate
-t	4226	9	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	1099	senate
-f	4229	12	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	943	senate
-t	4232	2	member	Insurance	2017-02-13 16:36:21	2017	938	senate
-t	4233	3	member	Insurance	2017-02-13 16:36:21	2017	937	senate
-t	4235	5	member	Insurance	2017-02-13 16:36:21	2017	1095	senate
-t	4236	6	member	Insurance	2017-02-13 16:36:21	2017	1084	senate
-t	4237	7	member	Insurance	2017-02-13 16:36:21	2017	1012	senate
-t	4239	9	member	Insurance	2017-02-13 16:36:21	2017	1014	senate
-t	4240	10	member	Insurance	2017-02-13 16:36:21	2017	941	senate
-t	4242	12	member	Insurance	2017-02-13 16:36:21	2017	933	senate
-f	4244	14	member	Insurance	2017-02-13 16:36:21	2017	946	senate
-f	4246	16	member	Insurance	2017-02-13 16:36:21	2017	922	senate
-f	4247	17	member	Insurance	2017-02-13 16:36:21	2017	926	senate
-f	4249	19	member	Insurance	2017-02-13 16:36:21	2017	932	senate
-t	4251	2	member	Labor	2017-02-13 16:36:21	2017	952	senate
-t	4252	3	member	Labor	2017-02-13 16:36:21	2017	956	senate
-t	4253	4	member	Labor	2017-02-13 16:36:21	2017	1011	senate
-t	4254	5	member	Labor	2017-02-13 16:36:21	2017	1088	senate
-t	4285	2	member	Local Government	2017-02-14 09:46:16	2017	944	senate
-t	4287	4	member	Local Government	2017-02-14 09:46:16	2017	1014	senate
-t	4289	6	member	Local Government	2017-02-14 09:46:16	2017	949	senate
-t	4294	2	vice_chair	Codes	2017-02-24 09:54:05	2017	933	senate
-t	4315	2	vice_chair	Finance	2017-02-24 09:54:05	2017	933	senate
-t	4317	4	member	Finance	2017-02-24 09:54:05	2017	1016	senate
-t	4319	6	member	Finance	2017-02-24 09:54:05	2017	1072	senate
-t	4337	24	member	Finance	2017-02-24 09:54:05	2017	951	senate
-f	4343	30	member	Finance	2017-02-24 09:54:05	2017	918	senate
-f	4349	36	member	Finance	2017-02-24 09:54:05	2017	924	senate
-t	4208	2	member	Consumer Protection	2017-02-13 16:36:21	2017	954	senate
-t	4212	6	member	Consumer Protection	2017-02-13 16:36:21	2017	945	senate
-f	4214	8	member	Consumer Protection	2017-02-13 16:36:21	2017	1097	senate
-t	4219	2	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	952	senate
-t	4220	3	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	1017	senate
-t	4222	5	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	945	senate
-t	4224	7	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	947	senate
-t	4225	8	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	949	senate
-f	4227	10	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	1098	senate
-f	4228	11	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	921	senate
-f	4230	13	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	926	senate
-t	4231	1	chair_person	Insurance	2017-02-13 16:36:21	2017	950	senate
-t	4234	4	member	Insurance	2017-02-13 16:36:21	2017	952	senate
-t	4238	8	member	Insurance	2017-02-13 16:36:21	2017	1010	senate
-t	4241	11	member	Insurance	2017-02-13 16:36:21	2017	1096	senate
-t	4243	13	member	Insurance	2017-02-13 16:36:21	2017	1018	senate
-f	4245	15	member	Insurance	2017-02-13 16:36:21	2017	1097	senate
-t	4256	7	member	Labor	2017-02-13 16:36:21	2017	957	senate
-t	4258	9	member	Labor	2017-02-13 16:36:21	2017	1015	senate
-t	4268	4	member	Local Government	2017-02-13 16:36:21	2017	1014	senate
-t	4269	5	member	Local Government	2017-02-13 16:36:21	2017	957	senate
-t	4270	6	member	Local Government	2017-02-13 16:36:21	2017	949	senate
-f	4271	7	member	Local Government	2017-02-13 16:36:21	2017	1097	senate
-f	4272	8	member	Local Government	2017-02-13 16:36:21	2017	922	senate
-t	4273	1	chair_person	Civil Service and Pensions	2017-02-14 09:46:16	2017	938	senate
-t	4275	3	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	1084	senate
-t	4277	5	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	1096	senate
-t	4279	7	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	933	senate
-f	4280	8	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	934	senate
-f	4281	9	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	919	senate
-f	4283	11	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	932	senate
-f	4290	7	member	Local Government	2017-02-14 09:46:16	2017	1097	senate
-f	4292	9	member	Local Government	2017-02-14 09:46:16	2017	922	senate
-t	4299	7	member	Codes	2017-02-24 09:54:05	2017	938	senate
-t	4301	9	member	Codes	2017-02-24 09:54:05	2017	941	senate
-f	4305	13	member	Codes	2017-02-24 09:54:05	2017	921	senate
-f	4307	15	member	Codes	2017-02-24 09:54:05	2017	935	senate
-t	4308	1	chair_person	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	948	senate
-t	4310	3	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	954	senate
-t	4316	3	member	Finance	2017-02-24 09:54:05	2017	920	senate
-t	4320	7	member	Finance	2017-02-24 09:54:05	2017	1013	senate
-t	4333	20	member	Finance	2017-02-24 09:54:05	2017	948	senate
-t	4336	23	member	Finance	2017-02-24 09:54:05	2017	950	senate
-f	4339	26	member	Finance	2017-02-24 09:54:05	2017	946	senate
-f	4342	29	member	Finance	2017-02-24 09:54:05	2017	927	senate
-f	4345	32	member	Finance	2017-02-24 09:54:05	2017	943	senate
-f	4348	35	member	Finance	2017-02-24 09:54:05	2017	923	senate
-t	4351	2	member	Judiciary	2017-02-24 09:54:05	2017	954	senate
-t	4353	4	member	Judiciary	2017-02-24 09:54:05	2017	944	senate
-t	4355	6	member	Judiciary	2017-02-24 09:54:05	2017	937	senate
-t	4357	8	member	Judiciary	2017-02-24 09:54:05	2017	1095	senate
-t	4360	11	member	Judiciary	2017-02-24 09:54:05	2017	941	senate
-t	4363	14	member	Judiciary	2017-02-24 09:54:05	2017	933	senate
-f	4365	16	member	Judiciary	2017-02-24 09:54:05	2017	921	senate
-f	4369	20	member	Judiciary	2017-02-24 09:54:05	2017	927	senate
-t	4375	4	member	Rules	2017-02-24 09:54:05	2017	1072	senate
-t	4377	6	member	Rules	2017-02-24 09:54:05	2017	1011	senate
-t	4379	8	member	Rules	2017-02-24 09:54:05	2017	1012	senate
-t	4381	10	member	Rules	2017-02-24 09:54:05	2017	947	senate
-t	4383	12	member	Rules	2017-02-24 09:54:05	2017	948	senate
-t	4385	14	member	Rules	2017-02-24 09:54:05	2017	933	senate
-t	4387	16	member	Rules	2017-02-24 09:54:05	2017	951	senate
-f	4389	18	member	Rules	2017-02-24 09:54:05	2017	946	senate
-f	4391	20	member	Rules	2017-02-24 09:54:05	2017	928	senate
-f	4393	22	member	Rules	2017-02-24 09:54:05	2017	943	senate
-f	4395	24	member	Rules	2017-02-24 09:54:05	2017	923	senate
-t	4398	3	member	Transportation	2017-02-24 09:54:05	2017	920	senate
-t	4401	6	member	Transportation	2017-02-24 09:54:05	2017	1017	senate
-t	4404	9	member	Transportation	2017-02-24 09:54:05	2017	930	senate
-t	4408	13	member	Transportation	2017-02-24 09:54:05	2017	942	senate
-f	4412	17	member	Transportation	2017-02-24 09:54:05	2017	929	senate
-f	4248	18	member	Insurance	2017-02-13 16:36:21	2017	925	senate
-t	4250	1	chair_person	Labor	2017-02-13 16:36:21	2017	1090	senate
-t	4255	6	member	Labor	2017-02-13 16:36:21	2017	1014	senate
-t	4259	10	member	Labor	2017-02-13 16:36:21	2017	933	senate
-f	4263	14	member	Labor	2017-02-13 16:36:21	2017	929	senate
-t	4265	1	chair_person	Local Government	2017-02-13 16:36:21	2017	940	senate
-t	4267	3	member	Local Government	2017-02-13 16:36:21	2017	1072	senate
-t	4274	2	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	955	senate
-t	4276	4	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	957	senate
-t	4278	6	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	949	senate
-f	4282	10	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	1086	senate
-t	4284	1	chair_person	Local Government	2017-02-14 09:46:16	2017	940	senate
-t	4286	3	member	Local Government	2017-02-14 09:46:16	2017	1072	senate
-t	4288	5	member	Local Government	2017-02-14 09:46:16	2017	957	senate
-f	4291	8	member	Local Government	2017-02-14 09:46:16	2017	918	senate
-t	4293	1	chair_person	Codes	2017-02-24 09:54:05	2017	1084	senate
-t	4295	3	member	Codes	2017-02-24 09:54:05	2017	952	senate
-t	4296	4	member	Codes	2017-02-24 09:54:05	2017	944	senate
-t	4297	5	member	Codes	2017-02-24 09:54:05	2017	955	senate
-t	4298	6	member	Codes	2017-02-24 09:54:05	2017	956	senate
-t	4300	8	member	Codes	2017-02-24 09:54:05	2017	1017	senate
-t	4302	10	member	Codes	2017-02-24 09:54:05	2017	930	senate
-t	4303	11	member	Codes	2017-02-24 09:54:05	2017	1099	senate
-f	4304	12	member	Codes	2017-02-24 09:54:05	2017	923	senate
-f	4306	14	member	Codes	2017-02-24 09:54:05	2017	918	senate
-t	4309	2	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	1090	senate
-t	4311	4	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	1012	senate
-t	4312	5	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	957	senate
-f	4313	6	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	923	senate
-t	4314	1	chair_person	Finance	2017-02-24 09:54:05	2017	942	senate
-t	4318	5	member	Finance	2017-02-24 09:54:05	2017	944	senate
-t	4321	8	member	Finance	2017-02-24 09:54:05	2017	956	senate
-t	4322	9	member	Finance	2017-02-24 09:54:05	2017	938	senate
-t	4323	10	member	Finance	2017-02-24 09:54:05	2017	1017	senate
-t	4324	11	member	Finance	2017-02-24 09:54:05	2017	1011	senate
-t	4325	12	member	Finance	2017-02-24 09:54:05	2017	1084	senate
-t	4326	13	member	Finance	2017-02-24 09:54:05	2017	1012	senate
-t	4327	14	member	Finance	2017-02-24 09:54:05	2017	1010	senate
-t	4328	15	member	Finance	2017-02-24 09:54:05	2017	947	senate
-t	4329	16	member	Finance	2017-02-24 09:54:05	2017	1088	senate
-t	4330	17	member	Finance	2017-02-24 09:54:05	2017	940	senate
-t	4331	18	member	Finance	2017-02-24 09:54:05	2017	941	senate
-t	4332	19	member	Finance	2017-02-24 09:54:05	2017	930	senate
-t	4334	21	member	Finance	2017-02-24 09:54:05	2017	949	senate
-t	4335	22	member	Finance	2017-02-24 09:54:05	2017	1015	senate
-f	4338	25	member	Finance	2017-02-24 09:54:05	2017	935	senate
-f	4340	27	member	Finance	2017-02-24 09:54:05	2017	936	senate
-f	4341	28	member	Finance	2017-02-24 09:54:05	2017	1085	senate
-f	4344	31	member	Finance	2017-02-24 09:54:05	2017	929	senate
-f	4346	33	member	Finance	2017-02-24 09:54:05	2017	925	senate
-f	4347	34	member	Finance	2017-02-24 09:54:05	2017	926	senate
-t	4350	1	chair_person	Judiciary	2017-02-24 09:54:05	2017	1016	senate
-t	4352	3	member	Judiciary	2017-02-24 09:54:05	2017	920	senate
-t	4354	5	member	Judiciary	2017-02-24 09:54:05	2017	955	senate
-t	4356	7	member	Judiciary	2017-02-24 09:54:05	2017	1011	senate
-t	4358	9	member	Judiciary	2017-02-24 09:54:05	2017	1084	senate
-t	4359	10	member	Judiciary	2017-02-24 09:54:05	2017	1010	senate
-t	4361	12	member	Judiciary	2017-02-24 09:54:05	2017	1096	senate
-t	4362	13	member	Judiciary	2017-02-24 09:54:05	2017	948	senate
-t	4364	15	member	Judiciary	2017-02-24 09:54:05	2017	1018	senate
-f	4366	17	member	Judiciary	2017-02-24 09:54:05	2017	1098	senate
-f	4367	18	member	Judiciary	2017-02-24 09:54:05	2017	946	senate
-f	4368	19	member	Judiciary	2017-02-24 09:54:05	2017	1085	senate
-f	4370	21	member	Judiciary	2017-02-24 09:54:05	2017	918	senate
-f	4371	22	member	Judiciary	2017-02-24 09:54:05	2017	924	senate
-t	4372	1	chair_person	Rules	2017-02-24 09:54:05	2017	1089	senate
-t	4373	2	vice_chair	Rules	2017-02-24 09:54:05	2017	939	senate
-t	4374	3	member	Rules	2017-02-24 09:54:05	2017	1016	senate
-t	4376	5	member	Rules	2017-02-24 09:54:05	2017	1017	senate
-t	4378	7	member	Rules	2017-02-24 09:54:05	2017	1084	senate
-t	4380	9	member	Rules	2017-02-24 09:54:05	2017	1010	senate
-t	4382	11	member	Rules	2017-02-24 09:54:05	2017	1088	senate
-t	4384	13	member	Rules	2017-02-24 09:54:05	2017	1015	senate
-t	4386	15	member	Rules	2017-02-24 09:54:05	2017	950	senate
-f	4388	17	member	Rules	2017-02-24 09:54:05	2017	1087	senate
-f	4390	19	member	Rules	2017-02-24 09:54:05	2017	927	senate
-f	4392	21	member	Rules	2017-02-24 09:54:05	2017	935	senate
-f	4394	23	member	Rules	2017-02-24 09:54:05	2017	925	senate
-t	4396	1	chair_person	Transportation	2017-02-24 09:54:05	2017	1015	senate
-t	4397	2	vice_chair	Transportation	2017-02-24 09:54:05	2017	941	senate
-t	4399	4	member	Transportation	2017-02-24 09:54:05	2017	955	senate
-t	4400	5	member	Transportation	2017-02-24 09:54:05	2017	956	senate
-t	4402	7	member	Transportation	2017-02-24 09:54:05	2017	1012	senate
-t	4403	8	member	Transportation	2017-02-24 09:54:05	2017	1088	senate
-t	4405	10	member	Transportation	2017-02-24 09:54:05	2017	948	senate
-t	4406	11	member	Transportation	2017-02-24 09:54:05	2017	949	senate
-t	4407	12	member	Transportation	2017-02-24 09:54:05	2017	951	senate
-f	4409	14	member	Transportation	2017-02-24 09:54:05	2017	927	senate
-f	4410	15	member	Transportation	2017-02-24 09:54:05	2017	1085	senate
-f	4411	16	member	Transportation	2017-02-24 09:54:05	2017	918	senate
-f	4413	18	member	Transportation	2017-02-24 09:54:05	2017	923	senate
-f	4414	19	member	Transportation	2017-02-24 09:54:05	2017	924	senate
-t	4415	1	chair_person	Codes	2017-03-02 12:36:47	2017	1084	senate
-t	4416	2	vice_chair	Codes	2017-03-02 12:36:47	2017	933	senate
-t	4417	3	member	Codes	2017-03-02 12:36:47	2017	952	senate
-t	4418	4	member	Codes	2017-03-02 12:36:47	2017	944	senate
-t	4419	5	member	Codes	2017-03-02 12:36:47	2017	955	senate
-t	4420	6	member	Codes	2017-03-02 12:36:47	2017	956	senate
-t	4421	7	member	Codes	2017-03-02 12:36:47	2017	938	senate
-t	4422	8	member	Codes	2017-03-02 12:36:47	2017	1017	senate
-t	4424	10	member	Codes	2017-03-02 12:36:47	2017	930	senate
-f	4426	12	member	Codes	2017-03-02 12:36:47	2017	923	senate
-f	4430	16	member	Codes	2017-03-02 12:36:47	2017	934	senate
-t	4434	4	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	1012	senate
-t	4435	5	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	957	senate
-f	4436	6	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	923	senate
-f	4437	7	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	936	senate
-t	4438	1	chair_person	Finance	2017-03-02 12:36:47	2017	942	senate
-t	4440	3	member	Finance	2017-03-02 12:36:47	2017	920	senate
-t	4442	5	member	Finance	2017-03-02 12:36:47	2017	944	senate
-t	4444	7	member	Finance	2017-03-02 12:36:47	2017	1013	senate
-t	4446	9	member	Finance	2017-03-02 12:36:47	2017	938	senate
-t	4448	11	member	Finance	2017-03-02 12:36:47	2017	1011	senate
-t	4450	13	member	Finance	2017-03-02 12:36:47	2017	1012	senate
-t	4453	16	member	Finance	2017-03-02 12:36:47	2017	1088	senate
-t	4455	18	member	Finance	2017-03-02 12:36:47	2017	941	senate
-t	4458	21	member	Finance	2017-03-02 12:36:47	2017	949	senate
-f	4462	25	member	Finance	2017-03-02 12:36:47	2017	935	senate
-f	4465	28	member	Finance	2017-03-02 12:36:47	2017	936	senate
-f	4467	30	member	Finance	2017-03-02 12:36:47	2017	927	senate
-f	4471	34	member	Finance	2017-03-02 12:36:47	2017	925	senate
-f	4473	36	member	Finance	2017-03-02 12:36:47	2017	923	senate
-t	4489	15	member	Judiciary	2017-03-02 12:36:47	2017	1018	senate
-f	4491	17	member	Judiciary	2017-03-02 12:36:47	2017	1098	senate
-f	4492	18	member	Judiciary	2017-03-02 12:36:47	2017	946	senate
-f	4494	20	member	Judiciary	2017-03-02 12:36:47	2017	927	senate
-f	4495	21	member	Judiciary	2017-03-02 12:36:47	2017	918	senate
-f	4497	23	member	Judiciary	2017-03-02 12:36:47	2017	924	senate
-f	4520	23	member	Rules	2017-03-02 12:36:47	2017	943	senate
-t	4423	9	member	Codes	2017-03-02 12:36:47	2017	941	senate
-t	4425	11	member	Codes	2017-03-02 12:36:47	2017	1099	senate
-f	4427	13	member	Codes	2017-03-02 12:36:47	2017	921	senate
-f	4428	14	member	Codes	2017-03-02 12:36:47	2017	918	senate
-t	4431	1	chair_person	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	948	senate
-t	4433	3	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	954	senate
-t	4441	4	member	Finance	2017-03-02 12:36:47	2017	1016	senate
-t	4447	10	member	Finance	2017-03-02 12:36:47	2017	1017	senate
-t	4449	12	member	Finance	2017-03-02 12:36:47	2017	1084	senate
-t	4452	15	member	Finance	2017-03-02 12:36:47	2017	947	senate
-t	4454	17	member	Finance	2017-03-02 12:36:47	2017	940	senate
-t	4457	20	member	Finance	2017-03-02 12:36:47	2017	948	senate
-t	4459	22	member	Finance	2017-03-02 12:36:47	2017	1015	senate
-t	4461	24	member	Finance	2017-03-02 12:36:47	2017	951	senate
-f	4463	26	member	Finance	2017-03-02 12:36:47	2017	1098	senate
-f	4464	27	member	Finance	2017-03-02 12:36:47	2017	946	senate
-f	4468	31	member	Finance	2017-03-02 12:36:47	2017	918	senate
-f	4470	33	member	Finance	2017-03-02 12:36:47	2017	943	senate
-f	4474	37	member	Finance	2017-03-02 12:36:47	2017	924	senate
-t	4475	1	chair_person	Judiciary	2017-03-02 12:36:47	2017	1016	senate
-t	4476	2	member	Judiciary	2017-03-02 12:36:47	2017	954	senate
-t	4477	3	member	Judiciary	2017-03-02 12:36:47	2017	920	senate
-t	4479	5	member	Judiciary	2017-03-02 12:36:47	2017	955	senate
-t	4481	7	member	Judiciary	2017-03-02 12:36:47	2017	1011	senate
-t	4485	11	member	Judiciary	2017-03-02 12:36:47	2017	941	senate
-t	4487	13	member	Judiciary	2017-03-02 12:36:47	2017	948	senate
-f	4493	19	member	Judiciary	2017-03-02 12:36:47	2017	1085	senate
-f	4496	22	member	Judiciary	2017-03-02 12:36:47	2017	943	senate
-t	4498	1	chair_person	Rules	2017-03-02 12:36:47	2017	1089	senate
-t	4499	2	vice_chair	Rules	2017-03-02 12:36:47	2017	939	senate
-t	4500	3	member	Rules	2017-03-02 12:36:47	2017	1016	senate
-t	4501	4	member	Rules	2017-03-02 12:36:47	2017	1072	senate
-t	4502	5	member	Rules	2017-03-02 12:36:47	2017	1017	senate
-t	4503	6	member	Rules	2017-03-02 12:36:47	2017	1011	senate
-t	4505	8	member	Rules	2017-03-02 12:36:47	2017	1012	senate
-t	4507	10	member	Rules	2017-03-02 12:36:47	2017	947	senate
-t	4509	12	member	Rules	2017-03-02 12:36:47	2017	948	senate
-t	4511	14	member	Rules	2017-03-02 12:36:47	2017	933	senate
-t	4513	16	member	Rules	2017-03-02 12:36:47	2017	951	senate
-f	4515	18	member	Rules	2017-03-02 12:36:47	2017	946	senate
-f	4517	20	member	Rules	2017-03-02 12:36:47	2017	928	senate
-f	4519	22	member	Rules	2017-03-02 12:36:47	2017	935	senate
-f	4521	24	member	Rules	2017-03-02 12:36:47	2017	925	senate
-f	4522	25	member	Rules	2017-03-02 12:36:47	2017	923	senate
-f	4429	15	member	Codes	2017-03-02 12:36:47	2017	935	senate
-t	4432	2	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	1090	senate
-t	4439	2	vice_chair	Finance	2017-03-02 12:36:47	2017	933	senate
-t	4443	6	member	Finance	2017-03-02 12:36:47	2017	1072	senate
-t	4445	8	member	Finance	2017-03-02 12:36:47	2017	956	senate
-t	4451	14	member	Finance	2017-03-02 12:36:47	2017	1010	senate
-t	4456	19	member	Finance	2017-03-02 12:36:47	2017	930	senate
-t	4460	23	member	Finance	2017-03-02 12:36:47	2017	950	senate
-f	4466	29	member	Finance	2017-03-02 12:36:47	2017	1085	senate
-f	4469	32	member	Finance	2017-03-02 12:36:47	2017	929	senate
-f	4472	35	member	Finance	2017-03-02 12:36:47	2017	926	senate
-t	4478	4	member	Judiciary	2017-03-02 12:36:47	2017	944	senate
-t	4480	6	member	Judiciary	2017-03-02 12:36:47	2017	937	senate
-t	4482	8	member	Judiciary	2017-03-02 12:36:47	2017	1095	senate
-t	4483	9	member	Judiciary	2017-03-02 12:36:47	2017	1084	senate
-t	4484	10	member	Judiciary	2017-03-02 12:36:47	2017	1010	senate
-t	4486	12	member	Judiciary	2017-03-02 12:36:47	2017	1096	senate
-t	4488	14	member	Judiciary	2017-03-02 12:36:47	2017	933	senate
-f	4490	16	member	Judiciary	2017-03-02 12:36:47	2017	921	senate
-t	4504	7	member	Rules	2017-03-02 12:36:47	2017	1084	senate
-t	4506	9	member	Rules	2017-03-02 12:36:47	2017	1010	senate
-t	4508	11	member	Rules	2017-03-02 12:36:47	2017	1088	senate
-t	4510	13	member	Rules	2017-03-02 12:36:47	2017	1015	senate
-t	4512	15	member	Rules	2017-03-02 12:36:47	2017	950	senate
-f	4514	17	member	Rules	2017-03-02 12:36:47	2017	1087	senate
-f	4516	19	member	Rules	2017-03-02 12:36:47	2017	927	senate
-f	4518	21	member	Rules	2017-03-02 12:36:47	2017	929	senate
+t	5054	1	chair_person	Banks	2017-02-13 16:36:21	2017	937	senate
+t	5056	3	member	Banks	2017-02-13 16:36:21	2017	954	senate
+t	5058	5	member	Banks	2017-02-13 16:36:21	2017	945	senate
+t	5060	7	member	Banks	2017-02-13 16:36:21	2017	1088	senate
+t	5062	9	member	Banks	2017-02-13 16:36:21	2017	1014	senate
+t	5064	11	member	Banks	2017-02-13 16:36:21	2017	930	senate
+t	5066	13	member	Banks	2017-02-13 16:36:21	2017	1099	senate
+f	5068	15	member	Banks	2017-02-13 16:36:21	2017	946	senate
+f	5070	17	member	Banks	2017-02-13 16:36:21	2017	929	senate
+f	5072	19	member	Banks	2017-02-13 16:36:21	2017	925	senate
+t	5075	3	member	Cities	2017-02-13 16:36:21	2017	920	senate
+t	5077	5	member	Cities	2017-02-13 16:36:21	2017	1095	senate
+f	5079	7	member	Cities	2017-02-13 16:36:21	2017	934	senate
+f	5088	9	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	919	senate
+t	5091	2	vice_chair	Codes	2017-02-13 16:36:21	2017	933	senate
+t	5094	5	member	Codes	2017-02-13 16:36:21	2017	955	senate
+t	5097	8	member	Codes	2017-02-13 16:36:21	2017	1017	senate
+t	5099	10	member	Codes	2017-02-13 16:36:21	2017	930	senate
+f	5103	14	member	Codes	2017-02-13 16:36:21	2017	918	senate
+t	5106	1	chair_person	Consumer Protection	2017-02-13 16:36:21	2017	1072	senate
+t	5110	5	member	Consumer Protection	2017-02-13 16:36:21	2017	937	senate
+f	5115	10	member	Consumer Protection	2017-02-13 16:36:21	2017	922	senate
+t	5119	3	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	1017	senate
+t	5121	5	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	945	senate
+t	5123	7	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	947	senate
+f	5127	11	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	921	senate
+t	5130	1	chair_person	Insurance	2017-02-13 16:36:21	2017	950	senate
+t	5133	4	member	Insurance	2017-02-13 16:36:21	2017	952	senate
+t	5135	6	member	Insurance	2017-02-13 16:36:21	2017	1084	senate
+t	5138	9	member	Insurance	2017-02-13 16:36:21	2017	1014	senate
+t	5141	12	member	Insurance	2017-02-13 16:36:21	2017	933	senate
+f	5144	15	member	Insurance	2017-02-13 16:36:21	2017	1097	senate
+f	5147	18	member	Insurance	2017-02-13 16:36:21	2017	925	senate
+t	5149	1	chair_person	Labor	2017-02-13 16:36:21	2017	1090	senate
+t	5151	3	member	Labor	2017-02-13 16:36:21	2017	956	senate
+t	5153	5	member	Labor	2017-02-13 16:36:21	2017	1088	senate
+t	5156	8	member	Labor	2017-02-13 16:36:21	2017	949	senate
+f	5162	14	member	Labor	2017-02-13 16:36:21	2017	929	senate
+t	5165	2	member	Local Government	2017-02-13 16:36:21	2017	944	senate
+t	5167	4	member	Local Government	2017-02-13 16:36:21	2017	1014	senate
+t	5169	6	member	Local Government	2017-02-13 16:36:21	2017	949	senate
+f	5171	8	member	Local Government	2017-02-13 16:36:21	2017	922	senate
+t	5073	1	chair_person	Cities	2017-02-13 16:36:21	2017	1013	senate
+t	5080	1	chair_person	Civil Service and Pensions	2017-02-13 16:36:21	2017	938	senate
+t	5082	3	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	1084	senate
+t	5084	5	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	1096	senate
+t	5086	7	member	Civil Service and Pensions	2017-02-13 16:36:21	2017	933	senate
+t	5090	1	chair_person	Codes	2017-02-13 16:36:21	2017	1084	senate
+t	5092	3	member	Codes	2017-02-13 16:36:21	2017	952	senate
+t	5096	7	member	Codes	2017-02-13 16:36:21	2017	938	senate
+t	5100	11	member	Codes	2017-02-13 16:36:21	2017	1099	senate
+f	5102	13	member	Codes	2017-02-13 16:36:21	2017	921	senate
+f	5104	15	member	Codes	2017-02-13 16:36:21	2017	935	senate
+t	5107	2	member	Consumer Protection	2017-02-13 16:36:21	2017	954	senate
+t	5109	4	member	Consumer Protection	2017-02-13 16:36:21	2017	953	senate
+t	5112	7	member	Consumer Protection	2017-02-13 16:36:21	2017	1015	senate
+f	5114	9	member	Consumer Protection	2017-02-13 16:36:21	2017	936	senate
+t	5118	2	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	952	senate
+t	5120	4	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	937	senate
+t	5122	6	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	1095	senate
+t	5124	8	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	949	senate
+f	5126	10	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	1098	senate
+f	5129	13	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	926	senate
+t	5152	4	member	Labor	2017-02-13 16:36:21	2017	1011	senate
+t	5158	10	member	Labor	2017-02-13 16:36:21	2017	933	senate
+f	5160	12	member	Labor	2017-02-13 16:36:21	2017	919	senate
+f	5163	15	member	Labor	2017-02-13 16:36:21	2017	926	senate
+t	5172	1	chair_person	Civil Service and Pensions	2017-02-14 09:46:16	2017	938	senate
+t	5176	5	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	1096	senate
+t	5108	3	member	Consumer Protection	2017-02-13 16:36:21	2017	944	senate
+t	5111	6	member	Consumer Protection	2017-02-13 16:36:21	2017	945	senate
+f	5113	8	member	Consumer Protection	2017-02-13 16:36:21	2017	1097	senate
+f	5116	11	member	Consumer Protection	2017-02-13 16:36:21	2017	934	senate
+t	5117	1	chair_person	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	956	senate
+t	5125	9	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	1099	senate
+f	5128	12	member	Crime Victims, Crime and Correction	2017-02-13 16:36:21	2017	943	senate
+t	5132	3	member	Insurance	2017-02-13 16:36:21	2017	937	senate
+t	5136	7	member	Insurance	2017-02-13 16:36:21	2017	1012	senate
+t	5140	11	member	Insurance	2017-02-13 16:36:21	2017	1096	senate
+t	5142	13	member	Insurance	2017-02-13 16:36:21	2017	1018	senate
+f	5146	17	member	Insurance	2017-02-13 16:36:21	2017	926	senate
+f	5148	19	member	Insurance	2017-02-13 16:36:21	2017	932	senate
+t	5197	6	member	Codes	2017-02-24 09:54:05	2017	956	senate
+t	5202	11	member	Codes	2017-02-24 09:54:05	2017	1099	senate
+f	5204	13	member	Codes	2017-02-24 09:54:05	2017	921	senate
+f	5206	15	member	Codes	2017-02-24 09:54:05	2017	935	senate
+t	5208	2	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	1090	senate
+t	5210	4	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	1012	senate
+t	5213	1	chair_person	Finance	2017-02-24 09:54:05	2017	942	senate
+t	5216	4	member	Finance	2017-02-24 09:54:05	2017	1016	senate
+t	5219	7	member	Finance	2017-02-24 09:54:05	2017	1013	senate
+t	5222	10	member	Finance	2017-02-24 09:54:05	2017	1017	senate
+t	5225	13	member	Finance	2017-02-24 09:54:05	2017	1012	senate
+t	5228	16	member	Finance	2017-02-24 09:54:05	2017	1088	senate
+t	5231	19	member	Finance	2017-02-24 09:54:05	2017	930	senate
+t	5234	22	member	Finance	2017-02-24 09:54:05	2017	1015	senate
+f	5237	25	member	Finance	2017-02-24 09:54:05	2017	935	senate
+f	5240	28	member	Finance	2017-02-24 09:54:05	2017	1085	senate
+f	5243	31	member	Finance	2017-02-24 09:54:05	2017	929	senate
+f	5248	36	member	Finance	2017-02-24 09:54:05	2017	924	senate
+t	5249	1	chair_person	Judiciary	2017-02-24 09:54:05	2017	1016	senate
+t	5253	5	member	Judiciary	2017-02-24 09:54:05	2017	955	senate
+t	5256	8	member	Judiciary	2017-02-24 09:54:05	2017	1095	senate
+t	5259	11	member	Judiciary	2017-02-24 09:54:05	2017	941	senate
+t	5262	14	member	Judiciary	2017-02-24 09:54:05	2017	933	senate
+f	5265	17	member	Judiciary	2017-02-24 09:54:05	2017	1098	senate
+f	5267	19	member	Judiciary	2017-02-24 09:54:05	2017	1085	senate
+f	5270	22	member	Judiciary	2017-02-24 09:54:05	2017	924	senate
+t	5272	2	vice_chair	Rules	2017-02-24 09:54:05	2017	939	senate
+t	5275	5	member	Rules	2017-02-24 09:54:05	2017	1017	senate
+t	5278	8	member	Rules	2017-02-24 09:54:05	2017	1012	senate
+t	5280	10	member	Rules	2017-02-24 09:54:05	2017	947	senate
+t	5283	13	member	Rules	2017-02-24 09:54:05	2017	1015	senate
+t	5286	16	member	Rules	2017-02-24 09:54:05	2017	951	senate
+f	5290	20	member	Rules	2017-02-24 09:54:05	2017	928	senate
+f	5293	23	member	Rules	2017-02-24 09:54:05	2017	925	senate
+t	5297	3	member	Transportation	2017-02-24 09:54:05	2017	920	senate
+t	5299	5	member	Transportation	2017-02-24 09:54:05	2017	956	senate
+t	5301	7	member	Transportation	2017-02-24 09:54:05	2017	1012	senate
+t	5303	9	member	Transportation	2017-02-24 09:54:05	2017	930	senate
+t	5306	12	member	Transportation	2017-02-24 09:54:05	2017	951	senate
+f	5308	14	member	Transportation	2017-02-24 09:54:05	2017	927	senate
+f	5310	16	member	Transportation	2017-02-24 09:54:05	2017	918	senate
+f	5312	18	member	Transportation	2017-02-24 09:54:05	2017	923	senate
+t	5174	3	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	1084	senate
+t	5178	7	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	933	senate
+f	5180	9	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	919	senate
+f	5182	11	member	Civil Service and Pensions	2017-02-14 09:46:16	2017	932	senate
+t	5184	2	member	Local Government	2017-02-14 09:46:16	2017	944	senate
+t	5186	4	member	Local Government	2017-02-14 09:46:16	2017	1014	senate
+f	5189	7	member	Local Government	2017-02-14 09:46:16	2017	1097	senate
+t	5193	2	vice_chair	Codes	2017-02-24 09:54:05	2017	933	senate
+t	5195	4	member	Codes	2017-02-24 09:54:05	2017	944	senate
+t	5199	8	member	Codes	2017-02-24 09:54:05	2017	1017	senate
+t	5200	9	member	Codes	2017-02-24 09:54:05	2017	941	senate
+t	5201	10	member	Codes	2017-02-24 09:54:05	2017	930	senate
+f	5203	12	member	Codes	2017-02-24 09:54:05	2017	923	senate
+f	5205	14	member	Codes	2017-02-24 09:54:05	2017	918	senate
+t	5207	1	chair_person	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	948	senate
+t	5209	3	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	954	senate
+t	5211	5	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	957	senate
+f	5212	6	member	Corporations, Authorities and Commissions	2017-02-24 09:54:05	2017	923	senate
+t	5214	2	vice_chair	Finance	2017-02-24 09:54:05	2017	933	senate
+t	5215	3	member	Finance	2017-02-24 09:54:05	2017	920	senate
+t	5217	5	member	Finance	2017-02-24 09:54:05	2017	944	senate
+t	5218	6	member	Finance	2017-02-24 09:54:05	2017	1072	senate
+t	5220	8	member	Finance	2017-02-24 09:54:05	2017	956	senate
+t	5221	9	member	Finance	2017-02-24 09:54:05	2017	938	senate
+t	5223	11	member	Finance	2017-02-24 09:54:05	2017	1011	senate
+t	5224	12	member	Finance	2017-02-24 09:54:05	2017	1084	senate
+t	5226	14	member	Finance	2017-02-24 09:54:05	2017	1010	senate
+t	5227	15	member	Finance	2017-02-24 09:54:05	2017	947	senate
+t	5229	17	member	Finance	2017-02-24 09:54:05	2017	940	senate
+t	5230	18	member	Finance	2017-02-24 09:54:05	2017	941	senate
+t	5232	20	member	Finance	2017-02-24 09:54:05	2017	948	senate
+t	5233	21	member	Finance	2017-02-24 09:54:05	2017	949	senate
+t	5235	23	member	Finance	2017-02-24 09:54:05	2017	950	senate
+t	5236	24	member	Finance	2017-02-24 09:54:05	2017	951	senate
+f	5238	26	member	Finance	2017-02-24 09:54:05	2017	946	senate
+f	5239	27	member	Finance	2017-02-24 09:54:05	2017	936	senate
+f	5241	29	member	Finance	2017-02-24 09:54:05	2017	927	senate
+f	5242	30	member	Finance	2017-02-24 09:54:05	2017	918	senate
+f	5244	32	member	Finance	2017-02-24 09:54:05	2017	943	senate
+f	5245	33	member	Finance	2017-02-24 09:54:05	2017	925	senate
+f	5246	34	member	Finance	2017-02-24 09:54:05	2017	926	senate
+f	5247	35	member	Finance	2017-02-24 09:54:05	2017	923	senate
+t	5251	3	member	Judiciary	2017-02-24 09:54:05	2017	920	senate
+t	5254	6	member	Judiciary	2017-02-24 09:54:05	2017	937	senate
+t	5257	9	member	Judiciary	2017-02-24 09:54:05	2017	1084	senate
+t	5260	12	member	Judiciary	2017-02-24 09:54:05	2017	1096	senate
+t	5263	15	member	Judiciary	2017-02-24 09:54:05	2017	1018	senate
+f	5266	18	member	Judiciary	2017-02-24 09:54:05	2017	946	senate
+f	5269	21	member	Judiciary	2017-02-24 09:54:05	2017	918	senate
+t	5271	1	chair_person	Rules	2017-02-24 09:54:05	2017	1089	senate
+t	5274	4	member	Rules	2017-02-24 09:54:05	2017	1072	senate
+t	5277	7	member	Rules	2017-02-24 09:54:05	2017	1084	senate
+t	5281	11	member	Rules	2017-02-24 09:54:05	2017	1088	senate
+t	5284	14	member	Rules	2017-02-24 09:54:05	2017	933	senate
+f	5287	17	member	Rules	2017-02-24 09:54:05	2017	1087	senate
+f	5289	19	member	Rules	2017-02-24 09:54:05	2017	927	senate
+f	5292	22	member	Rules	2017-02-24 09:54:05	2017	943	senate
+t	5295	1	chair_person	Transportation	2017-02-24 09:54:05	2017	1015	senate
+t	5298	4	member	Transportation	2017-02-24 09:54:05	2017	955	senate
+t	5302	8	member	Transportation	2017-02-24 09:54:05	2017	1088	senate
+t	5305	11	member	Transportation	2017-02-24 09:54:05	2017	949	senate
+t	5317	4	member	Codes	2017-03-02 12:36:47	2017	944	senate
+t	5320	7	member	Codes	2017-03-02 12:36:47	2017	938	senate
+t	5322	9	member	Codes	2017-03-02 12:36:47	2017	941	senate
+t	5324	11	member	Codes	2017-03-02 12:36:47	2017	1099	senate
+f	5326	13	member	Codes	2017-03-02 12:36:47	2017	921	senate
+f	5328	15	member	Codes	2017-03-02 12:36:47	2017	935	senate
+t	5330	1	chair_person	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	948	senate
+t	5331	2	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	1090	senate
+t	5332	3	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	954	senate
+t	5334	5	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	957	senate
+f	5336	7	member	Corporations, Authorities and Commissions	2017-03-02 12:36:47	2017	936	senate
+t	5337	1	chair_person	Finance	2017-03-02 12:36:47	2017	942	senate
+t	5339	3	member	Finance	2017-03-02 12:36:47	2017	920	senate
+t	5341	5	member	Finance	2017-03-02 12:36:47	2017	944	senate
+t	5342	6	member	Finance	2017-03-02 12:36:47	2017	1072	senate
+t	5343	7	member	Finance	2017-03-02 12:36:47	2017	1013	senate
+t	5345	9	member	Finance	2017-03-02 12:36:47	2017	938	senate
+t	5346	10	member	Finance	2017-03-02 12:36:47	2017	1017	senate
+t	5348	12	member	Finance	2017-03-02 12:36:47	2017	1084	senate
+t	5350	14	member	Finance	2017-03-02 12:36:47	2017	1010	senate
+t	5352	16	member	Finance	2017-03-02 12:36:47	2017	1088	senate
+t	5353	17	member	Finance	2017-03-02 12:36:47	2017	940	senate
+t	5355	19	member	Finance	2017-03-02 12:36:47	2017	930	senate
+t	5356	20	member	Finance	2017-03-02 12:36:47	2017	948	senate
+t	5358	22	member	Finance	2017-03-02 12:36:47	2017	1015	senate
+t	5359	23	member	Finance	2017-03-02 12:36:47	2017	950	senate
+t	5360	24	member	Finance	2017-03-02 12:36:47	2017	951	senate
+f	5362	26	member	Finance	2017-03-02 12:36:47	2017	1098	senate
+f	5363	27	member	Finance	2017-03-02 12:36:47	2017	946	senate
+f	5365	29	member	Finance	2017-03-02 12:36:47	2017	1085	senate
+f	5366	30	member	Finance	2017-03-02 12:36:47	2017	927	senate
+f	5368	32	member	Finance	2017-03-02 12:36:47	2017	929	senate
+f	5369	33	member	Finance	2017-03-02 12:36:47	2017	943	senate
+f	5371	35	member	Finance	2017-03-02 12:36:47	2017	926	senate
+f	5372	36	member	Finance	2017-03-02 12:36:47	2017	923	senate
+t	5374	1	chair_person	Judiciary	2017-03-02 12:36:47	2017	1016	senate
+t	5376	3	member	Judiciary	2017-03-02 12:36:47	2017	920	senate
+t	5377	4	member	Judiciary	2017-03-02 12:36:47	2017	944	senate
+t	5379	6	member	Judiciary	2017-03-02 12:36:47	2017	937	senate
+t	5383	10	member	Judiciary	2017-03-02 12:36:47	2017	1010	senate
+t	5385	12	member	Judiciary	2017-03-02 12:36:47	2017	1096	senate
+f	5389	16	member	Judiciary	2017-03-02 12:36:47	2017	921	senate
+f	5392	19	member	Judiciary	2017-03-02 12:36:47	2017	1085	senate
+t	5397	1	chair_person	Rules	2017-03-02 12:36:47	2017	1089	senate
+t	5400	4	member	Rules	2017-03-02 12:36:47	2017	1072	senate
+t	5402	6	member	Rules	2017-03-02 12:36:47	2017	1011	senate
+t	5406	10	member	Rules	2017-03-02 12:36:47	2017	947	senate
+t	5408	12	member	Rules	2017-03-02 12:36:47	2017	948	senate
+t	5410	14	member	Rules	2017-03-02 12:36:47	2017	933	senate
+f	5413	17	member	Rules	2017-03-02 12:36:47	2017	1087	senate
+f	5416	20	member	Rules	2017-03-02 12:36:47	2017	928	senate
+f	5421	25	member	Rules	2017-03-02 12:36:47	2017	923	senate
+t	5380	7	member	Judiciary	2017-03-02 12:36:47	2017	1011	senate
+t	5382	9	member	Judiciary	2017-03-02 12:36:47	2017	1084	senate
+t	5386	13	member	Judiciary	2017-03-02 12:36:47	2017	948	senate
+t	5388	15	member	Judiciary	2017-03-02 12:36:47	2017	1018	senate
+f	5390	17	member	Judiciary	2017-03-02 12:36:47	2017	1098	senate
+f	5393	20	member	Judiciary	2017-03-02 12:36:47	2017	927	senate
+f	5395	22	member	Judiciary	2017-03-02 12:36:47	2017	943	senate
 t	4523	1	chair_person	Ethics and Internal Governance Committee	2017-05-18 10:12:14	2017	1096	senate
 t	4524	2	member	Ethics and Internal Governance Committee	2017-05-18 10:12:14	2017	1072	senate
 t	4525	3	member	Ethics and Internal Governance Committee	2017-05-18 10:12:14	2017	955	senate
@@ -5403,29 +4959,595 @@ t	4537	6	member	Ethics and Internal Governance	2017-05-18 10:57:17	2017	951	sena
 f	4538	7	member	Ethics and Internal Governance	2017-05-18 10:57:17	2017	928	senate
 f	4539	8	member	Ethics and Internal Governance	2017-05-18 10:57:17	2017	926	senate
 f	4540	9	member	Ethics and Internal Governance	2017-05-18 10:57:17	2017	1086	senate
-t	4541	1	chair_person	Civil Service and Pensions	2017-06-06 18:26:24	2017	938	senate
-t	4542	2	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	955	senate
-t	4543	3	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	1084	senate
-t	4544	4	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	957	senate
-t	4545	5	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	1096	senate
-t	4546	6	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	949	senate
-t	4547	7	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	933	senate
-f	4548	8	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	1133	senate
-f	4549	9	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	934	senate
-f	4550	10	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	919	senate
-f	4551	11	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	1086	senate
-f	4552	12	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	932	senate
-t	4553	1	chair_person	Civil Service and Pensions	2017-06-06 20:46:33	2017	938	senate
-t	4554	2	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	955	senate
-t	4555	3	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	1084	senate
-t	4556	4	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	957	senate
-t	4557	5	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	1096	senate
-t	4558	6	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	949	senate
-t	4559	7	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	933	senate
-f	4560	8	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	1133	senate
-f	4561	9	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	919	senate
-f	4562	10	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	1086	senate
-f	4563	11	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	932	senate
+t	4564	1	chair_person	Banks	2014-03-03 17:09:09	2013	149	senate
+t	4565	2	vice_chair	Banks	2014-03-03 17:09:09	2013	151	senate
+t	4566	3	member	Banks	2014-03-03 17:09:09	2013	169	senate
+t	4567	4	member	Banks	2014-03-03 17:09:09	2013	132	senate
+t	4568	5	member	Banks	2014-03-03 17:09:09	2013	178	senate
+t	4569	6	member	Banks	2014-03-03 17:09:09	2013	144	senate
+t	4570	7	member	Banks	2014-03-03 17:09:09	2013	153	senate
+t	4571	8	member	Banks	2014-03-03 17:09:09	2013	163	senate
+t	4572	9	member	Banks	2014-03-03 17:09:09	2013	183	senate
+t	4573	10	member	Banks	2014-03-03 17:09:09	2013	162	senate
+t	4574	11	member	Banks	2014-03-03 17:09:09	2013	171	senate
+t	4575	12	member	Banks	2014-03-03 17:09:09	2013	147	senate
+f	4576	13	member	Banks	2014-03-03 17:09:09	2013	148	senate
+f	4577	14	member	Banks	2014-03-03 17:09:09	2013	174	senate
+f	4578	15	member	Banks	2014-03-03 17:09:09	2013	177	senate
+f	4579	16	member	Banks	2014-03-03 17:09:09	2013	172	senate
+f	4580	17	member	Banks	2014-03-03 17:09:09	2013	134	senate
+f	4581	18	member	Banks	2014-03-03 17:09:09	2013	158	senate
+t	4582	1	chair_person	Civil Service and Pensions	2014-03-03 17:09:09	2013	178	senate
+t	4583	2	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	180	senate
+t	4584	3	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	165	senate
+t	4585	4	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	153	senate
+t	4586	5	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	179	senate
+t	4587	6	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	159	senate
+t	4588	7	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	167	senate
+f	4589	8	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	134	senate
+f	4590	9	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	139	senate
+f	4591	10	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	137	senate
+f	4592	11	member	Civil Service and Pensions	2014-03-03 17:09:09	2013	131	senate
+t	4593	1	chair_person	Codes	2014-03-03 17:09:09	2013	150	senate
+t	4594	2	member	Codes	2014-03-03 17:09:09	2013	141	senate
+t	4595	3	member	Codes	2014-03-03 17:09:09	2013	132	senate
+t	4596	4	member	Codes	2014-03-03 17:09:09	2013	155	senate
+t	4597	5	member	Codes	2014-03-03 17:09:09	2013	182	senate
+t	4598	6	member	Codes	2014-03-03 17:09:09	2013	178	senate
+t	4599	7	member	Codes	2014-03-03 17:09:09	2013	165	senate
+f	4603	11	member	Codes	2014-03-03 17:09:09	2013	157	senate
+f	4605	13	member	Codes	2014-03-03 17:09:09	2013	140	senate
+f	4607	15	member	Codes	2014-03-03 17:09:09	2013	148	senate
+t	4609	1	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	171	senate
+t	4611	3	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	182	senate
+t	4615	7	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	135	senate
+f	4618	10	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	134	senate
+t	4622	3	member	Consumer Protection	2014-03-03 17:09:09	2013	135	senate
+t	4632	2	member	Education	2014-03-03 17:09:09	2013	151	senate
+t	4636	6	member	Education	2014-03-03 17:09:09	2013	163	senate
+t	4639	9	member	Education	2014-03-03 17:09:09	2013	173	senate
+t	4642	12	member	Education	2014-03-03 17:09:09	2013	147	senate
+f	4645	15	member	Education	2014-03-03 17:09:09	2013	174	senate
+f	4648	18	member	Education	2014-03-03 17:09:09	2013	128	senate
+t	4650	2	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	126	senate
+t	4652	4	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	183	senate
+t	4654	6	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	173	senate
+f	4656	8	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	172	senate
+f	4659	11	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	187	senate
+t	4661	2	member	Finance	2014-03-03 17:09:09	2013	169	senate
+t	4665	6	member	Finance	2014-03-03 17:09:09	2013	149	senate
+t	4668	9	member	Finance	2014-03-03 17:09:09	2013	165	senate
+t	4671	12	member	Finance	2014-03-03 17:09:09	2013	135	senate
+t	4674	15	member	Finance	2014-03-03 17:09:09	2013	183	senate
+t	4677	18	member	Finance	2014-03-03 17:09:09	2013	159	senate
+t	4681	22	member	Finance	2014-03-03 17:09:09	2013	153	senate
+f	4685	26	member	Finance	2014-03-03 17:09:09	2013	133	senate
+f	4691	32	member	Finance	2014-03-03 17:09:09	2013	131	senate
+f	4695	36	member	Finance	2014-03-03 17:09:09	2013	140	senate
+t	4698	2	member	Health	2014-03-03 17:09:09	2013	164	senate
+t	4701	5	member	Health	2014-03-03 17:09:09	2013	178	senate
+t	4703	7	member	Health	2014-03-03 17:09:09	2013	159	senate
+t	4706	10	member	Health	2014-03-03 17:09:09	2013	153	senate
+f	4710	14	member	Health	2014-03-03 17:09:09	2013	187	senate
+f	4712	16	member	Health	2014-03-03 17:09:09	2013	176	senate
+t	4724	2	member	Insurance	2014-03-03 17:09:09	2013	126	senate
+t	4728	6	member	Insurance	2014-03-03 17:09:09	2013	165	senate
+t	4732	10	member	Insurance	2014-03-03 17:09:09	2013	183	senate
+t	4734	12	member	Insurance	2014-03-03 17:09:09	2013	147	senate
+f	4736	14	member	Insurance	2014-03-03 17:09:09	2013	140	senate
+f	4740	18	member	Insurance	2014-03-03 17:09:09	2013	148	senate
+t	4743	2	member	Judiciary	2014-03-03 17:09:09	2013	132	senate
+t	4745	4	member	Judiciary	2014-03-03 17:09:09	2013	180	senate
+t	4747	6	member	Judiciary	2014-03-03 17:09:09	2013	175	senate
+t	4749	8	member	Judiciary	2014-03-03 17:09:09	2013	150	senate
+t	4751	10	member	Judiciary	2014-03-03 17:09:09	2013	159	senate
+t	4753	12	member	Judiciary	2014-03-03 17:09:09	2013	160	senate
+t	4755	14	member	Judiciary	2014-03-03 17:09:09	2013	147	senate
+f	4757	16	member	Judiciary	2014-03-03 17:09:09	2013	174	senate
+f	4759	18	member	Judiciary	2014-03-03 17:09:09	2013	140	senate
+f	4761	20	member	Judiciary	2014-03-03 17:09:09	2013	156	senate
+f	4763	22	member	Judiciary	2014-03-03 17:09:09	2013	139	senate
+t	4791	2	vice_chair	Transportation	2014-03-03 17:09:09	2013	163	senate
+t	4795	6	member	Transportation	2014-03-03 17:09:09	2013	167	senate
+t	4797	8	member	Transportation	2014-03-03 17:09:09	2013	183	senate
+t	4800	11	member	Transportation	2014-03-03 17:09:09	2013	160	senate
+f	4803	14	member	Transportation	2014-03-03 17:09:09	2013	177	senate
+f	4806	17	member	Transportation	2014-03-03 17:09:09	2013	157	senate
+t	4809	1	chair_person	New York City Education Subcommittee	2014-03-03 17:09:09	2013	181	senate
+f	4813	5	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	131	senate
+t	5422	1	chair_person	Civil Service and Pensions	2017-06-06 18:26:24	2017	938	senate
+t	5426	5	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	1096	senate
+t	5428	7	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	933	senate
+f	5432	11	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	1086	senate
+t	5434	1	chair_person	Civil Service and Pensions	2017-06-06 20:46:33	2017	938	senate
+t	5438	5	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	1096	senate
+t	5440	7	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	933	senate
+f	5444	11	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	932	senate
+t	5445	1	chair_person	Codes	2017-08-25 14:31:55	2017	1084	senate
+t	5449	5	member	Codes	2017-08-25 14:31:55	2017	955	senate
+t	5451	7	member	Codes	2017-08-25 14:31:55	2017	938	senate
+t	5454	10	member	Codes	2017-08-25 14:31:55	2017	930	senate
+f	5457	13	member	Codes	2017-08-25 14:31:55	2017	918	senate
+f	5459	15	member	Codes	2017-08-25 14:31:55	2017	934	senate
+t	5462	3	member	Corporations, Authorities and Commissions	2017-08-25 14:31:55	2017	954	senate
+f	5465	6	member	Corporations, Authorities and Commissions	2017-08-25 14:31:55	2017	936	senate
+t	5467	2	vice_chair	Finance	2017-08-25 14:31:55	2017	933	senate
+t	5469	4	member	Finance	2017-08-25 14:31:55	2017	1016	senate
+t	5474	9	member	Finance	2017-08-25 14:31:55	2017	938	senate
+t	5478	13	member	Finance	2017-08-25 14:31:55	2017	1012	senate
+t	5480	15	member	Finance	2017-08-25 14:31:55	2017	947	senate
+t	5482	17	member	Finance	2017-08-25 14:31:55	2017	940	senate
+t	5486	21	member	Finance	2017-08-25 14:31:55	2017	949	senate
+t	5488	23	member	Finance	2017-08-25 14:31:55	2017	950	senate
+f	5491	26	member	Finance	2017-08-25 14:31:55	2017	1098	senate
+f	5494	29	member	Finance	2017-08-25 14:31:55	2017	1085	senate
+f	5497	32	member	Finance	2017-08-25 14:31:55	2017	929	senate
+f	5500	35	member	Finance	2017-08-25 14:31:55	2017	926	senate
+t	5502	1	chair_person	Investigations and Government Operations	2017-08-25 14:31:55	2017	1014	senate
+t	5506	5	member	Investigations and Government Operations	2017-08-25 14:31:55	2017	941	senate
+t	5511	2	vice_chair	Rules	2017-08-25 14:31:55	2017	939	senate
+t	5513	4	member	Rules	2017-08-25 14:31:55	2017	1072	senate
+t	5515	6	member	Rules	2017-08-25 14:31:55	2017	1011	senate
+t	4600	8	member	Codes	2014-03-03 17:09:09	2013	183	senate
+t	4602	10	member	Codes	2014-03-03 17:09:09	2013	147	senate
+f	4608	16	member	Codes	2014-03-03 17:09:09	2013	129	senate
+t	4612	4	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	181	senate
+t	4614	6	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	173	senate
+f	4617	9	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	136	senate
+f	4619	11	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	148	senate
+t	4621	2	member	Consumer Protection	2014-03-03 17:09:09	2013	141	senate
+t	4624	5	member	Consumer Protection	2014-03-03 17:09:09	2013	167	senate
+f	4627	8	member	Consumer Protection	2014-03-03 17:09:09	2013	176	senate
+f	4630	11	member	Consumer Protection	2014-03-03 17:09:09	2013	143	senate
+t	4634	4	member	Education	2014-03-03 17:09:09	2013	175	senate
+t	4637	7	member	Education	2014-03-03 17:09:09	2013	167	senate
+t	4641	11	member	Education	2014-03-03 17:09:09	2013	171	senate
+f	4644	14	member	Education	2014-03-03 17:09:09	2013	139	senate
+f	4647	17	member	Education	2014-03-03 17:09:09	2013	156	senate
+t	4651	3	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	149	senate
+t	4655	7	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	155	senate
+f	4657	9	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	146	senate
+t	4662	3	member	Finance	2014-03-03 17:09:09	2013	151	senate
+t	4664	5	member	Finance	2014-03-03 17:09:09	2013	178	senate
+t	4666	7	member	Finance	2014-03-03 17:09:09	2013	154	senate
+t	4669	10	member	Finance	2014-03-03 17:09:09	2013	130	senate
+t	4673	14	member	Finance	2014-03-03 17:09:09	2013	150	senate
+t	4675	16	member	Finance	2014-03-03 17:09:09	2013	162	senate
+t	4679	20	member	Finance	2014-03-03 17:09:09	2013	170	senate
+f	4683	24	member	Finance	2014-03-03 17:09:09	2013	177	senate
+f	4687	28	member	Finance	2014-03-03 17:09:09	2013	174	senate
+f	4689	30	member	Finance	2014-03-03 17:09:09	2013	172	senate
+f	4693	34	member	Finance	2014-03-03 17:09:09	2013	157	senate
+f	4696	37	member	Finance	2014-03-03 17:09:09	2013	136	senate
+t	4715	2	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	169	senate
+t	4717	4	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	182	senate
+t	4719	6	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	147	senate
+f	4722	9	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	129	senate
+t	4744	3	member	Judiciary	2014-03-03 17:09:09	2013	155	senate
+t	4746	5	member	Judiciary	2014-03-03 17:09:09	2013	165	senate
+t	4748	7	member	Judiciary	2014-03-03 17:09:09	2013	135	senate
+t	4750	9	member	Judiciary	2014-03-03 17:09:09	2013	183	senate
+t	4754	13	member	Judiciary	2014-03-03 17:09:09	2013	154	senate
+f	4756	15	member	Judiciary	2014-03-03 17:09:09	2013	136	senate
+f	4758	17	member	Judiciary	2014-03-03 17:09:09	2013	137	senate
+f	4760	19	member	Judiciary	2014-03-03 17:09:09	2013	131	senate
+f	4762	21	member	Judiciary	2014-03-03 17:09:09	2013	176	senate
+f	4764	23	member	Judiciary	2014-03-03 17:09:09	2013	157	senate
+t	4767	3	member	Rules	2014-03-03 17:09:09	2013	169	senate
+t	4770	6	member	Rules	2014-03-03 17:09:09	2013	155	senate
+t	4773	9	member	Rules	2014-03-03 17:09:09	2013	175	senate
+t	4776	12	member	Rules	2014-03-03 17:09:09	2013	150	senate
+t	4779	15	member	Rules	2014-03-03 17:09:09	2013	135	senate
+f	4782	18	member	Rules	2014-03-03 17:09:09	2013	137	senate
+f	4785	21	member	Rules	2014-03-03 17:09:09	2013	168	senate
+f	4789	25	member	Rules	2014-03-03 17:09:09	2013	138	senate
+t	4790	1	chair_person	Transportation	2014-03-03 17:09:09	2013	173	senate
+t	4793	4	member	Transportation	2014-03-03 17:09:09	2013	182	senate
+t	4796	7	member	Transportation	2014-03-03 17:09:09	2013	150	senate
+t	4799	10	member	Transportation	2014-03-03 17:09:09	2013	170	senate
+f	4802	13	member	Transportation	2014-03-03 17:09:09	2013	137	senate
+f	4805	16	member	Transportation	2014-03-03 17:09:09	2013	131	senate
+f	4808	19	member	Transportation	2014-03-03 17:09:09	2013	158	senate
+t	4811	3	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	178	senate
+f	4814	6	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	156	senate
+t	5423	2	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	955	senate
+t	5425	4	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	957	senate
+t	5427	6	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	949	senate
+f	5429	8	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	1133	senate
+f	5431	10	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	919	senate
+t	5435	2	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	955	senate
+t	5437	4	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	957	senate
+t	5446	2	vice_chair	Codes	2017-08-25 14:31:55	2017	933	senate
+t	5448	4	member	Codes	2017-08-25 14:31:55	2017	944	senate
+t	5452	8	member	Codes	2017-08-25 14:31:55	2017	1017	senate
+f	5456	12	member	Codes	2017-08-25 14:31:55	2017	921	senate
+t	5461	2	member	Corporations, Authorities and Commissions	2017-08-25 14:31:55	2017	1090	senate
+t	5464	5	member	Corporations, Authorities and Commissions	2017-08-25 14:31:55	2017	957	senate
+t	5470	5	member	Finance	2017-08-25 14:31:55	2017	944	senate
+t	5472	7	member	Finance	2017-08-25 14:31:55	2017	1013	senate
+t	5476	11	member	Finance	2017-08-25 14:31:55	2017	1011	senate
+t	5481	16	member	Finance	2017-08-25 14:31:55	2017	1088	senate
+t	5483	18	member	Finance	2017-08-25 14:31:55	2017	941	senate
+t	5485	20	member	Finance	2017-08-25 14:31:55	2017	948	senate
+t	5489	24	member	Finance	2017-08-25 14:31:55	2017	951	senate
+f	5493	28	member	Finance	2017-08-25 14:31:55	2017	936	senate
+f	5495	30	member	Finance	2017-08-25 14:31:55	2017	927	senate
+f	5499	34	member	Finance	2017-08-25 14:31:55	2017	925	senate
+t	5504	3	member	Investigations and Government Operations	2017-08-25 14:31:55	2017	938	senate
+f	5508	7	member	Investigations and Government Operations	2017-08-25 14:31:55	2017	921	senate
+t	5510	1	chair_person	Rules	2017-08-25 14:31:55	2017	1089	senate
+t	5514	5	member	Rules	2017-08-25 14:31:55	2017	1017	senate
+t	5518	9	member	Rules	2017-08-25 14:31:55	2017	1010	senate
+t	5522	13	member	Rules	2017-08-25 14:31:55	2017	1015	senate
+t	5524	15	member	Rules	2017-08-25 14:31:55	2017	950	senate
+f	5526	17	member	Rules	2017-08-25 14:31:55	2017	1087	senate
+t	4601	9	member	Codes	2014-03-03 17:09:09	2013	149	senate
+f	4604	12	member	Codes	2014-03-03 17:09:09	2013	131	senate
+f	4606	14	member	Codes	2014-03-03 17:09:09	2013	176	senate
+t	4610	2	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	141	senate
+t	4613	5	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	149	senate
+f	4616	8	member	Commerce, Economic Development and Small Business	2014-03-03 17:09:09	2013	146	senate
+t	4620	1	chair_person	Consumer Protection	2014-03-03 17:09:09	2013	160	senate
+t	4626	7	member	Consumer Protection	2014-03-03 17:09:09	2013	173	senate
+f	4629	10	member	Consumer Protection	2014-03-03 17:09:09	2013	158	senate
+t	4631	1	chair_person	Education	2014-03-03 17:09:09	2013	155	senate
+t	4633	3	member	Education	2014-03-03 17:09:09	2013	165	senate
+t	4635	5	member	Education	2014-03-03 17:09:09	2013	135	senate
+t	4638	8	member	Education	2014-03-03 17:09:09	2013	162	senate
+t	4640	10	member	Education	2014-03-03 17:09:09	2013	127	senate
+f	4643	13	member	Education	2014-03-03 17:09:09	2013	143	senate
+f	4646	16	member	Education	2014-03-03 17:09:09	2013	168	senate
+t	4649	1	chair_person	Energy and Telecommunications	2014-03-03 17:09:09	2013	167	senate
+t	4653	5	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	179	senate
+f	4658	10	member	Energy and Telecommunications	2014-03-03 17:09:09	2013	137	senate
+t	4699	3	member	Health	2014-03-03 17:09:09	2013	151	senate
+t	4705	9	member	Health	2014-03-03 17:09:09	2013	170	senate
+f	4708	12	member	Health	2014-03-03 17:09:09	2013	168	senate
+f	4711	15	member	Health	2014-03-03 17:09:09	2013	148	senate
+t	4714	1	chair_person	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	170	senate
+t	4716	3	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	141	senate
+f	4720	7	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	140	senate
+t	4726	4	member	Insurance	2014-03-03 17:09:09	2013	178	senate
+t	4730	8	member	Insurance	2014-03-03 17:09:09	2013	175	senate
+t	4733	11	member	Insurance	2014-03-03 17:09:09	2013	170	senate
+f	4738	16	member	Insurance	2014-03-03 17:09:09	2013	172	senate
+t	4766	2	vice_chair	Rules	2014-03-03 17:09:09	2013	166	senate
+t	4769	5	member	Rules	2014-03-03 17:09:09	2013	151	senate
+t	4772	8	member	Rules	2014-03-03 17:09:09	2013	130	senate
+t	4775	11	member	Rules	2014-03-03 17:09:09	2013	167	senate
+t	4778	14	member	Rules	2014-03-03 17:09:09	2013	171	senate
+f	4781	17	member	Rules	2014-03-03 17:09:09	2013	174	senate
+f	4784	20	member	Rules	2014-03-03 17:09:09	2013	129	senate
+f	4786	22	member	Rules	2014-03-03 17:09:09	2013	172	senate
+f	4788	24	member	Rules	2014-03-03 17:09:09	2013	140	senate
+t	4810	2	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	165	senate
+t	4812	4	member	New York City Education Subcommittee	2014-03-03 17:09:09	2013	147	senate
+t	5424	3	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	1084	senate
+f	5430	9	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	934	senate
+f	5433	12	member	Civil Service and Pensions	2017-06-06 18:26:24	2017	932	senate
+t	5436	3	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	1084	senate
+f	5441	8	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	1133	senate
+f	5443	10	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	1086	senate
+t	5447	3	member	Codes	2017-08-25 14:31:55	2017	952	senate
+t	5450	6	member	Codes	2017-08-25 14:31:55	2017	956	senate
+t	5453	9	member	Codes	2017-08-25 14:31:55	2017	941	senate
+t	5471	6	member	Finance	2017-08-25 14:31:55	2017	1072	senate
+t	5479	14	member	Finance	2017-08-25 14:31:55	2017	1010	senate
+t	5484	19	member	Finance	2017-08-25 14:31:55	2017	930	senate
+t	5487	22	member	Finance	2017-08-25 14:31:55	2017	1015	senate
+f	5490	25	member	Finance	2017-08-25 14:31:55	2017	935	senate
+f	5492	27	member	Finance	2017-08-25 14:31:55	2017	946	senate
+f	5496	31	member	Finance	2017-08-25 14:31:55	2017	918	senate
+f	5498	33	member	Finance	2017-08-25 14:31:55	2017	943	senate
+f	5501	36	member	Finance	2017-08-25 14:31:55	2017	924	senate
+f	5509	8	member	Investigations and Government Operations	2017-08-25 14:31:55	2017	1085	senate
+t	5512	3	member	Rules	2017-08-25 14:31:55	2017	1016	senate
+t	5516	7	member	Rules	2017-08-25 14:31:55	2017	1084	senate
+t	5520	11	member	Rules	2017-08-25 14:31:55	2017	1088	senate
+t	5523	14	member	Rules	2017-08-25 14:31:55	2017	933	senate
+t	5525	16	member	Rules	2017-08-25 14:31:55	2017	951	senate
+f	5527	18	member	Rules	2017-08-25 14:31:55	2017	946	senate
+f	5529	20	member	Rules	2017-08-25 14:31:55	2017	928	senate
+f	5531	22	member	Rules	2017-08-25 14:31:55	2017	935	senate
+f	5533	24	member	Rules	2017-08-25 14:31:55	2017	925	senate
+t	5535	2	member	Social Services	2017-08-25 14:31:55	2017	1090	senate
+f	5553	14	member	Transportation	2017-08-25 14:31:55	2017	927	senate
+f	5555	16	member	Transportation	2017-08-25 14:31:55	2017	918	senate
+t	4623	4	member	Consumer Protection	2014-03-03 17:09:09	2013	144	senate
+t	4625	6	member	Consumer Protection	2014-03-03 17:09:09	2013	159	senate
+f	4628	9	member	Consumer Protection	2014-03-03 17:09:09	2013	142	senate
+t	4660	1	chair_person	Finance	2014-03-03 17:09:09	2013	132	senate
+t	4663	4	member	Finance	2014-03-03 17:09:09	2013	155	senate
+t	4667	8	member	Finance	2014-03-03 17:09:09	2013	180	senate
+t	4670	11	member	Finance	2014-03-03 17:09:09	2013	175	senate
+t	4672	13	member	Finance	2014-03-03 17:09:09	2013	163	senate
+t	4676	17	member	Finance	2014-03-03 17:09:09	2013	173	senate
+t	4678	19	member	Finance	2014-03-03 17:09:09	2013	127	senate
+t	4680	21	member	Finance	2014-03-03 17:09:09	2013	171	senate
+f	4682	23	member	Finance	2014-03-03 17:09:09	2013	129	senate
+f	4684	25	member	Finance	2014-03-03 17:09:09	2013	137	senate
+f	4686	27	member	Finance	2014-03-03 17:09:09	2013	138	senate
+f	4688	29	member	Finance	2014-03-03 17:09:09	2013	168	senate
+f	4690	31	member	Finance	2014-03-03 17:09:09	2013	187	senate
+f	4692	33	member	Finance	2014-03-03 17:09:09	2013	156	senate
+f	4694	35	member	Finance	2014-03-03 17:09:09	2013	146	senate
+t	4697	1	chair_person	Health	2014-03-03 17:09:09	2013	180	senate
+t	4700	4	member	Health	2014-03-03 17:09:09	2013	181	senate
+t	4702	6	member	Health	2014-03-03 17:09:09	2013	130	senate
+t	4704	8	member	Health	2014-03-03 17:09:09	2013	127	senate
+f	4707	11	member	Health	2014-03-03 17:09:09	2013	133	senate
+f	4709	13	member	Health	2014-03-03 17:09:09	2013	136	senate
+f	4713	17	member	Health	2014-03-03 17:09:09	2013	142	senate
+t	4718	5	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	150	senate
+f	4721	8	member	Housing, Construction and Community Development	2014-03-03 17:09:09	2013	177	senate
+t	4723	1	chair_person	Insurance	2014-03-03 17:09:09	2013	127	senate
+t	4725	3	member	Insurance	2014-03-03 17:09:09	2013	155	senate
+t	4727	5	member	Insurance	2014-03-03 17:09:09	2013	154	senate
+t	4729	7	member	Insurance	2014-03-03 17:09:09	2013	130	senate
+t	4731	9	member	Insurance	2014-03-03 17:09:09	2013	153	senate
+f	4735	13	member	Insurance	2014-03-03 17:09:09	2013	174	senate
+f	4737	15	member	Insurance	2014-03-03 17:09:09	2013	146	senate
+f	4739	17	member	Insurance	2014-03-03 17:09:09	2013	156	senate
+f	4741	19	member	Insurance	2014-03-03 17:09:09	2013	187	senate
+t	4742	1	chair_person	Judiciary	2014-03-03 17:09:09	2013	169	senate
+t	4752	11	member	Judiciary	2014-03-03 17:09:09	2013	162	senate
+t	4765	1	chair_person	Rules	2014-03-03 17:09:09	2013	184	senate
+t	4768	4	member	Rules	2014-03-03 17:09:09	2013	126	senate
+t	4771	7	member	Rules	2014-03-03 17:09:09	2013	180	senate
+t	4774	10	member	Rules	2014-03-03 17:09:09	2013	163	senate
+t	4777	13	member	Rules	2014-03-03 17:09:09	2013	127	senate
+f	4780	16	member	Rules	2014-03-03 17:09:09	2013	152	senate
+f	4783	19	member	Rules	2014-03-03 17:09:09	2013	136	senate
+f	4787	23	member	Rules	2014-03-03 17:09:09	2013	131	senate
+t	4792	3	member	Transportation	2014-03-03 17:09:09	2013	126	senate
+t	4794	5	member	Transportation	2014-03-03 17:09:09	2013	130	senate
+t	4798	9	member	Transportation	2014-03-03 17:09:09	2013	162	senate
+t	4801	12	member	Transportation	2014-03-03 17:09:09	2013	147	senate
+f	4804	15	member	Transportation	2014-03-03 17:09:09	2013	146	senate
+f	4807	18	member	Transportation	2014-03-03 17:09:09	2013	156	senate
+t	4815	1	chair_person	Aging	2014-03-13 14:48:16	2013	171	senate
+t	4816	2	member	Aging	2014-03-13 14:48:16	2013	178	senate
+t	4817	3	member	Aging	2014-03-13 14:48:16	2013	181	senate
+t	4818	4	member	Aging	2014-03-13 14:48:16	2013	175	senate
+t	4819	5	member	Aging	2014-03-13 14:48:16	2013	144	senate
+t	4820	6	member	Aging	2014-03-13 14:48:16	2013	160	senate
+f	4821	7	member	Aging	2014-03-13 14:48:16	2013	177	senate
+f	4822	8	member	Aging	2014-03-13 14:48:16	2013	139	senate
+f	4823	9	member	Aging	2014-03-13 14:48:16	2013	156	senate
+f	4824	10	member	Aging	2014-03-13 14:48:16	2013	134	senate
+t	4825	1	chair_person	Banks	2014-03-13 14:48:16	2013	149	senate
+t	4826	2	vice_chair	Banks	2014-03-13 14:48:16	2013	151	senate
+t	4827	3	member	Banks	2014-03-13 14:48:16	2013	169	senate
+t	4828	4	member	Banks	2014-03-13 14:48:16	2013	132	senate
+t	4829	5	member	Banks	2014-03-13 14:48:16	2013	178	senate
+t	4830	6	member	Banks	2014-03-13 14:48:16	2013	144	senate
+t	4831	7	member	Banks	2014-03-13 14:48:16	2013	153	senate
+t	4832	8	member	Banks	2014-03-13 14:48:16	2013	163	senate
+t	4833	9	member	Banks	2014-03-13 14:48:16	2013	183	senate
+t	4834	10	member	Banks	2014-03-13 14:48:16	2013	162	senate
+t	4835	11	member	Banks	2014-03-13 14:48:16	2013	171	senate
+t	4836	12	member	Banks	2014-03-13 14:48:16	2013	147	senate
+f	4837	13	member	Banks	2014-03-13 14:48:16	2013	148	senate
+f	4838	14	member	Banks	2014-03-13 14:48:16	2013	174	senate
+f	4839	15	member	Banks	2014-03-13 14:48:16	2013	177	senate
+f	4840	16	member	Banks	2014-03-13 14:48:16	2013	172	senate
+f	4841	17	member	Banks	2014-03-13 14:48:16	2013	134	senate
+f	4842	18	member	Banks	2014-03-13 14:48:16	2013	158	senate
+f	4843	19	member	Banks	2014-03-13 14:48:16	2013	146	senate
+t	4844	1	chair_person	Cities	2014-03-13 14:48:16	2013	165	senate
+t	4845	2	member	Cities	2014-03-13 14:48:16	2013	164	senate
+t	4846	3	member	Cities	2014-03-13 14:48:16	2013	132	senate
+t	4847	4	member	Cities	2014-03-13 14:48:16	2013	154	senate
+f	4848	5	member	Cities	2014-03-13 14:48:16	2013	157	senate
+f	4849	6	member	Cities	2014-03-13 14:48:16	2013	174	senate
+t	4850	1	chair_person	Education	2014-03-13 14:48:16	2013	155	senate
+t	4851	2	member	Education	2014-03-13 14:48:16	2013	151	senate
+t	4852	3	member	Education	2014-03-13 14:48:16	2013	165	senate
+t	4853	4	member	Education	2014-03-13 14:48:16	2013	175	senate
+t	4854	5	member	Education	2014-03-13 14:48:16	2013	135	senate
+t	4855	6	member	Education	2014-03-13 14:48:16	2013	163	senate
+t	4856	7	member	Education	2014-03-13 14:48:16	2013	167	senate
+t	4857	8	member	Education	2014-03-13 14:48:16	2013	162	senate
+t	4858	9	member	Education	2014-03-13 14:48:16	2013	173	senate
+t	4859	10	member	Education	2014-03-13 14:48:16	2013	127	senate
+t	4860	11	member	Education	2014-03-13 14:48:16	2013	171	senate
+t	4861	12	member	Education	2014-03-13 14:48:16	2013	147	senate
+f	4862	13	member	Education	2014-03-13 14:48:16	2013	143	senate
+f	4863	14	member	Education	2014-03-13 14:48:16	2013	139	senate
+f	4864	15	member	Education	2014-03-13 14:48:16	2013	174	senate
+f	4865	16	member	Education	2014-03-13 14:48:16	2013	168	senate
+f	4868	19	member	Education	2014-03-13 14:48:16	2013	187	senate
+t	4871	3	member	Environmental Conservation	2014-03-13 14:48:16	2013	175	senate
+t	4873	5	member	Environmental Conservation	2014-03-13 14:48:16	2013	163	senate
+t	4875	7	member	Environmental Conservation	2014-03-13 14:48:16	2013	183	senate
+f	4877	9	member	Environmental Conservation	2014-03-13 14:48:16	2013	148	senate
+f	4879	11	member	Environmental Conservation	2014-03-13 14:48:16	2013	142	senate
+t	4886	5	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	144	senate
+f	4889	8	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	139	senate
+f	4892	11	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	128	senate
+t	4895	3	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	155	senate
+t	4898	6	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	154	senate
+f	4901	9	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	139	senate
+f	4904	12	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	128	senate
+t	5439	6	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	949	senate
+f	5442	9	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	919	senate
+t	5455	11	member	Codes	2017-08-25 14:31:55	2017	1099	senate
+f	5458	14	member	Codes	2017-08-25 14:31:55	2017	935	senate
+t	5460	1	chair_person	Corporations, Authorities and Commissions	2017-08-25 14:31:55	2017	948	senate
+t	5463	4	member	Corporations, Authorities and Commissions	2017-08-25 14:31:55	2017	1012	senate
+t	5466	1	chair_person	Finance	2017-08-25 14:31:55	2017	942	senate
+t	5468	3	member	Finance	2017-08-25 14:31:55	2017	920	senate
+t	5473	8	member	Finance	2017-08-25 14:31:55	2017	956	senate
+t	5475	10	member	Finance	2017-08-25 14:31:55	2017	1017	senate
+t	5477	12	member	Finance	2017-08-25 14:31:55	2017	1084	senate
+t	5503	2	member	Investigations and Government Operations	2017-08-25 14:31:55	2017	1072	senate
+t	5505	4	member	Investigations and Government Operations	2017-08-25 14:31:55	2017	1084	senate
+t	5507	6	member	Investigations and Government Operations	2017-08-25 14:31:55	2017	1096	senate
+t	5538	5	member	Social Services	2017-08-25 14:31:55	2017	1010	senate
+t	5541	2	vice_chair	Transportation	2017-08-25 14:31:55	2017	941	senate
+t	5544	5	member	Transportation	2017-08-25 14:31:55	2017	956	senate
+t	5547	8	member	Transportation	2017-08-25 14:31:55	2017	1088	senate
+t	5550	11	member	Transportation	2017-08-25 14:31:55	2017	949	senate
+f	5557	18	member	Transportation	2017-08-25 14:31:55	2017	924	senate
+f	4866	17	member	Education	2014-03-13 14:48:16	2013	156	senate
+t	4894	2	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	126	senate
+t	4897	5	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	149	senate
+t	4899	7	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	130	senate
+f	4903	11	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	134	senate
+t	4919	2	member	Banks	2017-01-30 16:39:21	2017	952	senate
+t	4921	4	member	Banks	2017-01-30 16:39:21	2017	1016	senate
+t	4923	6	member	Banks	2017-01-30 16:39:21	2017	1095	senate
+t	4929	12	member	Banks	2017-01-30 16:39:21	2017	933	senate
+f	4931	14	member	Banks	2017-01-30 16:39:21	2017	932	senate
+f	4935	18	member	Banks	2017-01-30 16:39:21	2017	929	senate
+t	4941	4	member	Cities	2017-01-30 16:39:21	2017	953	senate
+t	5517	8	member	Rules	2017-08-25 14:31:55	2017	1012	senate
+t	5519	10	member	Rules	2017-08-25 14:31:55	2017	947	senate
+t	5521	12	member	Rules	2017-08-25 14:31:55	2017	948	senate
+f	5528	19	member	Rules	2017-08-25 14:31:55	2017	927	senate
+f	5530	21	member	Rules	2017-08-25 14:31:55	2017	929	senate
+t	5537	4	member	Social Services	2017-08-25 14:31:55	2017	945	senate
+f	5539	6	member	Social Services	2017-08-25 14:31:55	2017	1086	senate
+t	5540	1	chair_person	Transportation	2017-08-25 14:31:55	2017	1015	senate
+t	5543	4	member	Transportation	2017-08-25 14:31:55	2017	955	senate
+t	5546	7	member	Transportation	2017-08-25 14:31:55	2017	1012	senate
+t	5549	10	member	Transportation	2017-08-25 14:31:55	2017	948	senate
+t	5552	13	member	Transportation	2017-08-25 14:31:55	2017	942	senate
+f	5554	15	member	Transportation	2017-08-25 14:31:55	2017	1085	senate
+f	5556	17	member	Transportation	2017-08-25 14:31:55	2017	929	senate
+f	4867	18	member	Education	2014-03-13 14:48:16	2013	128	senate
+t	4869	1	chair_person	Environmental Conservation	2014-03-13 14:48:16	2013	154	senate
+f	4881	13	member	Environmental Conservation	2014-03-13 14:48:16	2013	128	senate
+t	4883	2	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	141	senate
+t	4885	4	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	149	senate
+t	4888	7	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	162	senate
+f	4890	9	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	143	senate
+f	5532	23	member	Rules	2017-08-25 14:31:55	2017	943	senate
+t	5534	1	chair_person	Social Services	2017-08-25 14:31:55	2017	1099	senate
+t	5536	3	member	Social Services	2017-08-25 14:31:55	2017	954	senate
+t	5542	3	member	Transportation	2017-08-25 14:31:55	2017	920	senate
+t	5545	6	member	Transportation	2017-08-25 14:31:55	2017	1017	senate
+t	5548	9	member	Transportation	2017-08-25 14:31:55	2017	930	senate
+t	5551	12	member	Transportation	2017-08-25 14:31:55	2017	951	senate
+t	4870	2	vice_chair	Environmental Conservation	2014-03-13 14:48:16	2013	147	senate
+t	4872	4	member	Environmental Conservation	2014-03-13 14:48:16	2013	135	senate
+t	4874	6	member	Environmental Conservation	2014-03-13 14:48:16	2013	167	senate
+t	4876	8	member	Environmental Conservation	2014-03-13 14:48:16	2013	170	senate
+f	4878	10	member	Environmental Conservation	2014-03-13 14:48:16	2013	140	senate
+f	4880	12	member	Environmental Conservation	2014-03-13 14:48:16	2013	143	senate
+t	4882	1	chair_person	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	169	senate
+t	4884	3	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	126	senate
+t	4887	6	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	150	senate
+f	4891	10	member	Racing, Gaming and Wagering	2014-03-13 14:48:16	2013	134	senate
+t	4893	1	chair_person	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	164	senate
+t	4896	4	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	178	senate
+t	4900	8	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	160	senate
+f	4902	10	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	158	senate
+f	4905	13	member	Veterans, Homeland Security and Military Affairs	2014-03-13 14:48:16	2013	143	senate
+t	4906	1	chair_person	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	153	senate
+t	4907	2	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	171	senate
+t	4908	3	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	141	senate
+t	4909	4	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	182	senate
+t	4910	5	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	181	senate
+t	4911	6	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	149	senate
+t	4912	7	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	173	senate
+t	4913	8	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	135	senate
+f	4914	9	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	146	senate
+f	4915	10	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	136	senate
+f	4916	11	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	134	senate
+f	4917	12	member	Commerce, Economic Development and Small Business	2014-03-17 18:43:42	2013	148	senate
+t	4918	1	chair_person	Banks	2017-01-30 16:39:21	2017	937	senate
+t	4920	3	member	Banks	2017-01-30 16:39:21	2017	954	senate
+t	4922	5	member	Banks	2017-01-30 16:39:21	2017	945	senate
+t	4924	7	member	Banks	2017-01-30 16:39:21	2017	1088	senate
+t	4925	8	member	Banks	2017-01-30 16:39:21	2017	940	senate
+t	4926	9	member	Banks	2017-01-30 16:39:21	2017	1014	senate
+t	4927	10	member	Banks	2017-01-30 16:39:21	2017	941	senate
+t	4928	11	member	Banks	2017-01-30 16:39:21	2017	930	senate
+t	4930	13	member	Banks	2017-01-30 16:39:21	2017	1099	senate
+f	4932	15	member	Banks	2017-01-30 16:39:21	2017	1098	senate
+f	4933	16	member	Banks	2017-01-30 16:39:21	2017	946	senate
+f	4934	17	member	Banks	2017-01-30 16:39:21	2017	1085	senate
+f	4936	19	member	Banks	2017-01-30 16:39:21	2017	922	senate
+f	4937	20	member	Banks	2017-01-30 16:39:21	2017	925	senate
+t	4938	1	chair_person	Cities	2017-01-30 16:39:21	2017	1013	senate
+t	4939	2	member	Cities	2017-01-30 16:39:21	2017	952	senate
+t	4940	3	member	Cities	2017-01-30 16:39:21	2017	920	senate
+t	4942	5	member	Cities	2017-01-30 16:39:21	2017	1095	senate
+f	4943	6	member	Cities	2017-01-30 16:39:21	2017	1086	senate
+t	4944	1	chair_person	Codes	2017-01-30 16:39:21	2017	1084	senate
+t	4945	2	vice_chair	Codes	2017-01-30 16:39:21	2017	933	senate
+t	4946	3	member	Codes	2017-01-30 16:39:21	2017	952	senate
+t	4947	4	member	Codes	2017-01-30 16:39:21	2017	944	senate
+t	4948	5	member	Codes	2017-01-30 16:39:21	2017	955	senate
+t	4949	6	member	Codes	2017-01-30 16:39:21	2017	956	senate
+t	4950	7	member	Codes	2017-01-30 16:39:21	2017	938	senate
+t	4951	8	member	Codes	2017-01-30 16:39:21	2017	1017	senate
+t	4952	9	member	Codes	2017-01-30 16:39:21	2017	941	senate
+t	4953	10	member	Codes	2017-01-30 16:39:21	2017	930	senate
+t	4954	11	member	Codes	2017-01-30 16:39:21	2017	1099	senate
+f	4955	12	member	Codes	2017-01-30 16:39:21	2017	923	senate
+f	4956	13	member	Codes	2017-01-30 16:39:21	2017	1098	senate
+f	4957	14	member	Codes	2017-01-30 16:39:21	2017	921	senate
+f	4958	15	member	Codes	2017-01-30 16:39:21	2017	918	senate
+f	4959	16	member	Codes	2017-01-30 16:39:21	2017	935	senate
+f	4960	17	member	Codes	2017-01-30 16:39:21	2017	931	senate
+t	4961	1	chair_person	Consumer Protection	2017-01-30 16:39:21	2017	1072	senate
+t	4962	2	member	Consumer Protection	2017-01-30 16:39:21	2017	954	senate
+t	4963	3	member	Consumer Protection	2017-01-30 16:39:21	2017	944	senate
+t	4964	4	member	Consumer Protection	2017-01-30 16:39:21	2017	953	senate
+t	4965	5	member	Consumer Protection	2017-01-30 16:39:21	2017	937	senate
+t	4966	6	member	Consumer Protection	2017-01-30 16:39:21	2017	945	senate
+t	4967	7	member	Consumer Protection	2017-01-30 16:39:21	2017	1015	senate
+f	4968	8	member	Consumer Protection	2017-01-30 16:39:21	2017	936	senate
+f	4969	9	member	Consumer Protection	2017-01-30 16:39:21	2017	922	senate
+f	4970	10	member	Consumer Protection	2017-01-30 16:39:21	2017	934	senate
+t	4971	1	chair_person	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	956	senate
+t	4972	2	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	952	senate
+t	4973	3	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	1017	senate
+t	4974	4	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	937	senate
+t	4975	5	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	945	senate
+t	4976	6	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	1095	senate
+t	4977	7	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	947	senate
+t	4978	8	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	949	senate
+t	4979	9	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	1099	senate
+f	4980	10	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	1098	senate
+f	4981	11	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	943	senate
+f	4982	12	member	Crime Victims, Crime and Correction	2017-01-30 16:39:21	2017	926	senate
+t	4983	1	chair_person	Labor	2017-01-30 16:39:21	2017	1090	senate
+t	4984	2	member	Labor	2017-01-30 16:39:21	2017	952	senate
+t	4987	5	member	Labor	2017-01-30 16:39:21	2017	1088	senate
+t	4990	8	member	Labor	2017-01-30 16:39:21	2017	949	senate
+f	4993	11	member	Labor	2017-01-30 16:39:21	2017	919	senate
+f	4996	14	member	Labor	2017-01-30 16:39:21	2017	932	senate
+t	4997	1	chair_person	Transportation	2017-01-30 16:39:21	2017	1015	senate
+t	4999	3	member	Transportation	2017-01-30 16:39:21	2017	920	senate
+t	5002	6	member	Transportation	2017-01-30 16:39:21	2017	1017	senate
+t	5005	9	member	Transportation	2017-01-30 16:39:21	2017	930	senate
+t	5008	12	member	Transportation	2017-01-30 16:39:21	2017	951	senate
+f	5011	15	member	Transportation	2017-01-30 16:39:21	2017	1085	senate
+f	5013	17	member	Transportation	2017-01-30 16:39:21	2017	929	senate
+f	5016	20	member	Transportation	2017-01-30 16:39:21	2017	924	senate
+t	4985	3	member	Labor	2017-01-30 16:39:21	2017	956	senate
+t	4988	6	member	Labor	2017-01-30 16:39:21	2017	1014	senate
+t	4991	9	member	Labor	2017-01-30 16:39:21	2017	1015	senate
+f	4994	12	member	Labor	2017-01-30 16:39:21	2017	927	senate
+t	4998	2	vice_chair	Transportation	2017-01-30 16:39:21	2017	941	senate
+t	5001	5	member	Transportation	2017-01-30 16:39:21	2017	956	senate
+t	5004	8	member	Transportation	2017-01-30 16:39:21	2017	1088	senate
+t	5007	11	member	Transportation	2017-01-30 16:39:21	2017	949	senate
+f	5010	14	member	Transportation	2017-01-30 16:39:21	2017	927	senate
+f	5014	18	member	Transportation	2017-01-30 16:39:21	2017	931	senate
+t	4986	4	member	Labor	2017-01-30 16:39:21	2017	1011	senate
+t	4989	7	member	Labor	2017-01-30 16:39:21	2017	957	senate
+t	4992	10	member	Labor	2017-01-30 16:39:21	2017	933	senate
+f	4995	13	member	Labor	2017-01-30 16:39:21	2017	926	senate
+t	5000	4	member	Transportation	2017-01-30 16:39:21	2017	955	senate
+t	5003	7	member	Transportation	2017-01-30 16:39:21	2017	1012	senate
+t	5006	10	member	Transportation	2017-01-30 16:39:21	2017	948	senate
+t	5009	13	member	Transportation	2017-01-30 16:39:21	2017	942	senate
+f	5012	16	member	Transportation	2017-01-30 16:39:21	2017	918	senate
+f	5015	19	member	Transportation	2017-01-30 16:39:21	2017	923	senate
 \.
 
 
@@ -5433,14 +5555,14 @@ f	4563	11	member	Civil Service and Pensions	2017-06-06 20:46:33	2017	932	senate
 -- Name: committee_member_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-SELECT pg_catalog.setval('committee_member_id_seq', 4563, true);
+SELECT pg_catalog.setval('committee_member_id_seq', 5557, true);
 
 
 --
 -- Name: committee_version_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-SELECT pg_catalog.setval('committee_version_id_seq', 324, true);
+SELECT pg_catalog.setval('committee_version_id_seq', 387, true);
 
 
 SET search_path = public, pg_catalog;

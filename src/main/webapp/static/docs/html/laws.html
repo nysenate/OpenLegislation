@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
         <link rel="next" title="Senate Floor Transcripts API" href="transcripts_floor.html"/>
         <link rel="prev" title="Senate Committee API" href="committees.html"/> 
@@ -41,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -81,18 +87,23 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agendas.html"><strong>Senate Agenda API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="committees.html"><strong>Senate Committee API</strong></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href=""><strong>NYS Laws API</strong></a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>NYS Laws API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-list-of-law-ids">Get a list of law ids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-the-law-structure">Get the law structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-law-sub-document">Get a law sub document</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#search-for-law-documents">Search for law documents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#get-law-updates">Get law updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-law-document-updates">Get law document updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-law-tree-updates">Get law tree updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-repealed-laws">Get repealed laws</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a></li>
@@ -112,8 +123,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="reference.html">Open Legislation</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="reference.html">Open Legislation</a>
+        
       </nav>
 
 
@@ -126,19 +139,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="reference.html">Docs</a> &raquo;</li>
-      
-    <li><strong>NYS Laws API</strong></li>
+    
+      <li><a href="reference.html">Docs</a> &raquo;</li>
+        
+      <li><strong>NYS Laws API</strong></li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/laws.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/laws.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -167,7 +197,7 @@ It&#8217;s possible to retrieve law documents roughly as they were represented d
 <div class="section" id="get-a-list-of-law-ids">
 <h2>Get a list of law ids<a class="headerlink" href="#get-a-list-of-law-ids" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -195,7 +225,7 @@ It&#8217;s possible to retrieve law documents roughly as they were represented d
 </tbody>
 </table>
 <p><strong>Response</strong></p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Listing of consolidated and unconsolidated NYS Laws&quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;law-info list&quot;</span><span class="p">,</span>
@@ -227,7 +257,7 @@ It&#8217;s possible to retrieve law documents roughly as they were represented d
 <p>Laws are represented as a collection of sub documents, each of which is structured within a hierarchy.
 The following call will provide the structure of the law.</p>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -255,13 +285,13 @@ The following call will provide the structure of the law.</p>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/ABC                  // Get latest law structure for ABC law
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/laws/ABC                  // Get latest law structure for ABC law
 /api/3/laws/TAX?date=2015-01-01  // Get law structure for TAX law as it appeared on or before 01/01/2015
 /api/3/laws/EDN?full=true        // Get latest law structure for EDN law as well as the text body of the law
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// /api/3/laws/RPT</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="c1">// /api/3/laws/RPT</span>
 <span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;The document structure for RPT law&quot;</span><span class="p">,</span>
@@ -332,15 +362,15 @@ the text body. Note that response can be rather large (several MB) for certain l
 <div class="section" id="get-a-law-sub-document">
 <h2>Get a law sub document<a class="headerlink" href="#get-a-law-sub-document" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">locationId</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>The lawId once again is the three letter code (e.g. EDN, TAX) and locationId is the identifier for the sub document.
 You can discover the locationId when you make an API request for the law structure (see above section). See the
 &#8216;locationId&#8217; field for that response.</p>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/TAX/8/     // Get section 8 of Tax law
-/api/3/laws/EDN/A2/    // Get article 2 of Education law
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">TAX</span><span class="o">/</span><span class="mi">8</span><span class="o">/</span>     <span class="o">//</span> <span class="n">Get</span> <span class="n">section</span> <span class="mi">8</span> <span class="n">of</span> <span class="n">Tax</span> <span class="n">law</span>
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">EDN</span><span class="o">/</span><span class="n">A2</span><span class="o">/</span>    <span class="o">//</span> <span class="n">Get</span> <span class="n">article</span> <span class="mi">2</span> <span class="n">of</span> <span class="n">Education</span> <span class="n">law</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -349,7 +379,7 @@ You can discover the locationId when you make an API request for the law structu
 </div>
 <p><strong>Response</strong></p>
 <p>The response here is straight-forward.</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Law document for location A2 in EDN law &quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;law-document&quot;</span><span class="p">,</span>
@@ -366,7 +396,7 @@ You can discover the locationId when you make an API request for the law structu
 </pre></div>
 </div>
 <p>If the law document was not found you will receive an error response</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;The requested law document was not found&quot;</span><span class="p">,</span>
     <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
@@ -383,8 +413,8 @@ You can discover the locationId when you make an API request for the law structu
 <div class="section" id="search-for-law-documents">
 <h2>Search for law documents<a class="headerlink" href="#search-for-law-documents" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>(GET) /api/3/laws/search           // Search across all law volumes
-(GET) /api/3/laws/{lawId}/search   // Search within a specific law volume
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">search</span>           <span class="o">//</span> <span class="n">Search</span> <span class="n">across</span> <span class="nb">all</span> <span class="n">law</span> <span class="n">volumes</span>
+<span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">search</span>   <span class="o">//</span> <span class="n">Search</span> <span class="n">within</span> <span class="n">a</span> <span class="n">specific</span> <span class="n">law</span> <span class="n">volume</span>
 </pre></div>
 </div>
 <p><strong>Required Params</strong></p>
@@ -436,13 +466,13 @@ You can discover the locationId when you make an API request for the law structu
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/search?term=chickens                            // Search all law volumes for the word &#39;chickens&#39;
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/laws/search?term=chickens                            // Search all law volumes for the word &#39;chickens&#39;
 /api/3/laws/EDN/search?term=teacher&amp;sort=activeDate:desc    // Search education law for documents containing &#39;teacher&#39;
                                                             // sorted by the activeDate in descending order.
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;search-results list&quot;</span><span class="p">,</span>
@@ -469,21 +499,17 @@ You can discover the locationId when you make an API request for the law structu
 </pre></div>
 </div>
 </div>
-<div class="section" id="get-law-updates">
-<h2>Get law updates<a class="headerlink" href="#get-law-updates" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-law-document-updates">
+<h2>Get law document updates<a class="headerlink" href="#get-law-document-updates" title="Permalink to this headline">¶</a></h2>
 <p>To identify which documents have been modified or added to a body of law, use the law updates API.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Currently only updates and modifications to law documents are tracked. Structural modifications to a body
-of law are not reported yet (such as repeals, removal of an article), but may be implemented in the future.</p>
-</div>
+<p>To detect updates to the structure of the law document tree, see <a class="reference internal" href="#get-law-tree-updates">Get law tree updates</a>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Law updates are received in a batch update on a weekly basis, so updates that occur during the week will only be visible at the end of that week.</p>
 </div>
 <p><strong>Usage</strong></p>
 <p>List of laws updated during the given date/time range</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/updates/{fromDateTime}/{toDateTime}
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -491,14 +517,14 @@ of law are not reported yet (such as repeals, removal of an article), but may be
 <p class="last">The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.</p>
 </div>
 <p>All updates made on a specific body of law</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/{lawId}/updates/
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
 
-e.g. /api/3/laws/ABC/updates/
-     /api/3/laws/VAT/updates/
+<span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">ABC</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
+     <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">VAT</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
 </pre></div>
 </div>
 <p>All updates made on a specific body of law during a date/time range</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/laws/{lawId}/updates/{fromDateTime}/{toDateTime}
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="p">{</span><span class="n">lawId</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -539,10 +565,10 @@ e.g. /api/3/laws/ABC/updates/
 </table>
 <p><strong>Response</strong></p>
 <p>Global law updates</p>
-<div class="highlight-python"><div class="highlight"><pre>e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2015</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">01</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">/</span><span class="mi">2015</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">01</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
 </pre></div>
 </div>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
@@ -565,11 +591,11 @@ e.g. /api/3/laws/ABC/updates/
 </pre></div>
 </div>
 <p>Detailed law doc updates</p>
-<div class="highlight-python"><div class="highlight"><pre>e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true
+<div class="highlight-default"><div class="highlight"><pre><span></span>e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true
      /api/3/laws/ABC/updates/
 </pre></div>
 </div>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-digest list&quot;</span><span class="p">,</span>
@@ -597,19 +623,132 @@ e.g. /api/3/laws/ABC/updates/
 </pre></div>
 </div>
 </div>
+<div class="section" id="get-law-tree-updates">
+<h2>Get law tree updates<a class="headerlink" href="#get-law-tree-updates" title="Permalink to this headline">¶</a></h2>
+<p>Gets a list of laws which have had structural changes over a specified date/time range.</p>
+<p>To see updates to the content of law documents, see <a class="reference internal" href="#get-law-document-updates">Get law document updates</a>.</p>
+<p><strong>Usage</strong></p>
+<p>List of laws with tree updates during the given date/time range</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span>
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
+For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
+The fromDateTime and toDateTime range is exclusive.
+If excluded, fromDateTime defaults to Jan 1 1970 and toDateTime defaults to the current datetime</p>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="25%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>type</td>
+<td>(processed|published)</td>
+<td>The type of law update</td>
+</tr>
+<tr class="row-odd"><td>order</td>
+<td>string (asc|desc)</td>
+<td>Order the results by update date/time</td>
+</tr>
+<tr class="row-even"><td>limit</td>
+<td>1 - 1000</td>
+<td>Number of results to return (high limits take longer)</td>
+</tr>
+<tr class="row-odd"><td>offset</td>
+<td>&gt;= 1</td>
+<td>Result number to start from</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response</strong></p>
+<p>Get law tree updates by published date</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>e.g. /api/3/laws/tree/updates/2016-10-06/2016-10-08?type=published
+</pre></div>
+</div>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nx">responseType</span><span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
+    <span class="nx">total</span><span class="o">:</span> <span class="mi">23</span><span class="p">,</span>
+    <span class="nx">offsetStart</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">offsetEnd</span><span class="o">:</span> <span class="mi">23</span><span class="p">,</span>
+    <span class="nx">limit</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="nx">result</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="nx">id</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">lawId</span><span class="o">:</span> <span class="s2">&quot;PAR&quot;</span><span class="p">,</span>                   <span class="c1">// Location id of doc that was updated</span>
+                    <span class="nx">activeDate</span><span class="o">:</span> <span class="s2">&quot;2016-10-07&quot;</span>        <span class="c1">// Published date of this doc</span>
+                <span class="p">},</span>
+                <span class="nx">contentType</span><span class="o">:</span> <span class="s2">&quot;LAW&quot;</span><span class="p">,</span>
+                <span class="nx">sourceId</span><span class="o">:</span> <span class="s2">&quot;20161007.UPDATE&quot;</span><span class="p">,</span>
+                <span class="nx">sourceDateTime</span><span class="o">:</span> <span class="s2">&quot;2016-10-07T00:00&quot;</span><span class="p">,</span>
+                <span class="nx">processedDateTime</span><span class="o">:</span> <span class="s2">&quot;2017-08-15T12:40:02.271155&quot;</span>
+            <span class="p">},</span>
+            <span class="p">(</span><span class="nx">truncated</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-repealed-laws">
+<h2>Get repealed laws<a class="headerlink" href="#get-repealed-laws" title="Permalink to this headline">¶</a></h2>
+<p>Gets a list of law documents that have been repealed with the option of restricting to a specified date/time range.
+The date/time range applies to the processed date of the law document, not the official repeal date.</p>
+<p><strong>Usage</strong></p>
+<p>List of laws repealed during the given date/time range</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">laws</span><span class="o">/</span><span class="n">repealed</span>
+</pre></div>
+</div>
+<p><strong>Optional Params</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="20%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Values</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>fromDateTime</td>
+<td>ISO 8601 datetime</td>
+<td>default 1970-01-01 - The inclusive start time of the specified time range</td>
+</tr>
+<tr class="row-odd"><td>toDateTime</td>
+<td>ISO 8601 datetime</td>
+<td>default now - The inclusive end time of the specified time period</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="transcripts_floor.html" class="btn btn-neutral float-right" title="Senate Floor Transcripts API" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="transcripts_floor.html" class="btn btn-neutral float-right" title="Senate Floor Transcripts API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="committees.html" class="btn btn-neutral" title="Senate Committee API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="committees.html" class="btn btn-neutral" title="Senate Committee API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -643,7 +782,8 @@ e.g. /api/3/laws/ABC/updates/
             VERSION:'2.0-alpha',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

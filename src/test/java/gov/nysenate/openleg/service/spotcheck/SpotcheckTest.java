@@ -21,6 +21,11 @@ public class SpotcheckTest extends WebAppBaseTests {
     @Autowired SpotCheckCtrl spotCheckCtrl;
 
     @Test
+    public void runWeeklyReports() {
+        spotcheckRunService.runIntervalReports();
+    }
+
+    @Test
     public void runReports()
     {
         spotcheckRunService.runReports(SpotCheckRefType.SENATE_SITE_CALENDAR);

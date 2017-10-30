@@ -51,7 +51,17 @@ public enum SqlLawUpdatesQuery implements BasicSqlQuery
             "law_id, document_id, " + SELECT_COLUMNS_FOR_DIGEST_FRAGMENT.sql,
             "AND document_id = :documentId",
             "")
-    );
+    ),
+
+    SELECT_LAW_TREE_UPDATES(
+            "SELECT law_id, " + SELECT_COLUMNS_FOR_TOKEN_FRAGMENT.getSql() + "\n" +
+            "FROM ${schema}." + SqlTable.LAW_CHANGE_LOG + "\n" +
+            "WHERE table_name = '" + SqlTable.LAW_TREE + "'\n" +
+            "  AND ${dateColumn} BETWEEN :startDateTime AND :endDateTime\n" +
+            "GROUP BY law_id"
+    ),
+
+    ;
 
     private String sql;
 

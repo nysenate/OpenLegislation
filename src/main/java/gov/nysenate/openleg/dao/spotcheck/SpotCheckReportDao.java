@@ -6,7 +6,6 @@ import gov.nysenate.openleg.model.spotcheck.*;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
-import java.util.EnumSet;
 import java.util.Set;
 
 /**
@@ -29,18 +28,22 @@ public interface SpotCheckReportDao<ContentKey>
      * Get mismatch status summary counts for given datasource and report date.
      *
      * @param reportDate The date of the report
+     * @param contentType
      * @return OpenMismatchesSummary
      */
     MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource datasource,
-                                                   Set<SpotCheckMismatchIgnore> ignoreStatuses);
+                                                   SpotCheckContentType contentType, Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**
-     * Get mismatch type summary counts for the given datasource and date.
+     * Get mismatch type summary counts for the given date, data source, content type, and mismatch status.
      *
      * @return MismatchTypeSummary
      */
-    MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate, SpotCheckDataSource datasource,
-                                               MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses);
+    MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate,
+                                               SpotCheckDataSource datasource,
+                                               SpotCheckContentType contentType,
+                                               MismatchStatus mismatchStatus,
+                                               Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
 
     /**
@@ -49,7 +52,6 @@ public interface SpotCheckReportDao<ContentKey>
      * @return MismatchContentTypeSummary
      */
     MismatchContentTypeSummary getMismatchContentTypeSummary(LocalDate reportDate, SpotCheckDataSource datasource,
-                                                             MismatchStatus mismatchStatus, EnumSet mismatchTypes,
                                                              Set<SpotCheckMismatchIgnore> ignoreStatuses);
 
     /**

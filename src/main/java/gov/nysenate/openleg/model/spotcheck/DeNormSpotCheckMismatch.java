@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import com.google.common.base.MoreObjects;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,6 +43,9 @@ public class DeNormSpotCheckMismatch<ContentKey> {
     /** The datetime this observation was made. */
     private LocalDateTime observedDateTime;
 
+    /** The first time this mismatch has been seen. This value resets once a mismatch is closed. */
+    private LocalDateTime firstSeenDateTime;
+
     /** The date time when the report that generated this observation was run */
     private LocalDateTime reportDateTime;
 
@@ -58,9 +63,80 @@ public class DeNormSpotCheckMismatch<ContentKey> {
        this.ignoreStatus = SpotCheckMismatchIgnore.NOT_IGNORED;
     }
 
+    public DeNormSpotCheckMismatch copy() {
+        DeNormSpotCheckMismatch copy = new DeNormSpotCheckMismatch(key, type, dataSource);
+        copy.setReportId(reportId);
+        copy.setState(state);
+        copy.setContentType(contentType);
+        copy.setReferenceId(referenceId);
+        copy.setReferenceData(referenceData);
+        copy.setObservedData(observedData);
+        copy.setNotes(notes);
+        copy.setObservedDateTime(observedDateTime);
+        copy.setFirstSeenDateTime(firstSeenDateTime);
+        copy.setReportDateTime(reportDateTime);
+        copy.setIgnoreStatus(ignoreStatus);
+        copy.setIssueIds(issueIds);
+        return copy;
+    }
+
+    /* --- Overrides --- */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DeNormSpotCheckMismatch<?> that = (DeNormSpotCheckMismatch<?>) o;
+        if (key != null ? !key.equals(that.key) : that.key != null) return false;
+        if (type != that.type) return false;
+        if (dataSource != that.dataSource) return false;
+        return contentType == that.contentType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = key != null ? key.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (dataSource != null ? dataSource.hashCode() : 0);
+        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("dataSource", dataSource)
+                .add("key", key)
+                .add("type", type)
+                .add("state", state)
+                .toString();
+    }
+
+   /* --- Functional Getters/Setters --- */
+
     public void setReferenceDateTime(LocalDateTime referenceDateTime) {
         this.setReferenceId(new SpotCheckReferenceId(this.getReferenceId().getReferenceType(), referenceDateTime));
     }
+
+    /**
+     * Set issue ids to the given values, ignores empty string values.
+     */
+    public void setIssueIds(Set<String> issueIds) {
+        this.issueIds = issueIds.stream().filter(i -> i.length() > 0).collect(Collectors.toSet());
+    }
+
+    public void addIssueId(String issueId) {
+        if (issueId == null || issueId == "") {
+            return;
+        }
+        this.issueIds.add(issueId);
+    }
+
+    public void deleteIssueId(String issueId) {
+        this.issueIds.remove(issueId);
+    }
+
+    /* --- Getters / Setters --- */
 
     public void setMismatchId(int mismatchId) {
         this.mismatchId = mismatchId;
@@ -94,6 +170,10 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         this.observedDateTime = observedDateTime;
     }
 
+    public void setFirstSeenDateTime(LocalDateTime firstSeenDateTime) {
+        this.firstSeenDateTime = firstSeenDateTime;
+    }
+
     public void setReportDateTime(LocalDateTime reportDateTime) {
         this.reportDateTime = reportDateTime;
     }
@@ -104,24 +184,6 @@ public class DeNormSpotCheckMismatch<ContentKey> {
 
     public void setContentType(SpotCheckContentType contentType) {
         this.contentType = contentType;
-    }
-
-    /**
-     * Set issue ids to the given values, ignores empty string values.
-     */
-    public void setIssueIds(Set<String> issueIds) {
-        this.issueIds = issueIds.stream().filter(i -> i.length() > 0).collect(Collectors.toSet());
-    }
-
-    public void addIssueId(String issueId) {
-        if (issueId == null || issueId == "") {
-            return;
-        }
-        this.issueIds.add(issueId);
-    }
-
-    public void deleteIssueId(String issueId) {
-        this.issueIds.remove(issueId);
     }
 
     public int getMismatchId() {
@@ -164,6 +226,10 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         return observedData;
     }
 
+    public LocalDateTime getFirstSeenDateTime() {
+        return firstSeenDateTime;
+    }
+
     public String getNotes() {
         return notes;
     }
@@ -182,25 +248,5 @@ public class DeNormSpotCheckMismatch<ContentKey> {
 
     public Set<String> getIssueIds() {
         return issueIds;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DeNormSpotCheckMismatch<?> mismatch = (DeNormSpotCheckMismatch<?>) o;
-
-        if (key != null ? !key.equals(mismatch.key) : mismatch.key != null) return false;
-        if (type != mismatch.type) return false;
-        return dataSource == mismatch.dataSource;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = key != null ? key.hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (dataSource != null ? dataSource.hashCode() : 0);
-        return result;
     }
 }

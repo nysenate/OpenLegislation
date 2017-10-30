@@ -45,7 +45,7 @@ public class SobiCollateIT extends BaseTests {
     private File xmlArchive;
 
     private static final List<String> fileNames = Arrays.asList(
-            "2017-01-01-00.00.00.000000_BILLSTAT_S00609.XML"
+            "2017-01-01-00.00.00.000000_BILLSTAT_S00009.XML"
     );
 
     private final File testFileDir = new File(

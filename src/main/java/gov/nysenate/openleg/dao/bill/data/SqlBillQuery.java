@@ -294,16 +294,18 @@ public enum SqlBillQuery implements BasicSqlQuery
         " last_fragment_id)\n" +
         "VALUES (:printNo, :sessionYear, :prevPrintNo, :prevSessionYear, :prevVersion, :lastFragmentId)"
     ),
-    DELETE_BILL_PREVIOUS_VERSIONS(
-        "DELETE FROM ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
-        "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    UPDATE_BILL_PREVIOUS_VERSION(
+            "UPDATE ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
+            "SET prev_bill_print_no = :prevPrintNo, prev_bill_session_year = :prevSessionYear, \n" +
+            "prev_amend_version = :prevVersion, last_fragment_id = :lastFragmentId \n" +
+            "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     DELETE_BILL_PREVIOUS_VERSION(
-        DELETE_BILL_PREVIOUS_VERSIONS.sql + " AND prev_bill_print_no = :prevPrintNo AND " +
-        "prev_bill_session_year = :prevSessionYear AND prev_amend_version = :prevVersion"
+            "DELETE FROM ${schema}." + SqlTable.BILL_PREVIOUS_VERSION + "\n" +
+            "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
 
-    /** --- Bill Milestones --- */
+        /** --- Bill Milestones --- */
 
     GET_BILL_MILESTONES(
         "SELECT * FROM ${schema}." + SqlTable.BILL_MILESTONE + "\n" +

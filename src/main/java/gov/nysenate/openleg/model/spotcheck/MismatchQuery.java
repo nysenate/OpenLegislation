@@ -27,8 +27,8 @@ public class MismatchQuery {
                          MismatchStatus status, Set<SpotCheckContentType> contentTypes) {
         this.reportDate = reportDate;
         this.dataSource = dataSource;
-        this.contentTypes = contentTypes;
         this.status = status;
+        this.contentTypes = contentTypes;
         // Default values
         this.mismatchTypes = EnumSet.allOf(SpotCheckMismatchType.class);
         this.ignoredStatuses = EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED);
@@ -39,12 +39,20 @@ public class MismatchQuery {
         return status.getState();
     }
 
-    public LocalDateTime getEndDateTime() {
-        return status.getEndDateTime(reportDate);
+    public LocalDateTime getObservedStartDateTime() {
+        return status.getObservedStartDateTime(reportDate);
     }
 
-    public LocalDateTime getStartDateTime() {
-        return status.getStartDateTime(reportDate);
+    public LocalDateTime getFirstSeenStartDateTime() {
+        return status.getFirstSeenStartDateTime(reportDate);
+    }
+
+    public LocalDateTime getFirstSeenEndDateTime() {
+        return status.getFirstSeenEndDateTime(reportDate);
+    }
+
+    public LocalDateTime getObservedEndDateTime() {
+        return status.getObservedEndDateTime(reportDate);
     }
 
     /** --- Setters and Getters --- */

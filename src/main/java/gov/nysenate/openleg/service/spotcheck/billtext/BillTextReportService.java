@@ -9,18 +9,15 @@ import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
-import gov.nysenate.openleg.service.scraping.BillTextScraper;
-import gov.nysenate.openleg.service.scraping.ScrapedBillMemoParser;
-import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 /**
  * Created by kyle on 3/12/15.
@@ -28,39 +25,29 @@ import java.util.List;
 @Service("LRSBillTextReport")
 public class BillTextReportService extends BaseSpotCheckReportService {
 
-    @Autowired
-    BillTextScraper scraper;
-    @Autowired
-    ScrapedBillTextParser scrapedBillTextParser;
-    @Autowired
-    ScrapedBillMemoParser scrapedBillMemoParser;
-    @Autowired
-    SqlFsBillTextReferenceDao dao;
-    @Autowired
-    BillDataService billDataService;
-    @Autowired
-    BaseBillIdSpotCheckReportDao reportDao;
-    @Autowired
-    BillTextCheckService billTextCheckService;
-
-    @PostConstruct
-    public void init() throws IOException{
-    }
+    @Autowired private SqlFsBillTextReferenceDao dao;
+    @Autowired private BillDataService billDataService;
+    @Autowired private BaseBillIdSpotCheckReportDao reportDao;
+    @Autowired private BillTextCheckService billTextCheckService;
 
     @Override
     protected SpotCheckReportDao getReportDao() {
         return reportDao;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_SCRAPED_BILL;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
+    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         List<BillTextReference> references = dao.getUncheckedBillTextReferences();
         if (references.isEmpty()) {
             throw new ReferenceDataNotFoundEx();
@@ -87,20 +74,20 @@ public class BillTextReportService extends BaseSpotCheckReportService {
         return report;
     }
 
-    /** --- Internal Methods --- */
+    /* --- Internal Methods --- */
 
     private SpotCheckObservation<BaseBillId> generateObservation(BillTextReference btr) {
         //Gets bill from openleg processed info
         try {
             Bill bill = billDataService.getBill(new BaseBillId(btr.getPrintNo(), btr.getSessionYear()));
             return billTextCheckService.check(bill, btr);
-        }catch(BillNotFoundEx e){
+        } catch (BillNotFoundEx e) {
             SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(btr.getReferenceId(), btr.getBaseBillId());
             if (btr.isNotFound()) { // Bill text references are still generated if LRS data is not found
-                ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING,
+                ob.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING,
                         "also missing", btr.getBaseBillId() + "\n" + btr.getText()));
             }
-            ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", btr.getBaseBillId().toString()));
+            ob.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, "", btr.getBaseBillId().toString()));
             return ob;
         }
     }

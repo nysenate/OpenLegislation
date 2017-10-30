@@ -2,11 +2,13 @@ package gov.nysenate.openleg.model.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Simple representation of a session year. The senate has two year session periods, the start of
@@ -110,6 +112,12 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
     public Range<LocalDateTime> asDateTimeRange() {
         return Range.closed(LocalDateTime.of(getSessionStartYear(), 1, 1, 0, 0, 0),
                             LocalDateTime.of(getSessionEndYear(), 12, 31, 23, 59, 59));
+    }
+
+    /** Returns a sorted list containing the years of the session */
+    @JsonIgnore
+    public List<Integer> asYearList() {
+        return Lists.newArrayList(this.year, this.year + 1);
     }
 
     /**

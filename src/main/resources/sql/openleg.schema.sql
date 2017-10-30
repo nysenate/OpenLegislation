@@ -4024,7 +4024,7 @@ CREATE TABLE spotcheck_mismatch (
     datasource text NOT NULL,
     content_type text NOT NULL,
     reference_type text NOT NULL,
-    status text NOT NULL,
+    state text NOT NULL,
     reference_data text NOT NULL,
     observed_data text NOT NULL,
     notes text,
@@ -4032,6 +4032,7 @@ CREATE TABLE spotcheck_mismatch (
     ignore_status text DEFAULT 'NOT_IGNORED'::text NOT NULL,
     report_date_time timestamp without time zone NOT NULL,
     observed_date_time timestamp without time zone NOT NULL,
+    first_seen_date_time timestamp without time zone NOT NULL,
     reference_active_date_time timestamp without time zone NOT NULL,
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
@@ -4049,11 +4050,15 @@ ALTER TABLE ONLY spotcheck_mismatch
 
 
 --
--- Name: spotcheck_mismatch_datasource_content_type_ref_date_time_index; Type: INDEX; Schema: master; Owner: postgres
+-- Name: spotcheck_mismatch_observed_date_time_index; Type: INDEX; Schema: master; Owner: postgres
 --
 
-CREATE INDEX spotcheck_mismatch_datasource_content_type_ref_date_time_index ON spotcheck_mismatch USING btree (datasource, content_type, reference_active_date_time);
+CREATE INDEX spotcheck_mismatch_observed_date_time_index on master.spotcheck_mismatch(observed_date_time);
 
+--
+-- Name: spotcheck_mismatch_first_seen_date_time_index; Type: INDEX; Schema: master; Owner: postgres
+--
+CREATE INDEX spotcheck_mismatch_first_seen_date_time_index on master.spotcheck_mismatch(first_seen_date_time);
 
 --
 -- Name: transcript; Type: TABLE; Schema: master; Owner: postgres
@@ -5922,6 +5927,11 @@ CREATE INDEX law_tree_doc_id_idx ON law_tree USING btree (doc_id);
 CREATE INDEX law_tree_published_date_idx ON law_tree USING btree (published_date);
 
 
+--
+-- Name: law_tree_published_date_idx; Type: INDEX; Schema: master; Owner: postgres
+--
+
+CREATE INDEX law_tree_law_id_doc_id_idx ON law_tree USING btree (law_id, doc_id);
 
 --
 -- Name: notification_digest_subscription_next_digest_index; Type: INDEX; Schema: master; Owner: postgres

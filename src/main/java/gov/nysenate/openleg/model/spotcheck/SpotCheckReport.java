@@ -1,13 +1,12 @@
 package gov.nysenate.openleg.model.spotcheck;
 
-import com.google.common.collect.*;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A SpotCheckReport is basically a collection of observations that have 1 or more mismatches associated
@@ -18,6 +17,9 @@ import java.util.Optional;
  */
 public class SpotCheckReport<ContentKey>
 {
+    /** Auto increment id */
+    private int id;
+
     /** Identifier for this report. */
     protected SpotCheckReportId reportId;
 
@@ -168,6 +170,30 @@ public class SpotCheckReport<ContentKey>
         return Optional.ofNullable(this.observations).map(Map::size).orElse(0);
     }
 
+    /**
+     * Get ContentKey's that were checked by this report.
+     * @return
+     */
+    public Set<ContentKey> getCheckedKeys() {
+        return this.getObservations().values().stream().map(SpotCheckObservation::getKey).collect(Collectors.toSet());
+    }
+
+    /**
+     * Add an observation to the report indicating that content is missing from the reference data
+     * @param missingKey ContentKey - id of the missing data
+     */
+    public void addRefMissingObs(ContentKey missingKey) {
+        this.addObservation(SpotCheckObservation.getRefMissingObs(reportId.getReferenceId(), missingKey));
+    }
+
+    /**
+     * Add an observation to the report indicating that content is missing from Openleg data
+     * @param missingKey ContentKey - id of the missing data
+     */
+    public void addObservedDataMissingObs(ContentKey missingKey) {
+        this.addObservation(SpotCheckObservation.getObserveDataMissingObs(reportId.getReferenceId(), missingKey));
+    }
+
     /** --- Delegates --- */
 
     public LocalDateTime getReportDateTime() {
@@ -183,6 +209,14 @@ public class SpotCheckReport<ContentKey>
     }
 
     /** --- Basic Getters/Setters --- */
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public SpotCheckReportId getReportId() {
         return reportId;

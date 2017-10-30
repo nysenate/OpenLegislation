@@ -13,11 +13,11 @@ public abstract class BaseSpotcheckProcessService implements ProcessService
 {
     private static final Logger logger = LoggerFactory.getLogger(BaseSpotcheckProcessService.class);
 
-    @Autowired SpotCheckNotificationService spotCheckNotificationService;
+    @Autowired private SpotCheckNotificationService spotCheckNotificationService;
 
-    @Autowired EventBus eventBus;
+    @Autowired private EventBus eventBus;
 
-    @Autowired Environment environment;
+    @Autowired private Environment environment;
 
     /**
      * {@inheritDoc}

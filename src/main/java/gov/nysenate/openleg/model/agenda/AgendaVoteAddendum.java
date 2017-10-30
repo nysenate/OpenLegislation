@@ -45,6 +45,10 @@ public class AgendaVoteAddendum extends BaseLegislativeContent implements Serial
 
     /** --- Functional Getters/Setters --- */
 
+    public AgendaVoteCommittee getCommittee(CommitteeId committeeId) {
+        return this.committeeVoteMap.get(committeeId);
+    }
+
     public void putCommittee(AgendaVoteCommittee committee) {
         this.committeeVoteMap.put(committee.getCommitteeId(), committee);
     }

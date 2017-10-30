@@ -41,16 +41,20 @@ function spotcheckMismatchApi($resource) {
     function createMismatch(mismatch) {
         return {
             id: parseMismatchId(mismatch),
+            key: mismatch.key,
+            contentType: mismatch.contentType,
             status: parseStatus(mismatch),
-            disableDiff: parseDisableDiff(mismatch),
+            datasource: mismatch.dataSource,
             mismatchType: parseMismatchType(mismatch),
             observedDate: parseObservedDate(mismatch),
             referenceDate: parseReferenceDate(mismatch),
             reportDate: parseReportDate(mismatch),
             issue: parseIssues(mismatch),
+            issueInput: parseIssues(mismatch),
+            refTypeLabel: parseRefTypeLabel(mismatch),
             refType: parseRefType(mismatch),
             bill: parseBill(mismatch),
-            source: parseRefType(mismatch),
+            billId: parseBillId(mismatch),
             calNo: parseCalNo(mismatch),
             calType:parseCalType(mismatch),
             session: parseSession(mismatch),
@@ -60,15 +64,6 @@ function spotcheckMismatchApi($resource) {
             diffLoading: false,
             agendaNo: parseAgendaNo(mismatch),
             committee: parseCommittee(mismatch)
-        }
-    }
-
-    function parseDisableDiff(mismatch) {
-        if (mismatch.mismatchType == "REFERENCE_DATA_MISSING" || mismatch.mismatchType == "OBSERVE_DATA_MISSING") {
-            return true;
-        }
-        else{
-            return false;
         }
     }
 
@@ -86,7 +81,7 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseSession(mismatch) {
-        return mismatch.key.session;
+        return mismatch.key.session || {};
     }
 
     function parseBasePrintNo(mismatch) {
@@ -169,16 +164,40 @@ function spotcheckMismatchApi($resource) {
         return mismatch.issueIds.items.join(', ')
     }
 
-    function parseRefType(mismatch) {
+    function parseRefTypeLabel(mismatch) {
         return referenceTypeDisplayMap[mismatch.referenceType];
+    }
+
+    function parseRefType(mismatch) {
+        return mismatch.referenceType;
     }
 
     function parseBill(mismatch) {
         return mismatch.key.printNo || "";
     }
 
+    function parseBillId(mismatch) {
+        return parseBill(mismatch) + '-' + parseSession(mismatch).year;
+    }
+
     function parseCalNo(mismatch) {
-        return mismatch.key.calNo || "";
+        var calNo = mismatch.key.calNo;
+        if(!calNo) {
+            return "";
+        }
+
+        switch (mismatch.key.type) {
+            case 'FLOOR_CALENDAR':
+                return calNo + 'Floor';
+            case 'SUPPLEMENTAL_CALENDAR':
+                return calNo + mismatch.key.version;
+            case 'ACTIVE_LIST':
+                return calNo + '-' + mismatch.key.sequenceNo;
+            default:
+                console.error('Could not parse calendar no for mismatch:', mismatch);
+                return 'Error';
+        }
+
     }
 
     function parseAgendaNo(mismatch) {

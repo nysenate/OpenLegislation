@@ -1,13 +1,24 @@
 package gov.nysenate.openleg.util;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.*;
 
 public class FileIOUtils
 {
+    private static final Set<PosixFilePermission> filePermissions = ImmutableSet.of(
+            PosixFilePermission.OWNER_READ,
+            PosixFilePermission.OWNER_WRITE,
+            PosixFilePermission.GROUP_READ,
+            PosixFilePermission.OTHERS_READ);
+
     /**
      * Returns a collection of files sorted by file name (not file path!)
      *
@@ -150,5 +161,32 @@ public class FileIOUtils
             Optional.ofNullable(plsof).ifPresent(Process::destroy);
         }
         return true;
+    }
+
+    /**
+     * Saves a character sequence to a file and sets common permissions to the file.
+     * See {@code FileUtils.write} for details on file saving.
+     * Permissions set are owner read + write, group read, and others read.
+     * @param file The file to save to.
+     * @param data The data to save to the file.
+     * @throws IOException
+     */
+    public static void write(File file, CharSequence data) throws IOException {
+        FileUtils.write(file, data);
+        Files.setPosixFilePermissions(Paths.get(file.getAbsolutePath()), filePermissions);
+    }
+
+    /**
+     * Saves a character sequence to a file and sets common permissions to the file.
+     * See {@code FileUtils.write} for details on file saving.
+     * Permissions set are owner read + write, group read, and others read.
+     * @param file The file to save to.
+     * @param data The data to save to the file.
+     * @param encoding The encoding to use.
+     * @throws IOException
+     */
+    public static void write(File file, CharSequence data, Charset encoding) throws IOException {
+        FileUtils.write(file, data, encoding);
+        Files.setPosixFilePermissions(Paths.get(file.getAbsolutePath()), filePermissions);
     }
 }

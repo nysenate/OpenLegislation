@@ -88,7 +88,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         // Get the actions
         bill.setActions(getBillActions(baseParams));
         // Get direct prev bill version ids
-        bill.setDirectPreviousVersions(getDirectPrevVersions(baseParams));
+        bill.setDirectPreviousVersion(getDirectPrevVersion(baseParams));
         // Get the prev bill version ids
         bill.setAllPreviousVersions(getAllPreviousVersions(baseParams));
         // Get the associated bill committees
@@ -177,7 +177,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         // Determine which actions need to be inserted/deleted. Individual actions are never updated.
         updateActions(bill, sobiFragment, billParams);
         // Determine if the previous versions have changed and insert accordingly.
-        updatePreviousBillVersions(bill, sobiFragment, billParams);
+        updatePreviousBillVersion(bill, sobiFragment, billParams);
         // Update associated committees
         updateBillCommittees(bill, sobiFragment, billParams);
         // Update veto messages
@@ -258,11 +258,15 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     }
 
     /**
-     * Get previous session year bill ids for the base bill id in the params.
+     * Get previous session year bill id for the base bill id in the params.
      */
-    public Set<BillId> getDirectPrevVersions(ImmutableParams baseParams) {
-        return new TreeSet<>(jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS.getSql(schema()), baseParams,
-                new BillPreviousVersionRowMapper()));
+    public BillId getDirectPrevVersion(ImmutableParams baseParams) {
+        List<BillId> billIds =jdbcNamed.query(SqlBillQuery.SELECT_BILL_PREVIOUS_VERSIONS.getSql(schema(), new OrderBy("bill_session_year", SortOrder.DESC)),
+                             baseParams,new BillPreviousVersionRowMapper());
+        if (billIds.size() == 0) {
+            return null;
+        }
+        return billIds.get(0);
     }
 
     /**
@@ -451,24 +455,18 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     }
 
     /**
-     * Update the bill's previous version set.
+     * Update the bill's previous version.
      */
-    protected void updatePreviousBillVersions(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
-        Set<BillId> existingPrevBills = getDirectPrevVersions(billParams);
-        if (existingPrevBills.equals(bill.getDirectPreviousVersions())) {
-            return;
+    protected void updatePreviousBillVersion(Bill bill, SobiFragment sobiFragment, ImmutableParams billParams) {
+        if (bill.getDirectPreviousVersion() == null) {
+            jdbcNamed.update(SqlBillQuery.DELETE_BILL_PREVIOUS_VERSION.getSql(schema()), billParams);
         }
-        Set<BillId> newPrevBills = new HashSet<>(bill.getDirectPreviousVersions());
-        newPrevBills.removeAll(existingPrevBills);               // New prev bill ids to insert
-        existingPrevBills.removeAll(bill.getDirectPreviousVersions()); // Old prev bill ids to delete
-        existingPrevBills.forEach(billId -> {
-            ImmutableParams prevParams = ImmutableParams.from(getBillPrevVersionParams(bill, billId, sobiFragment));
-            jdbcNamed.update(SqlBillQuery.DELETE_BILL_PREVIOUS_VERSIONS.getSql(schema()), prevParams);
-        });
-        newPrevBills.forEach(billId -> {
-            ImmutableParams prevParams = ImmutableParams.from(getBillPrevVersionParams(bill, billId, sobiFragment));
-            jdbcNamed.update(SqlBillQuery.INSERT_BILL_PREVIOUS_VERSION.getSql(schema()), prevParams);
-        });
+        else {
+            MapSqlParameterSource params = getBillPrevVersionParams(bill, sobiFragment);
+            if (jdbcNamed.update(SqlBillQuery.UPDATE_BILL_PREVIOUS_VERSION.getSql(schema()), params) == 0) {
+                jdbcNamed.update(SqlBillQuery.INSERT_BILL_PREVIOUS_VERSION.getSql(schema()), params);
+            }
+        }
         // Update the bill object to include any indirect previous versions resulting from the new prev version
         bill.setAllPreviousVersions(getAllPreviousVersions(billParams));
     }
@@ -909,12 +907,12 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         return params;
     }
 
-    private static MapSqlParameterSource getBillPrevVersionParams(Bill bill, BillId prevVersion, SobiFragment fragment) {
+    private static MapSqlParameterSource getBillPrevVersionParams(Bill bill, SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(bill, params);
-        params.addValue("prevPrintNo", prevVersion.getBasePrintNo())
-                .addValue("prevSessionYear", prevVersion.getSession().getYear())
-                .addValue("prevVersion", prevVersion.getVersion().getValue());
+        params.addValue("prevPrintNo", bill.getDirectPreviousVersion().getBasePrintNo())
+                .addValue("prevSessionYear", bill.getDirectPreviousVersion().getSession().getYear())
+                .addValue("prevVersion", bill.getDirectPreviousVersion().getVersion().getValue());
         addLastFragmentParam(fragment, params);
         return params;
     }

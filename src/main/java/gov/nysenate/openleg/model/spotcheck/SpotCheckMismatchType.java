@@ -4,10 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import gov.nysenate.openleg.util.OutputUtils;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
@@ -27,7 +24,7 @@ public enum SpotCheckMismatchType
 
     BILL_ACTION("Action", LBDC_DAYBREAK, SENATE_SITE_BILLS),
     BILL_ACTIVE_AMENDMENT("Active Amendment", LBDC_DAYBREAK, LBDC_SCRAPED_BILL, SENATE_SITE_BILLS, OPENLEG_BILL),
-    BILL_AMENDMENT_PUBLISH("Published Status", LBDC_DAYBREAK),
+    BILL_AMENDMENT_PUBLISH("Published Status", LBDC_DAYBREAK, SENATE_SITE_BILLS),
     BILL_COSPONSOR("Co Sponsor", LBDC_DAYBREAK, SENATE_SITE_BILLS),
     BILL_FULLTEXT_PAGE_COUNT("Page Count", LBDC_DAYBREAK),
     BILL_TEXT_LINE_OFFSET("Text Line Offset", LBDC_SCRAPED_BILL, SENATE_SITE_BILLS),
@@ -72,11 +69,12 @@ public enum SpotCheckMismatchType
 
     /** --- Agenda Committee Meeting info mismatches --- */
 
-    AGENDA_BILL_LISTING("Bill List", LBDC_AGENDA_ALERT, OPENLEG_AGENDA),
-    AGENDA_CHAIR("Chair", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
-    AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
-    AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
-    AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT,OPENLEG_AGENDA),
+    AGENDA_BILL_LISTING("Bill List", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
+    AGENDA_CHAIR("Chair", LBDC_AGENDA_ALERT, OPENLEG_AGENDA),
+    AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
+    AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
+    AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
+    AGENDA_BILLS("Bills", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
     AGENDA_MODIFIED_DATE_TIME("Modified Date Time", OPENLEG_AGENDA),
     AGENDA_HAS_VOTES("Has Votes", OPENLEG_AGENDA),
     AGENDA_ATTENDANCE_LIST("Agenda Attendance List",OPENLEG_AGENDA),
@@ -117,6 +115,13 @@ public enum SpotCheckMismatchType
     SpotCheckMismatchType(String displayName, SpotCheckRefType... refTypes) {
         this.displayName = displayName;
         this.refTypes = new HashSet<>(Arrays.asList(refTypes));
+    }
+
+    public boolean possibleForContentType(SpotCheckContentType contentType) {
+        Objects.requireNonNull(contentType);
+        return this.getRefTypes().stream()
+                .map(SpotCheckRefType::getContentType)
+                .anyMatch(contentType::equals);
     }
 
     public String getDisplayName() {

@@ -28,7 +28,7 @@ public enum MismatchOrderBy {
     CAL_TYPE("key->'type'"),
 
     /** Agenda Fields */
-    AGENDA_NO("key->'agenda_no'"),
+    AGENDA_NO("(key->'agendaNo')::smallint"),
     AGENDA_COMMITTEE("key->'committee_name'")
     ;
 

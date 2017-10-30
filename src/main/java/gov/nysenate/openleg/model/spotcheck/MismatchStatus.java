@@ -21,7 +21,7 @@ public enum MismatchStatus {
         return state;
     }
 
-    public LocalDateTime getStartDateTime(LocalDate date) {
+    public LocalDateTime getObservedStartDateTime(LocalDate date) {
         switch(this) {
             case NEW:
             case RESOLVED:
@@ -31,12 +31,25 @@ public enum MismatchStatus {
         }
     }
 
-    public LocalDateTime getEndDateTime(LocalDate date) {
+    public LocalDateTime getFirstSeenStartDateTime(LocalDate date) {
+        switch(this) {
+            case NEW:
+                return date.atStartOfDay();
+            default:
+                return SessionYear.of(date.getYear()).getStartDateTime();
+        }
+    }
+
+    public LocalDateTime getFirstSeenEndDateTime(LocalDate date) {
         switch(this) {
             case EXISTING:
                 return date.minusDays(1).atTime(23, 59, 59);
             default:
                 return date.atTime(23, 59, 59);
         }
+    }
+
+    public LocalDateTime getObservedEndDateTime(LocalDate date) {
+        return date.atTime(23, 59, 59);
     }
 }

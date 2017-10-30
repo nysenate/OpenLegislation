@@ -1,9 +1,8 @@
 package gov.nysenate.openleg.dao.scraping;
 
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -14,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 /**
  * Created by kyle on 11/12/14.
@@ -70,7 +68,7 @@ public class SenateAgnScraper extends LRSScraper{
                 logger.info("Fetching all committee agendas");
                 String contents = getUrlContents(contentURL);
                 logger.info("Writing content to "+filename);
-                FileUtils.write(scrapedAgendaFile, contents);
+                FileIOUtils.write(scrapedAgendaFile, contents);
                 scrapedCount++;
             }
         }

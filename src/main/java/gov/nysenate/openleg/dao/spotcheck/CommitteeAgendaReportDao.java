@@ -17,12 +17,12 @@ public class CommitteeAgendaReportDao extends AbstractSpotCheckReportDao<Committ
     public CommitteeAgendaAddendumId getKeyFromMap(Map<String, String> keyMap) {
         return new CommitteeAgendaAddendumId(
                 new AgendaId(
-                        Long.parseLong(keyMap.get("agenda_no")),
+                        Long.parseLong(keyMap.get("agendaNo")),
                         Integer.parseInt(keyMap.get("year"))
                 ),
                 new CommitteeId(
                         Chamber.getValue(keyMap.get("chamber")),
-                        keyMap.get("committee_name")
+                        keyMap.get("committeeName")
                 ),
                 Version.of(keyMap.get("addendum"))
         );
@@ -31,10 +31,10 @@ public class CommitteeAgendaReportDao extends AbstractSpotCheckReportDao<Committ
     @Override
     public Map<String, String> getMapFromKey(CommitteeAgendaAddendumId addendumId) {
         return ImmutableMap.<String, String>builder()
-                .put("agenda_no", addendumId.getAgendaId().getNumber().toString())
+                .put("agendaNo", addendumId.getAgendaId().getNumber().toString())
                 .put("year", Integer.toString(addendumId.getAgendaId().getYear()))
                 .put("chamber", addendumId.getCommitteeId().getChamber().asSqlEnum())
-                .put("committee_name", addendumId.getCommitteeId().getName())
+                .put("committeeName", addendumId.getCommitteeId().getName())
                 .put("addendum", addendumId.getAddendum().name())
                 .build();
     }

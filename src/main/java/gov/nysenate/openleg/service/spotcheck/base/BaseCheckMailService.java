@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.util.FileIOUtils;
 import gov.nysenate.openleg.util.MailUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +32,14 @@ public abstract class BaseCheckMailService {
 
     protected void saveMessageBody(Message message, File file) throws MessagingException, IOException {
         if (message.isMimeType("text/*")) {
-            FileUtils.write(file, (String) message.getContent());
+            FileIOUtils.write(file, (String) message.getContent());
         } else if (message.isMimeType("multipart/*")) {
             Multipart content = (Multipart) message.getContent();
             for (int i = 0; i < content.getCount(); i++) {
                 Part part = content.getBodyPart(i);
                 if (!Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
                     logger.info("\tsaving body of {} to {}", message.getSubject(), file.getAbsolutePath());
-                    FileUtils.write(file, (String) part.getContent());
+                    FileIOUtils.write(file, (String) part.getContent());
                 }
             }
         }
@@ -53,8 +53,7 @@ public abstract class BaseCheckMailService {
                 if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
                     logger.info("\tSaving " + part.getFileName() + " to " + file.getAbsolutePath());
                     String attachment = IOUtils.toString(part.getInputStream());
-
-                    FileUtils.write(file, attachment);
+                    FileIOUtils.write(file, attachment);
                 }
             }
         }

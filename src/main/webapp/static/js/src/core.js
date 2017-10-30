@@ -505,7 +505,8 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
             '<nav>' +
             '  <div ng-repeat="section in menu.sections">' +
             '    <a ng-class="{active: isSectionSelected(section)}" class="menu-item menu-title md-menu-item"' +
-            '       ng-click="selectSection(section)" tab-index="-1"> {{section.title}}' +
+            '       ng-click="selectSection(section)" tab-index="-1" ng-href="{{section.url}}">' +
+            '      {{section.title}}' +
             '    </a>' +
             '    <div ng-if="section.items" ng-repeat="item in section.items">' +
             '      <a ng-class="{active: isItemSelected(item)}" target="{{item.target}}"' +
@@ -529,6 +530,7 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
                 $scope.selectSection = function(section) {
                     deselectMenu(false);
                     section.active = true;
+                    return true;
                 };
                 $scope.selectItem = function(item) {
                     deselectMenu(true);
@@ -565,7 +567,7 @@ openApp.directive('materialMenu', ['$compile', '$rootScope', '$mdSidenav', '$log
                         scope.menu = {sections: []};
                         var $sections = $($elem.context).children('menu-section');
                         angular.forEach($sections, function(_s) {
-                            var section = {title: _s.title, items: []};
+                            var section = {title: _s.title, url: $(_s).attr('url'), items: []};
                             angular.forEach($(_s).children('menu-item'), function(_i) {
                                 var item = {
                                     url: $(_i).attr('url'),

@@ -7,6 +7,7 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
+import gov.nysenate.openleg.service.scraping.LrsOutageScrapingEx;
 import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -159,7 +161,7 @@ public class LRSBillTextSobiMaker {
                 logger.info("parsing {}", scrapedFile);
                 btrs.add(billTextParser.parseReference(scrapedFile));
                 scrapedFile.delete();
-            } catch (ParseError ex) {
+            } catch (ParseError | LrsOutageScrapingEx ex) {
                 logger.error("error parsing scraped bill file {}:\n{}", scrapedFile, ex);
             }
         }
@@ -178,6 +180,6 @@ public class LRSBillTextSobiMaker {
         FileUtils.forceMkdir(destinationDir);
         File sobiFile = new File(destinationDir, pubDateTime.format(sobiFileNameFormat));
         logger.info("writing {}", sobiFile);
-        FileUtils.write(sobiFile, fileContents, "UTF-8");
+        FileIOUtils.write(sobiFile, fileContents, Charset.forName("UTF-8"));
     }
 }

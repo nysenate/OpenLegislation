@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
         <link rel="prev" title="Aggregate Updates API" href="agg_updates.html"/> 
 
@@ -40,6 +45,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -80,7 +86,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
@@ -91,7 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Public Hearing Transcripts API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="agg_updates.html"><strong>Aggregate Updates API</strong></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Search APIs</strong></a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Search APIs</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#term">term</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sort">sort</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#search-response">Search Response</a></li>
@@ -109,8 +118,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="reference.html">Open Legislation</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="reference.html">Open Legislation</a>
+        
       </nav>
 
 
@@ -123,19 +134,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="reference.html">Docs</a> &raquo;</li>
-      
-    <li><strong>Search APIs</strong></li>
+    
+      <li><a href="reference.html">Docs</a> &raquo;</li>
+        
+      <li><strong>Search APIs</strong></li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/search_api.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/search_api.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -151,15 +179,15 @@ and we aim to provide as much elasticsearch functionality as possible through th
 <p>The term parameter takes in an <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_field_names">elasticsearch query string</a>.</p>
 <p>The simplest way to search is to send a general search term.
 For example, to search for legislation pertaining to apples, the following query will do the job.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/search?term=apples
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/bills/search?term=apples
 </pre></div>
 </div>
 <p>In addition to a simple search term, there are a number of advanced features available.  Our search index is generated
 with data in the same JSON format as the API responses, so any response field that is nested under &#8220;result&#8221; is fair game
 for search.  Going back to the previous example, a number of resolutions appear in the results for the apples search query.
-Looking back at the <a class="reference internal" href="bills.html#bill-response"><span>bill response</span></a>, we see that resolutions are designated by the &#8220;resolution&#8221; boolean under &#8220;billType&#8221;.
+Looking back at the <a class="reference internal" href="bills.html#bill-response"><span class="std std-ref">bill response</span></a>, we see that resolutions are designated by the &#8220;resolution&#8221; boolean under &#8220;billType&#8221;.
 In order to filter resolutions out of the search results, a field query can be chained to the original query using &#8220;AND&#8221;.</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/search?term=apples%20AND%20billType.resolution:false
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/bills/search?term=apples%20AND%20billType.resolution:false
 </pre></div>
 </div>
 <p>For a full enumeration of query features see the <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_field_names">elasticsearch query string</a> syntax.</p>
@@ -170,19 +198,19 @@ In order to filter resolutions out of the search results, a field query can be c
 which takes a comma separated string of response fields, each designated with a sort order (&#8220;ASC&#8221; or &#8220;DESC&#8221;) separated
 from the field with a colon.</p>
 <p>For example, to get the 2013 governor&#8217;s program bills in canonical order:</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
                         &amp;sort=programInfo.sequenceNo:ASC
 </pre></div>
 </div>
 <p>Or, you may want to order them by their status and action date:</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
                         &amp;sort=status.statusType:ASC,status.actionDate:DESC
 </pre></div>
 </div>
 </div>
 <div class="section" id="search-response">
 <h2>Search Response<a class="headerlink" href="#search-response" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;search-results list&quot;</span><span class="p">,</span>
@@ -208,13 +236,16 @@ from the field with a colon.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="agg_updates.html" class="btn btn-neutral" title="Aggregate Updates API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="agg_updates.html" class="btn btn-neutral" title="Aggregate Updates API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -248,7 +279,8 @@ from the field with a colon.</p>
             VERSION:'2.0-alpha',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

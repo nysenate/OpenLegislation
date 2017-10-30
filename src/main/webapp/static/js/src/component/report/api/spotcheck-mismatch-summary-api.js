@@ -8,37 +8,55 @@ function mismatchSummaryApi($resource) {
     var mismatchContentTypeSummaryApi = $resource(adminApiPath + "/spotcheck/mismatches/summary/contenttype");
 
     /**
+     * @param reportDate An ISO date time string. Returns summary data for mismatches observed before this date time.
      * @param datasource datasource filter
-     * @param date An ISO date time string. Returns summary data for mismatches observed before this date time.
+     * @param contentType content type filter
      */
-    function getMismatchStatusSummary(datasource, reportDate) {
-        return mismatchStatusSummaryApi.get({datasource: datasource, reportDate : reportDate}).$promise
+    function getMismatchStatusSummary(reportDate, datasource, contentType) {
+        var params = {
+            reportDate: reportDate,
+            datasource: datasource,
+            contentType: contentType
+        };
+        return mismatchStatusSummaryApi.get(params).$promise
             .then(createStatusSummary)
     }
 
-    function getMismatchTypeSummary(datasource, reportDate, mismatchStatus) {
-        return mismatchTypeSummaryApi.get({datasource: datasource, reportDate : reportDate, mismatchStatus: mismatchStatus}).$promise
+    function getMismatchTypeSummary(reportDate, datasource, contentType, mismatchStatus) {
+        var params = {
+            reportDate: reportDate,
+            datasource: datasource,
+            contentType: contentType,
+            mismatchStatus: mismatchStatus
+        };
+        return mismatchTypeSummaryApi.get(params).$promise
             .then(createMismatchTypeSummary)
     }
 
-    function getMismatchContentTypeSummary(datasource, reportDate, mismatchStatus, mismatchType) {
-        return mismatchContentTypeSummaryApi.get({datasource: datasource, reportDate : reportDate, mismatchStatus: mismatchStatus, mismatchType:mismatchType}).$promise
+    function getMismatchContentTypeSummary(reportDate, datasource) {
+        var params = {
+            datasource: datasource,
+            reportDate: reportDate
+        };
+        return mismatchContentTypeSummaryApi.get(params).$promise
             .then(createContentTypeSummary)
     }
 
     function createStatusSummary(response) {
         return response.result;
     }
+
     function createMismatchTypeSummary(response) {
-        return response.result;
+        return response.result.typeCount.items;
     }
+
     function createContentTypeSummary(response) {
         return response.result;
     }
 
     return {
         getMismatchStatusSummary: getMismatchStatusSummary,
-        getMismatchTypeSummary:getMismatchTypeSummary,
-        getMismatchContentTypeSummary:getMismatchContentTypeSummary
+        getMismatchTypeSummary: getMismatchTypeSummary,
+        getMismatchContentTypeSummary: getMismatchContentTypeSummary
     }
 }

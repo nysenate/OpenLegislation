@@ -16,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Set;
-import java.time.temporal.ChronoUnit;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,43 +57,43 @@ public class SpotcheckReportDaoTest extends BaseTests {
         assertThat(actual.getState(), is(MismatchState.OPEN));
     }
 
-    // TODO not necessary?
     @Test
     public void testSaveExistingMismatch() {
         // Save new mismatch
         reportDao.saveReport(createMismatchReport(start));
+        DeNormSpotCheckMismatch newMismatch = queryMostRecentOpenMismatch();
         // Save same mismatch again
         reportDao.saveReport(createMismatchReport(start.plusMinutes(1)));
+        DeNormSpotCheckMismatch existingMismatch = queryMostRecentOpenMismatch();
 
-        DeNormSpotCheckMismatch actual = queryMostRecentOpenMismatch();
-        assertThat(actual.getKey(), is(billId));
-        assertThat(actual.getState(), is(MismatchState.OPEN));
+        assertThat(existingMismatch.getFirstSeenDateTime(), is(newMismatch.getFirstSeenDateTime()));
     }
 
     @Test
-    public void testSaveResolvedMismatch() {
+    public void testSaveClosedMismatch() {
         reportDao.saveReport(createMismatchReport(start));
+        DeNormSpotCheckMismatch newMismatch = queryMostRecentOpenMismatch();
         // Then save report without a mismatch
         reportDao.saveReport(createEmptyReport(start.plusMinutes(1)));
+        DeNormSpotCheckMismatch closedMismatch = queryMostRecentClosedMismatch();
 
-        DeNormSpotCheckMismatch actual = queryMostRecentClosedMismatch();
-        assertThat(actual.getKey(), is(billId));
-        assertThat(actual.getState(), is(MismatchState.CLOSED));
+        assertThat(closedMismatch.getState(), is(MismatchState.CLOSED));
+        assertThat(closedMismatch.getFirstSeenDateTime(), is(newMismatch.getFirstSeenDateTime()));
     }
 
-    // TODO necessary?
     @Test
-    public void testSaveRegressionMismatch() throws InterruptedException {
+    public void regressionMismatchResetsFirstSeenDateTime() throws InterruptedException {
         // Save new mismatch
         reportDao.saveReport(createMismatchReport(start));
         // Resolve the mismatch
         reportDao.saveReport(createEmptyReport(start.plusMinutes(1)));
+        DeNormSpotCheckMismatch closedMismatch = queryMostRecentClosedMismatch();
         // Encounter it again
         reportDao.saveReport(createMismatchReport(start.plusMinutes(2)));
+        DeNormSpotCheckMismatch regressionMismatch = queryMostRecentOpenMismatch();
 
-        DeNormSpotCheckMismatch actual = queryMostRecentOpenMismatch();
-        assertThat(actual.getKey(), is(billId));
-        assertThat(actual.getState(), is(MismatchState.OPEN));
+        assertThat(regressionMismatch.getState(), is(MismatchState.OPEN));
+        assertThat(regressionMismatch.getFirstSeenDateTime(), is(not(closedMismatch.getFirstSeenDateTime())));
     }
 
     /**
@@ -169,20 +167,22 @@ public class SpotcheckReportDaoTest extends BaseTests {
     @Test
     public void canGetStatusSummary() {
         MismatchStatusSummary summary = reportDao.getMismatchStatusSummary(LocalDate.now(), SpotCheckDataSource.LBDC,
-                                                                           Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
+                SpotCheckContentType.BILL,
+                Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
     }
 
     @Test
     public void canGetMismatchTypeSummary() {
         MismatchTypeSummary summary = reportDao.getMismatchTypeSummary(LocalDate.now(), SpotCheckDataSource.LBDC,
-                                                                       MismatchStatus.EXISTING, Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
+                                                                       SpotCheckContentType.BILL,
+                                                                       MismatchStatus.EXISTING,
+                                                                       Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
     }
 
     @Test
     public void canGetContentTypeSummary() {
         MismatchContentTypeSummary summary = reportDao.getMismatchContentTypeSummary(LocalDate.now(), SpotCheckDataSource.LBDC,
-                                                                                     MismatchStatus.EXISTING, EnumSet.of(SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE),
-                                                                                     Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
+                Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
     }
 
     private DeNormSpotCheckMismatch queryMostRecentOpenMismatch() {

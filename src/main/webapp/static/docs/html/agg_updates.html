@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
         <link rel="next" title="Search APIs" href="search_api.html"/>
         <link rel="prev" title="Senate Members API" href="members.html"/> 
@@ -41,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -81,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Open Legislation v2.0 API Docs</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="bills.html"><strong>Bills and Resolutions API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="calendars.html"><strong>Senate Calendar API</strong></a></li>
@@ -91,7 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="transcripts_floor.html"><strong>Senate Floor Transcripts API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="transcripts_ph.html"><strong>Public Hearing Transcripts API</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="members.html"><strong>Senate Members API</strong></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href=""><strong>Aggregate Updates API</strong></a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Aggregate Updates API</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#get-aggregate-updates">Get aggregate updates</a></li>
 </ul>
 </li>
@@ -108,8 +117,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="reference.html">Open Legislation</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="reference.html">Open Legislation</a>
+        
       </nav>
 
 
@@ -122,19 +133,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="reference.html">Docs</a> &raquo;</li>
-      
-    <li><strong>Aggregate Updates API</strong></li>
+    
+      <li><a href="reference.html">Docs</a> &raquo;</li>
+        
+      <li><strong>Aggregate Updates API</strong></li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/agg_updates.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/agg_updates.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -147,8 +175,8 @@
 <h2>Get aggregate updates<a class="headerlink" href="#get-aggregate-updates" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>List of content that was updated during the given date/time range</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/updates/{fromDateTime}
-/api/3/updates/{fromDateTime}/{toDateTime}
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -205,7 +233,7 @@ which data was intended to be published. This can differ from the processed date
 reprocess it&#8217;s data to fix issues. By default the type is set to published.</p>
 <p><strong>Example</strong></p>
 <p>Get a detailed view of the first 50 agenda, bill, and calendar updates processed on March 17 2015</p>
-<div class="highlight-python"><div class="highlight"><pre>/api/3/updates/2015-03-17T00:00:00/2015-03-18T00:00:00?type=processed
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/updates/2015-03-17T00:00:00/2015-03-18T00:00:00?type=processed
                 &amp;content-type=AGENDA&amp;content-type=BILL&amp;content-type=CALENDAR
                 &amp;detail=true&amp;fields=true&amp;limit=50
 </pre></div>
@@ -214,12 +242,12 @@ reprocess it&#8217;s data to fix issues. By default the type is set to published
 <p>See the following pages for info on the unique updates responses for each content type:</p>
 <div class="line-block">
 <div class="line"><span class="xref std std-ref">agenda update token response</span>, <span class="xref std std-ref">agenda update digest response</span></div>
-<div class="line"><a class="reference internal" href="bills.html#bill-update-token-response"><span>bill update token response</span></a>, <a class="reference internal" href="bills.html#bill-update-digest-response"><span>bill update digest response</span></a></div>
-<div class="line"><a class="reference internal" href="calendars.html#calendar-update-token-response"><span>calendar update token response</span></a>, <a class="reference internal" href="calendars.html#calendar-update-digest-response"><span>calendar update digest response</span></a></div>
+<div class="line"><a class="reference internal" href="bills.html#bill-update-token-response"><span class="std std-ref">bill update token response</span></a>, <a class="reference internal" href="bills.html#bill-update-digest-response"><span class="std std-ref">bill update digest response</span></a></div>
+<div class="line"><a class="reference internal" href="calendars.html#calendar-update-token-response"><span class="std std-ref">calendar update token response</span></a>, <a class="reference internal" href="calendars.html#calendar-update-digest-response"><span class="std std-ref">calendar update digest response</span></a></div>
 <div class="line"><span class="xref std std-ref">law update token response</span>, <span class="xref std std-ref">law update digest response</span></div>
 </div>
 <hr class="docutils" />
-<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
@@ -259,15 +287,18 @@ reprocess it&#8217;s data to fix issues. By default the type is set to published
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="search_api.html" class="btn btn-neutral float-right" title="Search APIs" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="search_api.html" class="btn btn-neutral float-right" title="Search APIs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="members.html" class="btn btn-neutral" title="Senate Members API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="members.html" class="btn btn-neutral" title="Senate Members API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -301,7 +332,8 @@ reprocess it&#8217;s data to fix issues. By default the type is set to published
             VERSION:'2.0-alpha',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

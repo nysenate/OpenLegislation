@@ -1,13 +1,14 @@
 package gov.nysenate.openleg.service.law.data;
 
+import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.law.data.LawDataDao;
+import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
-import gov.nysenate.openleg.model.law.*;
-import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
+import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -19,13 +20,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheCache;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -199,6 +200,13 @@ public class CachedLawDataService implements LawDataService, CachingService<LawV
         if (lawId == null) throw new IllegalArgumentException("Supplied lawId cannot be null");
         if (endPublishedDate == null) endPublishedDate = LocalDate.now();
         return lawDataDao.getLawDocuments(lawId.toUpperCase(), endPublishedDate);
+    }
+
+    /** {@inheritDoc}
+     * @param dateRange*/
+    @Override
+    public Set<LawDocId> getRepealedLawDocs(Range<LocalDateTime> dateRange) {
+        return new HashSet<>(lawDataDao.getRepealedLaws(dateRange));
     }
 
     /** {@inheritDoc} */

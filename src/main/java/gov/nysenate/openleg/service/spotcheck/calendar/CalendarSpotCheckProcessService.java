@@ -7,8 +7,8 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckNotificationService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotcheckMailProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class CalendarSpotCheckProcessService extends BaseSpotcheckProcessService {
+public class CalendarSpotCheckProcessService extends SpotcheckMailProcessService {
 
     private Logger logger = LoggerFactory.getLogger(CalendarSpotCheckProcessService.class);
 

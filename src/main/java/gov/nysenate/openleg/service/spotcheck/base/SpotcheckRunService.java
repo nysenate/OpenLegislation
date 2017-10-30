@@ -9,25 +9,29 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceEvent;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.service.spotcheck.agenda.AgendaReportService;
+import gov.nysenate.openleg.service.spotcheck.agenda.IntervalAgendaReportService;
 import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.CalendarReportService;
+import gov.nysenate.openleg.service.spotcheck.calendar.IntervalCalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
 import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegAgendaReportService;
 import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegBillReportService;
 import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegCalendarReportService;
-import gov.nysenate.openleg.service.spotcheck.senatesite.agenda.AgendaReportServices;
+import gov.nysenate.openleg.service.spotcheck.senatesite.agenda.SenSiteAgendaReportService;
 import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillReportService;
-import gov.nysenate.openleg.service.spotcheck.senatesite.calendar.CalendarReportServices;
+import gov.nysenate.openleg.service.spotcheck.senatesite.calendar.SenateSiteCalendarReportService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
 
@@ -48,10 +52,14 @@ public class SpotcheckRunService {
     /** A multimap of reports that run whenever pertinent references are generated */
     SetMultimap<SpotCheckRefType, SpotCheckReportService> eventTriggeredReports;
 
+    /** A set of reports are automatically ran based on the scheduler.spotcheck.interval.cron */
+    Set<SpotCheckReportService> intervalReports;
+
     /** --- Report Services --- */
 
     /** Agenda Report Services */
     @Autowired private AgendaReportService agendaReportService;
+    @Autowired private IntervalAgendaReportService intervalAgendaReportService;
 
     /** Bill Report Services */
     @Autowired private DaybreakReportService daybreakReportService;
@@ -59,11 +67,12 @@ public class SpotcheckRunService {
 
     /** Calendar Report Services */
     @Autowired private CalendarReportService calendarReportService;
+    @Autowired private IntervalCalendarReportService intervalCalendarReportService;
 
     /** Nysenate.gov Report Services */
     @Autowired private BillReportService senSiteBillReportService;
-    @Autowired private CalendarReportServices senSiteCalReportService;
-    @Autowired private AgendaReportServices senSiteAgendaReportService;
+    @Autowired private SenateSiteCalendarReportService senSiteCalReportService;
+    @Autowired private SenSiteAgendaReportService senSiteAgendaReportService;
 
     /** Openleg Check Report Service*/
 
@@ -86,6 +95,23 @@ public class SpotcheckRunService {
                 .put(OPENLEG_CAL,openlegCalendarReportService)
                 .put(OPENLEG_AGENDA, openlegAgendaReportService)
                 .build();
+        intervalReports = ImmutableSet.<SpotCheckReportService>builder()
+                .add(intervalAgendaReportService)
+                .add(intervalCalendarReportService)
+                .build();
+    }
+
+    /**
+     * Runs all interval reports according to {@code scheduler.spotcheck.interval.cron} in app.properties.
+     * Only runs if spotcheck processing is enabled/scheduled.
+     */
+    @Scheduled(cron = "${scheduler.spotcheck.interval.cron:0 45 23 * * *}")
+    public synchronized void runIntervalReports() {
+        if (env.isSpotcheckScheduled()) {
+            LocalDateTime startOfYear = LocalDateTime.of(LocalDateTime.now().getYear(), 1, 1, 0, 0);
+            Range<LocalDateTime> ytd = Range.closed(startOfYear, LocalDateTime.now());
+            intervalReports.forEach(reportService -> runReport(reportService, ytd));
+        }
     }
 
     /**

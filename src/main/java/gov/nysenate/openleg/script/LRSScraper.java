@@ -1,8 +1,8 @@
 package gov.nysenate.openleg.script;
 
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
@@ -56,7 +56,7 @@ public class LRSScraper extends BaseScript
                 logger.info("Fetching "+linkMatcher.group(2).trim());
                 String contents = IOUtils.toString(linkURL);
                 logger.info("Writing content to "+filename);
-                FileUtils.write(outfile, contents);
+                FileIOUtils.write(outfile, contents);
             }
         }
     }
@@ -83,7 +83,7 @@ public class LRSScraper extends BaseScript
                     logger.info("Fetching all committee agendas");
                     String contents = IOUtils.toString(linkURL);
                     logger.info("Writing content to "+filename);
-                    FileUtils.write(outfile, contents);
+                    FileIOUtils.write(outfile, contents);
                 }
             }
         }

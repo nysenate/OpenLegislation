@@ -1,24 +1,10 @@
 angular.module('open.spotcheck')
-    .controller('detailDialogCtrl', ['$scope', '$mdDialog', 'mismatchRow','source','contentType', detailDialogCtrl]);
+    .controller('detailDialogCtrl', ['$scope', '$mdDialog', '$filter',
+                                     'mismatch', 'source', 'contentType', detailDialogCtrl]);
 
-function detailDialogCtrl($scope, $mdDialog, mismatchRow,source,contentType) {
-    $scope.reportType = mismatchRow.refType;
+function detailDialogCtrl($scope, $mdDialog, $filter, mismatch, source, contentType) {
 
-    $scope.newDetails = function (newMismatchRow,source,contentType) {
-        $scope.contentType = contentType;
-        if(source == "LBDC")
-            $scope.com = ["LBDC","Open Legislation"];
-        else if(source == "NYSENATE")
-            $scope.com = ["Open Legislation","NYSenate.gov"];
-        else
-            $scope.com = ["XML","SOBI"];
-        $scope.date = moment().format('l');
-        console.log('loading detail dialog for', newMismatchRow);
-        $scope.observation = newMismatchRow.observedData;
-        $scope.currentMismatch = newMismatchRow;
-        setDefaultTextOptions(newMismatchRow.mismatchType);
-        $scope.formatDisplayData();
-    };
+    $scope.reportType = mismatch.refType;
 
     $scope.$watchGroup(['referenceData', 'displayData'], function () {
         $scope.obsMultiLine = $scope.observedData && $scope.observedData.indexOf('\n') > -1;
@@ -67,30 +53,58 @@ function detailDialogCtrl($scope, $mdDialog, mismatchRow,source,contentType) {
             .replace(/\n+/, '\n');
     }
 
-    $scope.formatDisplayData = function() {
+    $scope.formatDisplayData = function () {
         var texts = [$scope.currentMismatch.referenceData, $scope.currentMismatch.observedData];
         if ($scope.textControls.removeLinePageNums) {
             texts = texts.map(removeLinePageNumbers);
         }
         switch ($scope.textControls.whitespace) {
             case 'stripNonAlpha':
-                texts = texts.map(function (text) {return text.replace(/(?:[^\w\n]|_)+/g, '')});
+                texts = texts.map(function (text) {
+                    return text.replace(/(?:[^\w\n]|_)+/g, '')
+                });
                 break;
             case 'normalize':
-                texts = texts.map(function (text) {return text.replace(/[ ]+/g, ' ')});
-                texts = texts.map(function (text) {return text.replace(/^[ ]+|[ ]+$/gm, '')});
+                texts = texts.map(function (text) {
+                    return text.replace(/[ ]+/g, ' ')
+                });
+                texts = texts.map(function (text) {
+                    return text.replace(/^[ ]+|[ ]+$/gm, '')
+                });
                 break;
         }
         if ($scope.textControls.capitalize) {
-            texts = texts.map(function(text) { return text.toUpperCase();});
+            texts = texts.map(function (text) {
+                return text.toUpperCase();
+            });
         }
 
-        $scope.referenceData = texts[0];
-        $scope.observedData = texts[1];
+        // Swap source and ref if openleg is viewed as the ref
+        if (isOpenlegRef()) {
+            $scope.referenceData = texts[1];
+            $scope.observedData = texts[0];
+        } else {
+            $scope.referenceData = texts[0];
+            $scope.observedData = texts[1];
+        }
     };
 
+    /**
+     * Return true if openleg is the reference in this comparison
+     * @return {boolean}
+     */
+    function isOpenlegRef() {
+        return $filter('isOLRef')(source);
+    }
+
     function init() {
-        $scope.newDetails(mismatchRow, source,contentType);
+        $scope.contentType = contentType;
+        $scope.date = moment().format('l');
+        console.log('loading detail dialog for', mismatch);
+        $scope.observation = mismatch.observedData;
+        $scope.currentMismatch = mismatch;
+        setDefaultTextOptions(mismatch.mismatchType);
+        $scope.formatDisplayData();
     }
 
     init();

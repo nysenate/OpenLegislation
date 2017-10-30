@@ -62,9 +62,8 @@
               <menu-item url="${ctxPath}/admin/logs">Logs</menu-item>
               <menu-item url="${ctxPath}/admin/account">Account Settings</menu-item>
             </menu-section>
-            <menu-section title="Reports">
-              <menu-item url="${ctxPath}/admin/report/spotcheck/open">Open Mismatches</menu-item>
-              <menu-item url="${ctxPath}/admin/report/spotcheck">Report Log</menu-item>
+            <menu-section title="Reports" url="${ctxPath}/admin/report/spotcheck">
+              <menu-item url="${ctxPath}/admin/report/spotcheck">Spotcheck Reports</menu-item>
             </menu-section>
           </shiro:hasPermission>
         </material-menu>

@@ -18,7 +18,6 @@ import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
@@ -129,12 +128,14 @@ public class SpotCheckCtrl extends BaseCtrl
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches/summary/status", method = RequestMethod.GET)
     public BaseResponse getMismatchStatusSummary(@RequestParam String datasource,
+                                                 @RequestParam String contentType,
                                                  @RequestParam(required = false) String reportDate,
                                                  @RequestParam(required = false) String[] ignoredStatuses) {
         SpotCheckDataSource ds = getDatasource(datasource);
+        SpotCheckContentType ct = getContentType(contentType);
         LocalDate rDate = getReportDate(reportDate);
         Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
-        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(rDate, ds, igs);
+        MismatchStatusSummary summary = getAnyReportService().getMismatchStatusSummary(rDate, ds, ct, igs);
         return new ViewObjectResponse<>(new MismatchStatusSummaryView(summary));
     }
 
@@ -155,14 +156,16 @@ public class SpotCheckCtrl extends BaseCtrl
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/mismatches/summary/mismatchtype", method = RequestMethod.GET)
     public BaseResponse getMismatchTypeSummary(@RequestParam String datasource,
+                                               @RequestParam String contentType,
                                                @RequestParam(required = false) String reportDate,
                                                @RequestParam(required = false) String mismatchStatus,
                                                @RequestParam(required = false) String[] ignoredStatuses) {
         SpotCheckDataSource ds = getDatasource(datasource);
+        SpotCheckContentType ct = getContentType(contentType);
         LocalDate rDate = getReportDate(reportDate);
         MismatchStatus status = mismatchStatus == null ? MismatchStatus.OPEN : getMismatchStatus(mismatchStatus);
         Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
-        MismatchTypeSummary summary = getAnyReportService().getMismatchTypeSummary(rDate, ds, status, igs);
+        MismatchTypeSummary summary = getAnyReportService().getMismatchTypeSummary(rDate, ds, ct, status, igs);
         return new ViewObjectResponse<>(new MismatchTypeSummaryView(summary));
     }
 
@@ -186,15 +189,11 @@ public class SpotCheckCtrl extends BaseCtrl
     @RequestMapping(value = "/mismatches/summary/contenttype", method = RequestMethod.GET)
     public BaseResponse getMismatchContentTypeSummary(@RequestParam String datasource,
                                                       @RequestParam(required = false) String reportDate,
-                                                      @RequestParam(required = false) String mismatchStatus,
-                                                      @RequestParam(required = false) String mismatchType,
                                                       @RequestParam(required = false) String[] ignoredStatuses) {
         SpotCheckDataSource ds = getDatasource(datasource);
         LocalDate rDate = getReportDate(reportDate);
-        MismatchStatus status = mismatchStatus == null ? MismatchStatus.OPEN : getMismatchStatus(mismatchStatus);
-        EnumSet<SpotCheckMismatchType> types = getMismatchTypes(mismatchType);
         Set<SpotCheckMismatchIgnore> igs = getIgnoredStatuses(ignoredStatuses);
-        MismatchContentTypeSummary summary = getAnyReportService().getMismatchContentTypeSummary(rDate, ds, status, types, igs);
+        MismatchContentTypeSummary summary = getAnyReportService().getMismatchContentTypeSummary(rDate, ds, igs);
         return new ViewObjectResponse<>(new MismatchContentTypeSummaryView(summary));
     }
 
@@ -317,6 +316,21 @@ public class SpotCheckCtrl extends BaseCtrl
                 refTypes.stream().map(SpotCheckRefType::toString).collect(Collectors.toList())),
                 "spotcheck reports run");
     }
+
+    /**
+     * Spotcheck Interval Report Run API
+     *
+     * Attempts to run all spotcheck reports designated as interval reports
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/run/interval
+     */
+    @RequiresPermissions("admin:view")
+    @RequestMapping(value = "/run/interval")
+    public BaseResponse runWeeklyReports() {
+        spotcheckRunService.runIntervalReports();
+        return new SimpleResponse(true, "interval reports run", "report report");
+    }
+
 
     /** --- Internal Methods --- */
 

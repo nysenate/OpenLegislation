@@ -15,7 +15,7 @@ module.exports = function(grunt) {
         jspSource: 'WEB-INF/view',
         tagSource: 'WEB-INF/tags',
         tomcatWeb: '<%= properties.deployDirectory %>',
-        docsSourceRoot: '../../../docs',
+        docsSourceRoot: '../../../docs/api',
         docsDestRoot: 'static/docs',
 
         // Compile sass into css
@@ -149,14 +149,10 @@ module.exports = function(grunt) {
                         // SpotChecks
                         '<%= jsSource %>/component/report/spotcheck-base.js',
                         '<%= jsSource %>/component/report/spotcheck-detail-window.js',
-                        '<%= jsSource %>/component/report/spotcheck-summary.js',
-                        '<%= jsSource %>/component/report/spotcheck-report.js',
-                        '<%= jsSource %>/component/report/spotcheck-mismatch.js',
-                        '<%= jsSource %>/component/report/spotcheck-mismatch-view.js',
-                        '<%= jsSource %>/component/report/spotcheck-open-summary.js',
                         '<%= jsSource %>/component/report/spotcheck-report-page.js',
-                        '<%= jsSource %>/component/report/api/spotcheck-mismatch-summary-api.js',
+                        '<%= jsSource %>/component/report/spotcheck-report-page-content-tab.js',
                         '<%= jsSource %>/component/report/api/spotcheck-mismatch-api.js',
+                        '<%= jsSource %>/component/report/api/spotcheck-mismatch-summary-api.js',
 
                         // Admin
                         '<%= jsSource %>/component/admin/admin.js',
@@ -202,7 +198,7 @@ module.exports = function(grunt) {
                 options: {
                     stderr: false,
                     execOptions: {
-                        cwd: '../../../docs'
+                        cwd: '<%= docsSourceRoot %>'
                     }
                 }
             }

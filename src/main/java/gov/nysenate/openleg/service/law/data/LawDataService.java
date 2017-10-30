@@ -1,10 +1,13 @@
 package gov.nysenate.openleg.service.law.data;
 
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.model.law.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface LawDataService
 {
@@ -58,6 +61,14 @@ public interface LawDataService
      * @return Map<String, LawDocument> Map of documentId -> LawDocument
      */
     public Map<String, LawDocument> getLawDocuments(String lawId, LocalDate endPublishedDate);
+
+    /**
+     * Get a set of law documents that have been repealed during the given datetime range.
+     *
+     * @param dateRange Range<LocalDateTime>
+     * @return {@link Set<LawDocId>}
+     */
+    public Set<LawDocId> getRepealedLawDocs(Range<LocalDateTime> dateRange);
 
     /**
      * Persists the LawTree into the backing store with LawFile used as a reference to the source data.

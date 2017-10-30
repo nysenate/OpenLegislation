@@ -71,13 +71,13 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
                     String oldamd = xmlHelper.getString("digestsummary/oldbill/oldamd[" + i + "]", doc).replaceAll("\n", "");
                     if (oldamd.isEmpty() || oldno.isEmpty() || oldhse.isEmpty())
                         break;// we dont know what to do that a digestsummary contains oldbill field but has no information related to oldbill
-                    baseBill.addDirectPreviousVersion(new BillId(oldhse + oldno, SessionYear.of(sess), Version.of(oldamd)));
+                    baseBill.setDirectPreviousVersion(new BillId(oldhse + oldno, SessionYear.of(sess), Version.of(oldamd)));
                 }
             } else { //remove bill
 
                 // clear Set<BillID> pre version
                 baseBill.getAllPreviousVersions().clear();
-                baseBill.getDirectPreviousVersions().clear();
+                baseBill.setDirectPreviousVersion(null);
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
             logger.info("Put base bill in the ingest cache.");

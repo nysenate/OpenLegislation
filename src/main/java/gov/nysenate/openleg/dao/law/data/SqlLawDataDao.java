@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.dao.law.data;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.law.*;
+import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +19,12 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.dao.law.data.SqlLawDataQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
@@ -71,6 +72,16 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
             schema(), new OrderBy("published_date", SortOrder.ASC), LimitOffset.ALL), treeParams,
                 (rs, rowNum) -> getLocalDateFromRs(rs, "published_date")));
         return lawTree;
+    }
+
+    @Override
+    public List<LawDocId> getRepealedLaws(Range<LocalDateTime> dateRange) {
+        ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource()
+                .addValue("startDateTime", toDate(DateUtils.startOfDateTimeRange(dateRange)))
+                .addValue("endDateTime", toDate(DateUtils.endOfDateTimeRange(dateRange))));
+
+        final String sql = SqlLawDataQuery.SELECT_REPEALED_LAWS.getSql(schema());
+        return jdbcNamed.query(sql, params, lawDocIdRowMapper);
     }
 
     /** {@inheritDoc} */
@@ -171,6 +182,15 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
             return tree;
         }
     }
+
+    /**
+     * Constructs LawDocId from result set.
+     */
+    protected static RowMapper<LawDocId> lawDocIdRowMapper = (rs, rowNum) ->
+            new LawDocId(
+                    rs.getString("document_id"),
+                    getLocalDateFromRs(rs, "published_date")
+            );
 
     /**
      * Constructs LawDocInfo from result set.

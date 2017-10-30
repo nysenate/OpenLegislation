@@ -11,16 +11,15 @@ import gov.nysenate.openleg.client.view.bill.BillStatusView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.spotcheck.senatesite.*;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
 
 import java.io.IOException;
-import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,9 +39,9 @@ public class BillJsonParser extends JsonParser{
     private List<SenateSiteBill> extractBillsFromFragment(SenateSiteDumpFragment fragment) throws ParseError {
         try {
             JsonNode billMap = objectMapper.readTree(fragment.getFragmentFile())
-                    .path("bills");
+                    .path("nodes");
             if (billMap.isMissingNode()) {
-                throw new ParseError("Could not locate \"bills\" node in senate site bill dump fragment file: " +
+                throw new ParseError("Could not locate \"nodes\" node in senate site bill dump fragment file: " +
                         fragment.getFragmentFile().getAbsolutePath());
             }
             List<SenateSiteBill> bills = new LinkedList<>();
@@ -58,7 +57,7 @@ public class BillJsonParser extends JsonParser{
     }
 
     private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteDumpFragment fragment) throws IOException {
-        SenateSiteBill bill = new SenateSiteBill(DateUtils.endOfDateTimeRange(fragment.getDumpId().getRange()));
+        SenateSiteBill bill = new SenateSiteBill(fragment.getDumpId().getDumpTime());
 
         bill.setBasePrintNo(getValue(billNode, "field_ol_base_print_no"));
         bill.setActiveVersion(getValue(billNode, "field_ol_active_version"));
