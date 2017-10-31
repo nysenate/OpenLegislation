@@ -678,8 +678,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             if (rs.getString("sub_bill_print_no") != null) {
                 bill.setSubstitutedBy(new BaseBillId(rs.getString("sub_bill_print_no"), bill.getSession()));
             }
-            if (rs.getString("reprint_of_bill") != null) {
-                bill.setReprintOf(new BaseBillId(rs.getString("reprint_of_bill"),bill.getSession()));
+            if (rs.getString("reprint_no") != null) {
+                bill.setReprintOf(new BaseBillId(rs.getString("reprint_no"),bill.getSession()));
             }
             bill.setLDBlurb(rs.getString("blurb"));
             setModPubDatesFromResultSet(bill, rs);

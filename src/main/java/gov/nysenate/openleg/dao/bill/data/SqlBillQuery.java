@@ -28,14 +28,14 @@ public enum SqlBillQuery implements BasicSqlQuery
         "    status = :status, status_date = :statusDate, committee_name = :committeeName, " +
         "    committee_chamber = :committeeChamber::chamber, bill_cal_no = :billCalNo, blurb = :blurb, "  +
         "    modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId, " +
-        "    reprint_of_bill = :reprintOf \n" +
+        "    reprint_no = :reprintOf \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     INSERT_BILL(
         "INSERT INTO ${schema}." + SqlTable.BILL + "\n" +
         "(bill_print_no, bill_session_year, title, summary, active_version, active_year, sub_bill_print_no, " +
         " program_info, program_info_num, status, status_date, committee_name, committee_chamber, bill_cal_no, blurb," +
-        " modified_date_time, published_date_time, last_fragment_id, reprint_of_bill) \n" +
+        " modified_date_time, published_date_time, last_fragment_id, reprint_no) \n" +
         "VALUES (:printNo, :sessionYear, :title, :summary, :activeVersion, :activeYear, :subPrintNo, " +
         "        :programInfo, :programInfoNum, :status, :statusDate, :committeeName, :committeeChamber::chamber, :billCalNo, :blurb," +
         "        :modifiedDateTime, :publishedDateTime, :lastFragmentId, :reprintOf)"

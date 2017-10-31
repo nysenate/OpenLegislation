@@ -1474,7 +1474,8 @@ CREATE TABLE bill (
     modified_date_time timestamp without time zone,
     published_date_time timestamp without time zone,
     last_fragment_id text,
-    blurb text
+    blurb text,
+    reprint_no text
 );
 
 
@@ -1612,6 +1613,19 @@ COMMENT ON COLUMN bill.published_date_time IS 'Date/time when this bill became p
 
 COMMENT ON COLUMN bill.last_fragment_id IS 'Reference to the last sobi fragment that caused an update';
 
+
+--
+-- Name: COLUMN bill.blurb; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN master.bill.blurb IS 'Brief summary of pertinent bill info';
+
+
+--
+-- Name: COLUMN bill.reprint_no; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN master.bill.reprint_no IS 'Points to a reprint of the bill in the same session (if applicable)';
 
 --
 -- Name: bill_amendment; Type: TABLE; Schema: master; Owner: postgres
