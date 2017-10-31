@@ -37,7 +37,7 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
             },
             {
                 value:'OPENLEG',
-                label: 'Openleg XML - Openleg SOBI'
+                label: 'Openleg Ref - Openleg Source'
             }
         ],
         selected: {}

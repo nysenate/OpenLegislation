@@ -51,6 +51,7 @@
         window.apiPath = window.ctxPath + "/api/3";
         window.adminApiPath = window.apiPath + "/admin";
         window.senSitePath = "${senSitePath}";
+        window.openlegRefPath = "${openlegRefPath}"
         window.referenceTypeMap = <%= refTypeMap %>;
         window.referenceTypeDisplayMap = <%= refTypeDisplayMap %>;
         window.referenceContentTypeMap = <%= refTypeContentTypeMap %>;
