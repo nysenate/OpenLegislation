@@ -18,7 +18,6 @@ import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -84,7 +83,7 @@ public class OpenlegCalendarReportService extends BaseSpotCheckReportService<Cal
         logger.info("The current session year is " + SessionYear.of(start.getYear()));
 
         //Retrieve Openleg Ref Calendar data
-        List<CalendarView> referenceCalendarViews = openlegCalendarDao.getOpenlegCalendarView(String.valueOf(start.getYear()), env.getRefApiKey());
+        List<CalendarView> referenceCalendarViews = openlegCalendarDao.getOpenlegCalendarView(String.valueOf(start.getYear()), env.getOpenlegRefApiKey());
         if (referenceCalendarViews.isEmpty()) {
             throw new ReferenceDataNotFoundEx("The collection of sobi calendars with the given session year " + SessionYear.of(start.getYear()) + " is empty");
         }

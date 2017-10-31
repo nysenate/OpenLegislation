@@ -240,7 +240,7 @@ openleg.apiKey = cix1d0bCsmFHaSrCg2pZPM1WIN9Khe3n
 
 # --- Openleg Reference -------------------------------------------------------
 #Api Key for the reference instance of Openleg
-ref.api.key =
+openleg.ref.api.key =
 
 #Openleg-ref url (include trailing slash)
-ref.url = http://legislation.nysenate.gov/
+openleg.ref.url = http://legislation.nysenate.gov/

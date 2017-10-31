@@ -14,7 +14,6 @@ import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -79,7 +78,7 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
         report.setReportId(reportId);
         logger.info("Loading BillView from Openleg reference");
         logger.info("The current session year is " + SessionYear.of( start.getYear() ) );
-        List<BillView> referenceBillViews = openlegBillDao.getOpenlegBillView(String.valueOf(start.getYear()), env.getRefApiKey());
+        List<BillView> referenceBillViews = openlegBillDao.getOpenlegBillView(String.valueOf(start.getYear()), env.getOpenlegRefApiKey());
         if (referenceBillViews.isEmpty()) {
             throw new ReferenceDataNotFoundEx("The collection of sobi bills with the given session year " + SessionYear.of( start.getYear() )  + " is empty.");
         }

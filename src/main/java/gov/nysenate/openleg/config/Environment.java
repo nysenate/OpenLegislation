@@ -121,9 +121,9 @@ public class Environment
 
     /** ---- Openleg Reference ---*/
 
-    @Value ("${ref.api.key}") private String refApiKey;
+    @Value ("${openleg.ref.api.key}") private String openlegRefApiKey;
 
-    @Value ("${ref.url}") private String refUrl;
+    @Value ("${openleg.ref.url}") private String openlegRefUrl;
 
     /** --- Constructors --- */
 
@@ -351,20 +351,20 @@ public class Environment
         return sobiProcessEnabled;
     }
 
-    public String getRefApiKey() {
-        return refApiKey;
+    public String getOpenlegRefApiKey() {
+        return openlegRefApiKey;
     }
 
-    public void setRefApiKey(String refApiKey) {
-        this.refApiKey = refApiKey;
+    public void setOpenlegRefApiKey(String refApiKey) {
+        this.openlegRefApiKey = refApiKey;
     }
 
-    public String getRefUrl() {
-        return refUrl;
+    public String getOpenlegRefUrl() {
+        return openlegRefUrl;
     }
 
-    public void setRefUrl(String refUrl) {
-        this.refUrl = refUrl;
+    public void setOpenlegRefUrl(String refUrl) {
+        this.openlegRefUrl = refUrl;
     }
 
     public String getSenSiteUrl() {

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.agenda.reference.openleg;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
@@ -38,7 +39,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
 
         for (AgendaId agendaId: getAgendaIds(sessionYear)) {
             StringBuffer response = new StringBuffer();
-            connection = JsonOpenlegDaoUtils.setConnection(env.getRefUrl()+"/api/3/agendas/" + sessionYear  + "/" + agendaId.getNumber() + "?key=" + apiKey, "GET", false, true);
+            connection = JsonOpenlegDaoUtils.setConnection(env.getOpenlegRefUrl()+"/api/3/agendas/" + sessionYear  + "/" + agendaId.getNumber() + "?key=" + apiKey, "GET", false, true);
             JsonOpenlegDaoUtils.readInputStream(connection, response);
             mapJSONToAgendaView(response, agendaViews);
             connection.disconnect();
@@ -48,6 +49,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
 
     private AgendaView toAgendaView(JsonNode node) throws IOException {
         ObjectMapper mapper = OutputUtils.getJsonMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         AgendaView agendaView = null;
         if (node.get("result") != null) { //Convert the 1 agenda
             JsonNode agenda = node.get("result");
@@ -106,7 +108,7 @@ public class JsonOpenlegAgendaDao implements OpenlegAgendaDao {
     private List<AgendaId> getAgendaIds(String sessionYear) {
         List<AgendaId> agendaIds = new LinkedList<>();
         StringBuffer idResponse = new StringBuffer();
-        connection = JsonOpenlegDaoUtils.setConnection(env.getRefUrl()+"/api/3/agendas/" + sessionYear,"GET", false, true);
+        connection = JsonOpenlegDaoUtils.setConnection(env.getOpenlegRefUrl()+"/api/3/agendas/" + sessionYear,"GET", false, true);
         JsonOpenlegDaoUtils.readInputStream(connection, idResponse);
         mapJSONToAgendaId(idResponse, agendaIds);
         connection.disconnect();
