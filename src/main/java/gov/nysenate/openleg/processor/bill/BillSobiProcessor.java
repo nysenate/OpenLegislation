@@ -111,7 +111,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
             try {
                 switch (block.getType()) {
                     case BILL_INFO: break; //  applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
-                    case LAW_SECTION: break; // applyLawSection(data, baseBill, specifiedAmendment, date); break;
+                    case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: break; //  applyTitle(data, baseBill, date); break;
                     case BILL_EVENT: break; // applyBillActions(data, baseBill, specifiedAmendment, sobiFragment); break;
                     case SAME_AS: break; // applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
@@ -120,7 +120,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
                     case MULTI_SPONSOR: break; // applyMultisponsors(data, baseBill); break;
                     case PROGRAM_INFO: break; // applyProgramInfo(data, baseBill, date); break;
                     case ACT_CLAUSE: break; // applyActClause(data, specifiedAmendment); break;
-                    case LAW: break; // applyLaw(data, baseBill, specifiedAmendment, date); break;
+                    case LAW: applyLaw(data, baseBill, specifiedAmendment, date); break;
                     case SUMMARY: break; //  applySummary(data, baseBill, date); break;
                     case SPONSOR_MEMO:
                     case RESOLUTION_TEXT:
