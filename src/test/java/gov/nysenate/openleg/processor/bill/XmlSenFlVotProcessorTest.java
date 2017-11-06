@@ -38,9 +38,6 @@ public class XmlSenFlVotProcessorTest extends BaseXmlProcessorTest {
     @Test
     public void processedCorrectlytest() {
         //Get and Process Sample Floor Votes
-//        final File testFileDir = new File(
-//                getClass().getClassLoader().getResource("test/resources/processor/bill/senFlVot/2017-10-23-10.25.46.989009_SENFLVOT_S00100").getFile());
-
         processXmlFile("processor/bill/senFlVot/2017-10-23-10.25.46.989009_SENFLVOT_S00100.XML");
         //Get sample floor votes for this bill
         Bill baseBill = billDao.getBill(new BillId("S100", 2017));
