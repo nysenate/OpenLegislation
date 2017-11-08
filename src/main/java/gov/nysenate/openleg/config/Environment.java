@@ -93,6 +93,12 @@ public class Environment
     /** Enables periodic checking for email spotcheck references */
     @Value("${spotcheck.checkmail.enabled:true}") private boolean checkmailEnabled;
 
+    /** ---- Openleg Reference ---*/
+
+    @Value ("${spotcheck.openleg_ref.api.key}") private String openlegRefApiKey;
+
+    @Value ("${spotcheck.openleg_ref.url}") private String openlegRefUrl;
+
     /** --- Email Settings --- */
 
     /** Imaps host, username, and password for the application's email account*/
@@ -118,12 +124,6 @@ public class Environment
 
     /** The base url of the NYSenate.gov public website */
     @Value ("${nysenate.gov.url:https://www.NYSenate.gov}") private String senSiteUrl;
-
-    /** ---- Openleg Reference ---*/
-
-    @Value ("${openleg.ref.api.key}") private String openlegRefApiKey;
-
-    @Value ("${openleg.ref.url}") private String openlegRefUrl;
 
     /** --- Constructors --- */
 
