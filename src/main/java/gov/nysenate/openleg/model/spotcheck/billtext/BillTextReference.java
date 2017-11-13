@@ -85,7 +85,7 @@ public class BillTextReference {
         return text;
     }
 
-    public String getStripedText() {
+    public String getStrippedText() {
         return BillTextUtils.parseHTMLtext(text);
     }
 

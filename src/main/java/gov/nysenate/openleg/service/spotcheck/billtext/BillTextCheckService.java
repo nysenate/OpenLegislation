@@ -60,7 +60,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
 
         //Add mismatches to observation
         if (reference.isNotFound()) {
-            observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", reference.getStripedText()));
+            observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", reference.getStrippedText()));
         } else {
             checkAmendment(bill, reference, observation);
             if (bill.hasAmendment(reference.getActiveVersion())) {
@@ -90,8 +90,8 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
      * normalization if there was a mismatch in the no-whitespace text
      */
     private void checkBillText(BillAmendment billAmendment, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv){
-        String dataText = billAmendment.getFullText();
-        String refText = reference.getStripedText();
+        String dataText = billAmendment.getStrippedFullText();
+        String refText = reference.getStrippedText();
         String strippedDataText = stripNonAlpha(dataText);
         String strippedRefText = stripNonAlpha(refText);
         // Check normalized text and report on non-normalized text as well if there is a mismatch
