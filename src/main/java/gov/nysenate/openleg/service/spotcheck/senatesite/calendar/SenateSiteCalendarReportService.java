@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.calendar;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.dao.calendar.data.CalendarUpdatesDao;
 import gov.nysenate.openleg.dao.spotcheck.CalendarEntryListIdSpotCheckReportDao;
@@ -24,12 +22,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.dao.base.LimitOffset.ALL;
+import static gov.nysenate.openleg.dao.base.SortOrder.ASC;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.SENATE_SITE_CALENDAR;
 
 /**
@@ -62,10 +61,7 @@ public class SenateSiteCalendarReportService extends BaseSpotCheckReportService<
         try {
 
             //Get openleg calendars for session
-            List<Calendar> openlegCalendars = dumpId.getSession().asYearList().stream()
-                    .map(year -> calendarDataService.getCalendars(year, SortOrder.ASC, LimitOffset.ALL))
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
+            List<Calendar> openlegCalendars = calendarDataService.getCalendars(dumpId.getYear(), ASC, ALL);
 
             // Parse senate site calendars from dump
             List<SenateSiteCalendar> senSiteCalendars = calendarJsonParser.parseCalendars(calendarDump);
