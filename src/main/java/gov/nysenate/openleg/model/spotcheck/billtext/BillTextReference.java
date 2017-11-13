@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
+import gov.nysenate.openleg.util.BillTextUtils;
 
 import java.time.LocalDateTime;
 
@@ -83,6 +84,11 @@ public class BillTextReference {
     public String getText() {
         return text;
     }
+
+    public String getStripedText() {
+        return BillTextUtils.parseHTMLtext(text);
+    }
+
     public void setText(String text) {
         this.text = text;
     }

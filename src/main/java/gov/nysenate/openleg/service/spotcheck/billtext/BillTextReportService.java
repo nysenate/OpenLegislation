@@ -85,7 +85,7 @@ public class BillTextReportService extends BaseSpotCheckReportService {
             SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(btr.getReferenceId(), btr.getBaseBillId());
             if (btr.isNotFound()) { // Bill text references are still generated if LRS data is not found
                 ob.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING,
-                        "also missing", btr.getBaseBillId() + "\n" + btr.getText()));
+                        "also missing", btr.getBaseBillId() + "\n" + btr.getStripedText()));
             }
             ob.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, "", btr.getBaseBillId().toString()));
             return ob;
