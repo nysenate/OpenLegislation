@@ -39,6 +39,7 @@ public class JsonOpenlegDaoUtils {
     }
 
     public static void readInputStream(HttpURLConnection connection,StringBuffer response) {
+        logger.info(connection.getContentType());
         InputStream is = null;
         try {
             is = connection.getInputStream();
