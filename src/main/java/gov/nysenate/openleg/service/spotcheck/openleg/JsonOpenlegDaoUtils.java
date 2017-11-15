@@ -43,7 +43,7 @@ public class JsonOpenlegDaoUtils {
         InputStream is = null;
         try {
             is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is,"UTF-8"));
             String line;
             while (( line = rd.readLine()) != null ) {
                 response.append(line);
