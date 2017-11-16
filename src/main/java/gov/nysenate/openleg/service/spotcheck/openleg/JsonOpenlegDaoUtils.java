@@ -46,11 +46,12 @@ public class JsonOpenlegDaoUtils {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is,"UTF-8"));
             String line;
             while (( line = rd.readLine()) != null ) {
+                line = line.replaceAll("Â", "");
                 response.append(line);
             }
             rd.close();
         } catch (IOException e) {
-            logger.error("The StringBuffer could not read the incoming stream ");
+            logger.error("The BufferedReader could not read the incoming stream ");
             e.printStackTrace();
         }
     }
