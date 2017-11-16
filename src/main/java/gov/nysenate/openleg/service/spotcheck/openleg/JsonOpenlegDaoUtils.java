@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 
 public class JsonOpenlegDaoUtils {
@@ -47,7 +48,7 @@ public class JsonOpenlegDaoUtils {
             String line;
             while (( line = rd.readLine()) != null ) {
                 line = line.replaceAll("Â", "");
-                response.append(line);
+                response.append(new String(line.getBytes("UTF-8")));
             }
             rd.close();
         } catch (IOException e) {
