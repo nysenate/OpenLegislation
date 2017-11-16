@@ -99,9 +99,9 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
                 billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
                 updatedBills.add(baseBill.getBaseBillId());
             }
-            updatedBills.forEach(baseBillId ->
-                    eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-                            baseBillId, BillUpdateField.FULLTEXT)));
+//            updatedBills.forEach(baseBillId ->
+//                    eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
+//                            baseBillId, BillUpdateField.FULLTEXT)));
         }catch (IOException | SAXException |XPathExpressionException e) {
             throw new ParseError("Error While Parsing Bill Text XML", e);
         }
