@@ -79,8 +79,8 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
         BillAmendmentView contentLatestAmendment = content.getAmendments().getItems().get(content.getActiveVersion());
         BillAmendmentView referenceLatestAmendment = reference.getAmendments().getItems().get(reference.getActiveVersion());
         if (referenceLatestAmendment != null && contentLatestAmendment != null) {
-            checkString(contentLatestAmendment.getLawCode().trim(),referenceLatestAmendment.getLawCode().trim().replaceAll("Â§", "§").replaceAll("\\s{2,}", " "),obsrv,BILL_LAW_CODE );
-            checkString(contentLatestAmendment.getLawSection().trim(),referenceLatestAmendment.getLawSection().trim().replaceAll("Â§", "§").replaceAll("\\s{2,}", " "),obsrv,BILL_LAW_SECTION);
+            checkString(contentLatestAmendment.getLawCode().trim(),referenceLatestAmendment.getLawCode().trim().replaceAll("Â§", "§").replaceAll(" +", " "),obsrv,BILL_LAW_CODE );
+            checkString(contentLatestAmendment.getLawSection().trim(),referenceLatestAmendment.getLawSection().trim().replaceAll("Â§", "§").replaceAll(" +", " "),obsrv,BILL_LAW_SECTION);
         }
     }
 
