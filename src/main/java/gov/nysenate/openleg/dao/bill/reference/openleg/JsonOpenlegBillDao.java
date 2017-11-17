@@ -59,12 +59,12 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<BillView> billViewList = new LinkedList<>();
         if (node.get("result").get("items") == null) { // if there is only 1 available bill
-            billViewList.add(mapper.readValue(node.get("result").toString().replaceAll("Â", ""), BillView.class)); //Add Replace all to fix encoding issue hopefully
+            billViewList.add(mapper.readValue(node.get("result").toString(), BillView.class)); //Add Replace all to fix encoding issue hopefully
         } else { // if there are many available bills.
             Iterator<JsonNode> nodeIterator = node.get("result").get("items").iterator();
             while (nodeIterator.hasNext()) {
                 JsonNode node1 = nodeIterator.next();
-                billViewList.add(mapper.readValue(node1.toString().replaceAll("Â", ""), BillView.class)); //Add Replace all to fix encoding issue hopefully
+                billViewList.add(mapper.readValue(node1.toString(), BillView.class)); //Add Replace all to fix encoding issue hopefully
             }
         }
         return billViewList;
@@ -76,7 +76,7 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
         mapper.registerModule(new GuavaModule());
 
         JsonNode node = null;
-        node = mapper.readTree(response.toString().replaceAll("Â", "")); //Add Replace all to fix encoding issue hopefully
+        node = mapper.readTree(response.toString()); //Add Replace all to fix encoding issue hopefully
 
         logger.info("Fetching bill from openleg ref with offset " + offset);
         setOffset( node.get("offsetEnd").asInt() );

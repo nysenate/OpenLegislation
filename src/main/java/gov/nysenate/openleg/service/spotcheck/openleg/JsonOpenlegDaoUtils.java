@@ -47,7 +47,6 @@ public class JsonOpenlegDaoUtils {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is,"UTF-8"));
             String line;
             while (( line = rd.readLine()) != null ) {
-                line = line.replaceAll("Â", "");
                 response.append(line);
             }
             rd.close();
