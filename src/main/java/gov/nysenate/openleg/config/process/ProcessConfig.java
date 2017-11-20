@@ -2,7 +2,7 @@ package gov.nysenate.openleg.config.process;
 
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import org.elasticsearch.search.aggregations.metrics.percentiles.hdr.InternalHDRPercentiles;
+import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -13,14 +13,14 @@ import java.util.Iterator;
 import java.util.List;
 
 @Component
-public class ProcessConfig {
+public class ProcessConfig extends AbstractDataProcessor {
 
     private HashMap<LocalDate,ProcessYear> processYearMap = new HashMap<>();
 
     public ProcessConfig() {}
 
     @PostConstruct
-    private void init() {
+    public void init() {
         //Create NonDefault ProcessYears
         ProcessYear mixed2017 = new ProcessYear();
         mixed2017.setOverarchingDataConfigs(true,true);
@@ -75,11 +75,15 @@ public class ProcessConfig {
             if (fragmentName.contains("SOBI")) {
                 if (removeSobiFragment(fragment,fragProcYear)) {
                     iterator.remove();
+                    postDataUnitEvent(createProcessUnit(fragment));
+                    flushBillUpdates();
                 }
             }
             else if (fragmentName.contains("XML")) {
                 if (removeXmlFragement(fragment,fragProcYear)) {
                     iterator.remove();
+                    postDataUnitEvent(createProcessUnit(fragment));
+                    flushBillUpdates();
                 }
             }
         }
