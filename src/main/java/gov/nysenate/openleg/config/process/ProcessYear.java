@@ -73,7 +73,7 @@ public class ProcessYear {
 
     private boolean senCalal = true;
 
-    private boolean senAen = true;
+    private boolean senAgen = true;
 
     private boolean senAgenV = true;
 
@@ -176,7 +176,7 @@ public class ProcessYear {
         this.senFlVot = true;
         this. senCal = true;
         this. senCalal = true;
-        this.senAen = true;
+        this.senAgen = true;
         this. senAgenV = true;
         this.vetoMsg = true;
     }
@@ -194,7 +194,7 @@ public class ProcessYear {
         this.senFlVot = false;
         this. senCal = false;
         this. senCalal = false;
-        this.senAen = false;
+        this.senAgen = false;
         this. senAgenV = false;
         this.vetoMsg = false;
     }
@@ -427,12 +427,12 @@ public class ProcessYear {
         this.senCalal = senCalal;
     }
 
-    public boolean isSenAen() {
-        return senAen;
+    public boolean isSenAgen() {
+        return senAgen;
     }
 
-    public void setSenAen(boolean senAen) {
-        this.senAen = senAen;
+    public void setSenAgen(boolean senAen) {
+        this.senAgen = senAen;
     }
 
     public boolean isSenAgenV() {
