@@ -1,10 +1,15 @@
 package gov.nysenate.openleg.config.process;
 
+import java.time.LocalDate;
+
 /*
 This class houses the processing configurations for a specific legislative year
 Each year from 1995-now will have a configuration object (Even if they share a common configuration)
  */
 public class ProcessYear {
+
+    //Each year has a LocalDate field of the year it corresponds to
+    LocalDate year;
 
     /**
      * Overarching Data Configurations
@@ -641,5 +646,13 @@ public class ProcessYear {
 
     public void setVetoApprMemo(boolean vetoApprMemo) {
         this.vetoApprMemo = vetoApprMemo;
+    }
+
+    public LocalDate getYear() {
+        return year;
+    }
+
+    public void setYear(LocalDate year) {
+        this.year = year;
     }
 }

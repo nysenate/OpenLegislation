@@ -15,10 +15,13 @@ import java.util.List;
 @Component
 public class ProcessConfig extends AbstractDataProcessor {
 
+    //Map contains all property configurations for all years initialized on init
     private HashMap<LocalDate,ProcessYear> processYearMap = new HashMap<>();
 
+    //defualt constructor
     public ProcessConfig() {}
 
+    //Populates the
     @PostConstruct
     public void init() {
         //Create NonDefault ProcessYears
@@ -63,8 +66,14 @@ public class ProcessConfig extends AbstractDataProcessor {
 
         //Xml Only
         processYearMap.put(LocalDate.of(2018,1,1), createDefaultXmlProcessYear());
+
+        //Set the year field in each ProcessYear
+        for (LocalDate year : processYearMap.keySet()) {
+            processYearMap.get(year).setYear(year);
+        }
     }
 
+    //This method removes sobi fragments that are not allowed to process from the processYearMap
     public List<SobiFragment> filterFileFragements(List<SobiFragment> fragments) {
         for (Iterator<SobiFragment> iterator = fragments.iterator(); iterator.hasNext();) {
 
@@ -90,6 +99,7 @@ public class ProcessConfig extends AbstractDataProcessor {
         return fragments;
     }
 
+    //Removes Sobi bill blocks that are not allowed to process from the processYearMap
     public List<SobiBlock> filterSobiBlocks(SobiFragment fragment, List<SobiBlock> blocks) {
         for (Iterator<SobiBlock> iterator = blocks.iterator(); iterator.hasNext();) {
             SobiBlock block = iterator.next();
@@ -101,7 +111,7 @@ public class ProcessConfig extends AbstractDataProcessor {
     }
 
 
-
+    //Determines Whether a xml fragment should continue processing or not
     public boolean removeXmlFragement(SobiFragment fragment, ProcessYear fragProcYear) {
         boolean removeFragment = false;
 
@@ -164,6 +174,7 @@ public class ProcessConfig extends AbstractDataProcessor {
         return removeFragment;
     }
 
+    //Determines Whether a sobi fragment should continue processing or not
     public boolean removeSobiFragment(SobiFragment fragment, ProcessYear fragProcYear) {
         boolean removeFragment = false;
 
@@ -199,6 +210,7 @@ public class ProcessConfig extends AbstractDataProcessor {
         return removeFragment;
     }
 
+    //Determines whether a sobi block should continue processing or not
     private boolean removeSobiBlock(SobiBlock block, ProcessYear fragProcYear) {
       boolean removeBlock = false;
       switch (block.getType()) {
@@ -258,10 +270,7 @@ public class ProcessConfig extends AbstractDataProcessor {
       return removeBlock;
     }
 
-    private ProcessYear getProcessYearFromMap(LocalDateTime publishDate) {
-        return processYearMap.get(LocalDate.of(publishDate.getYear(),1,1));
-    }
-
+    //Creates the default Xml only process years
     private ProcessYear createDefaultXmlProcessYear() {
         ProcessYear xmlYear = new ProcessYear();
         xmlYear.setOverarchingDataConfigs(true,false);
@@ -272,6 +281,7 @@ public class ProcessConfig extends AbstractDataProcessor {
         return xmlYear;
     }
 
+    //Creates the default sobi only process years
     private ProcessYear createDefualtSobiProcessYear() {
         ProcessYear sobiYear = new ProcessYear();
         sobiYear.setOverarchingDataConfigs(false,true);
@@ -280,5 +290,29 @@ public class ProcessConfig extends AbstractDataProcessor {
         sobiYear.setSpecificSobiConfigsTrue();
         sobiYear.setAllXmlConfigsFalse();
         return sobiYear;
+    }
+
+    //Retrieves a single ProcessYear from the processYearMap
+    public ProcessYear getProcessYearFromMap(LocalDateTime publishDate) {
+        ProcessYear requestedProcessYear = processYearMap.get(LocalDate.of(publishDate.getYear(),1,1));
+        if (requestedProcessYear == null) {
+            requestedProcessYear = createDefaultXmlProcessYear();
+            requestedProcessYear.setYear(LocalDate.of(publishDate.getYear(),1,1));
+        }
+        return requestedProcessYear;
+    }
+
+    public ProcessYear getProcessYearFromMap(LocalDate publishDate) {
+        ProcessYear requestedProcessYear = processYearMap.get(LocalDate.of(publishDate.getYear(),1,1));
+        if (requestedProcessYear == null) {
+            requestedProcessYear = createDefaultXmlProcessYear();
+            requestedProcessYear.setYear(LocalDate.of(publishDate.getYear(),1,1));
+        }
+        return requestedProcessYear;
+    }
+
+    //Retrieves the entire processYearMap
+    public HashMap<LocalDate, ProcessYear> getProcessYearMap() {
+        return processYearMap;
     }
 }
