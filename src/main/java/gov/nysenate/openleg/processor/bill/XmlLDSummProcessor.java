@@ -55,7 +55,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
             final String summary = xmlHelper.getNode("digestsummary/summary", doc) == null ? "" : xmlHelper.getNode("digestsummary/summary", doc).getTextContent().replaceAll("\n"," ").trim();
             final String amd = xmlHelper.getString("digestsummary/summaryamendment", doc);
             final Version version = Version.of(amd);
-            final String law = xmlHelper.getString("law", billTextNode).replaceAll("Â", "¶").replaceAll("º","§").replaceAll("\n"," ").replaceAll(" +"," ").trim();
+            final String law = xmlHelper.getString("law", billTextNode).replaceAll("Â", "¶").replaceAll("º","§").replaceAll("\n"," ").replaceAll("\t", " ").replaceAll(" +"," ").trim();
             final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse + billno, new SessionYear(sessionYear), version), sobiFragment);
             baseBill.setSummary(summary);
             baseBill.getAmendment(version).setLaw(law);
