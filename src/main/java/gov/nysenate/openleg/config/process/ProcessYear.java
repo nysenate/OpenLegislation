@@ -43,7 +43,7 @@ public class ProcessYear {
     private boolean allAgendaVotes = true;
 
     //Enable/Disable all committee processing
-    private boolean allCommittess = true;
+    private boolean allCommittees = true;
 
     /**
      * Xml Specific Data Configurations
@@ -156,11 +156,11 @@ public class ProcessYear {
         this.allSobi = allSobi;
     }
 
-    public void setOverarchingSharedConfigs(boolean allCalendar, boolean allActiveLists, boolean allCommittess,
+    public void setOverarchingSharedConfigs(boolean allCalendar, boolean allActiveLists, boolean allCommittees,
                                             boolean allAgendas, boolean allAgendaVotes) {
         this.allCalendar = allCalendar;
         this.allActiveLists = allActiveLists;
-        this.allCommittess = allCommittess;
+        this.allCommittees = allCommittees;
         this.allAgendas = allAgendas;
         this.allAgendaVotes = allAgendaVotes;
     }
@@ -320,12 +320,12 @@ public class ProcessYear {
         this.allAgendaVotes = allAgendaVotes;
     }
 
-    public boolean isAllCommittess() {
-        return allCommittess;
+    public boolean isAllCommittees() {
+        return allCommittees;
     }
 
-    public void setAllCommittess(boolean allCommittess) {
-        this.allCommittess = allCommittess;
+    public void setAllCommittees(boolean allCommittees) {
+        this.allCommittees = allCommittees;
     }
 
     public boolean isAnAct() {

@@ -145,7 +145,7 @@ public class ProcessConfig extends AbstractDataProcessor {
                     if (!fragProcYear.isSameas()) removeFragment = true;
                     break;
                 case COMMITTEE:
-                    if (!fragProcYear.isSenComm() || !fragProcYear.isAllCommittess()) removeFragment = true;
+                    if (!fragProcYear.isSenComm() || !fragProcYear.isAllCommittees()) removeFragment = true;
                     break;
                 case SENMEMO:
                     if (!fragProcYear.isSenMemo()) removeFragment = true;
@@ -199,7 +199,7 @@ public class ProcessConfig extends AbstractDataProcessor {
                     if (!fragProcYear.isCalendarActive() || !fragProcYear.isAllActiveLists()) removeFragment = true;
                     break;
                 case COMMITTEE:
-                    if (!fragProcYear.isCommittee() || !fragProcYear.isAllCommittess()) removeFragment = true;
+                    if (!fragProcYear.isCommittee() || !fragProcYear.isAllCommittees()) removeFragment = true;
                     break;
                 case ANNOTATION:
                     if (!fragProcYear.isAnnotation()) removeFragment = true;
