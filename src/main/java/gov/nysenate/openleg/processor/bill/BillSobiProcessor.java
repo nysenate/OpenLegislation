@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processor.bill;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import gov.nysenate.openleg.config.process.ProcessConfig;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
@@ -21,6 +22,7 @@ import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -72,6 +74,9 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
     protected static final String vetoApprovalSplitter =
         "(?<=00000.SO DOC (?:VETO\\d{4}|APPR\\d{3}\\s)\\s{8}(?:\\*END\\*.{3}|\\*DELETE\\*).{42})\\n";
 
+    @Autowired
+    private ProcessConfig processConfig;
+
     /** --- Constructors --- */
 
     public BillSobiProcessor() {}
@@ -99,7 +104,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
         List<SobiBlock> blocks = sobiFragment.getSobiBlocks();
         logger.info("Processing " + sobiFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
         DataProcessUnit unit = createProcessUnit(sobiFragment);
-        for (SobiBlock block : blocks) {
+        for (SobiBlock block : processConfig.filterSobiBlocks(sobiFragment ,blocks)) {
             String data = block.getData();
             BillId billId = block.getBillId();
             Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), billId, sobiFragment);
@@ -110,22 +115,22 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
                                                           block.getStartLineNo(), block.getEndLineNo());
             try {
                 switch (block.getType()) {
-                    case BILL_INFO: break; //  applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
+                    case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
                     case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
-                    case TITLE: break; //  applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT: break; // applyBillActions(data, baseBill, specifiedAmendment, sobiFragment); break;
-                    case SAME_AS: break; // applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
-                    case SPONSOR: break; // applySponsor(data, baseBill, specifiedAmendment, date); break;
-                    case CO_SPONSOR: break; // applyCosponsors(data, baseBill); break;
-                    case MULTI_SPONSOR: break; // applyMultisponsors(data, baseBill); break;
-                    case PROGRAM_INFO: break; // applyProgramInfo(data, baseBill, date); break;
-                    case ACT_CLAUSE: break; // applyActClause(data, specifiedAmendment); break;
+                    case TITLE: applyTitle(data, baseBill, date); break;
+                    case BILL_EVENT:  applyBillActions(data, baseBill, specifiedAmendment, sobiFragment); break;
+                    case SAME_AS:  applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
+                    case SPONSOR:  applySponsor(data, baseBill, specifiedAmendment, date); break;
+                    case CO_SPONSOR:  applyCosponsors(data, baseBill); break;
+                    case MULTI_SPONSOR:  applyMultisponsors(data, baseBill); break;
+                    case PROGRAM_INFO:  applyProgramInfo(data, baseBill, date); break;
+                    case ACT_CLAUSE:  applyActClause(data, specifiedAmendment); break;
                     case LAW: applyLaw(data, baseBill, specifiedAmendment, date); break;
-                    case SUMMARY: break; //  applySummary(data, baseBill, date); break;
+                    case SUMMARY:  applySummary(data, baseBill, date); break;
                     case SPONSOR_MEMO:
                     case RESOLUTION_TEXT:
-                    case TEXT: break; // applyText(data, specifiedAmendment, date, block.getType(), sobiFragment); break;
-                    case VETO_APPROVE_MEMO: break; // applyVetoApprovalMessage(data, baseBill, date); break;
+                    case TEXT: applyText(data, specifiedAmendment, date, block.getType(), sobiFragment); break;
+                    case VETO_APPROVE_MEMO:  applyVetoApprovalMessage(data, baseBill, date); break;
                     case VOTE_MEMO: applyVoteMemo(data, specifiedAmendment, date); break;
                     default: {
                         throw new ParseError("Invalid Line Code " + block.getType());

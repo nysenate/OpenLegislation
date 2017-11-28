@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.config.process.ProcessConfig;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileFsDao;
@@ -54,6 +55,8 @@ public class ManagedSobiProcessService implements SobiProcessService {
     private EventBus eventBus;
     @Autowired
     private Environment env;
+    @Autowired
+    private ProcessConfig processConfig;
 
     private boolean sobiProcessEnabled = true;
     /**
@@ -145,7 +148,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
     public int processFragments(List<SobiFragment> fragments, SobiProcessOptions options) {
         logger.debug((fragments.isEmpty()) ? "No more fragments to process"
                 : "Iterating through {} fragments", fragments.size());
-        for (SobiFragment fragment : fragments) {
+        for (SobiFragment fragment : processConfig.filterFileFragements(fragments)) {
             // Hand off processing to specific implementations based on fragment type.
             if (processorMap.containsKey(fragment.getType())) {
                 processorMap.get(fragment.getType()).process(fragment);
@@ -158,11 +161,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
         // Perform any necessary post-processing/cleanup
         processorMap.values().forEach(p -> p.postProcess());
         // Set the fragments as processed and update
-        fragments.forEach(f -> {
-            f.setPendingProcessing(false);
-            sobiFragmentDao.updateSobiFragment(f);
-        });
-
+        sobiFragmentDao.setPendProcessingFalse(fragments);
         return fragments.size();
     }
 
