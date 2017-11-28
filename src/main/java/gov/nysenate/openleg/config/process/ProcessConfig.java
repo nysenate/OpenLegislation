@@ -1,19 +1,25 @@
 package gov.nysenate.openleg.config.process;
 
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 @Component
 public class ProcessConfig extends AbstractDataProcessor {
+
+    @Autowired
+    private SobiFragmentDao sobiFragmentDao;
 
     //Map contains all property configurations for all years initialized on init
     private HashMap<LocalDate,ProcessYear> processYearMap = new HashMap<>();
@@ -84,15 +90,13 @@ public class ProcessConfig extends AbstractDataProcessor {
             if (fragmentName.contains("SOBI")) {
                 if (removeSobiFragment(fragment,fragProcYear)) {
                     iterator.remove();
-                    postDataUnitEvent(createProcessUnit(fragment));
-                    flushBillUpdates();
+                    sendFragmentToDaoForUpdate(fragment);
                 }
             }
             else if (fragmentName.contains("XML")) {
                 if (removeXmlFragement(fragment,fragProcYear)) {
                     iterator.remove();
-                    postDataUnitEvent(createProcessUnit(fragment));
-                    flushBillUpdates();
+                    sendFragmentToDaoForUpdate(fragment);
                 }
             }
         }
@@ -314,5 +318,12 @@ public class ProcessConfig extends AbstractDataProcessor {
     //Retrieves the entire processYearMap
     public HashMap<LocalDate, ProcessYear> getProcessYearMap() {
         return processYearMap;
+    }
+
+    //Calls the sobiFragmentDao to set the fragment to not pend process
+    private void sendFragmentToDaoForUpdate(SobiFragment fragment) {
+        ArrayList<SobiFragment> fragmentToSetFalse = new ArrayList<>();
+        fragmentToSetFalse.add(fragment);
+        sobiFragmentDao.setPendProcessingFalse(fragmentToSetFalse);
     }
 }

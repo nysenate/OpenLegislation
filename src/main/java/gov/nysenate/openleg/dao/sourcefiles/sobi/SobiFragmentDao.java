@@ -81,4 +81,10 @@ public interface SobiFragmentDao {
      * @param fragment SobiFragment
      */
     void updateSobiFragment(SobiFragment fragment);
+
+    /**
+     * Set pending_processing false for sobi fragments after they have been processed or if they have not been
+     * configured to process in the ProcessConfig
+     */
+    void setPendProcessingFalse(List<SobiFragment> fragments);
 }

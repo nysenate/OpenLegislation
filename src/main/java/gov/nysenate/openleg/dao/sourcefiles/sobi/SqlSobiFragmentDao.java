@@ -80,6 +80,17 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
      * {@inheritDoc}
      */
     @Override
+    public void setPendProcessingFalse(List<SobiFragment> fragments) {
+        fragments.forEach(f -> {
+            f.setPendingProcessing(false);
+            updateSobiFragment(f);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public SobiFragment getSobiFragment(String fragmentId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fragmentId", fragmentId);
