@@ -45,10 +45,9 @@ public class ProcessYearCtrl {
      *  View Complete Process Map API
      * ---------------------------
      *
-     * Get a single data process run via the process id (int).
      * Usage: (GET) /api/3/admin/process/map/complete
      *
-     * Expected Output: Json structure of the entire ProcessYearMap
+     * Expected Output: Json structure of the entire ProcessYearMap containing all years
      */
     @RequiresPermissions("admin:dataProcess")
     @RequestMapping(value = "/complete", method = RequestMethod.GET)
@@ -60,7 +59,6 @@ public class ProcessYearCtrl {
      *  View Single Process Map API
      * ---------------------------
      *
-     * Get a single data process run via the process id (int).
      * Usage: (GET) /api/3/admin/process/map/{year}
      *
      * Path variable
@@ -79,12 +77,11 @@ public class ProcessYearCtrl {
      *  View Range Process Map API
      * ---------------------------
      *
-     * Get a single data process run via the process id (int).
      * Usage: (GET) /api/3/admin/process/map/{startYear}/{endYear}
      *
      * Path variables
-     * startYear Beginning year which must be before the end year by at least 1 year
-     * endyear End year which must be after the start year by at at least 1 year
+     * startYear: Beginning year which must be before the end year by at least 1 year
+     * endYear: End year which must be after the start year by at at least 1 year
      * are the (inclusive) years that you want to see the processMaps for
      *
      *
@@ -117,12 +114,13 @@ public class ProcessYearCtrl {
      *  Single Year Method API
      * ---------------------------
      *
-     * Set a single data process run via the process id (int).
      * Usage: (GET) /api/3/admin/process/map/set/{year}/{allXml}/{allSobi}
      *
      * Path variables:
      *  year: you want to retrieve the ProcessYear for
      *  property: the property you want to change in the ProcessYear
+     *
+     *
      *  value: true = Enable false = disable
      *
      * Expected Output: Json Structure of the requested ProcessYear
@@ -141,7 +139,6 @@ public class ProcessYearCtrl {
      *  Single Year Method API
      * ---------------------------
      *
-     * Set a single data process run via the process id (int).
      * Usage: (GET)
      * /api/3/admin/process/map/set/{year}/{xml}/{sobi}/{specificSobi}
      *
@@ -150,6 +147,8 @@ public class ProcessYearCtrl {
      *  xml - should xml params be set true or false in the requestedProcessyear
      *  sobi - should general sobi params be set true or false in the requestedProcessYear
      *  specificSobi - should the specific sobi params be set true or false in the requestedProcessYear
+     *
+     *
      *  value: true = Enable false = disable
      *
      * Expected Output: Json Structure of the requested ProcessYear
@@ -171,7 +170,6 @@ public class ProcessYearCtrl {
      *  Single Year Method API
      * ---------------------------
      *
-     * Set a single data process run via the process id (int).
      * Usage: (GET)
      * /api/3/admin/process/map/set/{year}/{allCalendar}/{allActiveLists}/{allCommittees}/{allAgendas}/{allAgendaVotes}
      *
@@ -182,6 +180,8 @@ public class ProcessYearCtrl {
      *  allCommittess: the value you want to change allCalendar in the process year map
      *  allAgendas: the value you want to change allCalendar in the process year map
      *  allAgendaVotes: the value you want to change allCalendar in the process year map
+     *
+     *
      *  value: true = Enable false = disable
      *
      * Expected Output: Json Structure of the requested ProcessYear
@@ -206,19 +206,20 @@ public class ProcessYearCtrl {
      *  Range Year Method API
      * ---------------------------
      *
-     * Set a single data process run via the process id (int).
-     * Usage: (GET) /api/3/admin/process/map/set/{startYear}/{endYear}/{allXml}/{allSobi}
+     * Usage: (GET) /api/3/admin/process/map/set/range/{startYear}/{endYear}/{allXml}/{allSobi}
      *
      * Path variables:
      *  startYear: The first inclusive year you want to change a property in the ProcessYearMap
      *  endYear: The last inclusive year you want to change a property in the ProcessYearMap
      *  property: the property you want to change in the ProcessYear
+     *
+     *
      *  value: true = Enable false = disable
      *
      * Expected Output: Json Structure of the requested ProcessYears
      */
     @RequiresPermissions("admin:dataProcess")
-    @RequestMapping(value = "/set/{startYear}/{endYear}/{allXml}/{allSobi}", method = RequestMethod.GET)
+    @RequestMapping(value = "/set/range/{startYear}/{endYear}/{allXml}/{allSobi}", method = RequestMethod.GET)
     public String setOverarchingDataProcessingOnRangeOfProcessYears(@PathVariable int startYear,
                                                                    @PathVariable int endYear,
                                                                    @PathVariable boolean allXml,
@@ -245,25 +246,26 @@ public class ProcessYearCtrl {
      *  Range Year Method API
      * ---------------------------
      *
-     * Set a single data process run via the process id (int).
      * Usage: (GET)
-     * /api/3/admin/process/map/set/{year}/{allCalendar}/{allActiveLists}/{allCommittees}/{allAgendas}/{allAgendaVotes}
+     * /api/3/admin/process/map/set/range/{startYear}/{endYear}/{allCalendar}/{allActiveLists}/{allCommittees}/{allAgendas}/{allAgendaVotes}
      *
      * Path variables:
      *  startYear: The first inclusive year you want to change the properties in the ProcessYearMap
-     *  endYear: The last inclusive year you want to change the properties in the ProcessYearMap
+     *  endYear: The last non-inclusive year you want to change the properties in the ProcessYearMap
      *  allCalendar: the value you want to change allCalendar in the process year map
      *  allActiveLists: the value you want to change allCalendar in the process year map
      *  allCommittess: the value you want to change allCalendar in the process year map
      *  allAgendas: the value you want to change allCalendar in the process year map
      *  allAgendaVotes: the value you want to change allCalendar in the process year map
+     *
+     *
      *  value: true = Enable false = disable
      *
      * Expected Output: Json Structure of the requested ProcessYear
      */
     @RequiresPermissions("admin:dataProcess")
     @RequestMapping(
-            value = "/set/{startYear}/{endYear}/{allCalendar}/{allActiveLists}/{allCommittees}/{allAgendas}/{allAgendaVotes}",
+            value = "/set/range/{startYear}/{endYear}/{allCalendar}/{allActiveLists}/{allCommittees}/{allAgendas}/{allAgendaVotes}",
             method = RequestMethod.GET)
     public String setOverarchingSharedConfigsOnRangeOfProcessYears(@PathVariable int startYear,
                                                                  @PathVariable int endYear,
@@ -294,21 +296,23 @@ public class ProcessYearCtrl {
      *  Range Year Method API
      * ---------------------------
      *
-     * Set a single data process run via the process id (int).
      * Usage: (GET)
-     * /api/3/admin/process/map/set/{year}/{xml}/{sobi}/{specificSobi}
+     * /api/3/admin/process/map/set/range/{startYear}/{endYear}/{xml}/{sobi}/{specificSobi}
      *
      * Path variables:
-     *  year: you want to retrieve the ProcessYear for
+     *  startYear: the inclusive end year you want to set propeties in
+     *  endYear: the non-inclusive end year you want to set propeties in
      *  xml - should xml params be set true or false in the requestedProcessyear
      *  sobi - should general sobi params be set true or false in the requestedProcessYear
      *  specificSobi - should the specific sobi params be set true or false in the requestedProcessYear
+     *
+     *
      *  value: true = Enable false = disable
      *
      * Expected Output: Json Structure of the requested ProcessYear
      */
     @RequiresPermissions("admin:dataProcess")
-    @RequestMapping(value = "/set/{startYear}/{endYear}/{xml}/{sobi}/{specificSobi}",
+    @RequestMapping(value = "/set/range/{startYear}/{endYear}/{xml}/{sobi}/{specificSobi}",
             method = RequestMethod.GET)
     public String setOverarchingGeneralConfigsOnRangeOfProcessYears(@PathVariable int startYear,
                                                                   @PathVariable int endYear,
@@ -382,7 +386,7 @@ public class ProcessYearCtrl {
      *  Single Property Process Map API
      * ---------------------------
      *
-     * Usage: (GET) /api/3/admin/process/map/set/{year}/{property}/{value}
+     * Usage: (GET) /api/3/admin/process/map/set/property/{year}/{property}/{value}
      *
      * Path variables:
      *  year: you want to retrieve the ProcessYear for
@@ -392,7 +396,7 @@ public class ProcessYearCtrl {
      * Expected Output: Json Structure of the requested ProcessYear
      */
     @RequiresPermissions("admin:dataProcess")
-    @RequestMapping(value = "/set/{year}/{property}/{value}", method = RequestMethod.GET)
+    @RequestMapping(value = "/set/property/{year}/{property}/{value}", method = RequestMethod.GET)
     public String setPropertyOnSingleProcessYear(@PathVariable int year,@PathVariable String property,
                                                  @PathVariable boolean value) {
         LocalDate requestedYear = LocalDate.of(year,1,1);
@@ -404,7 +408,7 @@ public class ProcessYearCtrl {
      *  Range Property Process Map API
      * ---------------------------
      *.
-     * Usage: (GET) /api/3/admin/process/map/set/{startYear}/{endYear}/{property}/{value}
+     * Usage: (GET) /api/3/admin/process/map/set/property/range/{startYear}/{endYear}/{property}/{value}
      *
      * Path variables:
      *  startYear: The first inclusive year you want to change a property in the ProcessYearMap
@@ -415,7 +419,7 @@ public class ProcessYearCtrl {
      * Expected Output: List of messages detailing which properties were applied successfully
      */
     @RequiresPermissions("admin:dataProcess")
-    @RequestMapping(value = "/set/{startYear}/{endYear}/{property}/{value}", method = RequestMethod.GET)
+    @RequestMapping(value = "/set/property/range/{startYear}/{endYear}/{property}/{value}", method = RequestMethod.GET)
     public String setPropertyOnRangeOfProcessYears(@PathVariable int startYear,@PathVariable int endYear,
                                                    @PathVariable String property, @PathVariable boolean value) {
         if (startYear >= endYear) {
@@ -449,7 +453,7 @@ public class ProcessYearCtrl {
             Field requestedField = processYearClass.getDeclaredField(property);
             requestedField.setAccessible(true);
             requestedField.setBoolean(requestedProcessYear, value);
-            return  property + " set to " + value +" for "+ requestedProcessYear.getYear() ;
+            return  property + " set to " + value +" for "+ requestedProcessYear.getYear().getYear() ;
         }
         catch (Exception e){
             return "Unable to Update " + property + " for " + requestedProcessYear.getYear() + ".\n\n" + e.getMessage();
