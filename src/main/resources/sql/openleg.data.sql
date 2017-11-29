@@ -2279,6 +2279,7 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1050	1134	WRIGHT	2017	56	f
 1133	1136	BENJAMIN	2017	30	f
 1134	1137	PELLEGRINO	2017	9	f
+1135	520  	ROSENTHAL L 2017	67	t
 \.
 
 

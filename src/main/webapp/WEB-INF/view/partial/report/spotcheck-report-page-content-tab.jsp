@@ -91,7 +91,7 @@
     </dir-pagination-controls>
     <div class="spotcheck-table-goto" ng-show="showGoto">
       Go to:
-      <input ng-model="currentPage" ng-change="onGotoChange()" type="text">
+      <input ng-model="pagination.currPage" ng-change="onPageChange(pagination.currPage, type)" type="text">
     </div>
   </md-content>
 </md-tab>

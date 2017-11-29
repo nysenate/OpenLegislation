@@ -1,8 +1,8 @@
 angular.module('open.spotcheck')
     .controller('detailDialogCtrl', ['$scope', '$mdDialog', '$filter',
-                                     'mismatch', 'source', 'contentType', detailDialogCtrl]);
+                                     'mismatch', 'source', 'contentType', 'CalendarGetApi', detailDialogCtrl]);
 
-function detailDialogCtrl($scope, $mdDialog, $filter, mismatch, source, contentType) {
+function detailDialogCtrl($scope, $mdDialog, $filter, mismatch, source, contentType, calendarGetApi) {
 
     $scope.reportType = mismatch.refType;
 
@@ -97,6 +97,13 @@ function detailDialogCtrl($scope, $mdDialog, $filter, mismatch, source, contentT
         return $filter('isOLRef')(source);
     }
 
+    function setCalDate(year, calNo) {
+        $scope.currentMismatch.calDate = 'N/A';
+        calendarGetApi.get({year: year, calNo: calNo, full: false}, function(response) {
+            $scope.currentMismatch.calDate = response.result.calDate;
+        });
+    }
+
     function init() {
         $scope.contentType = contentType;
         $scope.date = moment().format('l');
@@ -105,6 +112,9 @@ function detailDialogCtrl($scope, $mdDialog, $filter, mismatch, source, contentT
         $scope.currentMismatch = mismatch;
         setDefaultTextOptions(mismatch.mismatchType);
         $scope.formatDisplayData();
+        if ($scope.contentType === 'CALENDAR') {
+            setCalDate($scope.currentMismatch.key.year, $scope.currentMismatch.key.calNo);
+        }
     }
 
     init();

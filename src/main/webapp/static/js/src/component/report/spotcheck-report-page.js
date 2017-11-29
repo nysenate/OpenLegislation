@@ -89,7 +89,6 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
     $scope.diffLoading = false;
     $scope.orderby = 'OBSERVED_DATE';
     $scope.sort = 'DESC';
-    $scope.currentPage = 1;
     $scope.showGoto = false;
 
     $scope.mismatchResponse = {
@@ -159,10 +158,6 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
             $scope.updateMismatches();
         }
         $location.search(searchParams.currentPage, pageNum);
-    };
-
-    $scope.onGotoChange = function () {
-        $scope.pagination.currPage = $scope.currentPage;
     };
 
     $scope.currentDay = function () {
@@ -266,7 +261,6 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
                 $scope.pagination.setTotalItems(result.pagination.total);
                 $scope.mismatchResponse.mismatches = result.mismatches;
                 $scope.loading = false;
-                $scope.currentPage = $scope.pagination.currPage;
                 $scope.showGoto = (result.pagination.total > $scope.pagination.getLimit())
             })
             .catch(function (response) {
@@ -431,8 +425,7 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     function initPage() {
         if ($routeParams.hasOwnProperty(searchParams.currentPage)) {
-            $scope.currentPage = $routeParams[searchParams.currentPage];
-            $scope.pagination.currPage = $scope.currentPage;
+            $scope.pagination.currPage = $routeParams[searchParams.currentPage];
         }
     }
 
