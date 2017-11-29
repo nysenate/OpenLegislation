@@ -746,6 +746,7 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 377	Kevin Cahill	Kevin	\N	Cahill	\N	Assembly Member	\N	t	551_kevin_cahill.jpg
 255	George Latimer	George	\N	Latimer	latimer@nysenate.gov	Senator	\N	t	434_george_latimer.jpg
 959	Christine Pellegrino	Christine		Pellegrino	pellegrinoc@nyassembly.gov	Assembly Member		t	no_image.jpg
+961	Daniel Rosenthal	Daniel	\N	Rosenthal	\N	Assembly Member		t	no_image.jpg
 \.
 
 
@@ -1142,6 +1143,7 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 579	405	assembly	t	Brian Kolb
 582	408	assembly	t	Joseph Morelle
 1137	959	assembly	t	Christine Pellegrino
+1139	961	assembly	t	Daniel Rosenthal
 \.
 
 
@@ -2279,6 +2281,8 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1050	1134	WRIGHT	2017	56	f
 1133	1136	BENJAMIN	2017	30	f
 1134	1137	PELLEGRINO	2017	9	f
+1135	520	ROSENTHAL L 2017	67	t
+1136	1139	ROSENTHAL D 2017	27	f
 \.
 
 
