@@ -36,8 +36,6 @@ public class ProcessConfig extends AbstractDataProcessor {
         mixed2017.setOverarchingSharedConfigs(true,true,true,true,true);
         mixed2017.setAllXmlConfigsTrue();
         mixed2017.setGeneralSobiConfigsTrue();
-        mixed2017.setAnnotation(false);
-        mixed2017.setCommittee(false);
         mixed2017.setSpecificSobiConfigsFalse();
 
         //Put ProcessYear's in Hash map
