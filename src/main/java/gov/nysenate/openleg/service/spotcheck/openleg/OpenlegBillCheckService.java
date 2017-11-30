@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -158,6 +159,6 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     private String removeExcessWhitespace(String input) {
-        return input.replaceAll("\n"," ").replaceAll("\t", " ").replaceAll(" +"," ").trim();
+        return StringUtils.deleteWhitespace(input);
     }
 }
