@@ -88,12 +88,14 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
             } else {
                 if (prime.contains("BUDGET BILL")) {
                     BillSponsor billSponsor1 = new BillSponsor();
+                    billSponsor1.setMember(null);
                     billSponsor1.setBudget(true);
                     baseBill.setSponsor(billSponsor1);
                 } else {
                     String sponsor = "";
                     if (prime.contains("RULES")) {
                         BillSponsor billSponsor1 = new BillSponsor();
+                        billSponsor1.setMember(null);
                         billSponsor1.setRules(true);
                         baseBill.setSponsor(billSponsor1);
                     } else {
