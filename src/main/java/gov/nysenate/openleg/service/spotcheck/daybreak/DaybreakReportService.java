@@ -10,7 +10,6 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
@@ -34,7 +33,7 @@ import static java.util.stream.Collectors.toSet;
  * and save reports for bill data.
  */
 @Service("daybreakReport")
-public class DaybreakReportService extends BaseSpotCheckReportService<BillId>
+public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId>
 {
     private static final Logger logger = LoggerFactory.getLogger(DaybreakReportService.class);
 
@@ -45,7 +44,7 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BillId>
     private DaybreakDao daybreakDao;
 
     @Autowired
-    private SpotCheckReportDao<BillId> reportDao;
+    private SpotCheckReportDao<BaseBillId> reportDao;
 
     @Autowired
     private BillDataService billDataService;
@@ -58,15 +57,15 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BillId>
     }
 
     @Override
-    protected SpotCheckReportDao<BillId> getReportDao() {
+    protected SpotCheckReportDao<BaseBillId> getReportDao() {
         return reportDao;
     }
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckReport<BillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
+    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         // Create a new report instance
-        SpotCheckReport<BillId> report = new SpotCheckReport<>();
+        SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
         // Fetch the daybreak bills that are within the given date range
         logger.info("Fetching daybreak bills...");
         Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
@@ -97,7 +96,7 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BillId>
         Sets.symmetricDifference(daybreakBillIds, openlegBillIds).stream()
                 .forEach(id -> {
                     // id exists in daybreak or openleg sets, never both.
-                    SpotCheckObservation<BillId> sourceMissingObs = new SpotCheckObservation<>(refId, id);
+                    SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(refId, id);
                     SpotCheckMismatch mismatch = null;
                     if (openlegBillIds.contains(id)) {
                         // openleg has the bill but daybreak does not, add reference missing mismatch if bill is published.
@@ -137,8 +136,8 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BillId>
         return pubStatus.isPresent() && pubStatus.get().isPublished();
     }
 
-    private void recordMismatch(SpotCheckReport<BillId> report, SpotCheckObservation<BillId> observation, SpotCheckMismatch mismatch) {
-        observation.addMismatch(mismatch);
-        report.addObservation(observation);
+    private void recordMismatch(SpotCheckReport<BaseBillId> report, SpotCheckObservation<BaseBillId> sourceMissingObs, SpotCheckMismatch mismatch) {
+        sourceMissingObs.addMismatch(mismatch);
+        report.addObservation(sourceMissingObs);
     }
 }

@@ -82,13 +82,12 @@ public class BillJsonParser extends JsonParser{
         bill.setLastStatus(getValue(billNode, "field_ol_last_status"));
         bill.setLastStatusDate(getDateTimeValue(billNode, "field_ol_last_status_date"));
         bill.setActions(getActionList(billNode, "field_ol_all_actions"));
+        bill.setHasSameAs(getBooleanValue(billNode, "field_ol_has_same_as"));
 
         if (bill.getBaseBillId().getBillType().isResolution()) {
             // Public Website has different models for resolution and bills. For resolutions action info is stored
             // in the field_ol_all_statuses node.
             bill.setActions(getActionList(billNode, "field_ol_all_statuses"));
-        } else {
-            bill.setHasSameAs(getBooleanValue(billNode, "field_ol_has_same_as"));
         }
 
         return bill;
