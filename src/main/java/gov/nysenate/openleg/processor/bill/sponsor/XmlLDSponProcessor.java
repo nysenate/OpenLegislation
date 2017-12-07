@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill.sponsor;
 
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -26,6 +27,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is responsible for Processing the Sponsor Sobi Fragments
@@ -36,6 +39,10 @@ import java.util.List;
 public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessor.class);
+
+    protected static final Pattern rulesSponsorPattern =
+            Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
+
     @Autowired
     private XmlHelper xmlHelper;
 
@@ -95,9 +102,17 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
                     String sponsor = "";
                     if (prime.contains("RULES")) {
                         BillSponsor billSponsor1 = new BillSponsor();
-                        billSponsor1.setMember(null);
                         billSponsor1.setRules(true);
+                        Matcher rules = rulesSponsorPattern.matcher(prime);
+                        if (!"RULES COM".equals(prime) && rules.matches()) {
+                            String primeSponsor = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
+                            billSponsor1.setMember(getMemberFromShortName(primeSponsor, SessionYear.of(sessyr), chamber));
+                        }
+                        else {
+                            billSponsor1.setMember(null);
+                        }
                         baseBill.setSponsor(billSponsor1);
+
                     } else {
                         sponsor = prime;
                         List<SessionMember> sessionMembers = getSessionMember(sponsor, baseBill.getSession(), chamber);
