@@ -106,7 +106,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
             ));
         }
 
-        String daybreakPubVersionsStr = publishedVersionsString(daybreakActiveVersion);
+        String daybreakPubVersionsStr = publishedVersionsString(daybreakBill);
         String billPubVersionsStr = publishedVersionsString(bill);
         if (!daybreakPubVersionsStr.equals(billPubVersionsStr)) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_AMENDMENT_PUBLISH, billPubVersionsStr, daybreakPubVersionsStr));
@@ -273,23 +273,40 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
 
     /**
      * Given the bill return a single string that has the name of each published version,
-     * e.g. 'DEFAULT A B C' if the base and amendments A, B, and C are all published. If
-     * the amendment is missing from the bill but is in the publish map, tack on a [MISSING_DATA]
-     * like B[MISSING_DATA]
+     * e.g. 'DEFAULT A B C' if the base and amendments A, B, and C are all published.
      */
     protected String publishedVersionsString(Bill bill) {
-        return bill.getAmendPublishStatusMap().entrySet().stream()
-            .filter(e -> e.getValue().isPublished())
-            .map(e -> e.getKey().name() + ((!bill.hasAmendment(e.getKey())) ? "[MISSING_DATA]" : ""))
-            .collect(joining(" "));
+        Set<Version> publishedVersionSet = bill.getAmendPublishStatusMap().entrySet().stream()
+                .filter(entry -> entry.getValue().isPublished())
+                .map(Map.Entry::getKey)
+                .collect(toSet());
+        return publishedVersionsString(publishedVersionSet);
     }
 
     /**
-     * Given an active amendment version, return a string that has the names of every version before
-     * and including the active version.
+     * Get a string representing the published versions of the given {@link DaybreakBill}
      */
-    protected String publishedVersionsString(Version activeVersion) {
-        return Arrays.asList(Version.values()).stream()
-            .filter(v -> v.compareTo(activeVersion) <= 0).map(v -> v.name()).collect(joining(" "));
+    protected String publishedVersionsString(DaybreakBill bill) {
+        if (bill.getActiveVersion() == null) {
+            return "";
+        }
+        Set<Version> publishedVersions = new HashSet<>();
+        // Add all versions up to the active version
+        for (int i = 0; i < Version.values().length && i <= bill.getActiveVersion().ordinal(); i++) {
+            publishedVersions.add(Version.values()[i]);
+        }
+        // Add any versions with page file entries
+        publishedVersions.addAll(bill.getAmendments().keySet());
+        return publishedVersionsString(publishedVersions);
+    }
+
+    /**
+     * Generate a string that represents the given set of versions.
+     */
+    protected String publishedVersionsString(Set<Version> publishedVersions) {
+        return publishedVersions.stream()
+                .sorted()
+                .map(Version::name)
+                .collect(joining(" "));
     }
 }
