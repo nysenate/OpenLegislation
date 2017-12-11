@@ -6,14 +6,14 @@ import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.client.view.entity.MemberView;
+import gov.nysenate.openleg.client.view.entity.ExtendedMemberView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
@@ -88,7 +88,7 @@ public class MemberGetCtrl extends BaseCtrl
                                          @RequestParam(defaultValue = "true") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         return new ViewObjectResponse<>(
-                (full) ? new MemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))
+                (full) ? new ExtendedMemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))
                         : new SimpleMemberView(memberData.getMemberById(id, SessionYear.of(sessionYear)))
         );
     }
@@ -118,7 +118,7 @@ public class MemberGetCtrl extends BaseCtrl
         List<ViewObject> memberList;
             memberList = results.getRawResults().stream()
                     .map(member -> memberData.getMemberById(member.getMemberId(), member.getSessionYear()))
-                    .map(member -> full ? new MemberView(member) : new SimpleMemberView(member))
+                    .map(member -> full ? new ExtendedMemberView(member) : new SimpleMemberView(member))
                     .collect(Collectors.toList());
 
         return ListViewResponse.of(memberList, results.getTotalResults(), limOff);
