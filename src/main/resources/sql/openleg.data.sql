@@ -1144,6 +1144,7 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 582	408	assembly	t	Joseph Morelle
 1137	959	assembly	t	Christine Pellegrino
 1139	961	assembly	t	Daniel Rosenthal
+1140	350	senate	t	Brian Kavanagh
 \.
 
 
@@ -2283,6 +2284,7 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1134	1137	PELLEGRINO	2017	9	f
 1135	520	ROSENTHAL L 2017	67	t
 1136	1139	ROSENTHAL D 2017	27	f
+1137	1140	KAVANAGH 2017	26	f
 \.
 
 
