@@ -1,10 +1,7 @@
 package gov.nysenate.openleg.processor.bill.sponsor;
 
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillSponsor;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
@@ -20,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -42,6 +40,9 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
 
     protected static final Pattern rulesSponsorPattern =
             Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
+
+    /** The format for program info lines. */
+    protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
 
     @Autowired
     private XmlHelper xmlHelper;
@@ -74,6 +75,7 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
         try {
             final Document doc = xmlHelper.parse(sobiFragment.getText());
             final Node billTextNode = xmlHelper.getNode("sponsor_data", doc);
+
             final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
             final String sponsorhse = xmlHelper.getString("@billhse", billTextNode).trim();
             final Integer sponsorno = xmlHelper.getInteger("@billno", billTextNode);
@@ -126,6 +128,25 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
                         amendment.setCoSponsors(getSessionMember(coprime, baseBill.getSession(), chamber));
                         amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber));
                     }
+                }
+            }
+            ArrayList<ProgramInfo> programInfos = new ArrayList<>();
+            NodeList departdescs = doc.getElementsByTagName("departdesc");
+            if (departdescs.getLength() > 0) {
+                for (int index = 0; index < departdescs.getLength(); index++) {
+                    Node programInfoNode = departdescs.item(index);
+                    String programInfoString = programInfoNode.getFirstChild().getTextContent();
+                    if (!programInfoString.isEmpty()) {
+                        Matcher programMatcher = programInfoPattern.matcher(programInfoString);
+                        if (programMatcher.find()) {
+                            programInfos.add(new ProgramInfo(programMatcher.group(2), Integer.parseInt(programMatcher.group(1))));
+
+                        }
+                    }
+                }
+                if (programInfos.size() > 0) {
+                    baseBill.setProgramInfo(programInfos.get(0));
+                    baseBill.setModifiedDateTime(date);
                 }
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
