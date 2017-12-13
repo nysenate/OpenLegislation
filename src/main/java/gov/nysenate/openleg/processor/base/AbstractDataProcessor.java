@@ -39,6 +39,8 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +52,9 @@ import java.util.stream.Collectors;
 public abstract class AbstractDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractDataProcessor.class);
+
+    protected static final Pattern rulesSponsorPattern =
+            Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
 
     @Autowired protected Environment env;
 
@@ -179,6 +184,56 @@ public abstract class AbstractDataProcessor
     }
 
     /** --- Member Methods --- */
+
+    /**
+     * Handles parsing a Session member out of a sobi or xml file
+     */
+    protected void handlePrimaryMemberParsing(Bill baseBill, String sponsorLine, SessionYear sessionYear) {
+        // Get the chamber from the Bill
+        Chamber chamber = baseBill.getBillType().getChamber();
+        // New Sponsor instance
+        BillSponsor billSponsor = new BillSponsor();
+        // Format the sponsor line
+        sponsorLine = sponsorLine.replace("(MS)", "").toUpperCase().trim();
+
+        // Check for RULES sponsors
+        if (sponsorLine.startsWith("RULES")) {
+            billSponsor.setRules(true);
+            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
+            if (!"RULES COM".equals(sponsorLine) && rules.matches()) {
+                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
+                billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
+            }
+            else {
+                billSponsor.setMember(null);
+            }
+        }
+        // Budget bills don't have a specific sponsor
+        else if (sponsorLine.startsWith("BUDGET")) {
+            billSponsor.setBudget(true);
+            billSponsor.setMember(null);
+        }
+
+        else {
+            // In rare cases multiple sponsors can be listed on a single line. We can handle this
+            // by setting the first contact as the sponsor, and subsequent ones as additional sponsors.
+            if (sponsorLine.contains(",")) {
+                List<String> sponsors = Lists.newArrayList(
+                        Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsorLine));
+                if (!sponsors.isEmpty()) {
+                    sponsorLine = sponsors.remove(0);
+                    for (String sponsor : sponsors) {
+                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(sponsor, sessionYear, chamber));
+                    }
+                }
+            }
+
+            // Set the member into the sponsor instance
+            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
+        }
+        baseBill.setSponsor(billSponsor);
+    }
+
 
     /**
      * Retrieves a member from the LBDC short name.  Creates a new unverified session member entry if no member can be retrieved.

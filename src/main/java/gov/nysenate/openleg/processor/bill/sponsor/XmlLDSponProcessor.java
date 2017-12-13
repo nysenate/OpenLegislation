@@ -95,40 +95,9 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
             if (action.equals("remove")) {
                 removeProcess(amendment, baseBill);
             } else {
-                if (prime.contains("BUDGET BILL")) {
-                    BillSponsor billSponsor1 = new BillSponsor();
-                    billSponsor1.setMember(null);
-                    billSponsor1.setBudget(true);
-                    baseBill.setSponsor(billSponsor1);
-                } else {
-                    String sponsor = "";
-                    if (prime.contains("RULES")) {
-                        BillSponsor billSponsor1 = new BillSponsor();
-                        billSponsor1.setRules(true);
-                        Matcher rules = rulesSponsorPattern.matcher(prime);
-                        if (!"RULES COM".equals(prime) && rules.matches()) {
-                            String primeSponsor = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
-                            billSponsor1.setMember(getMemberFromShortName(primeSponsor, SessionYear.of(sessyr), chamber));
-                        }
-                        else {
-                            billSponsor1.setMember(null);
-                        }
-                        baseBill.setSponsor(billSponsor1);
-
-                    } else {
-                        sponsor = prime;
-                        List<SessionMember> sessionMembers = getSessionMember(sponsor, baseBill.getSession(), chamber);
-                        if (billSponsor != null && !sessionMembers.isEmpty()) { // if noone support the bill, but it contains the session member, it maybe means that the member added in another bill. so add her/him as the sponsor
-                            baseBill.setSponsor(new BillSponsor(sessionMembers.get(0)));
-                            baseBill.getSponsor().setMember(sessionMembers.get(0));
-                        }
-                        else if (billSponsor == null && !sessionMembers.isEmpty()){
-                            baseBill.setSponsor(new BillSponsor(sessionMembers.get(0)));
-                        }
-                        amendment.setCoSponsors(getSessionMember(coprime, baseBill.getSession(), chamber));
-                        amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber));
-                    }
-                }
+                handlePrimaryMemberParsing(baseBill, prime, baseBill.getSession());
+                amendment.setCoSponsors(getSessionMember(coprime, baseBill.getSession(), chamber));
+                amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber));
             }
             ArrayList<ProgramInfo> programInfos = new ArrayList<>();
             NodeList departdescs = doc.getElementsByTagName("departdesc");
