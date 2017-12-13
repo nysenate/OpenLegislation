@@ -91,7 +91,7 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
 
                         // The notes are very important because they will contain any vital information such
                         // as if the meeting is off the floor (ad-hoc) or if there was a change to the meeting time.
-                        String notes = xml.getString("notes/text()", xmlCommittee).replaceAll("\\\\n", "\n").replaceAll("\\|","\\n");
+                        String notes = xml.getString("notes/text()", xmlCommittee).replaceAll("\n","").replaceAll("\\\\n", "\n").replaceAll("\\|","\\n").replaceAll(" +"," ");
 
                         // The meeting date/time may not be entirely accurate because often the data is expressed
                         // through the notes field, especially for multiple ad-hoc meetings during the end of session.
