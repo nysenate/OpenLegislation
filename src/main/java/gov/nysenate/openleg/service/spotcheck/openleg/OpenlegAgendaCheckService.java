@@ -1,6 +1,9 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
+import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.client.view.agenda.AgendaCommAddendumView;
+import gov.nysenate.openleg.client.view.agenda.AgendaItemView;
+import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
@@ -11,6 +14,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Service
 public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAgendaAddendumId, AgendaCommAddendumView, AgendaCommAddendumView> {
@@ -67,7 +71,26 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
     }
 
     protected void checkBillListing(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(OutputUtils.toJson(content.getBills()),OutputUtils.toJson(reference.getBills()), observation, SpotCheckMismatchType.AGENDA_BILL_LISTING);
+        ArrayList<BillIdView> mismatchList = new ArrayList<>();
+        ArrayList<BillIdView> contentBillIdViews = new ArrayList<>();
+        ArrayList<BillIdView> referenceBillIdViews = new ArrayList<>();
+        content.getBills().getItems().forEach(agendaItemView -> contentBillIdViews.add(agendaItemView.getBillId()));
+        reference.getBills().getItems().forEach(agendaItemView -> referenceBillIdViews.add(agendaItemView.getBillId()));
+        for(BillIdView refBillIdView : referenceBillIdViews ) {
+            boolean matched = false;
+            for (BillIdView contentbillIdView : contentBillIdViews) {
+                if ( contentbillIdView.getPrintNo().equals(refBillIdView.getPrintNo()) &&
+                        contentbillIdView.getVersion().equals(refBillIdView.getVersion()) ) {
+                    matched = true;
+                }
+            }
+            if (!matched) {
+                mismatchList.add(refBillIdView);
+            }
+        }
+        if (mismatchList.size() > 0) {
+            checkString(OutputUtils.toJson(contentBillIdViews),OutputUtils.toJson(referenceBillIdViews), observation, SpotCheckMismatchType.AGENDA_BILL_LISTING);
+        }
     }
 
     protected void checkAttendanceList(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
