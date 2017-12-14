@@ -118,8 +118,7 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             if (billSponsor == null) {
                 billSponsor = new BillSponsor();
             }
-            billSponsor.setMember(getMemberFromShortName(sponsor, new SessionYear(sessyr), chamber));
-            baseBill.setSponsor(billSponsor);
+            handlePrimaryMemberParsing(baseBill, sponsor,baseBill.getSession());
             billAmendment.setLawSection(lawSec);
             baseBill.setTitle(title);
 
