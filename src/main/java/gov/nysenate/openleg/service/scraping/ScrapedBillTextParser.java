@@ -136,7 +136,6 @@ public class ScrapedBillTextParser {
      */
     private String formatBillText(String billText, BaseBillId billId) {
         billText = billText.replaceAll("[\r\\uFEFF-\\uFFFF]|(?<=\n) ", "");
-        billText = billText.replaceAll("§", "S");
         if (billId.getBillType().isResolution()) {
             billText = billText.replaceFirst("^\n\n[\\w \\.-]+\n\n[\\w '\\.\\-:]+\n", "");
             billText = billText.replaceFirst("^\\s+PROVIDING", String.format("\n%s RESOLUTION providing", billId.getChamber()));
