@@ -3,13 +3,13 @@ package gov.nysenate.openleg.controller.api.entity;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.client.view.entity.MemberView;
+import gov.nysenate.openleg.client.view.entity.ExtendedMemberView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -84,7 +84,7 @@ public class MemberSearchCtrl extends BaseCtrl
             } catch (MemberNotFoundEx ex) {
                 throw new SearchException("No Member found.", ex);
             }
-            viewtypes.add((full) ? new MemberView(member) : new SimpleMemberView(member));
+            viewtypes.add((full) ? new ExtendedMemberView(member) : new SimpleMemberView(member));
         }
         return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
     }

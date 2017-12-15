@@ -202,7 +202,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
             // Set the fragment as processed
             daybreakDao.setProcessed(daybreakFragment.getDaybreakBillId());
         } catch(Exception ex) {
-            logger.error("An error has occurred while processing a daybreak fragment.", ex);
+            logger.error("An error has occured while processing a daybreak fragment.", ex);
         }
     }
 }

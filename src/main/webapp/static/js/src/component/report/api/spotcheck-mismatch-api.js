@@ -105,47 +105,7 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseMismatchType(mismatch) {
-        // if (mismatch.mismatchType == "OBSERVE_DATA_MISSING") {
-        //     if (mismatch.dataSource == 'LBDC') {
-        //         if (mismatch.contentType == "BILL")
-        //             mismatch.mismatchType = 'Missing LBDC Bill';
-        //         if (mismatch.contentType == "CALENDAR")
-        //             mismatch.mismatchType = 'Missing LBDC Cal';
-        //         if (mismatch.contentType == "AGENDA")
-        //             mismatch.mismatchType = 'Missing LBDC Agenda';
-        //     }
-        //     else {
-        //         if (mismatch.contentType == "BILL")
-        //             mismatch.mismatchType = 'Missing OpenLeg  Bill';
-        //         if (mismatch.contentType == "CALENDAR")
-        //             mismatch.mismatchType = 'Missing OpenLeg  Cal';
-        //         if (mismatch.contentType == "AGENDA")
-        //             mismatch.mismatchType = 'Missing OpenLeg  Agenda';
-        //     }
-        //     return mismatch.mismatchType;
-        // }
-        // else if (mismatch.mismatchType == "REFERENCE_DATA_MISSING") {
-        //     if (mismatch.dataSource == 'LBDC') {
-        //         if (mismatch.contentType == "BILL")
-        //             mismatch.mismatchType = 'Missing OpenLeg  Bill';
-        //         if (mismatch.contentType == "CALENDAR")
-        //             mismatch.mismatchType = 'Missing OpenLeg  Cal';
-        //         if (mismatch.contentType == "AGENDA")
-        //             mismatch.mismatchType = 'Missing OpenLeg  Agenda';
-        //     }
-        //     else {
-        //         if (mismatch.contentType == "BILL")
-        //             mismatch.mismatchType = 'Missing NYSenate.gov  Bill';
-        //         if (mismatch.contentType == "CALENDAR")
-        //             mismatch.mismatchType = 'Missing NYSenate.gov  Cal';
-        //         if (mismatch.contentType == "AGENDA")
-        //             mismatch.mismatchType = 'Missing NYSenate.gov  Agenda';
-        //     }
-        //     return mismatch.mismatchType;
-        // }
-        // else {
-            return mismatchMap[mismatch.mismatchType];
-        // }
+        return mismatch.mismatchType;
     }
 
     function parseReferenceDate(mismatch) {
