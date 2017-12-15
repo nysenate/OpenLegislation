@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
+import gov.nysenate.openleg.client.view.agenda.CommAgendaIdView;
 import gov.nysenate.openleg.client.view.bill.BillActionView;
 import gov.nysenate.openleg.client.view.bill.BillAmendmentView;
 import gov.nysenate.openleg.client.view.bill.BillView;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -142,7 +144,33 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillCommitteeAgendas(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getCommitteeAgendas()), OutputUtils.toJson(reference.getCommitteeAgendas()),obsrv,BILL_COMMITTEE_AGENDAS_OPENLEG );
+        ArrayList<CommAgendaIdView> mismatchList = new ArrayList<>();
+        ArrayList<CommAgendaIdView> contentCommAgendaIds = new ArrayList<>();
+        ArrayList<CommAgendaIdView> referenceCommAgendaIds = new ArrayList<>();
+
+        contentCommAgendaIds.addAll( content.getCommitteeAgendas().getItems() );
+        referenceCommAgendaIds.addAll( reference.getCommitteeAgendas().getItems() );
+
+        for (CommAgendaIdView refComAgendaIdView: referenceCommAgendaIds) {
+            boolean matched = false;
+            for (CommAgendaIdView contentComAgendaIdView: contentCommAgendaIds) {
+                if (contentComAgendaIdView.getCommitteeId().getChamber().equals(refComAgendaIdView.getCommitteeId().getChamber())
+                        && contentComAgendaIdView.getCommitteeId().getName().equals(refComAgendaIdView.getCommitteeId().getName()) ) {
+
+                    if (contentComAgendaIdView.getAgendaId().getNumber() == refComAgendaIdView.getAgendaId().getNumber()
+                            && contentComAgendaIdView.getAgendaId().getYear() == refComAgendaIdView.getAgendaId().getYear()) {
+                        matched = true;
+                    }
+
+                }
+                if (!matched) {
+                    mismatchList.add(refComAgendaIdView);
+                }
+            }
+        }
+        if (mismatchList.size() > 0) {
+            checkString(OutputUtils.toJson(contentCommAgendaIds), OutputUtils.toJson(referenceCommAgendaIds),obsrv,BILL_COMMITTEE_AGENDAS_OPENLEG );
+        }
     }
 
     protected void checkBillPastCommmittee(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
