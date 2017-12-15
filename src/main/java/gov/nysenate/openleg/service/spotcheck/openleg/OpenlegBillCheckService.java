@@ -121,7 +121,16 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillApproveMessage(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getApprovalMessage()), OutputUtils.toJson(reference.getApprovalMessage()),obsrv,BILL_APPROVE_MESSAGE_OPENLEG );
+        String contentApprMemo;
+        String referenceApprMemo;
+        try {
+            contentApprMemo = removeExcessWhitespace(content.getApprovalMessage().getText().replaceAll("\n","").replaceAll("\\\\n", "\n"));
+            referenceApprMemo = removeExcessWhitespace(reference.getApprovalMessage().getText().replaceAll("\n","").replaceAll("\\\\n", "\n"));
+            checkString(OutputUtils.toJson(contentApprMemo), OutputUtils.toJson(referenceApprMemo),obsrv,BILL_APPROVE_MESSAGE_OPENLEG );
+        }
+        catch (NullPointerException e) {
+            //The Bill did not have an appr memo no need to do anything
+        }
     }
 
     protected void checkVotes(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
