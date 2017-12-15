@@ -173,7 +173,7 @@ public class FileIOUtils
      */
     public static void write(File file, CharSequence data) throws IOException {
         FileUtils.write(file, data);
-        Files.setPosixFilePermissions(Paths.get(file.getAbsolutePath()), filePermissions);
+        setCommonFilePermissions(file);
     }
 
     /**
@@ -187,6 +187,22 @@ public class FileIOUtils
      */
     public static void write(File file, CharSequence data, Charset encoding) throws IOException {
         FileUtils.write(file, data, encoding);
+        setCommonFilePermissions(file);
+    }
+
+    /**
+     * Saves an input stream to a file and sets common permissions to the file.
+     * Wraps the FileUtils.copyInputStreamToFile method.
+     * @param stream
+     * @param file
+     * @throws IOException
+     */
+    public static void copyInputStreamToFile(InputStream stream, File file) throws IOException {
+        FileUtils.copyInputStreamToFile(stream, file);
+        setCommonFilePermissions(file);
+    }
+
+    private static void setCommonFilePermissions(File file) throws IOException {
         Files.setPosixFilePermissions(Paths.get(file.getAbsolutePath()), filePermissions);
     }
 }

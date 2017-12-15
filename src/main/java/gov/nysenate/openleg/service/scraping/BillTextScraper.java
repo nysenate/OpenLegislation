@@ -6,6 +6,7 @@ import gov.nysenate.openleg.dao.scraping.LRSScraper;
 import gov.nysenate.openleg.dao.scraping.ScrapingIOException;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.util.DateUtils;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.http.HttpResponse;
@@ -70,7 +71,7 @@ public class BillTextScraper extends LRSScraper {
     }
 
     public void saveResponseToFile(HttpResponse response, File file) throws IOException {
-        FileUtils.copyInputStreamToFile(response.getEntity().getContent(), file);
+        FileIOUtils.copyInputStreamToFile(response.getEntity().getContent(), file);
     }
 
     /**

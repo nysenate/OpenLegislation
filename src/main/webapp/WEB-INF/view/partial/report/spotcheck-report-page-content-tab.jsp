@@ -57,7 +57,7 @@
         <!-- Id column data -->
         <div ng-repeat="col in idColumns[type]" class="{{col.class}}" ng-bind="mismatch[col.field]"></div>
 
-        <div class="spotcheck-col-type">{{mismatch.mismatchType}}</div>
+        <div class="spotcheck-col-type">{{mismatch.mismatchType | mismatchType:mismatch.datasource}}</div>
         <div class="spotcheck-col-date">{{mismatch.observedDate}}</div>
         <div class="spotcheck-col-issue">
           <md-input-container class="md-block">

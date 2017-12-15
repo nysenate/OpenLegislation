@@ -4761,6 +4761,12 @@ COMMENT ON TABLE session_member IS 'Links LBDC short names to members for each s
 
 
 --
+-- Name: COLUMN session_member.alternate; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN session_member.alternate IS 'Used when a senator has multiple short names in the same session. Active short name should have alternate = FALSE and all previous short names should have alternate = TRUE.';
+
+--
 -- Name: session_member_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 

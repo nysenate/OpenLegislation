@@ -1,13 +1,13 @@
 angular.module('open.spotcheck')
     .controller('SpotcheckReportCtrl',
-        ['$scope', '$route', '$location', '$routeParams', '$mdDialog', '$mdDateLocale', '$timeout',
+        ['$scope', '$route', '$location', '$routeParams', '$mdDialog', '$mdDateLocale', '$timeout', '$filter',
             'PaginationModel', 'SpotcheckMismatchApi',
             'SpotcheckMismatchSummaryApi', 'SpotcheckMismatchIgnoreAPI',
             'SpotcheckMismatchTrackingAPI', 'SpotcheckMismatchDeleteAllAPI',
             'SpotcheckMismatchDeleteAllAPI', ReportCtrl])
 ;
 
-function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateLocale, $timeout,
+function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateLocale, $timeout, $filter,
                     paginationModel, spotcheckMismatchApi, mismatchSummaryApi, mismatchIgnoreApi,
                     spotcheckMismatchTrackingAPI, spotcheckMismatchDeleteAllAPI) {
 
@@ -389,7 +389,8 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
     }
 
     $scope.mismatchTypeLabel = function (type, count) {
-        return window.mismatchMap[type] + " (" + count + ")"
+        var datasource = $scope.datasource.selected.value;
+        return $filter('mismatchType')(type, datasource) + " (" + count + ")"
     };
 
     function selectedContentType() {

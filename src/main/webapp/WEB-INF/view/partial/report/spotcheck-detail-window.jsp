@@ -16,21 +16,21 @@
               </a>
             </p>
             <p>Session Year: {{currentMismatch.session.year}}</p>
-            <p>Error Type: {{currentMismatch.mismatchType}}</p>
+            <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
           </md-card>
 
           <md-card ng-if="contentType == 'CALENDAR'" class="mismatch-diff-info-card">
             <p>Date Reported: {{date}}</p>
             <p>Calendar Number: {{currentMismatch.calNo}}</p>
             <p>Session Date: {{currentMismatch.calDate}}</p>
-            <p>Error Type: {{currentMismatch.mismatchType}}</p>
+            <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
           </md-card>
 
           <md-card  ng-if="contentType == 'AGENDA'" class="mismatch-diff-info-card">
             <p>Date Reported: {{date}}</p>
             <p>Week:</p>
             <p>Agenda: {{currentMismatch.agendaNo}}</p>
-            <p>Error Type: {{currentMismatch.mismatchType}}</p>
+            <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
           </md-card>
 
           <md-card class="mismatch-diff-text-controls">
