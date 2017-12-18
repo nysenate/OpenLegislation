@@ -32,7 +32,6 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
     @Override
     public SpotCheckObservation<CommitteeAgendaAddendumId>  check(AgendaCommAddendumView content, AgendaCommAddendumView reference) {
         final SpotCheckObservation<CommitteeAgendaAddendumId> observation = new SpotCheckObservation<>(reference.getCommitteeAgendaAddendumId());
-        checkModifiedDateTime(content,reference,observation);
         checkChair(content,reference,observation);
         checkLocation(content,reference,observation);
         checkMeetingDateTime(content,reference,observation);
@@ -44,10 +43,6 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
             checkVotesList(content,reference,observation);
         }
         return observation;
-    }
-
-    protected void checkModifiedDateTime(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation ) {
-        checkString(content.getModifiedDateTime().toString(), reference.getModifiedDateTime().toString(),observation, SpotCheckMismatchType.AGENDA_MODIFIED_DATE_TIME);
     }
 
     protected void checkHasVotes(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
