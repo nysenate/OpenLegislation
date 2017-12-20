@@ -1,13 +1,11 @@
 package gov.nysenate.openleg.service.spotcheck.billtext;
 
 import gov.nysenate.openleg.dao.bill.text.BillTextReferenceDao;
-import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.model.spotcheck.billtext.ScrapeQueuePriority;
-import gov.nysenate.openleg.service.scraping.BillTextScraper;
-import gov.nysenate.openleg.service.scraping.LrsOutageScrapingEx;
-import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
+import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.service.scraping.*;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckNotificationService;
 import org.slf4j.Logger;
@@ -20,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by kyle on 4/21/15.
@@ -27,12 +26,21 @@ import java.util.List;
 @Service
 public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService {
 
-    @Autowired private BillTextReferenceDao btrDao;
-    @Autowired private BillTextScraper scraper;
-    @Autowired private ScrapedBillTextParser scrapedBillTextParser;
-    @Autowired private SpotCheckNotificationService notificationService;
-
     private static final Logger logger = LoggerFactory.getLogger(BillTextSpotcheckProcessService.class);
+
+    private BillTextReferenceDao btrDao;
+    private BillTextScraper scraper;
+    private BillTextReferenceFactory btrFactory;
+    private SpotCheckNotificationService notificationService;
+
+    @Autowired
+    public BillTextSpotcheckProcessService(BillTextReferenceDao btrDao, BillTextScraper scraper,
+                                           BillTextReferenceFactory btrFactory, SpotCheckNotificationService notificationService) {
+        this.btrDao = btrDao;
+        this.scraper = scraper;
+        this.btrFactory = btrFactory;
+        this.notificationService = notificationService;
+    }
 
     @Override
     public int doCollate() throws IOException {
@@ -42,20 +50,25 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
     @Override
     public int doIngest() throws IOException {
         Collection<File> incomingScrapedBills = btrDao.getIncomingScrapedBills();
+        List<BillTextReferenceFile> btrFiles = incomingScrapedBills.stream()
+                .map(BillTextReferenceFile::new)
+                .collect(Collectors.toList());
         List<BillTextReference> billTextReferences = new ArrayList<>();
-        for (File file : incomingScrapedBills) {
-            BaseBillId baseBillId = scrapedBillTextParser.getBaseBillIdFromFileName(file);
+        for (BillTextReferenceFile btrFile: btrFiles) {
             try {
-                BillTextReference btr = scrapedBillTextParser.parseReference(file);
+                BillTextReference btr = btrFactory.fromFile(btrFile);
                 btrDao.insertBillTextReference(btr);
                 billTextReferences.add(btr);
             } catch (LrsOutageScrapingEx ex) {
-                logger.warn("LRS outage detected from scraped file: {}", file.getPath());
+                logger.warn("LRS outage detected from scraped file: {}", btrFile.getFile().getPath());
                 notificationService.handleLrsOutageScrapingEx(ex);
                 // Add the bill back to the queue
-                btrDao.addBillToScrapeQueue(baseBillId, ScrapeQueuePriority.SPOTCHECK_TRIGGERED);
+                btrDao.addBillToScrapeQueue(btrFile.getBaseBillId(), ScrapeQueuePriority.SPOTCHECK_TRIGGERED);
+            } catch(ParseError ex) {
+                logger.warn("Could not successfully parse bill text reference file {}", btrFile.getFile().getName());
+                // TODO notify of parse error
             } finally {
-                btrDao.archiveScrapedBill(file);
+                btrDao.archiveScrapedBill(btrFile.getFile());
             }
         }
         return billTextReferences.size();

@@ -6,9 +6,10 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.service.scraping.BillTextReferenceFile;
 import gov.nysenate.openleg.service.scraping.BillTextScraper;
 import gov.nysenate.openleg.service.scraping.LrsOutageScrapingEx;
-import gov.nysenate.openleg.service.scraping.ScrapedBillTextParser;
+import gov.nysenate.openleg.service.scraping.BillTextReferenceFactory;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +63,8 @@ public class LRSBillTextSobiMaker {
     private static final String billTextCloserTemplate = String.format(billTextHeaderTemplateTemplate, "*END*     ");
 
     @Autowired BillTextScraper billTextScraper;
-    @Autowired ScrapedBillTextParser billTextParser;
+    @Autowired
+    BillTextReferenceFactory billTextParser;
 
     private File scrapedDir = new File("/tmp/scraped-bills");
 
@@ -159,7 +161,7 @@ public class LRSBillTextSobiMaker {
         for (File scrapedFile : scrapedBills) {
             try {
                 logger.info("parsing {}", scrapedFile);
-                btrs.add(billTextParser.parseReference(scrapedFile));
+                btrs.add(billTextParser.fromFile(new BillTextReferenceFile(scrapedFile)));
                 scrapedFile.delete();
             } catch (ParseError | LrsOutageScrapingEx ex) {
                 logger.error("error parsing scraped bill file {}:\n{}", scrapedFile, ex);
