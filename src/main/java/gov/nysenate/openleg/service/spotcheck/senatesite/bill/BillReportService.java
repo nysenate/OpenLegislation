@@ -5,11 +5,13 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.dao.spotcheck.BillIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
-import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
@@ -159,13 +161,27 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         Set<BillId> senSiteBillIds = senSiteBills.stream()
                 .map(SenateSiteBill::getBillId)
                 .collect(Collectors.toSet());
-        Set<BillId> openlegBillIds = openlegBills.stream()
-                .flatMap(bill -> bill.getAmendmentIds().stream()
-                        .filter(billId -> bill.getPublishStatus(billId.getVersion())
-                                .map(PublishStatus::isPublished)
-                                .orElse(false)))
-                .collect(Collectors.toSet());
 
-        Sets.difference(openlegBillIds, senSiteBillIds).forEach(report::addRefMissingObs);
+        Set<BillId> publishedOlBillIds = new HashSet<>();
+        Set<BillId> unpublishedOlBillIds = new HashSet<>();
+
+        for (Bill bill : openlegBills) {
+            bill.getAmendPublishStatusMap().forEach((version, pubStatus) -> {
+                BillId billId = bill.getBaseBillId().withVersion(version);
+                if (pubStatus.isPublished()) {
+                    publishedOlBillIds.add(billId);
+                } else {
+                    unpublishedOlBillIds.add(billId);
+                }
+            });
+        }
+
+        // Add ref missing observations for published openleg bills missing from the dump
+        Sets.difference(publishedOlBillIds, senSiteBillIds)
+                .forEach(report::addRefMissingObs);
+
+        // Add empty observations for unpublished openleg bills missing from the dump
+        Sets.difference(unpublishedOlBillIds, senSiteBillIds)
+                .forEach(report::addEmptyObservation);
     }
 }
