@@ -31,27 +31,39 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
     Environment env;
 
     HttpURLConnection connection = null;
-    int offset = 0;
-    int total = 0;
 
     @Override
-    public List<BillView> getOpenlegBillView(String sessionYear, String apiKey) {
+    public List<BillView> getOpenlegBillView(String sessionYear, String apiKey, int offset) {
         List<BillView> billViews = new LinkedList<>();
         StringBuffer response = new StringBuffer();
-
-        connection = JsonOpenlegDaoUtils.setConnection(env.getOpenlegRefUrl()+"/api/3/bills/" + sessionYear  + "?full=true&limit=1000&key=" + apiKey, "GET", false, true);
+        connection = JsonOpenlegDaoUtils.setConnection(env.getOpenlegRefUrl()+"/api/3/bills/" + sessionYear + "?full=true&key=" + apiKey + "&limit=1000&offset=" + offset,"GET",false,true );
         JsonOpenlegDaoUtils.readInputStream(connection, response);
+        logger.info("Fetching bill from openleg ref with offset " + offset);
         mapJSONToBillView(response, billViews);
         connection.disconnect();
-
-        while (offset < total) {
-            StringBuffer restOfBill = new StringBuffer();
-            connection = JsonOpenlegDaoUtils.setConnection(env.getOpenlegRefUrl()+"/api/3/bills/" + sessionYear + "?full=true&key=" + apiKey + "&limit=1000&offset=" + (offset + 1),"GET",false,true );
-            JsonOpenlegDaoUtils.readInputStream(connection, restOfBill);
-            mapJSONToBillView(restOfBill, billViews);
-            connection.disconnect();
-        }
         return billViews;
+    }
+
+    @Override
+    public int getTotalRefBillsForSessionYear(int sessionYear, String apiKey) {
+        StringBuffer response = new StringBuffer();
+        HttpURLConnection connection = JsonOpenlegDaoUtils.setConnection(env.getOpenlegRefUrl()+"api/3/bills/" +
+                sessionYear  + "?key=" + apiKey, "GET", false, true);
+        JsonOpenlegDaoUtils.readInputStream(connection, response);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new GuavaModule());
+
+            JsonNode node = null;
+            node = mapper.readTree(response.toString());
+            return  node.get("total").asInt();
+        }
+        catch(IOException e) {
+            logger.error("The JSON Object could not be mapped to a Json Node");
+            e.printStackTrace();
+        }
+
+        return -1;
     }
 
     private List<BillView> toBillView(JsonNode node) throws IOException {
@@ -59,12 +71,12 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<BillView> billViewList = new LinkedList<>();
         if (node.get("result").get("items") == null) { // if there is only 1 available bill
-            billViewList.add(mapper.readValue(node.get("result").toString(), BillView.class)); //Add Replace all to fix encoding issue hopefully
+            billViewList.add(mapper.readValue(node.get("result").toString(), BillView.class));
         } else { // if there are many available bills.
             Iterator<JsonNode> nodeIterator = node.get("result").get("items").iterator();
             while (nodeIterator.hasNext()) {
                 JsonNode node1 = nodeIterator.next();
-                billViewList.add(mapper.readValue(node1.toString(), BillView.class)); //Add Replace all to fix encoding issue hopefully
+                billViewList.add(mapper.readValue(node1.toString(), BillView.class));
             }
         }
         return billViewList;
@@ -76,25 +88,12 @@ public class JsonOpenlegBillDao implements OpenlegBillDao {
         mapper.registerModule(new GuavaModule());
 
         JsonNode node = null;
-        node = mapper.readTree(response.toString()); //Add Replace all to fix encoding issue hopefully
-
-        logger.info("Fetching bill from openleg ref with offset " + offset);
-        setOffset( node.get("offsetEnd").asInt() );
-        setTotal( node.get("total").asInt() );
-
+        node = mapper.readTree(response.toString());
         billViews.addAll(toBillView(node));
         } catch (IOException e) {
             logger.error("The JSON Object could not be mapped to a bill view");
             e.printStackTrace();
         }
-    }
-
-    private void setOffset(int update) {
-        offset = update;
-    }
-
-    private void setTotal(int total) {
-        this.total = total;
     }
 
 }

@@ -78,46 +78,62 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
         report.setReportId(reportId);
         logger.info("Loading BillView from Openleg reference");
         logger.info("The current session year is " + SessionYear.of( start.getYear() ) );
-        List<BillView> referenceBillViews = openlegBillDao.getOpenlegBillView(String.valueOf(start.getYear()), env.getOpenlegRefApiKey());
-        if (referenceBillViews.isEmpty()) {
-            throw new ReferenceDataNotFoundEx("The collection of sobi bills with the given session year " + SessionYear.of( start.getYear() )  + " is empty.");
-        }
-        //Fetching Bill from Openleg xml-data-processing branch
-        // by iterating BaseBillId of BillView from Openleg reference
-        logger.info("Check the symmetric diff...");
-        Set<BaseBillId> refBill = new HashSet<>();
+        int totalRefBills = openlegBillDao.getTotalRefBillsForSessionYear(start.getYear(), env.getOpenlegRefApiKey());
+        int offsetRefBills = 0;
+
+        //Fetching Bill from Openleg Source branch
         Set<BaseBillId> localBill = new HashSet<>();
-        for (BillView sobiBill : referenceBillViews) {
-            refBill.add(sobiBill.toBaseBillId());
-        }
-        //get all
-        for (BaseBillId baseBillId : billDataService.getBillIds(SessionYear.of(start.getYear()), LimitOffset.ALL)) {
-            localBill.add(baseBillId);
-        }
-        Set<BaseBillId> diffBill = new HashSet<>(); // the collection of bills which only appears in either dev or xml
-        // Check for differences between the set of daybreak and openleg base bill ids.
-        logger.info("Found " + refBill.size()+" bills in Openleg-ref(SOBI) and " + localBill.size()+" bills in local (XML)" );
-        Sets.symmetricDifference(refBill, localBill).stream() //19216 vs 19234
-                .forEach(id -> {
-                    SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), id);
-                    if (localBill.contains(id)) {
-                        sourceMissingObs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, id, "Missing Data from Openleg Ref, ID:" + id.getBasePrintNo()));
+        localBill.addAll( billDataService.getBillIds(SessionYear.of(start.getYear()), LimitOffset.ALL));
 
-                    } else {
-                        sourceMissingObs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, id, "Missing Data from Openleg XML, ID:" + id.getBasePrintNo()));
-                    }
-                    diffBill.add(id);
+
+        while (offsetRefBills < totalRefBills) {
+
+            List<BillView> referenceBillViews = openlegBillDao.getOpenlegBillView(String.valueOf(start.getYear()), env.getOpenlegRefApiKey(), offsetRefBills);
+            if (referenceBillViews.isEmpty()) {
+                throw new ReferenceDataNotFoundEx("The collection of sobi bills with the given session year " + SessionYear.of( start.getYear() )  + " is empty.");
+            }
+
+            //Get BaseBillId of BillView from Openleg reference by iterating through them
+            logger.info("Check the symmetric diff...");
+            Set<BaseBillId> refBill = new HashSet<>();
+
+            for (BillView sobiBill : referenceBillViews) {
+                refBill.add(sobiBill.toBaseBillId());
+            }
+            logger.info("Retrieved " + refBill.size()+" bills in Openleg-Ref");
+
+
+            Set<BaseBillId> diffBill = new HashSet<>(); // the collection of bills which only appears in both ref or source
+
+            for (BaseBillId refBillId:refBill) {
+                SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), refBillId);
+                if (!localBill.contains(refBillId)) {
+                    localBill.remove(refBillId);
+                    sourceMissingObs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, refBillId, "Missing Data from Openleg XML, ID:" + refBillId.getBasePrintNo()));
                     report.addObservation(sourceMissingObs);
-                });
-        logger.info("Found " + report.getOpenMismatchCount(false) +" missing bills mismatches");
+                }
+                else {
+                    localBill.remove(refBillId);
+                    diffBill.add(refBillId);
+                }
+            }
 
-        logger.info("Fetching Bill from Openleg xml-data-processing branch by iterating BaseBillId of BillView from Openleg Ref");
-        for (BillView sobiBill : referenceBillViews) {
-            if (diffBill.contains(sobiBill.toBaseBillId())) // if current bill appears in both dev and xml.
-                continue;
-            SpotCheckObservation<BaseBillId> observation = checkService.check(new BillView(billDataService.getBill(sobiBill.toBaseBillId())),sobiBill);
 
-            report.addObservation(observation);
+            logger.info("Comparing Bill from Openleg Source branch by iterating BaseBillId of BillView from Openleg Ref");
+            for (BillView sobiBill : referenceBillViews) {
+                if (!diffBill.contains(sobiBill.toBaseBillId())) // if current bill appears in both dev and xml.
+                    continue;
+                SpotCheckObservation<BaseBillId> observation = checkService.check(new BillView(billDataService.getBill(sobiBill.toBaseBillId())),sobiBill);
+
+                report.addObservation(observation);
+            }
+
+            offsetRefBills = offsetRefBills + 1000;
+        }
+
+        for (BaseBillId refMissingId: localBill) {
+            SpotCheckObservation<BaseBillId> refMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), refMissingId);
+            refMissingObs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, refMissingId, "Missing Data from Openleg Ref, ID:" + refMissingId.getBasePrintNo()));
         }
         logger.info("Found total number of " + report.getOpenMismatchCount(false) + " mismatches");
         return report;

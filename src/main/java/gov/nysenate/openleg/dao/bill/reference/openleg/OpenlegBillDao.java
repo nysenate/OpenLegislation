@@ -13,5 +13,7 @@ public interface OpenlegBillDao {
      * @param sessionYear
      * @return List of BillView
      */
-    public List<BillView> getOpenlegBillView(String sessionYear, String apiKey);
+    public List<BillView> getOpenlegBillView(String sessionYear, String apiKey, int offset);
+
+    public int getTotalRefBillsForSessionYear(int Sessionyear, String apiKey);
 }
