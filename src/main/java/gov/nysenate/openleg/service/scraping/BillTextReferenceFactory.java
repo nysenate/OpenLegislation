@@ -23,7 +23,7 @@ public class BillTextReferenceFactory {
         this.lrsToSobiBillText = lrsToSobiBillText;
     }
 
-    public BillTextReference fromFile(BillTextReferenceFile btrFile) throws IOException, LrsOutageScrapingEx {
+    public BillTextReference createFromFile(BillTextReferenceFile btrFile) throws IOException, LrsOutageScrapingEx {
         Document doc = Jsoup.parse(btrFile.getFile(), "UTF-8");
         if (btrHtmlParser.isLrsOutage(doc)) {
             throw new LrsOutageScrapingEx(btrFile.getBaseBillId());

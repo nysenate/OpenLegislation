@@ -161,7 +161,7 @@ public class LRSBillTextSobiMaker {
         for (File scrapedFile : scrapedBills) {
             try {
                 logger.info("parsing {}", scrapedFile);
-                btrs.add(billTextParser.fromFile(new BillTextReferenceFile(scrapedFile)));
+                btrs.add(billTextParser.createFromFile(new BillTextReferenceFile(scrapedFile)));
                 scrapedFile.delete();
             } catch (ParseError | LrsOutageScrapingEx ex) {
                 logger.error("error parsing scraped bill file {}:\n{}", scrapedFile, ex);

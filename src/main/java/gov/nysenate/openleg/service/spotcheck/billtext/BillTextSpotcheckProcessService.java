@@ -56,7 +56,7 @@ public class BillTextSpotcheckProcessService extends BaseSpotcheckProcessService
         List<BillTextReference> billTextReferences = new ArrayList<>();
         for (BillTextReferenceFile btrFile: btrFiles) {
             try {
-                BillTextReference btr = btrFactory.fromFile(btrFile);
+                BillTextReference btr = btrFactory.createFromFile(btrFile);
                 btrDao.insertBillTextReference(btr);
                 billTextReferences.add(btr);
             } catch (LrsOutageScrapingEx ex) {
