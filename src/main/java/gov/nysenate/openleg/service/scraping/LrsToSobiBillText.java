@@ -23,7 +23,6 @@ public class LrsToSobiBillText {
      */
     public String billText(String text) {
         text = text.replaceAll("[\r\\uFEFF-\\uFFFF]|(?<=\n) ", "");
-        text = text.replaceAll("§", "S");
         text = text.replaceFirst("^\n\n[ ]{12}STATE OF NEW YORK(?=\n)",
                 "\n                           S T A T E   O F   N E W   Y O R K");
         text = text.replaceFirst("(?<=\\n)[ ]{16}IN SENATE(?=\\n)",
