@@ -16,25 +16,6 @@ public class LrsToSobiBillText {
     private static final Pattern resolutionStartPattern = Pattern.compile("^\\s+([A-z]{2,})");
 
     /**
-     * Converts the HTML version of bill text into the sobi version.
-     * If text is for a resolution, use {@link #resolutionText}
-     * @param text
-     * @return
-     */
-    public String billText(String text) {
-        text = text.replaceAll("[\r\\uFEFF-\\uFFFF]|(?<=\n) ", "");
-        text = text.replaceFirst("^\n\n[ ]{12}STATE OF NEW YORK(?=\n)",
-                "\n                           S T A T E   O F   N E W   Y O R K");
-        text = text.replaceFirst("(?<=\\n)[ ]{16}IN SENATE(?=\\n)",
-                "                                   I N  S E N A T E");
-        text = text.replaceFirst("(?<=\\n)[ ]{15}IN ASSEMBLY(?=\\n)",
-                "                                 I N  A S S E M B L Y");
-        text = text.replaceFirst("(?<=\\n)[ ]{12}SENATE - ASSEMBLY(?=\\n)",
-                "                             S E N A T E - A S S E M B L Y");
-        return text;
-    }
-
-    /**
      * Converts the HTML version of resolution text into the SOBI version.
      * @param text
      * @param chamber

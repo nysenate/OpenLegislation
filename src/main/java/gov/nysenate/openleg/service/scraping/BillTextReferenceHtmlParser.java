@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.scraping;
 
 import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.util.BillTextUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -63,27 +64,8 @@ public class BillTextReferenceHtmlParser {
         }
 
         StringBuilder textBuilder = new StringBuilder();
-        textEles.forEach(ele -> processTextNode(ele, textBuilder));
+        textEles.forEach(ele -> BillTextUtils.processTextNode(ele, textBuilder));
         return textBuilder.toString();
-    }
-
-    /**
-     * Extracts bill/memo text from an element recursively
-     */
-    private void processTextNode(Element ele, StringBuilder stringBuilder) {
-        for (Node t : ele.childNodes()) {
-            if (t instanceof Element) {
-                Element e = (Element) t;
-                // TEXT IN <U> TAGS IS REPRESENTED IN CAPS FOR SOBI BILL TEXT
-                if ("u".equals(e.tag().getName())) {
-                    stringBuilder.append(e.text().toUpperCase());
-                } else {
-                    processTextNode(e, stringBuilder);
-                }
-            } else if (t instanceof TextNode) {
-                stringBuilder.append(((TextNode) t).getWholeText());
-            }
-        }
     }
 
     /**
@@ -95,7 +77,7 @@ public class BillTextReferenceHtmlParser {
         Element memoElement = doc.select("pre:last-of-type").first(); // you are the first and last of your kind
         if (memoElement != null) {
             StringBuilder memoBuilder = new StringBuilder();
-            processTextNode(memoElement, memoBuilder);
+            BillTextUtils.processTextNode(memoElement, memoBuilder);
             // todo format text
             return memoBuilder.toString();
         }

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.scraping;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillType;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
+import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,7 +43,7 @@ public class BillTextReferenceFactory {
         if (billType.isResolution()) {
             return lrsToSobiBillText.resolutionText(text, billType.getChamber());
         }
-        return lrsToSobiBillText.billText(text);
+        return BillTextUtils.formatHeader(text);
     }
 
     private BillTextReference errorBillTextReference(BillTextReferenceFile btrFile) throws IOException {

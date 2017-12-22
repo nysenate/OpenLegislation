@@ -125,7 +125,7 @@ public class BillTextUtils
 
         Document doc = Jsoup.parse(htmlText);
         if (doc.select("pre").size() == 0) {
-            return htmlText;
+            return formatHeader(htmlText);
         }
         Elements preTag = doc.select("pre");
 
@@ -135,8 +135,11 @@ public class BillTextUtils
             processTextNode(element, textBuilder);
         }
 
-        String text = textBuilder.toString();
+        return formatHeader(textBuilder.toString());
+    }
 
+    public static String formatHeader(String text) {
+        text = text.replaceAll("[\r\\uFEFF-\\uFFFF]|(?<=\n) ", "");
         text = text.replaceFirst("[ ]{3,}STATE OF NEW YORK\n",
                 "                           S T A T E   O F   N E W   Y O R K\n");
         text = text.replaceFirst("[ ]{3,}IN SENATE\n",
