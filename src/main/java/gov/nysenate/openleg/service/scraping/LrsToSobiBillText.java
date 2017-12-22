@@ -43,7 +43,6 @@ public class LrsToSobiBillText {
      */
     public String resolutionText(String text, Chamber chamber) {
         text = text.replaceAll("[\r\\uFEFF-\\uFFFF]|(?<=\n) ", ""); // replace "\r" with "\n"
-        text = text.replaceAll("§", "S");
         text = text.replaceFirst("^\n\n[\\w \\.-]+\n\n[\\w '\\.\\-:]+\n", "");
         text = text.replaceFirst("^\\s+PROVIDING", String.format("\n%s RESOLUTION providing", chamber));
         Matcher resoStartMatcher = resolutionStartPattern.matcher(text);
