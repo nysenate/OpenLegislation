@@ -194,6 +194,14 @@ public class SpotCheckReport<ContentKey>
         this.addObservation(SpotCheckObservation.getObserveDataMissingObs(reportId.getReferenceId(), missingKey));
     }
 
+    /**
+     * Add an empty observation to the report, indicating that there are no errors.
+     * @param contentKey ContentKey
+     */
+    public void addEmptyObservation(ContentKey contentKey) {
+        this.addObservation(new SpotCheckObservation<>(reportId.getReferenceId(), contentKey));
+    }
+
     /** --- Delegates --- */
 
     public LocalDateTime getReportDateTime() {

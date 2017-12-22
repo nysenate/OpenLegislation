@@ -90,10 +90,10 @@
     function mismatchTypeFilter() {
         var mismatchTypeMap = angular.copy(window.mismatchMap);
 
-        // Map of mismatch type to data source property containing proper label
+        // Map of mismatch type to boolean indicating whether the mismatch is reference missing.
         var missingTypes = {
-            'REFERENCE_DATA_MISSING': 'refLabel',
-            'OBSERVE_DATA_MISSING': 'dataLabel'
+            'REFERENCE_DATA_MISSING': true,
+            'OBSERVE_DATA_MISSING': false
         };
 
         return function (mismatchType, dataSource) {
@@ -104,7 +104,14 @@
 
             // If mismatch is for data missing, display the data source from which it was missing
             if (dataSource && missingTypes.hasOwnProperty(mismatchType)) {
-                return "Missing: " + dataSourceMap[dataSource][missingTypes[mismatchType]];
+                var refMissing = missingTypes[mismatchType];
+                var dataSourceInfo = dataSourceMap[dataSource];
+                // If openleg is the reference, reference/observed is flipped in the display
+                if (dataSourceInfo.olRef) {
+                    refMissing = !refMissing;
+                }
+                var label = refMissing ? dataSourceInfo.refLabel : dataSourceInfo.dataLabel;
+                return "Missing: " + label;
             }
 
             return mismatchTypeMap[mismatchType];
