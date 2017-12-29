@@ -194,6 +194,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             member.setImgName(rs.getString("img_name"));
             member.setAlternate(rs.getBoolean("alternate"));
             member.setVerified(rs.getBoolean("verified"));
+            member.setEmail(rs.getString("email"));
             return member;
         }
     }

@@ -33,6 +33,7 @@ public class ExtendedMemberView extends MemberView {
             this.middleName = member.getMiddleName();
             this.lastName = member.getLastName();
             this.suffix = member.getSuffix();
+            this.email = member.getEmail();
             this.verified = member.isVerified();
         }
     }
