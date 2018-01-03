@@ -50,8 +50,7 @@ public class ExtendedMemberView extends MemberView {
         member.setFullName(fullName);
         member.setDistrictCode(districtCode);
         member.setImgName(imgName);
-        member.setAlternate(this.alternate);
-        member.setIncumbent(this.alternate);
+        member.setIncumbent(this.incumbent);
         member.setPersonId(this.personId);
         member.setPrefix(this.prefix);
         member.setFirstName(this.firstName);

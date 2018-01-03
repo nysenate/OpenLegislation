@@ -58,8 +58,8 @@ public enum SqlMemberQuery implements BasicSqlQuery
     ),
     INSERT_PERSON_SQL(
         "INSERT INTO " + SqlTable.PERSON + "\n" +
-               "( full_name, first_name, middle_name, last_name, email,  prefix,  suffix,  verified)\n" +
-        "VALUES (:fullName, :firstName, :middleName, :lastName, :email, :prefix, :suffix, :verified)\n" +
+               "( full_name, first_name, middle_name, last_name, email,  prefix,  suffix,  verified, img_name)\n" +
+        "VALUES (:fullName, :firstName, :middleName, :lastName, :email, :prefix, :suffix, :verified, :img_name)\n" +
         "RETURNING id"
     ),
 
