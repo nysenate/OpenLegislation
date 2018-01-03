@@ -39,8 +39,6 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
     @Autowired
     private VetoDao vetoDao;
 
-    private VetoMessage vetoMessage = new VetoMessage();
-
     /** --- RegEx Patterns ---*/
     private static final Pattern datePattern =
             Pattern.compile("TO THE (SENATE|ASSEMBLY):\\s*([a-zA-Z]+ \\d+, \\d+)?");
@@ -62,6 +60,7 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
 
     @Override
     public void process(SobiFragment fragment) {
+        VetoMessage vetoMessage = new VetoMessage();
         LocalDateTime date = fragment.getPublishedDateTime();
         try {
             final Document doc = xmlHelper.parse(fragment.getText());
@@ -101,8 +100,8 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
                 vetoMessage.setBillId(baseBill.getBaseBillId());
                 vetoMessage.setModifiedDateTime(date);
                 vetoMessage.setPublishedDateTime(date);
-
-                parseTextContent(cleanText);
+                vetoMessage.setType(VetoType.STANDARD);
+                parseTextContent(cleanText, vetoMessage);
 
                 baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
             }
@@ -133,40 +132,46 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
         return "";
     }
 
-    private void parseTextContent(String data) {
+    private void parseTextContent(String data, VetoMessage vetoMessage) {
         StringBuilder text = new StringBuilder();
         text.ensureCapacity(data.length());
 
         for (String line : data.split("\n")) {
-            parseLine(line);
+            parseLine(line, vetoMessage);
         }
     }
 
-    private void parseLine (String line) {
+    private void parseLine (String line, VetoMessage vetoMessage) {
         Matcher dateMatcher = datePattern.matcher(line);
         Matcher chapterMatcher = chapterPattern.matcher(line);
         Matcher lineRefMatcher = lineReferencePattern.matcher(line);
         Matcher signerMatcher = signerPattern.matcher(line);
 
         if (dateMatcher.find()) {
-            if (dateMatcher.group(2) == null) { // This date is only present on line vetos
-                vetoMessage.setType(VetoType.STANDARD);
-            } else {
-                vetoMessage.setType(VetoType.LINE_ITEM);
-                vetoMessage.setSignedDate(LocalDate.parse(dateMatcher.group(2), DateTimeFormatter.ofPattern("MMMM d, yyyy")));
+                if (dateMatcher.group(2)==null) {
+                    vetoMessage.setType(VetoType.STANDARD);
+                }
+                else {
+                    vetoMessage.setType(VetoType.LINE_ITEM);
+                    vetoMessage.setSignedDate(LocalDate.parse(dateMatcher.group(2), DateTimeFormatter.ofPattern("MMMM d, yyyy")));
+                }
             }
-        } else if (chapterMatcher.find() && vetoMessage.getType() == VetoType.LINE_ITEM) {
-            vetoMessage.setChapter(Integer.parseInt(chapterMatcher.group(1)));
-        } else if (lineRefMatcher.find()) {
-            vetoMessage.setBillPage(Integer.parseInt(lineRefMatcher.group(1)));
-            vetoMessage.setLineStart(Integer.parseInt(lineRefMatcher.group(2)));
-            if (lineRefMatcher.group(4) == null) {
-                vetoMessage.setLineEnd(vetoMessage.getLineStart());
-            } else {
-                vetoMessage.setLineEnd(Integer.parseInt(lineRefMatcher.group(4)));
-            }
-        } else if (signerMatcher.find()) {
-            vetoMessage.setSigner(signerMatcher.group(1));
+        else if (chapterMatcher.find() && vetoMessage.getType() == VetoType.LINE_ITEM) {
+                vetoMessage.setChapter(Integer.parseInt(chapterMatcher.group(1)));
+        }
+
+        else if (lineRefMatcher.find() && vetoMessage.getType() == VetoType.LINE_ITEM) {
+                vetoMessage.setBillPage(Integer.parseInt(lineRefMatcher.group(1)));
+                vetoMessage.setLineStart(Integer.parseInt(lineRefMatcher.group(2)));
+                if (lineRefMatcher.group(4) == null) {
+                    vetoMessage.setLineEnd(vetoMessage.getLineStart());
+                }
+                else {
+                    vetoMessage.setLineEnd(Integer.parseInt(lineRefMatcher.group(4)));
+                }
+        }
+        else if (signerMatcher.find()) {
+                vetoMessage.setSigner(signerMatcher.group(1));
         }
     }
 }
