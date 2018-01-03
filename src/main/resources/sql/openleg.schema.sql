@@ -6187,7 +6187,7 @@ ALTER TABLE ONLY agenda_info_addendum
 --
 
 ALTER TABLE ONLY agenda_info_addendum
-    ADD CONSTRAINT agenda_info_addendum_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_info_addendum_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6211,7 +6211,7 @@ ALTER TABLE ONLY agenda_info_committee_item
 --
 
 ALTER TABLE ONLY agenda_info_committee_item
-    ADD CONSTRAINT agenda_info_committee_item_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_info_committee_item_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6219,7 +6219,7 @@ ALTER TABLE ONLY agenda_info_committee_item
 --
 
 ALTER TABLE ONLY agenda_info_committee
-    ADD CONSTRAINT agenda_info_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_info_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6227,7 +6227,7 @@ ALTER TABLE ONLY agenda_info_committee
 --
 
 ALTER TABLE ONLY agenda
-    ADD CONSTRAINT agenda_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6243,7 +6243,7 @@ ALTER TABLE ONLY agenda_vote_addendum
 --
 
 ALTER TABLE ONLY agenda_vote_addendum
-    ADD CONSTRAINT agenda_vote_addendum_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_vote_addendum_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6259,7 +6259,7 @@ ALTER TABLE ONLY agenda_vote_committee
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend
-    ADD CONSTRAINT agenda_vote_committee_attend_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_vote_committee_attend_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6267,7 +6267,7 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 --
 
 ALTER TABLE ONLY agenda_vote_committee_attend
-    ADD CONSTRAINT agenda_vote_committee_attend_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_vote_committee_attend_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id);
 
 
 --
@@ -6283,7 +6283,7 @@ ALTER TABLE ONLY agenda_vote_committee_attend
 --
 
 ALTER TABLE ONLY agenda_vote_committee
-    ADD CONSTRAINT agenda_vote_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_vote_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6291,7 +6291,7 @@ ALTER TABLE ONLY agenda_vote_committee
 --
 
 ALTER TABLE ONLY agenda_vote_committee_vote
-    ADD CONSTRAINT agenda_vote_committee_vote_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT agenda_vote_committee_vote_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6419,7 +6419,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 --
 
 ALTER TABLE ONLY bill_amendment_cosponsor
-    ADD CONSTRAINT bill_amendment_cosponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_cosponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6435,7 +6435,7 @@ ALTER TABLE ONLY bill_amendment_cosponsor
 --
 
 ALTER TABLE ONLY bill_amendment
-    ADD CONSTRAINT bill_amendment_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6451,7 +6451,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
-    ADD CONSTRAINT bill_amendment_multi_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_multi_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6459,7 +6459,7 @@ ALTER TABLE ONLY bill_amendment_multi_sponsor
 --
 
 ALTER TABLE ONLY bill_amendment_multi_sponsor
-    ADD CONSTRAINT bill_amendment_multi_sponsor_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_multi_sponsor_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id);
 
 
 --
@@ -6475,7 +6475,7 @@ ALTER TABLE ONLY bill_amendment_publish_status
 --
 
 ALTER TABLE ONLY bill_amendment_publish_status
-    ADD CONSTRAINT bill_amendment_publish_status_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_publish_status_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6491,7 +6491,7 @@ ALTER TABLE ONLY bill_amendment_same_as
 --
 
 ALTER TABLE ONLY bill_amendment_same_as
-    ADD CONSTRAINT bill_amendment_same_as_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_same_as_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6507,7 +6507,7 @@ ALTER TABLE ONLY bill_amendment_vote_info
 --
 
 ALTER TABLE ONLY bill_amendment_vote_info
-    ADD CONSTRAINT bill_amendment_vote_info_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_vote_info_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6515,7 +6515,7 @@ ALTER TABLE ONLY bill_amendment_vote_info
 --
 
 ALTER TABLE ONLY bill_amendment_vote_roll
-    ADD CONSTRAINT bill_amendment_vote_roll_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_vote_roll_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6523,7 +6523,7 @@ ALTER TABLE ONLY bill_amendment_vote_roll
 --
 
 ALTER TABLE ONLY bill_amendment_vote_roll
-    ADD CONSTRAINT bill_amendment_vote_roll_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_amendment_vote_roll_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id);
 
 
 --
@@ -6571,7 +6571,7 @@ ALTER TABLE ONLY bill_committee
 --
 
 ALTER TABLE ONLY bill_committee
-    ADD CONSTRAINT bill_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_committee_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6579,7 +6579,7 @@ ALTER TABLE ONLY bill_committee
 --
 
 ALTER TABLE ONLY bill
-    ADD CONSTRAINT bill_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6595,7 +6595,7 @@ ALTER TABLE ONLY bill_milestone
 --
 
 ALTER TABLE ONLY bill_milestone
-    ADD CONSTRAINT bill_milestone_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_milestone_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6611,7 +6611,7 @@ ALTER TABLE ONLY bill_previous_version
 --
 
 ALTER TABLE ONLY bill_previous_version
-    ADD CONSTRAINT bill_previous_version_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_previous_version_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6627,7 +6627,7 @@ ALTER TABLE ONLY bill_sponsor
 --
 
 ALTER TABLE ONLY bill_sponsor
-    ADD CONSTRAINT bill_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_sponsor_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6635,7 +6635,7 @@ ALTER TABLE ONLY bill_sponsor
 --
 
 ALTER TABLE ONLY bill_sponsor
-    ADD CONSTRAINT bill_sponsor_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_sponsor_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id);
 
 
 --
@@ -6651,7 +6651,7 @@ ALTER TABLE ONLY bill_veto
 --
 
 ALTER TABLE ONLY bill_veto
-    ADD CONSTRAINT bill_veto_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT bill_veto_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6675,7 +6675,7 @@ ALTER TABLE ONLY calendar_active_list_entry
 --
 
 ALTER TABLE ONLY calendar_active_list
-    ADD CONSTRAINT calendar_active_list_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT calendar_active_list_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6683,7 +6683,7 @@ ALTER TABLE ONLY calendar_active_list
 --
 
 ALTER TABLE ONLY calendar
-    ADD CONSTRAINT calendar_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT calendar_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6707,7 +6707,7 @@ ALTER TABLE ONLY calendar_supplemental_entry
 --
 
 ALTER TABLE ONLY calendar_supplemental_entry
-    ADD CONSTRAINT calendar_supplemental_entry_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT calendar_supplemental_entry_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6715,7 +6715,7 @@ ALTER TABLE ONLY calendar_supplemental_entry
 --
 
 ALTER TABLE ONLY calendar_supplemental
-    ADD CONSTRAINT calendar_supplemental_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT calendar_supplemental_last_fragment_id_fkey FOREIGN KEY (last_fragment_id) REFERENCES sobi_fragment(fragment_id);
 
 
 --
@@ -6739,7 +6739,7 @@ ALTER TABLE ONLY committee_member
 --
 
 ALTER TABLE ONLY committee_member
-    ADD CONSTRAINT committee_member_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT committee_member_session_member_id_fkey FOREIGN KEY (session_member_id) REFERENCES public.session_member(id);
 
 
 --
@@ -6917,7 +6917,7 @@ ALTER TABLE ONLY apiuser_roles
 --
 
 ALTER TABLE ONLY member
-    ADD CONSTRAINT member_person_id_fkey FOREIGN KEY (person_id) REFERENCES person(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT member_person_id_fkey FOREIGN KEY (person_id) REFERENCES person(id);
 
 
 --
@@ -6933,7 +6933,7 @@ ALTER TABLE ONLY response
 --
 
 ALTER TABLE ONLY session_member
-    ADD CONSTRAINT session_member_member_id_fkey FOREIGN KEY (member_id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT session_member_member_id_fkey FOREIGN KEY (member_id) REFERENCES member(id);
 
 
 --
