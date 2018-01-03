@@ -28,7 +28,9 @@ public enum SqlMemberQuery implements BasicSqlQuery
     ),
     SELECT_MEMBER_BY_SESSION_MEMBER_ID_SQL(
         "SELECT smp.id AS session_member_id, smp.lbdc_short_name, sm.id, sm.member_id, sm.session_year, sm.district_code, sm.alternate,\n" +
-        "       m.chamber, m.incumbent, p.id AS person_id, p.full_name, p.prefix, p.first_name, p.middle_name, p.last_name, p.suffix, p.img_name, p.verified" + "\n" +
+        "       m.chamber, m.incumbent,\n" +
+        "       p.id AS person_id, p.full_name, p.prefix, p.first_name, p.middle_name, p.last_name, p.suffix,\n" +
+        "       p.img_name, p.verified, p.email\n" +
         SELECT_MEMBER_TABLE_FRAGMENT.sql +
         "JOIN " + SqlTable.SESSION_MEMBER + " smp ON smp.member_id = sm.member_id AND smp.session_year = sm.session_year AND smp.alternate = FALSE\n" +
         "WHERE sm.id = :sessionMemberId"
