@@ -59,7 +59,12 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(referenceId, baseBillId);
 
         //Add mismatches to observation
-        if (reference.isNotFound()) {
+
+        // If not found on LRS and not published in openleg, don't create mismatch. LRS removes bills when unpublished.
+        if (reference.isNotFound() && !bill.isPublished()) {
+            return observation;
+        }
+        else if (reference.isNotFound()) {
             observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", reference.getText()));
         } else {
             checkAmendment(bill, reference, observation);

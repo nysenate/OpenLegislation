@@ -10,7 +10,7 @@ public enum SqlMemberQuery implements BasicSqlQuery
     SELECT_MEMBER_SELECT_FRAGMENT(
         "SELECT sm.id AS session_member_id, sm.member_id, sm.lbdc_short_name, sm.session_year, sm.district_code, sm.alternate,\n" +
         "       m.chamber, m.incumbent, p.id AS person_id, p.prefix, p.full_name, p.first_name, p.middle_name, p.last_name, p.suffix, " +
-        "       p.img_name, p.verified"
+        "       p.img_name, p.verified, p.email"
     ),
     SELECT_MEMBER_TABLE_FRAGMENT(
         "FROM " + SqlTable.SESSION_MEMBER + " sm\n" +
@@ -58,8 +58,8 @@ public enum SqlMemberQuery implements BasicSqlQuery
     ),
     INSERT_PERSON_SQL(
         "INSERT INTO " + SqlTable.PERSON + "\n" +
-               "( full_name, first_name, middle_name, last_name, email,  prefix,  suffix,  verified)\n" +
-        "VALUES (:fullName, :firstName, :middleName, :lastName, :email, :prefix, :suffix, :verified)\n" +
+               "( full_name, first_name, middle_name, last_name, email,  prefix,  suffix,  verified, img_name)\n" +
+        "VALUES (:fullName, :firstName, :middleName, :lastName, :email, :prefix, :suffix, :verified, :img_name)\n" +
         "RETURNING id"
     ),
 
