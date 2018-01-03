@@ -747,6 +747,7 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 255	George Latimer	George	\N	Latimer	latimer@nysenate.gov	Senator	\N	t	434_george_latimer.jpg
 959	Christine Pellegrino	Christine		Pellegrino	pellegrinoc@nyassembly.gov	Assembly Member		t	no_image.jpg
 961	Daniel Rosenthal	Daniel	\N	Rosenthal	\N	Assembly Member		t	no_image.jpg
+963	Al Taylor	Al	\N	Taylor	taylora@nyassembly.gov	Assembly Member		t	no_image.jpg
 \.
 
 
@@ -1145,6 +1146,7 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 1137	959	assembly	t	Christine Pellegrino
 1139	961	assembly	t	Daniel Rosenthal
 1140	350	senate	t	Brian Kavanagh
+1141	963	assembly	Al Taylor
 \.
 
 
@@ -2285,6 +2287,7 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1135	520	ROSENTHAL L 2017	67	f
 1136	1139	ROSENTHAL D 2017	27	f
 1137	1140	KAVANAGH 2017	26	f
+1139	1141	TAYLOR 2017	71	f
 \.
 
 
