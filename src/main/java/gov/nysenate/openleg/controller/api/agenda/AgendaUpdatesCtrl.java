@@ -68,7 +68,7 @@ public class AgendaUpdatesCtrl extends BaseCtrl
         return getUpdatesDuring(LocalDate.now().minusDays(7).atStartOfDay(), LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/updates/{from}")
+    @RequestMapping(value = "/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesFrom(@PathVariable String from, WebRequest request) {
         return getUpdatesDuring(parseISODateTime(from, "from"), LocalDateTime.now(), request);
     }
@@ -102,7 +102,7 @@ public class AgendaUpdatesCtrl extends BaseCtrl
             LocalDateTime.now(), request);
     }
 
-    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/updates/{from}")
+    @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}/updates/{from:.*\\.?.*}")
     public BaseResponse getUpdatesForBill(@PathVariable int year, @PathVariable int agendaNo, @PathVariable String from,
                                           WebRequest request) {
         LocalDateTime fromDateTime = parseISODateTime(from, "from");
@@ -122,7 +122,7 @@ public class AgendaUpdatesCtrl extends BaseCtrl
     private BaseResponse getUpdatesDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
         // Fetch params
         LimitOffset limOff = getLimitOffset(request, 50);
-        Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
+        Range<LocalDateTime> updateRange = getOpenRange(from, to, "from", "to");
         boolean detail = getBooleanParam(request, "detail", false);
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         UpdateType updateType = getUpdateTypeFromParam(request);
