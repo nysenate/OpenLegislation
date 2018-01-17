@@ -12,8 +12,11 @@ import java.util.List;
 public class PublicHearingTestHelper
 {
     public static File openFile(String fileName) throws URISyntaxException {
-        ClassLoader classloader = PublicHearingTestHelper.class.getClassLoader();
-        return new File(classloader.getResource("hearing/" + fileName).toURI());
+//        ClassLoader classloader = PublicHearingTestHelper.class.getClassLoader();
+//        return new File(classloader.getResource("hearing/" + fileName).toURI());
+
+        return new File(
+                PublicHearingTestHelper.class.getClassLoader().getResource("hearing/" + fileName).toURI());
     }
 
     public static List<List<String>> getPagesFromFileName(String fileName) throws URISyntaxException, IOException {
