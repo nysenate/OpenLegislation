@@ -89,15 +89,15 @@ COPY bill_text_alternate_pdf (bill_session_year, bill_print_no, bill_amend_versi
 2017	S2004		t	/static/pdf/2017-S2004-A3004.pdf
 2017	A3004		t	/static/pdf/2017-S2004-A3004.pdf
 2017	S7500		t	/static/pdf/2017-S7500-A9500.pdf
-2017	S9500		t	/static/pdf/2017-S7500-A9500.pdf
+2017	A9500		t	/static/pdf/2017-S7500-A9500.pdf
 2017	S7501		t	/static/pdf/2017-S7501-A9501.pdf
-2017	S9501		t	/static/pdf/2017-S7501-A9501.pdf
+2017	A9501		t	/static/pdf/2017-S7501-A9501.pdf
 2017	S7502		t	/static/pdf/2017-S7502-A9502.pdf
-2017	S9502		t	/static/pdf/2017-S7502-A9502.pdf
+2017	A9502		t	/static/pdf/2017-S7502-A9502.pdf
 2017	S7503		t	/static/pdf/2017-S7503-A9503.pdf
-2017	S9503		t	/static/pdf/2017-S7503-A9503.pdf
+2017	A9503		t	/static/pdf/2017-S7503-A9503.pdf
 2017	S7504		t	/static/pdf/2017-S7504-A9504.pdf
-2017	S9504		t	/static/pdf/2017-S7504-A9504.pdf
+2017	A9504		t	/static/pdf/2017-S7504-A9504.pdf
 \.
 
 
