@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.billtext;
 
 import gov.nysenate.openleg.client.view.bill.BillInfoView;
+import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
@@ -61,7 +63,8 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         //Add mismatches to observation
 
         // If not found on LRS and not published in openleg, don't create mismatch. LRS removes bills when unpublished.
-        if (reference.isNotFound() && !bill.isPublished()) {
+        Optional<PublishStatus> publishStatus = bill.getPublishStatus(bill.getActiveVersion());
+        if (reference.isNotFound() && publishStatus.isPresent() && !publishStatus.get().isPublished()) {
             return observation;
         }
         else if (reference.isNotFound()) {
