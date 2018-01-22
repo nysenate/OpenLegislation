@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
+import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgenda;
@@ -42,26 +43,22 @@ public class SenateSiteAgendaCheckService
     @Override
     public SpotCheckObservation<CommitteeAgendaAddendumId> check(Agenda content, SenateSiteAgenda reference) {
         Optional<AgendaInfoCommittee> openlegInfoCommOpt = getOLInfoCommittee(content, reference);
-        Optional<AgendaVoteCommittee> openlegVoteCommOpt = getOLVoteCommittee(content, reference);
 
-        // Return an observe data missing observation if there is no info or votes for the given reference
-        if (!(openlegInfoCommOpt.isPresent() || openlegVoteCommOpt.isPresent())) {
+        // Return an observe data missing observation if Openleg does not have a info addendum matching the SenateSite addendum
+        if (!openlegInfoCommOpt.isPresent()) {
             return SpotCheckObservation.getObserveDataMissingObs(
                     reference.getReferenceId(), reference.getcommitteeAgendaAddendumId());
         }
+        AgendaInfoCommittee openlegInfoComm = openlegInfoCommOpt.orElse(new AgendaInfoCommittee());
 
         SpotCheckObservation<CommitteeAgendaAddendumId> observation =
                 new SpotCheckObservation<>(reference.getReferenceId(),
                         reference.getcommitteeAgendaAddendumId());
 
-        // Use blank values if either votes or info is not present in openleg
-        AgendaInfoCommittee openlegInfoComm = openlegInfoCommOpt.orElse(new AgendaInfoCommittee());
-        AgendaVoteCommittee openlegVoteComm = openlegVoteCommOpt.orElse(new AgendaVoteCommittee());
-
         checkLocation(openlegInfoComm, reference, observation);
         checkNotes(openlegInfoComm, reference, observation);
         checkMeetingTime(openlegInfoComm, reference, observation);
-        checkBills(openlegVoteComm, openlegInfoComm, reference, observation);
+        checkBills(content, openlegInfoComm, reference, observation);
         return observation;
     }
 
@@ -82,53 +79,67 @@ public class SenateSiteAgendaCheckService
         checkObject(content.getMeetingDateTime(), reference.getMeetingDateTime(), observation, AGENDA_LOCATION);
     }
 
-    private void checkBills(AgendaVoteCommittee contentVotes, AgendaInfoCommittee contentInfo, SenateSiteAgenda reference,
+    /**
+     * Compares bill votes for bills in the {@code reference} to the bill votes for bills in the {@code openlegInfoAddendum}
+     * Fetches openleg bill votes from the {@code openlegAgenda} since the info addenda do not contain votes.
+     *
+     * We cannot simply look at the openleg vote addendum because bills in a openleg vote addendum do not
+     * necessarily match the bills in the info addendum, while in the SenateSite, those bills always match.
+     * i.e.:    Openleg Info Addendum A - contains bills: S100 & S200.
+     *          Openleg Vote Addendum A - contains bill votes for: S100 & S999 (S999 would of been in a different info addendum.)
+     *          SenateSite Addendum A - contains bill votes for S100 & S200.
+     *          Cant compare Openleg Vote A to SenateSite A without false positives.
+     * @param openlegAgenda
+     * @param openlegInfoAddendum
+     * @param reference
+     * @param observation
+     */
+    private void checkBills(Agenda openlegAgenda, AgendaInfoCommittee openlegInfoAddendum, SenateSiteAgenda reference,
                             SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        StringBuffer contentVoteString = getFullVoteString(contentVotes, contentInfo);
-        StringBuffer refVoteString = getFullVoteString(reference);
+        Table<BillId, BillVoteCode, Integer> olVoteTable = getOpenlegVoteTable(openlegAgenda, openlegInfoAddendum);
+        Table<BillId, BillVoteCode, Integer> referenceVoteTable = getSenateSiteVoteTable(reference);
 
-        checkObject(contentVoteString, refVoteString, observation, AGENDA_BILLS);
+        checkObject(getVoteTableString(olVoteTable), getVoteTableString(referenceVoteTable), observation, AGENDA_BILLS);
     }
 
     private static final ImmutableMap<BillVoteCode, Integer> emptyVoteCountMap = ImmutableMap.copyOf(
             Maps.toMap(Arrays.asList(BillVoteCode.values()), (bvc) -> 0)
     );
 
-    private StringBuffer getFullVoteString(AgendaVoteCommittee voteComm, AgendaInfoCommittee infoComm) {
-        Map<BillId, AgendaVoteBill> votedBills = voteComm.getVotedBills();
-
-        Set<BillId> billIds = new HashSet<>();
-
-        billIds.addAll(votedBills.keySet());
-        infoComm.getItems().stream()
-                .map(AgendaInfoCommitteeItem::getBillId)
-                .forEach(billIds::add);
-
+    private Table<BillId, BillVoteCode, Integer> getOpenlegVoteTable(Agenda agenda, AgendaInfoCommittee infoComm) {
         Table<BillId, BillVoteCode, Integer> voteCountTable = HashBasedTable.create();
 
-        for (BillId billId : billIds) {
-            // Some bills do not have votes, use an empty vote count map for these
-            Map<BillVoteCode, Integer> voteCountMap =
-                    Optional.ofNullable(votedBills.get(billId))
-                            .map(AgendaVoteBill::getBillVote)
-                            .map(BillVote::getVoteCounts)
-                            .orElse(emptyVoteCountMap);
+        for (AgendaInfoCommitteeItem item : infoComm.getItems()) {
+            BillId billId = item.getBillId();
+            // Search through all agenda vote addenda for this bill's votes.
+            for (AgendaVoteCommittee voteCommittee : agenda.getVotesForCommittee(infoComm.getCommitteeId())) {
+                AgendaVoteBill agendaVoteBill = voteCommittee.getVotedBills().get(billId);
+                // If billId has votes in this vote addendum
+                if (agendaVoteBill != null) {
+                    // Add votes to table.
+                    BillVote billVote = agendaVoteBill.getBillVote();
+                    voteCountTable.row(billId).putAll(billVote.getVoteCounts());
+                }
+            }
 
-            voteCountTable.row(billId).putAll(voteCountMap);
+            // If no votes were found
+            if (voteCountTable.row(billId).size() == 0) {
+                // Add empty vote row for this bill.
+                voteCountTable.row(billId).putAll(emptyVoteCountMap);
+            }
         }
 
-        return getFullVoteString(voteCountTable);
+        return voteCountTable;
     }
 
-    private StringBuffer getFullVoteString(SenateSiteAgenda senateSiteAgenda) {
+    private Table<BillId, BillVoteCode, Integer> getSenateSiteVoteTable(SenateSiteAgenda senateSiteAgenda) {
         Table<BillId, BillVoteCode, Integer> voteCountTable = HashBasedTable.create();
         senateSiteAgenda.getAgendaBills().forEach(bill ->
                 voteCountTable.row(bill.getBillId()).putAll(bill.getVoteCounts()));
-
-        return getFullVoteString(voteCountTable);
+        return voteCountTable;
     }
 
-    private StringBuffer getFullVoteString(Table<BillId, BillVoteCode, Integer> billVoteTable) {
+    private StringBuffer getVoteTableString(Table<BillId, BillVoteCode, Integer> billVoteTable) {
         return billVoteTable.rowKeySet().stream()
                 .sorted()
                 .map(billId -> getVoteLine(billId, billVoteTable.row(billId)))

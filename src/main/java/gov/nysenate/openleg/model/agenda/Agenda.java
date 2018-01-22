@@ -210,4 +210,17 @@ public class Agenda extends BaseLegislativeContent implements Serializable
         }
         return votes;
     }
+
+    /**
+     * Given a {@code committeeId}, returns all {@link AgendaVoteCommittee}'s for
+     * that committee in this agenda.
+     * @param committeeId
+     * @return
+     */
+    public List<AgendaVoteCommittee> getVotesForCommittee(CommitteeId committeeId) {
+        return this.getAgendaVoteAddenda().values().stream()
+                .map(a -> a.getCommitteeVoteMap().get(committeeId))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
 }
