@@ -124,7 +124,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         // Just count the pages for versions that also appear in the daybreak
         bill.getAmendmentMap().forEach((k,v) -> {
             if (daybreakPageCounts.containsKey(k)) {
-                billPageCounts.put(k, BillTextUtils.getPageCount(v.getFullText()));
+                billPageCounts.put(k, BillTextUtils.getBillPages(v.getFullText()).size());
             }
         });
         if (!daybreakPageCounts.equals(billPageCounts)) {
