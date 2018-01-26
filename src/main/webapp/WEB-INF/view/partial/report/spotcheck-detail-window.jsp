@@ -6,30 +6,25 @@
       <md-content class="mismatch-diff-view-top-half">
         <div layout="row" layout-align="space-between center">
 
-
-          <md-card  ng-if="contentType == 'BILL'" class="mismatch-diff-info-card">
+          <md-card class="mismatch-diff-info-card">
             <p>Last Reported: {{currentMismatch.observedDate}}</p>
 
-            <p> {{reportType | contentType}} Number:
+            <!-- Bill Id Fields -->
+            <p ng-if="contentType == 'BILL'">
+              {{reportType | contentType}} Number:
               <a class="white-2-blue inactive-link" target="_blank">
                 {{currentMismatch.bill}}
               </a>
             </p>
-            <p>Session Year: {{currentMismatch.session.year}}</p>
-            <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
-          </md-card>
+            <p ng-if="contentType == 'BILL'">Session Year: {{currentMismatch.session.year}}</p>
 
-          <md-card ng-if="contentType == 'CALENDAR'" class="mismatch-diff-info-card">
-            <p>Date Reported: {{date}}</p>
-            <p>Calendar Number: {{currentMismatch.calNo}}</p>
-            <p>Session Date: {{currentMismatch.calDate}}</p>
-            <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
-          </md-card>
+            <!-- Calendar Id Fields -->
+            <p ng-if="contentType == 'CALENDAR'">Calendar Number: {{currentMismatch.calNo}}</p>
+            <p ng-if="contentType == 'CALENDAR'">Session Date: {{currentMismatch.calDate}}</p>
 
-          <md-card  ng-if="contentType == 'AGENDA'" class="mismatch-diff-info-card">
-            <p>Date Reported: {{date}}</p>
-            <p>Week:</p>
-            <p>Agenda: {{currentMismatch.agendaNo}}</p>
+            <!-- Agenda Id Fields -->
+            <p ng-if="contentType == 'AGENDA'">Agenda: {{currentMismatch.agendaNo}}</p>
+
             <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
           </md-card>
 

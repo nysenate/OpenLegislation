@@ -1303,14 +1303,14 @@ md-dialog.detail-diff-dialog {
 }
 
 .mismatch-diff-info-card {
-  padding: 0 10px;
+  padding: 5px 10px;
   margin-left: 2.5%;
   border-radius: 10px;
   background-color: $mismatch-menu-color;
   color: #fafafa;
 
   p {
-    line-height: .5em;
+    margin: .25em;
   }
 }
 
