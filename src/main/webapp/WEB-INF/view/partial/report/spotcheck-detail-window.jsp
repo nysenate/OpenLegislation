@@ -8,7 +8,7 @@
 
 
           <md-card  ng-if="contentType == 'BILL'" class="mismatch-diff-info-card">
-            <p>Date Reported: {{date}}</p>
+            <p>Last Reported: {{currentMismatch.observedDate}}</p>
 
             <p> {{reportType | contentType}} Number:
               <a class="white-2-blue inactive-link" target="_blank">
