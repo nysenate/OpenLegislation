@@ -23,7 +23,9 @@
             <p ng-if="contentType == 'CALENDAR'">Session Date: {{currentMismatch.calDate}}</p>
 
             <!-- Agenda Id Fields -->
+            <p ng-if="contentType == 'AGENDA'">Year: {{currentMismatch.key.agendaId.year}}</p>
             <p ng-if="contentType == 'AGENDA'">Agenda: {{currentMismatch.agendaNo}}</p>
+            <p ng-if="contentType == 'AGENDA'">Committee: {{currentMismatch.key.committeeId.name}}</p>
 
             <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
           </md-card>
