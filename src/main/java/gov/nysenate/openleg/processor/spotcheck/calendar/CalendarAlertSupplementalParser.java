@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processor.spotcheck.calendar;
 
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSectionType;
 import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry;
+import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -29,10 +29,11 @@ public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
 
     private static final Logger logger = LoggerFactory.getLogger(CalendarAlertSupplementalParser.class);
 
-    protected CalendarSupplemental parseSupplemental(CalendarId calendarId, File file) throws IOException {
-        CalendarSupplemental supplemental = new CalendarSupplemental(
-                calendarId, parseVersion(file), parseCalendarDate(file), parseReleaseDateTime(file));
-        parseSupplementalEntries(file, supplemental);
+    protected CalendarSupplemental parseSupplemental(CalendarAlertFile calFile) throws IOException {
+        CalendarSupplemental supplemental = new CalendarSupplemental(calFile.getCalendarId(),
+                calFile.getFloorSupplementalVersion(), parseCalendarDate(calFile.getFile()),
+                calFile.getPublishedDateTime());
+        parseSupplementalEntries(calFile.getFile(), supplemental);
         return supplemental;
     }
 
