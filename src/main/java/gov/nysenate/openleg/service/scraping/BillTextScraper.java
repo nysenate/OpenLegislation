@@ -12,6 +12,7 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,11 +83,15 @@ public class BillTextScraper extends LRSScraper {
     public HttpResponse makeRequest(String url) throws IOException {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url);
-        HttpResponse response = httpClient.execute(request);
-        if (response.getStatusLine().getStatusCode() != 200) {
-            throw new ScrapingIOException("Cannot scrape url " + url + ". Response status code was " + response.getStatusLine().getStatusCode());
+        try {
+            HttpResponse response = httpClient.execute(request);
+            if (response.getStatusLine().getStatusCode() != 200) {
+                throw new ScrapingIOException("Cannot scrape url " + url + ". Response status code was " + response.getStatusLine().getStatusCode());
+            }
+            return response;
+        } catch (HttpHostConnectException ex) {
+            throw new ScrapingIOException(url, ex);
         }
-        return response;
     }
 
     public String constructUrl(BaseBillId billId) {

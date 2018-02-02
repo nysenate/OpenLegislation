@@ -61,7 +61,7 @@ public class CalendarSpotCheckProcessService extends SpotcheckMailProcessService
         for (CalendarAlertFile file : files) {
             try {
                 logger.info("Processing calendar from file: " + file.getFile().getName());
-                Calendar calendar = processor.process(file.getFile());
+                Calendar calendar = processor.process(file);
                 calendarAlertDao.updateCalendar(calendar, file);
                 processedCount++;
             } catch (Exception ex) {

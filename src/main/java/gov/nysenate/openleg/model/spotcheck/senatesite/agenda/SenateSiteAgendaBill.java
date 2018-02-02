@@ -20,6 +20,7 @@ public class SenateSiteAgendaBill {
     protected Integer aye_wrCount;
     protected Integer excusedCount;
     protected Integer abstainedCount;
+    protected Integer absentCount;
     protected String billMessage;
     protected AgendaItemView billName;
 
@@ -43,6 +44,7 @@ public class SenateSiteAgendaBill {
                 .put(AYEWR, getCountValue(aye_wrCount))
                 .put(EXC, getCountValue(excusedCount))
                 .put(ABD, getCountValue(abstainedCount))
+                .put(ABS, getCountValue(abstainedCount))
                 .build();
     }
 
@@ -102,6 +104,14 @@ public class SenateSiteAgendaBill {
 
     public AgendaItemView getBillName(){
         return billName;
+    }
+
+    public Integer getAbsentCount() {
+        return absentCount;
+    }
+
+    public void setAbsentCount(Integer absentCount) {
+        this.absentCount = absentCount;
     }
 
     /* --- Internal Methods --- */

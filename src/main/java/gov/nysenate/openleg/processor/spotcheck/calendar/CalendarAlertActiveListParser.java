@@ -2,9 +2,9 @@ package gov.nysenate.openleg.processor.spotcheck.calendar;
 
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarActiveList;
 import gov.nysenate.openleg.model.calendar.CalendarEntry;
+import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,19 +28,15 @@ public class CalendarAlertActiveListParser extends BaseCalendarAlertParser{
 
     /**
      * Parses a Calendar Active List from an LBDC Alert email file.
-     * We increment the sequence num for every file so that version is saved.
-     * The sequence num does NOT match the sequence number of the reference data since they don't include
-     * it in the alert emails.
-     * @param file
+     * @param calFile
      * @return
      * @throws IOException
      */
-    protected CalendarActiveList parseActiveList(Calendar calendar, File file) throws IOException {
-        int sequenceNum = calendar.getActiveListMap().size();
-        CalendarActiveList activeList = new CalendarActiveList(
-                calendar.getId(), sequenceNum, "", parseCalendarDate(file), parseReleaseDateTime(file));
+    protected CalendarActiveList parseActiveList(CalendarAlertFile calFile) throws IOException {
+        CalendarActiveList activeList = new CalendarActiveList(calFile.getCalendarId(), calFile.getActiveListSeqNum(),
+                "", parseCalendarDate(calFile.getFile()), calFile.getPublishedDateTime());
 
-        parseActiveListEntries(file, activeList);
+        parseActiveListEntries(calFile.getFile(), activeList);
         return activeList;
     }
 
