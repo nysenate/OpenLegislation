@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
+import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,9 +35,9 @@ public class SupplementalCalendarTest extends BaseTests {
     private CalendarCheckService calendarCheckService;
 
     @Test
-    public void supplementalCalendarTest() {
+    public void supplementalCalendarTest() throws FileNotFoundException {
         Calendar dummyCalendar = new Calendar(new CalendarEntryListId(new CalendarId(28, 2015), CalendarType.FLOOR_CALENDAR, Version.DEFAULT, 0));
-        Calendar expected = process.process(alertFile);
+        Calendar expected = process.process(new CalendarAlertFile(alertFile));
        List<SpotCheckObservation<CalendarEntryListId>> spotCheckObservation = calendarCheckService.checkAll(dummyCalendar,expected);
        CalendarEntryListId actual = spotCheckObservation.get(0).getKey();
        assertTrue(actual.getType().equals(CalendarType.FLOOR_CALENDAR));

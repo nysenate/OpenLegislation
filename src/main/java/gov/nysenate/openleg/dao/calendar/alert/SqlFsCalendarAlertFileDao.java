@@ -32,7 +32,7 @@ public class SqlFsCalendarAlertFileDao extends SqlBaseDao {
     private static final Logger logger = LoggerFactory.getLogger(SqlFsCalendarAlertFileDao.class);
 
     private static final Pattern calendarAlertFilePattern =
-            Pattern.compile("^(floor_cal|active_list)_alert-\\d{4}-\\d+[A-Z]?-\\d{8}T\\d{6}.html$");
+            Pattern.compile("^(floor_cal|active_list)_alert-\\d{4}-\\d+(-\\d+)?[A-Z]?-\\d{8}T\\d{6}.html$");
 
     @Autowired
     private Environment environment;
