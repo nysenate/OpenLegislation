@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -76,12 +75,12 @@ public class FsSenateSiteDao implements SenateSiteDao {
         try {  // Delete existing dump if possible
             FileUtils.forceDelete(fragmentFile);
         } catch (FileNotFoundException ignored) {}
-        FileIOUtils.write(fragmentFile, prettyPrintJson(fragmentData), Charset.forName("UTF-8"));
-    }
 
-    private String prettyPrintJson(String fragmentData) throws IOException {
+        // Write pretty printed json to a temporary file, then rename it to the desired name
+        File tempFile = FileIOUtils.getTempFile(fragmentFile);
         Object json = objectMapper.readValue(fragmentData, Object.class);
-        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(tempFile, json);
+        FileUtils.moveFile(tempFile, fragmentFile);
     }
 
     @Override
@@ -159,10 +158,11 @@ public class FsSenateSiteDao implements SenateSiteDao {
 
     /** Regex to match SenateSiteDumpFragments of the given refType. */
     private static Pattern dumpFragFilenameRegex(SpotCheckRefType refType) {
-             return Pattern.compile(
-                     StrSubstitutor.replace(dumpFragFilename(refType), ImmutableMap.of(
-                    "year", "(\\d{4})",
-                    "refDateTime", "(" + BASIC_ISO_DATE_TIME_REGEX.toString() + ")",
-                    "seqNo", "(\\d+)")));
+        String reTemplate = "^" + dumpFragFilename(refType);
+        String regex = StrSubstitutor.replace(reTemplate, ImmutableMap.of(
+                "year", "(\\d{4})",
+                "refDateTime", "(" + BASIC_ISO_DATE_TIME_REGEX.toString() + ")",
+                "seqNo", "(\\d+)"));
+        return Pattern.compile(regex);
     }
 }
