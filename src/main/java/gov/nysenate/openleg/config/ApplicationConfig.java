@@ -107,28 +107,43 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
     @Value("${elastic.search.cluster.name:elasticsearch}") private String elasticSearchCluster;
     @Value("${elastic.search.host:localhost}") private String elasticSearchHost;
     @Value("${elastic.search.port:9300}") private int elasticSearchPort;
+    @Value("${elastic.search.connection_retries:30}") private int esAllowedRetries;
 
     @Bean(destroyMethod = "close")
-    public Client elasticSearchNode() {
-        logger.info("Connecting to elastic search cluster {}", elasticSearchCluster);
+    public Client elasticSearchNode() throws InterruptedException {
         Settings settings = Settings.settingsBuilder()
             .put("cluster.name", elasticSearchCluster).build();
-        try {
-            TransportClient tc = TransportClient.builder().settings(settings).build().addTransportAddress(
-                    new InetSocketTransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
-            if (tc.connectedNodes().size() == 0) {
-                tc.close();
-                throw new ElasticsearchException("Failed to connect to elastic search node!");
+
+        int retryCount = 0;
+        ElasticsearchException cause;
+
+        do {
+            if (retryCount <= esAllowedRetries) {
+                Thread.sleep(1000);
             }
-            return tc;
-        }
-        catch (ElasticsearchException ex) {
-            logger.error("Error while initializing elasticsearch client:\n" + ExceptionUtils.getStackTrace(ex));
-            logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
-                    elasticSearchCluster, elasticSearchHost, elasticSearchPort);
-            logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
-            return null;
-        }
+            logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
+            try {
+                TransportClient tc = TransportClient.builder().settings(settings).build().addTransportAddress(
+                        new InetSocketTransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
+                if (tc.connectedNodes().size() == 0) {
+                    tc.close();
+                    throw new ElasticsearchException("Failed to connect to elastic search node!");
+                }
+                logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
+                return tc;
+            } catch (ElasticsearchException ex) {
+                logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
+                logger.warn("{} retries remain.", esAllowedRetries - retryCount);
+                cause = ex;
+                retryCount++;
+            }
+        } while (retryCount <= esAllowedRetries);
+
+        logger.error("Error while initializing elasticsearch client:\n" + ExceptionUtils.getStackTrace(cause));
+        logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
+                elasticSearchCluster, elasticSearchHost, elasticSearchPort);
+        logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
+        return null;
     }
 
     /** --- Guava Event Bus Configuration --- */
