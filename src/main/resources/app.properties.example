@@ -103,6 +103,11 @@ elastic.search.port = 9300
 
 elastic.search.cluster.name = openleg
 
+# Allow a number of retries when the elasticsearch connection is established on startup.
+# Each retry will be attempted after a 1 second delay.
+
+elastic.search.connection_retries = 30
+
 # --- Eh Cache Configuration --------------------------------------------------
 
 # The amount of memory to allocate to Eh Cache for all heap based caches (in MB).

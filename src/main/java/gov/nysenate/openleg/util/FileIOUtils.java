@@ -19,6 +19,8 @@ public class FileIOUtils
             PosixFilePermission.GROUP_READ,
             PosixFilePermission.OTHERS_READ);
 
+    private static final String tempFilePrefix = ".in.";
+
     /**
      * Returns a collection of files sorted by file name (not file path!)
      *
@@ -165,8 +167,9 @@ public class FileIOUtils
 
     /**
      * Saves a character sequence to a file and sets common permissions to the file.
-     * See {@code FileUtils.write} for details on file saving.
      * Permissions set are owner read + write, group read, and others read.
+     * @see FileUtils#write(File, CharSequence) for details on file saving.
+     *
      * @param file The file to save to.
      * @param data The data to save to the file.
      * @throws IOException
@@ -178,8 +181,9 @@ public class FileIOUtils
 
     /**
      * Saves a character sequence to a file and sets common permissions to the file.
-     * See {@code FileUtils.write} for details on file saving.
      * Permissions set are owner read + write, group read, and others read.
+     * @see FileUtils#write(File, CharSequence, Charset) for details on file saving.
+     *
      * @param file The file to save to.
      * @param data The data to save to the file.
      * @param encoding The encoding to use.
@@ -188,6 +192,37 @@ public class FileIOUtils
     public static void write(File file, CharSequence data, Charset encoding) throws IOException {
         FileUtils.write(file, data, encoding);
         setCommonFilePermissions(file);
+    }
+
+    /**
+     * Saves a character sequence to a file and sets common permissions to the file.
+     * The data is initially saved to a temporary file and then moved to the destination file.
+     * This discourages use of the file while data is being written.
+     * Permissions set are owner read + write, group read, and others read.
+     * @see FileUtils#write(File, CharSequence, Charset) for details on file saving.
+     *
+     * @param file The file to save to.
+     * @param data The data to save to the file.
+     * @param encoding The encoding to use.
+     * @throws IOException
+     */
+    public static void writeUsingTemp(File file, CharSequence data, Charset encoding) throws IOException {
+        File tempFile = getTempFile(file);
+        FileUtils.write(tempFile, data, encoding);
+        FileUtils.moveFile(tempFile, file);
+        setCommonFilePermissions(file);
+    }
+
+    /**
+     * Create a temporary file corresponding to the given file for safe writing purposes.
+     * Any existing temp file will be deleted.
+     *
+     * @param file File
+     */
+    public static File getTempFile(File file) {
+        File tempFile = new File(file.getParent(), tempFilePrefix + file.getName());
+        FileUtils.deleteQuietly(tempFile);
+        return tempFile;
     }
 
     /**
