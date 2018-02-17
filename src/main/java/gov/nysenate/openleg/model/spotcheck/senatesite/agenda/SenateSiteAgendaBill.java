@@ -44,7 +44,7 @@ public class SenateSiteAgendaBill {
                 .put(AYEWR, getCountValue(aye_wrCount))
                 .put(EXC, getCountValue(excusedCount))
                 .put(ABD, getCountValue(abstainedCount))
-                .put(ABS, getCountValue(abstainedCount))
+                .put(ABS, getCountValue(absentCount))
                 .build();
     }
 
