@@ -18,6 +18,7 @@ import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -105,7 +106,7 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
                 billAmendment = baseBill.getAmendment(Version.of(version));
             }
             if (action.equals("remove")) {
-                removeCase(baseBill, billAmendment);
+                removeCase(baseBill, billAmendment, sobiFragment.getPublishedDateTime());
                 return;
             } else {
                 if (billAmendment.isBaseVersion() ) {
@@ -159,11 +160,11 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
      * @param baseBill The Bill in alteration
      * @param billAmendment The Bill Amendment of said bill
      */
-    private void removeCase(Bill baseBill, BillAmendment billAmendment) {
+    private void removeCase(Bill baseBill, BillAmendment billAmendment, LocalDateTime effectiveDateTime) {
         billAmendment.setLawSection(null);
         baseBill.setSponsor(null);
         baseBill.setTitle(null);
-        baseBill.setPublishedDateTime(null);
+        baseBill.updatePublishStatus(billAmendment.getVersion(), new PublishStatus(false, effectiveDateTime));
     }
 
     /**
