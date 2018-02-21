@@ -95,7 +95,6 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
                         if (sobiFragment.getParentSobiFile().getFileName().contains("XML")) {
                             notes = xml.getString("notes/text()", xmlCommittee)
                                     //.replaceAll("\n","")
-//                                    .replaceAll("\\\\n", "\n")
                                     .replaceAll("\\|","\n")
                                     .replaceAll(" +"," ")
                                     .replaceAll("º","§")
@@ -103,7 +102,8 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
                         }
                         else {
                             notes = xml.getString("notes/text()", xmlCommittee)
-                                    .replaceAll("╣","§");
+                                    .replaceAll("╣","§")
+                                    .replaceAll("\\\\n", "\n");
                         }
 
 
