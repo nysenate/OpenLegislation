@@ -200,7 +200,7 @@ public abstract class AbstractDataProcessor
         if (sponsorLine.startsWith("RULES")) {
             billSponsor.setRules(true);
             Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
-            if (!"RULES COM".equals(sponsorLine) && rules.matches()) {
+            if (sponsorLine.contains("RULES COM") && rules.matches()) {
                 sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
                 billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
             }
