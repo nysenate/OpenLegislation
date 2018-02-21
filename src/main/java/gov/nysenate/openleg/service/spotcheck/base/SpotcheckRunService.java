@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -96,10 +97,17 @@ public class SpotcheckRunService {
     @Scheduled(cron = "${scheduler.spotcheck.interval.cron:0 45 23 * * *}")
     public synchronized void runIntervalReports() {
         if (env.isSpotcheckScheduled()) {
-            LocalDateTime startOfYear = LocalDateTime.of(LocalDateTime.now().getYear(), 1, 1, 0, 0);
-            Range<LocalDateTime> ytd = Range.closed(startOfYear, LocalDateTime.now());
-            intervalReports.forEach(reportService -> runReport(reportService, ytd));
+            runIntervalReports(LocalDate.now().getYear());
         }
+    }
+
+    /**
+     * Runs all interval reports, checking all data in the specified year.
+     * @param year
+     */
+    public synchronized void runIntervalReports(int year) {
+        Range<LocalDateTime> yearRange = Range.closed(LocalDateTime.of(year, 1, 1, 0, 0), LocalDateTime.of(year, 12, 31, 0, 0));
+        intervalReports.forEach(reportService -> runReport(reportService, yearRange));
     }
 
     /**
