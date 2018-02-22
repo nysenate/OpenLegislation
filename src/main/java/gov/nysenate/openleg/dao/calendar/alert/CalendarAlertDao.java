@@ -26,7 +26,7 @@ public interface CalendarAlertDao {
 
     List<Calendar> getCalendarAlertsByDateRange(LocalDateTime start, LocalDateTime end);
 
-    void markAsChecked(CalendarId id);
+    void updateChecked(CalendarId id, boolean checked);
 
     void markProdAsChecked(CalendarId id);
 
