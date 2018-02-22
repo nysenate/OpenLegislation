@@ -1187,7 +1187,7 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 1137	959	assembly	t	Christine Pellegrino
 1139	961	assembly	t	Daniel Rosenthal
 1140	350	senate	t	Brian Kavanagh
-1141	963	assembly	Al Taylor
+1141	963	assembly	f	Al Taylor
 \.
 
 
@@ -2325,10 +2325,10 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1050	1134	WRIGHT	2017	56	f
 1133	1136	BENJAMIN	2017	30	f
 1134	1137	PELLEGRINO	2017	9	f
-1135	520	ROSENTHAL L 2017	67	f
-1136	1139	ROSENTHAL D 2017	27	f
-1137	1140	KAVANAGH 2017	26	f
-1139	1141	TAYLOR 2017	71	f
+1135	520	ROSENTHAL L	2017	67	f
+1136	1139	ROSENTHAL D	2017	27	f
+1137	1140	KAVANAGH	2017	26	f
+1139	1141	TAYLOR	2017	71	f
 \.
 
 

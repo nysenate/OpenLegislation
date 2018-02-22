@@ -323,12 +323,16 @@ public class SpotCheckCtrl extends BaseCtrl
      * Attempts to run all spotcheck reports designated as interval reports
      *
      * Usage: (GET) /api/3/admin/spotcheck/run/interval
+     *
+     * Request Parameters:
+     *          year - int - optional - The year to run interval reports for, defaults to current year.
      */
     @RequiresPermissions("admin:view")
     @RequestMapping(value = "/run/interval")
-    public BaseResponse runWeeklyReports() {
-        spotcheckRunService.runIntervalReports();
-        return new SimpleResponse(true, "interval reports run", "report report");
+    public BaseResponse runWeeklyReports(@RequestParam(required = false) Integer year) {
+        int yr = year == null ? LocalDate.now().getYear() : year;
+        spotcheckRunService.runIntervalReports(yr);
+        return new SimpleResponse(true, "Interval Reports for " + yr + " have been run.", "report report");
     }
 
 
