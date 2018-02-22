@@ -34,7 +34,7 @@ public class MockCalendarAlertDao implements CalendarAlertDao {
     }
 
     @Override
-    public void markAsChecked(CalendarId id) {
+    public void updateChecked(CalendarId id, boolean checked) {
 
     }
 
