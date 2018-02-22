@@ -7,17 +7,18 @@
 # Organization: New York State Senate
 # Date: 2016-01-12
 # Revised: 2016-01-26 - Now using new pdrush script to run drush
-# Revised: 2016-02-10 - Added environment option, which defaults to "live"
+# Revised: 2016-02-10 - Add environment option, which defaults to "live"
 # Revised: 2016-03-04 - Add /usr/local/bin to PATH since crond is missing it
-# Revised: 2016-03-18 - Added --qa option to run QA-style drush scripts
-# Revised: 2016-03-21 - Added --arg option to specify drush arguments
-# Revised: 2016-05-04 - Added calendar-qa drush command
-# Revised: 2016-12-22 - Added --disqus option to run Disqus integration
-# Revised: 2017-01-12 - Added safe_cache_form_clear drush command
-# Revised: 2017-02-09 - Added --maint option to run Drupal maintenance tasks
-# Revised: 2017-08-14 - Added --update-statutes to update all statutes
-# Revised: 2017-08-24 - Modified --qa option to use spotcheck-dump drush command
-# Revised: 2017-10-10 - Added --accum option to run Drupal accumulator integrity
+# Revised: 2016-03-18 - Add --qa option to run QA-style drush scripts
+# Revised: 2016-03-21 - Add --arg option to specify drush arguments
+# Revised: 2016-05-04 - Add calendar-qa drush command
+# Revised: 2016-12-22 - Add --disqus option to run Disqus integration
+# Revised: 2017-01-12 - Add safe_cache_form_clear drush command
+# Revised: 2017-02-09 - Add --maint option to run Drupal maintenance tasks
+# Revised: 2017-08-14 - Add --update-statutes to update all statutes
+# Revised: 2017-08-24 - Modify --qa option to use spotcheck-dump drush command
+# Revised: 2017-10-10 - Add --accum option to run Drupal accumulator integrity
+# Revised: 2018-02-22 - Add new process-queues drush command
 #
 
 PATH=$PATH:/usr/local/bin
@@ -123,6 +124,9 @@ else
 
   echo "About to import bills"
   pdrush @$penv bill-import $drush_args
+
+  echo "About to process subscription queues for notifications"
+  pdrush @$penv process-queues $drush_args
 
   echo "About to import agendas"
   pdrush @$penv agenda-import $drush_args
