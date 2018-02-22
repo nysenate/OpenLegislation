@@ -104,7 +104,8 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
                             notes = xml.getString("notes/text()", xmlCommittee)
                                     .replaceAll("╣","§")
                                     .replaceAll("\n","")
-                                    .replaceAll("\\\\n", "\n");
+                                    .replaceAll("\\\\n", "\n")
+                                    .replaceAll(" +"," ");
                         }
 
 
