@@ -49,20 +49,24 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     @Override
     public SpotCheckObservation<BaseBillId>  check(BillView content, BillView reference) {
         final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<BaseBillId>(reference.toBaseBillId());
-        checkBillTitle(content, reference, observation);
-        checkActiveVersion(content, reference, observation);
-        checkBillSummary(content, reference, observation);
-        checkBillLawSection(content, reference, observation);
-        checkBillActions(content, reference, observation);
-        checkBillSponsor(content, reference, observation);
-        checkBillYear(content, reference, observation);
-        checkBillStatus(content, reference, observation);
-        checkAdditionalSponsors(content, reference, observation);
-        checkBillApproveMessage(content, reference, observation);
-        checkVotes(content, reference, observation);
-        checkCalendars(content, reference, observation);
-        checkBillCommitteeAgendas(content, reference, observation);
-        checkBillPastCommmittee(content, reference, observation);
+        if (content.getActiveVersion().equals(reference.getActiveVersion() ) ) {
+            checkBillTitle(content, reference, observation);
+            checkBillSummary(content, reference, observation);
+            checkBillLawSection(content, reference, observation);
+            checkBillActions(content, reference, observation);
+            checkBillSponsor(content, reference, observation);
+            checkBillYear(content, reference, observation);
+            checkBillStatus(content, reference, observation);
+            checkAdditionalSponsors(content, reference, observation);
+            checkBillApproveMessage(content, reference, observation);
+            checkVotes(content, reference, observation);
+            checkCalendars(content, reference, observation);
+            checkBillCommitteeAgendas(content, reference, observation);
+            checkBillPastCommmittee(content, reference, observation);
+        }
+        else {
+            checkActiveVersion(content, reference, observation);
+        }
         return observation;
     }
 
@@ -82,8 +86,14 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
         BillAmendmentView contentLatestAmendment = content.getAmendments().getItems().get(content.getActiveVersion());
         BillAmendmentView referenceLatestAmendment = reference.getAmendments().getItems().get(reference.getActiveVersion());
         if (referenceLatestAmendment != null && contentLatestAmendment != null) {
-            checkString(removeExcessWhitespace(contentLatestAmendment.getLawCode()),removeExcessWhitespace(referenceLatestAmendment.getLawCode()).replaceAll("Â§", "§"),obsrv,BILL_LAW_CODE );
-            checkString(contentLatestAmendment.getLawSection().trim(),referenceLatestAmendment.getLawSection().trim().replaceAll("Â§", "§").replaceAll(" +", " "),obsrv,BILL_LAW_SECTION);
+            checkString(removeExcessWhitespace(contentLatestAmendment.getLawCode()),
+                    removeExcessWhitespace(referenceLatestAmendment.getLawCode())
+                            .replaceAll("Â§", "§"),
+                    obsrv, BILL_LAW_CODE);
+            checkString(contentLatestAmendment.getLawSection().trim(),
+                    referenceLatestAmendment.getLawSection().trim().
+                            replaceAll("Â§", "§")
+                            .replaceAll(" +", " "),obsrv,BILL_LAW_SECTION);
         }
     }
 
