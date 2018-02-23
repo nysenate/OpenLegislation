@@ -1,24 +1,25 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 
-import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.dao.spotcheck.BillIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
+import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
+import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
+import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import gov.nysenate.openleg.util.AsyncUtils;
+import gov.nysenate.openleg.util.pipeline.Pipeline;
+import gov.nysenate.openleg.util.pipeline.PipelineFactory;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 @Service
 public class BillReportService extends BaseSpotCheckReportService<BillId> {
@@ -36,6 +36,7 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
     private static final Logger logger = LoggerFactory.getLogger(BillReportService.class);
 
     @Autowired private AsyncUtils asyncUtils;
+    @Autowired private PipelineFactory pipelineFactory;
 
     @Autowired private BillIdSpotCheckReportDao billReportDao;
     @Autowired private SenateSiteDao senateSiteDao;
@@ -63,9 +64,7 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         SpotCheckReport<BillId> report = new SpotCheckReport<>(reportId);
         report.setNotes(billDump.getDumpId().getNotes());
         try {
-
             generateReport(billDump, report);
-
         } finally {
             logger.info("archiving bill dump...");
             senateSiteDao.setProcessed(billDump);
@@ -80,25 +79,96 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
      */
     private void generateReport(SenateSiteDump billDump, SpotCheckReport<BillId> report) {
 
-        // Get openleg bills and parse the bill dump in parallel
+        // Set up a pipeline: dump parsing -> bill retrieval -> checking
 
-        CompletableFuture<Map<BaseBillId, Bill>> olBillFuture =
-                asyncUtils.get(() -> getBills(billDump, report));
+        BillChecker billChecker = new BillChecker(getBillIdsForSession(billDump));
 
-        CompletableFuture<List<SenateSiteBill>> refBillFuture =
-                asyncUtils.get(() -> parseBillDump(billDump));
+        Pipeline<SenateSiteDumpFragment, SpotCheckObservation<BillId>> pipeline =
+                pipelineFactory.<SenateSiteDumpFragment>pipelineBuilder()
+                        .addTask(billJsonParser::extractBillsFromFragment, 500)
+                        .addTask(this::getBill, 500, 2)
+                        .addTask(billChecker)
+                        .build();
 
-        Map<BaseBillId, Bill> openlegBills = olBillFuture.join();
-        List<SenateSiteBill> dumpedBills = refBillFuture.join();
+        pipeline.addInput(billDump.getDumpFragments());
+        // Wait for pipeline to finish and add observations to report
+        report.addObservations(pipeline.run().join());
 
-        generateRefMissingObs(dumpedBills, openlegBills.values(), report);
+        // Record ref missing mismatches from unchecked openleg bills
+        generateRefMissingObs(billChecker.getUncheckedBaseBillIds(), billChecker.getUncheckedBillIds(), report);
+    }
 
-        logger.info("checking bills");
-        // Check each dumped senate site bill
-        dumpedBills.stream()
-                .map(senSiteBill -> billCheckService.check(openlegBills.get(senSiteBill.getBaseBillId()), senSiteBill))
-                .forEach(report::addObservation);
-        logger.info("done: {} mismatches", report.getOpenMismatchCount(false));
+    /**
+     * Gets the {@link Bill} corresponding to the given {@link SenateSiteBill} and packages them in a Pair.
+     * Substitutes an empty optional for the bill of it does not exist in openleg
+     *
+     * @param refBill {@link SenateSiteBill}
+     * @return Collection<Pair<SenateSiteBill, Optional<Bill>>>
+     */
+    private Collection<Pair<SenateSiteBill, Optional<Bill>>> getBill(SenateSiteBill refBill) {
+        BillId billId = refBill.getBillId();
+        Optional<Bill> olBill;
+        try {
+            olBill = Optional.of(
+                    billDataService.getBill(BaseBillId.of(billId)));
+        } catch (BillNotFoundEx ex) {
+            olBill = Optional.empty();
+        }
+        return Collections.singletonList(Pair.of(refBill, olBill));
+    }
+
+    /**
+     * An object that performs checks on {@link SenateSiteBill} against {@link Bill}s,
+     * while keeping track of {@link Bill}s that had no {@link SenateSiteBill} counterpart.
+     */
+    private class BillChecker
+            implements Function<Pair<SenateSiteBill, Optional<Bill>>, Collection<SpotCheckObservation<BillId>>> {
+
+        /*
+         *  Keep track of which openleg amendments were checked.
+         *
+         *  If no amendments of a bill were checked, it will be in the unchecked base bill id set.
+         *  When a check is performed on a bill for the first time, all of its amendments
+         *  will be added to the unchecked bill id set and it will be removed from the base bill id set.
+         *  Each time an amendment is checked, it will be removed from the bill id set.
+         */
+        private Set<BaseBillId> uncheckedBaseBillIds;
+        private Set<BillId> uncheckedBillIds = new HashSet<>();
+
+        public BillChecker( Set<BaseBillId> uncheckedBaseBillIds) {
+            this.uncheckedBaseBillIds = new HashSet<>(uncheckedBaseBillIds);
+        }
+
+        @Override
+        public Collection<SpotCheckObservation<BillId>> apply(Pair<SenateSiteBill, Optional<Bill>> checkData) {
+            Optional<Bill> olBillOpt = checkData.getRight();
+            SenateSiteBill refBill = checkData.getLeft();
+            BillId billId = refBill.getBillId();
+            BaseBillId baseBillId = BaseBillId.of(billId);
+
+            SpotCheckObservation<BillId> observation;
+            if (olBillOpt.isPresent()) {
+                Bill olBill = olBillOpt.get();
+                observation = billCheckService.check(olBill, refBill);
+                if (uncheckedBaseBillIds.remove(baseBillId)) {
+                    uncheckedBillIds.addAll(olBill.getAmendmentIds());
+                }
+            } else {
+                observation = SpotCheckObservation.getObserveDataMissingObs(
+                        refBill.getReferenceId(), billId);
+            }
+            uncheckedBillIds.remove(billId);
+            return Collections.singletonList(observation);
+        }
+
+
+        public Set<BillId> getUncheckedBillIds() {
+            return uncheckedBillIds;
+        }
+
+        public Set<BaseBillId> getUncheckedBaseBillIds() {
+            return uncheckedBaseBillIds;
+        }
     }
 
     private SenateSiteDump getMostRecentDump() throws IOException, ReferenceDataNotFoundEx {
@@ -106,33 +176,6 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
                 .filter(SenateSiteDump::isComplete)
                 .max(SenateSiteDump::compareTo)
                 .orElseThrow(() -> new ReferenceDataNotFoundEx("Found no full senate site bill dumps"));
-    }
-
-    /**
-     *  Parses bills from dump and logs when done
-     */
-    private List<SenateSiteBill> parseBillDump(SenateSiteDump billDump) {
-        logger.info("Extracting bill references from dump...");
-        List<SenateSiteBill> senateSiteBills = billJsonParser.parseBills(billDump);
-        logger.info("parsed {} dumped bills", senateSiteBills.size());
-        return senateSiteBills;
-    }
-
-    private Map<BaseBillId, Bill> getBills(SenateSiteDump billDump, SpotCheckReport<BillId> report) {
-        // Get reference billids
-        Set<BaseBillId> sessionBillIds = getBillIdsForSession(billDump);
-        logger.info("got {} bill ids for {}", sessionBillIds.size(), billDump.getDumpId().getSession());
-        Map<BaseBillId, Bill> sessionBills = new LinkedHashMap<>();
-        logger.info("retrieving bills");
-        for (BaseBillId billId : sessionBillIds) {
-            try {
-                sessionBills.put(billId, billDataService.getBill(billId));
-            } catch (BillNotFoundEx ex) {
-                report.addObservedDataMissingObs(billId);
-            }
-        }
-        logger.info("got {} bills", sessionBills.size());
-        return sessionBills;
     }
 
     /**
@@ -149,39 +192,33 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
     }
 
     /**
-     * Generate reference data missing observations for all openleg bills that were not present in the dump
-     * @param senSiteBills Collection<SenateSiteBill> - Bills extracted from the dump
-     * @param openlegBills Collection<Bill> - Bills in openleg
+     * Generate reference data missing observations for all openleg bills that were not present in the dump.
+     *
+     * @param uncheckedBaseBillIds {@link Set<BaseBillId>} - ids for bills with 0 checked amendments
+     * @param uncheckedBillIds {@link Set<BillId>} - ids for bill amendments that were never checked
      * @param report SpotCheckReport - ref missing obs. will be added to this report
      */
-    private void generateRefMissingObs(Collection<SenateSiteBill> senSiteBills,
-                                       Collection<Bill> openlegBills,
+    private void generateRefMissingObs(Set<BaseBillId> uncheckedBaseBillIds,
+                                       Set<BillId> uncheckedBillIds,
                                        SpotCheckReport<BillId> report) {
-        logger.info("Looking for bills missing from dump..");
-        Set<BillId> senSiteBillIds = senSiteBills.stream()
-                .map(SenateSiteBill::getBillId)
-                .collect(Collectors.toSet());
-
-        Set<BillId> publishedOlBillIds = new HashSet<>();
-        Set<BillId> unpublishedOlBillIds = new HashSet<>();
-
-        for (Bill bill : openlegBills) {
-            bill.getAmendPublishStatusMap().forEach((version, pubStatus) -> {
-                BillId billId = bill.getBaseBillId().withVersion(version);
-                if (pubStatus.isPublished()) {
-                    publishedOlBillIds.add(billId);
-                } else {
-                    unpublishedOlBillIds.add(billId);
-                }
-            });
+        for (BaseBillId baseBillId : uncheckedBaseBillIds) {
+            Bill bill = billDataService.getBill(baseBillId);
+            uncheckedBillIds.addAll(bill.getAmendmentIds());
         }
 
-        // Add ref missing observations for published openleg bills missing from the dump
-        Sets.difference(publishedOlBillIds, senSiteBillIds)
-                .forEach(report::addRefMissingObs);
-
-        // Add empty observations for unpublished openleg bills missing from the dump
-        Sets.difference(unpublishedOlBillIds, senSiteBillIds)
-                .forEach(report::addEmptyObservation);
+        for (BillId billId : uncheckedBillIds) {
+            Bill bill = billDataService.getBill(BaseBillId.of(billId));
+            boolean published = bill.getPublishStatus(billId.getVersion())
+                    .map(PublishStatus::isPublished)
+                    .orElse(false);
+            if (published) {
+                report.addRefMissingObs(billId);
+            } else {
+                // Add empty observation for unpublished bills not in dump
+                // Because unpublished bills shouldn't be on NYSenate.gov
+                report.addEmptyObservation(billId);
+            }
+        }
     }
+
 }
