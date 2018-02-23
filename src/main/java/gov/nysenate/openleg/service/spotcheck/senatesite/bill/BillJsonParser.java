@@ -16,6 +16,8 @@ import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 @Service
 public class BillJsonParser extends JsonParser{
 
+    private static final Logger logger = LoggerFactory.getLogger(BillJsonParser.class);
+
     @Autowired ObjectMapper objectMapper;
 
     public List<SenateSiteBill> parseBills(SenateSiteDump billDump) throws ParseError {
@@ -34,9 +38,8 @@ public class BillJsonParser extends JsonParser{
                 .collect(Collectors.toList());
     }
 
-    /** --- Internal Methods --- */
-
-    private List<SenateSiteBill> extractBillsFromFragment(SenateSiteDumpFragment fragment) throws ParseError {
+    public List<SenateSiteBill> extractBillsFromFragment(SenateSiteDumpFragment fragment) throws ParseError {
+        logger.info("Parsing bills from NYSenate.gov dump fragment: {}", fragment.getFragmentFile().getName());
         try {
             JsonNode billMap = objectMapper.readTree(fragment.getFragmentFile())
                     .path("nodes");
@@ -55,6 +58,8 @@ public class BillJsonParser extends JsonParser{
                     ex);
         }
     }
+
+    /** --- Internal Methods --- */
 
     private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteDumpFragment fragment) throws IOException {
         SenateSiteBill bill = new SenateSiteBill(fragment.getDumpId().getDumpTime());
