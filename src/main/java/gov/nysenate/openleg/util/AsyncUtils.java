@@ -14,8 +14,8 @@ public class AsyncUtils {
     @Resource(name = "openlegAsync") private ThreadPoolTaskExecutor executor;
 
     @Async
-    public void run(Runnable runnable) {
-        runnable.run();
+    public CompletableFuture<Void> run(Runnable runnable) {
+        return CompletableFuture.runAsync(runnable, executor);
     }
 
     public <T> CompletableFuture<T> get(Supplier<T> supplier) {
