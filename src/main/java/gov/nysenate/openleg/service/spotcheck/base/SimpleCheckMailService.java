@@ -25,7 +25,6 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
         Store store = null;
         int savedReports = 0;
         try {
-            logger.info("checking for " + getCheckMailType() + " emails...");
             store = mailUtils.getCheckMailStore();
 
             Folder sourceFolder = mailUtils.navigateToFolder(environment.getEmailReceivingFolder(), store);
@@ -33,7 +32,6 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
             sourceFolder.open(Folder.READ_WRITE);
 
             List<Message> messages = getMatchingMessages(subjectPattern, sourceFolder);
-            logger.info("found {} messages", messages.size());
             List<Message> savedMessages = new ArrayList<>();
             for (Message message : messages) {
                 try {
@@ -43,7 +41,6 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
                     logger.error("Could not save message {}", message.getSubject());
                 }
             }
-            logger.info("archiving messages");
             moveToArchive(sourceFolder, archiveFolder, savedMessages.toArray(new Message[messages.size()]));
         } catch (MessagingException ex) {
             logger.error("CheckMail Error\n{}", ExceptionUtils.getStackTrace(ex));
@@ -72,6 +69,7 @@ public abstract class SimpleCheckMailService extends BaseCheckMailService {
         for (Message message : sourceFolder.getMessages()) {
             if (subjectPattern.matcher(message.getSubject()).matches()) {
                 messages.add(message);
+                logger.info("Saving and archiving {} email message with subject: {}", getCheckMailType(), message.getSubject());
             }
         }
         return messages;
