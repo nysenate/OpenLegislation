@@ -77,7 +77,7 @@ public class PipelineBuilder<T, R> {
         for (int i = 0; i < instances; i++) {
             PipelineTask<R, E> newTask = new PipelineTask<>(task, inputQueue, outputQueue);
             if (prevTask != null) {
-                newTask.registerPreviousTask(lastTask);
+                newTask.registerPreviousTask(prevTask);
             }
             prevTask = newTask;
             newTasks.add(newTask);
