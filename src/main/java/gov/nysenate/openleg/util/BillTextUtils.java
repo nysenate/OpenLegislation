@@ -10,6 +10,7 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -128,11 +129,13 @@ public class BillTextUtils
             return formatHeader(htmlText);
         }
         Elements preTag = doc.select("pre");
-
+        doc = null; //doc is never used again. Save some memory here before the recursive processTextNode
         StringBuilder textBuilder = new StringBuilder();
 
-        for (Element element : preTag) {
-            processTextNode(element, textBuilder);
+        Iterator<Element> elementIterator = preTag.iterator();
+        while (elementIterator.hasNext()) {
+            processTextNodeWithIterator(elementIterator.next(),textBuilder);
+            elementIterator.remove();
         }
 
         return formatHeader(textBuilder.toString());
@@ -155,8 +158,10 @@ public class BillTextUtils
     /**
      * Extracts bill/memo text from an element recursively
      */
-    public static void processTextNode(Element element, StringBuilder stringBuilder) {
-        for (Node t : element.childNodes()) {
+    public static void processTextNodeWithIterator(Element element, StringBuilder stringBuilder) {
+        Iterator<Node> nodeIterator = element.childNodes().iterator();
+        while (nodeIterator.hasNext()) {
+            Node t = nodeIterator.next();
             if (t instanceof Element) {
                 Element e = (Element) t;
                 // TEXT IN <U> TAGS IS REPRESENTED IN CAPS FOR SOBI AND XML BILL TEXT
@@ -164,11 +169,13 @@ public class BillTextUtils
                     stringBuilder.append(e.text().toUpperCase());
                 }
                 else {
-                    processTextNode(e, stringBuilder);
+                    processTextNodeWithIterator(e, stringBuilder);
                 }
             } else if (t instanceof TextNode) {
                 stringBuilder.append(((TextNode) t).getWholeText());
             }
         }
+
+
     }
 }

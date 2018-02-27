@@ -64,7 +64,7 @@ public class BillTextReferenceHtmlParser {
         }
 
         StringBuilder textBuilder = new StringBuilder();
-        textEles.forEach(ele -> BillTextUtils.processTextNode(ele, textBuilder));
+        textEles.forEach(ele -> BillTextUtils.processTextNodeWithIterator(ele, textBuilder));
         return textBuilder.toString();
     }
 
@@ -77,7 +77,7 @@ public class BillTextReferenceHtmlParser {
         Element memoElement = doc.select("pre:last-of-type").first(); // you are the first and last of your kind
         if (memoElement != null) {
             StringBuilder memoBuilder = new StringBuilder();
-            BillTextUtils.processTextNode(memoElement, memoBuilder);
+            BillTextUtils.processTextNodeWithIterator(memoElement, memoBuilder);
             // todo format text
             return memoBuilder.toString();
         }
