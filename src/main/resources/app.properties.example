@@ -191,12 +191,17 @@ bill.scrape.queue.enabled = true
 # e.g. Daybreaks, agenda/calendar alerts
 spotcheck.checkmail.enabled = true
 
-# --- Openleg Ref to Openleg Source------------------------------------------------
+# --- Openleg Ref to Openleg Source--------------------------------------------
 #Api Key for the reference instance of Openleg
 spotcheck.openleg_ref.api.key =
 
 #Openleg-ref url (include trailing slash)
 spotcheck.openleg_ref.url = http://legislation.nysenate.gov/
+
+# Configure processing queue limits for NYSenate.gov bill spotchecks
+# Lower these sizes if your system is running out of memory during this report
+spotcheck.website.bill.ref_queue_size = 500
+spotcheck.website.bill.data_queue_size = 500
 
 # --- Mail Configuration ------------------------------------------------------
 

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -45,6 +46,12 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
     @Autowired private BillDataService billDataService;
 
     @Autowired private BillCheckService billCheckService;
+
+    @Value("${spotcheck.website.bill.ref_queue_size:500}")
+    private int refQueueSize;
+
+    @Value("${spotcheck.website.bill.data_queue_size:500}")
+    private int dataQueueSize;
 
     @Override
     protected SpotCheckReportDao<BillId> getReportDao() {
@@ -85,8 +92,8 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
 
         Pipeline<SenateSiteDumpFragment, SpotCheckObservation<BillId>> pipeline =
                 pipelineFactory.<SenateSiteDumpFragment>pipelineBuilder()
-                        .addTask(billJsonParser::extractBillsFromFragment, 500)
-                        .addTask(this::getBill, 500, 2)
+                        .addTask(billJsonParser::extractBillsFromFragment, refQueueSize)
+                        .addTask(this::getBill, dataQueueSize, 2)
                         .addTask(billChecker)
                         .build();
 
