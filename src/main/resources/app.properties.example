@@ -189,6 +189,11 @@ bill.scrape.queue.enabled = true
 # e.g. Daybreaks, agenda/calendar alerts
 spotcheck.checkmail.enabled = true
 
+# Configure processing queue limits for NYSenate.gov bill spotchecks
+# Lower these sizes if your system is running out of memory during this report
+spotcheck.website.bill.ref_queue_size = 500
+spotcheck.website.bill.data_queue_size = 500
+
 # --- Mail Configuration ------------------------------------------------------
 
 # Connection information for the mail account that receives daybreak emails
