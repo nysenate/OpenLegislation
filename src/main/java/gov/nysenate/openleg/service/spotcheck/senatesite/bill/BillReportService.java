@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.dao.spotcheck.BillIdSpotCheckReportDao;
@@ -16,14 +17,12 @@ import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
-import gov.nysenate.openleg.util.AsyncUtils;
 import gov.nysenate.openleg.util.pipeline.Pipeline;
 import gov.nysenate.openleg.util.pipeline.PipelineFactory;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -36,22 +35,27 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
 
     private static final Logger logger = LoggerFactory.getLogger(BillReportService.class);
 
-    @Autowired private AsyncUtils asyncUtils;
-    @Autowired private PipelineFactory pipelineFactory;
+    private final Environment env;
+    private final PipelineFactory pipelineFactory;
+    private final BillIdSpotCheckReportDao billReportDao;
+    private final SenateSiteDao senateSiteDao;
+    private final BillJsonParser billJsonParser;
+    private final BillDataService billDataService;
+    private final BillCheckService billCheckService;
 
-    @Autowired private BillIdSpotCheckReportDao billReportDao;
-    @Autowired private SenateSiteDao senateSiteDao;
-    @Autowired private BillJsonParser billJsonParser;
-
-    @Autowired private BillDataService billDataService;
-
-    @Autowired private BillCheckService billCheckService;
-
-    @Value("${spotcheck.website.bill.ref_queue_size:500}")
-    private int refQueueSize;
-
-    @Value("${spotcheck.website.bill.data_queue_size:500}")
-    private int dataQueueSize;
+    @Autowired
+    public BillReportService(Environment env, PipelineFactory pipelineFactory,
+                             BillIdSpotCheckReportDao billReportDao, SenateSiteDao senateSiteDao,
+                             BillJsonParser billJsonParser, BillDataService billDataService,
+                             BillCheckService billCheckService) {
+        this.env = env;
+        this.pipelineFactory = pipelineFactory;
+        this.billReportDao = billReportDao;
+        this.senateSiteDao = senateSiteDao;
+        this.billJsonParser = billJsonParser;
+        this.billDataService = billDataService;
+        this.billCheckService = billCheckService;
+    }
 
     @Override
     protected SpotCheckReportDao<BillId> getReportDao() {
@@ -89,6 +93,9 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         // Set up a pipeline: dump parsing -> bill retrieval -> checking
 
         BillChecker billChecker = new BillChecker(getBillIdsForSession(billDump));
+
+        int refQueueSize = env.getSensiteBillRefQueueSize();
+        int dataQueueSize = env.getSensiteBillDataQueueSize();
 
         Pipeline<SenateSiteDumpFragment, SpotCheckObservation<BillId>> pipeline =
                 pipelineFactory.<SenateSiteDumpFragment>pipelineBuilder()
