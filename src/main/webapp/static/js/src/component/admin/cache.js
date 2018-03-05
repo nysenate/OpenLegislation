@@ -11,7 +11,6 @@ adminModule.factory('CacheAPI', ['$resource', function ($resource) {
 adminModule.controller('CacheCtrl', ['$scope', '$timeout', 'CacheAPI',
     function($scope, $timeout, CacheAPI) {
     $scope.caches = [];
-
     $scope.loading = {};
 
     $scope.fetchCaches = function() {

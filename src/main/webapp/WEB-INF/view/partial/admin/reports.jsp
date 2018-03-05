@@ -1,0 +1,1 @@
+<div ng-controller="ReportsCtl"> {{title}} </div>

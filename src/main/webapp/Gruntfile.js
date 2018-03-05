@@ -161,7 +161,8 @@ module.exports = function(grunt) {
                         '<%= jsSource %>/component/admin/cache.js',
                         '<%= jsSource %>/component/admin/account.js',
                         '<%= jsSource %>/component/admin/notification_sub.js',
-                        '<%= jsSource %>/component/admin/environment.js']
+                        '<%= jsSource %>/component/admin/environment.js',
+                        '<%= jsSource %>/component/admin/reports.js']
                 }
             }
         },
