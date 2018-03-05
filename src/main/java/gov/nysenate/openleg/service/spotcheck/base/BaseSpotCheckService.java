@@ -45,10 +45,9 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
                                             SpotCheckObservation<ContentKey> observation,
                                             SpotCheckMismatchType mismatchType,
                                             Function<? super T, String> toString, String split) {
-        Function<Collection<T>, String> stringify = collection ->
-                Optional.ofNullable(collection).orElse(Collections.emptyList()).stream()
-                        .map(toString).reduce("", (a, b) -> StringUtils.isEmpty(a) ? b : a + split + b);
-        checkString(stringify.apply(content), stringify.apply(reference), observation, mismatchType);
+        String contentStr = stringifyCollection(content, toString, split);
+        String refStr = stringifyCollection(reference, toString, split);
+        checkString(contentStr, refStr, observation, mismatchType);
     }
 
     protected <T> void checkCollection(Collection<T> content, Collection<T> reference,
@@ -61,5 +60,16 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
 
     private String getBooleanString(boolean value, String condition) {
         return condition + ": " + (value ? "YES" : "NO");
+    }
+
+    private <T> String stringifyCollection(Collection<T> collection,
+                                           Function<? super T, String> toString,
+                                           String split) {
+        return Optional.ofNullable(collection)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(toString)
+                .reduce((a, b) -> a + split + b)
+                .orElse("");
     }
 }

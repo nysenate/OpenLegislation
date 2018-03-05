@@ -98,6 +98,14 @@ public class Environment
     @Value ("${spotcheck.openleg_ref.api.key}") private String openlegRefApiKey;
 
     @Value ("${spotcheck.openleg_ref.url}") private String openlegRefUrl;
+    
+    /** Sets queue sizes for nysenate.gov bill report */
+    @Value("${spotcheck.website.bill.ref_queue_size:500}")
+    private int sensiteBillRefQueueSize;
+
+    /** Sets queue sizes for nysenate.gov bill report */
+    @Value("${spotcheck.website.bill.data_queue_size:500}")
+    private int sensiteBillDataQueueSize;
 
     /** --- Email Settings --- */
 
@@ -381,5 +389,21 @@ public class Environment
 
     public void setCheckmailEnabled(boolean checkmailEnabled) {
         this.checkmailEnabled = checkmailEnabled;
+    }
+
+    public int getSensiteBillRefQueueSize() {
+        return sensiteBillRefQueueSize;
+    }
+
+    public void setSensiteBillRefQueueSize(int sensiteBillRefQueueSize) {
+        this.sensiteBillRefQueueSize = sensiteBillRefQueueSize;
+    }
+
+    public int getSensiteBillDataQueueSize() {
+        return sensiteBillDataQueueSize;
+    }
+
+    public void setSensiteBillDataQueueSize(int sensiteBillDataQueueSize) {
+        this.sensiteBillDataQueueSize = sensiteBillDataQueueSize;
     }
 }
