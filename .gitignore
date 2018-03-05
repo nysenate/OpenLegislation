@@ -7,6 +7,8 @@
 .settings/*
 .idea/**
 !.idea/codeStyleSettings.xml
+legislation.ipr
+legislation.iws
 *.iml
 src/main/webapp/.sass-cache/**
 src/main/webapp/static/bower_components/**
