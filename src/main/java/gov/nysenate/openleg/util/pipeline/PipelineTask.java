@@ -1,9 +1,15 @@
 package gov.nysenate.openleg.util.pipeline;
 
 import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -15,6 +21,11 @@ import java.util.function.Function;
  * @param <R>
  */
 class PipelineTask<T, R> implements Runnable {
+
+    private static final Logger logger = LoggerFactory.getLogger(PipelineTask.class);
+
+    /** The amount of time in ms the task should wait for a new input before checking if the previous task is done */
+    private static final long inputTimeout = 50;
 
     private Function<T, Collection<R>> task;
     private BlockingQueue<T> inputQueue;
@@ -43,15 +54,25 @@ class PipelineTask<T, R> implements Runnable {
      */
     @Override
     public void run() {
-        while (!(isPrevFinished() && inputQueue.isEmpty())) {
-            if (inputQueue.isEmpty()) {
-                continue;
+        try {
+            while (true) {
+                boolean prevFinished = isPrevFinished();
+
+                T inputValue = inputQueue.poll(inputTimeout, TimeUnit.MILLISECONDS);
+
+                if (inputValue != null) {
+                    Collection<R> outputValues = task.apply(inputValue);
+                    addToQueue(outputValues, outputQueue);
+                } else if (prevFinished) {
+                    // End this task if the previous task is finished and the input poll timed out
+                    break;
+                }
             }
-            T inputValue = inputQueue.poll();
-            Collection<R> outputValues = task.apply(inputValue);
-            addToQueue(outputValues, outputQueue);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            this.finished.set(true);
         }
-        this.finished.set(true);
     }
 
     /**
@@ -86,6 +107,10 @@ class PipelineTask<T, R> implements Runnable {
         List<R> list = new LinkedList<>();
         outputQueue.drainTo(list);
         return ImmutableList.copyOf(list);
+    }
+
+    Function<T, Collection<R>> getTask() {
+        return task;
     }
 
     /**

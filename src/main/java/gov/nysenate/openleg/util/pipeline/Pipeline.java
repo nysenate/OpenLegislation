@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.util.pipeline;
 
 import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -18,6 +20,8 @@ import java.util.concurrent.Executor;
  * @param <R>
  */
 public class Pipeline<T, R> {
+
+    private static final Logger logger = LoggerFactory.getLogger(Pipeline.class);
 
     private LinkedList<PipelineTask> tasks;
     private Executor executor;
@@ -50,7 +54,7 @@ public class Pipeline<T, R> {
         CompletableFuture<Void> lastTaskFuture = CompletableFuture.runAsync(lastTask, executor);
         while (taskItr.hasNext()) {
             PipelineTask task = taskItr.next();
-            CompletableFuture.runAsync(task, executor);
+            executor.execute(task);
         }
         return lastTaskFuture.thenApply(v -> lastTask.getOutputs());
     }

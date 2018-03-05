@@ -99,8 +99,8 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
 
         Pipeline<SenateSiteDumpFragment, SpotCheckObservation<BillId>> pipeline =
                 pipelineFactory.<SenateSiteDumpFragment>pipelineBuilder()
-                        .addTask(billJsonParser::extractBillsFromFragment, refQueueSize)
-                        .addTask(this::getBill, dataQueueSize, 2)
+                        .addTask(new FragmentParser(), refQueueSize)
+                        .addTask(new BillLoader(), dataQueueSize, 2)
                         .addTask(billChecker)
                         .build();
 
@@ -112,23 +112,35 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         generateRefMissingObs(billChecker.getUncheckedBaseBillIds(), billChecker.getUncheckedBillIds(), report);
     }
 
+    /* --- Functional classes for pipeline --- */
+
+    /**
+     * Parses {@link SenateSiteDumpFragment} into {@link SenateSiteBill}s
+     */
+    private class FragmentParser implements Function<SenateSiteDumpFragment, Collection<SenateSiteBill>> {
+        @Override
+        public Collection<SenateSiteBill> apply(SenateSiteDumpFragment fragment) {
+            return billJsonParser.extractBillsFromFragment(fragment);
+        }
+    }
+
     /**
      * Gets the {@link Bill} corresponding to the given {@link SenateSiteBill} and packages them in a Pair.
      * Substitutes an empty optional for the bill of it does not exist in openleg
-     *
-     * @param refBill {@link SenateSiteBill}
-     * @return Collection<Pair<SenateSiteBill, Optional<Bill>>>
      */
-    private Collection<Pair<SenateSiteBill, Optional<Bill>>> getBill(SenateSiteBill refBill) {
-        BillId billId = refBill.getBillId();
-        Optional<Bill> olBill;
-        try {
-            olBill = Optional.of(
-                    billDataService.getBill(BaseBillId.of(billId)));
-        } catch (BillNotFoundEx ex) {
-            olBill = Optional.empty();
+    private class BillLoader implements Function<SenateSiteBill, Collection<Pair<SenateSiteBill, Optional<Bill>>>> {
+        @Override
+        public Collection<Pair<SenateSiteBill, Optional<Bill>>> apply(SenateSiteBill refBill) {
+            BillId billId = refBill.getBillId();
+            Optional<Bill> olBill;
+            try {
+                olBill = Optional.of(
+                        billDataService.getBill(BaseBillId.of(billId)));
+            } catch (BillNotFoundEx ex) {
+                olBill = Optional.empty();
+            }
+            return Collections.singletonList(Pair.of(refBill, olBill));
         }
-        return Collections.singletonList(Pair.of(refBill, olBill));
     }
 
     /**
