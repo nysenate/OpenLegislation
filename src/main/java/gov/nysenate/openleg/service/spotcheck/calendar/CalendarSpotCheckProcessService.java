@@ -63,6 +63,8 @@ public class CalendarSpotCheckProcessService extends SpotcheckMailProcessService
                 logger.info("Processing calendar from file: " + file.getFile().getName());
                 Calendar calendar = processor.process(file);
                 calendarAlertDao.updateCalendar(calendar, file);
+                // Set as unchecked so this new calendar data gets checked in the CalendarReportService.
+                calendarAlertDao.updateChecked(calendar.getId(), false);
                 processedCount++;
             } catch (Exception ex) {
                 notificationService.handleSpotcheckException(ex, false);

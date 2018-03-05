@@ -4,17 +4,14 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAction;
-import gov.nysenate.openleg.model.bill.BillSponsor;
-import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
-import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
+import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -28,20 +25,20 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 
 @Service("daybreak")
-public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, DaybreakBill>
+public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill, DaybreakBill>
 {
     private static final Logger logger = LoggerFactory.getLogger(DaybreakCheckService.class);
 
     @Autowired
     protected DaybreakDao daybreakDao;
 
-    /** --- Implemented Methods --- */
+    /* --- Implemented Methods --- */
 
     /** {@inheritDoc}
      *  Just use the latest daybreak files we have. */
@@ -93,13 +90,13 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
         return observation;
     }
 
-    /** --- Methods --- */
+    /* --- Methods --- */
 
     /**
      * Check that the active version matches and also that only amendments before and including the active version
      * are published.
      */
-    protected void checkActiveVersions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    private void checkActiveVersions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         Version daybreakActiveVersion = daybreakBill.getActiveVersion();
         if (!daybreakActiveVersion.equals(bill.getActiveVersion())) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT, ((bill.getActiveVersion() != null) ? bill.getActiveVersion().name() : "NULL"), daybreakActiveVersion.name()
@@ -117,7 +114,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Checks the full text page counts for each amendment version. The page count for the daybreak comes from
      * the page file.
      */
-    protected void checkFullTextPageCounts(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    private void checkFullTextPageCounts(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         Map<Version, Integer> billPageCounts = new HashMap<>();
         Map<Version, Integer> daybreakPageCounts = new HashMap<>();
         daybreakBill.getAmendments().forEach((k, v) -> daybreakPageCounts.put(k, v.getPageCount()));
@@ -137,7 +134,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Compare the actions in the daybreak with the bill's actions.
      */
-    protected void checkBillActions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    private void checkBillActions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         if (daybreakBill.getActions() != null && !daybreakBill.getActions().equals(bill.getActions())) {
             // There are cases when the daybreak actions list stops upon substitution of the bill. Ignore those cases
             if (!daybreakBill.getActions().isEmpty()) {
@@ -154,42 +151,58 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     }
 
     /**
+     * Convert a list of shortnames (for cosponsors/multisponsors)
+     * to a checkable representation with all uppercase, special characters removed, and sorted alphabetically
+     */
+    private List<String> prepareShortnames(Collection<String> shortnames) {
+        return shortnames.stream()
+                .map(sn -> sn.replaceAll("[\\(\\)]+", ""))
+                .map(StringUtils::upperCase)
+                .sorted()
+                .collect(toList());
+    }
+
+    /**
      * Check the active bill amendment's multisponsor list. Order and case do not matter.
      */
-    protected void checkMultiSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
-        List<SessionMember> billMuSponsors = bill.hasActiveAmendment() ? bill.getActiveAmendment().getMultiSponsors()
-                                                                : new ArrayList<>();
-        Set<String> daybreakMuSponsorSet =
-            daybreakBill.getMultiSponsors().stream()
-                .map(c -> StringUtils.upperCase(c.replaceAll("[\\(\\)]+", "")))  // Upper case and remove any parenthesis
-                .collect(toSet());
-        // The bill multi sponsor set will just have the short names as-is (they should already be uppercased)
-        Set<String> billMuSponsorSet = billMuSponsors.stream().map(SessionMember::getLbdcShortName).collect(toSet());
+    private void checkMultiSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+        Optional<BillAmendment> activeAmendmentOpt =
+                bill.hasActiveAmendment() ? Optional.of(bill.getActiveAmendment()) : Optional.empty();
+
+        List<String> dataMuSponsors = activeAmendmentOpt
+                .map(BillAmendment::getMultiSponsors)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(SessionMember::getLbdcShortName)
+                .collect(collectingAndThen(toList(), this::prepareShortnames));
+
+        List<String> refMuSponsors = prepareShortnames(daybreakBill.getMultiSponsors());
+
         // Only check for mismatch if a daybreak multisponsor is set. Sometimes the daybreaks omit the multisponsor.
-        if (!daybreakMuSponsorSet.isEmpty() && (daybreakMuSponsorSet.size() != billMuSponsorSet.size() ||
-                                               !daybreakMuSponsorSet.containsAll(billMuSponsorSet))) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_MULTISPONSOR, StringUtils.join(billMuSponsorSet, " "), StringUtils.join(daybreakMuSponsorSet, " ")
-            ));
+        if (!refMuSponsors.isEmpty()) {
+            checkCollection(dataMuSponsors, refMuSponsors, obsrv, BILL_MULTISPONSOR, Function.identity(), "\n");
         }
     }
 
     /**
      * Check the active bill amendment's cosponsor list. Order and case do not matter.
      */
-    protected void checkCoSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
-        List<SessionMember> billCoSponsors = bill.hasActiveAmendment() ? bill.getActiveAmendment().getCoSponsors()
-                                                                : new ArrayList<>();
-        Set<String> daybreakCoSponsorSet =
-            daybreakBill.getCosponsors().stream()
-                .map(c -> StringUtils.upperCase(c.replaceAll("[\\(\\)]+", "")))  // Upper case and remove any parenthesis
-                .collect(toSet());
-        // The bill co sponsor set will just have the short names as-is (they should already be uppercased)
-        Set<String> billCoSponsorSet = billCoSponsors.stream().map(SessionMember::getLbdcShortName).collect(toSet());
+    private void checkCoSponsors(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+        Optional<BillAmendment> activeAmendmentOpt =
+                bill.hasActiveAmendment() ? Optional.of(bill.getActiveAmendment()) : Optional.empty();
+
+        List<String> dataCoSponsors = activeAmendmentOpt
+                .map(BillAmendment::getCoSponsors)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(SessionMember::getLbdcShortName)
+                .collect(collectingAndThen(toList(), this::prepareShortnames));
+
+        List<String> refCoSponsors = prepareShortnames(daybreakBill.getCosponsors());
+
         // Only check for mismatch if a daybreak cosponsor is set. Sometimes the daybreaks omit the cosponsor.
-        if (!daybreakCoSponsorSet.isEmpty() && (daybreakCoSponsorSet.size() != billCoSponsorSet.size() ||
-                                               !daybreakCoSponsorSet.containsAll(billCoSponsorSet))) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_COSPONSOR, StringUtils.join(billCoSponsorSet, " "), StringUtils.join(daybreakCoSponsorSet, " ")
-            ));
+        if (!refCoSponsors.isEmpty()) {
+            checkCollection(dataCoSponsors, refCoSponsors, obsrv, BILL_COSPONSOR, Function.identity(), "\n");
         }
     }
 
@@ -197,7 +210,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Check the BillSponsor by comparing the string representation. The toString method for BillSponsor should
      * produce the same formatting as the sponsor string found in the DaybreakBill.
      */
-    protected void checkBillSponsor(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    private void checkBillSponsor(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         String billSponsorStr = sponsorString(bill.getSponsor());
         if (!stringEquals(daybreakBill.getSponsor(), billSponsorStr, true, true)) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_SPONSOR, billSponsorStr, daybreakBill.getSponsor()));
@@ -208,7 +221,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * The daybreaks concatenate the law code and the summary. Since it's not trivial to parse this out, we simply
      * concatenate our own law and summary and just compare the strings.
      */
-    protected void checkBillLawAndSummary(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    private void checkBillLawAndSummary(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         String billLawSummary = (Strings.nullToEmpty(bill.getAmendment(bill.getActiveVersion()).getLaw()) + " " +
                                  Strings.nullToEmpty(bill.getSummary())).trim();
         billLawSummary = billLawSummary.replace('§', 'S').replace('¶', 'P');
@@ -221,7 +234,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Compare the bill title with the daybreak title.
      */
-    protected void checkBillTitle(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
+    private void checkBillTitle(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         if (!stringEquals(daybreakBill.getTitle(), bill.getTitle(), false, true)) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_TITLE, bill.getTitle(), daybreakBill.getTitle()));
         }
@@ -239,7 +252,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Compare two strings a and b with the option to ignore case and extra whitespace.
      */
-    protected boolean stringEquals(String a, String b, boolean ignoreCase, boolean normalizeSpaces) {
+    private boolean stringEquals(String a, String b, boolean ignoreCase, boolean normalizeSpaces) {
         // Convert null values to empty strings.
         a = (a == null) ? "" : a;
         b = (b == null) ? "" : b;
@@ -254,14 +267,14 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Convert a BillSponsor to its string representation.
      */
-    protected String sponsorString(BillSponsor billSponsor) {
+    private String sponsorString(BillSponsor billSponsor) {
         return (billSponsor != null) ? billSponsor.toString() : "NULL";
     }
 
     /**
      * Convert the actions list into a string with each line e.g SENATE - 12/16/13 PRINT NUMBER 1234A\n.
      */
-    protected String actionsListString(List<BillAction> actions) {
+    private String actionsListString(List<BillAction> actions) {
         String actionsStr = "";
         if (actions != null) {
             actionsStr = actions.stream()
@@ -275,7 +288,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Given the bill return a single string that has the name of each published version,
      * e.g. 'DEFAULT A B C' if the base and amendments A, B, and C are all published.
      */
-    protected String publishedVersionsString(Bill bill) {
+    private String publishedVersionsString(Bill bill) {
         Set<Version> publishedVersionSet = bill.getAmendPublishStatusMap().entrySet().stream()
                 .filter(entry -> entry.getValue().isPublished())
                 .map(Map.Entry::getKey)
@@ -286,7 +299,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Get a string representing the published versions of the given {@link DaybreakBill}
      */
-    protected String publishedVersionsString(DaybreakBill bill) {
+    private String publishedVersionsString(DaybreakBill bill) {
         if (bill.getActiveVersion() == null) {
             return "";
         }
@@ -303,7 +316,7 @@ public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, 
     /**
      * Generate a string that represents the given set of versions.
      */
-    protected String publishedVersionsString(Set<Version> publishedVersions) {
+    private String publishedVersionsString(Set<Version> publishedVersions) {
         return publishedVersions.stream()
                 .sorted()
                 .map(Version::name)

@@ -42,6 +42,6 @@ public class CalendarReportService extends BaseCalendarReportService {
 
     @Override
     protected void markAsChecked(CalendarId id) {
-        alertDao.markAsChecked(id);
+        alertDao.updateChecked(id, true);
     }
 }

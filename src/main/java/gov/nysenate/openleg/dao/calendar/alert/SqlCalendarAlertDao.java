@@ -69,10 +69,11 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
         return calendarHandler.getCalendars();
     }
 
-    public void markAsChecked(CalendarId id) {
+    @Override
+    public void updateChecked(CalendarId id, boolean checked) {
         MapSqlParameterSource params  = getCalendarIdParams(id);
-        params.addValue("checked", true);
-        jdbcNamed.update(SqlCalendarAlertQuery.MARK_CHECKED.getSql(schema()), params);
+        params.addValue("checked", checked);
+        jdbcNamed.update(SqlCalendarAlertQuery.UPDATE_CHECKED.getSql(schema()), params);
     }
 
     public void markProdAsChecked(CalendarId id) {
