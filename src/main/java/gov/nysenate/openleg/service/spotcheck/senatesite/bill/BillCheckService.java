@@ -158,7 +158,7 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
     }
 
     private void checkPublishDate(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        LocalDateTime olPubDateTime = content.getPublishedDateTime();
+        LocalDateTime olPubDateTime = content.getPublishedDateTime().withNano(0);
         LocalDateTime refPubDateTime = reference.getPublishDate();
         checkObject(olPubDateTime, refPubDateTime, observation, BILL_PUBLISH_DATE);
     }
