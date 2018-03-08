@@ -59,7 +59,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
             final Node senFloorVote = xmlHelper.getNode("senfloorvote", doc);
             //File Print number
             final Integer sessyr = xmlHelper.getInteger("@sessyr", senFloorVote);
-            final Integer seqno = xmlHelper.getInteger("@bill_seqno", senFloorVote);
+            final Integer seqno = xmlHelper.getInteger("@date_seqno", senFloorVote);
             final String printNo = xmlHelper.getString("@no", senFloorVote).trim();
             BillId billId = new BillId(printNo, sessyr);
             String version = billId.getVersion().getValue();
