@@ -58,6 +58,8 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
             checkBillYear(content, reference, observation);
             checkBillStatus(content, reference, observation);
             checkAdditionalSponsors(content, reference, observation);
+            checkCoSponsors(content,reference,observation);
+            checkMultisponsors(content, reference, observation);
             checkBillApproveMessage(content, reference, observation);
             checkVotes(content, reference, observation);
             checkCalendars(content, reference, observation);
@@ -119,6 +121,34 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
         checkString(OutputUtils.toJson(content.getSponsor()),OutputUtils.toJson(reference.getSponsor()),obsrv,BILL_SPONSOR);
     }
 
+    protected void checkAdditionalSponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
+        checkString(OutputUtils.toJson(content.getAdditionalSponsors()),OutputUtils.toJson(reference.getAdditionalSponsors()), obsrv, BILL_ADDITIONAL_SPONSOR_OPENLEG);
+    }
+
+    protected void checkCoSponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
+        checkString(OutputUtils.toJson(content.getAmendments()
+                .getItems()
+                .get(content.getActiveVersion())
+                .getCoSponsors()),
+                OutputUtils.toJson(reference.getAmendments().
+                        getItems()
+                        .get(reference.getActiveVersion())
+                        .getCoSponsors()),
+                obsrv, BILL_COSPONSOR);
+    }
+
+    protected void checkMultisponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
+        checkString(OutputUtils.toJson(content.getAmendments()
+                .getItems()
+                .get(content.getActiveVersion())
+                .getMultiSponsors()),
+                OutputUtils.toJson(reference.getAmendments()
+                        .getItems()
+                        .get(reference.getActiveVersion())
+                        .getMultiSponsors()),
+                obsrv, BILL_MULTISPONSOR);
+    }
+
     protected void checkBillYear(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         checkString(String.valueOf( content.getSession() ), String.valueOf( reference.getSession() ),obsrv,BILL_SESSION_YEAR);
     }
@@ -126,10 +156,6 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
 
     protected void checkBillStatus(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
         checkString(OutputUtils.toJson(content.getStatus()),OutputUtils.toJson(reference.getStatus()), obsrv, BILL_LAST_STATUS );
-    }
-
-    protected void checkAdditionalSponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getAdditionalSponsors()),OutputUtils.toJson(reference.getAdditionalSponsors()), obsrv, BILL_ADDITIONAL_SPONSOR_OPENLEG);
     }
 
     protected void checkBillApproveMessage(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
