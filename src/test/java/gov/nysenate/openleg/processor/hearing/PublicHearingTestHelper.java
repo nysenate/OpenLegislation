@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processor.hearing;
 
-import gov.nysenate.openleg.model.hearing.PublicHearingFile;
 import gov.nysenate.openleg.util.PublicHearingTextUtils;
 import org.apache.commons.io.FileUtils;
 
@@ -18,6 +17,6 @@ public class PublicHearingTestHelper
 
     public static List<List<String>> getPagesFromFileName(String fileName) throws URISyntaxException, IOException {
         File file = openFile(fileName);
-        return PublicHearingTextUtils.getPages(FileUtils.readFileToString(file));
+        return PublicHearingTextUtils.getPages(FileUtils.readFileToString(file, "UTF-8"));
     }
 }
