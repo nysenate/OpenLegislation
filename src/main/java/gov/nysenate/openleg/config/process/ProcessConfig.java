@@ -35,6 +35,10 @@ public class ProcessConfig extends AbstractDataProcessor {
         mixed2017.setOverarchingDataConfigs(true,true);
         mixed2017.setOverarchingSharedConfigs(true,true,true,true,true);
         mixed2017.setAllXmlConfigsTrue();
+        mixed2017.setSenAgen(false);
+        mixed2017.setSenAgenV(false);
+        mixed2017.setSenCalal(false);
+        mixed2017.setSenCal(false);
         mixed2017.setGeneralSobiConfigsTrue();
         mixed2017.setSpecificSobiConfigsFalse();
 
