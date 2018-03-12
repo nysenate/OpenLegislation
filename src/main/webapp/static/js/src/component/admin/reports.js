@@ -15,6 +15,7 @@ adminModule.factory('RunScrapeQueueAPI',['$resource', function($resource){
         });
 }]);
 
+
 adminModule.controller('ReportsCtrl', ['$scope', 'RunIntervalAPI', 'RunScrapeQueueAPI', function($scope, RunIntervalAPI, RunScrapeQueueAPI){
     $scope.runInvervalReport = function(year){
         RunIntervalAPI.get({year: year}, function (response) {
@@ -25,6 +26,13 @@ adminModule.controller('ReportsCtrl', ['$scope', 'RunIntervalAPI', 'RunScrapeQue
 
     $scope.addToScrapeQueue = function(sessionYear, printNo){
         RunScrapeQueueAPI.update({sessionYear: sessionYear}, {printNo: printNo}, function(response){
+            console.log(response);
+            window.alert(response.message + '\n' + JSON.stringify(response.result));
+        });
+    };
+
+    $scope.deleteFromScrapeQueue = function(sessionYear, printNo){
+        RunScrapeQueueAPI.delete({sessionYear: sessionYear}, {printNo: printNo}, function(response){
             console.log(response);
             window.alert(response.message + '\n' + JSON.stringify(response.result));
         });

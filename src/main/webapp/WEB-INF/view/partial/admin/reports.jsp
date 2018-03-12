@@ -44,6 +44,26 @@
                     <span class="blue3">Add to Queue</span>
                 </md-button>
             </md-list-item>
+            <md-list-item>
+                <p>Delete to Scrape Queue</p>
+                <md-input-container>
+                    <label>Print Number</label>
+                    <input id="printNoD"  required name="printNoD" ng-model="printNoD">
+                    <div ng-messages="printNo.$error">
+                        <div ng-message="required">This is required.</div>
+                    </div>
+                </md-input-container>
+                <md-input-container>
+                    <label>Session Year</label>
+                    <input id="sessionYearD" required name="sessionYearD" ng-model="sessionYearD">
+                    <div ng-messages="sessionYear.$error">
+                        <div ng-message="required">This is required.</div>
+                    </div>
+                </md-input-container>
+                <md-button class="md-raised" ng-click="deleteFromScrapeQueue(sessionYearD, printNoD)">
+                    <span class="blue3">Delete</span>
+                </md-button>
+            </md-list-item>
     </md-card-content>
 </md-card>
 
