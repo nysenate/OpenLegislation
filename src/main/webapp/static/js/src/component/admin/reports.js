@@ -30,18 +30,13 @@ adminModule.controller('ReportsCtrl', ['$scope', 'RunIntervalAPI', 'RunScrapeQue
         });
     };
 
-    $scope.years = [
-        "2018",
-        "2017",
-        "2016",
-        "2015",
-        "2014",
-        "2013",
-        "2012",
-        "2011",
-        "2010",
-        "2009"
-    ];
+    $scope.years = [];
+    $scope.minYear = 2009;
+    $scope.maxYear =  new Date().getFullYear();
+    for(i = $scope.minYear; i<=$scope.maxYear; i++){
+        $scope.years.unshift(i.toString());
+    }
+
 
     $scope.year = "2018";
     $scope.year2 = "2018";

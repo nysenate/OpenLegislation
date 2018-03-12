@@ -4,7 +4,7 @@
         <md-list class = "reportlist">
             <md-list-item>
                 <p>Calendar Report</p>
-                <md-select ng-model="year" placeholder="2018">
+                <md-select ng-model="year" id="year" placeholder="2018">
                     <md-optgroup label="Select A Year">
                         <md-option ng-repeat="year in years" ng-value="year" value="{{year}}">{{year}}</md-option>
                     </md-optgroup>
@@ -27,16 +27,16 @@
             <md-list-item>
                 <p>Add to Scrape Queue</p>
                 <md-input-container>
-                    <label>Session Year</label>
-                    <input id="sessionYear" required name="sessionYear" ng-model="sessionYear">
-                    <div ng-messages="sessionYear.$error">
+                    <label>Print Number</label>
+                    <input id="printNo"  required name="printNo" ng-model="printNo">
+                    <div ng-messages="printNo.$error">
                         <div ng-message="required">This is required.</div>
                     </div>
                 </md-input-container>
                 <md-input-container>
-                    <label>Print Number</label>
-                    <input id="printNo"  required name="printNo" ng-model="printNo">
-                    <div ng-messages="printNo.$error">
+                    <label>Session Year</label>
+                    <input id="sessionYear" required name="sessionYear" ng-model="sessionYear">
+                    <div ng-messages="sessionYear.$error">
                         <div ng-message="required">This is required.</div>
                     </div>
                 </md-input-container>
