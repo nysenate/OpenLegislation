@@ -1,9 +1,15 @@
 var adminModule = angular.module('open.admin');
 
-adminModule.factory('RunIntervalAPI', ['$resource', function ($resource) {
-    return $resource(adminApiPath + '/spotcheck/run/interval', {
-        year: '@year'
 
+adminModule.factory('RunCalendarIntervalAPI', ['$resource', function($resource){
+    return $resource(adminApiPath + '/spotcheck/run/interval/calendar', {
+        year: '@year'
+    });
+}]);
+
+adminModule.factory('RunAgendaIntervalAPI', ['$resource', function($resource){
+    return $resource(adminApiPath + '/spotcheck/run/interval/agenda', {
+        year: '@year'
     });
 }]);
 
@@ -16,11 +22,18 @@ adminModule.factory('RunScrapeQueueAPI',['$resource', function($resource){
 }]);
 
 
-adminModule.controller('ReportsCtrl', ['$scope', 'RunIntervalAPI', 'RunScrapeQueueAPI', function($scope, RunIntervalAPI, RunScrapeQueueAPI){
-    $scope.runInvervalReport = function(year){
-        RunIntervalAPI.get({year: year}, function (response) {
+adminModule.controller('ReportsCtrl', ['$scope', 'RunCalendarIntervalAPI', 'RunAgendaIntervalAPI','RunScrapeQueueAPI', function($scope, RunCalendarIntervalAPI, RunAgendaIntervalAPI, RunScrapeQueueAPI){
+    $scope.runCalendarIntervalReport = function(year){
+        RunCalendarIntervalAPI.get({year: year}, function(response){
             console.log(response);
             window.alert(response.message);
+        });
+    };
+
+    $scope.runAgendaIntervalReport = function(year){
+        RunAgendaIntervalAPI.get({year: year},function(response){
+           console.log(response);
+           window.alert(response.message);
         });
     };
 

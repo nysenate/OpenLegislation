@@ -9,7 +9,7 @@
                         <md-option ng-repeat="year in years" ng-value="year" value="{{year}}">{{year}}</md-option>
                     </md-optgroup>
                 </md-select>
-                <md-button class="md-raised md-hue-2" ng-click="runInvervalReport(year)">
+                <md-button class="md-raised md-hue-2" ng-click="runCalendarIntervalReport(year)">
                     <span class="blue3">Run Report</span>
                 </md-button>
             </md-list-item>
@@ -20,7 +20,7 @@
                         <md-option ng-repeat="year in years" ng-value="year" value="{{year}}">{{year}}</md-option>
                     </md-optgroup>
                 </md-select>
-                <md-button class="md-raised md-hue-2" ng-click="runInvervalReport(year2)">
+                <md-button class="md-raised md-hue-2" ng-click="runAgendaIntervalReport(year2)">
                     <span class="blue3">Run Report</span>
                 </md-button>
             </md-list-item>
@@ -45,7 +45,7 @@
                 </md-button>
             </md-list-item>
             <md-list-item>
-                <p>Delete to Scrape Queue</p>
+                <p>Delete from Scrape Queue</p>
                 <md-input-container>
                     <label>Print Number</label>
                     <input id="printNoD"  required name="printNoD" ng-model="printNoD">
@@ -61,7 +61,7 @@
                     </div>
                 </md-input-container>
                 <md-button class="md-raised" ng-click="deleteFromScrapeQueue(sessionYearD, printNoD)">
-                    <span class="blue3">Delete</span>
+                    <span class="blue3">Delete Queue</span>
                 </md-button>
             </md-list-item>
     </md-card-content>
