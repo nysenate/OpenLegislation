@@ -159,8 +159,9 @@ public class SpotcheckRunService {
             SpotCheckReport<T> report = reportService.generateReport(
                     DateUtils.startOfDateTimeRange(reportRange), DateUtils.endOfDateTimeRange(reportRange));
             int notesCutoff = 140;
-            logger.info("Saving {} report. obs: {} mm: {} notes: {}",
-                    report.getReferenceType(), report.getObservedCount(), report.getOpenMismatchCount(true),
+            logger.info("Saving {} report. obs: {} mm: {}({}ig.) notes: {}",
+                    report.getReferenceType(), report.getObservedCount(),
+                    report.getOpenMismatchCount(false), report.getOpenMismatchCount(true),
                     StringUtils.abbreviate(report.getNotes(), notesCutoff));
             reportService.saveReport(report);
             spotCheckNotificationService.spotcheckCompleteNotification(report);
