@@ -1,31 +1,24 @@
 package gov.nysenate.openleg.dao.base;
 
-import com.google.common.base.Splitter;
 import com.google.common.primitives.Ints;
-import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
-import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.delete.DeleteAction;
-import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +27,6 @@ import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -193,7 +185,20 @@ public abstract class ElasticBaseDao
     }
 
     protected void createIndex(String indexName) {
-        searchClient.admin().indices().prepareCreate(indexName).execute().actionGet();
+        searchClient.admin().indices()
+                .prepareCreate(indexName)
+                .setSettings(getIndexSettings())
+                .execute().actionGet();
+    }
+
+    /**
+     * Get settings for index.
+     * Use default settings by default.
+     * Override for index specific settings.
+     * @return Settings.Builder
+     */
+    protected Settings.Builder getIndexSettings() {
+        return Settings.builder();
     }
 
     protected void deleteIndex(String index) {

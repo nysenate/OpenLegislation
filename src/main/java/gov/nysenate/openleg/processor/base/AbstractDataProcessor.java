@@ -152,6 +152,8 @@ public abstract class AbstractDataProcessor
                     BillAmendment activeAmendment = baseBill.getActiveAmendment();
                     billAmendment.setCoSponsors(activeAmendment.getCoSponsors());
                     billAmendment.setMultiSponsors(activeAmendment.getMultiSponsors());
+                    billAmendment.setLaw(activeAmendment.getLaw());
+                    billAmendment.setLawSection(activeAmendment.getLawSection());
                 }
             }
             logger.trace("Adding bill amendment: " + billAmendment);
