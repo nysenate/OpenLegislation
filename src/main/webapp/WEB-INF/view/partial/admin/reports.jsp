@@ -1,26 +1,20 @@
 <md-card ng-controller="ReportsCtrl">
-    <md-card-content>
-        <md-subheader>Run Reports or Add to Scrape Queue</md-subheader>
-        <md-list class = "reportlist">
-            <md-list-item>
-                <p>Calendar Report</p>
-                <md-select ng-model="year" id="year" placeholder="2018">
+    <md-subheader>Run Reports or Add to Scrape Queue</md-subheader>
+    <md-card-content class = "spotcheck-table-row">
+        <md-list >
+            <md-list-item >
+                <p>Select a Spotcheck Report to Run</p>
+                <md-select ng-model="defaultReportType" id="reportType" placeholder="Both">
+                    <md-optgroup label="What report would you like to Run?">
+                        <md-option ng-repeat="report in reportType" ng-value="report" value="{{report}}">{{report}}</md-option>
+                    </md-optgroup>
+                </md-select>
+                <md-select ng-model="year" id="year" placeholder={{years[0]}}>
                     <md-optgroup label="Select A Year">
                         <md-option ng-repeat="year in years" ng-value="year" value="{{year}}">{{year}}</md-option>
                     </md-optgroup>
                 </md-select>
-                <md-button class="md-raised md-hue-2" ng-click="runCalendarIntervalReport(year)">
-                    <span class="blue3">Run Report</span>
-                </md-button>
-            </md-list-item>
-            <md-list-item>
-                <p>Agenda Report</p>
-                <md-select ng-model="year2" placeholder="2018">
-                    <md-optgroup label="Select A Year">
-                        <md-option ng-repeat="year in years" ng-value="year" value="{{year}}">{{year}}</md-option>
-                    </md-optgroup>
-                </md-select>
-                <md-button class="md-raised md-hue-2" ng-click="runAgendaIntervalReport(year2)">
+                <md-button class="md-raised md-hue-2" ng-click="runReports(defaultReportType, year)">
                     <span class="blue3">Run Report</span>
                 </md-button>
             </md-list-item>
@@ -33,19 +27,17 @@
                         <div ng-message="required">This is required.</div>
                     </div>
                 </md-input-container>
-                <md-input-container>
-                    <label>Session Year</label>
-                    <input id="sessionYear" required name="sessionYear" ng-model="sessionYear">
-                    <div ng-messages="sessionYear.$error">
-                        <div ng-message="required">This is required.</div>
-                    </div>
-                </md-input-container>
+                <md-select ng-model="sessionYear" class="sessionYear" placeholder={{sessionYears[0]}}>
+                    <md-optgroup label="Select A Year">
+                        <md-option ng-repeat="sessionYear in sessionYears" ng-value="sessionYear" value="{{sessionYear}}">{{sessionYear}}</md-option>
+                    </md-optgroup>
+                </md-select>
                 <md-button class="md-raised" ng-click="addToScrapeQueue(sessionYear, printNo)">
                     <span class="blue3">Add to Queue</span>
                 </md-button>
             </md-list-item>
             <md-list-item>
-                <p>Delete from Scrape Queue</p>
+                <p>Remove Bill Scrape Queue</p>
                 <md-input-container>
                     <label>Print Number</label>
                     <input id="printNoD"  required name="printNoD" ng-model="printNoD">
@@ -53,17 +45,16 @@
                         <div ng-message="required">This is required.</div>
                     </div>
                 </md-input-container>
-                <md-input-container>
-                    <label>Session Year</label>
-                    <input id="sessionYearD" required name="sessionYearD" ng-model="sessionYearD">
-                    <div ng-messages="sessionYear.$error">
-                        <div ng-message="required">This is required.</div>
-                    </div>
-                </md-input-container>
-                <md-button class="md-raised" ng-click="deleteFromScrapeQueue(sessionYearD, printNoD)">
+                <md-select ng-model="dSessionYear" class="sessionYear" placeholder={{sessionYears[0]}}">
+                    <md-optgroup label="Select A Year">
+                        <md-option ng-repeat="dSessionYear in sessionYears" ng-value="dSessionYear" value="{{dSessionYear}}">{{dSessionYear}}</md-option>
+                    </md-optgroup>
+                </md-select>
+                <md-button class="md-raised" ng-click="deleteFromScrapeQueue(dSessionYear, printNoD)">
                     <span class="blue3">Delete Queue</span>
                 </md-button>
             </md-list-item>
+            <span flex-auto=""></span>
     </md-card-content>
 </md-card>
 
