@@ -39,7 +39,7 @@ public class SpotCheckObservation<ContentKey>
      * is made within the content of previously saved reports and the mismatch is one that has appeared before. */
     protected LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> priorMismatches = LinkedListMultimap.create();
 
-    /** --- Constructors --- */
+    /* --- Constructors --- */
 
     public SpotCheckObservation() {}
 
@@ -77,26 +77,13 @@ public class SpotCheckObservation<ContentKey>
         return obs;
     }
 
-    /** --- Methods --- */
-
-    public boolean hasMismatches() {
-        return !mismatches.isEmpty();
-    }
-
     public boolean hasMismatch(SpotCheckMismatchType type) {
         return mismatches.containsKey(type);
     }
 
     public void addMismatch(SpotCheckMismatch mismatch) {
-        if (mismatch != null) {
-            mismatches.put(mismatch.getMismatchType(), mismatch);
-        }
-    }
-
-    public void addPriorMismatch(SpotCheckPriorMismatch priorMismatch) {
-        if (priorMismatch != null) {
-            priorMismatches.put(priorMismatch.getMismatchType(), priorMismatch);
-        }
+        validateMismatch(mismatch);
+        mismatches.put(mismatch.getMismatchType(), mismatch);
     }
 
     /**
@@ -151,7 +138,24 @@ public class SpotCheckObservation<ContentKey>
         }
     }
 
-    /** --- Basic Getters/Setters --- */
+    /* --- Internal Methods --- */
+
+    /**
+     * Tests to see if a mismatch is valid for this observation.
+     * If not an exception is thrown.
+     * @param mismatch {@link SpotCheckMismatch}
+     */
+    private void validateMismatch(SpotCheckMismatch mismatch) {
+        SpotCheckRefType referenceType = referenceId.getReferenceType();
+        // The mismatch type must be registered as being checked by the observation's reference type.
+        // Otherwise it cannot be resolved.
+        if (!referenceType.checkedMismatchTypes().contains(mismatch.getMismatchType())) {
+            throw new IllegalArgumentException(mismatch.getMismatchType() +
+                    " mismatches cannot be reported in " + referenceType + " observations.");
+        }
+    }
+
+    /* --- Basic Getters/Setters --- */
 
     public LocalDateTime getReportDateTime() {
         return reportDateTime;
@@ -187,10 +191,6 @@ public class SpotCheckObservation<ContentKey>
 
     public Map<SpotCheckMismatchType, SpotCheckMismatch> getMismatches() {
         return mismatches;
-    }
-
-    public void setMismatches(Map<SpotCheckMismatchType, SpotCheckMismatch> mismatches) {
-        this.mismatches = mismatches;
     }
 
     public LinkedListMultimap<SpotCheckMismatchType, SpotCheckPriorMismatch> getPriorMismatches() {
