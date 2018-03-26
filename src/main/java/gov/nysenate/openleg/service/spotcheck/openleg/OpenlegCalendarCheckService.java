@@ -2,9 +2,7 @@ package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.NotImplementedException;
@@ -50,7 +48,9 @@ public class OpenlegCalendarCheckService
      * @return The mismatches
      */
     private SpotCheckObservation<CalendarEntryListId>  checkFloorCals(CalendarSupView content, CalendarSupView reference) {
-        final SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reference.getCalendarEntryListId());
+        final SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(
+                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_CAL,LocalDateTime.now()),
+                reference.getCalendarEntryListId());
         checkFloorCalDate(content,reference, observation);
         checkFloorCalYear(content,reference, observation);
         checkFloorReleaseDateTime(content,reference,observation);
@@ -73,7 +73,9 @@ public class OpenlegCalendarCheckService
      * @return The mismatches
      */
     private SpotCheckObservation<CalendarEntryListId>  checkActiveLists(ActiveListView content, ActiveListView reference) {
-        final SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(reference.getCalendarEntryListId());
+        final SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(
+                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_CAL,LocalDateTime.now()),
+                reference.getCalendarEntryListId());
         checkActiveListCalDate(content,reference,observation);
         checkActiveListReleaseDateTime(content,reference,observation);
         checkActiveListNotes(content,reference,observation);

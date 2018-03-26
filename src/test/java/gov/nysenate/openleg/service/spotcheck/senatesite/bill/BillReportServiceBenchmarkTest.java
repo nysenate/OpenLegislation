@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
@@ -31,6 +32,7 @@ public class BillReportServiceBenchmarkTest extends BaseTests {
 
     private static final Logger logger = LoggerFactory.getLogger(BillReportServiceBenchmarkTest.class);
 
+    @Autowired private SpotcheckRunService spotcheckRunService;
     @Autowired private BillReportService billReportService;
     @Autowired private Environment env;
 
@@ -40,7 +42,7 @@ public class BillReportServiceBenchmarkTest extends BaseTests {
     private static final String billDumpPath = SENSITE_DUMP_DIRNAME + "/" + SENATE_SITE_BILLS.getRefName();
     private static final Pattern testDumpRegex = Pattern.compile("senate-site-bills_dump-2017-20180226T050308.*");
 
-    private static final int startingSize = 512;
+    private static final int startingSize = 128;
 
     @Before
     public void setup() {
@@ -52,6 +54,12 @@ public class BillReportServiceBenchmarkTest extends BaseTests {
     public void cleanup() {
         env.setSensiteBillRefQueueSize(initialRefQueueSize);
         env.setSensiteBillDataQueueSize(initialDataQueueSize);
+    }
+
+    @Test
+    public void runReportTest() throws Exception {
+        stageDump();
+        spotcheckRunService.runReports(SENATE_SITE_BILLS);
     }
 
     @Test

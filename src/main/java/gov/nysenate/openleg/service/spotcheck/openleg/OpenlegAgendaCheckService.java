@@ -5,9 +5,7 @@ import gov.nysenate.openleg.client.view.agenda.AgendaCommAddendumView;
 import gov.nysenate.openleg.client.view.agenda.AgendaItemView;
 import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.NotImplementedException;
@@ -31,7 +29,9 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
 
     @Override
     public SpotCheckObservation<CommitteeAgendaAddendumId>  check(AgendaCommAddendumView content, AgendaCommAddendumView reference) {
-        final SpotCheckObservation<CommitteeAgendaAddendumId> observation = new SpotCheckObservation<>(reference.getCommitteeAgendaAddendumId());
+        final SpotCheckObservation<CommitteeAgendaAddendumId> observation = new SpotCheckObservation<>(
+                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_AGENDA,LocalDateTime.now()),
+                reference.getCommitteeAgendaAddendumId());
         checkChair(content,reference,observation);
         checkLocation(content,reference,observation);
         checkMeetingDateTime(content,reference,observation);

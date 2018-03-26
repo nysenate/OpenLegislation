@@ -5,9 +5,7 @@ import gov.nysenate.openleg.client.view.bill.BillActionView;
 import gov.nysenate.openleg.client.view.bill.BillAmendmentView;
 import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.NotImplementedException;
@@ -48,7 +46,9 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
      */
     @Override
     public SpotCheckObservation<BaseBillId>  check(BillView content, BillView reference) {
-        final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<BaseBillId>(reference.toBaseBillId());
+        final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<BaseBillId>(
+                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_BILL, LocalDateTime.now()),
+                reference.toBaseBillId());
         if (content.getActiveVersion().equals(reference.getActiveVersion() ) ) {
             checkBillTitle(content, reference, observation);
             checkBillSummary(content, reference, observation);
