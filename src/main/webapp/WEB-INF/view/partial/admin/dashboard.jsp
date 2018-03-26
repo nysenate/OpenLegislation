@@ -12,5 +12,10 @@
         <jsp:include page="cache.jsp"/>
       </md-tab-body>
     </md-tab>
+    <md-tab label="Indices">
+      <md-tab-body>
+        <jsp:include page="indices.jsp"/>
+      </md-tab-body>
+    </md-tab>
   </md-tabs>
 </section>
