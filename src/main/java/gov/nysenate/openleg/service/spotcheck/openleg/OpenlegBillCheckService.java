@@ -126,27 +126,110 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkCoSponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getAmendments()
-                .getItems()
-                .get(content.getActiveVersion())
-                .getCoSponsors()),
-                OutputUtils.toJson(reference.getAmendments().
-                        getItems()
-                        .get(reference.getActiveVersion())
-                        .getCoSponsors()),
-                obsrv, BILL_COSPONSOR);
+        boolean referenceCosponsors = true;
+        boolean contentCosponsors = true;
+
+        try {
+            content.getAmendments()
+                    .getItems()
+                    .get(content.getActiveVersion())
+                    .getCoSponsors();
+        }
+        catch (NullPointerException e) {
+            contentCosponsors = false;
+        }
+
+        try {
+            reference.getAmendments()
+                    .getItems()
+                    .get(reference.getActiveVersion())
+                    .getCoSponsors();
+        }
+        catch (NullPointerException e) {
+            contentCosponsors = false;
+        }
+
+        if (contentCosponsors && referenceCosponsors)  {
+            checkString(OutputUtils.toJson(content.getAmendments()
+                            .getItems()
+                            .get(content.getActiveVersion())
+                            .getCoSponsors()),
+                    OutputUtils.toJson(reference.getAmendments().
+                            getItems()
+                            .get(reference.getActiveVersion())
+                            .getCoSponsors()),
+                    obsrv, BILL_COSPONSOR);
+        }
+        else if (!contentCosponsors && referenceCosponsors) {
+            checkString(OutputUtils.toJson(""),
+                    OutputUtils.toJson(reference.getAmendments().
+                            getItems()
+                            .get(reference.getActiveVersion())
+                            .getCoSponsors()),
+                    obsrv, BILL_COSPONSOR);
+        }
+        else if (contentCosponsors && !referenceCosponsors) {
+            checkString(OutputUtils.toJson(content.getAmendments()
+                            .getItems()
+                            .get(content.getActiveVersion())
+                            .getCoSponsors()),
+                    OutputUtils.toJson(""),
+                    obsrv, BILL_COSPONSOR);
+        }
+
     }
 
     protected void checkMultisponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getAmendments()
-                .getItems()
-                .get(content.getActiveVersion())
-                .getMultiSponsors()),
-                OutputUtils.toJson(reference.getAmendments()
-                        .getItems()
-                        .get(reference.getActiveVersion())
-                        .getMultiSponsors()),
-                obsrv, BILL_MULTISPONSOR);
+        boolean referenceMultisponsors = true;
+        boolean contentMultisponsors = true;
+
+        try {
+            content.getAmendments()
+                    .getItems()
+                    .get(content.getActiveVersion())
+                    .getMultiSponsors();
+        }
+        catch (NullPointerException e) {
+            contentMultisponsors = false;
+        }
+
+        try {
+            reference.getAmendments()
+                    .getItems()
+                    .get(reference.getActiveVersion())
+                    .getMultiSponsors();
+        }
+        catch (NullPointerException e) {
+            contentMultisponsors= false;
+        }
+
+        if (contentMultisponsors && referenceMultisponsors)  {
+            checkString(OutputUtils.toJson(content.getAmendments()
+                            .getItems()
+                            .get(content.getActiveVersion())
+                            .getMultiSponsors()),
+                    OutputUtils.toJson(reference.getAmendments().
+                            getItems()
+                            .get(reference.getActiveVersion())
+                            .getMultiSponsors()),
+                    obsrv, BILL_MULTISPONSOR);
+        }
+        else if (!contentMultisponsors && referenceMultisponsors) {
+            checkString(OutputUtils.toJson(""),
+                    OutputUtils.toJson(reference.getAmendments().
+                            getItems()
+                            .get(reference.getActiveVersion())
+                            .getMultiSponsors()),
+                    obsrv, BILL_MULTISPONSOR);
+        }
+        else if (contentMultisponsors && !referenceMultisponsors) {
+            checkString(OutputUtils.toJson(content.getAmendments()
+                            .getItems()
+                            .get(content.getActiveVersion())
+                            .getCoSponsors()),
+                    OutputUtils.toJson(""),
+                    obsrv, BILL_MULTISPONSOR);
+        }
     }
 
     protected void checkBillYear(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
