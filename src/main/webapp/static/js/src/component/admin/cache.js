@@ -19,6 +19,8 @@ adminModule.controller('CacheCtrl', ['$scope', '$timeout', 'CacheAPI',
             if ($scope.cacheResp.success === true) {
                 $scope.caches = $scope.cacheResp.result.items;
             }
+        }, function (resp) {
+            console.error(resp);
         });
     };
 

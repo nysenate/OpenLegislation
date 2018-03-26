@@ -3,10 +3,12 @@ package gov.nysenate.openleg.controller.api.admin;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
+import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
@@ -21,7 +23,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
 
@@ -79,6 +84,14 @@ public class SearchIndexCtrl extends BaseCtrl
             response.setMessage("Invalid search index: " + indexType);
         }
         return response;
+    }
+
+    // returns the index names. Can later be expanded to return index information as well.
+    @RequiresPermissions("admin:searchIndexEdit")
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ListViewResponse<String> getIndexNames() {
+        List<String> names = Arrays.stream(SearchIndex.values()).map(Enum::name).collect(Collectors.toList());
+        return ListViewResponse.ofStringList(names, names.size(), LimitOffset.ALL);
     }
 
     /** --- Internal --- */
