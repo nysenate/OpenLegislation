@@ -263,33 +263,50 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillCommitteeAgendas(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        ArrayList<CommAgendaIdView> mismatchList = new ArrayList<>();
         ArrayList<CommAgendaIdView> contentCommAgendaIds = new ArrayList<>();
         ArrayList<CommAgendaIdView> referenceCommAgendaIds = new ArrayList<>();
 
         contentCommAgendaIds.addAll( content.getCommitteeAgendas().getItems() );
         referenceCommAgendaIds.addAll( reference.getCommitteeAgendas().getItems() );
 
-        for (CommAgendaIdView refComAgendaIdView: referenceCommAgendaIds) {
+        for (CommAgendaIdView refView: referenceCommAgendaIds) {
             boolean matched = false;
-            for (CommAgendaIdView contentComAgendaIdView: contentCommAgendaIds) {
-                if (contentComAgendaIdView.getCommitteeId().getChamber().equals(refComAgendaIdView.getCommitteeId().getChamber())
-                        && contentComAgendaIdView.getCommitteeId().getName().equals(refComAgendaIdView.getCommitteeId().getName()) ) {
 
-                    if (contentComAgendaIdView.getAgendaId().getNumber() == refComAgendaIdView.getAgendaId().getNumber()
-                            && contentComAgendaIdView.getAgendaId().getYear() == refComAgendaIdView.getAgendaId().getYear()) {
-                        matched = true;
-                    }
+            for (CommAgendaIdView contentView: contentCommAgendaIds) {
+                boolean commName = false;
+                boolean chamber = false;
+                boolean number = false;
+                boolean year = false;
 
+                if (refView.getCommitteeId().getName().equals(contentView.getCommitteeId().getName())) {
+                    commName = true;
                 }
-                if (!matched) {
-                    mismatchList.add(refComAgendaIdView);
+
+                if (refView.getCommitteeId().getChamber().equals(contentView.getCommitteeId().getChamber())) {
+                    chamber = true;
+                }
+
+                if (refView.getAgendaId().getNumber() == contentView.getAgendaId().getNumber()) {
+                    number = true;
+                }
+
+                if (refView.getAgendaId().getYear() == contentView.getAgendaId().getYear()) {
+                    year = true;
+                }
+
+                if (commName && chamber && number && year) {
+                    matched = true;
                 }
             }
+
+            if (!matched) {
+                checkString(OutputUtils.toJson(contentCommAgendaIds), OutputUtils.toJson(referenceCommAgendaIds),
+                        obsrv,BILL_COMMITTEE_AGENDAS_OPENLEG );
+                return;
+            }
         }
-        if (mismatchList.size() > 0) {
-            checkString(OutputUtils.toJson(contentCommAgendaIds), OutputUtils.toJson(referenceCommAgendaIds),obsrv,BILL_COMMITTEE_AGENDAS_OPENLEG );
-        }
+
+
     }
 
     protected void checkBillPastCommmittee(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
