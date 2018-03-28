@@ -3,6 +3,7 @@ package gov.nysenate.openleg.service.spotcheck.openleg;
 import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.client.view.agenda.AgendaCommAddendumView;
 import gov.nysenate.openleg.client.view.agenda.AgendaItemView;
+import gov.nysenate.openleg.client.view.agenda.AgendaVoteBillView;
 import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.spotcheck.*;
@@ -93,6 +94,24 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
     }
 
     protected void checkVotesList(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(OutputUtils.toJson(content.getVoteInfo().getVotesList()),OutputUtils.toJson(reference.getVoteInfo().getVotesList()), observation, SpotCheckMismatchType.AGENDA_VOTES_LIST);
+        ArrayList<AgendaVoteBillView> refAgendaVoteBillViews = new ArrayList<>();
+        ArrayList<AgendaVoteBillView> contentAgendaVoteBillViews = new ArrayList<>();
+
+        for (AgendaVoteBillView refView: refAgendaVoteBillViews) {
+            boolean matched = false;
+            for (AgendaVoteBillView contentView: contentAgendaVoteBillViews) {
+                if (OutputUtils.toJson(contentView).equals(OutputUtils.toJson(refView))) {
+                    matched = true;
+                }
+            }
+            if (!matched) {
+                checkString(OutputUtils.toJson(contentAgendaVoteBillViews),
+                        OutputUtils.toJson(refAgendaVoteBillViews),
+                        observation, SpotCheckMismatchType.AGENDA_VOTES_LIST);
+                return;
+            }
+        }
+
+
     }
 }
