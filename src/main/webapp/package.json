@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/nysenate/OpenLegislation.git"
   },
-  "devDependencies": {
+  "dependencies": {
     "autoprefixer": "^6.5.0",
     "bower": "^1.7.9",
     "cssnano": "^3.7.5",
@@ -18,7 +18,9 @@
     "grunt-postcss": "^0.8.0",
     "grunt-sass": "^1.2.1",
     "grunt-shell": "^1.1.1",
-    "pixrem": "^3.0.2"
+    "pixrem": "^3.0.2",
+    "grunt-file-exists": "^0.1.4",
+    "libxmljs": "^0.18.7"
   },
   "scripts": {
     "postinstall": "bower update && grunt"

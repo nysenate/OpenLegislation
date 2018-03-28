@@ -1,3 +1,13 @@
+var fs = require("fs");
+var libxmljs = require("libxmljs");
+
+var pomPath = __dirname + "/../../../pom.xml";
+var pomXml = fs.readFileSync(pomPath, 'utf8');
+
+var pomDoc = libxmljs.parseXml(pomXml);
+var artifactId = pomDoc.find("/*/*[name()='artifactId']")[0].text();
+var version = pomDoc.find("/*/*[name()='version']")[0].text();
+
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -14,7 +24,9 @@ module.exports = function(grunt) {
         jsDest: '<%= jsRoot %>/dest',
         jspSource: 'WEB-INF/view',
         tagSource: 'WEB-INF/tags',
-        tomcatWeb: '<%= properties.deployDirectory %>',
+
+        buildName: artifactId + '##' + version,
+        tomcatWeb: '<%= properties.deployDirectory %>/<%= buildName %>',
         docsSourceRoot: '../../../docs/api',
         docsDestRoot: 'static/docs',
 
@@ -223,6 +235,10 @@ module.exports = function(grunt) {
                 files: ['<%= docsSourceRoot %>/*.rst', '<%= docsSourceRoot %>/conf.py'],
                 tasks: ['docs', '<%= properties.docsBeep %>']
             }
+        },
+
+        fileExists: {
+            buildDir: '<%= tomcatWeb %>'
         }
     });
 
@@ -235,19 +251,20 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-beep');
+    grunt.loadNpmTasks('grunt-file-exists');
 
     // Tasks that process and copy only one type of source file
-    grunt.registerTask('css:openleg',   ['sass', 'postcss:openleg', 'copy:css']);
-    grunt.registerTask('css:lib',       ['concat', 'postcss:lib', 'copy:css']);
-    grunt.registerTask('js:app',        ['uglify:app', 'copy:js']);
-    grunt.registerTask('js:vendor',     ['uglify:vendor', 'copy:js']);
-    grunt.registerTask('jsp',           ['copy:jsp']);
-    grunt.registerTask('docs',          ['shell:docs', 'copy:docs']);
+    grunt.registerTask('css:openleg',   ['sass', 'postcss:openleg', 'fileExists', 'copy:css']);
+    grunt.registerTask('css:lib',       ['concat', 'postcss:lib', 'fileExists', 'copy:css']);
+    grunt.registerTask('js:app',        ['uglify:app', 'fileExists', 'copy:js']);
+    grunt.registerTask('js:vendor',     ['uglify:vendor', 'fileExists', 'copy:js']);
+    grunt.registerTask('jsp',           ['fileExists', 'copy:jsp']);
+    grunt.registerTask('docs',          ['shell:docs', 'fileExists', 'copy:docs']);
 
     // Generate necessary css + js files
     grunt.registerTask('process',   ['sass', 'concat', 'postcss', 'uglify']);
     // *DEFAULT* Process and copy only css + js
-    grunt.registerTask('default',   ['process', 'copy', 'beep']);
+    grunt.registerTask('default',   ['process', 'fileExists', 'copy', 'beep']);
     // Process and copy css + js + docs
-    grunt.registerTask('build',     ['process', 'docs', 'copy', 'beep'])
+    grunt.registerTask('build',     ['process', 'docs', 'fileExists', 'copy', 'beep'])
 };
