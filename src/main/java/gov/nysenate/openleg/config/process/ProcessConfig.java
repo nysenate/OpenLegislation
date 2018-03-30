@@ -31,16 +31,11 @@ public class ProcessConfig extends AbstractDataProcessor {
     @PostConstruct
     public void init() {
         //Create NonDefault ProcessYears
-        ProcessYear mixed2017 = new ProcessYear();
-        mixed2017.setOverarchingDataConfigs(true,true);
-        mixed2017.setOverarchingSharedConfigs(true,true,true,true,true);
-        mixed2017.setAllXmlConfigsTrue();
-//        mixed2017.setSenAgen(false);
-//        mixed2017.setSenAgenV(false);
-//        mixed2017.setSenCalal(false);
-//        mixed2017.setSenCal(false);
-        mixed2017.setGeneralSobiConfigsTrue();
-        mixed2017.setSpecificSobiConfigsFalse();
+        ProcessYear mixed2017 = createDefualtSobiProcessYear();
+        mixed2017.setAllXml(true);
+        mixed2017.setBillText(true);
+        mixed2017.setText(false);
+        mixed2017.setResolutionText(false);
 
         //Put ProcessYear's in Hash map
         //Xml only years
@@ -74,6 +69,9 @@ public class ProcessConfig extends AbstractDataProcessor {
 
         //Xml Only
         processYearMap.put(LocalDate.of(2018,1,1), createDefaultXmlProcessYear());
+        processYearMap.put(LocalDate.of(2019,1,1), createDefaultXmlProcessYear());
+        processYearMap.put(LocalDate.of(2020,1,1), createDefaultXmlProcessYear());
+        processYearMap.put(LocalDate.of(2021,1,1), createDefaultXmlProcessYear());
 
         //Set the year field in each ProcessYear
         for (LocalDate year : processYearMap.keySet()) {
