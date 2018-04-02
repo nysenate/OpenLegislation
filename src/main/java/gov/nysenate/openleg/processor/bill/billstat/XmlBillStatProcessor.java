@@ -75,7 +75,6 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             final Integer billno = xmlHelper.getInteger("@billno", billTextNode);
             final String action = xmlHelper.getString("@action", billTextNode).trim();
 
-            final String sponsor = xmlHelper.getString("sponsor", billTextNode).trim();
             final String version = xmlHelper.getString("currentamd", billTextNode).trim();
             String lawSec = xmlHelper.getString("law", billTextNode).trim();
             String title = xmlHelper.getString("title", billTextNode).trim();
@@ -96,9 +95,6 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
                 baseBill.setReprintOf(null);
             }
 
-            BillSponsor billSponsor = baseBill.getSponsor();
-            Chamber chamber = baseBill.getBillType().getChamber();
-
             BillAmendment billAmendment;
             if (version == null || version.equals("")) {
                 billAmendment = baseBill.getAmendment(Version.DEFAULT);
@@ -116,10 +112,6 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
                     }
                 }
             }
-            if (billSponsor == null) {
-                billSponsor = new BillSponsor();
-            }
-            handlePrimaryMemberParsing(baseBill, sponsor,baseBill.getSession());
             billAmendment.setLawSection(lawSec);
             baseBill.setTitle(title);
 
