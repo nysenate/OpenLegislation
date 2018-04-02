@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.entity.member.data;
 
-import com.google.common.collect.TreeMultimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -140,15 +139,11 @@ public class CachedMemberService implements MemberService, CachingService<Intege
     }
 
     @Override
-    public TreeMultimap<SessionYear, SessionMember> getMemberById(int memberId) throws MemberNotFoundEx {
+    public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
         if (memberId <= 0) {
             throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");
         }
-        TreeMultimap<SessionYear, SessionMember> sessionMemberMap = memberDao.getMemberById(memberId);
-        if (sessionMemberMap.isEmpty()) {
-            throw new MemberNotFoundEx(memberId);
-        }
-        return sessionMemberMap;
+        return memberDao.getMemberById(memberId);
     }
 
     /** {@inheritDoc} */

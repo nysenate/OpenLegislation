@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.model.entity;
 
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.Chamber;
 
 public class MemberNotFoundEx extends RuntimeException
 {
@@ -23,7 +22,9 @@ public class MemberNotFoundEx extends RuntimeException
     }
 
     public MemberNotFoundEx(int memberId, SessionYear session) {
-        super("Member with id: " + memberId + " during session year: " + session + " was not found!");
+        super("Member with id: " + memberId +
+                ( session != null ? " during session year: " + session : "")
+                + " was not found!");
         this.memberId = memberId;
     }
 

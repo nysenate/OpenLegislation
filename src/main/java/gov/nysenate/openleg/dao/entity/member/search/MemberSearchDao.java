@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.dao.entity.member.search;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.entity.SessionMember;
+import gov.nysenate.openleg.model.entity.FullMember;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -18,25 +18,20 @@ public interface MemberSearchDao
      * @param filter FilterBuilder - Filter result set
      * @param sort String - Sort String
      * @param limOff LimitOffset - Limit the result set
-     * @return SearchResults<Member>
+     * @return SearchResults<Integer> - memberIds from matched members
      */
-    public SearchResults<SessionMember> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
+    SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff);
 
     /**
      * Update the Member search index with the supplied Member.
      * @param member
      */
-    public void updateMemberIndex(SessionMember member);
+    void updateMemberIndex(FullMember member);
 
     /**
      * Updates the Member search index with the supplied Members.
      * @param members
      */
-    public void updateMemberIndex(Collection<SessionMember> members);
+    void updateMemberIndex(Collection<FullMember> members);
 
-    /**
-     * Removes the Member from the search index with the given id.
-     * @param member
-     */
-    public void deleteMemberFromIndex(SessionMember member);
 }
