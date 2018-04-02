@@ -34,6 +34,7 @@ public class ProcessConfig extends AbstractDataProcessor {
         ProcessYear mixed2017 = createDefualtSobiProcessYear();
         mixed2017.setAllXml(true);
         mixed2017.setBillText(true);
+        mixed2017.setLdBlurb(true);
         mixed2017.setText(false);
         mixed2017.setResolutionText(false);
 
