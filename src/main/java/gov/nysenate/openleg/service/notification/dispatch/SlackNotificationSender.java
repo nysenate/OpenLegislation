@@ -63,8 +63,7 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
     private String getColor(RegisteredNotification notification) {
         if (NotificationType.EXCEPTION.covers(notification.getType())) {
             return "danger";
-        } else if (NotificationType.WARNING.covers(notification.getType()) ||
-                   NotificationType.SPOTCHECK_MISMATCH.covers(notification.getType())) {
+        } else if (NotificationType.WARNING.covers(notification.getType())) {
             return "warning";
         }
         return "good";
@@ -75,7 +74,7 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
             return ":scream_cat:";
         } else if (NotificationType.WARNING.covers(notification.getType())) {
             return ":pouting_cat:";
-        } else if (NotificationType.SPOTCHECK_MISMATCH.covers(notification.getType())) {
+        } else if (NotificationType.SPOTCHECK.covers(notification.getType())) {
             return ":see_no_evil:";
         }
         return ":smile_cat:";

@@ -95,9 +95,7 @@ public class SpotCheckNotificationService {
                     .append("\n");
         }
 
-        NotificationType type = daybreakReport.getOpenMismatchCount(false) > 0
-                ? daybreakReport.getReferenceType().getNotificationType()
-                : NotificationType.SPOTCHECK_ALL_CLEAR;
+        NotificationType type = daybreakReport.getReferenceType().getNotificationType();
 
         Notification notification =
                 new Notification(type, daybreakReport.getReportDateTime(), summary, messageBuilder.toString());

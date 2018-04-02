@@ -17,7 +17,7 @@ function ($scope, $routeParams) {
     $scope.viewMap = {
         'environment': 0,
         'cache': 1,
-        'index': 2
+        'indices': 2
     };
 
     $scope.init();
