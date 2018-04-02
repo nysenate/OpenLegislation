@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.entity.member.data;
 
-import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -30,7 +29,7 @@ public interface MemberService
      * @param id int
      * @return Map<Integer, Member>
      */
-    public TreeMultimap<SessionYear, SessionMember> getMemberById(int id) throws MemberNotFoundEx;
+    public FullMember getMemberById(int id) throws MemberNotFoundEx;
 
     /**
      * Retrieve a member by session member id
