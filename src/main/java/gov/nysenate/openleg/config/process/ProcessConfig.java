@@ -1,37 +1,35 @@
 package gov.nysenate.openleg.config.process;
 
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.model.sourcefiles.SourceType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static gov.nysenate.openleg.model.sourcefiles.SourceType.SOBI;
+import static gov.nysenate.openleg.model.sourcefiles.SourceType.XML;
 
 @Component
 public class ProcessConfig extends AbstractDataProcessor {
 
-    @Autowired
-    private SobiFragmentDao sobiFragmentDao;
-
     //Map contains all property configurations for all years initialized on init
     private HashMap<LocalDate,ProcessYear> processYearMap = new HashMap<>();
 
-    //defualt constructor
+    //default constructor
     public ProcessConfig() {}
 
     //Populates the
     @PostConstruct
     public void init() {
         //Create NonDefault ProcessYears
-        ProcessYear mixed2017 = createDefualtSobiProcessYear();
+        ProcessYear mixed2017 = createDefaultSobiProcessYear();
         mixed2017.setAllXml(true);
         mixed2017.setBillText(true);
         mixed2017.setLdBlurb(true);
@@ -57,14 +55,14 @@ public class ProcessConfig extends AbstractDataProcessor {
         processYearMap.put(LocalDate.of(2008,1,1), createDefaultXmlProcessYear());
 
         //Sobi Mostly Years
-        processYearMap.put(LocalDate.of(2009,1,1), createDefualtSobiProcessYear());
-        processYearMap.put(LocalDate.of(2010,1,1), createDefualtSobiProcessYear());
-        processYearMap.put(LocalDate.of(2011,1,1), createDefualtSobiProcessYear());
-        processYearMap.put(LocalDate.of(2012,1,1), createDefualtSobiProcessYear());
-        processYearMap.put(LocalDate.of(2013,1,1), createDefualtSobiProcessYear());
-        processYearMap.put(LocalDate.of(2014,1,1), createDefualtSobiProcessYear());
-        processYearMap.put(LocalDate.of(2015,1,1), createDefualtSobiProcessYear());
-        processYearMap.put(LocalDate.of(2016,1,1), createDefualtSobiProcessYear());
+        processYearMap.put(LocalDate.of(2009,1,1), createDefaultSobiProcessYear());
+        processYearMap.put(LocalDate.of(2010,1,1), createDefaultSobiProcessYear());
+        processYearMap.put(LocalDate.of(2011,1,1), createDefaultSobiProcessYear());
+        processYearMap.put(LocalDate.of(2012,1,1), createDefaultSobiProcessYear());
+        processYearMap.put(LocalDate.of(2013,1,1), createDefaultSobiProcessYear());
+        processYearMap.put(LocalDate.of(2014,1,1), createDefaultSobiProcessYear());
+        processYearMap.put(LocalDate.of(2015,1,1), createDefaultSobiProcessYear());
+        processYearMap.put(LocalDate.of(2016,1,1), createDefaultSobiProcessYear());
 
         //2017
         processYearMap.put(LocalDate.of(2017,1,1), mixed2017);
@@ -81,44 +79,46 @@ public class ProcessConfig extends AbstractDataProcessor {
         }
     }
 
-    //This method removes sobi fragments that are not allowed to process from the processYearMap
-    public List<SobiFragment> filterFileFragements(List<SobiFragment> fragments) {
-        for (Iterator<SobiFragment> iterator = fragments.iterator(); iterator.hasNext();) {
-
-            SobiFragment fragment = iterator.next();
-            ProcessYear fragProcYear = getProcessYearFromMap(fragment.getPublishedDateTime());
-            String fragmentName = fragment.getParentSobiFile().getFileName();
-
-            if (fragmentName.contains("SOBI")) {
-                if (removeSobiFragment(fragment,fragProcYear)) {
-                    iterator.remove();
-                    sendFragmentToDaoForUpdate(fragment);
-                }
-            }
-            else if (fragmentName.contains("XML")) {
-                if (removeXmlFragement(fragment,fragProcYear)) {
-                    iterator.remove();
-                    sendFragmentToDaoForUpdate(fragment);
-                }
-            }
-        }
-        return fragments;
+    /**
+     * This method filters the given list of fragments,
+     * returning a list that is filtered according to the process config.
+     *
+     * @param fragments {@link SobiFragment}
+     * @return {@link List<SobiFragment>}
+     */
+    public List<SobiFragment> filterFileFragments(List<SobiFragment> fragments) {
+        return fragments.stream()
+                .filter(frag -> {
+                    ProcessYear fragProcYear = getProcessYearFromMap(frag.getPublishedDateTime());
+                    SourceType sourceType = frag.getParentSobiFile().getSourceType();
+                    if (sourceType == XML) {
+                        return !removeXmlFragment(frag, fragProcYear);
+                    }
+                    if (sourceType == SOBI) {
+                        return !removeSobiFragment(frag, fragProcYear);
+                    }
+                    throw new IllegalStateException("Unknown source type: " + sourceType);
+                })
+                .collect(Collectors.toList());
     }
 
-    //Removes Sobi bill blocks that are not allowed to process from the processYearMap
+    /**
+     * This method filters the given list of sobi blocks,
+     * returning a list that is filtered according to the process config.
+     *
+     * @param fragment {@link SobiFragment}
+     * @param blocks {@link List<SobiBlock>}
+     * @return {@link List<SobiBlock>}
+     */
     public List<SobiBlock> filterSobiBlocks(SobiFragment fragment, List<SobiBlock> blocks) {
-        for (Iterator<SobiBlock> iterator = blocks.iterator(); iterator.hasNext();) {
-            SobiBlock block = iterator.next();
-            if (removeSobiBlock(block,getProcessYearFromMap(fragment.getPublishedDateTime()))) {
-                iterator.remove();
-            }
-        }
-        return blocks;
+        ProcessYear processYear = getProcessYearFromMap(fragment.getPublishedDateTime());
+        return blocks.stream()
+                .filter(block -> !removeSobiBlock(block, processYear))
+                .collect(Collectors.toList());
     }
-
 
     //Determines Whether a xml fragment should continue processing or not
-    public boolean removeXmlFragement(SobiFragment fragment, ProcessYear fragProcYear) {
+    private boolean removeXmlFragment(SobiFragment fragment, ProcessYear fragProcYear) {
         boolean removeFragment = false;
 
         if (!fragProcYear.isAllXml()) {
@@ -213,7 +213,7 @@ public class ProcessConfig extends AbstractDataProcessor {
     }
 
     //Determines Whether a sobi fragment should continue processing or not
-    public boolean removeSobiFragment(SobiFragment fragment, ProcessYear fragProcYear) {
+    private boolean removeSobiFragment(SobiFragment fragment, ProcessYear fragProcYear) {
         boolean removeFragment = false;
 
         if (!fragProcYear.isAllSobi()) {
@@ -368,7 +368,7 @@ public class ProcessConfig extends AbstractDataProcessor {
     }
 
     //Creates the default sobi only process years
-    private ProcessYear createDefualtSobiProcessYear() {
+    private ProcessYear createDefaultSobiProcessYear() {
         ProcessYear sobiYear = new ProcessYear();
         sobiYear.setOverarchingDataConfigs(false,true);
         //sobiYear.setOverarchingSharedConfigs(true,true,true,true,true);
@@ -402,10 +402,4 @@ public class ProcessConfig extends AbstractDataProcessor {
         return processYearMap;
     }
 
-    //Calls the sobiFragmentDao to set the fragment to not pend process
-    private void sendFragmentToDaoForUpdate(SobiFragment fragment) {
-        ArrayList<SobiFragment> fragmentToSetFalse = new ArrayList<>();
-        fragmentToSetFalse.add(fragment);
-        sobiFragmentDao.setPendProcessingFalse(fragmentToSetFalse);
-    }
 }

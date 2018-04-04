@@ -10,9 +10,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileFsDao;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.FsSobiDao;
 import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
-import gov.nysenate.openleg.dao.sourcefiles.xml.FsXmlDao;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -148,7 +145,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
     public int processFragments(List<SobiFragment> fragments, SobiProcessOptions options) {
         logger.debug((fragments.isEmpty()) ? "No more fragments to process"
                 : "Iterating through {} fragments", fragments.size());
-        for (SobiFragment fragment : processConfig.filterFileFragements(fragments)) {
+        for (SobiFragment fragment : processConfig.filterFileFragments(fragments)) {
             // Hand off processing to specific implementations based on fragment type.
             if (processorMap.containsKey(fragment.getType())) {
                 processorMap.get(fragment.getType()).process(fragment);
