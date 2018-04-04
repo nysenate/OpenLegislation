@@ -31,19 +31,19 @@ public class ProcessYear {
      * the calendar would not be processed
      */
     //Enable/Disable all calendar processing
-    private boolean allCalendar = true;
-
-    //Enable/Disable all active list processing
-    private boolean allActiveLists = true;
-
-    //Enable/Disable all agenda processing
-    private boolean allAgendas = true;
-
-    //Enable/Disable all agenda vote processing
-    private boolean allAgendaVotes = true;
-
-    //Enable/Disable all committee processing
-    private boolean allCommittees = true;
+//    private boolean allCalendar = true;
+//
+//    //Enable/Disable all active list processing
+//    private boolean allActiveLists = true;
+//
+//    //Enable/Disable all agenda processing
+//    private boolean allAgendas = true;
+//
+//    //Enable/Disable all agenda vote processing
+//    private boolean allAgendaVotes = true;
+//
+//    //Enable/Disable all committee processing
+//    private boolean allCommittees = true;
 
     /**
      * Xml Specific Data Configurations
@@ -156,14 +156,14 @@ public class ProcessYear {
         this.allSobi = allSobi;
     }
 
-    public void setOverarchingSharedConfigs(boolean allCalendar, boolean allActiveLists, boolean allCommittees,
-                                            boolean allAgendas, boolean allAgendaVotes) {
-        this.allCalendar = allCalendar;
-        this.allActiveLists = allActiveLists;
-        this.allCommittees = allCommittees;
-        this.allAgendas = allAgendas;
-        this.allAgendaVotes = allAgendaVotes;
-    }
+//    public void setOverarchingSharedConfigs(boolean allCalendar, boolean allActiveLists, boolean allCommittees,
+//                                            boolean allAgendas, boolean allAgendaVotes) {
+//        this.allCalendar = allCalendar;
+//        this.allActiveLists = allActiveLists;
+//        this.allCommittees = allCommittees;
+//        this.allAgendas = allAgendas;
+//        this.allAgendaVotes = allAgendaVotes;
+//    }
 
     /*
     Batch xml configuration methods
@@ -288,45 +288,45 @@ public class ProcessYear {
         this.allSobi = allSobi;
     }
 
-    public boolean isAllCalendar() {
-        return allCalendar;
-    }
-
-    public void setAllCalendar(boolean allCalendar) {
-        this.allCalendar = allCalendar;
-    }
-
-    public boolean isAllActiveLists() {
-        return allActiveLists;
-    }
-
-    public void setAllActiveLists(boolean allActiveLists) {
-        this.allActiveLists = allActiveLists;
-    }
-
-    public boolean isAllAgendas() {
-        return allAgendas;
-    }
-
-    public void setAllAgendas(boolean allAgendas) {
-        this.allAgendas = allAgendas;
-    }
-
-    public boolean isAllAgendaVotes() {
-        return allAgendaVotes;
-    }
-
-    public void setAllAgendaVotes(boolean allAgendaVotes) {
-        this.allAgendaVotes = allAgendaVotes;
-    }
-
-    public boolean isAllCommittees() {
-        return allCommittees;
-    }
-
-    public void setAllCommittees(boolean allCommittees) {
-        this.allCommittees = allCommittees;
-    }
+//    public boolean isAllCalendar() {
+//        return allCalendar;
+//    }
+//
+//    public void setAllCalendar(boolean allCalendar) {
+//        this.allCalendar = allCalendar;
+//    }
+//
+//    public boolean isAllActiveLists() {
+//        return allActiveLists;
+//    }
+//
+//    public void setAllActiveLists(boolean allActiveLists) {
+//        this.allActiveLists = allActiveLists;
+//    }
+//
+//    public boolean isAllAgendas() {
+//        return allAgendas;
+//    }
+//
+//    public void setAllAgendas(boolean allAgendas) {
+//        this.allAgendas = allAgendas;
+//    }
+//
+//    public boolean isAllAgendaVotes() {
+//        return allAgendaVotes;
+//    }
+//
+//    public void setAllAgendaVotes(boolean allAgendaVotes) {
+//        this.allAgendaVotes = allAgendaVotes;
+//    }
+//
+//    public boolean isAllCommittees() {
+//        return allCommittees;
+//    }
+//
+//    public void setAllCommittees(boolean allCommittees) {
+//        this.allCommittees = allCommittees;
+//    }
 
     public boolean isAnAct() {
         return anAct;

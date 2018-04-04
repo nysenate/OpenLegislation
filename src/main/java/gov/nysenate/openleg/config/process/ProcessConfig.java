@@ -35,6 +35,7 @@ public class ProcessConfig extends AbstractDataProcessor {
         mixed2017.setAllXml(true);
         mixed2017.setBillText(true);
         mixed2017.setLdBlurb(true);
+        mixed2017.setSenMemo(true);
         mixed2017.setText(false);
         mixed2017.setResolutionText(false);
 
@@ -126,54 +127,86 @@ public class ProcessConfig extends AbstractDataProcessor {
         else {
             switch ( fragment.getType() ) {
                 case ANACT:
-                    if (!fragProcYear.isAnAct()) removeFragment = true;
+                    if (!fragProcYear.isAnAct()) {
+                        removeFragment = true;
+                    }
                     break;
                 case APPRMEMO:
-                    if (!fragProcYear.isApprMemo()) removeFragment = true;
+                    if (!fragProcYear.isApprMemo()) {
+                        removeFragment = true;
+                    }
                     break;
                 case BILLSTAT:
-                    if (!fragProcYear.isBillStat()) removeFragment = true;
+                    if (!fragProcYear.isBillStat()) {
+                        removeFragment = true;
+                    }
                     break;
                 case BILLTEXT:
-                    if (!fragProcYear.isBillText()) removeFragment = true;
+                    if (!fragProcYear.isBillText()) {
+                        removeFragment = true;
+                    }
                     break;
                 case LDSUMM:
-                    if (!fragProcYear.isLdSumm()) removeFragment = true;
+                    if (!fragProcYear.isLdSumm()) {
+                        removeFragment = true;
+                    }
                     break;
                 case LDSPON:
-                    if (!fragProcYear.isLdSpon()) removeFragment = true;
+                    if (!fragProcYear.isLdSpon()) {
+                        removeFragment = true;
+                    }
                     break;
                 case LDBLURB:
-                    if (!fragProcYear.isLdBlurb()) removeFragment = true;
+                    if (!fragProcYear.isLdBlurb()) {
+                        removeFragment = true;
+                    }
                     break;
                 case SAMEAS:
-                    if (!fragProcYear.isSameas()) removeFragment = true;
+                    if (!fragProcYear.isSameas()) {
+                        removeFragment = true;
+                    }
                     break;
                 case COMMITTEE:
-                    if (!fragProcYear.isSenComm() || !fragProcYear.isAllCommittees()) removeFragment = true;
+                    if (!fragProcYear.isSenComm() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case SENMEMO:
-                    if (!fragProcYear.isSenMemo()) removeFragment = true;
+                    if (!fragProcYear.isSenMemo()) {
+                        removeFragment = true;
+                    }
                     break;
                 case SENFLVOTE:
-                    if (!fragProcYear.isSenFlVot()) removeFragment = true;
+                    if (!fragProcYear.isSenFlVot()) {
+                        removeFragment = true;
+                    }
                     break;
                 case CALENDAR:
-                    if (!fragProcYear.isSenCal() || !fragProcYear.isAllCalendar()) removeFragment = true;
+                    if (!fragProcYear.isSenCal() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case CALENDAR_ACTIVE:
-                    if (!fragProcYear.isSenCalal() || !fragProcYear.isAllActiveLists()) removeFragment = true;
+                    if (!fragProcYear.isSenCalal() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case AGENDA:
-                    if (!fragProcYear.isSenAgen() || !fragProcYear.isAllAgendas()) removeFragment = true;
+                    if (!fragProcYear.isSenAgen() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case SENAGENV:
-                    if (!fragProcYear.isSenAgenV() || !fragProcYear.isAllAgendaVotes()) removeFragment = true;
+                    if (!fragProcYear.isSenAgenV() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case VETOMSG:
-                    if (!fragProcYear.isVetoMsg()) removeFragment = true;
+                    if (!fragProcYear.isVetoMsg()) {
+                        removeFragment = true;
+                    }
                     break;
-                default: removeFragment = false; break;
+                default: removeFragment = false;
             }
         }
         return removeFragment;
@@ -189,25 +222,39 @@ public class ProcessConfig extends AbstractDataProcessor {
         else {
             switch ( fragment.getType() ) {
                 case BILL:
-                    if (!fragProcYear.isBill()) removeFragment = true;
+                    if (!fragProcYear.isBill()) {
+                        removeFragment = true;
+                    }
                     break;
                 case AGENDA:
-                    if (!fragProcYear.isAgenda() || !fragProcYear.isAllAgendas()) removeFragment = true;
+                    if (!fragProcYear.isAgenda() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case AGENDA_VOTE:
-                    if (!fragProcYear.isAgendaVote() || !fragProcYear.isAllAgendaVotes()) removeFragment = true;
+                    if (!fragProcYear.isAgendaVote() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case CALENDAR:
-                    if (!fragProcYear.isCalendar() || !fragProcYear.isAllCalendar()) removeFragment = true;
+                    if (!fragProcYear.isCalendar() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case CALENDAR_ACTIVE:
-                    if (!fragProcYear.isCalendarActive() || !fragProcYear.isAllActiveLists()) removeFragment = true;
+                    if (!fragProcYear.isCalendarActive() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case COMMITTEE:
-                    if (!fragProcYear.isCommittee() || !fragProcYear.isAllCommittees()) removeFragment = true;
+                    if (!fragProcYear.isCommittee() ) {
+                        removeFragment = true;
+                    }
                     break;
                 case ANNOTATION:
-                    if (!fragProcYear.isAnnotation()) removeFragment = true;
+                    if (!fragProcYear.isAnnotation()) {
+                        removeFragment = true;
+                    }
                     break;
                 default: removeFragment = false;
             }
@@ -220,55 +267,89 @@ public class ProcessConfig extends AbstractDataProcessor {
       boolean removeBlock = false;
       switch (block.getType()) {
           case BILL_INFO:
-              if (!fragProcYear.isBillInfo()) removeBlock = true;
+              if (!fragProcYear.isBillInfo()) {
+                  removeBlock = true;
+              }
               break;
           case LAW_SECTION:
-              if (!fragProcYear.isLawSection()) removeBlock = true;
+              if (!fragProcYear.isLawSection()) {
+                  removeBlock = true;
+              }
               break;
           case TITLE:
-              if (!fragProcYear.isTitle()) removeBlock = true;
+              if (!fragProcYear.isTitle()) {
+                  removeBlock = true;
+              }
               break;
           case BILL_EVENT:
-              if (!fragProcYear.isBillEvent()) removeBlock = true;
+              if (!fragProcYear.isBillEvent()) {
+                  removeBlock = true;
+              }
               break;
           case SAME_AS:
-              if (!fragProcYear.isSameasSobi()) removeBlock = true;
+              if (!fragProcYear.isSameasSobi()) {
+                  removeBlock = true;
+              }
               break;
           case SPONSOR:
-              if (!fragProcYear.isSponsor()) removeBlock = true;
+              if (!fragProcYear.isSponsor()) {
+                  removeBlock = true;
+              }
               break;
           case CO_SPONSOR:
-              if (!fragProcYear.isCosponsor()) removeBlock = true;
+              if (!fragProcYear.isCosponsor()) {
+                  removeBlock = true;
+              }
               break;
           case MULTI_SPONSOR:
-              if (!fragProcYear.isMultisponsor()) removeBlock = true;
+              if (!fragProcYear.isMultisponsor()) {
+                  removeBlock = true;
+              }
               break;
           case PROGRAM_INFO:
-              if (!fragProcYear.isProgramInfo()) removeBlock = true;
+              if (!fragProcYear.isProgramInfo()) {
+                  removeBlock = true;
+              }
               break;
           case ACT_CLAUSE:
-              if (!fragProcYear.isActClause()) removeBlock = true;
+              if (!fragProcYear.isActClause()) {
+                  removeBlock = true;
+              }
               break;
           case LAW:
-              if (!fragProcYear.isLaw()) removeBlock = true;
+              if (!fragProcYear.isLaw()) {
+                  removeBlock = true;
+              }
               break;
           case SUMMARY:
-              if (!fragProcYear.isSummary()) removeBlock = true;
+              if (!fragProcYear.isSummary()) {
+                  removeBlock = true;
+              }
               break;
           case SPONSOR_MEMO:
-              if (!fragProcYear.isSponsorMemo()) removeBlock = true;
+              if (!fragProcYear.isSponsorMemo()) {
+                  removeBlock = true;
+              }
               break;
           case RESOLUTION_TEXT:
-              if (!fragProcYear.isResolutionText()) removeBlock = true;
+              if (!fragProcYear.isResolutionText()) {
+                  removeBlock = true;
+              }
               break;
           case TEXT:
-              if (!fragProcYear.isText()) removeBlock = true;
+              if (!fragProcYear.isText()) {
+                  removeBlock = true;
+              }
               break;
           case VETO_APPROVE_MEMO:
-              if (!fragProcYear.isVetoApprMemo()) removeBlock = true;
+              if (!fragProcYear.isVetoApprMemo()) {
+                  removeBlock = true;
+              }
               break;
           case VOTE_MEMO:
-              if (!fragProcYear.isVoteMemo()) removeBlock = true;
+              if (!fragProcYear.isVoteMemo()) {
+                  removeBlock = true;
+              }
               break;
           default: removeBlock = false;
       }
@@ -279,7 +360,7 @@ public class ProcessConfig extends AbstractDataProcessor {
     private ProcessYear createDefaultXmlProcessYear() {
         ProcessYear xmlYear = new ProcessYear();
         xmlYear.setOverarchingDataConfigs(true,false);
-        xmlYear.setOverarchingSharedConfigs(true,true,true,true,true);
+        //xmlYear.setOverarchingSharedConfigs(true,true,true,true,true);
         xmlYear.setAllXmlConfigsTrue();
         xmlYear.setGeneralSobiConfigsFalse();
         xmlYear.setSpecificSobiConfigsFalse();
@@ -290,7 +371,7 @@ public class ProcessConfig extends AbstractDataProcessor {
     private ProcessYear createDefualtSobiProcessYear() {
         ProcessYear sobiYear = new ProcessYear();
         sobiYear.setOverarchingDataConfigs(false,true);
-        sobiYear.setOverarchingSharedConfigs(true,true,true,true,true);
+        //sobiYear.setOverarchingSharedConfigs(true,true,true,true,true);
         sobiYear.setGeneralSobiConfigsTrue();
         sobiYear.setSpecificSobiConfigsTrue();
         sobiYear.setAllXmlConfigsFalse();
@@ -298,7 +379,7 @@ public class ProcessConfig extends AbstractDataProcessor {
     }
 
     //Retrieves a single ProcessYear from the processYearMap
-    public ProcessYear getProcessYearFromMap(LocalDateTime publishDate) {
+    private ProcessYear getProcessYearFromMap(LocalDateTime publishDate) {
         ProcessYear requestedProcessYear = processYearMap.get(LocalDate.of(publishDate.getYear(),1,1));
         if (requestedProcessYear == null) {
             requestedProcessYear = createDefaultXmlProcessYear();

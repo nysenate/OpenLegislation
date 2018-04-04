@@ -186,21 +186,21 @@ public class ProcessYearCtrl {
      *
      * Expected Output: Json Structure of the requested ProcessYear
      */
-    @RequiresPermissions("admin:dataProcess")
-    @RequestMapping(value = "/set/{year}/{allCalendar}/{allActiveLists}/{allCommittees}/{allAgendas}/{allAgendaVotes}",
-            method = RequestMethod.GET)
-    public String setOverarchingSharedConfigsOnSingleProcessYear(@PathVariable int year,
-                                                                 @PathVariable boolean allCalendar,
-                                                                 @PathVariable boolean allActiveLists,
-                                                                 @PathVariable boolean allCommittees,
-                                                                 @PathVariable boolean allAgendas,
-                                                                 @PathVariable boolean allAgendaVotes) {
-        LocalDate requestedYear = LocalDate.of(year,1,1);
-        ProcessYear requestedProcessYear = processConfig.getProcessYearFromMap(requestedYear);
-        requestedProcessYear.setOverarchingSharedConfigs(allCalendar,allActiveLists,allCommittees,
-                allAgendas,allAgendaVotes);
-        return OutputUtils.toJson(requestedProcessYear);
-    }
+//    @RequiresPermissions("admin:dataProcess")
+//    @RequestMapping(value = "/set/{year}/{allCalendar}/{allActiveLists}/{allCommittees}/{allAgendas}/{allAgendaVotes}",
+//            method = RequestMethod.GET)
+//    public String setOverarchingSharedConfigsOnSingleProcessYear(@PathVariable int year,
+//                                                                 @PathVariable boolean allCalendar,
+//                                                                 @PathVariable boolean allActiveLists,
+//                                                                 @PathVariable boolean allCommittees,
+//                                                                 @PathVariable boolean allAgendas,
+//                                                                 @PathVariable boolean allAgendaVotes) {
+//        LocalDate requestedYear = LocalDate.of(year,1,1);
+//        ProcessYear requestedProcessYear = processConfig.getProcessYearFromMap(requestedYear);
+//        requestedProcessYear.setOverarchingSharedConfigs(allCalendar,allActiveLists,allCommittees,
+//                allAgendas,allAgendaVotes);
+//        return OutputUtils.toJson(requestedProcessYear);
+//    }
 
     /**
      *  Range Year Method API
@@ -263,34 +263,34 @@ public class ProcessYearCtrl {
      *
      * Expected Output: Json Structure of the requested ProcessYear
      */
-    @RequiresPermissions("admin:dataProcess")
-    @RequestMapping(
-            value = "/set/range/{startYear}/{endYear}/{allCalendar}/{allActiveLists}/{allCommittees}/{allAgendas}/{allAgendaVotes}",
-            method = RequestMethod.GET)
-    public String setOverarchingSharedConfigsOnRangeOfProcessYears(@PathVariable int startYear,
-                                                                 @PathVariable int endYear,
-                                                                 @PathVariable boolean allCalendar,
-                                                                 @PathVariable boolean allActiveLists,
-                                                                 @PathVariable boolean allCommittees,
-                                                                 @PathVariable boolean allAgendas,
-                                                                 @PathVariable boolean allAgendaVotes) {
-        if (startYear >= endYear) {
-            return "Invalid Range: The start year must be before the end year";
-        }
-        else if (startYear > LocalDate.now().getYear()) {
-            return "Invalid Range: The start year must be within 1995 - " + LocalDate.now().getYear();
-        }
-        LocalDate requestedStartYear = LocalDate.of(startYear,1,1);
-        LocalDate requestedEndYear = LocalDate.of(endYear,1,1);
-        Range<LocalDate> mapRange = Range.closedOpen(requestedStartYear, requestedEndYear);
-        for (LocalDate validYear : validYears) {
-            if (mapRange.contains(validYear)) {
-                processConfig.getProcessYearFromMap(validYear).setOverarchingSharedConfigs(allCalendar,
-                        allActiveLists,allCommittees, allAgendas,allAgendaVotes);
-            }
-        }
-        return getRangeOfProcessYearsFromMap(startYear, endYear);
-    }
+//    @RequiresPermissions("admin:dataProcess")
+//    @RequestMapping(
+//            value = "/set/range/{startYear}/{endYear}/{allCalendar}/{allActiveLists}/{allCommittees}/{allAgendas}/{allAgendaVotes}",
+//            method = RequestMethod.GET)
+//    public String setOverarchingSharedConfigsOnRangeOfProcessYears(@PathVariable int startYear,
+//                                                                 @PathVariable int endYear,
+//                                                                 @PathVariable boolean allCalendar,
+//                                                                 @PathVariable boolean allActiveLists,
+//                                                                 @PathVariable boolean allCommittees,
+//                                                                 @PathVariable boolean allAgendas,
+//                                                                 @PathVariable boolean allAgendaVotes) {
+//        if (startYear >= endYear) {
+//            return "Invalid Range: The start year must be before the end year";
+//        }
+//        else if (startYear > LocalDate.now().getYear()) {
+//            return "Invalid Range: The start year must be within 1995 - " + LocalDate.now().getYear();
+//        }
+//        LocalDate requestedStartYear = LocalDate.of(startYear,1,1);
+//        LocalDate requestedEndYear = LocalDate.of(endYear,1,1);
+//        Range<LocalDate> mapRange = Range.closedOpen(requestedStartYear, requestedEndYear);
+//        for (LocalDate validYear : validYears) {
+//            if (mapRange.contains(validYear)) {
+//                processConfig.getProcessYearFromMap(validYear).setOverarchingSharedConfigs(allCalendar,
+//                        allActiveLists,allCommittees, allAgendas,allAgendaVotes);
+//            }
+//        }
+//        return getRangeOfProcessYearsFromMap(startYear, endYear);
+//    }
 
     /**
      *  Range Year Method API
