@@ -349,12 +349,16 @@ List bills within a session year
 +-----------+--------------------+--------------------------------------------------------+
 | full      | boolean            | Set to true to see the full bill responses.            |
 +-----------+--------------------+--------------------------------------------------------+
+| idsOnly   | boolean            | Set to true to see only the printNo and session        |
+|           |                    | for each bill.  (overrides 'full' parameter)           |
++-----------+--------------------+--------------------------------------------------------+
 | sort      | string             | Sort by any field from the response.                   |
 +-----------+--------------------+--------------------------------------------------------+
 
 **Default Sort Order**
 
-By default, (i.e. no sort param was included in the request) the results will be ordered by most recent status date (sort=status.actionDate:DESC)
+By default, (i.e. no sort param was included in the request)
+the results will be in ascending order by the bill's published date time (sort=publishedDateTime:DESC)
 
 **Examples**
 
