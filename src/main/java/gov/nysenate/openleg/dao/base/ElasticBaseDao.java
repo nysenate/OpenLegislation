@@ -37,6 +37,8 @@ public abstract class ElasticBaseDao
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBaseDao.class);
 
+    private static final int defaultMaxResultWindow = 10000;
+
     @Autowired
     protected Client searchClient;
 
@@ -95,6 +97,7 @@ public abstract class ElasticBaseDao
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
                                                     List<HighlightBuilder.Field> highlightedFields, RescoreBuilder.Rescorer rescorer,
                                                     List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) {
+        limitOffset = adjustLimitOffset(limitOffset);
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(query)
@@ -131,6 +134,7 @@ public abstract class ElasticBaseDao
      */
     protected <R> SearchResults<R> getSearchResults(SearchResponse response, LimitOffset limitOffset,
                                                     Function<SearchHit, R> hitMapper) {
+        limitOffset = adjustLimitOffset(limitOffset);
         List<SearchResult<R>> resultList = new ArrayList<>();
         for (SearchHit hit : response.getHits().hits()) {
             SearchResult<R> result = new SearchResult<>(
@@ -198,7 +202,16 @@ public abstract class ElasticBaseDao
      * @return Settings.Builder
      */
     protected Settings.Builder getIndexSettings() {
-        return Settings.builder();
+        Settings.Builder indexSettings = Settings.builder();
+        indexSettings.put("index.max_result_window", getMaxResultWindow());
+        return indexSettings;
+    }
+
+    /**
+     * @return the max result window for the index, this can be overridden.
+     */
+    protected int getMaxResultWindow() {
+        return defaultMaxResultWindow;
     }
 
     protected void deleteIndex(String index) {
@@ -209,5 +222,23 @@ public abstract class ElasticBaseDao
         catch (IndexNotFoundException ex) {
             logger.info("Cannot delete index {} because it doesn't exist.", index);
         }
+    }
+
+    /**
+     * Validate and adjust limit offset so that it conforms to the index max result window.
+     */
+    private LimitOffset adjustLimitOffset(LimitOffset limitOffset) {
+        final int maxResultWindow = getMaxResultWindow();
+
+        if (!limitOffset.hasLimit() || limitOffset.getLimit() > maxResultWindow) {
+            limitOffset = new LimitOffset(maxResultWindow, limitOffset.getOffsetStart());
+        }
+
+        if (limitOffset.getOffsetEnd() > maxResultWindow) {
+            throw new IllegalArgumentException("LimitOffset with offset end of " + limitOffset.getOffsetEnd() +
+                    " extends past allowed result window of " + maxResultWindow);
+        }
+
+        return limitOffset;
     }
 }
