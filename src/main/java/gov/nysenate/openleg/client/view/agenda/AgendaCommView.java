@@ -21,7 +21,7 @@ public class AgendaCommView implements ViewObject
         this.committeeId = committeeId;
         List<AgendaCommAddendumView> addendaList = new ArrayList<>();
         if (agenda != null) {
-            for (String addendumId : agenda.getAgendaInfoAddenda().keySet()) {
+            for (String addendumId : agenda.getAddenda()) {
                 AgendaInfoCommittee infoComm = null;
                 AgendaVoteCommittee voteComm = null;
                 LocalDateTime modifiedDateTime = null;
@@ -30,11 +30,11 @@ public class AgendaCommView implements ViewObject
                     infoComm = agenda.getAgendaInfoAddendum(addendumId).getCommitteeInfoMap().get(committeeId);
                     modifiedDateTime = agenda.getAgendaInfoAddendum(addendumId).getModifiedDateTime();
                 }
-                if (infoComm != null) {
-                    if (agenda.getAgendaVoteAddenda().containsKey(addendumId) &&
+                if (agenda.getAgendaVoteAddenda().containsKey(addendumId) &&
                         agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().containsKey(committeeId)) {
-                        voteComm = agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().get(committeeId);
-                    }
+                    voteComm = agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().get(committeeId);
+                }
+                if (infoComm != null || voteComm != null) {
                     addendaList.add(new AgendaCommAddendumView(addendumId, modifiedDateTime, infoComm, voteComm, billDataService));
                 }
             }
