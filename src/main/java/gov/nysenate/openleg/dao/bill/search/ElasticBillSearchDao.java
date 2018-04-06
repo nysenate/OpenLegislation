@@ -12,7 +12,6 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.highlight.HighlightBuilder;
@@ -96,13 +95,11 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
      *
      * @see gov.nysenate.openleg.controller.api.bill.BillGetCtrl#getBills(int, String, boolean, WebRequest)
      *
-     * @return Settings.Builder
+     * @return int
      */
     @Override
-    protected Settings.Builder getIndexSettings() {
-        Settings.Builder indexSettings = super.getIndexSettings();
-        indexSettings.put("index.max_result_window", billMaxResultWindow);
-        return indexSettings;
+    protected int getMaxResultWindow() {
+        return billMaxResultWindow;
     }
 
     protected BaseBillId getBaseBillIdFromHit(SearchHit hit) {
