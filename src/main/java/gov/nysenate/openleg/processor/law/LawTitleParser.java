@@ -19,8 +19,8 @@ public class LawTitleParser
     protected static String sectionTitlePattern = "(?i)((?:Section|§)\\s*%s).?\\s(.+?)\\.(.*)";
     protected static Pattern tocStartPattern = Pattern.compile("(Section|Article)\\s+\\n?[0-9a-zA-Z-.]+");
     protected static Pattern nonSectionPrefixPattern = Pattern.compile("((\\*\\s*)?(SUB)?(ARTICLE|TITLE|PART)(.+?)(\\\\n|--))");
-    protected static Pattern contiguousUppercasePattern = Pattern.compile("([^a-z]+(\\b))");
-    protected static Pattern contiguousUppercaseExcludeTocPattern = Pattern.compile("(~\\s+\\d+\\.\\s*)$");
+    protected static Pattern uppercasePattern = Pattern.compile("([A-Z]{2,})");
+    private static Pattern endOfUppercasePattern = Pattern.compile("((\\\\n\\s*(\\d+)?(.)?\\s*[A-Z]{1}[a-z]+)|(\\\\nTITLE))");
 
     /** --- Methods --- */
 
@@ -74,30 +74,28 @@ public class LawTitleParser
         if (prefixMatcher.find()) {
             title = title.substring(prefixMatcher.end());
         }
-        // Check if there is a 'Section X' in the body, it is usually a good indicator of where the title ends.
-        Matcher sectionStartMatcher = tocStartPattern.matcher(title);
-        if (sectionStartMatcher.find()) {
-            title = title.substring(0, sectionStartMatcher.start());
+
+        // If uppercase words, title is all the uppercase words
+        Matcher uppercaseMatcher = uppercasePattern.matcher(title);
+        if (uppercaseMatcher.find()) {
+            // Match the first line that starts with a non uppercase word.
+            Matcher endOfUppercaseMatcher = endOfUppercasePattern.matcher(title);
+            if (endOfUppercaseMatcher.find()) {
+                title = title.substring(0, endOfUppercaseMatcher.start());
+            }
         }
-        // Otherwise try to find the first contiguous sequence of uppercase characters.
+        // Otherwise, remove the 'body' and the title is what remains.
         else {
-            // Replace new lines with an easier to detect symbol that doesn't break the uppercase.
-            title = title.replaceAll("\\\\n", "~");
-            Matcher uppercaseMatcher = contiguousUppercasePattern.matcher(title);
-            if (uppercaseMatcher.find()) {
-                title = title.substring(0, uppercaseMatcher.end());
-                Matcher removeLastNumberMatcher = contiguousUppercaseExcludeTocPattern.matcher(title);
-                if (removeLastNumberMatcher.find()) {
-                    title = title.substring(0, removeLastNumberMatcher.start());
-                }
-                title = title.replaceAll("~", " ");
-            }
-            // Otherwise just grab the whole thing (truncate it to say 240 characters) and call it a day.
-            else {
-                title = title.substring(0, Integer.min(240, title.length()));
+            Pattern bodyPattern = Pattern.compile("((\\\\n|^)(  )?)(\\w.*)");
+            Matcher bodyMatcher = bodyPattern.matcher(title);
+            if (bodyMatcher.find()) {
+                title = title.substring(0, bodyMatcher.start());
             }
         }
-        return capitalizeTitle(title.replaceAll("(\\\\n|\\s{2,})", " ").trim());
+
+        title = title.replaceAll("\\\\n", " ");
+        title = title.replaceAll("\\s{2,}", " ");
+        return capitalizeTitle(title.trim());
     }
 
     /**
