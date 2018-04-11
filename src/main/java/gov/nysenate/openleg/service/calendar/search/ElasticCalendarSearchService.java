@@ -24,7 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
@@ -102,9 +104,18 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
         clearIndex();
         Optional<Range<Integer>> calendarYearRange =  calendarDataService.getCalendarYearRange();
         if (calendarYearRange.isPresent()) {
-            for (int year = calendarYearRange.get().lowerEndpoint();
-                 year <= calendarYearRange.get().upperEndpoint(); year++) {
-                updateIndex(calendarDataService.getCalendars(year, SortOrder.NONE, LimitOffset.ALL));
+            int calYear = calendarYearRange.get().lowerEndpoint();
+            logger.info("Starting rebuild with session " + calYear);
+            while (calYear <= LocalDate.now().getYear()) {
+                LimitOffset limOff = new LimitOffset(5);
+                List<Calendar> calendars = calendarDataService.getCalendars(calYear,SortOrder.NONE,limOff);
+                while (!calendars.isEmpty()) {
+                    updateIndex(calendars);
+                    limOff = limOff.next();
+                    calendars = calendarDataService.getCalendars(calYear,SortOrder.NONE,limOff);
+                }
+                calYear++;
+                logger.info("The session year is now " + calYear);
             }
         }
     }
