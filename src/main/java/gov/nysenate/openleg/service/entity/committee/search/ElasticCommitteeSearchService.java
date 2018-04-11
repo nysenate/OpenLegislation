@@ -16,6 +16,8 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ import java.util.Collection;
 @Service
 public class ElasticCommitteeSearchService implements CommitteeSearchService
 {
+    private static final Logger logger = LoggerFactory.getLogger(ElasticCommitteeSearchService.class);
+
     @Autowired
     ElasticCommitteeSearchDao committeeSearchDao;
 
@@ -116,7 +120,9 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
     public void rebuildIndex() {
         clearIndex();
 
+        logger.info("Reindexing committees...");
         committeeSearchDao.updateCommitteeIndexBulk(committeeDataService.getAllCommitteeSessionIds());
+        logger.info("Committee reindex complete.");
     }
 
     /**

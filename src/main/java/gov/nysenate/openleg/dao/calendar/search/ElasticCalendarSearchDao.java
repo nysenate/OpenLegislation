@@ -1,7 +1,8 @@
 package gov.nysenate.openleg.dao.calendar.search;
 
 import com.google.common.collect.Lists;
-import gov.nysenate.openleg.client.view.calendar.*;
+import gov.nysenate.openleg.client.view.calendar.CalendarView;
+import gov.nysenate.openleg.client.view.calendar.CalendarViewFactory;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.calendar.Calendar;
@@ -9,13 +10,11 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryAction;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryRequestBuilder;
+import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
@@ -34,11 +33,11 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     @Autowired
     CalendarViewFactory calendarViewFactory;
 
-    /** --- Index Names --- */
+    /* --- Index Names --- */
 
     protected static final String calIndexName = "calendars";
 
-    /** --- Implementations --- */
+    /* --- Implementations --- */
 
     /**{@inheritDoc}*/
     @Override
@@ -70,17 +69,13 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     /**{@inheritDoc}*/
     @Override
     public void deleteCalendarFromIndex(CalendarId calId) {
-        if (calId != null) {
-            DeleteByQueryRequestBuilder builder = new DeleteByQueryRequestBuilder(searchClient, DeleteByQueryAction.INSTANCE);
-            builder.setIndices(calIndexName)
-                    .setTypes(Integer.toString(calId.getYear()))
-                    .setQuery(QueryBuilders.matchQuery("calendarNumber", Integer.toString(calId.getCalNo())))
-                    .execute().actionGet();
-            /*searchClient.prepareDeleteByQuery(calIndexName)
-                    .setTypes(Integer.toString(calId.getYear()))
-                    .setQuery(QueryBuilders.matchQuery("calendarNumber", Integer.toString(calId.getCalNo())))
-                    .execute().actionGet();*/
-        }
+        DeleteRequestBuilder deleteRequest = searchClient.prepareDelete(
+                calIndexName,
+                Integer.toString(calId.getYear()),
+                Integer.toString(calId.getCalNo())
+        );
+
+        deleteRequest.execute().actionGet();
     }
 
     /**
@@ -91,9 +86,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
         return Lists.newArrayList(calIndexName);
     }
 
-    /**
-     * --- Internal Methods ---
-     */
+    /* --- Internal Methods --- */
 
     /**
      * Adds a calendar along with all of its floor calendars and active lists to a bulk index request
@@ -119,7 +112,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
                 .setSource(OutputUtils.toJson(calendarView));
     }
 
-    /** --- Id Mappers --- */
+    /* --- Id Mappers --- */
 
     /**
      * Retrieves a CalendarId from a search hit
