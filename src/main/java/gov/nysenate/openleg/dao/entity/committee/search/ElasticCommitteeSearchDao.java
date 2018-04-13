@@ -119,8 +119,8 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     private BoolQueryBuilder getCommitteeSessionQuery(CommitteeSessionId committeeSessionId) {
         return QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchAllQuery())
-                .filter(QueryBuilders.termQuery("chamber", committeeSessionId.getChamber().toString()))
-                .filter(QueryBuilders.termQuery("name", committeeSessionId.getName()));
+                .filter(QueryBuilders.termQuery("chamber", committeeSessionId.getChamber().toString().toLowerCase()))
+                .filter(QueryBuilders.termQuery("name", committeeSessionId.getName().toLowerCase()));
     }
 
     /**
