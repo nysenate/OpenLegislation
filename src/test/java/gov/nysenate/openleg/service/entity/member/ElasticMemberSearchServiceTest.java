@@ -3,9 +3,7 @@ package gov.nysenate.openleg.service.entity.member;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.entity.member.search.ElasticMemberSearchService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -22,7 +20,6 @@ public class ElasticMemberSearchServiceTest extends BaseTests {
 
     @Test
     public void memberSearchTest() throws SearchException {
-        SearchResults<SessionMember> memberSearchResults = memberSearchService.searchMembers("*", "", LimitOffset.ALL);
-        logger.info("{}");
+        logger.info("{}", memberSearchService.searchMembers("*", "", LimitOffset.ALL));
     }
 }

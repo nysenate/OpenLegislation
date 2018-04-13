@@ -5,8 +5,6 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.client.view.base.ModelView;
-import gov.nysenate.openleg.client.view.base.StringView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.bill.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
@@ -24,7 +22,6 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.search.BillSearchService;
 import gov.nysenate.openleg.util.BillTextUtils;
-import gov.nysenate.openleg.util.OutputUtils;
 import gov.nysenate.openleg.util.StringDiffer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,7 +34,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -95,8 +91,9 @@ public class BillGetCtrl extends BaseCtrl
      */
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}")
     public BaseResponse getBills(@PathVariable int sessionYear,
-                                 @RequestParam(defaultValue = "status.actionDate:desc") String sort,
+                                 @RequestParam(defaultValue = "publishedDateTime:asc") String sort,
                                  @RequestParam(defaultValue = "false") boolean full,
+                                 @RequestParam(defaultValue = "false") boolean idsOnly,
                                  WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);
         SearchResults<BaseBillId> results =
@@ -104,8 +101,16 @@ public class BillGetCtrl extends BaseCtrl
         // The bill data is retrieved from the data service so the data is always fresh.
         return ListViewResponse.of(
             results.getResults().stream()
-                .map(r -> (full) ? new BillView(billData.getBill(r.getResult()))
-                        : new BillInfoView(billData.getBillInfo(r.getResult())))
+                .map(r -> {
+                    BaseBillId baseBillId = r.getResult();
+                    if (idsOnly) {
+                        return new BaseBillIdView(baseBillId);
+                    }
+                    if (full) {
+                        return new BillView(billData.getBill(baseBillId));
+                    }
+                    return new BillInfoView(billData.getBillInfo(baseBillId));
+                })
                 .collect(Collectors.toList()), results.getTotalResults(), limOff);
     }
 

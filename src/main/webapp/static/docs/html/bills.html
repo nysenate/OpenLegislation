@@ -547,14 +547,20 @@ the base print no (e.g. S1234).</p>
 <td>boolean</td>
 <td>Set to true to see the full bill responses.</td>
 </tr>
-<tr class="row-odd"><td>sort</td>
+<tr class="row-odd"><td>idsOnly</td>
+<td>boolean</td>
+<td>Set to true to see only the printNo and session
+for each bill.  (overrides &#8216;full&#8217; parameter)</td>
+</tr>
+<tr class="row-even"><td>sort</td>
 <td>string</td>
 <td>Sort by any field from the response.</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Default Sort Order</strong></p>
-<p>By default, (i.e. no sort param was included in the request) the results will be ordered by most recent status date (sort=status.actionDate:DESC)</p>
+<p>By default, (i.e. no sort param was included in the request)
+the results will be in ascending order by the bill&#8217;s published date time (sort=publishedDateTime:DESC)</p>
 <p><strong>Examples</strong></p>
 <p>List 100 bills from 2013</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/bills/2013?limit=100

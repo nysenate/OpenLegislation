@@ -1,12 +1,9 @@
 package gov.nysenate.openleg.dao.entity.member.data;
 
-import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.SessionMember;
-import gov.nysenate.openleg.model.entity.Person;
+import gov.nysenate.openleg.model.entity.*;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +35,7 @@ public interface MemberDao
      * @param id int
      * @return Map<Integer, Member>
      */
-    public TreeMultimap<SessionYear, SessionMember> getMemberById(int id);
+    public FullMember getMemberById(int id) throws MemberNotFoundEx;
 
     /**
      * Retrieve a map of session year -> Member given the LBDC short name.

@@ -3,13 +3,13 @@ package gov.nysenate.openleg.controller.api.entity;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.client.view.entity.ExtendedMemberView;
+import gov.nysenate.openleg.client.view.entity.FullMemberView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.FullMember;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
-import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -49,7 +49,7 @@ public class MemberSearchCtrl extends BaseCtrl
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);
-        SearchResults<SessionMember> results = memberSearch.searchMembers(term, sort, limOff);
+        SearchResults<Integer> results = memberSearch.searchMembers(term, sort, limOff);
         return getSearchResponse(results, full, limOff);
     }
 
@@ -71,20 +71,20 @@ public class MemberSearchCtrl extends BaseCtrl
                                      @RequestParam(defaultValue = "false") boolean full,
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);
-        SearchResults<SessionMember> results = memberSearch.searchMembers(term, SessionYear.of(sessionYear), sort, limOff);
+        SearchResults<Integer> results = memberSearch.searchMembers(term, SessionYear.of(sessionYear), sort, limOff);
         return getSearchResponse(results, full, limOff);
     }
 
-    private BaseResponse getSearchResponse(SearchResults<SessionMember> results, boolean full, LimitOffset limOff) throws SearchException {
+    private BaseResponse getSearchResponse(SearchResults<Integer> results, boolean full, LimitOffset limOff) throws SearchException {
         List<ViewObject> viewtypes = new ArrayList<>();
-        for (SearchResult<SessionMember> result : results.getResults()) {
-            SessionMember member;
+        for (SearchResult<Integer> result : results.getResults()) {
+            FullMember member;
             try {
-                member = memberData.getMemberById(result.getResult().getMemberId(), result.getResult().getSessionYear());
+                member = memberData.getMemberById(result.getResult());
             } catch (MemberNotFoundEx ex) {
                 throw new SearchException("No Member found.", ex);
             }
-            viewtypes.add((full) ? new ExtendedMemberView(member) : new SimpleMemberView(member));
+            viewtypes.add((full) ? new FullMemberView(member) : new SimpleMemberView(member.getLatestSessionMember().get()));
         }
         return ListViewResponse.of(viewtypes, results.getTotalResults(), limOff);
     }

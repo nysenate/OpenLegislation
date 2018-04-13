@@ -5,10 +5,10 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
-import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.member.search.ElasticMemberSearchDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.FullMember;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
@@ -28,10 +28,11 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class ElasticMemberSearchService implements MemberSearchService, IndexedSearchService<SessionMember>
+public class ElasticMemberSearchService implements MemberSearchService, IndexedSearchService<FullMember>
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticMemberSearchService.class);
 
@@ -47,41 +48,46 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<SessionMember> searchMembers(SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
+    public SearchResults<Integer> searchMembers(SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
         return search(
                 QueryBuilders.boolQuery()
                         .must(QueryBuilders.matchAllQuery())
-                        .filter(QueryBuilders.termQuery("sessionYear", sessionYear.getYear())),
+                        .filter(requireSessionYear(sessionYear)),
                 null, sort, limOff);
     }
 
     @Override
-    public SearchResults<SessionMember> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff) throws SearchException {
-        String query = "(chamber:" + chamber.toString() + ") AND (sessionYear:" + sessionYear.getYear() + ")";
-        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<SessionMember> searchMembers(String query, String sort, LimitOffset limOff) throws SearchException {
-        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SearchResults<SessionMember> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
+    public SearchResults<Integer> searchMembers(SessionYear sessionYear, Chamber chamber, String sort, LimitOffset limOff) throws SearchException {
         return search(
                 QueryBuilders.boolQuery()
-                        .must(QueryBuilders.queryStringQuery(query))
-                        .filter(QueryBuilders.termQuery("sessionYear", sessionYear.getYear())),
+                        .must(QueryBuilders.matchAllQuery())
+                        .filter(requireSessionYear(sessionYear))
+                        .filter(QueryBuilders.termQuery("chamber", chamber.toString().toLowerCase())),
                 null, sort, limOff);
     }
 
-    private SearchResults<SessionMember> search(QueryBuilder query, QueryBuilder postFilter, String sort, LimitOffset limOff)
+    /** {@inheritDoc} */
+    @Override
+    public SearchResults<Integer> searchMembers(String query, String sort, LimitOffset limOff) throws SearchException {
+        return search(QueryBuilders.queryStringQuery(query), null, sort, limOff);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchResults<Integer> searchMembers(String query, SessionYear sessionYear, String sort, LimitOffset limOff) throws SearchException {
+        return search(
+                QueryBuilders.boolQuery()
+                        .filter(requireSessionYear(sessionYear))
+                        .must(QueryBuilders.queryStringQuery(query)),
+                null, sort, limOff);
+    }
+
+    private SearchResults<Integer> search(QueryBuilder query, QueryBuilder postFilter, String sort, LimitOffset limOff)
             throws SearchException {
         if (limOff == null) limOff = LimitOffset.TWENTY_FIVE;
         try {
-            return memberSearchDao.searchMembers(query, postFilter, ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
+            return memberSearchDao.searchMembers(query, postFilter,
+                    ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
         }
         catch (SearchParseException ex) {
             throw new SearchException("Invalid query string", ex);
@@ -93,18 +99,18 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
 
     /** {@inheritDoc} */
     @Override
-    public void updateIndex(SessionMember member) {
+    public void updateIndex(FullMember member) {
         if (env.isElasticIndexing() && member != null) {
-            logger.info("Indexing member {} into elastic search.", member.getLbdcShortName());
+            logger.info("Indexing member {} into elastic search.", member.getFullName());
             memberSearchDao.updateMemberIndex(member);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void updateIndex(Collection<SessionMember> members) {
+    public void updateIndex(Collection<FullMember> members) {
         if (env.isElasticIndexing() && !members.isEmpty()) {
-            List<SessionMember> indexableMembers = members.stream().filter(t -> t != null).collect(Collectors.toList());
+            List<FullMember> indexableMembers = members.stream().filter(Objects::nonNull).collect(Collectors.toList());
             logger.info("Indexing {} valid members into elastic search.", indexableMembers.size());
             memberSearchDao.updateMemberIndex(indexableMembers);
         }
@@ -121,17 +127,9 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     @Override
     public void rebuildIndex() {
         clearIndex();
-        LimitOffset limOff = LimitOffset.HUNDRED;
-        SortOrder sortOrder = SortOrder.ASC;
-        List<SessionMember> members;
-        do {
-            members = memberDataService.getAllMembers(sortOrder, limOff);
-            logger.info("Indexing {} members", members.size());
-            updateIndex(members);
-            limOff = limOff.next();
-            members = memberDataService.getAllMembers(sortOrder, limOff);
-        }
-        while(!members.isEmpty());
+        List<FullMember> members = memberDataService.getAllFullMembers();
+        logger.info("Indexing {} members", members.size());
+        updateIndex(members);
     }
 
     /** {@inheritDoc} */
@@ -161,8 +159,9 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     @Override
     @Subscribe
     public void handleMemberUpdate(MemberUpdateEvent memberUpdateEvent) {
-        if (memberUpdateEvent.getMember() != null) {
-            updateIndex(memberUpdateEvent.getMember());
+        SessionMember sessionMember = memberUpdateEvent.getMember();
+        if (sessionMember != null) {
+            updateSessionMember(sessionMember);
         }
     }
 
@@ -170,8 +169,27 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     @Override
     @Subscribe
     public void handleBulkMemberUpdate(BulkMemberUpdateEvent bulkMemberUpdateEvent) {
-        if (bulkMemberUpdateEvent.getMembers() != null) {
-            updateIndex(bulkMemberUpdateEvent.getMembers());
+        Collection<SessionMember> sessionMembers = bulkMemberUpdateEvent.getMembers();
+        if (sessionMembers != null) {
+            sessionMembers.forEach(this::updateSessionMember);
         }
     }
+
+    /* --- Internal Methods --- */
+
+    private void updateSessionMember(SessionMember sessionMember) {
+        FullMember member = memberDataService.getMemberById(sessionMember.getMemberId());
+        updateIndex(member);
+    }
+
+    /**
+     * Generate a query that matches members that were active on the given session year.
+     *
+     * @param sessionYear {@link SessionYear}
+     * @return QueryBuilder
+     */
+    private QueryBuilder requireSessionYear(SessionYear sessionYear) {
+        return QueryBuilders.existsQuery("sessionShortNameMap." + sessionYear.getYear());
+    }
 }
+

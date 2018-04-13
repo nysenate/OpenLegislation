@@ -123,8 +123,11 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
             }
             logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
             try {
-                TransportClient tc = TransportClient.builder().settings(settings).build().addTransportAddress(
-                        new InetSocketTransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
+                TransportClient tc = TransportClient.builder()
+                        .settings(settings)
+                        .build()
+                        .addTransportAddress(
+                                new InetSocketTransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
                 if (tc.connectedNodes().size() == 0) {
                     tc.close();
                     throw new ElasticsearchException("Failed to connect to elastic search node!");

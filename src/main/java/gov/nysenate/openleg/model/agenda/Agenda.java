@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.model.agenda;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
@@ -156,6 +158,16 @@ public class Agenda extends BaseLegislativeContent implements Serializable
     public Set<CommitteeId> getCommittees() {
         return agendaInfoAddenda.values().stream().flatMap(a -> a.getCommitteeInfoMap().keySet().stream())
             .collect(Collectors.toSet());
+    }
+
+    /**
+     * @return A set of all addenda in this Agenda for either votes or info
+     */
+    public ImmutableSet<String> getAddenda() {
+        return ImmutableSet.copyOf(Sets.union(
+                agendaInfoAddenda.keySet(),
+                agendaVoteAddenda.keySet()
+        ));
     }
 
     /** --- Basic Getters/Setters --- */

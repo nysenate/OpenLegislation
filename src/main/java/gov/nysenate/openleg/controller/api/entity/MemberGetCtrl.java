@@ -7,13 +7,13 @@ import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.entity.ExtendedMemberView;
+import gov.nysenate.openleg.client.view.entity.FullMemberView;
 import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
-import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
@@ -33,8 +33,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = BASE_API_PATH + "/members", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
 public class MemberGetCtrl extends BaseCtrl
 {
-    @Autowired private MemberService memberData;
-    @Autowired private MemberSearchService memberSearch;
+    private final MemberService memberData;
+    private final MemberSearchService memberSearch;
+
+    @Autowired
+    public MemberGetCtrl(MemberService memberData, MemberSearchService memberSearch) {
+        this.memberData = memberData;
+        this.memberSearch = memberSearch;
+    }
 
     /**
      * Member Listing API
@@ -51,7 +57,7 @@ public class MemberGetCtrl extends BaseCtrl
                                          @RequestParam(defaultValue = "false") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
-        SearchResults<SessionMember> results = memberSearch.searchMembers("*", sort, limOff);
+        SearchResults<Integer> results = memberSearch.searchMembers("*", sort, limOff);
         return getMemberResponse(full, limOff, results);
     }
 
@@ -71,7 +77,7 @@ public class MemberGetCtrl extends BaseCtrl
                                          @RequestParam(defaultValue = "false") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
-        SearchResults<SessionMember> results = memberSearch.searchMembers(SessionYear.of(sessionYear), sort, limOff);
+        SearchResults<Integer> results = memberSearch.searchMembers(SessionYear.of(sessionYear), sort, limOff);
         return getMemberResponse(full, limOff, results);
     }
 
@@ -110,16 +116,15 @@ public class MemberGetCtrl extends BaseCtrl
                                          @RequestParam(defaultValue = "false") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
-        SearchResults<SessionMember> results = memberSearch.searchMembers(SessionYear.of(sessionYear), Chamber.getValue(chamber), sort, limOff);
+        SearchResults<Integer> results = memberSearch.searchMembers(SessionYear.of(sessionYear), Chamber.getValue(chamber), sort, limOff);
         return getMemberResponse(full, limOff, results);
     }
 
-    private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<SessionMember> results) throws MemberNotFoundEx {
-        List<ViewObject> memberList;
-            memberList = results.getRawResults().stream()
-                    .map(member -> memberData.getMemberById(member.getMemberId(), member.getSessionYear()))
-                    .map(member -> full ? new ExtendedMemberView(member) : new SimpleMemberView(member))
-                    .collect(Collectors.toList());
+    private BaseResponse getMemberResponse(boolean full, LimitOffset limOff, SearchResults<Integer> results) throws MemberNotFoundEx {
+        List<ViewObject> memberList = results.getRawResults().stream()
+                .map(memberData::getMemberById)
+                .map(member -> full ? new FullMemberView(member) : new SimpleMemberView(member.getLatestSessionMember().get()))
+                .collect(Collectors.toList());
 
         return ListViewResponse.of(memberList, results.getTotalResults(), limOff);
     }

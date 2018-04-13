@@ -1,11 +1,8 @@
 package gov.nysenate.openleg.dao.entity.member.data;
 
-import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.SessionMember;
-import gov.nysenate.openleg.model.entity.Person;
+import gov.nysenate.openleg.model.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,13 +28,14 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
 
     /** {@inheritDoc} */
     @Override
-    public TreeMultimap<SessionYear, SessionMember> getMemberById(int id) {
+    public FullMember getMemberById(int id) throws MemberNotFoundEx {
         MapSqlParameterSource params = new MapSqlParameterSource("memberId", id);
         List<SessionMember> memberList =
             jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_BY_ID_SQL.getSql(schema()), params, new MemberRowMapper());
-        TreeMultimap<SessionYear, SessionMember> memberMap = TreeMultimap.create();
-        memberList.forEach(member -> memberMap.put(member.getSessionYear(), member));
-        return memberMap;
+        if (memberList.isEmpty()) {
+            throw new MemberNotFoundEx(id, null);
+        }
+        return new FullMember(memberList);
     }
 
     /** {@inheritDoc} */
