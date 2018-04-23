@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 
 import java.io.Serializable;
@@ -55,7 +56,7 @@ public class BillVoteId implements Serializable, Comparable<BillVoteId>
             .compare(this.sequenceNo, o.sequenceNo)
             // Properly handle case when committee is not present, which would be the case of a floor vote.
             // The floor vote should come after a same-day committee vote.
-            .compare(this.committeeId != null ? this.committeeId.toString() : "Z", o.committeeId != null ? o.committeeId.toString() : "Z")
+            .compare(this.committeeId, o.committeeId, Ordering.natural().nullsLast())
             .result();
     }
 

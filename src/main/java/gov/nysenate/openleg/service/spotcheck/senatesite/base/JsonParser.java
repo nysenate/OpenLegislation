@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.processor.base.ParseError;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 
@@ -100,7 +102,7 @@ public class JsonParser {
         throw new ParseError("unexpected value for boolean. field: " + fieldName + " value: " + rawValue);
     }
 
-    protected LocalDateTime getDateTimeValue(JsonNode parentNode, String fieldName) {
+    protected LocalDateTime parseUnixTimeValue(JsonNode parentNode, String fieldName) {
         String rawValue = getValue(parentNode, fieldName);
         if (rawValue == null) {
             return null;
@@ -111,5 +113,23 @@ public class JsonParser {
         } catch (DateTimeException | NumberFormatException ex) {
             throw new ParseError("cannot convert value into LocalDateTime. field: " + fieldName + " value: " + rawValue, ex);
         }
+    }
+
+    protected LocalDateTime parseTimeStamp(JsonNode parentNode, String fieldName) {
+        final DateTimeFormatter timeStampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String rawValue = getValue(parentNode, fieldName);
+        if (rawValue == null) {
+            return null;
+        }
+        try {
+            return LocalDateTime.parse(rawValue, timeStampFormatter);
+        } catch (DateTimeException ex) {
+            throw new ParseError("cannot convert value into LocalDateTime. field: " + fieldName + " value: " + rawValue, ex);
+        }
+    }
+
+    protected <E extends Enum<E>> E getEnumValue(JsonNode parentNode, String fieldName, Class<E> enumClass) {
+        String stringValue = getValue(parentNode, fieldName);
+        return E.valueOf(enumClass, StringUtils.upperCase(stringValue));
     }
 }

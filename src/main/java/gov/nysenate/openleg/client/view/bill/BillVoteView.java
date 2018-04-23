@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class BillVoteView implements ViewObject
 {
+    protected BillIdView billId;
     protected String version;
     protected BillVoteType voteType;
     protected LocalDate voteDate;
@@ -22,6 +23,7 @@ public class BillVoteView implements ViewObject
 
     public BillVoteView(BillVote billVote) {
         if(billVote != null) {
+            this.billId = new BillIdView(billVote.getBillId());
             this.version = new BillIdView(billVote.getBillId()).getVersion();
             this.voteType = billVote.getVoteType();
             this.voteDate = billVote.getVoteDate();
@@ -35,6 +37,10 @@ public class BillVoteView implements ViewObject
                             .collect(Collectors.toList()))))
             );
         }
+    }
+
+    public BillIdView getBillId() {
+        return billId;
     }
 
     public String getVersion() {
