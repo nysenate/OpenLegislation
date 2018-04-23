@@ -31,10 +31,10 @@ public class CommitteeAgendaReportDao extends AbstractSpotCheckReportDao<Committ
     @Override
     public Map<String, String> getMapFromKey(CommitteeAgendaAddendumId addendumId) {
         return ImmutableMap.<String, String>builder()
-                .put("agendaNo", addendumId.getAgendaId().getNumber().toString())
+                .put("agenda_no", addendumId.getAgendaId().getNumber().toString())
                 .put("year", Integer.toString(addendumId.getAgendaId().getYear()))
                 .put("chamber", addendumId.getCommitteeId().getChamber().asSqlEnum())
-                .put("committeeName", addendumId.getCommitteeId().getName())
+                .put("committee_name", addendumId.getCommitteeId().getName())
                 .put("addendum", addendumId.getAddendum().name())
                 .build();
     }
