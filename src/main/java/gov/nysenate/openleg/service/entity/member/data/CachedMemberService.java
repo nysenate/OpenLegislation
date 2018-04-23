@@ -127,9 +127,6 @@ public class CachedMemberService implements MemberService, CachingService<Intege
     /** {@inheritDoc} */
     @Override
     public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");
-        }
         try {
             return memberDao.getMemberById(memberId, sessionYear);
         }
@@ -140,9 +137,6 @@ public class CachedMemberService implements MemberService, CachingService<Intege
 
     @Override
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");
-        }
         return memberDao.getMemberById(memberId);
     }
 
