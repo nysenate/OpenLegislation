@@ -110,6 +110,9 @@ public class Environment
     @Value("${checkmail.receiving}") private String emailReceivingFolder;
     @Value("${checkmail.processed}") private String emailProcessedFolder;
 
+    /** The return address on outbound emails */
+    @Value("${mail.smtp.from}") private String emailFromAddress;
+
     /** --- Notifications --- */
     @Value("${notifications.enabled}")
     private boolean notificationsEnabled;
@@ -377,5 +380,13 @@ public class Environment
 
     public void setSensiteBillDataQueueSize(int sensiteBillDataQueueSize) {
         this.sensiteBillDataQueueSize = sensiteBillDataQueueSize;
+    }
+
+    public String getEmailFromAddress() {
+        return emailFromAddress;
+    }
+
+    public void setEmailFromAddress(String emailFromAddress) {
+        this.emailFromAddress = emailFromAddress;
     }
 }

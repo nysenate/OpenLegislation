@@ -1,8 +1,10 @@
 package gov.nysenate.openleg.service.auth;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.auth.ApiUserDao;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.model.auth.ApiUserAuthEvictEvent;
@@ -19,6 +21,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +40,14 @@ import java.util.regex.Pattern;
 @Service
 public class CachedSqlApiUserService implements ApiUserService, CachingService<String>
 {
-    @Autowired
-    protected ApiUserDao apiUserDao;
-
-    @Autowired
-    protected MimeSendMailService sendMailService;
+    @Autowired protected ApiUserDao apiUserDao;
+    @Autowired protected MimeSendMailService sendMailService;
 
     @Value("${domain.url}") private String domainUrl;
 
     @Autowired private CacheManager cacheManager;
     @Autowired private EventBus eventBus;
+    @Autowired private Environment environment;
 
 //    private static final String apiUserCacheName = ;
     private EhCacheCache apiUserCache;
@@ -256,11 +257,20 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
      * @param user The user to send the registration information to
      */
     private void sendRegistrationEmail(ApiUser user) {
-        String message = String.format("Hello %s,\n\n\tThank you for your interest in Open Legislation. " +
+        final String userPlaceholder = "username";
+        final String domainPlaceholder = "domain";
+        final String tokenPlaceholder = "token";
+        final String regEmailTemplate = "Hello ${" + userPlaceholder + "},\n\n" +
+                "\tThank you for your interest in Open Legislation. " +
                 "In order to receive your API key you must first activate your account by visiting the link below. " +
                 "Once you have confirmed your email address, an email will be sent to you containing your API Key.\n\n" +
-                "Activate your account here:\n%s/%s" +
-                "\n\n-- NY Senate Development Team", user.getName(), domainUrl + "/register/token", user.getRegistrationToken());
+                "Activate your account here:\n" +
+                "${" + domainPlaceholder + "}/register/token/${" + tokenPlaceholder + "}";
+        final ImmutableMap<String, String> subMap = ImmutableMap.of(
+                userPlaceholder, user.getName(),
+                domainPlaceholder, environment.getUrl(),
+                tokenPlaceholder, user.getRegistrationToken());
+        final String message = StrSubstitutor.replace(regEmailTemplate, subMap);
 
         sendMailService.sendMessage(user.getEmail(), "Open Legislation API Account Registration", message);
     }
@@ -271,8 +281,23 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
      * @param user The user to send the API Key to.
      */
     private void sendApikeyEmail(ApiUser user) {
-        String message = String.format("Hello %s,\n\n\tThank you for your interest in Open Legislation.\n\n\t" +
-                "Here's your API Key:\n%s\n\n-- NY Senate Development Team", user.getName(), user.getApiKey());
+        final String userPlaceholder = "username";
+        final String domainPlaceholder = "domain";
+        final String keyPlaceholder = "apikey";
+        final String fromPlaceholder = "from";
+        final String keyEmailTemplate = "Hello ${" + userPlaceholder + "},\n\n" +
+                "\tThank you for your interest in Open Legislation.\n\n" +
+                "\tHere's your API Key:\n" +
+                "${" + keyPlaceholder +"}\n\n" +
+                "API documentation can be found here: ${" + domainPlaceholder + "}/docs\n" +
+                "For any questions or feedback, please email us at ${" + fromPlaceholder + "}\n\n" +
+                "-- NY Senate Development Team";
+        final ImmutableMap<String, String> subMap = ImmutableMap.of(
+                userPlaceholder, user.getName(),
+                keyPlaceholder, user.getApiKey(),
+                domainPlaceholder, environment.getUrl(),
+                fromPlaceholder, environment.getEmailFromAddress());
+        final String message = StrSubstitutor.replace(keyEmailTemplate, subMap);
 
         sendMailService.sendMessage(user.getEmail(), "Your Open Legislation API Key", message);
     }
