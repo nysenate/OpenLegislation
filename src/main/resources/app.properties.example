@@ -224,7 +224,7 @@ mail.smtp.starttls.enable = false
 mail.smtp.ssl.enable = true
 mail.smtp.ssl.protocols = TLSv1.2
 mail.smtp.user =
-mail.smtp.from = openleg-test-no-reply
+mail.smtp.from = openleg-test-no-reply@nysenate.gov
 mail.smtp.password =
 mail.debug = false
 
