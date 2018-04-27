@@ -6,7 +6,7 @@ import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
-import gov.nysenate.openleg.service.spotcheck.senatesite.bill.BillJsonParser;
+import gov.nysenate.openleg.service.spotcheck.senatesite.bill.SenateSiteBillJsonParser;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ public class SenateSiteBillDumpTest extends BaseTests {
     private static final Logger logger = LoggerFactory.getLogger(SenateSiteBillDumpTest.class);
 
     @Autowired SenateSiteDao senateSiteDao;
-    @Autowired BillJsonParser billJsonParser;
+    @Autowired SenateSiteBillJsonParser billJsonParser;
 
     @Test
     public void parseDumps() throws Exception {

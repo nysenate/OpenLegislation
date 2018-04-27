@@ -1,51 +1,70 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.bill.*;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAction;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillStatusType;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.FullMember;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
+import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBillVote;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
+import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.bill.BillVoteType.COMMITTEE;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Service
-public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateSiteBill> {
+public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bill, SenateSiteBill> {
 
-    /** {@inheritDoc} */
+    private final MemberService memberService;
+
+    @Autowired
+    public SenateSiteBillCheckService(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SpotCheckObservation<BillId> check(Bill content) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException(":P");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SpotCheckObservation<BillId> check(Bill content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException(":P");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SpotCheckObservation<BillId> check(Bill content, SenateSiteBill reference) {
 
@@ -92,6 +111,7 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
         checkTitle(contentBillView, reference, observation);
         checkSummary(contentBillView, reference, observation);
         checkPrevVersions(contentBillView, reference, observation);
+        checkVotes(contentBillView, reference, observation);
 
         checkText(amendment, reference, observation);
         checkMemo(amendment, reference, observation);
@@ -165,8 +185,8 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
 
     private String billActionToString(BillAction action) {
         return String.valueOf(action.getSequenceNo()) + " " +
-               // Only check base print number, don't check the amendment version associated with the action.
-               // Public website models this differently causing amendment errors we are not interested in.
+                // Only check base print number, don't check the amendment version associated with the action.
+                // Public website models this differently causing amendment errors we are not interested in.
                 action.getBillId().getBasePrintNo() + " " +
                 action.getChamber() + " " +
                 action.getDate() + " " +
@@ -179,7 +199,7 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
                 .orElse(ImmutableList.of())
                 .stream()
                 .map(BillActionView::toBillAction)
-                .collect(Collectors.toList());
+                .collect(toList());
         checkCollection(contentActions, reference.getActions(), observation, BILL_ACTION,
                 this::billActionToString, "\n");
     }
@@ -237,7 +257,7 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
                 .orElse(ImmutableList.of())
                 .stream()
                 .map(MemberView::getShortName)
-                .collect(Collectors.toList());
+                .collect(toList());
         checkCollection(contentCoSponsors, reference.getCoSponsors(), observation, BILL_COSPONSOR);
     }
 
@@ -247,7 +267,7 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
                 .orElse(ImmutableList.of())
                 .stream()
                 .map(MemberView::getShortName)
-                .collect(Collectors.toList());
+                .collect(toList());
         checkCollection(contentMultiSponsors, reference.getMultiSponsors(), observation, BILL_MULTISPONSOR);
     }
 
@@ -275,6 +295,43 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
         checkString(content.getLawSection(), reference.getLawSection(), observation, BILL_LAW_SECTION);
     }
 
+    private void checkVotes(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> obs) {
+        BillId billId = reference.getBillId();
+        List<SenateSiteBillVote> contentVoteList = content.getVotes().getItems().stream()
+                .filter(vote -> vote.getVersion().equalsIgnoreCase(billId.getVersion().getValue()))
+                .map(SenateSiteBillVote::new)
+                .collect(toList());
+        TreeMap<BillVoteId, SenateSiteBillVote> contentVoteMap = getVoteMap(contentVoteList, billId);
+        TreeMap<BillVoteId, SenateSiteBillVote> refVoteMap = getVoteMap(reference.getVotes(), billId);
+
+        Set<BillVoteId> contentVoteInfos = contentVoteMap.keySet();
+        Set<BillVoteId> refVoteInfos = refVoteMap.keySet();
+
+        checkCollection(contentVoteInfos, refVoteInfos, obs, BILL_VOTE_INFO,
+                this::getVoteInfoString, "\n");
+
+        Set<BillVoteId> intersection = Sets.intersection(contentVoteMap.keySet(), refVoteMap.keySet());
+
+        boolean infoSetsEqual =
+                intersection.size() == contentVoteInfos.size() && intersection.size() == refVoteInfos.size();
+        // Test to make sure that the set comparison and string comparison get the same result
+        if (infoSetsEqual == obs.hasMismatch(BILL_VOTE_INFO)) {
+            throw new IllegalStateException(
+                    "Vote comparison result differs between set and string representation for bill " + billId);
+        }
+
+        // Get lists of content and ref votes that are present in both
+        List<SenateSiteBillVote> checkedContentVotes = intersection.stream()
+                .map(contentVoteMap::get)
+                .collect(toList());
+
+        List<SenateSiteBillVote> checkedRefVotes = intersection.stream()
+                .map(refVoteMap::get)
+                .collect(toList());
+
+        checkCollection(checkedContentVotes, checkedRefVotes, obs, BILL_VOTE_ROLL, this::getVoteString, "\n");
+    }
+
     /**
      * Return true if an amendment exists for the given bill id and it is unpublished
      */
@@ -283,5 +340,53 @@ public class BillCheckService extends BaseSpotCheckService<BillId, Bill, SenateS
                 .map(bill -> bill.getAmendPublishStatusMap().get(billId.getVersion()))
                 .map(pubStatus -> !pubStatus.isPublished())
                 .orElse(false);
+    }
+
+    private String getVoteInfoString(BillVoteId voteId) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(voteId.getVoteType())
+                .append(" - ")
+                .append(voteId.getVoteDate());
+        if (voteId.getVoteType() == COMMITTEE) {
+            builder.append(" - ")
+                    .append(Optional.ofNullable(voteId.getCommitteeId())
+                            .map(CommitteeId::getName)
+                            .map(StringUtils::upperCase)
+                            .orElse(null)
+                    );
+        }
+        return builder.toString();
+    }
+
+    private String getVoteString(SenateSiteBillVote vote) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getVoteInfoString(vote.getVoteId()))
+                .append("\n");
+        for (BillVoteCode code : BillVoteCode.values()) {
+            builder.append(code)
+                    .append(" votes - count: ")
+                    .append(Optional.ofNullable(vote.getVoteCounts().get(code)).orElse(0))
+                    .append("\n");
+            for (int memberId : vote.getVoteRoll().get(code)) {
+                String shortName;
+                try {
+                    FullMember member = memberService.getMemberById(memberId);
+                    shortName = member.getLatestSessionMember()
+                            .orElseThrow(MemberNotFoundEx::new)
+                            .getLbdcShortName();
+                } catch (MemberNotFoundEx ex) {
+                    shortName = "Unknown id: " + memberId;
+                }
+                builder.append("    ")
+                        .append(shortName)
+                        .append("\n");
+            }
+        }
+        return builder.toString();
+    }
+
+    private TreeMap<BillVoteId, SenateSiteBillVote> getVoteMap(Collection<SenateSiteBillVote> votes, BillId billId) {
+        return votes.stream()
+                .collect(toMap(SenateSiteBillVote::getVoteId, Function.identity(), (a, b) -> b, TreeMap::new));
     }
 }

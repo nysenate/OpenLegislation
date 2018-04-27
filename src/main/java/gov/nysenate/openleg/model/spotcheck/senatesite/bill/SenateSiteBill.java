@@ -49,6 +49,8 @@ public class SenateSiteBill {
     protected String lawCode;
     protected String lawSection;
 
+    protected List<SenateSiteBillVote> votes;
+
     public SenateSiteBill(LocalDateTime referenceDateTime) {
         this.referenceDateTime = referenceDateTime;
     }
@@ -259,5 +261,13 @@ public class SenateSiteBill {
 
     public void setChamber(String chamber) {
         this.chamber = chamber;
+    }
+
+    public List<SenateSiteBillVote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<SenateSiteBillVote> votes) {
+        this.votes = votes;
     }
 }

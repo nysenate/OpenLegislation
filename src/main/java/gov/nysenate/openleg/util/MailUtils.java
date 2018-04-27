@@ -24,7 +24,9 @@ public class MailUtils {
     @Value("${mail.smtp.user:}") private String smtpUser;
     @Value("${mail.smtp.password:}") private String smtpPass;
     @Value("${mail.debug:false}") private boolean debug;
-    @Value("${mail.smtp.starttls.enable:}") private boolean stlsEnable;
+    @Value("${mail.smtp.starttls.enable:false}") private boolean stlsEnable;
+    @Value("${mail.smtp.ssl.enable:true}") private boolean sslEnable;
+    @Value("${mail.smtp.ssl.protocols:TLSv1.2}") private String sslProtocol;
 
     @Value("${mail.store.protocol:imaps}") private String storeProtocol;
     @Value("${mail.imaps.ssl.protocols:SSLv3}") private String imapsSSLProtocol;
@@ -39,9 +41,12 @@ public class MailUtils {
 
         mailProperties.put("mail.smtp.auth", auth);
         mailProperties.put("mail.smtp.starttls.enable", stlsEnable);
+        mailProperties.put("mail.smtp.ssl.enable", sslEnable);
+        mailProperties.put("mail.smtp.ssl.protocols", sslProtocol);
 
         mailProperties.put("mail.smtp.user", smtpUser);
         mailProperties.put("mail.smtp.pass", smtpPass);
+        mailProperties.put("mail.smtp.from", environment.getEmailFromAddress());
 
         mailProperties.put("mail.debug", debug);
 

@@ -98,7 +98,7 @@ public class Environment
     @Value ("${spotcheck.openleg_ref.api.key}") private String openlegRefApiKey;
 
     @Value ("${spotcheck.openleg_ref.url}") private String openlegRefUrl;
-    
+
     /** Sets queue sizes for nysenate.gov bill report */
     @Value("${spotcheck.website.bill.ref_queue_size:500}")
     private int sensiteBillRefQueueSize;
@@ -117,6 +117,9 @@ public class Environment
     /** Incoming emails are stored in the receiving folder and archived in the processed folder */
     @Value("${checkmail.receiving}") private String emailReceivingFolder;
     @Value("${checkmail.processed}") private String emailProcessedFolder;
+
+    /** The return address on outbound emails */
+    @Value("${mail.smtp.from}") private String emailFromAddress;
 
     /** --- Notifications --- */
     @Value("${notifications.enabled}")
@@ -405,5 +408,13 @@ public class Environment
 
     public void setSensiteBillDataQueueSize(int sensiteBillDataQueueSize) {
         this.sensiteBillDataQueueSize = sensiteBillDataQueueSize;
+    }
+
+    public String getEmailFromAddress() {
+        return emailFromAddress;
+    }
+
+    public void setEmailFromAddress(String emailFromAddress) {
+        this.emailFromAddress = emailFromAddress;
     }
 }

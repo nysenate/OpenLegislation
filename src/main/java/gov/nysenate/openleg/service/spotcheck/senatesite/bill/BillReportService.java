@@ -39,15 +39,15 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
     private final PipelineFactory pipelineFactory;
     private final BillIdSpotCheckReportDao billReportDao;
     private final SenateSiteDao senateSiteDao;
-    private final BillJsonParser billJsonParser;
+    private final SenateSiteBillJsonParser billJsonParser;
     private final BillDataService billDataService;
-    private final BillCheckService billCheckService;
+    private final SenateSiteBillCheckService billCheckService;
 
     @Autowired
     public BillReportService(Environment env, PipelineFactory pipelineFactory,
                              BillIdSpotCheckReportDao billReportDao, SenateSiteDao senateSiteDao,
-                             BillJsonParser billJsonParser, BillDataService billDataService,
-                             BillCheckService billCheckService) {
+                             SenateSiteBillJsonParser billJsonParser, BillDataService billDataService,
+                             SenateSiteBillCheckService billCheckService) {
         this.env = env;
         this.pipelineFactory = pipelineFactory;
         this.billReportDao = billReportDao;

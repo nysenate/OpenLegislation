@@ -64,7 +64,7 @@ public class AgendaJsonParser extends JsonParser {
         agenda.setAddendum(addendum);
         agenda.setLocation(getValue(agendaNode, "field_ol_agenda_location"));
         agenda.setNotes(getValue(agendaNode, "field_ol_agenda_notes"));
-        agenda.setMeetingDateTime(getDateTimeValue(agendaNode, "field_ol_meeting_date"));
+        agenda.setMeetingDateTime(parseUnixTimeValue(agendaNode, "field_ol_meeting_date"));
         List<SenateSiteAgendaBill> agendaBills =
                 getListValue(agendaNode, "field_ol_agenda_bills", this::parseBillNode);
         agenda.setAgendaBills(agendaBills);

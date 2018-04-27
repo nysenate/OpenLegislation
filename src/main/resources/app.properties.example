@@ -217,11 +217,14 @@ checkmail.receiving = OpenLegislationTest/LRSAutomated
 checkmail.processed = OpenLegislationTest/LRSProcessed
 
 # Connection information for sending emails
-mail.smtp.host = imap.gmail.com
-mail.smtp.port = 587
+mail.smtp.host =
+mail.smtp.port =
 mail.smtp.auth = true
-mail.smtp.starttls.enable = true
-mail.smtp.user = nysenatedev
+mail.smtp.starttls.enable = false
+mail.smtp.ssl.enable = true
+mail.smtp.ssl.protocols = TLSv1.2
+mail.smtp.user =
+mail.smtp.from = openleg-test-no-reply
 mail.smtp.password =
 mail.debug = false
 

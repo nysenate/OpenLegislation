@@ -1188,6 +1188,8 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 1139	961	assembly	t	Daniel Rosenthal
 1140	350	senate	t	Brian Kavanagh
 1141	963	assembly	f	Al Taylor
+1142	493	senate	t	Luis Sepúlveda
+1143	445	senate	t	Shelley Mayer
 \.
 
 
@@ -2329,6 +2331,8 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1136	1139	ROSENTHAL D	2017	27	f
 1137	1140	KAVANAGH	2017	26	f
 1139	1141	TAYLOR	2017	71	f
+1140	1142	SEPULVEDA	2017	32	f
+1141	1143	MAYER	2017	39	f
 \.
 
 
