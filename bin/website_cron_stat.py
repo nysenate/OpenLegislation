@@ -37,7 +37,7 @@ class ImportRun:
         return self.end - self.start
     
 run_line_prefix = "^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - "
-run_line_suffix = " default website cron tasks for \[(\w+)\] environment"
+run_line_suffix = " (?:default|import) website cron tasks for \[(\w+)\] environment"
 start_line_re = re.compile(run_line_prefix + "Running" + run_line_suffix)
 end_line_re = re.compile(run_line_prefix + "Completed execution of" + run_line_suffix)
 timestamp_format = "%Y-%m-%d %H:%M:%S"
@@ -95,15 +95,17 @@ def plot_run_duration(runs, save_file=None, relative_time=False):
         start_time_fn = lambda run: run.get_relative_start()
     start_times =  list(map(start_time_fn, runs))
     durations = list(map(lambda run: run.get_duration().total_seconds(), runs))
+    minute_durations = list(map(lambda seconds: seconds / 60, durations))
     fig, ax = pyplot.subplots()
-    ax.plot_date(start_times, durations)
-    ax.set(xlabel="Run Start", ylabel="Run Duration (s)", 
+    ax.plot_date(start_times, minute_durations)
+    ax.set(xlabel="Run Start", ylabel="Run Duration (minutes)",
            title="Updates Import Run Times - " + instance)
     ax.grid()
     pyplot.annotate(get_stats(runs), (0,0), (0, -20), 
                     xycoords='axes fraction', 
                     textcoords='offset points', 
                     va='top')
+    ax.axhline(5, color='red')
     
     if save_file:
         print('saving graph to ' + save_file)
