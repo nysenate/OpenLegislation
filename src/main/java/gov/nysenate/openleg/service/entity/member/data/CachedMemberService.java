@@ -207,11 +207,11 @@ public class CachedMemberService implements MemberService, CachingService<Intege
     @Override
     public void updateMembers(List<SessionMember> sessionMembers) {
         Collection<? extends Person> persons = sessionMembers.stream()
-                .collect(Collectors.toMap(Person::getPersonId, Function.identity()))
+                .collect(Collectors.toMap(Person::getPersonId, Function.identity(), (a,b) -> b))
                 .values();
 
         Collection<SessionMember> members = sessionMembers.stream()
-                .collect(Collectors.toMap(SessionMember::getMemberId, Function.identity()))
+                .collect(Collectors.toMap(SessionMember::getMemberId, Function.identity(), (a,b) -> b))
                 .values();
 
         persons.forEach(memberDao::updatePerson);
