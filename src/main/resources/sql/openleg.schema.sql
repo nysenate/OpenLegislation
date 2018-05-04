@@ -240,6 +240,10 @@ BEGIN
   ELSE
     agenda_no := OLD.agenda_no;
     year := OLD.year;
+    SELECT f.fragment_id, f.published_date_time
+    INTO fragment_id, published_date_time
+    FROM master.sobi_fragment f
+    WHERE f.process_start_date_time = (SELECT MAX(process_start_date_time) FROM master.sobi_fragment);
   END IF;
   IF TG_OP IN ('UPDATE', 'DELETE')
   THEN
@@ -302,6 +306,10 @@ BEGIN
   ELSE
     bill_print_no := OLD.bill_print_no;
     bill_session_year := OLD.bill_session_year;
+    SELECT f.fragment_id, f.published_date_time
+    INTO fragment_id, published_date_time
+    FROM master.sobi_fragment f
+    WHERE f.process_start_date_time = (SELECT MAX(process_start_date_time) FROM master.sobi_fragment);
   END IF;
 
   IF TG_OP IN ('UPDATE', 'DELETE')
@@ -372,6 +380,10 @@ BEGIN
   ELSE
     calendar_no := OLD.calendar_no;
     calendar_year := OLD.calendar_year;
+    SELECT f.fragment_id, f.published_date_time
+    INTO fragment_id, published_date_time
+    FROM master.sobi_fragment f
+    WHERE f.process_start_date_time = (SELECT MAX(process_start_date_time) FROM master.sobi_fragment);
   END IF;
 
   IF TG_OP IN ('UPDATE', 'DELETE')
