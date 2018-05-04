@@ -3579,6 +3579,7 @@ CREATE TABLE sobi_fragment (
     text text,
     sequence_no smallint NOT NULL,
     processed_count smallint DEFAULT 0 NOT NULL,
+    process_start_date_time timestamp without time zone,
     processed_date_time timestamp without time zone,
     staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
     pending_processing boolean NOT NULL,
@@ -3678,6 +3679,13 @@ COMMENT ON COLUMN sobi_fragment.manual_fix IS 'Indicates if the contents of the 
 --
 
 COMMENT ON COLUMN sobi_fragment.manual_fix_notes IS 'Description of any manual changes made (if applicable)';
+
+
+--
+-- Name: COLUMN sobi_fragment.process_start_date_time; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN sobi_fragment.process_start_date_time IS 'Timestamp of the last time processing was initiated for this fragment';
 
 
 --
@@ -5966,6 +5974,13 @@ CREATE INDEX notification_digest_subscription_next_digest_index ON notification_
 --
 
 CREATE INDEX sobi_fragment_published_date_time_idx ON sobi_fragment USING btree (published_date_time);
+
+
+--
+-- Name: sobi_fragment_process_start_date_time_idx; Type: INDEX; Schema: master; Owner: postgres
+--
+
+CREATE INDEX sobi_fragment_process_start_date_time_idx ON sobi_fragment USING BTREE (process_start_date_time);
 
 
 --
