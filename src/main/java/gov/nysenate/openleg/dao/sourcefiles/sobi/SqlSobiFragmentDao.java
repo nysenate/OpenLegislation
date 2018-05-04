@@ -127,6 +127,7 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
         params.addValue("pendingProcessing", fragment.isPendingProcessing());
         params.addValue("manualFix", fragment.isManualFix());
         params.addValue("manualFixNotes", fragment.getManualFixNotes());
+        params.addValue("processStartDateTime", fragment.getProcessStartDateTime());
         return params;
     }
 
@@ -173,6 +174,7 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
             fragment.setProcessedDateTime(getLocalDateTimeFromRs(rs, "processed_date_time"));
             fragment.setManualFix(rs.getBoolean("manual_fix"));
             fragment.setManualFixNotes(rs.getString("manual_fix_notes"));
+            fragment.setProcessStartDateTime(getLocalDateTimeFromRs(rs, "process_start_date_time"));
             return fragment;
         }
     }

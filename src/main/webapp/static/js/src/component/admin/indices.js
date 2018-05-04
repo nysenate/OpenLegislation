@@ -50,9 +50,7 @@ adminModule.controller('IndicesCtrl', ['$scope', '$timeout', '$mdDialog', 'Index
                 $scope.indices = $scope.indexResp.result.items;
                 $scope.indices.unshift("ALL");
             }
-        }, function (resp) {
-            $scope.showErrorMessage(resp)
-        });
+        }, $scope.showErrorMessage);
     };
 
     // Confirmation prompt for CLEARING the elastic search index

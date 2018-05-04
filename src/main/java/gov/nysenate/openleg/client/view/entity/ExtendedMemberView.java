@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.entity.SessionMember;
 
 public class ExtendedMemberView extends MemberView {
 
-    protected boolean alternate;
     protected boolean incumbent;
 
     protected int personId;
@@ -25,7 +24,6 @@ public class ExtendedMemberView extends MemberView {
     public ExtendedMemberView(SessionMember member) {
         super(member);
         if (member != null) {
-            this.alternate = member.isAlternate();
             this.incumbent = member.isIncumbent();
             this.personId = member.getPersonId();
             this.prefix = member.getPrefix();
@@ -60,10 +58,6 @@ public class ExtendedMemberView extends MemberView {
         member.setEmail(this.email);
         member.setVerified(this.verified);
         return member;
-    }
-
-    public boolean isAlternate() {
-        return alternate;
     }
 
     public boolean isIncumbent() {

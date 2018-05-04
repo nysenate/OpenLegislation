@@ -11,7 +11,7 @@
                 <md-progress-linear class="md-warn" md-mode="query" ng-disabled="!clearing[index]"></md-progress-linear>
             </div>
             <div layout="row" layout-align="center center" class="gray3-bg">
-                <md-button class="md-raised md-hue-3" ng-click="showClearConfirm(index)" ng-disabled="isProcessing()">
+                    <md-button class="md-raised md-hue-3" ng-click="showClearConfirm(index)" ng-disabled="isProcessing()">
                     <span class="red1">Clear</span>
                 </md-button>
                 <md-button class="md-raised md-hue-2" ng-click="showRebuildConfirm(index)" ng-disabled="isProcessing()">

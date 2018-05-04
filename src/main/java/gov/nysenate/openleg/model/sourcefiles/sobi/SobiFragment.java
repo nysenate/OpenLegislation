@@ -36,6 +36,9 @@ public class SobiFragment extends BaseSourceData
     /** The actual text body of the fragment. */
     private String text;
 
+    /** The last time processing was initiated for the fragment */
+    private LocalDateTime processStartDateTime = null;
+
     /** --- Constructors --- */
 
     public SobiFragment(SourceFile parentSobiFile, SobiFragmentType type, String text, int sequenceNo) {
@@ -137,6 +140,10 @@ public class SobiFragment extends BaseSourceData
         return parentSobiFile.getPublishedDateTime();
     }
 
+    public void startProcessing() {
+        this.processStartDateTime = LocalDateTime.now();
+    }
+
     /** --- Basic Getters/Setters --- */
 
     public SourceFile getParentSobiFile() {
@@ -157,5 +164,13 @@ public class SobiFragment extends BaseSourceData
 
     public int getSequenceNo() {
         return sequenceNo;
+    }
+
+    public LocalDateTime getProcessStartDateTime() {
+        return processStartDateTime;
+    }
+
+    public void setProcessStartDateTime(LocalDateTime processStartDateTime) {
+        this.processStartDateTime = processStartDateTime;
     }
 }

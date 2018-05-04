@@ -146,6 +146,8 @@ public class ManagedSobiProcessService implements SobiProcessService {
         logger.debug((fragments.isEmpty()) ? "No more fragments to process"
                 : "Iterating through {} fragments", fragments.size());
         for (SobiFragment fragment : processConfig.filterFileFragments(fragments)) {
+            fragment.startProcessing();
+            sobiFragmentDao.updateSobiFragment(fragment);
             // Hand off processing to specific implementations based on fragment type.
             if (processorMap.containsKey(fragment.getType())) {
                 processorMap.get(fragment.getType()).process(fragment);
