@@ -127,9 +127,6 @@ public class CachedMemberService implements MemberService, CachingService<Intege
     /** {@inheritDoc} */
     @Override
     public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");
-        }
         try {
             return memberDao.getMemberById(memberId, sessionYear);
         }
@@ -140,9 +137,6 @@ public class CachedMemberService implements MemberService, CachingService<Intege
 
     @Override
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Member Id cannot be less than or equal to 0.");
-        }
         return memberDao.getMemberById(memberId);
     }
 
@@ -213,11 +207,11 @@ public class CachedMemberService implements MemberService, CachingService<Intege
     @Override
     public void updateMembers(List<SessionMember> sessionMembers) {
         Collection<? extends Person> persons = sessionMembers.stream()
-                .collect(Collectors.toMap(Person::getPersonId, Function.identity()))
+                .collect(Collectors.toMap(Person::getPersonId, Function.identity(), (a,b) -> b))
                 .values();
 
         Collection<SessionMember> members = sessionMembers.stream()
-                .collect(Collectors.toMap(SessionMember::getMemberId, Function.identity()))
+                .collect(Collectors.toMap(SessionMember::getMemberId, Function.identity(), (a,b) -> b))
                 .values();
 
         persons.forEach(memberDao::updatePerson);

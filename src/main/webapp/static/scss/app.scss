@@ -1770,3 +1770,203 @@ md-dialog.issuedialog {
     text-align: center
   }
 }
+
+/** --- Member Management Admin Page --- */
+
+.member-content-section {
+  max-width: 1100px;
+  margin: 1em auto auto auto;
+}
+
+.member-header-section {
+  max-width: 1100px;
+  margin: 1em auto auto auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.member-header {
+  margin: 0;
+}
+
+.member-toggle {
+  text-decoration: underline;
+  position:relative;
+  bottom:0;
+  padding-bottom: 7px;
+  cursor: pointer;
+}
+
+.member-total-results {
+  display:inline;
+  font-size: 16px;
+  padding: 0 5px;
+}
+
+.member-table-row {
+  display:flex;
+  height: 50px;
+  align-items: center;
+}
+
+.member-table-row:nth-child(even) {
+  background-color: lightblue;
+}
+
+.member-table-row:nth-child(odd) {
+  background-color: rgb(238,238,239);
+}
+
+.member-table-item {
+  display: inline;
+  margin: 0 1em;
+  min-width: 200px;
+}
+
+.member-table-button {
+  margin-left: auto;
+  height: 40px;
+}
+
+.member-text-center {
+  text-align: center;
+}
+
+.verify-content-section {
+  max-width: 1200px;
+  margin: 1em auto auto auto;
+}
+
+.verify-card-margin {
+  margin: 10px 50px;
+}
+
+.verify-create-new {
+  border: black solid 1px;
+}
+
+.verify-table-row {
+  display:flex;
+  height: 90px;
+  align-items: center;
+  width: 80%;
+  margin: auto;
+}
+
+.verify-table-row:hover {
+  -webkit-filter: brightness(70%);
+  -webkit-transition: all 1s ease;
+  -moz-transition: all 1s ease;
+  -o-transition: all 1s ease;
+  -ms-transition: all 1s ease;
+  transition: all 1s ease;
+}
+
+.verify-table-row:nth-child(even) {
+  background-color: lightblue;
+}
+
+.verify-table-row:nth-child(odd) {
+  background-color: rgb(238,238,239);
+}
+
+.verify-icon {
+  font-size: 65px;
+  vertical-align: middle;
+  margin: auto 15px auto 2px;
+}
+
+.verify-image-small {
+  width: 53.6px;
+  height: 80px;
+  margin-left: 10px;
+  border: solid black 1px;
+}
+
+.verify-image {
+  border: solid black 1px;
+  float: left;
+}
+
+.verify-search {
+  width:80%;
+  display:block;
+  margin:auto 10% 15px 10%;
+}
+
+.verify-button {
+  background-color:rgb(0,139,186) !important;
+  color: white !important;
+}
+
+.verify-disabled {
+  background-color: lightgrey !important;
+  cursor: not-allowed !important;
+}
+
+.verify-disabled-checkbox {
+  display: flex;
+  background-color: lightgrey !important;
+  cursor: not-allowed !important;
+  width: 20px !important;
+}
+
+.verify-basic-info {
+  margin: 10px 0;
+  padding-top: 30px;
+}
+
+.verify-required {
+  font-size: 0.5em;
+}
+
+.member-info {
+  margin-left: 110px;
+  margin-right: 50px;
+  float:left;
+}
+
+.member-even-columns {
+  width:50%;
+  float:left;
+}
+
+.member-uneven-columns-1 {
+  float:left; width:33%;
+}
+
+.member-uneven-columns-2 {
+  float:left; width:67%;
+}
+
+.member-session-map-container {
+  display:block;
+  margin-left:110px;
+  margin-right:130px
+}
+
+.member-session-map:nth-child(even) {
+  background-color: lightblue;
+}
+
+.member-session-map:nth-child(odd) {
+  background-color: rgb(238,238,239);
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.red {
+  color: red;
+}
+
+.grey {
+  color: grey;
+}
+
+.bold {
+  font-weight: bold;
+}
+

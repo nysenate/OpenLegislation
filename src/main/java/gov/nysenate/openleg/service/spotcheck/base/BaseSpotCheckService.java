@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceType>
         implements SpotCheckService<ContentKey, ContentType, ReferenceType> {
@@ -69,7 +70,7 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(toString)
-                .reduce((a, b) -> a + split + b)
-                .orElse("");
+                .collect(Collectors.joining(split));
     }
+
 }

@@ -10,6 +10,8 @@ public class SimpleMemberView implements ViewObject
     protected String shortName;
     protected int sessionYear;
     protected String chamber;
+    protected Integer districtCode;
+    protected boolean alternate;
 
     protected SimpleMemberView(){}
 
@@ -20,6 +22,8 @@ public class SimpleMemberView implements ViewObject
             this.shortName = member.getLbdcShortName();
             this.sessionYear = member.getSessionYear().getYear();
             this.chamber = (member.getChamber() != null) ? member.getChamber().name() : null;
+            this.districtCode = member.getDistrictCode();
+            this.alternate = member.isAlternate();
         }
     }
 
@@ -41,6 +45,14 @@ public class SimpleMemberView implements ViewObject
 
     public String getChamber() {
         return chamber;
+    }
+
+    public Integer getDistrictCode() {
+        return districtCode;
+    }
+
+    public boolean isAlternate() {
+        return alternate;
     }
 
     @Override

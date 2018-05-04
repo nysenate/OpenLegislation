@@ -7,7 +7,6 @@ import gov.nysenate.openleg.model.sobi.SobiFile;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.util.DateUtils;
-import org.apache.commons.io.FileExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -266,6 +264,7 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
             fragment.setProcessedDateTime(getLocalDateTimeFromRs(rs, "processed_date_time"));
             fragment.setManualFix(rs.getBoolean("manual_fix"));
             fragment.setManualFixNotes(rs.getString("manual_fix_notes"));
+            fragment.setProcessStartDateTime(getLocalDateTimeFromRs(rs, "process_start_date_time"));
             return fragment;
         }
     }
@@ -320,6 +319,7 @@ public class SqlFsSobiDao extends SqlBaseDao implements SobiDao
         params.addValue("pendingProcessing", fragment.isPendingProcessing());
         params.addValue("manualFix", fragment.isManualFix());
         params.addValue("manualFixNotes", fragment.getManualFixNotes());
+        params.addValue("processStartDateTime", toDate(fragment.getProcessStartDateTime()));
         return params;
     }
 }

@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.service.mail;
 
-import gov.nysenate.openleg.model.mail.MessageBuilder;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.util.MailUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
@@ -9,17 +9,21 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.mail.Address;
-import javax.mail.MessagingException;
 
 
 @Service
 public class MimeSendMailService implements SendMailService {
 
-    @Autowired
-    private MailUtils mailUtils;
+    private final MailUtils mailUtils;
+    private final Environment env;
 
     private MailSender mailSender;
+
+    @Autowired
+    public MimeSendMailService(MailUtils mailUtils, Environment env) {
+        this.mailUtils = mailUtils;
+        this.env = env;
+    }
 
     @PostConstruct
     public void init() {
@@ -42,14 +46,12 @@ public class MimeSendMailService implements SendMailService {
         mailSender.send(message);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void sendMessage(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        mailSender.send(message);
+        sendMessage(to, env.getEmailFromAddress(), subject, text);
     }
 
     /**

@@ -19,6 +19,7 @@
 # Revised: 2017-08-24 - Modify --qa option to use spotcheck-dump drush command
 # Revised: 2017-10-10 - Add --accum option to run Drupal accumulator integrity
 # Revised: 2018-02-22 - Add new process-queues drush command
+# Revised: 2018-05-01 - Add --import-all and --import-leg options
 #
 
 PATH=$PATH:/usr/local/bin
@@ -28,7 +29,7 @@ prog=`basename $0`
 penv=$DEFAULT_ENV
 
 usage() {
-  echo "Usage: $prog [--qa | --maint | --accum | --update-statutes | --disqus] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
+  echo "Usage: $prog [--import-all | --import-leg | --qa | --maint | --accum | --update-statutes | --disqus] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
   echo "  where 'environ' is typically one of: live, test, dev" >&2
 }
 
@@ -40,11 +41,14 @@ run_module_cron() {
 }
 
 
-mode=default
+mode=import
+scope=all
 drush_args=
 
 while [ $# -gt 0 ]; do
   case "$1" in
+    --import-all|--ia) mode=import; scope=all ;;
+    --import-leg|--il) mode=import; scope=leg ;;
     --qa) mode=qa ;;
     --maint) mode=maint ;;
     --accum) mode=accum ;;
@@ -120,13 +124,10 @@ elif [ "$mode" = "uas" ]; then
   pdrush @$penv structure-clear-range-statutes -y $drush_args
   pdrush @$penv update-all-statutes --force -y $drush_args
 
-else
+elif [ "$mode" = "import" ]; then
 
   echo "About to import bills"
   pdrush @$penv bill-import $drush_args
-
-  echo "About to process subscription queues for notifications"
-  pdrush @$penv process-queues $drush_args
 
   echo "About to import agendas"
   pdrush @$penv agenda-import $drush_args
@@ -137,14 +138,25 @@ else
   echo "About to import transcripts"
   pdrush @$penv transcript-import $drush_args
 
-  echo "About to import Twitter data"
-  pdrush @$penv twitter-import $drush_args
+  if [ "$scope" = "all" ]; then
+    echo "About to process subscription queues for notifications"
+    pdrush @$penv process-queues $drush_args
 
-  echo "About to index new content in Solr"
-  pdrush @$penv solr-index $drush_args
+    echo "About to import Twitter data"
+    pdrush @$penv twitter-import $drush_args
 
-  echo "About to clear items from the cache_form table"
-  pdrush @$penv safe-cache-form-clear
+    echo "About to index new content in Solr"
+    pdrush @$penv solr-index $drush_args
+
+    echo "About to clear items from the cache_form table"
+    pdrush @$penv safe-cache-form-clear
+  fi
+
+else
+
+  echo "$prog: $mode: Invalid mode specified" >&2
+  usage
+  exit 1
 fi
 
 ts=`date +"%Y-%m-%d %H:%M:%S"`

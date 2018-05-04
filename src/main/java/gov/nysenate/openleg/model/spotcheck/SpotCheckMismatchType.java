@@ -51,6 +51,8 @@ public enum SpotCheckMismatchType
     BILL_SUMMARY("Summary", SENATE_SITE_BILLS),
     BILL_LAW_CODE("Law Code", SENATE_SITE_BILLS),
     BILL_TEXT("Full Text", SENATE_SITE_BILLS),
+    BILL_VOTE_INFO("Bill Vote Info", SENATE_SITE_BILLS),
+    BILL_VOTE_ROLL("Bill Vote Roll", SENATE_SITE_BILLS),
 
 
     /** --- Active List data mismatches --- */

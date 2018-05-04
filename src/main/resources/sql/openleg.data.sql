@@ -789,6 +789,10 @@ COPY person (id, full_name, first_name, middle_name, last_name, email, prefix, s
 959	Christine Pellegrino	Christine		Pellegrino	pellegrinoc@nyassembly.gov	Assembly Member		t	no_image.jpg
 961	Daniel Rosenthal	Daniel	\N	Rosenthal	\N	Assembly Member		t	no_image.jpg
 963	Al Taylor	Al	\N	Taylor	taylora@nyassembly.gov	Assembly Member		t	no_image.jpg
+964	Harvey Epstein	Harvey	\N	Epstein	\N	Assembly Member		t	no_image.jpg
+965	Ari Espinal	Ari	\N	Espinal	\N	Assembly Member		t	no_image.jpg
+966	Nathalia Fernandez	Nathalia	\N	Fernandez	\N	Assembly Member		t	no_image.jpg
+967	Steve Stern	Steve	\N	Stern	\N	Assembly Member		t	no_image.jpg
 \.
 
 
@@ -1188,6 +1192,12 @@ COPY member (id, person_id, chamber, incumbent, full_name) FROM stdin;
 1139	961	assembly	t	Daniel Rosenthal
 1140	350	senate	t	Brian Kavanagh
 1141	963	assembly	f	Al Taylor
+1142	493	senate	t	Luis Sepúlveda
+1143	445	senate	t	Shelley Mayer
+1144	964	assembly	t	Harvey Epstein
+1145	965	assembly	t	Ari Espinal
+1146	966	assembly	t	Nathalia Fernandez
+1147	967	assembly	t	Steve Stern
 \.
 
 
@@ -2329,6 +2339,12 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1136	1139	ROSENTHAL D	2017	27	f
 1137	1140	KAVANAGH	2017	26	f
 1139	1141	TAYLOR	2017	71	f
+1140	1142	SEPULVEDA	2017	32	f
+1141	1143	MAYER	2017	39	f
+1142	1144	EPSTEIN	2017	74	f
+1143	1145	ESPINAL	2017	39	f
+1144	1146	FERNANDEZ	2017	80	f
+1145	1147	STERN	2017	10	f
 \.
 
 

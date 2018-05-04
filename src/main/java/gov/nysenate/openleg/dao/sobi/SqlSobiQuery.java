@@ -59,15 +59,18 @@ public enum SqlSobiQuery implements BasicSqlQuery
         "SET sobi_file_name = :sobiFileName, published_date_time = :publishedDateTime, " +
         "    fragment_type = :fragmentType, text = :text, sequence_no = :sequenceNo, " +
         "    processed_count = :processedCount, processed_date_time = :processedDateTime, " +
-        "    pending_processing = :pendingProcessing, manual_fix = :manualFix, manual_fix_notes = :manualFixNotes \n" +
+        "    pending_processing = :pendingProcessing, manual_fix = :manualFix, manual_fix_notes = :manualFixNotes,\n" +
+        "    process_start_date_time = :processStartDateTime\n" +
         "WHERE fragment_id = :fragmentId"
     ),
     INSERT_SOBI_FRAGMENT(
         "INSERT INTO ${schema}." + SqlTable.SOBI_FRAGMENT +
         "(sobi_file_name, fragment_id, published_date_time, fragment_type, text, sequence_no, " +
-        " processed_count, processed_date_time, pending_processing, manual_fix, manual_fix_notes)\n" +
-        "VALUES (:sobiFileName, :fragmentId, :publishedDateTime, :fragmentType, :text, :sequenceNo," +
-        "        :processedCount, :processedDateTime, :pendingProcessing, :manualFix, :manualFixNotes)"
+        " processed_count, processed_date_time, pending_processing, manual_fix, manual_fix_notes,\n" +
+        " process_start_date_time)\n" +
+        "VALUES (:sobiFileName, :fragmentId, :publishedDateTime, :fragmentType, :text, :sequenceNo,\n" +
+        "        :processedCount, :processedDateTime, :pendingProcessing, :manualFix, :manualFixNotes,\n" +
+        "        :processStartDateTime)"
     ),
     DELETE_SOBI_FRAGMENTS(
         "DELETE FROM ${schema}." + SqlTable.SOBI_FRAGMENT + " WHERE sobi_file_name = :sobiFileName"
