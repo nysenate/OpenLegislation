@@ -1,6 +1,11 @@
-package gov.nysenate.openleg.service.scraping;
+package gov.nysenate.openleg.service.scraping.bill;
 
+import com.google.common.collect.*;
+import gov.nysenate.openleg.model.bill.BillVoteCode;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.processor.base.ParseError;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -8,6 +13,14 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +28,7 @@ import java.util.regex.Pattern;
  * Handles parsing of LRS bill scraped html files.
  */
 @Service
-public class BillTextReferenceHtmlParser {
+public class BillScrapeReferenceHtmlParser {
 
     private static final String lrsOutageText = "404 - Processing Error";
     private static final Pattern billIdPattern = Pattern.compile("^([A-z]\\d+)(?:-([A-z]))?$");
@@ -104,8 +117,94 @@ public class BillTextReferenceHtmlParser {
     }
 
     /**
+     * Parses votes from a scraped bill html.
+     * Will ignore Assembly votes.
+     * @param doc
+     * @return A collection of {@link BillScrapeVote} or an empty list if no votes were found.
+     */
+    public Set<BillScrapeVote> parseVotes(Document doc) {
+        Set<BillScrapeVote> votes = new HashSet<>();
+        Element content = doc.getElementById("nv_bot_contents");
+        Elements tables = content.select("table");
+        for (int i = 0; i < tables.size(); i++) {
+            Element table = tables.get(i);
+            if (isVoteSummaryTable(table)) {
+                if (hasSingleVote(table)) {
+                    votes.add(parseSingleVote(table, tables.get(i + 1)));
+                    break;
+                }
+                else {
+                    votes.addAll(parseMultipleVotes(table));
+                    break;
+                }
+            }
+        }
+        return votes;
+    }
+
+    /**
+     * Parses votes from bills with multiple votes.
+     * Ignores Assembly votes.
+     * @param summaryTable The vote summary table.
+     * @return
+     */
+    private List<BillScrapeVote> parseMultipleVotes(Element summaryTable) {
+        List<BillScrapeVote> votes = new ArrayList<>();
+        for (Element voteSummary : summaryTable.select("tr")) {
+            Chamber chamber = Chamber.getValue(elementText(voteSummary.child(2)).split("\\s")[0]);
+            if (chamber.equals(Chamber.SENATE)) {
+                String voteId = voteSummary.select("a[href^=#VOTE").attr("href").replace("#", "");
+                String date = voteSummary.select("a[href^=#VOTE").text().trim();
+                LocalDate voteDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("M/d/yy"));
+
+                Element voteTable = summaryTable.parent().select("a[name=" + voteId + "] ~ table").first();
+                SortedSetMultimap<BillVoteCode, String> voteMap = parseVote(voteTable);
+                votes.add(new BillScrapeVote(voteDate, voteMap));
+            }
+        }
+        return votes;
+    }
+
+    /**
+     * Parses a vote from the summary table and vote table.
+     * @param summaryTable The table containing vote summary data.
+     * @param nextTable The next table after the vote summary table, Should always contain the vote data if
+     *                  this bill only has a single vote.
+     * @return
+     */
+    private BillScrapeVote parseSingleVote(Element summaryTable, Element nextTable) {
+        String date = summaryTable.select("a[href^=#VOTE").text().trim();
+        LocalDate voteDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("M/d/yy"));
+        SortedSetMultimap<BillVoteCode, String> voteMap = parseVote(nextTable);
+        return new BillScrapeVote(voteDate, voteMap);
+    }
+
+    private boolean isVoteSummaryTable(Element table) {
+        return !table.select("a[href^=#VOTE").isEmpty();
+    }
+
+    private boolean hasSingleVote(Element table) {
+        return table.select("a[href^=#VOTE").size() == 1;
+    }
+
+    private SortedSetMultimap<BillVoteCode, String> parseVote(Element voteTable) {
+        SortedSetMultimap<BillVoteCode, String> votes = TreeMultimap.create();
+        Elements entries = voteTable.select("td");
+        for (int i = 0; i < entries.size(); i = i + 2) {
+            votes.put(BillVoteCode.getValue(elementText(entries.get(i))),
+                    elementText(entries.get(i + 1)));
+        }
+        return votes;
+    }
+
+    // Trims and strips &nbsp; from element text and returns it.
+    private String elementText(Element el) {
+        return el.text().replace("\u00a0", "").trim();
+    }
+
+    /**
      * Determines if a bill was missing from LRS.
-     * @param doc A {@link Document} containing the text from a {@link BillTextReferenceFile}.
+     * @param doc A {@link Document} containing the text from a {@link BillScrapeFile}.
      * @return {@code true} if the Bill represented by this Document was missing from LRS,
      *         {@code false} if the bill exists on LRS.
      */
@@ -123,7 +222,8 @@ public class BillTextReferenceHtmlParser {
      * Detects if the document indicates an lrs outage
      * returns true if so
      */
-    public boolean isLrsOutage(Document doc) {
+    public boolean isLrsOutage(String content) throws IOException {
+        Document doc = Jsoup.parse(content, "UTF-8");
         Elements h2Eles = doc.getElementsByTag("h2");
         if (h2Eles.isEmpty()) {
             return false;

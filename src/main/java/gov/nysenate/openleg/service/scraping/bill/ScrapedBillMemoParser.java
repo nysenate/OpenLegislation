@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.scraping;
+package gov.nysenate.openleg.service.scraping.bill;
 
 import gov.nysenate.openleg.util.StringDiffer;
 import org.springframework.stereotype.Repository;

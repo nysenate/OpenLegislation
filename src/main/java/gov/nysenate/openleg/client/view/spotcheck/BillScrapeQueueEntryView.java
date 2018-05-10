@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.client.view.spotcheck;
 
-import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.bill.BaseBillIdView;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeQueueEntry;
 
 import java.time.LocalDateTime;
 

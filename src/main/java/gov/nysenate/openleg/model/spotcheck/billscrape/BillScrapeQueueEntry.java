@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.spotcheck.billtext;
+package gov.nysenate.openleg.model.spotcheck.billscrape;
 
 import gov.nysenate.openleg.model.bill.BaseBillId;
 
