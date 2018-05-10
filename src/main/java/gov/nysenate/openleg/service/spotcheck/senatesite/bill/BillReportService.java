@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 
+import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 @Service
@@ -106,7 +108,9 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
 
         pipeline.addInput(billDump.getDumpFragments());
         // Wait for pipeline to finish and add observations to report
-        report.addObservations(pipeline.run().join());
+        CompletableFuture<ImmutableList<SpotCheckObservation<BillId>>> obsFuture = pipeline.run();
+        List<SpotCheckObservation<BillId>> observations = obsFuture.join();
+        report.addObservations(observations);
 
         // Record ref missing mismatches from unchecked openleg bills
         generateRefMissingObs(billChecker.getUncheckedBaseBillIds(), billChecker.getUncheckedBillIds(), report);
