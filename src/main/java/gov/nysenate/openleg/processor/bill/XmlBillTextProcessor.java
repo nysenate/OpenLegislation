@@ -70,7 +70,7 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
             final String asmno = xmlHelper.getString("@asmno",billTextNode).replaceAll("\n","");
             final String asmamd = xmlHelper.getString("@asmamd",billTextNode).replaceAll("\n","");
             final String action = xmlHelper.getString("@action",billTextNode).replaceAll("\n","");
-            final String billText = billTextNode.getTextContent();//.replaceAll("\n"," ");
+            final String billText = billTextNode.getTextContent();
             Set<BaseBillId> updatedBills = new HashSet<>();
             if (!senhse.isEmpty() && !asmhse.isEmpty()){ // uni bill
                 //update senate
@@ -99,9 +99,9 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
                 billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
                 updatedBills.add(baseBill.getBaseBillId());
             }
-//            updatedBills.forEach(baseBillId ->
-//                    eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-//                            baseBillId, BillUpdateField.FULLTEXT)));
+            updatedBills.forEach(baseBillId ->
+                    eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
+                            baseBillId, BillUpdateField.FULLTEXT)));
         }catch (IOException | SAXException |XPathExpressionException e) {
             throw new ParseError("Error While Parsing Bill Text XML", e);
         }
