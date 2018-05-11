@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
 import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
@@ -8,6 +9,8 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +23,35 @@ import java.io.IOException;
 @Transactional
 public abstract class BaseXmlProcessorTest extends BaseTests {
 
-    @Autowired
-    private SourceFileRefDao sourceFileRefDao;
-    @Autowired
-    private SobiFragmentDao sobiFragmentDao;
+    @Autowired private SourceFileRefDao sourceFileRefDao;
+    @Autowired private SobiFragmentDao sobiFragmentDao;
+    @Autowired private Environment env;
 
     /**
      * @return {@link SobiProcessor} the processor implementation associated with this test
      */
     abstract protected SobiProcessor getSobiProcessor();
+
+    private boolean originalIndexingSetting;
+
+    /**
+     * Store original indexing setting and disable indexing.
+     * Elasticsearch does not support rollbacks,
+     * so we need to prevent elasticsearch indexing when testing the processors.
+     */
+    @Before
+    public void setUp() {
+        originalIndexingSetting = env.isElasticIndexing();
+        env.setElasticIndexing(false);
+    }
+
+    /**
+     * Restore original indexing setting.
+     */
+    @After
+    public void cleanUp() {
+        env.setElasticIndexing(originalIndexingSetting);
+    }
 
     /**
      * Generates a dummy sobi fragment from an xml file
@@ -64,6 +87,9 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
      * @param fragment {@link SobiFragment}
      */
     protected void processFragment(SobiFragment fragment) {
+        // Prevent elastic indexing of saved bills
+        env.setElasticIndexing(false);
+        env.setBillScrapeQueueEnabled(false);
         SobiProcessor processor = getSobiProcessor();
         processor.process(fragment);
         processor.postProcess();
