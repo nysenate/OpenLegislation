@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.bill;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -36,13 +35,15 @@ import java.util.Set;
 @Service
 public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiProcessor {
     private static final Logger logger = LoggerFactory.getLogger(XmlBillTextProcessor.class);
-    @Autowired
-    private XmlHelper xmlHelper;
+
+    private final XmlHelper xmlHelper;
+    private final EventBus eventBus;
 
     @Autowired
-    private EventBus eventBus;
-
-    public XmlBillTextProcessor() {}
+    public XmlBillTextProcessor(XmlHelper xmlHelper, EventBus eventBus) {
+        this.xmlHelper = xmlHelper;
+        this.eventBus = eventBus;
+    }
 
     @Override
     public void init() {
@@ -56,60 +57,63 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
 
     @Override
     public void process(SobiFragment sobiFragment) {
-        LocalDateTime date = sobiFragment.getPublishedDateTime();
         logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             final Document doc = xmlHelper.parse(sobiFragment.getText());
-            final Node billTextNode = xmlHelper.getNode("billtext_html",doc);
-            final int sessionYear = xmlHelper.getInteger("@sessyr",billTextNode);
-            final String senhse = xmlHelper.getString("@senhse",billTextNode).replaceAll("\n","");
-            final String senno = xmlHelper.getString("@senno",billTextNode).replaceAll("\n","");
-            final String senamd = xmlHelper.getString("@senamd",billTextNode).replaceAll("\n","");
-            final String asmhse = xmlHelper.getString("@asmhse",billTextNode).replaceAll("\n","");
-            final String asmno = xmlHelper.getString("@asmno",billTextNode).replaceAll("\n","");
-            final String asmamd = xmlHelper.getString("@asmamd",billTextNode).replaceAll("\n","");
-            final String action = xmlHelper.getString("@action",billTextNode).replaceAll("\n","");
-            final String billText = billTextNode.getTextContent();
+            final Node billTextNode = xmlHelper.getNode("billtext_html", doc);
+
+            final int sessionYear = xmlHelper.getInteger("@sessyr", billTextNode);
+            final String senhse = xmlHelper.getString("@senhse", billTextNode);
+            final String senno = xmlHelper.getString("@senno", billTextNode);
+            final String senamd = xmlHelper.getString("@senamd", billTextNode);
+            final String asmhse = xmlHelper.getString("@asmhse", billTextNode);
+            final String asmno = xmlHelper.getString("@asmno", billTextNode);
+            final String asmamd = xmlHelper.getString("@asmamd", billTextNode);
+            final String action = xmlHelper.getString("@action", billTextNode);
+            // If remove action, set bill text to blank
+            final String billText = "remove".equals(action)
+                    ? ""
+                    : billTextNode.getTextContent();
+
             Set<BaseBillId> updatedBills = new HashSet<>();
-            if (!senhse.isEmpty() && !asmhse.isEmpty()){ // uni bill
-                //update senate
-                final Version senVersion = Version.of(senamd);
-                final Bill senateBill = getOrCreateBaseBill(
-                        sobiFragment.getPublishedDateTime(),
-                        new BillId(senhse + senno, new SessionYear(sessionYear), senVersion),
-                        sobiFragment);
-                senateBill.getAmendment(senVersion).setFullText(billText);
-                billIngestCache.set(senateBill.getBaseBillId(), senateBill, sobiFragment);
-                updatedBills.add(senateBill.getBaseBillId());
-                //update assmbly
-                final Version asmVersion = Version.of(asmamd);
-                final Bill assemblyBill = getOrCreateBaseBill(
-                        sobiFragment.getPublishedDateTime(),
-                        new BillId(asmhse+asmno, new SessionYear(sessionYear), asmVersion),
-                        sobiFragment);
-                assemblyBill.getAmendment(asmVersion).setFullText(billText);
-                billIngestCache.set(assemblyBill.getBaseBillId(), assemblyBill, sobiFragment);
-                updatedBills.add(assemblyBill.getBaseBillId());
+
+            if (!senhse.isEmpty()) {
+                applyBillText(senhse, senno, senamd, sessionYear, billText, sobiFragment, updatedBills);
             }
-            else {
-                final Version version = Version.of(senamd.isEmpty() ? asmamd : senamd);
-                final Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(senhse.isEmpty() ? asmhse + asmno : senhse + senno, new SessionYear(sessionYear), version), sobiFragment);
-                baseBill.getAmendment(version).setFullText(billText);
-                billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
-                updatedBills.add(baseBill.getBaseBillId());
+            if (!asmhse.isEmpty()) {
+                applyBillText(asmhse, asmno, asmamd, sessionYear, billText, sobiFragment, updatedBills);
             }
+
             updatedBills.forEach(baseBillId ->
                     eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
                             baseBillId, BillUpdateField.FULLTEXT)));
-        }catch (IOException | SAXException |XPathExpressionException e) {
+        } catch (IOException | SAXException | XPathExpressionException e) {
+            unit.addException("XML bill text parsing error", e);
             throw new ParseError("Error While Parsing Bill Text XML", e);
+        } finally {
+            postDataUnitEvent(unit);
         }
     }
 
     @Override
     public void postProcess() {
         flushBillUpdates();
+    }
+
+    /* --- Internal Methods --- */
+
+    /**
+     * Applies bill text to a single bill using the values parsed from the billtext html tag
+     */
+    private void applyBillText(String house, String number, String amdVersion, int session,
+                               String billText, SobiFragment fragment, Set<BaseBillId> updatedBills) {
+        final BillId billId = new BillId(house + number, session, amdVersion);
+        final Bill baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), billId, fragment);
+        baseBill.getAmendment(Version.of(amdVersion))
+                .setFullText(billText);
+        billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
+        updatedBills.add(baseBill.getBaseBillId());
     }
 
 }
