@@ -4,8 +4,6 @@ import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.util.BillTextUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +62,7 @@ public class BillTextReferenceHtmlParser {
         }
 
         StringBuilder textBuilder = new StringBuilder();
-        textEles.forEach(ele -> BillTextUtils.processTextNodeWithIterator(ele, textBuilder));
+        textEles.forEach(ele -> BillTextUtils.processTextNode(ele, textBuilder));
         return textBuilder.toString();
     }
 
@@ -77,7 +75,7 @@ public class BillTextReferenceHtmlParser {
         Element memoElement = doc.select("pre:last-of-type").first(); // you are the first and last of your kind
         if (memoElement != null) {
             StringBuilder memoBuilder = new StringBuilder();
-            BillTextUtils.processTextNodeWithIterator(memoElement, memoBuilder);
+            BillTextUtils.processTextNode(memoElement, memoBuilder);
             // todo format text
             return memoBuilder.toString();
         }
