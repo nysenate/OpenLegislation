@@ -4,10 +4,17 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
 import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
+import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -24,6 +31,7 @@ import java.io.IOException;
 @Transactional
 public abstract class BaseXmlProcessorTest extends BaseTests {
 
+    @Autowired private BillDataService billDataService;
     @Autowired private SourceFileRefDao sourceFileRefDao;
     @Autowired private SobiFragmentDao sobiFragmentDao;
     @Autowired private Environment env;
@@ -101,6 +109,16 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     protected void processXmlFile(String xmlFilePath) {
         SobiFragment sobiFragment = generateXmlSobiFragment(xmlFilePath);
         processFragment(sobiFragment);
+    }
+
+    /* --- Test helper methods --- */
+
+    /**
+     * Get a bill amendment from the db
+     */
+    protected BillAmendment getAmendment(BillId billId) throws BillNotFoundEx, BillAmendNotFoundEx {
+        Bill bill = billDataService.getBill(BaseBillId.of(billId));
+        return bill.getAmendment(billId.getVersion());
     }
 
 }

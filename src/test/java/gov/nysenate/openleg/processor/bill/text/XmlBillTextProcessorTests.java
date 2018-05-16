@@ -1,14 +1,10 @@
 package gov.nysenate.openleg.processor.bill.text;
 
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.bill.XmlBillTextProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
-import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +12,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +22,6 @@ public class XmlBillTextProcessorTests extends BaseXmlProcessorTest {
 
     private static final String resourceDir = "processor/bill/text";
 
-    @Autowired private BillDataService billDataService;
     @Autowired private XmlBillTextProcessor xmlBillTextProcessor;
 
     @Override
@@ -127,25 +121,6 @@ public class XmlBillTextProcessorTests extends BaseXmlProcessorTest {
     /* --- Internal Methods --- */
 
     /**
-     * Get a bill amendment from the db
-     */
-    private BillAmendment getAmendment(BillId billId) throws BillNotFoundEx, BillAmendNotFoundEx {
-        Bill bill = billDataService.getBill(BaseBillId.of(billId));
-        return bill.getAmendment(billId.getVersion());
-    }
-
-    /**
-     * Get a bill amendment from the db, returning null if bill/amendment not found exceptions are raised.
-     */
-    private BillAmendment getAmendmentSafe(BillId billId) {
-        try {
-            return getAmendment(billId);
-        } catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
-            return null;
-        }
-    }
-
-    /**
      * Get the full text for a bill id
      */
     private String getPlainText(BillId billId) {
@@ -156,9 +131,11 @@ public class XmlBillTextProcessorTests extends BaseXmlProcessorTest {
      * Get the full text for a bill id that you cannot be sure exists.  Returns null if not exists.
      */
     private String getPlainTextSafe(BillId billId) {
-        return Optional.ofNullable(getAmendmentSafe(billId))
-                .map(BillAmendment::getFullText)
-                .orElse(null);
+        try {
+            return getPlainText(billId);
+        } catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
+            return null;
+        }
     }
 
     /**
@@ -172,8 +149,10 @@ public class XmlBillTextProcessorTests extends BaseXmlProcessorTest {
      * Get the full html text for a bill id that you cannot be sure exists.  Returns null if not exists.
      */
     private String getHtmlTextSafe(BillId billId) {
-        return Optional.ofNullable(getAmendmentSafe(billId))
-                .map(BillAmendment::getFullTextHtml)
-                .orElse(null);
+        try {
+            return getPlainText(billId);
+        } catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
+            return null;
+        }
     }
 }

@@ -1,51 +1,40 @@
-<senate_billmemo sessyr="2017" billhse="S" billno="00957" billamd="A" action="replace"><![CDATA[
-<center><B>NEW YORK STATE SENATE<BR>INTRODUCER'S MEMORANDUM IN SUPPORT<BR>submitted in accordance with Senate Rule VI. Sec 1<br></b></center>
-<STYLE>
-<!--
-U  {color: Green}
-S  {color: RED}
-I  {color: DARKBLUE; background-color:yellow}
-P.brk {page-break-before:always}
--->
-</STYLE>
-<BASEFONT SIZE=3>
-<PRE WIDTH="80">
-<B><U>THIS IS A TEST MEMO.  YOU SHOULD NOT SEE THIS PERSISTED.</U></B>
-&nbsp
-<B><U>BILL NUMBER:</U></B> S957A
- 
-<B><U>SPONSOR:</U></B> CROCI<BR>
-&nbsp
-<B><U>TITLE OF BILL</U></B>:  An act to amend the penal law, in relation to creating
+
+THIS IS A TEST MEMO.  YOU SHOULD NOT SEE THIS PERSISTED.
+ 
+BILL NUMBER: S957A
+
+SPONSOR: CROCI
+ 
+TITLE OF BILL:  An act to amend the penal law, in relation to creating
 the crime of stolen valor
- 
-&nbsp
-<B><U>PURPOSE OR GENERAL IDEA OF BILL</U></B>:
- 
+
+ 
+PURPOSE OR GENERAL IDEA OF BILL:
+
 This bill establishes the new crime of stolen valor and directs that a
 stolen valor fee be assessed against those convicted and deposited in to
 the veterans cemetery fund.
- 
-&nbsp
-<B><U>SUMMARY OF SPECIFIC PROVISIONS</U></B>:
- 
+
+ 
+SUMMARY OF SPECIFIC PROVISIONS:
+
 Sections one amends the penal law by defining member of the military or
 reserves and defining veteran.
- 
+
 Section two amends the penal law by establishing the new crime of stolen
 valor, which is classified as a class E felony.
- 
+
 Section three amends the penal law by establishing a stolen valor fee
 and providing that any person convicted of the crime of stolen valor
 shall pay a stolen valor fee in the amount of $250. Further, this
 section provides that stolen valor fees shall be deposited in to the
 veterans remembrance and cemetery maintenance and operation fund.
- 
+
 Section four provides the effective date.
- 
-&nbsp
-<B><U>JUSTIFICATION</U></B>:
- 
+
+ 
+JUSTIFICATION:
+
 Impersonating the men and women who bravely serve our country for the
 purpose of obtaining money or other benefits is a deplorable act.
 Sadly, occurrences such as these have become all too common. In addition
@@ -56,19 +45,17 @@ operation fund. Requiring these criminals to pay a stolen valor fee,
 which will be used to establish and maintain a state Veterans Cemetery,
 is a fitting way to ensure that our real veterans are honored appropri-
 ately.
- 
-&nbsp
-<B><U>PRIOR LEGISLATIVE HISTORY</U></B>:
- 
+
+ 
+PRIOR LEGISLATIVE HISTORY:
+
 S.5201- 2015/16: Passed in the Senate
- 
-&nbsp
-<B><U>FISCAL IMPLICATIONS</U></B>:
- 
+
+ 
+FISCAL IMPLICATIONS:
+
 None to the State.
- 
-&nbsp
-<B><U>EFFECTIVE DATE</U></B>:
+
+ 
+EFFECTIVE DATE:
 This act shall take effect immediately.
-</pre>
-]]></senate_billmemo>
