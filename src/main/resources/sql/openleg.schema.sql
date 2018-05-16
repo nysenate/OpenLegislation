@@ -1650,6 +1650,7 @@ CREATE TABLE bill_amendment (
     sponsor_memo text,
     act_clause text,
     full_text text,
+    full_text_html text,
     stricken boolean DEFAULT false,
     uni_bill boolean DEFAULT false,
     law_code text,
@@ -1680,6 +1681,13 @@ COMMENT ON COLUMN bill_amendment.law_code IS 'Specifies the sections/chapters of
 --
 
 COMMENT ON COLUMN bill_amendment.law_section IS 'The primary section of law this bill affects';
+
+
+--
+-- Name: COLUMN bill_amendment.full_text_html; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill_amendment.full_text_html IS 'A marked up version of full text.';
 
 
 --

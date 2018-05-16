@@ -87,9 +87,6 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
      * @param fragment {@link SobiFragment}
      */
     protected void processFragment(SobiFragment fragment) {
-        // Prevent elastic indexing of saved bills
-        env.setElasticIndexing(false);
-        env.setBillScrapeQueueEnabled(false);
         SobiProcessor processor = getSobiProcessor();
         processor.process(fragment);
         processor.postProcess();

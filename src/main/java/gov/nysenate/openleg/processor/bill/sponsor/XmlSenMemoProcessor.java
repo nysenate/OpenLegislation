@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,35 +29,42 @@ import java.time.LocalDateTime;
 @Service
 public class XmlSenMemoProcessor extends AbstractMemoProcessor implements SobiProcessor {
 
+    private final XmlHelper xmlHelper;
+
     @Autowired
-    XmlHelper xmlHelper;
+    public XmlSenMemoProcessor(XmlHelper xmlHelper) {
+        this.xmlHelper = xmlHelper;
+    }
 
     @Override
     public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.SENMEMO;    }
+        return SobiFragmentType.SENMEMO;
+    }
 
     @Override
     public void process(SobiFragment fragment) {
         LocalDateTime date = fragment.getPublishedDateTime();
 
-        try{
+        try {
             final Document doc = xmlHelper.parse(fragment.getText());
-            final Node senMemoNode = xmlHelper.getNode("senate_billmemo",doc);
+            final Node senMemoNode = xmlHelper.getNode("senate_billmemo", doc);
             final int year = xmlHelper.getInteger("@sessyr", senMemoNode);
             final String billhse = xmlHelper.getString("@billhse", senMemoNode);
             final int billno = xmlHelper.getInteger("@billno", senMemoNode);
-            final String billamd = xmlHelper.getString("@billamd",senMemoNode);
+            final String billamd = xmlHelper.getString("@billamd", senMemoNode);
             final Version version = Version.of(billamd);
 
-            Bill basebill = getOrCreateBaseBill(date, new BillId(billhse + billno, new SessionYear(year), version), fragment);
+            BillId billId = new BillId(billhse + billno, new SessionYear(year), version);
+
+            Bill basebill = getOrCreateBaseBill(date, billId, fragment);
 
             BillAmendment amendment = basebill.getAmendment(version);
             amendment.setMemo(getNodeText(senMemoNode));
 
 
-            billIngestCache.set(basebill.getBaseBillId(),basebill,fragment);
-        }  catch (IOException | SAXException | XPathExpressionException e) {
-        throw new ParseError("Error While Parsing senate_billMemo", e);
+            billIngestCache.set(basebill.getBaseBillId(), basebill, fragment);
+        } catch (IOException | SAXException | XPathExpressionException e) {
+            throw new ParseError("Error While Parsing senate_billMemo", e);
         }
     }
 
@@ -70,18 +78,19 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements SobiPr
         initBase();
     }
 
-    /*
-    *    Gets text context from a CDATA node
-    *
-    *   @param node - CDATA node
-    *   @return temp.getTextContent() - context of CDATA node
-    */
+    /**
+     * Gets text context from a CDATA node
+     *
+     * @param node - CDATA node
+     * @return temp.getTextContent() - context of CDATA node
+     */
     private String getNodeText(Node node) {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node temp = childNodes.item(i);
             if (temp.getNodeType() == temp.CDATA_SECTION_NODE) {
-                return temp.getTextContent();
+                String htmlMemoText = temp.getTextContent();
+                return BillTextUtils.parseHTMLtext(htmlMemoText);
             }
         }
         return "";

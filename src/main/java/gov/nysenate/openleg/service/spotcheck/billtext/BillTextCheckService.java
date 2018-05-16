@@ -1,15 +1,16 @@
 package gov.nysenate.openleg.service.spotcheck.billtext;
 
-import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -98,7 +99,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
      * normalization if there was a mismatch in the no-whitespace text
      */
     private void checkBillText(BillAmendment billAmendment, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv){
-        String dataText = billAmendment.getStrippedFullText();
+        String dataText = billAmendment.getFullText();
         String refText = reference.getText();
         String strippedDataText = stripNonAlpha(dataText);
         String strippedRefText = stripNonAlpha(refText);

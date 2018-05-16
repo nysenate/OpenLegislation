@@ -131,9 +131,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
         MapSqlParameterSource billParams = new MapSqlParameterSource();
         addBillIdParams(strippedBill, billParams);
-        jdbcNamed.query(SqlBillQuery.SELECT_BILL_TEXT.getSql(schema()), billParams, (RowCallbackHandler) (ResultSet rs) -> {
+        jdbcNamed.query(SqlBillQuery.SELECT_BILL_TEXT.getSql(schema()), billParams, (ResultSet rs) -> {
             BillAmendment ba = strippedBill.getAmendment(Version.of(rs.getString("bill_amend_version")));
             ba.setMemo(rs.getString("sponsor_memo"));
+            ba.setFullTextHtml(rs.getString("full_text_html"));
             ba.setFullText(rs.getString("full_text"));
         });
     }
@@ -710,6 +711,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             amend.setMemo(rs.getString("sponsor_memo"));
             amend.setActClause(rs.getString("act_clause"));
             amend.setFullText(rs.getString("full_text"));
+            amend.setFullTextHtml(rs.getString("full_text_html"));
             amend.setStricken(rs.getBoolean("stricken"));
             amend.setUniBill(rs.getBoolean("uni_bill"));
             amend.setLawSection(rs.getString("law_section"));
@@ -874,6 +876,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         params.addValue("sponsorMemo", amendment.getMemo())
                 .addValue("actClause", amendment.getActClause())
                 .addValue("fullText", amendment.getFullText())
+                .addValue("fullTextHtml", amendment.getFullTextHtml())
                 .addValue("stricken", amendment.isStricken())
                 .addValue("lawSection", amendment.getLawSection())
                 .addValue("lawCode", amendment.getLaw())

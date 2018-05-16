@@ -77,7 +77,7 @@ public enum SqlBillQuery implements BasicSqlQuery
     /** --- Bill Text --- */
 
     SELECT_BILL_TEXT(
-        "SELECT bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, full_text \n" +
+        "SELECT bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, full_text, full_text_html \n" +
         "FROM ${schema}.bill_amendment \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
@@ -96,16 +96,18 @@ public enum SqlBillQuery implements BasicSqlQuery
     ),
     UPDATE_BILL_AMENDMENT(
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-        "SET sponsor_memo = :sponsorMemo, act_clause = :actClause, full_text = :fullText, stricken = :stricken, " +
-        "    uni_bill = :uniBill, last_fragment_id = :lastFragmentId, law_section = :lawSection, law_code = :lawCode\n" +
+        "SET sponsor_memo = :sponsorMemo, act_clause = :actClause,\n" +
+        "    full_text = :fullText, full_text_html = :fullTextHtml,\n" +
+        "    stricken = :stricken, uni_bill = :uniBill, last_fragment_id = :lastFragmentId,\n" +
+        "    law_section = :lawSection, law_code = :lawCode\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     INSERT_BILL_AMENDMENT(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-        "(bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, act_clause, full_text, stricken, " +
-        " uni_bill, last_fragment_id, law_section, law_code)\n" +
-        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, " +
-        "       :uniBill, :lastFragmentId, :lawSection, :lawCode)"
+        "(bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, act_clause, full_text, full_text_html,\n" +
+        "    stricken, uni_bill, last_fragment_id, law_section, law_code)\n" +
+        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :fullTextHtml,\n" +
+        "    :stricken, :uniBill, :lastFragmentId, :lawSection, :lawCode)"
     ),
 
     /** --- Bill Amendment Publish Status --- */

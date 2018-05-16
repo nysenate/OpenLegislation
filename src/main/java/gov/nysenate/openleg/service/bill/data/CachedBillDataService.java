@@ -309,6 +309,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
                 cacheBill.getAmendmentList().stream().forEach(ba -> {
                     ba.setMemo("");
                     ba.setFullText("");
+                    ba.setFullTextHtml("");
                 });
                 this.billCache.put(new Element(cacheBill.getBaseBillId(), cacheBill));
                 // Remove entry from the bill info cache if it exists

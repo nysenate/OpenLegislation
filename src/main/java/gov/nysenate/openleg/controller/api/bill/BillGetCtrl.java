@@ -141,7 +141,7 @@ public class BillGetCtrl extends BaseCtrl
                     amdVersion = parseVersion(request.getParameter("version"), "version");
                 }
                 Bill bill = billData.getBill(baseBillId);
-                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.getValue(), bill.getAmendment(amdVersion).getStrippedFullText());
+                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.getValue(), bill.getAmendment(amdVersion).getFullText());
                 break;
             }
             default: viewObject = new BillView(billData.getBill(baseBillId));
@@ -199,8 +199,8 @@ public class BillGetCtrl extends BaseCtrl
         Bill bill = billData.getBill(baseBillId);
         BillAmendment amend1 = bill.getAmendment(parseVersion(version1, "version1"));
         BillAmendment amend2 = bill.getAmendment(parseVersion(version2, "version2"));
-        String fullText1 = BillTextUtils.formatBillText(bill.isResolution(), amend1.getStrippedFullText());
-        String fullText2 = BillTextUtils.formatBillText(bill.isResolution(), amend2.getStrippedFullText());
+        String fullText1 = BillTextUtils.formatBillText(bill.isResolution(), amend1.getFullText());
+        String fullText2 = BillTextUtils.formatBillText(bill.isResolution(), amend2.getFullText());
         LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(fullText1, fullText2);
         stringDiffer.diff_cleanupEfficiency(diffs);
         stringDiffer.diff_cleanupSemantic(diffs);
