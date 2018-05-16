@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -61,8 +62,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
      */
     protected SobiFragment generateXmlSobiFragment(String xmlFilePath) {
         try {
-            String absolutePath = getClass().getClassLoader().getResource(xmlFilePath).getFile();
-            File file = new File(absolutePath);
+            File file = FileIOUtils.getResourceFile(xmlFilePath);
 
             String contents = FileUtils.readFileToString(file);
 

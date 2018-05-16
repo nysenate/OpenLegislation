@@ -1,11 +1,7 @@
 package gov.nysenate.openleg.processor.bill.text;
 
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
 import gov.nysenate.openleg.util.BillTextUtils;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -15,11 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.BILL_TEXT_CONTENT;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.BILL_TEXT_LINE_OFFSET;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 
 /**
@@ -28,8 +20,7 @@ import static org.junit.Assert.fail;
 @Transactional
 public class BillHTMLparserTest extends BillTextUtils {
 
-    private final File testFileDir = new File(
-           getClass().getClassLoader().getResource("sourcefile/").getFile());
+    private final File testFileDir = FileIOUtils.getResourceFile("sourcefile/");
 
             /**
              * Text XML BillTEXT files

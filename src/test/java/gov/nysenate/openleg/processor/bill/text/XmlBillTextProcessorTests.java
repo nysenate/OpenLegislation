@@ -10,12 +10,11 @@ import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
-import org.apache.commons.io.FileUtils;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -115,10 +114,8 @@ public class XmlBillTextProcessorTests extends BaseXmlProcessorTest {
     public void htmlTextTest() throws IOException {
         final String path = resourceDir + "/2017-01-01-00.00.00.000000_BILLTEXT_S09999.XML";
         final BillId billId = new BillId("S9999", 2017);
-        final String expectedHtml = FileUtils.readFileToString(
-                new File(getClass().getClassLoader().getResource(resourceDir + "/S9999_expected.html").getFile()));
-        final String expectedPlain = FileUtils.readFileToString(
-                new File(getClass().getClassLoader().getResource(resourceDir + "/S9999_expected.txt").getFile()));
+        final String expectedHtml = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.html");
+        final String expectedPlain = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.txt");
 
         assertNotEquals("Preprocessed html is not set", expectedHtml, getHtmlTextSafe(billId));
         assertNotEquals("Preprocessed plaintext is not set", expectedPlain, getPlainTextSafe(billId));

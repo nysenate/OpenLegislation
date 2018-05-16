@@ -237,6 +237,31 @@ public class FileIOUtils
         setCommonFilePermissions(file);
     }
 
+    /**
+     * Gets a file from the resource directory given its relative path.
+     *
+     * @param relativePath String - file path relative to the resource directory
+     * @return File
+     */
+    public static File getResourceFile(String relativePath) {
+        return new File(
+                FileIOUtils.class.getClassLoader().getResource(relativePath).getFile()
+        );
+    }
+
+    /**
+     * Gets a the contents of a file from the resource directory given its relative path.
+     *
+     * @param relativePath String - file path relative to the resource directory
+     * @return File
+     * @throws IOException
+     */
+    public static String getResourceFileContents(String relativePath) throws IOException {
+        return FileUtils.readFileToString(getResourceFile(relativePath));
+    }
+
+    /* --- Internal Methods --- */
+
     private static void setCommonFilePermissions(File file) throws IOException {
         Files.setPosixFilePermissions(Paths.get(file.getAbsolutePath()), filePermissions);
     }
