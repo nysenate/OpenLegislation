@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.processor.bill.anact;
 
-import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,8 @@ import static org.junit.Assert.assertEquals;
 @Transactional
 public class XmlAnActProcessorTest extends BaseXmlProcessorTest {
 
-    @Autowired BillDao billDao;
+    @Autowired
+    BillDataService billDataService;
     @Autowired
     XmlAnActProcessor xmlAnActProcessor;
 
@@ -39,7 +40,7 @@ public class XmlAnActProcessorTest extends BaseXmlProcessorTest {
 
         processXmlFile(anactXmlFilePath);
 
-        Bill b = billDao.getBill(new BillId("S08215", 2015));
+        Bill b = billDataService.getBill(new BaseBillId("S08215", 2015));
         String expectedS = "AN ACT to amend the executive law, in relation to the appointment of\n" +
                 "interpreters to be used in parole board proceedings [altered]";
         String actualClause = b.getAmendment(Version.DEFAULT).getActClause();
@@ -52,7 +53,7 @@ public class XmlAnActProcessorTest extends BaseXmlProcessorTest {
 
         processXmlFile(anactXmlFilePath);
 
-        Bill b = billDao.getBill(new BillId("A05462", 2017));
+        Bill b = billDataService.getBill(new BaseBillId("A05462", 2017));
         String expectedS = "";
         String actualClause = b.getAmendment(Version.DEFAULT).getActClause();
         assertEquals(expectedS, actualClause);

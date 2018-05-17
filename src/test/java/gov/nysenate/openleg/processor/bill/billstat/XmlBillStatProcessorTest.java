@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processor.bill.billstat;
 
-import gov.nysenate.openleg.dao.bill.data.BillDao;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 public class XmlBillStatProcessorTest extends BaseXmlProcessorTest {
 
     @Autowired
-    BillDao billDao;
+    BillDataService billDataService;
     @Autowired
     XmlBillStatProcessor XmlBillStatProcessor;
 
@@ -40,7 +40,7 @@ public class XmlBillStatProcessorTest extends BaseXmlProcessorTest {
 
         processXmlFile(xmlFilePath);
 
-        Bill baseBill = billDao.getBill(new BillId("S04329", 2017));
+        Bill baseBill = billDataService.getBill(new BaseBillId("S04329", 2017));
         String expectedVersion = "";
         String expectedSponsor = "GALLIVAN";
         String expectedLawSec = "General Municipal Law";
@@ -56,7 +56,7 @@ public class XmlBillStatProcessorTest extends BaseXmlProcessorTest {
 
         processXmlFile(xmlFilePath);
 
-        Bill baseBill = billDao.getBill(new BillId("S05795", 2015));
+        Bill baseBill = billDataService.getBill(new BaseBillId("S05795", 2015));
         String expectedVersion = "A";
         String expectedSponsor = "MARCELLINO";
         String expectedLawSec = "Education Law";
@@ -93,7 +93,7 @@ public class XmlBillStatProcessorTest extends BaseXmlProcessorTest {
 
         processXmlFile(xmlFilePath);
 
-        Bill baseBill = billDao.getBill(new BillId("A04833", 2017));
+        Bill baseBill = billDataService.getBill(new BaseBillId("A04833", 2017));
         assertTest(baseBill, "", null, null, null, null);
     }
 

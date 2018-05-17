@@ -1,11 +1,11 @@
 package gov.nysenate.openleg.processor.bill.ldblurb;
 
-import gov.nysenate.openleg.dao.bill.data.BillDao;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.bill.anact.XmlAnActProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 public class XmlLDBlurbProcessorTest extends BaseXmlProcessorTest {
 
     @Autowired
-    BillDao billDao;
+    BillDataService billDataService;
     @Autowired
     XmlLDBlurbProcessor xmlLdBlurbProcessor;
 
@@ -38,7 +38,7 @@ public class XmlLDBlurbProcessorTest extends BaseXmlProcessorTest {
 
         processXmlFile(ldBlurbXmlFilePath);
 
-        Bill b = billDao.getBill(new BillId("K00094", 2017));
+        Bill b = billDataService.getBill(new BaseBillId("K00094", 2017));
         String expectedS = "Johnson, Charles Rodney-Death of";
         String actualClause = b.getLDBlurb();
         assertEquals(expectedS, actualClause);
@@ -50,7 +50,7 @@ public class XmlLDBlurbProcessorTest extends BaseXmlProcessorTest {
 
         processXmlFile(ldBlurbXmlFilePath);
 
-        Bill b = billDao.getBill(new BillId("S03968", 2017));
+        Bill b = billDataService.getBill(new BaseBillId("S03968", 2017));
         String expectedS = "";
         String actualClause = b.getLDBlurb();
         assertEquals(expectedS, actualClause);

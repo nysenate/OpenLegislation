@@ -1,17 +1,16 @@
 package gov.nysenate.openleg.processor.bill;
 
-import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -21,10 +20,8 @@ import static org.junit.Assert.assertTrue;
 
 @Transactional
 public class XmlSenFlVotProcessorTest extends BaseXmlProcessorTest {
-    @Autowired
-    BillDao billDao;
-    @Autowired
-    XmlSenFlVotProcessor xmlSenFlVotProcessor;
+    @Autowired private BillDataService billDataService;
+    @Autowired private XmlSenFlVotProcessor xmlSenFlVotProcessor;
 
     private static final Logger logger = LoggerFactory.getLogger(XmlSenFlVotProcessor.class);
 
@@ -40,7 +37,7 @@ public class XmlSenFlVotProcessorTest extends BaseXmlProcessorTest {
         //Get and Process Sample Floor Votes
         processXmlFile("processor/bill/senFlVot/2017-10-23-10.25.46.989009_SENFLVOT_S00100.XML");
         //Get sample floor votes for this bill
-        Bill baseBill = billDao.getBill(new BillId("S100", 2017));
+        Bill baseBill = billDataService.getBill(new BaseBillId("S100", 2017));
         BillAmendment s100 = baseBill.getAmendment(Version.DEFAULT);
         Map<BillVoteId, BillVote> s100VotesMap = s100.getVotesMap();
         //Check that votes made it into the votes map

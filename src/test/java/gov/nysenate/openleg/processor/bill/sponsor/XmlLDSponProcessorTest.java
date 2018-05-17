@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processor.bill.sponsor;
 
-import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 @Transactional
 public class XmlLDSponProcessorTest extends BaseXmlProcessorTest {
     @Autowired
-    BillDao billDao;
+    BillDataService billDataService;
     @Autowired
     XmlLDSponProcessor xmlLDSponProcessor;
 
@@ -132,7 +132,7 @@ public class XmlLDSponProcessorTest extends BaseXmlProcessorTest {
      */
     private void verifySponsors(BaseBillId billId, String expectedSponsor, boolean isRules, boolean isBudget,
                                 List<String> expectedCoSponsors, List<String> expectedMultiSponsors) {
-        Bill bill = billDao.getBill(billId);
+        Bill bill = billDataService.getBill(billId);
         BillAmendment activeAmend = bill.getActiveAmendment();
 
         Optional<BillSponsor> actualSponsorOpt = Optional.ofNullable(bill.getSponsor());
