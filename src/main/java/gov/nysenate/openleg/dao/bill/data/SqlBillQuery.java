@@ -76,11 +76,18 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     /** --- Bill Text --- */
 
-    SELECT_BILL_TEXT(
-        "SELECT bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, full_text, full_text_html \n" +
+    SELECT_BILL_TEXT_TEMPLATE(
+        "SELECT bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, ${fullTextField}\n" +
         "FROM ${schema}.bill_amendment \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
+    SELECT_BILL_TEXT(
+            SELECT_BILL_TEXT_TEMPLATE.getSql().replace("${fullTextField}", "full_text")
+    ),
+    SELECT_BILL_TEXT_HTML(
+            SELECT_BILL_TEXT_TEMPLATE.getSql().replace("${fullTextField}", "full_text_html")
+    ),
+
     SELECT_ALTERNATE_PDF_URL(
         "SELECT url_path \n" +
         "FROM ${schema}." + SqlTable.BILL_ALTERNATE_PDF + "\n" +
@@ -90,9 +97,18 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     /** --- Bill Amendment --- */
 
-    SELECT_BILL_AMENDMENTS(
-        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
+    SELECT_BILL_AMENDMENTS_TEMPLATE(
+        "SELECT bill_print_no, bill_session_year, bill_amend_version,\n" +
+        "       ${fullTextField},\n" +
+        "       sponsor_memo, act_clause, stricken, uni_bill, law_section, law_code\n" +
+        "FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
+    ),
+    SELECT_BILL_AMENDMENTS(
+            SELECT_BILL_AMENDMENTS_TEMPLATE.getSql().replace("${fullTextField}", "full_text")
+    ),
+    SELECT_BILL_AMENDMENTS_HTML(
+            SELECT_BILL_AMENDMENTS_TEMPLATE.getSql().replace("${fullTextField}", "full_text_html")
     ),
     UPDATE_BILL_AMENDMENT(
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +

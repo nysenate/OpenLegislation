@@ -23,10 +23,11 @@ public interface BillDao
      * result was found.
      *
      * @param billId BillId - The version in the bill id is not used.
+     * @param htmlText boolean - if true, html full text will be applied instead of plain text
      * @return Bill
      * @throws DataAccessException - If no bill was matched
      */
-    public Bill getBill(BillId billId) throws DataAccessException;
+    Bill getBill(BillId billId, boolean htmlText) throws DataAccessException;
 
     /**
      * Retrieves a BillInfo for the given BillId. The query time for a BillInfo will be less than that
@@ -36,17 +37,20 @@ public interface BillDao
      * @return BillInfo
      * @throws DataAccessException - If no bill was matched.
      */
-    public BillInfo getBillInfo(BillId billId) throws DataAccessException;
+    BillInfo getBillInfo(BillId billId) throws DataAccessException;
 
     /**
      * This method applies the memo and full text for all amendments contained in the given Bill object.
      * This can be used by caching implementations where the bill object is kept in memory but the references
      * to the full text and memo are dropped to save memory space.
      *
+     * Html full text will be applied instead of standard text if the htmlText flag is true.
+     *
      * @param strippedBill Bill - The stripped Bill object.
+     * @param htmlText boolean - will appy html text instead of plain text if true.
      * @throws DataAccessException
      */
-    public void applyText(Bill strippedBill) throws DataAccessException;
+    void applyText(Bill strippedBill, boolean htmlText) throws DataAccessException;
 
     /**
      * Gets a List of BaseBillIds for the given session year with options to order and limit the results.
@@ -57,7 +61,7 @@ public interface BillDao
      * @return List<BaseBillId>
      * @throws DataAccessException
      */
-    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException;
+    List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException;
 
     /**
      * Retrieves a simple count of all the unique base bills in the database for all session years.
@@ -65,7 +69,7 @@ public interface BillDao
      * @return int
      * @throws DataAccessException - Should only be thrown if there was a fatal error,
      */
-    public int getBillCount() throws DataAccessException;
+    int getBillCount() throws DataAccessException;
 
     /**
      * Retrieves a simple count of all the unique base bills in the database for a given session year.
@@ -74,7 +78,7 @@ public interface BillDao
      * @return int
      * @throws DataAccessException - Should only be thrown if there was a fatal error
      */
-    public int getBillCount(SessionYear sessionYear) throws DataAccessException;
+    int getBillCount(SessionYear sessionYear) throws DataAccessException;
 
     /**
      * Certain bills require alternate urls when linking their pdfs. If the given bill id is one of
@@ -82,7 +86,7 @@ public interface BillDao
      * @param billId BillId
      * @return String
      */
-    public String getAlternateBillPdfUrl(BillId billId) throws DataAccessException;
+    String getAlternateBillPdfUrl(BillId billId) throws DataAccessException;
 
     /**
      * Returns a range containing the minimum and maximum session years for which there is bill data for.
@@ -90,7 +94,7 @@ public interface BillDao
      *
      * @return Range<SessionYear>
      */
-    public Range<SessionYear> activeSessionRange() throws DataAccessException;
+    Range<SessionYear> activeSessionRange() throws DataAccessException;
 
     /**
      * Updates the bill or inserts it if it does not yet exist. Associates
@@ -100,5 +104,5 @@ public interface BillDao
      * @param sobiFragment SobiFragment
      * @throws DataAccessException - If there was an error while trying to save the Bill.
      */
-    public void updateBill(Bill bill, SobiFragment sobiFragment) throws DataAccessException;
+    void updateBill(Bill bill, SobiFragment sobiFragment) throws DataAccessException;
 }
