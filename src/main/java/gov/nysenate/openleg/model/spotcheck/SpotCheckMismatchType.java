@@ -53,6 +53,7 @@ public enum SpotCheckMismatchType
     BILL_TEXT("Full Text", SENATE_SITE_BILLS),
     BILL_VOTE_INFO("Bill Vote Info", SENATE_SITE_BILLS),
     BILL_VOTE_ROLL("Bill Vote Roll", SENATE_SITE_BILLS),
+    BILL_SCRAPE_VOTE("Bill Scrape Vote", LBDC_SCRAPED_BILL),
 
     /**
      *  Openleg xml vs Openleg sobi mismatches

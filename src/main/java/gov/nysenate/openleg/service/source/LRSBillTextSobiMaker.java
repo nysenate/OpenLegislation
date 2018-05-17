@@ -1,17 +1,19 @@
 package gov.nysenate.openleg.service.source;
 
 import com.google.common.collect.ImmutableMap;
+import gov.nysenate.openleg.dao.bill.scrape.BillScrapeReferenceDao;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.service.scraping.BillTextReferenceFile;
-import gov.nysenate.openleg.service.scraping.BillTextScraper;
+import gov.nysenate.openleg.service.scraping.bill.BillScrapeFile;
+import gov.nysenate.openleg.service.scraping.bill.BillScraper;
 import gov.nysenate.openleg.service.scraping.LrsOutageScrapingEx;
-import gov.nysenate.openleg.service.scraping.BillTextReferenceFactory;
+import gov.nysenate.openleg.service.scraping.bill.BillScrapeReferenceFactory;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.http.HttpResponse;
@@ -62,9 +64,11 @@ public class LRSBillTextSobiMaker {
     private static final String billTextHeaderTemplate = String.format(billTextHeaderTemplateTemplate, "          ");
     private static final String billTextCloserTemplate = String.format(billTextHeaderTemplateTemplate, "*END*     ");
 
-    @Autowired BillTextScraper billTextScraper;
     @Autowired
-    BillTextReferenceFactory billTextParser;
+    BillScraper billScraper;
+    @Autowired
+    BillScrapeReferenceFactory billTextParser;
+    @Autowired private BillScrapeReferenceDao billScrapeDao;
 
     private File scrapedDir = new File("/tmp/scraped-bills");
 
@@ -78,14 +82,14 @@ public class LRSBillTextSobiMaker {
         try {
             scrapeBills(billIds);
 
-            List<BillTextReference> btrs = parseBills();
+            List<BillScrapeReference> btrs = parseBills();
 
             StringBuilder dataBuilder = new StringBuilder();
-            for (BillTextReference btr : btrs) {
+            for (BillScrapeReference btr : btrs) {
                 addBillText(btr, dataBuilder);
             }
 
-            writeSobi(dataBuilder, resultDir, btrs.stream().map(BillTextReference::getBillId).collect(Collectors.toList()));
+            writeSobi(dataBuilder, resultDir, btrs.stream().map(BillScrapeReference::getBillId).collect(Collectors.toList()));
         } catch (IOException ex) {
             logger.error("Error while generating sobis \n{}", ex);
         }
@@ -94,7 +98,7 @@ public class LRSBillTextSobiMaker {
     /**
      * Appends sobi formatted bill text from the given bill text reference to the given string builder
      */
-    private void addBillText(BillTextReference btr, StringBuilder dataBuilder) {
+    private void addBillText(BillScrapeReference btr, StringBuilder dataBuilder) {
         logger.info("formatting {}", btr.getBillId());
         BillId billId = btr.getBillId();
 
@@ -146,24 +150,24 @@ public class LRSBillTextSobiMaker {
         FileUtils.forceMkdir(scrapedDir);
         for (BaseBillId billId : billIds) {
             logger.info("scraping {}", billId);
-            String url = billTextScraper.constructUrl(billId);
-            HttpResponse res = billTextScraper.makeRequest(url);
-            billTextScraper.saveResponseToFile(res, billTextScraper.getSaveFile(scrapedDir, billId));
+            String url = billScraper.constructUrl(billId);
+            HttpResponse res = billScraper.makeRequest(url);
+            billScrapeDao.saveScrapedBillContent(IOUtils.toString(res.getEntity().getContent()), billId);
         }
     }
 
     /**
      * Parses all bill html files in the scraped directory into BillTextReferences
      */
-    private List<BillTextReference> parseBills() throws IOException {
+    private List<BillScrapeReference> parseBills() throws IOException {
         Collection<File> scrapedBills = FileIOUtils.safeListFiles(scrapedDir, false, new String[]{});
-        List<BillTextReference> btrs = new ArrayList<>();
+        List<BillScrapeReference> btrs = new ArrayList<>();
         for (File scrapedFile : scrapedBills) {
             try {
                 logger.info("parsing {}", scrapedFile);
-                btrs.add(billTextParser.createFromFile(new BillTextReferenceFile(scrapedFile)));
+                btrs.add(billTextParser.createFromFile(new BillScrapeFile(scrapedFile.getName(), scrapedDir.getPath())));
                 scrapedFile.delete();
-            } catch (ParseError | LrsOutageScrapingEx ex) {
+            } catch (ParseError ex) {
                 logger.error("error parsing scraped bill file {}:\n{}", scrapedFile, ex);
             }
         }

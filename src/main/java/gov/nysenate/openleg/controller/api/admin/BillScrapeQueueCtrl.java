@@ -9,10 +9,10 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.bill.text.BillTextReferenceDao;
+import gov.nysenate.openleg.dao.bill.scrape.BillScrapeReferenceDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
-import gov.nysenate.openleg.model.spotcheck.billtext.ScrapeQueuePriority;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeQueueEntry;
+import gov.nysenate.openleg.model.spotcheck.billscrape.ScrapeQueuePriority;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class BillScrapeQueueCtrl extends BaseCtrl
     private static final Logger logger = LoggerFactory.getLogger(BillScrapeQueueCtrl.class);
 
     @Autowired
-    private BillTextReferenceDao btrDao;
+    private BillScrapeReferenceDao btrDao;
 
     /**
      * Get Scrape Queue API
