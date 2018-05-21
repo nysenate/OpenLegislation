@@ -106,6 +106,12 @@ public class BillScrapeReferenceHtmlParserTest {
         Set<BillScrapeVote> actualVotes = parser.parseVotes(doc);
 
         assertEquals(expectedVotes, actualVotes);
+
+        // This bill only has a single assembly vote
+        doc = loadDocument("billScrape/2017-A1646-20180518T231109.html");
+        expectedVotes = new HashSet<>();
+        actualVotes = parser.parseVotes(doc);
+        assertEquals(expectedVotes, actualVotes);
     }
 
     private Document loadDocument(String file) {
