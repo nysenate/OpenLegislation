@@ -111,6 +111,25 @@ public class SpotcheckRunService {
     }
 
     /**
+     * Runs Calendar reports, checking all data in the specified year.
+     * @param year
+     */
+    public synchronized void runCalendarIntervalReports(int year) {
+        Range<LocalDateTime> yearRange = Range.closed(LocalDateTime.of(year, 1, 1, 0, 0), LocalDateTime.of(year, 12, 31, 0, 0));
+        runReport(intervalCalendarReportService, yearRange);
+    }
+
+    /**
+     * Runs Agenda reports, checking all data in the specified year.
+     * @param year
+     */
+    public synchronized void runAgendaIntervalReports(int year) {
+        Range<LocalDateTime> yearRange = Range.closed(LocalDateTime.of(year, 1, 1, 0, 0), LocalDateTime.of(year, 12, 31, 0, 0));
+        runReport(intervalAgendaReportService, yearRange);
+    }
+
+
+    /**
      * Given a spotcheck reference event, runs all reports that use the event's spotcheck reference type
      * @param referenceEvent SpotCheckReferenceEvent
      */
