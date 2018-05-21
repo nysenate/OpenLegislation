@@ -110,7 +110,7 @@ public class BillScrapeReferenceHtmlParser {
             Element table = tables.get(i);
             if (isVoteSummaryTable(table)) {
                 if (hasSingleVote(table)) {
-                    votes.add(parseSingleVote(table, tables.get(i + 1)));
+                    votes.addAll(parseSingleVote(table, tables.get(i + 1)));
                     break;
                 }
                 else {
@@ -118,6 +118,33 @@ public class BillScrapeReferenceHtmlParser {
                     break;
                 }
             }
+        }
+        return votes;
+    }
+
+    private boolean isVoteSummaryTable(Element table) {
+        return !table.select("a[href^=#VOTE").isEmpty();
+    }
+
+    private boolean hasSingleVote(Element table) {
+        return table.select("a[href^=#VOTE").size() == 1;
+    }
+
+    /**
+     * Parses a vote from the summary table and vote table.
+     * @param summaryTable The table containing vote summary data.
+     * @param nextTable The next table after the vote summary table, Should always contain the vote data if
+     *                  this bill only has a single vote.
+     * @return
+     */
+    private List<BillScrapeVote> parseSingleVote(Element summaryTable, Element nextTable) {
+        List<BillScrapeVote> votes = new ArrayList<>();
+        Chamber chamber = parseChamber(summaryTable.select("tr").get(0));
+        if (chamber.equals(Chamber.SENATE)) {
+            String date = summaryTable.select("a[href^=#VOTE").text().trim();
+            LocalDate voteDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("M/d/yy"));
+            SortedSetMultimap<BillVoteCode, String> voteMap = parseVote(nextTable);
+            votes.add(new BillScrapeVote(voteDate, voteMap));
         }
         return votes;
     }
@@ -131,7 +158,7 @@ public class BillScrapeReferenceHtmlParser {
     private List<BillScrapeVote> parseMultipleVotes(Element summaryTable) {
         List<BillScrapeVote> votes = new ArrayList<>();
         for (Element voteSummary : summaryTable.select("tr")) {
-            Chamber chamber = Chamber.getValue(elementText(voteSummary.child(2)).split("\\s")[0]);
+            Chamber chamber = parseChamber(voteSummary);
             if (chamber.equals(Chamber.SENATE)) {
                 String voteId = voteSummary.select("a[href^=#VOTE").attr("href").replace("#", "");
                 String date = voteSummary.select("a[href^=#VOTE").text().trim();
@@ -145,26 +172,8 @@ public class BillScrapeReferenceHtmlParser {
         return votes;
     }
 
-    /**
-     * Parses a vote from the summary table and vote table.
-     * @param summaryTable The table containing vote summary data.
-     * @param nextTable The next table after the vote summary table, Should always contain the vote data if
-     *                  this bill only has a single vote.
-     * @return
-     */
-    private BillScrapeVote parseSingleVote(Element summaryTable, Element nextTable) {
-        String date = summaryTable.select("a[href^=#VOTE").text().trim();
-        LocalDate voteDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("M/d/yy"));
-        SortedSetMultimap<BillVoteCode, String> voteMap = parseVote(nextTable);
-        return new BillScrapeVote(voteDate, voteMap);
-    }
-
-    private boolean isVoteSummaryTable(Element table) {
-        return !table.select("a[href^=#VOTE").isEmpty();
-    }
-
-    private boolean hasSingleVote(Element table) {
-        return table.select("a[href^=#VOTE").size() == 1;
+    private Chamber parseChamber(Element voteSummary) {
+        return Chamber.getValue(elementText(voteSummary.child(2)).split("\\s")[0]);
     }
 
     private SortedSetMultimap<BillVoteCode, String> parseVote(Element voteTable) {
