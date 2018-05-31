@@ -5,18 +5,15 @@ import gov.nysenate.openleg.dao.agenda.reference.AgendaAlertDao;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,18 +27,6 @@ public class AgendaSpotCheckService
 
     @Autowired
     AgendaAlertDao agendaAlertDao;
-
-    /** {@inheritDoc} */
-    @Override
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaInfoCommittee content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaInfoCommittee content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
 
     /** {@inheritDoc} */
     @Override

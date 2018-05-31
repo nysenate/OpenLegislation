@@ -9,7 +9,6 @@ import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -38,17 +36,6 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     @PostConstruct
     public void init(){
 
-    }
-
-    @Override
-    public SpotCheckObservation<BaseBillId> check(Bill content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
-
-    @Override
-    public SpotCheckObservation<BaseBillId> check(Bill content, LocalDateTime start, LocalDateTime end)
-            throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
     }
 
     @Override
