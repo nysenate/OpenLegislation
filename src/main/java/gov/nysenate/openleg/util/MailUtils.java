@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.util;
 
 import gov.nysenate.openleg.config.Environment;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,13 +41,16 @@ public class MailUtils {
         mailProperties.put("mail.smtp.port", port);
 
         mailProperties.put("mail.smtp.auth", auth);
+        mailProperties.put("mail.smtp.pass", smtpPass);
         mailProperties.put("mail.smtp.starttls.enable", stlsEnable);
         mailProperties.put("mail.smtp.ssl.enable", sslEnable);
         mailProperties.put("mail.smtp.ssl.protocols", sslProtocol);
 
         mailProperties.put("mail.smtp.user", smtpUser);
-        mailProperties.put("mail.smtp.pass", smtpPass);
-        mailProperties.put("mail.smtp.from", environment.getEmailFromAddress());
+
+        if (StringUtils.isNotBlank(environment.getEmailFromAddress())) {
+            mailProperties.put("mail.smtp.from", environment.getEmailFromAddress());
+        }
 
         mailProperties.put("mail.debug", debug);
 

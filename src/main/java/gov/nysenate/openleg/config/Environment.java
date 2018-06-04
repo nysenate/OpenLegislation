@@ -111,7 +111,7 @@ public class Environment
     @Value("${checkmail.processed}") private String emailProcessedFolder;
 
     /** The return address on outbound emails */
-    @Value("${mail.smtp.from}") private String emailFromAddress;
+    @Value("${mail.smtp.from:}") private String emailFromAddress;
 
     /** --- Notifications --- */
     @Value("${notifications.enabled}")
