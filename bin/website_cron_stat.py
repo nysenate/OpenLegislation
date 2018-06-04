@@ -9,6 +9,7 @@ import datetime
 import re
 import statistics
 from matplotlib import pyplot
+import matplotlib.dates as mpdates
 
 
 # In[35]:
@@ -101,6 +102,9 @@ def plot_run_duration(runs, save_file=None, relative_time=False):
     ax.set(xlabel="Run Start", ylabel="Run Duration (minutes)",
            title="Updates Import Run Times - " + instance)
     ax.grid()
+
+    ax.xaxis.set_major_formatter(mpdates.DateFormatter('%H:%M'))
+
     pyplot.annotate(get_stats(runs), (0,0), (0, -20), 
                     xycoords='axes fraction', 
                     textcoords='offset points', 
