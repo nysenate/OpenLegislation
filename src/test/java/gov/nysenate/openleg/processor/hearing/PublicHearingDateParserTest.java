@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.hearing;
 
 import gov.nysenate.openleg.annotation.UnitTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
