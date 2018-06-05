@@ -216,7 +216,7 @@ public class AdminAccountCtrl extends BaseCtrl
      * @param password the password of the new user
      */
     @Async
-    public void sendNewUserEmail(String username, String password) {
+    private void sendNewUserEmail(String username, String password) {
         String message = StrSubstitutor.replace(registrationEmailTemplate,
                 ImmutableMap.of("username", username, "password", password, "base_url", environment.getUrl()));
         sendMailService.sendMessage(username, registrationEmailSubject, message);
