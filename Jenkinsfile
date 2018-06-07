@@ -8,24 +8,30 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // Note: replace 'jenkins-branch' with whichever branch is needed.
-                git branch: 'jenkins-integration', url: 'https://github.com/nysenate/OpenLegislation'
+                echo 'Jenkins is building...'
                 // Run the maven build
-                if (isUnix()) {
-                    sh 'mvn clean compile'
-                    sh 'mvn verify'
-                } else {
-                    bat 'mvn clean compile'
-                    bat 'mvn verify'
+
+                script {
+                    if (isUnix()) {
+                        sh 'mvn clean compile'
+                        sh 'mvn verify'
+                    } else {
+                        bat 'mvn clean compile'
+                        bat 'mvn verify'
+                    }
                 }
+
+                echo 'Jenkins has finished building.'
             }
         }
 
         stage('Results') {
+            echo 'Jenkins is returning results.'
             steps {
                 junit '**/target/surefire-reports/TEST-*.xml'
                 archive 'target/*.jar'
             }
+            echo 'Jenkins has returned results.'
         }
    }
 }
