@@ -1,30 +1,31 @@
 pipeline {
     agent any
     tools {
-        jdk 'jdk8'
-        maven 'maven 3.5.0'
+        maven 'Maven 3.5.2'
+        jdk 'OpenJDK 8'
     }
+
     stages {
-        stage('Test') {
+        stage('Build') {
             steps {
-                configFileProvider([configFile(fileId: '229494d5-96f1-4f6a-8ac2-cbc5f8101e78', targetLocation: 'src/main/resources/test.app.properties')]) {
-                    bat 'mvn clean'
+                // Note: replace 'jenkins-branch' with whichever branch is needed.
+                git branch: 'jenkins-integration', url: 'https://github.com/nysenate/OpenLegislation'
+                // Run the maven build
+                if (isUnix()) {
+                    sh 'mvn clean compile'
+                    sh 'mvn verify'
+                } else {
+                    bat 'mvn clean compile'
                     bat 'mvn verify'
                 }
             }
-            post {
-                always {
-                    junit 'target/*-reports/*.xml'
-                    jacoco execPattern: 'target/*.exec'
-                }
-            }
         }
-        stage('Analyze') {
+
+        stage('Results') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    bat 'mvn sonar:sonar'
-                }
+                junit '**/target/surefire-reports/TEST-*.xml'
+                archive 'target/*.jar'
             }
         }
-    }
+   }
 }
