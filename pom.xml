@@ -21,7 +21,7 @@
       <!-- Compiler Plugin -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.6.1</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -33,17 +33,25 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.19</version>
+        <version>2.20</version>
         <configuration>
           <argLine>-Dlog4j.configuration=test.log4j.properties</argLine>
           <skipTests>false</skipTests>
           <groups>gov.nysenate.openleg.annotation.UnitTest</groups>
         </configuration>
+        <executions>
+          <execution>
+            <id>unit-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <!-- Failsafe Plugin -->
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.19</version>
+        <version>2.20</version>
         <configuration>
           <argLine>-Dlog4j.configuration=test.log4j.properties</argLine>
           <groups>gov.nysenate.openleg.annotation.IntegrationTest</groups>
@@ -58,6 +66,27 @@
           </execution>
         </executions>
       </plugin>
+      <!-- JaCoCo plugin -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.9</version>
+        <executions>
+          <execution>
+            <id>pre-unit-test</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>pre-integration-test</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>prepare-agent-integration</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -68,6 +97,7 @@
     <commons-lang.version>3.3.2</commons-lang.version>
     <eh-cache.version>2.8.3</eh-cache.version>
     <elastic-search.version>2.4.1</elastic-search.version>
+    <elastic-search-delete-by-query.version>2.4.1</elastic-search-delete-by-query.version>
     <guava.version>18.0</guava.version>
     <guava.jackson.version>2.4.0</guava.jackson.version>
     <http-client.version>4.3.6</http-client.version>
@@ -135,7 +165,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>4.0.5.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
 
     <!-- Servlet -->
@@ -213,6 +243,12 @@
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
       <version>${elastic-search.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.elasticsearch.plugin</groupId>
+      <artifactId>delete-by-query</artifactId>
+      <version>${elastic-search-delete-by-query.version}</version>
     </dependency>
 
     <!-- Serializers/Deserializers -->
