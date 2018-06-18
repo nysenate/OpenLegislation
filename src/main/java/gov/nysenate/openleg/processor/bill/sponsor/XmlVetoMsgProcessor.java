@@ -106,8 +106,17 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
                 baseBill.getVetoMessages().put(vetoMessage.getVetoId(), vetoMessage);
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
+            checkIngestCache();
+
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing vetoMessageXML", e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

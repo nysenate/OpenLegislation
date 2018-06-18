@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.processor.bill;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.config.process.ProcessConfig;
 import gov.nysenate.openleg.model.base.PublishStatus;
@@ -143,16 +141,15 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
 
-            if (billIngestCache.exceedsCapacity()) {
-                logger.info("Flushing bill ingest cache with {} bills!", billIngestCache.getSize());
-                flushBillUpdates();
-            }
+            checkIngestCache();
         }
         // Notify the data processor that a bill fragment has finished processing
         postDataUnitEvent(unit);
+    }
 
-        // Flush cache after each fragment when doing incremental updates
-        if (!env.isSobiBatchEnabled()) {
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }

@@ -53,10 +53,18 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements SobiPr
             BillAmendment amendment = basebill.getAmendment(version);
             amendment.setMemo(getNodeText(senMemoNode));
 
-
             billIngestCache.set(basebill.getBaseBillId(),basebill,fragment);
+            checkIngestCache();
+
         }  catch (IOException | SAXException | XPathExpressionException e) {
         throw new ParseError("Error While Parsing senate_billMemo", e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

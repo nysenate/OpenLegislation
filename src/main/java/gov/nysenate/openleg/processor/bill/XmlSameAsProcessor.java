@@ -99,9 +99,17 @@ public class XmlSameAsProcessor extends AbstractDataProcessor implements SobiPro
                     }
                 }
             }
-            //billIngestCache.set(baseBill.getBaseBillId(),baseBill,fragment);
+            billIngestCache.set(baseBill.getBaseBillId(),baseBill,fragment);
+            checkIngestCache();
         } catch (IOException | SAXException |XPathExpressionException e) {
             throw new ParseError("Error While Parsing sameAsXML", e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

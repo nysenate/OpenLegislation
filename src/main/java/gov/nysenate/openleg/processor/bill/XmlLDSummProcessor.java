@@ -81,8 +81,18 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
             logger.info("Put base bill in the ingest cache.");
+
+            checkIngestCache();
+
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing Bill Digest XML : " + sobiFragment.getFragmentId(), e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

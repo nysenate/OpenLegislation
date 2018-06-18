@@ -10,7 +10,6 @@ import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
-import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,9 +111,20 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
                 vote.addMemberVote(voteCode, voter);
             }
             billAmendment.updateVote(vote);
+
+            billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+            checkIngestCache();
         }
+
         catch (IOException | SAXException | XPathExpressionException | NullPointerException e) {
             throw new ParseError("Error While Parsing XmlSenFlVotProcessor", e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

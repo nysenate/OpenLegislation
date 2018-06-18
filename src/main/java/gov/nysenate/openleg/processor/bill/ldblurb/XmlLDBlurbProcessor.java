@@ -68,8 +68,17 @@ public class XmlLDBlurbProcessor extends AbstractDataProcessor implements SobiPr
                 baseBill.setLDBlurb("");
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
+            checkIngestCache();
+
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing LDBlurbXML", e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

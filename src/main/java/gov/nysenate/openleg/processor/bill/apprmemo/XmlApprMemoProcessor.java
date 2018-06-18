@@ -103,8 +103,17 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
                 applyMemoText(cdata, baseBill, apprno, action, year);
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
+            checkIngestCache();
+
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing ApprmemoSobiXML", e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

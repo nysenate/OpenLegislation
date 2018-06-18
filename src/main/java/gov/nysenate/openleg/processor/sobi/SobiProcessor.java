@@ -30,4 +30,15 @@ public interface SobiProcessor
      * Perform any additional tasks that must be run prior to finishing processing.
      */
     public void postProcess();
+
+    /**
+     * All processors must have this method to ensure that the ManagedSobiProcessService can properly flush the
+     * Ingest Cache or caches the processor is specified to flush
+     *
+     * This is an exmaple of a bill implementation of this method
+     * if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+     *             flushBillUpdates();
+     *         }
+     */
+    public void checkIngestCache();
 }

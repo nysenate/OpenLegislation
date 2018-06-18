@@ -140,13 +140,18 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
         // Notify the data processor that an agenda fragment has finished processing
         postDataUnitEvent(unit);
 
-        if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
-            flushAllUpdates(); // Flush all the things
-        }
+        checkIngestCache();
     }
 
     @Override
     public void postProcess() {
         flushAllUpdates();
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
+            flushAllUpdates();
+        }
     }
 }

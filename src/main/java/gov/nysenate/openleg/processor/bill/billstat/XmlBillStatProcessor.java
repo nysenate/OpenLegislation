@@ -2,7 +2,6 @@ package gov.nysenate.openleg.processor.bill.billstat;
 
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.base.PublishStatus;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -18,7 +17,6 @@ import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -149,8 +147,18 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             });
             billAmendment.setStricken(analyzer.isStricken());
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+
+            checkIngestCache();
+
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing BillStatProcessorXML", e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

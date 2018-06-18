@@ -150,7 +150,9 @@ public class ManagedSobiProcessService implements SobiProcessService {
             sobiFragmentDao.updateSobiFragment(fragment);
             // Hand off processing to specific implementations based on fragment type.
             if (processorMap.containsKey(fragment.getType())) {
-                processorMap.get(fragment.getType()).process(fragment);
+                SobiProcessor currentProcessor = processorMap.get(fragment.getType());
+                currentProcessor.process(fragment);
+                currentProcessor.checkIngestCache();
             } else {
                 logger.error("No processors have been registered to handle: " + fragment);
             }

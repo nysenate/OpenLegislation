@@ -6,14 +6,12 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillUpdateField;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
-import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +30,6 @@ import java.util.Set;
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
-// TODO : figure out how to get the correct published_date_time to be stored in the bill_change_log table
 @Service
 public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiProcessor {
     private static final Logger logger = LoggerFactory.getLogger(XmlBillTextProcessor.class);
@@ -102,8 +99,18 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
 //            updatedBills.forEach(baseBillId ->
 //                    eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
 //                            baseBillId, BillUpdateField.FULLTEXT)));
+
+            checkIngestCache();
+
         }catch (IOException | SAXException |XPathExpressionException e) {
             throw new ParseError("Error While Parsing Bill Text XML", e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

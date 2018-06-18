@@ -110,13 +110,18 @@ public class XmlSenCalProcessor extends AbstractDataProcessor implements SobiPro
         // Notify the data processor that a calendar fragment has finished processing
         postDataUnitEvent(unit);
 
-        if (!env.isSobiBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
-            flushCalendarUpdates();
-        }
+        checkIngestCache();
     }
 
     @Override
     public void postProcess() {
         flushCalendarUpdates();
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
+            flushAllUpdates();
+        }
     }
 }

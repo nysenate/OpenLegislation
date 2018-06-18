@@ -158,13 +158,18 @@ public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements So
         // Notify the data processor that an agenda vote fragment has finished processing
         postDataUnitEvent(unit);
 
-        if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
-            flushAllUpdates(); // Flush all the things
-        }
+        checkIngestCache();
     }
 
     @Override
     public void postProcess() {
         flushAllUpdates();
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
+            flushAllUpdates();
+        }
     }
 }

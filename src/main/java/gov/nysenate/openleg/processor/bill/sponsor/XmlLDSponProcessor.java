@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processor.bill.sponsor;
 
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
@@ -119,8 +118,17 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
                 }
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+            checkIngestCache();
+
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing SponsorSobiProcessorXML", e);
+        }
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+            flushBillUpdates();
         }
     }
 

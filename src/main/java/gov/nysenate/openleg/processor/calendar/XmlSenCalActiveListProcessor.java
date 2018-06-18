@@ -102,13 +102,18 @@ public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implemen
         // Notify the data processor that a calendar active list fragment has finished processing
         postDataUnitEvent(unit);
 
-        if (!env.isSobiBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
-            flushCalendarUpdates();
-        }
+        checkIngestCache();
     }
 
     @Override
     public void postProcess() {
         flushCalendarUpdates();
+    }
+
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
+            flushAllUpdates();
+        }
     }
 }

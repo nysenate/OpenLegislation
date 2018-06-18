@@ -73,7 +73,7 @@ public class XmlAnActProcessor extends AbstractDataProcessor implements SobiProc
             final String anactamd = xmlHelper.getString("@billamd", billTextNode).trim();
             final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
             final String title = xmlHelper.getString("@title", billTextNode).trim();
-            final String action = xmlHelper.getString("@action", billTextNode).trim(); // TODO: implement actions
+            final String action = xmlHelper.getString("@action", billTextNode).trim();
             final String anactClause = billTextNode.getTextContent().trim();
             final Version version = Version.of(anactamd);
             final Bill baseAnAct = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(new BaseBillId(anacthse + anactno, new SessionYear(sessyr)), Version.of(anactamd)), sobiFragment);
@@ -83,18 +83,20 @@ public class XmlAnActProcessor extends AbstractDataProcessor implements SobiProc
                 baseAnAct.getAmendment(version).setActClause("");
             }
             billIngestCache.set(baseAnAct.getBaseBillId(), baseAnAct, sobiFragment);
+            checkIngestCache();
+
         } catch (IOException | SAXException | XPathExpressionException e) {
             throw new ParseError("Error While Parsing AnActXML", e);
         }
+    }
 
+    @Override
+    public void checkIngestCache() {
         if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }
 
-    /**
-     * Best JavaDoc right here
-     */
     @Override
     public void postProcess() {
         flushBillUpdates();
