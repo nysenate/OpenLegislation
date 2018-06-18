@@ -28,12 +28,10 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 @Service("openlegBillCheck")
 public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, BillView, BillView> {
 
-    @Override
     public SpotCheckObservation<BaseBillId> check(BillView content) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException("");
     }
 
-    @Override
     public SpotCheckObservation<BaseBillId> check(BillView content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException("");
     }

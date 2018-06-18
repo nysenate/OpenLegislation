@@ -20,12 +20,10 @@ public class OpenlegCalendarCheckService
     Logger logger = LoggerFactory.getLogger(OpenlegBillCheckService.class);
 
 
-    @Override
     public SpotCheckObservation<CalendarEntryListId> check(CalendarEntryList content) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException("");
     }
 
-    @Override
     public SpotCheckObservation<CalendarEntryListId> check(CalendarEntryList content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException("");
     }

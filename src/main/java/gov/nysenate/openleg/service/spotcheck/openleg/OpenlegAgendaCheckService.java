@@ -18,12 +18,10 @@ import java.util.ArrayList;
 @Service
 public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAgendaAddendumId, AgendaCommAddendumView, AgendaCommAddendumView> {
 
-    @Override
     public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaCommAddendumView content) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException("");
     }
 
-    @Override
     public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaCommAddendumView content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
         throw new NotImplementedException("");
     }

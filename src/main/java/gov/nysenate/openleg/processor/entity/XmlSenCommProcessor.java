@@ -75,6 +75,7 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiPr
                         committee.setChamber(chamber);
                         processCommittee(committeeNode, committee);
                         committeeDataService.saveCommittee(committee, sobiFragment);
+                        checkIngestCache();
                     }
                     catch (Exception e){
                         logger.error(e);
@@ -90,7 +91,14 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiPr
     @Override
     public void postProcess() {}
 
-    /** --- Internal Methods --- */
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled()) {
+            flushAllUpdates();
+        }
+    }
+
+        /** --- Internal Methods --- */
 
     private Committee processCommittee(Node committeeNode, Committee committee) throws XPathExpressionException,
                                                                                        ParseException {
