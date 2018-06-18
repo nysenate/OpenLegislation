@@ -12,7 +12,6 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.FullMember;
 import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
@@ -20,7 +19,6 @@ import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBillVote;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,22 +42,6 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     @Autowired
     public SenateSiteBillCheckService(MemberService memberService) {
         this.memberService = memberService;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SpotCheckObservation<BillId> check(Bill content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SpotCheckObservation<BillId> check(Bill content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
     }
 
     /**

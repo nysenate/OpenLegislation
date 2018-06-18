@@ -19,16 +19,6 @@ import java.util.*;
 @Service
 public class CalendarCheckService implements SpotCheckService<CalendarEntryListId, Calendar, Calendar> {
 
-    @Override
-    public SpotCheckObservation<CalendarEntryListId> check(Calendar content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
-
-    @Override
-    public SpotCheckObservation<CalendarEntryListId> check(Calendar content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
-
     public SpotCheckObservation<CalendarEntryListId> check(Calendar content, Calendar reference) {
         throw new NotImplementedException(":P");
     }

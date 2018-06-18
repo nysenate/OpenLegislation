@@ -65,7 +65,7 @@ public class BillUpdatesCtrl extends BaseCtrl
      *
      * Request Params: detail (boolean) - Show update digests within each token.
      *                 summary (boolean) - Return bill infos instead of just the bill id.
-     *                 type (string) - Update type (processed, published) Default: published
+     *                 type (string) - Update type (processed, published) Default: processed
      *                 filter (string) - Filter updates by a BillUpdateField value
      *                 limit, offset (int) - Paginate
      *                 order (string) - Order by update date
@@ -105,7 +105,7 @@ public class BillUpdatesCtrl extends BaseCtrl
      * Where 'from' and 'to' are ISO date times.
      *
      * Request Params: filter (string) - Filter updates by a BillUpdateField
-     *                 type (string) - Update type (processed, published) Default: published
+     *                 type (string) - Update type (processed, published) Default: processed
      *
      * Expected Output: List of UpdateDigestView<BaseBillId>
      */

@@ -9,17 +9,14 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.calendar.SenateSiteCalendar;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,16 +32,6 @@ public class SenateSiteCalendarCheckService
         extends BaseSpotCheckService<CalendarEntryListId, Calendar, SenateSiteCalendar> {
 
     @Autowired private BillDataService billDataService;
-
-    @Override
-    public SpotCheckObservation<CalendarEntryListId> check(Calendar content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
-
-    @Override
-    public SpotCheckObservation<CalendarEntryListId> check(Calendar content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
 
     @Override
     public SpotCheckObservation<CalendarEntryListId> check(Calendar content, SenateSiteCalendar reference) {

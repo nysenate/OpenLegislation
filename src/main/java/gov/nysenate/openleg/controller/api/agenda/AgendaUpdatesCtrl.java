@@ -56,7 +56,7 @@ public class AgendaUpdatesCtrl extends BaseCtrl
      * Where 'from' and 'to' are ISO date times.
      *
      * Request Params: detail (boolean) - Show update digests within each token.
-     *                 type (string) - Update type (processed, published) Default: published
+     *                 type (string) - Update type (processed, published) Default: processed
      *                 limit, offset (int) - Paginate
      *                 order (string) - Order by update date
      *
@@ -90,7 +90,7 @@ public class AgendaUpdatesCtrl extends BaseCtrl
      *
      * Where 'from' and 'to' are ISO date times.
      *
-     * Request Params: type (string) - Update type (processed, published) Default: published
+     * Request Params: type (string) - Update type (processed, published) Default: processed
      *                 limit, offset (int) - Paginate
      *
      * Expected Output: List of UpdateDigestView<BaseBillId>

@@ -8,15 +8,11 @@ import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
-import gov.nysenate.openleg.model.entity.CommitteeId;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgenda;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
@@ -27,18 +23,6 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 @Service
 public class SenateSiteAgendaCheckService
         extends BaseSpotCheckService<CommitteeAgendaAddendumId, Agenda, SenateSiteAgenda> {
-
-    @Override
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(Agenda content)
-            throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
-
-    @Override
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(Agenda content, LocalDateTime start, LocalDateTime end)
-            throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
 
     @Override
     public SpotCheckObservation<CommitteeAgendaAddendumId> check(Agenda content, SenateSiteAgenda reference) {

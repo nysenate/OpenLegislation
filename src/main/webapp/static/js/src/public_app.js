@@ -46,7 +46,7 @@ openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$window', '$loca
             $scope.processing = true;
             $http.post(ctxPath + "/register/signup", {name:$scope.name, email:$scope.email})
             .success(function(data, status, headers, config) {
-                if (data.success == false) {
+                if (data.success === false) {
                     $scope.errmsg = data.message;
                 }
                 else {
@@ -56,6 +56,7 @@ openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$window', '$loca
             })
             .error(function(data, status, headers, config) {
                 $scope.processing = false;
+                $scope.errmsg = 'Sorry, there was an error while processing your request.';
             });
         }
     };

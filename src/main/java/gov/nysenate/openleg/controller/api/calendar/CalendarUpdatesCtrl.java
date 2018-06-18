@@ -51,7 +51,7 @@ public class CalendarUpdatesCtrl extends BaseCtrl {
      * Where 'from' and 'to' are ISO date times.
      *
      * Request Params: detail (boolean) - Show update digests within each token.
-     *                 type (string) - Update type (processed, published) Default: published
+     *                 type (string) - Update type (processed, published) Default: processed
      *                 limit, offset (int) - Paginate
      *                 order (string) - Order by update date
      *
