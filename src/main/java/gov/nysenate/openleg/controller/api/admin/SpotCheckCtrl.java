@@ -335,6 +335,41 @@ public class SpotCheckCtrl extends BaseCtrl
         return new SimpleResponse(true, "Interval Reports for " + yr + " have been run.", "report report");
     }
 
+    /**
+     * Spotcheck Calendar Interval Report Run API
+     *
+     * Attempts to run calendar spotcheck reports designated as interval reports
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/run/interval/calendar
+     *
+     * Request Parameters:
+     *          year - int - optional - The year to run interval reports for, defaults to current year.
+     */
+    @RequiresPermissions("admin:view")
+    @RequestMapping(value = "/run/interval/calendar")
+    public BaseResponse runCalendarWeeklyReports(@RequestParam(required = false) Integer year) {
+        int yr = year == null ? LocalDate.now().getYear() : year;
+        spotcheckRunService.runCalendarIntervalReports(yr);
+        return new SimpleResponse(true, "Calendar Interval Reports for " + yr + " have been run.", "report report");
+    }
+
+    /**
+     * Spotcheck Agenda Interval Report Run API
+     *
+     * Attempts to run Agenda spotcheck reports designated as interval reports
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/run/interval/agenda
+     *
+     * Request Parameters:
+     *          year - int - optional - The year to run interval reports for, defaults to current year.
+     */
+    @RequiresPermissions("admin:view")
+    @RequestMapping(value = "/run/interval/agenda")
+    public BaseResponse runAgendaWeeklyReports(@RequestParam(required = false) Integer year) {
+        int yr = year == null ? LocalDate.now().getYear() : year;
+        spotcheckRunService.runAgendaIntervalReports(yr);
+        return new SimpleResponse(true, "Agenda Interval Reports for " + yr + " have been run.", "report report");
+    }
 
     /** --- Internal Methods --- */
 

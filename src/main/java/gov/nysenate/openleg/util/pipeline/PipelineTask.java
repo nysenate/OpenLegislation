@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -31,11 +32,14 @@ class PipelineTask<T, R> implements Runnable {
     private BlockingQueue<T> inputQueue;
     private BlockingQueue<R> outputQueue;
 
+    /** Latch used to delay processing until the task is officially started */
+    private final CountDownLatch startCountDown = new CountDownLatch(1);
+
     /**
      * Boolean set to true when this task is finished.
      * A task cannot be finished unless previous tasks have indicated they are finished.
      */
-    private AtomicBoolean finished = new AtomicBoolean(false);
+    private final AtomicBoolean finished = new AtomicBoolean(false);
 
     /** Reference to previous task in the pipeline */
     private PipelineTask previousTask;
@@ -55,6 +59,8 @@ class PipelineTask<T, R> implements Runnable {
     @Override
     public void run() {
         try {
+            // Wait for start signal to begin processing
+            startCountDown.await();
             while (true) {
                 boolean prevFinished = isPrevFinished();
 
@@ -69,10 +75,16 @@ class PipelineTask<T, R> implements Runnable {
                 }
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } finally {
-            this.finished.set(true);
+            throw new PipelineException(e);
         }
+        this.finished.set(true);
+    }
+
+    /**
+     * Allows the task to start.
+     */
+    void startTask() {
+        startCountDown.countDown();
     }
 
     /**
@@ -130,8 +142,7 @@ class PipelineTask<T, R> implements Runnable {
             try {
                 queue.put(value);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
+                throw new PipelineException(e);
             }
         }
     }

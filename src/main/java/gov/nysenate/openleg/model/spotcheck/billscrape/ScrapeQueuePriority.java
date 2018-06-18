@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.spotcheck.billtext;
+package gov.nysenate.openleg.model.spotcheck.billscrape;
 
 /** Assigns a priority number to actions that add bills to the scrape queue.
  * Higher numbers indicate a higher priority */

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -16,14 +17,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @UnitTest
 public class XmlJsonIT {
 
-    private final File testFileDir = new File(
-            getClass().getClassLoader().getResource("sourcefile/").getFile());
+    private final File testFileDir = FileIOUtils.getResourceFile("sourcefile/");
 
     private List<BillView> billViews = new LinkedList<>();
     private File billJsonFile = new File(testFileDir, "S609-2017_JSON");

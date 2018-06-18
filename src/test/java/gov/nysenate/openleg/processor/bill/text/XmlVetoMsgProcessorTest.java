@@ -1,10 +1,10 @@
 package gov.nysenate.openleg.processor.bill.text;
 
-import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.bill.sponsor.XmlVetoMsgProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 @Transactional
 public class XmlVetoMsgProcessorTest extends BaseXmlProcessorTest {
 
-    @Autowired private BillDao billDao;
+    @Autowired private BillDataService billDataService;
     @Autowired private XmlVetoMsgProcessor vetoMessageProcessor;
 
     @Override
@@ -37,7 +37,7 @@ public class XmlVetoMsgProcessorTest extends BaseXmlProcessorTest {
         String xmlPath = "processor/bill/vetomessage/2016-11-29-12.19.46.006100_VETOMSG_2016-00231.XML";
         processXmlFile(xmlPath);
 
-        Bill bill = billDao.getBill(new BillId("A1984", 2016));
+        Bill bill = billDataService.getBill(new BaseBillId("A1984", 2016));
 
         VetoMessage vetoMessage = new VetoMessage();
         vetoMessage.setType(VetoType.STANDARD);
@@ -103,7 +103,7 @@ public class XmlVetoMsgProcessorTest extends BaseXmlProcessorTest {
         String xmlPath = "processor/bill/vetomessage/2016-11-17-09.59.11.184200_VETOMSG_2016-00002.XML";
         processXmlFile(xmlPath);
 
-        Bill bill = billDao.getBill(new BillId("A9000", 2016));
+        Bill bill = billDataService.getBill(new BaseBillId("A9000", 2016));
 
         VetoMessage vetoMessage = new VetoMessage();
         vetoMessage.setType(VetoType.LINE_ITEM);
@@ -179,7 +179,7 @@ public class XmlVetoMsgProcessorTest extends BaseXmlProcessorTest {
         String xmlPath = "processor/bill/vetomessage/2016-11-17-09.59.11.184200_VETOMSG_2016-00002.XML";
         processXmlFile(xmlPath);
 
-        Bill bill = billDao.getBill(new BillId("A9000", 2016));
+        Bill bill = billDataService.getBill(new BaseBillId("A9000", 2016));
 
         VetoMessage vetoMessage = new VetoMessage();
         vetoMessage.setBillId(new BaseBillId("A9000",2016));
@@ -198,7 +198,7 @@ public class XmlVetoMsgProcessorTest extends BaseXmlProcessorTest {
         String xmlPath1 = "processor/bill/vetomessage/2016-11-28-23.56.28.935222_VETOMSG_2016-00233.XML";
         processXmlFile(xmlPath1);
 
-        Bill bill1 = billDao.getBill(new BillId("A9000", 2016));
+        Bill bill1 = billDataService.getBill(new BaseBillId("A9000", 2016));
         VetoMessage removedMsgObject = bill1.getVetoMessages().get(id);
 
         assertTrue(removedMsgObject == null);

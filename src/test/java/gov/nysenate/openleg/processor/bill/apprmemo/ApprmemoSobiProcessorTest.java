@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.processor.bill.apprmemo;
 
 import gov.nysenate.openleg.dao.bill.data.ApprovalDao;
-import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
+import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 @Transactional
 public class ApprmemoSobiProcessorTest extends BaseXmlProcessorTest {
 
-    @Autowired private BillDao billDao;
+    @Autowired private BillDataService billDataService;
     @Autowired private XmlApprMemoProcessor xmlApprMemoProcessor;
 
     @Autowired private ApprovalDao approvalDao;
@@ -38,7 +38,7 @@ public class ApprmemoSobiProcessorTest extends BaseXmlProcessorTest {
     public void replaceProcessor() {
         String xmlFilePath = "processor/bill/apprmemo/2016-11-17-10.06.30.448942_APPRMEMO_2016-00002.XML";
         processXmlFile(xmlFilePath);
-        Bill baseBill = billDao.getBill(new BillId("A06182", 2016));
+        Bill baseBill = billDataService.getBill(new BaseBillId("A06182", 2016));
         String actual = baseBill.getApprovalMessage().getMemoText();
         String expectedMemo = "\n \n" +
                 "                 APPROVAL MEMORANDUM - No. 2 Chapter 62\n" +
@@ -56,7 +56,7 @@ public class ApprmemoSobiProcessorTest extends BaseXmlProcessorTest {
         String xmlFilePath = "processor/bill/apprmemo/2016-12-01-11.01.07.328317_APPRMEMO_2016-00009.XML";
         ApprovalMessage add=approvalDao.getApprovalMessage(new ApprovalId(2016,9));
         processXmlFile(xmlFilePath);
-        Bill baseBill=billDao.getBill(add.getBillId());
+        Bill baseBill = billDataService.getBill(BaseBillId.of(add.getBillId()));
         assertEquals("Remove Case shown to have ApprovalMessage still",null,baseBill.getApprovalMessage());
     }
 

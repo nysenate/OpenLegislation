@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.SessionMember;
-import gov.nysenate.openleg.util.BillTextUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -44,6 +43,9 @@ public class BillAmendment implements Serializable, Cloneable
 
     /** The full text of the amendment. */
     protected String fullText = "";
+
+    /** The full text of the amendment structured using html markup */
+    protected String fullTextHtml = "";
 
     /** The committee the bill is currently referred to, if any. */
     protected CommitteeVersionId currentCommittee = null;
@@ -93,16 +95,6 @@ public class BillAmendment implements Serializable, Cloneable
         catch (CloneNotSupportedException e) {
             throw new RuntimeException("Failed to clone bill amendment!");
         }
-    }
-
-    /** --- Functional Getters/Setters --- */
-
-    public String getStrippedFullText() {
-        return BillTextUtils.parseHTMLtext(fullText);
-    }
-
-    public String getStrippedMemo() {
-        return BillTextUtils.parseHTMLtext(memo);
     }
 
     public String getBasePrintNo() {
@@ -181,6 +173,14 @@ public class BillAmendment implements Serializable, Cloneable
 
     public void setFullText(String fullText) {
         this.fullText = fullText;
+    }
+
+    public String getFullTextHtml() {
+        return fullTextHtml;
+    }
+
+    public void setFullTextHtml(String fullTextHtml) {
+        this.fullTextHtml = fullTextHtml;
     }
 
     public CommitteeVersionId getCurrentCommittee() {

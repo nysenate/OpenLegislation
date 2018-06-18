@@ -2,6 +2,7 @@ package gov.nysenate.openleg.util;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -134,7 +135,7 @@ public class BillTextUtils
 
         Iterator<Element> elementIterator = preTag.iterator();
         while (elementIterator.hasNext()) {
-            processTextNodeWithIterator(elementIterator.next(),textBuilder);
+            processTextNode(elementIterator.next(),textBuilder);
             elementIterator.remove();
         }
 
@@ -158,24 +159,27 @@ public class BillTextUtils
     /**
      * Extracts bill/memo text from an element recursively
      */
-    public static void processTextNodeWithIterator(Element element, StringBuilder stringBuilder) {
-        Iterator<Node> nodeIterator = element.childNodes().iterator();
-        while (nodeIterator.hasNext()) {
-            Node t = nodeIterator.next();
-            if (t instanceof Element) {
-                Element e = (Element) t;
-                // TEXT IN <U> TAGS IS REPRESENTED IN CAPS FOR SOBI AND XML BILL TEXT
-                if ("u".equals(e.tag().getName())) {
-                    stringBuilder.append(e.text().toUpperCase());
+    public static void processTextNode(Element element, StringBuilder stringBuilder) {
+        processTextNode(element, stringBuilder, false);
+    }
+
+    /**
+     * Extracts bill/memo text from an element recursively
+     */
+    private static void processTextNode(Element element, StringBuilder stringBuilder, boolean insideUTag) {
+        // If this element is <U>, consider it within a u tag
+        insideUTag = insideUTag || "u".equalsIgnoreCase(element.tag().getName());
+        for (Node node : element.childNodes()) {
+            if (node instanceof Element) {
+                processTextNode((Element) node, stringBuilder, insideUTag);
+            } else if (node instanceof TextNode) {
+                String text = ((TextNode) node).getWholeText();
+                if (insideUTag) {
+                    // TEXT IN <U> TAGS IS REPRESENTED IN CAPS FOR SOBI AND XML BILL TEXT
+                    text = StringUtils.upperCase(text);
                 }
-                else {
-                    processTextNodeWithIterator(e, stringBuilder);
-                }
-            } else if (t instanceof TextNode) {
-                stringBuilder.append(((TextNode) t).getWholeText());
+                stringBuilder.append(text);
             }
         }
-
-
     }
 }

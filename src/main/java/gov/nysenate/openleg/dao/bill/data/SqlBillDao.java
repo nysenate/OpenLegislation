@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.dao.bill.data.SqlBillQuery.*;
 import static gov.nysenate.openleg.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
@@ -57,13 +58,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      * {@inheritDoc}
      */
     @Override
-    public Bill getBill(BillId billId) {
+    public Bill getBill(BillId billId, boolean htmlText) {
         logger.trace("Fetching Bill {} from database...", billId);
         final ImmutableParams baseParams = getBaseParams(billId);
         // Retrieve base Bill object
         Bill bill = getBaseBill(baseParams);
         // Fetch the amendments
-        List<BillAmendment> billAmendments = getBillAmendments(baseParams);
+        List<BillAmendment> billAmendments = getBillAmendments(baseParams, htmlText);
         for (BillAmendment amendment : billAmendments) {
             final ImmutableParams amendParams = baseParams.add(
                     new MapSqlParameterSource("version", amendment.getVersion().getValue()));
@@ -125,16 +126,21 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      * {@inheritDoc}
      */
     @Override
-    public void applyText(Bill strippedBill) throws DataAccessException {
+    public void applyText(Bill strippedBill, boolean htmlText) throws DataAccessException {
         if (strippedBill == null) {
             throw new IllegalArgumentException("Cannot apply bill text on a null bill");
         }
         MapSqlParameterSource billParams = new MapSqlParameterSource();
         addBillIdParams(strippedBill, billParams);
-        jdbcNamed.query(SqlBillQuery.SELECT_BILL_TEXT.getSql(schema()), billParams, (RowCallbackHandler) (ResultSet rs) -> {
+        final SqlBillQuery query = htmlText ? SELECT_BILL_TEXT_HTML : SELECT_BILL_TEXT;
+        jdbcNamed.query(query.getSql(schema()), billParams, (ResultSet rs) -> {
             BillAmendment ba = strippedBill.getAmendment(Version.of(rs.getString("bill_amend_version")));
             ba.setMemo(rs.getString("sponsor_memo"));
-            ba.setFullText(rs.getString("full_text"));
+            if (htmlText) {
+                ba.setFullTextHtml(rs.getString("full_text_html"));
+            } else {
+                ba.setFullText(rs.getString("full_text"));
+            }
         });
     }
 
@@ -337,8 +343,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     /**
      * Fetch the collection of bill amendment references for the base bill id in the params.
      */
-    public List<BillAmendment> getBillAmendments(ImmutableParams baseParams) {
-        return jdbcNamed.query(SqlBillQuery.SELECT_BILL_AMENDMENTS.getSql(schema()), baseParams, new BillAmendmentRowMapper());
+    public List<BillAmendment> getBillAmendments(ImmutableParams baseParams, boolean htmlText) {
+        final SqlBillQuery query = htmlText ? SELECT_BILL_AMENDMENTS_HTML : SELECT_BILL_AMENDMENTS;
+        return jdbcNamed.query(query.getSql(schema()), baseParams, new BillAmendmentRowMapper(htmlText));
     }
 
     /**
@@ -703,13 +710,23 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     }
 
     private static class BillAmendmentRowMapper implements RowMapper<BillAmendment> {
+        private boolean htmlText;
+
+        BillAmendmentRowMapper(boolean htmlText) {
+            this.htmlText = htmlText;
+        }
+
         @Override
         public BillAmendment mapRow(ResultSet rs, int rowNum) throws SQLException {
             BaseBillId baseBillId = new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year"));
             BillAmendment amend = new BillAmendment(baseBillId, Version.of(rs.getString("bill_amend_version")));
             amend.setMemo(rs.getString("sponsor_memo"));
             amend.setActClause(rs.getString("act_clause"));
-            amend.setFullText(rs.getString("full_text"));
+            if (htmlText) {
+                amend.setFullTextHtml(rs.getString("full_text_html"));
+            } else {
+                amend.setFullText(rs.getString("full_text"));
+            }
             amend.setStricken(rs.getBoolean("stricken"));
             amend.setUniBill(rs.getBoolean("uni_bill"));
             amend.setLawSection(rs.getString("law_section"));
@@ -874,6 +891,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         params.addValue("sponsorMemo", amendment.getMemo())
                 .addValue("actClause", amendment.getActClause())
                 .addValue("fullText", amendment.getFullText())
+                .addValue("fullTextHtml", amendment.getFullTextHtml())
                 .addValue("stricken", amendment.isStricken())
                 .addValue("lawSection", amendment.getLawSection())
                 .addValue("lawCode", amendment.getLaw())

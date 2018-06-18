@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceEvent;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.service.spotcheck.agenda.AgendaReportService;
 import gov.nysenate.openleg.service.spotcheck.agenda.IntervalAgendaReportService;
-import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
+import gov.nysenate.openleg.service.spotcheck.scrape.BillScrapeReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.CalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.calendar.IntervalCalendarReportService;
 import gov.nysenate.openleg.service.spotcheck.daybreak.DaybreakReportService;
@@ -64,7 +64,7 @@ public class SpotcheckRunService {
 
     /** Bill Report Services */
     @Autowired private DaybreakReportService daybreakReportService;
-    @Autowired private BillTextReportService billTextReportService;
+    @Autowired private BillScrapeReportService billScrapeReportService;
 
     /** Calendar Report Services */
     @Autowired private CalendarReportService calendarReportService;
@@ -87,7 +87,7 @@ public class SpotcheckRunService {
         eventTriggeredReports = ImmutableSetMultimap.<SpotCheckRefType, SpotCheckReportService>builder()
                 .put(LBDC_AGENDA_ALERT, agendaReportService)
                 .put(LBDC_DAYBREAK, daybreakReportService)
-                .put(LBDC_SCRAPED_BILL, billTextReportService)
+                .put(LBDC_SCRAPED_BILL, billScrapeReportService)
                 .put(LBDC_CALENDAR_ALERT, calendarReportService)
                 .put(SENATE_SITE_BILLS, senSiteBillReportService)
                 .put(SENATE_SITE_CALENDAR, senSiteCalReportService)
@@ -121,6 +121,25 @@ public class SpotcheckRunService {
         Range<LocalDateTime> yearRange = Range.closed(LocalDateTime.of(year, 1, 1, 0, 0), LocalDateTime.of(year, 12, 31, 0, 0));
         intervalReports.forEach(reportService -> runReport(reportService, yearRange));
     }
+
+    /**
+     * Runs Calendar reports, checking all data in the specified year.
+     * @param year
+     */
+    public synchronized void runCalendarIntervalReports(int year) {
+        Range<LocalDateTime> yearRange = Range.closed(LocalDateTime.of(year, 1, 1, 0, 0), LocalDateTime.of(year, 12, 31, 0, 0));
+        runReport(intervalCalendarReportService, yearRange);
+    }
+
+    /**
+     * Runs Agenda reports, checking all data in the specified year.
+     * @param year
+     */
+    public synchronized void runAgendaIntervalReports(int year) {
+        Range<LocalDateTime> yearRange = Range.closed(LocalDateTime.of(year, 1, 1, 0, 0), LocalDateTime.of(year, 12, 31, 0, 0));
+        runReport(intervalAgendaReportService, yearRange);
+    }
+
 
     /**
      * Given a spotcheck reference event, runs all reports that use the event's spotcheck reference type

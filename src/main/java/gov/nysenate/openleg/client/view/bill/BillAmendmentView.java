@@ -2,9 +2,7 @@ package gov.nysenate.openleg.client.view.bill;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.nysenate.openleg.client.view.base.ListView;
-import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
-import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.util.BillTextUtils;
@@ -27,7 +25,8 @@ public class BillAmendmentView extends BillIdView
     protected boolean uniBill;
     protected boolean isStricken;
 
-    public BillAmendmentView(){}
+    protected BillAmendmentView(){}
+
     public BillAmendmentView(BillAmendment billAmendment, PublishStatus publishStatus) {
         super(billAmendment != null ? billAmendment.getBillId() : null);
         if (billAmendment != null) {
@@ -35,11 +34,11 @@ public class BillAmendmentView extends BillIdView
             this.sameAs = ListView.of(billAmendment.getSameAs().stream()
                 .map(BillIdView::new)
                 .collect(Collectors.toList()));
-            this.memo = billAmendment.getStrippedMemo();
+            this.memo = billAmendment.getMemo();
             this.lawSection = billAmendment.getLawSection();
             this.lawCode = billAmendment.getLaw();
             this.actClause = billAmendment.getActClause();
-            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getStrippedFullText() );
+            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText() );
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
                 .map(MemberView::new)
                 .collect(Collectors.toList()));

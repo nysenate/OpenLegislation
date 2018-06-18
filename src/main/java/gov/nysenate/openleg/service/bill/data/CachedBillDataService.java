@@ -163,19 +163,19 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
 
     /** {@inheritDoc} */
     @Override
-    public Bill getBill(BaseBillId billId) throws BillNotFoundEx {
+    public Bill getBill(BaseBillId billId, boolean htmlText) throws BillNotFoundEx {
         if (billId == null) {
             throw new IllegalArgumentException("BillId cannot be null");
         }
         try {
             Bill bill;
             if (billCache.get(billId) != null) {
-                bill = constructBillFromCache(billId);
+                bill = constructBillFromCache(billId, htmlText);
                 logger.debug("Cache hit for bill {}", bill);
             }
             else {
                 logger.debug("Fetching bill {}..", billId);
-                bill = billDao.getBill(billId);
+                bill = billDao.getBill(billId, htmlText);
                 putStrippedBillInCache(bill);
             }
             return bill;
@@ -287,13 +287,14 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
      * method. The fulltext and memo are put back into a copy of the cached bill.
      *
      * @param billId BaseBillId
+     * @param htmlText
      * @return Bill
      * @throws CloneNotSupportedException
      */
-    private Bill constructBillFromCache(BaseBillId billId) throws CloneNotSupportedException {
+    private Bill constructBillFromCache(BaseBillId billId, boolean htmlText) throws CloneNotSupportedException {
         Bill cachedBill = (Bill) billCache.get(billId).getObjectValue();
         cachedBill = cachedBill.shallowClone();
-        billDao.applyText(cachedBill);
+        billDao.applyText(cachedBill, htmlText);
         return cachedBill;
     }
 
@@ -309,6 +310,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
                 cacheBill.getAmendmentList().stream().forEach(ba -> {
                     ba.setMemo("");
                     ba.setFullText("");
+                    ba.setFullTextHtml("");
                 });
                 this.billCache.put(new Element(cacheBill.getBaseBillId(), cacheBill));
                 // Remove entry from the bill info cache if it exists

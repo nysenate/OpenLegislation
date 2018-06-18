@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.scraping;
 
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.service.scraping.bill.LrsToSobiBillText;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

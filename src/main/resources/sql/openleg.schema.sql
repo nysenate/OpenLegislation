@@ -1650,6 +1650,7 @@ CREATE TABLE bill_amendment (
     sponsor_memo text,
     act_clause text,
     full_text text,
+    full_text_html text,
     stricken boolean DEFAULT false,
     uni_bill boolean DEFAULT false,
     law_code text,
@@ -1680,6 +1681,13 @@ COMMENT ON COLUMN bill_amendment.law_code IS 'Specifies the sections/chapters of
 --
 
 COMMENT ON COLUMN bill_amendment.law_section IS 'The primary section of law this bill affects';
+
+
+--
+-- Name: COLUMN bill_amendment.full_text_html; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill_amendment.full_text_html IS 'A marked up version of full text.';
 
 
 --
@@ -2192,29 +2200,23 @@ ALTER TABLE bill_sponsor_additional OWNER TO postgres;
 COMMENT ON TABLE bill_sponsor_additional IS 'Contains additional sponsor mappings for special cases';
 
 
---
--- Name: bill_text_reference; Type: TABLE; Schema: master; Owner: postgres
---
 
-CREATE TABLE bill_text_reference (
-    bill_print_no text NOT NULL,
-    bill_session_year smallint NOT NULL,
-    reference_date_time timestamp without time zone DEFAULT now() NOT NULL,
-    bill_amend_version character(1),
-    text text,
-    memo text,
-    checked boolean DEFAULT false NOT NULL,
-    not_found boolean DEFAULT false NOT NULL
+CREATE TABLE IF NOT EXISTS bill_scrape_file (
+  file_name text NOT NULL,
+  file_path text NOT NULL,
+  staged_date_time timestamp without time zone DEFAULT now() NOT NULL,
+  is_archived boolean DEFAULT false NOT NULL,
+  is_pending_processing boolean DEFAULT true NOT NULL,
+  CONSTRAINT bill_scrape_file_pk PRIMARY KEY(file_name)
 );
 
+ALTER TABLE bill_scrape_file OWNER TO postgres;
 
-ALTER TABLE bill_text_reference OWNER TO postgres;
+COMMENT ON COLUMN master.bill_scrape_file.file_path IS 'The directory where this file is located';
 
---
--- Name: COLUMN bill_text_reference.not_found; Type: COMMENT; Schema: master; Owner: postgres
---
+COMMENT ON COLUMN bill_scrape_file.staged_date_time IS 'The date time this entry was saved into the database.';
 
-COMMENT ON COLUMN bill_text_reference.not_found IS 'If set to false, no reference with this bill id could be found.  ';
+COMMENT ON COLUMN bill_scrape_file.is_pending_processing IS 'Indicates if this file is waiting to be processed by a spotcheck report.';
 
 
 --

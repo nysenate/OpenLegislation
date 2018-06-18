@@ -195,6 +195,31 @@ public class FileIOUtils
     }
 
     /**
+     * Save a string to a file and sets common permissions to the file.
+     * @see FileUtils#writeStringToFile(File, String) for details.
+     * @param file
+     * @param data
+     * @throws IOException
+     */
+    public static void writeStringToFile(File file, String data) throws IOException {
+        FileUtils.writeStringToFile(file, data);
+        setCommonFilePermissions(file);
+    }
+
+    /**
+     * Save a string to a file with a specified encoding. Sets common permissions to the saved file.
+     * @see FileUtils#writeStringToFile(File, String, Charset) for details.
+     * @param file
+     * @param data
+     * @param encoding
+     * @throws IOException
+     */
+    public static void writeStringToFile(File file, String data, Charset encoding) throws IOException {
+        FileUtils.writeStringToFile(file, data, encoding);
+        setCommonFilePermissions(file);
+    }
+
+    /**
      * Saves a character sequence to a file and sets common permissions to the file.
      * The data is initially saved to a temporary file and then moved to the destination file.
      * This discourages use of the file while data is being written.
@@ -236,6 +261,31 @@ public class FileIOUtils
         FileUtils.copyInputStreamToFile(stream, file);
         setCommonFilePermissions(file);
     }
+
+    /**
+     * Gets a file from the resource directory given its relative path.
+     *
+     * @param relativePath String - file path relative to the resource directory
+     * @return File
+     */
+    public static File getResourceFile(String relativePath) {
+        return new File(
+                FileIOUtils.class.getClassLoader().getResource(relativePath).getFile()
+        );
+    }
+
+    /**
+     * Gets a the contents of a file from the resource directory given its relative path.
+     *
+     * @param relativePath String - file path relative to the resource directory
+     * @return File
+     * @throws IOException
+     */
+    public static String getResourceFileContents(String relativePath) throws IOException {
+        return FileUtils.readFileToString(getResourceFile(relativePath));
+    }
+
+    /* --- Internal Methods --- */
 
     private static void setCommonFilePermissions(File file) throws IOException {
         Files.setPosixFilePermissions(Paths.get(file.getAbsolutePath()), filePermissions);

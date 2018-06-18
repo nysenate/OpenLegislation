@@ -253,7 +253,3 @@ domain.url = http://localhost:8080/legislation
 # The base url of the NYSenate public website
 # Useful when testing openleg alongside a development instance of NYSenate.gov
 nysenate.gov.url = https://www.NYSenate.gov
-
-
-# --- Openleg Mismatches Checking Service Configuration ----------------------------------------------------
-openleg.apiKey = cix1d0bCsmFHaSrCg2pZPM1WIN9Khe3n

@@ -1,14 +1,14 @@
-package gov.nysenate.openleg.service.spotcheck.billtext;
+package gov.nysenate.openleg.service.spotcheck.scrape;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.dao.bill.text.BillTextReferenceDao;
+import gov.nysenate.openleg.dao.bill.scrape.BillScrapeReferenceDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillUpdateField;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
-import gov.nysenate.openleg.model.spotcheck.billtext.ScrapeQueuePriority;
+import gov.nysenate.openleg.model.spotcheck.billscrape.ScrapeQueuePriority;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckMismatchEvent;
 import org.slf4j.Logger;
@@ -20,11 +20,11 @@ import javax.annotation.PostConstruct;
 
 /** Adds bills to the bill text scrape queue based on certain events */
 @Service
-public class BillTextScrapeQueueService {
-    private static final Logger logger = LoggerFactory.getLogger(BillTextScrapeQueueService.class);
+public class BillScrapeQueueService {
+    private static final Logger logger = LoggerFactory.getLogger(BillScrapeQueueService.class);
 
     @Autowired
-    BillTextReferenceDao btrDao;
+    BillScrapeReferenceDao btrDao;
 
     @Autowired
     EventBus eventBus;
@@ -43,9 +43,15 @@ public class BillTextScrapeQueueService {
      */
     @Subscribe
     public void handleBillFullTextUpdate(BillFieldUpdateEvent updateEvent) {
-        if (BillUpdateField.FULLTEXT.equals(updateEvent.getUpdateField()) &&
-                env.isBillScrapeQueueEnabled()) {
+        if (!env.isBillScrapeQueueEnabled()) {
+            return;
+        }
+        if (BillUpdateField.FULLTEXT.equals(updateEvent.getUpdateField())) {
             logger.info("adding {} to bill scrape queue after full text update", updateEvent.getBillId());
+            btrDao.addBillToScrapeQueue(updateEvent.getBillId(), ScrapeQueuePriority.UPDATE_TRIGGERED.getPriority());
+        }
+        if (BillUpdateField.VOTE.equals(updateEvent.getUpdateField())) {
+            logger.info("adding {} to bill scrape queue after vote update", updateEvent.getBillId());
             btrDao.addBillToScrapeQueue(updateEvent.getBillId(), ScrapeQueuePriority.UPDATE_TRIGGERED.getPriority());
         }
     }

@@ -174,6 +174,7 @@ module.exports = function(grunt) {
                         '<%= jsSource %>/component/admin/account.js',
                         '<%= jsSource %>/component/admin/notification_sub.js',
                         '<%= jsSource %>/component/admin/environment.js',
+                        '<%= jsSource %>/component/admin/reports.js',
                         '<%= jsSource %>/component/admin/indices.js',
                         '<%= jsSource %>/component/admin/members.js',
                         '<%= jsSource %>/component/admin/member.js',

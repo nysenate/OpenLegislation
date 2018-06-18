@@ -1,13 +1,24 @@
 package gov.nysenate.openleg.processor;
 
 import gov.nysenate.openleg.BaseTests;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
 import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
+import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +31,36 @@ import java.io.IOException;
 @Transactional
 public abstract class BaseXmlProcessorTest extends BaseTests {
 
-    @Autowired
-    private SourceFileRefDao sourceFileRefDao;
-    @Autowired
-    private SobiFragmentDao sobiFragmentDao;
+    @Autowired private BillDataService billDataService;
+    @Autowired private SourceFileRefDao sourceFileRefDao;
+    @Autowired private SobiFragmentDao sobiFragmentDao;
+    @Autowired private Environment env;
 
     /**
      * @return {@link SobiProcessor} the processor implementation associated with this test
      */
     abstract protected SobiProcessor getSobiProcessor();
+
+    private boolean originalIndexingSetting;
+
+    /**
+     * Store original indexing setting and disable indexing.
+     * Elasticsearch does not support rollbacks,
+     * so we need to prevent elasticsearch indexing when testing the processors.
+     */
+    @Before
+    public void setUp() {
+        originalIndexingSetting = env.isElasticIndexing();
+        env.setElasticIndexing(false);
+    }
+
+    /**
+     * Restore original indexing setting.
+     */
+    @After
+    public void cleanUp() {
+        env.setElasticIndexing(originalIndexingSetting);
+    }
 
     /**
      * Generates a dummy sobi fragment from an xml file
@@ -38,8 +70,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
      */
     protected SobiFragment generateXmlSobiFragment(String xmlFilePath) {
         try {
-            String absolutePath = getClass().getClassLoader().getResource(xmlFilePath).getFile();
-            File file = new File(absolutePath);
+            File file = FileIOUtils.getResourceFile(xmlFilePath);
 
             String contents = FileUtils.readFileToString(file);
 
@@ -78,6 +109,16 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     protected void processXmlFile(String xmlFilePath) {
         SobiFragment sobiFragment = generateXmlSobiFragment(xmlFilePath);
         processFragment(sobiFragment);
+    }
+
+    /* --- Test helper methods --- */
+
+    /**
+     * Get a bill amendment from the db
+     */
+    protected BillAmendment getAmendment(BillId billId) throws BillNotFoundEx, BillAmendNotFoundEx {
+        Bill bill = billDataService.getBill(BaseBillId.of(billId));
+        return bill.getAmendment(billId.getVersion());
     }
 
 }

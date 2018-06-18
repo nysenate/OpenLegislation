@@ -3,6 +3,7 @@ package gov.nysenate.openleg.stupid;
 import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.Test;
@@ -23,12 +24,11 @@ public class actionCodeParseTest {
 
         final String fileName = "LBDC_ACTION_CODES.csv";
 
-        final File testFileDir = new File(
-                getClass().getClassLoader().getResource("sourcefile/").getFile());
+        final File testFileDir = FileIOUtils.getResourceFile("sourcefile/");
 
         File csvFile = new File(testFileDir, fileName);
 
-        File outputCodes = new File(getClass().getClassLoader().getResource("sourcefile/").getFile()+ "outputActionCodes.txt");
+        File outputCodes = FileIOUtils.getResourceFile("sourcefile/outputActionCodes.txt");
         try {
             //outputCodes.createNewFile();
             Reader in = new FileReader(csvFile);

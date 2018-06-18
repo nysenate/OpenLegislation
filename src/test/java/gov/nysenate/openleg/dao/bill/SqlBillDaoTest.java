@@ -29,7 +29,7 @@ public class SqlBillDaoTest extends BaseTests
 
     @Test
     public void testGetBill() throws Exception {
-        logger.info("{}", OutputUtils.toJson(billDao.getBill(new BaseBillId("S1051", 2013))));
+        logger.info("{}", OutputUtils.toJson(billDao.getBill(new BaseBillId("S1051", 2013), false)));
     }
 
     @Test
@@ -51,11 +51,11 @@ public class SqlBillDaoTest extends BaseTests
 
     @Test
     public void testFastBill() throws Exception {
-        Bill bill = billDao.getBill(new BillId("S5922", 2013));
+        Bill bill = billDao.getBill(new BillId("S5922", 2013), false);
 
         StopWatch sw = new StopWatch();
         sw.start();
-            bill = billDao.getBill(new BillId("S5922", 2013));
+            bill = billDao.getBill(new BillId("S5922", 2013), false);
         sw.stop();
         logger.info("Time {} ms",sw.getTime());
 //        logger.info("{}", OutputUtils.toJson(bill));

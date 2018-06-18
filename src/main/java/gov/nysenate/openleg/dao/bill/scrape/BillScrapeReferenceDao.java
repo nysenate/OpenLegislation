@@ -1,16 +1,18 @@
-package gov.nysenate.openleg.dao.bill.text;
+package gov.nysenate.openleg.dao.bill.scrape;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
-import gov.nysenate.openleg.model.spotcheck.billtext.ScrapeQueuePriority;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeQueueEntry;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
+import gov.nysenate.openleg.model.spotcheck.billscrape.ScrapeQueuePriority;
+import gov.nysenate.openleg.service.scraping.bill.BillScrapeFile;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -19,55 +21,42 @@ import java.util.Objects;
 /**
  * Created by kyle on 2/19/15.
  */
-public interface BillTextReferenceDao {
+public interface BillScrapeReferenceDao {
+
+
+    /**
+     * Saves a file containing the scraped bill content to the incoming directory and
+     * saves file metadata to the database.
+     * @param content The content of the file.
+     * @param scrapedBill The BaseBillId the file represents.
+     * @throws IOException
+     */
+    void saveScrapedBillContent(String content, BaseBillId scrapedBill) throws IOException;
 
     /**
      * @return A list of all incoming scraped bill files
      */
-    Collection<File> getIncomingScrapedBills() throws IOException;
+    List<BillScrapeFile> getIncomingScrapedBills() throws IOException;
 
     /**
-     * Moves a scraped bill file into the archive directory
-     * @param scrapedBill File
-     * @throws IOException if the file could not be archived
+     * Moves a scraped bill file into the archive directory and marks as archived in the database.
+     * @param scrapedBill
+     * @return The updated BillScrapeFile.
+     * @throws IOException
      */
-    void archiveScrapedBill(File scrapedBill) throws IOException;
+    BillScrapeFile archiveScrapedBill(BillScrapeFile scrapedBill) throws IOException;
 
     /**
-     * Gets a list of all unchecked bill text references
+     * Updates a scraped bill file.
+     * @param scrapeFile
      */
-    List<BillTextReference> getUncheckedBillTextReferences();
+    void updateScrapedBill(BillScrapeFile scrapeFile);
 
     /**
-     * Gets the most recent bill text reference for the given bill within the given date time range
+     * Gets bill scrape files pending processing.
+     * @return
      */
-    BillTextReference getMostRecentBillTextReference(BaseBillId id, LocalDateTime start, LocalDateTime end);
-
-    /**
-     * Gets the most recently scraped bill text reference within the given date time range
-     */
-    BillTextReference getMostRecentBillTextReference(LocalDateTime start, LocalDateTime end);
-
-    /**
-     * Gets a bill text reference for the given base bill id that was scraped at the given date time
-     */
-    BillTextReference getBillTextReference(BaseBillId id, LocalDateTime refDateTime);
-
-    /**
-     * Gets all bill text references for the given billid
-     */
-    List<BillTextReference> getBillTextReference(BaseBillId id);
-
-    /**
-     * Inserts a new bill text reference
-     */
-    void insertBillTextReference(BillTextReference ref);
-
-    /** Sets all references for the given bill id as checked */
-    void setChecked(BaseBillId billId);
-
-    /** Deletes a bill text reference */
-    void deleteBillTextReference(BillTextReference ref);
+    List<BillScrapeFile> pendingScrapeBills();
 
     /**
      * Gets the bill at the head of the scrape queue
