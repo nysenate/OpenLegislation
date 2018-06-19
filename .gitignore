@@ -1,6 +1,6 @@
 *.jar
 *.class
-app.properties
+*.properties
 *.log
 .classpath
 .project
