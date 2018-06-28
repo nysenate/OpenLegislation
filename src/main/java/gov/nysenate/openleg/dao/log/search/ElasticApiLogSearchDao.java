@@ -11,6 +11,7 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
             logViewList.forEach(log ->
                 bulkRequest.add(searchClient
                     .prepareIndex(logIndexName, "default", Integer.toString(log.getRequestId()))
-                    .setSource(OutputUtils.toJson(log)))
+                    .setSource(OutputUtils.toJson(log), XContentType.JSON))
                 );
             safeBulkRequestExecute(bulkRequest);
         }

@@ -11,6 +11,7 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -60,7 +61,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
                             bulkRequest.add(searchClient.prepareIndex(memberIndexName,
                                     String.valueOf(fullMemberType),
                                     String.valueOf(m.getMemberId()))
-                                    .setSource(OutputUtils.toJson(m)))
+                                    .setSource(OutputUtils.toJson(m), XContentType.JSON))
             );
             safeBulkRequestExecute(bulkRequest);
         }

@@ -26,7 +26,7 @@ public interface BillSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder filter, RescoreBuilder.Rescorer rescorer,
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder filter, RescoreBuilder rescorer,
                                                  List<SortBuilder> sort, LimitOffset limOff);
 
     /**

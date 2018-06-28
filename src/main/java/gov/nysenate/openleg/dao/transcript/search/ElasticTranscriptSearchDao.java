@@ -12,9 +12,10 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
             transcriptViewList.forEach(t ->
                             bulkRequest.add(
                                     searchClient.prepareIndex(transcriptIndexName, "transcripts", t.getFilename())
-                                            .setSource(OutputUtils.toJson(t)))
+                                            .setSource(OutputUtils.toJson(t), XContentType.JSON))
             );
             safeBulkRequestExecute(bulkRequest);
         }

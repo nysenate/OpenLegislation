@@ -85,7 +85,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     /**
      * Delegates to the underlying bill search dao.
      */
-    private SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescoreBuilder.Rescorer rescorer,
+    private SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescoreBuilder rescorer,
                                                   String sort, LimitOffset limOff)
         throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;

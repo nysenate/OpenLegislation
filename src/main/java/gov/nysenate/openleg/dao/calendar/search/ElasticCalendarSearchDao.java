@@ -14,6 +14,7 @@ import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -109,7 +110,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     protected IndexRequestBuilder getCalendarIndexRequest(CalendarView calendarView) {
         return searchClient.prepareIndex(calIndexName,
                 Integer.toString(calendarView.getYear()), Integer.toString(calendarView.getCalendarNumber()))
-                .setSource(OutputUtils.toJson(calendarView));
+                .setSource(OutputUtils.toJson(calendarView), XContentType.JSON);
     }
 
     /* --- Id Mappers --- */
@@ -121,7 +122,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      * @return
      */
     protected CalendarId getCalendarId(SearchHit hit) {
-        return new CalendarId(Integer.parseInt(hit.id()), Integer.parseInt(hit.type()));
+        return new CalendarId(Integer.parseInt(hit.getId()), Integer.parseInt(hit.getType()));
     }
 
 }

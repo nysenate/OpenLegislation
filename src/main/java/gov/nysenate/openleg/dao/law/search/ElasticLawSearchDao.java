@@ -11,9 +11,10 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     /** {@inheritDoc} */
     @Override
     public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder postFilter,
-                                                 RescoreBuilder.Rescorer rescorer, List<SortBuilder> sort, LimitOffset limOff) {
+                                                 RescoreBuilder rescorer, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
             getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, true);
         SearchResponse response = searchBuilder.execute().actionGet();
@@ -63,7 +64,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
             lawDocs.stream().map(doc -> new LawDocView(doc)).forEach(docView -> {
                 bulkRequest.add(
                     searchClient.prepareIndex(lawIndexName, docView.getLawId(), createSearchId(docView))
-                                .setSource(OutputUtils.toJson(docView)));
+                                .setSource(OutputUtils.toJson(docView), XContentType.JSON));
             });
             safeBulkRequestExecute(bulkRequest);
         }

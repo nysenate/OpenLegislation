@@ -17,6 +17,7 @@ import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -158,7 +159,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
         return searchClient.prepareIndex(committeeSearchIndexName,
                 Integer.toString(committee.getSession().getYear()),
                 generateCommitteeVersionSearchId(committee.getVersionId()))
-                .setSource(OutputUtils.toJson(new CommitteeView(committee)));
+                .setSource(OutputUtils.toJson(new CommitteeView(committee)), XContentType.JSON);
     }
 
     /* --- Id Mappers --- */

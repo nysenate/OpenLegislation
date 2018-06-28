@@ -14,6 +14,7 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -80,7 +81,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
                             searchClient.prepareIndex(agendaIndexName,
                                 agenda.getId().getYear() + "-" + cfv.getAgenda().getId().getNumber(),
                                 cfv.getCommittee().getCommitteeId().getName())
-                            .setSource(OutputUtils.toJson(cfv)))));
+                            .setSource(OutputUtils.toJson(cfv), XContentType.JSON))));
             safeBulkRequestExecute(bulkRequest);
         }
     }

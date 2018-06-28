@@ -25,6 +25,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -111,8 +112,7 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
     @Bean(destroyMethod = "close")
     public Client elasticSearchNode() throws InterruptedException {
-        Settings settings = Settings.settingsBuilder()
-            .put("cluster.name", elasticSearchCluster).build();
+        Settings settings = Settings.builder().put("cluster.name", elasticSearchCluster).build();
 
         int retryCount = 0;
         ElasticsearchException cause;
@@ -123,10 +123,8 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
             }
             logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
             try {
-                TransportClient tc = TransportClient.builder()
-                        .settings(settings)
-                        .build()
-                        .addTransportAddress(
+                TransportClient tc = new PreBuiltTransportClient(Settings.EMPTY)
+                .addTransportAddress(
                                 new InetSocketTransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
                 if (tc.connectedNodes().size() == 0) {
                     tc.close();

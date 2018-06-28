@@ -26,7 +26,7 @@ public interface LawSearchDao
      * @param limOff LimitOffset
      * @return SearchResults<LawDocId>
      */
-    public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder filter, RescoreBuilder.Rescorer rescorer,
+    public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder filter, RescoreBuilder rescorer,
                                                  List<SortBuilder> sort, LimitOffset limOff);
 
     /**

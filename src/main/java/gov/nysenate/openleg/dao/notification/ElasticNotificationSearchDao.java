@@ -16,6 +16,7 @@ import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -60,7 +61,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     public RegisteredNotification registerNotification(Notification notification) {
         RegisteredNotification regNotification = new RegisteredNotification(notification, getNextId());
         searchClient.prepareIndex(notificationIndex, notificationType, Long.toString(regNotification.getId()))
-                .setSource(OutputUtils.toJson(new NotificationView(regNotification)))
+                .setSource(OutputUtils.toJson(new NotificationView(regNotification)), XContentType.JSON)
                 .execute().actionGet();
         return regNotification;
     }
@@ -117,7 +118,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
      */
     protected long getNextId() {
         IndexResponse response = searchClient.prepareIndex(notificationIndex, idType, idId)
-                .setSource("{}").execute().actionGet();
+                .setSource("{}", XContentType.JSON).execute().actionGet();
         return response.getVersion();
     }
 

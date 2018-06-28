@@ -16,7 +16,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
@@ -95,7 +95,7 @@ public abstract class ElasticBaseDao
      * @return SearchRequestBuilder
      */
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
-                                                    List<HighlightBuilder.Field> highlightedFields, RescoreBuilder.Rescorer rescorer,
+                                                    List<HighlightBuilder.Field> highlightedFields, RescoreBuilder rescorer,
                                                     List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) {
         limitOffset = adjustLimitOffset(limitOffset);
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
@@ -107,7 +107,10 @@ public abstract class ElasticBaseDao
                 .setMinScore(0.05f)
                 .setFetchSource(fetchSource);
         if (highlightedFields != null) {
-            highlightedFields.stream().forEach(searchBuilder::addHighlightedField);
+            HighlightBuilder hb = new HighlightBuilder();
+            for (HighlightBuilder.Field field : highlightedFields)
+                hb.field(field);
+            searchBuilder.highlighter(hb);
         }
 //        if (rescorer != null) {
 //            searchBuilder.addRescorer(rescorer);
@@ -136,7 +139,7 @@ public abstract class ElasticBaseDao
                                                     Function<SearchHit, R> hitMapper) {
         limitOffset = adjustLimitOffset(limitOffset);
         List<SearchResult<R>> resultList = new ArrayList<>();
-        for (SearchHit hit : response.getHits().hits()) {
+        for (SearchHit hit : response.getHits().getHits()) {
             SearchResult<R> result = new SearchResult<>(
                     hitMapper.apply(hit), // Result
                     (!Float.isNaN(hit.getScore())) ? BigDecimal.valueOf(hit.getScore()) : BigDecimal.ONE, // Rank
