@@ -67,7 +67,7 @@ public class SenateSiteBillJsonParser extends JsonParser {
                 bills.add(extractSenSiteBill(billNode, fragment));
             }
             return bills;
-        } catch (IOException | NoSuchElementException ex) {
+        } catch (Exception ex) {
             throw new ParseError("error while reading senate site bill dump fragment file: " +
                     fragment.getFragmentFile().getAbsolutePath(),
                     ex);
@@ -79,39 +79,45 @@ public class SenateSiteBillJsonParser extends JsonParser {
     private SenateSiteBill extractSenSiteBill(JsonNode billNode, SenateSiteDumpFragment fragment) throws IOException {
         SenateSiteBill bill = new SenateSiteBill(fragment.getDumpId().getDumpTime());
 
-        bill.setBasePrintNo(getValue(billNode, "field_ol_base_print_no"));
-        bill.setActiveVersion(getValue(billNode, "field_ol_active_version"));
-        bill.setMilestones(getMilestones(billNode, "field_ol_all_statuses"));
-        bill.setChamber(getValue(billNode, "field_ol_chamber"));
-        bill.setCoSponsors(getMembers(billNode, "field_ol_co_sponsor_names"));
-        bill.setText(getValue(billNode, "field_ol_full_text"));
-        bill.setAmended(getBooleanValue(billNode, "field_ol_is_amended"));
-        bill.setLatestStatusCommittee(getValue(billNode, "field_ol_latest_status_committee"));
-        bill.setLawCode(getValue(billNode, "field_ol_law_code"));
-        bill.setLawSection(getValue(billNode, "field_ol_law_section"));
-        bill.setMemo(getValue(billNode, "field_ol_memo"));
-        bill.setMultiSponsors(getMembers(billNode, "field_ol_multi_sponsor_names"));
-        bill.setTitle(getValue(billNode, "field_ol_name"));
-        bill.setPreviousVersions(getBillIdList(billNode, "field_ol_previous_versions"));
-        bill.setPrintNo(getValue(billNode, "field_ol_print_no"));
-        bill.setPublishDate(parseUnixTimeValue(billNode, "field_ol_publish_date"));
-        bill.setSameAs(getBillIdList(billNode, "field_ol_same_as"));
-        bill.setSponsor(getValue(billNode, "field_ol_sponsor_name"));
-        bill.setSummary(getValue(billNode, "field_ol_summary"));
-        bill.setSessionYear(getIntValue(billNode, "field_ol_session"));
-        bill.setLastStatus(getValue(billNode, "field_ol_last_status"));
-        bill.setLastStatusDate(parseUnixTimeValue(billNode, "field_ol_last_status_date"));
-        bill.setActions(getActionList(billNode, "field_ol_all_actions"));
-        bill.setHasSameAs(getBooleanValue(billNode, "field_ol_has_same_as"));
-        bill.setVotes(getVotes(billNode, bill.getBillId()));
+        final String printNo = getValue(billNode, "field_ol_print_no");
+        bill.setPrintNo(printNo);
 
-        if (bill.getBaseBillId().getBillType().isResolution()) {
-            // Public Website has different models for resolution and bills. For resolutions action info is stored
-            // in the field_ol_all_statuses node.
-            bill.setActions(getActionList(billNode, "field_ol_all_statuses"));
+        try {
+            bill.setBasePrintNo(getValue(billNode, "field_ol_base_print_no"));
+            bill.setActiveVersion(getValue(billNode, "field_ol_active_version"));
+            bill.setMilestones(getMilestones(billNode, "field_ol_all_statuses"));
+            bill.setChamber(getValue(billNode, "field_ol_chamber"));
+            bill.setCoSponsors(getMembers(billNode, "field_ol_co_sponsor_names"));
+            bill.setText(getValue(billNode, "field_ol_full_text"));
+            bill.setAmended(getBooleanValue(billNode, "field_ol_is_amended"));
+            bill.setLatestStatusCommittee(getValue(billNode, "field_ol_latest_status_committee"));
+            bill.setLawCode(getValue(billNode, "field_ol_law_code"));
+            bill.setLawSection(getValue(billNode, "field_ol_law_section"));
+            bill.setMemo(getValue(billNode, "field_ol_memo"));
+            bill.setMultiSponsors(getMembers(billNode, "field_ol_multi_sponsor_names"));
+            bill.setTitle(getValue(billNode, "field_ol_name"));
+            bill.setPreviousVersions(getBillIdList(billNode, "field_ol_previous_versions"));
+            bill.setPublishDate(parseUnixTimeValue(billNode, "field_ol_publish_date"));
+            bill.setSameAs(getBillIdList(billNode, "field_ol_same_as"));
+            bill.setSponsor(getValue(billNode, "field_ol_sponsor_name"));
+            bill.setSummary(getValue(billNode, "field_ol_summary"));
+            bill.setSessionYear(getIntValue(billNode, "field_ol_session"));
+            bill.setLastStatus(getValue(billNode, "field_ol_last_status"));
+            bill.setLastStatusDate(parseUnixTimeValue(billNode, "field_ol_last_status_date"));
+            bill.setActions(getActionList(billNode, "field_ol_all_actions"));
+            bill.setHasSameAs(getBooleanValue(billNode, "field_ol_has_same_as"));
+            bill.setVotes(getVotes(billNode, bill.getBillId()));
+
+            if (bill.getBaseBillId().getBillType().isResolution()) {
+                // Public Website has different models for resolution and bills. For resolutions action info is stored
+                // in the field_ol_all_statuses node.
+                bill.setActions(getActionList(billNode, "field_ol_all_statuses"));
+            }
+
+            return bill;
+        } catch (Exception ex) {
+            throw new ParseError("Error while parsing senate site bill " + printNo, ex);
         }
-
-        return bill;
     }
 
     private List<BillStatusView> getMilestones(JsonNode billNode, String fieldName) {
@@ -149,6 +155,7 @@ public class SenateSiteBillJsonParser extends JsonParser {
     private List<SenateSiteBillVote> getVotes(JsonNode billNode, BillId billId) {
         List<JsonNode> jsonVotes = getListValue(billNode, "field_ol_votes", Function.identity());
         return jsonVotes.stream()
+                .filter(JsonNode::isObject)
                 .map(voteNode -> parseVote(voteNode, billId))
                 .collect(Collectors.toList());
     }
