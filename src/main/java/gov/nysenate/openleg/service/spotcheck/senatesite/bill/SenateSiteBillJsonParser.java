@@ -155,7 +155,7 @@ public class SenateSiteBillJsonParser extends JsonParser {
     private List<SenateSiteBillVote> getVotes(JsonNode billNode, BillId billId) {
         List<JsonNode> jsonVotes = getListValue(billNode, "field_ol_votes", Function.identity());
         return jsonVotes.stream()
-//                .filter(JsonNode::isObject)
+                .filter(JsonNode::isObject)
                 .map(voteNode -> parseVote(voteNode, billId))
                 .collect(Collectors.toList());
     }
