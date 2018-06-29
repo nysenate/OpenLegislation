@@ -185,6 +185,31 @@ public class FileIOUtils
     }
 
     /**
+     * Save a string to a file and sets common permissions to the file.
+     * @see FileUtils#writeStringToFile(File, String) for details.
+     * @param file
+     * @param data
+     * @throws IOException
+     */
+    public static void writeStringToFile(File file, String data) throws IOException {
+        FileUtils.writeStringToFile(file, data);
+        setCommonFilePermissions(file);
+    }
+
+    /**
+     * Save a string to a file with a specified encoding. Sets common permissions to the saved file.
+     * @see FileUtils#writeStringToFile(File, String, Charset) for details.
+     * @param file
+     * @param data
+     * @param encoding
+     * @throws IOException
+     */
+    public static void writeStringToFile(File file, String data, Charset encoding) throws IOException {
+        FileUtils.writeStringToFile(file, data, encoding);
+        setCommonFilePermissions(file);
+    }
+
+    /**
      * Saves a character sequence to a file and sets common permissions to the file.
      * The data is initially saved to a temporary file and then moved to the destination file.
      * This discourages use of the file while data is being written.

@@ -4,17 +4,17 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.bill.text.SqlFsBillTextReferenceDao;
+import gov.nysenate.openleg.dao.bill.scrape.SqlFsBillScrapeReferenceDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillScrapeQueueEntry;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
-import gov.nysenate.openleg.model.spotcheck.billtext.ScrapeQueuePriority;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeQueueEntry;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
+import gov.nysenate.openleg.model.spotcheck.billscrape.ScrapeQueuePriority;
 import gov.nysenate.openleg.service.source.LRSBillTextSobiMaker;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
-import gov.nysenate.openleg.service.spotcheck.billtext.BillTextReportService;
-import gov.nysenate.openleg.service.spotcheck.billtext.BillTextSpotcheckProcessService;
+import gov.nysenate.openleg.service.spotcheck.scrape.BillScrapeReportService;
+import gov.nysenate.openleg.service.spotcheck.scrape.BillScrapeSpotcheckProcessService;
 import gov.nysenate.openleg.util.StringDiffer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -53,13 +53,13 @@ public class BillTextTest extends BaseTests {
     SpotcheckRunService runService;
 
     @Autowired
-    BillTextReportService report;
+    BillScrapeReportService report;
 
     @Autowired
-    BillTextSpotcheckProcessService procService;
+    BillScrapeSpotcheckProcessService procService;
 
     @Autowired
-    SqlFsBillTextReferenceDao dao;
+    SqlFsBillScrapeReferenceDao dao;
 
     @Autowired
     LRSBillTextSobiMaker sobiMaker;
@@ -112,17 +112,18 @@ public class BillTextTest extends BaseTests {
 
     @Test
     public void getBillsTest(){
-        BaseBillId id2 = new BaseBillId("S1", 2015);
-        List<BillTextReference> list = dao.getBillTextReference(id2);
-
-        for (BillTextReference ref : list){
-            System.out.println("________________________________");
-            System.out.println("print no:::: "+ ref.getPrintNo());
-            System.out.println("Amend:::: "+ ref.getActiveVersion());
-            System.out.println("Session Year:::: "+ ref.getSessionYear());
-            System.out.println("refDate :::: "+ ref.getReferenceDate());
-        }
+//        BaseBillId id2 = new BaseBillId("S1", 2015);
+//        List<BillScrapeReference> list = dao.getBillScrapeReference(id2);
+//
+//        for (BillScrapeReference ref : list){
+//            System.out.println("________________________________");
+//            System.out.println("print no:::: "+ ref.getPrintNo());
+//            System.out.println("Amend:::: "+ ref.getActiveVersion());
+//            System.out.println("Session Year:::: "+ ref.getSessionYear());
+//            System.out.println("refDate :::: "+ ref.getReferenceDate());
+//        }
     }
+
     @Test
     public void getBillTest(){
         BaseBillId id2 = new BaseBillId("S1", new SessionYear(2015));

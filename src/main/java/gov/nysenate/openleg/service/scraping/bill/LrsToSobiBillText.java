@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.service.scraping;
+package gov.nysenate.openleg.service.scraping.bill;
 
 import gov.nysenate.openleg.model.entity.Chamber;
 import org.springframework.stereotype.Component;

@@ -5,8 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -25,6 +26,7 @@ public class Pipeline<T, R> {
 
     private LinkedList<PipelineTask> tasks;
     private Executor executor;
+    private CompletableFuture<ImmutableList<R>> result = null;
 
     Pipeline(Collection<PipelineTask> tasks, Executor executor) {
         this.tasks = new LinkedList<>(tasks);
@@ -46,16 +48,47 @@ public class Pipeline<T, R> {
      * @return CompletableFuture<ImmutableList<R>>
      */
     public CompletableFuture<ImmutableList<R>> run() {
-        Iterator<PipelineTask> taskItr = tasks.descendingIterator();
-        if (!taskItr.hasNext()) {
+        if (tasks.isEmpty()) {
             return CompletableFuture.completedFuture(ImmutableList.of());
         }
-        PipelineTask<?, R> lastTask = taskItr.next();
-        CompletableFuture<Void> lastTaskFuture = CompletableFuture.runAsync(lastTask, executor);
-        while (taskItr.hasNext()) {
-            PipelineTask task = taskItr.next();
-            executor.execute(task);
+
+        LinkedList<CompletableFuture<Void>> futures = new LinkedList<>();
+        for (PipelineTask task : tasks) {
+            CompletableFuture<Void> cf = CompletableFuture.runAsync(task, executor)
+                    .exceptionally(ex -> handleTaskException(ex, futures));
+            futures.push(cf);
         }
-        return lastTaskFuture.thenApply(v -> lastTask.getOutputs());
+        // Set the result future to return the result of the last task when its future completes
+        PipelineTask<?, R> lastTask = tasks.getLast();
+        CompletableFuture<Void> lastTaskFuture = futures.getLast();
+        result = lastTaskFuture.thenApply(v -> lastTask.getOutputs());
+
+        // Send the signal for tasks to start and return the result future
+        tasks.descendingIterator().forEachRemaining(PipelineTask::startTask);
+        return result;
+    }
+
+    /* --- Internal Methods --- */
+
+    /**
+     * Handles an exception thrown by one of the pipeline tasks.
+     *
+     * @param ex Throwable
+     * @param allTaskFutures List<CompletableFuture<Void>> - list of futures for all tasks
+     * @return Void
+     */
+    private Void handleTaskException(Throwable ex, List<CompletableFuture<Void>> allTaskFutures) {
+        // Start a new thread that cancels all of the active futures
+        // (a new thread is needed since this method is run from one of the active future threads)
+        logger.warn("Canceling pipeline execution due to exception");
+        Optional.ofNullable(result)
+                .ifPresent(r -> r.completeExceptionally(ex));
+        executor.execute(() -> {
+            logger.info("killing pipeline tasks due to exception");
+            for (CompletableFuture future : allTaskFutures) {
+                Optional.ofNullable(future).ifPresent(f -> f.cancel(true));
+            }
+        });
+        return null;
     }
 }

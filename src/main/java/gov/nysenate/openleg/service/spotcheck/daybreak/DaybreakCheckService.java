@@ -1,12 +1,9 @@
 package gov.nysenate.openleg.service.spotcheck.daybreak;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Range;
-import gov.nysenate.openleg.dao.bill.reference.daybreak.DaybreakDao;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
@@ -18,12 +15,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -35,34 +28,7 @@ public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill,
 {
     private static final Logger logger = LoggerFactory.getLogger(DaybreakCheckService.class);
 
-    @Autowired
-    protected DaybreakDao daybreakDao;
-
     /* --- Implemented Methods --- */
-
-    /** {@inheritDoc}
-     *  Just use the latest daybreak files we have. */
-    @Override
-    public SpotCheckObservation<BaseBillId> check(Bill bill) throws ReferenceDataNotFoundEx {
-        return check(bill, DateUtils.LONG_AGO.atStartOfDay(), LocalDateTime.now());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SpotCheckObservation<BaseBillId> check(Bill bill, LocalDateTime start, LocalDateTime end)
-                                                  throws ReferenceDataNotFoundEx {
-        if (bill == null) {
-            throw new IllegalArgumentException("Supplied bill cannot be null");
-        }
-        Range<LocalDate> dateRange = Range.closed(start.toLocalDate(), end.toLocalDate());
-        try {
-            DaybreakBill daybreakBill = daybreakDao.getCurrentDaybreakBill(bill.getBaseBillId(), dateRange);
-            return check(bill, daybreakBill);
-        }
-        catch (DataAccessException ex) {
-            throw new ReferenceDataNotFoundEx();
-        }
-    }
 
     /** {@inheritDoc} */
     @Override

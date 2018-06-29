@@ -1664,8 +1664,15 @@ md-dialog.issuedialog {
 .spotcheck-table-row {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  > * {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  > md-input-container {
+    margin-top: 35px;
+  }
 }
 
 .spotcheck-table-mismatch-row {

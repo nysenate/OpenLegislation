@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.model.spotcheck.billtext;
+package gov.nysenate.openleg.model.spotcheck.billscrape;
 
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
@@ -7,11 +7,15 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by kyle on 3/3/15.
  */
-public class BillTextReference {
+public class BillScrapeReference {
 
     //print number for referenced bill eg. "S100"
     private BaseBillId baseBillId;
@@ -21,13 +25,13 @@ public class BillTextReference {
     private String text;
     //text in the memo of the bill
     private String memo;
-
+    private Set<BillScrapeVote> votes;
     private Version activeVersion;
 
     /** If a scraped reference could not be found/parsed this is set to true */
     private boolean notFound = false;
 
-    public BillTextReference(){}
+    public BillScrapeReference(){}
 
     /**
      *  @param billId
@@ -36,10 +40,11 @@ public class BillTextReference {
      * @param memo
      * @param notFound
      */
-    private BillTextReference(BillId billId, LocalDateTime referenceDate, String text, String memo,
-                             boolean notFound){
+    private BillScrapeReference(BillId billId, LocalDateTime referenceDate, String text, String memo,
+                                boolean notFound){
         this.baseBillId = BillId.getBaseId(billId);
         this.activeVersion = billId.getVersion();
+        this.votes = new HashSet<>();
 
         this.referenceDate = referenceDate;
         this.text = text;
@@ -47,13 +52,13 @@ public class BillTextReference {
         this.notFound = notFound;
     }
 
-    public BillTextReference(BillId billId, LocalDateTime referenceDate, String text, String memo) {
+    public BillScrapeReference(BillId billId, LocalDateTime referenceDate, String text, String memo) {
         this(billId, referenceDate, text, memo, false);
     }
 
-    public static BillTextReference getErrorBtr(BillId billId, LocalDateTime referenceDate,
-                                                String text) {
-        return new BillTextReference(billId, referenceDate, text, "", true);
+    public static BillScrapeReference getErrorBtr(BillId billId, LocalDateTime referenceDate,
+                                                  String text) {
+        return new BillScrapeReference(billId, referenceDate, text, "", true);
     }
 
     /* --- Functional Getters --- */
@@ -109,6 +114,14 @@ public class BillTextReference {
     }
     public void setActiveVersion(Version activeVersion) {
         this.activeVersion = activeVersion;
+    }
+
+    public Set<BillScrapeVote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(Set<BillScrapeVote> votes) {
+        this.votes = votes;
     }
 
     public boolean isNotFound() {

@@ -1,25 +1,23 @@
-package gov.nysenate.openleg.service.spotcheck.billtext;
+package gov.nysenate.openleg.service.spotcheck.scrape;
 
-import gov.nysenate.openleg.client.view.bill.BillInfoView;
+import com.google.common.collect.*;
 import gov.nysenate.openleg.model.base.PublishStatus;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.spotcheck.*;
-import gov.nysenate.openleg.model.spotcheck.billtext.BillTextReference;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
+import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
-import gov.nysenate.openleg.util.OutputUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
@@ -27,8 +25,8 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
  * Created by kyle on 2/19/15.
  */
 @Service
-public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, BillTextReference>{
-    private static final Logger logger = Logger.getLogger(BillTextCheckService.class);
+public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill, BillScrapeReference>{
+    private static final Logger logger = Logger.getLogger(BillScrapeCheckService.class);
 
     @Autowired
     BillDataService billDataService;
@@ -39,26 +37,12 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
     }
 
     @Override
-    public SpotCheckObservation<BaseBillId> check(Bill content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
-
-    @Override
-    public SpotCheckObservation<BaseBillId> check(Bill content, LocalDateTime start, LocalDateTime end)
-            throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException(":P");
-    }
-
-    @Override
-    public SpotCheckObservation<BaseBillId> check(Bill bill, BillTextReference reference) {
+    public SpotCheckObservation<BaseBillId> check(Bill bill, BillScrapeReference reference) {
         if (reference == null) {
-            throw new IllegalArgumentException("BillTextSpotcheckReference cannot be null when performing spot check");
+            throw new IllegalArgumentException("BillScrapeSpotcheckReference cannot be null when performing spot check");
         }
 
-        BaseBillId baseBillId = bill.getBaseBillId();
-        SpotCheckReferenceId referenceId = reference.getReferenceId();
-
-        final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(referenceId, baseBillId);
+        final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(reference.getReferenceId(), bill.getBaseBillId());
 
         //Add mismatches to observation
 
@@ -71,6 +55,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
             observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", reference.getText()));
         } else {
             checkAmendment(bill, reference, observation);
+            checkVotes(bill, reference, observation);
             if (bill.hasAmendment(reference.getActiveVersion())) {
                 BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
                 checkBillText(amendment, reference, observation);
@@ -86,7 +71,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         return observation;
     }
 
-    private void checkAmendment(Bill bill, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv) {
+    private void checkAmendment(Bill bill, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv) {
         if (bill.getActiveVersion() == null || !bill.getActiveVersion().equals(reference.getActiveVersion())) {
             obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT,
                     bill.getActiveVersion(), reference.getActiveVersion()));
@@ -97,7 +82,7 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
      * Checks text with all whitespace removed, and generates several mismatches with different levels of text
      * normalization if there was a mismatch in the no-whitespace text
      */
-    private void checkBillText(BillAmendment billAmendment, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv){
+    private void checkBillText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
         String dataText = billAmendment.getFullText();
         String refText = reference.getText();
         String strippedDataText = stripNonAlpha(dataText);
@@ -114,7 +99,42 @@ public class BillTextCheckService implements SpotCheckService<BaseBillId, Bill, 
         }
     }
 
-    private void checkMemoText(BillAmendment billAmendment, BillTextReference reference, SpotCheckObservation<BaseBillId> obsrv){
+    private void checkVotes(Bill bill, BillScrapeReference reference, SpotCheckObservation<BaseBillId> observation) {
+        Set<BillScrapeVote> referenceVotes = reference.getVotes();
+        Set<BillScrapeVote> openlegVotes = createOpenlegVotes(bill);
+
+        if (!Sets.symmetricDifference(referenceVotes, openlegVotes).isEmpty()) {
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_SCRAPE_VOTE,
+                    openlegVotes.toString(), referenceVotes.toString()));
+        }
+    }
+
+    private Set<BillScrapeVote> createOpenlegVotes(Bill bill) {
+        Set<BillScrapeVote> votes = new HashSet<>();
+        for (BillVote vote : fetchBillFloorVotes(bill)) {
+            SortedSetMultimap<BillVoteCode, String> voteMultiList = TreeMultimap.create();
+            LocalDate voteDate = vote.getVoteDate();
+            for (BillVoteCode code : vote.getMemberVotes().keySet()) {
+                for (SessionMember member : vote.getMembersByVote(code)) {
+                    voteMultiList.put(code, member.getLastName());
+                }
+            }
+            BillScrapeVote v = new BillScrapeVote(voteDate, voteMultiList);
+            votes.add(v);
+        }
+        return votes;
+    }
+
+    // Returns floor votes from all amendments of this bill.
+    private List<BillVote> fetchBillFloorVotes(Bill bill) {
+        return bill.getAmendmentList().stream()
+                .map(BillAmendment::getVotesList)
+                .flatMap(Collection::stream)
+                .filter(v -> v.getVoteType() == BillVoteType.FLOOR)
+                .collect(Collectors.toList());
+    }
+
+    private void checkMemoText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
         String dataMemo = billAmendment.getMemo();
         String refMemo = reference.getMemo();
         if (!StringUtils.equalsIgnoreCase(dataMemo, refMemo)) {
