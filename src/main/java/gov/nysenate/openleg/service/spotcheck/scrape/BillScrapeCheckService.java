@@ -16,10 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
@@ -57,10 +55,10 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             observation.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, "", reference.getText()));
         } else {
             checkAmendment(bill, reference, observation);
+            checkVotes(bill, reference, observation);
             if (bill.hasAmendment(reference.getActiveVersion())) {
                 BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
                 checkBillText(amendment, reference, observation);
-                checkVotes(amendment, reference, observation);
                 // Only check senate, non-resolution bills for sponsor memos
                 // Todo find a better way of checking memo text
                 //  currently, memos are sent daily in batches and are not guaranteed to be present in sobi data if on lrs
@@ -101,13 +99,9 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
         }
     }
 
-    private void checkVotes(BillAmendment amendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> observation) {
-        if (amendment.getVotesList().isEmpty() && reference.getVotes().isEmpty()) {
-            return;
-        }
-
+    private void checkVotes(Bill bill, BillScrapeReference reference, SpotCheckObservation<BaseBillId> observation) {
         Set<BillScrapeVote> referenceVotes = reference.getVotes();
-        Set<BillScrapeVote> openlegVotes = createOpenlegVotes(amendment);
+        Set<BillScrapeVote> openlegVotes = createOpenlegVotes(bill);
 
         if (!Sets.symmetricDifference(referenceVotes, openlegVotes).isEmpty()) {
             observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_SCRAPE_VOTE,
@@ -115,9 +109,9 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
         }
     }
 
-    private Set<BillScrapeVote> createOpenlegVotes(BillAmendment amendment) {
+    private Set<BillScrapeVote> createOpenlegVotes(Bill bill) {
         Set<BillScrapeVote> votes = new HashSet<>();
-        for (BillVote vote : amendment.getVotesList()) {
+        for (BillVote vote : fetchBillFloorVotes(bill)) {
             SortedSetMultimap<BillVoteCode, String> voteMultiList = TreeMultimap.create();
             LocalDate voteDate = vote.getVoteDate();
             for (BillVoteCode code : vote.getMemberVotes().keySet()) {
@@ -129,6 +123,15 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             votes.add(v);
         }
         return votes;
+    }
+
+    // Returns floor votes from all amendments of this bill.
+    private List<BillVote> fetchBillFloorVotes(Bill bill) {
+        return bill.getAmendmentList().stream()
+                .map(BillAmendment::getVotesList)
+                .flatMap(Collection::stream)
+                .filter(v -> v.getVoteType() == BillVoteType.FLOOR)
+                .collect(Collectors.toList());
     }
 
     private void checkMemoText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
