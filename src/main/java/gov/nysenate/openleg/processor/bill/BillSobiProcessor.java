@@ -102,7 +102,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
         List<SobiBlock> blocks = sobiFragment.getSobiBlocks();
         logger.info("Processing " + sobiFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
         DataProcessUnit unit = createProcessUnit(sobiFragment);
-        for (SobiBlock block : processConfig.filterSobiBlocks(sobiFragment ,blocks)) {
+        for (SobiBlock block : processConfig.filterSobiBlocks(blocks)) {
             String data = block.getData();
             BillId billId = block.getBillId();
             Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), billId, sobiFragment);
