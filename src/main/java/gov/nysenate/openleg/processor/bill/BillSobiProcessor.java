@@ -63,7 +63,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
 
     /** RULES Sponsors are formatted as RULES COM followed by the name of the sponsor that requested passage. */
     protected static final Pattern rulesSponsorPattern =
-        Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
+        Pattern.compile("RULES COM \\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
 
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
