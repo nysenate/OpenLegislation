@@ -56,7 +56,7 @@ public class Pipeline<T, R> {
         for (PipelineTask task : tasks) {
             CompletableFuture<Void> cf = CompletableFuture.runAsync(task, executor)
                     .exceptionally(ex -> handleTaskException(ex, futures));
-            futures.push(cf);
+            futures.add(cf);
         }
         // Set the result future to return the result of the last task when its future completes
         PipelineTask<?, R> lastTask = tasks.getLast();
