@@ -15,7 +15,6 @@ import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import gov.nysenate.openleg.service.transcript.event.BulkTranscriptUpdateEvent;
 import gov.nysenate.openleg.service.transcript.event.TranscriptUpdateEvent;
-import org.apache.lucene.queryparser.xml.builders.RangeFilterBuilder;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;

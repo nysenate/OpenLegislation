@@ -123,7 +123,7 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
             }
             logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
             try {
-                TransportClient tc = new PreBuiltTransportClient(Settings.EMPTY)
+                TransportClient tc = new PreBuiltTransportClient(settings)
                 .addTransportAddress(
                                 new InetSocketTransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
                 if (tc.connectedNodes().size() == 0) {
