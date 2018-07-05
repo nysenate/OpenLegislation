@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <Configuration status="WARN">
+        <Appenders>
+            <Console name="STDOUT" target="SYSTEM_OUT">
+                <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %5p %t %c{2}:%L - %m%n"/>
+            </Console>
+        </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="STDOUT" level="INFO"/>
+        </Root>
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.springframework.jdbc" level="WARN"/>
+        <logger name="com.mchange.v2" level="WARN"/>
+        <logger name="logger.net.sf.ehcache" level="WARN"/>
+        <logger name="org.elasticsearch.client.transport" level="WARN"/>
+    </Loggers>
+    </Configuration>
