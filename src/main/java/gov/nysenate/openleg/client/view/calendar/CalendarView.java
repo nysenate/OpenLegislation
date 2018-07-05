@@ -18,7 +18,7 @@ public class CalendarView extends CalendarIdView {
     protected LocalDate calDate;
 
     public CalendarView(Calendar calendar, BillDataService billDataService) {
-        super(calendar !=null ? calendar.getId() : null);
+        super(calendar != null ? calendar.getId() : null);
         if (calendar != null) {
             if (calendar.getSupplemental(Version.DEFAULT) != null) {
                 this.floorCalendar = new CalendarSupView(calendar.getSupplemental(Version.DEFAULT), billDataService);
