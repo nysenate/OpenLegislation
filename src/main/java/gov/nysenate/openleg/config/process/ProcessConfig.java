@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,15 +45,12 @@ public class ProcessConfig extends AbstractDataProcessor {
      * @return {@link List<SobiFragment>}
      */
     public List<SobiFragment> filterFileFragments(List<SobiFragment> fragments) {
-        List<SobiFragment> allowedFragments = fragments.stream()
-                .filter(frag -> {
-                    SourceFilter sourceFilter = determineProcessWhitelist(frag.getPublishedDateTime());
-                    SourceType sourceType = frag.getParentSobiFile().getSourceType();
-                    sourceFilter.acceptFragment(frag);
-                    throw new IllegalStateException("Unknown source type: " + sourceType);
-                })
+        return fragments.stream()
+                .filter(frag -> determineProcessWhitelist(frag.getPublishedDateTime(),
+                            frag.getParentSobiFile().getSourceType())
+                            .acceptFragment(frag)
+                )
                 .collect(Collectors.toList());
-        return allowedFragments;
     }
 
     /**
@@ -66,16 +62,20 @@ public class ProcessConfig extends AbstractDataProcessor {
      */
     public List<SobiBlock> filterSobiBlocks( List<SobiBlock> blocks) {
         return blocks.stream()
-                .filter(block -> !sobiFilter.acceptBlock(block))
+                .filter(block -> sobiFilter.acceptBlock(block))
                 .collect(Collectors.toList());
     }
 
-    private SourceFilter determineProcessWhitelist(LocalDateTime publishDate) {
-        return determineProcessWhitelist(LocalDate.of(publishDate.getYear(), publishDate.getMonth(),
-                publishDate.getDayOfMonth()));
+    private SourceFilter determineProcessWhitelist(LocalDateTime publishDate,SourceType sourceType) {
+        return determineProcessWhitelist(publishDate.toLocalDate(), sourceType);
     }
 
-    public SourceFilter determineProcessWhitelist(LocalDate publishDate) {
-        return filterRangeMap.get(publishDate.getYear());
+    public SourceFilter determineProcessWhitelist(LocalDate publishDate,SourceType sourceType) {
+        if (sourceType == SourceType.XML || sourceType == SourceType.SOBI) {
+            return filterRangeMap.get(publishDate.getYear());
+        }
+        else {
+            throw new IllegalStateException("Unknown source type: " + sourceType);
+        }
     }
 }
