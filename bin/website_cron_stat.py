@@ -131,6 +131,7 @@ def plot_run_duration(runs, save_file=None, relative_time=False):
     saved_ax.plot_date(start_times, bills_imported, marker='x', color='g')
     saved_ax.set(ylabel="Saved Bills")
     saved_ax.tick_params('y', colors='g')
+    saved_ax.xaxis.set_major_formatter(mpdates.DateFormatter('%H:%M'))
 
     if save_file:
         print('saving graph to ' + save_file)
