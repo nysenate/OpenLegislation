@@ -78,7 +78,7 @@ Default Bill Response
         "resolution": false                       // True if this is a resolution
       },
       "title": "Provides enhanced..",             // Title of the bill
-      "activeVersion": "",                        // Current amendment version ("" for initial version)
+      "activeVersion": "DEFAULT",                 // Current amendment version ("DEFAULT" for initial version)
       "year": 2013,                               // Year the bill was introduced on
       "publishedDateTime": "2013-01-14T10:36:22", // Date/Time this bill was first published via LBDC
       "substitutedBy": {                          // If the bill was substituted, the bill id will be contained
@@ -633,7 +633,7 @@ Sample response:
                 "billCalNo": null,
                 "activeYear": "2013",
                 "committeeName": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
-                "activeVersion": " ",
+                "activeVersion": "DEFAULT",
                 "status": "IN_SENATE_COMM"
             }
         },

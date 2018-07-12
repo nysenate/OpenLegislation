@@ -125,9 +125,9 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
      * <p>Returns:</p>
      * <ul>
      * <li>Empty string if the supplemental is null</li>
-     * <li>"BASE" if the Version = Version.BASE</li>
+     * <li>"BASE" if the Version = Version.DEFAULT</li>
      * </ul>
-     * This is different from the Version.toString() behavior of returning an empty string for the Default/Base version.
+     * This is different from the Version.toString() behavior of returning "DEFAULT" for the Default/Base version.
      */
     private String getVersionString(CalendarSupplemental contentSuppDiff) {
         String versionString = "";
