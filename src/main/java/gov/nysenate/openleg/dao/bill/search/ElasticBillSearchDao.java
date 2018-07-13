@@ -94,7 +94,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     /**
      * Increase max result window for bills in order to perform paginated queries on lots of bills.
      *
-     * @see gov.nysenate.openleg.controller.api.bill.BillGetCtrl#getBills(int, String, boolean, WebRequest)
+     * @see gov.nysenate.openleg.controller.api.bill.BillGetCtrl#getBills(int, String, boolean, boolean, WebRequest)
      *
      * @return int
      */

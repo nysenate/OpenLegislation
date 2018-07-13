@@ -1,11 +1,7 @@
 package gov.nysenate.openleg.model.base;
 
-import com.google.common.collect.Lists;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -19,8 +15,10 @@ public enum Version
     DEFAULT, // The default version
     A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
 
+    public final static String DEFAULT_VERSION_NAME = "ORIGINAL";
+
     public String getValue() {
-        return this.name();
+        return this == DEFAULT ?  DEFAULT_VERSION_NAME : this.name();
     }
 
     @Override

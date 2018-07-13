@@ -18,6 +18,7 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.search.SearchPhaseExecutionException;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchParseException;
 import org.elasticsearch.search.rescore.RescoreBuilder;
@@ -95,6 +96,9 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         }
         catch (SearchParseException ex) {
             throw new SearchException("Invalid query string", ex);
+        }
+        catch (SearchPhaseExecutionException ex){
+            throw new ElasticsearchException("Database is probably unpopulated. Try rebuilding indices.\n" + ex);
         }
         catch (ElasticsearchException ex) {
             throw new UnexpectedSearchException(ex);

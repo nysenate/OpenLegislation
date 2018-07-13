@@ -101,20 +101,18 @@ public abstract class ElasticBaseDao
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(query)
-                .setRescorer(rescorer)
                 .setFrom(limitOffset.getOffsetStart() - 1)
                 .setSize((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
                 .setMinScore(0.05f)
                 .setFetchSource(fetchSource);
         if (highlightedFields != null) {
             HighlightBuilder hb = new HighlightBuilder();
-            for (HighlightBuilder.Field field : highlightedFields)
-                hb.field(field);
+            highlightedFields.forEach(hb::field);
             searchBuilder.highlighter(hb);
         }
-//        if (rescorer != null) {
-//            searchBuilder.addRescorer(rescorer);
-//        }
+        if (rescorer != null) {
+            searchBuilder.setRescorer(rescorer);
+        }
         // Post filters take effect after the search is completed
         if (postFilter != null) {
             searchBuilder.setPostFilter(postFilter);

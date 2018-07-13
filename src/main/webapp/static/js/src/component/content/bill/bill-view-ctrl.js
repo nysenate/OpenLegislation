@@ -12,7 +12,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         $scope.loading = false;
         $scope.fullTextFetched = {}; // Contains a dict of versions to indicate the ones where text was fetched.
         $scope.curr = {
-            amdVersion: '',
+            amdVersion: 'ORIGINAL',
             compareVersion: 'None',
             selectedView: (parseInt($routeParams.view, 10) || 1),
             updateTypeFilter: 'status',
