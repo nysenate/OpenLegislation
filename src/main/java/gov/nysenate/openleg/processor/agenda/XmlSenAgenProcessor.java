@@ -52,7 +52,7 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
         LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
-            Document doc = xml.parse(sobiFragment.getText());
+            Document doc = xml.parse(stripNonValidXMLCharacters(sobiFragment.getText()));
             Node xmlAgenda = xml.getNode("senagenda", doc);
             Integer agendaNo = xml.getInteger("@no", xmlAgenda);
             Integer year = xml.getInteger("@year", xmlAgenda);
@@ -153,5 +153,20 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
         if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
             flushAllUpdates();
         }
+    }
+
+    /**
+     * @param text the string that has a non valid character.
+     * @return the string that is stripped of the non-valid character
+     */
+    private String stripNonValidXMLCharacters(String text) {
+        if (text == null || ("".equals(text))) return null;
+        StringBuffer out = new StringBuffer(text);
+        for (int i = 0; i < out.length(); i++) {
+            if(out.charAt(i) == 0x1a) {
+                out.setCharAt(i, '-');
+            }
+        }
+        return out.toString();
     }
 }
