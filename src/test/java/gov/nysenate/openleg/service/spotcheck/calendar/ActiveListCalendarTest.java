@@ -32,7 +32,7 @@ public class ActiveListCalendarTest extends BaseTests {
 
     @Test
     public void activeListCalendarTest() throws FileNotFoundException {
-        Calendar dummyCalendar = new Calendar(new CalendarEntryListId(new CalendarId(10, 2015), CalendarType.FLOOR_CALENDAR, Version.DEFAULT, 0));
+        Calendar dummyCalendar = new Calendar(new CalendarEntryListId(new CalendarId(10, 2015), CalendarType.FLOOR_CALENDAR, Version.ORIGINAL, 0));
         Calendar expected = process.process(new CalendarAlertFile(alertFile));
         List<SpotCheckObservation<CalendarEntryListId>> spotCheckObservation = calendarCheckService.checkAll(dummyCalendar,expected);
         CalendarEntryListId actual = spotCheckObservation.get(0).getKey();

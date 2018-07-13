@@ -20,12 +20,12 @@ public class CalendarView extends CalendarIdView {
     public CalendarView(Calendar calendar, BillDataService billDataService) {
         super(calendar != null ? calendar.getId() : null);
         if (calendar != null) {
-            if (calendar.getSupplemental(Version.DEFAULT) != null) {
-                this.floorCalendar = new CalendarSupView(calendar.getSupplemental(Version.DEFAULT), billDataService);
+            if (calendar.getSupplemental(Version.ORIGINAL) != null) {
+                this.floorCalendar = new CalendarSupView(calendar.getSupplemental(Version.ORIGINAL), billDataService);
             }
             this.supplementalCalendars = MapView.of(
                     calendar.getSupplementalMap().values().stream()
-                            .filter((calSup) -> !calSup.getVersion().equals(Version.DEFAULT))
+                            .filter((calSup) -> !calSup.getVersion().equals(Version.ORIGINAL))
                             .map(calSup -> new CalendarSupView(calSup, billDataService))
                             .collect(Collectors.toMap(SimpleCalendarSupView::getVersion, Function.identity(),
                                     (a, b) -> b, TreeMap::new))

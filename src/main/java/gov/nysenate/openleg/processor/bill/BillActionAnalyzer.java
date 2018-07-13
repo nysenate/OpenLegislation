@@ -144,7 +144,7 @@ public class BillActionAnalyzer
         this.actions = actions;
         this.billId = billId;
         if (defaultPubStatus.isPresent()) {
-            this.publishStatusMap.put(Version.DEFAULT, defaultPubStatus.get());
+            this.publishStatusMap.put(Version.ORIGINAL, defaultPubStatus.get());
             this.billStatus = new BillStatus(INTRODUCED, defaultPubStatus.get().getEffectDateTime().toLocalDate());
         }
     }

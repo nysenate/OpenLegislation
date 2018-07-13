@@ -27,7 +27,7 @@ public class BillId implements Serializable, Comparable<BillId>
     public static Pattern billIdPattern = Pattern.compile("(?<printNo>" + printNumberRegex + ")-?(?<year>[0-9]{4})");
 
     /** The default amendment version letter. */
-    public static final Version DEFAULT_VERSION = Version.DEFAULT;
+    public static final Version DEFAULT_VERSION = Version.ORIGINAL;
 
     /** A number assigned to a bill when it's introduced in the Legislature. Each printNo begins with a
      *  letter (A for Assembly, S for Senate) followed by 1 to 5 digits. This printNo is valid only for the

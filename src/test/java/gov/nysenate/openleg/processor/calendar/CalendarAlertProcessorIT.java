@@ -70,7 +70,7 @@ public class CalendarAlertProcessorIT extends BaseTests {
     public void parsesFloorSupplementalVersion() throws ParseError {
         Calendar actualCalendar = process.process(simpleFloor);
         assertThat(actualCalendar.getSupplementalMap().keySet().size(), is(1));
-        assertThat(actualCalendar.getSupplemental(Version.DEFAULT), is(not(nullValue())));
+        assertThat(actualCalendar.getSupplemental(Version.ORIGINAL), is(not(nullValue())));
 
         actualCalendar = process.process(floorSupplemental);
         assertThat(actualCalendar.getSupplementalMap().keySet().size(), is(1));
@@ -79,7 +79,7 @@ public class CalendarAlertProcessorIT extends BaseTests {
         // Active list alerts should have no floor supplemental's.
         actualCalendar = process.process(activeListSupplemental);
         assertThat(actualCalendar.getSupplementalMap().keySet().size(), is(0));
-        assertThat(actualCalendar.getSupplemental(Version.DEFAULT), is(nullValue()));
+        assertThat(actualCalendar.getSupplemental(Version.ORIGINAL), is(nullValue()));
     }
 
     @Test
@@ -88,10 +88,10 @@ public class CalendarAlertProcessorIT extends BaseTests {
         LocalDateTime releaseDateTime = LocalDateTime.of(2015, 2, 19, 14, 30, 33);
         LocalDate calendarDate = LocalDate.of(2015, 2, 25);
         CalendarSupplemental expectedSupplemental = new CalendarSupplemental(
-                calendarId, Version.DEFAULT, calendarDate, releaseDateTime);
+                calendarId, Version.ORIGINAL, calendarDate, releaseDateTime);
 
         Calendar actualCalendar = process.process(simpleFloor);
-        CalendarSupplemental actualSupplemental = actualCalendar.getSupplemental(Version.DEFAULT);
+        CalendarSupplemental actualSupplemental = actualCalendar.getSupplemental(Version.ORIGINAL);
 
         assertThat(actualSupplemental.getCalendarId(), is(expectedSupplemental.getCalendarId()));
         assertThat(actualSupplemental.getVersion(), is(expectedSupplemental.getVersion()));
@@ -107,7 +107,7 @@ public class CalendarAlertProcessorIT extends BaseTests {
                 78, sectionType, new BillId("S390", sessionYear), null, null);
 
         Calendar actualCalendar = process.process(simpleFloor);
-        assertThat(getSupplementalEntries(actualCalendar, Version.DEFAULT, sectionType), hasItem(entry));
+        assertThat(getSupplementalEntries(actualCalendar, Version.ORIGINAL, sectionType), hasItem(entry));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class CalendarAlertProcessorIT extends BaseTests {
                 70, sectionType, new BillId("S2236", sessionYear), null, null);
 
         Calendar actualCalendar = process.process(simpleFloor);
-        assertThat(getSupplementalEntries(actualCalendar, Version.DEFAULT, sectionType), hasItem(entry));
+        assertThat(getSupplementalEntries(actualCalendar, Version.ORIGINAL, sectionType), hasItem(entry));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class CalendarAlertProcessorIT extends BaseTests {
                 49, sectionType, new BillId("S2314", sessionYear), null, null);
 
         Calendar actualCalendar = process.process(simpleFloor);
-        assertThat(getSupplementalEntries(actualCalendar, Version.DEFAULT, sectionType), hasItem(entry));
+        assertThat(getSupplementalEntries(actualCalendar, Version.ORIGINAL, sectionType), hasItem(entry));
     }
 
     private CalendarId simpleCalendarId() {

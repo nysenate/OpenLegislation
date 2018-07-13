@@ -282,8 +282,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      * @return boolean
      */
     public boolean isBaseVersionPublished() {
-        return (this.amendPublishStatusMap.containsKey(Version.DEFAULT) &&
-                this.amendPublishStatusMap.get(Version.DEFAULT).isPublished());
+        return (this.amendPublishStatusMap.containsKey(Version.ORIGINAL) &&
+                this.amendPublishStatusMap.get(Version.ORIGINAL).isPublished());
     }
 
     /**

@@ -21,12 +21,12 @@ public class SimpleCalendarView extends CalendarIdView {
     public SimpleCalendarView(Calendar calendar) {
         super(calendar != null ? calendar.getId() : null);
         if (calendar != null) {
-            if (calendar.getSupplemental(Version.DEFAULT) != null) {
-                this.floorCalendar = new SimpleCalendarSupView(calendar.getSupplemental(Version.DEFAULT));
+            if (calendar.getSupplemental(Version.ORIGINAL) != null) {
+                this.floorCalendar = new SimpleCalendarSupView(calendar.getSupplemental(Version.ORIGINAL));
             }
             this.supplementalCalendars = MapView.of(
                     calendar.getSupplementalMap().values().stream()
-                            .filter((calSup) -> !calSup.getVersion().equals(Version.DEFAULT))
+                            .filter((calSup) -> !calSup.getVersion().equals(Version.ORIGINAL))
                             .map(SimpleCalendarSupView::new)
                             .collect(Collectors.toMap(SimpleCalendarSupView::getVersion, scsv -> scsv, (a, b) -> b, TreeMap::new))
             );

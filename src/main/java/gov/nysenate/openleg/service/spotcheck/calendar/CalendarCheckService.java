@@ -46,14 +46,14 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
     private SpotCheckObservation<CalendarEntryListId> initializeObservation(Calendar reference) {
         SpotCheckReferenceId referenceId = new SpotCheckReferenceId(
                 SpotCheckRefType.LBDC_CALENDAR_ALERT, reference.getPublishedDateTime());
-        return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.ALL,Version.DEFAULT,0));
+        return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.ALL,Version.ORIGINAL,0));
     }
 
     private SpotCheckObservation<CalendarEntryListId> initializeFloorAndSupplementalObservation(Calendar reference) {
         SpotCheckReferenceId referenceId = new SpotCheckReferenceId(
                 SpotCheckRefType.LBDC_CALENDAR_ALERT, reference.getPublishedDateTime());
-        if (reference.getSupplementalMap().containsKey(Version.DEFAULT)) // if it has the default version then it is floor
-            return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.FLOOR_CALENDAR,reference.getSupplemental(Version.DEFAULT).getVersion(),0));
+        if (reference.getSupplementalMap().containsKey(Version.ORIGINAL)) // if it has the default version then it is floor
+            return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.FLOOR_CALENDAR,reference.getSupplemental(Version.ORIGINAL).getVersion(),0));
         else// otherwise it is supplemental
             return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.SUPPLEMENTAL_CALENDAR,reference.getSupplementalMap().firstEntry().getKey(),0));
     }
@@ -61,7 +61,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
     private SpotCheckObservation<CalendarEntryListId> initializeActivelistObservation(Calendar reference) {
         SpotCheckReferenceId referenceId = new SpotCheckReferenceId(
                 SpotCheckRefType.LBDC_CALENDAR_ALERT, reference.getPublishedDateTime());
-        return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.ACTIVE_LIST,Version.DEFAULT,reference.getActiveList(0).getSequenceNo()));
+        return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(),CalendarType.ACTIVE_LIST,Version.ORIGINAL,reference.getActiveList(0).getSequenceNo()));
     }
 
     /**
@@ -133,7 +133,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
         String versionString = "";
         if (contentSuppDiff != null) {
             Version v = contentSuppDiff.getVersion();
-            versionString = v.equals(Version.DEFAULT) ? "BASE" : v.toString();
+            versionString = v.equals(Version.ORIGINAL) ? "BASE" : v.toString();
         }
         return versionString;
     }
