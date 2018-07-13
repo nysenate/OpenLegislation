@@ -492,7 +492,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         BillId billId = item.getBillId();
         infoCommParams.addValue("printNo", billId.getBasePrintNo());
         infoCommParams.addValue("session", billId.getSession().getYear());
-        infoCommParams.addValue("amendVersion", billId.getVersion().getValue());
+        infoCommParams.addValue("amendVersion", billId.getVersion().name());
         infoCommParams.addValue("message", item.getMessage());
     }
 
@@ -525,7 +525,7 @@ public class SqlAgendaDao extends SqlBaseDao implements AgendaDao
         BillVote billVote = voteBill.getBillVote();
         voteCommParams.addValue("billPrintNo", billVote.getBillId().getBasePrintNo());
         voteCommParams.addValue("sessionYear", billVote.getBillId().getSession().getYear());
-        voteCommParams.addValue("amendVersion", billVote.getBillId().getVersion().getValue());
+        voteCommParams.addValue("amendVersion", billVote.getBillId().getVersion().name());
         voteCommParams.addValue("voteDate", toDate(billVote.getVoteDate()));
         voteCommParams.addValue("sequenceNo", billVote.getSequenceNo());
         voteCommParams.addValue("voteType", billVote.getVoteType().name().toLowerCase());

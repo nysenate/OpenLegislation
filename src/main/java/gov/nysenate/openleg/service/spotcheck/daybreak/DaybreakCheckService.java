@@ -252,7 +252,7 @@ public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill,
 
     /**
      * Given the bill return a single string that has the name of each published version,
-     * e.g. 'DEFAULT A B C' if the base and amendments A, B, and C are all published.
+     * e.g. 'ORIGINAL A B C' if the base and amendments A, B, and C are all published.
      */
     private String publishedVersionsString(Bill bill) {
         Set<Version> publishedVersionSet = bill.getAmendPublishStatusMap().entrySet().stream()

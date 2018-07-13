@@ -20,14 +20,14 @@ public class BillVersionTest
 
     @Test
     public void testToString() throws Exception {
-        assertEquals(Version.DEFAULT_VERSION_NAME, Version.of(" ").toString());
+        assertEquals("ORIGINAL", Version.of(" ").toString());
         assertEquals("A", Version.of("A ").toString());
     }
 
     @Test
-    public void testGetValue() throws Exception {
-        assertEquals(Version.DEFAULT_VERSION_NAME, Version.of(" ").getValue());
-        assertEquals("A", Version.of("A").getValue());
+    public void testName() throws Exception {
+        assertEquals("ORIGINAL", Version.of(" ").name());
+        assertEquals("A", Version.of("A").name());
     }
 
     @Test

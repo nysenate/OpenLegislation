@@ -15,17 +15,6 @@ public enum Version
     ORIGINAL, // The original version
     A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
 
-    public final static String DEFAULT_VERSION_NAME = "ORIGINAL";
-
-    public String getValue() {
-        return this == ORIGINAL ?  DEFAULT_VERSION_NAME : this.name();
-    }
-
-    @Override
-    public String toString() {
-        return this.getValue();
-    }
-
     /**
      * Given an input string return the matching Version. Use this method instead of
      * valueOf() as it will handle the default version as well as normalize the input.

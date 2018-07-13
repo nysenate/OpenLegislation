@@ -117,7 +117,7 @@ Supplemental/Floor calendar:
                       "resolution": false
                     },
                     "title": "Extends the expiration of the New York state French and Indian war 250th anniversary commemoration commission until December 31, 2015",
-                    "activeVersion": "DEFAULT",
+                    "activeVersion": "ORIGINAL",
                     "year": 2014,
                     "publishedDateTime": "2014-05-15T18:17:31",
                     "substitutedBy": null,

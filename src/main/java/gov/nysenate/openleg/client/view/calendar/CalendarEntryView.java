@@ -21,7 +21,7 @@ public class CalendarEntryView extends BillInfoView
             this.billCalNo = calendarEntry.getBillCalNo();
             this.selectedVersion = Optional.ofNullable(calendarEntry.getBillId())
                     .map(BillId::getVersion)
-                    .map(Version::getValue)
+                    .map(Version::name)
                     .orElse(null);
         }
     }

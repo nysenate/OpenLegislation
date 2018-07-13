@@ -111,7 +111,7 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
             try {
                 // Attempt to get the committee meeting info that corresponds to the reference
                 agenda = getAgenda(reference);
-                String addendumId = reference.getAddendum().getValue();
+                String addendumId = reference.getAddendum().name();
                 CommitteeId committeeId = reference.getCommitteeId();
                 if (agenda.getAgendaInfoAddendum(addendumId) == null
                         || agenda.getAgendaInfoAddendum(addendumId).getCommittee(committeeId) == null) {

@@ -21,7 +21,7 @@ public class BillAmendment implements Serializable, Cloneable
     /** The parent base bill id. */
     protected BaseBillId baseBillId;
 
-    /** Amendment version (e.g DEFAULT, A, B, C, etc). */
+    /** Amendment version (e.g ORIGINAL, A, B, C, etc). */
     protected Version version = BillId.DEFAULT_VERSION;
 
     /** The "sameAs" bill in the other chamber that matches this version.

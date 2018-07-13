@@ -260,7 +260,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
 
     private MapSqlParameterSource getAgendaAlertInfoCommIdParams(AgendaAlertInfoCommId commId) {
         MapSqlParameterSource params = getAgendaAlertIdParams(commId);
-        params.addValue("addendumId", commId.getAddendum().getValue());
+        params.addValue("addendumId", commId.getAddendum().name());
         params.addValue("chamber", commId.getCommitteeId().getChamber().asSqlEnum());
         params.addValue("committeeName", commId.getCommitteeId().getName());
         return params;
@@ -280,7 +280,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
         params.addValue("alertInfoCommitteeId", aaicId);
         params.addValue("billPrintNo", aici.getBillId().getBasePrintNo());
         params.addValue("billSessionYear", aici.getBillId().getSession().getYear());
-        params.addValue("billAmendVersion", aici.getBillId().getVersion().getValue());
+        params.addValue("billAmendVersion", aici.getBillId().getVersion().name());
         params.addValue("message", aici.getMessage());
         return params;
     }
