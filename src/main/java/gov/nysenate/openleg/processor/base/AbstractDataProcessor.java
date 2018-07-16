@@ -31,6 +31,7 @@ import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 import gov.nysenate.openleg.service.calendar.event.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -252,12 +253,23 @@ public abstract class AbstractDataProcessor
      * @param chamber Bill Chamber for getting ShortName
      * @return
      */
-    public List<SessionMember> getSessionMember(String sponsors, SessionYear session, Chamber chamber) {
+    public List<SessionMember> getSessionMember(String sponsors, SessionYear session, Chamber chamber, Bill baseBill) {
         List<String> shortNames = Lists.newArrayList(
                 Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsors.toUpperCase()));
         List<SessionMember> sessionMembers = new ArrayList<>();
-        for (String t : shortNames) {
-            sessionMembers.add(getMemberFromShortName(t, session, chamber));
+        List<String> badSponsors = new ArrayList<>();
+        for (String shortName : shortNames) {
+            SessionMember sessionMember = getMemberFromShortName(shortName, session, chamber);
+            if (sessionMember != null) {
+                sessionMembers.add(sessionMember);
+            }
+            else {
+                badSponsors.add(shortName);
+            }
+        }
+        if (!badSponsors.isEmpty()) {
+            throw new ParseError(String.format("Could not parse %s multi sponsors: %s",
+                    baseBill.getBaseBillId(), StringUtils.join(shortNames, ", ")));
         }
         return sessionMembers;
     }

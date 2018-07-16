@@ -87,7 +87,6 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
                 return;
             Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(sponsorhse +
                     sponsorno, sessyr), sobiFragment);
-            BillSponsor billSponsor = baseBill.getSponsor();
             Chamber chamber = baseBill.getBillType().getChamber();
             BillAmendment amendment = baseBill.getAmendment(baseBill.getActiveVersion());
 
@@ -95,8 +94,8 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
                 removeProcess(amendment, baseBill);
             } else {
                 handlePrimaryMemberParsing(baseBill, prime, baseBill.getSession());
-                amendment.setCoSponsors(getSessionMember(coprime, baseBill.getSession(), chamber));
-                amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber));
+                amendment.setCoSponsors(getSessionMember(coprime, baseBill.getSession(), chamber, baseBill));
+                amendment.setMultiSponsors(getSessionMember(multi, baseBill.getSession(), chamber, baseBill));
             }
             ArrayList<ProgramInfo> programInfos = new ArrayList<>();
             NodeList departdescs = doc.getElementsByTagName("departdesc");
