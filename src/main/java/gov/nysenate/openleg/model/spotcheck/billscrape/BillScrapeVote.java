@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.spotcheck.billscrape;
 
 import com.google.common.collect.SortedSetMultimap;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
+import org.apache.commons.lang3.text.WordUtils;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -27,10 +28,11 @@ public class BillScrapeVote {
 
     @Override
     public String toString() {
-        return "BillScrapeVote{ \n" +
+        String s = "BillScrapeVote{ \n" +
                 "    voteDate=" + voteDate + ",\n" +
                 "        votes=" + votes + "\n" +
                 '}';
+        return WordUtils.wrap(s, 70, "\n            ", false);
     }
 
     @Override
