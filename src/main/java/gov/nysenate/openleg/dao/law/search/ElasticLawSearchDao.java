@@ -15,7 +15,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     /** {@inheritDoc} */
     @Override
     public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder postFilter,
-                                                 RescoreBuilder rescorer, List<SortBuilder> sort, LimitOffset limOff) {
+                                                 RescorerBuilder rescorer, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
             getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, true);
         SearchResponse response = searchBuilder.execute().actionGet();
@@ -89,7 +89,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     private LawDocId getLawDocIdFromHit(SearchHit hit) {
         String locationId = hit.getId();
         String docId = hit.getType() + locationId;
-        return new LawDocId(docId, LocalDate.parse((String) hit.getSource().get("activeDate")));
+        return new LawDocId(docId, LocalDate.parse((String) hit.getSourceAsMap().get("activeDate")));
     }
 
     private String createSearchId(LawDocId lawDocId) {

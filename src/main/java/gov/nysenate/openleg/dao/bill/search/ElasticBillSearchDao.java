@@ -16,7 +16,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,12 +45,12 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     /** {@inheritDoc} */
     @Override
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescoreBuilder rescorer,
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder rescorer,
                                                  List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder =
             getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer , sort, limOff, false);
         SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Bill search result with query {} took {} ms", query, response.getTookInMillis());
+        logger.debug("Bill search result with query {} took {} ms", query, response.getTook().getMillis());
         return getSearchResults(response, limOff, this::getBaseBillIdFromHit);
     }
 

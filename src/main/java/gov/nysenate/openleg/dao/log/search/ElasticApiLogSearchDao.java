@@ -49,7 +49,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
                 getSearchRequest(logIndexName, query, filter, null, null, sort, limOff, true);
         SearchResponse response = searchBuilder.execute().actionGet();
         return getSearchResults(response, limOff,
-            hit -> objectMapper.convertValue(hit.getSource(), ApiLogItemView.class));
+            hit -> objectMapper.convertValue(hit.getSourceAsMap(), ApiLogItemView.class));
     }
 
     /** {@inheritDoc} */

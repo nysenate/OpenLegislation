@@ -53,7 +53,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
         QueryBuilder fullFilter = QueryBuilders.boolQuery().filter(filter).must(QueryBuilders.typeQuery(notificationType));
         SearchRequestBuilder request = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, true);
         SearchResponse response = request.execute().actionGet();
-        return getSearchResults(response, limitOffset, hit -> getNotificationFromSourceMap(hit.getSource()));
+        return getSearchResults(response, limitOffset, hit -> getNotificationFromSourceMap(hit.getSourceAsMap()));
     }
 
     /** {@inheritDoc} */

@@ -40,7 +40,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
                                                  List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Agenda Search result with query {} took {} ms", query, response.getTookInMillis());
+        logger.debug("Agenda Search result with query {} took {} ms", query, response.getTook().getMillis());
         return getSearchResults(response, limOff, this::getAgendaIdFromHit);
     }
 
@@ -50,7 +50,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
                                                                    List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Committee Agenda search result with query {} took {} ms", query, response.getTookInMillis());
+        logger.debug("Committee Agenda search result with query {} took {} ms", query, response.getTook().getMillis());
         return getSearchResults(response, limOff, (hit) ->
             new CommitteeAgendaId(
                 getAgendaIdFromHit(hit), new CommitteeId(Chamber.SENATE, hit.getId()))

@@ -37,7 +37,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
     public SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(memberIndexName, query, filter, sort, limOff);
         SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Member search result with query {} and filter {} took {} ms", query, filter, response.getTookInMillis());
+        logger.debug("Member search result with query {} and filter {} took {} ms", query, filter, response.getTook().getMillis());
         return getSearchResults(response, limOff, this::getMemberFromHit);
     }
 

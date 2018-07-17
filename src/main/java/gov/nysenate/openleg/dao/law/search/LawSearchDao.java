@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.law.LawDocId;
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
@@ -26,7 +26,7 @@ public interface LawSearchDao
      * @param limOff LimitOffset
      * @return SearchResults<LawDocId>
      */
-    public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder filter, RescoreBuilder rescorer,
+    public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder filter, RescorerBuilder rescorer,
                                                  List<SortBuilder> sort, LimitOffset limOff);
 
     /**

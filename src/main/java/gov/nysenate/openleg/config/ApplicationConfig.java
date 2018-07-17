@@ -24,7 +24,7 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,7 +125,7 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
             try {
                 TransportClient tc = new PreBuiltTransportClient(settings)
                 .addTransportAddress(
-                                new InetSocketTransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
+                                new TransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
                 if (tc.connectedNodes().size() == 0) {
                     tc.close();
                     throw new ElasticsearchException("Failed to connect to elastic search node!");

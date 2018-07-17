@@ -44,7 +44,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
                                                                List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequestBuilder searchBuilder = getSearchRequest(publicHearingIndexName, query, postFilter, highlightedFields, null, sort, limOff, false);
         SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Public Hearing search result with query {} and filter {} took {} ms", query, postFilter, response.getTookInMillis());
+        logger.debug("Public Hearing search result with query {} and filter {} took {} ms", query, postFilter, response.getTook().getMillis());
         return getSearchResults(response, limOff, this::getPublicHearingIdFromHit);
     }
 

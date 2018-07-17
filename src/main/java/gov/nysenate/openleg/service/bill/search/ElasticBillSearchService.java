@@ -21,7 +21,7 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchPhaseExecutionException;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchParseException;
-import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     /**
      * Delegates to the underlying bill search dao.
      */
-    private SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescoreBuilder rescorer,
+    private SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder rescorer,
                                                   String sort, LimitOffset limOff)
         throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;

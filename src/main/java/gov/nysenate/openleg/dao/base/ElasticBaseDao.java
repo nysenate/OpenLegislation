@@ -17,7 +17,7 @@ import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ public abstract class ElasticBaseDao
      * @return SearchRequestBuilder
      */
     protected SearchRequestBuilder getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
-                                                    List<HighlightBuilder.Field> highlightedFields, RescoreBuilder rescorer,
+                                                    List<HighlightBuilder.Field> highlightedFields, RescorerBuilder rescorer,
                                                     List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) {
         limitOffset = adjustLimitOffset(limitOffset);
         SearchRequestBuilder searchBuilder = searchClient.prepareSearch(indexName)
