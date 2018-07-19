@@ -37,6 +37,8 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
 
     protected static String lawIndexName = SearchIndex.LAW.getIndexName();
 
+    protected static String lawTypeName = lawIndexName;
+
     protected static List<HighlightBuilder.Field> highlightFields =
         Arrays.asList(new HighlightBuilder.Field("text").numOfFragments(5),
                       new HighlightBuilder.Field("title").numOfFragments(0));
@@ -73,7 +75,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
             BulkRequest bulkRequest = new BulkRequest();
             lawDocs.stream().map(doc -> new LawDocView(doc)).forEach(docView -> {
                 bulkRequest.add(
-                    new IndexRequest(lawIndexName, docView.getLawId(), createSearchId(docView))
+                    new IndexRequest(lawIndexName, lawTypeName, createSearchId(docView))
                                 .source(OutputUtils.toJson(docView), XContentType.JSON));
             });
             safeBulkRequestExecute(bulkRequest);
@@ -84,7 +86,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     @Override
     public void deleteLawDocFromIndex(LawDocId lawDocId) {
         if (lawDocId != null) {
-            deleteEntry(lawIndexName, lawDocId.getLawId(), createSearchId(lawDocId));
+            deleteEntry(lawIndexName, createSearchId(lawDocId));
         }
     }
 

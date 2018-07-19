@@ -32,6 +32,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
     private static final Logger logger = LoggerFactory.getLogger(ElasticMemberSearchDao.class);
 
     private static final String memberIndexName = SearchIndex.MEMBER.getIndexName();
+    private static final String memberTypeName = memberIndexName;
     private static final String fullMemberType = "full_member";
 
     /** {@inheritDoc} */
@@ -68,7 +69,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
                     .collect(Collectors.toList());
             memberViewList.forEach(m ->
                             bulkRequest.add(new IndexRequest(memberIndexName,
-                                    String.valueOf(fullMemberType),
+                                    memberTypeName,
                                     String.valueOf(m.getMemberId()))
                                     .source(OutputUtils.toJson(m), XContentType.JSON))
             );

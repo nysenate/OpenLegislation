@@ -44,6 +44,8 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     private static final String committeeSearchIndexName = "committees";
 
+    private static final String committeeSearchIndexType = committeeSearchIndexName;
+
     private static final Pattern committeeSearchIdPattern =
             Pattern.compile("(SENATE|ASSEMBLY)-([A-z, ]*)-(.*)");
 
@@ -167,7 +169,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     protected DeleteRequest getCommitteeVersionDeleteRequest(CommitteeVersionId committeeVersionId) {
         return new DeleteRequest(
                 committeeSearchIndexName,
-                Integer.toString(committeeVersionId.getSession().getYear()),
+                committeeSearchIndexType,
                 generateCommitteeVersionSearchId(committeeVersionId)
         );
     }
@@ -180,7 +182,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
      */
     private IndexRequest getCommitteeVersionIndexRequest(Committee committee) {
         return new IndexRequest(committeeSearchIndexName,
-                Integer.toString(committee.getSession().getYear()),
+                committeeSearchIndexType,
                 generateCommitteeVersionSearchId(committee.getVersionId()))
                 .source(OutputUtils.toJson(new CommitteeView(committee)), XContentType.JSON);
     }

@@ -33,6 +33,8 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
 
     protected static final String logIndexName = SearchIndex.API_LOG.getIndexName();
 
+    protected static final String logTypeName = logIndexName;
+
     @Autowired protected ObjectMapper objectMapper;
 
     /** {@inheritDoc} */
@@ -79,7 +81,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
             BulkRequest bulkRequest = new BulkRequest();
             List<ApiLogItemView> logViewList = apiResponses.stream().map(ApiLogItemView::new).collect(Collectors.toList());
             logViewList.forEach(log ->
-                bulkRequest.add(new IndexRequest(logIndexName, "default", Integer.toString(log.getRequestId()))
+                bulkRequest.add(new IndexRequest(logIndexName, logTypeName, Integer.toString(log.getRequestId()))
                     .source(OutputUtils.toJson(log), XContentType.JSON))
                 );
             safeBulkRequestExecute(bulkRequest);
@@ -89,7 +91,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
     /** {@inheritDoc} */
     @Override
     public void deleteLogFromIndex(Integer requestId) {
-        deleteEntry(logIndexName, "default", Integer.toString(requestId));
+        deleteEntry(logIndexName, Integer.toString(requestId));
     }
 
     /** {@inheritDoc} */

@@ -36,6 +36,8 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
 
     protected static final String publicHearingIndexName = SearchIndex.HEARING.getIndexName();
 
+    protected static final String publicHearingTypeName = publicHearingIndexName;
+
     protected static final List<HighlightBuilder.Field> highlightedFields =
             Arrays.asList(new HighlightBuilder.Field("text").numOfFragments(2),
                           new HighlightBuilder.Field("committees").numOfFragments(0),
@@ -72,7 +74,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
 
             for (PublicHearingView ph : publicHearingViews) {
                 bulkRequest.add(new IndexRequest(
-                        publicHearingIndexName, "hearings", ph.getFilename())
+                        publicHearingIndexName, publicHearingTypeName, ph.getFilename())
                         .source(OutputUtils.toJson(ph), XContentType.JSON));
 
             }
@@ -84,7 +86,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     @Override
     public void deletePublicHearingFromIndex(PublicHearingId publicHearingId) {
         if (publicHearingId != null) {
-            deleteEntry(publicHearingIndexName, "hearings", publicHearingId.getFileName());
+            deleteEntry(publicHearingIndexName, publicHearingId.getFileName());
         }
     }
 

@@ -35,9 +35,11 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     @Autowired
     CalendarViewFactory calendarViewFactory;
 
-    /* --- Index Names --- */
+    /* --- Names --- */
 
     protected static final String calIndexName = "calendars";
+
+    protected static final String calTypeName = calIndexName;
 
     /* --- Implementations --- */
 
@@ -90,7 +92,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     public void deleteCalendarFromIndex(CalendarId calId) {
         DeleteRequest deleteRequest = new DeleteRequest(
                 calIndexName,
-                Integer.toString(calId.getYear()),
+                calTypeName,
                 Integer.toString(calId.getCalNo())
         );
 
@@ -132,7 +134,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      */
     protected IndexRequest getCalendarIndexRequest(CalendarView calendarView) {
         return new IndexRequest(calIndexName,
-                Integer.toString(calendarView.getYear()), Integer.toString(calendarView.getCalendarNumber()))
+                calTypeName, Integer.toString(calendarView.getCalendarNumber()))
                 .source(OutputUtils.toJson(calendarView), XContentType.JSON);
     }
 

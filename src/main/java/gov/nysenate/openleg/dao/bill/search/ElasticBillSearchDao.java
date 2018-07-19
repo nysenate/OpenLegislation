@@ -40,6 +40,8 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     protected static final String billIndexName = SearchIndex.BILL.getIndexName();
 
+    protected static final String billTypeName = billIndexName;
+
     protected static final List<HighlightBuilder.Field> highlightedFields =
         Arrays.asList(new HighlightBuilder.Field("basePrintNo").numOfFragments(0),
                       new HighlightBuilder.Field("printNo").numOfFragments(0),
@@ -77,7 +79,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
             List<BillView> billViewList = bills.stream().map(BillView::new).collect(Collectors.toList());
             billViewList.forEach(b ->
                 bulkRequest.add(
-                    new IndexRequest(billIndexName, Integer.toString(b.getSession()), b.getBasePrintNo())
+                    new IndexRequest(billIndexName, billTypeName, b.getBasePrintNo())
                                 .source(OutputUtils.toJson(b), XContentType.JSON))
             );
             safeBulkRequestExecute(bulkRequest);
@@ -88,7 +90,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     @Override
     public void deleteBillFromIndex(BaseBillId baseBillId) {
         if (baseBillId != null) {
-            deleteEntry(billIndexName, Integer.toString(baseBillId.getSession().getYear()), baseBillId.getBasePrintNo());
+            deleteEntry(billIndexName, baseBillId.getBasePrintNo());
         }
     }
 

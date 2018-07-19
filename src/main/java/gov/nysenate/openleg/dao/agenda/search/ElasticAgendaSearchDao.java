@@ -35,6 +35,8 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
 
     protected static final String agendaIndexName = SearchIndex.AGENDA.getIndexName();
 
+    protected static final String agendaTypeName = agendaIndexName;
+
     /** {@inheritDoc} */
     @Override
     public SearchResults<AgendaId> searchAgendas(QueryBuilder query, QueryBuilder postFilter,
@@ -104,7 +106,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     @Override
     public void deleteAgendaFromIndex(AgendaId agendaId) {
         if (agendaId != null) {
-            deleteEntry(agendaIndexName, Integer.toString(agendaId.getYear()), Long.toString(agendaId.getNumber()));
+            deleteEntry(agendaIndexName, Long.toString(agendaId.getNumber()));
         }
     }
 

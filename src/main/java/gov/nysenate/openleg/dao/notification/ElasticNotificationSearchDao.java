@@ -34,7 +34,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     Logger logger = LoggerFactory.getLogger(ElasticNotificationSearchDao.class);
 
     protected static final String notificationIndex = SearchIndex.NOTIFICATION.getIndexName();
-    protected static final String notificationType = "notifications";
+    protected static final String notificationType = notificationIndex;
     protected static final String idType = "id";
     protected static final String idId = "id";
 
