@@ -20,12 +20,9 @@ import gov.nysenate.openleg.util.OpenlegThreadFactory;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -44,7 +41,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
-import java.net.InetSocketAddress;
+import java.io.IOException;
 import java.util.Calendar;
 
 @Configuration
@@ -107,36 +104,40 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
     @Value("${elastic.search.cluster.name:elasticsearch}") private String elasticSearchCluster;
     @Value("${elastic.search.host:localhost}") private String elasticSearchHost;
-    @Value("${elastic.search.port:9300}") private int elasticSearchPort;
+    @Value("${elastic.search.port:9200}") private int elasticSearchPort;
     @Value("${elastic.search.connection_retries:30}") private int esAllowedRetries;
 
     @Bean(destroyMethod = "close")
-    public Client elasticSearchNode() throws InterruptedException {
-        Settings settings = Settings.builder().put("cluster.name", elasticSearchCluster).build();
+    public RestHighLevelClient elasticSearchNode() throws InterruptedException {
 
         int retryCount = 0;
-        ElasticsearchException cause;
+        Exception cause;
 
         do {
-            if (retryCount <= esAllowedRetries) {
-                Thread.sleep(1000);
-            }
             logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
+            RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
+                    new HttpHost(elasticSearchHost, elasticSearchPort, "http")));
             try {
-                TransportClient tc = new PreBuiltTransportClient(settings)
-                .addTransportAddress(
-                                new TransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
-                if (tc.connectedNodes().size() == 0) {
-                    tc.close();
-                    throw new ElasticsearchException("Failed to connect to elastic search node!");
-                }
+                client.ping();
                 logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
-                return tc;
-            } catch (ElasticsearchException ex) {
+                return client;
+            } catch (IOException ex){
+
+                while (true) {
+                    try {
+                        client.close();
+                    } catch (IOException closeEx) {
+                        Thread.sleep(1000);
+                        continue;
+                    }
+                    break;
+                }
+
                 logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
                 logger.warn("{} retries remain.", esAllowedRetries - retryCount);
                 cause = ex;
                 retryCount++;
+                Thread.sleep(1000);
             }
         } while (retryCount <= esAllowedRetries);
 

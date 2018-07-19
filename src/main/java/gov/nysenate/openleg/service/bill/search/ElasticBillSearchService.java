@@ -200,8 +200,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
             }
         }
         else {
-            logger.info("Can't rebuild the bill search index because there are no bills. Clearing it instead!");
-            clearIndex();
+            logger.info("Can't rebuild the bill search index because there are no bills. Cleared it instead!");
         }
     }
 

@@ -8,8 +8,9 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.auth.ApiResponse;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,18 +38,30 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
     /** {@inheritDoc} */
     @Override
     public SearchResults<Integer> searchLogs(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder =
-            getSearchRequest(logIndexName, query, filter, null, null, sort, limOff, false);
-        SearchResponse response = searchBuilder.execute().actionGet();
-        return getSearchResults(response, limOff, hit -> Integer.parseInt(hit.getId()));
+        SearchResponse response = justSearchLogs(query, filter, sort, limOff, false);
+        return getSearchResults(response, limOff,
+                hit -> Integer.parseInt(hit.getId()));
+    }
+
+    /**
+     * Helper method to create a response when searching logs.
+     */
+    private SearchResponse justSearchLogs(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff, boolean isFetch){
+        SearchRequest searchRequest =
+                getSearchRequest(logIndexName, query, filter, null, null, sort, limOff, isFetch);
+        try {
+            return searchClient.search(searchRequest);
+        }
+        catch (IOException ex){
+            logger.warn("Search API Logs request failed.", ex);
+        }
+        return new SearchResponse();
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<ApiLogItemView> searchLogsAndFetchData(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder =
-                getSearchRequest(logIndexName, query, filter, null, null, sort, limOff, true);
-        SearchResponse response = searchBuilder.execute().actionGet();
+        SearchResponse response = justSearchLogs(query, filter, sort, limOff, true);
         return getSearchResults(response, limOff,
             hit -> objectMapper.convertValue(hit.getSourceAsMap(), ApiLogItemView.class));
     }
@@ -62,12 +76,11 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
     @Override
     public void updateLogIndex(Collection<ApiResponse> apiResponses) {
         if (!apiResponses.isEmpty()) {
-            BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
+            BulkRequest bulkRequest = new BulkRequest();
             List<ApiLogItemView> logViewList = apiResponses.stream().map(ApiLogItemView::new).collect(Collectors.toList());
             logViewList.forEach(log ->
-                bulkRequest.add(searchClient
-                    .prepareIndex(logIndexName, "default", Integer.toString(log.getRequestId()))
-                    .setSource(OutputUtils.toJson(log), XContentType.JSON))
+                bulkRequest.add(new IndexRequest(logIndexName, "default", Integer.toString(log.getRequestId()))
+                    .source(OutputUtils.toJson(log), XContentType.JSON))
                 );
             safeBulkRequestExecute(bulkRequest);
         }

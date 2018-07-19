@@ -13,8 +13,8 @@ import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.util.OutputUtils;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -51,18 +52,30 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
                                                                      List<SortBuilder> sort, LimitOffset limitOffset) {
         // Restrict search to only notifications, excluding the id incrementer
         QueryBuilder fullFilter = QueryBuilders.boolQuery().filter(filter).must(QueryBuilders.typeQuery(notificationType));
-        SearchRequestBuilder request = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, true);
-        SearchResponse response = request.execute().actionGet();
-        return getSearchResults(response, limitOffset, hit -> getNotificationFromSourceMap(hit.getSourceAsMap()));
+        SearchRequest searchRequest = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, true);
+        SearchResponse searchResponse = new SearchResponse();
+        try {
+            searchResponse = searchClient.search(searchRequest);
+        }
+        catch (IOException ex){
+            logger.warn("Search Notifications request failed.", ex);
+        }
+        return getSearchResults(searchResponse, limitOffset,
+                hit -> getNotificationFromSourceMap(hit.getSourceAsMap()));
     }
 
     /** {@inheritDoc} */
     @Override
     public RegisteredNotification registerNotification(Notification notification) {
         RegisteredNotification regNotification = new RegisteredNotification(notification, getNextId());
-        searchClient.prepareIndex(notificationIndex, notificationType, Long.toString(regNotification.getId()))
-                .setSource(OutputUtils.toJson(new NotificationView(regNotification)), XContentType.JSON)
-                .execute().actionGet();
+        IndexRequest indexRequest = new IndexRequest(notificationIndex, notificationType, String.valueOf(regNotification.getId()))
+                .source(OutputUtils.toJson(new NotificationView(regNotification)), XContentType.JSON);
+        try {
+            searchClient.index(indexRequest);
+        }
+        catch (IOException ex){
+            logger.warn(ex.getMessage(), ex);
+        }
         return regNotification;
     }
 
@@ -117,9 +130,15 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
      * @return long - the next available notification id
      */
     protected long getNextId() {
-        IndexResponse response = searchClient.prepareIndex(notificationIndex, idType, idId)
-                .setSource("{}", XContentType.JSON).execute().actionGet();
-        return response.getVersion();
+        IndexRequest indexRequest = new IndexRequest(notificationIndex, idType, idId)
+                .source("{}", XContentType.JSON);
+        try {
+            return searchClient.index(indexRequest).getVersion();
+        }
+        catch (IOException ex){
+            logger.warn(ex.getMessage(), ex);
+        }
+        return -1;
     }
 
     protected RegisteredNotification getNotificationFromSourceMap(Map<String, Object> source) {

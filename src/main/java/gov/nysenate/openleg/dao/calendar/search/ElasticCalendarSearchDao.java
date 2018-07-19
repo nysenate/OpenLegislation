@@ -9,10 +9,10 @@ import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -44,39 +45,61 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     @Override
     public SearchResults<CalendarId> searchCalendars(QueryBuilder query, QueryBuilder postFilter,
                                                      List<SortBuilder> sort, LimitOffset limitOffset) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(calIndexName, query, postFilter, sort, limitOffset);
-        SearchResponse response = searchBuilder.execute().actionGet();
-        return getSearchResults(response, limitOffset, this::getCalendarId);
+        SearchRequest searchRequest = getSearchRequest(calIndexName, query, postFilter, sort, limitOffset);
+        SearchResponse searchResponse = new SearchResponse();
+        try {
+            searchResponse = searchClient.search(searchRequest);
+        }
+        catch (IOException ex){
+            logger.warn("Search Calendars request failed.", ex);
+        }
+
+        return getSearchResults(searchResponse, limitOffset, this::getCalendarId);
     }
 
     /**{@inheritDoc}*/
     @Override
     public void updateCalendarIndex(Calendar calendar) {
         if (calendar != null) {
-            BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
+            BulkRequest bulkRequest = new BulkRequest();
             addCalToBulkRequest(calendar, bulkRequest);
-            bulkRequest.execute().actionGet();
+            try {
+                searchClient.bulk(bulkRequest);
+            }
+            catch (IOException ex){
+                logger.warn("Update Calendars request failed.", ex);
+            }
         }
     }
 
     /**{@inheritDoc}*/
     @Override
     public void updateCalendarIndexBulk(Collection<Calendar> calendars) {
-        BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
+        BulkRequest bulkRequest = new BulkRequest();
         calendars.forEach(cal -> addCalToBulkRequest(cal, bulkRequest));
-        bulkRequest.execute().actionGet();
+        try {
+            searchClient.bulk(bulkRequest);
+        }
+        catch (IOException ex){
+            logger.warn("Bulk Calendars request failed.", ex);
+        }
     }
 
     /**{@inheritDoc}*/
     @Override
     public void deleteCalendarFromIndex(CalendarId calId) {
-        DeleteRequestBuilder deleteRequest = searchClient.prepareDelete(
+        DeleteRequest deleteRequest = new DeleteRequest(
                 calIndexName,
                 Integer.toString(calId.getYear()),
                 Integer.toString(calId.getCalNo())
         );
 
-        deleteRequest.execute().actionGet();
+        try {
+            searchClient.delete(deleteRequest);
+        }
+        catch (IOException ex){
+            logger.warn("Delete Calendars request failed.", ex);
+        }
     }
 
     /**
@@ -95,7 +118,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      * @param calendar
      * @param bulkRequest
      */
-    protected void addCalToBulkRequest(Calendar calendar, BulkRequestBuilder bulkRequest) {
+    protected void addCalToBulkRequest(Calendar calendar, BulkRequest bulkRequest) {
         logger.info("Preparing to index {}", calendar);
         CalendarView calendarView = calendarViewFactory.getCalendarView(calendar);
         bulkRequest.add(getCalendarIndexRequest(calendarView));
@@ -107,10 +130,10 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      * @param calendarView
      * @return
      */
-    protected IndexRequestBuilder getCalendarIndexRequest(CalendarView calendarView) {
-        return searchClient.prepareIndex(calIndexName,
+    protected IndexRequest getCalendarIndexRequest(CalendarView calendarView) {
+        return new IndexRequest(calIndexName,
                 Integer.toString(calendarView.getYear()), Integer.toString(calendarView.getCalendarNumber()))
-                .setSource(OutputUtils.toJson(calendarView), XContentType.JSON);
+                .source(OutputUtils.toJson(calendarView), XContentType.JSON);
     }
 
     /* --- Id Mappers --- */

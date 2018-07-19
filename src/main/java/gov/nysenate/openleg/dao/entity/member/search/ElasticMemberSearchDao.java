@@ -8,8 +8,9 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.entity.FullMember;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -19,8 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,17 +37,24 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
     /** {@inheritDoc} */
     @Override
     public SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(memberIndexName, query, filter, sort, limOff);
-        SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Member search result with query {} and filter {} took {} ms", query, filter, response.getTook().getMillis());
-        return getSearchResults(response, limOff, this::getMemberFromHit);
+        SearchRequest searchRequest = getSearchRequest(memberIndexName, query, filter, sort, limOff);
+        SearchResponse searchResponse = new SearchResponse();
+        try {
+            searchResponse = searchClient.search(searchRequest);
+        }
+        catch (IOException ex){
+            logger.warn("Search Members request failed.", ex);
+        }
+
+        logger.debug("Member search result with query {} and filter {} took {} ms", query, filter, searchResponse.getTook().getMillis());
+        return getSearchResults(searchResponse, limOff, this::getMemberFromHit);
     }
 
     /** {@inheritDoc}
      * @param member*/
     @Override
     public void updateMemberIndex(FullMember member) {
-        updateMemberIndex(Arrays.asList(member));
+        updateMemberIndex(Collections.singletonList(member));
     }
 
     /** {@inheritDoc}
@@ -53,15 +62,15 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
     @Override
     public void updateMemberIndex(Collection<FullMember> members) {
         if (!members.isEmpty()) {
-            BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
+            BulkRequest bulkRequest = new BulkRequest();
             List<FullMemberView> memberViewList = members.stream()
                     .map(FullMemberView::new)
                     .collect(Collectors.toList());
             memberViewList.forEach(m ->
-                            bulkRequest.add(searchClient.prepareIndex(memberIndexName,
+                            bulkRequest.add(new IndexRequest(memberIndexName,
                                     String.valueOf(fullMemberType),
                                     String.valueOf(m.getMemberId()))
-                                    .setSource(OutputUtils.toJson(m), XContentType.JSON))
+                                    .source(OutputUtils.toJson(m), XContentType.JSON))
             );
             safeBulkRequestExecute(bulkRequest);
         }

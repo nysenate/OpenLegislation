@@ -9,8 +9,9 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.context.request.WebRequest;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,9 +49,16 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     @Override
     public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder rescorer,
                                                  List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder =
+        SearchRequest request =
             getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer , sort, limOff, false);
-        SearchResponse response = searchBuilder.execute().actionGet();
+        SearchResponse response = new SearchResponse();
+        try {
+            response = searchClient.search(request);
+        }
+        catch (IOException ex){
+            logger.warn("Search Bills request failed.", ex);
+        }
+
         logger.debug("Bill search result with query {} took {} ms", query, response.getTook().getMillis());
         return getSearchResults(response, limOff, this::getBaseBillIdFromHit);
     }
@@ -64,12 +73,12 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     @Override
     public void updateBillIndex(Collection<Bill> bills) {
         if (!bills.isEmpty()) {
-            BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
+            BulkRequest bulkRequest = new BulkRequest();
             List<BillView> billViewList = bills.stream().map(BillView::new).collect(Collectors.toList());
             billViewList.forEach(b ->
                 bulkRequest.add(
-                    searchClient.prepareIndex(billIndexName, Integer.toString(b.getSession()), b.getBasePrintNo())
-                                .setSource(OutputUtils.toJson(b), XContentType.JSON))
+                    new IndexRequest(billIndexName, Integer.toString(b.getSession()), b.getBasePrintNo())
+                                .source(OutputUtils.toJson(b), XContentType.JSON))
             );
             safeBulkRequestExecute(bulkRequest);
         }
