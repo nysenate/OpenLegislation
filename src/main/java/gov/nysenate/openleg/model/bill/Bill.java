@@ -73,7 +73,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected BaseBillId substitutedBy;
 
     /** If this bill was a reprint of another bill*/
-    protected BaseBillId reprintOf;
+    protected BillId reprintOf;
 
     /** A list of ids for versions of this legislation in previous sessions.
      *  This set of will contain only previous versions that have been directly linked to this bill*/
@@ -525,7 +525,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.chapterYear = chapterYear;
     }
 
-    public void setReprintOf(BaseBillId reprintOf) {this.reprintOf = reprintOf;}
+    public void setReprintOf(BillId reprintOf) {this.reprintOf = reprintOf;}
 
-    public BaseBillId getReprintOf() {return reprintOf;}
+    public BillId getReprintOf() {return reprintOf;}
 }

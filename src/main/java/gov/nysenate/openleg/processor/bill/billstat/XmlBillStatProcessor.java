@@ -82,11 +82,11 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             Node xmlActions = xmlHelper.getNode("billstatus/actions",doc);
 
             //SET the proper basebill
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(reprintBillhse +
-                    rprtBillno, sessyr,rprtVersion), sobiFragment);
+            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse +
+                    billno, sessyr,version), sobiFragment);
 
             if(reprinted) {
-                baseBill.setReprintOf( new BaseBillId(billhse + billno, sessyr));
+                baseBill.setReprintOf( new BillId(reprintBillhse + rprtBillno, sessyr, rprtVersion));
             }
             else {
                 baseBill.setReprintOf(null);
