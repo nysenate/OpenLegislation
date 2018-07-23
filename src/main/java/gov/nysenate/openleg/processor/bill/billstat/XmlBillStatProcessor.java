@@ -82,20 +82,15 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             Node xmlActions = xmlHelper.getNode("billstatus/actions",doc);
 
             //SET the proper basebill
-            Bill baseBill;
+            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(reprintBillhse +
+                    rprtBillno, sessyr,rprtVersion), sobiFragment);
+
             if(reprinted) {
-                baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(reprintBillhse +
-                        rprtBillno, sessyr,rprtVersion), sobiFragment);
                 baseBill.setReprintOf( new BaseBillId(billhse + billno, sessyr));
             }
             else {
-                baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse +
-                        billno, sessyr,version), sobiFragment);
                 baseBill.setReprintOf(null);
             }
-
-            BillSponsor billSponsor = baseBill.getSponsor();
-            Chamber chamber = baseBill.getBillType().getChamber();
 
             BillAmendment billAmendment;
             if (version == null || version.equals("")) {
@@ -103,6 +98,7 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             } else {
                 billAmendment = baseBill.getAmendment(Version.of(version));
             }
+
             if (action.equals("remove")) {
                 removeCase(baseBill, billAmendment, sobiFragment.getPublishedDateTime());
                 return;
@@ -115,9 +111,6 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
                 }
             }
 
-            if (billSponsor == null) {
-                billSponsor = new BillSponsor();
-            }
             handlePrimaryMemberParsing(baseBill, sponsor,baseBill.getSession());
             billAmendment.setLawSection(lawSec);
             baseBill.setTitle(title);
@@ -148,10 +141,13 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             billAmendment.setStricken(analyzer.isStricken());
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
 
-            checkIngestCache();
-
         } catch (IOException | SAXException | XPathExpressionException e) {
+            unit.addException("XML bill stat parsing error", e);
             throw new ParseError("Error While Parsing BillStatProcessorXML", e);
+        }
+        finally {
+            postDataUnitEvent(unit);
+            checkIngestCache();
         }
     }
 
