@@ -81,15 +81,15 @@ public class XmlSameAsProcessor extends AbstractDataProcessor implements SobiPro
                         for (String sameAs : sameAsMatchesBeforeSplit) {
                             if (sameAs.contains(",")) {
                                 for( String splitSameAs: sameAs.split(",") ) {
-                                    amendment.getSameAs().add(new BillId(splitSameAs.replace(" ", "").replace("-",""), amendment.getSession()));
+                                    amendment.getSameAs().add(createBillId(splitSameAs, amendment.getSession()));
                                 }
                             }
                             else if (sameAs.contains("/")) {
                                 for( String splitSameAs: sameAs.split("/") ) {
-                                    amendment.getSameAs().add(new BillId(splitSameAs.replace(" ", "").replace("-",""), amendment.getSession()));
+                                    amendment.getSameAs().add(createBillId(splitSameAs, amendment.getSession()));
                                 }                            }
                             else {
-                                amendment.getSameAs().add(new BillId(sameAs.replace(" ", "").replace("-",""), amendment.getSession()));
+                                amendment.getSameAs().add(createBillId(sameAs, amendment.getSession()));
                             }
                         }
 
@@ -127,5 +127,9 @@ public class XmlSameAsProcessor extends AbstractDataProcessor implements SobiPro
     @Override
     public void init() {
         initBase();
+    }
+
+    private BillId createBillId(String line, SessionYear sessionYear) {
+        return new BillId(line.replace(" ", "").replace("-",""), sessionYear);
     }
 }
