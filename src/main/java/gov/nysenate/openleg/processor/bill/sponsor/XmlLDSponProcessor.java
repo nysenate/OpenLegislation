@@ -37,9 +37,6 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
 
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessor.class);
 
-    protected static final Pattern rulesSponsorPattern =
-            Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
-
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
 
@@ -117,10 +114,13 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
                 }
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
-            checkIngestCache();
 
         } catch (IOException | SAXException | XPathExpressionException e) {
+            unit.addException("XML LD Spon parsing error", e);
             throw new ParseError("Error While Parsing SponsorSobiProcessorXML", e);
+        } finally {
+            postDataUnitEvent(unit);
+            checkIngestCache();
         }
     }
 

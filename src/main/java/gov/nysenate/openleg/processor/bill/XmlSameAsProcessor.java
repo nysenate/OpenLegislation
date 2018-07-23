@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -47,6 +48,7 @@ public class XmlSameAsProcessor extends AbstractDataProcessor implements SobiPro
     @Override
     public void process(SobiFragment fragment) {
         LocalDateTime date = fragment.getPublishedDateTime();
+        DataProcessUnit unit = createProcessUnit(fragment);
         try {
             final Document doc = xmlHelper.parse(fragment.getText());
             final Node billSameAsNode = xmlHelper.getNode("sameas", doc);
@@ -100,9 +102,13 @@ public class XmlSameAsProcessor extends AbstractDataProcessor implements SobiPro
                 }
             }
             billIngestCache.set(baseBill.getBaseBillId(),baseBill,fragment);
-            checkIngestCache();
+
         } catch (IOException | SAXException |XPathExpressionException e) {
+            unit.addException("XML SameAs parsing error", e);
             throw new ParseError("Error While Parsing sameAsXML", e);
+        } finally {
+            postDataUnitEvent(unit);
+            checkIngestCache();
         }
     }
 

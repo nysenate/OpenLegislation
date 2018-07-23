@@ -1,7 +1,5 @@
 package gov.nysenate.openleg.processor.bill.apprmemo;
 
-import gov.nysenate.openleg.dao.bill.data.ApprovalDao;
-import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -15,7 +13,6 @@ import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -24,7 +21,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * This Class is responsible for Processing the Approval Memorandum.
@@ -37,9 +33,6 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
     private static final Logger logger = LoggerFactory.getLogger(XmlApprMemoProcessor.class);
     @Autowired
     private XmlHelper xmlHelper;
-
-    @Autowired
-    private ApprovalDao approvalDao;
 
     public XmlApprMemoProcessor() {
     }
@@ -57,7 +50,6 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
     @Override
     public void process(SobiFragment fragment) {
         logger.info("Processing Apprmemo...");
-        LocalDateTime date = fragment.getPublishedDateTime();
         logger.info("Processing " + fragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(fragment);
         try {
@@ -88,25 +80,22 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
                         break;
                 }
             }
-            Bill baseBill = null;
+            Bill baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), new BillId(billhse +
+                    billno, year), fragment);
             if (action.equals("remove")) {
-                try { //try to remove
-                    ApprovalMessage add = approvalDao.getApprovalMessage(new ApprovalId(year, apprno));
-                    baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), add.getBillId(), fragment);
-                    baseBill.setApprovalMessage(null);
-                }catch (EmptyResultDataAccessException emptyResultDataAccessException){
-                    return;
-                }
+                baseBill.setApprovalMessage(null);
             } else {
-                baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), new BillId(billhse +
-                        billno, year), fragment);
                 applyMemoText(cdata, baseBill, apprno, action, year);
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
-            checkIngestCache();
 
         } catch (IOException | SAXException | XPathExpressionException e) {
+            unit.addException("XML Appr Memo parsing error", e);
             throw new ParseError("Error While Parsing ApprmemoSobiXML", e);
+        }
+        finally {
+            postDataUnitEvent(unit);
+            checkIngestCache();
         }
     }
 

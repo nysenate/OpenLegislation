@@ -21,14 +21,15 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
 @Service
 public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiProcessor {
+
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSummProcessor.class);
+
     @Autowired
     private XmlHelper xmlHelper;
 
@@ -42,7 +43,6 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
 
     @Override
     public void process(SobiFragment sobiFragment) {
-        LocalDateTime date = sobiFragment.getPublishedDateTime();
         logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
@@ -70,7 +70,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
                     String oldno = xmlHelper.getString("digestsummary/oldbill/oldno[" + i + "]", doc).replaceAll("\n", "");
                     String oldamd = xmlHelper.getString("digestsummary/oldbill/oldamd[" + i + "]", doc).replaceAll("\n", "");
                     if (oldamd.isEmpty() || oldno.isEmpty() || oldhse.isEmpty())
-                        break;// we dont know what to do that a digestsummary contains oldbill field but has no information related to oldbill
+                        break;
                     baseBill.setDirectPreviousVersion(new BillId(oldhse + oldno, SessionYear.of(sess), Version.of(oldamd)));
                 }
             } else { //remove bill
@@ -82,10 +82,12 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
             logger.info("Put base bill in the ingest cache.");
 
-            checkIngestCache();
-
         } catch (IOException | SAXException | XPathExpressionException e) {
+            unit.addException("XML LD Summ parsing error", e);
             throw new ParseError("Error While Parsing Bill Digest XML : " + sobiFragment.getFragmentId(), e);
+        } finally {
+            postDataUnitEvent(unit);
+            checkIngestCache();
         }
     }
 

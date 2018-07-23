@@ -22,7 +22,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * This class process the Anact Sobi fragments.
@@ -62,7 +61,6 @@ public class XmlAnActProcessor extends AbstractDataProcessor implements SobiProc
     public void process(SobiFragment sobiFragment) {
 
         logger.info("Processing AnAct...");
-        LocalDateTime date = sobiFragment.getPublishedDateTime();
         logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
@@ -72,21 +70,26 @@ public class XmlAnActProcessor extends AbstractDataProcessor implements SobiProc
             final String anacthse = xmlHelper.getString("@billhse", billTextNode).trim();
             final String anactamd = xmlHelper.getString("@billamd", billTextNode).trim();
             final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
-            final String title = xmlHelper.getString("@title", billTextNode).trim();
             final String action = xmlHelper.getString("@action", billTextNode).trim();
             final String anactClause = billTextNode.getTextContent().trim();
             final Version version = Version.of(anactamd);
-            final Bill baseAnAct = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(new BaseBillId(anacthse + anactno, new SessionYear(sessyr)), Version.of(anactamd)), sobiFragment);
+            final Bill baseAnAct = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(
+                    new BaseBillId(anacthse + anactno, new SessionYear(sessyr)),
+                    Version.of(anactamd)), sobiFragment);
             if (action.equals("replace")) {
                 baseAnAct.getAmendment(version).setActClause(anactClause);
             } else if (action.equals("remove")) {
                 baseAnAct.getAmendment(version).setActClause("");
             }
             billIngestCache.set(baseAnAct.getBaseBillId(), baseAnAct, sobiFragment);
-            checkIngestCache();
 
         } catch (IOException | SAXException | XPathExpressionException e) {
+            unit.addException("XML AnAct parsing error", e);
             throw new ParseError("Error While Parsing AnActXML", e);
+        }
+        finally {
+            postDataUnitEvent(unit);
+            checkIngestCache();
         }
     }
 

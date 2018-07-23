@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -52,6 +53,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
     public void process(SobiFragment sobiFragment) {
         logger.info("Processing SenFlVot...");
         logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
+        DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             LocalDateTime date = sobiFragment.getPublishedDateTime();
             final Document doc = xmlHelper.parse(sobiFragment.getText());
@@ -89,6 +91,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
                 }
             }
             catch (DateTimeParseException ex) {
+                unit.addException("XML Sen Fl Vot parsing error", ex);
                 throw new ParseError("voteDateFormat not matched: " + ex);
             }
 
@@ -104,6 +107,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
                     voteCode = BillVoteCode.getValue(howMemberVoted);
                 }
                 catch (IllegalArgumentException ex) {
+                    unit.addException("XML Sen Fl Vot parsing error", ex);
                     throw new ParseError("No vote code mapping for " + howMemberVoted);
                 }
                 // Only senator votes are received. A valid member mapping is required.
@@ -113,11 +117,16 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
             billAmendment.updateVote(vote);
 
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
-            checkIngestCache();
         }
 
         catch (IOException | SAXException | XPathExpressionException | NullPointerException e) {
+            unit.addException("XML Sen Fl Vot parsing error", e);
             throw new ParseError("Error While Parsing XmlSenFlVotProcessor", e);
+        }
+
+        finally {
+            postDataUnitEvent(unit);
+            checkIngestCache();
         }
     }
 

@@ -18,7 +18,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * Created by Robert Bebber on 3/16/17.
@@ -46,7 +45,6 @@ public class XmlLDBlurbProcessor extends AbstractDataProcessor implements SobiPr
     @Override
     public void process(SobiFragment fragment) {
         logger.info("Processing LDBlurb...");
-        LocalDateTime date = fragment.getPublishedDateTime();
         logger.info("Processing " + fragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(fragment);
         try {
@@ -54,9 +52,8 @@ public class XmlLDBlurbProcessor extends AbstractDataProcessor implements SobiPr
             final Node billTextNode = xmlHelper.getNode("sponsor_blurb", doc);
             final Integer billno = xmlHelper.getInteger("@billno", billTextNode);
             final String billhse = xmlHelper.getString("@billhse", billTextNode).trim();
-            final String billamd = xmlHelper.getString("@billamd", billTextNode).trim();
             final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
-            final String action = xmlHelper.getString("@action", billTextNode).trim(); // TODO: implement actions
+            final String action = xmlHelper.getString("@action", billTextNode).trim();
             final String blurb = billTextNode.getTextContent().trim();
             if (billno == 0) // if it is a LDBC error
                 return;
@@ -68,10 +65,14 @@ public class XmlLDBlurbProcessor extends AbstractDataProcessor implements SobiPr
                 baseBill.setLDBlurb("");
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
-            checkIngestCache();
 
         } catch (IOException | SAXException | XPathExpressionException e) {
+            unit.addException("XML LD Blurb parsing error", e);
             throw new ParseError("Error While Parsing LDBlurbXML", e);
+        }
+        finally {
+            postDataUnitEvent(unit);
+            checkIngestCache();
         }
     }
 
