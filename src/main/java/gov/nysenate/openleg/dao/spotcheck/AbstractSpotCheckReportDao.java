@@ -23,7 +23,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.*;
+import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.INSERT_MISMATCH;
+import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.INSERT_REPORT;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 /**
@@ -79,7 +80,7 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
      * {@inheritDoc}
      */
     @Override
-    public PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset) {
+    public PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery<ContentKey> query, LimitOffset limitOffset) {
         MapSqlParameterSource params = activeMismatchParams(SpotCheckReportUtils.getReportEndDateTime(query.getReportDate()), query.getDataSource())
                 .addValue("contentTypes", query.getContentTypes().stream().map(Enum::name).collect(Collectors.toSet()))
                 .addValue("state", query.getState().name())
@@ -88,7 +89,12 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("firstSeenEndDateTime", query.getFirstSeenEndDateTime())
                 .addValue("observedEndDateTime", query.getObservedEndDateTime())
                 .addValue("ignoreStatuses", query.getIgnoredStatuses().stream().map(Enum::name).collect(Collectors.toSet()))
-                .addValue("mismatchTypes", extractEnumSetParams(query.getMismatchTypes()));
+                .addValue("mismatchTypes", extractEnumSetParams(query.getMismatchTypes()))
+                .addValue("filteringKeys", query.isFilteringKeys())
+                .addValue("keys", query.isFilteringKeys()
+                        ? query.getKeys().stream().map(this::getMapFromKey).map(SqlBaseDao::toHstoreString).collect(Collectors.toList())
+                        : null)
+                ;
         String sql = SqlSpotCheckReportQuery.GET_MISMATCHES.getSql(schema(), query.getOrderBy(), limitOffset);
         PaginatedRowHandler<DeNormSpotCheckMismatch> handler = new PaginatedRowHandler<>(limitOffset, "total_rows", new MismatchMapper());
         jdbcNamed.query(sql, params, handler);
@@ -163,28 +169,26 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
         }
 
         List<DeNormSpotCheckMismatch> reportMismatches = reportToDeNormMismatches(report);
-        List<DeNormSpotCheckMismatch> currentMismatches = getCurrentMismatches(report);
+        List<DeNormSpotCheckMismatch> savedMismatches = getRelevantSavedMismatches(report);
 
-        reportMismatches.addAll(closedMismatches(report, reportMismatches, currentMismatches));
-        reportMismatches = MismatchUtils.copyIgnoreStatuses(currentMismatches, reportMismatches);
+        reportMismatches.addAll(MismatchUtils.deriveClosedMismatches(reportMismatches, savedMismatches, report));
+        reportMismatches = MismatchUtils.copyIgnoreStatuses(savedMismatches, reportMismatches);
         reportMismatches = MismatchUtils.updateIgnoreStatus(reportMismatches);
-        reportMismatches = MismatchUtils.updateFirstSeenDateTime(reportMismatches, currentMismatches);
+        reportMismatches = MismatchUtils.updateFirstSeenDateTime(reportMismatches, savedMismatches);
 
         insertMismatches(reportMismatches);
     }
 
-    private List<DeNormSpotCheckMismatch> closedMismatches(SpotCheckReport<ContentKey> report,
-                                                           List<DeNormSpotCheckMismatch> reportMismatches,
-                                                           List<DeNormSpotCheckMismatch> currentMismatches) {
-        return MismatchUtils.deriveClosedMismatches(reportMismatches, currentMismatches, report);
-    }
-
-    private List<DeNormSpotCheckMismatch> getCurrentMismatches(SpotCheckReport<ContentKey> report) {
-        MismatchQuery query = new MismatchQuery(report.getReportDateTime().toLocalDate(),
+    /**
+     * Gets any open mismatches for the content observed in the report
+     */
+    private List<DeNormSpotCheckMismatch> getRelevantSavedMismatches(SpotCheckReport<ContentKey> report) {
+        MismatchQuery<ContentKey> query = new MismatchQuery<ContentKey>(report.getReportDateTime().toLocalDate(),
                                                 report.getReferenceType().getDataSource(),
                                                 MismatchStatus.OPEN,
                                                 Sets.newHashSet(report.getReferenceType().getContentType()))
-                .withIgnoredStatuses(EnumSet.allOf(SpotCheckMismatchIgnore.class));
+                .withIgnoredStatuses(EnumSet.allOf(SpotCheckMismatchIgnore.class))
+                .withKeys(report.getCheckedKeys());
         return getMismatches(query, LimitOffset.ALL).getResults();
     }
 

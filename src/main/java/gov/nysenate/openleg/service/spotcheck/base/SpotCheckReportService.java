@@ -51,7 +51,7 @@ public interface SpotCheckReportService<ContentKey>
      * @param query Defines parameters to query by.
      * @return Paginated list of DeNormSpotCheckMismatch's
      */
-    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
+    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery<ContentKey> query, LimitOffset limitOffset);
 
     /**
      * Gets mismatch status summary information for the given datasource, as of the given summary date time.

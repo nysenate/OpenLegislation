@@ -22,7 +22,7 @@ public interface SpotCheckReportDao<ContentKey>
     /**
      * Get mismatches matching the given query params.
      */
-    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
+    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery<ContentKey> query, LimitOffset limitOffset);
 
     /**
      * Get mismatch status summary counts for given datasource and report date.

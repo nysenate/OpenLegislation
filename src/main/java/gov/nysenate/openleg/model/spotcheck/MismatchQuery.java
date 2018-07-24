@@ -13,7 +13,7 @@ import java.util.Set;
  * Contains query parameters used to query for spotcheck mismatches.
  * Provides reasonable defaults for non required parameters.
  */
-public class MismatchQuery {
+public class MismatchQuery<ContentKey> {
 
     private LocalDate reportDate;
     private SpotCheckDataSource dataSource;
@@ -21,6 +21,8 @@ public class MismatchQuery {
     private MismatchStatus status;
     private Set<SpotCheckMismatchType> mismatchTypes;
     private Set<SpotCheckMismatchIgnore> ignoredStatuses;
+    private Set<ContentKey> keys;
+
     private OrderBy orderBy;
 
     public MismatchQuery(LocalDate reportDate, SpotCheckDataSource dataSource,
@@ -34,6 +36,8 @@ public class MismatchQuery {
         this.ignoredStatuses = EnumSet.of(SpotCheckMismatchIgnore.NOT_IGNORED);
         this.orderBy = new OrderBy(MismatchOrderBy.REFERENCE_DATE.getColumnName(), SortOrder.DESC);
     }
+
+    /* --- Functional Getters --- */
 
     public MismatchState getState() {
         return status.getState();
@@ -55,22 +59,33 @@ public class MismatchQuery {
         return status.getObservedEndDateTime(reportDate);
     }
 
-    /** --- Setters and Getters --- */
+    public boolean isFilteringKeys() {
+        return keys != null && !keys.isEmpty();
+    }
 
-    public MismatchQuery withIgnoredStatuses(Set<SpotCheckMismatchIgnore> ignoredStatuses) {
+    /* --- Builder Methods --- */
+
+    public MismatchQuery<ContentKey> withIgnoredStatuses(Set<SpotCheckMismatchIgnore> ignoredStatuses) {
         this.ignoredStatuses = ignoredStatuses;
         return this;
     }
 
-    public MismatchQuery withOrderBy(OrderBy orderBy) {
+    public MismatchQuery<ContentKey> withOrderBy(OrderBy orderBy) {
         this.orderBy = orderBy;
         return this;
     }
 
-    public MismatchQuery withMismatchTypes(EnumSet<SpotCheckMismatchType> mismatchTypes){
+    public MismatchQuery<ContentKey> withMismatchTypes(EnumSet<SpotCheckMismatchType> mismatchTypes){
         this.mismatchTypes = mismatchTypes;
         return this;
     }
+
+    public MismatchQuery<ContentKey> withKeys(Set<ContentKey> keys) {
+        this.keys = keys;
+        return this;
+    }
+
+    /* --- Getters --- */
 
     public LocalDate getReportDate() {
         return reportDate;
@@ -100,4 +115,7 @@ public class MismatchQuery {
         return orderBy;
     }
 
+    public Set<ContentKey> getKeys() {
+        return keys;
+    }
 }
