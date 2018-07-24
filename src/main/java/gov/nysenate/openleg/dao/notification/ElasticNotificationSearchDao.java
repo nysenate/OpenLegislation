@@ -31,18 +31,16 @@ import java.util.*;
 @Repository
 public class ElasticNotificationSearchDao extends ElasticBaseDao implements NotificationSearchDao, IndexedSearchService<RegisteredNotification> {
 
-    Logger logger = LoggerFactory.getLogger(ElasticNotificationSearchDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElasticNotificationSearchDao.class);
 
     protected static final String notificationIndex = SearchIndex.NOTIFICATION.getIndexName();
-    protected static final String notificationType = notificationIndex;
-    protected static final String idType = "id";
     protected static final String idId = "id";
 
     /** --- Implemented Methods --- */
 
     @Override
     public Optional<RegisteredNotification> getNotification(long notificationId) {
-        return getRequest(notificationIndex, notificationType, Long.toString(notificationId),
+        return getRequest(notificationIndex, defaultType, Long.toString(notificationId),
                 getResponse -> getNotificationFromSourceMap(getResponse.getSource()));
     }
 
@@ -51,8 +49,8 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, QueryBuilder filter,
                                                                      List<SortBuilder> sort, LimitOffset limitOffset) {
         // Restrict search to only notifications, excluding the id incrementer
-        QueryBuilder fullFilter = QueryBuilders.boolQuery().filter(filter).must(QueryBuilders.typeQuery(notificationType));
-        SearchRequest searchRequest = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, true);
+        QueryBuilder fullFilter = QueryBuilders.boolQuery().filter(filter).must(QueryBuilders.typeQuery(defaultType));
+        SearchRequest searchRequest = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, null, true);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);
@@ -68,7 +66,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     @Override
     public RegisteredNotification registerNotification(Notification notification) {
         RegisteredNotification regNotification = new RegisteredNotification(notification, getNextId());
-        IndexRequest indexRequest = new IndexRequest(notificationIndex, notificationType, String.valueOf(regNotification.getId()))
+        IndexRequest indexRequest = new IndexRequest(notificationIndex, defaultType, String.valueOf(regNotification.getId()))
                 .source(OutputUtils.toJson(new NotificationView(regNotification)), XContentType.JSON);
         try {
             searchClient.index(indexRequest);
@@ -130,7 +128,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
      * @return long - the next available notification id
      */
     protected long getNextId() {
-        IndexRequest indexRequest = new IndexRequest(notificationIndex, idType, idId)
+        IndexRequest indexRequest = new IndexRequest(notificationIndex, defaultType, idId)
                 .source("{}", XContentType.JSON);
         try {
             return searchClient.index(indexRequest).getVersion();

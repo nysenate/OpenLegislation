@@ -32,13 +32,12 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
     private static final Logger logger = LoggerFactory.getLogger(ElasticMemberSearchDao.class);
 
     private static final String memberIndexName = SearchIndex.MEMBER.getIndexName();
-    private static final String memberTypeName = memberIndexName;
     private static final String fullMemberType = "full_member";
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequest searchRequest = getSearchRequest(memberIndexName, query, filter, sort, limOff);
+        SearchRequest searchRequest = getSearchRequest(memberIndexName, query, filter, sort, limOff, null);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);
@@ -69,7 +68,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
                     .collect(Collectors.toList());
             memberViewList.forEach(m ->
                             bulkRequest.add(new IndexRequest(memberIndexName,
-                                    memberTypeName,
+                                    defaultType,
                                     String.valueOf(m.getMemberId()))
                                     .source(OutputUtils.toJson(m), XContentType.JSON))
             );

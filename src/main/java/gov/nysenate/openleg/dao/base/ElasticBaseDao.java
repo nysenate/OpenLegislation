@@ -20,6 +20,7 @@ import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -43,6 +44,8 @@ public abstract class ElasticBaseDao
     private static final Logger logger = LoggerFactory.getLogger(ElasticBaseDao.class);
 
     private static final int defaultMaxResultWindow = 10000;
+
+    protected static final String defaultType = "_doc";
 
     @Autowired
     protected RestHighLevelClient searchClient;
@@ -75,13 +78,13 @@ public abstract class ElasticBaseDao
 
     /**
      * Generates a typical search request that involves a query, filter, sort string, and a limit + offset
-     * @see #getSearchRequest(String, QueryBuilder, QueryBuilder, List, LimitOffset)
+     * @see #getSearchRequest(String, QueryBuilder, QueryBuilder, List, LimitOffset, String[])
      *
      * Highlighting, rescoring, and full source response are not supported via this method.
      */
     protected SearchRequest getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
-                                                    List<SortBuilder> sort, LimitOffset limitOffset) {
-        return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset, false);
+                                                    List<SortBuilder> sort, LimitOffset limitOffset, String[] filteredFields) {
+        return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset, filteredFields, false);
     }
 
     /**
@@ -94,19 +97,23 @@ public abstract class ElasticBaseDao
      * @param rescorer - Optional rescorer that can be used to fine tune the query ranking.
      * @param sort - List of SortBuilders specifying the desired sorting
      * @param limitOffset - Restrict the number of results returned as well as paginate.
-     * @param fetchSource - Will return the indexed source fields when set to true
+     * @param filteredFields - Optional List of fields to store in the response.
+     * @param fetchFullSource - Will return the indexed source fields when set to true.
      * @return SearchRequest
      */
     protected SearchRequest getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
                                                     List<HighlightBuilder.Field> highlightedFields, RescorerBuilder rescorer,
-                                                    List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) {
+                                                    List<SortBuilder> sort, LimitOffset limitOffset, String[] filteredFields, boolean fetchFullSource) {
+
+
         limitOffset = adjustLimitOffset(limitOffset);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
                 .query(query)
                 .from(limitOffset.getOffsetStart() - 1)
                 .size((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
                 .minScore(0.05f)
-                .fetchSource(fetchSource);
+                .fetchSource(new FetchSourceContext(fetchFullSource || filteredFields != null,
+                        filteredFields, null));
 
         if (highlightedFields != null) {
             HighlightBuilder hb = new HighlightBuilder();
@@ -198,7 +205,7 @@ public abstract class ElasticBaseDao
 
     protected void deleteEntry(String indexName, String id) {
         DeleteRequest deleteRequest = new DeleteRequest(indexName)
-        .type(indexName)
+        .type(defaultType)
         .id(id);
         try {
             searchClient.delete(deleteRequest);
@@ -278,5 +285,18 @@ public abstract class ElasticBaseDao
         }
 
         return limitOffset;
+    }
+
+    /**
+     * Returns the proper FetchSourceContext, based on fields to filter by and
+     */
+    private FetchSourceContext createFetchSourceContext(String[] filterFields, boolean fetchFullSource){
+        if (fetchFullSource){
+            return new FetchSourceContext(true);
+        }
+        if (filterFields == null){
+            return new FetchSourceContext(false);
+        }
+        return new FetchSourceContext(true, filterFields, null);
     }
 }

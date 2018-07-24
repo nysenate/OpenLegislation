@@ -35,8 +35,6 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
 
     protected static final String transcriptIndexName = SearchIndex.TRANSCRIPT.getIndexName();
 
-    protected static final String transcriptTypeName = transcriptIndexName;
-
     protected static final List<HighlightBuilder.Field> highlightedFields =
             Collections.singletonList(new HighlightBuilder.Field("text").numOfFragments(3));
 
@@ -45,7 +43,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, QueryBuilder postFilter,
                                                          List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequest searchRequest = getSearchRequest(transcriptIndexName, query, postFilter,
-                highlightedFields, null, sort, limOff, false);
+                highlightedFields, null, sort, limOff, null, false);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);
@@ -72,7 +70,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
             List<TranscriptView> transcriptViewList = transcripts.stream().map(TranscriptView::new).collect(Collectors.toList());
             transcriptViewList.forEach(t ->
                             bulkRequest.add(
-                                    new IndexRequest(transcriptIndexName, transcriptIndexName, t.getFilename())
+                                    new IndexRequest(transcriptIndexName, defaultType, t.getFilename())
                                             .source(OutputUtils.toJson(t), XContentType.JSON))
             );
             safeBulkRequestExecute(bulkRequest);

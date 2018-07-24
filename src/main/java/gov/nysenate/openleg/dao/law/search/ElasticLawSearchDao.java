@@ -37,8 +37,6 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
 
     protected static String lawIndexName = SearchIndex.LAW.getIndexName();
 
-    protected static String lawTypeName = lawIndexName;
-
     protected static List<HighlightBuilder.Field> highlightFields =
         Arrays.asList(new HighlightBuilder.Field("text").numOfFragments(5),
                       new HighlightBuilder.Field("title").numOfFragments(0));
@@ -48,7 +46,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder postFilter,
                                                  RescorerBuilder rescorer, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequest searchRequest =
-            getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, true);
+            getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, null, true);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);
@@ -75,7 +73,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
             BulkRequest bulkRequest = new BulkRequest();
             lawDocs.stream().map(doc -> new LawDocView(doc)).forEach(docView -> {
                 bulkRequest.add(
-                    new IndexRequest(lawIndexName, lawTypeName, createSearchId(docView))
+                    new IndexRequest(lawIndexName, defaultType, createSearchId(docView))
                                 .source(OutputUtils.toJson(docView), XContentType.JSON));
             });
             safeBulkRequestExecute(bulkRequest);
@@ -100,7 +98,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
 
     private LawDocId getLawDocIdFromHit(SearchHit hit) {
         String locationId = hit.getId();
-        String docId = hit.getType() + locationId;
+        String docId = hit.getSourceAsMap().get("lawID") + locationId;
         return new LawDocId(docId, LocalDate.parse((String) hit.getSourceAsMap().get("activeDate")));
     }
 

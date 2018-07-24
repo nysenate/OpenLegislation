@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import gov.nysenate.openleg.client.view.committee.CommitteeView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchResult;
@@ -42,12 +43,12 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticCommitteeSearchDao.class);
 
-    private static final String committeeSearchIndexName = "committees";
-
-    private static final String committeeSearchIndexType = committeeSearchIndexName;
+    private static final String committeeSearchIndexName = SearchIndex.COMMITTEE.getIndexName();
 
     private static final Pattern committeeSearchIdPattern =
             Pattern.compile("(SENATE|ASSEMBLY)-([A-z, ]*)-(.*)");
+
+    private static final String[] filteredFields = {"sessionYear"};
 
     @Autowired
     CommitteeDataService committeeDataService;
@@ -55,7 +56,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     @Override
     public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
                                                               List<SortBuilder> sort, LimitOffset limitOffset) {
-        SearchRequest searchRequest = getSearchRequest(committeeSearchIndexName, query, filter, sort, limitOffset);
+        SearchRequest searchRequest = getSearchRequest(committeeSearchIndexName, query, filter, sort, limitOffset, filteredFields);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);
@@ -169,7 +170,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     protected DeleteRequest getCommitteeVersionDeleteRequest(CommitteeVersionId committeeVersionId) {
         return new DeleteRequest(
                 committeeSearchIndexName,
-                committeeSearchIndexType,
+                defaultType,
                 generateCommitteeVersionSearchId(committeeVersionId)
         );
     }
@@ -182,7 +183,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
      */
     private IndexRequest getCommitteeVersionIndexRequest(Committee committee) {
         return new IndexRequest(committeeSearchIndexName,
-                committeeSearchIndexType,
+                defaultType,
                 generateCommitteeVersionSearchId(committee.getVersionId()))
                 .source(OutputUtils.toJson(new CommitteeView(committee)), XContentType.JSON);
     }
@@ -203,7 +204,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
         Matcher versionIdMatcher = committeeSearchIdPattern.matcher(hit.getId());
         versionIdMatcher.find();
         return new CommitteeVersionId(Chamber.getValue(versionIdMatcher.group(1)), versionIdMatcher.group(2),
-                SessionYear.of(Integer.parseInt(hit.getType())),
+                SessionYear.of((Integer)hit.getSourceAsMap().get(filteredFields[0])),
                 LocalDateTime.parse(versionIdMatcher.group(3), DateTimeFormatter.ISO_DATE_TIME));
     }
 }

@@ -35,8 +35,6 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
 
     protected static final String agendaIndexName = SearchIndex.AGENDA.getIndexName();
 
-    protected static final String agendaTypeName = agendaIndexName;
-
     /** {@inheritDoc} */
     @Override
     public SearchResults<AgendaId> searchAgendas(QueryBuilder query, QueryBuilder postFilter,
@@ -51,7 +49,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
      */
     private SearchResponse searchAgendasResponse(QueryBuilder query, QueryBuilder postFilter,
                                                            List<SortBuilder> sort, LimitOffset limOff){
-        SearchRequest searchRequest = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
+        SearchRequest searchRequest = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff, null);
         try {
             return searchClient.search(searchRequest);
         }
@@ -69,13 +67,13 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
         logger.debug("Committee Agenda search result with query {} took {} ms", query, response.getTook().getMillis());
         return getSearchResults(response, limOff, (hit) ->
             new CommitteeAgendaId(
-                getAgendaIdFromHit(hit), new CommitteeId(Chamber.SENATE, hit.getId()))
+                getAgendaIdFromHit(hit), new CommitteeId(Chamber.SENATE, hit.getId().split("-")[2]))
         );
     }
 
     private AgendaId getAgendaIdFromHit(SearchHit hit) {
-        String[] type = hit.getType().split("-");
-        return new AgendaId(Integer.parseInt(type[1]), Integer.parseInt(type[0]));
+        String[] id = hit.getId().split("-");
+        return new AgendaId(Integer.parseInt(id[1]), Integer.parseInt(id[0]));
     }
 
     /** {@inheritDoc} */
@@ -95,8 +93,9 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
                     .forEach(cfv ->
                         request.add(
                             new IndexRequest(agendaIndexName,
-                                agenda.getId().getYear() + "-" + cfv.getAgenda().getId().getNumber(),
-                                cfv.getCommittee().getCommitteeId().getName())
+                                defaultType, agenda.getId().getYear() + "-" +
+                                    cfv.getAgenda().getId().getNumber() + "-" +
+                                    cfv.getCommittee().getCommitteeId().getName())
                             .source(OutputUtils.toJson(cfv), XContentType.JSON))));
             safeBulkRequestExecute(request);
         }

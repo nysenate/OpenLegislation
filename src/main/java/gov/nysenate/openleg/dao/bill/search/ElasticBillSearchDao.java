@@ -38,9 +38,9 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
     private static final int billMaxResultWindow = 500000;
 
-    protected static final String billIndexName = SearchIndex.BILL.getIndexName();
+    private static final String[] filteredFields = {"session"};
 
-    protected static final String billTypeName = billIndexName;
+    protected static final String billIndexName = SearchIndex.BILL.getIndexName();
 
     protected static final List<HighlightBuilder.Field> highlightedFields =
         Arrays.asList(new HighlightBuilder.Field("basePrintNo").numOfFragments(0),
@@ -52,7 +52,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder rescorer,
                                                  List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequest request =
-            getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer , sort, limOff, false);
+            getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer, sort, limOff, filteredFields, false);
         SearchResponse response = new SearchResponse();
         try {
             response = searchClient.search(request);
@@ -79,8 +79,9 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
             List<BillView> billViewList = bills.stream().map(BillView::new).collect(Collectors.toList());
             billViewList.forEach(b ->
                 bulkRequest.add(
-                    new IndexRequest(billIndexName, billTypeName, b.getBasePrintNo())
-                                .source(OutputUtils.toJson(b), XContentType.JSON))
+                    new IndexRequest(billIndexName, defaultType, b.getBasePrintNo())
+                                .source(OutputUtils.toJson(b), XContentType.JSON)
+                )
             );
             safeBulkRequestExecute(bulkRequest);
         }
@@ -115,6 +116,9 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     }
 
     protected BaseBillId getBaseBillIdFromHit(SearchHit hit) {
-        return new BaseBillId(hit.getId(), Integer.parseInt(hit.getType()));
+
+        return new BaseBillId(hit.getId(), (Integer)hit
+                .getSourceAsMap()
+                .get(filteredFields[0]));
     }
 }

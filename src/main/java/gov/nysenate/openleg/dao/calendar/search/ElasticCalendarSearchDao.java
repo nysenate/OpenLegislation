@@ -5,6 +5,7 @@ import gov.nysenate.openleg.client.view.calendar.CalendarView;
 import gov.nysenate.openleg.client.view.calendar.CalendarViewFactory;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -32,14 +33,14 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticCalendarSearchDao.class);
 
+    private static final String[] filteredFields = {"year"};
+
     @Autowired
     CalendarViewFactory calendarViewFactory;
 
     /* --- Names --- */
 
-    protected static final String calIndexName = "calendars";
-
-    protected static final String calTypeName = calIndexName;
+    protected static final String calIndexName = SearchIndex.CALENDAR.getIndexName();
 
     /* --- Implementations --- */
 
@@ -47,7 +48,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     @Override
     public SearchResults<CalendarId> searchCalendars(QueryBuilder query, QueryBuilder postFilter,
                                                      List<SortBuilder> sort, LimitOffset limitOffset) {
-        SearchRequest searchRequest = getSearchRequest(calIndexName, query, postFilter, sort, limitOffset);
+        SearchRequest searchRequest = getSearchRequest(calIndexName, query, postFilter, sort, limitOffset, filteredFields);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);
@@ -92,7 +93,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     public void deleteCalendarFromIndex(CalendarId calId) {
         DeleteRequest deleteRequest = new DeleteRequest(
                 calIndexName,
-                calTypeName,
+                defaultType,
                 Integer.toString(calId.getCalNo())
         );
 
@@ -134,7 +135,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      */
     protected IndexRequest getCalendarIndexRequest(CalendarView calendarView) {
         return new IndexRequest(calIndexName,
-                calTypeName, Integer.toString(calendarView.getCalendarNumber()))
+                defaultType, Integer.toString(calendarView.getCalendarNumber()))
                 .source(OutputUtils.toJson(calendarView), XContentType.JSON);
     }
 
@@ -147,7 +148,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
      * @return
      */
     protected CalendarId getCalendarId(SearchHit hit) {
-        return new CalendarId(Integer.parseInt(hit.getId()), Integer.parseInt(hit.getType()));
+        return new CalendarId(Integer.parseInt(hit.getId()), (Integer)hit.getSourceAsMap().get(filteredFields[0]));
     }
 
 }
