@@ -37,7 +37,8 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "  AND state = :state \n" +
         "  AND content_type IN (:contentTypes) \n" +
         "  AND type IN (:mismatchTypes) \n" +
-        "  AND ignore_status IN (:ignoreStatuses)\n"
+        "  AND ignore_status IN (:ignoreStatuses)\n" +
+        "  AND (NOT :filteringKeys OR key::text IN (:keys))\n"
     ),
 
     INSERT_MISMATCH(
