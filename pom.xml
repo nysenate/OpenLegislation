@@ -60,6 +60,7 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
+        <version>1.6.0</version>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
