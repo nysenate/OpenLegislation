@@ -46,9 +46,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     private static final String committeeSearchIndexName = SearchIndex.COMMITTEE.getIndexName();
 
     private static final Pattern committeeSearchIdPattern =
-            Pattern.compile("(SENATE|ASSEMBLY)-([A-z, ]*)-(.*)");
-
-    private static final String[] filteredFields = {"sessionYear"};
+            Pattern.compile("(SENATE|ASSEMBLY)-([A-z, ]*)-(\\d{4})-(.*)");
 
     @Autowired
     CommitteeDataService committeeDataService;
@@ -56,7 +54,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     @Override
     public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
                                                               List<SortBuilder> sort, LimitOffset limitOffset) {
-        SearchRequest searchRequest = getSearchRequest(committeeSearchIndexName, query, filter, sort, limitOffset, filteredFields);
+        SearchRequest searchRequest = getSearchRequest(committeeSearchIndexName, query, filter, sort, limitOffset);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);
@@ -191,8 +189,13 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     /* --- Id Mappers --- */
 
     private String generateCommitteeVersionSearchId(CommitteeVersionId committeeVersionId) {
-        return generateCommitteeSearchId(committeeVersionId) + "-" +
+        return generateCommitteeSessionSearchId(committeeVersionId) + "-" +
                 committeeVersionId.getReferenceDate();
+    }
+
+    private String generateCommitteeSessionSearchId(CommitteeSessionId committeeSessionId){
+        return generateCommitteeSearchId(committeeSessionId) + "-" +
+                committeeSessionId.getSession().toString();
     }
 
     private String generateCommitteeSearchId(CommitteeId committeeId) {
@@ -204,7 +207,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
         Matcher versionIdMatcher = committeeSearchIdPattern.matcher(hit.getId());
         versionIdMatcher.find();
         return new CommitteeVersionId(Chamber.getValue(versionIdMatcher.group(1)), versionIdMatcher.group(2),
-                SessionYear.of((Integer)hit.getSourceAsMap().get(filteredFields[0])),
-                LocalDateTime.parse(versionIdMatcher.group(3), DateTimeFormatter.ISO_DATE_TIME));
+                new SessionYear(Integer.parseInt(versionIdMatcher.group(3))),
+                LocalDateTime.parse(versionIdMatcher.group(4), DateTimeFormatter.ISO_DATE_TIME));
     }
 }

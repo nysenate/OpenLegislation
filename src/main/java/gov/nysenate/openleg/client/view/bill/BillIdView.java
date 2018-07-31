@@ -19,7 +19,7 @@ public class BillIdView extends BaseBillIdView implements ViewObject
         if (billId != null) {
             this.printNo = billId.getPrintNo();
             this.version = Optional.ofNullable(billId.getVersion())
-                    .map(Version::name).orElse(null);
+                    .map(Version::displayName).orElse(null);
         }
     }
 

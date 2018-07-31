@@ -65,7 +65,7 @@ public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill,
     private void checkActiveVersions(Bill bill, DaybreakBill daybreakBill, SpotCheckObservation<BaseBillId> obsrv) {
         Version daybreakActiveVersion = daybreakBill.getActiveVersion();
         if (!daybreakActiveVersion.equals(bill.getActiveVersion())) {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT, ((bill.getActiveVersion() != null) ? bill.getActiveVersion().displayName() : "NULL"), daybreakActiveVersion.name()
+            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTIVE_AMENDMENT, ((bill.getActiveVersion() != null) ? bill.getActiveVersion().name() : "NULL"), daybreakActiveVersion.name()
             ));
         }
 
@@ -285,7 +285,7 @@ public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill,
     private String publishedVersionsString(Set<Version> publishedVersions) {
         return publishedVersions.stream()
                 .sorted()
-                .map(Version::displayName)
+                .map(Version::name)
                 .collect(joining(" "));
     }
 }

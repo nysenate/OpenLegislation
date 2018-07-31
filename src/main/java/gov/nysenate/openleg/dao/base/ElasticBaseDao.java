@@ -78,13 +78,13 @@ public abstract class ElasticBaseDao
 
     /**
      * Generates a typical search request that involves a query, filter, sort string, and a limit + offset
-     * @see #getSearchRequest(String, QueryBuilder, QueryBuilder, List, LimitOffset, String[])
+     * @see #getSearchRequest(String, QueryBuilder, QueryBuilder, List, LimitOffset)
      *
      * Highlighting, rescoring, and full source response are not supported via this method.
      */
     protected SearchRequest getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
-                                                    List<SortBuilder> sort, LimitOffset limitOffset, String[] filteredFields) {
-        return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset, filteredFields, false);
+                                                    List<SortBuilder> sort, LimitOffset limitOffset) {
+        return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset, false);
     }
 
     /**
@@ -97,13 +97,12 @@ public abstract class ElasticBaseDao
      * @param rescorer - Optional rescorer that can be used to fine tune the query ranking.
      * @param sort - List of SortBuilders specifying the desired sorting
      * @param limitOffset - Restrict the number of results returned as well as paginate.
-     * @param filteredFields - Optional List of fields to store in the response.
-     * @param fetchFullSource - Will return the indexed source fields when set to true.
+     * @param fetchSource - Will return the indexed source fields when set to true.
      * @return SearchRequest
      */
     protected SearchRequest getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
                                                     List<HighlightBuilder.Field> highlightedFields, RescorerBuilder rescorer,
-                                                    List<SortBuilder> sort, LimitOffset limitOffset, String[] filteredFields, boolean fetchFullSource) {
+                                                    List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) {
 
 
         limitOffset = adjustLimitOffset(limitOffset);
@@ -112,8 +111,7 @@ public abstract class ElasticBaseDao
                 .from(limitOffset.getOffsetStart() - 1)
                 .size((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
                 .minScore(0.05f)
-                .fetchSource(new FetchSourceContext(fetchFullSource || filteredFields != null,
-                        filteredFields, null));
+                .fetchSource(new FetchSourceContext(fetchSource));
 
         if (highlightedFields != null) {
             HighlightBuilder hb = new HighlightBuilder();

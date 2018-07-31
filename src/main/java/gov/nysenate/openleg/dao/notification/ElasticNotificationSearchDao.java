@@ -50,7 +50,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
                                                                      List<SortBuilder> sort, LimitOffset limitOffset) {
         // Restrict search to only notifications, excluding the id incrementer
         QueryBuilder fullFilter = QueryBuilders.boolQuery().filter(filter).must(QueryBuilders.typeQuery(defaultType));
-        SearchRequest searchRequest = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, null, true);
+        SearchRequest searchRequest = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, true);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);

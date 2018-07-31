@@ -43,7 +43,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected Map<Version, BillAmendment> amendmentMap = Collections.synchronizedSortedMap(new TreeMap<>());
 
     /** Publish status mapped by amendment versions. */
-    protected Map<Version, PublishStatus> amendPublishStatusMap =Collections.synchronizedSortedMap(new TreeMap<>());
+    protected Map<Version, PublishStatus> amendPublishStatusMap = Collections.synchronizedSortedMap(new TreeMap<>());
 
     /** A list of veto messages for this bill */
     protected Map<VetoId, VetoMessage> vetoMessages = Collections.synchronizedMap(new HashMap<>());

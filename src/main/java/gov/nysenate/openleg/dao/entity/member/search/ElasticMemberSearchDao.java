@@ -37,7 +37,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
     /** {@inheritDoc} */
     @Override
     public SearchResults<Integer> searchMembers(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequest searchRequest = getSearchRequest(memberIndexName, query, filter, sort, limOff, null);
+        SearchRequest searchRequest = getSearchRequest(memberIndexName, query, filter, sort, limOff);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);

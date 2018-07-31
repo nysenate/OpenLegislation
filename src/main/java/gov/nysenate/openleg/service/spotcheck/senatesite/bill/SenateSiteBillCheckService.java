@@ -59,8 +59,9 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         try {
             Version refVersion = reference.getBillId().getVersion();
             amendment = Optional.of(contentBillView)
-                    .map(BillView::getAmendments).map(MapView::getItems)
-                    .map(amendments -> amendments.get(refVersion.displayName()))
+                    .map(BillView::getAmendments)
+                    .map(MapView::getItems)
+                    .map(amendments -> amendments.get(refVersion.name()))
                     .orElseThrow(() -> new BillAmendNotFoundEx(reference.getBillId()));
         } catch (IllegalArgumentException | BillAmendNotFoundEx ex) {
             if (isUnpublished(billId, content)) {

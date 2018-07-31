@@ -37,16 +37,17 @@ public class BillView extends BillInfoView implements ViewObject
             TreeMap<String, BillAmendmentView> amendmentMap = new TreeMap<>();
             bill.getAmendPublishStatusMap().forEach((k,v) -> {
                 if (v.isPublished() && bill.hasAmendment(k)) {
-                    amendmentMap.put(k.name(), new BillAmendmentView(bill.getAmendment(k), v));
+                    amendmentMap.put(k.displayName(), new BillAmendmentView(bill.getAmendment(k), v));
                 }
             });
+
             this.amendments = MapView.of(amendmentMap);
             this.amendmentVersions = ListView.ofStringList(amendmentMap.keySet().stream().collect(Collectors.toList()));
 
             this.votes = ListView.of(bill.getAmendmentList().stream()
                 .flatMap(a -> a.getVotesList().stream())
                 .sorted()
-                .map(v -> new BillVoteView(v))
+                .map(BillVoteView::new)
                 .collect(Collectors.toList()));
 
             this.vetoMessages = ListView.of(bill.getVetoMessages().values().stream()
@@ -56,7 +57,7 @@ public class BillView extends BillInfoView implements ViewObject
             this.approvalMessage = bill.getApprovalMessage() != null ?
                 new ApprovalMessageView(bill.getApprovalMessage()) : null;
 
-            this.activeVersion = bill.getActiveVersion().name();
+            this.activeVersion = bill.getActiveVersion().displayName();
 
             this.additionalSponsors = ListView.of(bill.getAdditionalSponsors().stream()
                 .map(MemberView::new)

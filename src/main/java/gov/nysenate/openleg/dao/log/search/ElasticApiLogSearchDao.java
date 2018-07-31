@@ -48,7 +48,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
      */
     private SearchResponse justSearchLogs(QueryBuilder query, QueryBuilder filter, List<SortBuilder> sort, LimitOffset limOff, boolean isFetch){
         SearchRequest searchRequest =
-                getSearchRequest(logIndexName, query, filter, null, null, sort, limOff, null, isFetch);
+                getSearchRequest(logIndexName, query, filter, null, null, sort, limOff, isFetch);
         try {
             return searchClient.search(searchRequest);
         }

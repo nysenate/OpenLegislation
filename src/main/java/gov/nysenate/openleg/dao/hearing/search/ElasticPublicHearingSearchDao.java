@@ -45,7 +45,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, QueryBuilder postFilter,
                                                                List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequest searchRequest = getSearchRequest(publicHearingIndexName, query, postFilter, highlightedFields, null, sort, limOff, null, false);
+        SearchRequest searchRequest = getSearchRequest(publicHearingIndexName, query, postFilter, highlightedFields, null, sort, limOff, false);
         SearchResponse response = new SearchResponse();
         try {
             response = searchClient.search(searchRequest);

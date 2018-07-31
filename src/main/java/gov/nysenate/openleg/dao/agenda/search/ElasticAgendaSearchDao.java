@@ -49,7 +49,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
      */
     private SearchResponse searchAgendasResponse(QueryBuilder query, QueryBuilder postFilter,
                                                            List<SortBuilder> sort, LimitOffset limOff){
-        SearchRequest searchRequest = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff, null);
+        SearchRequest searchRequest = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
         try {
             return searchClient.search(searchRequest);
         }

@@ -133,7 +133,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
         String versionString = "";
         if (contentSuppDiff != null) {
             Version v = contentSuppDiff.getVersion();
-            versionString = (v == Version.ORIGINAL) ? "BASE" : v.name();
+            versionString = (v == Version.ORIGINAL) ? "BASE" : v.displayName();
         }
         return versionString;
     }

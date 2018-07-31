@@ -43,7 +43,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, QueryBuilder postFilter,
                                                          List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequest searchRequest = getSearchRequest(transcriptIndexName, query, postFilter,
-                highlightedFields, null, sort, limOff, null, false);
+                highlightedFields, null, sort, limOff, false);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);

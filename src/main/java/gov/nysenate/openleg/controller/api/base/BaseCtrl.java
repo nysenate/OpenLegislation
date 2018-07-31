@@ -232,7 +232,7 @@ public abstract class BaseCtrl
         Optional<Version> optVersion = parseVersion(version);
         if (!optVersion.isPresent()) {
             throw new InvalidRequestParamEx(version, versionParamName, "String",
-                    Version.ORIGINAL.displayName() + "|[A-Z]");
+                    Version.ORIGINAL.name() + "|[A-Z]");
         }
         return optVersion.get();
     }

@@ -46,7 +46,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder postFilter,
                                                  RescorerBuilder rescorer, List<SortBuilder> sort, LimitOffset limOff) {
         SearchRequest searchRequest =
-            getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, null, true);
+            getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, true);
         SearchResponse searchResponse = new SearchResponse();
         try {
             searchResponse = searchClient.search(searchRequest);
