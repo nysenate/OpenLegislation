@@ -118,7 +118,7 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
         // Delete any supplementals that were not found in the current map or were different.
         Set<Version> deleteSupVersions = Sets.union(diff.entriesDiffering().keySet(), diff.entriesOnlyOnLeft().keySet());
         for (Version supVersion : deleteSupVersions) {
-            ImmutableParams calSupParams = calParams.add(new MapSqlParameterSource("supVersion", supVersion.name()));
+            ImmutableParams calSupParams = calParams.add(new MapSqlParameterSource("supVersion", supVersion.displayName()));
             jdbcNamed.update(SqlCalendarAlertQuery.DELETE_CALENDAR_SUP.getSql(schema()), calSupParams);
         }
         // Insert any new or differing supplementals
@@ -351,7 +351,7 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
     private static MapSqlParameterSource getCalSupplementalParams(CalendarSupplemental sup, CalendarAlertFile file) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(sup.getCalendarId(), params);
-        params.addValue("supVersion", sup.getVersion().name());
+        params.addValue("supVersion", sup.getVersion().displayName());
         params.addValue("calendarDate", toDate(sup.getCalDate()));
         params.addValue("releaseDateTime", toDate(sup.getReleaseDateTime()));
         addModPubDateParams(sup.getModifiedDateTime(), sup.getPublishedDateTime(), params);
@@ -363,14 +363,14 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
                                                                 CalendarAlertFile file) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(sup.getCalendarId(), params);
-        params.addValue("supVersion", sup.getVersion().name());
+        params.addValue("supVersion", sup.getVersion().displayName());
         params.addValue("sectionCode", entry.getSectionType().getCode());
         params.addValue("billCalNo", entry.getBillCalNo());
         addBillIdParams(entry.getBillId(), params);
         BillId subBillId = entry.getSubBillId();
         params.addValue("subPrintNo", (subBillId != null) ? subBillId.getBasePrintNo() : null);
         params.addValue("subSession", (subBillId != null) ? subBillId.getSession().getYear() : null);
-        params.addValue("subAmendVersion", (subBillId != null) ? subBillId.getVersion().name() : null);
+        params.addValue("subAmendVersion", (subBillId != null) ? subBillId.getVersion().displayName() : null);
         params.addValue("high", entry.getBillHigh());
         addLastFile(file, params);
         return params;
@@ -407,7 +407,7 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
     private static void addBillIdParams(BillId billId, MapSqlParameterSource params) {
         params.addValue("printNo", billId.getBasePrintNo());
         params.addValue("session", billId.getSession().getYear());
-        params.addValue("amendVersion", billId.getVersion().name());
+        params.addValue("amendVersion", billId.getVersion().displayName());
     }
 
     private static MapSqlParameterSource addLastFile(CalendarAlertFile file, MapSqlParameterSource params) {

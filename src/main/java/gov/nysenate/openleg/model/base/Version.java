@@ -16,6 +16,13 @@ public enum Version
     A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
 
     /**
+     * For use when displaying a bill's Version.
+     */
+    public String displayName(){
+        return (this == ORIGINAL) ? "" : this.name();
+    }
+
+    /**
      * Given an input string return the matching Version. Use this method instead of
      * valueOf() as it will handle the default version as well as normalize the input.
      * An IllegalArgumentException will be thrown if the given version is invalid.
@@ -50,4 +57,5 @@ public enum Version
     public static List<Version> after(Version v) {
         return Arrays.stream(values()).filter(p -> p.compareTo(v) > 0).collect(toList());
     }
+
 }

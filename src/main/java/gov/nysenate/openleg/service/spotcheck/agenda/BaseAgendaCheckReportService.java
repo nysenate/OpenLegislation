@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +110,7 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
             try {
                 // Attempt to get the committee meeting info that corresponds to the reference
                 agenda = getAgenda(reference);
-                String addendumId = reference.getAddendum().name();
+                String addendumId = reference.getAddendum().displayName();
                 CommitteeId committeeId = reference.getCommitteeId();
                 if (agenda.getAgendaInfoAddendum(addendumId) == null
                         || agenda.getAgendaInfoAddendum(addendumId).getCommittee(committeeId) == null) {

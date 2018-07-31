@@ -88,7 +88,7 @@ public class SqlActiveListReferenceDAO extends SqlBaseDao implements ActiveListR
         params.addValue("bill_session_no", entry.getBillId().getSession().getYear());
         params.addValue("bill_calendar_no", entry.getBillCalNo());
         params.addValue("active_list_reference_id", keyId);
-        params.addValue("bill_amend_version", entry.getBillId().getVersion().name());
+        params.addValue("bill_amend_version", entry.getBillId().getVersion().displayName());
         params.addValue("bill_session_year", entry.getBillId().getSession().getYear());
         params.addValue("created_date_time", entry.getBillId().getSession());
 

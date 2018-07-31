@@ -62,7 +62,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         List<BillAmendment> billAmendments = getBillAmendments(baseParams);
         for (BillAmendment amendment : billAmendments) {
             final ImmutableParams amendParams = baseParams.add(
-                new MapSqlParameterSource("version", amendment.getVersion().name()));
+                new MapSqlParameterSource("version", amendment.getVersion().displayName()));
             // Fetch all the same as bill ids
             amendment.setSameAs(getSameAsBills(amendParams));
             // Get the cosponsors for the amendment
@@ -822,7 +822,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         return ImmutableParams.from(new MapSqlParameterSource()
                 .addValue("printNo", billId.getBasePrintNo())
                 .addValue("sessionYear", billId.getSession().getYear())
-                .addValue("version", billId.getVersion().name()));
+                .addValue("version", billId.getVersion().displayName()));
     }
 
     /**
@@ -834,7 +834,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         addBillIdParams(bill, params);
         params.addValue("title", bill.getTitle())
               .addValue("summary", bill.getSummary())
-              .addValue("activeVersion", bill.getActiveVersion().name())
+              .addValue("activeVersion", bill.getActiveVersion().displayName())
               .addValue("activeYear", bill.getYear())
               .addValue("programInfo", bill.getProgramInfo()!=null ? bill.getProgramInfo().getInfo() : null)
               .addValue("programInfoNum", bill.getProgramInfo()!=null ? bill.getProgramInfo().getNumber() : null)
@@ -873,7 +873,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
                                                                     SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(bill, params);
-        params.addValue("version", version.name());
+        params.addValue("version", version.displayName());
         params.addValue("published", pubStatus.isPublished());
         params.addValue("effectDateTime", toDate(pubStatus.getEffectDateTime()));
         params.addValue("override", pubStatus.isOverride());
@@ -891,7 +891,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         params.addValue("printNo", billAction.getBillId().getBasePrintNo())
               .addValue("sessionYear", billAction.getBillId().getSession().getYear())
               .addValue("chamber", billAction.getChamber().toString().toLowerCase())
-              .addValue("version", billAction.getBillId().getVersion().name())
+              .addValue("version", billAction.getBillId().getVersion().displayName())
               .addValue("effectDate", toDate(billAction.getDate()))
               .addValue("text", billAction.getText())
               .addValue("sequenceNo", billAction.getSequenceNo());
@@ -904,7 +904,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         addBillIdParams(billAmendment, params);
         params.addValue("sameAsPrintNo", sameAs.getBasePrintNo())
               .addValue("sameAsSessionYear", sameAs.getSession().getYear())
-              .addValue("sameAsVersion", sameAs.getVersion().name());
+              .addValue("sameAsVersion", sameAs.getVersion().displayName());
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -914,7 +914,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         addBillIdParams(bill, params);
         params.addValue("prevPrintNo", bill.getDirectPreviousVersion().getBasePrintNo())
               .addValue("prevSessionYear", bill.getDirectPreviousVersion().getSession().getYear())
-              .addValue("prevVersion", bill.getDirectPreviousVersion().getVersion().name());
+              .addValue("prevVersion", bill.getDirectPreviousVersion().getVersion().displayName());
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -997,7 +997,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     private static void addBillIdParams(BillAmendment billAmendment, MapSqlParameterSource params) {
         params.addValue("printNo", billAmendment.getBasePrintNo())
               .addValue("sessionYear", billAmendment.getSession().getYear())
-              .addValue("version", billAmendment.getVersion().name());
+              .addValue("version", billAmendment.getVersion().displayName());
     }
 
     /**

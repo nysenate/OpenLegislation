@@ -200,7 +200,7 @@ public class BillId implements Serializable, Comparable<BillId>
      */
     @Override
     public String toString() {
-        return basePrintNo + ((version != null) ? version : "") + "-" + session;
+        return basePrintNo + ((version != null) ? version.displayName() : "") + "-" + session;
     }
 
     @Override

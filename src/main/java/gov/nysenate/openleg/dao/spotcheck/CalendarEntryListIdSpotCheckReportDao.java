@@ -55,7 +55,7 @@ public class CalendarEntryListIdSpotCheckReportDao extends AbstractSpotCheckRepo
             keyMap.put("calNo", Integer.toString(calendarEntryListId.getCalendarId().getCalNo()));
             keyMap.put("year", Integer.toString(calendarEntryListId.getCalendarId().getYear()));
             keyMap.put("type", calendarEntryListId.getType().toString());
-            keyMap.put("version", calendarEntryListId.getVersion().name());
+            keyMap.put("version", calendarEntryListId.getVersion().displayName());
             keyMap.put("sequenceNo", calendarEntryListId.getSequenceNo().toString());
             return keyMap;
         }

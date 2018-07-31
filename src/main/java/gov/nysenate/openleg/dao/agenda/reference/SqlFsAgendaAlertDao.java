@@ -280,7 +280,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
         params.addValue("alertInfoCommitteeId", aaicId);
         params.addValue("billPrintNo", aici.getBillId().getBasePrintNo());
         params.addValue("billSessionYear", aici.getBillId().getSession().getYear());
-        params.addValue("billAmendVersion", aici.getBillId().getVersion().name());
+        params.addValue("billAmendVersion", aici.getBillId().getVersion().displayName());
         params.addValue("message", aici.getMessage());
         return params;
     }
