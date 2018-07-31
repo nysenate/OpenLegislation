@@ -169,10 +169,7 @@ public abstract class ElasticBaseDao
      * @return Optional<T></T>
      */
     protected <T> Optional<T> getRequest(String index, String type, String id, Function<GetResponse, T> responseMapper) {
-        GetRequest getRequest = new GetRequest()
-                .index(index)
-                .type(type)
-                .id(id);
+        GetRequest getRequest = new GetRequest(index, type, id);
         try {
             GetResponse getResponse = searchClient.get(getRequest);
             if (getResponse.isExists()){
