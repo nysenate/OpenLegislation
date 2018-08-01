@@ -19,12 +19,13 @@ class ImportRun:
     """
     Contains data for a single import run
     """
-    def __init__(self, instance, start, end, first_run, bills_imported):
+    def __init__(self, instance, start, end, first_run, bills_imported, import_action_times):
         self.instance = instance
         self.start = start
         self.end = end
         self.first_run = first_run
         self.bills_imported = bills_imported
+        self.import_action_times = import_action_times
     def get_instance(self):
         return self.instance
     def get_start(self):
@@ -41,6 +42,8 @@ class ImportRun:
         return self.bills_imported
     def get_bills_imported_count(self):
         return len(self.bills_imported)
+    def get_import_action_times(self):
+        return self.import_action_times
     
 run_line_prefix = "^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - "
 run_line_suffix = " (?:default|import) website cron tasks for \[(\w+)\] environment"
@@ -48,6 +51,7 @@ start_line_re = re.compile(run_line_prefix + "Running" + run_line_suffix)
 end_line_re = re.compile(run_line_prefix + "Completed execution of" + run_line_suffix)
 bill_save_re = r'^Saving (\d{4}-[A-Z]\d+)[A-Z]? \.\.\.'
 timestamp_format = "%Y-%m-%d %H:%M:%S"
+import_action_timer_re = r'^0.(\d{3})\d{5} (\d{10}) - (starting|finished) (.+)$'
 
 def get_runs(log_file):
     """
@@ -59,11 +63,14 @@ def get_runs(log_file):
         instance = None
         first_start_time = None
         saved_bills = None
-        
+        import_action_times = {}
+        current_actions = []
+
         for line in log.readlines():
             start_match = start_line_re.search(line)
             end_match = end_line_re.search(line)
             save_match = re.search(bill_save_re, line)
+            action_timer_match = re.search(import_action_timer_re, line)
             run_match = start_match or end_match
             if run_match:
                 timestamp = datetime.datetime.strptime(run_match.group(1), timestamp_format)
@@ -83,13 +90,44 @@ def get_runs(log_file):
                     if not start_time_queue:
                         raise Exception("No corresponding start time for end time: " + line)
                     start_time = start_time_queue.pop()
-                    runs.append(ImportRun(instance, start_time, timestamp, first_start_time, saved_bills))
+                    runs.append(ImportRun(instance, start_time, timestamp, first_start_time, saved_bills, import_action_times))
+                    import_action_times = {}
                     saved_bills = None
+
             elif save_match:
                 saved_bills.add(save_match.group(1))
+            elif action_timer_match:
+                millis = get_import_action_millis(action_timer_match)
+                starting = action_timer_match.group(3) == 'starting'
+                action = action_timer_match.group(4)
+                if starting:
+                    current_actions.append((action, millis))
+                else:
+                    if not current_actions:
+                        raise Exception("Terminating non-existent action: " + line)
+                    current_action = current_actions.pop()
+                    if current_action[0] != action:
+                        raise Exception(f"Terminating different action than was started: [{action}] vs [{current_action[0]}]\n{line}")
+                    time_difference = millis - current_action[1]
+                    prev_total = import_action_times[action] if action in import_action_times else 0
+                    new_total = prev_total + time_difference
+                    import_action_times[action] = new_total
     return runs
-        
 
+def get_import_action_millis(action_timer_match):
+    seconds = int(action_timer_match.group(2))
+    millis = int(action_timer_match.group(1))
+    return 1000 * seconds + millis
+
+def aggregate_import_action_times(runs):
+    agg_action_times = {}
+    for run in runs:
+        action_times = run.get_import_action_times()
+        for action, time in action_times.items():
+            prev_total = agg_action_times[action] if action in agg_action_times else 0
+            new_total = prev_total + time
+            agg_action_times[action] = new_total
+    return agg_action_times
 
 # In[124]:
 
@@ -147,21 +185,34 @@ def get_stats(runs):
     """
     stat_str = ""
     durations = list(map(lambda run: run.get_duration().total_seconds(), runs))
-    
-    shortest = min(durations)
-    longest = max(durations)
-    median = statistics.median(durations)
-    mean = statistics.mean(durations)
-    std = statistics.stdev(durations)
+
+    if len(durations) > 1:
+        shortest = min(durations)
+        longest = max(durations)
+        median = statistics.median(durations)
+        mean = statistics.mean(durations)
+        std = statistics.stdev(durations)
+        stat_str  += "\nmin: {0:.1f}s".format(shortest) + \
+                     "\nmax: {0:.1f}s".format(longest) + \
+                     "\nmedian: {0:.1f}s".format(median) + \
+                     "\nmean: {0:.1f}s".format(mean) + \
+                     "\nstdev: {0:.1f}s".format(std)
 
     total_imp = sum(map(ImportRun.get_bills_imported_count, runs))
+    stat_str += "\ntotal imports: " + str(total_imp)
 
-    stat_str  = "\nmin: {0:.1f}s".format(shortest) +\
-                "\nmax: {0:.1f}s".format(longest) +\
-                "\nmedian: {0:.1f}s".format(median) +\
-                "\nmean: {0:.1f}s".format(mean) +\
-                "\nstdev: {0:.1f}s".format(std) +\
-                "\ntotal imports: " + str(total_imp)
+    iats = aggregate_import_action_times(runs)
+    print(str(len(iats.items())))
+    if iats.items():
+        stat_str += "\n\nimport action times:\n"
+    for action, total_millis in sorted(iats.items(), key=lambda t: t[1], reverse=True):
+        total_seconds, millis = divmod(total_millis, 1000)
+        total_minutes, seconds = divmod(total_seconds, 60)
+        hours, minutes = divmod(total_minutes, 60)
+        hourtxt = f'{hours} hrs ' if hours > 0 else ''
+        mintxt = f'{minutes} min ' if minutes > 0 else ''
+        secstxt = f'{seconds} sec ' if seconds > 0 else ''
+        stat_str += f'\t{action}: {hourtxt}{mintxt}{secstxt}{millis} ms\n'
 
     return stat_str
     
