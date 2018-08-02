@@ -7,6 +7,7 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.calendar.CalendarIdView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 
 import java.util.TreeMap;
@@ -34,7 +35,7 @@ public class BillView extends BillInfoView implements ViewObject
         super(bill != null ? bill.getBillInfo() : null);
         if (bill != null) {
             // Only output amendments that are currently published
-            TreeMap<String, BillAmendmentView> amendmentMap = new TreeMap<>();
+            TreeMap<String, BillAmendmentView> amendmentMap = new TreeMap<>(new Version.SortVersionStrings());
             bill.getAmendPublishStatusMap().forEach((k,v) -> {
                 if (v.isPublished() && bill.hasAmendment(k)) {
                     amendmentMap.put(k.name(), new BillAmendmentView(bill.getAmendment(k), v));
