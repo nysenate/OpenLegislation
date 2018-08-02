@@ -128,7 +128,7 @@ public class BillId implements Serializable, Comparable<BillId>
      * Returns the full print no including amendment version, e.g. S1234A
      */
     public String getPrintNo() {
-        return this.basePrintNo + ((this.version != null) ? this.version : "");
+        return this.basePrintNo + ((this.version != null) ? this.version.displayName() : "");
     }
 
     /**
