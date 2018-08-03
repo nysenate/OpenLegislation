@@ -4,6 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.DateRangeListViewResponse;
 import gov.nysenate.openleg.client.view.bill.BaseBillIdView;
+import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.client.view.bill.SimpleBillInfoView;
 import gov.nysenate.openleg.client.view.updates.UpdateDigestModelView;
 import gov.nysenate.openleg.client.view.updates.UpdateDigestView;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,6 +67,7 @@ public class BillUpdatesCtrl extends BaseCtrl
      *
      * Request Params: detail (boolean) - Show update digests within each token.
      *                 summary (boolean) - Return bill infos instead of just the bill id.
+     *                 fullBill(boolean) - Return a full bill response instead of bill id. (overrides summary, unavailable for detailed updates)
      *                 type (string) - Update type (processed, published) Default: processed
      *                 filter (string) - Filter updates by a BillUpdateField value
      *                 limit, offset (int) - Paginate
@@ -140,6 +143,7 @@ public class BillUpdatesCtrl extends BaseCtrl
         Range<LocalDateTime> updateRange = getOpenRange(from, to, "from", "to");
         boolean detail = getBooleanParam(request, "detail", false);
         boolean summary = getBooleanParam(request, "summary", false);
+        boolean fullBill = getBooleanParam(request, "fullBill", false);
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         String filter = request.getParameter("filter");
         UpdateType updateType = getUpdateTypeFromParam(request);
@@ -148,12 +152,20 @@ public class BillUpdatesCtrl extends BaseCtrl
         if (!detail) {
             PaginatedList<UpdateToken<BaseBillId>> updateTokens =
                 billUpdatesDao.getUpdates(updateRange, updateType, fieldFilter, sortOrder, limOff);
-            return DateRangeListViewResponse.of(updateTokens.getResults().stream()
-                .map(token ->
-                    (!summary) ? new UpdateTokenView(token, new BaseBillIdView(token.getId()))
-                               : new UpdateTokenModelView(token, new BaseBillIdView(token.getId()),
-                                                                 new SimpleBillInfoView(billData.getBillInfo(token.getId())))
-                ).collect(toList()), updateRange, updateTokens.getTotal(), limOff);
+            List<UpdateTokenView> updates = updateTokens.getResults().stream()
+                    .map(token -> {
+                        if (fullBill) {
+                            return new UpdateTokenModelView(token, new BaseBillIdView(token.getId()),
+                                    new BillView(billData.getBill(token.getId())));
+                        }
+                        if (summary) {
+                            return new UpdateTokenModelView(token, new BaseBillIdView(token.getId()),
+                                    new SimpleBillInfoView(billData.getBillInfo(token.getId())));
+                        }
+                        return new UpdateTokenView(token, new BaseBillIdView(token.getId()));
+                    })
+                    .collect(toList());
+            return DateRangeListViewResponse.of(updates, updateRange, updateTokens.getTotal(), limOff);
         }
         else {
             PaginatedList<UpdateDigest<BaseBillId>> updateDigests =
