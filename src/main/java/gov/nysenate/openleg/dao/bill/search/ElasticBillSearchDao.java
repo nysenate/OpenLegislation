@@ -56,7 +56,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
             response = searchClient.search(request);
         }
         catch (IOException ex){
-            logger.warn("Search Bills request failed.", ex);
+            logger.error("Search Bills request failed.", ex);
         }
 
         logger.debug("Bill search result with query {} took {} ms", query, response.getTook().getMillis());

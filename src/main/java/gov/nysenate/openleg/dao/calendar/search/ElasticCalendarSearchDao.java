@@ -52,7 +52,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
             searchResponse = searchClient.search(searchRequest);
         }
         catch (IOException ex){
-            logger.warn("Search Calendars request failed.", ex);
+            logger.error("Search Calendars request failed.", ex);
         }
 
         return getSearchResults(searchResponse, limitOffset, this::getCalendarId);

@@ -54,7 +54,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
             return searchClient.search(searchRequest);
         }
         catch (IOException ex){
-            logger.warn("Search Agendas request failed.", ex);
+            logger.error("Search Agendas request failed.", ex);
         }
         return new SearchResponse();
     }

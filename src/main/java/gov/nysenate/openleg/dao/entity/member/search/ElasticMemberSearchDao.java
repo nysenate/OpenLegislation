@@ -43,7 +43,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
             searchResponse = searchClient.search(searchRequest);
         }
         catch (IOException ex){
-            logger.warn("Search Members request failed.", ex);
+            logger.error("Search Members request failed.", ex);
         }
 
         logger.debug("Member search result with query {} and filter {} took {} ms", query, filter, searchResponse.getTook().getMillis());

@@ -56,7 +56,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
             searchResponse = searchClient.search(searchRequest);
         }
         catch (IOException ex){
-            logger.warn("Search Notifications request failed.", ex);
+            logger.error("Search Notifications request failed.", ex);
         }
         return getSearchResults(searchResponse, limitOffset,
                 hit -> getNotificationFromSourceMap(hit.getSourceAsMap()));

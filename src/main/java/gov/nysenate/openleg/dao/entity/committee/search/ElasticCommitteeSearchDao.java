@@ -60,7 +60,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
             searchResponse = searchClient.search(searchRequest);
         }
         catch (IOException ex){
-            logger.warn("Search Committees request failed.", ex);
+            logger.error("Search Committees request failed.", ex);
         }
 
         return getSearchResults(searchResponse, limitOffset, this::getCommitteeVersionId);

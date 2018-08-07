@@ -49,7 +49,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
             searchResponse = searchClient.search(searchRequest);
         }
         catch (IOException ex){
-            logger.warn("Search Transcript request failed.", ex);
+            logger.error("Search Transcript request failed.", ex);
         }
 
         logger.debug("Transcript search result with query {} and filter {} took {} ms", query, postFilter, searchResponse.getTook().getMillis());

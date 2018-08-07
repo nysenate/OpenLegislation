@@ -52,7 +52,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
             searchResponse = searchClient.search(searchRequest);
         }
         catch (IOException ex){
-            logger.warn("Search Law request failed.", ex);
+            logger.error("Search Law request failed.", ex);
         }
 
         return getSearchResults(searchResponse, limOff, this::getLawDocIdFromHit);

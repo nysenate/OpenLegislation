@@ -281,17 +281,4 @@ public abstract class ElasticBaseDao
 
         return limitOffset;
     }
-
-    /**
-     * Returns the proper FetchSourceContext, based on fields to filter by and
-     */
-    private FetchSourceContext createFetchSourceContext(String[] filterFields, boolean fetchFullSource){
-        if (fetchFullSource){
-            return new FetchSourceContext(true);
-        }
-        if (filterFields == null){
-            return new FetchSourceContext(false);
-        }
-        return new FetchSourceContext(true, filterFields, null);
-    }
 }

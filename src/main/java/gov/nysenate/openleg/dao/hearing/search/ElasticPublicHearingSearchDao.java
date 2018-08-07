@@ -51,7 +51,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
             response = searchClient.search(searchRequest);
         }
         catch (IOException ex){
-            logger.warn("Search request failed.", ex);
+            logger.error("Search Public Hearings request failed.", ex);
         }
         logger.debug("Public Hearing search result with query {} and filter {} took {} ms", query, postFilter, response.getTook().getMillis());
         return getSearchResults(response, limOff, this::getPublicHearingIdFromHit);

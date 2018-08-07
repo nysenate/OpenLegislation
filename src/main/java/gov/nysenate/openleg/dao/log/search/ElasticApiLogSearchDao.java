@@ -53,7 +53,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
             return searchClient.search(searchRequest);
         }
         catch (IOException ex){
-            logger.warn("Search API Logs request failed.", ex);
+            logger.error("Search API Logs request failed.", ex);
         }
         return new SearchResponse();
     }

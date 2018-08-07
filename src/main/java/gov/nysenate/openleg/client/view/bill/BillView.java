@@ -58,7 +58,7 @@ public class BillView extends BillInfoView implements ViewObject
             this.approvalMessage = bill.getApprovalMessage() != null ?
                 new ApprovalMessageView(bill.getApprovalMessage()) : null;
 
-            this.activeVersion = bill.getActiveVersion().displayName();
+            this.activeVersion = bill.getActiveVersion().name();
 
             this.additionalSponsors = ListView.of(bill.getAdditionalSponsors().stream()
                 .map(MemberView::new)
