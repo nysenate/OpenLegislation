@@ -466,7 +466,13 @@ List of bills updated during the given date/time range
 ::
     /api/3/bills/updates/{fromDateTime}/{toDateTime}
 
-.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format. For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
+List of bills updated since the given date/time
+::
+    /api/3/bills/updates/{fromDateTime}
+
+.. note:: The 'fromDateTime' and 'toDateTime' parameters should be formatted as the ISO 8601 Date Time format.
+   For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
+   The fromDateTime and toDateTime range is exclusive/inclusive respectively.
 
 **Optional Params**
 
