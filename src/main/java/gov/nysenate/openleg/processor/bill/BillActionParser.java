@@ -45,7 +45,7 @@ public class BillActionParser
         // Impose a strict order to the actions.
         int sequenceNo = 0;
         // Each action should be on its own line
-        for (String line : data.split("\n\n?\n")) {
+        for (String line : data.split("\n+")) {
             Matcher billEvent = billEventPattern.matcher(line);
             if (billEvent.find()) {
                 LocalDate eventDate;
