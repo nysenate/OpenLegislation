@@ -134,7 +134,7 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     protected IndexRequest getCalendarIndexRequest(CalendarView calendarView) {
         return new IndexRequest(calIndexName,
                 defaultType, Integer.toString(calendarView.getCalendarNumber()) + "-" + Integer.toString(calendarView.getYear()))
-                .source(OutputUtils.toJson(calendarView), XContentType.JSON);
+                .source(OutputUtils.toElasticsearchJson(calendarView), XContentType.JSON);
     }
 
     /* --- Id Mappers --- */

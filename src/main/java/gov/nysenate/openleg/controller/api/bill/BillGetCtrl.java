@@ -141,7 +141,7 @@ public class BillGetCtrl extends BaseCtrl
                     amdVersion = parseVersion(request.getParameter("version"), "version");
                 }
                 Bill bill = billData.getBill(baseBillId);
-                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.name(), bill.getAmendment(amdVersion).getFullText());
+                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.displayName(), bill.getAmendment(amdVersion).getFullText());
                 break;
             }
             default: viewObject = new BillView(billData.getBill(baseBillId));

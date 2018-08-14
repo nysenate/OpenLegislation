@@ -51,7 +51,7 @@ public class BillInfoView extends SimpleBillInfoView implements ViewObject
             milestones = ListView.of(billInfo.getMilestones().stream().map(BillStatusView::new).collect(toList()));
             actions = ListView.of(billInfo.getActions().stream().map(BillActionView::new).collect(toList()));
             publishStatusMap = billInfo.getAmendPublishStatusMap().entrySet().stream()
-                    .map((pubStatEntry) -> new PublishStatusView(pubStatEntry.getKey().name(), pubStatEntry.getValue()))
+                    .map((pubStatEntry) -> new PublishStatusView(pubStatEntry.getKey().displayName(), pubStatEntry.getValue()))
                     .collect(Collectors.collectingAndThen(
                             Collectors.toMap(PublishStatusView::getVersion, Function.identity()),
                             MapView::of));

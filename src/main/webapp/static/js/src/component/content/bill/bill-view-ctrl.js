@@ -12,7 +12,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         $scope.loading = false;
         $scope.fullTextFetched = {}; // Contains a dict of versions to indicate the ones where text was fetched.
         $scope.curr = {
-            amdVersion: 'ORIGINAL',
+            amdVersion: '',
             compareVersion: 'None',
             selectedView: (parseInt($routeParams.view, 10) || 1),
             updateTypeFilter: 'status',
@@ -41,7 +41,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
             $scope.printNo = $routeParams.printNo;
             //TODO: The following few lines don't seem to do anything in the current version of OpenLegislation.
             var baseVersionRegex = /default|base/i;
-            var requestedVersion = baseVersionRegex.exec($routeParams.version) ? 'ORIGINAL'
+            var requestedVersion = baseVersionRegex.exec($routeParams.version) ? ''
                 : $routeParams.version && $routeParams.version.toUpperCase();
             $scope.loading = true;
             $scope.billApiPath = $sce.trustAsResourceUrl(apiPath + '/bills/' + $scope.session + '/' + $scope.printNo);

@@ -80,7 +80,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
                     new IndexRequest(billIndexName, defaultType,
                             b.getBasePrintNo() + "-" +
                                     Integer.toString(b.getSession()))
-                                .source(OutputUtils.toJson(b), XContentType.JSON)
+                                .source(OutputUtils.toElasticsearchJson(b), XContentType.JSON)
                 )
             );
             safeBulkRequestExecute(bulkRequest);

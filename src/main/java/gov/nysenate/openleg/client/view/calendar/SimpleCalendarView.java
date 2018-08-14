@@ -13,31 +13,28 @@ public class SimpleCalendarView extends CalendarIdView {
 
     protected SimpleCalendarSupView floorCalendar;
     protected MapView<String, SimpleCalendarSupView> supplementalCalendars;
-
     protected MapView<Integer, SimpleActiveListView> activeLists;
 
     private LocalDate calDate;
 
     public SimpleCalendarView(Calendar calendar) {
-        super(calendar != null ? calendar.getId() : null);
-        if (calendar != null) {
-            if (calendar.getSupplemental(Version.ORIGINAL) != null) {
-                this.floorCalendar = new SimpleCalendarSupView(calendar.getSupplemental(Version.ORIGINAL));
-            }
-            this.supplementalCalendars = MapView.of(
-                    calendar.getSupplementalMap().values().stream()
-                            .filter((calSup) -> !calSup.getVersion().equals(Version.ORIGINAL))
-                            .map(SimpleCalendarSupView::new)
-                            .collect(Collectors.toMap(SimpleCalendarSupView::getVersion, scsv -> scsv, (a, b) -> b, TreeMap::new))
-            );
-            this.activeLists = MapView.of(
-                    calendar.getActiveListMap().values().stream()
-                            .map(SimpleActiveListView::new)
-                            .collect(Collectors.toMap(SimpleActiveListView::getSequenceNumber, salv -> salv, (a, b) -> b, TreeMap::new))
-            );
-
-            this.calDate = calendar.getCalDate();
+        super(calendar.getId());
+        if (calendar.getSupplemental(Version.ORIGINAL) != null) {
+            this.floorCalendar = new SimpleCalendarSupView(calendar.getSupplemental(Version.ORIGINAL));
         }
+        this.supplementalCalendars = MapView.of(
+                calendar.getSupplementalMap().values().stream()
+                        .filter((calSup) -> !calSup.getVersion().equals(Version.ORIGINAL))
+                        .map(SimpleCalendarSupView::new)
+                        .collect(Collectors.toMap(SimpleCalendarSupView::getVersion, scsv -> scsv, (a, b) -> b, TreeMap::new))
+        );
+        this.activeLists = MapView.of(
+                calendar.getActiveListMap().values().stream()
+                        .map(SimpleActiveListView::new)
+                        .collect(Collectors.toMap(SimpleActiveListView::getSequenceNumber, salv -> salv, (a, b) -> b, TreeMap::new))
+        );
+
+        this.calDate = calendar.getCalDate();
     }
 
     public SimpleCalendarSupView getFloorCalendar() {
