@@ -93,7 +93,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.base;
 import com.google.common.primitives.Ints;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,8 @@ public abstract class ElasticBaseDao
     private static final int defaultMaxResultWindow = 10000;
 
     protected static final String defaultType = "_doc";
+
+    private static final String COUNT_API = "/_cat/count/";
 
     @Autowired
     protected RestHighLevelClient searchClient;
@@ -102,9 +106,11 @@ public abstract class ElasticBaseDao
      */
     protected SearchRequest getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
                                                     List<HighlightBuilder.Field> highlightedFields, RescorerBuilder rescorer,
-                                                    List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) {
+                                                    List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) throws ElasticsearchException{
 
-
+        if (indexIsEmpty(indexName)){
+            throw new ElasticsearchException("Error: attempting to search on empty index \"" + indexName + "\".");
+        }
         limitOffset = adjustLimitOffset(limitOffset);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
                 .query(query)
@@ -280,5 +286,27 @@ public abstract class ElasticBaseDao
         }
 
         return limitOffset;
+    }
+
+    /**
+     * Checks if an index is empty. If it is, it should not be searched, as trying causes errors.
+     * @param indexName to check
+     * @return if indexName is empty
+     */
+    private boolean indexIsEmpty(String indexName){
+        try {
+            InputStream responseStream = searchClient.getLowLevelClient().performRequest("GET", COUNT_API + indexName + "?v").getEntity().getContent();
+            byte[] isIndexEmpty = new byte[1];
+            // Read past the unnecessary data to get to the count of documents in the specified index.
+            // If the first byte of this number is the character 0, then the index must be empty.
+            // See https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-count.html for details.
+            if (responseStream.skip(48) != 48 || responseStream.read(isIndexEmpty) != 1) {
+                throw new IOException();
+            }
+            return isIndexEmpty[0] == '0';
+        }
+        catch (IOException io){
+            throw new ElasticsearchException("Error while executing search request.");
+        }
     }
 }

@@ -17,7 +17,7 @@ public abstract class ElasticSearchServiceUtils {
 
     /**
      * Generates a list of elastic search sort parameters from a CSV string.  If no parameters are specified,
-     *  a single score sort parameter is used.
+     * a single score sort parameter is used.
      *
      * @param sort String
      * @return List<SortBuilder>

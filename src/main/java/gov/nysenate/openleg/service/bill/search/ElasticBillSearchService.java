@@ -97,11 +97,8 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         catch (SearchParseException ex) {
             throw new SearchException("Invalid query string", ex);
         }
-        catch (ElasticsearchStatusException ex){
-            throw new ElasticsearchException("Database may be unpopulated. Try rebuilding indices.\n" + ex);
-        }
         catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 
