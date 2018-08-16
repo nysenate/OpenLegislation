@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.Calendar;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -22,13 +23,13 @@ public class SimpleCalendarView extends CalendarIdView {
         if (calendar.getSupplemental(Version.ORIGINAL) != null) {
             this.floorCalendar = new SimpleCalendarSupView(calendar.getSupplemental(Version.ORIGINAL));
         }
-        this.supplementalCalendars = MapView.of(
+        this.supplementalCalendars = MapView.of((Map<String, SimpleCalendarSupView>)
                 calendar.getSupplementalMap().values().stream()
                         .filter((calSup) -> !calSup.getVersion().equals(Version.ORIGINAL))
                         .map(SimpleCalendarSupView::new)
                         .collect(Collectors.toMap(SimpleCalendarSupView::getVersion, scsv -> scsv, (a, b) -> b, TreeMap::new))
         );
-        this.activeLists = MapView.of(
+        this.activeLists = MapView.of((Map<Integer, SimpleActiveListView>)
                 calendar.getActiveListMap().values().stream()
                         .map(SimpleActiveListView::new)
                         .collect(Collectors.toMap(SimpleActiveListView::getSequenceNumber, salv -> salv, (a, b) -> b, TreeMap::new))
