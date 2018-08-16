@@ -20,7 +20,7 @@ public class Calendar extends BaseLegislativeContent
     private CalendarId id;
 
     /** Map of all the supplementals associated with this calendar. */
-    private TreeMap<Version, CalendarSupplemental> supplementalMap;
+    private EnumMap<Version, CalendarSupplemental> supplementalMap;
 
     /** Map of all the active lists associated with this calendar. */
     private TreeMap<Integer, CalendarActiveList> activeListMap;
@@ -29,7 +29,7 @@ public class Calendar extends BaseLegislativeContent
 
     public Calendar() {
         super();
-        this.supplementalMap = new TreeMap<>();
+        this.supplementalMap = new EnumMap<>(Version.class);
         this.activeListMap = new TreeMap<>();
     }
 
@@ -140,11 +140,11 @@ public class Calendar extends BaseLegislativeContent
         this.id = id;
     }
 
-    public TreeMap<Version, CalendarSupplemental> getSupplementalMap() {
+    public EnumMap<Version, CalendarSupplemental> getSupplementalMap() {
         return supplementalMap;
     }
 
-    public void setSupplementalMap(TreeMap<Version, CalendarSupplemental> supplementalMap) {
+    public void setSupplementalMap(EnumMap<Version, CalendarSupplemental> supplementalMap) {
         this.supplementalMap = supplementalMap;
     }
 

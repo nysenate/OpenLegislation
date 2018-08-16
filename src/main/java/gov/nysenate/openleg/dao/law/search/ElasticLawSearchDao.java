@@ -73,7 +73,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
             BulkRequest bulkRequest = new BulkRequest();
             lawDocs.stream().map(LawDocView::new).forEach(docView -> {
                 bulkRequest.add(
-                    new IndexRequest(lawIndexName, defaultType, createSearchId(docView))
+                    new IndexRequest(lawIndexName, defaultType, docView.getLawId() + createSearchId(docView))
                                 .source(OutputUtils.toJson(docView), XContentType.JSON));
             });
             safeBulkRequestExecute(bulkRequest);
@@ -97,8 +97,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     /** --- Internal --- */
 
     private LawDocId getLawDocIdFromHit(SearchHit hit) {
-        String locationId = hit.getId();
-        String docId = hit.getSourceAsMap().get("lawID") + locationId;
+        String docId = hit.getId();
         return new LawDocId(docId, LocalDate.parse((String) hit.getSourceAsMap().get("activeDate")));
     }
 

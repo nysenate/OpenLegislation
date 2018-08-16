@@ -123,7 +123,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
         }
         MapSqlParameterSource billParams = new MapSqlParameterSource();
         addBillIdParams(strippedBill, billParams);
-        jdbcNamed.query(SqlBillQuery.SELECT_BILL_TEXT.getSql(schema()), billParams, (RowCallbackHandler) (ResultSet rs) -> {
+        jdbcNamed.query(SqlBillQuery.SELECT_BILL_TEXT.getSql(schema()), billParams, (ResultSet rs) -> {
             BillAmendment ba = strippedBill.getAmendment(Version.of(rs.getString("bill_amend_version")));
             ba.setMemo(rs.getString("sponsor_memo"));
             ba.setFullText(rs.getString("full_text"));
@@ -330,7 +330,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
     /**
      * Get a map of the publish statuses for each amendment version.
      */
-    public TreeMap<Version, PublishStatus> getBillAmendPublishStatuses(ImmutableParams baseParams) {
+    public EnumMap<Version, PublishStatus> getBillAmendPublishStatuses(ImmutableParams baseParams) {
         BillAmendPublishStatusHandler handler = new BillAmendPublishStatusHandler();
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_AMEND_PUBLISH_STATUSES.getSql(schema()), baseParams, handler);
         return handler.getPublishStatusMap();
@@ -703,7 +703,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
 
     private static class BillAmendPublishStatusHandler implements RowCallbackHandler
     {
-        TreeMap<Version, PublishStatus> publishStatusMap = new TreeMap<>();
+        EnumMap<Version, PublishStatus> publishStatusMap = new EnumMap<>(Version.class);
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {
@@ -713,7 +713,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao
             publishStatusMap.put(Version.of(rs.getString("bill_amend_version")), pubStatus);
         }
 
-        public TreeMap<Version, PublishStatus> getPublishStatusMap() {
+        public EnumMap<Version, PublishStatus> getPublishStatusMap() {
             return publishStatusMap;
         }
     }

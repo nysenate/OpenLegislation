@@ -27,6 +27,8 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,7 +96,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     /** {@inheritDoc} */
     @Override
     public void updateIndex(LawDocument content) {
-        updateIndex(Arrays.asList(content));
+        updateIndex(Collections.singletonList(content));
     }
 
     /** {@inheritDoc} */
@@ -117,9 +119,9 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     public void rebuildIndex() {
         logger.info("Handling law search re-indexing");
         clearIndex();
-        lawDataDao.getLawInfos().stream().forEach(lawInfo ->
+        lawDataDao.getLawInfos().forEach(lawInfo ->
             updateIndex(lawDataDao.getLawDocuments(lawInfo.getLawId(), LocalDate.now()).entrySet().stream()
-                .map(doc -> doc.getValue()).collect(Collectors.toList())));
+                .map(Map.Entry::getValue).collect(Collectors.toList())));
     }
 
     /** {@inheritDoc} */

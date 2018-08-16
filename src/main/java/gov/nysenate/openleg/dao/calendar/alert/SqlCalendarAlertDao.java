@@ -38,8 +38,7 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
 
     public Calendar getCalendar(CalendarId calendarId) throws DataAccessException {
         ImmutableParams calParams = ImmutableParams.from(getCalendarIdParams(calendarId));
-        Calendar calendar = jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_CALENDAR.getSql(schema()), calParams, CalendarRowMapper);
-        return calendar;
+        return jdbcNamed.queryForObject(SqlCalendarAlertQuery.SELECT_CALENDAR.getSql(schema()), calParams, CalendarRowMapper);
     }
 
     public List<CalendarId> getCalendarIds(int year, SortOrder calOrder, LimitOffset limitOffset) {
@@ -99,11 +98,11 @@ public class SqlCalendarAlertDao extends SqlBaseDao implements CalendarAlertDao 
     /**
      * Retrieves all the supplementals for a particular calendar.
      */
-    private TreeMap<Version, CalendarSupplemental> getCalSupplementals(ImmutableParams calParams) {
+    private EnumMap<Version, CalendarSupplemental> getCalSupplementals(ImmutableParams calParams) {
         CalendarSupRowHandler calendarSupRowHandler = new CalendarSupRowHandler();
         jdbcNamed.query(SqlCalendarAlertQuery.SELECT_CALENDAR_SUPS.getSql(schema()), calParams, calendarSupRowHandler);
         return calendarSupRowHandler.getCalendarSupplementals().stream()
-                .collect(Collectors.toMap(CalendarSupplemental::getVersion, Function.identity(), (a, b) -> b, TreeMap::new));
+                .collect(Collectors.toMap(CalendarSupplemental::getVersion, Function.identity(), (a, b) -> b, () -> new EnumMap<>(Version.class)));
     }
 
     /**
