@@ -26,9 +26,13 @@ public class AgendaCommAddendumView implements ViewObject
     private AgendaId agendaId;
     private CommitteeId committeeId;
 
-    public AgendaCommAddendumView(String addendumId, LocalDateTime modDateTime, AgendaInfoCommittee infoComm,
+    public AgendaCommAddendumView(CommitteeAgendaAddendumId id, LocalDateTime modDateTime, AgendaInfoCommittee infoComm,
                                   AgendaVoteCommittee voteComm, BillDataService billDataService) {
-        this.addendumId = addendumId;
+        if (id != null) {
+            this.agendaId = id.getAgendaId();
+            this.addendumId = id.getAddendum().getValue();
+            this.committeeId = id.getCommitteeId();
+        }
         if (infoComm != null) {
             this.modifiedDateTime = modDateTime;
             this.meeting = new AgendaMeetingView(infoComm.getChair(), infoComm.getLocation(),
@@ -36,15 +40,10 @@ public class AgendaCommAddendumView implements ViewObject
             this.bills = ListView.of(infoComm.getItems().stream()
                 .map(i -> new AgendaItemView(i, billDataService))
                 .collect(toList()));
-            this.agendaId = infoComm.getAgendaId();
-            this.committeeId = infoComm.getCommitteeId();
         }
         if (voteComm != null) {
             this.hasVotes = true;
             this.voteInfo = new AgendaVoteView(voteComm);
-            if (infoComm == null) {
-                this.committeeId = voteComm.getCommitteeId();
-            }
         }
     }
 
