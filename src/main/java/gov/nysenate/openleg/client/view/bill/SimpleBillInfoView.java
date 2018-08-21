@@ -23,7 +23,7 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
         super(billInfo != null ? billInfo.getBillId() : null);
         if (billInfo != null) {
             title = billInfo.getTitle();
-            activeVersion = billInfo.getActiveVersion() != null ? billInfo.getActiveVersion().displayName() : null;
+            activeVersion = billInfo.getActiveVersion() != null ? billInfo.getActiveVersion().toString() : null;
             printNo = basePrintNo + (activeVersion!=null ? activeVersion : "");
             year = billInfo.getYear();
             publishedDateTime = billInfo.getPublishedDateTime();

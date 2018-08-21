@@ -38,7 +38,7 @@ public class BillIdSpotCheckReportDao extends AbstractSpotCheckReportDao<BillId>
             Map<String, String> keyMap = new HashMap<>();
             keyMap.put("print_no", billId.getBasePrintNo());
             keyMap.put("session_year", billId.getSession().toString());
-            keyMap.put("version", billId.getVersion().displayName());
+            keyMap.put("version", billId.getVersion().toString());
             return keyMap;
         }
         return null;

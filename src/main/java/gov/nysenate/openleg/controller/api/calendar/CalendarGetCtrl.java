@@ -159,7 +159,7 @@ public class CalendarGetCtrl extends BaseCtrl
                                                 @PathVariable String version,
                                                 @RequestParam(defaultValue = "true") boolean full) {
         if (version.equalsIgnoreCase("floor")) {
-            version = Version.ORIGINAL.displayName();
+            version = Version.ORIGINAL.toString();
         }
         CalendarSupplemental calSup = calendarDataService.getCalendarSupplemental(
                                             new CalendarSupplementalId(calNo, year, parseVersion(version, "version")));

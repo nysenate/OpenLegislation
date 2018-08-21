@@ -141,7 +141,7 @@ public class BillGetCtrl extends BaseCtrl
                     amdVersion = parseVersion(request.getParameter("version"), "version");
                 }
                 Bill bill = billData.getBill(baseBillId);
-                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.displayName(), bill.getAmendment(amdVersion).getFullText());
+                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.toString(), bill.getAmendment(amdVersion).getFullText());
                 break;
             }
             default: viewObject = new BillView(billData.getBill(baseBillId));
@@ -208,7 +208,7 @@ public class BillGetCtrl extends BaseCtrl
         String prettyHtml = stringDiffer.diff_prettyHtml(diffs).replace("&para;", " ");
         return new ViewObjectResponse<>(
             new BillDiffView(
-                new BaseBillIdView(baseBillId), amend1.getVersion().displayName(), amend2.getVersion().displayName(),
+                new BaseBillIdView(baseBillId), amend1.getVersion().toString(), amend2.getVersion().toString(),
                     prettyHtml));
     }
 

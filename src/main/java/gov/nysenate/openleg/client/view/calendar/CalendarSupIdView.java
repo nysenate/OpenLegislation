@@ -11,7 +11,7 @@ public class CalendarSupIdView extends CalendarIdView {
         super(calendarSupplementalId);
         Version calVersion = calendarSupplementalId.getVersion();
         if (calVersion != null) {
-            this.version = (calVersion == Version.ORIGINAL ? "floor" : calVersion.displayName());
+            this.version = (calVersion == Version.ORIGINAL ? "floor" : calVersion.toString());
         }
     }
 

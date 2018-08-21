@@ -31,7 +31,7 @@ public class CommitteeAgendaAddendumIdSpotCheckReportDao extends AbstractSpotChe
             Map<String, String> keyMap = new HashMap<>();
             keyMap.put("agendaNo", Long.toString(committeeAgendaAddendumId.getAgendaId().getNumber()));
             keyMap.put("year", Long.toString(committeeAgendaAddendumId.getAgendaId().getYear()));
-            keyMap.put("addendum", committeeAgendaAddendumId.getAddendum().displayName());
+            keyMap.put("addendum", committeeAgendaAddendumId.getAddendum().toString());
             keyMap.put("committeeName", committeeAgendaAddendumId.getCommitteeId().getName());
             keyMap.put("chamber",committeeAgendaAddendumId.getCommitteeId().getChamber().toString());
             return keyMap;

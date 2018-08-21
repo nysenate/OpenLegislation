@@ -20,7 +20,8 @@ public enum Version
     /**
      * For use when displaying a bill's Version.
      */
-    public String displayName(){
+    @Override
+    public String toString(){
         return (this == ORIGINAL) ? "" : this.name();
     }
 
