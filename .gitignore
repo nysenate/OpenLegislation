@@ -1,6 +1,8 @@
 *.jar
 *.class
 *.properties
+log4j2.xml
+test.log4j2.xml
 *.log
 .classpath
 .project
