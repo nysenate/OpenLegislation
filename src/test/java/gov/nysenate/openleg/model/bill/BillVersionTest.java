@@ -20,7 +20,7 @@ public class BillVersionTest
 
     @Test
     public void testToString() throws Exception {
-        assertEquals("ORIGINAL", Version.of(" ").toString());
+        assertEquals("", Version.of(" ").toString());
         assertEquals("A", Version.of("A ").toString());
     }
 

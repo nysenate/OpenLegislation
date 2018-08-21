@@ -38,11 +38,7 @@ public class CalendarSupplementalId extends CalendarId implements Serializable{
         if (!(o instanceof CalendarSupplementalId)) return false;
         if (!super.equals(o)) return false;
 
-        CalendarSupplementalId that = (CalendarSupplementalId) o;
-
-        if (version != null ? !version.equals(that.version) : that.version != null) return false;
-
-        return true;
+        return this.version == ((CalendarSupplementalId)o).version;
     }
 
     @Override

@@ -39,14 +39,6 @@
           <skipTests>false</skipTests>
           <groups>gov.nysenate.openleg.annotation.UnitTest</groups>
         </configuration>
-        <executions>
-          <execution>
-            <id>unit-test</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <!-- Failsafe Plugin -->
       <plugin>
@@ -62,27 +54,6 @@
             <goals>
               <goal>integration-test</goal>
               <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- JaCoCo plugin -->
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.7.9</version>
-        <executions>
-          <execution>
-            <id>pre-unit-test</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>pre-integration-test</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>prepare-agent-integration</goal>
             </goals>
           </execution>
         </executions>
