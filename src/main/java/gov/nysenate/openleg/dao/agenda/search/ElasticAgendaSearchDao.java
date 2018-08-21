@@ -5,8 +5,8 @@ import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.agenda.Agenda;
-import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -96,7 +96,7 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
                                 defaultType, agenda.getId().getYear() + "-" +
                                     cfv.getAgenda().getId().getNumber() + "-" +
                                     cfv.getCommittee().getCommitteeId().getName())
-                            .source(OutputUtils.toJson(cfv), XContentType.JSON))));
+                            .source(OutputUtils.toElasticsearchJson(cfv), XContentType.JSON))));
             safeBulkRequestExecute(request);
         }
     }

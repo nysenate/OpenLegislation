@@ -10,7 +10,6 @@ import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
-import gov.nysenate.openleg.model.entity.CommitteeNotFoundEx;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -183,7 +182,7 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
         return new IndexRequest(committeeSearchIndexName,
                 defaultType,
                 generateCommitteeVersionSearchId(committee.getVersionId()))
-                .source(OutputUtils.toJson(new CommitteeView(committee)), XContentType.JSON);
+                .source(OutputUtils.toElasticsearchJson(new CommitteeView(committee)), XContentType.JSON);
     }
 
     /* --- Id Mappers --- */

@@ -73,7 +73,7 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
             for (PublicHearingView ph : publicHearingViews) {
                 bulkRequest.add(new IndexRequest(
                         publicHearingIndexName, defaultType, ph.getFilename())
-                        .source(OutputUtils.toJson(ph), XContentType.JSON));
+                        .source(OutputUtils.toElasticsearchJson(ph), XContentType.JSON));
 
             }
             safeBulkRequestExecute(bulkRequest);

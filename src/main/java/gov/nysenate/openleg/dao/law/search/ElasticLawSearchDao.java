@@ -74,7 +74,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
             lawDocs.stream().map(LawDocView::new).forEach(docView -> {
                 bulkRequest.add(
                     new IndexRequest(lawIndexName, defaultType, docView.getLawId() + createSearchId(docView))
-                                .source(OutputUtils.toJson(docView), XContentType.JSON));
+                                .source(OutputUtils.toElasticsearchJson(docView), XContentType.JSON));
             });
             safeBulkRequestExecute(bulkRequest);
         }

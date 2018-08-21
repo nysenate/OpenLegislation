@@ -17,8 +17,8 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     public RegisteredNotification registerNotification(Notification notification) {
         RegisteredNotification regNotification = new RegisteredNotification(notification, getNextId());
         IndexRequest indexRequest = new IndexRequest(notificationIndex, defaultType, String.valueOf(regNotification.getId()))
-                .source(OutputUtils.toJson(new NotificationView(regNotification)), XContentType.JSON);
+                .source(OutputUtils.toElasticsearchJson(new NotificationView(regNotification)), XContentType.JSON);
         try {
             searchClient.index(indexRequest);
         }

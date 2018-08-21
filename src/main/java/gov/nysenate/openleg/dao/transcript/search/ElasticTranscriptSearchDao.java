@@ -71,7 +71,7 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
             transcriptViewList.forEach(t ->
                             bulkRequest.add(
                                     new IndexRequest(transcriptIndexName, defaultType, t.getFilename())
-                                            .source(OutputUtils.toJson(t), XContentType.JSON))
+                                            .source(OutputUtils.toElasticsearchJson(t), XContentType.JSON))
             );
             safeBulkRequestExecute(bulkRequest);
         }

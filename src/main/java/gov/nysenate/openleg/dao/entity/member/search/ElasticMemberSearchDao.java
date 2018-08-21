@@ -70,7 +70,7 @@ public class ElasticMemberSearchDao extends ElasticBaseDao implements MemberSear
                             bulkRequest.add(new IndexRequest(memberIndexName,
                                     defaultType,
                                     String.valueOf(m.getMemberId()))
-                                    .source(OutputUtils.toJson(m), XContentType.JSON))
+                                    .source(OutputUtils.toElasticsearchJson(m), XContentType.JSON))
             );
             safeBulkRequestExecute(bulkRequest);
         }

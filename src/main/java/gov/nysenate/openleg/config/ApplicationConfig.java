@@ -112,27 +112,16 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
         int retryCount = 0;
         Exception cause;
+        RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
+                new HttpHost(elasticSearchHost, elasticSearchPort, "http")));
 
         do {
             logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
-            RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-                    new HttpHost(elasticSearchHost, elasticSearchPort, "http")));
             try {
                 client.ping();
                 logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
                 return client;
             } catch (IOException ex){
-
-                while (true) {
-                    try {
-                        client.close();
-                    } catch (IOException closeEx) {
-                        Thread.sleep(1000);
-                        continue;
-                    }
-                    break;
-                }
-
                 logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
                 logger.warn("{} retries remain.", esAllowedRetries - retryCount);
                 cause = ex;

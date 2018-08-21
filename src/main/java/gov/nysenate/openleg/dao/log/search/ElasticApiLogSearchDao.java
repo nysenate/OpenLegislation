@@ -80,7 +80,7 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
             List<ApiLogItemView> logViewList = apiResponses.stream().map(ApiLogItemView::new).collect(Collectors.toList());
             logViewList.forEach(log ->
                 bulkRequest.add(new IndexRequest(logIndexName, defaultType, Integer.toString(log.getRequestId()))
-                    .source(OutputUtils.toJson(log), XContentType.JSON))
+                    .source(OutputUtils.toElasticsearchJson(log), XContentType.JSON))
                 );
             safeBulkRequestExecute(bulkRequest);
         }
