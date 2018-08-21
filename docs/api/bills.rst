@@ -78,7 +78,7 @@ Default Bill Response
         "resolution": false                       // True if this is a resolution
       },
       "title": "Provides enhanced..",             // Title of the bill
-      "activeVersion": "ORIGINAL",                // Current amendment version
+      "activeVersion": "",                        // Current amendment version ("" for initial version)
       "year": 2013,                               // Year the bill was introduced on
       "publishedDateTime": "2013-01-14T10:36:22", // Date/Time this bill was first published via LBDC
       "substitutedBy": {                          // If the bill was substituted, the bill id will be contained
@@ -122,20 +122,20 @@ Default Bill Response
         "sequenceNo": 2                           // The position of this bill within that program/agency list
       },
       // ---- Bill summary view ends here --- //
-      "amendments": {                             // Contains info specific to an amendment (base version is "ORIGINAL")
+      "amendments": {                              // Contains info specific to an amendment (base version is "")
         "items": {
-          "ORIGINAL": {                           // Map of Amendment versions
+          "": {                                   // Map of Amendment versions
             "basePrintNo": "S2180",               // Bill print no/session details duplicated here
             "session": 2013,
             "printNo": "S2180",
-            "version": "ORIGINAL",                // Amendment version
+            "version": "",                        // Amendment version
             "publishDate": "2013-01-14",          // Date this amendment was published
             "sameAs": {                           // List of bill that are identical to this within the same session year
                "items": [{
                   "basePrintNo": "A2098",
                   "session": 2013,
                   "printNo": "A2098",
-                  "version": "ORIGINAL"
+                  "version": ""
                }],
                "size": 1
             },
@@ -169,7 +169,7 @@ Default Bill Response
       "votes": {                                  // Votes will be stored here if there are any
          "items": [
           {
-            "version": "ORIGINAL",                // Amendment version vote was taken on
+            "version": "",                        // Amendment version vote was taken on
             "voteType": "COMMITTEE",              // Type of vote (COMMITTEE or FLOOR)
             "voteDate": "2013-04-22",             // Date the vote was taken
             "committee": {                        // If it was a committee vote, the committee will be shown here
@@ -204,7 +204,7 @@ Default Bill Response
               "basePrintNo" : "A10049",
               "session" : 2013,
               "printNo" : "A10049",
-              "version" : "ORIGINAL"
+              "version" : ""
             },
             "year" : 2014,                        // Year this veto was sent
             "vetoNumber" : 511,                   // Veto number (unique to a single year)
@@ -253,7 +253,7 @@ Default Bill Response
                "basePrintNo": "S6830",
                "session": 2013,
                "printNo": "S6830",
-               "version": "ORIGINAL"               // Specifies which amendment version of the bill the action affects
+               "version": ""                       // Specifies which amendment version of the bill the action affects
             },
             "date": "2014-03-17",                  // Date of the action
             "chamber": "SENATE",                   // Chamber this action occurred in
@@ -268,7 +268,7 @@ Default Bill Response
             "basePrintNo": "A1989",                // Bill id of the previous bill
             "session": 2013,
             "printNo": "A1989",
-            "version": "ORIGINAL"
+            "version": ""
             }
          ],
          "size": 1
@@ -637,7 +637,7 @@ Sample response:
                 "billCalNo": null,
                 "activeYear": "2013",
                 "committeeName": "INVESTIGATIONS AND GOVERNMENT OPERATIONS",
-                "activeVersion": "ORIGINAL",
+                "activeVersion": " ",
                 "status": "IN_SENATE_COMM"
             }
         },
