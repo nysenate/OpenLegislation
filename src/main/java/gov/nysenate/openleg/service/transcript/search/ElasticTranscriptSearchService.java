@@ -29,6 +29,7 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -130,7 +131,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     @Override
     public void updateIndex(Collection<Transcript> transcripts) {
         if (env.isElasticIndexing() && !transcripts.isEmpty()) {
-            List<Transcript> indexableTranscripts = transcripts.stream().filter(t -> t != null).collect(Collectors.toList());
+            List<Transcript> indexableTranscripts = transcripts.stream().filter(Objects::nonNull).collect(Collectors.toList());
             logger.info("Indexing {} valid transcripts into elastic search.", indexableTranscripts.size());
             transcriptSearchDao.updateTranscriptIndex(indexableTranscripts);
         }

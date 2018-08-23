@@ -123,9 +123,9 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
      * @return BulkRequestBuilder
      */
     private BulkRequest getCommitteeDeleteRequest(CommitteeSessionId committeeSessionId) {
+        BulkRequest request = new BulkRequest();
         SearchResults<CommitteeVersionId> searchResults = searchCommittees(
                 getCommitteeSessionQuery(committeeSessionId), null, Collections.emptyList(), LimitOffset.ALL);
-        BulkRequest request = new BulkRequest();
 
         searchResults.getResults().stream()
                 .map(SearchResult::getResult)
@@ -204,7 +204,9 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     private CommitteeVersionId getCommitteeVersionId(SearchHit hit) {
         Matcher versionIdMatcher = committeeSearchIdPattern.matcher(hit.getId());
-        versionIdMatcher.find();
+        if (!versionIdMatcher.find()){
+            return null;
+        }
         return new CommitteeVersionId(Chamber.getValue(versionIdMatcher.group(1)), versionIdMatcher.group(2),
                 new SessionYear(Integer.parseInt(versionIdMatcher.group(3))),
                 LocalDateTime.parse(versionIdMatcher.group(4), DateTimeFormatter.ISO_DATE_TIME));

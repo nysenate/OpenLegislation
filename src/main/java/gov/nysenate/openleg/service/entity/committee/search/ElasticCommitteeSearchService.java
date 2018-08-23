@@ -118,8 +118,6 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
      */
     @Override
     public void rebuildIndex() {
-        clearIndex();
-
         logger.info("Reindexing committees...");
         committeeSearchDao.updateCommitteeIndexBulk(committeeDataService.getAllCommitteeSessionIds());
         logger.info("Committee reindex complete.");

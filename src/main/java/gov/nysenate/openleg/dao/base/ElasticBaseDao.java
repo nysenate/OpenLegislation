@@ -106,7 +106,7 @@ public abstract class ElasticBaseDao
      */
     protected SearchRequest getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
                                                     List<HighlightBuilder.Field> highlightedFields, RescorerBuilder rescorer,
-                                                    List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) throws ElasticsearchException{
+                                                    List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) throws ElasticsearchException {
 
         if (indexIsEmpty(indexName)){
             throw new ElasticsearchException("Error: attempting to search on empty index \"" + indexName + "\".");

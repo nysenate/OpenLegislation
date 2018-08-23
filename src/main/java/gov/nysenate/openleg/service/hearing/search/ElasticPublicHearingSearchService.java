@@ -2,21 +2,23 @@ package gov.nysenate.openleg.service.hearing.search;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.hearing.search.ElasticPublicHearingSearchDao;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
+import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
 import gov.nysenate.openleg.service.hearing.event.BulkPublicHearingUpdateEvent;
 import gov.nysenate.openleg.service.hearing.event.PublicHearingUpdateEvent;
-import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -127,7 +130,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     @Override
     public void updateIndex(Collection<PublicHearing> publicHearings) {
         if (env.isElasticIndexing() && !publicHearings.isEmpty()) {
-            List<PublicHearing> indexablePublicHearings = publicHearings.stream().filter(ph -> ph != null).collect(Collectors.toList());
+            List<PublicHearing> indexablePublicHearings = publicHearings.stream().filter(Objects::nonNull).collect(Collectors.toList());
             logger.info("Indexing {} public hearings into elastic search.", indexablePublicHearings.size());
             publicHearingSearchDao.updatePublicHearingIndex(indexablePublicHearings);
         }
