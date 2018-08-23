@@ -29,7 +29,7 @@ public class AgendaCommAddendumView implements ViewObject
                                   AgendaVoteCommittee voteComm, BillDataService billDataService) {
         if (id != null) {
             this.agendaId = id.getAgendaId();
-            this.addendumId = id.getAddendum().getValue();
+            this.addendumId = id.getAddendum().toString();
             this.committeeId = id.getCommitteeId();
         }
         if (infoComm != null) {

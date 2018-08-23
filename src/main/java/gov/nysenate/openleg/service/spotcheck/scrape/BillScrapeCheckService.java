@@ -1,10 +1,13 @@
 package gov.nysenate.openleg.service.spotcheck.scrape;
 
-import com.google.common.collect.*;
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
