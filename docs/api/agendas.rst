@@ -1,5 +1,5 @@
 **Senate Agenda API**
-=============
+=====================
 
 Committee Agendas are a collection of legislative meetings that take place to discuss bills and ultimately pass them to the floor.
 
@@ -14,9 +14,9 @@ Get a single agenda
 
 Retrieve an agenda by year and agenda no
 ::
-    (GET) /api/3/bills/{year}/{agendaNo}
+    (GET) /api/3/agendas/{year}/{agendaNo}
 
-Documentation coming soon..
+More documentation coming soon..
 
 
 

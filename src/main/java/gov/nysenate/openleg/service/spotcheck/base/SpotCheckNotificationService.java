@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 
@@ -23,11 +24,16 @@ public class SpotCheckNotificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(SpotCheckNotificationService.class);
 
-    @Autowired
-    private EventBus eventBus;
+    private static final String spotcheckReportPath = "/admin/report/spotcheck";
+
+    private final EventBus eventBus;
+    private final Environment env;
 
     @Autowired
-    private Environment env;
+    public SpotCheckNotificationService(EventBus eventBus, Environment env) {
+        this.eventBus = eventBus;
+        this.env = env;
+    }
 
     /**
      * Sends out a notification reporting the given spotcheck exception
@@ -50,31 +56,27 @@ public class SpotCheckNotificationService {
     }
 
     /**
-     * Generates and sends a notification for a new daybreak spotcheck report
+     * Generates and sends a notification for a new spotcheck report
      *
-     * @param daybreakReport SpotCheckReport<
+     * @param report SpotCheckReport<
      */
-    public void spotcheckCompleteNotification(SpotCheckReport<?> daybreakReport) {
-        String summary = "New " + daybreakReport.getReportId().getReferenceType() +
-                " spotcheck report: " + daybreakReport.getReportDateTime();
+    public void spotcheckCompleteNotification(SpotCheckReport<?> report) {
+        String summary = "New " + report.getReportId().getReferenceType() +
+                " spotcheck report: " + report.getReportDateTime();
 
         StringBuilder messageBuilder = new StringBuilder();
 
         messageBuilder.append(summary)
                 .append("\n")
-                .append(env.getUrl())
-                .append("/admin/report/spotcheck/")
-                .append(daybreakReport.getReferenceType().getRefName())
-                .append("/")
-                .append(daybreakReport.getReportDateTime())
+                .append(getReportUrl(report))
                 .append("\n")
-                .append(StringUtils.isNotBlank(daybreakReport.getNotes()) ? "Notes: " + daybreakReport.getNotes() : "")
+                .append(StringUtils.isNotBlank(report.getNotes()) ? "Notes: " + report.getNotes() : "")
                 .append("\n\n")
                 .append("Total open errors: ")
-                .append(daybreakReport.getOpenMismatchCount(false))
+                .append(report.getOpenMismatchCount(false))
                 .append("\n");
 
-        daybreakReport.getMismatchStatusTypeCounts(false).forEach((status, typeCounts) -> {
+        report.getMismatchStatusTypeCounts(false).forEach((status, typeCounts) -> {
             long totalTypeCounts = typeCounts.values().stream().reduce(0L, (a, b) -> a + b);
             messageBuilder.append(status)
                     .append(": ")
@@ -88,17 +90,17 @@ public class SpotCheckNotificationService {
                             .append("\n"));
         });
 
-        long ignoredCount = daybreakReport.getOpenMismatchCount(true);
+        long ignoredCount = report.getOpenMismatchCount(true);
         if (ignoredCount > 0) {
             messageBuilder.append("IGNORED: ")
                     .append(ignoredCount)
                     .append("\n");
         }
 
-        NotificationType type = daybreakReport.getReferenceType().getNotificationType();
+        NotificationType type = report.getReferenceType().getNotificationType();
 
         Notification notification =
-                new Notification(type, daybreakReport.getReportDateTime(), summary, messageBuilder.toString());
+                new Notification(type, report.getReportDateTime(), summary, messageBuilder.toString());
 
         eventBus.post(notification);
     }
@@ -113,5 +115,15 @@ public class SpotCheckNotificationService {
                 ex.getMessage()
         );
         eventBus.post(notification);
+    }
+
+    /* --- Internal Methods --- */
+
+    private String getReportUrl(SpotCheckReport<?> report) {
+        return UriComponentsBuilder.fromHttpUrl(env.getUrl() + spotcheckReportPath)
+                .queryParam("date", report.getReportDateTime().toLocalDate())
+                .queryParam("source", report.getReferenceType().getDataSource())
+                .queryParam("content", report.getReferenceType().getContentType())
+                .toUriString();
     }
 }

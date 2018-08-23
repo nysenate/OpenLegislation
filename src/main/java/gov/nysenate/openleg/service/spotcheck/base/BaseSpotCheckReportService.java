@@ -25,7 +25,7 @@ public abstract class BaseSpotCheckReportService<ContentKey> implements SpotChec
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset){
+    public PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery<ContentKey> query, LimitOffset limitOffset){
         return getReportDao().getMismatches(query, limitOffset);
     }
 

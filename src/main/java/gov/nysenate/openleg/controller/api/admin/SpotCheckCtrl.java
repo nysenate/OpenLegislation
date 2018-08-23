@@ -96,7 +96,7 @@ public class SpotCheckCtrl extends BaseCtrl
         OrderBy order = getOrderBy(orderBy, sort);
         LimitOffset limitOffset = getLimitOffset(request, 10);
 
-        MismatchQuery query = new MismatchQuery(rDate, ds, status, Collections.singleton(ct))
+        MismatchQuery query = new MismatchQuery<>(rDate, ds, status, Collections.singleton(ct))
                 .withIgnoredStatuses(igs)
                 .withOrderBy(order)
                 .withMismatchTypes(type);

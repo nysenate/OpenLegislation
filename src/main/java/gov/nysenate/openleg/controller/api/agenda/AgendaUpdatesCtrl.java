@@ -122,7 +122,7 @@ public class AgendaUpdatesCtrl extends BaseCtrl
     private BaseResponse getUpdatesDuring(LocalDateTime from, LocalDateTime to, WebRequest request) {
         // Fetch params
         LimitOffset limOff = getLimitOffset(request, 50);
-        Range<LocalDateTime> updateRange = getOpenRange(from, to, "from", "to");
+        Range<LocalDateTime> updateRange = getOpenClosedRange(from, to, "from", "to");
         boolean detail = getBooleanParam(request, "detail", false);
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         UpdateType updateType = getUpdateTypeFromParam(request);
@@ -145,7 +145,7 @@ public class AgendaUpdatesCtrl extends BaseCtrl
 
     private BaseResponse getUpdatesForAgendaDuring(AgendaId agendaId, LocalDateTime from, LocalDateTime to, WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 50);
-        Range<LocalDateTime> updateRange = getClosedOpenRange(from, to, "from", "to");
+        Range<LocalDateTime> updateRange = getOpenClosedRange(from, to, "from", "to");
         SortOrder sortOrder = getSortOrder(request, SortOrder.ASC);
         UpdateType updateType = getUpdateTypeFromParam(request);
 

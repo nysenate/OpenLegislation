@@ -14,7 +14,8 @@ legislation.iws
 *.iml
 src/main/webapp/.sass-cache/**
 src/main/webapp/static/bower_components/**
-src/main/webapp/static/css/src/**
+src/main/webapp/static/css/**
+src/main/webapp/static/js/dest/**
 src/main/webapp/node_modules/**
 src/main/webapp/META-INF/**
 node_modules/**

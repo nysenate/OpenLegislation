@@ -1,12 +1,9 @@
 package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
-import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillTextType;
-import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.processor.base.ParseError;
 
 import java.time.LocalDateTime;
@@ -20,7 +17,7 @@ public class ApprovalMessageParser extends BillTextParser {
     private static final Pattern approvalHeaderPattern =
             Pattern.compile("00000\\.SO DOC APPR(\\d+)\\s+APPROVAL\\s+(\\d{4})");
     private static final Pattern approvalTitlePattern =
-            Pattern.compile("\\d{5}\\s+APPROVAL MEMORANDUM\\s+-\\s+No\\.\\s+\\d+\\s+Chapter\\s+(\\d+)");
+            Pattern.compile("\\d{5}\\s*APPROVAL MEMORANDUM\\s*-\\s*No\\.\\s*\\d+\\s*Chapter\\s*(\\d+)");
     private static final Pattern approvalBillIdPattern =
             Pattern.compile("(?i)\\d{5}\\s+MEMORANDUM filed with (Senate|Assembly) Bill Number (\\d+)\\-?([A-Z])?, entitled:");
     private static final Pattern approvalSignerPattern =

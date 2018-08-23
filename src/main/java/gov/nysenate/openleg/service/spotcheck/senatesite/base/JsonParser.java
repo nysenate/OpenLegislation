@@ -130,6 +130,10 @@ public class JsonParser {
 
     protected <E extends Enum<E>> E getEnumValue(JsonNode parentNode, String fieldName, Class<E> enumClass) {
         String stringValue = getValue(parentNode, fieldName);
-        return E.valueOf(enumClass, StringUtils.upperCase(stringValue));
+        try {
+            return E.valueOf(enumClass, StringUtils.upperCase(stringValue));
+        } catch (NullPointerException | IllegalArgumentException ex) {
+            return null;
+        }
     }
 }

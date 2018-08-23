@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.text.Collator;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -104,8 +105,16 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
         Set<BillScrapeVote> referenceVotes = reference.getVotes();
         Set<BillScrapeVote> openlegVotes = createOpenlegVotes(bill);
 
-        if (!Sets.symmetricDifference(referenceVotes, openlegVotes).isEmpty()) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_SCRAPE_VOTE,
+        String referenceVotesString = referenceVotes.toString();
+        String openlegVotesString = openlegVotes.toString();
+
+        // Only consider primary differences significant when comparing.
+        // This will consider ú, u and U equal.
+        Collator usCollator = Collator.getInstance(Locale.US);
+        usCollator.setStrength(Collator.PRIMARY);
+
+        if (usCollator.compare(referenceVotesString, openlegVotesString) != 0) {
+               observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_SCRAPE_VOTE,
                     openlegVotes.toString(), referenceVotes.toString()));
         }
     }
