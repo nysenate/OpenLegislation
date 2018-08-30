@@ -21,27 +21,7 @@ public class SimpleCalendarSupView extends CalendarSupIdView{
     }
 
     //Added for Json deserialization
-    public SimpleCalendarSupView() {}
-
-    //Added for Json deserialization
-//    public SimpleCalendarSupView(String calDate) {
-//        this.calDate = LocalDate.parse(calDate);
-//    }
-
-    //Added for Json deserialization
-    public void setCalDate(String calDate) {
-        this.calDate = LocalDate.parse(calDate);
-    }
-
-    //Added for Json deserialization
-    public void setReleaseDateTime(String releaseDateTime) {
-        this.releaseDateTime = LocalDateTime.parse(releaseDateTime);
-    }
-
-    //Added for Json deserialization
-    public void setTotalEntries(int totalEntries) {
-        this.totalEntries = totalEntries;
-    }
+    protected SimpleCalendarSupView() {}
 
     public LocalDate getCalDate() {
         return calDate;

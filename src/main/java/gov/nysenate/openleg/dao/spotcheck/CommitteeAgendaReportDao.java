@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class CommitteeAgendaReportDao extends AbstractSpotCheckReportDao<CommitteeAgendaAddendumId> {
@@ -30,12 +31,14 @@ public class CommitteeAgendaReportDao extends AbstractSpotCheckReportDao<Committ
 
     @Override
     public Map<String, String> getMapFromKey(CommitteeAgendaAddendumId addendumId) {
+        Optional<AgendaId> agendaIdOpt = Optional.ofNullable(addendumId.getAgendaId());
+        Optional<CommitteeId> committeeIdOpt = Optional.ofNullable(addendumId.getCommitteeId());
         return ImmutableMap.<String, String>builder()
-                .put("agenda_no", addendumId.getAgendaId().getNumber().toString())
-                .put("year", Integer.toString(addendumId.getAgendaId().getYear()))
-                .put("chamber", addendumId.getCommitteeId().getChamber().asSqlEnum())
-                .put("committee_name", addendumId.getCommitteeId().getName())
-                .put("addendum", addendumId.getAddendum().name())
+                .put("agenda_no", agendaIdOpt.map(AgendaId::getNumber).map(String::valueOf).orElse("null"))
+                .put("year", agendaIdOpt.map(AgendaId::getYear).map(String::valueOf).orElse("null"))
+                .put("chamber", committeeIdOpt.map(CommitteeId::getChamber).map(Chamber::asSqlEnum).orElse("null"))
+                .put("committee_name", committeeIdOpt.map(CommitteeId::getName).orElse("null"))
+                .put("addendum", Optional.ofNullable(addendumId.getAddendum()).map(Enum::name).orElse("null"))
                 .build();
     }
 }

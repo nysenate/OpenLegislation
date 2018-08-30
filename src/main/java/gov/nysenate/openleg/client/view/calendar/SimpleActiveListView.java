@@ -24,27 +24,7 @@ public class SimpleActiveListView extends CalendarActiveListIdView{
     }
 
     //Added for Json deserialization
-    public SimpleActiveListView() {}
-
-    //Added for Json deserialization
-    public void setCalDate(String calDate) {
-        this.calDate = LocalDate.parse(calDate);
-    }
-
-    //Added for Json deserialization
-    public void setReleaseDateTime(String releaseDateTime) {
-        this.releaseDateTime = LocalDateTime.parse(releaseDateTime);
-    }
-
-    //Added for Json deserialization
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    //Added for Json deserialization
-    public void setTotalEntries(int totalEntries) {
-        this.totalEntries = totalEntries;
-    }
+    protected SimpleActiveListView() {}
 
     public LocalDate getCalDate() {
         return calDate;

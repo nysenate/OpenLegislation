@@ -41,7 +41,7 @@ public class CalendarView extends CalendarIdView {
     }
 
     //Added for Json deserialization
-    public CalendarView() {}
+    protected CalendarView() {}
 
     public CalendarSupView getFloorCalendar() {
         return floorCalendar;
@@ -57,26 +57,6 @@ public class CalendarView extends CalendarIdView {
 
     public String getCalDate() {
         return calDate;
-    }
-
-    //Added for Json deserialization
-    public void setFloorCalendar(CalendarSupView floorCalendar) {
-        this.floorCalendar = floorCalendar;
-    }
-
-    //Added for Json deserialization
-    public void setSupplementalCalendars(MapView<String, CalendarSupView> supplementalCalendars) {
-        this.supplementalCalendars = supplementalCalendars;
-    }
-
-    //Added for Json deserialization
-    public void setActiveLists(MapView<Integer, ActiveListView> activeLists) {
-        this.activeLists = activeLists;
-    }
-
-    //Added for Json deserialization
-    public void setCalDate(String calDate) {
-        this.calDate = calDate;
     }
 
     @Override

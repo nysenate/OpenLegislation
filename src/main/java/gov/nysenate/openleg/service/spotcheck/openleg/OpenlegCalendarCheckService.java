@@ -1,153 +1,155 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
+import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.bill.SimpleBillInfoView;
 import gov.nysenate.openleg.client.view.calendar.*;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
-import gov.nysenate.openleg.util.OutputUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 @Service
 public class OpenlegCalendarCheckService
         extends BaseSpotCheckService<CalendarEntryListId, CalendarEntryList, CalendarEntryList> {
-    Logger logger = LoggerFactory.getLogger(OpenlegBillCheckService.class);
-
-
-    public SpotCheckObservation<CalendarEntryListId> check(CalendarEntryList content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException("");
-    }
-
-    public SpotCheckObservation<CalendarEntryListId> check(CalendarEntryList content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException("");
-    }
+    private static final Logger logger = LoggerFactory.getLogger(OpenlegBillCheckService.class);
 
     @Override
     public SpotCheckObservation<CalendarEntryListId> check(CalendarEntryList content, CalendarEntryList reference) {
-        if(content instanceof CalendarSupView) {
-            return checkFloorCals((CalendarSupView) content,(CalendarSupView) reference);
+        if (content instanceof CalendarSupView) {
+            return checkFloorCals((CalendarSupView) content, (CalendarSupView) reference);
+        } else if (content instanceof ActiveListView) {
+            return checkActiveLists((ActiveListView) content, (ActiveListView) reference);
         }
-        else if (content instanceof ActiveListView) {
-            return checkActiveLists( (ActiveListView) content,(ActiveListView) reference );
-        }
-        return null;
+        throw new IllegalStateException("Unhandled calendar entry list type" + content.getClass().getSimpleName());
     }
 
     /**
-     * Check for any mismatches between Openleg reference and Openleg source calenders
-     * @param content ContentType - The content to check
+     * Check for any mismatches between Openleg reference and Openleg source calendars
+     *
+     * @param content   ContentType - The content to check
      * @param reference ReferenceType - The reference content to use for comparison
      * @return The mismatches
      */
-    private SpotCheckObservation<CalendarEntryListId>  checkFloorCals(CalendarSupView content, CalendarSupView reference) {
+    private SpotCheckObservation<CalendarEntryListId> checkFloorCals(CalendarSupView content, CalendarSupView reference) {
         final SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(
-                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_CAL,LocalDateTime.now()),
+                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_CAL, LocalDateTime.now()),
                 reference.getCalendarEntryListId());
-        checkFloorCalDate(content,reference, observation);
-        checkFloorCalYear(content,reference, observation);
-        checkFloorReleaseDateTime(content,reference,observation);
-        StringBuffer referenceEntryViewsAsString = new StringBuffer();
-        StringBuffer contentEntryViewsAsString = new StringBuffer();
-        for(CalendarSupEntryView calendarSupEntryView: getCalendarSupEntryViews(reference)) {
-            referenceEntryViewsAsString.append(calendarSupEntryView.toString());
-        }
-        for(CalendarSupEntryView calendarSupEntryView: getCalendarSupEntryViews(content)) {
-            contentEntryViewsAsString.append(calendarSupEntryView.toString());
-        }
-        checkFloorCalendarSupEntryViews(contentEntryViewsAsString.toString(), referenceEntryViewsAsString.toString(), observation);
+        checkFloorCalDate(content, reference, observation);
+        checkFloorCalYear(content, reference, observation);
+        checkFloorReleaseDateTime(content, reference, observation);
+        checkFloorCalendarSupEntryViews(content, reference, observation);
         return observation;
     }
 
     /**
      * Check for any mismatches between Openleg reference and Openleg source active lists
-     * @param content ContentType - The content to check
+     *
+     * @param content   ContentType - The content to check
      * @param reference ReferenceType - The reference content to use for comparison
      * @return The mismatches
      */
-    private SpotCheckObservation<CalendarEntryListId>  checkActiveLists(ActiveListView content, ActiveListView reference) {
+    private SpotCheckObservation<CalendarEntryListId> checkActiveLists(ActiveListView content, ActiveListView reference) {
         final SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(
-                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_CAL,LocalDateTime.now()),
+                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_CAL, LocalDateTime.now()),
                 reference.getCalendarEntryListId());
-        checkActiveListCalDate(content,reference,observation);
-        checkActiveListReleaseDateTime(content,reference,observation);
-        checkActiveListNotes(content,reference,observation);
-        checkActiveListViewtype(content,reference,observation);
-        checkActiveListSequenceNumber(content,reference,observation);
-        StringBuffer referenceEntryViewsAsString = new StringBuffer();
-        StringBuffer contentEntryViewsAsString = new StringBuffer();
-        for(CalendarEntryView calendarEntryView: content.getEntries().getItems()) {
-            contentEntryViewsAsString.append(calendarEntryView.toString());
-        }
-
-        for(CalendarEntryView calendarEntryView: reference.getEntries().getItems()) {
-            referenceEntryViewsAsString.append(calendarEntryView.toString());
-        }
-        checkActiveListCalendarEntryViews(contentEntryViewsAsString.toString(), referenceEntryViewsAsString.toString(),observation);
+        checkActiveListCalDate(content, reference, observation);
+        checkActiveListReleaseDateTime(content, reference, observation);
+        checkActiveListNotes(content, reference, observation);
+        checkActiveListCalendarEntryViews(content, reference, observation);
         return observation;
     }
 
-    //*************************************************
-    //METHODS TO CHECK FLOOR AND SUPPLEMENTAL CALENDARS
+    /* --- Floor Cal Check Methods --- */
 
-    protected void checkFloorCalDate(CalendarSupView content, CalendarSupView reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(OutputUtils.toJson(content.getCalDate()),OutputUtils.toJson(reference.getCalDate()),observation,SpotCheckMismatchType.FLOOR_CAL_DATE);
+    protected void checkFloorCalDate(CalendarSupView content, CalendarSupView reference,
+                                     SpotCheckObservation<CalendarEntryListId> observation) {
+        checkObject(content.getCalDate(), reference.getCalDate(), observation, FLOOR_CAL_DATE);
     }
 
-    protected void checkFloorCalYear(CalendarSupView content, CalendarSupView reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(OutputUtils.toJson(content.getYear()),OutputUtils.toJson(reference.getYear()),observation,SpotCheckMismatchType.FLOOR_CAL_YEAR);
+    protected void checkFloorCalYear(CalendarSupView content, CalendarSupView reference,
+                                     SpotCheckObservation<CalendarEntryListId> observation) {
+        checkObject(content.getYear(), reference.getYear(), observation, FLOOR_CAL_YEAR);
     }
 
-    protected void checkFloorReleaseDateTime(CalendarSupView content, CalendarSupView reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(OutputUtils.toJson(content.getReleaseDateTime()),OutputUtils.toJson(reference.getReleaseDateTime()),observation,SpotCheckMismatchType.FLOOR_RELEASE_DATE_TIME);
+    protected void checkFloorReleaseDateTime(CalendarSupView content, CalendarSupView reference,
+                                             SpotCheckObservation<CalendarEntryListId> observation) {
+        checkObject(content.getReleaseDateTime(), reference.getReleaseDateTime(), observation, FLOOR_RELEASE_DATE_TIME);
     }
 
-    protected void checkFloorCalendarSupEntryViews(String content, String reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(content,reference,observation,SpotCheckMismatchType.FLOOR_ENTRY);
+    protected void checkFloorCalendarSupEntryViews(CalendarSupView content, CalendarSupView reference,
+                                                   SpotCheckObservation<CalendarEntryListId> observation) {
+        List<CalendarSupEntryView> contentEntries = getCalendarSupEntryViews(content);
+        List<CalendarSupEntryView> supEntries = getCalendarSupEntryViews(reference);
+        checkCollection(contentEntries, supEntries, observation, FLOOR_ENTRY, this::getSupEntryString, "\n");
     }
 
-    //HELPER METHODS FOR FLOOR AND SUPPLEMENTAL CALENDARS
     private List<CalendarSupEntryView> getCalendarSupEntryViews(CalendarSupView calendarSupView) {
-        return calendarSupView.getEntriesBySection()
-                .getItems()
-                .values()
-                .stream()
-                .map(calendarSupViewMap -> calendarSupViewMap.getItems())
-                .flatMap(calendarSupEntryView -> calendarSupEntryView.stream())
+        return calendarSupView.getEntriesBySection().getItems().values().stream()
+                .map(ListView::getItems)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
-
-    //*************************************************
-    //METHODS TO CHECK ACTIVE LISTS
-
-    protected void checkActiveListCalDate(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(OutputUtils.toJson(content.getCalDate()),OutputUtils.toJson(reference.getCalDate()),observation,SpotCheckMismatchType.ACTIVE_LIST_CAL_DATE);
+    private StringBuilder getSupEntryString(CalendarSupEntryView entry) {
+        return new StringBuilder()
+                .append(entry.getSectionType()).append(" ")
+                .append(getEntryString(entry))
+                .append(" ")
+                .append("high:")
+                .append(entry.getBillHigh()).append(" ")
+                .append("sub:")
+                .append(Optional.ofNullable(entry.getSubBillInfo())
+                        .map(SimpleBillInfoView::getPrintNo));
     }
 
-    protected void checkActiveListReleaseDateTime(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(OutputUtils.toJson(content.getReleaseDateTime()),OutputUtils.toJson(reference.getReleaseDateTime()),observation,SpotCheckMismatchType.ACTIVE_LIST_RELEASE_DATE_TIME);
+
+    /* --- Active List Check Methods --- */
+
+    protected void checkActiveListCalDate(ActiveListView content, ActiveListView reference,
+                                          SpotCheckObservation<CalendarEntryListId> observation) {
+        checkObject(content.getCalDate(), reference.getCalDate(), observation, ACTIVE_LIST_CAL_DATE);
     }
 
-    protected void checkActiveListNotes(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(OutputUtils.toJson(content.getNotes()),OutputUtils.toJson(reference.getNotes()),observation,SpotCheckMismatchType.ACTIVE_LIST_NOTES);
+    protected void checkActiveListReleaseDateTime(ActiveListView content, ActiveListView reference,
+                                                  SpotCheckObservation<CalendarEntryListId> observation) {
+        checkObject(content.getReleaseDateTime(), reference.getReleaseDateTime(),
+                observation, ACTIVE_LIST_RELEASE_DATE_TIME);
     }
 
-    protected void checkActiveListViewtype(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(OutputUtils.toJson(content.getViewType()),OutputUtils.toJson(reference.getViewType()),observation,SpotCheckMismatchType.ACTIVE_LIST_VIEW_TYPE);
+    protected void checkActiveListNotes(ActiveListView content, ActiveListView reference,
+                                        SpotCheckObservation<CalendarEntryListId> observation) {
+        checkObject(content.getNotes(), reference.getNotes(), observation, ACTIVE_LIST_NOTES);
     }
 
-    protected void checkActiveListSequenceNumber(ActiveListView content, ActiveListView reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(OutputUtils.toJson(content.getSequenceNumber()),OutputUtils.toJson(reference.getSequenceNumber()),observation,SpotCheckMismatchType.ACTIVE_LIST_SEQUENCE_NUMBER);
+    protected void checkActiveListCalendarEntryViews(ActiveListView content, ActiveListView reference,
+                                                     SpotCheckObservation<CalendarEntryListId> observation) {
+        checkCollection(getActiveListEntries(content), getActiveListEntries(reference),
+                observation, ACTIVE_LIST_ENTRY, this::getEntryString, "\n");
     }
 
-    protected void checkActiveListCalendarEntryViews(String content, String reference, SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(content,reference,observation,SpotCheckMismatchType.ACTIVE_LIST_ENTRY);
+    private List<CalendarEntryView> getActiveListEntries(ActiveListView activeListView) {
+        return Optional.ofNullable(activeListView.getEntries()).map(ListView::getItems).orElse(null);
+    }
+
+    private StringBuilder getEntryString(CalendarEntryView entry) {
+        return new StringBuilder()
+                .append(entry.getBasePrintNoStr())
+                .append(" amend:")
+                .append(entry.getSelectedVersion()).append(" ")
+                .append("calNo:")
+                .append(entry.getBillCalNo());
     }
 
 }

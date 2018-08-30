@@ -27,17 +27,7 @@ public class CalendarEntryView extends BillInfoView
     }
 
     //Added for Json deserialization
-    public CalendarEntryView() {}
-
-    //Added for Json deserialization
-    public void setBillCalNo(int billCalNo) {
-        this.billCalNo = billCalNo;
-    }
-
-    //Added for Json deserialization
-    public void setSelectedVersion(String selectedVersion) {
-        this.selectedVersion = selectedVersion;
-    }
+    protected CalendarEntryView() {}
 
     public int getBillCalNo() {
         return billCalNo;
@@ -47,8 +37,8 @@ public class CalendarEntryView extends BillInfoView
         return selectedVersion;
     }
 
-    public static Comparator<CalendarEntryView> calEntryViewComparator =
-            (ent1, ent2) -> Integer.compare(ent1.billCalNo, ent2.billCalNo);
+    public static final Comparator<CalendarEntryView> calEntryViewComparator =
+            Comparator.comparingInt(CalendarEntryView::getBillCalNo);
 
     @Override
     public String getViewType() {

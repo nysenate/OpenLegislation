@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.client.view.agenda;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.agenda.AgendaId;
@@ -26,6 +25,9 @@ public class AgendaCommAddendumView implements ViewObject
     private AgendaId agendaId;
     private CommitteeId committeeId;
 
+    //Added for Json Deserialization
+    protected AgendaCommAddendumView() {}
+
     public AgendaCommAddendumView(CommitteeAgendaAddendumId id, LocalDateTime modDateTime, AgendaInfoCommittee infoComm,
                                   AgendaVoteCommittee voteComm, BillDataService billDataService) {
         if (id != null) {
@@ -46,9 +48,6 @@ public class AgendaCommAddendumView implements ViewObject
             this.voteInfo = new AgendaVoteView(voteComm);
         }
     }
-
-    //Added for Json Deserialization
-    public AgendaCommAddendumView() {}
 
     public String getAddendumId() {
         return addendumId;
@@ -98,7 +97,4 @@ public class AgendaCommAddendumView implements ViewObject
     public String getViewType() {
         return "agenda-addendum";
     }
-
-    //Added for Json Deserialization
-    public void setModifiedDateTime(String modifiedDateTime) {this.modifiedDateTime = LocalDateTime.parse(modifiedDateTime);}
 }

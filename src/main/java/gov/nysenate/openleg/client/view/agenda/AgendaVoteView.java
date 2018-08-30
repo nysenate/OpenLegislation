@@ -23,7 +23,7 @@ public class AgendaVoteView implements ViewObject
     }
 
     //Added for Json Deserialization
-    public AgendaVoteView() {}
+    protected AgendaVoteView() {}
 
     public ListView<AgendaAttendanceView> getAttendanceList() {
         return attendanceList;
@@ -32,11 +32,6 @@ public class AgendaVoteView implements ViewObject
     public ListView<AgendaVoteBillView> getVotesList() {
         return votesList;
     }
-
-    //Added for Json Deserialization
-    public void setAttendanceList(ListView<AgendaAttendanceView> attendanceList) {this.attendanceList = attendanceList;}
-
-    public void setVotesList(ListView<AgendaVoteBillView> votesList) {this.votesList = votesList;}
 
     @Override
     public String getViewType() {

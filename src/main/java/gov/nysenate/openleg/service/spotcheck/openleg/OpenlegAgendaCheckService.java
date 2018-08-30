@@ -1,115 +1,188 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import com.google.common.collect.ImmutableList;
-import gov.nysenate.openleg.client.view.agenda.AgendaCommAddendumView;
-import gov.nysenate.openleg.client.view.agenda.AgendaItemView;
-import gov.nysenate.openleg.client.view.agenda.AgendaVoteBillView;
+import gov.nysenate.openleg.client.view.agenda.*;
+import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.bill.BillIdView;
+import gov.nysenate.openleg.client.view.bill.BillVoteView;
+import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
+import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
-import gov.nysenate.openleg.util.OutputUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 @Service
 public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAgendaAddendumId, AgendaCommAddendumView, AgendaCommAddendumView> {
 
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaCommAddendumView content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException("");
-    }
-
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaCommAddendumView content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException("");
-    }
-
     @Override
-    public SpotCheckObservation<CommitteeAgendaAddendumId>  check(AgendaCommAddendumView content, AgendaCommAddendumView reference) {
+    public SpotCheckObservation<CommitteeAgendaAddendumId> check(
+            AgendaCommAddendumView content, AgendaCommAddendumView reference) {
         final SpotCheckObservation<CommitteeAgendaAddendumId> observation = new SpotCheckObservation<>(
-                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_AGENDA,LocalDateTime.now()),
+                new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_AGENDA, LocalDateTime.now()),
                 reference.getCommitteeAgendaAddendumId());
-        checkChair(content,reference,observation);
-        checkLocation(content,reference,observation);
-        checkMeetingDateTime(content,reference,observation);
-        checkNotes(content,reference,observation);
-        checkBillListing(content,reference,observation);
-        checkHasVotes(content,reference,observation);
-        if(content.isHasVotes() && reference.isHasVotes()) {
-            checkAttendanceList(content,reference,observation);
-            checkVotesList(content,reference,observation);
-        }
+        checkChair(content, reference, observation);
+        checkLocation(content, reference, observation);
+        checkMeetingDateTime(content, reference, observation);
+        checkNotes(content, reference, observation);
+        checkBillListing(content, reference, observation);
+        checkHasVotes(content, reference, observation);
+            checkAttendanceList(content, reference, observation);
+            checkVotesList(content, reference, observation);
         return observation;
     }
 
-    protected void checkHasVotes(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(String.valueOf(content.isHasVotes()), String.valueOf(reference.isHasVotes()), observation, SpotCheckMismatchType.AGENDA_HAS_VOTES);
+    private void checkHasVotes(AgendaCommAddendumView content, AgendaCommAddendumView reference,
+                               SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
+        checkObject(content.isHasVotes(), reference.isHasVotes(), observation, AGENDA_HAS_VOTES);
     }
 
-    protected void checkChair(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(content.getMeeting().getChair(), reference.getMeeting().getChair(), observation, SpotCheckMismatchType.AGENDA_CHAIR);
+    private String extractChair(AgendaCommAddendumView acav) {
+        return Optional.ofNullable(acav.getMeeting())
+                .map(AgendaMeetingView::getChair)
+                .orElse(null);
     }
 
-    protected void checkLocation(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(content.getMeeting().getLocation(), content.getMeeting().getLocation(), observation, SpotCheckMismatchType.AGENDA_LOCATION);
+    private void checkChair(AgendaCommAddendumView content, AgendaCommAddendumView reference,
+                            SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
+        String contentChair = extractChair(content);
+        String refChair = extractChair(reference);
+        checkString(contentChair, refChair, observation, AGENDA_CHAIR);
     }
 
-    protected void checkMeetingDateTime(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(content.getMeeting().getMeetingDateTime().toString(), reference.getMeeting().getMeetingDateTime().toString(),observation,SpotCheckMismatchType.AGENDA_MEETING_TIME);
+    private String extractLocation(AgendaCommAddendumView acav) {
+        return Optional.ofNullable(acav.getMeeting())
+                .map(AgendaMeetingView::getLocation)
+                .orElse(null);
     }
 
-    protected void checkNotes(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(content.getMeeting().getNotes(), reference.getMeeting().getNotes(), observation, SpotCheckMismatchType.AGENDA_NOTES);
+    private void checkLocation(AgendaCommAddendumView content, AgendaCommAddendumView reference,
+                               SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
+        String contentLocation = extractLocation(content);
+        String refLocation = extractLocation(reference);
+        checkString(contentLocation, refLocation, observation, AGENDA_LOCATION);
     }
 
-    protected void checkBillListing(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        ArrayList<BillIdView> mismatchList = new ArrayList<>();
-        ArrayList<BillIdView> contentBillIdViews = new ArrayList<>();
-        ArrayList<BillIdView> referenceBillIdViews = new ArrayList<>();
-        content.getBills().getItems().forEach(agendaItemView -> contentBillIdViews.add(agendaItemView.getBillId()));
-        reference.getBills().getItems().forEach(agendaItemView -> referenceBillIdViews.add(agendaItemView.getBillId()));
-        for(BillIdView refBillIdView : referenceBillIdViews ) {
-            boolean matched = false;
-            for (BillIdView contentbillIdView : contentBillIdViews) {
-                if ( contentbillIdView.getPrintNo().equals(refBillIdView.getPrintNo()) &&
-                        contentbillIdView.getVersion().equals(refBillIdView.getVersion()) ) {
-                    matched = true;
-                }
-            }
-            if (!matched) {
-                mismatchList.add(refBillIdView);
-            }
+    private LocalDateTime extractMeetingDateTime(AgendaCommAddendumView acav) {
+        return Optional.ofNullable(acav.getMeeting())
+                .map(AgendaMeetingView::getMeetingDateTime)
+                .orElse(null);
+    }
+
+    private void checkMeetingDateTime(AgendaCommAddendumView content, AgendaCommAddendumView reference,
+                                      SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
+        LocalDateTime contentMDT = extractMeetingDateTime(content);
+        LocalDateTime refMDT = extractMeetingDateTime(reference);
+        checkObject(contentMDT, refMDT, observation, AGENDA_MEETING_TIME);
+    }
+
+    private String extractNotes(AgendaCommAddendumView acav) {
+        return Optional.ofNullable(acav.getMeeting())
+                .map(AgendaMeetingView::getNotes)
+                .orElse(null);
+    }
+
+    private void checkNotes(AgendaCommAddendumView content, AgendaCommAddendumView reference,
+                            SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
+        String contentNotes = extractNotes(content);
+        String refNotes = extractNotes(reference);
+        checkString(contentNotes, refNotes, observation, AGENDA_NOTES);
+    }
+
+    private String agendaItemViewStr(AgendaItemView aiv) {
+        String billIdStr = getBillIdStr(aiv.getBillId());
+        return billIdStr + " - " + aiv.getMessage();
+    }
+
+    Comparator<AgendaItemView> agendaItemViewComparator =
+            Comparator.comparing(a -> Optional.ofNullable(a.getBillId()).map(BillIdView::toBillId).orElse(null));
+
+    List<AgendaItemView> extractBillList(AgendaCommAddendumView acav) {
+        return Optional.ofNullable(acav.getBills())
+                .map(ListView::getItems)
+                .orElseGet(ImmutableList::of).stream()
+                .sorted(agendaItemViewComparator)
+                .collect(Collectors.toList());
+    }
+
+    private void checkBillListing(AgendaCommAddendumView content, AgendaCommAddendumView reference,
+                                  SpotCheckObservation<CommitteeAgendaAddendumId> obs) {
+        List<AgendaItemView> contentBills = extractBillList(content);
+        List<AgendaItemView> refBills = extractBillList(reference);
+        checkCollection(contentBills, refBills, obs, AGENDA_BILLS, this::agendaItemViewStr, "\n");
+    }
+
+    private List<AgendaAttendanceView> extractAttendList(AgendaCommAddendumView acav) {
+        return Optional.ofNullable(acav.getVoteInfo())
+                .map(AgendaVoteView::getAttendanceList)
+                .map(ListView::getItems)
+                .orElse(null);
+    }
+
+    private String agendaAttendanceViewStr(AgendaAttendanceView av) {
+        String shortName = Optional.ofNullable(av.getMember()).map(MemberView::getShortName).orElse(null);
+        return av.getRank() + " - " + shortName + " - " + av.getParty() + " - " + av.getAttend();
+    }
+
+    private void checkAttendanceList(AgendaCommAddendumView content, AgendaCommAddendumView reference,
+                                     SpotCheckObservation<CommitteeAgendaAddendumId> obs) {
+        List<AgendaAttendanceView> contentAttendList = extractAttendList(content);
+        List<AgendaAttendanceView> refAttendList = extractAttendList(reference);
+        checkCollection(contentAttendList, refAttendList, obs, AGENDA_ATTENDANCE_LIST,
+                this::agendaAttendanceViewStr, "\n");
+    }
+
+
+    private List<AgendaVoteBillView> extractVotes(AgendaCommAddendumView acav) {
+        return Optional.ofNullable(acav.getVoteInfo())
+                .map(AgendaVoteView::getVotesList)
+                .map(ListView::getItems)
+                .orElse(null);
+    }
+
+    private StringBuilder getVoteStr(AgendaVoteBillView avb) {
+        StringBuilder sBuilder = new StringBuilder();
+        Optional<BillVoteView> voteOpt = Optional.ofNullable(avb.getVote());
+        sBuilder.append(voteOpt.map(BillVoteView::getCommittee).map(CommitteeIdView::getName).orElse(null))
+                .append(" ")
+                .append(voteOpt.map(BillVoteView::getVoteDate).orElse(null)).append(" ")
+                .append(getBillIdStr(avb.getBill())).append(" ")
+                .append(avb.getAction());
+        if (avb.getReferCommittee() != null) {
+            sBuilder.append(" -> ")
+                    .append(avb.getReferCommittee().getName());
         }
-        if (mismatchList.size() > 0) {
-            checkString(OutputUtils.toJson(contentBillIdViews),OutputUtils.toJson(referenceBillIdViews), observation, SpotCheckMismatchType.AGENDA_BILL_LISTING);
+        Map<String, ListView<MemberView>> memberVoteMap = voteOpt.map(BillVoteView::getMemberVotes)
+                .map(MapView::getItems)
+                .orElse(new HashMap<>());
+        for (String voteCode : memberVoteMap.keySet()) {
+            sBuilder.append("\n").append(voteCode);
+            memberVoteMap.get(voteCode).getItems()
+                    .forEach(mv -> sBuilder.append("\n\t").append(mv.getShortName()));
         }
+        return sBuilder;
     }
 
-    protected void checkAttendanceList(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(OutputUtils.toJson(content.getVoteInfo().getAttendanceList()),OutputUtils.toJson(reference.getVoteInfo().getAttendanceList()), observation, SpotCheckMismatchType.AGENDA_ATTENDANCE_LIST);
+    private void checkVotesList(AgendaCommAddendumView content, AgendaCommAddendumView reference,
+                                SpotCheckObservation<CommitteeAgendaAddendumId> obs) {
+        checkCollection(extractVotes(content), extractVotes(reference), obs, AGENDA_VOTES_LIST,
+                this::getVoteStr, "\n\n");
     }
 
-    protected void checkVotesList(AgendaCommAddendumView content, AgendaCommAddendumView reference,SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        ArrayList<AgendaVoteBillView> refAgendaVoteBillViews = new ArrayList<>();
-        ArrayList<AgendaVoteBillView> contentAgendaVoteBillViews = new ArrayList<>();
-
-        for (AgendaVoteBillView refView: refAgendaVoteBillViews) {
-            boolean matched = false;
-            for (AgendaVoteBillView contentView: contentAgendaVoteBillViews) {
-                if (OutputUtils.toJson(contentView).equals(OutputUtils.toJson(refView))) {
-                    matched = true;
-                }
-            }
-            if (!matched) {
-                checkString(OutputUtils.toJson(contentAgendaVoteBillViews),
-                        OutputUtils.toJson(refAgendaVoteBillViews),
-                        observation, SpotCheckMismatchType.AGENDA_VOTES_LIST);
-                return;
-            }
-        }
-
-
+    private String getBillIdStr(BillIdView billIdView) {
+        return Optional.ofNullable(billIdView)
+                .map(BillIdView::toBillId)
+                .map(BillId::toString)
+                .orElse(null);
     }
 }

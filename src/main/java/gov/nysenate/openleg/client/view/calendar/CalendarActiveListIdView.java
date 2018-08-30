@@ -1,11 +1,10 @@
 package gov.nysenate.openleg.client.view.calendar;
 
-import gov.nysenate.openleg.model.base.Version;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.model.calendar.CalendarActiveListId;
-import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 
-public class CalendarActiveListIdView extends CalendarIdView{
+public class CalendarActiveListIdView extends CalendarIdView {
 
     protected int sequenceNumber;
 
@@ -15,19 +14,17 @@ public class CalendarActiveListIdView extends CalendarIdView{
     }
 
     //Added for Json deserialization
-    public CalendarActiveListIdView() {}
-
-    //Added for Json deserialization
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
+    protected CalendarActiveListIdView() {
     }
 
+    @JsonIgnore
     public CalendarEntryListId toCalendarEntryListId() {
-        return new CalendarEntryListId(this.toCalendarId(), CalendarType.ACTIVE_LIST, Version.DEFAULT,sequenceNumber);
+        return this.toCalendarActiveListId().toCalendarEntryListId();
     }
 
+    @JsonIgnore
     public CalendarActiveListId toCalendarActiveListId() {
-        return new CalendarActiveListId(this.calendarNumber,this.year,this.sequenceNumber);
+        return new CalendarActiveListId(this.calendarNumber, this.year, this.sequenceNumber);
     }
 
     public int getSequenceNumber() {

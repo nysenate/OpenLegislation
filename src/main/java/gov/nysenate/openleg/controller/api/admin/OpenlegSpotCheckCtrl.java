@@ -1,25 +1,26 @@
 package gov.nysenate.openleg.controller.api.admin;
 
 import com.google.common.collect.Range;
-import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
+import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckContentType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.service.spotcheck.base.SpotcheckRunService;
-import gov.nysenate.openleg.service.spotcheck.openleg.OpenlegBillReportService;
+import gov.nysenate.openleg.util.AsyncUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.time.Year;
+import java.util.List;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckDataSource.OPENLEG;
 
 /**
  * Created by Chenguang He on 2017/3/27.
@@ -28,30 +29,51 @@ import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_P
  */
 
 @RestController
-@RequestMapping(value = BASE_ADMIN_API_PATH + "/openlegspotcheck")
+@RequestMapping(value = BASE_ADMIN_API_PATH + "/spotcheck/openleg")
 public class OpenlegSpotCheckCtrl extends BaseCtrl {
+
     private static final Logger logger = LoggerFactory.getLogger(OpenlegSpotCheckCtrl.class);
 
-    @Autowired
-    private EventBus eventBus;
+    private static final String defaultSessionIndicator = "-945100001";
+
+    private final SpotcheckRunService spotcheckRunService;
+    private final AsyncUtils asyncUtils;
 
     @Autowired
-    private SpotcheckRunService spotcheckRunService;
-
-    @Autowired
-    OpenlegBillReportService openlegBillReportService;
-
-    @PostConstruct
-    private void init() {
-        eventBus.register(this);
+    public OpenlegSpotCheckCtrl(SpotcheckRunService spotcheckRunService,
+                                AsyncUtils asyncUtils) {
+        this.spotcheckRunService = spotcheckRunService;
+        this.asyncUtils = asyncUtils;
     }
 
     @RequiresPermissions("admin:spotcheck")
-    @RequestMapping(value = "/{sessionYear}", method = RequestMethod.GET)
-    public BaseResponse performSpotCheck(@PathVariable String sessionYear) {
-        logger.info("Running Openleg Spotcheck with session year: " + sessionYear);
-        spotcheckRunService.runReports(openlegBillReportService.getSpotcheckRefType(), Range.closed(LocalDateTime.of(Integer.valueOf(sessionYear), 1, 1, 1, 1), LocalDateTime.of(Integer.valueOf(sessionYear), 1, 1, 1, 1)));
-        return new SimpleResponse(true, "Successful Running Openleg Spotcheck", " Openleg Spotcheck");
+    @RequestMapping(value = "/{contentType}", method = RequestMethod.POST)
+    public BaseResponse performSpotCheck(@PathVariable String contentType,
+                                         @RequestParam(defaultValue = defaultSessionIndicator) int year) {
+        if (year == Integer.parseInt(defaultSessionIndicator)) {
+            year = Year.now().getValue();
+        }
+        SpotCheckRefType refType = getRefType(contentType);
+        logger.info("Running {} Spotcheck for year: {}", refType, year);
+
+        LocalDateTime sessionYearStart = Year.of(year).atDay(1).atStartOfDay();
+        asyncUtils.run(() ->
+                spotcheckRunService.runReports(refType, Range.singleton(sessionYearStart)));
+        return new SimpleResponse(true,
+                "Initiated run of " + refType + " spotcheck",
+                "openleg-spotcheck-start");
+    }
+
+    private SpotCheckRefType getRefType(String contentTypeStr) {
+        SpotCheckContentType contentType =
+                getEnumParameter("contentType", contentTypeStr, SpotCheckContentType.class);
+        List<SpotCheckRefType> spotCheckRefTypes = SpotCheckRefType.get(OPENLEG, contentType);
+        if (spotCheckRefTypes.size() != 1) {
+            throw new InvalidRequestParamEx(contentTypeStr, "contentType",
+                    SpotCheckContentType.class.getSimpleName(),
+                    "there must be 1 openleg ref type for the given content type");
+        }
+        return spotCheckRefTypes.get(0);
     }
 
 }

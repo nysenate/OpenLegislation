@@ -11,12 +11,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceType>
         implements SpotCheckService<ContentKey, ContentType, ReferenceType> {
 
     protected void checkString(String content, String reference,
                                     SpotCheckObservation<ContentKey> observation, SpotCheckMismatchType mismatchType) {
+        // Ensure that the mismatch can be reported in the observation.
+        observation.checkReportable(mismatchType);
+
         content = StringUtils.trimToEmpty(content);
         reference = StringUtils.trimToEmpty(reference);
         if (!StringUtils.equals(content, reference)) {
@@ -43,12 +47,22 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
     }
 
     protected <T> void checkCollection(Collection<T> content, Collection<T> reference,
-                                            SpotCheckObservation<ContentKey> observation,
-                                            SpotCheckMismatchType mismatchType,
-                                            Function<? super T, String> toString, String split) {
-        String contentStr = stringifyCollection(content, toString, split);
-        String refStr = stringifyCollection(reference, toString, split);
+                                       SpotCheckObservation<ContentKey> observation,
+                                       SpotCheckMismatchType mismatchType,
+                                       Function<? super T, ? extends CharSequence> toString,
+                                       String split,
+                                       boolean sort) {
+        String contentStr = stringifyCollection(content, toString, split, sort);
+        String refStr = stringifyCollection(reference, toString, split, sort);
         checkString(contentStr, refStr, observation, mismatchType);
+    }
+
+    protected <T> void checkCollection(Collection<T> content, Collection<T> reference,
+                                       SpotCheckObservation<ContentKey> observation,
+                                       SpotCheckMismatchType mismatchType,
+                                       Function<? super T, ? extends CharSequence> toString,
+                                       String split) {
+        checkCollection(content, reference, observation, mismatchType, toString, split, false);
     }
 
     protected <T> void checkCollection(Collection<T> content, Collection<T> reference,
@@ -64,13 +78,19 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
     }
 
     private <T> String stringifyCollection(Collection<T> collection,
-                                           Function<? super T, String> toString,
-                                           String split) {
-        return Optional.ofNullable(collection)
-                .orElse(Collections.emptyList())
-                .stream()
+                                           Function<? super T, ? extends CharSequence> toString,
+                                           String split,
+                                           boolean sort) {
+        Stream<String> s = Optional.ofNullable(collection)
+                .orElse(Collections.emptyList()).stream()
                 .map(toString)
-                .collect(Collectors.joining(split));
+                .map(CharSequence::toString);
+
+        if (sort) {
+            s = s.sorted();
+        }
+
+        return s.collect(Collectors.joining(split));
     }
 
 }

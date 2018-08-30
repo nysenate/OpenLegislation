@@ -64,6 +64,14 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
         return new SessionYear(year);
     }
 
+    public static SessionYear of(LocalDate localDate) {
+        return SessionYear.of(localDate.getYear());
+    }
+
+    public static SessionYear of(LocalDateTime localDateTime) {
+        return SessionYear.of(localDateTime.getYear());
+    }
+
     public static SessionYear current() {
         return new SessionYear();
     }

@@ -1,9 +1,8 @@
 package gov.nysenate.openleg.client.view.calendar;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalId;
-import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 
 public class CalendarSupIdView extends CalendarIdView {
@@ -16,8 +15,7 @@ public class CalendarSupIdView extends CalendarIdView {
             if (calendarSupplementalId.getVersion() != null) {
                 if (calendarSupplementalId.getVersion().equals(Version.DEFAULT)) {
                     this.version = "floor";
-                }
-                else {
+                } else {
                     this.version = calendarSupplementalId.getVersion().getValue();
                 }
             }
@@ -25,11 +23,7 @@ public class CalendarSupIdView extends CalendarIdView {
     }
 
     //Added for Json deserialization
-    public CalendarSupIdView() {}
-
-    //Added for Json deserialization
-    public void setVersion(String version) {
-        this.version = version;
+    protected CalendarSupIdView() {
     }
 
     public String getVersion() {
@@ -44,12 +38,13 @@ public class CalendarSupIdView extends CalendarIdView {
         return "calendar-supplemental-id";
     }
 
+    @JsonIgnore
     public CalendarEntryListId toCalendarEntryListId() {
-        return new CalendarEntryListId(this.toCalendarId(),this.version.equals("floor") ? CalendarType.FLOOR_CALENDAR : CalendarType.SUPPLEMENTAL_CALENDAR,
-                this.version.equals("floor") ? Version.DEFAULT : Version.of(this.version),0);
+        return this.toCalendarSupplementalId().toCalendarEntryListId();
     }
 
-    public CalendarSupplementalId getCalendarSupplementalId() {
-        return new CalendarSupplementalId(this.calendarNumber,this.year,this.version.equals("floor") ? Version.DEFAULT : Version.of(this.version));
+    @JsonIgnore
+    public CalendarSupplementalId toCalendarSupplementalId() {
+        return new CalendarSupplementalId(this.calendarNumber, this.year, this.version.equals("floor") ? Version.DEFAULT : Version.of(this.version));
     }
 }

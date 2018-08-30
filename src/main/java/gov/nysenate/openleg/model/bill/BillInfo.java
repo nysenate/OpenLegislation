@@ -28,7 +28,7 @@ public class BillInfo
     protected ProgramInfo programInfo;
     protected BillId reprintOf;
 
-    /** --- Constructors --- */
+    /* --- Constructors --- */
 
     public BillInfo() {}
 
@@ -49,7 +49,18 @@ public class BillInfo
         this.reprintOf = bill.getReprintOf();
     }
 
-    /** --- Basic Getters/Setters --- */
+    /* --- Functional Getters / Setters --- */
+
+    /**
+     * Indicates if the base amendment is published.
+     * @return boolean
+     */
+    public boolean isBaseVersionPublished() {
+        return (this.amendPublishStatusMap.containsKey(Version.DEFAULT) &&
+                this.amendPublishStatusMap.get(Version.DEFAULT).isPublished());
+    }
+
+    /* --- Basic Getters/Setters --- */
 
     public BillId getBillId() {
         return billId;

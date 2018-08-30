@@ -1,70 +1,71 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
 import gov.nysenate.openleg.client.view.agenda.CommAgendaIdView;
-import gov.nysenate.openleg.client.view.bill.BillActionView;
-import gov.nysenate.openleg.client.view.bill.BillAmendmentView;
-import gov.nysenate.openleg.client.view.bill.BillView;
+import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.base.MapView;
+import gov.nysenate.openleg.client.view.bill.*;
+import gov.nysenate.openleg.client.view.calendar.CalendarIdView;
+import gov.nysenate.openleg.client.view.committee.CommitteeIdView;
+import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
+import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.bill.BillVoteType;
+import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
-import gov.nysenate.openleg.util.OutputUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 /**
  * Created by Chenguang He on 2017/3/22.
- *  This service use to compare the difference between two branches of Openleg.
- *  It requires to pass in an API key to enable the comparision.
- *
+ * This service use to compare the difference between two branches of Openleg.
+ * It requires to pass in an API key to enable the comparision.
  */
 @Service("openlegBillCheck")
 public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, BillView, BillView> {
 
-    public SpotCheckObservation<BaseBillId> check(BillView content) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException("");
-    }
-
-    public SpotCheckObservation<BaseBillId> check(BillView content, LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx {
-        throw new NotImplementedException("");
-    }
-
     /**
      * Check the mismatch between openleg sobi-processing and xml-data-processing Bills
-     * @param content ContentType - The content to check
+     *
+     * @param content   ContentType - The content to check
      * @param reference ReferenceType - The reference content to use for comparison
      * @return The mismatches
      */
     @Override
-    public SpotCheckObservation<BaseBillId>  check(BillView content, BillView reference) {
-        final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<BaseBillId>(
+    public SpotCheckObservation<BaseBillId> check(BillView content, BillView reference) {
+        final SpotCheckObservation<BaseBillId> observation = new SpotCheckObservation<>(
                 new SpotCheckReferenceId(SpotCheckRefType.OPENLEG_BILL, LocalDateTime.now()),
                 reference.toBaseBillId());
-        if (content.getActiveVersion().equals(reference.getActiveVersion() ) ) {
+        if (content.getActiveVersion().equals(reference.getActiveVersion())) {
             checkBillTitle(content, reference, observation);
             checkBillSummary(content, reference, observation);
+            checkLawCode(content, reference, observation);
             checkBillLawSection(content, reference, observation);
             checkBillActions(content, reference, observation);
             checkBillSponsor(content, reference, observation);
             checkBillYear(content, reference, observation);
             checkBillStatus(content, reference, observation);
             checkAdditionalSponsors(content, reference, observation);
-            checkCoSponsors(content,reference,observation);
+            checkCoSponsors(content, reference, observation);
             checkMultisponsors(content, reference, observation);
             checkBillApproveMessage(content, reference, observation);
             checkVotes(content, reference, observation);
             checkCalendars(content, reference, observation);
             checkBillCommitteeAgendas(content, reference, observation);
             checkBillPastCommmittee(content, reference, observation);
-        }
-        else {
+        } else {
             checkActiveVersion(content, reference, observation);
         }
         return observation;
@@ -75,261 +76,210 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkActiveVersion(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(content.getActiveVersion(),reference.getActiveVersion(),obsrv,BILL_ACTIVE_AMENDMENT);
+        checkString(content.getActiveVersion(), reference.getActiveVersion(), obsrv, BILL_ACTIVE_AMENDMENT);
     }
 
     protected void checkBillSummary(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(content.getSummary(), reference.getSummary(), obsrv,BILL_SUMMARY );
+        checkString(content.getSummary(), reference.getSummary(), obsrv, BILL_SUMMARY);
+    }
+
+    private String getLawCode(BillView billView) {
+        return getActiveAmendOpt(billView)
+                .map(BillAmendmentView::getLawCode)
+                .map(StringUtils::deleteWhitespace)
+                .map(lawCode -> lawCode.replaceAll("Â§", "§"))
+                .orElse(null);
+    }
+
+    protected void checkLawCode(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obs) {
+        checkString(getLawCode(content), getLawCode(reference), obs, BILL_LAW_CODE);
+    }
+
+    private String formatLawSection(BillView billView) {
+        return getActiveAmendOpt(billView)
+                .map(BillAmendmentView::getLawSection)
+                .map(String::trim)
+                .map(section -> section.replaceAll("Â§", "§"))
+                .map(section -> section.replaceAll(" +", " "))
+                .orElse(null);
     }
 
     protected void checkBillLawSection(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        BillAmendmentView contentLatestAmendment = content.getAmendments().getItems().get(content.getActiveVersion());
-        BillAmendmentView referenceLatestAmendment = reference.getAmendments().getItems().get(reference.getActiveVersion());
-        if (referenceLatestAmendment != null && contentLatestAmendment != null) {
-            checkString(removeExcessWhitespace(contentLatestAmendment.getLawCode()),
-                    removeExcessWhitespace(referenceLatestAmendment.getLawCode())
-                            .replaceAll("Â§", "§"),
-                    obsrv, BILL_LAW_CODE);
-            checkString(contentLatestAmendment.getLawSection().trim(),
-                    referenceLatestAmendment.getLawSection().trim().
-                            replaceAll("Â§", "§")
-                            .replaceAll(" +", " "),obsrv,BILL_LAW_SECTION);
-        }
+        checkString(formatLawSection(content), formatLawSection(reference), obsrv, BILL_LAW_SECTION);
+    }
+
+    private String getActionStr(BillActionView actionView) {
+        BillAction action = actionView.toBillAction();
+        return String.join(" ",
+                String.valueOf(action.getSequenceNo()),
+                String.valueOf(action.getBillId()),
+                String.valueOf(action.getDate()),
+                String.valueOf(action.getChamber()),
+                String.valueOf(action.getText())
+        );
     }
 
     protected void checkBillActions(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        TreeMap<String, String> contentActionVersionDateMap = getActionVersionDateMap(content.getActions().getItems());
-        TreeMap<String, String> referenceActionVersionDateMap = getActionVersionDateMap(reference.getActions().getItems());
+        checkCollection(
+                extractListValue(content.getActions()),
+                extractListValue(reference.getActions()),
+                obsrv, BILL_ACTION, this::getActionStr, "\n");
+    }
 
-        checkString(contentActionVersionDateMap.toString(),referenceActionVersionDateMap.toString(),obsrv,BILL_ACTION);
-
-        List<BillActionView> contentBillActions = content.getActions().getItems();
-        List<BillActionView> referenceBillActions = content.getActions().getItems();
-        if ( contentBillActions.size() == referenceBillActions.size() ) {
-            for (int index = 0; index < contentBillActions.size(); index++) {
-                checkObject(contentBillActions.get(index), referenceBillActions.get(index), obsrv, BILL_ACTION);
-            }
-        }
-        else {
-            obsrv.addMismatch(new SpotCheckMismatch(BILL_ACTION, contentBillActions.size(), referenceBillActions.size()));
-        }
+    private String getSponsorString(BillView billView) {
+        Optional<SponsorView> sponsorOpt = Optional.ofNullable(billView.getSponsor());
+        return sponsorOpt.map(SponsorView::getMember).map(MemberView::getShortName).orElse(null) +
+                " budget:" + sponsorOpt.map(SponsorView::isBudget).orElse(null) +
+                " rules:" + sponsorOpt.map(SponsorView::isRules).orElse(null);
     }
 
     protected void checkBillSponsor(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getSponsor()),OutputUtils.toJson(reference.getSponsor()),obsrv,BILL_SPONSOR);
+        checkString(getSponsorString(content), getSponsorString(reference), obsrv, BILL_SPONSOR);
     }
 
     protected void checkAdditionalSponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getAdditionalSponsors()),OutputUtils.toJson(reference.getAdditionalSponsors()), obsrv, BILL_ADDITIONAL_SPONSOR_OPENLEG);
+        checkCollection(
+                extractListValue(content.getAdditionalSponsors()),
+                extractListValue(reference.getAdditionalSponsors()),
+                obsrv, BILL_ADDITIONAL_SPONSOR, MemberView::getShortName, "\n");
+    }
+
+    protected List<MemberView> extractActiveAmendSponsors(BillView bv,
+                                                          Function<BillAmendmentView, ListView<MemberView>> sponFunc) {
+        return getActiveAmendOpt(bv)
+                .map(sponFunc)
+                .map(this::extractListValue)
+                .orElse(null);
     }
 
     protected void checkCoSponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        boolean referenceCosponsors = true;
-        boolean contentCosponsors = true;
-
-        try {
-            content.getAmendments()
-                    .getItems()
-                    .get(content.getActiveVersion())
-                    .getCoSponsors();
-        }
-        catch (NullPointerException e) {
-            contentCosponsors = false;
-        }
-
-        try {
-            reference.getAmendments()
-                    .getItems()
-                    .get(reference.getActiveVersion())
-                    .getCoSponsors();
-        }
-        catch (NullPointerException e) {
-            contentCosponsors = false;
-        }
-
-        if (contentCosponsors && referenceCosponsors)  {
-            checkString(OutputUtils.toJson(content.getAmendments()
-                            .getItems()
-                            .get(content.getActiveVersion())
-                            .getCoSponsors()),
-                    OutputUtils.toJson(reference.getAmendments().
-                            getItems()
-                            .get(reference.getActiveVersion())
-                            .getCoSponsors()),
-                    obsrv, BILL_COSPONSOR);
-        }
-        else if (!contentCosponsors && referenceCosponsors) {
-            checkString(OutputUtils.toJson(""),
-                    OutputUtils.toJson(reference.getAmendments().
-                            getItems()
-                            .get(reference.getActiveVersion())
-                            .getCoSponsors()),
-                    obsrv, BILL_COSPONSOR);
-        }
-        else if (contentCosponsors && !referenceCosponsors) {
-            checkString(OutputUtils.toJson(content.getAmendments()
-                            .getItems()
-                            .get(content.getActiveVersion())
-                            .getCoSponsors()),
-                    OutputUtils.toJson(""),
-                    obsrv, BILL_COSPONSOR);
-        }
-
+        checkCollection(
+                extractActiveAmendSponsors(content, BillAmendmentView::getCoSponsors),
+                extractActiveAmendSponsors(reference, BillAmendmentView::getCoSponsors),
+                obsrv, BILL_COSPONSOR, MemberView::getShortName, "\n"
+        );
     }
 
     protected void checkMultisponsors(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        boolean referenceMultisponsors = true;
-        boolean contentMultisponsors = true;
-
-        try {
-            content.getAmendments()
-                    .getItems()
-                    .get(content.getActiveVersion())
-                    .getMultiSponsors();
-        }
-        catch (NullPointerException e) {
-            contentMultisponsors = false;
-        }
-
-        try {
-            reference.getAmendments()
-                    .getItems()
-                    .get(reference.getActiveVersion())
-                    .getMultiSponsors();
-        }
-        catch (NullPointerException e) {
-            contentMultisponsors= false;
-        }
-
-        if (contentMultisponsors && referenceMultisponsors)  {
-            checkString(OutputUtils.toJson(content.getAmendments()
-                            .getItems()
-                            .get(content.getActiveVersion())
-                            .getMultiSponsors()),
-                    OutputUtils.toJson(reference.getAmendments().
-                            getItems()
-                            .get(reference.getActiveVersion())
-                            .getMultiSponsors()),
-                    obsrv, BILL_MULTISPONSOR);
-        }
-        else if (!contentMultisponsors && referenceMultisponsors) {
-            checkString(OutputUtils.toJson(""),
-                    OutputUtils.toJson(reference.getAmendments().
-                            getItems()
-                            .get(reference.getActiveVersion())
-                            .getMultiSponsors()),
-                    obsrv, BILL_MULTISPONSOR);
-        }
-        else if (contentMultisponsors && !referenceMultisponsors) {
-            checkString(OutputUtils.toJson(content.getAmendments()
-                            .getItems()
-                            .get(content.getActiveVersion())
-                            .getCoSponsors()),
-                    OutputUtils.toJson(""),
-                    obsrv, BILL_MULTISPONSOR);
-        }
+        checkCollection(
+                extractActiveAmendSponsors(content, BillAmendmentView::getMultiSponsors),
+                extractActiveAmendSponsors(reference, BillAmendmentView::getMultiSponsors),
+                obsrv, BILL_MULTISPONSOR, MemberView::getShortName, "\n"
+        );
     }
 
     protected void checkBillYear(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(String.valueOf( content.getSession() ), String.valueOf( reference.getSession() ),obsrv,BILL_SESSION_YEAR);
+        checkObject(content.getSession(), reference.getSession(), obsrv, BILL_SESSION_YEAR);
     }
 
+    private String getStatusString(BillView billView) {
+        Optional<BillStatusView> statusOpt = Optional.ofNullable(billView.getStatus());
+        return String.join(" ",
+                statusOpt.map(BillStatusView::getActionDate).map(String::valueOf).orElse("null"),
+                statusOpt.map(BillStatusView::getStatusType).orElse("null"),
+                statusOpt.map(BillStatusView::getStatusDesc).orElse("null"),
+                statusOpt.map(BillStatusView::getCommitteeName).orElse("null"),
+                statusOpt.map(BillStatusView::getBillCalNo).map(String::valueOf).orElse("null")
+        );
+    }
 
     protected void checkBillStatus(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getStatus()),OutputUtils.toJson(reference.getStatus()), obsrv, BILL_LAST_STATUS );
+        checkString(getStatusString(content), getStatusString(reference), obsrv, BILL_LAST_STATUS);
+    }
+
+    private String getApprovalMessage(BillView billView) {
+        return Optional.ofNullable(billView.getApprovalMessage())
+                .map(ApprovalMessageView::getText)
+                .map(aprm -> aprm.replaceAll("\\\\n", ""))
+                .map(StringUtils::deleteWhitespace)
+                .orElse(null);
     }
 
     protected void checkBillApproveMessage(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        String contentApprMemo;
-        String referenceApprMemo;
-        try {
-            contentApprMemo = removeExcessWhitespace(content.getApprovalMessage().getText().replaceAll("\n","").replaceAll("\\\\n", "\n"));
-            referenceApprMemo = removeExcessWhitespace(reference.getApprovalMessage().getText().replaceAll("\n","").replaceAll("\\\\n", "\n"));
-            checkString(OutputUtils.toJson(contentApprMemo), OutputUtils.toJson(referenceApprMemo),obsrv,BILL_APPROVE_MESSAGE_OPENLEG );
+        checkString(getApprovalMessage(content), getApprovalMessage(reference), obsrv, BILL_APPROVAL_MESSAGE);
+    }
+
+    private StringBuilder getVoteStr(BillVoteView vote) {
+        StringBuilder sBuilder = new StringBuilder();
+        sBuilder.append(Optional.ofNullable(vote.getBillId()).map(BillIdView::toBillId).orElse(null))
+                .append(" ")
+                .append(vote.getVersion()).append(" ")
+                .append(vote.getVoteDate()).append(" ")
+                .append(vote.getVoteType()).append(" ");
+        if (vote.getVoteType() == BillVoteType.COMMITTEE) {
+            sBuilder.append(Optional.ofNullable(vote.getCommittee()).map(CommitteeIdView::getName).orElse(null));
         }
-        catch (NullPointerException e) {
-            //The Bill did not have an appr memo no need to do anything
+        Map<String, ListView<MemberView>> memberVoteMap = Optional.ofNullable(vote.getMemberVotes())
+                .map(MapView::getItems)
+                .orElse(new HashMap<>());
+        for (String voteCode : memberVoteMap.keySet()) {
+            sBuilder.append("\n").append(voteCode);
+            memberVoteMap.get(voteCode).getItems()
+                    .forEach(mv -> sBuilder.append("\n\t").append(mv.getShortName()));
         }
+        return sBuilder;
     }
 
     protected void checkVotes(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getVotes()),  OutputUtils.toJson(reference.getVotes()), obsrv,BILL_VOTES_OPENLEG);
+        checkCollection(
+                extractListValue(content.getVotes()),
+                extractListValue(reference.getVotes()),
+                obsrv, BILL_VOTE_ROLL, this::getVoteStr, "\n\n");
     }
 
     protected void checkCalendars(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getCalendars()),OutputUtils.toJson(reference.getCalendars()), obsrv,CALENDAR_OPENLEG);
+        checkCollection(
+                extractListValue(content.getCalendars()),
+                extractListValue(reference.getCalendars()),
+                obsrv, BILL_CALENDARS,
+                (calIdView) -> Optional.ofNullable(calIdView)
+                        .map(CalendarIdView::toCalendarId).map(CalendarId::toString).orElse("null"),
+                "\n");
+    }
+
+    private String getCommAgendaIdStr(CommAgendaIdView id) {
+        Optional<CommAgendaIdView> idOpt = Optional.ofNullable(id);
+        String agendaIdStr = idOpt.map(CommAgendaIdView::getAgendaId)
+                .map(aiv -> aiv.getYear() + "#" + aiv.getNumber())
+                .orElse("null");
+        String commIdStr = idOpt.map(CommAgendaIdView::getCommitteeId)
+                .map(civ -> civ.getChamber() + "-" + civ.getName())
+                .orElse("null");
+        return agendaIdStr + " " + commIdStr;
     }
 
     protected void checkBillCommitteeAgendas(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        ArrayList<CommAgendaIdView> contentCommAgendaIds = new ArrayList<>();
-        ArrayList<CommAgendaIdView> referenceCommAgendaIds = new ArrayList<>();
+        checkCollection(
+                extractListValue(content.getCommitteeAgendas()),
+                extractListValue(reference.getCommitteeAgendas()),
+                obsrv, BILL_COMMITTEE_AGENDAS, this::getCommAgendaIdStr, "\n", true
+        );
+    }
 
-        contentCommAgendaIds.addAll( content.getCommitteeAgendas().getItems() );
-        referenceCommAgendaIds.addAll( reference.getCommitteeAgendas().getItems() );
-
-        for (CommAgendaIdView refView: referenceCommAgendaIds) {
-            boolean matched = false;
-
-            for (CommAgendaIdView contentView: contentCommAgendaIds) {
-                boolean commName = false;
-                boolean chamber = false;
-                boolean number = false;
-                boolean year = false;
-
-                if (refView.getCommitteeId().getName().equals(contentView.getCommitteeId().getName())) {
-                    commName = true;
-                }
-
-                if (refView.getCommitteeId().getChamber().equals(contentView.getCommitteeId().getChamber())) {
-                    chamber = true;
-                }
-
-                if (refView.getAgendaId().getNumber() == contentView.getAgendaId().getNumber()) {
-                    number = true;
-                }
-
-                if (refView.getAgendaId().getYear() == contentView.getAgendaId().getYear()) {
-                    year = true;
-                }
-
-                if (commName && chamber && number && year) {
-                    matched = true;
-                }
-            }
-
-            if (!matched) {
-                checkString(OutputUtils.toJson(contentCommAgendaIds), OutputUtils.toJson(referenceCommAgendaIds),
-                        obsrv,BILL_COMMITTEE_AGENDAS_OPENLEG );
-                return;
-            }
-        }
-
-
+    private String getCommVerIdStr(CommitteeVersionIdView cvid) {
+        return cvid.getChamber() + " " + cvid.getName() + " " + cvid.getSessionYear() + " " + cvid.getReferenceDate();
     }
 
     protected void checkBillPastCommmittee(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(OutputUtils.toJson(content.getPastCommittees()),OutputUtils.toJson(reference.getPastCommittees()), obsrv,BILL_PAST_COMMITTEE_OPENLEG);
+        checkCollection(
+                extractListValue(content.getPastCommittees()),
+                extractListValue(reference.getPastCommittees()),
+                obsrv, BILL_PAST_COMMITTEES, this::getCommVerIdStr, "\n"
+        );
     }
 
-    private TreeMap<String, String> getActionVersionDateMap(List<BillActionView> billActions) {
-        TreeMap<String, String> actionVersionDateMap = new TreeMap<>();
-
-        for (BillActionView billAction: billActions) {
-            String version = billAction.getBillId().getVersion();
-            String date = billAction.getDate();
-
-            if (!actionVersionDateMap.containsKey(date)) {
-                actionVersionDateMap.put(date, version);
-            }
-            else if (actionVersionDateMap.containsKey(date) ) {
-                actionVersionDateMap.replace(date,version);
-            }
-
+    private Optional<BillAmendmentView> getActiveAmendOpt(BillView billView) {
+        Optional<String> activeVersionOpt = Optional.ofNullable(billView.getActiveVersion());
+        if (!activeVersionOpt.isPresent()) {
+            return Optional.empty();
         }
-        return actionVersionDateMap;
+
+        return Optional.ofNullable(billView.getAmendments())
+                .map(MapView::getItems)
+                .map(amendMap -> amendMap.get(activeVersionOpt.get()));
     }
 
-    private String removeExcessWhitespace(String input) {
-        return StringUtils.deleteWhitespace(input);
+    private <T> List<T> extractListValue(ListView<T> listView) {
+        return Optional.ofNullable(listView).map(ListView::getItems).orElse(null);
     }
 }

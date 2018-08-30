@@ -1,15 +1,20 @@
 package gov.nysenate.openleg.service.spotcheck.openleg;
 
-import com.google.common.collect.Sets;
 import gov.nysenate.openleg.client.view.bill.BillView;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.bill.reference.openleg.OpenlegBillDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.bill.BillInfo;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
+import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,36 +23,38 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-
-import java.util.List;
 import java.util.Set;
-
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
 
 /**
  * Created by Chenguang He on 2017/3/20.
  * This service is used to report the difference of two openleg branches.
  */
 @Service("openlegBillReport")
-
 public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBillId> {
+
     private static final Logger logger = LoggerFactory.getLogger(OpenlegBillReportService.class);
 
-    @Autowired
-    private SpotCheckReportDao<BaseBillId> reportDao;
+    /** Throttles the number of bills retrieved at once from the ref. api to reduce memory footprint. */
+    private static final int billRetrievalLimit = 100;
+
+    private final SpotCheckReportDao<BaseBillId> reportDao;
+    private final OpenlegBillDao openlegBillDao;
+    private final BillDataService billDataService;
+    private final OpenlegBillCheckService checkService;
+    private final Environment env;
 
     @Autowired
-    private OpenlegBillDao openlegBillDao;
-
-    @Autowired
-    private BillDataService billDataService;
-
-    @Autowired
-    OpenlegBillCheckService checkService;
-
-    @Autowired
-    Environment env;
+    public OpenlegBillReportService(SpotCheckReportDao<BaseBillId> reportDao,
+                                    OpenlegBillDao openlegBillDao,
+                                    BillDataService billDataService,
+                                    OpenlegBillCheckService checkService,
+                                    Environment env) {
+        this.reportDao = reportDao;
+        this.openlegBillDao = openlegBillDao;
+        this.billDataService = billDataService;
+        this.checkService = checkService;
+        this.env = env;
+    }
 
     @Override
     protected SpotCheckReportDao<BaseBillId> getReportDao() {
@@ -60,82 +67,75 @@ public class OpenlegBillReportService extends BaseSpotCheckReportService<BaseBil
     }
 
     /**
-     * generate report of difference between xml-processing bill and sobi-processing bill.
+     * Generate report checking against bills from another openleg instance.
      *
      * @param start LocalDateTime - The session year
      * @param end   LocalDateTime -  Not in use
-     * @return the mismatch
-     * @throws Exception exception
+     * @return {@link SpotCheckReport<BaseBillId>}
      */
     @Override
-    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
+    public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) {
         // Create a new report instance
-        logger.info("Start generating new report of difference between Openleg Ref and XML branch ");
-        SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.OPENLEG_BILL,
                 LocalDateTime.now(),
                 LocalDateTime.now());
-        report.setReportId(reportId);
-        logger.info("Loading BillView from Openleg reference");
-        logger.info("The current session year is " + SessionYear.of( start.getYear() ) );
-        int totalRefBills = openlegBillDao.getTotalRefBillsForSessionYear(start.getYear(), env.getOpenlegRefApiKey());
-        int offsetRefBills = 0;
+        SpotCheckReport<BaseBillId> report = new SpotCheckReport<>(reportId);
 
-        //Fetching Bill from Openleg Source branch
-        Set<BaseBillId> localBill = new HashSet<>();
-        localBill.addAll( billDataService.getBillIds(SessionYear.of(start.getYear()), LimitOffset.ALL));
+        SessionYear sessionYear = SessionYear.of(start);
 
+        logger.info("Running Bill Spotcheck against {} for {} session...", env.getOpenlegRefUrl(), sessionYear);
 
-        while (offsetRefBills < totalRefBills) {
+        // Get a set of all local bill ids for the session for tracking ref. missing mismatches.
+        Set<BaseBillId> localBillIds = new HashSet<>(billDataService.getBillIds(sessionYear, LimitOffset.ALL));
 
-            List<BillView> referenceBillViews = openlegBillDao.getOpenlegBillView(String.valueOf(start.getYear()), env.getOpenlegRefApiKey(), offsetRefBills);
-            if (referenceBillViews.isEmpty()) {
-                throw new ReferenceDataNotFoundEx("The collection of sobi bills with the given session year " + SessionYear.of( start.getYear() )  + " is empty.");
-            }
+        // Initialize to 1 but set to the real value once a response has been read.
+        int totalRefBills = 1;
 
-            //Get BaseBillId of BillView from Openleg reference by iterating through them
-            logger.info("Check the symmetric diff...");
-            Set<BaseBillId> refBill = new HashSet<>();
+        // Go through all bills of the session in paginated increments.
+        for (LimitOffset limoff = new LimitOffset(billRetrievalLimit);
+             limoff.getOffsetStart() <= totalRefBills;
+             limoff = limoff.next()) {
 
-            for (BillView sobiBill : referenceBillViews) {
-                refBill.add(sobiBill.toBaseBillId());
-            }
-            logger.info("Retrieved " + refBill.size()+" bills in Openleg-Ref");
+            // Get bills from ref. API
+            PaginatedList<BillView> paginatedBillViews = openlegBillDao.getBillViews(sessionYear, limoff);
+            // Set the total based on the response.
+            totalRefBills = paginatedBillViews.getTotal();
 
+            logger.info("Checking bills {} - {} of {}",
+                    limoff.getOffsetStart(), limoff.getOffsetEnd(), totalRefBills);
 
-            Set<BaseBillId> diffBill = new HashSet<>(); // the collection of bills which only appears in both ref or source
-
-            for (BaseBillId refBillId:refBill) {
-                SpotCheckObservation<BaseBillId> sourceMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), refBillId);
-                if (!localBill.contains(refBillId)) {
-                    localBill.remove(refBillId);
-                    sourceMissingObs.addMismatch(new SpotCheckMismatch(OBSERVE_DATA_MISSING, refBillId, "Missing Data from Openleg XML, ID:" + refBillId.getBasePrintNo()));
-                    report.addObservation(sourceMissingObs);
+            // Check each bill in the result.
+            for (BillView refBill : paginatedBillViews.getResults()) {
+                BaseBillId baseBillId = refBill.toBaseBillId();
+                try {
+                    if (!localBillIds.contains(baseBillId)) {
+                        throw new BillNotFoundEx(baseBillId);
+                    }
+                    BillView localBill = new BillView(billDataService.getBill(baseBillId));
+                    SpotCheckObservation<BaseBillId> obs = checkService.check(localBill, refBill);
+                    report.addObservation(obs);
+                    // Remove this bill from localBillIds to indicate it was present in ref. bills.
+                    localBillIds.remove(baseBillId);
+                } catch (BillNotFoundEx ex) {
+                    // Add data missing mismatch if the bill was not found locally.
+                    report.addObservedDataMissingObs(baseBillId);
                 }
-                else {
-                    localBill.remove(refBillId);
-                    diffBill.add(refBillId);
-                }
             }
-
-
-            logger.info("Comparing Bill from Openleg Source branch by iterating BaseBillId of BillView from Openleg Ref");
-            for (BillView sobiBill : referenceBillViews) {
-                if (!diffBill.contains(sobiBill.toBaseBillId())) // if current bill appears in both dev and xml.
-                    continue;
-                SpotCheckObservation<BaseBillId> observation = checkService.check(new BillView(billDataService.getBill(sobiBill.toBaseBillId())),sobiBill);
-
-                report.addObservation(observation);
-            }
-
-            offsetRefBills = offsetRefBills + 1000;
         }
 
-        for (BaseBillId refMissingId: localBill) {
-            SpotCheckObservation<BaseBillId> refMissingObs = new SpotCheckObservation<>(reportId.getReferenceId(), refMissingId);
-            refMissingObs.addMismatch(new SpotCheckMismatch(REFERENCE_DATA_MISSING, refMissingId, "Missing Data from Openleg Ref, ID:" + refMissingId.getBasePrintNo()));
+        // Set any remaining unchecked local bill ids as ref. missing mismatches
+        for (BaseBillId id : localBillIds) {
+            if (report.getObservations().containsKey(id)) {
+                throw new IllegalStateException(id + " is supposedly not checked, but an observation for it exists");
+            }
+            BillInfo billInfo = billDataService.getBillInfo(id);
+            if (billInfo.isBaseVersionPublished()) {
+                report.addRefMissingObs(id);
+            } else {
+                report.addEmptyObservation(id);
+            }
         }
-        logger.info("Found total number of " + report.getOpenMismatchCount(false) + " mismatches");
+
         return report;
     }
 

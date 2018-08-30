@@ -21,7 +21,7 @@ public class AgendaAttendanceView implements ViewObject
     }
 
     //Added for Json Deserialization
-    public AgendaAttendanceView() {}
+    protected AgendaAttendanceView() {}
 
     public MemberView getMember() {
         return member;
@@ -42,10 +42,5 @@ public class AgendaAttendanceView implements ViewObject
     @Override
     public String getViewType() {
         return "agenda-attendance";
-    }
-
-    //Added for Json Deserialization
-    public void setMember(MemberView member) {
-        this.member = member;
     }
 }
