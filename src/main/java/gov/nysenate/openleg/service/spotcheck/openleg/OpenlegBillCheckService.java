@@ -199,7 +199,7 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
         checkString(getApprovalMessage(content), getApprovalMessage(reference), obsrv, BILL_APPROVAL_MESSAGE);
     }
 
-    private StringBuilder getVoteStr(BillVoteView vote) {
+    private StringBuilder getVoteInfoStr(BillVoteView vote) {
         StringBuilder sBuilder = new StringBuilder();
         sBuilder.append(Optional.ofNullable(vote.getBillId()).map(BillIdView::toBillId).orElse(null))
                 .append(" ")
@@ -207,8 +207,14 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
                 .append(vote.getVoteDate()).append(" ")
                 .append(vote.getVoteType()).append(" ");
         if (vote.getVoteType() == BillVoteType.COMMITTEE) {
-            sBuilder.append(Optional.ofNullable(vote.getCommittee()).map(CommitteeIdView::getName).orElse(null));
+            sBuilder.append(Optional.ofNullable(vote.getCommittee())
+                    .map(CommitteeIdView::getName).orElse(null));
         }
+        return sBuilder;
+    }
+
+    private StringBuilder getVoteRollStr(BillVoteView vote) {
+        StringBuilder sBuilder = getVoteInfoStr(vote);
         Map<String, ListView<MemberView>> memberVoteMap = Optional.ofNullable(vote.getMemberVotes())
                 .map(MapView::getItems)
                 .orElse(new HashMap<>());
@@ -221,10 +227,13 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkVotes(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkCollection(
-                extractListValue(content.getVotes()),
-                extractListValue(reference.getVotes()),
-                obsrv, BILL_VOTE_ROLL, this::getVoteStr, "\n\n");
+        List<BillVoteView> contentVotes = extractListValue(content.getVotes());
+        List<BillVoteView> refVotes = extractListValue(reference.getVotes());
+        checkCollection(contentVotes, refVotes, obsrv, BILL_VOTE_INFO, this::getVoteInfoStr, "\n");
+        // Only check for vote roll if there is no vote info mismatch.
+        if (!obsrv.hasMismatch(BILL_VOTE_INFO)) {
+            checkCollection(contentVotes, refVotes, obsrv, BILL_VOTE_ROLL, this::getVoteRollStr, "\n\n");
+        }
     }
 
     protected void checkCalendars(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
