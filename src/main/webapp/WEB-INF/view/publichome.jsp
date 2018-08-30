@@ -45,7 +45,7 @@
       <h2 class="project-desc-label" id="dataweprovide">Data We Provide</h2>
       <div class="regular-container">
         <div class="project-desc">
-          <md-list layout-gt-sm="row" layout-wrap>
+          <md-list layout="column" layout-gt-sm="row" layout-wrap>
             <md-list-item flex="50" class="provide-data-container md-3-line" ng-repeat="provideData in dataWeProvide"
                           ng-click="goToDocsPage(provideData.docsPage)">
               <div class="provide-data-icon" ng-class="provideData.bgclass">
