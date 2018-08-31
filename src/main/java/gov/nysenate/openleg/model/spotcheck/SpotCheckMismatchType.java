@@ -80,8 +80,8 @@ public enum SpotCheckMismatchType {
     CALENDAR_ID("Calendar Id", SENATE_SITE_CALENDAR),
 
     /* --- Floor / Supplemental mismatches --- */
-    SUPPLEMENTAL_ENTRY("Supplemental Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_CALENDAR),
-    FLOOR_ENTRY("Floor Entry", SENATE_SITE_CALENDAR),
+    SUPPLEMENTAL_ENTRY("Supplemental Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_CALENDAR, OPENLEG_CAL),
+    FLOOR_ENTRY("Floor Entry", SENATE_SITE_CALENDAR, OPENLEG_CAL),
 
     FLOOR_CAL_DATE("Floor Calendar Date", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
     FLOOR_CAL_YEAR("Floor Calendar Year", OPENLEG_CAL),
@@ -90,18 +90,13 @@ public enum SpotCheckMismatchType {
 
     /* --- Active list mismatches --- */
     ACTIVE_LIST_CAL_DATE("Active List Calendar Date", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
-    ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_BILLS),
+    ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_BILLS, OPENLEG_CAL),
 
     /* --- Active List data mismatches --- */
     ACTIVE_LIST_RELEASE_DATE_TIME("Active List Release Time", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
     ACTIVE_LIST_NOTES("Active List Notes", OPENLEG_CAL),
-    ACTIVE_LIST_VIEW_TYPE("Active List View Type", OPENLEG_CAL),
-    ACTIVE_LIST_SEQUENCE_NUMBER("Active List Sequence Number", OPENLEG_CAL),
-    ACTIVE_LIST_BILL_CAL_NUMBER("Active List Bill Cal Number", OPENLEG_CAL),
-    ACTIVE_LIST_SELECTED_VERSION("Active List Selected Version", OPENLEG_CAL),
 
-    ACTIVE_LIST_CALENDAR_MISMATCH("Active List Calendar Data", LBDC_CALENDAR_ALERT),
-    ACTIVE_LIST_ENTRY_MISMATCH("Active List Cal Entry", LBDC_CALENDAR_ALERT, OPENLEG_CAL);
+    ;
 
     private String displayName;
     Set<SpotCheckRefType> refTypes;
