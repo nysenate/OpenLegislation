@@ -14,6 +14,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -50,6 +51,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
     private String extractChair(AgendaCommAddendumView acav) {
         return Optional.ofNullable(acav.getMeeting())
                 .map(AgendaMeetingView::getChair)
+                .map(StringUtils::normalizeSpace)
                 .orElse(null);
     }
 
@@ -63,6 +65,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
     private String extractLocation(AgendaCommAddendumView acav) {
         return Optional.ofNullable(acav.getMeeting())
                 .map(AgendaMeetingView::getLocation)
+                .map(StringUtils::normalizeSpace)
                 .orElse(null);
     }
 
@@ -89,6 +92,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
     private String extractNotes(AgendaCommAddendumView acav) {
         return Optional.ofNullable(acav.getMeeting())
                 .map(AgendaMeetingView::getNotes)
+                .map(StringUtils::normalizeSpace)
                 .orElse(null);
     }
 
@@ -101,13 +105,13 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
 
     private String agendaItemViewStr(AgendaItemView aiv) {
         String billIdStr = getBillIdStr(aiv.getBillId());
-        return billIdStr + " - " + aiv.getMessage();
+        return billIdStr + " - " + StringUtils.normalizeSpace(aiv.getMessage());
     }
 
-    Comparator<AgendaItemView> agendaItemViewComparator =
+    private Comparator<AgendaItemView> agendaItemViewComparator =
             Comparator.comparing(a -> Optional.ofNullable(a.getBillId()).map(BillIdView::toBillId).orElse(null));
 
-    List<AgendaItemView> extractBillList(AgendaCommAddendumView acav) {
+    private List<AgendaItemView> extractBillList(AgendaCommAddendumView acav) {
         return Optional.ofNullable(acav.getBills())
                 .map(ListView::getItems)
                 .orElseGet(ImmutableList::of).stream()

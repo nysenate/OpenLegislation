@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -130,7 +131,10 @@ public class OpenlegCalendarCheckService
 
     protected void checkActiveListNotes(ActiveListView content, ActiveListView reference,
                                         SpotCheckObservation<CalendarEntryListId> observation) {
-        checkObject(content.getNotes(), reference.getNotes(), observation, ACTIVE_LIST_NOTES);
+        checkObject(
+                StringUtils.normalizeSpace(content.getNotes()),
+                StringUtils.normalizeSpace(reference.getNotes()),
+                observation, ACTIVE_LIST_NOTES);
     }
 
     protected void checkActiveListCalendarEntryViews(ActiveListView content, ActiveListView reference,

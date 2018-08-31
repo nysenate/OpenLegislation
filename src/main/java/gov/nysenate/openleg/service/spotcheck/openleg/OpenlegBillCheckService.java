@@ -72,7 +72,10 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillTitle(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(content.getTitle(), reference.getTitle(), obsrv, BILL_TITLE);
+        checkString(
+                StringUtils.normalizeSpace(content.getTitle()),
+                StringUtils.normalizeSpace(reference.getTitle()),
+                obsrv, BILL_TITLE);
     }
 
     protected void checkActiveVersion(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
@@ -80,7 +83,10 @@ public class OpenlegBillCheckService extends BaseSpotCheckService<BaseBillId, Bi
     }
 
     protected void checkBillSummary(BillView content, BillView reference, SpotCheckObservation<BaseBillId> obsrv) {
-        checkString(content.getSummary(), reference.getSummary(), obsrv, BILL_SUMMARY);
+        checkString(
+                StringUtils.normalizeSpace(content.getSummary()),
+                StringUtils.normalizeSpace(reference.getSummary()),
+                obsrv, BILL_SUMMARY);
     }
 
     private String getLawCode(BillView billView) {
