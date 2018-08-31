@@ -88,7 +88,8 @@ public abstract class ElasticBaseDao
      */
     protected SearchRequest getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
                                                     List<SortBuilder> sort, LimitOffset limitOffset) {
-        return getSearchRequest(indexName, query, postFilter, null, null, sort, limitOffset, false);
+        return getSearchRequest(indexName, query, postFilter,
+                null, null, sort, limitOffset, false);
     }
 
     /**
@@ -104,9 +105,14 @@ public abstract class ElasticBaseDao
      * @param fetchSource - Will return the indexed source fields when set to true.
      * @return SearchRequest
      */
-    protected SearchRequest getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
-                                                    List<HighlightBuilder.Field> highlightedFields, RescorerBuilder rescorer,
-                                                    List<SortBuilder> sort, LimitOffset limitOffset, boolean fetchSource) throws ElasticsearchException {
+    protected SearchRequest getSearchRequest(String indexName,
+                                             QueryBuilder query,
+                                             QueryBuilder postFilter,
+                                             List<HighlightBuilder.Field> highlightedFields,
+                                             RescorerBuilder rescorer,
+                                             List<SortBuilder> sort,
+                                             LimitOffset limitOffset,
+                                             boolean fetchSource) throws ElasticsearchException {
 
         if (indexIsEmpty(indexName)){
             throw new ElasticsearchException("Error: attempting to search on empty index \"" + indexName + "\".");
@@ -183,7 +189,7 @@ public abstract class ElasticBaseDao
             }
         }
         catch(IOException ex){
-            logger.warn("Get request failed.", ex);
+            throw new ElasticsearchException("Get request failed.", ex);
         }
         return Optional.empty();
     }
@@ -199,20 +205,20 @@ public abstract class ElasticBaseDao
                 searchClient.bulk(bulkRequest);
             }
             catch (IOException ex){
-                logger.warn("Bulk request failed.", ex);
+                throw new ElasticsearchException("Bulk request failed", ex);
             }
         }
     }
 
     protected void deleteEntry(String indexName, String id) {
         DeleteRequest deleteRequest = new DeleteRequest(indexName)
-        .type(defaultType)
-        .id(id);
+                .type(defaultType)
+                .id(id);
         try {
             searchClient.delete(deleteRequest);
         }
         catch (IOException ex){
-            logger.warn("Delete request failed.", ex);
+            throw new ElasticsearchException("Delete request failed.", ex);
         }
     }
 
@@ -223,9 +229,8 @@ public abstract class ElasticBaseDao
             return searchClient.indices().exists(getIndexRequest);
         }
         catch (IOException ex){
-            logger.warn("Exist request failed.", ex);
+            throw new ElasticsearchException("Exist request failed.", ex);
         }
-        return false;
     }
 
     protected void createIndex(String indexName) {
@@ -234,7 +239,7 @@ public abstract class ElasticBaseDao
             searchClient.indices().create(createIndexRequest);
         }
         catch (IOException ex){
-            logger.warn("Create index request failed.", ex);
+            throw new ElasticsearchException("Create index request failed.", ex);
         }
     }
 
@@ -266,7 +271,7 @@ public abstract class ElasticBaseDao
             logger.info("Cannot delete index {} because it doesn't exist.", index);
         }
         catch (IOException ex){
-            logger.warn("Delete index request failed.", ex);
+            throw new ElasticsearchException("Delete index request failed.", ex);
         }
     }
 
@@ -295,7 +300,10 @@ public abstract class ElasticBaseDao
      */
     private boolean indexIsEmpty(String indexName){
         try {
-            InputStream responseStream = searchClient.getLowLevelClient().performRequest("GET", COUNT_API + indexName + "?v").getEntity().getContent();
+            InputStream responseStream = searchClient.getLowLevelClient()
+                    .performRequest("GET", COUNT_API + indexName + "?v")
+                    .getEntity()
+                    .getContent();
             byte[] isIndexEmpty = new byte[1];
             // Read past the unnecessary data to get to the count of documents in the specified index.
             // If the first byte of this number is the character 0, then the index must be empty.
