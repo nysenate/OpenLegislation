@@ -21,6 +21,7 @@ import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpHost;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
@@ -111,30 +112,31 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
     public RestHighLevelClient elasticSearchNode() throws InterruptedException {
 
         int retryCount = 0;
-        Exception cause;
         RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
                 new HttpHost(elasticSearchHost, elasticSearchPort, "http")));
 
-        do {
+        while (true) {
             logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
             try {
-                client.ping();
+                // Test the connection with a ping.
+                if (!client.ping()) {
+                    throw new ElasticsearchException("Could not ping elasticsearch cluster.");
+                }
                 logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
                 return client;
-            } catch (IOException ex){
+            } catch (IOException | ElasticsearchException ex){
                 logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
                 logger.warn("{} retries remain.", esAllowedRetries - retryCount);
-                cause = ex;
-                retryCount++;
-                Thread.sleep(1000);
+                if (retryCount >= esAllowedRetries) {
+                    logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
+                            elasticSearchCluster, elasticSearchHost, elasticSearchPort);
+                    logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
+                    throw new ElasticsearchException("Elasticsearch connection retries exceeded", ex);
+                }
             }
-        } while (retryCount <= esAllowedRetries);
-
-        logger.error("Error while initializing elasticsearch client:\n" + ExceptionUtils.getStackTrace(cause));
-        logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
-                elasticSearchCluster, elasticSearchHost, elasticSearchPort);
-        logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
-        return null;
+            retryCount++;
+            Thread.sleep(1000);
+        }
     }
 
     /** --- Guava Event Bus Configuration --- */
