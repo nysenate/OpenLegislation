@@ -3,10 +3,10 @@ package gov.nysenate.openleg.service.bill.search;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.bill.search.ElasticBillSearchDao;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -18,8 +18,9 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.ElasticsearchStatusException;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.SearchParseException;
 import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.slf4j.Logger;
@@ -207,12 +208,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.BILL)) {
             logger.info("Handling bill re-index event!");
-            try {
-                rebuildIndex();
-            }
-            catch (Exception ex) {
-                logger.error("Unexpected exception during handling of Bill RebuildIndexEvent!", ex);
-            }
+            rebuildIndex();
         }
     }
 

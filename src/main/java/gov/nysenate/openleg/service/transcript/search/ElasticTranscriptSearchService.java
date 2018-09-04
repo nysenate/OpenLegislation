@@ -166,12 +166,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.TRANSCRIPT)) {
             logger.info("Handling transcript re-index event.");
-            try {
-                rebuildIndex();
-            }
-            catch (Exception ex) {
-                logger.error("Unexpected exception during handling of transcript index rebuild event.", ex);
-            }
+            rebuildIndex();
         }
     }
 

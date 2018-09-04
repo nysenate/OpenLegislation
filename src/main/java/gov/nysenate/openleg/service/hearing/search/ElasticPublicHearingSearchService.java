@@ -166,11 +166,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.HEARING)) {
             logger.info("Handling public hearing re-index event.");
-            try {
-                rebuildIndex();
-            } catch (Exception ex) {
-                logger.error("Unexpected exception during handling of public hearing index rebuild event.", ex);
-            }
+            rebuildIndex();
         }
     }
 

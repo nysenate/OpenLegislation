@@ -138,11 +138,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.MEMBER)) {
             logger.info("Handling member re-index event");
-            try {
-                rebuildIndex();
-            } catch (Exception ex) {
-                logger.error("Unexpected exception during handling of member index rebuild event.", ex);
-            }
+            rebuildIndex();
         }
     }
 
