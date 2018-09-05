@@ -10,12 +10,7 @@ import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.search.SearchResults;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -23,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,41 +33,14 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     @Override
     public SearchResults<AgendaId> searchAgendas(QueryBuilder query, QueryBuilder postFilter,
                                                  List<SortBuilder> sort, LimitOffset limOff) {
-        SearchResponse response = searchAgendasResponse(query, postFilter, sort, limOff);
-        logger.debug("Agenda Search result with query {} took {} ms", query, response.getTook().getMillis());
-        return getSearchResults(response, limOff, this::getAgendaIdFromHit);
-    }
-
-    /**
-     * Helper method to generate a SearchResponse.
-     */
-    private SearchResponse searchAgendasResponse(QueryBuilder query, QueryBuilder postFilter,
-                                                           List<SortBuilder> sort, LimitOffset limOff){
-        SearchRequest searchRequest = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
-        try {
-            return searchClient.search(searchRequest);
-        }
-        catch (IOException ex){
-            logger.error("Search Agendas request failed.", ex);
-        }
-        return new SearchResponse();
+        return search(agendaIndexName, query, postFilter, sort, limOff, this::getAgendaIdFromHit);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, QueryBuilder postFilter,
                                                                    List<SortBuilder> sort, LimitOffset limOff) {
-        SearchResponse response = searchAgendasResponse(query, postFilter, sort, limOff);
-        logger.debug("Committee Agenda search result with query {} took {} ms", query, response.getTook().getMillis());
-        return getSearchResults(response, limOff, (hit) ->
-            new CommitteeAgendaId(
-                getAgendaIdFromHit(hit), new CommitteeId(Chamber.SENATE, hit.getId().split("-")[2]))
-        );
-    }
-
-    private AgendaId getAgendaIdFromHit(SearchHit hit) {
-        String[] id = hit.getId().split("-");
-        return new AgendaId(Integer.parseInt(id[1]), Integer.parseInt(id[0]));
+        return search(agendaIndexName, query, postFilter, sort, limOff, this::getCommAgendaIdFromHit);
     }
 
     /** {@inheritDoc} */
@@ -85,20 +52,9 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     /** {@inheritDoc} */
     @Override
     public void updateAgendaIndex(Collection<Agenda> agendas) {
-        if (!agendas.isEmpty()) {
-            BulkRequest request = new BulkRequest();
-            agendas.forEach(agenda ->
-                agenda.getCommittees().stream()
-                    .map(cid -> new AgendaCommFlatView(agenda, cid, null))
-                    .forEach(cfv ->
-                        request.add(
-                            new IndexRequest(agendaIndexName,
-                                defaultType, agenda.getId().getYear() + "-" +
-                                    cfv.getAgenda().getId().getNumber() + "-" +
-                                    cfv.getCommittee().getCommitteeId().getName())
-                            .source(OutputUtils.toElasticsearchJson(cfv), XContentType.JSON))));
-            safeBulkRequestExecute(request);
-        }
+        BulkRequest request = new BulkRequest();
+        agendas.forEach(agenda -> addAgendaToBulkIndex(agenda, request));
+        safeBulkRequestExecute(request);
     }
 
     /** {@inheritDoc} */
@@ -112,5 +68,33 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     @Override
     protected List<String> getIndices() {
         return Collections.singletonList(agendaIndexName);
+    }
+
+    /* --- Internal Methods --- */
+
+    private AgendaId getAgendaIdFromHit(SearchHit hit) {
+        String[] id = hit.getId().split("-");
+        return new AgendaId(Integer.parseInt(id[1]), Integer.parseInt(id[0]));
+    }
+
+    private CommitteeAgendaId getCommAgendaIdFromHit(SearchHit hit) {
+        return new CommitteeAgendaId(
+                getAgendaIdFromHit(hit), new CommitteeId(Chamber.SENATE, hit.getId().split("-")[2]));
+    }
+
+    private String toElasticId(CommitteeAgendaId commAgendaId) {
+        AgendaId agendaId = commAgendaId.getAgendaId();
+        CommitteeId commId = commAgendaId.getCommitteeId();
+        return agendaId.getYear() + "-" +
+                agendaId.getNumber() + "-" +
+                commId.getName();
+    }
+
+    private void addAgendaToBulkIndex(Agenda agenda, BulkRequest request) {
+        agenda.getCommittees().stream()
+                .map(cid -> getJsonIndexRequest(agendaIndexName,
+                        toElasticId(new CommitteeAgendaId(agenda.getId(), cid)),
+                        new AgendaCommFlatView(agenda, cid, null)))
+                .forEach(request::add);
     }
 }

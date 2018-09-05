@@ -7,12 +7,7 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.law.LawDocId;
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.search.SearchResults;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -22,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,17 +39,10 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     @Override
     public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder postFilter,
                                                  RescorerBuilder rescorer, List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequest searchRequest =
-            getSearchRequest(lawIndexName, query, postFilter, highlightFields, rescorer, sort, limOff, true);
-        SearchResponse searchResponse = new SearchResponse();
-        try {
-            searchResponse = searchClient.search(searchRequest);
-        }
-        catch (IOException ex){
-            logger.error("Search Law request failed.", ex);
-        }
-
-        return getSearchResults(searchResponse, limOff, this::getLawDocIdFromHit);
+        return search(lawIndexName, query, postFilter,
+                highlightFields, rescorer,
+                sort, limOff,
+                true, this::getLawDocIdFromHit);
     }
 
     /** {@inheritDoc} */
@@ -71,11 +58,9 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     public void updateLawIndex(Collection<LawDocument> lawDocs) {
         if (lawDocs != null && !lawDocs.isEmpty()) {
             BulkRequest bulkRequest = new BulkRequest();
-            lawDocs.stream().map(LawDocView::new).forEach(docView -> {
-                bulkRequest.add(
-                    new IndexRequest(lawIndexName, defaultType, docView.getLawId() + createSearchId(docView))
-                                .source(OutputUtils.toElasticsearchJson(docView), XContentType.JSON));
-            });
+            lawDocs.stream().map(LawDocView::new)
+                    .map(docView -> getJsonIndexRequest(lawIndexName, createSearchId(docView), docView))
+                    .forEach(bulkRequest::add);
             safeBulkRequestExecute(bulkRequest);
         }
     }
@@ -94,7 +79,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
         return Collections.singletonList(lawIndexName);
     }
 
-    /** --- Internal --- */
+    /* --- Internal --- */
 
     private LawDocId getLawDocIdFromHit(SearchHit hit) {
         String docId = hit.getId();

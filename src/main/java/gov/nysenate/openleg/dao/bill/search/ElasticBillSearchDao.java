@@ -8,12 +8,7 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.search.SearchResults;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -24,12 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.context.request.WebRequest;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDao
@@ -49,18 +42,9 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     @Override
     public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder rescorer,
                                                  List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequest request =
-            getSearchRequest(billIndexName, query, postFilter, highlightedFields, rescorer, sort, limOff, false);
-        SearchResponse response = new SearchResponse();
-        try {
-            response = searchClient.search(request);
-        }
-        catch (IOException ex){
-            logger.error("Search Bills request failed.", ex);
-        }
-
-        logger.debug("Bill search result with query {} took {} ms", query, response.getTook().getMillis());
-        return getSearchResults(response, limOff, this::getBaseBillIdFromHit);
+        return search(billIndexName, query, postFilter,
+                highlightedFields, rescorer, sort, limOff,
+                false, this::getBaseBillIdFromHit);
     }
 
     /** {@inheritDoc} */
@@ -72,27 +56,19 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     /** {@inheritDoc} */
     @Override
     public void updateBillIndex(Collection<Bill> bills) {
-        if (!bills.isEmpty()) {
-            BulkRequest bulkRequest = new BulkRequest();
-            List<BillView> billViewList = bills.stream().map(BillView::new).collect(Collectors.toList());
-            billViewList.forEach(b ->
-                bulkRequest.add(
-                    new IndexRequest(billIndexName, defaultType,
-                            b.getBasePrintNo() + "-" +
-                                    Integer.toString(b.getSession()))
-                                .source(OutputUtils.toElasticsearchJson(b), XContentType.JSON)
-                )
-            );
-            safeBulkRequestExecute(bulkRequest);
-        }
+        BulkRequest bulkRequest = new BulkRequest();
+        bills.stream()
+                .map(BillView::new)
+                .map(bv -> getJsonIndexRequest(billIndexName, toElasticId(bv.toBaseBillId()), bv))
+                .forEach(bulkRequest::add);
+        safeBulkRequestExecute(bulkRequest);
     }
 
     /** {@inheritDoc} */
     @Override
     public void deleteBillFromIndex(BaseBillId baseBillId) {
         if (baseBillId != null) {
-            deleteEntry(billIndexName, baseBillId.getBasePrintNo() + "-" +
-                    baseBillId.getSession().toString());
+            deleteEntry(billIndexName, toElasticId(baseBillId));
         }
     }
 
@@ -120,6 +96,11 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
 
         String[] IDparts = hit.getId().split("-");
 
-        return new BaseBillId(IDparts[0], Integer.parseInt(IDparts[1]));
+        return new BaseBillId(IDparts[1], Integer.parseInt(IDparts[0]));
+    }
+
+    private String toElasticId(BaseBillId baseBillId) {
+        return baseBillId.getSession() + "-" +
+                baseBillId.getBasePrintNo();
     }
 }

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.search;
 
+import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 
@@ -16,13 +17,15 @@ import java.util.stream.Collectors;
 public class SearchResults<ResultType>
 {
     /** The total number of results available. */
-    private int totalResults;
+    private final int totalResults;
 
     /** A list of the selected results. */
-    private List<SearchResult<ResultType>> results;
+    private final List<SearchResult<ResultType>> results;
 
     /** The limit offset value used to generate the results listing. */
-    private LimitOffset limitOffset;
+    private final LimitOffset limitOffset;
+
+    private static final SearchResults<Object> EMPTY = new SearchResults<>(0, ImmutableList.of(), LimitOffset.ALL);
 
     /** --- Constructors --- */
 
@@ -30,6 +33,17 @@ public class SearchResults<ResultType>
         this.totalResults = totalResults;
         this.results = results;
         this.limitOffset = limitOffset;
+    }
+
+    /**
+     * Returns a {@link SearchResults} object with no results.
+     * @param <T>
+     * @return {@link SearchResults}
+     */
+    // Can safely cast to generic type since EMPTY will never contain any elements.
+    @SuppressWarnings("unchecked")
+    public static <T> SearchResults<T> empty() {
+        return (SearchResults<T>) EMPTY;
     }
 
     /** --- Methods --- */

@@ -8,12 +8,7 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -22,11 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class ElasticTranscriptSearchDao extends ElasticBaseDao implements TranscriptSearchDao
@@ -42,18 +35,9 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     @Override
     public SearchResults<TranscriptId> searchTranscripts(QueryBuilder query, QueryBuilder postFilter,
                                                          List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequest searchRequest = getSearchRequest(transcriptIndexName, query, postFilter,
-                highlightedFields, null, sort, limOff, false);
-        SearchResponse searchResponse = new SearchResponse();
-        try {
-            searchResponse = searchClient.search(searchRequest);
-        }
-        catch (IOException ex){
-            logger.error("Search Transcript request failed.", ex);
-        }
-
-        logger.debug("Transcript search result with query {} and filter {} took {} ms", query, postFilter, searchResponse.getTook().getMillis());
-        return getSearchResults(searchResponse, limOff, this::getTranscriptIdFromHit);
+        return search(transcriptIndexName, query, postFilter,
+                highlightedFields, null, sort, limOff,
+                false, this::getTranscriptIdFromHit);
     }
 
     /** {@inheritDoc} */
@@ -65,16 +49,12 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     /** {@inheritDoc} */
     @Override
     public void updateTranscriptIndex(Collection<Transcript> transcripts) {
-        if (!transcripts.isEmpty()) {
-            BulkRequest bulkRequest = new BulkRequest();
-            List<TranscriptView> transcriptViewList = transcripts.stream().map(TranscriptView::new).collect(Collectors.toList());
-            transcriptViewList.forEach(t ->
-                            bulkRequest.add(
-                                    new IndexRequest(transcriptIndexName, defaultType, t.getFilename())
-                                            .source(OutputUtils.toElasticsearchJson(t), XContentType.JSON))
-            );
-            safeBulkRequestExecute(bulkRequest);
-        }
+        BulkRequest bulkRequest = new BulkRequest();
+        transcripts.stream()
+                .map(TranscriptView::new)
+                .map(t -> getJsonIndexRequest(transcriptIndexName, t.getFilename(), t))
+                .forEach(bulkRequest::add);
+        safeBulkRequestExecute(bulkRequest);
     }
 
     /** {@inheritDoc} */

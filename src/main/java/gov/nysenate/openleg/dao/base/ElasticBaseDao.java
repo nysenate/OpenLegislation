@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.base;
 import com.google.common.primitives.Ints;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -11,12 +12,15 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
@@ -51,15 +55,14 @@ public abstract class ElasticBaseDao
 
     private static final String COUNT_API = "/_cat/count/";
 
-    @Autowired
-    protected RestHighLevelClient searchClient;
+    @Autowired private RestHighLevelClient searchClient;
 
     @PostConstruct
     private void init() {
         createIndices();
     }
 
-    /** --- Public methods --- */
+    /* --- Public methods --- */
 
     public void createIndices() {
         getIndices().stream()
@@ -71,103 +74,62 @@ public abstract class ElasticBaseDao
         getIndices().forEach(this::deleteIndex);
     }
 
-    /** --- Abstract methods --- */
+    /* --- Abstract methods --- */
 
     /**
      * Returns a list containing the names of all indices used by the inheriting Dao
      */
     protected abstract List<String> getIndices();
 
-    /** --- Common Elastic Search methods --- */
+    /* --- Common Elastic Search methods --- */
 
     /**
-     * Generates a typical search request that involves a query, filter, sort string, and a limit + offset
-     * @see #getSearchRequest(String, QueryBuilder, QueryBuilder, List, LimitOffset)
+     * Performs a typical search that involves a query, filter, sort string, and a limit + offset
      *
+     * @see #search(String, QueryBuilder, QueryBuilder, List, RescorerBuilder, List, LimitOffset, boolean, Function)
+     * <p>
      * Highlighting, rescoring, and full source response are not supported via this method.
      */
-    protected SearchRequest getSearchRequest(String indexName, QueryBuilder query, QueryBuilder postFilter,
-                                                    List<SortBuilder> sort, LimitOffset limitOffset) {
-        return getSearchRequest(indexName, query, postFilter,
-                null, null, sort, limitOffset, false);
+    protected <T> SearchResults<T> search(String indexName, QueryBuilder query, QueryBuilder postFilter,
+                                          List<SortBuilder> sort, LimitOffset limitOffset,
+                                          Function<SearchHit, T> hitMapper)
+            throws ElasticsearchException {
+        return search(indexName, query, postFilter,
+                null, null, sort, limitOffset, false, hitMapper);
     }
 
+
     /**
-     * Generates a SearchRequest with support for various functions.
+     * Performs a search with support for various functions.
      *
-     * @param indexName - The name of the index to search.
-     * @param query - The QueryBuilder instance to perform the search with.
-     * @param postFilter - Optional FilterBuilder to filter out the results.
+     * @param indexName         - The name of the index to search.
+     * @param query             - The QueryBuilder instance to perform the search with.
+     * @param postFilter        - Optional FilterBuilder to filter out the results.
      * @param highlightedFields - Optional list of field names to return as highlighted fields.
-     * @param rescorer - Optional rescorer that can be used to fine tune the query ranking.
-     * @param sort - List of SortBuilders specifying the desired sorting
-     * @param limitOffset - Restrict the number of results returned as well as paginate.
-     * @param fetchSource - Will return the indexed source fields when set to true.
+     * @param rescorer          - Optional rescorer that can be used to fine tune the query ranking.
+     * @param sort              - List of SortBuilders specifying the desired sorting
+     * @param limitOffset       - Restrict the number of results returned as well as paginate.
+     * @param fetchSource       - Will return the indexed source fields when set to true.
+     * @param hitMapper         - function for converting elastic results into the desired java objects.
      * @return SearchRequest
      */
-    protected SearchRequest getSearchRequest(String indexName,
-                                             QueryBuilder query,
-                                             QueryBuilder postFilter,
-                                             List<HighlightBuilder.Field> highlightedFields,
-                                             RescorerBuilder rescorer,
-                                             List<SortBuilder> sort,
-                                             LimitOffset limitOffset,
-                                             boolean fetchSource) throws ElasticsearchException {
-
-        if (indexIsEmpty(indexName)){
-            throw new ElasticsearchException("Error: attempting to search on empty index \"" + indexName + "\".");
+    protected <T> SearchResults<T> search(String indexName,
+                                          QueryBuilder query,
+                                          QueryBuilder postFilter,
+                                          List<HighlightBuilder.Field> highlightedFields,
+                                          RescorerBuilder rescorer,
+                                          List<SortBuilder> sort,
+                                          LimitOffset limitOffset,
+                                          boolean fetchSource,
+                                          Function<SearchHit, T> hitMapper
+    ) throws ElasticsearchException {
+        if (indexIsEmpty(indexName)) {
+            return SearchResults.empty();
         }
-        limitOffset = adjustLimitOffset(limitOffset);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-                .query(query)
-                .from(limitOffset.getOffsetStart() - 1)
-                .size((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
-                .minScore(0.05f)
-                .fetchSource(new FetchSourceContext(fetchSource));
-
-        if (highlightedFields != null) {
-            HighlightBuilder hb = new HighlightBuilder();
-            highlightedFields.forEach(hb::field);
-            searchSourceBuilder.highlighter(hb);
-        }
-        if (rescorer != null) {
-            searchSourceBuilder.addRescorer(rescorer);
-        }
-        // Post filters take effect after the search is completed
-        if (postFilter != null) {
-            searchSourceBuilder.postFilter(postFilter);
-        }
-        // Add the sort by fields
-        sort.forEach(searchSourceBuilder::sort);
-        SearchRequest searchRequest = Requests.searchRequest(indexName)
-                .source(searchSourceBuilder)
-                .searchType(SearchType.QUERY_THEN_FETCH);
-        logger.debug("{}", searchRequest);
-        return searchRequest;
-    }
-
-    /**
-     * Extracts search results from a search response
-     *
-     * template <R> is the desired return type
-     *
-     * @param response a SearchResponse generated by a SearchRequest
-     * @param limitOffset the LimitOffset used in the SearchRequest
-     * @param hitMapper a function that maps a SearchHit to the desired return type R
-     * @return SearchResults<R>
-     */
-    protected <R> SearchResults<R> getSearchResults(SearchResponse response, LimitOffset limitOffset,
-                                                    Function<SearchHit, R> hitMapper) {
-        limitOffset = adjustLimitOffset(limitOffset);
-        List<SearchResult<R>> resultList = new ArrayList<>();
-        for (SearchHit hit : response.getHits().getHits()) {
-            SearchResult<R> result = new SearchResult<>(
-                    hitMapper.apply(hit), // Result
-                    (!Float.isNaN(hit.getScore())) ? BigDecimal.valueOf(hit.getScore()) : BigDecimal.ONE, // Rank
-                    hit.getHighlightFields()); // Highlights
-            resultList.add(result);
-        }
-        return new SearchResults<>(Ints.checkedCast(response.getHits().getTotalHits()), resultList, limitOffset);
+        SearchRequest searchRequest = getSearchRequest(
+                indexName, query, postFilter, highlightedFields, rescorer, sort, limitOffset, fetchSource);
+        SearchResponse searchResponse = getSearchResponse(searchRequest);
+        return getSearchResults(searchResponse, limitOffset, hitMapper);
     }
 
     /**
@@ -192,6 +154,35 @@ public abstract class ElasticBaseDao
             throw new ElasticsearchException("Get request failed.", ex);
         }
         return Optional.empty();
+    }
+
+    /**
+     * Return a request to index the given object as a json document.
+     *
+     * @param indexName String
+     * @param id String - elasticsearch id for the object
+     * @param object - Object to be indexed.
+     * @return IndexRequest
+     */
+    protected IndexRequest getJsonIndexRequest(String indexName, String id, Object object) {
+        return new IndexRequest(indexName, defaultType, id)
+                .source(OutputUtils.toElasticsearchJson(object), XContentType.JSON);
+    }
+
+    /**
+     * Index the given object as a json document;
+     *
+     * @param indexName String
+     * @param id String - elasticsearch id for the object.
+     * @param object - Object to be indexed
+     */
+    protected IndexResponse indexJsonDoc(String indexName, String id, Object object) {
+        try {
+            IndexRequest jsonIndexRequest = getJsonIndexRequest(indexName, id, object);
+            return searchClient.index(jsonIndexRequest);
+        } catch (IOException ex) {
+            throw new ElasticsearchException("Index request failed", ex);
+        }
     }
 
     /**
@@ -222,7 +213,16 @@ public abstract class ElasticBaseDao
         }
     }
 
-    protected boolean indicesExist(String... indices) {
+    /**
+     * @return the max result window for the index, this can be overridden.
+     */
+    protected int getMaxResultWindow() {
+        return defaultMaxResultWindow;
+    }
+
+    /* --- Internal Methods --- */
+
+    private boolean indicesExist(String... indices) {
         GetIndexRequest getIndexRequest = new GetIndexRequest()
                 .indices(indices);
         try {
@@ -233,7 +233,7 @@ public abstract class ElasticBaseDao
         }
     }
 
-    protected void createIndex(String indexName) {
+    private void createIndex(String indexName) {
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName, getIndexSettings().build());
         try {
             searchClient.indices().create(createIndexRequest);
@@ -249,20 +249,13 @@ public abstract class ElasticBaseDao
      * Override for index specific settings.
      * @return Settings.Builder
      */
-    protected Settings.Builder getIndexSettings() {
+    private Settings.Builder getIndexSettings() {
         Settings.Builder indexSettings = Settings.builder();
         indexSettings.put("index.max_result_window", getMaxResultWindow());
         return indexSettings;
     }
 
-    /**
-     * @return the max result window for the index, this can be overridden.
-     */
-    protected int getMaxResultWindow() {
-        return defaultMaxResultWindow;
-    }
-
-    protected void deleteIndex(String index) {
+    private void deleteIndex(String index) {
         try {
             logger.info("Deleting search index {}", index);
             searchClient.indices().delete(new DeleteIndexRequest(index));
@@ -273,6 +266,94 @@ public abstract class ElasticBaseDao
         catch (IOException ex){
             throw new ElasticsearchException("Delete index request failed.", ex);
         }
+    }
+
+    /**
+     * Generates a SearchRequest with support for various functions.
+     *
+     * @param indexName - The name of the index to search.
+     * @param query - The QueryBuilder instance to perform the search with.
+     * @param postFilter - Optional FilterBuilder to filter out the results.
+     * @param highlightedFields - Optional list of field names to return as highlighted fields.
+     * @param rescorer - Optional rescorer that can be used to fine tune the query ranking.
+     * @param sort - List of SortBuilders specifying the desired sorting
+     * @param limitOffset - Restrict the number of results returned as well as paginate.
+     * @param fetchSource - Will return the indexed source fields when set to true.
+     * @return SearchRequest
+     */
+    private SearchRequest getSearchRequest(String indexName,
+                                           QueryBuilder query,
+                                           QueryBuilder postFilter,
+                                           List<HighlightBuilder.Field> highlightedFields,
+                                           RescorerBuilder rescorer,
+                                           List<SortBuilder> sort,
+                                           LimitOffset limitOffset,
+                                           boolean fetchSource) throws ElasticsearchException {
+        limitOffset = adjustLimitOffset(limitOffset);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+                .query(query)
+                .from(limitOffset.getOffsetStart() - 1)
+                .size((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
+                .minScore(0.05f)
+                .fetchSource(new FetchSourceContext(fetchSource));
+
+        if (highlightedFields != null) {
+            HighlightBuilder hb = new HighlightBuilder();
+            highlightedFields.forEach(hb::field);
+            searchSourceBuilder.highlighter(hb);
+        }
+        if (rescorer != null) {
+            searchSourceBuilder.addRescorer(rescorer);
+        }
+        // Post filters take effect after the search is completed
+        if (postFilter != null) {
+            searchSourceBuilder.postFilter(postFilter);
+        }
+        // Add the sort by fields
+        sort.forEach(searchSourceBuilder::sort);
+        SearchRequest searchRequest = Requests.searchRequest(indexName)
+                .source(searchSourceBuilder)
+                .searchType(SearchType.QUERY_THEN_FETCH);
+        logger.debug("{}", searchRequest);
+        return searchRequest;
+    }
+
+    /**
+     * Execute a search query, returning a response.
+     * Handle IOExceptions by rethrowing as runtime exception.
+     * @param request SearchRequest
+     * @return SearchResponse
+     */
+    private SearchResponse getSearchResponse(SearchRequest request) throws ElasticsearchException {
+        try {
+            return searchClient.search(request);
+        } catch (IOException ex) {
+            throw new ElasticsearchException("IOException occurred during search request.", ex);
+        }
+    }
+
+    /**
+     * Extracts search results from a search response
+     *
+     * template <R> is the desired return type
+     *
+     * @param response a SearchResponse generated by a SearchRequest
+     * @param limitOffset the LimitOffset used in the SearchRequest
+     * @param hitMapper a function that maps a SearchHit to the desired return type R
+     * @return SearchResults<R>
+     */
+    private <R> SearchResults<R> getSearchResults(SearchResponse response, LimitOffset limitOffset,
+                                                  Function<SearchHit, R> hitMapper) {
+        limitOffset = adjustLimitOffset(limitOffset);
+        List<SearchResult<R>> resultList = new ArrayList<>();
+        for (SearchHit hit : response.getHits().getHits()) {
+            SearchResult<R> result = new SearchResult<>(
+                    hitMapper.apply(hit), // Result
+                    (!Float.isNaN(hit.getScore())) ? BigDecimal.valueOf(hit.getScore()) : BigDecimal.ONE, // Rank
+                    hit.getHighlightFields()); // Highlights
+            resultList.add(result);
+        }
+        return new SearchResults<>(Ints.checkedCast(response.getHits().getTotalHits()), resultList, limitOffset);
     }
 
     /**
