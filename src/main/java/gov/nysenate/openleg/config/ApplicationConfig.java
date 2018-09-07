@@ -7,12 +7,13 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.SubscriberExceptionHandler;
+import com.google.common.eventbus.SubscriberExceptionContext;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.base.IngestCache;
 import gov.nysenate.openleg.util.AsciiArt;
@@ -43,7 +44,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Calendar;
+
+import static gov.nysenate.openleg.model.notification.NotificationType.EVENT_BUS_EXCEPTION;
 
 @Configuration
 @EnableCaching
@@ -143,20 +147,12 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
     @Bean
     public EventBus eventBus() {
-        SubscriberExceptionHandler errorHandler = (exception, context) -> {
-            logger.error("Event Bus Exception thrown during event handling within {}: {}, {}", context.getSubscriberMethod(),
-                exception, ExceptionUtils.getStackTrace(exception));
-        };
-        return new EventBus(errorHandler);
+        return new EventBus(this::handleEventBusException);
     }
 
     @Bean
     public AsyncEventBus asyncEventBus() {
-        SubscriberExceptionHandler errorHandler = (exception, context) -> {
-            logger.error("Async Event Bus Exception thrown during event handling within {}: {}, {}",
-                    context.getSubscriberMethod(), exception, ExceptionUtils.getStackTrace(exception));
-        };
-        return new AsyncEventBus(getAsyncExecutor(), errorHandler);
+        return new AsyncEventBus(getAsyncExecutor(), this::handleEventBusException);
     }
 
     /* --- Threadpool/Async/Scheduling Configuration --- */
@@ -221,5 +217,29 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
     @Bean(name = "calendarIngestCache")
     public IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache() {
         return new IngestCache<>(100);
+    }
+
+    /**
+     * Handle event bus exceptions by posting a notification.
+     *
+     * Note that even though notifications are posted through the event bus,
+     * all exceptions are caught within the notification event handling code, preventing an infinite loop.
+     * @see gov.nysenate.openleg.service.notification.dispatch.NotificationDispatcher#handleNotificationEvent(Notification)
+     *
+     * @param exception Throwable
+     * @param context SubscriberExceptionContext
+     */
+    private void handleEventBusException(Throwable exception, SubscriberExceptionContext context) {
+        logger.error("Event Bus Exception thrown during event handling within " + context.getSubscriberMethod(), exception);
+
+        LocalDateTime occurred = LocalDateTime.now();
+        String summary = "Event Bus Exception within " + context.getSubscriberMethod() +
+                " at " + occurred + " - " + ExceptionUtils.getStackFrames(exception)[0];
+        String message = "\nThe following exception occurred during event handling within " +
+                context.getSubscriberMethod() + " at " + occurred + ":\n" +
+                ExceptionUtils.getStackTrace(exception);
+        Notification notification = new Notification(EVENT_BUS_EXCEPTION, occurred, summary, message);
+
+        eventBus().post(notification);
     }
 }

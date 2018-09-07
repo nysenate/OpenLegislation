@@ -14,6 +14,7 @@ public enum NotificationType {
     REQUEST_EXCEPTION       (EXCEPTION),
     PROCESS_EXCEPTION       (EXCEPTION),
     SPOTCHECK_EXCEPTION     (EXCEPTION),
+    EVENT_BUS_EXCEPTION     (EXCEPTION),
     WARNING                 (ALL),
     PROCESS_WARNING         (WARNING),
     SCRAPING_EXCEPTION      (WARNING),
