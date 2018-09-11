@@ -21,6 +21,7 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -155,7 +156,7 @@ public abstract class ElasticBaseDao
     protected <T> Optional<T> getRequest(String index, String type, String id, Function<GetResponse, T> responseMapper) {
         GetRequest getRequest = new GetRequest(index, type, id);
         try {
-            GetResponse getResponse = searchClient.get(getRequest);
+            GetResponse getResponse = searchClient.get(getRequest, RequestOptions.DEFAULT);
             if (getResponse.isExists()){
                 return Optional.of(responseMapper.apply(getResponse));
             }
@@ -189,7 +190,7 @@ public abstract class ElasticBaseDao
     protected IndexResponse indexJsonDoc(String indexName, String id, Object object) {
         try {
             IndexRequest jsonIndexRequest = getJsonIndexRequest(indexName, id, object);
-            return searchClient.index(jsonIndexRequest);
+            return searchClient.index(jsonIndexRequest, RequestOptions.DEFAULT);
         } catch (IOException ex) {
             throw new ElasticsearchException("Index request failed", ex);
         }
@@ -203,7 +204,7 @@ public abstract class ElasticBaseDao
     protected void safeBulkRequestExecute(BulkRequest bulkRequest) {
         if (bulkRequest != null && bulkRequest.numberOfActions() > 0) {
             try {
-                searchClient.bulk(bulkRequest);
+                searchClient.bulk(bulkRequest, RequestOptions.DEFAULT);
             }
             catch (IOException ex){
                 throw new ElasticsearchException("Bulk request failed", ex);
@@ -216,7 +217,7 @@ public abstract class ElasticBaseDao
                 .type(defaultType)
                 .id(id);
         try {
-            searchClient.delete(deleteRequest);
+            searchClient.delete(deleteRequest, RequestOptions.DEFAULT);
         }
         catch (IOException ex){
             throw new ElasticsearchException("Delete request failed.", ex);
@@ -252,7 +253,7 @@ public abstract class ElasticBaseDao
         Throwable ex = null;
         for (int attempts = 0; attempts < 5; attempts++) {
             try {
-                UpdateSettingsResponse response = searchClient.indices().putSettings(request);
+                UpdateSettingsResponse response = searchClient.indices().putSettings(request, RequestOptions.DEFAULT);
                 if (response.isAcknowledged()) {
                     return;
                 }
@@ -302,7 +303,7 @@ public abstract class ElasticBaseDao
         GetIndexRequest getIndexRequest = new GetIndexRequest()
                 .indices(indices);
         try {
-            return searchClient.indices().exists(getIndexRequest);
+            return searchClient.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
         }
         catch (IOException ex){
             throw new ElasticsearchException("Exist request failed.", ex);
@@ -312,7 +313,7 @@ public abstract class ElasticBaseDao
     private void createIndex(String indexName) {
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName, getIndexSettings().build());
         try {
-            searchClient.indices().create(createIndexRequest);
+            searchClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
         }
         catch (IOException ex){
             throw new ElasticsearchException("Create index request failed.", ex);
@@ -322,7 +323,7 @@ public abstract class ElasticBaseDao
     private void deleteIndex(String index) {
         try {
             logger.info("Deleting search index {}", index);
-            searchClient.indices().delete(new DeleteIndexRequest(index));
+            searchClient.indices().delete(new DeleteIndexRequest(index), RequestOptions.DEFAULT);
         }
         catch (IndexNotFoundException ex) {
             logger.info("Cannot delete index {} because it doesn't exist.", index);
@@ -390,7 +391,7 @@ public abstract class ElasticBaseDao
      */
     private SearchResponse getSearchResponse(SearchRequest request) throws ElasticsearchException {
         try {
-            return searchClient.search(request);
+            return searchClient.search(request, RequestOptions.DEFAULT);
         } catch (IOException ex) {
             throw new ElasticsearchException("IOException occurred during search request.", ex);
         }
@@ -446,7 +447,7 @@ public abstract class ElasticBaseDao
     private boolean indexIsEmpty(String indexName){
         try {
             InputStream responseStream = searchClient.getLowLevelClient()
-                    .performRequest("GET", COUNT_API + indexName + "?v")
+                    .performRequest(new Request("GET", COUNT_API + indexName + "?v"))
                     .getEntity()
                     .getContent();
             byte[] isIndexEmpty = new byte[1];
