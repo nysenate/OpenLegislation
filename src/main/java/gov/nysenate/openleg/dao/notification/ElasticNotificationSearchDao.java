@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.notification;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -17,6 +18,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -28,9 +30,13 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     private static final Logger logger = LoggerFactory.getLogger(ElasticNotificationSearchDao.class);
 
     private static final String notificationIndex = SearchIndex.NOTIFICATION.getIndexName();
-    private static final String idId = "id";
-    private static final Object idDoc = new Object();
+    private static final String idId = "id_counter";
     private static final QueryBuilder idIdQuery = QueryBuilders.termQuery("_id", idId);
+
+    @Autowired
+    public ElasticNotificationSearchDao(EventBus eventBus) {
+        eventBus.register(this);
+    }
 
     /* --- Implemented Methods --- */
 
@@ -107,11 +113,22 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     /* --- Internal Methods --- */
 
     /**
+     * Class to model the elasticsearch document that tracks the notification id field.
+     */
+    private static class NotificationIdCounterDoc {
+        private LocalDateTime incremented = LocalDateTime.now();
+
+        public LocalDateTime getIncremented() {
+            return incremented;
+        }
+    }
+
+    /**
      * Gets the next available notification id by indexing to id/id and returning the version from the response
      * @return long - the next available notification id
      */
     private long getNextId() {
-        IndexResponse indexResponse = indexJsonDoc(notificationIndex, idId, idDoc);
+        IndexResponse indexResponse = indexJsonDoc(notificationIndex, idId, new NotificationIdCounterDoc());
         return indexResponse.getVersion();
     }
 

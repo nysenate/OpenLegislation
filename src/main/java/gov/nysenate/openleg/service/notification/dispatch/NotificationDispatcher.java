@@ -63,7 +63,7 @@ public class NotificationDispatcher {
         }
         try {
             Multimap<NotificationTarget, NotificationSubscription> subscriptionMap = ArrayListMultimap.create();
-            subscriptionDataService.getSubscriptions(notification.getType())
+            subscriptionDataService.getSubscriptions(notification.getNotificationType())
                     .forEach(subscription -> addSubscription(subscriptionMap, subscription));
 
             subscriptionMap.keySet().forEach(target ->

@@ -18,7 +18,7 @@ public interface NotificationSearchDao {
      * @param notificationId long - notification numeric id
      * @return RegisteredNotification
      */
-    public Optional<RegisteredNotification> getNotification(long notificationId) throws ElasticsearchException;
+    Optional<RegisteredNotification> getNotification(long notificationId) throws ElasticsearchException;
 
     /**
      * Performs a search across all notifications using the given query, filter, and sort string
@@ -28,12 +28,12 @@ public interface NotificationSearchDao {
      * @param limitOffset LimitOffset
      * @return SearchResults<RegisteredNotification>
      */
-    public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, QueryBuilder filter,
-                                                                     List<SortBuilder> sort, LimitOffset limitOffset);
+    SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, QueryBuilder filter,
+                                                              List<SortBuilder> sort, LimitOffset limitOffset);
 
     /**
      * Inserts a notification into the data store and assigns it a notification id, returning a registered notification
      * @param notification Notification
      */
-    public RegisteredNotification registerNotification(Notification notification);
+    RegisteredNotification registerNotification(Notification notification);
 }

@@ -20,7 +20,7 @@ public interface NotificationService {
      * @param notificationId int
      * @return RegisteredNotification
      */
-    public RegisteredNotification getNotification(long notificationId) throws NotificationNotFoundException;
+    RegisteredNotification getNotification(long notificationId) throws NotificationNotFoundException;
 
     /**
      * Retrieves a list of notifications that occurred within the specified date time range and match one of the given
@@ -32,19 +32,19 @@ public interface NotificationService {
      * @param limitOffset LimitOffset
      * @return PaginatedList<RegisteredNotification>
      */
-    public PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types, Range<LocalDateTime> dateTimeRange,
-                                                                     SortOrder order,
-                                                                     LimitOffset limitOffset) throws SearchException;
+    PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types, Range<LocalDateTime> dateTimeRange,
+                                                              SortOrder order,
+                                                              LimitOffset limitOffset) throws SearchException;
 
     /**
      * Performs a search across all notifications using the given query, filter, and sort string
      */
-    public SearchResults<RegisteredNotification> notificationSearch(String queryString, String sort, LimitOffset limitOffset) throws SearchException;
+    SearchResults<RegisteredNotification> notificationSearch(String queryString, String sort, LimitOffset limitOffset) throws SearchException;
 
     /**
      * Inserts a notification into the data store and assigns it a notification id, returning a registered notification
      *  returns a RegisteredNotifcation with an id of -1 if registration was unsuccessful
      * @param notification Notification
      */
-    public RegisteredNotification registerNotification(Notification notification);
+    RegisteredNotification registerNotification(Notification notification);
 }
