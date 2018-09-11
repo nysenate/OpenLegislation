@@ -282,6 +282,20 @@ public abstract class ElasticBaseDao
         return currentRefreshInterval == null;
     }
 
+    /**
+     * Generates default index settings.
+     *
+     * Can be overridden by implementations for custom settings.
+     * @return Settings.Builder
+     */
+    protected Settings.Builder getIndexSettings() {
+        Settings.Builder indexSettings = Settings.builder();
+        indexSettings.put("index.max_result_window", getMaxResultWindow());
+        // Disable replicas since we do not run multiple nodes
+        indexSettings.put("index.number_of_replicas", 0);
+        return indexSettings;
+    }
+
     /* --- Internal Methods --- */
 
     private boolean indicesExist(String... indices) {
@@ -303,18 +317,6 @@ public abstract class ElasticBaseDao
         catch (IOException ex){
             throw new ElasticsearchException("Create index request failed.", ex);
         }
-    }
-
-    /**
-     * Get settings for index.
-     * Use default settings by default.
-     * Override for index specific settings.
-     * @return Settings.Builder
-     */
-    private Settings.Builder getIndexSettings() {
-        Settings.Builder indexSettings = Settings.builder();
-        indexSettings.put("index.max_result_window", getMaxResultWindow());
-        return indexSettings;
     }
 
     private void deleteIndex(String index) {
