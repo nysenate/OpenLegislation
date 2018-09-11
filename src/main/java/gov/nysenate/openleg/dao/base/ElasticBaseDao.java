@@ -8,6 +8,10 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
@@ -17,6 +21,7 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
@@ -50,6 +55,8 @@ public abstract class ElasticBaseDao
     private static final Logger logger = LoggerFactory.getLogger(ElasticBaseDao.class);
 
     private static final int defaultMaxResultWindow = 10000;
+
+    private static final String refreshIntervalSetting = "refresh_interval";
 
     protected static final String defaultType = "_doc";
 
@@ -221,6 +228,58 @@ public abstract class ElasticBaseDao
      */
     protected int getMaxResultWindow() {
         return defaultMaxResultWindow;
+    }
+
+    /**
+     * Allows for enabling/disabling periodic refreshing for an index.
+     *
+     * Disabling can reduce load during large operations.
+     * It should always be re-enabled when done.
+     * @param indexName
+     * @param enabled
+     */
+    protected void setIndexRefresh(String indexName, boolean enabled) {
+        logger.info("{} index refresh for {}", enabled ? "Enabling" : "Disabling", indexName);
+        Settings settings;
+        if (enabled) {
+            // Set to null to restore default setting
+            settings = Settings.builder().putNull(refreshIntervalSetting).build();
+        } else {
+            settings = Settings.builder().put(refreshIntervalSetting, -1).build();
+        }
+        UpdateSettingsRequest request = new UpdateSettingsRequest(settings, indexName);
+        // Try to set the setting up to 5 times if a failure occurs
+        Throwable ex = null;
+        for (int attempts = 0; attempts < 5; attempts++) {
+            try {
+                UpdateSettingsResponse response = searchClient.indices().putSettings(request);
+                if (response.isAcknowledged()) {
+                    return;
+                }
+            } catch (Exception e) {
+                ex = e;
+            }
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                logger.error("Attempt to set index refresh interrupted");
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        throw new ElasticsearchException("Failed to set refresh setting to " + enabled + " for index " + indexName, ex);
+    }
+
+    /**
+     * Returns true iff index refresh is the default value for the given index.
+     *
+     * @param indexName String
+     * @return boolean
+     */
+    protected boolean isIndexRefreshDefault(String indexName) {
+        GetSettingsResponse currentIndexSettings = getCurrentIndexSettings(indexName);
+        String currentRefreshInterval = currentIndexSettings.getSetting(indexName, "index." + refreshIntervalSetting);
+        return currentRefreshInterval == null;
     }
 
     /* --- Internal Methods --- */
@@ -399,6 +458,21 @@ public abstract class ElasticBaseDao
         }
         catch (IOException io){
             throw new ElasticsearchException("Error while executing search request.");
+        }
+    }
+
+    /**
+     * Get the current settings for the given index, including defaults.
+     *
+     * @param indexName String
+     * @return GetSettingsResponse
+     */
+    private GetSettingsResponse getCurrentIndexSettings(String indexName) {
+        GetSettingsRequest request = new GetSettingsRequest().indices(indexName);
+        try {
+            return searchClient.indices().getSettings(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new ElasticsearchException("Failed to get elasticsearch settings");
         }
     }
 }

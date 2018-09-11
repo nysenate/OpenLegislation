@@ -29,10 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 
 import static java.util.stream.Collectors.toList;
@@ -137,38 +134,34 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     /** {@inheritDoc} */
     @Override
     public void updateIndex(Bill bill) {
-        if (env.isElasticIndexing()) {
-            if (isBillIndexable(bill)) {
-                logger.info("Indexing bill {} into elastic search.", bill.getBaseBillId());
-                billSearchDao.updateBillIndex(bill);
-            }
-            else if (bill != null) {
-                logger.info("Deleting {} from index.", bill.getBaseBillId());
-                billSearchDao.deleteBillFromIndex(bill.getBaseBillId());
-            }
+        if (bill != null) {
+            updateIndex(Collections.singleton(bill));
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateIndex(Collection<Bill> bills) {
-        if (env.isElasticIndexing() && !bills.isEmpty()) {
-            List<Bill> indexableBills = bills.stream()
-                .filter(b -> isBillIndexable(b))
-                .collect(toList());
-            logger.info("Indexing {} valid bills into elastic search.", indexableBills.size());
-            billSearchDao.updateBillIndex(indexableBills);
-
-            // Ensure any bills that currently don't meet the criteria are not in the index.
-            if (indexableBills.size() != bills.size()) {
-                bills.stream()
-                    .filter(b -> !isBillIndexable(b) && b != null)
-                    .forEach(b -> {
-                        logger.info("Deleting {} from index.", b.getBaseBillId());
-                        billSearchDao.deleteBillFromIndex(b.getBaseBillId());
-                    });
+        if (!env.isElasticIndexing() || bills.isEmpty()) {
+            return;
+        }
+        List<Bill> indexableBills = new ArrayList<>();
+        List<Bill> nonIndexableBills = new ArrayList<>();
+        // Categorize bills based on whether or not they should be index.
+        for (Bill bill : bills) {
+            if (isBillIndexable(bill)) {
+                indexableBills.add(bill);
+            } else {
+                nonIndexableBills.add(bill);
             }
         }
+        logger.info("Indexing {} valid bill(s) into elastic search.", indexableBills.size());
+        billSearchDao.updateBillIndex(indexableBills);
+
+        // Ensure any bills that currently don't meet the criteria are not in the index.
+        nonIndexableBills.stream()
+                .map(Bill::getBaseBillId)
+                .forEach(billSearchDao::deleteBillFromIndex);
     }
 
     /** {@inheritDoc} */
@@ -183,22 +176,37 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     public void rebuildIndex() {
         clearIndex();
         Optional<Range<SessionYear>> sessions = billDataService.activeSessionRange();
-        if (sessions.isPresent()) {
-            SessionYear session = sessions.get().lowerEndpoint();
-            while (session.getSessionStartYear() <= LocalDate.now().getYear()) {
-                LimitOffset limOff = LimitOffset.THOUSAND;
-                List<BaseBillId> billIds = billDataService.getBillIds(session, limOff);
-                while (!billIds.isEmpty()) {
-                    logger.info("Indexing {} bills starting from {}", billIds.size(), billIds.get(0));
-                    updateIndex(billIds.stream().map(id -> billDataService.getBill(id)).collect(toList()));
-                    limOff = limOff.next();
-                    billIds = billDataService.getBillIds(session, limOff);
-                }
-                session = session.next();
-            }
-        }
-        else {
+        if (!sessions.isPresent()) {
             logger.info("Can't rebuild the bill search index because there are no bills. Cleared it instead!");
+            return;
+        }
+        try {
+            // Prep elasticsearch for heavy indexing.
+            billSearchDao.reindexSetup();
+            for (SessionYear session = sessions.get().lowerEndpoint();
+                 session.compareTo(SessionYear.current()) < 1;
+                 session = session.next()) {
+
+                LimitOffset limOff = new LimitOffset(50);
+                while (true) {
+                    List<Bill> bills = billDataService.getBillIds(session, limOff).stream()
+                            .map(billDataService::getBill)
+                            .collect(toList());
+                    if (bills.isEmpty()) {
+                        break;
+                    }
+                    // Ensure that the reindex settings don't time out
+                    billSearchDao.reaffirmReindexing();
+                    logger.info("Reindexing session {} bills {} - {}", session,
+                            limOff.getOffsetStart(),
+                            limOff.getOffsetStart() + bills.size() - 1);
+                    updateIndex(bills);
+                    limOff = limOff.next();
+                }
+            }
+        } finally {
+            // Restore normal index settings.
+            billSearchDao.reindexCleanup();
         }
     }
 
