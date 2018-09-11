@@ -71,7 +71,10 @@ public abstract class ElasticBaseDao
     }
 
     public void purgeIndices() {
-        getIndices().forEach(this::deleteIndex);
+        getIndices().forEach(index -> {
+            deleteIndex(index);
+            createIndex(index);
+        });
     }
 
     /* --- Abstract methods --- */
