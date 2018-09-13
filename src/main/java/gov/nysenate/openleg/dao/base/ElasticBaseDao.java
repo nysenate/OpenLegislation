@@ -4,7 +4,10 @@ import com.google.common.primitives.Ints;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
@@ -43,9 +46,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -56,6 +57,9 @@ public abstract class ElasticBaseDao
     private static final Logger logger = LoggerFactory.getLogger(ElasticBaseDao.class);
 
     private static final int defaultMaxResultWindow = 10000;
+
+    /** The ideal upper limit for the size of a bulk request */
+    private static final long desiredBulkRequestSize = 5242880L;
 
     private static final String refreshIntervalSetting = "refresh_interval";
 
@@ -199,14 +203,23 @@ public abstract class ElasticBaseDao
     /**
      * Performs a bulk request execution while making sure that the bulk request is actually valid to
      * prevent exceptions.
+     *
+     * Also split the bulk request into smaller bulks if it is too big.
      * @param bulkRequest BulkRequestBuilder
      */
     protected void safeBulkRequestExecute(BulkRequest bulkRequest) {
-        if (bulkRequest != null && bulkRequest.numberOfActions() > 0) {
+        if (bulkRequest == null || bulkRequest.numberOfActions() == 0) {
+            return;
+        }
+
+        List<BulkRequest> bulkRequests = splitBulkRequest(bulkRequest);
+
+        for (BulkRequest subRequest : bulkRequests) {
             try {
-                searchClient.bulk(bulkRequest, RequestOptions.DEFAULT);
-            }
-            catch (IOException ex){
+                logger.debug("Making bulk request: {} bytes",
+                        StringUtils.leftPad(Long.toString(subRequest.estimatedSizeInBytes()), 9));
+                searchClient.bulk(subRequest, RequestOptions.DEFAULT);
+            } catch (IOException ex) {
                 throw new ElasticsearchException("Bulk request failed", ex);
             }
         }
@@ -477,5 +490,44 @@ public abstract class ElasticBaseDao
         } catch (IOException e) {
             throw new ElasticsearchException("Failed to get elasticsearch settings");
         }
+    }
+
+    /**
+     * Attempts to break down a large bulk request into a list of smaller ones.
+     *
+     * The resulting requests may still be larger than the desired size if any discrete requests exceed that size.
+     * @param bulkRequest BulkRequest
+     * @return List<BulkRequest>
+     */
+    private List<BulkRequest> splitBulkRequest(BulkRequest bulkRequest) {
+        long totalSize = bulkRequest.estimatedSizeInBytes();
+        if (totalSize <= desiredBulkRequestSize) {
+            return Collections.singletonList(bulkRequest);
+        }
+
+        Queue<DocWriteRequest> requestQueue = new ArrayDeque<>(bulkRequest.requests());
+        List<BulkRequest> bulkRequests = new ArrayList<>();
+
+        while (!requestQueue.isEmpty()) {
+            BulkRequest openBulk = new BulkRequest();
+            // pack in as many requests from the queue as will fit in the desired size.
+            while (!requestQueue.isEmpty() && openBulk.estimatedSizeInBytes() < desiredBulkRequestSize) {
+                DocWriteRequest nextDoc = requestQueue.peek();
+                // Break early if the next request is an index that will put the current bulk over the desired size.
+                // Still allow it if the current bulk is empty.
+                if (nextDoc instanceof IndexRequest) {
+                    int length = ((IndexRequest) nextDoc).source().length();
+                    if (openBulk.numberOfActions() > 0 &&
+                            openBulk.estimatedSizeInBytes() + length > desiredBulkRequestSize) {
+                        break;
+                    }
+                }
+                openBulk.add(requestQueue.remove());
+            }
+            bulkRequests.add(openBulk);
+        }
+        logger.debug("Large elasticsearch bulk request ({}) will be broken into {} smaller bulk requests",
+                FileUtils.byteCountToDisplaySize(totalSize), bulkRequests.size());
+        return bulkRequests;
     }
 }
