@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.law.LawDocId;
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -77,6 +78,18 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     @Override
     protected List<String> getIndices() {
         return Collections.singletonList(lawIndexName);
+    }
+
+    /**
+     * Allocate additional shards for law index.
+     *
+     * @return Settings.Builder
+     */
+    @Override
+    protected Settings.Builder getIndexSettings() {
+        Settings.Builder indexSettings = super.getIndexSettings();
+        indexSettings.put("index.number_of_shards", 2);
+        return indexSettings;
     }
 
     /* --- Internal --- */

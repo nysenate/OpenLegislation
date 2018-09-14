@@ -12,6 +12,7 @@ import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -72,6 +73,18 @@ public class ElasticCalendarSearchDao extends ElasticBaseDao implements Calendar
     @Override
     protected List<String> getIndices() {
         return Lists.newArrayList(calIndexName);
+    }
+
+    /**
+     * Allocate additional shards for calendar index.
+     *
+     * @return Settings.Builder
+     */
+    @Override
+    protected Settings.Builder getIndexSettings() {
+        Settings.Builder indexSettings = super.getIndexSettings();
+        indexSettings.put("index.number_of_shards", 2);
+        return indexSettings;
     }
 
     /* --- Internal Methods --- */

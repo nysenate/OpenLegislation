@@ -11,6 +11,7 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -68,6 +69,18 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     @Override
     protected List<String> getIndices() {
         return Collections.singletonList(agendaIndexName);
+    }
+
+    /**
+     * Allocate additional shards for agenda index.
+     *
+     * @return Settings.Builder
+     */
+    @Override
+    protected Settings.Builder getIndexSettings() {
+        Settings.Builder indexSettings = super.getIndexSettings();
+        indexSettings.put("index.number_of_shards", 2);
+        return indexSettings;
     }
 
     /* --- Internal Methods --- */

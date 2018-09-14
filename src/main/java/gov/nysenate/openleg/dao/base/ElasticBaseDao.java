@@ -307,6 +307,8 @@ public abstract class ElasticBaseDao
         indexSettings.put("index.max_result_window", getMaxResultWindow());
         // Disable replicas since we do not run multiple nodes
         indexSettings.put("index.number_of_replicas", 0);
+        // Use 1 shard per index by default.
+        indexSettings.put("index.number_of_shards", 1);
         return indexSettings;
     }
 

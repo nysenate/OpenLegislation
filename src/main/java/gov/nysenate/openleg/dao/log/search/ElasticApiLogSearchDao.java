@@ -8,6 +8,7 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.auth.ApiResponse;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -69,6 +70,18 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
     @Override
     protected List<String> getIndices() {
         return Collections.singletonList(logIndexName);
+    }
+
+    /**
+     * Allocate additional shards for log index.
+     *
+     * @return Settings.Builder
+     */
+    @Override
+    protected Settings.Builder getIndexSettings() {
+        Settings.Builder indexSettings = super.getIndexSettings();
+        indexSettings.put("index.number_of_shards", 8);
+        return indexSettings;
     }
 
     private Integer parseId(SearchHit hit) {

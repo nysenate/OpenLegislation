@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -156,6 +157,18 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     @Override
     protected int getMaxResultWindow() {
         return billMaxResultWindow;
+    }
+
+    /**
+     * Allocate additional shards for bill index.
+     *
+     * @return Settings.Builder
+     */
+    @Override
+    protected Settings.Builder getIndexSettings() {
+        Settings.Builder indexSettings = super.getIndexSettings();
+        indexSettings.put("index.number_of_shards", 6);
+        return indexSettings;
     }
 
     protected BaseBillId getBaseBillIdFromHit(SearchHit hit) {
