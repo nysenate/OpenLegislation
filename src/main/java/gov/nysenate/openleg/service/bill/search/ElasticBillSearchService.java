@@ -17,6 +17,7 @@ import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
+import gov.nysenate.openleg.util.AsyncUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -30,26 +31,33 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Service
 public class ElasticBillSearchService implements BillSearchService, IndexedSearchService<Bill>
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchService.class);
 
+    private static final int billReindexThreadCount = 4;
+    private static final int billReindexBatchSize = 100;
+
     @Autowired protected Environment env;
     @Autowired protected EventBus eventBus;
     @Autowired protected ElasticBillSearchDao billSearchDao;
     @Autowired protected BillDataService billDataService;
+    @Autowired private AsyncUtils asyncUtils;
 
     @PostConstruct
     protected void init() {
         eventBus.register(this);
     }
 
-    /** --- BillSearchService implementation --- */
+    /* --- BillSearchService implementation --- */
 
     /** {@inheritDoc} */
     @Override
@@ -129,7 +137,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         }
     }
 
-    /** --- IndexedSearchService implementation --- */
+    /* --- IndexedSearchService implementation --- */
 
     /** {@inheritDoc} */
     @Override
@@ -183,27 +191,23 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         try {
             // Prep elasticsearch for heavy indexing.
             billSearchDao.reindexSetup();
+
+            // Load all bill ids into a queue
+            final LinkedBlockingQueue<BaseBillId> billIdQueue = new LinkedBlockingQueue<>();
             for (SessionYear session = sessions.get().lowerEndpoint();
                  session.compareTo(SessionYear.current()) < 1;
                  session = session.next()) {
-
-                LimitOffset limOff = new LimitOffset(50);
-                while (true) {
-                    List<Bill> bills = billDataService.getBillIds(session, limOff).stream()
-                            .map(billDataService::getBill)
-                            .collect(toList());
-                    if (bills.isEmpty()) {
-                        break;
-                    }
-                    // Ensure that the reindex settings don't time out
-                    billSearchDao.reaffirmReindexing();
-                    logger.info("Reindexing session {} bills {} - {}", session,
-                            limOff.getOffsetStart(),
-                            limOff.getOffsetStart() + bills.size() - 1);
-                    updateIndex(bills);
-                    limOff = limOff.next();
-                }
+                billIdQueue.addAll(billDataService.getBillIds(session, LimitOffset.ALL));
             }
+
+            // Initialize and run several BillReindexWorkers to index bills from the queue
+            CompletableFuture[] futures = new CompletableFuture[billReindexThreadCount];
+            AtomicBoolean interrupted = new AtomicBoolean(false);
+            for (int workerNo = 0; workerNo < billReindexThreadCount; workerNo++) {
+                futures[workerNo] = asyncUtils.run(new BillReindexWorker(billIdQueue, interrupted));
+            }
+            CompletableFuture.allOf(futures).join();
+            logger.info("Finished bill reindex.");
         } finally {
             // Restore normal index settings.
             billSearchDao.reindexCleanup();
@@ -229,7 +233,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         }
     }
 
-    /** --- Internal --- */
+    /* --- Internal --- */
 
     /**
      * Returns true if the given bill meets the criteria for being indexed in the search layer.
@@ -237,7 +241,50 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
      * @param bill Bill
      * @return boolean
      */
-    protected boolean isBillIndexable(Bill bill) {
+    private boolean isBillIndexable(Bill bill) {
         return bill != null && bill.isBaseVersionPublished();
+    }
+
+    /**
+     * Runnable that loads and indexes bills from a bill id queue.
+     */
+    private class BillReindexWorker implements Runnable {
+
+        /** Job queue of bill ids of bills to be indexed */
+        private final BlockingQueue<BaseBillId> billIdQueue;
+        /** Flag shared between workers that is set to true if one worker experiences an error */
+        private final AtomicBoolean interrupted;
+
+        BillReindexWorker(BlockingQueue<BaseBillId> billIdQueue, AtomicBoolean interrupted) {
+            this.billIdQueue = billIdQueue;
+            this.interrupted = interrupted;
+        }
+
+        @Override
+        public void run() {
+            List<BaseBillId> billIdBatch;
+            try {
+                do {
+                    if (interrupted.get()) {
+                        logger.info("Terminating reindex job due to exception in other worker");
+                        return;
+                    }
+                    billSearchDao.reaffirmReindexing();
+
+                    billIdBatch = new ArrayList<>(billReindexBatchSize);
+                    billIdQueue.drainTo(billIdBatch, billReindexBatchSize);
+
+                    List<Bill> bills = billIdBatch.stream()
+                            .map(billDataService::getBill)
+                            .collect(Collectors.toCollection(() -> new ArrayList<>(billReindexBatchSize)));
+
+                    updateIndex(bills);
+                } while (!billIdBatch.isEmpty());
+            } catch (Throwable ex) {
+                // Set the interrupted flag if an exception occurs
+                interrupted.set(true);
+                throw ex;
+            }
+        }
     }
 }
