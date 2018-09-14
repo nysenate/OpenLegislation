@@ -27,9 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -147,17 +145,18 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     @Override
     public void rebuildIndex() {
         clearIndex();
-        for (int year = 2011; year <= LocalDate.now().getYear(); year++) {
-            LimitOffset limitOffset = LimitOffset.TWENTY_FIVE;
-            List<PublicHearingId> publicHearingIds = publicHearingDataService.getPublicHearingIds(SortOrder.DESC, limitOffset);
-            while (!publicHearingIds.isEmpty()) {
-                logger.info("Indexing {} public hearings starting from {}.", publicHearingIds.size(), year);
-                List<PublicHearing> publicHearings = publicHearingIds.stream().map(publicHearingDataService::getPublicHearing).collect(Collectors.toList());
-                updateIndex(publicHearings);
-                limitOffset = limitOffset.next();
-                publicHearingIds = publicHearingDataService.getPublicHearingIds(SortOrder.DESC, limitOffset);
+        final int bulkSize = 500;
+        Queue<PublicHearingId> hearingIdQueue =
+                new ArrayDeque<>(publicHearingDataService.getPublicHearingIds(SortOrder.DESC, LimitOffset.ALL));
+        while(!hearingIdQueue.isEmpty()) {
+            List<PublicHearing> publicHearings = new ArrayList<>(bulkSize);
+            for (int i = 0; i < bulkSize && !hearingIdQueue.isEmpty(); i++) {
+                PublicHearingId hid = hearingIdQueue.remove();
+                publicHearings.add(publicHearingDataService.getPublicHearing(hid));
             }
+            updateIndex(publicHearings);
         }
+        logger.info("Finished reindexing public hearings.");
     }
 
     /** {@inheritDoc} */

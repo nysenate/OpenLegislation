@@ -27,9 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -132,7 +130,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     public void updateIndex(Collection<Transcript> transcripts) {
         if (env.isElasticIndexing() && !transcripts.isEmpty()) {
             List<Transcript> indexableTranscripts = transcripts.stream().filter(Objects::nonNull).collect(Collectors.toList());
-            logger.info("Indexing {} valid transcripts into elastic search.", indexableTranscripts.size());
+            logger.info("Indexing {} valid transcripts into elasticsearch.", indexableTranscripts.size());
             transcriptSearchDao.updateTranscriptIndex(indexableTranscripts);
         }
     }
@@ -148,17 +146,18 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     @Override
     public void rebuildIndex() {
         clearIndex();
-        for (int year = 1993; year <= LocalDate.now().getYear(); year++) {
-            LimitOffset limOff = LimitOffset.TWENTY_FIVE;
-            List<TranscriptId> transcriptIds = transcriptDataService.getTranscriptIds(SortOrder.DESC, limOff);
-            while (!transcriptIds.isEmpty()) {
-                logger.info("Indexing {} transcripts starting from {}", transcriptIds.size(), year);
-                List<Transcript> transcripts = transcriptIds.stream().map(transcriptDataService::getTranscript).collect(Collectors.toList());
-                updateIndex(transcripts);
-                limOff = limOff.next();
-                transcriptIds = transcriptDataService.getTranscriptIds(SortOrder.DESC, limOff);
+        final int bulkSize = 500;
+        Queue<TranscriptId> transcriptIdQueue =
+                new ArrayDeque<>(transcriptDataService.getTranscriptIds(SortOrder.DESC, LimitOffset.ALL));
+        while(!transcriptIdQueue.isEmpty()) {
+            List<Transcript> transcripts = new ArrayList<>(bulkSize);
+            for (int i = 0; i < bulkSize && !transcriptIdQueue.isEmpty(); i++) {
+                TranscriptId tid = transcriptIdQueue.remove();
+                transcripts.add(transcriptDataService.getTranscript(tid));
             }
+            updateIndex(transcripts);
         }
+        logger.info("Finished reindexing transcripts.");
     }
 
     /** {@inheritDoc} */
