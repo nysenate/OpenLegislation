@@ -163,6 +163,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
 
     /** {@inheritDoc} */
     @Override
+    @Subscribe
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.TRANSCRIPT)) {
             logger.info("Handling transcript re-index event.");
