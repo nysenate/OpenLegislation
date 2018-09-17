@@ -4,6 +4,7 @@
     "type": "git",
     "url": "https://github.com/nysenate/OpenLegislation.git"
   },
+  "license": "(BSD-2-Clause OR GPL-3.0)",
   "dependencies": {
     "autoprefixer": "^6.7.7",
     "bower": "^1.8.4",
