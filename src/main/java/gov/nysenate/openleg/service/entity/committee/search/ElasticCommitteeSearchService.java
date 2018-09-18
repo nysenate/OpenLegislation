@@ -118,8 +118,6 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
      */
     @Override
     public void rebuildIndex() {
-        clearIndex();
-
         logger.info("Reindexing committees...");
         committeeSearchDao.updateCommitteeIndexBulk(committeeDataService.getAllCommitteeSessionIds());
         logger.info("Committee reindex complete.");
@@ -166,7 +164,7 @@ public class ElasticCommitteeSearchService implements CommitteeSearchService
         } catch (SearchParseException ex) {
             throw new SearchException("There was a problem parsing the supplied query string.", ex);
         } catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 }

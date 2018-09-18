@@ -40,10 +40,10 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     protected List<BillStatus> milestones = Collections.synchronizedList(new LinkedList<>());
 
     /** A mapping of amendment versions to BillAmendment instances (includes base amendment). */
-    protected Map<Version, BillAmendment> amendmentMap = Collections.synchronizedSortedMap(new TreeMap<>());
+    protected Map<Version, BillAmendment> amendmentMap = Collections.synchronizedMap(new EnumMap<>(Version.class));
 
     /** Publish status mapped by amendment versions. */
-    protected Map<Version, PublishStatus> amendPublishStatusMap =Collections.synchronizedSortedMap(new TreeMap<>());
+    protected Map<Version, PublishStatus> amendPublishStatusMap = Collections.synchronizedMap(new EnumMap<>(Version.class));
 
     /** A list of veto messages for this bill */
     protected Map<VetoId, VetoMessage> vetoMessages = Collections.synchronizedMap(new HashMap<>());
@@ -138,7 +138,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     public Bill shallowClone() throws CloneNotSupportedException {
         Bill cloneBill = (Bill) this.clone();
         cloneBill.amendmentMap = new TreeMap<>();
-        this.getAmendmentList().stream().forEach(a -> cloneBill.addAmendment(a.shallowClone()));
+        this.getAmendmentList().forEach(a -> cloneBill.addAmendment(a.shallowClone()));
         return cloneBill;
     }
 
@@ -282,8 +282,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      * @return boolean
      */
     public boolean isBaseVersionPublished() {
-        return (this.amendPublishStatusMap.containsKey(Version.DEFAULT) &&
-                this.amendPublishStatusMap.get(Version.DEFAULT).isPublished());
+        return (this.amendPublishStatusMap.containsKey(Version.ORIGINAL) &&
+                this.amendPublishStatusMap.get(Version.ORIGINAL).isPublished());
     }
 
     /**

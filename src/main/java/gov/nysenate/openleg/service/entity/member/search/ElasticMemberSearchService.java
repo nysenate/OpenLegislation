@@ -93,7 +93,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 
@@ -138,11 +138,7 @@ public class ElasticMemberSearchService implements MemberSearchService, IndexedS
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.MEMBER)) {
             logger.info("Handling member re-index event");
-            try {
-                rebuildIndex();
-            } catch (Exception ex) {
-                logger.error("Unexpected exception during handling of member index rebuild event.", ex);
-            }
+            rebuildIndex();
         }
     }
 

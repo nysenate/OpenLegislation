@@ -81,7 +81,7 @@ public class SenateSiteCalendar {
 
     public Version getVersion(){
         if (calendarType == CalendarType.FLOOR_CALENDAR){
-            return Version.DEFAULT;
+            return Version.ORIGINAL;
         }
         return version;
     }

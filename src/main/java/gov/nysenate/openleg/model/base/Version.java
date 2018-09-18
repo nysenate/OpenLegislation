@@ -1,11 +1,9 @@
 package gov.nysenate.openleg.model.base;
 
-import com.google.common.collect.Lists;
-
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -16,16 +14,15 @@ import static java.util.stream.Collectors.toList;
  */
 public enum Version
 {
-    DEFAULT, // The default version
+    ORIGINAL, // The original version
     A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
 
-    public String getValue() {
-        return (this.equals(DEFAULT)) ? "" : this.name();
-    }
-
+    /**
+     * For use when displaying a bill's Version.
+     */
     @Override
-    public String toString() {
-        return this.getValue();
+    public String toString(){
+        return (this == ORIGINAL) ? "" : this.name();
     }
 
     /**
@@ -38,8 +35,8 @@ public enum Version
      */
     public static Version of(String version) {
         String cleanVersion = (version != null) ? version.trim().toUpperCase() : "";
-        if (cleanVersion.isEmpty() || cleanVersion.equals("DEFAULT") || cleanVersion.equals("ORIGINAL")) {
-            return DEFAULT;
+        if (cleanVersion.isEmpty() || cleanVersion.equals("DEFAULT")) {
+            return ORIGINAL;
         }
         return valueOf(cleanVersion);
     }
@@ -63,4 +60,17 @@ public enum Version
     public static List<Version> after(Version v) {
         return Arrays.stream(values()).filter(p -> p.compareTo(v) > 0).collect(toList());
     }
+
+    /**
+     * A class to compare Versions once they are already made into strings.
+     */
+    public static class SortVersionStrings implements Comparator<String>, Serializable
+    {
+        public int compare(String str1, String str2){
+            Version v1 = of(str1);
+            Version v2 = of(str2);
+            return v1.compareTo(v2);
+        }
+    }
+
 }

@@ -15,7 +15,6 @@ import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.transcript.data.TranscriptDataService;
 import gov.nysenate.openleg.service.transcript.event.BulkTranscriptUpdateEvent;
 import gov.nysenate.openleg.service.transcript.event.TranscriptUpdateEvent;
-import org.apache.lucene.queryparser.xml.builders.RangeFilterBuilder;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -28,8 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,7 +94,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 
@@ -131,8 +129,8 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     @Override
     public void updateIndex(Collection<Transcript> transcripts) {
         if (env.isElasticIndexing() && !transcripts.isEmpty()) {
-            List<Transcript> indexableTranscripts = transcripts.stream().filter(t -> t != null).collect(Collectors.toList());
-            logger.info("Indexing {} valid transcripts into elastic search.", indexableTranscripts.size());
+            List<Transcript> indexableTranscripts = transcripts.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            logger.info("Indexing {} valid transcripts into elasticsearch.", indexableTranscripts.size());
             transcriptSearchDao.updateTranscriptIndex(indexableTranscripts);
         }
     }
@@ -148,30 +146,27 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     @Override
     public void rebuildIndex() {
         clearIndex();
-        for (int year = 1993; year <= LocalDate.now().getYear(); year++) {
-            LimitOffset limOff = LimitOffset.TWENTY_FIVE;
-            List<TranscriptId> transcriptIds = transcriptDataService.getTranscriptIds(SortOrder.DESC, limOff);
-            while (!transcriptIds.isEmpty()) {
-                logger.info("Indexing {} transcripts starting from {}", transcriptIds.size(), year);
-                List<Transcript> transcripts = transcriptIds.stream().map(transcriptDataService::getTranscript).collect(Collectors.toList());
-                updateIndex(transcripts);
-                limOff = limOff.next();
-                transcriptIds = transcriptDataService.getTranscriptIds(SortOrder.DESC, limOff);
+        final int bulkSize = 500;
+        Queue<TranscriptId> transcriptIdQueue =
+                new ArrayDeque<>(transcriptDataService.getTranscriptIds(SortOrder.DESC, LimitOffset.ALL));
+        while(!transcriptIdQueue.isEmpty()) {
+            List<Transcript> transcripts = new ArrayList<>(bulkSize);
+            for (int i = 0; i < bulkSize && !transcriptIdQueue.isEmpty(); i++) {
+                TranscriptId tid = transcriptIdQueue.remove();
+                transcripts.add(transcriptDataService.getTranscript(tid));
             }
+            updateIndex(transcripts);
         }
+        logger.info("Finished reindexing transcripts.");
     }
 
     /** {@inheritDoc} */
     @Override
+    @Subscribe
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.TRANSCRIPT)) {
             logger.info("Handling transcript re-index event.");
-            try {
-                rebuildIndex();
-            }
-            catch (Exception ex) {
-                logger.error("Unexpected exception during handling of transcript index rebuild event.", ex);
-            }
+            rebuildIndex();
         }
     }
 

@@ -4,7 +4,8 @@ import gov.nysenate.openleg.script.BaseScript;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.mail.*;
 import java.io.File;
@@ -15,7 +16,7 @@ import java.util.Properties;
 @Deprecated
 public class CheckMail extends BaseScript
 {
-    private static final Logger logger = Logger.getLogger(CheckMail.class);
+    private static final Logger logger = LogManager.getLogger(CheckMail.class);
 
     public static void main(String[] args) throws Exception
     {

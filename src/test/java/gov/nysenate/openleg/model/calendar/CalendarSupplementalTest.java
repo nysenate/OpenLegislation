@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.TreeMap;
+import java.util.EnumMap;
 
 import static gov.nysenate.openleg.model.calendar.CalendarSectionType.ORDER_OF_THE_FIRST_REPORT;
 import static gov.nysenate.openleg.model.calendar.CalendarSectionType.ORDER_OF_THE_SECOND_REPORT;
@@ -22,7 +22,7 @@ public class CalendarSupplementalTest
     private static final Logger logger = LoggerFactory.getLogger(CalendarSupplementalTest.class);
 
     @Test
-    public void testCalSupEqualityInMaps() throws Exception {
+    public void testCalSupEqualityInMaps() {
         CalendarId calId1 = new CalendarId(1, 2014);
         CalendarId calId2 = new CalendarId(1, 2014);
         LocalDateTime date = LocalDateTime.now();
@@ -45,8 +45,8 @@ public class CalendarSupplementalTest
         sup4.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1235", 2013), null, true));
         sup4.addEntry(new CalendarSupplementalEntry(1, ORDER_OF_THE_SECOND_REPORT, new BillId("S1231", 2013), null, true));
 
-        TreeMap<Version, Object> map1 = new TreeMap<>();
-        TreeMap<Version, Object> map2 = new TreeMap<>();
+        EnumMap<Version, Object> map1 = new EnumMap<>(Version.class);
+        EnumMap<Version, Object> map2 = new EnumMap<>(Version.class);
 
         map1.put(sup1.getVersion(), sup1);
         map1.put(sup2.getVersion(), sup2);

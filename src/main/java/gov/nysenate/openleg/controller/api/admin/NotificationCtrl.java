@@ -21,6 +21,7 @@ import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.notification.data.NotificationNotFoundException;
 import gov.nysenate.openleg.service.notification.data.NotificationService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,6 +140,9 @@ public class NotificationCtrl extends BaseCtrl
                                                WebRequest request) throws SearchException {
         LimitOffset limitOffset = getLimitOffset(request, 25);
         boolean full = getBooleanParam(request, "full", false);
+        if (StringUtils.isBlank(term)) {
+            term = "*";
+        }
         SearchResults<RegisteredNotification> results = notificationService.notificationSearch(term, sort, limitOffset);
         return ListViewResponse.of(results.getResults().stream()
                 .map(r -> new SearchResultView(
@@ -149,7 +153,7 @@ public class NotificationCtrl extends BaseCtrl
     }
 
 
-    /** --- Internal --- */
+    /* --- Internal --- */
 
     private BaseResponse getNotificationsDuring(LocalDateTime from, LocalDateTime to, WebRequest request) throws SearchException {
         Range<LocalDateTime> dateRange = getClosedRange(from, to, "from", "to");

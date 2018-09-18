@@ -11,9 +11,13 @@ import java.util.Map;
 
 public abstract class ElasticSearchServiceUtils {
 
+    // Sorting scores and fields requires different method calls,
+    // so the correct type must be identified.
+    private final static String SCORE_NAME = "_score";
+
     /**
      * Generates a list of elastic search sort parameters from a CSV string.  If no parameters are specified,
-     *  a single score sort parameter is used.
+     * a single score sort parameter is used.
      *
      * @param sort String
      * @return List<SortBuilder>
@@ -27,8 +31,8 @@ public abstract class ElasticSearchServiceUtils {
             try {
                 Map<String, String> sortMap =
                         Splitter.on(",").omitEmptyStrings().trimResults().withKeyValueSeparator(":").split(sort);
-                sortMap.forEach((k, v) -> sortBuilders.add(
-                        SortBuilders.fieldSort(k).order(org.elasticsearch.search.sort.SortOrder.valueOf(v.toUpperCase()))));
+                sortMap.forEach((k, v) -> sortBuilders.add( (k.equals(SCORE_NAME) ? SortBuilders.scoreSort() : SortBuilders.fieldSort(k))
+                        .order(org.elasticsearch.search.sort.SortOrder.valueOf(v.toUpperCase()))));
             } catch (IllegalArgumentException ex) {
                 throw new SearchException("Invalid sort string: '" + sort + "'\n" +
                         "Must be comma separated list of searchField:(ASC|DESC) e.g. 'status.statusType:ASC,status.actionDate:DESC'");

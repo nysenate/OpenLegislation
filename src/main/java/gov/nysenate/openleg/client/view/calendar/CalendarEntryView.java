@@ -21,7 +21,7 @@ public class CalendarEntryView extends BillInfoView
             this.billCalNo = calendarEntry.getBillCalNo();
             this.selectedVersion = Optional.ofNullable(calendarEntry.getBillId())
                     .map(BillId::getVersion)
-                    .map(Version::getValue)
+                    .map(Version::toString)
                     .orElse(null);
         }
     }
@@ -34,8 +34,7 @@ public class CalendarEntryView extends BillInfoView
         return selectedVersion;
     }
 
-    public static Comparator<CalendarEntryView> calEntryViewComparator =
-            (ent1, ent2) -> Integer.compare(ent1.billCalNo, ent2.billCalNo);
+    public static Comparator<CalendarEntryView> calEntryViewComparator = Comparator.comparingInt(CalendarEntryView::getBillCalNo);
 
     @Override
     public String getViewType() {

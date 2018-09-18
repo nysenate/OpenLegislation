@@ -6,7 +6,6 @@ import gov.nysenate.openleg.model.transcript.Transcript;
 import gov.nysenate.openleg.model.transcript.TranscriptFile;
 import gov.nysenate.openleg.model.transcript.TranscriptId;
 import gov.nysenate.openleg.model.transcript.TranscriptUpdateToken;
-import gov.nysenate.openleg.util.DateUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -24,7 +23,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
     /** {@inheritDoc} */
     @Override
     public List<TranscriptId> getTranscriptIds(SortOrder sortOrder, LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("filename", sortOrder);
+        OrderBy orderBy = new OrderBy("transcript_filename", sortOrder);
         return jdbcNamed.query(SELECT_TRANSCRIPT_IDS_BY_YEAR.getSql(schema(), orderBy, limOff), transcriptIdRowMapper);
     }
 
@@ -85,7 +84,7 @@ public class SqlTranscriptDao extends SqlBaseDao implements TranscriptDao
     };
 
     static RowMapper<TranscriptId> transcriptIdRowMapper = (rs, rowNum) ->
-        new TranscriptId(rs.getString("filename"));
+        new TranscriptId(rs.getString("transcript_filename"));
 
 
     private static RowMapper<TranscriptUpdateToken> transcriptUpdateRowMapper = (rs, rowNum) ->

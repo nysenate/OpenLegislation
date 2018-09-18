@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
 import java.util.Collection;
@@ -26,7 +26,7 @@ public interface BillSearchDao
      * @param limOff LimitOffset - Limit the result set
      * @return SearchResults<BillId>
      */
-    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder filter, RescoreBuilder.Rescorer rescorer,
+    public SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder filter, RescorerBuilder rescorer,
                                                  List<SortBuilder> sort, LimitOffset limOff);
 
     /**

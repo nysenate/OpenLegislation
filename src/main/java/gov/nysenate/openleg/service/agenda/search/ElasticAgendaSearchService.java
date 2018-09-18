@@ -2,6 +2,7 @@ package gov.nysenate.openleg.service.agenda.search;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.agenda.search.ElasticAgendaSearchDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
@@ -9,8 +10,6 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
-import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.agenda.event.AgendaUpdateEvent;
@@ -117,12 +116,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.AGENDA)) {
             logger.info("Handling agenda re-index event");
-            try {
-                rebuildIndex();
-            }
-            catch (Exception ex) {
-                logger.error("Unexpected exception during handling of Agenda RebuildIndexEvent!", ex);
-            }
+            rebuildIndex();
         }
     }
 
@@ -166,7 +160,7 @@ public class ElasticAgendaSearchService implements AgendaSearchService, IndexedS
         } catch (SearchParseException ex) {
             throw new SearchException("There was a problem parsing the supplied query string.", ex);
         } catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 }

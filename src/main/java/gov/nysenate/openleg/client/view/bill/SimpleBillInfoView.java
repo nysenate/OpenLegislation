@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.client.view.bill;
 
 import gov.nysenate.openleg.client.view.base.ViewObject;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillInfo;
 
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
         super(billInfo != null ? billInfo.getBillId() : null);
         if (billInfo != null) {
             title = billInfo.getTitle();
-            activeVersion = billInfo.getActiveVersion() != null ? billInfo.getActiveVersion().getValue() : null;
+            activeVersion = billInfo.getActiveVersion() != null ? billInfo.getActiveVersion().toString() : null;
             printNo = basePrintNo + (activeVersion!=null ? activeVersion : "");
             year = billInfo.getYear();
             publishedDateTime = billInfo.getPublishedDateTime();

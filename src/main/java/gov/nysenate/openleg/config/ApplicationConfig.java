@@ -7,12 +7,13 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.SubscriberExceptionHandler;
+import com.google.common.eventbus.SubscriberExceptionContext;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.base.IngestCache;
 import gov.nysenate.openleg.util.AsciiArt;
@@ -20,11 +21,10 @@ import gov.nysenate.openleg.util.OpenlegThreadFactory;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.HttpHost;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -43,8 +43,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
-import java.net.InetSocketAddress;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Calendar;
+
+import static gov.nysenate.openleg.model.notification.NotificationType.EVENT_BUS_EXCEPTION;
 
 @Configuration
 @EnableCaching
@@ -106,67 +109,50 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
     @Value("${elastic.search.cluster.name:elasticsearch}") private String elasticSearchCluster;
     @Value("${elastic.search.host:localhost}") private String elasticSearchHost;
-    @Value("${elastic.search.port:9300}") private int elasticSearchPort;
+    @Value("${elastic.search.port:9200}") private int elasticSearchPort;
     @Value("${elastic.search.connection_retries:30}") private int esAllowedRetries;
 
     @Bean(destroyMethod = "close")
-    public Client elasticSearchNode() throws InterruptedException {
-        Settings settings = Settings.settingsBuilder()
-            .put("cluster.name", elasticSearchCluster).build();
+    public RestHighLevelClient elasticSearchNode() throws InterruptedException {
 
         int retryCount = 0;
-        ElasticsearchException cause;
+        RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
+                new HttpHost(elasticSearchHost, elasticSearchPort, "http")));
 
-        do {
-            if (retryCount <= esAllowedRetries) {
-                Thread.sleep(1000);
-            }
+        while (true) {
             logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
             try {
-                TransportClient tc = TransportClient.builder()
-                        .settings(settings)
-                        .build()
-                        .addTransportAddress(
-                                new InetSocketTransportAddress(new InetSocketAddress(elasticSearchHost, elasticSearchPort)));
-                if (tc.connectedNodes().size() == 0) {
-                    tc.close();
-                    throw new ElasticsearchException("Failed to connect to elastic search node!");
+                // Test the connection with a ping.
+                if (!client.ping()) {
+                    throw new ElasticsearchException("Could not ping elasticsearch cluster.");
                 }
                 logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);
-                return tc;
-            } catch (ElasticsearchException ex) {
+                return client;
+            } catch (IOException | ElasticsearchException ex){
                 logger.warn("Could not connect to elastic search cluster {}", elasticSearchCluster);
                 logger.warn("{} retries remain.", esAllowedRetries - retryCount);
-                cause = ex;
-                retryCount++;
+                if (retryCount >= esAllowedRetries) {
+                    logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
+                            elasticSearchCluster, elasticSearchHost, elasticSearchPort);
+                    logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
+                    throw new ElasticsearchException("Elasticsearch connection retries exceeded", ex);
+                }
             }
-        } while (retryCount <= esAllowedRetries);
-
-        logger.error("Error while initializing elasticsearch client:\n" + ExceptionUtils.getStackTrace(cause));
-        logger.error("Elastic search cluster {} at host: {}:{} needs to be running prior to deployment!",
-                elasticSearchCluster, elasticSearchHost, elasticSearchPort);
-        logger.error(AsciiArt.START_ELASTIC_SEARCH.getText());
-        return null;
+            retryCount++;
+            Thread.sleep(1000);
+        }
     }
 
     /** --- Guava Event Bus Configuration --- */
 
     @Bean
     public EventBus eventBus() {
-        SubscriberExceptionHandler errorHandler = (exception, context) -> {
-            logger.error("Event Bus Exception thrown during event handling within {}: {}, {}", context.getSubscriberMethod(),
-                exception, ExceptionUtils.getStackTrace(exception));
-        };
-        return new EventBus(errorHandler);
+        return new EventBus(this::handleEventBusException);
     }
 
     @Bean
     public AsyncEventBus asyncEventBus() {
-        SubscriberExceptionHandler errorHandler = (exception, context) -> {
-            logger.error("Async Event Bus Exception thrown during event handling within {}: {}, {}",
-                    context.getSubscriberMethod(), exception, ExceptionUtils.getStackTrace(exception));
-        };
-        return new AsyncEventBus(getAsyncExecutor(), errorHandler);
+        return new AsyncEventBus(getAsyncExecutor(), this::handleEventBusException);
     }
 
     /* --- Threadpool/Async/Scheduling Configuration --- */
@@ -231,5 +217,29 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
     @Bean(name = "calendarIngestCache")
     public IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache() {
         return new IngestCache<>(100);
+    }
+
+    /**
+     * Handle event bus exceptions by posting a notification.
+     *
+     * Note that even though notifications are posted through the event bus,
+     * all exceptions are caught within the notification event handling code, preventing an infinite loop.
+     * @see gov.nysenate.openleg.service.notification.dispatch.NotificationDispatcher#handleNotificationEvent(Notification)
+     *
+     * @param exception Throwable
+     * @param context SubscriberExceptionContext
+     */
+    private void handleEventBusException(Throwable exception, SubscriberExceptionContext context) {
+        logger.error("Event Bus Exception thrown during event handling within " + context.getSubscriberMethod(), exception);
+
+        LocalDateTime occurred = LocalDateTime.now();
+        String summary = "Event Bus Exception within " + context.getSubscriberMethod() +
+                " at " + occurred + " - " + ExceptionUtils.getStackFrames(exception)[0];
+        String message = "\nThe following exception occurred during event handling within " +
+                context.getSubscriberMethod() + " at " + occurred + ":\n" +
+                ExceptionUtils.getStackTrace(exception);
+        Notification notification = new Notification(EVENT_BUS_EXCEPTION, occurred, summary, message);
+
+        eventBus().post(notification);
     }
 }

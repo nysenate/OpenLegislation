@@ -2,7 +2,8 @@ package gov.nysenate.openleg.dao.scraping;
 
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
  */
 @Repository
 public class AssemblyAgnScraper extends LRSScraper {
-    private static final Logger logger = Logger.getLogger(LRSScraper.class);
+    private static final Logger logger = LogManager.getLogger(LRSScraper.class);
     String assemblyAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=ASMAGEN";
     String senateAgendas = "http://public.leginfo.state.ny.us/menugetf.cgi?COMMONQUERY=SENAGEN";
 

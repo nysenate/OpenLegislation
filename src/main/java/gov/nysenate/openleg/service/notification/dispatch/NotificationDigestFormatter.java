@@ -2,7 +2,6 @@ package gov.nysenate.openleg.service.notification.dispatch;
 
 import gov.nysenate.openleg.model.notification.NotificationDigest;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
-import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
 import java.util.function.Function;
@@ -32,7 +31,7 @@ public abstract class NotificationDigestFormatter {
                     .append("\nURL: ")
                     .append(getUrl.apply(notification))
                     .append("\nType: ")
-                    .append(notification.getType())
+                    .append(notification.getNotificationType())
                     .append("\nSummary: ")
                     .append(notification.getSummary());
             if (digest.isFull()) {

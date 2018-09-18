@@ -90,11 +90,10 @@ elastic.search.enabled = true
 
 elastic.search.host = localhost
 
-# The transport client port used to communicate with elastic search from java land
-# Typically this is configured to 9300 while the REST API uses 9200.
-# (Default: 9300)
+# The port that the elasticsearch REST API is listening on.
+# (Default: 9200)
 
-elastic.search.port = 9300
+elastic.search.port = 9200
 
 # If the elastic search cluster has a name, it must be specified here.
 # (Default: elasticsearch)

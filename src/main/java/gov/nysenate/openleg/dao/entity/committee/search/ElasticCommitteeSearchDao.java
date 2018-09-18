@@ -4,19 +4,15 @@ import com.google.common.collect.Lists;
 import gov.nysenate.openleg.client.view.committee.CommitteeView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
-import gov.nysenate.openleg.model.entity.CommitteeNotFoundEx;
-import gov.nysenate.openleg.util.OutputUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -40,48 +36,37 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticCommitteeSearchDao.class);
 
-    private static final String committeeSearchIndexName = "committees";
+    private static final String committeeSearchIndexName = SearchIndex.COMMITTEE.getIndexName();
 
     private static final Pattern committeeSearchIdPattern =
-            Pattern.compile("(SENATE|ASSEMBLY)-([A-z, ]*)-(.*)");
+            Pattern.compile("(SENATE|ASSEMBLY)-([A-z, ]*)-(\\d{4})-(.*)");
 
-    @Autowired
-    CommitteeDataService committeeDataService;
+    @Autowired private CommitteeDataService committeeDataService;
 
     @Override
     public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
                                                               List<SortBuilder> sort, LimitOffset limitOffset) {
-        SearchRequestBuilder searchRequest = getSearchRequest(committeeSearchIndexName, query, filter, sort, limitOffset);
-        SearchResponse response = searchRequest.execute().actionGet();
-        return getSearchResults(response, limitOffset, this::getCommitteeVersionId);
+        return search(committeeSearchIndexName, query, filter, sort, limitOffset, this::getCommitteeVersionId);
     }
 
     @Override
     public void updateCommitteeIndex(CommitteeSessionId committeeSessionId) {
-        deleteCommitteeFromIndex(committeeSessionId);
-        BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
-        committeeHistoryIndexBulkAdd(committeeSessionId, bulkRequest);
-        bulkRequest.execute().actionGet();
+        updateCommitteeIndexBulk(Collections.singletonList(committeeSessionId));
     }
 
     @Override
     public void updateCommitteeIndexBulk(Collection<CommitteeSessionId> sessionIds) {
-        if (sessionIds.isEmpty()) {
-            return;
-        }
-        BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
+        BulkRequest bulkRequest = new BulkRequest();
         sessionIds.stream()
                 .peek(this::deleteCommitteeFromIndex)
                 .forEach(sessionId -> committeeHistoryIndexBulkAdd(sessionId, bulkRequest));
-        bulkRequest.execute().actionGet();
+        safeBulkRequestExecute(bulkRequest);
     }
 
     @Override
     public void deleteCommitteeFromIndex(CommitteeSessionId committeeSessionId) {
-        BulkRequestBuilder committeeDeleteRequest = getCommitteeDeleteRequest(committeeSessionId);
-        if (committeeDeleteRequest.numberOfActions() > 0) {
-            committeeDeleteRequest.execute().actionGet();
-        }
+        BulkRequest bulkRequest = getCommitteeDeleteRequest(committeeSessionId);
+        safeBulkRequestExecute(bulkRequest);
     }
 
     @Override
@@ -98,17 +83,17 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
      * @param committeeSessionId {@link CommitteeSessionId}
      * @return BulkRequestBuilder
      */
-    private BulkRequestBuilder getCommitteeDeleteRequest(CommitteeSessionId committeeSessionId) {
+    private BulkRequest getCommitteeDeleteRequest(CommitteeSessionId committeeSessionId) {
+        BulkRequest request = new BulkRequest();
         SearchResults<CommitteeVersionId> searchResults = searchCommittees(
                 getCommitteeSessionQuery(committeeSessionId), null, Collections.emptyList(), LimitOffset.ALL);
-        BulkRequestBuilder bulkDeleteRequest = searchClient.prepareBulk();
 
         searchResults.getResults().stream()
                 .map(SearchResult::getResult)
                 .map(this::getCommitteeVersionDeleteRequest)
-                .forEach(bulkDeleteRequest::add);
+                .forEach(request::add);
 
-        return bulkDeleteRequest;
+        return request;
     }
 
     /**
@@ -130,20 +115,16 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
      * @param committeeSessionId {@link CommitteeSessionId}
      * @param bulkRequest BulkRequestBuilder
      */
-    private void committeeHistoryIndexBulkAdd(CommitteeSessionId committeeSessionId, BulkRequestBuilder bulkRequest) {
-        try {
-            committeeDataService.getCommitteeHistory(committeeSessionId).stream()
-                    .map(this::getCommitteeVersionIndexRequest)
-                    .forEach(bulkRequest::add);
-        } catch (CommitteeNotFoundEx ex) {
-            logger.warn(ExceptionUtils.getStackTrace(ex));
-        }
+    private void committeeHistoryIndexBulkAdd(CommitteeSessionId committeeSessionId, BulkRequest bulkRequest) {
+        committeeDataService.getCommitteeHistory(committeeSessionId).stream()
+                .map(this::getCommitteeVersionIndexRequest)
+                .forEach(bulkRequest::add);
     }
 
-    protected DeleteRequestBuilder getCommitteeVersionDeleteRequest(CommitteeVersionId committeeVersionId) {
-        return searchClient.prepareDelete(
+    private DeleteRequest getCommitteeVersionDeleteRequest(CommitteeVersionId committeeVersionId) {
+        return new DeleteRequest(
                 committeeSearchIndexName,
-                Integer.toString(committeeVersionId.getSession().getYear()),
+                defaultType,
                 generateCommitteeVersionSearchId(committeeVersionId)
         );
     }
@@ -154,18 +135,22 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
      * @param committee
      * @return
      */
-    private IndexRequestBuilder getCommitteeVersionIndexRequest(Committee committee) {
-        return searchClient.prepareIndex(committeeSearchIndexName,
-                Integer.toString(committee.getSession().getYear()),
-                generateCommitteeVersionSearchId(committee.getVersionId()))
-                .setSource(OutputUtils.toJson(new CommitteeView(committee)));
+    private IndexRequest getCommitteeVersionIndexRequest(Committee committee) {
+        return getJsonIndexRequest(committeeSearchIndexName,
+                generateCommitteeVersionSearchId(committee.getVersionId()),
+                new CommitteeView(committee));
     }
 
     /* --- Id Mappers --- */
 
     private String generateCommitteeVersionSearchId(CommitteeVersionId committeeVersionId) {
-        return generateCommitteeSearchId(committeeVersionId) + "-" +
+        return generateCommitteeSessionSearchId(committeeVersionId) + "-" +
                 committeeVersionId.getReferenceDate();
+    }
+
+    private String generateCommitteeSessionSearchId(CommitteeSessionId committeeSessionId){
+        return generateCommitteeSearchId(committeeSessionId) + "-" +
+                committeeSessionId.getSession().toString();
     }
 
     private String generateCommitteeSearchId(CommitteeId committeeId) {
@@ -175,9 +160,11 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
 
     private CommitteeVersionId getCommitteeVersionId(SearchHit hit) {
         Matcher versionIdMatcher = committeeSearchIdPattern.matcher(hit.getId());
-        versionIdMatcher.find();
+        if (!versionIdMatcher.find()){
+            return null;
+        }
         return new CommitteeVersionId(Chamber.getValue(versionIdMatcher.group(1)), versionIdMatcher.group(2),
-                SessionYear.of(Integer.parseInt(hit.getType())),
-                LocalDateTime.parse(versionIdMatcher.group(3), DateTimeFormatter.ISO_DATE_TIME));
+                new SessionYear(Integer.parseInt(versionIdMatcher.group(3))),
+                LocalDateTime.parse(versionIdMatcher.group(4), DateTimeFormatter.ISO_DATE_TIME));
     }
 }

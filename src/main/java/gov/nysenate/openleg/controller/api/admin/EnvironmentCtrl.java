@@ -14,6 +14,7 @@ import gov.nysenate.openleg.client.view.environment.ImmutableEnvVarException;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,7 @@ public class EnvironmentCtrl extends BaseCtrl
                 .put("notificationsEnabled", setBoolean(env::setNotificationsEnabled))
                 .put("billScrapeQueueEnabled", setBoolean(env::setBillScrapeQueueEnabled))
                 .put("checkmailEnabled", setBoolean(env::setCheckmailEnabled))
+                .put("sobiBatchEnabled", setBoolean(env::setSobiBatchEnabled))
                 .build();
     }
 
@@ -78,7 +80,8 @@ public class EnvironmentCtrl extends BaseCtrl
     public BaseResponse setVariable(@RequestParam String varName,
                                     @RequestParam String value) {
         if (mutableProperties.containsKey(varName)) {
-            logger.info("Setting environment variable '{}' to '{}'", varName, value);
+            String user = SecurityUtils.getSubject().getPrincipal().toString();
+            logger.info("Setting environment variable '{}' to '{}'    user: {}", varName, value, user);
             mutableProperties.get(varName).accept(value);
             return new ViewObjectResponse<>(getVariable(varName), "Environment variable value successfully changed");
         } else {
@@ -134,9 +137,7 @@ public class EnvironmentCtrl extends BaseCtrl
         return new ViewObjectErrorResponse(ErrorCode.IMMUTABLE_ENV_VARIABLE, ex.getVar());
     }
 
-    /**
-     * --- Internal Methods ---
-     */
+    /* --- Internal Methods --- */
 
     private EnvironmentVariableView getVariable(String name) throws EnvVarNotFoundException {
         try {

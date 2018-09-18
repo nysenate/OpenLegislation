@@ -30,7 +30,7 @@ public class CalendarDataServiceTest extends BaseTests
 
     @Test
     public void getCalendarTest() {
-        CalendarSupplementalId calSupId = new CalendarSupplementalId(12, 2015, Version.DEFAULT);
+        CalendarSupplementalId calSupId = new CalendarSupplementalId(12, 2015, Version.ORIGINAL);
         CalendarSupplemental calendarSupplemental = calendarDataService.getCalendarSupplemental(calSupId);
         logger.info("got it.");
     }

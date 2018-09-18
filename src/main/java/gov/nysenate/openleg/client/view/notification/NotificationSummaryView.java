@@ -15,7 +15,7 @@ public class NotificationSummaryView implements ViewObject{
 
     public NotificationSummaryView(RegisteredNotification notification) {
         this.id = notification.getId();
-        this.notificationType = notification.getType();
+        this.notificationType = notification.getNotificationType();
         this.occurred = notification.getOccurred();
         this.summary = notification.getSummary();
     }
