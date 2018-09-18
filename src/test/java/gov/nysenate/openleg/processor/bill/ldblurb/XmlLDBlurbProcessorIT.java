@@ -1,31 +1,32 @@
 package gov.nysenate.openleg.processor.bill.ldblurb;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.bill.anact.XmlAnActProcessorTest;
+import gov.nysenate.openleg.processor.bill.anact.XmlAnActProcessorIT;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Robert Bebber on 3/16/17.
  */
-@Transactional
-public class XmlLDBlurbProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlLDBlurbProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired
     BillDataService billDataService;
     @Autowired
     XmlLDBlurbProcessor xmlLdBlurbProcessor;
 
-    private static final Logger logger = LoggerFactory.getLogger(XmlAnActProcessorTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlAnActProcessorIT.class);
 
     @Override
     protected SobiProcessor getSobiProcessor() {

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill.anact;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -7,10 +8,10 @@ import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,15 +20,15 @@ import static org.junit.Assert.assertEquals;
  *
  * Created by Robert Bebber on 2/15/17.
  */
-@Transactional
-public class XmlAnActProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlAnActProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired
     BillDataService billDataService;
     @Autowired
     XmlAnActProcessor xmlAnActProcessor;
 
-    private static final Logger logger = LoggerFactory.getLogger(XmlAnActProcessorTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlAnActProcessorIT.class);
 
     @Override
     protected SobiProcessor getSobiProcessor() {

@@ -5,7 +5,6 @@ import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import static org.junit.Assert.*;
 /**
  * Created by uros on 3/30/17. Tested for XML BILLTEXT AND SENMEMO FILES
  */
-@Transactional
 public class BillHTMLparserTest extends BillTextUtils {
 
     private final File testFileDir = FileIOUtils.getResourceFile("sourcefile/");

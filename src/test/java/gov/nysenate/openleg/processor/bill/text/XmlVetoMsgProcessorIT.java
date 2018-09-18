@@ -1,24 +1,24 @@
 package gov.nysenate.openleg.processor.bill.text;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.bill.sponsor.XmlVetoMsgProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by uros on 3/7/17.
  */
-@Transactional
-public class XmlVetoMsgProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlVetoMsgProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private BillDataService billDataService;
     @Autowired private XmlVetoMsgProcessor vetoMessageProcessor;

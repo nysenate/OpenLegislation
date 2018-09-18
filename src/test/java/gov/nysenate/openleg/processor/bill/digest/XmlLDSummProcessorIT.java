@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill.digest;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -9,6 +10,7 @@ import gov.nysenate.openleg.processor.bill.XmlLDSummProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
@@ -19,7 +21,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by senateuser on 2017/2/28.
  */
-public class XmlLDSummProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired
     BillDataService billDataService;
@@ -41,7 +44,7 @@ public class XmlLDSummProcessorTest extends BaseXmlProcessorTest {
         final String expectedLaw = "test digest bill law";
         assertEquals(expectedLaw, b.getAmendment(Version.ORIGINAL).getLaw()); // test law
         Set<BillId> preBill = b.getAllPreviousVersions();
-        assertTrue(preBill.contains(new BaseBillId("S06883", 2016)));//test pre bill
+        assertTrue(preBill.contains(new BillId("S06883", 2016)));//test pre bill
     }
 
     @Test

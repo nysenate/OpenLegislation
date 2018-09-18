@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor;
 
+import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
@@ -8,33 +9,35 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
-import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
+import gov.nysenate.openleg.service.bill.data.CachedBillDataService;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 
 /**
  * Contains common methods used when testing {@link SobiProcessor}s
  */
-@Transactional
 public abstract class BaseXmlProcessorTest extends BaseTests {
 
-    @Autowired private BillDataService billDataService;
+    @Autowired private CachedBillDataService billDataService;
     @Autowired private SourceFileRefDao sourceFileRefDao;
     @Autowired private SobiFragmentDao sobiFragmentDao;
     @Autowired private Environment env;
+    @Autowired private EventBus eventBus;
 
     /**
      * @return {@link SobiProcessor} the processor implementation associated with this test
@@ -42,6 +45,8 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     abstract protected SobiProcessor getSobiProcessor();
 
     private boolean originalIndexingSetting;
+    private boolean originalScrapeQueueSetting;
+    private boolean originalNotificationSetting;
 
     /**
      * Store original indexing setting and disable indexing.
@@ -51,15 +56,23 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     @Before
     public void setUp() {
         originalIndexingSetting = env.isElasticIndexing();
+        originalScrapeQueueSetting = env.isBillScrapeQueueEnabled();
+        originalNotificationSetting = env.isNotificationsEnabled();
         env.setElasticIndexing(false);
+        env.setBillScrapeQueueEnabled(false);
+        env.setNotificationsEnabled(false);
     }
 
     /**
      * Restore original indexing setting.
+     * Clear all caches.
      */
     @After
     public void cleanUp() {
         env.setElasticIndexing(originalIndexingSetting);
+        env.setBillScrapeQueueEnabled(originalScrapeQueueSetting);
+        env.setNotificationsEnabled(originalNotificationSetting);
+        eventBus.post(new CacheEvictEvent(EnumSet.allOf(ContentCache.class)));
     }
 
     /**
@@ -117,7 +130,14 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
      * Get a bill amendment from the db
      */
     protected BillAmendment getAmendment(BillId billId) throws BillNotFoundEx, BillAmendNotFoundEx {
-        Bill bill = billDataService.getBill(BaseBillId.of(billId));
+        return getAmendment(billId, false);
+    }
+
+    /**
+     * Get a bill amendment from the db
+     */
+    protected BillAmendment getAmendment(BillId billId, boolean htmlText) throws BillNotFoundEx, BillAmendNotFoundEx {
+        Bill bill = billDataService.getBill(BaseBillId.of(billId), htmlText);
         return bill.getAmendment(billId.getVersion());
     }
 

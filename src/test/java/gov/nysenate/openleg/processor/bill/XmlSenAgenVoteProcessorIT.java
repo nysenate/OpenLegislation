@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.bill;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.dao.agenda.data.AgendaDao;
 import gov.nysenate.openleg.model.agenda.*;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -18,8 +19,8 @@ import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,15 +29,14 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 
 /**
  * Created by uros on 4/12/17.
  *
  */
-@Transactional
-public class XmlSenAgenVoteProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlSenAgenVoteProcessorIT extends BaseXmlProcessorTest {
 
     ObjectMapper mapper = new ObjectMapper();
     @Autowired private AgendaDao agendaDao;

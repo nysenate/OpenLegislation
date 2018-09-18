@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.entry;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.dao.entity.committee.data.CommitteeDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
@@ -8,20 +9,20 @@ import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.entity.XmlSenCommProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Chenguang He on 5/8/2017.
  */
-public class XmlSenCommProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
     @Autowired
     private XmlSenCommProcessor process;
 
@@ -59,7 +60,7 @@ public class XmlSenCommProcessorTest extends BaseXmlProcessorTest {
         committeeMember.setTitle(CommitteeMemberTitle.CHAIR_PERSON);
         expected.addMember(committeeMember);
 
-        /**
+        /*
          * Comparision
          */
         assertEquals(expected.getChamber(),actual.getChamber());

@@ -1,15 +1,16 @@
 package gov.nysenate.openleg.processor.bill.sponsor;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,14 +25,14 @@ import static org.junit.Assert.assertEquals;
  * <p>
  * Created by Robert Bebber on 2/22/17.
  */
-@Transactional
-public class XmlLDSponProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
     @Autowired
     BillDataService billDataService;
     @Autowired
     XmlLDSponProcessor xmlLDSponProcessor;
 
-    private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessorTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessorIT.class);
 
     @Override
     protected SobiProcessor getSobiProcessor() {
@@ -146,7 +147,7 @@ public class XmlLDSponProcessorTest extends BaseXmlProcessorTest {
         assertEquals(billId + " Is Rules Sponsor", isRules, actualIsRules);
 
         boolean actualIsBudget = actualSponsorOpt.map(BillSponsor::isBudget).orElse(false);
-        assertEquals(billId + " Is Budget Sponsor", isRules, actualIsBudget);
+        assertEquals(billId + " Is Budget Sponsor", isBudget, actualIsBudget);
 
         List<String> actualCoSponsors = activeAmend.getCoSponsors().stream()
                 .map(SessionMember::getLbdcShortName)

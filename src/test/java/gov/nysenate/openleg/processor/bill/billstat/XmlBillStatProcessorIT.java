@@ -1,26 +1,28 @@
 package gov.nysenate.openleg.processor.bill.billstat;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Created by Robert Bebber on 3/20/17.
  */
-@Transactional
-public class XmlBillStatProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlBillStatProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired
     BillDataService billDataService;
@@ -93,8 +95,8 @@ public class XmlBillStatProcessorTest extends BaseXmlProcessorTest {
 
         processXmlFile(xmlFilePath);
 
-        Bill baseBill = billDataService.getBill(new BaseBillId("A04833", 2017));
-        assertTest(baseBill, "", null, null, null, null);
+        Bill bill = billDataService.getBill(new BaseBillId("A04833", 2017));
+        assertFalse("Base version should be unpublished", bill.isBaseVersionPublished());
     }
 
     /**

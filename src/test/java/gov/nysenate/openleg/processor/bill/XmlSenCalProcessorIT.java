@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.dao.calendar.data.CalendarDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
@@ -10,8 +11,8 @@ import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.calendar.XmlSenCalProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,8 +23,8 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by uros on 4/26/17.
  */
-@Transactional
-public class XmlSenCalProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlSenCalProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private XmlSenCalProcessor xmlSenCalProcessor;
     @Autowired private CalendarDao calendarDao;
@@ -62,7 +63,6 @@ public class XmlSenCalProcessorTest extends BaseXmlProcessorTest {
          */
         assertEquals(except.getId(), actual.getId());
         assertEquals(except.getCalDate(), actual.getCalDate());
-        assertEquals(except.getActiveListMap(), actual.getActiveListMap());
         assertEquals(except.getSupplementalMap().get(Version.ORIGINAL).getCalDate(),actual.getSupplementalMap().get(Version.ORIGINAL).getCalDate());
         assertEquals(except.getSupplementalMap().get(Version.ORIGINAL).getCalendarId(),actual.getSupplementalMap().get(Version.ORIGINAL).getCalendarId());
         assertEquals(except.getSupplementalMap().get(Version.ORIGINAL).getSectionEntries(),actual.getSupplementalMap().get(Version.ORIGINAL).getSectionEntries());

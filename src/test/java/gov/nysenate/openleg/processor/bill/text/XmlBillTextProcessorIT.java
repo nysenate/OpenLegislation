@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill.text;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.bill.XmlBillTextProcessor;
@@ -9,6 +10,7 @@ import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -18,7 +20,8 @@ import static org.junit.Assert.*;
 /**
  * Created by senateuser on 2017/2/28.
  */
-public class XmlBillTextProcessorTests extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
 
     private static final String resourceDir = "processor/bill/text";
 
@@ -124,7 +127,7 @@ public class XmlBillTextProcessorTests extends BaseXmlProcessorTest {
      * Get the full text for a bill id
      */
     private String getPlainText(BillId billId) {
-        return getAmendment(billId).getFullText();
+        return getAmendment(billId, false).getFullText();
     }
 
     /**
@@ -142,7 +145,7 @@ public class XmlBillTextProcessorTests extends BaseXmlProcessorTest {
      * Get the html text for a bill id.
      */
     private String getHtmlText(BillId billId) {
-        return getAmendment(billId).getFullTextHtml();
+        return getAmendment(billId, true).getFullTextHtml();
     }
 
     /**

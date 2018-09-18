@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +24,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Robert Bebber on 4/3/17.
  */
-@Transactional
 public class SqlSourceFileDaoTester extends BaseTests {
 
     @Autowired

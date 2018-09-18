@@ -26,7 +26,6 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +36,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-@Transactional
 @Category(SillyTest.class)
 public class BillUpdatesTest extends BaseTests {
 

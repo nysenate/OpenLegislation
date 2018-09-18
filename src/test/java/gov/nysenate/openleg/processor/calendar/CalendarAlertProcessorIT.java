@@ -14,7 +14,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -25,7 +24,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@Transactional
 @Category(IntegrationTest.class)
 public class CalendarAlertProcessorIT extends BaseTests {
 

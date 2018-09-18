@@ -1,24 +1,26 @@
 package gov.nysenate.openleg.processor.bill;
 
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertTrue;
 
 /**
  * Created by uros on 2/16/17.
  */
-@Transactional
-public class XmlSameAsProcessorTest extends BaseXmlProcessorTest {
+@Category(IntegrationTest.class)
+public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private BillDataService billDataService;
     @Autowired private XmlSameAsProcessor sameAsProcessor;
@@ -106,7 +108,7 @@ public class XmlSameAsProcessorTest extends BaseXmlProcessorTest {
 
         Bill bill = billDataService.getBill(new BaseBillId("S3526",2017));
         BillAmendment amendment = bill.getAmendment(Version.A);
-        assertTrue(amendment.getSameAs().contains(new BaseBillId("A3028A",2017)));
-        assertTrue(amendment.getSameAs().size() ==  1);
+        assertTrue(amendment.getSameAs().contains(new BillId("A3028A", 2017)));
+        assertTrue(amendment.getSameAs().size() == 1);
     }
 }
