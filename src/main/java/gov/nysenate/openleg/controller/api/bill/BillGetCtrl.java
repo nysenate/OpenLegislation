@@ -136,12 +136,12 @@ public class BillGetCtrl extends BaseCtrl
             case NO_FULLTEXT: viewObject = new BillView(getFullTextStrippedBill(baseBillId)); break;
             case WITH_REFS_NO_FULLTEXT: viewObject = new DetailBillView(getFullTextStrippedBill(baseBillId), billData); break;
             case ONLY_FULLTEXT: {
-                Version amdVersion = Version.DEFAULT;
+                Version amdVersion = Version.ORIGINAL;
                 if (request.getParameter("version") != null) {
                     amdVersion = parseVersion(request.getParameter("version"), "version");
                 }
                 Bill bill = billData.getBill(baseBillId);
-                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.getValue(), bill.getAmendment(amdVersion).getFullText());
+                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.toString(), bill.getAmendment(amdVersion).getFullText());
                 break;
             }
             default: viewObject = new BillView(billData.getBill(baseBillId));

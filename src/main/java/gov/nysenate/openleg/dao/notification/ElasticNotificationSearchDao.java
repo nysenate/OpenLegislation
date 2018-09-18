@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.dao.notification;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import gov.nysenate.openleg.client.view.notification.NotificationView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
@@ -12,15 +12,13 @@ import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -29,18 +27,22 @@ import java.util.*;
 @Repository
 public class ElasticNotificationSearchDao extends ElasticBaseDao implements NotificationSearchDao, IndexedSearchService<RegisteredNotification> {
 
-    Logger logger = LoggerFactory.getLogger(ElasticNotificationSearchDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElasticNotificationSearchDao.class);
 
-    protected static final String notificationIndex = SearchIndex.NOTIFICATION.getIndexName();
-    protected static final String notificationType = "notifications";
-    protected static final String idType = "id";
-    protected static final String idId = "id";
+    private static final String notificationIndex = SearchIndex.NOTIFICATION.getIndexName();
+    private static final String idId = "id_counter";
+    private static final QueryBuilder idIdQuery = QueryBuilders.termQuery("_id", idId);
 
-    /** --- Implemented Methods --- */
+    @Autowired
+    public ElasticNotificationSearchDao(EventBus eventBus) {
+        eventBus.register(this);
+    }
+
+    /* --- Implemented Methods --- */
 
     @Override
     public Optional<RegisteredNotification> getNotification(long notificationId) {
-        return getRequest(notificationIndex, notificationType, Long.toString(notificationId),
+        return getRequest(notificationIndex, defaultType, Long.toString(notificationId),
                 getResponse -> getNotificationFromSourceMap(getResponse.getSource()));
     }
 
@@ -49,19 +51,18 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
     public SearchResults<RegisteredNotification> searchNotifications(QueryBuilder query, QueryBuilder filter,
                                                                      List<SortBuilder> sort, LimitOffset limitOffset) {
         // Restrict search to only notifications, excluding the id incrementer
-        QueryBuilder fullFilter = QueryBuilders.boolQuery().filter(filter).must(QueryBuilders.typeQuery(notificationType));
-        SearchRequestBuilder request = getSearchRequest(notificationIndex, query, fullFilter, null, null, sort, limitOffset, true);
-        SearchResponse response = request.execute().actionGet();
-        return getSearchResults(response, limitOffset, hit -> getNotificationFromSourceMap(hit.getSource()));
+        QueryBuilder fullFilter = QueryBuilders.boolQuery().filter(filter).mustNot(idIdQuery);
+        return search(notificationIndex, query, fullFilter,
+                null, null,
+                sort, limitOffset, true,
+                hit -> getNotificationFromSourceMap(hit.getSourceAsMap()));
     }
 
     /** {@inheritDoc} */
     @Override
     public RegisteredNotification registerNotification(Notification notification) {
         RegisteredNotification regNotification = new RegisteredNotification(notification, getNextId());
-        searchClient.prepareIndex(notificationIndex, notificationType, Long.toString(regNotification.getId()))
-                .setSource(OutputUtils.toJson(new NotificationView(regNotification)))
-                .execute().actionGet();
+        indexJsonDoc(notificationIndex, String.valueOf(regNotification.getId()), regNotification);
         return regNotification;
     }
 
@@ -109,19 +110,29 @@ public class ElasticNotificationSearchDao extends ElasticBaseDao implements Noti
         }
     }
 
-    /** --- Internal Methods --- */
+    /* --- Internal Methods --- */
+
+    /**
+     * Class to model the elasticsearch document that tracks the notification id field.
+     */
+    private static class NotificationIdCounterDoc {
+        private LocalDateTime incremented = LocalDateTime.now();
+
+        public LocalDateTime getIncremented() {
+            return incremented;
+        }
+    }
 
     /**
      * Gets the next available notification id by indexing to id/id and returning the version from the response
      * @return long - the next available notification id
      */
-    protected long getNextId() {
-        IndexResponse response = searchClient.prepareIndex(notificationIndex, idType, idId)
-                .setSource("{}").execute().actionGet();
-        return response.getVersion();
+    private long getNextId() {
+        IndexResponse indexResponse = indexJsonDoc(notificationIndex, idId, new NotificationIdCounterDoc());
+        return indexResponse.getVersion();
     }
 
-    protected RegisteredNotification getNotificationFromSourceMap(Map<String, Object> source) {
+    private RegisteredNotification getNotificationFromSourceMap(Map<String, Object> source) {
         long id = Long.parseLong(source.get("id").toString());
         NotificationType type = NotificationType.getValue(source.get("notificationType").toString());
         LocalDateTime occurred = LocalDateTime.parse(source.get("occurred").toString());

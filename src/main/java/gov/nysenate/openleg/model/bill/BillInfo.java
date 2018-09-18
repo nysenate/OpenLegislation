@@ -23,7 +23,7 @@ public class BillInfo
     protected BillSponsor sponsor;
     protected List<BillStatus> milestones = new ArrayList<>();
     protected List<BillAction> actions = new ArrayList<>();
-    protected Map<Version, PublishStatus> amendPublishStatusMap = new TreeMap<>();
+    protected Map<Version, PublishStatus> amendPublishStatusMap = new EnumMap<>(Version.class);
     protected BillId substitutedBy;
     protected ProgramInfo programInfo;
     protected BillId reprintOf;
@@ -56,8 +56,8 @@ public class BillInfo
      * @return boolean
      */
     public boolean isBaseVersionPublished() {
-        return (this.amendPublishStatusMap.containsKey(Version.DEFAULT) &&
-                this.amendPublishStatusMap.get(Version.DEFAULT).isPublished());
+        return (this.amendPublishStatusMap.containsKey(Version.ORIGINAL) &&
+                this.amendPublishStatusMap.get(Version.ORIGINAL).isPublished());
     }
 
     /* --- Basic Getters/Setters --- */

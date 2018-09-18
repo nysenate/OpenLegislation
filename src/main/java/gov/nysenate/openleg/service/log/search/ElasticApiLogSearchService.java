@@ -48,10 +48,10 @@ public class ElasticApiLogSearchService implements ApiLogSearchService
                     ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
         }
         catch (SearchParseException ex) {
-            throw new SearchException("Invalid query string");
+            throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new SearchException("Unexpected search exception!");
+            throw new SearchException(ex.getMessage(), ex);
         }
     }
 

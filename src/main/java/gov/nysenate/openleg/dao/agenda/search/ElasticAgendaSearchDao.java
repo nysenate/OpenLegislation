@@ -5,15 +5,13 @@ import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.agenda.Agenda;
-import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.search.SearchResults;
-import gov.nysenate.openleg.util.OutputUtils;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -21,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -37,28 +34,14 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     @Override
     public SearchResults<AgendaId> searchAgendas(QueryBuilder query, QueryBuilder postFilter,
                                                  List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
-        SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Agenda Search result with query {} took {} ms", query, response.getTookInMillis());
-        return getSearchResults(response, limOff, this::getAgendaIdFromHit);
+        return search(agendaIndexName, query, postFilter, sort, limOff, this::getAgendaIdFromHit);
     }
 
     /** {@inheritDoc} */
     @Override
     public SearchResults<CommitteeAgendaId> searchCommitteeAgendas(QueryBuilder query, QueryBuilder postFilter,
                                                                    List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(agendaIndexName, query, postFilter, sort, limOff);
-        SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Committee Agenda search result with query {} took {} ms", query, response.getTookInMillis());
-        return getSearchResults(response, limOff, (hit) ->
-            new CommitteeAgendaId(
-                getAgendaIdFromHit(hit), new CommitteeId(Chamber.SENATE, hit.getId()))
-        );
-    }
-
-    private AgendaId getAgendaIdFromHit(SearchHit hit) {
-        String[] type = hit.getType().split("-");
-        return new AgendaId(Integer.parseInt(type[1]), Integer.parseInt(type[0]));
+        return search(agendaIndexName, query, postFilter, sort, limOff, this::getCommAgendaIdFromHit);
     }
 
     /** {@inheritDoc} */
@@ -70,31 +53,61 @@ public class ElasticAgendaSearchDao extends ElasticBaseDao implements AgendaSear
     /** {@inheritDoc} */
     @Override
     public void updateAgendaIndex(Collection<Agenda> agendas) {
-        if (!agendas.isEmpty()) {
-            BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
-            agendas.forEach(agenda ->
-                agenda.getCommittees().stream()
-                    .map(cid -> new AgendaCommFlatView(agenda, cid, null))
-                    .forEach(cfv ->
-                        bulkRequest.add(
-                            searchClient.prepareIndex(agendaIndexName,
-                                agenda.getId().getYear() + "-" + cfv.getAgenda().getId().getNumber(),
-                                cfv.getCommittee().getCommitteeId().getName())
-                            .setSource(OutputUtils.toJson(cfv)))));
-            safeBulkRequestExecute(bulkRequest);
-        }
+        BulkRequest request = new BulkRequest();
+        agendas.forEach(agenda -> addAgendaToBulkIndex(agenda, request));
+        safeBulkRequestExecute(request);
     }
 
     /** {@inheritDoc} */
     @Override
     public void deleteAgendaFromIndex(AgendaId agendaId) {
         if (agendaId != null) {
-            deleteEntry(agendaIndexName, Integer.toString(agendaId.getYear()), Long.toString(agendaId.getNumber()));
+            deleteEntry(agendaIndexName, Long.toString(agendaId.getNumber()));
         }
     }
 
     @Override
     protected List<String> getIndices() {
-        return Arrays.asList(agendaIndexName);
+        return Collections.singletonList(agendaIndexName);
+    }
+
+    /**
+     * Allocate additional shards for agenda index.
+     *
+     * @return Settings.Builder
+     */
+    @Override
+    protected Settings.Builder getIndexSettings() {
+        Settings.Builder indexSettings = super.getIndexSettings();
+        indexSettings.put("index.number_of_shards", 2);
+        return indexSettings;
+    }
+
+    /* --- Internal Methods --- */
+
+    private AgendaId getAgendaIdFromHit(SearchHit hit) {
+        String[] id = hit.getId().split("-");
+        return new AgendaId(Integer.parseInt(id[1]), Integer.parseInt(id[0]));
+    }
+
+    private CommitteeAgendaId getCommAgendaIdFromHit(SearchHit hit) {
+        return new CommitteeAgendaId(
+                getAgendaIdFromHit(hit), new CommitteeId(Chamber.SENATE, hit.getId().split("-")[2]));
+    }
+
+    private String toElasticId(CommitteeAgendaId commAgendaId) {
+        AgendaId agendaId = commAgendaId.getAgendaId();
+        CommitteeId commId = commAgendaId.getCommitteeId();
+        return agendaId.getYear() + "-" +
+                agendaId.getNumber() + "-" +
+                commId.getName();
+    }
+
+    private void addAgendaToBulkIndex(Agenda agenda, BulkRequest request) {
+        agenda.getCommittees().stream()
+                .map(cid -> getJsonIndexRequest(agendaIndexName,
+                        toElasticId(new CommitteeAgendaId(agenda.getId(), cid)),
+                        new AgendaCommFlatView(agenda, cid, null)))
+                .forEach(request::add);
     }
 }

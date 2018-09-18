@@ -45,18 +45,13 @@ import static gov.nysenate.openleg.util.DateUtils.toDate;
 public class SqlBillDao extends SqlBaseDao implements BillDao {
     private static final Logger logger = LoggerFactory.getLogger(SqlBillDao.class);
 
-    @Autowired
-    private MemberService memberService;
-    @Autowired
-    private VetoDataService vetoDataService;
-    @Autowired
-    private ApprovalDataService approvalDataService;
+    @Autowired private MemberService memberService;
+    @Autowired private VetoDataService vetoDataService;
+    @Autowired private ApprovalDataService approvalDataService;
 
     /* --- Implemented Methods --- */
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Bill getBill(BillId billId, boolean htmlText) {
         logger.trace("Fetching Bill {} from database...", billId);
@@ -67,7 +62,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         List<BillAmendment> billAmendments = getBillAmendments(baseParams, htmlText);
         for (BillAmendment amendment : billAmendments) {
             final ImmutableParams amendParams = baseParams.add(
-                    new MapSqlParameterSource("version", amendment.getVersion().getValue()));
+                new MapSqlParameterSource("version", amendment.getVersion().toString()));
             // Fetch all the same as bill ids
             amendment.setSameAs(getSameAsBills(amendParams));
             // Get the cosponsors for the amendment
@@ -107,9 +102,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         return bill;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public BillInfo getBillInfo(BillId billId) throws DataAccessException {
         logger.trace("Fetching BillInfo {} from database...", billId);
@@ -122,9 +115,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         return bill.getBillInfo();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void applyText(Bill strippedBill, boolean htmlText) throws DataAccessException {
         if (strippedBill == null) {
@@ -193,9 +184,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         updateApprovalMessage(bill, sobiFragment);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
@@ -204,17 +193,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 new BaseBillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int getBillCount() throws DataAccessException {
         return jdbc.queryForObject(SqlBillQuery.SELECT_COUNT_ALL_BILLS.getSql(schema()), (rs, row) -> rs.getInt("total"));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int getBillCount(SessionYear sessionYear) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("sessionYear", sessionYear.getYear()));
@@ -222,9 +207,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 (rs, row) -> rs.getInt("total"));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getAlternateBillPdfUrl(BillId billId) {
         SqlParameterSource params = getBillIdParams(billId);
@@ -232,9 +215,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 (rs, row) -> rs.getString("url_path"));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Range<SessionYear> activeSessionRange() {
         if (getBillCount() == 0) {
@@ -351,7 +332,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     /**
      * Get a map of the publish statuses for each amendment version.
      */
-    public TreeMap<Version, PublishStatus> getBillAmendPublishStatuses(ImmutableParams baseParams) {
+    public EnumMap<Version, PublishStatus> getBillAmendPublishStatuses(ImmutableParams baseParams) {
         BillAmendPublishStatusHandler handler = new BillAmendPublishStatusHandler();
         jdbcNamed.query(SqlBillQuery.SELECT_BILL_AMEND_PUBLISH_STATUSES.getSql(schema()), baseParams, handler);
         return handler.getPublishStatusMap();
@@ -735,8 +716,9 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
     }
 
-    private static class BillAmendPublishStatusHandler implements RowCallbackHandler {
-        TreeMap<Version, PublishStatus> publishStatusMap = new TreeMap<>();
+    private static class BillAmendPublishStatusHandler implements RowCallbackHandler
+    {
+        EnumMap<Version, PublishStatus> publishStatusMap = new EnumMap<>(Version.class);
 
         @Override
         public void processRow(ResultSet rs) throws SQLException {
@@ -746,7 +728,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             publishStatusMap.put(Version.of(rs.getString("bill_amend_version")), pubStatus);
         }
 
-        public TreeMap<Version, PublishStatus> getPublishStatusMap() {
+        public EnumMap<Version, PublishStatus> getPublishStatusMap() {
             return publishStatusMap;
         }
     }
@@ -849,7 +831,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         return ImmutableParams.from(new MapSqlParameterSource()
                 .addValue("printNo", billId.getBasePrintNo())
                 .addValue("sessionYear", billId.getSession().getYear())
-                .addValue("version", billId.getVersion().getValue()));
+                .addValue("version", billId.getVersion().toString()));
     }
 
     /**
@@ -861,7 +843,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         addBillIdParams(bill, params);
         params.addValue("title", bill.getTitle())
                 .addValue("summary", bill.getSummary())
-                .addValue("activeVersion", bill.getActiveVersion().getValue())
+                .addValue("activeVersion", bill.getActiveVersion().toString())
                 .addValue("activeYear", bill.getYear())
                 .addValue("programInfo", bill.getProgramInfo() != null ? bill.getProgramInfo().getInfo() : null)
                 .addValue("programInfoNum", bill.getProgramInfo() != null ? bill.getProgramInfo().getNumber() : null)
@@ -875,7 +857,6 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 .addValue("blurb", bill.getLDBlurb())
                 .addValue("reprintOf", bill.getReprintOf() != null ? bill.getReprintOf().getBasePrintNo() : null)
                 .addValue("subPrintNo", bill.getSubstitutedBy() != null ? bill.getSubstitutedBy().getBasePrintNo() : null);
-
         addModPubDateParams(bill.getModifiedDateTime(), bill.getPublishedDateTime(), params);
         addLastFragmentParam(fragment, params);
         return params;
@@ -904,7 +885,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                                                                     SobiFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addBillIdParams(bill, params);
-        params.addValue("version", version.getValue());
+        params.addValue("version", version.toString());
         params.addValue("published", pubStatus.isPublished());
         params.addValue("effectDateTime", toDate(pubStatus.getEffectDateTime()));
         params.addValue("override", pubStatus.isOverride());
@@ -922,7 +903,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         params.addValue("printNo", billAction.getBillId().getBasePrintNo())
                 .addValue("sessionYear", billAction.getBillId().getSession().getYear())
                 .addValue("chamber", billAction.getChamber().toString().toLowerCase())
-                .addValue("version", billAction.getBillId().getVersion().getValue())
+                .addValue("version", billAction.getBillId().getVersion().toString())
                 .addValue("effectDate", toDate(billAction.getDate()))
                 .addValue("text", billAction.getText())
                 .addValue("sequenceNo", billAction.getSequenceNo());
@@ -935,7 +916,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         addBillIdParams(billAmendment, params);
         params.addValue("sameAsPrintNo", sameAs.getBasePrintNo())
                 .addValue("sameAsSessionYear", sameAs.getSession().getYear())
-                .addValue("sameAsVersion", sameAs.getVersion().getValue());
+                .addValue("sameAsVersion", sameAs.getVersion().toString());
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -945,7 +926,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         addBillIdParams(bill, params);
         params.addValue("prevPrintNo", bill.getDirectPreviousVersion().getBasePrintNo())
                 .addValue("prevSessionYear", bill.getDirectPreviousVersion().getSession().getYear())
-                .addValue("prevVersion", bill.getDirectPreviousVersion().getVersion().getValue());
+                .addValue("prevVersion", bill.getDirectPreviousVersion().getVersion().toString());
         addLastFragmentParam(fragment, params);
         return params;
     }
@@ -1028,7 +1009,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     private static void addBillIdParams(BillAmendment billAmendment, MapSqlParameterSource params) {
         params.addValue("printNo", billAmendment.getBasePrintNo())
                 .addValue("sessionYear", billAmendment.getSession().getYear())
-                .addValue("version", billAmendment.getVersion().getValue());
+                .addValue("version", billAmendment.getVersion().toString());
     }
 
     /**

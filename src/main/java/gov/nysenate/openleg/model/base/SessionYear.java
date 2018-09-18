@@ -161,8 +161,7 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
         if (this == o) return true;
         if (!(o instanceof SessionYear)) return false;
         SessionYear that = (SessionYear) o;
-        if (year != that.year) return false;
-        return true;
+        return year == that.year;
     }
 
     @Override

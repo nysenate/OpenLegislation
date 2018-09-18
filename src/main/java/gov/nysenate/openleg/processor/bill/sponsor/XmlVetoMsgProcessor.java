@@ -69,7 +69,7 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
             final int year = xmlHelper.getInteger("@year", vetoMsgNode);
             final String action = xmlHelper.getString("@action", vetoMsgNode);
 
-            final Version version = Version.DEFAULT;
+            final Version version = Version.ORIGINAL;
             Bill baseBill = null;
 
             vetoMessage.setVetoNumber(number);

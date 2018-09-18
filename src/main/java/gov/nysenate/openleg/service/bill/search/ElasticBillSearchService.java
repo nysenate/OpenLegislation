@@ -3,10 +3,10 @@ package gov.nysenate.openleg.service.bill.search;
 import com.google.common.collect.Range;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.bill.search.ElasticBillSearchDao;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -17,40 +17,47 @@ import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
+import gov.nysenate.openleg.util.AsyncUtils;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.SearchParseException;
-import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.elasticsearch.search.rescore.RescorerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Service
 public class ElasticBillSearchService implements BillSearchService, IndexedSearchService<Bill>
 {
     private static final Logger logger = LoggerFactory.getLogger(ElasticBillSearchService.class);
 
+    private static final int billReindexThreadCount = 4;
+    private static final int billReindexBatchSize = 100;
+
     @Autowired protected Environment env;
     @Autowired protected EventBus eventBus;
     @Autowired protected ElasticBillSearchDao billSearchDao;
     @Autowired protected BillDataService billDataService;
+    @Autowired private AsyncUtils asyncUtils;
 
     @PostConstruct
     protected void init() {
         eventBus.register(this);
     }
 
-    /** --- BillSearchService implementation --- */
+    /* --- BillSearchService implementation --- */
 
     /** {@inheritDoc} */
     @Override
@@ -85,7 +92,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     /**
      * Delegates to the underlying bill search dao.
      */
-    private SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescoreBuilder.Rescorer rescorer,
+    private SearchResults<BaseBillId> searchBills(QueryBuilder query, QueryBuilder postFilter, RescorerBuilder rescorer,
                                                   String sort, LimitOffset limOff)
         throws SearchException {
         if (limOff == null) limOff = LimitOffset.TEN;
@@ -97,7 +104,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 
@@ -130,43 +137,39 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         }
     }
 
-    /** --- IndexedSearchService implementation --- */
+    /* --- IndexedSearchService implementation --- */
 
     /** {@inheritDoc} */
     @Override
     public void updateIndex(Bill bill) {
-        if (env.isElasticIndexing()) {
-            if (isBillIndexable(bill)) {
-                logger.info("Indexing bill {} into elastic search.", bill.getBaseBillId());
-                billSearchDao.updateBillIndex(bill);
-            }
-            else if (bill != null) {
-                logger.info("Deleting {} from index.", bill.getBaseBillId());
-                billSearchDao.deleteBillFromIndex(bill.getBaseBillId());
-            }
+        if (bill != null) {
+            updateIndex(Collections.singleton(bill));
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public void updateIndex(Collection<Bill> bills) {
-        if (env.isElasticIndexing() && !bills.isEmpty()) {
-            List<Bill> indexableBills = bills.stream()
-                .filter(b -> isBillIndexable(b))
-                .collect(toList());
-            logger.info("Indexing {} valid bills into elastic search.", indexableBills.size());
-            billSearchDao.updateBillIndex(indexableBills);
-
-            // Ensure any bills that currently don't meet the criteria are not in the index.
-            if (indexableBills.size() != bills.size()) {
-                bills.stream()
-                    .filter(b -> !isBillIndexable(b) && b != null)
-                    .forEach(b -> {
-                        logger.info("Deleting {} from index.", b.getBaseBillId());
-                        billSearchDao.deleteBillFromIndex(b.getBaseBillId());
-                    });
+        if (!env.isElasticIndexing() || bills.isEmpty()) {
+            return;
+        }
+        List<Bill> indexableBills = new ArrayList<>();
+        List<Bill> nonIndexableBills = new ArrayList<>();
+        // Categorize bills based on whether or not they should be index.
+        for (Bill bill : bills) {
+            if (isBillIndexable(bill)) {
+                indexableBills.add(bill);
+            } else {
+                nonIndexableBills.add(bill);
             }
         }
+        logger.info("Indexing {} valid bill(s) into elastic search.", indexableBills.size());
+        billSearchDao.updateBillIndex(indexableBills);
+
+        // Ensure any bills that currently don't meet the criteria are not in the index.
+        nonIndexableBills.stream()
+                .map(Bill::getBaseBillId)
+                .forEach(billSearchDao::deleteBillFromIndex);
     }
 
     /** {@inheritDoc} */
@@ -181,23 +184,33 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     public void rebuildIndex() {
         clearIndex();
         Optional<Range<SessionYear>> sessions = billDataService.activeSessionRange();
-        if (sessions.isPresent()) {
-            SessionYear session = sessions.get().lowerEndpoint();
-            while (session.getSessionStartYear() <= LocalDate.now().getYear()) {
-                LimitOffset limOff = LimitOffset.THOUSAND;
-                List<BaseBillId> billIds = billDataService.getBillIds(session, limOff);
-                while (!billIds.isEmpty()) {
-                    logger.info("Indexing {} bills starting from {}", billIds.size(), billIds.get(0));
-                    updateIndex(billIds.stream().map(id -> billDataService.getBill(id)).collect(toList()));
-                    limOff = limOff.next();
-                    billIds = billDataService.getBillIds(session, limOff);
-                }
-                session = session.next();
-            }
+        if (!sessions.isPresent()) {
+            logger.info("Can't rebuild the bill search index because there are no bills. Cleared it instead!");
+            return;
         }
-        else {
-            logger.info("Can't rebuild the bill search index because there are no bills. Clearing it instead!");
-            clearIndex();
+        try {
+            // Prep elasticsearch for heavy indexing.
+            billSearchDao.reindexSetup();
+
+            // Load all bill ids into a queue
+            final LinkedBlockingQueue<BaseBillId> billIdQueue = new LinkedBlockingQueue<>();
+            for (SessionYear session = sessions.get().lowerEndpoint();
+                 session.compareTo(SessionYear.current()) < 1;
+                 session = session.next()) {
+                billIdQueue.addAll(billDataService.getBillIds(session, LimitOffset.ALL));
+            }
+
+            // Initialize and run several BillReindexWorkers to index bills from the queue
+            CompletableFuture[] futures = new CompletableFuture[billReindexThreadCount];
+            AtomicBoolean interrupted = new AtomicBoolean(false);
+            for (int workerNo = 0; workerNo < billReindexThreadCount; workerNo++) {
+                futures[workerNo] = asyncUtils.run(new BillReindexWorker(billIdQueue, interrupted));
+            }
+            CompletableFuture.allOf(futures).join();
+            logger.info("Finished bill reindex.");
+        } finally {
+            // Restore normal index settings.
+            billSearchDao.reindexCleanup();
         }
     }
 
@@ -207,12 +220,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.BILL)) {
             logger.info("Handling bill re-index event!");
-            try {
-                rebuildIndex();
-            }
-            catch (Exception ex) {
-                logger.error("Unexpected exception during handling of Bill RebuildIndexEvent!", ex);
-            }
+            rebuildIndex();
         }
     }
 
@@ -225,7 +233,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         }
     }
 
-    /** --- Internal --- */
+    /* --- Internal --- */
 
     /**
      * Returns true if the given bill meets the criteria for being indexed in the search layer.
@@ -233,7 +241,50 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
      * @param bill Bill
      * @return boolean
      */
-    protected boolean isBillIndexable(Bill bill) {
+    private boolean isBillIndexable(Bill bill) {
         return bill != null && bill.isBaseVersionPublished();
+    }
+
+    /**
+     * Runnable that loads and indexes bills from a bill id queue.
+     */
+    private class BillReindexWorker implements Runnable {
+
+        /** Job queue of bill ids of bills to be indexed */
+        private final BlockingQueue<BaseBillId> billIdQueue;
+        /** Flag shared between workers that is set to true if one worker experiences an error */
+        private final AtomicBoolean interrupted;
+
+        BillReindexWorker(BlockingQueue<BaseBillId> billIdQueue, AtomicBoolean interrupted) {
+            this.billIdQueue = billIdQueue;
+            this.interrupted = interrupted;
+        }
+
+        @Override
+        public void run() {
+            List<BaseBillId> billIdBatch;
+            try {
+                do {
+                    if (interrupted.get()) {
+                        logger.info("Terminating reindex job due to exception in other worker");
+                        return;
+                    }
+                    billSearchDao.reaffirmReindexing();
+
+                    billIdBatch = new ArrayList<>(billReindexBatchSize);
+                    billIdQueue.drainTo(billIdBatch, billReindexBatchSize);
+
+                    List<Bill> bills = billIdBatch.stream()
+                            .map(billDataService::getBill)
+                            .collect(Collectors.toCollection(() -> new ArrayList<>(billReindexBatchSize)));
+
+                    updateIndex(bills);
+                } while (!billIdBatch.isEmpty());
+            } catch (Throwable ex) {
+                // Set the interrupted flag if an exception occurs
+                interrupted.set(true);
+                throw ex;
+            }
+        }
     }
 }

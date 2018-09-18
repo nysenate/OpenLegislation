@@ -25,9 +25,9 @@ public class BillVersionTest
     }
 
     @Test
-    public void testGetValue() throws Exception {
-        assertEquals("", Version.of(" ").getValue());
-        assertEquals("A", Version.of("A").getValue());
+    public void testName() throws Exception {
+        assertEquals("ORIGINAL", Version.of(" ").name());
+        assertEquals("A", Version.of("A").name());
     }
 
     @Test
@@ -36,10 +36,10 @@ public class BillVersionTest
         String s2 = " ";
         String s3 = "      ";
         String s4 = null;
-        assertEquals(Version.DEFAULT, Version.of(s1));
-        assertEquals(Version.DEFAULT, Version.of(s2));
-        assertEquals(Version.DEFAULT, Version.of(s3));
-        assertEquals(Version.DEFAULT, Version.of(s4));
+        assertEquals(Version.ORIGINAL, Version.of(s1));
+        assertEquals(Version.ORIGINAL, Version.of(s2));
+        assertEquals(Version.ORIGINAL, Version.of(s3));
+        assertEquals(Version.ORIGINAL, Version.of(s4));
     }
 
     @Test
@@ -62,9 +62,9 @@ public class BillVersionTest
 
     @Test
     public void testComparable() throws Exception {
-        List<Version> versions = Arrays.asList(Version.Z, Version.B, Version.DEFAULT, Version.D);
+        List<Version> versions = Arrays.asList(Version.Z, Version.B, Version.ORIGINAL, Version.D);
         Collections.sort(versions);
-        List<Version> sorted = Arrays.asList(Version.DEFAULT, Version.B, Version.D, Version.Z);
+        List<Version> sorted = Arrays.asList(Version.ORIGINAL, Version.B, Version.D, Version.Z);
         assertEquals(sorted, versions);
     }
 

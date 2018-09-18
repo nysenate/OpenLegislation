@@ -101,9 +101,9 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * @param source String - Indicates the origin of this publishing request, e.g. bill info line.
      */
     protected void ensureBaseBillIsPublished(Bill baseBill, SobiFragment fragment, String source) {
-        Optional<PublishStatus> pubStatus = baseBill.getPublishStatus(Version.DEFAULT);
+        Optional<PublishStatus> pubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
         if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
-            baseBill.updatePublishStatus(Version.DEFAULT, new PublishStatus(true, fragment.getPublishedDateTime(), false, source));
+            baseBill.updatePublishStatus(Version.ORIGINAL, new PublishStatus(true, fragment.getPublishedDateTime(), false, source));
             baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
             setModifiedDateTime(baseBill, fragment);
         }
@@ -188,7 +188,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
         setModifiedDateTime(baseBill, fragment);
 
         // Use the BillActionAnalyzer to derive other data from the actions list.
-        Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.DEFAULT);
+        Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
         BillActionAnalyzer analyzer = new BillActionAnalyzer(specificBillId, billActions, defaultPubStatus);
         analyzer.analyze();
 

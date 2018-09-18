@@ -34,7 +34,7 @@ public class XmlSameAsProcessorTest extends BaseXmlProcessorTest {
         processXmlFile(xmlPath);
 
         Bill bill = billDataService.getBill(new BaseBillId("A5457", 2017));
-        BillAmendment amendment = bill.getAmendment(Version.DEFAULT);
+        BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
         assertTrue(amendment.getSameAs().contains(new BaseBillId("S1329", 2017)));
         assertTrue(amendment.getSameAs().size() == 1);
     }
@@ -50,7 +50,7 @@ public class XmlSameAsProcessorTest extends BaseXmlProcessorTest {
 
         // Test same as equals new same as.
         Bill bill = billDataService.getBill(new BaseBillId("A5457", 2017));
-        BillAmendment amendment = bill.getAmendment(Version.DEFAULT);
+        BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
         assertTrue(amendment.getSameAs().contains(new BaseBillId("S1329", 2017)));
         assertTrue(amendment.getSameAs().size() == 1);
     }
@@ -66,7 +66,7 @@ public class XmlSameAsProcessorTest extends BaseXmlProcessorTest {
         processXmlFile(xmlPath);
 
         Bill bill = billDataService.getBill(new BaseBillId("A5457",2017));
-        BillAmendment amendment = bill.getAmendment(Version.DEFAULT);
+        BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
         assertTrue(amendment.getSameAs().size() == 0);
     }
 
@@ -76,7 +76,7 @@ public class XmlSameAsProcessorTest extends BaseXmlProcessorTest {
         processXmlFile(xmlPath);
 
         Bill bill = billDataService.getBill(new BaseBillId("S4257", 2017));
-        BillAmendment amendment = bill.getAmendment(Version.DEFAULT);
+        BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
         assertTrue(amendment.getSameAs().contains(new BaseBillId("A5261", 2017)));
         assertTrue(amendment.getSameAs().size() == 1);
     }
@@ -87,7 +87,7 @@ public class XmlSameAsProcessorTest extends BaseXmlProcessorTest {
         processXmlFile(xmlPath);
 
         Bill bill = billDataService.getBill(new BaseBillId("A5457", 2017));
-        BillAmendment amendment = bill.getAmendment(Version.DEFAULT);
+        BillAmendment amendment = bill.getAmendment(Version.ORIGINAL);
         assertTrue(amendment.getSameAs().contains(new BaseBillId("S1329", 2017)));
         assertTrue(amendment.getSameAs().contains(new BaseBillId("S3779",2017)));
         assertTrue(amendment.getSameAs().size() ==  2);

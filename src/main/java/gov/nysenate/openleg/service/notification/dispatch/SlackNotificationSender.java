@@ -54,27 +54,27 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
 
     private ArrayList<SlackField> getFields(RegisteredNotification notification) {
         return new ArrayList<>(Arrays.asList(
-                new SlackField("Type", notification.getType().toString()),
+                new SlackField("Type", notification.getNotificationType().toString()),
                 new SlackField("Occurred",
                         notification.getOccurred().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)))
         ));
     }
 
     private String getColor(RegisteredNotification notification) {
-        if (NotificationType.EXCEPTION.covers(notification.getType())) {
+        if (NotificationType.EXCEPTION.covers(notification.getNotificationType())) {
             return "danger";
-        } else if (NotificationType.WARNING.covers(notification.getType())) {
+        } else if (NotificationType.WARNING.covers(notification.getNotificationType())) {
             return "warning";
         }
         return "good";
     }
 
     private String getIcon(RegisteredNotification notification) {
-        if (NotificationType.EXCEPTION.covers(notification.getType())) {
+        if (NotificationType.EXCEPTION.covers(notification.getNotificationType())) {
             return ":scream_cat:";
-        } else if (NotificationType.WARNING.covers(notification.getType())) {
+        } else if (NotificationType.WARNING.covers(notification.getNotificationType())) {
             return ":pouting_cat:";
-        } else if (NotificationType.SPOTCHECK.covers(notification.getType())) {
+        } else if (NotificationType.SPOTCHECK.covers(notification.getNotificationType())) {
             return ":see_no_evil:";
         }
         return ":smile_cat:";

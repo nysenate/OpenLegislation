@@ -8,13 +8,10 @@ import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.SearchResults;
-import gov.nysenate.openleg.util.OutputUtils;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +19,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements PublicHearingSearchDao
@@ -41,37 +38,32 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(QueryBuilder query, QueryBuilder postFilter,
                                                                List<SortBuilder> sort, LimitOffset limOff) {
-        SearchRequestBuilder searchBuilder = getSearchRequest(publicHearingIndexName, query, postFilter, highlightedFields, null, sort, limOff, false);
-        SearchResponse response = searchBuilder.execute().actionGet();
-        logger.debug("Public Hearing search result with query {} and filter {} took {} ms", query, postFilter, response.getTookInMillis());
-        return getSearchResults(response, limOff, this::getPublicHearingIdFromHit);
+        return search(publicHearingIndexName, query, postFilter, highlightedFields, null,
+                sort, limOff, false, this::getPublicHearingIdFromHit);
     }
 
     /** {@inheritDoc} */
     @Override
     public void updatePublicHearingIndex(PublicHearing publicHearing) {
-        updatePublicHearingIndex(Arrays.asList(publicHearing));
+        updatePublicHearingIndex(Collections.singletonList(publicHearing));
     }
 
     /** {@inheritDoc} */
     @Override
     public void updatePublicHearingIndex(Collection<PublicHearing> publicHearings) {
-        if (!publicHearings.isEmpty()) {
-            BulkRequestBuilder bulkRequest = searchClient.prepareBulk();
-            List<PublicHearingView> publicHearingViews = publicHearings.stream().map(PublicHearingView::new).collect(Collectors.toList());
-            publicHearingViews.forEach(ph ->
-                    bulkRequest.add(searchClient.prepareIndex(publicHearingIndexName, "hearings", ph.getFilename())
-                            .setSource(OutputUtils.toJson(ph)))
-            );
-            safeBulkRequestExecute(bulkRequest);
-        }
+        BulkRequest bulkRequest = new BulkRequest();
+        publicHearings.stream()
+                .map(PublicHearingView::new)
+                .map(phv -> getJsonIndexRequest(publicHearingIndexName, phv.getFilename(), phv))
+                .forEach(bulkRequest::add);
+        safeBulkRequestExecute(bulkRequest);
     }
 
     /** {@inheritDoc} */
     @Override
     public void deletePublicHearingFromIndex(PublicHearingId publicHearingId) {
         if (publicHearingId != null) {
-            deleteEntry(publicHearingIndexName, "hearings", publicHearingId.getFileName());
+            deleteEntry(publicHearingIndexName, publicHearingId.getFileName());
         }
     }
 

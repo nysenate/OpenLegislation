@@ -175,7 +175,7 @@ public class ElasticCalendarSearchService implements CalendarSearchService {
         } catch (SearchParseException ex) {
             throw new SearchException("There was a problem parsing the supplied query string.", ex);
         } catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 

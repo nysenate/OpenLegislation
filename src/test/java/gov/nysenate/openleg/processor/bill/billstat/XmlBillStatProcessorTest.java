@@ -110,7 +110,7 @@ public class XmlBillStatProcessorTest extends BaseXmlProcessorTest {
      */
     public void assertTest(Bill baseBill, String exVersion, String exSponsor, String exLawSec, String exTitle,
                            ArrayList<String> expectedBillAction) {
-        String actualVersion = baseBill.getActiveVersion().getValue();
+        String actualVersion = baseBill.getActiveVersion().toString();
         assertEquals("Version Comparison: ", exVersion, actualVersion);
         if (baseBill.getSponsor() != null) {
             String actualSponsor = baseBill.getSponsor().getMember().getLbdcShortName();
@@ -124,7 +124,7 @@ public class XmlBillStatProcessorTest extends BaseXmlProcessorTest {
             List actions = baseBill.getActions();
             for (int i = 0; i < actions.size(); i++) {
                 String actualBillAction = actions.get(i).toString();
-                String exBillAction = expectedBillAction.get(i).toString();
+                String exBillAction = expectedBillAction.get(i);
                 assertEquals(" BillAction Comparison: ", exBillAction, actualBillAction.toString());
             }
         }

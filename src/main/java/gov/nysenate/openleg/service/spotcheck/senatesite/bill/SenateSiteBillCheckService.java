@@ -59,7 +59,8 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         try {
             Version refVersion = reference.getBillId().getVersion();
             amendment = Optional.of(contentBillView)
-                    .map(BillView::getAmendments).map(MapView::getItems)
+                    .map(BillView::getAmendments)
+                    .map(MapView::getItems)
                     .map(amendments -> amendments.get(refVersion.toString()))
                     .orElseThrow(() -> new BillAmendNotFoundEx(reference.getBillId()));
         } catch (IllegalArgumentException | BillAmendNotFoundEx ex) {
@@ -280,7 +281,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     private void checkVotes(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> obs) {
         BillId billId = reference.getBillId();
         List<SenateSiteBillVote> contentVoteList = content.getVotes().getItems().stream()
-                .filter(vote -> vote.getVersion().equalsIgnoreCase(billId.getVersion().getValue()))
+                .filter(vote -> vote.getVersion().equalsIgnoreCase(billId.getVersion().toString()))
                 .map(SenateSiteBillVote::new)
                 .collect(toList());
         TreeMap<BillVoteId, SenateSiteBillVote> contentVoteMap = getVoteMap(contentVoteList, billId);

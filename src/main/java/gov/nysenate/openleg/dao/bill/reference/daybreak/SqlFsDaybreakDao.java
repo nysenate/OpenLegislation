@@ -717,7 +717,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
 
     private MapSqlParameterSource getDaybreakFragmentParams(DaybreakFragment daybreakFragment){
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakFragment.getDaybreakBillId());
-        params.addValue("billActiveVersion", daybreakFragment.getBillId().getVersion().getValue());
+        params.addValue("billActiveVersion", daybreakFragment.getBillId().getVersion().toString());
         params.addValue("fileName", daybreakFragment.getDaybreakFile().getFileName());
         params.addValue("fragmentText", daybreakFragment.getDaybreakText());
         return params;
@@ -733,17 +733,17 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
         params.addValue("senateBillPrintNo", pageFileEntry.getSenateBillId()!=null ?
                                                 pageFileEntry.getSenateBillId().getBasePrintNo() : null);
         params.addValue("senateBillVersion",  pageFileEntry.getSenateBillId()!=null ?
-                                                pageFileEntry.getSenateBillId().getVersion().getValue() : null);
+                                                pageFileEntry.getSenateBillId().getVersion().toString() : null);
         params.addValue("assemblyBillPrintNo", pageFileEntry.getAssemblyBillId()!=null ?
                                                 pageFileEntry.getAssemblyBillId().getBasePrintNo() : null);
         params.addValue("assemblyBillVersion", pageFileEntry.getAssemblyBillId()!=null ?
-                                                pageFileEntry.getAssemblyBillId().getVersion().getValue() : null);
+                                                pageFileEntry.getAssemblyBillId().getVersion().toString() : null);
         return params;
     }
 
     private MapSqlParameterSource getDaybreakBillParams(DaybreakBill daybreakBill){
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBill.getDaybreakBillId());
-        params.addValue("activeVersion", daybreakBill.getActiveVersion().getValue());
+        params.addValue("activeVersion", daybreakBill.getActiveVersion().toString());
         params.addValue("title", daybreakBill.getTitle());
         params.addValue("sponsor", daybreakBill.getSponsor());
         params.addValue("lawAndSummary", daybreakBill.getLawCodeAndSummary());
@@ -763,7 +763,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     private MapSqlParameterSource getDaybreakBillAmendmentParams(DaybreakBillId daybreakBillId,
                                                                  DaybreakBillAmendment daybreakBillAmendment){
         MapSqlParameterSource params = getDaybreakBillIdParams(daybreakBillId);
-        params.addValue("version", daybreakBillAmendment.getBillId().getVersion().getValue());
+        params.addValue("version", daybreakBillAmendment.getBillId().getVersion().toString());
         params.addValue("sameAs", daybreakBillAmendment.getSameAs() != null ?
                                     daybreakBillAmendment.getSameAs().getPrintNo() :
                                     null );

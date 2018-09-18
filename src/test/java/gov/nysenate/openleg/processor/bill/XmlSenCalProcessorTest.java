@@ -15,10 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.TreeMap;
+import java.util.EnumMap;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * Created by uros on 4/26/17.
@@ -51,23 +50,23 @@ public class XmlSenCalProcessorTest extends BaseXmlProcessorTest {
         except.setId(new CalendarId(8,2017));
         except.setYear(2017);
         except.setSession(SessionYear.of(2017));
-        TreeMap<Version, CalendarSupplemental> supplementalTreeMap = new TreeMap<>();
-        CalendarSupplemental calendarSupplemental = new CalendarSupplemental(new CalendarId(8,2017), Version.DEFAULT, LocalDate.of(2017,1,31), LocalDateTime.parse("2017-01-30T17:47"));
+        EnumMap<Version, CalendarSupplemental> supplementalTreeMap = new EnumMap<>(Version.class);
+        CalendarSupplemental calendarSupplemental = new CalendarSupplemental(new CalendarId(8,2017), Version.ORIGINAL, LocalDate.of(2017,1,31), LocalDateTime.parse("2017-01-30T17:47"));
         calendarSupplemental.addEntry(new CalendarSupplementalEntry(96, CalendarSectionType.ORDER_OF_THE_FIRST_REPORT, new BillId("S249",2017),null,false));
         calendarSupplemental.addEntry(new CalendarSupplementalEntry(97, CalendarSectionType.ORDER_OF_THE_FIRST_REPORT, new BillId("S1635",2017),null,false));
-        supplementalTreeMap.put(Version.DEFAULT,calendarSupplemental);
+        supplementalTreeMap.put(Version.ORIGINAL,calendarSupplemental);
         except.setSupplementalMap(supplementalTreeMap);
 
-        /**
+        /*
          * Comparsion
          */
         assertEquals(except.getId(), actual.getId());
         assertEquals(except.getCalDate(), actual.getCalDate());
         assertEquals(except.getActiveListMap(), actual.getActiveListMap());
-        assertEquals(except.getSupplementalMap().get(Version.DEFAULT).getCalDate(),actual.getSupplementalMap().get(Version.DEFAULT).getCalDate());
-        assertEquals(except.getSupplementalMap().get(Version.DEFAULT).getCalendarId(),actual.getSupplementalMap().get(Version.DEFAULT).getCalendarId());
-        assertEquals(except.getSupplementalMap().get(Version.DEFAULT).getSectionEntries(),actual.getSupplementalMap().get(Version.DEFAULT).getSectionEntries());
-        assertEquals(except.getSupplementalMap().get(Version.DEFAULT).getAllEntries(),actual.getSupplementalMap().get(Version.DEFAULT).getAllEntries());
+        assertEquals(except.getSupplementalMap().get(Version.ORIGINAL).getCalDate(),actual.getSupplementalMap().get(Version.ORIGINAL).getCalDate());
+        assertEquals(except.getSupplementalMap().get(Version.ORIGINAL).getCalendarId(),actual.getSupplementalMap().get(Version.ORIGINAL).getCalendarId());
+        assertEquals(except.getSupplementalMap().get(Version.ORIGINAL).getSectionEntries(),actual.getSupplementalMap().get(Version.ORIGINAL).getSectionEntries());
+        assertEquals(except.getSupplementalMap().get(Version.ORIGINAL).getAllEntries(),actual.getSupplementalMap().get(Version.ORIGINAL).getAllEntries());
 
     }
 }

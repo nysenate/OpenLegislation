@@ -39,7 +39,7 @@ public class XmlLDSummProcessorTest extends BaseXmlProcessorTest {
         final String expectedSummary = "test digest bill summary";
         assertEquals(expectedSummary,b.getSummary()); // test summary
         final String expectedLaw = "test digest bill law";
-        assertEquals(expectedLaw, b.getAmendment(Version.DEFAULT).getLaw()); // test law
+        assertEquals(expectedLaw, b.getAmendment(Version.ORIGINAL).getLaw()); // test law
         Set<BillId> preBill = b.getAllPreviousVersions();
         assertTrue(preBill.contains(new BaseBillId("S06883", 2016)));//test pre bill
     }
@@ -56,7 +56,7 @@ public class XmlLDSummProcessorTest extends BaseXmlProcessorTest {
         final String expectedSummary = "";
         assertEquals(expectedSummary,b.getSummary()); // test summary
         final String expectedLaw = "";
-        assertEquals(expectedLaw, b.getAmendment(Version.DEFAULT).getLaw()); // test law
+        assertEquals(expectedLaw, b.getAmendment(Version.ORIGINAL).getLaw()); // test law
         Set<BillId> preBill = b.getAllPreviousVersions();
         assertTrue(preBill.isEmpty());//test pre bill
     }

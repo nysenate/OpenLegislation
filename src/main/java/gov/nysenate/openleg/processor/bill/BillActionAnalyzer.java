@@ -110,7 +110,7 @@ public class BillActionAnalyzer
     private Table<Integer, Chamber, Integer> calNoTable = HashBasedTable.create(2, 2);
 
     /** PublishStatus associated with each non-base amendment version listed in the actions. */
-    private final TreeMap<Version, PublishStatus> publishStatusMap = new TreeMap<>();
+    private final EnumMap<Version, PublishStatus> publishStatusMap = new EnumMap<>(Version.class);
 
     /** True if the last action encountered was an enacting clause stricken. */
     private boolean stricken = false;
@@ -123,7 +123,7 @@ public class BillActionAnalyzer
 
     /** Same as bill id references associated with any non-base versions. We use a map
      *  here because the substitution actions target a specific amendment version. */
-    private TreeMap<Version, BillId> sameAsMap = new TreeMap<>();
+    private EnumMap<Version, BillId> sameAsMap = new EnumMap<>(Version.class);
 
     /** If the bill is substituted by another bill, that bill's bill id will be set here. */
     private Optional<BaseBillId> substitutedBy = Optional.empty();
@@ -144,7 +144,7 @@ public class BillActionAnalyzer
         this.actions = actions;
         this.billId = billId;
         if (defaultPubStatus.isPresent()) {
-            this.publishStatusMap.put(Version.DEFAULT, defaultPubStatus.get());
+            this.publishStatusMap.put(Version.ORIGINAL, defaultPubStatus.get());
             this.billStatus = new BillStatus(INTRODUCED, defaultPubStatus.get().getEffectDateTime().toLocalDate());
         }
     }
@@ -320,7 +320,7 @@ public class BillActionAnalyzer
             List<BillStatusType> milestoneTypes;
             // Resolutions have a different set of milestones.
             if (billId.getBillType().isResolution()) {
-                milestoneTypes = Arrays.asList(ADOPTED);
+                milestoneTypes = Collections.singletonList(ADOPTED);
             }
             // Assembly and senate bills have their milestones ordered accordingly.
             else {
@@ -368,7 +368,7 @@ public class BillActionAnalyzer
         return activeVersion;
     }
 
-    public TreeMap<Version, PublishStatus> getPublishStatusMap() {
+    public EnumMap<Version, PublishStatus> getPublishStatusMap() {
         return publishStatusMap;
     }
 

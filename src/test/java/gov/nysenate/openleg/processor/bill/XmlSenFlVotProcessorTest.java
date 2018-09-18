@@ -38,7 +38,7 @@ public class XmlSenFlVotProcessorTest extends BaseXmlProcessorTest {
         processXmlFile("processor/bill/senFlVot/2017-10-23-10.25.46.989009_SENFLVOT_S00100.XML");
         //Get sample floor votes for this bill
         Bill baseBill = billDataService.getBill(new BaseBillId("S100", 2017));
-        BillAmendment s100 = baseBill.getAmendment(Version.DEFAULT);
+        BillAmendment s100 = baseBill.getAmendment(Version.ORIGINAL);
         Map<BillVoteId, BillVote> s100VotesMap = s100.getVotesMap();
         //Check that votes made it into the votes map
         assertNotNull(s100VotesMap);

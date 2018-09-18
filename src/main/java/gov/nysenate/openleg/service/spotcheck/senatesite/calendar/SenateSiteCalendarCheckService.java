@@ -70,7 +70,7 @@ public class SenateSiteCalendarCheckService
 
     private void checkSupplemental(CalendarView content, SenateSiteCalendar reference,
                                    SpotCheckObservation<CalendarEntryListId> observation) {
-        String version = reference.getVersion().getValue();
+        String version = reference.getVersion().toString();
         CalendarSupView calendarSupView = content.getSupplementalCalendars().getItems().get(version);
         List<CalendarEntryView> calendarEntryViews = calendarSupView.getEntriesBySection()
                 .getItems().values().stream()

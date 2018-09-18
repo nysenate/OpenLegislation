@@ -94,7 +94,7 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
 
             BillAmendment billAmendment;
             if (version == null || version.equals("")) {
-                billAmendment = baseBill.getAmendment(Version.DEFAULT);
+                billAmendment = baseBill.getAmendment(Version.ORIGINAL);
             } else {
                 billAmendment = baseBill.getAmendment(Version.of(version));
             }
@@ -121,7 +121,7 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             baseBill.setYear( BillActionParser.getCalendarYear(xmlActions, xmlHelper) );
 
             // Use the BillActionAnalyzer to derive other data from the actions list.
-            Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.DEFAULT);
+            Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
             BillActionAnalyzer analyzer = new BillActionAnalyzer(billAmendment.getBillId(), billActions, defaultPubStatus);
             analyzer.analyze();
 

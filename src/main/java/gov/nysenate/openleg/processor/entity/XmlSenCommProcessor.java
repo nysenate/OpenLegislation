@@ -11,7 +11,8 @@ import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -30,7 +31,7 @@ import java.util.List;
 @Service
 public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiProcessor
 {
-    private static final Logger logger = Logger.getLogger(XmlSenCommProcessor.class);
+    private static final Logger logger = LogManager.getLogger(XmlSenCommProcessor.class);
 
     private static final DateTimeFormatter meetTimeSDF = DateTimeFormatter.ofPattern("hh:mm a");
 

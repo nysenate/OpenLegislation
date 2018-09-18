@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import gov.nysenate.openleg.client.view.base.MapView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,13 @@ public abstract class OutputUtils
         jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
+    private static ObjectMapper elasticsearchJsonMapper = jsonMapper.copy();
+    static {
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(MapView.class, new MapViewSerializer());
+        elasticsearchJsonMapper.registerModule(module);
+    }
+
     public static ObjectMapper getJsonMapper() {
         return jsonMapper;
     }
@@ -35,8 +44,22 @@ public abstract class OutputUtils
      * @return String - Json or empty string if failed.
      */
     public static String toJson(Object object) {
+        return mapToJson(object, jsonMapper);
+    }
+
+    /**
+     * Given an object, this method will attempt to serialize it into JSON
+     * suitable for ElasticSearch indexing.
+     * @param object Object
+     * @return String - Json or empty string if failed.
+     */
+    public static String toElasticsearchJson(Object object){
+        return mapToJson(object, elasticsearchJsonMapper);
+    }
+
+    private static String mapToJson(Object object, ObjectMapper objectMapper){
         try {
-            return jsonMapper.writeValueAsString(object);
+            return objectMapper.writeValueAsString(object);
         }
         catch(JsonGenerationException ex){
             logger.error("Failed to generate json: " + ex.getMessage());

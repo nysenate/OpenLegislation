@@ -2,21 +2,23 @@ package gov.nysenate.openleg.service.hearing.search;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.hearing.search.ElasticPublicHearingSearchDao;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.hearing.PublicHearing;
 import gov.nysenate.openleg.model.hearing.PublicHearingId;
 import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
+import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
 import gov.nysenate.openleg.service.hearing.event.BulkPublicHearingUpdateEvent;
 import gov.nysenate.openleg.service.hearing.event.PublicHearingUpdateEvent;
-import gov.nysenate.openleg.service.hearing.data.PublicHearingDataService;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,7 +93,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 
@@ -127,7 +128,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     @Override
     public void updateIndex(Collection<PublicHearing> publicHearings) {
         if (env.isElasticIndexing() && !publicHearings.isEmpty()) {
-            List<PublicHearing> indexablePublicHearings = publicHearings.stream().filter(ph -> ph != null).collect(Collectors.toList());
+            List<PublicHearing> indexablePublicHearings = publicHearings.stream().filter(Objects::nonNull).collect(Collectors.toList());
             logger.info("Indexing {} public hearings into elastic search.", indexablePublicHearings.size());
             publicHearingSearchDao.updatePublicHearingIndex(indexablePublicHearings);
         }
@@ -144,17 +145,18 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     @Override
     public void rebuildIndex() {
         clearIndex();
-        for (int year = 2011; year <= LocalDate.now().getYear(); year++) {
-            LimitOffset limitOffset = LimitOffset.TWENTY_FIVE;
-            List<PublicHearingId> publicHearingIds = publicHearingDataService.getPublicHearingIds(SortOrder.DESC, limitOffset);
-            while (!publicHearingIds.isEmpty()) {
-                logger.info("Indexing {} public hearings starting from {}.", publicHearingIds.size(), year);
-                List<PublicHearing> publicHearings = publicHearingIds.stream().map(publicHearingDataService::getPublicHearing).collect(Collectors.toList());
-                updateIndex(publicHearings);
-                limitOffset = limitOffset.next();
-                publicHearingIds = publicHearingDataService.getPublicHearingIds(SortOrder.DESC, limitOffset);
+        final int bulkSize = 500;
+        Queue<PublicHearingId> hearingIdQueue =
+                new ArrayDeque<>(publicHearingDataService.getPublicHearingIds(SortOrder.DESC, LimitOffset.ALL));
+        while(!hearingIdQueue.isEmpty()) {
+            List<PublicHearing> publicHearings = new ArrayList<>(bulkSize);
+            for (int i = 0; i < bulkSize && !hearingIdQueue.isEmpty(); i++) {
+                PublicHearingId hid = hearingIdQueue.remove();
+                publicHearings.add(publicHearingDataService.getPublicHearing(hid));
             }
+            updateIndex(publicHearings);
         }
+        logger.info("Finished reindexing public hearings.");
     }
 
     /** {@inheritDoc} */
@@ -163,11 +165,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     public void handleRebuildEvent(RebuildIndexEvent event) {
         if (event.affects(SearchIndex.HEARING)) {
             logger.info("Handling public hearing re-index event.");
-            try {
-                rebuildIndex();
-            } catch (Exception ex) {
-                logger.error("Unexpected exception during handling of public hearing index rebuild event.", ex);
-            }
+            rebuildIndex();
         }
     }
 

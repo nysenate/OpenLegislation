@@ -43,7 +43,7 @@ public class XmlAnActProcessorTest extends BaseXmlProcessorTest {
         Bill b = billDataService.getBill(new BaseBillId("S08215", 2015));
         String expectedS = "AN ACT to amend the executive law, in relation to the appointment of\n" +
                 "interpreters to be used in parole board proceedings [altered]";
-        String actualClause = b.getAmendment(Version.DEFAULT).getActClause();
+        String actualClause = b.getAmendment(Version.ORIGINAL).getActClause();
         assertEquals(expectedS, actualClause);
     }
 
@@ -55,7 +55,7 @@ public class XmlAnActProcessorTest extends BaseXmlProcessorTest {
 
         Bill b = billDataService.getBill(new BaseBillId("A05462", 2017));
         String expectedS = "";
-        String actualClause = b.getAmendment(Version.DEFAULT).getActClause();
+        String actualClause = b.getAmendment(Version.ORIGINAL).getActClause();
         assertEquals(expectedS, actualClause);
     }
 

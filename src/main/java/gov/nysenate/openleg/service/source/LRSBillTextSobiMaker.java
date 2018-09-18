@@ -116,7 +116,7 @@ public class LRSBillTextSobiMaker {
 
         // Format the line start for this bill
         String lineStart = String.format("%s%s%05d%sT", yearString, billId.getBillType(), billId.getNumber(),
-                billId.getVersion() != Version.DEFAULT ? billId.getVersion() : " ");
+                billId.getVersion() != Version.ORIGINAL ? billId.getVersion() : " ");
 
         int textLine = 1;   // Tracks text line numbers
         int totalLine = 0;  // Tracks total lines that have been added including headers

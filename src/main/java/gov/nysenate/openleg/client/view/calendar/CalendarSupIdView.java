@@ -11,14 +11,9 @@ public class CalendarSupIdView extends CalendarIdView {
 
     public CalendarSupIdView(CalendarSupplementalId calendarSupplementalId) {
         super(calendarSupplementalId);
-        if (calendarSupplementalId != null) {
-            if (calendarSupplementalId.getVersion() != null) {
-                if (calendarSupplementalId.getVersion().equals(Version.DEFAULT)) {
-                    this.version = "floor";
-                } else {
-                    this.version = calendarSupplementalId.getVersion().getValue();
-                }
-            }
+        Version calVersion = calendarSupplementalId.getVersion();
+        if (calVersion != null) {
+            this.version = (calVersion == Version.ORIGINAL ? "floor" : calVersion.toString());
         }
     }
 
@@ -45,6 +40,6 @@ public class CalendarSupIdView extends CalendarIdView {
 
     @JsonIgnore
     public CalendarSupplementalId toCalendarSupplementalId() {
-        return new CalendarSupplementalId(this.calendarNumber, this.year, this.version.equals("floor") ? Version.DEFAULT : Version.of(this.version));
+        return new CalendarSupplementalId(this.calendarNumber, this.year, this.version.equals("floor") ? Version.ORIGINAL : Version.of(this.version));
     }
 }
