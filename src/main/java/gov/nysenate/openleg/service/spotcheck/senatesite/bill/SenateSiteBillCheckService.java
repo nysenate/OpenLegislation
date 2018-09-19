@@ -284,8 +284,8 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
                 .filter(vote -> vote.getVersion().equalsIgnoreCase(billId.getVersion().toString()))
                 .map(SenateSiteBillVote::new)
                 .collect(toList());
-        TreeMap<BillVoteId, SenateSiteBillVote> contentVoteMap = getVoteMap(contentVoteList, billId);
-        TreeMap<BillVoteId, SenateSiteBillVote> refVoteMap = getVoteMap(reference.getVotes(), billId);
+        TreeMap<BillVoteId, SenateSiteBillVote> contentVoteMap = getVoteMap(contentVoteList);
+        TreeMap<BillVoteId, SenateSiteBillVote> refVoteMap = getVoteMap(reference.getVotes());
 
         Set<BillVoteId> contentVoteInfos = contentVoteMap.keySet();
         Set<BillVoteId> refVoteInfos = refVoteMap.keySet();
@@ -368,7 +368,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         return builder.toString();
     }
 
-    private TreeMap<BillVoteId, SenateSiteBillVote> getVoteMap(Collection<SenateSiteBillVote> votes, BillId billId) {
+    private TreeMap<BillVoteId, SenateSiteBillVote> getVoteMap(Collection<SenateSiteBillVote> votes) {
         return votes.stream()
                 .collect(toMap(SenateSiteBillVote::getVoteId, Function.identity(), (a, b) -> b, TreeMap::new));
     }
