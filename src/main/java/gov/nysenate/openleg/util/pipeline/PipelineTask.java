@@ -26,7 +26,7 @@ class PipelineTask<T, R> implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(PipelineTask.class);
 
     /** The amount of time in ms the task should wait for a new input before checking if the previous task is done */
-    private static final long inputTimeout = 50;
+    private static final long queueIOTimeout = 50;
 
     private Function<T, Collection<R>> task;
     private BlockingQueue<T> inputQueue;
@@ -63,8 +63,12 @@ class PipelineTask<T, R> implements Runnable {
             startCountDown.await();
             while (true) {
                 boolean prevFinished = isPrevFinished();
+                T inputValue = inputQueue.poll(queueIOTimeout, TimeUnit.MILLISECONDS);
 
-                T inputValue = inputQueue.poll(inputTimeout, TimeUnit.MILLISECONDS);
+                // Throw exception for early termination
+                if (isFinished()) {
+                    throw new PipelineTaskCancellationEx();
+                }
 
                 if (inputValue != null) {
                     Collection<R> outputValues = task.apply(inputValue);
@@ -75,7 +79,10 @@ class PipelineTask<T, R> implements Runnable {
                 }
             }
         } catch (InterruptedException e) {
+            logger.error("Encountered exception in pipeline task: {}", task.getClass().getSimpleName());
             throw new PipelineException(e);
+        } catch (PipelineTaskCancellationEx ex) {
+            logger.warn("Pipeline task shutting down early: {}", task.getClass().getSimpleName());
         }
         this.finished.set(true);
     }
@@ -92,6 +99,13 @@ class PipelineTask<T, R> implements Runnable {
      */
     boolean isFinished() {
         return finished.get();
+    }
+
+    /**
+     * Sets the finished flag to true, which will signal the job to stop.
+     */
+    void terminate() {
+        this.finished.set(true);
     }
 
     /**
@@ -140,10 +154,18 @@ class PipelineTask<T, R> implements Runnable {
     private <E> void addToQueue(Collection<E> values, BlockingQueue<E> queue) {
         for (E value : values) {
             try {
-                queue.put(value);
+                // Try to add the item to the queue, and check for early termination if the queue is blocked.
+                while(!queue.offer(value, queueIOTimeout, TimeUnit.MILLISECONDS)) {
+                    if (isFinished()) {
+                        throw new PipelineTaskCancellationEx();
+                    }
+                }
             } catch (InterruptedException e) {
                 throw new PipelineException(e);
             }
         }
+    }
+
+    private static class PipelineTaskCancellationEx extends RuntimeException {
     }
 }
