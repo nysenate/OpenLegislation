@@ -21,6 +21,7 @@ import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.agenda.event.BulkAgendaUpdateEvent;
+import gov.nysenate.openleg.service.bill.data.ApprovalDataService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
@@ -68,6 +69,7 @@ public abstract class AbstractDataProcessor
     @Autowired protected CommitteeDataService committeeDataService;
     @Autowired protected MemberService memberService;
     @Autowired protected VetoDataService vetoDataService;
+    @Autowired protected ApprovalDataService apprDataService;
 
     /** --- Events --- */
 

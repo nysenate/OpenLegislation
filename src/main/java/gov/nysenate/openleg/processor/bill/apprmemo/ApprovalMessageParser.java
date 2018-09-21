@@ -2,8 +2,6 @@ package gov.nysenate.openleg.processor.bill.apprmemo;
 
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.bill.BillTextParser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,16 +13,14 @@ public class ApprovalMessageParser {
     private String memoText;
     private BillId billId;
     private int apprno;
-    private String action;
     ApprovalMessage approvalMessage;
     private static final Pattern approvalTitlePattern =
             Pattern.compile("\\s+APPROVAL MEMORANDUM\\s+-\\s+No\\.\\s?+\\d+\\s+Chapter\\s+?(\\d+)");
     private static final Pattern approvalSignerPattern =
             Pattern.compile("\\s+(?:(?:The|This) bill is|These bills are) approved\\.\\s*\\(signed\\)\\s*([a-zA-Z.'\\- ]*[a-zA-Z.])");
 
-    public ApprovalMessageParser(String text, BillId billId, int apprno, String action) {
+    public ApprovalMessageParser(String text, BillId billId, int apprno) {
         this.memoText = text;
-        this.action = action;
         this.billId = billId;
         this.apprno = apprno;
         approvalMessage = new ApprovalMessage();

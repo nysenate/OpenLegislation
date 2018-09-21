@@ -2,7 +2,6 @@ package gov.nysenate.openleg.processor.bill.apprmemo;
 
 import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.dao.bill.data.ApprovalDao;
-import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -15,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by senateuser on 3/2/17.
@@ -53,11 +52,17 @@ public class ApprmemoSobiProcessorIT extends BaseXmlProcessorTest {
 
     @Test
     public void removeProcessor() {
+        BaseBillId billId = new BaseBillId("S6789", 2015);
+        String preProcessXmlFilePath = "processor/bill/apprmemo/2016-12-01-00.00.00.000000_APPRMEMO_2016_00009.XML";
         String xmlFilePath = "processor/bill/apprmemo/2016-12-01-11.01.07.328317_APPRMEMO_2016-00009.XML";
-        ApprovalMessage add = approvalDao.getApprovalMessage(new ApprovalId(2016, 9));
+        Bill bill;
+
+        processXmlFile(preProcessXmlFilePath);
+        bill = billDataService.getBill(billId);
+        assertNotNull("Bill must have an initial approval message", bill.getApprovalMessage());
         processXmlFile(xmlFilePath);
-        Bill baseBill = billDataService.getBill(BaseBillId.of(add.getBillId()));
-        assertEquals("Remove Case shown to have ApprovalMessage still", null, baseBill.getApprovalMessage());
+        bill = billDataService.getBill(billId);
+        assertNull("Bill must have null approval after removal", bill.getApprovalMessage());
     }
 
     public void checkConditions(String expectedMemo, String expectedSignature, int expectedChapter, ApprovalMessage approvalMessage) {
