@@ -111,6 +111,8 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         SobiProcessor processor = getSobiProcessor();
         processor.process(fragment);
         processor.postProcess();
+        // Clear caches to ensure proper saves
+        eventBus.post(new CacheEvictEvent(EnumSet.allOf(ContentCache.class)));
     }
 
     /**
