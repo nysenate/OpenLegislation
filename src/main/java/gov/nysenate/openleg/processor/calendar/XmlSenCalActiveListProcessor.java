@@ -13,12 +13,10 @@ import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -52,8 +50,8 @@ public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implemen
         LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
-            Document doc = xml.parse(sobiFragment.getText());
-            Node xmlCalendarActive = xml.getNode("sencalendaractive", doc);
+            Node root = getXmlRoot(sobiFragment.getText());
+            Node xmlCalendarActive = xml.getNode("sencalendaractive", root);
             Integer calendarNo = xml.getInteger("@no", xmlCalendarActive);
             Integer sessionYear = xml.getInteger("@sessyr", xmlCalendarActive);
             Integer year = xml.getInteger("@year", xmlCalendarActive);

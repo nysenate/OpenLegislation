@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -52,8 +51,8 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
         LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
-            Document doc = xml.parse(sobiFragment.getText().replaceAll("\u001a",""));
-            Node xmlAgenda = xml.getNode("senagenda", doc);
+            Node root = getXmlRoot(sobiFragment.getText().replaceAll("\u001a",""));
+            Node xmlAgenda = xml.getNode("senagenda", root);
             Integer agendaNo = xml.getInteger("@no", xmlAgenda);
             Integer year = xml.getInteger("@year", xmlAgenda);
             AgendaId agendaId = new AgendaId(agendaNo, year);
