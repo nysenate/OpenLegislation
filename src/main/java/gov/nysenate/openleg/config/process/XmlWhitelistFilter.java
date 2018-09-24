@@ -3,7 +3,6 @@ package gov.nysenate.openleg.config.process;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiLineType;
 
 import java.util.HashSet;
 
@@ -37,7 +36,7 @@ public class XmlWhitelistFilter implements SourceFilter {
         xmlProcessYear.add(CALENDAR);
         xmlProcessYear.add(CALENDAR_ACTIVE);
         xmlProcessYear.add(AGENDA);
-        xmlProcessYear.add(SENAGENV);
+        xmlProcessYear.add(AGENDA_VOTE);
         xmlProcessYear.add(VETOMSG);
         xmlProcessYear.add(COMMITTEE);
         return xmlProcessYear;

@@ -3,33 +3,21 @@ package gov.nysenate.openleg.config.process;
 import com.google.common.collect.ImmutableRangeMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
-import gov.nysenate.openleg.model.sourcefiles.SourceType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ProcessConfig extends AbstractDataProcessor {
+public class ProcessConfig {
 
-    private RangeMap<Integer, SourceFilter> filterRangeMap;
-    private SourceFilter xmlFilter;
-    private SourceFilter sobiFilter;
+    private final RangeMap<Integer, SourceFilter> filterRangeMap;
+    private final SourceFilter xmlFilter = new XmlWhitelistFilter();
+    private final SourceFilter sobiFilter = new SobiWhitelistFilter();
 
-    //default constructor
-    public ProcessConfig() {}
-
-    @PostConstruct
-    public void init() {
-        xmlFilter = new XmlWhitelistFilter();
-        sobiFilter = new SobiWhitelistFilter();
-
+    public ProcessConfig() {
         filterRangeMap = ImmutableRangeMap.<Integer, SourceFilter>builder()
                 .put(Range.lessThan(2009), xmlFilter)
                 .put(Range.closedOpen(2009, 2018), sobiFilter)
@@ -46,10 +34,7 @@ public class ProcessConfig extends AbstractDataProcessor {
      */
     public List<SobiFragment> filterFileFragments(List<SobiFragment> fragments) {
         return fragments.stream()
-                .filter(frag -> determineProcessWhitelist(frag.getPublishedDateTime(),
-                            frag.getParentSobiFile().getSourceType())
-                            .acceptFragment(frag)
-                )
+                .filter(this::acceptFragment)
                 .collect(Collectors.toList());
     }
 
@@ -60,22 +45,17 @@ public class ProcessConfig extends AbstractDataProcessor {
      * @param blocks {@link List<SobiBlock>}
      * @return {@link List<SobiBlock>}
      */
-    public List<SobiBlock> filterSobiBlocks( List<SobiBlock> blocks) {
+    public List<SobiBlock> filterSobiBlocks(List<SobiBlock> blocks) {
         return blocks.stream()
-                .filter(block -> sobiFilter.acceptBlock(block))
+                .filter(sobiFilter::acceptBlock)
                 .collect(Collectors.toList());
     }
 
-    private SourceFilter determineProcessWhitelist(LocalDateTime publishDate,SourceType sourceType) {
-        return determineProcessWhitelist(publishDate.toLocalDate(), sourceType);
-    }
-
-    public SourceFilter determineProcessWhitelist(LocalDate publishDate,SourceType sourceType) {
-        if (sourceType == SourceType.XML || sourceType == SourceType.SOBI) {
-            return filterRangeMap.get(publishDate.getYear());
+    private boolean acceptFragment(SobiFragment fragment) {
+        SourceFilter applicableFilter = filterRangeMap.get(fragment.getPublishedDateTime().getYear());
+        if (applicableFilter == null) {
+            throw new IllegalStateException("No applicable filter for fragment " + fragment);
         }
-        else {
-            throw new IllegalStateException("Unknown source type: " + sourceType);
-        }
+        return applicableFilter.acceptFragment(fragment);
     }
 }
