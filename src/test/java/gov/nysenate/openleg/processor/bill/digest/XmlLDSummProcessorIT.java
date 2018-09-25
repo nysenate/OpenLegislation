@@ -15,8 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by senateuser on 2017/2/28.
@@ -36,15 +35,28 @@ public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
 
     @Test
     public void replaceDigestBillTest() {
+        final BaseBillId baseBillId = new BaseBillId("S00767", 2017);
         final String path = "processor/bill/digest/2017-01-05-10.29.46.171044_LDSUMM_S00767.XML";
-        processXmlFile(path);
-        Bill b = billDataService.getBill(new BaseBillId("S00767", 2017));
+
+        // Expected data
         final String expectedSummary = "test digest bill summary";
-        assertEquals(expectedSummary,b.getSummary()); // test summary
         final String expectedLaw = "test digest bill law";
-        assertEquals(expectedLaw, b.getAmendment(Version.ORIGINAL).getLaw()); // test law
-        Set<BillId> preBill = b.getAllPreviousVersions();
-        assertTrue(preBill.contains(new BillId("S06883", 2016)));//test pre bill
+        final BillId expectedPreviousVersion = new BillId("S06883", 2016);
+
+        // Assert bill is not initialized with expected data
+        if (doesBillExist(baseBillId)) {
+            Bill bill = getBill(baseBillId);
+            assertNotEquals(expectedSummary, bill.getSummary());
+            assertNotEquals(expectedLaw, bill.getAmendment(Version.ORIGINAL).getLaw());
+            assertFalse(bill.getAllPreviousVersions().contains(expectedPreviousVersion));
+        }
+
+        processXmlFile(path);
+        Bill bill = getBill(baseBillId);
+
+        assertEquals(expectedSummary, bill.getSummary());
+        assertEquals(expectedLaw, bill.getAmendment(Version.ORIGINAL).getLaw());
+        assertTrue(bill.getAllPreviousVersions().contains(expectedPreviousVersion));
     }
 
     @Test
@@ -52,15 +64,15 @@ public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
         //create bill
         final String createBillPath = "processor/bill/digest/2017-01-05-10.29.46.171044_LDSUMM_S00767.XML";
         processXmlFile(createBillPath);
+
         //remove bill
         final String path = "processor/bill/digest/2017-01-23-12.24.20.161955_LDSUMM_A02830.XML";
         processXmlFile(path);
+
         Bill b = billDataService.getBill(new BaseBillId("S00767", 2017));
-        final String expectedSummary = "";
-        assertEquals(expectedSummary,b.getSummary()); // test summary
-        final String expectedLaw = "";
-        assertEquals(expectedLaw, b.getAmendment(Version.ORIGINAL).getLaw()); // test law
-        Set<BillId> preBill = b.getAllPreviousVersions();
-        assertTrue(preBill.isEmpty());//test pre bill
+
+        assertEquals("", b.getSummary());
+        assertEquals("", b.getAmendment(Version.ORIGINAL).getLaw());
+        assertTrue(b.getAllPreviousVersions().isEmpty());
     }
 }

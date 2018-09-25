@@ -143,4 +143,23 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
         return bill.getAmendment(billId.getVersion());
     }
 
+    /**
+     * Get a bill from the db.
+     */
+    protected Bill getBill(BaseBillId baseBillId) throws BillNotFoundEx {
+        return billDataService.getBill(baseBillId, false);
+    }
+
+    /**
+     * Does a BaseBillId exist in the database.
+     */
+    protected boolean doesBillExist(BaseBillId baseBillId) {
+        try {
+            getBill(baseBillId);
+            return true;
+        }
+        catch (BillNotFoundEx ex) {
+            return false;
+        }
+    }
 }
