@@ -1,8 +1,12 @@
 package gov.nysenate.openleg.processor.bill;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import gov.nysenate.openleg.model.base.PublishStatus;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -31,7 +35,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
 {
     private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
 
-    /** --- Patterns --- */
+    /* --- Patterns --- */
 
     /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
     protected static final DateTimeFormatter voteDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -53,14 +57,14 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
     /** The format for program info lines. */
     protected static final Pattern programInfoPattern = Pattern.compile("(\\d+)\\s+(.+)");
 
-    /** --- Constructors --- */
+    /* --- Constructors --- */
 
     @PostConstruct
     public void init() {
         initBase();
     }
 
-    /** --- Abstract methods --- */
+    /* --- Abstract methods --- */
 
     /** {@inheritDoc} */
     public abstract SobiFragmentType getSupportedType();
@@ -79,7 +83,56 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
         flushBillUpdates();
     }
 
-    /** --- Processing Methods --- */
+    /* --- Processing Methods --- */
+
+    /**
+     * Handles parsing a Session member out of a sobi or xml file
+     */
+    protected void handlePrimaryMemberParsing(Bill baseBill, String sponsorLine, SessionYear sessionYear) {
+        // Get the chamber from the Bill
+        Chamber chamber = baseBill.getBillType().getChamber();
+        // New Sponsor instance
+        BillSponsor billSponsor = new BillSponsor();
+        // Format the sponsor line
+        sponsorLine = sponsorLine.replace("(MS)", "").toUpperCase().trim();
+
+        // Check for RULES sponsors
+        if (sponsorLine.startsWith("RULES")) {
+            billSponsor.setRules(true);
+            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
+            if (sponsorLine.contains("RULES COM") && rules.matches() && !sponsorLine.trim().equals("RULES COM")) {
+                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
+                billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
+            }
+            else {
+                billSponsor.setMember(null);
+            }
+        }
+        // Budget bills don't have a specific sponsor
+        else if (sponsorLine.startsWith("BUDGET")) {
+            billSponsor.setBudget(true);
+            billSponsor.setMember(null);
+        }
+
+        else {
+            // In rare cases multiple sponsors can be listed on a single line. We can handle this
+            // by setting the first contact as the sponsor, and subsequent ones as additional sponsors.
+            if (sponsorLine.contains(",")) {
+                List<String> sponsors = Lists.newArrayList(
+                        Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsorLine));
+                if (!sponsors.isEmpty()) {
+                    sponsorLine = sponsors.remove(0);
+                    for (String sponsor : sponsors) {
+                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(sponsor, sessionYear, chamber));
+                    }
+                }
+            }
+
+            // Set the member into the sponsor instance
+            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
+        }
+        baseBill.setSponsor(billSponsor);
+    }
 
     /**
      * Un-publishes the specified bill amendment.
@@ -294,7 +347,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
         baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
     }
 
-    /** --- Post Process Methods --- */
+    /* --- Post Process Methods --- */
 
     /**
      * Uni-bills share text with their counterpart house. Ensure that the full text of bill amendments that
@@ -304,15 +357,37 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
         billAmendment.getSameAs().forEach(uniBillId -> {
             Bill uniBill = getOrCreateBaseBill(uniBillId, sobiFragment);
             BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
-            // If this is the senate bill amendment and same as is assembly, copy text to the assembly bill amendment.
-            if (billAmendment.isSenateBill() && uniBillAmend.isAssemblyBill()) {
+            BaseBillId updatedBillId = null;
+            // If this is the senate bill amendment, copy text to the assembly bill amendment
+            if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
                 uniBillAmend.setFullText(billAmendment.getFullText());
+                updatedBillId = uniBillAmend.getBaseBillId();
             }
-            // Otherwise copy the senate text to this assembly bill amendment
-            else if (billAmendment.isAssemblyBill() && uniBillAmend.isSenateBill() &&
-                     !uniBillAmend.getFullText().isEmpty()) {
+            // Otherwise copy the text to this assembly bill amendment
+            else if (!uniBillAmend.getFullText().isEmpty()) {
                 billAmendment.setFullText(uniBillAmend.getFullText());
+                updatedBillId = billAmendment.getBaseBillId();
+            }
+            if (updatedBillId != null) {
+                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
+                        updatedBillId, BillUpdateField.FULLTEXT));
             }
         });
+    }
+
+    /**
+     * After the BillActionAnalyzer updates the actions with the proper amendment version, the baseBill must be updated
+     * with those changes
+     * @param baseBill
+     * @param billActions
+     */
+    protected void addAnyMissingAmendments(Bill baseBill, List<BillAction> billActions ) {
+        for (BillAction action: billActions) {
+            Version actionVersion = action.getBillId().getVersion();
+            if (!baseBill.hasAmendment(actionVersion)) {
+                BillAmendment baseAmendment = new BillAmendment(baseBill.getBaseBillId(), actionVersion);
+                baseBill.addAmendment(baseAmendment);
+            }
+        }
     }
 }

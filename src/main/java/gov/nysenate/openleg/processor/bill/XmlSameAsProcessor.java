@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
@@ -31,7 +30,7 @@ import java.util.regex.Pattern;
  * Created by uros on 2/16/17.
  */
 @Service
-public class XmlSameAsProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlSameAsProcessor extends AbstractBillProcessor implements SobiProcessor {
 
     @Autowired
     XmlHelper xmlHelper;

@@ -3,12 +3,15 @@ package gov.nysenate.openleg.processor.bill.billstat;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAction;
+import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.processor.bill.AbstractBillProcessor;
 import gov.nysenate.openleg.processor.bill.BillActionAnalyzer;
 import gov.nysenate.openleg.processor.bill.BillActionParser;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
@@ -31,7 +34,7 @@ import java.util.Optional;
  * Created by Robert Bebber on 3/20/17.
  */
 @Service
-public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlBillStatProcessor.class);
 

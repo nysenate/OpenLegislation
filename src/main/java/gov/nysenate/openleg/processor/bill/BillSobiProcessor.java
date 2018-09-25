@@ -13,7 +13,6 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiLineType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
@@ -28,7 +27,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +40,7 @@ import java.util.regex.Pattern;
  * are applied to the bills via these fragments.
  */
 @Service
-public class BillSobiProcessor extends AbstractDataProcessor implements SobiProcessor
+public class BillSobiProcessor extends AbstractBillProcessor implements SobiProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
 

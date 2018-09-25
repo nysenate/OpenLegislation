@@ -1,13 +1,16 @@
 package gov.nysenate.openleg.processor.bill.sponsor;
 
-import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.ProgramInfo;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.processor.bill.AbstractBillProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -33,7 +36,7 @@ import java.util.regex.Pattern;
  * Created by Robert Bebber on 2/22/17.
  */
 @Service
-public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlLDSponProcessor extends AbstractBillProcessor implements SobiProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessor.class);
 

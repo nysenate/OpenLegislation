@@ -199,55 +199,6 @@ public abstract class AbstractDataProcessor
 
     /* --- Member Methods --- */
 
-    /**
-     * Handles parsing a Session member out of a sobi or xml file
-     */
-    protected void handlePrimaryMemberParsing(Bill baseBill, String sponsorLine, SessionYear sessionYear) {
-        // Get the chamber from the Bill
-        Chamber chamber = baseBill.getBillType().getChamber();
-        // New Sponsor instance
-        BillSponsor billSponsor = new BillSponsor();
-        // Format the sponsor line
-        sponsorLine = sponsorLine.replace("(MS)", "").toUpperCase().trim();
-
-        // Check for RULES sponsors
-        if (sponsorLine.startsWith("RULES")) {
-            billSponsor.setRules(true);
-            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
-            if (sponsorLine.contains("RULES COM") && rules.matches() && !sponsorLine.trim().equals("RULES COM")) {
-                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
-                billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
-            }
-            else {
-                billSponsor.setMember(null);
-            }
-        }
-        // Budget bills don't have a specific sponsor
-        else if (sponsorLine.startsWith("BUDGET")) {
-            billSponsor.setBudget(true);
-            billSponsor.setMember(null);
-        }
-
-        else {
-            // In rare cases multiple sponsors can be listed on a single line. We can handle this
-            // by setting the first contact as the sponsor, and subsequent ones as additional sponsors.
-            if (sponsorLine.contains(",")) {
-                List<String> sponsors = Lists.newArrayList(
-                        Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsorLine));
-                if (!sponsors.isEmpty()) {
-                    sponsorLine = sponsors.remove(0);
-                    for (String sponsor : sponsors) {
-                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(sponsor, sessionYear, chamber));
-                    }
-                }
-            }
-
-            // Set the member into the sponsor instance
-            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
-        }
-        baseBill.setSponsor(billSponsor);
-    }
-
 
     /**
      * Retrieves a member from the LBDC short name.  Creates a new unverified session member entry if no member can be retrieved.
@@ -396,47 +347,5 @@ public abstract class AbstractDataProcessor
         flushBillUpdates();
         flushAgendaUpdates();
         flushCalendarUpdates();
-    }
-
-    /**
-     * Uni-bills share text with their counterpart house. Ensure that the full text of bill amendments that
-     * have a uni-bill designator are kept in sync.
-     */
-    protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
-        billAmendment.getSameAs().forEach(uniBillId -> {
-            Bill uniBill = getOrCreateBaseBill(uniBillId, sobiFragment);
-            BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
-            BaseBillId updatedBillId = null;
-            // If this is the senate bill amendment, copy text to the assembly bill amendment
-            if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
-                uniBillAmend.setFullText(billAmendment.getFullText());
-                updatedBillId = uniBillAmend.getBaseBillId();
-            }
-            // Otherwise copy the text to this assembly bill amendment
-            else if (!uniBillAmend.getFullText().isEmpty()) {
-                billAmendment.setFullText(uniBillAmend.getFullText());
-                updatedBillId = billAmendment.getBaseBillId();
-            }
-            if (updatedBillId != null) {
-                eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-                        updatedBillId, BillUpdateField.FULLTEXT));
-            }
-        });
-    }
-
-    /**
-     * After the BillActionAnalyzer updates the actions with the proper amendment version, the baseBill must be updated
-     * with those changes
-     * @param baseBill
-     * @param billActions
-     */
-    protected void addAnyMissingAmendments(Bill baseBill, List<BillAction> billActions ) {
-        for (BillAction action: billActions) {
-            Version actionVersion = action.getBillId().getVersion();
-            if (!baseBill.hasAmendment(actionVersion)) {
-                BillAmendment baseAmendment = new BillAmendment(baseBill.getBaseBillId(), actionVersion);
-                baseBill.addAmendment(baseAmendment);
-            }
-        }
     }
 }
