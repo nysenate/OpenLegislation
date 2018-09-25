@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -49,8 +48,8 @@ public class XmlSenCalProcessor extends AbstractDataProcessor implements SobiPro
         LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
-            Document doc = xml.parse(sobiFragment.getText());
-            Node xmlCalendar = xml.getNode("sencalendar", doc);
+            Node root = getXmlRoot(sobiFragment.getText());
+            Node xmlCalendar = xml.getNode("sencalendar", root);
             Integer calendarNo = xml.getInteger("@no", xmlCalendar);
             Integer sessionYear = xml.getInteger("@sessyr", xmlCalendar);
             Integer year = xml.getInteger("@year", xmlCalendar);

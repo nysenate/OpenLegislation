@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor.bill.apprmemo;
 
+import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -9,6 +10,7 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +36,6 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
     @Autowired
     private XmlHelper xmlHelper;
 
-    public XmlApprMemoProcessor() {
-    }
-
     @Override
     public void init() {
         initBase();
@@ -49,46 +48,22 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
 
     @Override
     public void process(SobiFragment fragment) {
-        logger.info("Processing Apprmemo...");
         logger.info("Processing " + fragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(fragment);
         try {
             final Document doc = xmlHelper.parse(fragment.getText());
-            final Node apprmemoNode = xmlHelper.getNode("approval_memorandum", doc);
-            final Integer apprno = xmlHelper.getInteger("@no", apprmemoNode);
-            final Integer year = xmlHelper.getInteger("@year", apprmemoNode);
-            final String action = xmlHelper.getString("@action", apprmemoNode).trim();
+            final Node apprMemoNode = xmlHelper.getNode("approval_memorandum", doc);
+            final int apprNo = xmlHelper.getInteger("@no", apprMemoNode);
+            final int year = xmlHelper.getInteger("@year", apprMemoNode);
+            final String action = xmlHelper.getString("@action", apprMemoNode).trim();
 
-            NodeList childNodes = apprmemoNode.getChildNodes();
-            String billhse = null;
-            Integer billno = null;
-            String cdata = null;
-            for (int i = 0; i < childNodes.getLength(); i++) {
-                Node node = childNodes.item(i);
-                switch (node.getNodeName()) {
-                    case "billhse":
-                        billhse = node.getTextContent();
-                        break;
-                    case "billno":
-                        billno = Integer.parseInt(node.getTextContent());
-                        break;
-                    case "#cdata-section":
-                        cdata = node.getTextContent();
-                        cdata = parsedMemoHTML(cdata);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            Bill baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), new BillId(billhse +
-                    billno, year), fragment);
-            if (action.equals("remove")) {
-                baseBill.setApprovalMessage(null);
+            if ("remove".equals(action)) {
+                removeApprovalMemo(fragment, apprNo, year);
+            } else if ("replace".equals(action)) {
+                replaceApprovalMemo(fragment, apprMemoNode, apprNo, year);
             } else {
-                applyMemoText(cdata, baseBill, apprno, action, year);
+                throw new ParseError("Unknown approval memo action: " + action);
             }
-            billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
-
         } catch (IOException | SAXException | XPathExpressionException e) {
             unit.addException("XML Appr Memo parsing error", e);
             throw new ParseError("Error While Parsing ApprmemoSobiXML", e);
@@ -106,6 +81,55 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
         }
     }
 
+    @Override
+    public void postProcess() {
+        flushBillUpdates();
+    }
+
+    /* --- Internal Methods --- */
+
+    private void removeApprovalMemo(SobiFragment fragment, int apprNo, int year) {
+        ApprovalId approvalId = new ApprovalId(year, apprNo);
+        try {
+            ApprovalMessage approvalMessage = apprDataService.getApprovalMessage(approvalId);
+            BillId billId = approvalMessage.getBillId();
+            Bill bill = getOrCreateBaseBill(fragment.getPublishedDateTime(), billId, fragment);
+            bill.setApprovalMessage(null);
+            billIngestCache.set(bill.getBaseBillId(), bill, fragment);
+        } catch (ApprovalNotFoundException ignored) {
+            // if the approval doesn't exist, we can't remove it.
+            logger.warn("Attempt to remove unknown approval message: {}", approvalId);
+        }
+    }
+
+    private void replaceApprovalMemo(SobiFragment fragment, Node apprMemoNode, int apprNo, int year) {
+        NodeList childNodes = apprMemoNode.getChildNodes();
+        String billhse = null;
+        Integer billno = null;
+        String cdata = null;
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node node = childNodes.item(i);
+            switch (node.getNodeName()) {
+                case "billhse":
+                    billhse = node.getTextContent();
+                    break;
+                case "billno":
+                    billno = Integer.parseInt(node.getTextContent());
+                    break;
+                case "#cdata-section":
+                    cdata = node.getTextContent();
+                    cdata = parsedMemoHTML(cdata);
+                    break;
+                default:
+                    break;
+            }
+        }
+        BillId billId = new BillId(billhse + billno, year);
+        Bill bill = getOrCreateBaseBill(fragment.getPublishedDateTime(), billId, fragment);
+        applyMemoText(cdata, bill, apprNo, year);
+        billIngestCache.set(bill.getBaseBillId(), bill, fragment);
+    }
+
     /**
      * Constructs an approval message object by parsing a memo
      *
@@ -113,18 +137,13 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
      * @param baseBill
      * @throws ParseError
      */
-    private void applyMemoText(String data, Bill baseBill, int apprno, String action, Integer year) throws ParseError {
+    private void applyMemoText(String data, Bill baseBill, int apprno, Integer year) throws ParseError {
         BillId BillId = baseBill.getActiveAmendment().getBillId();
-        ApprovalMessageParser approvalMessageParser = new ApprovalMessageParser(data, BillId, apprno, action);
+        ApprovalMessageParser approvalMessageParser = new ApprovalMessageParser(data, BillId, apprno);
         approvalMessageParser.extractText();
         ApprovalMessage approvalMessage = approvalMessageParser.getApprovalMessage();
         approvalMessage.setBillId(BillId);
         approvalMessage.setYear(year);
         baseBill.setApprovalMessage(approvalMessage);
-    }
-
-    @Override
-    public void postProcess() {
-        flushBillUpdates();
     }
 }

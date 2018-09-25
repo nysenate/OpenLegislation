@@ -7,7 +7,6 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
-import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -15,13 +14,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.annotation.PostConstruct;
 import javax.xml.xpath.XPathExpressionException;
-import java.text.ParseException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -59,8 +56,8 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiPr
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         String xmlString = sobiFragment.getText();
         try {
-            Document doc = xml.parse(xmlString);
-            Node committeeRoot = xml.getNode("sencommmem", doc);
+            Node root = getXmlRoot(xmlString);
+            Node committeeRoot = xml.getNode("sencommmem", root);
             SessionYear sessionYear = new SessionYear(Integer.parseInt(xml.getString("@sessyr", committeeRoot)));
             int year = Integer.parseInt(xml.getString("@year", committeeRoot));
             Chamber chamber = Chamber.SENATE;
