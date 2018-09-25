@@ -302,7 +302,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      */
     protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
         billAmendment.getSameAs().forEach(uniBillId -> {
-            Bill uniBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), uniBillId, sobiFragment);
+            Bill uniBill = getOrCreateBaseBill(uniBillId, sobiFragment);
             BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
             // If this is the senate bill amendment and same as is assembly, copy text to the assembly bill amendment.
             if (billAmendment.isSenateBill() && uniBillAmend.isAssemblyBill()) {

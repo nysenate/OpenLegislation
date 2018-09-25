@@ -119,15 +119,14 @@ public abstract class AbstractDataProcessor
      * If this base bill does not exist, it will be created. The amendment instance will also be created
      * if it does not exist.
      *
-     * @param publishDate Date - Typically the date of the source data file. Only used when bill information
-     *                           does not already exist and must be created.
      * @param billId BillId - The BillId to find a matching Bill for.
      * @return Bill
      */
-    protected final Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId, SobiFragment fragment) {
+    protected final Bill getOrCreateBaseBill(BillId billId, SobiFragment fragment) {
         boolean isBaseVersion = BillId.isBaseVersion(billId.getVersion());
         BaseBillId baseBillId = BillId.getBaseId(billId);
         Bill baseBill;
+        LocalDateTime publishedDateTime = fragment.getPublishedDateTime();
         // Check the cache, or hit the data service otherwise
         if (billIngestCache.has(baseBillId)) {
             baseBill = billIngestCache.get(baseBillId).getLeft();
@@ -142,8 +141,8 @@ public abstract class AbstractDataProcessor
                     logger.warn("Bill Amendment {} filed without initial bill.", billId);
                 }
                 baseBill = new Bill(baseBillId);
-                baseBill.setModifiedDateTime(publishDate);
-                baseBill.setPublishedDateTime(publishDate);
+                baseBill.setModifiedDateTime(publishedDateTime);
+                baseBill.setPublishedDateTime(publishedDateTime);
                 billIngestCache.set(baseBillId, baseBill, fragment);
             }
             billIngestCache.set(baseBillId, baseBill, fragment);
@@ -405,7 +404,7 @@ public abstract class AbstractDataProcessor
      */
     protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
         billAmendment.getSameAs().forEach(uniBillId -> {
-            Bill uniBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), uniBillId, sobiFragment);
+            Bill uniBill = getOrCreateBaseBill(uniBillId, sobiFragment);
             BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
             BaseBillId updatedBillId = null;
             // If this is the senate bill amendment, copy text to the assembly bill amendment

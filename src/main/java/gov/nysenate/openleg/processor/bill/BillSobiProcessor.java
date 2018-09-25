@@ -105,7 +105,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
         for (SobiBlock block : processConfig.filterSobiBlocks(blocks)) {
             String data = block.getData();
             BillId billId = block.getBillId();
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), billId, sobiFragment);
+            Bill baseBill = getOrCreateBaseBill(billId, sobiFragment);
             Version specifiedVersion = billId.getVersion();
             BillAmendment specifiedAmendment = baseBill.getAmendment(specifiedVersion);
             BillAmendment activeAmendment = baseBill.getActiveAmendment();
@@ -315,7 +315,6 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
         // Ensure that amendments exist for all versions in the publish status map
         baseBill.getAmendPublishStatusMap().keySet().forEach(version ->
                 getOrCreateBaseBill(
-                        fragment.getPublishedDateTime(),
                         baseBill.getBaseBillId().withVersion(version),
                         fragment)
         );

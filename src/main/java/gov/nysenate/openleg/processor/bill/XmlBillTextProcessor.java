@@ -116,7 +116,7 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
                                String billText, String strippedBillText,
                                SobiFragment fragment, Set<BaseBillId> updatedBills) {
         final BillId billId = new BillId(house + number, session, amdVersion);
-        final Bill baseBill = getOrCreateBaseBill(fragment.getPublishedDateTime(), billId, fragment);
+        final Bill baseBill = getOrCreateBaseBill(billId, fragment);
         BillAmendment amendment = baseBill.getAmendment(Version.of(amdVersion));
         amendment.setFullTextHtml(billText);
         amendment.setFullText(strippedBillText);

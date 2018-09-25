@@ -21,7 +21,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +46,6 @@ public class XmlSameAsProcessor extends AbstractDataProcessor implements SobiPro
 
     @Override
     public void process(SobiFragment fragment) {
-        LocalDateTime date = fragment.getPublishedDateTime();
         DataProcessUnit unit = createProcessUnit(fragment);
         try {
             final Document doc = xmlHelper.parse(fragment.getText());
@@ -59,7 +57,7 @@ public class XmlSameAsProcessor extends AbstractDataProcessor implements SobiPro
             final String action = xmlHelper.getString("@action", billSameAsNode).replaceAll("\n", "");
 
             final Version version = Version.of(billamd);
-            final Bill baseBill = getOrCreateBaseBill(date, new BillId(billhse + billno, new SessionYear(sessionYear), version), fragment);
+            final Bill baseBill = getOrCreateBaseBill(new BillId(billhse + billno, new SessionYear(sessionYear), version), fragment);
 
             BillAmendment amendment = baseBill.getAmendment(version);
 

@@ -73,7 +73,7 @@ public class XmlAnActProcessor extends AbstractDataProcessor implements SobiProc
             final String action = xmlHelper.getString("@action", billTextNode).trim();
             final String anactClause = billTextNode.getTextContent().trim();
             final Version version = Version.of(anactamd);
-            final Bill baseAnAct = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(
+            final Bill baseAnAct = getOrCreateBaseBill(new BillId(
                     new BaseBillId(anacthse + anactno, new SessionYear(sessyr)),
                     Version.of(anactamd)), sobiFragment);
             if (action.equals("replace")) {

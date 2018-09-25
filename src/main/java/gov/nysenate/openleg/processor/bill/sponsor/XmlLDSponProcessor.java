@@ -82,7 +82,7 @@ public class XmlLDSponProcessor extends AbstractDataProcessor implements SobiPro
 
             if (sponsorno == 0) // if it is a LDBC error
                 return;
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(sponsorhse +
+            Bill baseBill = getOrCreateBaseBill(new BillId(sponsorhse +
                     sponsorno, sessyr), sobiFragment);
             Chamber chamber = baseBill.getBillType().getChamber();
             BillAmendment amendment = baseBill.getAmendment(baseBill.getActiveVersion());

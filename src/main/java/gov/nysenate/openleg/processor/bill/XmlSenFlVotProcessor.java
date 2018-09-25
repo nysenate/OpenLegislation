@@ -67,7 +67,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
             final String action = xmlHelper.getString("@action", senFloorVote).trim();
             final String dateofvote = xmlHelper.getString("@dateofvote", senFloorVote).trim();
 
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), billId, sobiFragment);
+            Bill baseBill = getOrCreateBaseBill(billId, sobiFragment);
             BillAmendment billAmendment;
             if (!baseBill.hasAmendment( Version.of(version) )) {
                 billAmendment = new BillAmendment(baseBill.getBaseBillId(), Version.of(version));

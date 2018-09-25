@@ -78,7 +78,7 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
             if (action.equals("remove")) {
                 try { // try to remove throw exception if it does not exists
                     VetoMessage vetoM = vetoDao.getVetoMessage(new VetoId(year, number));
-                    baseBill = getOrCreateBaseBill(date, vetoM.getBillId(), fragment);
+                    baseBill = getOrCreateBaseBill(vetoM.getBillId(), fragment);
                     baseBill.getVetoMessages().remove(vetoM.getVetoId());
                 }
                 catch (EmptyResultDataAccessException emptyResultDataAccessException){
@@ -88,7 +88,7 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
                 final String billhse = xmlHelper.getNode("veto_message/billhse", doc).getTextContent();
                 final String billno = xmlHelper.getNode("veto_message/billno", doc).getTextContent();
 
-                baseBill = getOrCreateBaseBill(date, new BillId(billhse + billno, new SessionYear(year), version), fragment);
+                baseBill = getOrCreateBaseBill(new BillId(billhse + billno, new SessionYear(year), version), fragment);
 
                 String textWithHTML = getNodeText(vetoMsgNode);
                 String cleanText = parsedMemoHTML(textWithHTML);

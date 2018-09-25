@@ -93,7 +93,7 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
         try {
             ApprovalMessage approvalMessage = apprDataService.getApprovalMessage(approvalId);
             BillId billId = approvalMessage.getBillId();
-            Bill bill = getOrCreateBaseBill(fragment.getPublishedDateTime(), billId, fragment);
+            Bill bill = getOrCreateBaseBill(billId, fragment);
             bill.setApprovalMessage(null);
             billIngestCache.set(bill.getBaseBillId(), bill, fragment);
         } catch (ApprovalNotFoundException ignored) {
@@ -125,7 +125,7 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
             }
         }
         BillId billId = new BillId(billhse + billno, year);
-        Bill bill = getOrCreateBaseBill(fragment.getPublishedDateTime(), billId, fragment);
+        Bill bill = getOrCreateBaseBill(billId, fragment);
         applyMemoText(cdata, bill, apprNo, year);
         billIngestCache.set(bill.getBaseBillId(), bill, fragment);
     }

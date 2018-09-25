@@ -21,7 +21,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * Created by uros on 3/21/17.
@@ -43,8 +42,6 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements SobiPr
 
     @Override
     public void process(SobiFragment fragment) {
-        LocalDateTime date = fragment.getPublishedDateTime();
-
         try {
             final Document doc = xmlHelper.parse(fragment.getText());
             final Node senMemoNode = xmlHelper.getNode("senate_billmemo", doc);
@@ -56,7 +53,7 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements SobiPr
 
             BillId billId = new BillId(billhse + billno, new SessionYear(year), version);
 
-            Bill basebill = getOrCreateBaseBill(date, billId, fragment);
+            Bill basebill = getOrCreateBaseBill(billId, fragment);
 
             BillAmendment amendment = basebill.getAmendment(version);
             amendment.setMemo(getNodeText(senMemoNode));

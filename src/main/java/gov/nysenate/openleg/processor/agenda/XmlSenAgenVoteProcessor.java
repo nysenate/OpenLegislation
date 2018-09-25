@@ -143,7 +143,7 @@ public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements So
                         voteCommittee.addVoteBill(voteBill);
 
                         // Update the actual Bill with the vote information and persist it.
-                        Bill bill = getOrCreateBaseBill(modifiedDate, billId, sobiFragment);
+                        Bill bill = getOrCreateBaseBill(billId, sobiFragment);
                         bill.getAmendment(billId.getVersion()).updateVote(vote);
                     }
                     addendum.putCommittee(voteCommittee);

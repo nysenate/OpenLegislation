@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
-import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
@@ -82,7 +81,7 @@ public class XmlBillStatProcessor extends AbstractDataProcessor implements SobiP
             Node xmlActions = xmlHelper.getNode("billstatus/actions",doc);
 
             //SET the proper basebill
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), new BillId(billhse +
+            Bill baseBill = getOrCreateBaseBill(new BillId(billhse +
                     billno, sessyr,version), sobiFragment);
 
             if(reprinted) {
