@@ -37,7 +37,7 @@ public class XmlWhitelistFilter implements SourceFilter {
         xmlProcessYear.add(CALENDAR);
         xmlProcessYear.add(CALENDAR_ACTIVE);
         xmlProcessYear.add(AGENDA);
-        xmlProcessYear.add(SENAGENV);
+        xmlProcessYear.add(AGENDA_VOTE);
         xmlProcessYear.add(VETOMSG);
         xmlProcessYear.add(COMMITTEE);
         return xmlProcessYear;
