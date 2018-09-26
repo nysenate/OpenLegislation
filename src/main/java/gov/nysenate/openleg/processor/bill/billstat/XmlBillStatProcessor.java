@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.processor.bill.billstat;
 
-import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
@@ -12,7 +10,6 @@ import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractBillProcessor;
-import gov.nysenate.openleg.processor.bill.BillActionAnalyzer;
 import gov.nysenate.openleg.processor.bill.BillActionParser;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
@@ -26,8 +23,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -56,98 +51,39 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiP
 
     @Override
     public void process(SobiFragment sobiFragment) {
-        logger.info("Processing BillStat...");
-        LocalDateTime date = sobiFragment.getPublishedDateTime();
         logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(sobiFragment);
         try {
             final Document doc = xmlHelper.parse(sobiFragment.getText());
-            final Node billTextNode = xmlHelper.getNode("billstatus", doc);
-            //Reprint number
-            boolean reprinted = false;
-            final String reprintBillhse = xmlHelper.getString("reprint/rprtbillhse", billTextNode);
-            final Integer rprtBillno = xmlHelper.getInteger("reprint/rprtbillno",billTextNode);
-            final String rprtVersion = xmlHelper.getString("reprint/rprtbillamd", billTextNode);
-            if ( !reprintBillhse.isEmpty() ) {reprinted = true;}
-            //File Print number
-            final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
-            final String billhse = xmlHelper.getString("@billhse", billTextNode).trim();
-            final Integer billno = xmlHelper.getInteger("@billno", billTextNode);
-            final String action = xmlHelper.getString("@action", billTextNode).trim();
+            final Node billStatusNode = xmlHelper.getNode("billstatus", doc);
 
-            final String sponsor = xmlHelper.getString("sponsor", billTextNode).trim();
-            final String version = xmlHelper.getString("currentamd", billTextNode).trim();
-            String lawSec = xmlHelper.getString("law", billTextNode).trim();
-            String title = xmlHelper.getString("title", billTextNode).trim();
-            String billactions = xmlHelper.getString("billactions", billTextNode).trim();
-            billactions = reformatBillActions(billactions);
-            Node xmlActions = xmlHelper.getNode("billstatus/actions",doc);
+            // extract bill id
+            final Integer sessyr = xmlHelper.getInteger("@sessyr", billStatusNode);
+            final String billhse = xmlHelper.getString("@billhse", billStatusNode).trim();
+            final Integer billno = xmlHelper.getInteger("@billno", billStatusNode);
+            final String version = xmlHelper.getString("currentamd", billStatusNode).trim();
 
-            //SET the proper basebill
-            Bill baseBill = getOrCreateBaseBill(new BillId(billhse +
-                    billno, sessyr,version), sobiFragment);
+            BillId billId = new BillId(billhse + billno, sessyr, version);
+            Bill bill = getOrCreateBaseBill(billId, sobiFragment);
 
-            if(reprinted) {
-                baseBill.setReprintOf( new BillId(reprintBillhse + rprtBillno, sessyr, rprtVersion));
-            }
-            else {
-                baseBill.setReprintOf(null);
+            final String action = xmlHelper.getString("@action", billStatusNode).trim();
+            switch (action) {
+                case "remove":
+                    removeCase(bill, sobiFragment);
+                    break;
+                case "replace":
+                    replaceCase(billStatusNode, bill, billId, sobiFragment);
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                            "Unrecognized xml action: " + action + " in fragment: " + sobiFragment);
             }
 
-            BillAmendment billAmendment;
-            if (version == null || version.equals("")) {
-                billAmendment = baseBill.getAmendment(Version.ORIGINAL);
-            } else {
-                billAmendment = baseBill.getAmendment(Version.of(version));
-            }
-
-            if (action.equals("remove")) {
-                removeCase(baseBill, billAmendment, sobiFragment.getPublishedDateTime());
-                return;
-            } else {
-                if (billAmendment.isBaseVersion() ) {
-                    Optional<PublishStatus> pubStatus = baseBill.getPublishStatus( billAmendment.getVersion() );
-                    if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
-                        baseBill.updatePublishStatus( billAmendment.getVersion() , new PublishStatus(true, date, false, action));
-                    }
-                }
-            }
-
-            handlePrimaryMemberParsing(baseBill, sponsor,baseBill.getSession());
-            billAmendment.setLawSection(lawSec);
-            baseBill.setTitle(title);
-
-            List<BillAction> billActions = BillActionParser.parseActionsList(billAmendment.getBillId(), billactions);
-            baseBill.setActions(billActions);
-
-            baseBill.setYear( BillActionParser.getCalendarYear(xmlActions, xmlHelper) );
-
-            // Use the BillActionAnalyzer to derive other data from the actions list.
-            Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
-            BillActionAnalyzer analyzer = new BillActionAnalyzer(billAmendment.getBillId(), billActions, defaultPubStatus);
-            analyzer.analyze();
-
-            addAnyMissingAmendments(baseBill, billActions);
-            // Apply the results to the bill
-            baseBill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
-            baseBill.setActiveVersion(analyzer.getActiveVersion());
-            baseBill.setStatus(analyzer.getBillStatus());
-            baseBill.setMilestones(analyzer.getMilestones());
-            baseBill.setPastCommittees(analyzer.getPastCommittees());
-            baseBill.setPublishStatuses(analyzer.getPublishStatusMap());
-            analyzer.getSameAsMap().forEach((k, v) -> {
-                if (baseBill.hasAmendment(k)) {
-                    baseBill.getAmendment(k).setSameAs(Sets.newHashSet(v));
-                }
-            });
-            billAmendment.setStricken(analyzer.isStricken());
-            billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
-
+            billIngestCache.set(bill.getBaseBillId(), bill, sobiFragment);
         } catch (IOException | SAXException | XPathExpressionException e) {
             unit.addException("XML bill stat parsing error", e);
             throw new ParseError("Error While Parsing BillStatProcessorXML", e);
-        }
-        finally {
+        } finally {
             postDataUnitEvent(unit);
             checkIngestCache();
         }
@@ -161,27 +97,79 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiP
     }
 
     /**
-     * This method is responsible for removing key data fields impacted by the BillStat
-     * processor.
+     * Un-publish this bill.
      *
-     * @param baseBill The Bill in alteration
-     * @param billAmendment The Bill Amendment of said bill
+     * @param baseBill      The Bill in alteration
+     * @param fragment SobiFragment
      */
-    private void removeCase(Bill baseBill, BillAmendment billAmendment, LocalDateTime effectiveDateTime) {
-        billAmendment.setLawSection(null);
-        baseBill.setSponsor(null);
-        baseBill.setTitle(null);
-        baseBill.updatePublishStatus(billAmendment.getVersion(), new PublishStatus(false, effectiveDateTime));
+    private void removeCase(Bill baseBill, SobiFragment fragment) {
+        baseBill.updatePublishStatus(
+                Version.ORIGINAL,
+                new PublishStatus(false, fragment.getPublishedDateTime()));
     }
 
     /**
-     *  This method is used to reformat billaction, adding the space between lines in CDATA
+     * Set bill fields according to BILLSTAT data
+     *
+     * @param billStatusNode Node
+     * @param bill Bill
+     * @param billId BillId
+     * @param fragment SobiFragment
+     * @throws XPathExpressionException if improper x-paths are used
+     */
+    private void replaceCase(Node billStatusNode, Bill bill, BillId billId, SobiFragment fragment) throws XPathExpressionException {
+        BillAmendment billAmendment = bill.getAmendment(billId.getVersion());
+
+        // Publish the base version if not already done
+        if (billAmendment.isBaseVersion()) {
+            Optional<PublishStatus> pubStatus = bill.getPublishStatus(billAmendment.getVersion());
+            if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
+                bill.updatePublishStatus(billAmendment.getVersion(),
+                        new PublishStatus(true, fragment.getPublishedDateTime(), false, ""));
+            }
+        }
+
+        // Parse reprint if present
+        boolean reprinted = false;
+        final String reprintBillhse = xmlHelper.getString("reprint/rprtbillhse", billStatusNode);
+        final Integer rprtBillno = xmlHelper.getInteger("reprint/rprtbillno", billStatusNode);
+        final String rprtVersion = xmlHelper.getString("reprint/rprtbillamd", billStatusNode);
+        if (!reprintBillhse.isEmpty()) {
+            reprinted = true;
+        }
+        if (reprinted) {
+            bill.setReprintOf(
+                    new BillId(reprintBillhse + rprtBillno, billId.getSession().getYear(), rprtVersion));
+        } else {
+            bill.setReprintOf(null);
+        }
+
+        // Parse sponsor, law section, and title
+        String sponsor = xmlHelper.getString("sponsor", billStatusNode).trim();
+        handlePrimaryMemberParsing(bill, sponsor, bill.getSession());
+        String lawSec = xmlHelper.getString("law", billStatusNode).trim();
+        billAmendment.setLawSection(lawSec);
+        String title = xmlHelper.getString("title", billStatusNode).trim();
+        bill.setTitle(title);
+
+        // Parse actions
+        String billactions = xmlHelper.getString("billactions", billStatusNode).trim();
+        billactions = reformatBillActions(billactions);
+        Node xmlActions = xmlHelper.getNode("actions", billStatusNode);
+
+        parseActions(billactions, bill, billAmendment, fragment);
+        bill.setYear(BillActionParser.getCalendarYear(xmlActions, xmlHelper));
+    }
+
+    /**
+     * This method is used to reformat billaction, adding the space between lines in CDATA
+     *
      * @param str bill action string
      */
     private String reformatBillActions(String str) {
         if (str.isEmpty())
             return str;
-        return str.replaceAll("(\\d\\d)/(\\d\\d)/(\\d\\d)","\n$0").substring(1);
+        return str.replaceAll("(\\d\\d)/(\\d\\d)/(\\d\\d)", "\n$0").substring(1);
     }
 
     @Override

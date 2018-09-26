@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.bill;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
@@ -212,52 +213,71 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
     }
 
     /**
-     * Given a list of bill actions separated by new lines, parse each action to obtain the action's date, text,
-     * and chamber, and then analyze the actions to determine a variety of meta data including:
+     * Applies information to bill events; replaces existing information in full.
+     * Events are uniquely identified by text/date/sequenceNo/bill.
      *
-     * Same as bills - if bill was subsituted for/by
-     * The active version of the bill
-     * The current bill status
-     * The milestones list
-     * Past committees
-     * Publish statuses
-     * Stricken status
+     * Also parses bill events to apply several other bits of meta data to bills (see examples)
      *
-     * @param baseBill Bill
-     * @param version Version
-     * @param actionsStr String
-     * @param fragment SobiFragment
+     * Examples
+     * --------------------------------------------------------------------
+     * Same as             | 406/11/14 SUBSTITUTED BY A9504
+     * --------------------------------------------------------------------
+     * Stricken            | 403/10/14 RECOMMIT, ENACTING CLAUSE STRICKEN
+     * --------------------------------------------------------------------
+     * Current committee   | 406/21/13 COMMITTED TO RULES
+     * --------------------------------------------------------------------
+     *
+     * There are currently no checks for the action list starting over again which
+     * could lead back to back action blocks for a bill to produce a double long list.
+     *
+     * Bill events cannot be deleted, only replaced.
+     *
+     * @see BillActionParser
      * @throws ParseError
      */
-    protected void setBillActionsAndDerivedData(Bill baseBill, Version version, String actionsStr,
-                                                SobiFragment fragment) throws ParseError {
+    protected void parseActions(String data,
+                                Bill bill,
+                                BillAmendment specifiedAmendment,
+                                SobiFragment fragment)
+            throws ParseError {
         // Use the BillActionParser to convert the actions string into objects.
-        BillId specificBillId = baseBill.getBaseBillId().withVersion(version);
-        List<BillAction> billActions = BillActionParser.parseActionsList(specificBillId, actionsStr);
-
-        // Process the actions even if the list hasn't changed in the event that we modify
-        // the actions analyzer
-        baseBill.setActions(billActions);
-        setModifiedDateTime(baseBill, fragment);
-
+        List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
+        bill.setActions(billActions);
         // Use the BillActionAnalyzer to derive other data from the actions list.
-        Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
-        BillActionAnalyzer analyzer = new BillActionAnalyzer(specificBillId, billActions, defaultPubStatus);
+        Optional<PublishStatus> defaultPubStatus = bill.getPublishStatus(Version.ORIGINAL);
+        BillActionAnalyzer analyzer = new BillActionAnalyzer(specifiedAmendment.getBillId(), billActions, defaultPubStatus);
         analyzer.analyze();
 
+        addAnyMissingAmendments(bill, billActions);
+
         // Apply the results to the bill
-        baseBill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
-        baseBill.setActiveVersion(analyzer.getActiveVersion());
-        baseBill.setStatus(analyzer.getBillStatus());
-        baseBill.setMilestones(analyzer.getMilestones());
-        baseBill.setPastCommittees(analyzer.getPastCommittees());
-        baseBill.setPublishStatuses(analyzer.getPublishStatusMap());
+
+        final Version initialAV = bill.getActiveVersion();
+        bill.setActiveVersion(analyzer.getActiveVersion());
+        // If there is a new active amendment, transfer sponsors from the previous active amendment
+        if (initialAV != bill.getActiveVersion()) {
+            BillAmendment initialActiveAmend = bill.getAmendment(initialAV);
+            BillAmendment newActiveAmend = bill.getActiveAmendment();
+            newActiveAmend.setCoSponsors(initialActiveAmend.getCoSponsors());
+            newActiveAmend.setMultiSponsors(initialActiveAmend.getMultiSponsors());
+        }
+        bill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
+        bill.setStatus(analyzer.getBillStatus());
+        bill.setMilestones(analyzer.getMilestones());
+        bill.setPastCommittees(analyzer.getPastCommittees());
+        bill.setPublishStatuses(analyzer.getPublishStatusMap());
+        // Ensure that amendments exist for all versions in the publish status map
+        bill.getAmendPublishStatusMap().keySet().forEach(version ->
+                getOrCreateBaseBill(
+                        bill.getBaseBillId().withVersion(version),
+                        fragment)
+        );
         analyzer.getSameAsMap().forEach((k, v) -> {
-            if (baseBill.hasAmendment(k)) {
-                baseBill.getAmendment(k).getSameAs().add(v);
+            if (bill.hasAmendment(k)) {
+                bill.getAmendment(k).setSameAs(Sets.newHashSet(v));
             }
         });
-        baseBill.getAmendment(version).setStricken(analyzer.isStricken());
+        specifiedAmendment.setStricken(analyzer.isStricken());
     }
 
     /**

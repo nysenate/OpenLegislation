@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processor.bill;
 
-import com.google.common.collect.Sets;
 import gov.nysenate.openleg.config.process.ProcessConfig;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;
@@ -118,7 +117,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
                     case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
                     case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT:  applyBillActions(data, baseBill, specifiedAmendment, sobiFragment); break;
+                    case BILL_EVENT:  parseActions(data, baseBill, specifiedAmendment, sobiFragment); break;
                     case SAME_AS:  applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
                     case SPONSOR:  applySponsor(data, baseBill, specifiedAmendment, date); break;
                     case CO_SPONSOR:  applyCosponsors(data, baseBill); break;
@@ -270,62 +269,6 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
     private void applyTitle(String data, Bill baseBill, LocalDateTime date) {
         baseBill.setTitle(data.replace("\n", " ").trim());
         baseBill.setModifiedDateTime(date);
-    }
-
-    /**
-     * Applies information to bill events; replaces existing information in full.
-     * Events are uniquely identified by text/date/sequenceNo/bill.
-     *
-     * Also parses bill events to apply several other bits of meta data to bills (see examples)
-     *
-     * Examples
-     * --------------------------------------------------------------------
-     * Same as             | 406/11/14 SUBSTITUTED BY A9504
-     * --------------------------------------------------------------------
-     * Stricken            | 403/10/14 RECOMMIT, ENACTING CLAUSE STRICKEN
-     * --------------------------------------------------------------------
-     * Current committee   | 406/21/13 COMMITTED TO RULES
-     * --------------------------------------------------------------------
-     *
-     * There are currently no checks for the action list starting over again which
-     * could lead back to back action blocks for a bill to produce a double long list.
-     *
-     * Bill events cannot be deleted, only replaced.
-     *
-     * @see BillActionParser
-     * @throws ParseError
-     */
-    private void applyBillActions(String data, Bill baseBill, BillAmendment specifiedAmendment, SobiFragment fragment)
-                                throws ParseError {
-        // Use the BillActionParser to convert the actions string into objects.
-        List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
-        baseBill.setActions(billActions);
-        // Use the BillActionAnalyzer to derive other data from the actions list.
-        Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
-        BillActionAnalyzer analyzer = new BillActionAnalyzer(specifiedAmendment.getBillId(), billActions, defaultPubStatus);
-        analyzer.analyze();
-
-        addAnyMissingAmendments(baseBill, billActions);
-
-        // Apply the results to the bill
-        baseBill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
-        baseBill.setActiveVersion(analyzer.getActiveVersion());
-        baseBill.setStatus(analyzer.getBillStatus());
-        baseBill.setMilestones(analyzer.getMilestones());
-        baseBill.setPastCommittees(analyzer.getPastCommittees());
-        baseBill.setPublishStatuses(analyzer.getPublishStatusMap());
-        // Ensure that amendments exist for all versions in the publish status map
-        baseBill.getAmendPublishStatusMap().keySet().forEach(version ->
-                getOrCreateBaseBill(
-                        baseBill.getBaseBillId().withVersion(version),
-                        fragment)
-        );
-        analyzer.getSameAsMap().forEach((k, v) -> {
-            if (baseBill.hasAmendment(k)) {
-                baseBill.getAmendment(k).setSameAs(Sets.newHashSet(v));
-            }
-        });
-        specifiedAmendment.setStricken(analyzer.isStricken());
     }
 
     /**

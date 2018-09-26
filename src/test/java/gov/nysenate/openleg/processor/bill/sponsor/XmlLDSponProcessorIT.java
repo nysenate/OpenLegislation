@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.processor.bill.sponsor;
 
+import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.annotation.IntegrationTest;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
@@ -11,13 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * This class is responsible for testing all the type cases for the Sponsor Sobi Processor.
@@ -114,6 +114,51 @@ public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
     }
 
     /**
+     * Tests the transfer of sponsors as the active amendment changes.
+     */
+    @Test
+    public void amendmentTransferTest() {
+        BaseBillId baseBillId = new BaseBillId("A1010101", 1975);
+        BillId orig = baseBillId.withVersion(Version.ORIGINAL);
+        BillId amdA = baseBillId.withVersion(Version.A);
+        assertFalse("Test bill should not exist in db", doesBillExist(baseBillId));
+
+        final String testXmlDir = "processor/bill/sponsor/amend_transfer/";
+
+        // Initialize bill
+        processXmlFile(testXmlDir + "1975-01-01-00.00.00.000000_BILLSTAT_A1010101.XML");
+        processXmlFile(testXmlDir + "1975-01-01-00.00.00.000000_LDSPON_A1010101.XML");
+        final String mainSponsor = "MAINSPON";
+        final List<String> firstCoSpon = ImmutableList.of("COSPONONE");
+        final List<String> firstMultiSpon = ImmutableList.of("MUSPONONE");
+        verifySponsors(orig, mainSponsor, firstCoSpon, firstMultiSpon);
+        // Add unpublished amend A
+        processXmlFile(testXmlDir + "1975-01-02-00.00.00.000000_BILLTEXT_A1010101A.XML");
+        verifySponsors(orig, mainSponsor, firstCoSpon, firstMultiSpon);
+        verifySponsors(amdA, mainSponsor, firstCoSpon, firstMultiSpon);
+        // Add second co/multi sponsors
+        processXmlFile(testXmlDir + "1975-01-03-00.00.00.000000_LDSPON_A1010101.XML");
+        final List<String> secondCoSpon = ImmutableList.<String>builder().addAll(firstCoSpon).add("COSPONTWO").build();
+        final List<String> secondMultiSpon = ImmutableList.<String>builder().addAll(firstMultiSpon).add("MUSPONTWO").build();
+        verifySponsors(orig, mainSponsor, secondCoSpon, secondMultiSpon);
+        verifySponsors(amdA, mainSponsor, firstCoSpon, firstMultiSpon);
+        // Make A active amendment
+        processXmlFile(testXmlDir + "1975-01-04-00.00.00.000000_BILLSTAT_A1010101A.XML");
+        verifySponsors(orig, mainSponsor, secondCoSpon, secondMultiSpon);
+        verifySponsors(amdA, mainSponsor, secondCoSpon, secondMultiSpon);
+        // Add third co/multi sponsors
+        processXmlFile(testXmlDir + "1975-01-05-00.00.00.000000_LDSPON_A1010101A.XML");
+        final List<String> thirdCoSpon = ImmutableList.<String>builder().addAll(secondCoSpon).add("COSPONTHREE").build();
+        final List<String> thirdMultiSpon = ImmutableList.<String>builder().addAll(secondMultiSpon).add("MUSPONTHREE").build();
+        verifySponsors(orig, mainSponsor, secondCoSpon, secondMultiSpon);
+        verifySponsors(amdA, mainSponsor, thirdCoSpon, thirdMultiSpon);
+        // Restore to original amend
+        processXmlFile(testXmlDir + "1975-01-06-00.00.00.000000_BILLSTAT_A1010101.XML");
+        verifySponsors(orig, mainSponsor, thirdCoSpon, thirdMultiSpon);
+        verifySponsors(amdA, mainSponsor, thirdCoSpon, thirdMultiSpon);
+    }
+
+    /**
      * This method is responsible checking each segment of the bill sponsor section. and checks if it asserts equals.
      *
      * @param billId                The base id of the bill being effected by the sobifragment
@@ -123,10 +168,16 @@ public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
      * @param expectedCoSponsors    a list of the expected CoSponsors for the sobifragment
      * @param expectedMultiSponsors a list of the expected MultiSponsors for the sobifragment
      */
-    private void verifySponsors(BaseBillId billId, String expectedSponsor, boolean isRules, boolean isBudget,
+    private void verifySponsors(BillId billId, String expectedSponsor,
+                                boolean isRules, boolean isBudget,
                                 List<String> expectedCoSponsors, List<String> expectedMultiSponsors) {
-        Bill bill = billDataService.getBill(billId);
-        BillAmendment activeAmend = bill.getActiveAmendment();
+        Bill bill = getBill(billId);
+        BillAmendment amendment;
+        if (billId instanceof BaseBillId) {
+            amendment = bill.getActiveAmendment();
+        } else {
+            amendment = bill.getAmendment(billId.getVersion());
+        }
 
         Optional<BillSponsor> actualSponsorOpt = Optional.ofNullable(bill.getSponsor());
         String actualSponsorShortName = actualSponsorOpt
@@ -141,14 +192,20 @@ public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
         boolean actualIsBudget = actualSponsorOpt.map(BillSponsor::isBudget).orElse(false);
         assertEquals(billId + " Is Budget Sponsor", isBudget, actualIsBudget);
 
-        List<String> actualCoSponsors = activeAmend.getCoSponsors().stream()
+        List<String> actualCoSponsors = amendment.getCoSponsors().stream()
                 .map(SessionMember::getLbdcShortName)
                 .collect(Collectors.toList());
         assertEquals(billId + " Co-Sponsors", expectedCoSponsors, actualCoSponsors);
 
-        List<String> actualMultiSponsors = activeAmend.getMultiSponsors().stream()
+        List<String> actualMultiSponsors = amendment.getMultiSponsors().stream()
                 .map(SessionMember::getLbdcShortName)
                 .collect(Collectors.toList());
         assertEquals(billId + " Multi-Sponsors", expectedMultiSponsors, actualMultiSponsors);
     }
+
+    private void verifySponsors(BillId billId, String expectedSponsor,
+                                List<String> expectedCoSponsors, List<String> expectedMultiSponsors) {
+        verifySponsors(billId, expectedSponsor, false, false, expectedCoSponsors, expectedMultiSponsors);
+    }
+
 }

@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Robert Bebber on 3/20/17.
@@ -102,24 +104,17 @@ public class XmlBillStatProcessorIT extends BaseXmlProcessorTest {
      * @param exTitle   Expected Title
      */
     public void assertTest(Bill baseBill, String exVersion, String exSponsor, String exLawSec, String exTitle,
-                           ArrayList<String> expectedBillAction) {
+                           ArrayList<String> expectedBillActions) {
         String actualVersion = baseBill.getActiveVersion().toString();
         assertEquals("Version Comparison: ", exVersion, actualVersion);
-        if (baseBill.getSponsor() != null) {
-            String actualSponsor = baseBill.getSponsor().getMember().getLbdcShortName();
-            assertEquals("Sponsor Comparison: ", exSponsor, actualSponsor);
-        }
+        String actualSponsor = baseBill.getSponsor().getMember().getLbdcShortName();
+        assertEquals("Sponsor Comparison: ", exSponsor, actualSponsor);
         String actualLawSec = baseBill.getActiveAmendment().getLawSection();
         assertEquals("Law Section Comparison: ", exLawSec, actualLawSec);
         String actualTitle = baseBill.getTitle();
         assertEquals("Title Comparison: ", exTitle, actualTitle);
-        if (baseBill.getActions() != null) {
-            List actions = baseBill.getActions();
-            for (int i = 0; i < actions.size(); i++) {
-                String actualBillAction = actions.get(i).toString();
-                String exBillAction = expectedBillAction.get(i);
-                assertEquals(" BillAction Comparison: ", exBillAction, actualBillAction.toString());
-            }
-        }
+        assertNotNull("Actions shouldn't be null", baseBill.getActions());
+        List<String> actionStrings = baseBill.getActions().stream().map(String::valueOf).collect(Collectors.toList());
+        assertEquals("Actions should match expected", expectedBillActions, actionStrings);
     }
 }
