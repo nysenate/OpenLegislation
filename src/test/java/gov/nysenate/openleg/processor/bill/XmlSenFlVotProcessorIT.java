@@ -4,7 +4,6 @@ import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -20,15 +19,10 @@ import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class XmlSenFlVotProcessorIT extends BaseXmlProcessorTest {
+
     @Autowired private BillDataService billDataService;
-    @Autowired private XmlSenFlVotProcessor xmlSenFlVotProcessor;
 
     private static final Logger logger = LoggerFactory.getLogger(XmlSenFlVotProcessor.class);
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return xmlSenFlVotProcessor;
-    }
 
     @Test
     public void processedCorrectlytest() {

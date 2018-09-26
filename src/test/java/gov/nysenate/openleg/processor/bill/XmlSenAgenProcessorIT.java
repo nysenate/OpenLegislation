@@ -9,8 +9,6 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.agenda.XmlSenAgenProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.Test;
@@ -30,12 +28,6 @@ import static org.junit.Assert.assertEquals;
 public class XmlSenAgenProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private AgendaDao agendaDao;
-    @Autowired private XmlSenAgenProcessor xmlSenAgenProcessor;
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return xmlSenAgenProcessor;
-    }
 
     @Test
     public void processSenAgenda() throws JsonProcessingException {

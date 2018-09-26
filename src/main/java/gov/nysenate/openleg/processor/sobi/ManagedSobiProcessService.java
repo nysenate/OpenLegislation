@@ -277,7 +277,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
                 isPatch = true;
                 extractPatchMessage(lineIterator, patchMessage);
             }
-            SobiFragmentType fragmentType = getFragmentTypeFromLine(line);
+            SobiFragmentType fragmentType = SobiFragmentType.matchFragmentType(line);
             if (fragmentType != null) {
                 // Bill fragments are in the sobi format and appended into a single buffer
                 if (fragmentType.equals(SobiFragmentType.BILL)) {
@@ -311,21 +311,6 @@ public class ManagedSobiProcessService implements SobiProcessService {
             });
         }
         return sobiFragments;
-    }
-
-    /**
-     * Check the given SOBI line to determine if it matches the start of a SOBI Fragment type.
-     *
-     * @param line String
-     * @return SobiFragmentType or null if no match
-     */
-    private SobiFragmentType getFragmentTypeFromLine(String line) {
-        for (SobiFragmentType fragmentType : SobiFragmentType.values()) {
-            if (line.matches(fragmentType.getStartPattern())) {
-                return fragmentType;
-            }
-        }
-        return null;
     }
 
     /**

@@ -35,10 +35,6 @@ public enum SobiFragmentType
     String startPattern;
     String endPattern;
 
-    SobiFragmentType(boolean isXml) {
-        this.isXml = isXml;
-    }
-
     SobiFragmentType(boolean isXml, String startPattern, String endPattern) {
         this.isXml = isXml;
         this.startPattern = startPattern;
@@ -55,5 +51,21 @@ public enum SobiFragmentType
 
     public String getEndPattern() {
         return endPattern;
+    }
+
+    /**
+     * Attempt to identify a {@link SobiFragmentType} by the given line text.
+     *
+     * Returns null if no type matches.
+     * @param line String
+     * @return {@link SobiFragmentType}
+     */
+    public static SobiFragmentType matchFragmentType(String line) {
+        for (SobiFragmentType fragmentType : SobiFragmentType.values()) {
+            if (line.matches(fragmentType.getStartPattern())) {
+                return fragmentType;
+            }
+        }
+        return null;
     }
 }

@@ -7,7 +7,6 @@ import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.entity.XmlSenCommProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,8 +76,4 @@ public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
 
     }
 
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return process;
-    }
 }

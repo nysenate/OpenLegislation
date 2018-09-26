@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.processor;
 
+import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.Environment;
@@ -24,9 +25,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Contains common methods used when testing {@link SobiProcessor}s
@@ -38,15 +42,18 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     @Autowired private SobiFragmentDao sobiFragmentDao;
     @Autowired private Environment env;
     @Autowired private EventBus eventBus;
+    @Autowired private List<SobiProcessor> processors;
 
-    /**
-     * @return {@link SobiProcessor} the processor implementation associated with this test
-     */
-    abstract protected SobiProcessor getSobiProcessor();
+    private Map<SobiFragmentType, SobiProcessor> processorMap;
 
     private boolean originalIndexingSetting;
     private boolean originalScrapeQueueSetting;
     private boolean originalNotificationSetting;
+
+    @PostConstruct
+    public void init() {
+        processorMap = Maps.uniqueIndex(processors, SobiProcessor::getSupportedType);
+    }
 
     /**
      * Store original indexing setting and disable indexing.
@@ -89,7 +96,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
 
             XmlFile xmlFile = new XmlFile(file);
 
-            SobiFragmentType type = getSobiProcessor().getSupportedType();
+            SobiFragmentType type = getFragmentType(contents);
             SobiFragment sobiFragment = new SobiFragment(xmlFile, type, contents, 0);
 
             sourceFileRefDao.updateSourceFile(xmlFile);
@@ -103,12 +110,12 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     }
 
     /**
-     * Processes the given {@link SobiFragment} using the test's {@link SobiProcessor}
+     * Processes the given {@link SobiFragment} using the appropriate {@link SobiProcessor}
      *
      * @param fragment {@link SobiFragment}
      */
     protected void processFragment(SobiFragment fragment) {
-        SobiProcessor processor = getSobiProcessor();
+        SobiProcessor processor = processorMap.get(fragment.getType());
         processor.process(fragment);
         processor.postProcess();
         // Clear caches to ensure proper saves
@@ -146,20 +153,32 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     /**
      * Get a bill from the db.
      */
-    protected Bill getBill(BaseBillId baseBillId) throws BillNotFoundEx {
-        return billDataService.getBill(baseBillId, false);
+    protected Bill getBill(BillId billId) throws BillNotFoundEx {
+        return billDataService.getBill(BaseBillId.of(billId), false);
     }
 
     /**
      * Does a BaseBillId exist in the database.
      */
-    protected boolean doesBillExist(BaseBillId baseBillId) {
+    protected boolean doesBillExist(BillId billId) {
         try {
-            getBill(baseBillId);
+            getBill(BaseBillId.of(billId));
             return true;
         }
         catch (BillNotFoundEx ex) {
             return false;
         }
+    }
+
+    /* --- Internal Methods --- */
+
+    private SobiFragmentType getFragmentType(String text) {
+        for (String line : text.split("\n")) {
+            SobiFragmentType type = SobiFragmentType.matchFragmentType(line);
+            if (type != null) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Could not identify fragment type of file");
     }
 }

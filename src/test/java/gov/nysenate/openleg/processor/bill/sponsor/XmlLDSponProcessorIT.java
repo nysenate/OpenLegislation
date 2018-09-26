@@ -4,7 +4,6 @@ import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -27,17 +26,10 @@ import static org.junit.Assert.assertEquals;
  */
 @Category(IntegrationTest.class)
 public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
-    @Autowired
-    BillDataService billDataService;
-    @Autowired
-    XmlLDSponProcessor xmlLDSponProcessor;
+
+    @Autowired BillDataService billDataService;
 
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessorIT.class);
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return xmlLDSponProcessor;
-    }
 
     @Test
     public void coSponsorTest() {

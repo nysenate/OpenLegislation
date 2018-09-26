@@ -3,15 +3,12 @@ package gov.nysenate.openleg.processor.bill.text;
 import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.bill.XmlBillTextProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
@@ -24,13 +21,6 @@ import static org.junit.Assert.*;
 public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
 
     private static final String resourceDir = "processor/bill/text";
-
-    @Autowired private XmlBillTextProcessor xmlBillTextProcessor;
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return xmlBillTextProcessor;
-    }
 
     @Test
     public void replaceSenateBill(){

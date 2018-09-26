@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -23,12 +22,6 @@ import static org.junit.Assert.assertTrue;
 public class XmlSameAsProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private BillDataService billDataService;
-    @Autowired private XmlSameAsProcessor sameAsProcessor;
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return sameAsProcessor;
-    }
 
     @Test
     public void processSimpleSameAs() {

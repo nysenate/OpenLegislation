@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.processor.bill.apprmemo;
 
 import gov.nysenate.openleg.annotation.IntegrationTest;
-import gov.nysenate.openleg.dao.bill.data.ApprovalDao;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -23,16 +21,8 @@ import static org.junit.Assert.*;
 public class ApprmemoSobiProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private BillDataService billDataService;
-    @Autowired private XmlApprMemoProcessor xmlApprMemoProcessor;
-
-    @Autowired private ApprovalDao approvalDao;
 
     private static final Logger logger = LoggerFactory.getLogger(ApprmemoSobiProcessorIT.class);
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return xmlApprMemoProcessor;
-    }
 
     @Test
     public void replaceProcessor() {

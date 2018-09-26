@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.processor.bill;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.dao.agenda.data.AgendaDao;
 import gov.nysenate.openleg.model.agenda.*;
@@ -14,8 +13,6 @@ import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.agenda.XmlSenAgenVoteProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.junit.Test;
@@ -38,16 +35,9 @@ import static org.junit.Assert.assertEquals;
 @Category(IntegrationTest.class)
 public class XmlSenAgenVoteProcessorIT extends BaseXmlProcessorTest {
 
-    ObjectMapper mapper = new ObjectMapper();
     @Autowired private AgendaDao agendaDao;
-    @Autowired private XmlSenAgenVoteProcessor xmlSenAgenVoteProcessor;
     @Autowired private MemberService memberService;
 
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return xmlSenAgenVoteProcessor;
-    }
 
     @Test
     public void processSenAgendaVote() throws JsonProcessingException {

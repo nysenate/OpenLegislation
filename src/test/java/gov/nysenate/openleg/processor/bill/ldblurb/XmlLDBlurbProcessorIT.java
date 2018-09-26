@@ -5,7 +5,6 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.bill.anact.XmlAnActProcessorIT;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -21,17 +20,9 @@ import static org.junit.Assert.assertEquals;
 @Category(IntegrationTest.class)
 public class XmlLDBlurbProcessorIT extends BaseXmlProcessorTest {
 
-    @Autowired
-    BillDataService billDataService;
-    @Autowired
-    XmlLDBlurbProcessor xmlLdBlurbProcessor;
+    @Autowired BillDataService billDataService;
 
     private static final Logger logger = LoggerFactory.getLogger(XmlAnActProcessorIT.class);
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return xmlLdBlurbProcessor;
-    }
 
     @Test
     public void processReplaceTest() throws Exception {

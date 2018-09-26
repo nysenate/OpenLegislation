@@ -3,15 +3,12 @@ package gov.nysenate.openleg.processor.bill.text;
 import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
-import gov.nysenate.openleg.processor.bill.sponsor.XmlSenMemoProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
@@ -23,13 +20,6 @@ import static org.junit.Assert.*;
  */
 @Category(IntegrationTest.class)
 public class XmlSenMemoProcessorIT extends BaseXmlProcessorTest {
-
-    @Autowired private XmlSenMemoProcessor senMemo;
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return senMemo;
-    }
 
     @Test
     public void processSimpleSenMemo() throws IOException {

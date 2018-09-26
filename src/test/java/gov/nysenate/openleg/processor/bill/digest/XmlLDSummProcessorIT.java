@@ -7,13 +7,10 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.bill.XmlLDSummProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -27,11 +24,6 @@ public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
     BillDataService billDataService;
     @Autowired
     XmlLDSummProcessor xmlLDSummProcessor;
-
-    @Override
-    protected SobiProcessor getSobiProcessor() {
-        return xmlLDSummProcessor;
-    }
 
     @Test
     public void replaceDigestBillTest() {
