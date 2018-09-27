@@ -18,6 +18,7 @@ import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckException;
 import gov.nysenate.openleg.util.pipeline.Pipeline;
 import gov.nysenate.openleg.util.pipeline.PipelineFactory;
 import org.apache.commons.lang3.tuple.Pair;
@@ -30,6 +31,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 @Service
@@ -109,7 +113,13 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         pipeline.addInput(billDump.getDumpFragments());
         // Wait for pipeline to finish and add observations to report
         CompletableFuture<ImmutableList<SpotCheckObservation<BillId>>> obsFuture = pipeline.run();
-        List<SpotCheckObservation<BillId>> observations = obsFuture.join();
+        List<SpotCheckObservation<BillId>> observations;
+        try {
+            // Allow maximum 1 hour for asynchronous report execution
+            observations = obsFuture.get(1, TimeUnit.HOURS);
+        } catch (TimeoutException | InterruptedException | ExecutionException ex) {
+            throw new SpotCheckException("Error occurred while running NYSenate.gov bill spotcheck", ex);
+        }
         report.addObservations(observations);
 
         // Record ref missing mismatches from unchecked openleg bills
