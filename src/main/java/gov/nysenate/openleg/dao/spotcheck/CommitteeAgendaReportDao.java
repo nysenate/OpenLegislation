@@ -18,14 +18,14 @@ public class CommitteeAgendaReportDao extends AbstractSpotCheckReportDao<Committ
     public CommitteeAgendaAddendumId getKeyFromMap(Map<String, String> keyMap) {
         return new CommitteeAgendaAddendumId(
                 new AgendaId(
-                        Long.parseLong(keyMap.get("agenda_no")),
-                        Integer.parseInt(keyMap.get("year"))
+                        Optional.ofNullable(keyMap.get("agenda_no")).map(Long::parseLong).orElse(0L),
+                        Optional.ofNullable(keyMap.get("year")).map(Integer::parseInt).orElse(0)
                 ),
                 new CommitteeId(
-                        Chamber.getValue(keyMap.get("chamber")),
+                        Optional.ofNullable(keyMap.get("chamber")).map(Chamber::getValue).orElse(null),
                         keyMap.get("committee_name")
                 ),
-                Version.of(keyMap.get("addendum"))
+                Optional.ofNullable(keyMap.get("addendum")).map(Version::of).orElse(null)
         );
     }
 
