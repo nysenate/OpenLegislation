@@ -1,0 +1,19 @@
+# Standard Options
+
+log4j.rootCategory=INFO, stdout
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %5p %t %c{2}:%L - %m%n
+
+# Spring Framework logging
+
+log4j.logger.org.springframework=WARN
+log4j.logger.org.springframework.jdbc=WARN
+
+# Connection Pool Logging
+
+log4j.logger.com.mchange.v2 = WARN
+
+# EhCache Logging
+
+log4j.logger.net.sf.ehcache=WARN
