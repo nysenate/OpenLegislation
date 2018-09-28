@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashSet;
+
 import static org.junit.Assert.*;
 
 /**
@@ -27,20 +29,20 @@ public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
 
     @Test
     public void replaceDigestBillTest() {
-        final BaseBillId baseBillId = new BaseBillId("S00767", 2017);
-        final String path = "processor/bill/digest/2017-01-05-10.29.46.171044_LDSUMM_S00767.XML";
+        final BaseBillId baseBillId = new BaseBillId("S99999", 2017);
+        final String path = "processor/bill/digest/2017-01-05-10.29.46.171044_LDSUMM_S99999.XML";
 
         // Expected data
         final String expectedSummary = "test digest bill summary";
         final String expectedLaw = "test digest bill law";
-        final BillId expectedPreviousVersion = new BillId("S06883", 2016);
+        final BillId expectedPreviousVersion = new BillId("S88888", 2016);
 
-        // Assert bill is not initialized with expected data
+        // If bill already exists, clear its data
         if (doesBillExist(baseBillId)) {
             Bill bill = getBill(baseBillId);
-            assertNotEquals(expectedSummary, bill.getSummary());
-            assertNotEquals(expectedLaw, bill.getAmendment(Version.ORIGINAL).getLaw());
-            assertFalse(bill.getAllPreviousVersions().contains(expectedPreviousVersion));
+            bill.setSummary("");
+            bill.getAmendment(Version.ORIGINAL).setLaw("");
+            bill.setAllPreviousVersions(new HashSet<>());
         }
 
         processXmlFile(path);
@@ -54,14 +56,14 @@ public class XmlLDSummProcessorIT extends BaseXmlProcessorTest {
     @Test
     public void removeDigestBillTest() {
         //create bill
-        final String createBillPath = "processor/bill/digest/2017-01-05-10.29.46.171044_LDSUMM_S00767.XML";
+        final String createBillPath = "processor/bill/digest/2017-01-05-10.29.46.171044_LDSUMM_S99999.XML";
         processXmlFile(createBillPath);
 
         //remove bill
         final String path = "processor/bill/digest/2017-01-23-12.24.20.161955_LDSUMM_A02830.XML";
         processXmlFile(path);
 
-        Bill b = billDataService.getBill(new BaseBillId("S00767", 2017));
+        Bill b = billDataService.getBill(new BaseBillId("S99999", 2017));
 
         assertEquals("", b.getSummary());
         assertEquals("", b.getAmendment(Version.ORIGINAL).getLaw());
