@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
-import gov.nysenate.openleg.dao.base.*;
+import gov.nysenate.openleg.dao.base.BasicSqlQuery;
+import gov.nysenate.openleg.dao.base.SqlTable;
 
 public enum SqlSpotCheckReportQuery implements BasicSqlQuery
 {
@@ -26,18 +27,38 @@ public enum SqlSpotCheckReportQuery implements BasicSqlQuery
         "  WHERE m.mismatch_id = :mismatchId \n"
     ),
 
-    GET_MISMATCHES(
+    GET_MISMATCHES_SELECT(
         "SELECT mismatch_id, report_id, hstore_to_array(key) key_arr, type, state, datasource, content_type, \n" +
         "  reference_type, reference_active_date_time, reference_data, observed_data, notes, \n" +
         "  observed_date_time, first_seen_date_time, report_date_time, ignore_status, issue_ids, \n" +
         "  count(*) OVER() as total_rows \n" +
-        "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n" +
+        "FROM (" + ACTIVE_MISMATCHES.getSql() + ") active_mismatches \n"
+    ),
+
+    GET_MISMATCHES_CONDITIONS(
         "WHERE first_seen_date_time BETWEEN :firstSeenStartDateTime AND :firstSeenEndDateTime \n" +
         "  AND observed_date_time BETWEEN :observedStartDateTime AND :observedEndDateTime \n" +
         "  AND state = :state \n" +
         "  AND content_type IN (:contentTypes) \n" +
         "  AND type IN (:mismatchTypes) \n" +
         "  AND ignore_status IN (:ignoreStatuses)\n"
+    ),
+
+    GET_MISMATCHES(
+        GET_MISMATCHES_SELECT.getSql() +
+        GET_MISMATCHES_CONDITIONS.getSql()
+    ),
+
+    GET_MISMATCHES_FOR_KEYS(
+        "WITH selected_keys AS (\n" +
+        "  SELECT unnest(ARRAY[\n" +
+        "    :keys\n" +
+        "    ]::CHARACTER VARYING[]\n" +
+        "  )::hstore AS sel_key\n" +
+        ")\n" +
+        GET_MISMATCHES_SELECT.getSql() +
+        "JOIN selected_keys ON key = sel_key\n" +
+        GET_MISMATCHES_CONDITIONS.getSql()
     ),
 
     INSERT_MISMATCH(

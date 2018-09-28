@@ -50,9 +50,9 @@ public class BillVoteId implements Serializable, Comparable<BillVoteId>
     @Override
     public int compareTo(BillVoteId o) {
         return ComparisonChain.start()
-            .compare(this.billId, o.billId)
-            .compare(this.voteDate, o.voteDate)
-            .compare(this.voteType, o.voteType)
+            .compare(this.billId, o.billId, Ordering.natural().nullsLast())
+            .compare(this.voteDate, o.voteDate, Ordering.natural().nullsLast())
+            .compare(this.voteType, o.voteType, Ordering.natural().nullsLast())
             .compare(this.sequenceNo, o.sequenceNo)
             // Properly handle case when committee is not present, which would be the case of a floor vote.
             // The floor vote should come after a same-day committee vote.

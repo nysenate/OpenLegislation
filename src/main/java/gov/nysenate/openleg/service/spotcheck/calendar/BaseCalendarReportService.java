@@ -109,7 +109,7 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
         SpotCheckReferenceId obsRefId = new SpotCheckReferenceId(
                 getSpotcheckRefType(), reference.getPublishedDateTime());
 
-        SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(obsRefId, new CalendarEntryListId(id, CalendarType.ALL, Version.DEFAULT, Integer.MAX_VALUE)); // dummy observation for unfound mismatch
+        SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(obsRefId, new CalendarEntryListId(id, CalendarType.ALL, Version.ORIGINAL, Integer.MAX_VALUE)); // dummy observation for unfound mismatch
         observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
                 "", id.toString()));
         observations.add(observation);

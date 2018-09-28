@@ -59,7 +59,8 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         try {
             Version refVersion = reference.getBillId().getVersion();
             amendment = Optional.of(contentBillView)
-                    .map(BillView::getAmendments).map(MapView::getItems)
+                    .map(BillView::getAmendments)
+                    .map(MapView::getItems)
                     .map(amendments -> amendments.get(refVersion.toString()))
                     .orElseThrow(() -> new BillAmendNotFoundEx(reference.getBillId()));
         } catch (IllegalArgumentException | BillAmendNotFoundEx ex) {
@@ -280,11 +281,11 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     private void checkVotes(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> obs) {
         BillId billId = reference.getBillId();
         List<SenateSiteBillVote> contentVoteList = content.getVotes().getItems().stream()
-                .filter(vote -> vote.getVersion().equalsIgnoreCase(billId.getVersion().getValue()))
+                .filter(vote -> vote.getVersion().equalsIgnoreCase(billId.getVersion().toString()))
                 .map(SenateSiteBillVote::new)
                 .collect(toList());
-        TreeMap<BillVoteId, SenateSiteBillVote> contentVoteMap = getVoteMap(contentVoteList, billId);
-        TreeMap<BillVoteId, SenateSiteBillVote> refVoteMap = getVoteMap(reference.getVotes(), billId);
+        TreeMap<BillVoteId, SenateSiteBillVote> contentVoteMap = getVoteMap(contentVoteList);
+        TreeMap<BillVoteId, SenateSiteBillVote> refVoteMap = getVoteMap(reference.getVotes());
 
         Set<BillVoteId> contentVoteInfos = contentVoteMap.keySet();
         Set<BillVoteId> refVoteInfos = refVoteMap.keySet();
@@ -367,7 +368,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         return builder.toString();
     }
 
-    private TreeMap<BillVoteId, SenateSiteBillVote> getVoteMap(Collection<SenateSiteBillVote> votes, BillId billId) {
+    private TreeMap<BillVoteId, SenateSiteBillVote> getVoteMap(Collection<SenateSiteBillVote> votes) {
         return votes.stream()
                 .collect(toMap(SenateSiteBillVote::getVoteId, Function.identity(), (a, b) -> b, TreeMap::new));
     }

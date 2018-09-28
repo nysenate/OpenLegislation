@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.annotation.SillyTest;
@@ -10,13 +11,14 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,6 +35,8 @@ I have run the sql script qa-redesign/mismatch-refactor.sql
 @Category(SillyTest.class)
 @Transactional
 public class SpotcheckReportDaoTest extends BaseTests {
+
+    private static final Logger logger = LoggerFactory.getLogger(SpotcheckReportDaoTest.class);
 
     @Autowired
     private BaseBillIdSpotCheckReportDao reportDao;
@@ -99,7 +103,6 @@ public class SpotcheckReportDaoTest extends BaseTests {
     /**
      * Test setMismatchIgnoreStatus()
      */
-
     @Test(expected = IllegalArgumentException.class)
     public void givenNullIgnoreStatus_throwException() {
         reportDao.setMismatchIgnoreStatus(1, null);
@@ -118,7 +121,6 @@ public class SpotcheckReportDaoTest extends BaseTests {
     /**
      * Test add/delete issue id's
      */
-
     @Test
     public void canAddIssueId() {
         reportDao.saveReport(createMismatchReport(start));
@@ -185,15 +187,51 @@ public class SpotcheckReportDaoTest extends BaseTests {
                 Sets.immutableEnumSet(SpotCheckMismatchIgnore.NOT_IGNORED));
     }
 
+    @Test
+    public void massiveSaveTest() {
+        int session = 2017;
+
+        SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, LocalDateTime.now(), LocalDateTime.now());
+        SpotCheckReport<BaseBillId> report = new SpotCheckReport<>(reportId);
+
+        List<BaseBillId> baseBillIds = new ArrayList<>();
+        for (int i = 0; i < 20000; i++) {
+            String house = i % 2 == 0 ? "S" : "A";
+            String printNo = house + i / 2;
+            BaseBillId baseBillId = new BaseBillId(printNo, session);
+            baseBillIds.add(baseBillId);
+        }
+
+        Random rando = new Random(1234567890);
+
+        List<SpotCheckMismatchType> typeList = new ArrayList<>(SpotCheckMismatchType.getMismatchTypes(reportId.getReferenceType()));
+        baseBillIds.stream()
+                .map(baseBillId -> {
+                    SpotCheckObservation<BaseBillId> obs = new SpotCheckObservation<>(reportId.getReferenceId(), baseBillId);
+                    while (rando.nextInt(10) == 0) {
+                        SpotCheckMismatchType type = typeList.get(rando.nextInt(typeList.size()));
+                        obs.addMismatch(new SpotCheckMismatch(type, "D:", ":D"));
+                    }
+                    return obs;
+                })
+                .forEach(report::addObservation);
+        logger.info("Saving report, {} obs, {} mm", report.getObservedCount(), report.getOpenMismatchCount(false));
+        Stopwatch sw = Stopwatch.createStarted();
+        reportDao.saveReport(report);
+        logger.info("done {}", sw.stop());
+    }
+
+    /* --- Internal Methods --- */
+
     private DeNormSpotCheckMismatch queryMostRecentOpenMismatch() {
-        MismatchQuery query = new MismatchQuery(start.toLocalDate(), SpotCheckDataSource.LBDC,
+        MismatchQuery<BaseBillId> query = new MismatchQuery<>(start.toLocalDate(), SpotCheckDataSource.LBDC,
                                                 MismatchStatus.OPEN, Collections.singleton(SpotCheckContentType.BILL));
         return reportDao.getMismatches(query, LimitOffset.ALL).getResults().get(0);
     }
 
     private DeNormSpotCheckMismatch queryMostRecentClosedMismatch() {
-        MismatchQuery query = new MismatchQuery(start.toLocalDate(), SpotCheckDataSource.LBDC,
-                                                MismatchStatus.RESOLVED, Collections.singleton(SpotCheckContentType.BILL));
+        MismatchQuery<BaseBillId> query = new MismatchQuery<>(start.toLocalDate(), SpotCheckDataSource.LBDC,
+                MismatchStatus.RESOLVED, Collections.singleton(SpotCheckContentType.BILL));
         return reportDao.getMismatches(query, LimitOffset.ALL).getResults().get(0);
     }
 

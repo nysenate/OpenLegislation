@@ -2,7 +2,6 @@ package gov.nysenate.openleg.model.notification;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -14,6 +13,7 @@ public enum NotificationType {
     REQUEST_EXCEPTION       (EXCEPTION),
     PROCESS_EXCEPTION       (EXCEPTION),
     SPOTCHECK_EXCEPTION     (EXCEPTION),
+    EVENT_BUS_EXCEPTION     (EXCEPTION),
     WARNING                 (ALL),
     PROCESS_WARNING         (WARNING),
     SCRAPING_EXCEPTION      (WARNING),
@@ -59,8 +59,12 @@ public enum NotificationType {
         return children;
     }
 
-    private Map<NotificationType, Object> getTypeHierarchy() {
-        Map<NotificationType, Object> hierarchyMap = new TreeMap<>();
+    public NotificationType getParent() {
+        return parent;
+    }
+
+    private EnumMap<NotificationType, Object> getTypeHierarchy() {
+        EnumMap<NotificationType, Object> hierarchyMap = new EnumMap<>(NotificationType.class);
         children.forEach(child -> hierarchyMap.put(child, child.getTypeHierarchy()));
         return hierarchyMap;
     }
@@ -68,14 +72,29 @@ public enum NotificationType {
     /**
      * Returns a set of all notification types covered by the given notification type
      * @param type NotificationType
-     * @return Set<NotificationType>
+     * @return EnumSet<NotificationType>
      */
-    public static Set<NotificationType> getCoverage(NotificationType type) {
-        if (type == null) return Collections.emptySet();
-        Set<NotificationType> result = Sets.newHashSet(type);
+    public static EnumSet<NotificationType> getCoverage(NotificationType type) {
+        if (type == null) return EnumSet.noneOf(NotificationType.class);
+        EnumSet<NotificationType> result = EnumSet.of(type);
         type.children.stream()
                 .map(NotificationType::getCoverage)
                 .forEach(result::addAll);
+        return result;
+    }
+
+    /**
+     * Get all notification types covered by all types in the given collection
+     * @param types Collection<NotificationType>
+     * @return EnumSet<NotificationType>
+     */
+    public static EnumSet<NotificationType> getCoverage(Collection<NotificationType> types) {
+        EnumSet<NotificationType> result = EnumSet.noneOf(NotificationType.class);
+        for (NotificationType type : types) {
+            if (!result.contains(type)) {
+                result.addAll(getCoverage(type));
+            }
+        }
         return result;
     }
 

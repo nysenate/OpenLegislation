@@ -9,11 +9,12 @@ import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.bill.Bill;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
- * A complete representation of a bill including it's amendments.
+ * A complete representation of a bill including its amendments.
  */
 public class BillView extends BillInfoView implements ViewObject
 {
@@ -37,16 +38,17 @@ public class BillView extends BillInfoView implements ViewObject
             TreeMap<String, BillAmendmentView> amendmentMap = new TreeMap<>();
             bill.getAmendPublishStatusMap().forEach((k,v) -> {
                 if (v.isPublished() && bill.hasAmendment(k)) {
-                    amendmentMap.put(k.getValue(), new BillAmendmentView(bill.getAmendment(k), v));
+                    amendmentMap.put(k.toString(), new BillAmendmentView(bill.getAmendment(k), v));
                 }
             });
+
             this.amendments = MapView.of(amendmentMap);
-            this.amendmentVersions = ListView.ofStringList(amendmentMap.keySet().stream().collect(Collectors.toList()));
+            this.amendmentVersions = ListView.ofStringList(new ArrayList<>(amendmentMap.keySet()));
 
             this.votes = ListView.of(bill.getAmendmentList().stream()
                 .flatMap(a -> a.getVotesList().stream())
                 .sorted()
-                .map(v -> new BillVoteView(v))
+                .map(BillVoteView::new)
                 .collect(Collectors.toList()));
 
             this.vetoMessages = ListView.of(bill.getVetoMessages().values().stream()
@@ -56,7 +58,7 @@ public class BillView extends BillInfoView implements ViewObject
             this.approvalMessage = bill.getApprovalMessage() != null ?
                 new ApprovalMessageView(bill.getApprovalMessage()) : null;
 
-            this.activeVersion = bill.getActiveVersion().getValue();
+            this.activeVersion = bill.getActiveVersion().toString();
 
             this.additionalSponsors = ListView.of(bill.getAdditionalSponsors().stream()
                 .map(MemberView::new)

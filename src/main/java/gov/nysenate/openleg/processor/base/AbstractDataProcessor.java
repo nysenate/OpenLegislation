@@ -30,6 +30,7 @@ import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 import gov.nysenate.openleg.service.calendar.event.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +105,7 @@ public abstract class AbstractDataProcessor
      * @param billId BillId - The BillId to find a matching Bill for.
      * @return Bill
      */
-    protected  final Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId, SobiFragment fragment) {
+    protected final Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId, SobiFragment fragment) {
         boolean isBaseVersion = BillId.isBaseVersion(billId.getVersion());
         BaseBillId baseBillId = BillId.getBaseId(billId);
         Bill baseBill;
@@ -172,7 +173,7 @@ public abstract class AbstractDataProcessor
                 billDataService.saveBill(entry.getLeft(), entry.getRight(), false));
             logger.debug("Broadcasting bill updates...");
             List<Bill> bills =
-                billIngestCache.getCurrentCache().stream().map(entry -> entry.getLeft()).collect(Collectors.toList());
+                billIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
             eventBus.post(new BulkBillUpdateEvent(bills, LocalDateTime.now()));
             billIngestCache.clearCache();
         }
@@ -224,7 +225,7 @@ public abstract class AbstractDataProcessor
             agendaIngestCache.getCurrentCache().forEach(
                 entry -> agendaDataService.saveAgenda(entry.getLeft(), entry.getRight(), false));
             List<Agenda> agendas =
-                agendaIngestCache.getCurrentCache().stream().map(entry -> entry.getLeft()).collect(Collectors.toList());
+                agendaIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
             eventBus.post(new BulkAgendaUpdateEvent(agendas, LocalDateTime.now()));
             agendaIngestCache.clearCache();
         }
@@ -267,7 +268,7 @@ public abstract class AbstractDataProcessor
             calendarIngestCache.getCurrentCache().forEach(
                 entry -> calendarDataService.saveCalendar(entry.getLeft(), entry.getRight(), false));
             List<Calendar> calendars =
-                calendarIngestCache.getCurrentCache().stream().map(entry -> entry.getLeft()).collect(Collectors.toList());
+                calendarIngestCache.getCurrentCache().stream().map(Pair::getLeft).collect(Collectors.toList());
             eventBus.post(new BulkCalendarUpdateEvent(calendars, LocalDateTime.now()));
             calendarIngestCache.clearCache();
         }

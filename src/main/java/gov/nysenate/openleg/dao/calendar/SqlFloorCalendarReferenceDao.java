@@ -36,7 +36,7 @@ public class SqlFloorCalendarReferenceDao extends SqlBaseDao implements FloorCal
     protected static MapSqlParameterSource getCalendarSupplementalIdParams(CalendarSupplementalId calendarSupplementalId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(calendarSupplementalId, params);
-        params.addValue("supVersion", calendarSupplementalId.getVersion().getValue());
+        params.addValue("supVersion", calendarSupplementalId.getVersion().toString());
         return params;
     }
 

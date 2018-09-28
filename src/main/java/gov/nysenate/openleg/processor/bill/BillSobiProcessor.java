@@ -298,7 +298,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
         List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
         baseBill.setActions(billActions);
         // Use the BillActionAnalyzer to derive other data from the actions list.
-        Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.DEFAULT);
+        Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
         BillActionAnalyzer analyzer = new BillActionAnalyzer(specifiedAmendment.getBillId(), billActions, defaultPubStatus);
         analyzer.analyze();
 

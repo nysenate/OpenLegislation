@@ -14,6 +14,7 @@ import gov.nysenate.openleg.model.search.UnexpectedSearchException;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.util.DateUtils;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
@@ -22,7 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,63 +48,34 @@ public class ElasticNotificationService implements NotificationService {
 
     /** {@inheritDoc} */
     @Override
-    public PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types, Range<LocalDateTime> dateTimeRange,
-                                                                     SortOrder order, LimitOffset limitOffset) throws SearchException {
-        //Todo figure out why the notificationType term filter doesn't work
-//        FilterBuilder rangeFilter = FilterBuilders.matchAllFilter();
-//        FilterBuilder typesFilter = FilterBuilders.matchAllFilter();
-//        if (dateTimeRange != null && !dateTimeRange.encloses(DateUtils.ALL_DATE_TIMES)) {
-//            rangeFilter = FilterBuilders.rangeFilter("occurred")
-//                        .from(DateUtils.startOfDateTimeRange(dateTimeRange))
-//                        .to(DateUtils.endOfDateTimeRange(dateTimeRange));
-//        }
-//        if (types != null && !types.isEmpty() && !types.contains(NotificationType.ALL)) {
-//            List<String> coveredTypes = types.stream()
-//                    .map(NotificationType::getCoverage)
-//                    .flatMap(Set::stream)
-//                    .map(NotificationType::toString)
-//                    .collect(Collectors.toList());
-//            logger.info("{}", coveredTypes);
-//            typesFilter = FilterBuilders.termsFilter("notificationType", coveredTypes);
-//        }
-//        FilterBuilder filter = FilterBuilders.andFilter(rangeFilter, typesFilter);
-//
-//        String sort = String.format("occurred:%s", order != null ? order.toString() : "DESC");
-//
-//        return notificationDao.searchNotifications(QueryBuilders.matchAllQuery(), filter, sort, limitOffset)
-//                .toPaginatedList();
-        StringBuilder queryStringBuilder = new StringBuilder();
-        List<String> coveredTypes = types.stream()
-                .map(NotificationType::getCoverage)
-                .flatMap(Set::stream)
-                .map(NotificationType::toString)
-                .collect(Collectors.toList());
-        if (!coveredTypes.isEmpty()) {
-            queryStringBuilder.append("notificationType:");
-            if (coveredTypes.size() > 1) {
-                queryStringBuilder.append("(");
-            }
-            boolean firstType = true;
-            for (String type : coveredTypes) {
-                if (firstType) {
-                    firstType = false;
-                } else {
-                    queryStringBuilder.append(" ");
-                }
-                queryStringBuilder.append(type);
-            }
-            if (coveredTypes.size() > 1) {
-                queryStringBuilder.append(")");
-            }
-            queryStringBuilder.append(" AND ");
+    public PaginatedList<RegisteredNotification> getNotificationList(Set<NotificationType> types,
+                                                                     Range<LocalDateTime> dateTimeRange,
+                                                                     SortOrder order,
+                                                                     LimitOffset limitOffset) throws SearchException {
+        BoolQueryBuilder filterQuery = QueryBuilders.boolQuery();
+
+        EnumSet<NotificationType> coveredTypes = NotificationType.getCoverage(types);
+        if (!coveredTypes.equals(EnumSet.allOf(NotificationType.class))) {
+            // Convert to lowercase strings for term query.
+            List<String> typeValues = coveredTypes.stream()
+                    .map(Enum::name).map(String::toLowerCase).collect(Collectors.toList());
+            filterQuery.must(QueryBuilders.termsQuery("notificationType", typeValues));
         }
-        queryStringBuilder.append("occurred:[")
-                .append(DateUtils.startOfDateTimeRange(dateTimeRange))
-                .append(" TO ")
-                .append(DateUtils.endOfDateTimeRange(dateTimeRange))
-                .append("]");
+
+        filterQuery.must(QueryBuilders.rangeQuery("occurred")
+                .from(DateUtils.startOfDateTimeRange(dateTimeRange).toString())
+                .to(DateUtils.endOfDateTimeRange(dateTimeRange).toString()));
+
         String sortString = "occurred:" + order;
-        return notificationSearch(queryStringBuilder.toString(), sortString, limitOffset).toPaginatedList();
+
+        try {
+            SearchResults<RegisteredNotification> results = notificationDao.searchNotifications(
+                    QueryBuilders.matchAllQuery(), filterQuery,
+                    ElasticSearchServiceUtils.extractSortBuilders(sortString), limitOffset);
+            return results.toPaginatedList();
+        } catch (ElasticsearchException ex) {
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
+        }
     }
 
     /** {@inheritDoc} */
@@ -116,7 +91,7 @@ public class ElasticNotificationService implements NotificationService {
             throw new SearchException("Invalid query string", ex);
         }
         catch (ElasticsearchException ex) {
-            throw new UnexpectedSearchException(ex);
+            throw new UnexpectedSearchException(ex.getMessage(), ex);
         }
     }
 
@@ -126,6 +101,7 @@ public class ElasticNotificationService implements NotificationService {
         try {
             return notificationDao.registerNotification(notification);
         } catch (ElasticsearchException ex) {
+            logger.error("Failed to register notification!", ex);
             return new RegisteredNotification(notification, -1);
         }
     }

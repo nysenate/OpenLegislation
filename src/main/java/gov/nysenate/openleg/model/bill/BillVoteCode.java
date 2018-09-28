@@ -19,7 +19,7 @@ public enum BillVoteCode
     ABD   (ImmutableSet.of("ABD", "ABSTAINED")),
     AYEWR (ImmutableSet.of("AYEWR", "AYE W/R")); // 'Aye, with reservations'
 
-    private Set<String> acceptableStrings = new HashSet<>();
+    private Set<String> acceptableStrings;
 
     // Lookup string names quickly
     private static Map<String, BillVoteCode> nameLookupMap = new HashMap<>();

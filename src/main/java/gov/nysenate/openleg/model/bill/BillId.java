@@ -21,13 +21,13 @@ public class BillId implements Serializable, Comparable<BillId>
 {
     private static final long serialVersionUID = 6494036869654732240L;
 
-    public static String printNumberRegex = "([ASLREJKBC])([0-9]{1,5})([A-Z]?)";
+    public static String printNumberRegex = "([ASLREJKBC])(\\d{1,5})([A-Z]?)";
 
     public static Pattern printNumberPattern = Pattern.compile(printNumberRegex);
-    public static Pattern billIdPattern = Pattern.compile("(?<printNo>" + printNumberRegex + ")-?(?<year>[0-9]{4})");
+    public static Pattern billIdPattern = Pattern.compile("(?<printNo>" + printNumberRegex + ")-?(?<year>\\d{4})");
 
     /** The default amendment version letter. */
-    public static final Version DEFAULT_VERSION = Version.DEFAULT;
+    public static final Version DEFAULT_VERSION = Version.ORIGINAL;
 
     /** A number assigned to a bill when it's introduced in the Legislature. Each printNo begins with a
      *  letter (A for Assembly, S for Senate) followed by 1 to 5 digits. This printNo is valid only for the
@@ -128,7 +128,7 @@ public class BillId implements Serializable, Comparable<BillId>
      * Returns the full print no including amendment version, e.g. S1234A
      */
     public String getPrintNo() {
-        return this.basePrintNo + ((this.version != null) ? this.version : "");
+        return this.basePrintNo + ((this.version != null) ? this.version.toString() : "");
     }
 
     /**
@@ -200,7 +200,7 @@ public class BillId implements Serializable, Comparable<BillId>
      */
     @Override
     public String toString() {
-        return basePrintNo + ((version != null) ? version : "") + "-" + session;
+        return basePrintNo + ((version != null) ? version.toString() : "") + "-" + session;
     }
 
     @Override

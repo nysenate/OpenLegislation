@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class Notification {
 
     /** Designates the type of notification */
-    protected NotificationType type;
+    protected NotificationType notificationType;
 
     /** The date and time when the notification occurred */
     protected LocalDateTime occurred;
@@ -22,15 +22,15 @@ public class Notification {
 
     /** --- Constructors --- */
 
-    public Notification(NotificationType type, LocalDateTime occurred, String summary, String message) {
-        this.type = type;
+    public Notification(NotificationType notificationType, LocalDateTime occurred, String summary, String message) {
+        this.notificationType = notificationType;
         this.occurred = occurred;
         this.summary = summary;
         this.message = message;
     }
 
     public Notification(Notification that) {
-        this.type = that.type;
+        this.notificationType = that.notificationType;
         this.occurred = that.occurred;
         this.summary = that.summary;
         this.message = that.message;
@@ -38,8 +38,8 @@ public class Notification {
 
     /** --- Getters --- */
 
-    public NotificationType getType() {
-        return type;
+    public NotificationType getNotificationType() {
+        return notificationType;
     }
 
     public LocalDateTime getOccurred() {

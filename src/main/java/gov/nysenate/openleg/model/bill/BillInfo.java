@@ -23,7 +23,7 @@ public class BillInfo
     protected BillSponsor sponsor;
     protected List<BillStatus> milestones = new ArrayList<>();
     protected List<BillAction> actions = new ArrayList<>();
-    protected Map<Version, PublishStatus> amendPublishStatusMap = new TreeMap<>();
+    protected Map<Version, PublishStatus> amendPublishStatusMap = new EnumMap<>(Version.class);
     protected BillId substitutedBy;
     protected ProgramInfo programInfo;
 

@@ -5,6 +5,8 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
 import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
+import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 
@@ -22,6 +24,7 @@ public class AgendaCommView implements ViewObject
         List<AgendaCommAddendumView> addendaList = new ArrayList<>();
         if (agenda != null) {
             for (String addendumId : agenda.getAddenda()) {
+                CommitteeAgendaAddendumId id = new CommitteeAgendaAddendumId(agenda.getId(), committeeId, Version.of(addendumId));
                 AgendaInfoCommittee infoComm = null;
                 AgendaVoteCommittee voteComm = null;
                 LocalDateTime modifiedDateTime = null;
@@ -35,7 +38,7 @@ public class AgendaCommView implements ViewObject
                     voteComm = agenda.getAgendaVoteAddendum(addendumId).getCommitteeVoteMap().get(committeeId);
                 }
                 if (infoComm != null || voteComm != null) {
-                    addendaList.add(new AgendaCommAddendumView(addendumId, modifiedDateTime, infoComm, voteComm, billDataService));
+                    addendaList.add(new AgendaCommAddendumView(id, modifiedDateTime, infoComm, voteComm, billDataService));
                 }
             }
             this.addenda = ListView.of(addendaList);

@@ -3,7 +3,8 @@ package gov.nysenate.openleg.dao.scraping;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 
 @Repository
 public class CalendarScraper extends LRSScraper{
-    private static final Logger logger = Logger.getLogger(LRSScraper.class);
+    private static final Logger logger = LogManager.getLogger(LRSScraper.class);
     protected static final String allCalendars = "http://leginfo.state.ny.us/ASMSEN/menugetl.cgi?COMMONQUERY=CALENDAR";
     private File outfile = null;
 

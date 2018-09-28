@@ -301,7 +301,9 @@ List of calendars updated during the given date/time range
 ::
     (GET) /api/3/calendars/updates/{fromDateTime}/{toDateTime}
 
-.. note:: The fromDateTime and toDateTime should be formatted as the ISO Date Time format.  For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02. The fromDateTime and toDateTime range is exclusive.
+.. note:: The 'fromDateTime' and 'toDateTime' parameters should be formatted as the ISO 8601 Date Time format.
+   For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.
+   The fromDateTime and toDateTime range is exclusive/inclusive respectively.
 
 **Optional Params**
 

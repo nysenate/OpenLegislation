@@ -129,6 +129,9 @@ elif [ "$mode" = "import" ]; then
   echo "About to import bills"
   pdrush @$penv bill-import $drush_args
 
+  echo "About to detect bill changes"
+  pdrush @$penv detect-bill-changes $drush_args
+
   echo "About to import agendas"
   pdrush @$penv agenda-import $drush_args
 

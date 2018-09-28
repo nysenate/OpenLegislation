@@ -1,6 +1,6 @@
 package gov.nysenate.openleg.model.search;
 
-import org.elasticsearch.search.highlight.HighlightField;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

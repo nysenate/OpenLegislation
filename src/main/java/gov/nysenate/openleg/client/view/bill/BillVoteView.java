@@ -10,6 +10,7 @@ import gov.nysenate.openleg.model.bill.BillVoteCode;
 import gov.nysenate.openleg.model.bill.BillVoteType;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class BillVoteView implements ViewObject
@@ -32,8 +33,8 @@ public class BillVoteView implements ViewObject
                 billVote.getMemberVotes().keySet().stream()
                     .collect(Collectors.toMap(BillVoteCode::name, voteCode ->
                         ListView.of(billVote.getMembersByVote(voteCode).stream()
-                            .map(m -> new MemberView(m))
-                            .sorted((o1, o2) -> o1.getShortName().compareTo(o2.getShortName()))
+                            .map(MemberView::new)
+                            .sorted(Comparator.comparing(MemberView::getShortName))
                             .collect(Collectors.toList()))))
             );
         }

@@ -39,6 +39,7 @@ billModule.controller('BillViewCtrl', ['$scope', '$filter', '$location', '$route
         $scope.init = function() {
             $scope.session = $routeParams.session;
             $scope.printNo = $routeParams.printNo;
+            //TODO: The following few lines don't seem to do anything in the current version of OpenLegislation.
             var baseVersionRegex = /default|base/i;
             var requestedVersion = baseVersionRegex.exec($routeParams.version) ? ''
                 : $routeParams.version && $routeParams.version.toUpperCase();
