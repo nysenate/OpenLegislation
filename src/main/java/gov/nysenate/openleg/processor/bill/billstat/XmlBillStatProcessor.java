@@ -80,12 +80,11 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiP
             }
 
             billIngestCache.set(bill.getBaseBillId(), bill, sobiFragment);
+            postDataUnitEvent(unit);
+            checkIngestCache();
         } catch (IOException | SAXException | XPathExpressionException e) {
             unit.addException("XML bill stat parsing error", e);
             throw new ParseError("Error While Parsing BillStatProcessorXML", e);
-        } finally {
-            postDataUnitEvent(unit);
-            checkIngestCache();
         }
     }
 
