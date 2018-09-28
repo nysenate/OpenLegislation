@@ -5364,14 +5364,6 @@ ALTER TABLE ONLY bill_sponsor_additional
 
 
 --
--- Name: bill_text_reference_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY bill_text_reference
-    ADD CONSTRAINT bill_text_reference_pkey PRIMARY KEY (bill_print_no, bill_session_year, reference_date_time);
-
-
---
 -- Name: bill_veto_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
 --
 

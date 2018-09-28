@@ -2347,6 +2347,9 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1145	1147	STERN	2017	10	f
 \.
 
+-- Set the sequence value to the max session_member id.
+SELECT setval('session_member_id_seq', 1145);
+
 
 SET search_path = public, master, pg_catalog;
 
