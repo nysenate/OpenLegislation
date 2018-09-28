@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="warn" strict="true">
+    <Properties>
+        <Property name="LOG_PATTERN">%d{dd MMM yyyy HH:mm:ss,SSS} %5p %c{1}:%L - %m%n</Property>
+        <Property name="LOG_DIR">${sys:catalina.base}/logs</Property>
+        <Property name="LOG_FILENAME">${LOG_DIR}/webapp.log</Property>
+        <Property name="LOG_ROLLNAME">${LOG_DIR}/webapp.log.%i</Property>
+    </Properties>
     <Appenders>
         <Appender type="Console" name="stdout" target="SYSTEM_OUT">
-            <Layout type="PatternLayout" pattern="%d{yyyy-MM-dd HH:mm:ss} %5p %t %c{2}:%L - %m%n"/>
+            <Layout type="PatternLayout" pattern="${LOG_PATTERN}"/>
+        </Appender>
+        <Appender type="RollingFile" name="file" fileName="${LOG_FILENAME}" filePattern="${LOG_ROLLNAME}">
+            <Layout type="PatternLayout" pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
         </Appender>
     </Appenders>
     <Loggers>
@@ -11,8 +24,8 @@
         <Logger name="com.mchange.v2" level="warn"/>
         <Logger name="logger.net.sf.ehcache" level="warn"/>
         <Logger name="org.elasticsearch.client.RestHighLevelClient" level="warn"/>
-        <Root level="trace">
-            <AppenderRef ref="stdout"/>
+        <Root level="info">
+            <AppenderRef ref="file"/>
         </Root>
     </Loggers>
 </Configuration>
