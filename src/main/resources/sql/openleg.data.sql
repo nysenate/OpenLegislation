@@ -2347,9 +2347,6 @@ COPY session_member (id, member_id, lbdc_short_name, session_year, district_code
 1145	1147	STERN	2017	10	f
 \.
 
--- Set the sequence value to the max session_member id.
-SELECT setval('session_member_id_seq', 1145);
-
 
 SET search_path = public, master, pg_catalog;
 
@@ -5640,7 +5637,7 @@ SET search_path = public, pg_catalog;
 -- Name: member_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('member_id_seq', 1137, true);
+SELECT pg_catalog.setval('member_id_seq', 1147, true);
 
 
 --
@@ -5654,14 +5651,14 @@ SELECT pg_catalog.setval('member_person_id_seq', 1, false);
 -- Name: person_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('person_id_seq', 959, true);
+SELECT pg_catalog.setval('person_id_seq', 967, true);
 
 
 --
 -- Name: session_member_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('session_member_id_seq', 1134, true);
+SELECT pg_catalog.setval('session_member_id_seq', 1145, true);
 
 
 --
