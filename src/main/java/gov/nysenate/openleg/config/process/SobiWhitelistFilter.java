@@ -45,6 +45,7 @@ public class SobiWhitelistFilter implements SourceFilter {
         sobiBlockWhitelist.add(TITLE);
         sobiBlockWhitelist.add(BILL_EVENT);
         sobiBlockWhitelist.add(SAME_AS);
+        sobiBlockWhitelist.add(SPONSOR);
         sobiBlockWhitelist.add(CO_SPONSOR);
         sobiBlockWhitelist.add(MULTI_SPONSOR);
         sobiBlockWhitelist.add(PROGRAM_INFO);
