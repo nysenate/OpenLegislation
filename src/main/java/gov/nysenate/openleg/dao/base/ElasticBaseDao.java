@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.base;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Ints;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
@@ -312,6 +313,59 @@ public abstract class ElasticBaseDao
         return indexSettings;
     }
 
+    protected List<Map<String, Object>> getDynamicMappingTemplates() {
+        List<Map<String, Object>> templates = new ArrayList<>();
+        templates.add(ImmutableMap.of(
+                "printNos", ImmutableMap.of(
+                        "match_mapping_type", "string",
+                        "match_pattern", "regex",
+                        "match", "^(?:printNo|basePrintNo(?:Str)?)$",
+                        "mapping", ImmutableMap.of(
+                                "type", "keyword",
+                                "fields", ImmutableMap.of(
+                                        "search", ImmutableMap.of(
+                                                "type", "text"
+                                        )
+                                )
+                        )
+                )
+        ));
+        return templates;
+    }
+
+    /**
+     * Gets any custom mappings for the index.
+     *
+     * Must be overridden to include any mappings.
+     * @return XContentBuilder
+     * @throws IOException if somebody screws up
+     */
+    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
+        return new HashMap<>();
+    }
+
+    /**
+     * Custom mapping for a field that is primarily a keyword, but is also indexed as a text field for searching.
+     */
+    protected static final ImmutableMap<String, Object> searchableKeywordMapping = ImmutableMap.of(
+            "type", "keyword",
+            "fields", ImmutableMap.of(
+                    "text", ImmutableMap.of(
+                            "type", "text"
+                    )
+            )
+    );
+
+    protected static final ImmutableMap<String, Object> basicTimeMapping = ImmutableMap.of(
+            "type", "date",
+            "format", "hour_minute"
+    );
+
+    protected static final ImmutableMap<String, Object> dayOfWeekMapping = ImmutableMap.of(
+            "type", "date",
+            "format", "E"
+    );
+
     /* --- Internal Methods --- */
 
     private boolean indicesExist(String... indices) {
@@ -326,8 +380,15 @@ public abstract class ElasticBaseDao
     }
 
     private void createIndex(String indexName) {
-        CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName, getIndexSettings().build());
         try {
+            CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName, getIndexSettings().build());
+
+            Map customMappingProps = getCustomMappingProperties();
+            if (customMappingProps != null && !customMappingProps.isEmpty()) {
+                Map mapping = packageCustomMappingProperties(customMappingProps);
+                createIndexRequest.mapping(defaultType, mapping);
+            }
+
             searchClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
         }
         catch (IOException ex){
@@ -531,5 +592,19 @@ public abstract class ElasticBaseDao
         logger.debug("Large elasticsearch bulk request ({}) will be broken into {} smaller bulk requests",
                 FileUtils.byteCountToDisplaySize(totalSize), bulkRequests.size());
         return bulkRequests;
+    }
+
+    /**
+     * Packages a map of custom properties to get the complete mapping request body.
+     *
+     * @param properties Map
+     * @return Map<String, Object>
+     */
+    private ImmutableMap<String, Object> packageCustomMappingProperties(Map properties) {
+        return ImmutableMap.of(
+                defaultType, ImmutableMap.of(
+                        "properties", properties
+                )
+        );
     }
 }

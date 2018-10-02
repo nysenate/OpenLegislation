@@ -17,10 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 @Repository
 public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements PublicHearingSearchDao
@@ -71,6 +69,14 @@ public class ElasticPublicHearingSearchDao extends ElasticBaseDao implements Pub
     @Override
     protected List<String> getIndices() {
         return Lists.newArrayList(publicHearingIndexName);
+    }
+
+    @Override
+    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
+        HashMap<String, Object> props = super.getCustomMappingProperties();
+        props.put("startTime", basicTimeMapping);
+        props.put("endTime", basicTimeMapping);
+        return props;
     }
 
     private PublicHearingId getPublicHearingIdFromHit(SearchHit hit) {

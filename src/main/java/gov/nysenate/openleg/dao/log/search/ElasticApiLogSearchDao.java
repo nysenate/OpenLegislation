@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.log.search;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.client.view.log.ApiLogItemView;
 import gov.nysenate.openleg.dao.base.ElasticBaseDao;
 import gov.nysenate.openleg.dao.base.LimitOffset;
@@ -17,8 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -82,6 +85,15 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
         Settings.Builder indexSettings = super.getIndexSettings();
         indexSettings.put("index.number_of_shards", 8);
         return indexSettings;
+    }
+
+    @Override
+    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
+        HashMap<String, Object> props = super.getCustomMappingProperties();
+        props.put("requestMethod", ImmutableMap.of("type", "keyword"));
+        props.put("ipAddress", ImmutableMap.of("type", "ip"));
+        props.put("contentType", searchableKeywordMapping);
+        return props;
     }
 
     private Integer parseId(SearchHit hit) {
