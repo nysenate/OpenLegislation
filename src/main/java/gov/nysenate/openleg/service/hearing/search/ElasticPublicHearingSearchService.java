@@ -53,14 +53,7 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(int year, String sort, LimitOffset limOff) throws SearchException {
-        RangeQueryBuilder rangeFilter = QueryBuilders.rangeQuery("date")
-                .from(LocalDate.of(year, 1, 1))
-                .to(LocalDate.of(year, 12, 31));
-        return search(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.matchAllQuery())
-                        .filter(rangeFilter),
-                null, sort, limOff);
+        return search(QueryBuilders.matchAllQuery(), year, sort, limOff);
     }
 
     /** {@inheritDoc} */
@@ -72,21 +65,22 @@ public class ElasticPublicHearingSearchService implements PublicHearingSearchSer
     /** {@inheritDoc} */
     @Override
     public SearchResults<PublicHearingId> searchPublicHearings(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        RangeQueryBuilder rangeFilter = QueryBuilders.rangeQuery("date")
-                .from(LocalDate.of(year, 1, 1))
-                .to(LocalDate.of(year, 12, 31));
-        return search(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.queryStringQuery(query))
-                        .filter(rangeFilter),
-                null, sort, limOff);
+        return search(QueryBuilders.queryStringQuery(query), year, sort, limOff);
     }
 
-    private SearchResults<PublicHearingId> search(QueryBuilder query, QueryBuilder postFilter, String sort, LimitOffset limOff)
+    private SearchResults<PublicHearingId> search(QueryBuilder query, Integer year, String sort, LimitOffset limOff)
             throws SearchException {
-        if (limOff == null) limOff = LimitOffset.TEN;
+        if (limOff == null) {
+            limOff = LimitOffset.TEN;
+        }
+        RangeQueryBuilder rangeFilter = null;
+        if (year != null) {
+            rangeFilter = QueryBuilders.rangeQuery("date")
+                    .from(LocalDate.of(year, 1, 1).toString())
+                    .to(LocalDate.of(year, 12, 31).toString());
+        }
         try {
-            return publicHearingSearchDao.searchPublicHearings(query, postFilter,
+            return publicHearingSearchDao.searchPublicHearings(query, rangeFilter,
                     ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
         }
         catch (SearchParseException ex) {
