@@ -2,6 +2,7 @@ package gov.nysenate.openleg.model.sourcefiles.sobi;
 
 import gov.nysenate.openleg.model.bill.BillId;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -48,6 +49,9 @@ public class SobiBlock
     /** The type of SobiFragment that generated this block. */
     private SobiFragmentType fragmentType;
 
+    /** The published date time of the fragment that generated this block */
+    private LocalDateTime publishedDateTime;
+
     /** The line number that the block starts at. Defaults to zero when using the basic constructor. */
     private Integer startLineNo = 0;
 
@@ -73,7 +77,7 @@ public class SobiBlock
      *  but blocks whose data is DELETE should be treated as single line blocks regardless of type. */
     private final boolean multiline;
 
-    /** --- Constructors --- */
+    /* --- Constructors --- */
 
     /**
      * Construct a new block with without location information from a valid SobiFile line. The line is
@@ -93,14 +97,15 @@ public class SobiBlock
      * the source file and line number the block was initialized from. The line is assumed to be
      * valid SOBI file and is NOT checked for performance reasons.
      */
-    public SobiBlock(String fragmentFileName, SobiFragmentType type, int startLineNo, String line) {
+    public SobiBlock(String fragmentFileName, SobiFragmentType type, LocalDateTime publishedDateTime, int startLineNo, String line) {
         this(line);
         this.fragmentFileName = fragmentFileName;
+        this.publishedDateTime = publishedDateTime;
         fragmentType = type;
         setStartLineNo(startLineNo);
     }
 
-    /** --- Methods --- */
+    /* --- Methods --- */
 
     /**
      * Extends the block data with the data from the new line. Separates new lines with a '\n' character so
@@ -129,7 +134,7 @@ public class SobiBlock
         return getLocation()+":"+ getHeader();
     }
 
-    /** --- Functional Getters/Setters */
+    /* --- Functional Getters/Setters */
 
     /**
      * Returns a representation of the location of the block: fileName:lineNumber.
@@ -172,7 +177,7 @@ public class SobiBlock
         this.endLineNo = endLineNo;
     }
 
-    /** --- Internal Methods --- */
+    /* --- Internal Methods --- */
 
     /**
      * Ensures that the data segment of the block extends to the full 98 characters by appending spaces as needed
@@ -186,7 +191,7 @@ public class SobiBlock
         }
     }
 
-    /** --- Basic Getters/Setters */
+    /* --- Basic Getters/Setters */
 
     public String getFragmentFileName() {
         return fragmentFileName;
@@ -250,5 +255,9 @@ public class SobiBlock
 
     public boolean isMultiline() {
         return multiline;
+    }
+
+    public LocalDateTime getPublishedDateTime() {
+        return publishedDateTime;
     }
 }

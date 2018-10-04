@@ -145,7 +145,13 @@ public class ManagedSobiProcessService implements SobiProcessService {
     public int processFragments(List<SobiFragment> fragments, SobiProcessOptions options) {
         logger.debug((fragments.isEmpty()) ? "No more fragments to process"
                 : "Iterating through {} fragments", fragments.size());
-        for (SobiFragment fragment : processConfig.filterFileFragments(fragments)) {
+        final List<SobiFragment> filteredFragments = processConfig.filterFileFragments(fragments);
+        if (fragments.size() > 1) {
+            logger.info("Processing {} fragments ({} ignored)", filteredFragments.size(), fragments.size() - filteredFragments.size());
+        } else if (fragments.size() == 1 && filteredFragments.isEmpty()) {
+            logger.info("Ignoring fragment {} due to process config.", fragments.get(0).getFragmentId());
+        }
+        for (SobiFragment fragment : filteredFragments) {
             fragment.startProcessing();
             sobiFragmentDao.updateSobiFragment(fragment);
             // Hand off processing to specific implementations based on fragment type.
@@ -160,7 +166,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
             fragment.setProcessedDateTime(LocalDateTime.now());
         }
         // Perform any necessary post-processing/cleanup
-        processorMap.values().forEach(p -> p.postProcess());
+        processorMap.values().forEach(SobiProcessor::postProcess);
         // Set the fragments as processed and update
         sobiFragmentDao.setPendProcessingFalse(fragments);
         return fragments.size();

@@ -85,7 +85,7 @@ public class SobiFragment extends BaseSourceData
                 if (headerMatcher.find()) {
                     if (block == null) {
                         // No active block with a new matching line: create new block
-                        block = new SobiBlock(fragmentId, type, lineNo, line);
+                        block = new SobiBlock(fragmentId, type, getPublishedDateTime(), lineNo, line);
                     }
                     else if (block.getHeader().equals(headerMatcher.group()) && block.isMultiline()) {
                         // Active multi-line block with a new matching line: extend block
@@ -95,12 +95,12 @@ public class SobiFragment extends BaseSourceData
                         // Active block does not match new line or can't be extended: create new block
                         block.setEndLineNo(lineNo - 1);
                         blocks.add(block);
-                        SobiBlock newBlock = new SobiBlock(fragmentId, type, lineNo, line);
+                        SobiBlock newBlock = new SobiBlock(fragmentId, type, getPublishedDateTime(), lineNo, line);
                         // Handle certain SOBI grouping edge cases.
                         if (newBlock.getBillHeader().equals(block.getBillHeader())) {
                             // The law code line can be omitted when blank but it always precedes the 'C' line
                             if (newBlock.getType().equals(SobiLineType.SUMMARY) && !block.getType().equals(SobiLineType.LAW)) {
-                                blocks.add(new SobiBlock(fragmentId, type, lineNo,
+                                blocks.add(new SobiBlock(fragmentId, type, getPublishedDateTime(), lineNo,
                                            block.getBillHeader() + SobiLineType.LAW.getTypeCode()));
                             }
                         }
