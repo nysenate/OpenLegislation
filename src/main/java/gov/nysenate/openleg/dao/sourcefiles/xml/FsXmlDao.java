@@ -65,7 +65,7 @@ public class FsXmlDao implements SourceFileFsDao<XmlFile> {
         files = LimitOffset.limitList(files, limitOffset);
         List<XmlFile> xmlFile = new ArrayList<>();
         for (File file : files) {
-            xmlFile.add(new XmlFile(file));
+            xmlFile.add(toXmlFile(file));
         }
         return xmlFile;
     }
@@ -107,5 +107,14 @@ public class FsXmlDao implements SourceFileFsDao<XmlFile> {
         matt.find();
         File dir = new File(archiveSourceDir + "/" + year, matt.group(1));
         return new File(dir, fileName);
+    }
+
+    /* --- Internal Methods --- */
+
+    private XmlFile toXmlFile(File file) throws IOException {
+        if (file.getName().contains("_SENAGEN_")) {
+            return new XmlFile(file, "CP1252");
+        }
+        return new XmlFile(file);
     }
 }

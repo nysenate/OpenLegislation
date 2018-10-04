@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
+import gov.nysenate.openleg.model.sourcefiles.SourceType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
@@ -90,21 +91,15 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
 
                         // The notes are very important because they will contain any vital information such
                         // as if the meeting is off the floor (ad-hoc) or if there was a change to the meeting time.
-                        String notes = "";
-                        if (sobiFragment.getParentSobiFile().getFileName().contains("XML")) {
-                            notes = xml.getString("notes/text()", xmlCommittee)
+                        String notes = xml.getString("notes/text()", xmlCommittee)
+                                .replaceAll("╣","§")
+                                .replaceAll(" +"," ");
 
-                                    .replaceAll("\\|","\n")
-                                    .replaceAll(" +"," ")
-                                    .replaceAll("º","§")
-                                    .replaceAll("╣","§");
-                        }
-                        else {
-                            notes = xml.getString("notes/text()", xmlCommittee)
-                                    .replaceAll("╣","§")
-                                    .replaceAll("\n","")
-                                    .replaceAll("\\\\n", "\n")
-                                    .replaceAll(" +"," ");
+                        // Format specific replacements
+                        if (sobiFragment.getParentSobiFile().getSourceType() == SourceType.XML) {
+                            notes = notes.replaceAll("\\|", "\n");
+                        } else {
+                            notes = notes.replaceAll("\\\\n", "\n");
                         }
 
 
