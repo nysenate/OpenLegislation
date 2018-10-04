@@ -54,14 +54,7 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     /** {@inheritDoc} */
     @Override
     public SearchResults<TranscriptId> searchTranscripts(int year, String sort, LimitOffset limOff) throws SearchException {
-        RangeQueryBuilder rangeFilter = new RangeQueryBuilder("dateTime")
-                .from(LocalDate.of(year, 1, 1))
-                .to(LocalDate.of(year, 12, 31));
-        return search(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.matchAllQuery())
-                        .filter(rangeFilter),
-                null, sort, limOff);
+        return search(QueryBuilders.matchAllQuery(), year, sort, limOff);
     }
 
     /** {@inheritDoc} */
@@ -73,21 +66,22 @@ public class ElasticTranscriptSearchService implements TranscriptSearchService, 
     /** {@inheritDoc} */
     @Override
     public SearchResults<TranscriptId> searchTranscripts(String query, int year, String sort, LimitOffset limOff) throws SearchException {
-        RangeQueryBuilder rangeFilter = new RangeQueryBuilder("dateTime")
-                .from(LocalDate.of(year, 1, 1))
-                .to(LocalDate.of(year, 12, 31));
-        return search(
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.queryStringQuery(query))
-                        .filter(rangeFilter),
-                null, sort, limOff);
+        return search(QueryBuilders.queryStringQuery(query), year, sort, limOff);
     }
 
-    private SearchResults<TranscriptId> search(QueryBuilder query, QueryBuilder postFilter,
+    private SearchResults<TranscriptId> search(QueryBuilder query, Integer year,
                                                String sort, LimitOffset limOff) throws SearchException {
-        if (limOff == null) limOff = LimitOffset.TEN;
+        if (limOff == null) {
+            limOff = LimitOffset.TEN;
+        }
+        RangeQueryBuilder rangeFilter = null;
+        if (year != null) {
+            rangeFilter = new RangeQueryBuilder("dateTime")
+                    .from(LocalDate.of(year, 1, 1).toString())
+                    .to(LocalDate.of(year, 12, 31).toString());
+        }
         try {
-            return transcriptSearchDao.searchTranscripts(query, postFilter,
+            return transcriptSearchDao.searchTranscripts(query, rangeFilter,
                     ElasticSearchServiceUtils.extractSortBuilders(sort), limOff);
         }
         catch (SearchParseException ex) {

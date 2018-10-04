@@ -56,7 +56,7 @@
                     <select id="sort-by-select" ng-model="curr.billSearch.sort" ng-change="sortChanged()">
                       <option value="_score:desc,session:desc">Relevant</option>
                       <option value="status.actionDate:desc,_score:desc">Recent Status Update</option>
-                      <option value="printNo.keyword:asc,session:desc">Print No</option>
+                      <option value="printNo:asc,session:desc">Print No</option>
                       <option value="milestones.size:desc,_score:desc">Most Progress</option>
                       <option value="votes.items.memberVotes.items.NAY.size:desc,_score:desc">Most Nay Votes</option>
                       <option value="amendments.size:desc,_score:desc">Most Amendments</option>

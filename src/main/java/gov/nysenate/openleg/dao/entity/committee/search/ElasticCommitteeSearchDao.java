@@ -23,10 +23,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,6 +74,17 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
     @Override
     protected List<String> getIndices() {
         return Lists.newArrayList(committeeSearchIndexName);
+    }
+
+    @Override
+    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
+        HashMap<String, Object> props = super.getCustomMappingProperties();
+        props.put("chamber", searchableKeywordMapping);
+        props.put("location", searchableKeywordMapping);
+        props.put("name", searchableKeywordMapping);
+        props.put("meetDay", dayOfWeekMapping);
+        props.put("meetTime", basicTimeMapping);
+        return props;
     }
 
     /* --- Internal Methods --- */

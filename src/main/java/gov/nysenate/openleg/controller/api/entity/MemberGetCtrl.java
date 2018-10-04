@@ -116,7 +116,9 @@ public class MemberGetCtrl extends BaseCtrl
                                          @RequestParam(defaultValue = "false") boolean full,
                                          WebRequest request) throws SearchException, MemberNotFoundEx {
         LimitOffset limOff = getLimitOffset(request, 50);
-        SearchResults<Integer> results = memberSearch.searchMembers(SessionYear.of(sessionYear), Chamber.getValue(chamber), sort, limOff);
+        Chamber chamberValue = getEnumParameter("chamber", chamber, Chamber.class);
+        SearchResults<Integer> results =
+                memberSearch.searchMembers(SessionYear.of(sessionYear), chamberValue, sort, limOff);
         return getMemberResponse(full, limOff, results);
     }
 

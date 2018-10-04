@@ -17,8 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -69,6 +71,15 @@ public class ElasticTranscriptSearchDao extends ElasticBaseDao implements Transc
     @Override
     protected List<String> getIndices() {
         return Lists.newArrayList(transcriptIndexName);
+    }
+
+    @Override
+    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
+        HashMap<String, Object> props = super.getCustomMappingProperties();
+        props.put("filename", searchableKeywordMapping);
+        props.put("location", searchableKeywordMapping);
+        props.put("sessionType", searchableKeywordMapping);
+        return props;
     }
 
     private TranscriptId getTranscriptIdFromHit(SearchHit hit) {

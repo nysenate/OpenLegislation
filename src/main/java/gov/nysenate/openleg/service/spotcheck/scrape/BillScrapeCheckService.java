@@ -35,6 +35,8 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
 
     @Autowired
     BillDataService billDataService;
+    @Autowired
+    private BillScrapeVoteMismatchService voteMismatchService;
 
     @PostConstruct
     public void init(){
@@ -108,18 +110,8 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
         Set<BillScrapeVote> referenceVotes = reference.getVotes();
         Set<BillScrapeVote> openlegVotes = createOpenlegVotes(bill);
 
-        String referenceVotesString = referenceVotes.toString();
-        String openlegVotesString = openlegVotes.toString();
-
-        // Only consider primary differences significant when comparing.
-        // This will consider ú, u and U equal.
-        Collator usCollator = Collator.getInstance(Locale.US);
-        usCollator.setStrength(Collator.PRIMARY);
-
-        if (usCollator.compare(referenceVotesString, openlegVotesString) != 0) {
-               observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.BILL_SCRAPE_VOTE,
-                    openlegVotes.toString(), referenceVotes.toString()));
-        }
+        voteMismatchService.compareVotes(openlegVotes, referenceVotes)
+                .ifPresent(observation::addMismatch);
     }
 
     private Set<BillScrapeVote> createOpenlegVotes(Bill bill) {

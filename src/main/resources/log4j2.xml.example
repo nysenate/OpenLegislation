@@ -25,7 +25,7 @@
         <Logger name="logger.net.sf.ehcache" level="warn"/>
         <Logger name="org.elasticsearch.client.RestHighLevelClient" level="warn"/>
         <Root level="info">
-            <AppenderRef ref="file"/>
+            <AppenderRef ref="stdout"/>
         </Root>
     </Loggers>
 </Configuration>
