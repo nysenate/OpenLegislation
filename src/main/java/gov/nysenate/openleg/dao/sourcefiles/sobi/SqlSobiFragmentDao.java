@@ -29,11 +29,11 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
 
     @Override
     public List<SobiFragment> getSobiFragments(SobiFile sobiFile, SobiFragmentType fragmentType,
-                                               SortOrder sortById) {
+                                               SortOrder pubDateOrder) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("sobiFileName", sobiFile.getFileName());
         params.addValue("fragmentType", fragmentType.name());
-        OrderBy orderBy = new OrderBy("fragment_id", sortById);
+        OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder);
         return jdbcNamed.query(
                 SqlSobiFragmentQuery.GET_SOBI_FRAGMENTS_BY_SOBI_FILE_AND_TYPE.getSql(schema(), orderBy,
                         LimitOffset.ALL),
@@ -44,8 +44,8 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
      * {@inheritDoc}
      */
     @Override
-    public List<SobiFragment> getPendingSobiFragments(SortOrder sortById, LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("fragment_id", sortById);
+    public List<SobiFragment> getPendingSobiFragments(SortOrder pubDateOrder, LimitOffset limOff) {
+        OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder);
         return jdbcNamed.query(SqlSobiFragmentQuery.GET_PENDING_SOBI_FRAGMENTS.getSql(schema(), orderBy, limOff),
                 new SobiFragmentRowMapper());
     }
@@ -55,9 +55,9 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
      */
     @Override
     public List<SobiFragment> getPendingSobiFragments(ImmutableSet<SobiFragmentType> restrict,
-                                                      SortOrder sortById,
+                                                      SortOrder pubDateOrder,
                                                       LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("fragment_id", sortById);
+        OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fragmentTypes",
                 restrict.stream().map(Enum::name).collect(Collectors.toSet()));
@@ -102,10 +102,10 @@ public class SqlSobiFragmentDao extends SqlBaseDao implements SobiFragmentDao {
      * {@inheritDoc}
      */
     @Override
-    public List<SobiFragment> getSobiFragments(SourceFile sobiFile, SortOrder sortById) {
+    public List<SobiFragment> getSobiFragments(SourceFile sobiFile, SortOrder pubDateOrder) {
         MapSqlParameterSource params = new MapSqlParameterSource("sobiFileName",
                 sobiFile.getFileName());
-        OrderBy orderBy = new OrderBy("fragment_id", sortById);
+        OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder);
         return jdbcNamed.query(SqlSobiFragmentQuery.GET_SOBI_FRAGMENTS_BY_SOBI_FILE.getSql(schema(), orderBy, LimitOffset.ALL),
                 params, new SobiFragmentRowMapper(sobiFile));
     }
