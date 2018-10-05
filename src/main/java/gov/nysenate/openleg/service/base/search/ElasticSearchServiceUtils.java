@@ -1,7 +1,9 @@
 package gov.nysenate.openleg.service.base.search;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.model.search.SearchException;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 
@@ -14,6 +16,35 @@ public abstract class ElasticSearchServiceUtils {
     // Sorting scores and fields requires different method calls,
     // so the correct type must be identified.
     private final static String SCORE_NAME = "_score";
+
+    private static final ImmutableSet commonTextSortFields = ImmutableSet.of(
+            "printNo",
+            "basePrintNo",
+            "basePrintNoStr",
+            "version",
+            "activeVersion",
+            "chamber",
+            "location",
+            "name",
+            "docLevelId",
+            "docType",
+            "lawId",
+            "lawName",
+            "locationId",
+            "email",
+            "shortName",
+            "fullName",
+            "prefix",
+            "firstName",
+            "middleName",
+            "lastName",
+            "suffix",
+            "imgName",
+            "notificationType",
+            "filename",
+            "location",
+            "sessionType"
+    );
 
     /**
      * Generates a list of elastic search sort parameters from a CSV string.  If no parameters are specified,
@@ -31,8 +62,17 @@ public abstract class ElasticSearchServiceUtils {
             try {
                 Map<String, String> sortMap =
                         Splitter.on(",").omitEmptyStrings().trimResults().withKeyValueSeparator(":").split(sort);
-                sortMap.forEach((k, v) -> sortBuilders.add( (k.equals(SCORE_NAME) ? SortBuilders.scoreSort() : SortBuilders.fieldSort(k))
-                        .order(org.elasticsearch.search.sort.SortOrder.valueOf(v.toUpperCase()))));
+                sortMap.forEach((field, order) -> {
+                    // Replace common text properties with their keyword field
+                    // This is to maintain some limited backwards compatibility with the API before the elasticsearch 6 upgrade
+                    if (commonTextSortFields.contains(field)) {
+                        field += ".keyword";
+                    }
+                    SortBuilder sb = SCORE_NAME.equals(field)
+                            ? SortBuilders.scoreSort() : SortBuilders.fieldSort(field);
+                    sb.order(org.elasticsearch.search.sort.SortOrder.valueOf(StringUtils.upperCase(order)));
+                    sortBuilders.add(sb);
+                });
             } catch (IllegalArgumentException ex) {
                 throw new SearchException("Invalid sort string: '" + sort + "'\n" +
                         "Must be comma separated list of searchField:(ASC|DESC) e.g. 'status.statusType:ASC,status.actionDate:DESC'");
