@@ -39,15 +39,19 @@ Searches can be sorted by any number valid response fields.  This is accomplishe
 which takes a comma separated string of response fields, each designated with a sort order ("ASC" or "DESC") separated
 from the field with a colon.
 
+.. note:: When sorting using a text field, you must suffix the field name with ``.keyword``
+    e.g. ``...&sort=printNo.keyword:ASC...``
+    This does not apply to date and time fields, which are indexed in a different manner.
+
 For example, to get the 2013 governor's program bills in canonical order:
 ::
-    /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
+    /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
                             &sort=programInfo.sequenceNo:ASC
 
 Or, you may want to order them by their status and action date:
 ::
-    /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20_missing_:substitutedBy
-                            &sort=status.statusType:ASC,status.actionDate:DESC
+    /api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
+                            &sort=status.statusType.keyword:ASC,status.actionDate:DESC
 
 Search Response
 ---------------

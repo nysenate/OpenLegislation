@@ -313,26 +313,6 @@ public abstract class ElasticBaseDao
         return indexSettings;
     }
 
-    protected List<Map<String, Object>> getDynamicMappingTemplates() {
-        List<Map<String, Object>> templates = new ArrayList<>();
-        templates.add(ImmutableMap.of(
-                "printNos", ImmutableMap.of(
-                        "match_mapping_type", "string",
-                        "match_pattern", "regex",
-                        "match", "^(?:printNo|basePrintNo(?:Str)?)$",
-                        "mapping", ImmutableMap.of(
-                                "type", "keyword",
-                                "fields", ImmutableMap.of(
-                                        "search", ImmutableMap.of(
-                                                "type", "text"
-                                        )
-                                )
-                        )
-                )
-        ));
-        return templates;
-    }
-
     /**
      * Gets any custom mappings for the index.
      *
