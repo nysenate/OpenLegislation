@@ -92,7 +92,6 @@ public class ElasticApiLogSearchDao extends ElasticBaseDao implements ApiLogSear
         HashMap<String, Object> props = super.getCustomMappingProperties();
         props.put("requestMethod", ImmutableMap.of("type", "keyword"));
         props.put("ipAddress", ImmutableMap.of("type", "ip"));
-        props.put("contentType", searchableKeywordMapping);
         return props;
     }
 

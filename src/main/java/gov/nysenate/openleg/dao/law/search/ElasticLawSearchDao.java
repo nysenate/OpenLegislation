@@ -18,9 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /** {@inheritDoc} */
 @Repository
@@ -88,18 +90,6 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
         Settings.Builder indexSettings = super.getIndexSettings();
         indexSettings.put("index.number_of_shards", 2);
         return indexSettings;
-    }
-
-
-    @Override
-    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
-        HashMap<String, Object> props = super.getCustomMappingProperties();
-        props.put("docLevelId", searchableKeywordMapping);
-        props.put("docType", searchableKeywordMapping);
-        props.put("lawId", searchableKeywordMapping);
-        props.put("lawName", searchableKeywordMapping);
-        props.put("locationId", searchableKeywordMapping);
-        return props;
     }
 
     /* --- Internal --- */

@@ -21,10 +21,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.context.request.WebRequest;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDao
@@ -167,15 +169,6 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
         Settings.Builder indexSettings = super.getIndexSettings();
         indexSettings.put("index.number_of_shards", 6);
         return indexSettings;
-    }
-
-    @Override
-    protected HashMap<String, Object> getCustomMappingProperties() throws IOException {
-        HashMap<String, Object> props = super.getCustomMappingProperties();
-        props.put("printNo", searchableKeywordMapping);
-        props.put("basePrintNo", searchableKeywordMapping);
-        props.put("basePrintNoStr", searchableKeywordMapping);
-        return props;
     }
 
     private BaseBillId getBaseBillIdFromHit(SearchHit hit) {
