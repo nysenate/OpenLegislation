@@ -226,10 +226,14 @@ public abstract class ElasticBaseDao
         }
     }
 
-    protected void deleteEntry(String indexName, String id) {
-        DeleteRequest deleteRequest = new DeleteRequest(indexName)
+    protected DeleteRequest getDeleteRequest(String indexName, String id) {
+        return new DeleteRequest(indexName)
                 .type(defaultType)
                 .id(id);
+    }
+
+    protected void deleteEntry(String indexName, String id) {
+        DeleteRequest deleteRequest = getDeleteRequest(indexName, id);
         try {
             searchClient.delete(deleteRequest, RequestOptions.DEFAULT);
         }

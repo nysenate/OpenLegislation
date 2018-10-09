@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.law.search;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
@@ -16,7 +17,9 @@ import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.event.BulkLawUpdateEvent;
+import gov.nysenate.openleg.service.law.event.LawTreeUpdateEvent;
 import gov.nysenate.openleg.service.law.event.LawUpdateEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -94,6 +97,15 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
         }
     }
 
+    /** {@inheritDoc} */
+    @Subscribe
+    @Override
+    public void handleLawTreeUpdate(LawTreeUpdateEvent lawTreeUpdateEvent) {
+        String lawChapterId = lawTreeUpdateEvent.getLawChapterId();
+        clearLawChapter(lawChapterId);
+        indexLawChapter(lawChapterId);
+    }
+
     /* --- IndexedSearchService implementation --- */
 
     /** {@inheritDoc} */
@@ -151,6 +163,18 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     }
 
     /* --- Internal Methods --- */
+
+    /**
+     * Deletes all documents for the given law chapter from the law index.
+     * @param lawId String - law chapter id
+     */
+    private void clearLawChapter(String lawId) {
+        logger.info("Clearing law chapter {} from index", lawId);
+        QueryBuilder query = QueryBuilders.termQuery("lawId", StringUtils.lowerCase(lawId));
+        SearchResults<LawDocId> chapterDocs =
+                lawSearchDao.searchLawDocs(query, null, null, ImmutableList.of(), LimitOffset.ALL);
+        lawSearchDao.deleteLawDocsFromIndex(chapterDocs.getRawResults());
+    }
 
     /**
      * Indexes all published documents in a law chapter.

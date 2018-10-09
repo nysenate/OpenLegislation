@@ -72,10 +72,12 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
 
     /** {@inheritDoc} */
     @Override
-    public void deleteLawDocFromIndex(LawDocId lawDocId) {
-        if (lawDocId != null) {
-            deleteEntry(lawIndexName, createSearchId(lawDocId));
-        }
+    public void deleteLawDocsFromIndex(Collection<LawDocId> lawDocIds) {
+        BulkRequest bulkRequest = new BulkRequest();
+        lawDocIds.stream()
+                .map(docId -> getDeleteRequest(lawIndexName, createSearchId(docId)))
+                .forEach(bulkRequest::add);
+        safeBulkRequestExecute(bulkRequest);
     }
 
     /** {@inheritDoc} */

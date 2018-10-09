@@ -8,6 +8,10 @@ public class ContentUpdateEvent
 
     /** --- Constructors --- */
 
+    public ContentUpdateEvent() {
+        this(LocalDateTime.now());
+    }
+
     public ContentUpdateEvent(LocalDateTime updateDateTime) {
         this.updateDateTime = updateDateTime;
     }

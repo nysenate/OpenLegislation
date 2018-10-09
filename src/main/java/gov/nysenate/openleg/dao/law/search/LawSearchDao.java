@@ -26,27 +26,27 @@ public interface LawSearchDao
      * @param limOff LimitOffset
      * @return SearchResults<LawDocId>
      */
-    public SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder filter, RescorerBuilder rescorer,
-                                                 List<SortBuilder> sort, LimitOffset limOff);
+    SearchResults<LawDocId> searchLawDocs(QueryBuilder query, QueryBuilder filter, RescorerBuilder rescorer,
+                                          List<SortBuilder> sort, LimitOffset limOff);
 
     /**
      * Update the law index with the supplied law doc.
      *
      * @param lawDoc LawDocument
      */
-    public void updateLawIndex(LawDocument lawDoc);
+    void updateLawIndex(LawDocument lawDoc);
 
     /**
      * Update the law index with the supplied collection of law docs.
      *
      * @param lawDocs Collection<LawDocument>
      */
-    public void updateLawIndex(Collection<LawDocument> lawDocs);
+    void updateLawIndex(Collection<LawDocument> lawDocs);
 
     /**
-     * Removes the law document from the index.
+     * Removes the given law documents from the index
      *
-     * @param lawDocId LawDocId
+     * @param lawDocIds {@link Collection<LawDocId>}
      */
-    public void deleteLawDocFromIndex(LawDocId lawDocId);
+    void deleteLawDocsFromIndex(Collection<LawDocId> lawDocIds);
 }
