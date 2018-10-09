@@ -9,9 +9,12 @@ import gov.nysenate.openleg.dao.law.data.LawDataDao;
 import gov.nysenate.openleg.dao.law.search.ElasticLawSearchDao;
 import gov.nysenate.openleg.model.law.LawDocId;
 import gov.nysenate.openleg.model.law.LawDocument;
+import gov.nysenate.openleg.model.law.LawInfo;
+import gov.nysenate.openleg.model.law.LawTree;
 import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
+import gov.nysenate.openleg.service.law.data.LawDataService;
 import gov.nysenate.openleg.service.law.event.BulkLawUpdateEvent;
 import gov.nysenate.openleg.service.law.event.LawUpdateEvent;
 import org.elasticsearch.ElasticsearchException;
@@ -25,10 +28,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,13 +42,14 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Autowired private Environment env;
     @Autowired private ElasticLawSearchDao lawSearchDao;
     @Autowired private LawDataDao lawDataDao;
+    @Autowired private LawDataService lawDataService;
 
     @PostConstruct
     private void init() {
         eventBus.register(this);
     }
 
-    /** --- LawSearchService implementation --- */
+    /* --- LawSearchService implementation --- */
 
     /** {@inheritDoc} */
     @Override
@@ -91,7 +94,7 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
         }
     }
 
-    /** --- IndexedSearchService implementation --- */
+    /* --- IndexedSearchService implementation --- */
 
     /** {@inheritDoc} */
     @Override
@@ -103,7 +106,10 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     @Override
     public void updateIndex(Collection<LawDocument> content) {
         if (env.isElasticIndexing()) {
-            lawSearchDao.updateLawIndex(content);
+            List<LawDocument> indexableDocs = content.stream()
+                    .filter(this::isLawDocIndexable)
+                    .collect(Collectors.toList());
+            lawSearchDao.updateLawIndex(indexableDocs);
         }
     }
 
@@ -119,9 +125,11 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     public void rebuildIndex() {
         logger.info("Handling law search re-indexing");
         clearIndex();
-        lawDataDao.getLawInfos().forEach(lawInfo ->
-            updateIndex(lawDataDao.getLawDocuments(lawInfo.getLawId(), LocalDate.now()).entrySet().stream()
-                .map(Map.Entry::getValue).collect(Collectors.toList())));
+        lawDataDao.getLawInfos().stream()
+                .map(LawInfo::getLawId)
+                .sorted()
+                .forEach(this::indexLawChapter);
+        logger.info("Completed law search re-index");
     }
 
     /** {@inheritDoc} */
@@ -140,5 +148,29 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
         if (event.affects(SearchIndex.LAW)) {
             clearIndex();
         }
+    }
+
+    /* --- Internal Methods --- */
+
+    /**
+     * Indexes all published documents in a law chapter.
+     *
+     * Does not clear the chapter, so previously indexed documents may still be present.
+     * @param lawId String - law chapter id
+     */
+    private void indexLawChapter(String lawId) {
+        logger.info("Indexing law chapter {}", lawId);
+        Collection<LawDocument> lawDocs = lawDataService.getLawDocuments(lawId, LocalDate.now()).values();
+        updateIndex(lawDocs);
+    }
+
+    /**
+     * Determines if a law document can be indexed.
+     *
+     * The document must be present in the current law tree.
+     */
+    private boolean isLawDocIndexable(LawDocument doc) {
+        LawTree lawTree = lawDataService.getLawTree(doc.getLawId());
+        return lawTree.find(doc.getDocumentId()).isPresent();
     }
 }
