@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="warn" strict="true">
     <Properties>
-        <Property name="LOG_PATTERN">%d{dd MMM yyyy HH:mm:ss,SSS} %5p %c{1}:%L - %m%n</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %5p %t %c{2}:%L - %m%n</Property>
         <Property name="LOG_DIR">${sys:catalina.base}/logs</Property>
         <Property name="LOG_FILENAME">${LOG_DIR}/webapp.log</Property>
         <Property name="LOG_ROLLNAME">${LOG_DIR}/webapp.log.%i</Property>
