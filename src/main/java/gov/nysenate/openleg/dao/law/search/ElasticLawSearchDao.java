@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.law.LawDocId;
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.search.SearchResults;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
@@ -59,9 +60,12 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     public void updateLawIndex(Collection<LawDocument> lawDocs) {
         if (lawDocs != null && !lawDocs.isEmpty()) {
             BulkRequest bulkRequest = new BulkRequest();
-            lawDocs.stream().map(LawDocView::new)
-                    .map(docView -> getJsonIndexRequest(lawIndexName, createSearchId(docView), docView))
-                    .forEach(bulkRequest::add);
+            for (LawDocument doc : lawDocs) {
+                String searchId = createSearchId(doc);
+                LawDocView lawDocView = new LawDocView(doc);
+                IndexRequest indexRequest = getJsonIndexRequest(lawIndexName, searchId, lawDocView);
+                bulkRequest.add(indexRequest);
+            }
             safeBulkRequestExecute(bulkRequest);
         }
     }
@@ -100,10 +104,7 @@ public class ElasticLawSearchDao extends ElasticBaseDao implements LawSearchDao
     }
 
     private String createSearchId(LawDocId lawDocId) {
-        return lawDocId.getLocationId();
+        return lawDocId.getDocumentId();
     }
 
-    private String createSearchId(LawDocView lawDocView) {
-        return lawDocView.getLocationId();
-    }
 }
