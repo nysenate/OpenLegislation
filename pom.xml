@@ -98,7 +98,7 @@
     <jsoup.version>1.8.1</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.12</junit.version>
-    <log4j.version>2.11.0</log4j.version>
+    <log4j.version>2.11.1</log4j.version>
     <pdfbox.version>1.8.7</pdfbox.version>
     <postgres-jdbc.version>9.4.1209</postgres-jdbc.version>
     <shiro.version>1.2.3</shiro.version>
