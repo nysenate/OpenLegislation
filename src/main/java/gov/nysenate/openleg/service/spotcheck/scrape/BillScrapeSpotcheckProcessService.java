@@ -36,7 +36,11 @@ public class BillScrapeSpotcheckProcessService extends BaseSpotcheckProcessServi
 
     @Override
     public int doCollate() throws IOException {
-        return scraper.scrape();
+        // Scrape to generate a new file
+        scraper.scrape();
+        // Register any new files in the incoming dir.
+        List<BillScrapeFile> newBillScrapeFiles = btrDao.registerIncomingScrapedBills();
+        return newBillScrapeFiles.size();
     }
 
     @Override

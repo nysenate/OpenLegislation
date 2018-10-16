@@ -5,16 +5,11 @@ import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeQueueEntry;
-import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.model.spotcheck.billscrape.ScrapeQueuePriority;
 import gov.nysenate.openleg.service.scraping.bill.BillScrapeFile;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,13 +20,21 @@ public interface BillScrapeReferenceDao {
 
 
     /**
-     * Saves a file containing the scraped bill content to the incoming directory and
-     * saves file metadata to the database.
+     * Saves a file containing the scraped bill content to the incoming directory
+     *
      * @param content The content of the file.
      * @param scrapedBill The BaseBillId the file represents.
      * @throws IOException
      */
     void saveScrapedBillContent(String content, BaseBillId scrapedBill) throws IOException;
+
+    /**
+     * Scans the incoming scraped bill directory and registers any files in the db if they aren't already.
+     *
+     * @return {@link List<BillScrapeFile>} list of new files registered.
+     * @throws IOException
+     */
+    List<BillScrapeFile> registerIncomingScrapedBills() throws IOException;
 
     /**
      * @return A list of all incoming scraped bill files
@@ -47,7 +50,7 @@ public interface BillScrapeReferenceDao {
     BillScrapeFile archiveScrapedBill(BillScrapeFile scrapedBill) throws IOException;
 
     /**
-     * Updates a scraped bill file.
+     * Updates or inserts a scraped bill file.
      * @param scrapeFile
      */
     void updateScrapedBill(BillScrapeFile scrapeFile);
