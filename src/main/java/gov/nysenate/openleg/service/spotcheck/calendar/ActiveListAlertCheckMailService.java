@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class ActiveListAlertCheckMailService extends SimpleCheckMailService implements CheckMailService {
 
     protected static final Pattern activeListAlertSubjectPattern =
-            Pattern.compile("^Senate\\s+Active\\s+List\\s+No\\.\\s+(?<calNoAndSup>\\d+(-\\d+)?)\\s+for\\s+[A-z]+day\\s+(?<date>\\d{2}/\\d{2}/\\d{4})$");
+            Pattern.compile("^Senate\\s+Active\\s+List\\s+No\\.\\s+(?<calNoAndSup>\\d+(-\\d+)?)[A-Z]?\\s+for\\s+[A-z]+day\\s+(?<date>\\d{2}/\\d{2}/\\d{4})$");
 
     @Override
     public int checkMail() {
