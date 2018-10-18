@@ -30,6 +30,22 @@
             <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
           </md-card>
 
+          <!--------------------------------- ADDED SECTION  --------------------------------->
+
+          <div style="border-radius: 25px; text-align: center; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+          <p style="font-weight: bold;"> Please Choose One: </p>
+          <md-button style="border-radius: 15px;" class="md-primary md-raised" ng-click="showGen()">
+          Generate Issue
+        </md-button>
+          <md-button style="border-radius: 15px;" class="md-primary md-raised" ng-click="showLink()">
+            Link Issue
+          </md-button>
+            <br>
+            <br>
+          </div>
+
+          <!---------------------------------------------------------------------------------->
+
           <md-card class="mismatch-diff-text-controls">
             <select ng-model="textControls.whitespace" ng-change="formatDisplayData()"
                     ng-options="value as label for (value, label) in whitespaceOptions"></select>
@@ -44,13 +60,13 @@
       <md-content>
         <div class="mismatch-diff-side">
            <div class="mismatch-diff-source-label">
-             <a ng-href="{{currentMismatch.key | referenceUrl:currentMismatch.datasource:currentMismatch.contentType}}"
+             <a ng-href="{{currentMismatch.key | referenceUrl:currentMismatch.datasource:currentMismatch.contentType}}"˜˜
                 target="_blank">
                <span ng-bind="currentMismatch.datasource | dataSourceRef"></span>
              </a>
           </div>
 
-          <div id="mismatch-diff-reference" class="mismatch-diff-container">
+          <div id="mismatch-diff-reference" class="mismatch-diff-container">˜
             <mismatch-diff show-lines="false" left="observedData" right="referenceData"></mismatch-diff>
           </div>
         </div>

@@ -1,5 +1,36 @@
 var apiModule = angular.module('open.api', []);
 
+/** --------------------- Added Section --------------------- */
+/** --- Spotcheck API --- */
+
+apiModule.factory('SpotcheckList', ['$resource', function($resource) {
+    return $resource('/issues.json?offset=:offset&limit=:limit&sort=:sort&include=:include&attachments=:attachments&relations=:relations&key=', {
+    //return $resource('https://dev.nysenate.gov/issues.json?key=5da517d623411d6cfbd21c55a4e67618052c3b9d', {
+        offset: '@offset',
+        limit: '@limit',
+        sort: '@sort',
+        include: '@include',
+        attachments: '@attachments',
+        relations: '@relations'
+    });
+}]);
+
+apiModule.factory('SpotcheckRel', ['$resource', function($resource) {
+    return $resource('/issues/:id/relations.json?key=', {
+        //return $resource('https://dev.nysenate.gov/issues.json?key=5da517d623411d6cfbd21c55a4e67618052c3b9d', {
+        id: '@id'
+    });
+}]);
+
+apiModule.factory('SpotcheckIssueApi', ['$resource', function($resource) {
+    return $resource('/issues.json?key=', {
+    },
+    {'create': {method:'POST'}});
+}]);
+
+/** --------------------- End of Added Section ------------------------------ */
+
+
 /** --- Bill API --- */
 
 apiModule.factory('BillListingApi', ['$resource', function($resource) {

@@ -60,20 +60,23 @@
         <div class="spotcheck-col-type">{{mismatch.mismatchType | mismatchType:mismatch.datasource}}</div>
         <div class="spotcheck-col-date">{{mismatch.observedDate}}</div>
         <div class="spotcheck-col-issue">
+
+          <!--------------------------------- ADDED SECTION  --------------------------------->
+
           <md-input-container class="md-block">
-            <input type="text"
-                   title="Assign an issue id to this mismatch"
-                   aria-label="Assign an issue id to this mismatch"
-                   ng-model="mismatch.issueInput"
-                   ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)"
-                   ng-blur="updateIssue(mismatch)">
+
+            <a href={{mismatch.issueInput}} ng-blur="updateIssue(mismatch)" ng-keyup="$event.keyCode == 13 && updateIssue(mismatch)">{{mismatch.issue}}</a>
+
+            <!--------------------------------------------------------------------------->
+v
+
             <div class="report-page-toast" ng-class="{'saved': mismatch.issueSaved}">Saved</div>
           </md-input-container>
         </div>
         <div class="spotcheck-col-source">{{mismatch.refTypeLabel}}</div>
       </div>
       <div class="spotcheck-table-buttons">
-        <md-button class="md-raised rounded-corner-button"
+        <md-button class="md-raised rounded-corner-button"a
                    ng-click="showDetailedDiff(mismatch)">
           <div ng-show="mismatch.diffLoading === false">Diff</div>
           <div ng-show="mismatch.diffLoading" layout="row" layout-sm="column" layout-align="space-around">

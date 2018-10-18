@@ -18,6 +18,7 @@
                ng-disabled="currentDay()">
       Jump to Today
     </md-button>
+
   </md-content>
 
   <md-card class="content-card spotcheck-report-content-tabs">
