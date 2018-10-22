@@ -2,6 +2,7 @@ package gov.nysenate.openleg.util;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import gov.nysenate.openleg.model.entity.Chamber;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,7 +12,7 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -121,45 +122,125 @@ public class BillTextUtils
 
 
     /**
-     *  Cleans the HTML from the billText
+     *  Extracts plain bill text from html.
+     *
+     *  Substitutes text sections that are denoted by markup with plain text equivalents.
+     *  Further text alteration is needed depending on the type of text
+     *  @see #formatHtmlExtractedBillText(String)
+     *  @see #formatHtmlExtractedResoText(String)
      */
     public static String parseHTMLtext(String htmlText)    {
 
         Document doc = Jsoup.parse(htmlText);
         if (doc.select("pre").size() == 0) {
-            return formatHeader(htmlText);
+            return htmlText;
         }
-        Elements preTag = doc.select("pre");
-        doc = null; //doc is never used again. Save some memory here before the recursive processTextNode
-        StringBuilder textBuilder = new StringBuilder();
-
-        Iterator<Element> elementIterator = preTag.iterator();
-        while (elementIterator.hasNext()) {
-            processTextNode(elementIterator.next(),textBuilder);
-            elementIterator.remove();
-        }
-
-        return formatHeader(textBuilder.toString());
+        Elements preTags = doc.select("pre");
+        return parseHTMLText(preTags);
     }
 
-    public static String formatHeader(String text) {
-        text = text.replaceAll("[\r\\uFEFF-\\uFFFF]|(?<=\n) ", "");
-        text = text.replaceFirst("[ ]{3,}STATE OF NEW YORK\n",
-                "                           S T A T E   O F   N E W   Y O R K\n");
-        text = text.replaceFirst("[ ]{3,}IN SENATE\n",
-                "                                    I N  S E N A T E\n");
-        text = text.replaceFirst("[ ]{3,}IN ASSEMBLY\n",
-                "                                    I N  A S S E M B L Y\n");
-        text = text.replaceFirst("[ ]{3,}SENATE - ASSEMBLY\n",
-                "                              S E N A T E - A S S E M B L Y\n");
+    public static String parseHTMLText(Element element) {
+        return parseHTMLText(new Elements(element));
+    }
 
+    public static String parseHTMLText(Collection<Element> elements) {
+        StringBuilder textBuilder = new StringBuilder();
+
+        elements.forEach(element -> processTextNode(element, textBuilder));
+
+        String text = textBuilder.toString();
+        // Remove some undesirable characters and blank lines with spaces
+        text = text.replaceAll("[\r\\uFEFF-\\uFFFF]+|(?<=\n|^) +(?=\n|$)", "");
+        return text;
+    }
+
+    private static final String inSenate = "IN SENATE";
+    private static final String inAssembly = "IN ASSEMBLY";
+    private static final String inBoth = "SENATE - ASSEMBLY";
+    private static final Pattern billHeaderPattern = Pattern.compile("^(?<startingNewlines>\n*)" +
+            "[ ]{3,}STATE OF NEW YORK\n" +
+            "(?<divider>(?:[ \\w.\\-]*\n){0,8})" +
+            "[ ]{3,}(?<chamber>" + inSenate + "|" + inAssembly + "|" + inBoth + ")" +
+            "(?:(?<prefiledWhiteSpace>\\s+)\\(Prefiled\\))?"
+    );
+
+    /**
+     * Reformat plain bill text that has been extracted from html
+     *
+     * @param text String
+     * @return String
+     */
+    public static String formatHtmlExtractedBillText(String text) {
+        // The html has an extra space at the beginning of each line
+        text = text.replaceAll("(?<=\n|^) ", "");
+        Matcher matcher = billHeaderPattern.matcher(text);
+        if (matcher.find()) {
+            StringBuilder replacement = new StringBuilder()
+                    .append(matcher.group("startingNewlines"))
+                    .append(StringUtils.repeat(' ', 27))
+                    .append("S T A T E   O F   N E W   Y O R K\n")
+                    .append(matcher.group("divider"));
+            switch (matcher.group("chamber")) {
+                case inSenate:
+                    replacement.append(StringUtils.repeat(' ', 35))
+                            .append("I N  S E N A T E");
+                    break;
+                case inAssembly:
+                    replacement.append(StringUtils.repeat(' ', 33))
+                            .append("I N  A S S E M B L Y");
+                    break;
+                case inBoth:
+                    replacement.append(StringUtils.repeat(' ', 29))
+                            .append("S E N A T E - A S S E M B L Y");
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown chamber value: " + matcher.group("chamber"));
+            }
+            if (matcher.group("prefiledWhiteSpace") != null) {
+                replacement.append(matcher.group("prefiledWhiteSpace"))
+                        .append("(PREFILED)");
+            }
+            text = matcher.replaceFirst(replacement.toString());
+        }
+
+        return text;
+    }
+
+    private static final Pattern resolutionHeaderPattern = Pattern.compile(
+            "^\\s+(?<chamber>Senate|Assembly) *Resolution *No *\\. *(\\d+)\\s+" +
+                    "BY:[\\w '.\\-:()]+\n" +
+                    "(?:\\s+(?<verb>[A-Z]{2,}ING))?",
+            Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Reformat plain resolution text that has been extracted from html to resemble SOBI resolution text.
+     *
+     * @param text String
+     * @return String
+     */
+    public static String formatHtmlExtractedResoText(String text) {
+        Matcher headerMatcher = resolutionHeaderPattern.matcher(text);
+        if (headerMatcher.find()) {
+            Chamber chamber = Chamber.getValue(headerMatcher.group("chamber"));
+
+            String replacement = "\n";
+            String verb = headerMatcher.group("verb");
+            if (verb != null) {
+                replacement += String.format("%s RESOLUTION %s",
+                        verb.equalsIgnoreCase("providing") ? chamber : "LEGISLATIVE",
+                        verb.toLowerCase()
+                );
+            }
+
+            text = headerMatcher.replaceFirst(replacement);
+        }
         return text;
     }
 
     /**
      * Extracts bill/memo text from an element recursively
      */
-    public static void processTextNode(Element element, StringBuilder stringBuilder) {
+    private static void processTextNode(Element element, StringBuilder stringBuilder) {
         processTextNode(element, stringBuilder, false);
     }
 

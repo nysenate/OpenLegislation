@@ -3,7 +3,7 @@ package gov.nysenate.openleg.service.scraping.bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillType;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
-import gov.nysenate.openleg.service.scraping.LrsOutageScrapingEx;
+import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,12 +16,10 @@ import java.io.IOException;
 public class BillScrapeReferenceFactory {
 
     private BillScrapeReferenceHtmlParser htmlParser;
-    private LrsToSobiBillText lrsToSobiBillText;
 
     @Autowired
-    public BillScrapeReferenceFactory(BillScrapeReferenceHtmlParser htmlParser, LrsToSobiBillText lrsToSobiBillText) {
+    public BillScrapeReferenceFactory(BillScrapeReferenceHtmlParser htmlParser) {
         this.htmlParser = htmlParser;
-        this.lrsToSobiBillText = lrsToSobiBillText;
     }
 
     public BillScrapeReference createFromFile(BillScrapeFile btrFile) throws IOException {
@@ -32,17 +30,18 @@ public class BillScrapeReferenceFactory {
         BillId billId = new BillId(htmlParser.parsePrintNo(doc), btrFile.getBaseBillId().getSession());
         String text = htmlParser.parseText(doc);
         text = formatText(text, billId.getBillType());
-        String memo = billId.getBillType().isResolution() ? "" : htmlParser.parseMemo(doc); // Only parse memo's for non resolutions.
+        // Only parse memo's for non resolutions.
+        String memo = billId.getBillType().isResolution() ? "" : htmlParser.parseMemo(doc);
         BillScrapeReference reference = new BillScrapeReference(billId, btrFile.getReferenceDateTime(), text, memo);
         reference.setVotes(htmlParser.parseVotes(doc));
         return reference;
     }
 
     private String formatText(String text, BillType billType) {
-        if (billType.isResolution()) {
-            return lrsToSobiBillText.resolutionText(text, billType.getChamber());
+        if (!billType.isResolution()) {
+            text = BillTextUtils.formatHtmlExtractedBillText(text);
         }
-        return lrsToSobiBillText.billText(text);
+        return text;
     }
 
     private BillScrapeReference errorBillScrapeReference(BillScrapeFile btrFile) throws IOException {

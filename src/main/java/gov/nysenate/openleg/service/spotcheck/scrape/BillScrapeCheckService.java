@@ -6,12 +6,12 @@ import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.text.Collator;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -96,6 +95,22 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
         String strippedRefText = stripNonAlpha(refText);
         // Check normalized text and report on non-normalized text as well if there is a mismatch
         if (!StringUtils.equals(strippedRefText, strippedDataText)) {
+            // If its a resolution, check if its a header problem
+            if (billAmendment.getBillId().getBillType().isResolution()) {
+                // Try removing the resolution header from the ref in case we are checking against sobi data
+                String refTextNoHeader = stripNonAlpha(BillTextUtils.formatHtmlExtractedResoText(refText));
+                if (StringUtils.equals(strippedDataText, refTextNoHeader)) {
+                    // todo remove this when we have bill text for all sobi years.
+                    return;
+                }
+                // Try stripping the data header as well, to see if the header is the only issue.
+                String dataTextNoHeader = stripNonAlpha(BillTextUtils.formatHtmlExtractedResoText(refText));
+                if (StringUtils.equals(refTextNoHeader, dataTextNoHeader)) {
+                    obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_RESO_HEADER, dataText, refText));
+                    return;
+                }
+            }
+
             String pureContentRefText = stripNonContent(refText);
             String pureContentDataText = stripNonContent(dataText);
             if (!StringUtils.equals(pureContentRefText, pureContentDataText)) {

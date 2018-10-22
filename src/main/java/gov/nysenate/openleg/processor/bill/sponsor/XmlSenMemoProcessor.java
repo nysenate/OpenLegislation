@@ -55,8 +55,10 @@ public class XmlSenMemoProcessor extends AbstractMemoProcessor implements SobiPr
 
             Bill basebill = getOrCreateBaseBill(billId, fragment);
 
+            String memoText = getNodeText(senMemoNode);
+
             BillAmendment amendment = basebill.getAmendment(version);
-            amendment.setMemo(getNodeText(senMemoNode));
+            amendment.setMemo(memoText);
 
 
             billIngestCache.set(basebill.getBaseBillId(), basebill, fragment);

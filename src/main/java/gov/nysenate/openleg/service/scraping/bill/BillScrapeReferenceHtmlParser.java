@@ -1,19 +1,19 @@
 package gov.nysenate.openleg.service.scraping.bill;
 
-import com.google.common.collect.*;
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.processor.base.ParseError;
-import org.jsoup.Jsoup;
 import gov.nysenate.openleg.util.BillTextUtils;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -74,9 +74,7 @@ public class BillScrapeReferenceHtmlParser {
             }
         }
 
-        StringBuilder textBuilder = new StringBuilder();
-        textEles.forEach(ele -> BillTextUtils.processTextNode(ele, textBuilder));
-        return textBuilder.toString();
+        return BillTextUtils.parseHTMLText(textEles);
     }
 
     /**
@@ -86,14 +84,11 @@ public class BillScrapeReferenceHtmlParser {
      */
     public String parseMemo(Document doc) {
         Element memoElement = doc.select("pre:last-of-type").first(); // you are the first and last of your kind
+        String memoText = "";
         if (memoElement != null) {
-            StringBuilder memoBuilder = new StringBuilder();
-            BillTextUtils.processTextNode(memoElement, memoBuilder);
-            // todo format text
-            return memoBuilder.toString();
+            memoText = BillTextUtils.parseHTMLText(memoElement);
         }
-        // TODO: add parse exception here if element is null like other methods.
-        return "";
+        return memoText;
     }
 
     /**
