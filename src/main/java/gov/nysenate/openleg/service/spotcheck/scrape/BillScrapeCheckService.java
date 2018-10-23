@@ -104,7 +104,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
                     return;
                 }
                 // Try stripping the data header as well, to see if the header is the only issue.
-                String dataTextNoHeader = stripNonAlpha(BillTextUtils.formatHtmlExtractedResoText(refText));
+                String dataTextNoHeader = stripNonAlpha(BillTextUtils.formatHtmlExtractedResoText(dataText));
                 if (StringUtils.equals(refTextNoHeader, dataTextNoHeader)) {
                     obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_RESO_HEADER, dataText, refText));
                     return;
