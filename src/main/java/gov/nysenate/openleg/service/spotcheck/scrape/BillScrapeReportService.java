@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.scrape;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.bill.scrape.SqlFsBillScrapeReferenceDao;
 import gov.nysenate.openleg.dao.spotcheck.BaseBillIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
@@ -7,11 +9,9 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
-import gov.nysenate.openleg.model.spotcheck.billscrape.ScrapeQueuePriority;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
-import gov.nysenate.openleg.service.scraping.LrsOutageScrapingEx;
 import gov.nysenate.openleg.service.scraping.bill.BillScrapeFile;
 import gov.nysenate.openleg.service.scraping.bill.BillScrapeReferenceFactory;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
@@ -35,6 +35,8 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 public class BillScrapeReportService extends BaseSpotCheckReportService {
 
     private static final Logger logger = LoggerFactory.getLogger(BillScrapeReportService.class);
+
+    private static final int maxBillsPerReport = 5000;
 
     @Autowired private SqlFsBillScrapeReferenceDao dao;
     @Autowired private BillDataService billDataService;
@@ -60,8 +62,11 @@ public class BillScrapeReportService extends BaseSpotCheckReportService {
      */
     @Override
     public SpotCheckReport<BaseBillId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, IOException {
-        List<BillScrapeFile> scrapeFiles = dao.pendingScrapeBills();
-        List<BillScrapeReference> references = parseBillScrapeReferences(scrapeFiles);
+        PaginatedList<BillScrapeFile> pendingScrapeFiles = dao.getPendingScrapeBills(new LimitOffset(maxBillsPerReport));
+        if (pendingScrapeFiles.getTotal() > maxBillsPerReport) {
+            logger.info("Checking {} of {} pending scraped bills", maxBillsPerReport, pendingScrapeFiles.getTotal());
+        }
+        List<BillScrapeReference> references = parseBillScrapeReferences(pendingScrapeFiles.getResults());
 
         if (references.isEmpty()) {
             throw new ReferenceDataNotFoundEx();
@@ -76,7 +81,7 @@ public class BillScrapeReportService extends BaseSpotCheckReportService {
                 .forEach(report::addObservation);
 
         // Set each reference as checked
-        for (BillScrapeFile file : scrapeFiles) {
+        for (BillScrapeFile file : pendingScrapeFiles.getResults()) {
             file.setPendingProcessing(false);
             dao.updateScrapedBill(file);
         }

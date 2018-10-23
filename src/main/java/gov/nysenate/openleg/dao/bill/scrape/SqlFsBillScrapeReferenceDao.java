@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.bill.scrape;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.*;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeQueueEntry;
 import gov.nysenate.openleg.service.scraping.bill.BillScrapeFile;
@@ -101,7 +102,7 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
 
     @Override
     public List<BillScrapeFile> getIncomingScrapedBills() {
-        String sql = SqlBillScrapeReferenceQuery.SELECT_INCOMING_BILL_SCRAPE_FILES.getSql(schema());
+        String sql = SELECT_INCOMING_BILL_SCRAPE_FILES.getSql(schema());
         List<BillScrapeFile> scrapeFiles = jdbcNamed.query(sql, billScrapeFileMapper);
         return scrapeFiles;
     }
@@ -126,20 +127,30 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public void updateScrapedBill(BillScrapeFile scrapeFile) {
         MapSqlParameterSource params = billScrapeParams(scrapeFile);
-        String updateSql = SqlBillScrapeReferenceQuery.UPDATE_BILL_SCRAPE_FILE.getSql(schema());
+        String updateSql = UPDATE_BILL_SCRAPE_FILE.getSql(schema());
         int updated = jdbcNamed.update(updateSql, params);
 
         if (updated == 0) {
             // Insert if no rows updated.
-            String insertSql = SqlBillScrapeReferenceQuery.INSERT_BILL_SCRAPE_FILE.getSql(schema());
+            String insertSql = INSERT_BILL_SCRAPE_FILE.getSql(schema());
             jdbcNamed.update(insertSql, params);
         }
     }
 
     @Override
-    public List<BillScrapeFile> pendingScrapeBills() {
-        String sql = SqlBillScrapeReferenceQuery.SELECT_PENDING_BILL_SCRAPE_FILES.getSql(schema());
-        return jdbcNamed.query(sql, billScrapeFileMapper);
+    public PaginatedList<BillScrapeFile> getPendingScrapeBills(LimitOffset limitOffset) {
+        String sql = SELECT_PENDING_BILL_SCRAPE_FILES.getSql(schema(), limitOffset);
+        PaginatedRowHandler<BillScrapeFile> rowHandler =
+                new PaginatedRowHandler<>(limitOffset, "total", billScrapeFileMapper);
+        jdbcNamed.query(sql, rowHandler);
+        return rowHandler.getList();
+    }
+
+    @Override
+    public int stageArchivedScrapeFiles(SessionYear sessionYear) {
+        String sql = STAGE_RELEVANT_SCRAPE_FILES_FOR_SESSION.getSql(schema());
+        MapSqlParameterSource params = new MapSqlParameterSource("session", sessionYear.getYear());
+        return jdbcNamed.update(sql, params);
     }
 
     @Override

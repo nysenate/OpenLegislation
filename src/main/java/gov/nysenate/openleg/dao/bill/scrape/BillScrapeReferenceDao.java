@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.bill.scrape;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeQueueEntry;
 import gov.nysenate.openleg.model.spotcheck.billscrape.ScrapeQueuePriority;
@@ -57,9 +58,20 @@ public interface BillScrapeReferenceDao {
 
     /**
      * Gets bill scrape files pending processing.
-     * @return
+     *
+     * @param limitOffset {@link LimitOffset}
+     * @return {@link List<LimitOffset>}
      */
-    List<BillScrapeFile> pendingScrapeBills();
+    PaginatedList<BillScrapeFile> getPendingScrapeBills(LimitOffset limitOffset);
+
+    /**
+     * Stages reasonably un-stale archived scrape files of the given session for processing.
+     *
+     * Only stages files that were scraped after the latest update to their bill.
+     * @param sessionYear {@link SessionYear}
+     * @return int - number of files staged
+     */
+    int stageArchivedScrapeFiles(SessionYear sessionYear);
 
     /**
      * Gets the bill at the head of the scrape queue
