@@ -164,9 +164,11 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
 
     /**
      * Removes all non alpha characters
+     * Replace section symbol(§) with S
      */
     private String stripNonAlpha(String text) {
-        return text.replaceAll("(?:[^\\w]|_)+", "");
+        return text.replaceAll("§", "S")
+                .replaceAll("(?:[^\\w]|_)+", "");
     }
 
     private static final String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
