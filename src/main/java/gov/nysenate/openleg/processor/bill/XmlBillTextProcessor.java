@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processor.bill;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
@@ -25,8 +24,9 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
@@ -34,6 +34,10 @@ import java.util.Set;
 @Service
 public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiProcessor {
     private static final Logger logger = LoggerFactory.getLogger(XmlBillTextProcessor.class);
+
+    private static final Pattern filenamePrintNoPattern = Pattern.compile(
+            ".*_BILLTEXT_(?<printNo>[A-Z][0-9]+[A-Z]?)\\.XML$", Pattern.CASE_INSENSITIVE
+    );
 
     private final XmlHelper xmlHelper;
     private final EventBus eventBus;
@@ -71,39 +75,39 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
             final String asmamd = xmlHelper.getString("@asmamd", billTextNode);
             final String action = xmlHelper.getString("@action", billTextNode);
 
-            BillId senateId = null;
-            BillId assemblyId = null;
-
-            if (!StringUtils.isBlank(senhse)) {
-                senateId = new BillId(senhse + senno, sessionYear, senamd);
-            }
-            if (!StringUtils.isBlank(asmhse)) {
-                assemblyId = new BillId(asmhse + asmno, sessionYear, asmamd);
-            }
-
-            boolean isResolution = isResolution(senateId, assemblyId);
-
             // If remove action, set bill text to blank
             final String billText = "remove".equals(action)
                     ? ""
                     : billTextNode.getTextContent();
             String strippedBillText = BillTextUtils.parseHTMLtext(billText);
-            if (!isResolution) {
+
+            Set<BillId> updatedBills = new HashSet<>();
+
+            BillId filenamePrintNo = getFilenamePrintNo(sessionYear, sobiFragment);
+
+            // For Resolutions only apply to the bill from the filename
+            if (filenamePrintNo.getBillType().isResolution()) {
+                applyBillText(filenamePrintNo, billText, strippedBillText, sobiFragment);
+                updatedBills.add(filenamePrintNo);
+            } else {
+                // Apply special formatting for bill text
                 strippedBillText = BillTextUtils.formatHtmlExtractedBillText(strippedBillText);
+                // Apply to senate and/or assembly versions if referenced
+                if (!StringUtils.isBlank(senhse)) {
+                    BillId senateId = new BillId(senhse + senno, sessionYear, senamd);
+                    applyBillText(senateId, billText, strippedBillText, sobiFragment);
+                    updatedBills.add(senateId);
+                }
+                if (!StringUtils.isBlank(asmhse)) {
+                    BillId assemblyId = new BillId(asmhse + asmno, sessionYear, asmamd);
+                    applyBillText(assemblyId, billText, strippedBillText, sobiFragment);
+                    updatedBills.add(assemblyId);
+                }
             }
 
-            Set<BaseBillId> updatedBills = new HashSet<>();
-
-            if (senateId != null) {
-                applyBillText(senateId, billText, strippedBillText, sobiFragment, updatedBills);
-            }
-            if (assemblyId != null) {
-                applyBillText(assemblyId, billText, strippedBillText, sobiFragment, updatedBills);
-            }
-
-            updatedBills.forEach(baseBillId ->
+            updatedBills.forEach(billId ->
                     eventBus.post(new BillFieldUpdateEvent(LocalDateTime.now(),
-                            baseBillId, BillUpdateField.FULLTEXT)));
+                            BaseBillId.of(billId), BillUpdateField.FULLTEXT)));
         } catch (IOException | SAXException | XPathExpressionException e) {
             unit.addException("XML bill text parsing error", e);
             throw new ParseError("Error While Parsing Bill Text XML", e);
@@ -132,23 +136,24 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
      */
     private void applyBillText(BillId billId,
                                String billText, String strippedBillText,
-                               SobiFragment fragment, Set<BaseBillId> updatedBills) {
+                               SobiFragment fragment) {
         final Bill baseBill = getOrCreateBaseBill(billId, fragment);
         BillAmendment amendment = baseBill.getAmendment(billId.getVersion());
         amendment.setFullTextHtml(billText);
         amendment.setFullText(strippedBillText);
         billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
-        updatedBills.add(baseBill.getBaseBillId());
     }
 
-    private boolean isResolution(BillId senateId, BillId assemblyId) {
-        Optional<Boolean> senReso = Optional.ofNullable(senateId).map(billId -> billId.getBillType().isResolution());
-        Optional<Boolean> asmReso = Optional.ofNullable(assemblyId).map(billId -> billId.getBillType().isResolution());
-        if (senReso.isPresent() && asmReso.isPresent() && !senReso.get().equals(asmReso.get())) {
-            throw new IllegalStateException("Conflicting bill types for shared bill text: " +
-                    senateId + " " + assemblyId);
+    /**
+     * Parse the print no from the sobi fragment's filename
+     */
+    private BillId getFilenamePrintNo(int session, SobiFragment fragment) {
+        String filename = fragment.getParentSobiFile().getFileName();
+        Matcher matcher = filenamePrintNoPattern.matcher(filename);
+        if (!matcher.find()) {
+            throw new ParseError("Could not parse BILLTEXT filename: " + filename);
         }
-        return MoreObjects.firstNonNull(senReso.orElse(null), asmReso.orElse(null));
+        String printNo = matcher.group("printNo");
+        return new BillId(printNo, session);
     }
-
 }
