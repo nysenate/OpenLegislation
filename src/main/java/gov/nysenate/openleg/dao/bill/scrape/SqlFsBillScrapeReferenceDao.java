@@ -16,7 +16,6 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -174,10 +173,9 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public void addBillToScrapeQueue(BaseBillId id, int priority) {
         MapSqlParameterSource params = getQueueParams(id, priority);
-        try {
+        int updated = jdbcNamed.update(UPDATE_SCRAPE_QUEUE.getSql(schema()), params);
+        if (updated == 0) {
             jdbcNamed.update(INSERT_SCRAPE_QUEUE.getSql(schema()), params);
-        }catch(DuplicateKeyException ex){
-            jdbcNamed.update(UPDATE_SCRAPE_QUEUE.getSql(schema()), params);
         }
     }
 
