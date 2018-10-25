@@ -3,6 +3,9 @@ SET SEARCH_PATH = master;
 SET SESSION_REPLICATION_ROLE = replica;
 
 TRUNCATE sobi_file CASCADE;
+TRUNCATE agenda CASCADE;
+TRUNCATE bill CASCADE;
+TRUNCATE calendar CASCADE;
 
 TRUNCATE calendar_change_log;
 TRUNCATE bill_change_log;
