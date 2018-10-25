@@ -21,6 +21,17 @@ WHERE NOT EXISTS(SELECT 1
                  FROM master.committee_version v
                  WHERE c.chamber = v.chamber AND c.name = v.committee_name);
 
+-- Delete orphan committee members
+-- This shouldn't be necessary due to cascading fkey constraints, but orphans have been a problem..
+DELETE FROM master.committee_member m
+WHERE NOT EXISTS(SELECT 1
+                 FROM master.committee_version v
+                 WHERE m.chamber = v.chamber
+                   AND m.committee_name = v.committee_name
+                   AND m.session_year = v.session_year
+                   AND m.version_created = v.created);
+
+
 UPDATE master.committee
 SET current_session = 2013, current_version = '2013-01-01';
 
