@@ -106,6 +106,16 @@ public enum SqlBillQuery implements BasicSqlQuery
         "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, " +
         "       :uniBill, :lastFragmentId, :lawSection, :lawCode)"
     ),
+    SELECT_EMPTY_TEXT_BUDGET_BILL_PRINT_NOS (
+        "select s.bill_print_no, s.bill_session_year\n" +
+                "from ${schema}." + SqlTable.BILL_SPONSOR + " s, ${schema}." + SqlTable.BILL_AMENDMENT + " a\n" +
+                "where s.bill_print_no = a.bill_print_no\n" +
+                "  and s.bill_session_year = :sessionYear\n" +
+                "  and a.bill_session_year = :sessionYear2\n" +
+                "  and a.full_text = ''\n" +
+                "  and a.bill_amend_version = ''\n" +
+                "  and s.budget_bill = 'TRUE';"
+    ),
 
     /** --- Bill Amendment Publish Status --- */
 

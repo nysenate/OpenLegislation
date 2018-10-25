@@ -173,6 +173,9 @@ scheduler.process.cron = 0 */5 * * * *
 # When to run interval spotcheck reports. (Default: 0 45 23 * * *)
 scheduler.spotcheck.interval.cron = 0 45 23 * * *
 
+# Budget Bill Text Alert Redminder
+scheduler.budget.bill.reminder = 0 0 10,13,16 * * *
+
 # --- Spotcheck Configuration -------------------------------------------------
 
 # The amount of time (in minutes) allowed after an alert arrival for data to come in
