@@ -24,19 +24,27 @@
 
   
 
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bills and Resolutions API" href="bills.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="reference.html" /> 
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="#"/>
+        <link rel="next" title="Bills and Resolutions API" href="bills.html"/>
+        <link rel="prev" title="&lt;no title&gt;" href="reference.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -111,7 +119,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="reference.html">Open Legislation</a>
@@ -119,10 +127,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -182,12 +189,12 @@ You will need to sign up for a free API key from the Open Legislation homepage i
 <p>To register and obtain an API key, visit our main page <a class="reference external" href="http://legislation.nysenate.gov">here</a>.</p>
 <p><strong>Making requests</strong></p>
 <p>All URIs listed in these docs are relative to the Open Legislation subdomain:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">legislation</span><span class="o">.</span><span class="n">nysenate</span><span class="o">.</span><span class="n">gov</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">legislation</span><span class="o">.</span><span class="n">nysenate</span><span class="o">.</span><span class="n">gov</span>
 </pre></div>
 </div>
 <p>To make an API request using your key, set the key string as the value of the ‘key’ request parameter in the request URL.</p>
 <p>For example, if you wanted to get data for bill S1 of the 2015 session, your request would look something like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
+<div class="highlight-default"><div class="highlight"><pre><span></span>legislation.nysenate.gov/api/3/bills/2015/S1?key=*your key goes here*
 </pre></div>
 </div>
 </div>
@@ -240,7 +247,9 @@ in order to be reported to the senate floor.</td>
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -258,11 +267,11 @@ in order to be reported to the senate floor.</td>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services
+        &copy; Copyright 2014, NY State Senate Technology Services.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -277,24 +286,35 @@ in order to be reported to the senate floor.</td>
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0-alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
 
   
 
-  <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>
