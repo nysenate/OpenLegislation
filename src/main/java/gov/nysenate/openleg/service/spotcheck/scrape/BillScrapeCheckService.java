@@ -91,28 +91,28 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     private void checkBillText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
         String dataText = billAmendment.getFullText();
         String refText = reference.getText();
-        String strippedDataText = stripNonAlpha(dataText);
-        String strippedRefText = stripNonAlpha(refText);
+        String strippedDataText = basicNormalize(dataText);
+        String strippedRefText = basicNormalize(refText);
         // Check normalized text and report on non-normalized text as well if there is a mismatch
         if (!StringUtils.equals(strippedRefText, strippedDataText)) {
             // If its a resolution, check if its a header problem
             if (billAmendment.getBillId().getBillType().isResolution()) {
                 // Try removing the resolution header from the ref in case we are checking against sobi data
-                String refTextNoHeader = stripNonAlpha(BillTextUtils.formatHtmlExtractedResoText(refText));
+                String refTextNoHeader = basicNormalize(BillTextUtils.formatHtmlExtractedResoText(refText));
                 if (StringUtils.equals(strippedDataText, refTextNoHeader)) {
                     // todo remove this when we have bill text for all sobi years.
                     return;
                 }
                 // Try stripping the data header as well, to see if the header is the only issue.
-                String dataTextNoHeader = stripNonAlpha(BillTextUtils.formatHtmlExtractedResoText(dataText));
+                String dataTextNoHeader = basicNormalize(BillTextUtils.formatHtmlExtractedResoText(dataText));
                 if (StringUtils.equals(refTextNoHeader, dataTextNoHeader)) {
                     obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_RESO_HEADER, dataText, refText));
                     return;
                 }
             }
 
-            String pureContentRefText = stripNonContent(refText);
-            String pureContentDataText = stripNonContent(dataText);
+            String pureContentRefText = ultraNormalize(refText);
+            String pureContentDataText = ultraNormalize(dataText);
             if (!StringUtils.equals(pureContentRefText, pureContentDataText)) {
                 obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_CONTENT, dataText, refText));
             } else {
@@ -163,12 +163,16 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     }
 
     /**
+     * Performs a simple normalization to eliminate potential for mismatches that we would never care about.
+     *
      * Removes all non alpha characters
      * Replace section symbol(§) with S
+     * CAPITALIZE EVERYTHING.
      */
-    private String stripNonAlpha(String text) {
+    private String basicNormalize(String text) {
         return text.replaceAll("§", "S")
-                .replaceAll("(?:[^\\w]|_)+", "");
+                .replaceAll("(?:[^\\w]|_)+", "")
+                .toUpperCase();
     }
 
     private static final String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
@@ -179,11 +183,15 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     private static final String ultraNormalizeRegex = "(?m)" + String.join("|", Arrays.asList(
             lineNumberRegex, pageMarkerRegex, budgetPageMargerRegex, explanationRegex, explanationRegex2));
     /**
+     * Performs a more advanced normalization of text,
+     * removing specific sections that do not contribute to overall content.
+     *
      * Removes all whitespace, line numbers, and page numbers
+     * also performs {@link #basicNormalize(String)}
      */
-    private String stripNonContent(String text) {
+    private String ultraNormalize(String text) {
         String stripped = text.replaceAll(ultraNormalizeRegex, "");
-        return stripNonAlpha(stripped);
+        return basicNormalize(stripped);
     }
 
 }
