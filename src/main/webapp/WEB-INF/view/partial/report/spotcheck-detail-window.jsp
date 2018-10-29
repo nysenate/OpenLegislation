@@ -29,7 +29,20 @@
 
             <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
           </md-card>
-
+          <div layout="row" layout-align="space-between center">
+            <md-button class="md-raised rounded-corner-button"
+                       title="View the previous mismatch (left arrow key)"
+                       ng-disabled="!prevMismatchExists()"
+                       ng-click="loadPrevMismatch()">
+              <
+            </md-button>
+            <md-button class="md-raised rounded-corner-button"
+                       title="View the next mismatch (right arrow key)"
+                       ng-disabled="!nextMismatchExists()"
+                       ng-click="loadNextMismatch()">
+              >
+            </md-button>
+          </div>
           <md-card class="mismatch-diff-text-controls">
             <select ng-model="textControls.whitespace" ng-change="formatDisplayData()"
                     ng-options="value as label for (value, label) in whitespaceOptions"></select>

@@ -341,19 +341,20 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
     };
 
     // show the diff window.
-    $scope.showDetailedDiff = function (mismatch) {
-        mismatch.diffLoading = true;
+    $scope.showDetailedDiff = function (mismatchList, index) {
+        mismatchList[index].diffLoading = true;
         setTimeout(function () {
             $mdDialog.show({
                 templateUrl: 'mismatchDetailWindow',
                 controller: 'detailDialogCtrl',
                 locals: {
-                    mismatch: mismatch,
+                    mismatchList: mismatchList,
+                    index: index,
                     source: $scope.datasource.selected.value,
                     contentType: selectedContentType()
                 }
             });
-            mismatch.diffLoading = false;
+            mismatchList[index].diffLoading = false;
         }, 10); // delay 1 sec
     };
 

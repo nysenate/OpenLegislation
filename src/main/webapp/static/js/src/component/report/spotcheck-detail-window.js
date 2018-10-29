@@ -1,10 +1,10 @@
 angular.module('open.spotcheck')
     .controller('detailDialogCtrl', ['$scope', '$mdDialog', '$filter',
-                                     'mismatch', 'source', 'contentType', 'CalendarGetApi', detailDialogCtrl]);
+                                     'mismatchList', 'index', 'source', 'contentType', 'CalendarGetApi', detailDialogCtrl]);
 
-function detailDialogCtrl($scope, $mdDialog, $filter, mismatch, source, contentType, calendarGetApi) {
+function detailDialogCtrl($scope, $mdDialog, $filter, mismatchList, index, source, contentType, calendarGetApi) {
 
-    $scope.reportType = mismatch.refType;
+    $scope.reportType = mismatchList[index].refType;
 
     $scope.$watchGroup(['referenceData', 'displayData'], function () {
         $scope.obsMultiLine = $scope.observedData && $scope.observedData.indexOf('\n') > -1;
@@ -89,6 +89,50 @@ function detailDialogCtrl($scope, $mdDialog, $filter, mismatch, source, contentT
         }
     };
 
+    $scope.prevMismatchExists = function () {
+        return $scope.index > 0;
+    };
+
+    $scope.nextMismatchExists = function () {
+        return $scope.index < ($scope.mismatchList.length - 1);
+    };
+
+    $scope.loadPrevMismatch = function () {
+        if (!$scope.prevMismatchExists()) {
+            throw new Exception("Cannot load prev mismatch: none exists");
+        }
+        $scope.index--;
+        setMismatchFields();
+    };
+
+    $scope.loadNextMismatch = function () {
+        if (!$scope.nextMismatchExists()) {
+            throw new Exception("Cannot load next mismatch: none exists");
+        }
+        $scope.index++;
+        setMismatchFields();
+    };
+
+    /**
+     * Bind function to move record cursor when arrow keys are pressed
+     */
+    var $doc = angular.element(document);
+    $doc.on('keydown', onKeydown);
+    $scope.$on('$destroy', function () {
+        $doc.off('keydown', onKeydown);
+    });
+
+    function onKeydown(e) {
+        if ([37].indexOf(e.keyCode) >= 0 && $scope.prevMismatchExists()) {
+            $scope.loadPrevMismatch();
+        } else if ([39].indexOf(e.keyCode) >= 0 && $scope.nextMismatchExists()) {
+            $scope.loadNextMismatch();
+        } else {
+            return;
+        }
+        $scope.$digest();
+    }
+
     /**
      * Return true if openleg is the reference in this comparison
      * @return {boolean}
@@ -104,17 +148,23 @@ function detailDialogCtrl($scope, $mdDialog, $filter, mismatch, source, contentT
         });
     }
 
-    function init() {
-        $scope.contentType = contentType;
-        $scope.date = moment().format('l');
-        console.log('loading detail dialog for', mismatch);
-        $scope.observation = mismatch.observedData;
-        $scope.currentMismatch = mismatch;
-        setDefaultTextOptions(mismatch.mismatchType);
+    function setMismatchFields() {
+        $scope.currentMismatch = $scope.mismatchList[$scope.index];
+        console.log('loading detail dialog for', $scope.currentMismatch);
+        $scope.observation = $scope.currentMismatch.observedData;
+        setDefaultTextOptions($scope.currentMismatch.mismatchType);
         $scope.formatDisplayData();
         if ($scope.contentType === 'CALENDAR') {
             setCalDate($scope.currentMismatch.key.year, $scope.currentMismatch.key.calNo);
         }
+    }
+
+    function init() {
+        $scope.contentType = contentType;
+        $scope.date = moment().format('l');
+        $scope.mismatchList = mismatchList;
+        $scope.index = index;
+        setMismatchFields();
     }
 
     init();
