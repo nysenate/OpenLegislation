@@ -6,9 +6,7 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
-
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +51,11 @@ public class AdminLoginAuthRealm extends OpenLegAuthorizingRealm
 
     @PostConstruct
     public void setup() {
-        if (!adminUserService.adminInDb(defaultAdminName))
+        if (!adminUserService.adminInDb(defaultAdminName)) {
+            logger.info("Default admin user not present in database.  " +
+                    "Creating default admin according to properties...");
             adminUserService.createUser(defaultAdminName, defaultAdminPass, true, true);
+        }
     }
 
     /**
