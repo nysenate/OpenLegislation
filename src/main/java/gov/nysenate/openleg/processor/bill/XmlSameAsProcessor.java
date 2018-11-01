@@ -38,10 +38,6 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements SobiPro
     protected static final Pattern sameAsPattern =
             Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?)+)");
 
-    private static final Pattern filenamePrintNoPattern = Pattern.compile(
-            ".*_SAMEAS_(?<printNo>[A-Z][0-9]+[A-Z]?)\\.XML$", Pattern.CASE_INSENSITIVE
-    );
-
     @Override
     public SobiFragmentType getSupportedType() {
         return SobiFragmentType.SAMEAS;
@@ -63,7 +59,6 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements SobiPro
             final Bill baseBill = getOrCreateBaseBill(new BillId(billhse + billno, new SessionYear(sessionYear), version), fragment);
 
             BillAmendment amendment = baseBill.getAmendment(version);
-            BillId filenamePrintNo = getFilenamePrintNo(sessionYear, fragment);
 
             amendment.getSameAs().clear();
 
@@ -98,7 +93,7 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements SobiPro
                         // Check for uni-bill and sync
                         if (sameAsMatcher.group(1) != null && !sameAsMatcher.group(1).isEmpty()) {
                             amendment.setUniBill(true);
-                            if (!filenamePrintNo.getBillType().isResolution()) {
+                            if (!baseBill.getBillType().isResolution()) {
                                 syncUniBillText(amendment, fragment);
                             }
 
@@ -136,18 +131,5 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements SobiPro
 
     private BillId createBillId(String line, SessionYear sessionYear) {
         return new BillId(line.replace(" ", "").replace("-",""), sessionYear);
-    }
-
-    /**
-     * Parse the print no from the sobi fragment's filename
-     */
-    private BillId getFilenamePrintNo(int session, SobiFragment fragment) {
-        String filename = fragment.getParentSobiFile().getFileName();
-        Matcher matcher = filenamePrintNoPattern.matcher(filename);
-        if (!matcher.find()) {
-            throw new ParseError("Could not parse SAMEAS filename: " + filename);
-        }
-        String printNo = matcher.group("printNo");
-        return new BillId(printNo, session);
     }
 }
