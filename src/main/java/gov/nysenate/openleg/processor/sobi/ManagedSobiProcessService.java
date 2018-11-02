@@ -27,10 +27,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -181,13 +178,21 @@ public class ManagedSobiProcessService implements SobiProcessService {
     public int processPendingFragments(SobiProcessOptions options) {
         List<SobiFragment> fragments;
         int processCount = 0;
+
         do {
             ImmutableSet<SobiFragmentType> allowedTypes = options.getAllowedFragmentTypes();
-            LimitOffset limOff = (env.isSobiBatchEnabled()) ? new LimitOffset(env.getSobiBatchSize()) : LimitOffset.ONE;
+            LimitOffset limOff = new LimitOffset(env.getSobiBatchSize());
             fragments = sobiFragmentDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, limOff);
-            processCount += processFragments(fragments, options);
-        }
-        while (!fragments.isEmpty() && env.isProcessingEnabled());
+            // Process fragments in a batch, or one by one depending on sobi batch config.
+            if (env.isSobiBatchEnabled()) {
+                processCount += processFragments(fragments, options);
+            } else {
+                for (SobiFragment fragment : fragments) {
+                    processCount += processFragments(Collections.singletonList(fragment), options);
+                }
+            }
+        } while (!fragments.isEmpty() && env.isProcessingEnabled());
+
         return processCount;
     }
 
