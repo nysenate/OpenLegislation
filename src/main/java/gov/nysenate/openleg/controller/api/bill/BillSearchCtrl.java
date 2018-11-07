@@ -10,6 +10,7 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
@@ -19,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+
+import java.util.Set;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 import static java.util.stream.Collectors.toList;
@@ -44,6 +47,7 @@ public class BillSearchCtrl extends BaseCtrl
      * Request Parameters:  term - The lucene query string
      *                      sort - The lucene sort string (blank by default)
      *                      full - Set to true to retrieve full bill responses (false by default)
+     *                      fullTextFormat - Which texts will be included in responses if full is true.
      *                      limit - Limit the number of results (default 25)
      *                      offset - Start results from offset
      */
@@ -55,7 +59,7 @@ public class BillSearchCtrl extends BaseCtrl
                                      WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, sort, limOff);
-        return getBillSearchResponse(results, full, idOnly, limOff);
+        return getBillSearchResponse(results, full, idOnly, limOff, webRequest);
     }
 
     /**
@@ -74,16 +78,20 @@ public class BillSearchCtrl extends BaseCtrl
                                       WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 25);
         SearchResults<BaseBillId> results = billSearch.searchBills(term, SessionYear.of(sessionYear), sort, limOff);
-        return getBillSearchResponse(results, full, idOnly, limOff);
+        return getBillSearchResponse(results, full, idOnly, limOff, webRequest);
     }
 
     /** --- Internal --- */
 
-    private BaseResponse getBillSearchResponse(SearchResults<BaseBillId> results, boolean full, boolean idOnly, LimitOffset limOff) {
+    private BaseResponse getBillSearchResponse(SearchResults<BaseBillId> results,
+                                               boolean full, boolean idOnly,
+                                               LimitOffset limOff,
+                                               WebRequest request) {
+        Set<BillTextFormat> fullTextFormats = getFullTextFormats(request);
         return ListViewResponse.of(
             results.getResults().stream()
                 .map(r -> new SearchResultView((full)
-                        ? new BillView(billData.getBill(r.getResult()))
+                        ? new BillView(billData.getBill(r.getResult(), fullTextFormats))
                         : (idOnly)
                             ? new BillIdView(r.getResult())
                             : new BillInfoView(billData.getBillInfo(r.getResult())), r.getRank(), r.getHighlights()))

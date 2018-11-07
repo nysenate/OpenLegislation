@@ -13,6 +13,7 @@ import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.UnexpectedSearchException;
@@ -40,6 +41,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.Function;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.model.notification.NotificationType.REQUEST_EXCEPTION;
 
 public abstract class BaseCtrl
@@ -235,6 +237,23 @@ public abstract class BaseCtrl
                     Version.ORIGINAL.name() + "|[A-Z]");
         }
         return optVersion.get();
+    }
+
+    /**
+     * Get a set of bill text formats supplied in the request params or a default if none exist.
+     */
+    protected LinkedHashSet<BillTextFormat> getFullTextFormats(WebRequest request) {
+        final String formatParamName = "fullTextFormat";
+        String[] fullTextFormats = request.getParameterValues(formatParamName);
+        LinkedHashSet<BillTextFormat> formatSet = new LinkedHashSet<>();
+        if (fullTextFormats == null || fullTextFormats.length < 1) {
+            formatSet.add(PLAIN);
+        } else {
+            Arrays.stream(fullTextFormats)
+                    .map(fmt -> getEnumParameter(formatParamName, fmt, BillTextFormat.class))
+                    .forEach(formatSet::add);
+        }
+        return formatSet;
     }
 
     /**

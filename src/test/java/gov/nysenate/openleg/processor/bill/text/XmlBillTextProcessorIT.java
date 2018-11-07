@@ -12,6 +12,8 @@ import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 import static org.junit.Assert.*;
 
 /**
@@ -117,7 +119,7 @@ public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
      * Get the full text for a bill id
      */
     private String getPlainText(BillId billId) {
-        return getAmendment(billId, false).getFullText();
+        return getAmendment(billId, PLAIN).getFullText(PLAIN);
     }
 
     /**
@@ -135,7 +137,7 @@ public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
      * Get the html text for a bill id.
      */
     private String getHtmlText(BillId billId) {
-        return getAmendment(billId, true).getFullTextHtml();
+        return getAmendment(billId, HTML).getFullText(HTML);
     }
 
     /**

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.function.Function;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 import static java.util.stream.Collectors.*;
 
@@ -87,7 +88,7 @@ public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill,
         // Just count the pages for versions that also appear in the daybreak
         bill.getAmendmentMap().forEach((k,v) -> {
             if (daybreakPageCounts.containsKey(k)) {
-                billPageCounts.put(k, BillTextUtils.getBillPages(v.getFullText()).size());
+                billPageCounts.put(k, BillTextUtils.getBillPages(v.getFullText(PLAIN)).size());
             }
         });
         if (!daybreakPageCounts.equals(billPageCounts)) {

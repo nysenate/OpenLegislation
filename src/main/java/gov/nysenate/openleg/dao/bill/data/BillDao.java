@@ -4,14 +4,12 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillInfo;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * DAO interface for retrieving and persisting Bill data.
@@ -23,11 +21,11 @@ public interface BillDao
      * result was found.
      *
      * @param billId BillId - The version in the bill id is not used.
-     * @param htmlText boolean - if true, html full text will be applied instead of plain text
+     * @param textFormats {@link Set<BillTextFormat>} - specifies which text formats are loaded for the bill
      * @return Bill
      * @throws DataAccessException - If no bill was matched
      */
-    Bill getBill(BillId billId, boolean htmlText) throws DataAccessException;
+    Bill getBill(BillId billId, Set<BillTextFormat> textFormats) throws DataAccessException;
 
     /**
      * Retrieves a BillInfo for the given BillId. The query time for a BillInfo will be less than that
@@ -44,13 +42,13 @@ public interface BillDao
      * This can be used by caching implementations where the bill object is kept in memory but the references
      * to the full text and memo are dropped to save memory space.
      *
-     * Html full text will be applied instead of standard text if the htmlText flag is true.
+     * Full text will be applied only in the given formats.
      *
      * @param strippedBill Bill - The stripped Bill object.
-     * @param htmlText boolean - will appy html text instead of plain text if true.
+     * @param fullTextFormats {@link Set<BillTextFormat>} will apply texts for these formats.
      * @throws DataAccessException
      */
-    void applyText(Bill strippedBill, boolean htmlText) throws DataAccessException;
+    void applyText(Bill strippedBill, Set<BillTextFormat> fullTextFormats) throws DataAccessException;
 
     /**
      * Gets a List of BaseBillIds for the given session year with options to order and limit the results.

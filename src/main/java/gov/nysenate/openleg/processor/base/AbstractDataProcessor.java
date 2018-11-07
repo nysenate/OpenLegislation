@@ -46,6 +46,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -133,7 +134,7 @@ public abstract class AbstractDataProcessor
         }
         else {
             try {
-                baseBill = billDataService.getBill(baseBillId);
+                baseBill = billDataService.getBill(baseBillId, EnumSet.allOf(BillTextFormat.class));
             }
             catch (BillNotFoundEx ex) {
                 // Create the bill since it does not exist and add it to the ingest cache.

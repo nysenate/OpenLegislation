@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 /**
@@ -89,7 +90,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
      * normalization if there was a mismatch in the no-whitespace text
      */
     private void checkBillText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
-        String dataText = billAmendment.getFullText();
+        String dataText = billAmendment.getFullText(PLAIN);
         String refText = reference.getText();
         String strippedDataText = basicNormalize(dataText);
         String strippedRefText = basicNormalize(refText);

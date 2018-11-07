@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.controller.pdf;
 
 import gov.nysenate.openleg.client.view.bill.BillPdfView;
+import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
@@ -15,19 +17,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/pdf/bills")
-public class BillPdfCtrl
+public class BillPdfCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(BillPdfCtrl.class);
 
@@ -35,7 +40,7 @@ public class BillPdfCtrl
 
     @RequestMapping(value = "/{sessionYear:[\\d]{4}}/{printNo}")
     public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo,
-                                             HttpServletRequest request, HttpServletResponse response)
+                                             WebRequest request, HttpServletResponse response)
             throws IOException {
         try {
             BillId billId = new BillId(printNo, sessionYear);
@@ -48,7 +53,8 @@ public class BillPdfCtrl
                 }
                 response.sendRedirect(urlString);
             } else {
-                Bill bill = billData.getBill(BaseBillId.of(billId));
+                Set<BillTextFormat> fullTextFormats = getFullTextFormats(request);
+                Bill bill = billData.getBill(BaseBillId.of(billId), fullTextFormats);
                 ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
                 BillPdfView.writeBillPdf(bill, billId.getVersion(), pdfBytes);
                 HttpHeaders headers = new HttpHeaders();

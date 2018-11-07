@@ -6,10 +6,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
 import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
@@ -28,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -139,14 +137,14 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
      * Get a bill amendment from the db
      */
     protected BillAmendment getAmendment(BillId billId) throws BillNotFoundEx, BillAmendNotFoundEx {
-        return getAmendment(billId, false);
+        return getAmendment(billId, BillTextFormat.PLAIN);
     }
 
     /**
      * Get a bill amendment from the db
      */
-    protected BillAmendment getAmendment(BillId billId, boolean htmlText) throws BillNotFoundEx, BillAmendNotFoundEx {
-        Bill bill = billDataService.getBill(BaseBillId.of(billId), htmlText);
+    protected BillAmendment getAmendment(BillId billId, BillTextFormat htmlText) throws BillNotFoundEx, BillAmendNotFoundEx {
+        Bill bill = billDataService.getBill(BaseBillId.of(billId), Collections.singleton(htmlText));
         return bill.getAmendment(billId.getVersion());
     }
 
@@ -154,7 +152,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
      * Get a bill from the db.
      */
     protected Bill getBill(BillId billId) throws BillNotFoundEx {
-        return billDataService.getBill(BaseBillId.of(billId), false);
+        return billDataService.getBill(BaseBillId.of(billId));
     }
 
     /**

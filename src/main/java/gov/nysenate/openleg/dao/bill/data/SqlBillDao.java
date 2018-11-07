@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.dao.bill.data;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
@@ -19,6 +20,7 @@ import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
 import gov.nysenate.openleg.service.bill.data.VetoNotFoundException;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +40,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.bill.data.SqlBillQuery.*;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 @Repository
 public class SqlBillDao extends SqlBaseDao implements BillDao {
     private static final Logger logger = LoggerFactory.getLogger(SqlBillDao.class);
+
+    private static final ImmutableMap<BillTextFormat, String> fullTextFields =
+            ImmutableMap.<BillTextFormat, String>builder()
+                    .put(PLAIN, "full_text")
+                    .put(HTML, "full_text_html")
+                    .build();
 
     @Autowired private MemberService memberService;
     @Autowired private VetoDataService vetoDataService;
@@ -53,13 +63,13 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
 
     /** {@inheritDoc} */
     @Override
-    public Bill getBill(BillId billId, boolean htmlText) {
+    public Bill getBill(BillId billId, Set<BillTextFormat> textFormats) {
         logger.trace("Fetching Bill {} from database...", billId);
         final ImmutableParams baseParams = getBaseParams(billId);
         // Retrieve base Bill object
         Bill bill = getBaseBill(baseParams);
         // Fetch the amendments
-        List<BillAmendment> billAmendments = getBillAmendments(baseParams, htmlText);
+        List<BillAmendment> billAmendments = getBillAmendments(baseParams, textFormats);
         for (BillAmendment amendment : billAmendments) {
             final ImmutableParams amendParams = baseParams.add(
                 new MapSqlParameterSource("version", amendment.getVersion().toString()));
@@ -117,20 +127,19 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
 
     /** {@inheritDoc} */
     @Override
-    public void applyText(Bill strippedBill, boolean htmlText) throws DataAccessException {
+    public void applyText(Bill strippedBill, Set<BillTextFormat> fullTextFormats) throws DataAccessException {
         if (strippedBill == null) {
             throw new IllegalArgumentException("Cannot apply bill text on a null bill");
         }
         MapSqlParameterSource billParams = new MapSqlParameterSource();
         addBillIdParams(strippedBill, billParams);
-        final SqlBillQuery query = htmlText ? SELECT_BILL_TEXT_HTML : SELECT_BILL_TEXT;
-        jdbcNamed.query(query.getSql(schema()), billParams, (ResultSet rs) -> {
+        final String queryTemplate = SELECT_BILL_TEXT_TEMPLATE.getSql(schema());
+        final String query = applyFullTextFields(queryTemplate, fullTextFormats);
+        jdbcNamed.query(query, billParams, (ResultSet rs) -> {
             BillAmendment ba = strippedBill.getAmendment(Version.of(rs.getString("bill_amend_version")));
             ba.setMemo(rs.getString("sponsor_memo"));
-            if (htmlText) {
-                ba.setFullTextHtml(rs.getString("full_text_html"));
-            } else {
-                ba.setFullText(rs.getString("full_text"));
+            for (BillTextFormat format : fullTextFormats) {
+                ba.setFullText(format, rs.getString(fullTextFields.get(format)));
             }
         });
     }
@@ -324,9 +333,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     /**
      * Fetch the collection of bill amendment references for the base bill id in the params.
      */
-    public List<BillAmendment> getBillAmendments(ImmutableParams baseParams, boolean htmlText) {
-        final SqlBillQuery query = htmlText ? SELECT_BILL_AMENDMENTS_HTML : SELECT_BILL_AMENDMENTS;
-        return jdbcNamed.query(query.getSql(schema()), baseParams, new BillAmendmentRowMapper(htmlText));
+    public List<BillAmendment> getBillAmendments(ImmutableParams baseParams, Set<BillTextFormat> fullTextFormats) {
+        final String queryTemplate = SELECT_BILL_AMENDMENTS_TEMPLATE.getSql(schema());
+        final String fullQuery = applyFullTextFields(queryTemplate, fullTextFormats);
+        return jdbcNamed.query(fullQuery, baseParams, new BillAmendmentRowMapper(fullTextFormats));
     }
 
     /**
@@ -691,10 +701,10 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
     }
 
     private static class BillAmendmentRowMapper implements RowMapper<BillAmendment> {
-        private boolean htmlText;
+        private final Set<BillTextFormat> textFormats;
 
-        BillAmendmentRowMapper(boolean htmlText) {
-            this.htmlText = htmlText;
+        public BillAmendmentRowMapper(Set<BillTextFormat> textFormats) {
+            this.textFormats = textFormats;
         }
 
         @Override
@@ -703,10 +713,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             BillAmendment amend = new BillAmendment(baseBillId, Version.of(rs.getString("bill_amend_version")));
             amend.setMemo(rs.getString("sponsor_memo"));
             amend.setActClause(rs.getString("act_clause"));
-            if (htmlText) {
-                amend.setFullTextHtml(rs.getString("full_text_html"));
-            } else {
-                amend.setFullText(rs.getString("full_text"));
+            for (BillTextFormat format : textFormats) {
+                amend.setFullText(format, rs.getString(fullTextFields.get(format)));
             }
             amend.setStricken(rs.getBoolean("stricken"));
             amend.setUniBill(rs.getBoolean("uni_bill"));
@@ -871,8 +879,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         addBillIdParams(amendment, params);
         params.addValue("sponsorMemo", amendment.getMemo())
                 .addValue("actClause", amendment.getActClause())
-                .addValue("fullText", amendment.getFullText())
-                .addValue("fullTextHtml", amendment.getFullTextHtml())
+                .addValue("fullText", amendment.getFullText(PLAIN))
+                .addValue("fullTextHtml", amendment.getFullText(HTML))
                 .addValue("stricken", amendment.isStricken())
                 .addValue("lawSection", amendment.getLawSection())
                 .addValue("lawCode", amendment.getLaw())
@@ -1020,5 +1028,20 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             return new CommitteeId(Chamber.getValue(rs.getString("committee_chamber")), rs.getString("committee_name"));
         }
         return null;
+    }
+
+    /**
+     * Apply the correct full text fields to a query template given a set of formats.
+     *
+     * Assumes that "fullTextFields" token is at the end of the column list WITHOUT a leading comma
+     * e.g. ... bill_amend_version, sponsor_memo ${fullTextFields}
+     */
+    private String applyFullTextFields(String queryTemplate, Set<BillTextFormat> fullTextFormats) {
+        final String fullTextFields = fullTextFormats.stream()
+                .map(SqlBillDao.fullTextFields::get)
+                .map(field -> ", " + field)
+                .collect(Collectors.joining());
+        final ImmutableMap<String, String> subMap = ImmutableMap.of("fullTextFields", fullTextFields);
+        return StrSubstitutor.replace(queryTemplate, subMap);
     }
 }

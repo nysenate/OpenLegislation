@@ -33,6 +33,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
+
 /**
  * The BillProcessor parses bill sobi fragments, applies bill updates, and persists into the backing
  * store via the service layer. This implementation is fairly lengthy due to the various types of data that
@@ -509,7 +511,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
                 billAmendment.setMemo(fullText);
             }
             else if (lineType == SobiLineType.RESOLUTION_TEXT || lineType == SobiLineType.TEXT) {
-                billAmendment.setFullText(fullText);
+                billAmendment.setFullText(PLAIN, fullText);
                 if (billAmendment.isUniBill()) {
                     syncUniBillText(billAmendment, fragment);
                 }

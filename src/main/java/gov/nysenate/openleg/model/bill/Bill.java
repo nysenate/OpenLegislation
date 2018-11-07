@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
+
 /**
  * The Bill class serves as a container for all the entities that can be classified under a print number
  * and session year. It contains a collection of amendments (including the base amendment) as well as
@@ -350,9 +352,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** --- Delegates --- */
 
-    public String getFullText() {
+    public String getFullTextPlain() {
         if (this.hasActiveAmendment()) {
-            return this.getActiveAmendment().getFullText();
+            return this.getActiveAmendment().getFullText(PLAIN);
         }
         return "";
     }

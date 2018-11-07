@@ -3,14 +3,13 @@ package gov.nysenate.openleg.service.bill.data;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillInfo;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service interface for retrieving and saving Bill data. Retrieval is based
@@ -21,27 +20,27 @@ import java.util.Optional;
 public interface BillDataService
 {
     /**
-     * Default overload of {@link #getBill(BaseBillId, boolean)} that always applies plain bill text.
+     * Default overload of {@link #getBill(BaseBillId, Set)} that always applies plain bill text.
      *
      * @param billId BaseBillId
      * @return Bill
      * @throws BillNotFoundEx - If no Bill matching the BillId was found.
      */
     default Bill getBill(BaseBillId billId) throws BillNotFoundEx {
-        return getBill(billId, false);
+        return getBill(billId, Collections.singleton(BillTextFormat.PLAIN));
     }
 
     /**
      * Retrieve a Bill instance for the matching BillId.
      *
-     * Will apply html bill texts instead of plain bill texts if htmlText = true.
+     * Will only include bill texts for the given formats.
      *
      * @param billId BaseBillId
-     * @param htmlText boolean
+     * @param fullTextFormats {@link Set<BillTextFormat>} formats to include on bill
      * @return Bill
      * @throws BillNotFoundEx - If no Bill matching the BillId was found.
      */
-    Bill getBill(BaseBillId billId, boolean htmlText) throws BillNotFoundEx;
+    Bill getBill(BaseBillId billId, Set<BillTextFormat> fullTextFormats) throws BillNotFoundEx;
 
     /**
      * Retrieve a BillInfo instance for the matching BillId. This contains

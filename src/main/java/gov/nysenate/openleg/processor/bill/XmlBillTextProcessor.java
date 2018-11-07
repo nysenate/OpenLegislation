@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.*;
+
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
@@ -139,8 +141,8 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
                                SobiFragment fragment) {
         final Bill baseBill = getOrCreateBaseBill(billId, fragment);
         BillAmendment amendment = baseBill.getAmendment(billId.getVersion());
-        amendment.setFullTextHtml(billText);
-        amendment.setFullText(strippedBillText);
+        amendment.setFullText(HTML, billText);
+        amendment.setFullText(PLAIN, strippedBillText);
         billIngestCache.set(baseBill.getBaseBillId(), baseBill, fragment);
     }
 

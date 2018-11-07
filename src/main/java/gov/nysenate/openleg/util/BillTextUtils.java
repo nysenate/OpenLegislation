@@ -95,7 +95,10 @@ public class BillTextUtils
 
     /** WIP */
     public static String formatBillText(boolean isResolution, String fullText) {
-        if (!isResolution && fullText != null && !fullText.isEmpty()) {
+        if (fullText == null) {
+            fullText = "";
+        }
+        if (!isResolution && StringUtils.isNotBlank(fullText)) {
             List<String> lines = Splitter.on("\n").splitToList(fullText);
             StringBuilder formattedFullText = new StringBuilder();
             lines.forEach(line -> {

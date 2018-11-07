@@ -14,6 +14,7 @@ import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 
 /**
  * The AbstractBillProcessor serves as a base class for actual bill processor implementations to provide unified
@@ -339,25 +342,6 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
     }
 
     /**
-     * Sets the full text to the specified amendment. If the bill is also a uni bill, a uni bill sync will
-     * be triggered.
-     * @param baseBill Bill
-     * @param version Version
-     * @param text String
-     * @param fragment SobiFragment
-     */
-    protected void setFullText(Bill baseBill, Version version, String text, SobiFragment fragment) {
-        BillAmendment billAmendment = baseBill.getAmendment(version);
-        billAmendment.setFullText(text);
-        if (billAmendment.isUniBill()) {
-            syncUniBillText(billAmendment, fragment);
-        }
-        eventBus.post(
-            new BillFieldUpdateEvent(LocalDateTime.now(), billAmendment.getBaseBillId(), BillUpdateField.FULLTEXT));
-        setModifiedDateTime(baseBill, fragment);
-    }
-
-    /**
      * Sets the modified datetime to the base bill. This modified datetime is not guaranteed to reflect an actual
      * change to the bill or it's amendments since we receive duplicate data from LBDC frequently.
      * @param baseBill Bill
@@ -380,12 +364,12 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
             BaseBillId updatedBillId = null;
             // If this is the senate bill amendment, copy text to the assembly bill amendment
             if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
-                uniBillAmend.setFullText(billAmendment.getFullText());
+                copyBillTexts(billAmendment, uniBillAmend);
                 updatedBillId = uniBillAmend.getBaseBillId();
             }
             // Otherwise copy the text to this assembly bill amendment
-            else if (!uniBillAmend.getFullText().isEmpty()) {
-                billAmendment.setFullText(uniBillAmend.getFullText());
+            else if (StringUtils.isNotBlank(uniBillAmend.getFullText(PLAIN))) {
+                copyBillTexts(uniBillAmend, billAmendment);
                 updatedBillId = billAmendment.getBaseBillId();
             }
             if (updatedBillId != null) {
@@ -408,6 +392,12 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
                 BillAmendment baseAmendment = new BillAmendment(baseBill.getBaseBillId(), actionVersion);
                 baseBill.addAmendment(baseAmendment);
             }
+        }
+    }
+
+    private void copyBillTexts(BillAmendment sourceAmend, BillAmendment destAmend) {
+        for (BillTextFormat format : sourceAmend.getFullTextFormats()) {
+            destAmend.setFullText(format, sourceAmend.getFullText(format));
         }
     }
 }
