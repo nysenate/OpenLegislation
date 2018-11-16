@@ -654,10 +654,19 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
     }
 
+
+    public List<BillId> getBudgetBillIdsWithoutText(Integer sessionYear) {
+        MapSqlParameterSource billParams = new MapSqlParameterSource();
+        billParams.addValue("sessionYear",sessionYear);
+        billParams.addValue("sessionYear2",sessionYear);
+
+        return jdbcNamed.query(SqlBillQuery.SELECT_EMPTY_TEXT_BUDGET_BILL_PRINT_NOS.getSql(schema()), billParams,
+                (rs, rowNum) -> new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")) );
+    }
+
     /**
      * --- Helper Classes ---
      */
-
 
     private List<Integer> getCoSponsorIds(SqlParameterSource params) {
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_COSPONSORS.getSql(schema()), params,
