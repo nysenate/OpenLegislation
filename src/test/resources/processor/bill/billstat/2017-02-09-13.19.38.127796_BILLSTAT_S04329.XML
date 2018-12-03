@@ -1,0 +1,45 @@
+<billstatus  sessyr="2017" billhse="S" billno="04329" action="replace">
+<deadtag></deadtag>
+<currentamd></currentamd>
+<sponsor><![CDATA[GALLIVAN]]></sponsor>
+<reprint>
+<rprtbillhse></rprtbillhse>
+<rprtbillno></rprtbillno>
+<rprtbillamd></rprtbillamd>
+</reprint>
+<lbdno>00292017</lbdno>
+<introcomm>57</introcomm>
+<curcomm>57</curcomm>
+<curcommhse>S</curcommhse>
+<law><![CDATA[General Municipal Law]]></law>
+<title><![CDATA[Enacts the "charitable gaming act of 2017"]]></title>
+<billactions><![CDATA[
+02/09/17 REFERRED TO RACING, GAMING AND WAGERING
+]]></billactions>
+<actions>
+  <action no="1">
+    <actionbillamd></actionbillamd>
+    <actionhouse>S</actionhouse>
+    <actioncode>1</actioncode>
+    <actiontype>S</actiontype>
+    <actiondata>57</actiondata>
+    <actiondataamd></actiondataamd>
+    <actiondate>2017-02-09</actiondate>
+    <actiondesc><![CDATA[REFERRED TO RACING, GAMING AND WAGERING]]></actiondesc>
+    <actionpostdate>2017-02-09</actionpostdate>
+    <actionactsessyr>2017</actionactsessyr>
+  </action>
+  <action no="2017">
+    <actionbillamd></actionbillamd>
+    <actionhouse>S</actionhouse>
+    <actioncode>250</actioncode>
+    <actiontype>S</actiontype>
+    <actiondata>57</actiondata>
+    <actiondataamd></actiondataamd>
+    <actiondate>2017-02-09</actiondate>
+    <actiondesc><![CDATA[intro committee]]></actiondesc>
+    <actionpostdate>2017-02-09</actionpostdate>
+    <actionactsessyr>2017</actionactsessyr>
+  </action>
+</actions>
+</billstatus>

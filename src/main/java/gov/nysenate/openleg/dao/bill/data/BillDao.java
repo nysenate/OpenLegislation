@@ -4,15 +4,12 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillInfo;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 /**
  * DAO interface for retrieving and persisting Bill data.
@@ -24,10 +21,11 @@ public interface BillDao
      * result was found.
      *
      * @param billId BillId - The version in the bill id is not used.
+     * @param textFormats {@link Set<BillTextFormat>} - specifies which text formats are loaded for the bill
      * @return Bill
      * @throws DataAccessException - If no bill was matched
      */
-    public Bill getBill(BillId billId) throws DataAccessException;
+    Bill getBill(BillId billId, Set<BillTextFormat> textFormats) throws DataAccessException;
 
     /**
      * Retrieves a BillInfo for the given BillId. The query time for a BillInfo will be less than that
@@ -37,17 +35,20 @@ public interface BillDao
      * @return BillInfo
      * @throws DataAccessException - If no bill was matched.
      */
-    public BillInfo getBillInfo(BillId billId) throws DataAccessException;
+    BillInfo getBillInfo(BillId billId) throws DataAccessException;
 
     /**
      * This method applies the memo and full text for all amendments contained in the given Bill object.
      * This can be used by caching implementations where the bill object is kept in memory but the references
      * to the full text and memo are dropped to save memory space.
      *
+     * Full text will be applied only in the given formats.
+     *
      * @param strippedBill Bill - The stripped Bill object.
+     * @param fullTextFormats {@link Set<BillTextFormat>} will apply texts for these formats.
      * @throws DataAccessException
      */
-    public void applyText(Bill strippedBill) throws DataAccessException;
+    void applyText(Bill strippedBill, Set<BillTextFormat> fullTextFormats) throws DataAccessException;
 
     /**
      * Gets a List of BaseBillIds for the given session year with options to order and limit the results.
@@ -58,7 +59,7 @@ public interface BillDao
      * @return List<BaseBillId>
      * @throws DataAccessException
      */
-    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException;
+    List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limOff, SortOrder billIdSort) throws DataAccessException;
 
     /**
      * Retrieves a simple count of all the unique base bills in the database for all session years.
@@ -66,7 +67,7 @@ public interface BillDao
      * @return int
      * @throws DataAccessException - Should only be thrown if there was a fatal error,
      */
-    public int getBillCount() throws DataAccessException;
+    int getBillCount() throws DataAccessException;
 
     /**
      * Retrieves a simple count of all the unique base bills in the database for a given session year.
@@ -75,7 +76,7 @@ public interface BillDao
      * @return int
      * @throws DataAccessException - Should only be thrown if there was a fatal error
      */
-    public int getBillCount(SessionYear sessionYear) throws DataAccessException;
+    int getBillCount(SessionYear sessionYear) throws DataAccessException;
 
     /**
      * Certain bills require alternate urls when linking their pdfs. If the given bill id is one of
@@ -83,7 +84,7 @@ public interface BillDao
      * @param billId BillId
      * @return String
      */
-    public String getAlternateBillPdfUrl(BillId billId) throws DataAccessException;
+    String getAlternateBillPdfUrl(BillId billId) throws DataAccessException;
 
     /**
      * Returns a range containing the minimum and maximum session years for which there is bill data for.
@@ -91,7 +92,7 @@ public interface BillDao
      *
      * @return Range<SessionYear>
      */
-    public Range<SessionYear> activeSessionRange() throws DataAccessException;
+    Range<SessionYear> activeSessionRange() throws DataAccessException;
 
     /**
      * Updates the bill or inserts it if it does not yet exist. Associates
@@ -101,5 +102,5 @@ public interface BillDao
      * @param sobiFragment SobiFragment
      * @throws DataAccessException - If there was an error while trying to save the Bill.
      */
-    public void updateBill(Bill bill, SobiFragment sobiFragment) throws DataAccessException;
+    void updateBill(Bill bill, SobiFragment sobiFragment) throws DataAccessException;
 }

@@ -17,6 +17,7 @@ import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillUpdatesDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.bill.BillUpdateField;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateToken;
@@ -34,6 +35,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,6 +70,7 @@ public class BillUpdatesCtrl extends BaseCtrl
      * Request Params: detail (boolean) - Show update digests within each token.
      *                 summary (boolean) - Return bill infos instead of just the bill id.
      *                 fullBill(boolean) - Return a full bill response instead of bill id. (overrides summary, unavailable for detailed updates)
+     *                 fullTextFormat(string) - specifies which full text formats will be returned if fullBill = true.
      *                 type (string) - Update type (processed, published) Default: processed
      *                 filter (string) - Filter updates by a BillUpdateField value
      *                 limit, offset (int) - Paginate
@@ -155,8 +158,9 @@ public class BillUpdatesCtrl extends BaseCtrl
             List<UpdateTokenView> updates = updateTokens.getResults().stream()
                     .map(token -> {
                         if (fullBill) {
+                            Set<BillTextFormat> fullTextFormats = getFullTextFormats(request);
                             return new UpdateTokenModelView(token, new BaseBillIdView(token.getId()),
-                                    new BillView(billData.getBill(token.getId())));
+                                    new BillView(billData.getBill(token.getId(), fullTextFormats)));
                         }
                         if (summary) {
                             return new UpdateTokenModelView(token, new BaseBillIdView(token.getId()),

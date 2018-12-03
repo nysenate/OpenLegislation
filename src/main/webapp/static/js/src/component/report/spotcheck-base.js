@@ -34,6 +34,11 @@
             refLabel: 'OpenLeg',
             dataLabel: 'NYSenate.gov',
             olRef: true
+        },
+        OPENLEG: {
+            comparisonLabel: 'Openlegislation Ref - Openlegislaton Source',
+            refLabel: 'Open Legislation Ref',
+            dataLabel: 'Open Legislation Source'
         }
     };
 
@@ -53,7 +58,7 @@
         });
     }
 
-// Delete all issues corresponding to the given mismatch
+    // Delete all issues corresponding to the given mismatch
     function mismatchDeleteAllApi($resource) {
         return $resource(adminApiPath + "/spotcheck/mismatch/:mismatchId/delete", {
             mismatchId: '@mismatchId'
@@ -69,9 +74,12 @@
             LBDC_CALENDAR_ALERT: "Floor Cal",
             LBDC_SCRAPED_BILL: "Bill",
             SENATE_SITE_BILLS: "Bill",
-            SENATE_SITE_CALENDAR: "Calendar"
+            SENATE_SITE_CALENDAR: "Calendar",
+            OPENLEG_BILL: "Bill",
+            OPENLEG_CAL: "Calendar",
+            OPENLEG_AGENDA: "Agenda"
         };
-        return function (reportType) {
+        return function(reportType) {
             if (contentTypeMap.hasOwnProperty(reportType)) {
                 return contentTypeMap[reportType];
             }
@@ -130,8 +138,9 @@
 
     function contentUrlFilter() {
         var contentTypeUrlFns = {
-            LBDC: localOpenlegUrlFns,
-            NYSENATE: senateSiteUrlFns
+            LBDC: openlegLocalUrlFns,
+            NYSENATE: senateSiteUrlFns,
+            OPENLEG: openlegLocalUrlFns
         };
 
         return function (key, dataSource, contentType) {
@@ -147,7 +156,8 @@
         // multi-map of url generating functions by datasource and content type
         var refUrlFns = {
             LBDC: lbdcUrlFns,
-            NYSENATE: localOpenlegUrlFns
+            NYSENATE: openlegLocalUrlFns,
+            OPENLEG: openlegRefUrlFns
         };
 
         return function (key, datasource, contentType) {
@@ -210,7 +220,7 @@
     /* --- Mismatch Url Methods --- */
 
 
-    var localOpenlegUrlFns = {
+    var openlegLocalUrlFns = {
         'AGENDA': getLocalAgendaUrl,
         'BILL': getLocalBillUrl,
         'CALENDAR': getLocalCalendarUrl
@@ -224,6 +234,12 @@
         AGENDA: getSenSiteAgendaUrl,
         BILL: getSenSiteBillUrl,
         CALENDAR: getSenSiteCalendarUrl
+    };
+
+    var openlegRefUrlFns = {
+        AGENDA: getOpenlegRefAgendaUrl,
+        BILL: getOpenlegRefBillUrl,
+        CALENDAR: getOpenlegRefCalendarUrl
     };
 
     function getLocalAgendaUrl(key) {
@@ -286,5 +302,37 @@
         // TODO Need session date time to create link.
         // Example: https://www.nysenate.gov/calendar/sessions/june-05-2017/session-6-5-17
         return null;
+    }
+
+    function getOpenlegRefBillUrl(key) {
+        var url = openlegRefPath + "/bills/" + key.session.year + "/" + key.basePrintNo;
+        if (key.hasOwnProperty('version')) {
+            url += '?version=' + key.version;
+        }
+        return url;
+    }
+
+    function getOpenlegRefCalendarUrl(key) {
+        var url = openlegRefPath + "/calendars/" + key.year + "/" + key.calNo;
+        if (key.hasOwnProperty('type')) {
+            switch (key.type) {
+                case 'ACTIVE_LIST':
+                    url += '?view=active-list';
+                    break;
+                case 'FLOOR_CALENDAR':
+                case 'SUPPLEMENTAL_CALENDAR':
+                    url += '?view=floor';
+                    break;
+            }
+        }
+        return url;
+    }
+
+    function getOpenlegRefAgendaUrl(key) {
+        if (key.agendaId.year > 0) {
+            return openlegRefPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number +
+                "?comm=" + key.committeeId.name;
+        }
+        return "";
     }
 })();

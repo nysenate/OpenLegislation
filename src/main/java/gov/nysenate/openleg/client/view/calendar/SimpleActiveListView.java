@@ -23,6 +23,9 @@ public class SimpleActiveListView extends CalendarActiveListIdView{
         this.totalEntries = activeList.getEntries().size();
     }
 
+    //Added for Json deserialization
+    protected SimpleActiveListView() {}
+
     public LocalDate getCalDate() {
         return calDate;
     }

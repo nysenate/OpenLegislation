@@ -2,13 +2,12 @@ package gov.nysenate.openleg.dao.base;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
@@ -20,8 +19,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
@@ -117,18 +114,6 @@ public abstract class SqlBaseDao
         Map<String, String> replaceMap = new HashMap<>();
         replaceMap.put(key, replacement);
         return new StrSubstitutor(replaceMap).replace(originalQuery);
-    }
-
-    /** --- File Handling Methods --- */
-
-    /**
-     * Moves the file into the destination quietly.
-     */
-    protected void moveFile(File sourceFile, File destFile) throws IOException {
-        if (destFile.exists()) {
-            FileUtils.deleteQuietly(destFile);
-        }
-        FileUtils.moveFile(sourceFile, destFile);
     }
 
     /** --- PostgreSQL Hstore handling methods --- */

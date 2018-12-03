@@ -30,6 +30,9 @@ public class AgendaId implements Serializable, Comparable<AgendaId>
         this.year = year;
     }
 
+    //Added for Json Deserialization
+    protected AgendaId() {}
+
     /** --- Overrides --- */
 
     @Override

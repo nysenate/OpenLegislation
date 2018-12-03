@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
@@ -17,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 @Category(SillyTest.class)
@@ -29,7 +32,7 @@ public class SqlBillDaoTest extends BaseTests
 
     @Test
     public void testGetBill() throws Exception {
-        logger.info("{}", OutputUtils.toJson(billDao.getBill(new BaseBillId("S1051", 2013))));
+        logger.info("{}", OutputUtils.toJson(billDao.getBill(new BaseBillId("S1051", 2013), Collections.singleton(BillTextFormat.PLAIN))));
     }
 
     @Test
@@ -51,11 +54,11 @@ public class SqlBillDaoTest extends BaseTests
 
     @Test
     public void testFastBill() throws Exception {
-        Bill bill = billDao.getBill(new BillId("S5922", 2013));
+        Bill bill = billDao.getBill(new BillId("S5922", 2013), EnumSet.allOf(BillTextFormat.class));
 
         StopWatch sw = new StopWatch();
         sw.start();
-            bill = billDao.getBill(new BillId("S5922", 2013));
+            bill = billDao.getBill(new BillId("S5922", 2013), EnumSet.allOf(BillTextFormat.class));
         sw.stop();
         logger.info("Time {} ms",sw.getTime());
 //        logger.info("{}", OutputUtils.toJson(bill));

@@ -38,6 +38,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
+
 @Service
 public class ElasticBillSearchService implements BillSearchService, IndexedSearchService<Bill>
 {
@@ -158,7 +160,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
         // Categorize bills based on whether or not they should be index.
         for (Bill bill : bills) {
             if (isBillIndexable(bill)) {
-                indexableBills.add(bill);
+                indexableBills.add(ensurePlainTextPresent(bill));
             } else {
                 nonIndexableBills.add(bill);
             }
@@ -275,7 +277,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
                     billIdQueue.drainTo(billIdBatch, billReindexBatchSize);
 
                     List<Bill> bills = billIdBatch.stream()
-                            .map(billDataService::getBill)
+                            .map((billId) -> billDataService.getBill(billId, Collections.singleton(PLAIN)))
                             .collect(Collectors.toCollection(() -> new ArrayList<>(billReindexBatchSize)));
 
                     updateIndex(bills);
@@ -286,5 +288,18 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
                 throw ex;
             }
         }
+    }
+
+    /**
+     * Returns a version of the given bill that is guaranteed to contain plaintext versions of full text for all amendments
+     */
+    private Bill ensurePlainTextPresent(Bill bill) {
+        boolean allContainPlain = bill.getAmendmentList().stream().allMatch(a -> a.getFullTextFormats().contains(PLAIN));
+        if (!allContainPlain) {
+            // If the bill doesn't have plain text for any amendments, reload bill with plain text
+            logger.warn("Bill passed in for indexing does not contain plain text: {}", bill.getBaseBillId());
+            bill = billDataService.getBill(bill.getBaseBillId(), Collections.singleton(PLAIN));
+        }
+        return bill;
     }
 }

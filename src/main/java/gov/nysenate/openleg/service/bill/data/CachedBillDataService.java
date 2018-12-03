@@ -7,22 +7,15 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillInfo;
-import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
+import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
-import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.model.cache.ContentCache;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
-import gov.nysenate.openleg.util.OutputUtils;
 import net.sf.ehcache.*;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
@@ -36,9 +29,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Data service layer for retrieving and updating bill data. This implementation makes use of
@@ -115,11 +106,12 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
             while (sessionYear.compareTo(sessionRange.get().upperEndpoint()) <= 0) {
                 if (sessionYear.equals(SessionYear.current())) {
                     logger.info("Caching Bill instances for current session year: {}", sessionYear);
-                    getBillIds(sessionYear, LimitOffset.ALL).forEach(id -> getBill(id));
+                    // Don't load any text because that is not cached.
+                    getBillIds(sessionYear, LimitOffset.ALL).forEach(id -> getBill(id, Collections.emptySet()));
                 }
                 else {
                     logger.info("Caching Bill Info instances for session year: {}", sessionYear);
-                    getBillIds(sessionYear, LimitOffset.ALL).forEach(id -> getBillInfo(id));
+                    getBillIds(sessionYear, LimitOffset.ALL).forEach(this::getBillInfo);
                 }
                 sessionYear = sessionYear.next();
             }
@@ -165,19 +157,19 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
 
     /** {@inheritDoc} */
     @Override
-    public Bill getBill(BaseBillId billId) throws BillNotFoundEx {
+    public Bill getBill(BaseBillId billId, Set<BillTextFormat> fullTextFormats) throws BillNotFoundEx {
         if (billId == null) {
             throw new IllegalArgumentException("BillId cannot be null");
         }
         try {
             Bill bill;
             if (billCache.get(billId) != null) {
-                bill = constructBillFromCache(billId);
+                bill = constructBillFromCache(billId, fullTextFormats);
                 logger.debug("Cache hit for bill {}", bill);
             }
             else {
                 logger.debug("Fetching bill {}..", billId);
-                bill = billDao.getBill(billId);
+                bill = billDao.getBill(billId, fullTextFormats);
                 putStrippedBillInCache(bill);
             }
             return bill;
@@ -289,13 +281,14 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
      * method. The fulltext and memo are put back into a copy of the cached bill.
      *
      * @param billId BaseBillId
+     * @param billTextFormats {@link Set<BillTextFormat>}
      * @return Bill
      * @throws CloneNotSupportedException
      */
-    private Bill constructBillFromCache(BaseBillId billId) throws CloneNotSupportedException {
+    private Bill constructBillFromCache(BaseBillId billId, Set<BillTextFormat> billTextFormats) throws CloneNotSupportedException {
         Bill cachedBill = (Bill) billCache.get(billId).getObjectValue();
         cachedBill = cachedBill.shallowClone();
-        billDao.applyText(cachedBill);
+        billDao.applyText(cachedBill, billTextFormats);
         return cachedBill;
     }
 
@@ -308,9 +301,9 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
         if (bill != null) {
             try {
                 Bill cacheBill = bill.shallowClone();
-                cacheBill.getAmendmentList().stream().forEach(ba -> {
+                cacheBill.getAmendmentList().forEach(ba -> {
                     ba.setMemo("");
-                    ba.setFullText("");
+                    ba.clearFullTexts();
                 });
                 this.billCache.put(new Element(cacheBill.getBaseBillId(), cacheBill));
                 // Remove entry from the bill info cache if it exists

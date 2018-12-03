@@ -26,18 +26,19 @@ public enum SqlBillQuery implements BasicSqlQuery
         "SET title = :title, summary = :summary, active_version = :activeVersion, sub_bill_print_no = :subPrintNo,\n" +
         "    active_year = :activeYear, program_info = :programInfo, program_info_num = :programInfoNum, " +
         "    status = :status, status_date = :statusDate, committee_name = :committeeName, " +
-        "    committee_chamber = :committeeChamber::chamber, bill_cal_no = :billCalNo, " +
-        "    modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId\n" +
+        "    committee_chamber = :committeeChamber::chamber, bill_cal_no = :billCalNo, blurb = :blurb, "  +
+        "    modified_date_time = :modifiedDateTime, published_date_time = :publishedDateTime, last_fragment_id = :lastFragmentId, " +
+        "    reprint_no = :reprintOf \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     INSERT_BILL(
         "INSERT INTO ${schema}." + SqlTable.BILL + "\n" +
         "(bill_print_no, bill_session_year, title, summary, active_version, active_year, sub_bill_print_no, " +
-        " program_info, program_info_num, status, status_date, committee_name, committee_chamber, bill_cal_no, " +
-        " modified_date_time, published_date_time, last_fragment_id) \n" +
+        " program_info, program_info_num, status, status_date, committee_name, committee_chamber, bill_cal_no, blurb," +
+        " modified_date_time, published_date_time, last_fragment_id, reprint_no) \n" +
         "VALUES (:printNo, :sessionYear, :title, :summary, :activeVersion, :activeYear, :subPrintNo, " +
-        "        :programInfo, :programInfoNum, :status, :statusDate, :committeeName, :committeeChamber::chamber, :billCalNo, " +
-        "        :modifiedDateTime, :publishedDateTime, :lastFragmentId)"
+        "        :programInfo, :programInfoNum, :status, :statusDate, :committeeName, :committeeChamber::chamber, :billCalNo, :blurb," +
+        "        :modifiedDateTime, :publishedDateTime, :lastFragmentId, :reprintOf)"
     ),
     ACTIVE_SESSION_YEARS(
         "SELECT min(bill_session_year) as min, max(bill_session_year) as max\n" +
@@ -75,11 +76,12 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     /** --- Bill Text --- */
 
-    SELECT_BILL_TEXT(
-        "SELECT bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, full_text \n" +
+    SELECT_BILL_TEXT_TEMPLATE(
+        "SELECT bill_print_no, bill_session_year, bill_amend_version, sponsor_memo ${fullTextFields}\n" +
         "FROM ${schema}.bill_amendment \n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
+
     SELECT_ALTERNATE_PDF_URL(
         "SELECT url_path \n" +
         "FROM ${schema}." + SqlTable.BILL_ALTERNATE_PDF + "\n" +
@@ -89,22 +91,37 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     /** --- Bill Amendment --- */
 
-    SELECT_BILL_AMENDMENTS(
-        "SELECT * FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
+    SELECT_BILL_AMENDMENTS_TEMPLATE(
+        "SELECT bill_print_no, bill_session_year, bill_amend_version,\n" +
+        "       sponsor_memo, act_clause, stricken, uni_bill, law_section, law_code\n" +
+        "       ${fullTextFields}\n" +
+        "FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
     UPDATE_BILL_AMENDMENT(
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-        "SET sponsor_memo = :sponsorMemo, act_clause = :actClause, full_text = :fullText, stricken = :stricken, " +
-        "    uni_bill = :uniBill, last_fragment_id = :lastFragmentId, law_section = :lawSection, law_code = :lawCode\n" +
+        "SET sponsor_memo = :sponsorMemo, act_clause = :actClause,\n" +
+        "    full_text = :fullText, full_text_html = :fullTextHtml,\n" +
+        "    stricken = :stricken, uni_bill = :uniBill, last_fragment_id = :lastFragmentId,\n" +
+        "    law_section = :lawSection, law_code = :lawCode\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     INSERT_BILL_AMENDMENT(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-        "(bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, act_clause, full_text, stricken, " +
-        " uni_bill, last_fragment_id, law_section, law_code)\n" +
-        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :stricken, " +
-        "       :uniBill, :lastFragmentId, :lawSection, :lawCode)"
+        "(bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, act_clause, full_text, full_text_html,\n" +
+        "    stricken, uni_bill, last_fragment_id, law_section, law_code)\n" +
+        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :fullTextHtml,\n" +
+        "    :stricken, :uniBill, :lastFragmentId, :lawSection, :lawCode)"
+    ),
+    SELECT_EMPTY_TEXT_BUDGET_BILL_PRINT_NOS (
+        "select s.bill_print_no, s.bill_session_year\n" +
+                "from ${schema}." + SqlTable.BILL_SPONSOR + " s, ${schema}." + SqlTable.BILL_AMENDMENT + " a\n" +
+                "where s.bill_print_no = a.bill_print_no\n" +
+                "  and s.bill_session_year = :sessionYear\n" +
+                "  and a.bill_session_year = :sessionYear2\n" +
+                "  and a.full_text = ''\n" +
+                "  and a.bill_amend_version = ''\n" +
+                "  and s.budget_bill = 'TRUE';"
     ),
 
     /** --- Bill Amendment Publish Status --- */

@@ -1,24 +1,20 @@
 package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.dao.calendar.data.CalendarDao;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
@@ -29,7 +25,7 @@ import static junit.framework.TestCase.assertTrue;
  */
 public class SupplementalCalendarTest extends BaseTests {
 
-    private final File alertFile = new File(getClass().getClassLoader().getResource("calendarAlerts/floor_cal_alert-2015-28B-20150331T185833.html").getFile());
+    private final File alertFile = FileIOUtils.getResourceFile("calendarAlerts/floor_cal_alert-2015-28B-20150331T185833.html");
 
     @Autowired
     private CalendarAlertProcessor process;

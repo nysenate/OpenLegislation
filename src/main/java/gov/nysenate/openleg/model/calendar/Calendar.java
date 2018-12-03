@@ -136,6 +136,10 @@ public class Calendar extends BaseLegislativeContent
         return calendarEntryListIds;
     }
 
+    public void setId(int calenderNumber, int year) {
+        this.id = new CalendarId(calenderNumber, year);
+    }
+
     public void setId(CalendarId id) {
         this.id = id;
     }

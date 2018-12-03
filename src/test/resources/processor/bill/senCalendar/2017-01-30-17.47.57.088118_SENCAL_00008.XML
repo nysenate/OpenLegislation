@@ -1,0 +1,25 @@
+<sencalendar no="00008" sessyr="2017" year="2017" action="replace">
+<supplemental id="">
+<caldate>2017-01-31</caldate>
+<releasedate>2017-01-30</releasedate>
+<releasetime>T17.47.00Z</releasetime>
+<sections>
+<section name="BILLS ON ORDER OF FIRST REPORT" type="C" cd="0150">
+<calnos>
+<calno no="0000000096">
+<bill no="S00249" />
+<sponsor><![CDATA[ORTT]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+<calno no="0000000097">
+<bill no="S01635" />
+<sponsor><![CDATA[GOLDEN]]></sponsor>
+<subbill no="" />
+<subsponsor></subsponsor>
+</calno>
+</calnos>
+</section>
+</sections>
+</supplemental>
+</sencalendar>

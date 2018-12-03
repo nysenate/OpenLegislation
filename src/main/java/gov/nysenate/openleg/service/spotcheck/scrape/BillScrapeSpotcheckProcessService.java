@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.scrape;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.bill.scrape.BillScrapeReferenceDao;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.service.scraping.bill.BillScraper;
@@ -36,7 +37,11 @@ public class BillScrapeSpotcheckProcessService extends BaseSpotcheckProcessServi
 
     @Override
     public int doCollate() throws IOException {
-        return scraper.scrape();
+        // Scrape to generate a new file
+        scraper.scrape();
+        // Register any new files in the incoming dir.
+        List<BillScrapeFile> newBillScrapeFiles = btrDao.registerIncomingScrapedBills();
+        return newBillScrapeFiles.size();
     }
 
     @Override
@@ -55,7 +60,7 @@ public class BillScrapeSpotcheckProcessService extends BaseSpotcheckProcessServi
 
     @Override
     protected int getUncheckedRefCount() {
-        return btrDao.pendingScrapeBills().size();
+        return btrDao.getPendingScrapeBills(LimitOffset.ONE).getTotal();
     }
 
     @Override

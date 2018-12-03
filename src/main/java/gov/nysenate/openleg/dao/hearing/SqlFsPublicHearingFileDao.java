@@ -69,7 +69,7 @@ public class SqlFsPublicHearingFileDao extends SqlBaseDao implements PublicHeari
         File stagedFile = publicHearingFile.getFile();
         if (stagedFile.getParentFile().compareTo(incomingPublicHearingDir) == 0) {
             File archiveFile = new File(archivePublicHearingDir, publicHearingFile.getFileName());
-            moveFile(stagedFile, archiveFile);
+            FileIOUtils.moveFile(stagedFile, archiveFile);
 
             publicHearingFile.setFile(archiveFile);
             publicHearingFile.setArchived(true);

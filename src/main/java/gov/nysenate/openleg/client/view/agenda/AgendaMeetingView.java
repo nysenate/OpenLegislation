@@ -28,6 +28,9 @@ public class AgendaMeetingView implements ViewObject
         this.notes = notes;
     }
 
+    //Added for Json Deserialization
+    protected AgendaMeetingView() {}
+
     public String getChair() {
         return chair;
     }

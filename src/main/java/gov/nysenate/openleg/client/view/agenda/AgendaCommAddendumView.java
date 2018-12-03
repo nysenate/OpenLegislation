@@ -25,6 +25,9 @@ public class AgendaCommAddendumView implements ViewObject
     private AgendaId agendaId;
     private CommitteeId committeeId;
 
+    //Added for Json Deserialization
+    protected AgendaCommAddendumView() {}
+
     public AgendaCommAddendumView(CommitteeAgendaAddendumId id, LocalDateTime modDateTime, AgendaInfoCommittee infoComm,
                                   AgendaVoteCommittee voteComm, BillDataService billDataService) {
         if (id != null) {

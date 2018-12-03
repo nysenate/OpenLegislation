@@ -15,7 +15,7 @@
       <h2 class="text-normal margin-10">{{bill.title}}</h2>
       <div ng-if="bill.programInfo">
         <p class="text-medium margin-left-10 no-margin">
-          Bill #{{bill.programInfo.sequenceNo + 1}} on the program for <span class="bold">{{bill.programInfo.name}}</span>
+          Bill #{{bill.programInfo.sequenceNo}} on the program for <span class="bold">{{bill.programInfo.name}}</span>
         </p>
       </div>
       <%-- Bill sponsor,and status --%>

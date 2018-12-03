@@ -28,6 +28,9 @@ public class AgendaSummaryView implements ViewObject
         }
     }
 
+    //Added for Json Deserialization
+    protected AgendaSummaryView() {}
+
     public AgendaIdView getId() {
         return id;
     }

@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.model.bill;
 
+import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -41,8 +42,8 @@ public class BillAmendment implements Serializable, Cloneable
     /** The AN ACT TO... clause which describes the bill's intent. */
     protected String actClause = "";
 
-    /** The full text of the amendment. */
-    protected String fullText = "";
+    /** The full bill text in various formats.  Not all formats are always loaded to save space */
+    protected Map<BillTextFormat, String> fullTextMap = new HashMap<>();
 
     /** The committee the bill is currently referred to, if any. */
     protected CommitteeVersionId currentCommittee = null;
@@ -81,20 +82,42 @@ public class BillAmendment implements Serializable, Cloneable
         return this.getBillId().toString();
     }
 
+    /* --- Functional Getters --- */
+
+    public ImmutableSet<BillTextFormat> getFullTextFormats() {
+        return ImmutableSet.copyOf(fullTextMap.keySet());
+    }
+
+    public boolean hasTextInFormat(BillTextFormat format) {
+        return fullTextMap.containsKey(format);
+    }
+
+    public String getFullText(BillTextFormat format) {
+        return fullTextMap.get(format);
+    }
+
+    public void setFullText(BillTextFormat format, String fullText) {
+        fullTextMap.put(format, fullText);
+    }
+
+    public void clearFullTexts() {
+        fullTextMap.clear();
+    }
+
     /**
      * Creates a shallow clone for this amendment. This should only be used for caching purposes.
      * @return BillAmendment
      */
     public BillAmendment shallowClone() {
         try {
-            return (BillAmendment) this.clone();
+            BillAmendment clone = (BillAmendment) this.clone();
+            clone.fullTextMap = new HashMap<>(this.fullTextMap);
+            return clone;
         }
         catch (CloneNotSupportedException e) {
             throw new RuntimeException("Failed to clone bill amendment!");
         }
     }
-
-    /** --- Functional Getters/Setters --- */
 
     public String getBasePrintNo() {
         return baseBillId.getBasePrintNo();
@@ -164,14 +187,6 @@ public class BillAmendment implements Serializable, Cloneable
 
     public void setActClause(String actClause) {
         this.actClause = actClause;
-    }
-
-    public String getFullText() {
-        return fullText;
-    }
-
-    public void setFullText(String fullText) {
-        this.fullText = fullText;
     }
 
     public CommitteeVersionId getCurrentCommittee() {

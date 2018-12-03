@@ -39,6 +39,9 @@ public class BillVoteView implements ViewObject
             );
         }
     }
+    public BillVoteView(){
+
+    }
 
     public BillIdView getBillId() {
         return billId;
@@ -46,6 +49,10 @@ public class BillVoteView implements ViewObject
 
     public String getVersion() {
         return version;
+    }
+
+    public void setVoteDate(String date){
+        voteDate = LocalDate.parse(date);
     }
 
     public BillVoteType getVoteType() {

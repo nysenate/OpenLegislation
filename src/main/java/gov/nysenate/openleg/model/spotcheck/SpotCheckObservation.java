@@ -43,6 +43,10 @@ public class SpotCheckObservation<ContentKey>
 
     public SpotCheckObservation() {}
 
+    public SpotCheckObservation(ContentKey key) {
+        this.key = key;
+    }
+
     public SpotCheckObservation(SpotCheckReferenceId referenceId, ContentKey key) {
         this.referenceId = referenceId;
         this.key = key;
@@ -82,7 +86,7 @@ public class SpotCheckObservation<ContentKey>
     }
 
     public void addMismatch(SpotCheckMismatch mismatch) {
-        validateMismatch(mismatch);
+        checkReportable(mismatch.getMismatchType());
         mismatches.put(mismatch.getMismatchType(), mismatch);
     }
 
@@ -138,20 +142,18 @@ public class SpotCheckObservation<ContentKey>
         }
     }
 
-    /* --- Internal Methods --- */
-
     /**
-     * Tests to see if a mismatch is valid for this observation.
-     * If not an exception is thrown.
-     * @param mismatch {@link SpotCheckMismatch}
+     * Check to make sure the given mismatch type can be reported by this observation
+     * @param type {@link SpotCheckMismatchType}
+     * @throws IllegalArgumentException if it cannot.
      */
-    private void validateMismatch(SpotCheckMismatch mismatch) {
+    public void checkReportable(SpotCheckMismatchType type) throws IllegalArgumentException {
         SpotCheckRefType referenceType = referenceId.getReferenceType();
         // The mismatch type must be registered as being checked by the observation's reference type.
         // Otherwise it cannot be resolved.
-        if (!referenceType.checkedMismatchTypes().contains(mismatch.getMismatchType())) {
-            throw new IllegalArgumentException(mismatch.getMismatchType() +
-                    " mismatches cannot be reported in " + referenceType + " observations.");
+        if (!referenceType.checkedMismatchTypes().contains(type)) {
+            throw new IllegalArgumentException(
+                    type + " mismatches cannot be reported in " + referenceType + " observations.");
         }
     }
 

@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.law.data;
 
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.law.LawFile;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static gov.nysenate.openleg.dao.law.data.SqlLawFileQuery.*;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 import static gov.nysenate.openleg.util.FileIOUtils.safeListFiles;
 import static java.util.stream.Collectors.toList;
@@ -74,7 +74,7 @@ public class SqlFsLawFileDao extends SqlBaseDao implements LawFileDao
         File file = lawFile.getFile();
         if (file.getParentFile().compareTo(this.incomingLawDir) == 0) {
             File archiveFile = getFileInArchiveDir(file.getName());
-            moveFile(file, archiveFile);
+            FileIOUtils.moveFile(file, archiveFile);
             lawFile.setFile(archiveFile);
             lawFile.setArchived(true);
             updateLawFile(lawFile);

@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.agenda.data;
 
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.*;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 
 import java.time.LocalDate;
 import java.util.List;

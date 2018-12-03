@@ -1,16 +1,21 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.nysenate.openleg.client.view.base.ListView;
-import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
-import gov.nysenate.openleg.client.view.entity.SimpleMemberView;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BillAmendment;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.util.BillTextUtils;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.*;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BillAmendmentView extends BillIdView
 {
     protected LocalDate publishDate;
@@ -19,11 +24,15 @@ public class BillAmendmentView extends BillIdView
     protected String lawSection;
     protected String lawCode;
     protected String actClause;
+    protected List<BillTextFormat> fullTextFormats;
     protected String fullText;
+    protected String fullTextHtml;
     protected ListView<MemberView> coSponsors;
     protected ListView<MemberView> multiSponsors;
     protected boolean uniBill;
     protected boolean isStricken;
+
+    protected BillAmendmentView(){}
 
     public BillAmendmentView(BillAmendment billAmendment, PublishStatus publishStatus) {
         super(billAmendment != null ? billAmendment.getBillId() : null);
@@ -36,7 +45,9 @@ public class BillAmendmentView extends BillIdView
             this.lawSection = billAmendment.getLawSection();
             this.lawCode = billAmendment.getLaw();
             this.actClause = billAmendment.getActClause();
-            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText());
+            this.fullTextFormats = new ArrayList<>(billAmendment.getFullTextFormats());
+            this.fullText = BillTextUtils.formatBillText(billAmendment.isResolution(), billAmendment.getFullText(PLAIN));
+            this.fullTextHtml = billAmendment.getFullText(HTML);
             this.coSponsors = ListView.of(billAmendment.getCoSponsors().stream()
                 .map(MemberView::new)
                 .collect(Collectors.toList()));
@@ -55,6 +66,10 @@ public class BillAmendmentView extends BillIdView
 
     public LocalDate getPublishDate() {
         return publishDate;
+    }
+
+    public void setPublishDate(String date){
+        publishDate = LocalDate.parse(date);
     }
 
     public ListView<BillIdView> getSameAs() {
@@ -95,5 +110,13 @@ public class BillAmendmentView extends BillIdView
 
     public boolean isStricken() {
         return isStricken;
+    }
+
+    public List<BillTextFormat> getFullTextFormats() {
+        return fullTextFormats;
+    }
+
+    public String getFullTextHtml() {
+        return fullTextHtml;
     }
 }

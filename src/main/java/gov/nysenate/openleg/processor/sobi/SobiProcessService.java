@@ -2,13 +2,11 @@ package gov.nysenate.openleg.processor.sobi;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.process.DataProcessRun;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiFragmentNotFoundEx;
-import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentNotFoundEx;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processor.base.ProcessService;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 
 /**
@@ -26,7 +24,7 @@ public interface SobiProcessService extends ProcessService
      *
      * @return int - The number of sobi files that have been collated.
      */
-    public int collateSobiFiles();
+    public int collateSourceFiles();
 
     /**
      * Retrieves the SobiFragments that are awaiting processing.

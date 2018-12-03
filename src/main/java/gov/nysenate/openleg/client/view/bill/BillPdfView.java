@@ -5,6 +5,7 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.util.BillTextUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -14,8 +15,10 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 
 /**
  * PDF representation of a bill.
@@ -46,14 +49,14 @@ public class BillPdfView
 
         BillAmendment ba = bill.getAmendment(version);
         List<List<String>> pages;
-        if (ba.getFullText() == null || ba.getFullText().isEmpty()) {
-            pages = Arrays.asList(Arrays.asList("No full text available for " + bill.getBaseBillId().withVersion(version)));
-        }
-        else if (bill.isResolution()) {
-            pages = BillTextUtils.getResolutionPages(ba.getFullText());
-        }
-        else {
-            pages = BillTextUtils.getBillPages(ba.getFullText());
+        final String fullText = ba.getFullText(PLAIN);
+        if (StringUtils.isBlank(fullText)) {
+            pages = Collections.singletonList(Collections.singletonList(
+                    "No full text available for " + bill.getBaseBillId().withVersion(version)));
+        } else if (bill.isResolution()) {
+            pages = BillTextUtils.getResolutionPages(fullText);
+        } else {
+            pages = BillTextUtils.getBillPages(fullText);
         }
 
         try (PDDocument doc = new PDDocument()) {

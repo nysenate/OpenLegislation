@@ -26,6 +26,9 @@ public class CalendarEntryView extends BillInfoView
         }
     }
 
+    //Added for Json deserialization
+    protected CalendarEntryView() {}
+
     public int getBillCalNo() {
         return billCalNo;
     }
@@ -34,10 +37,15 @@ public class CalendarEntryView extends BillInfoView
         return selectedVersion;
     }
 
-    public static Comparator<CalendarEntryView> calEntryViewComparator = Comparator.comparingInt(CalendarEntryView::getBillCalNo);
+    public static final Comparator<CalendarEntryView> calEntryViewComparator =
+            Comparator.comparingInt(CalendarEntryView::getBillCalNo);
 
     @Override
     public String getViewType() {
         return "calendar-activelist-entry";
+    }
+
+    public String toString() {
+        return " Bill Cal No: " + this.getBillCalNo() + "\n" + " Selected Version: " + this.getSelectedVersion() +"\n\n";
     }
 }

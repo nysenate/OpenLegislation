@@ -9,24 +9,21 @@ import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@Transactional
 @Category(IntegrationTest.class)
 public class CalendarAlertProcessorIT extends BaseTests {
 
@@ -40,15 +37,14 @@ public class CalendarAlertProcessorIT extends BaseTests {
 
     @BeforeClass
     public static void beforeclass() throws FileNotFoundException {
-        Class<CalendarAlertProcessorIT> clazz = CalendarAlertProcessorIT.class;
-        simpleFloor = new CalendarAlertFile(new File(clazz.getClassLoader()
-                .getResource("calendarAlerts/floor_cal_alert-2015-10-20150219T143033.html").getFile()));
-        floorSupplemental = new CalendarAlertFile(new File(clazz.getClassLoader()
-                .getResource("calendarAlerts/floor_cal_alert-2015-28B-20150331T185833.html").getFile()));
-        simpleActiveList = new CalendarAlertFile(new File(clazz.getClassLoader()
-                .getResource("calendarAlerts/active_list_alert-2015-10-20150224T193238.html").getFile()));
-        activeListSupplemental = new CalendarAlertFile(new File(clazz.getClassLoader()
-                .getResource("calendarAlerts/active_list_alert-2017-59-2-20170621T205235.html").getFile()));
+        simpleFloor = new CalendarAlertFile(
+                FileIOUtils.getResourceFile("calendarAlerts/floor_cal_alert-2015-10-20150219T143033.html"));
+        floorSupplemental = new CalendarAlertFile(
+                FileIOUtils.getResourceFile("calendarAlerts/floor_cal_alert-2015-28B-20150331T185833.html"));
+        simpleActiveList = new CalendarAlertFile(
+                FileIOUtils.getResourceFile("calendarAlerts/active_list_alert-2015-10-20150224T193238.html"));
+        activeListSupplemental = new CalendarAlertFile(
+                FileIOUtils.getResourceFile("calendarAlerts/active_list_alert-2017-59-2-20170621T205235.html"));
     }
 
     @Test

@@ -236,7 +236,10 @@ BEGIN
     year := NEW.year;
     new_values := delete(hstore(NEW.*), ignored_columns);
     fragment_id := NEW.last_fragment_id;
-    published_date_time := (substring(fragment_id from 7 for 6) || substring(fragment_id from 14 for 7))::timestamp without time zone;
+    SELECT master.sobi_fragment.published_date_time
+    INTO published_date_time
+    FROM master.sobi_fragment
+    WHERE master.sobi_fragment.fragment_id = NEW.last_fragment_id;
   ELSE
     agenda_no := OLD.agenda_no;
     year := OLD.year;
@@ -302,7 +305,11 @@ BEGIN
     bill_session_year := NEW.bill_session_year;
     new_values := delete(hstore(NEW.*), ignored_columns);
     fragment_id := NEW.last_fragment_id;
-    published_date_time := (substring(fragment_id from 7 for 6) || substring(fragment_id from 14 for 7))::timestamp without time zone;
+    SELECT master.sobi_fragment.published_date_time
+    INTO published_date_time
+    FROM master.sobi_fragment
+    WHERE master.sobi_fragment.fragment_id = NEW.last_fragment_id;
+    RAISE NOTICE 'published_date_time is currently: %', published_date_time;
   ELSE
     bill_print_no := OLD.bill_print_no;
     bill_session_year := OLD.bill_session_year;
@@ -1478,7 +1485,9 @@ CREATE TABLE bill (
     created_date_time timestamp without time zone DEFAULT now(),
     modified_date_time timestamp without time zone,
     published_date_time timestamp without time zone,
-    last_fragment_id text
+    last_fragment_id text,
+    blurb text,
+    reprint_no text
 );
 
 
@@ -1618,6 +1627,19 @@ COMMENT ON COLUMN bill.last_fragment_id IS 'Reference to the last sobi fragment 
 
 
 --
+-- Name: COLUMN bill.blurb; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN master.bill.blurb IS 'Brief summary of pertinent bill info';
+
+
+--
+-- Name: COLUMN bill.reprint_no; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN master.bill.reprint_no IS 'Points to a reprint of the bill in the same session (if applicable)';
+
+--
 -- Name: bill_amendment; Type: TABLE; Schema: master; Owner: postgres
 --
 
@@ -1628,6 +1650,7 @@ CREATE TABLE bill_amendment (
     sponsor_memo text,
     act_clause text,
     full_text text,
+    full_text_html text,
     stricken boolean DEFAULT false,
     uni_bill boolean DEFAULT false,
     law_code text,
@@ -1658,6 +1681,13 @@ COMMENT ON COLUMN bill_amendment.law_code IS 'Specifies the sections/chapters of
 --
 
 COMMENT ON COLUMN bill_amendment.law_section IS 'The primary section of law this bill affects';
+
+
+--
+-- Name: COLUMN bill_amendment.full_text_html; Type: COMMENT; Schema: master; Owner: postgres
+--
+
+COMMENT ON COLUMN bill_amendment.full_text_html IS 'A marked up version of full text.';
 
 
 --
@@ -5334,14 +5364,6 @@ ALTER TABLE ONLY bill_sponsor_additional
 
 
 --
--- Name: bill_text_reference_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
---
-
-ALTER TABLE ONLY bill_text_reference
-    ADD CONSTRAINT bill_text_reference_pkey PRIMARY KEY (bill_print_no, bill_session_year, reference_date_time);
-
-
---
 -- Name: bill_veto_pkey; Type: CONSTRAINT; Schema: master; Owner: postgres
 --
 
@@ -7842,4 +7864,3 @@ GRANT ALL ON SEQUENCE session_member_id_seq TO postgres;
 --
 -- PostgreSQL database dump complete
 --
-

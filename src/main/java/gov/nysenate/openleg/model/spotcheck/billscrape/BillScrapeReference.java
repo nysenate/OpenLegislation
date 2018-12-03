@@ -7,9 +7,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -88,6 +86,7 @@ public class BillScrapeReference {
     public String getText() {
         return text;
     }
+
     public void setText(String text) {
         this.text = text;
     }

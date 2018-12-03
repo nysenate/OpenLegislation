@@ -39,6 +39,9 @@ public class CalendarView extends CalendarIdView {
         calDate = calendar.getCalDate();
     }
 
+    //Added for Json deserialization
+    protected CalendarView() {}
+
     public CalendarSupView getFloorCalendar() {
         return floorCalendar;
     }

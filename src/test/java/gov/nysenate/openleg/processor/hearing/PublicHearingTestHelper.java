@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processor.hearing;
 
 import gov.nysenate.openleg.TestUtils;
-import gov.nysenate.openleg.model.hearing.PublicHearingFile;
+import gov.nysenate.openleg.util.FileIOUtils;
 import gov.nysenate.openleg.util.PublicHearingTextUtils;
 import org.apache.commons.io.FileUtils;
 

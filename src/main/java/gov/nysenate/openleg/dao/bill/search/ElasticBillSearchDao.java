@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
+
 @Repository
 public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDao
 {
@@ -74,6 +76,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     public void updateBillIndex(Collection<Bill> bills) {
         BulkRequest bulkRequest = new BulkRequest();
         bills.stream()
+                .map(this::stripNonPlainText)
                 .map(BillView::new)
                 .map(bv -> getJsonIndexRequest(billIndexName, toElasticId(bv.toBaseBillId()), bv))
                 .forEach(bulkRequest::add);
@@ -181,5 +184,34 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     private String toElasticId(BaseBillId baseBillId) {
         return baseBillId.getSession() + "-" +
                 baseBillId.getBasePrintNo();
+    }
+
+    /**
+     * Ensure the passed in bill only contains plain text.
+     */
+    private Bill stripNonPlainText(Bill bill) {
+        boolean allPlain = bill.getAmendmentList().stream().allMatch(a -> {
+            // If no plain text is present, throw exception.
+            if (!a.hasTextInFormat(PLAIN)) {
+                throw new IllegalArgumentException("Bills must have plain text loaded to index");
+            }
+            return Collections.singleton(PLAIN).equals(a.getFullTextFormats());
+        });
+        if (allPlain) {
+            // Bill is good as is
+            return bill;
+        }
+        try {
+            // Create a clone with only plain text
+            Bill strippedBill = bill.shallowClone();
+            strippedBill.getAmendmentList().forEach(amend -> {
+                String plainText = amend.getFullText(PLAIN);
+                amend.clearFullTexts();
+                amend.setFullText(PLAIN, plainText);
+            });
+            return strippedBill;
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

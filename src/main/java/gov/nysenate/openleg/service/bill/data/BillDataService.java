@@ -3,15 +3,13 @@ package gov.nysenate.openleg.service.bill.data;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.bill.BillInfo;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import org.springframework.dao.DataAccessException;
+import gov.nysenate.openleg.model.bill.*;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service interface for retrieving and saving Bill data. Retrieval is based
@@ -22,13 +20,27 @@ import java.util.Optional;
 public interface BillDataService
 {
     /**
-     * Retrieve a Bill instance for the matching BillId.
+     * Default overload of {@link #getBill(BaseBillId, Set)} that always applies plain bill text.
      *
      * @param billId BaseBillId
      * @return Bill
      * @throws BillNotFoundEx - If no Bill matching the BillId was found.
      */
-    public Bill getBill(BaseBillId billId) throws BillNotFoundEx;
+    default Bill getBill(BaseBillId billId) throws BillNotFoundEx {
+        return getBill(billId, Collections.singleton(BillTextFormat.PLAIN));
+    }
+
+    /**
+     * Retrieve a Bill instance for the matching BillId.
+     *
+     * Will only include bill texts for the given formats.
+     *
+     * @param billId BaseBillId
+     * @param fullTextFormats {@link Set<BillTextFormat>} formats to include on bill
+     * @return Bill
+     * @throws BillNotFoundEx - If no Bill matching the BillId was found.
+     */
+    Bill getBill(BaseBillId billId, Set<BillTextFormat> fullTextFormats) throws BillNotFoundEx;
 
     /**
      * Retrieve a BillInfo instance for the matching BillId. This contains
@@ -38,7 +50,7 @@ public interface BillDataService
      * @return BillInfo
      * @throws BillNotFoundEx - If no Bill matching the BillId was found.
      */
-    public BillInfo getBillInfo(BaseBillId billId) throws BillNotFoundEx;
+    BillInfo getBillInfo(BaseBillId billId) throws BillNotFoundEx;
 
     /**
      * Retrieves a BillInfo instance for the matching BillId. This contains
@@ -49,7 +61,7 @@ public interface BillDataService
      * @param billId BaseBillId
      * @return BillInfo
      */
-    public BillInfo getBillInfoSafe(BaseBillId billId);
+    BillInfo getBillInfoSafe(BaseBillId billId);
 
     /**
      * Retrieve a list of BaseBillIds within the specified session year in ascending order.
@@ -60,7 +72,7 @@ public interface BillDataService
      * @param limitOffset Restrict the result set
      * @return List<BaseBillId>
      */
-    public List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limitOffset);
+    List<BaseBillId> getBillIds(SessionYear sessionYear, LimitOffset limitOffset);
 
     /**
      * Get the total number of bills for the given session year. This count includes
@@ -69,7 +81,7 @@ public interface BillDataService
      * @param sessionYear SessionYear
      * @return int
      */
-    public int getBillCount(SessionYear sessionYear);
+    int getBillCount(SessionYear sessionYear);
 
     /**
      * Saves the Bill in the persistence layer. If a new Bill reference is
@@ -81,7 +93,7 @@ public interface BillDataService
      * @param postUpdateEvent boolean - Set to true if this method should post a BillUpdateEvent
      *                                  to the event bus indicating to subscribers that the bill may have changed.
      */
-    public void saveBill(Bill bill, SobiFragment fragment, boolean postUpdateEvent);
+    void saveBill(Bill bill, SobiFragment fragment, boolean postUpdateEvent);
 
     /**
      * Returns a closed Range containing the session years for which bill data exists.
@@ -89,7 +101,7 @@ public interface BillDataService
      *
      * @return Optional<Range<SessionYear>>
      */
-    public Optional<Range<SessionYear>> activeSessionRange();
+    Optional<Range<SessionYear>> activeSessionRange();
 
     /**
      * Certain bills require alternate urls when linking their pdfs. If the given bill id is one of
@@ -97,5 +109,5 @@ public interface BillDataService
      * @param billId BillId
      * @return Optional<String>
      */
-    public Optional<String> getAlternateBillPdfUrl(BillId billId);
+    Optional<String> getAlternateBillPdfUrl(BillId billId);
 }

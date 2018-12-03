@@ -16,8 +16,205 @@ Retrieve an agenda by year and agenda no
 ::
     (GET) /api/3/agendas/{year}/{agendaNo}
 
-More documentation coming soon..
+**Examples**
+
+Request agenda 2 of session year 2017
+::
+   /api/3/agendas/2017/2
+
+.. note:: Agenda responses have a lot of data. They contain their own data as well as bill data. The example, agenda 2 has over 10,000 lines.
 
 
 
+Get a list of agendas for a single year
+---------------------------------------
 
+**Usage**
+
+Returns a list of agenda ids in ascending order that occur in the given year
+::
+    (GET) /api/3/agendas/{year}
+
+**Examples**
+
+Request agenda 2 of session year 2017
+::
+   /api/3/agendas/2017
+
+
+
+Get a specific committee with an agenda
+---------------------------------------
+
+**Usage**
+
+Retrieve a specific committee within an agenda
+::
+    /api/3/agendas/{year}/{agendaNo}/{committeeName}
+
+**Examples**
+
+Request the Rules commitee agenda 2 of session year 2017
+::
+   /api/3/agendas/2017/2/Rules
+
+Get a list of committee meeting times in a time range
+-------------------------------------------------
+
+**Usage**
+
+Retrieve a list of committee meetings between from and to date/time, ordered by earliest first
+::
+    (GET) /api/3/agendas/meetings/{from datetime}/{to datetime}
+
+**Examples**
+
+Retrieve a list of committee meetings between Jan 1st, 2017 to Feb 1st, 2017
+::
+   /api/3/agendas/meetings/2017-01-01/2017-02-01
+
+
+
+Search an Agenda for a term
+-------------------------------------------------
+
+**Usage**
+
+Search agendas across all years for a term
+::
+    (GET) /api/3/agendas/search
+
+.. note:: The param term is required and the value of this parameter is whatever you are looking to find
+
+**Optional Params**
+
++-----------+-----------------------------------------------------------------------------------------+
+| Parameter | Values                                                                                  |
++===========+=========================================================================================+
+| full      | 'true', 'false'                                                                         |
++-----------+-----------------------------------------------------------------------------------------+
+
+**Examples**
+
+Search agendas for the term crime
+::
+   /api/3/agendas/search?term=crime&full=false
+
+
+
+Search all agendas in a calendar year for a term
+-------------------------------------------------
+
+**Usage**
+
+Search agendas across all years for a term
+::
+    (GET) /api/3/agendas/{year}/search
+
+.. note:: The param term is required and the value of this parameter is whatever you are looking to find
+
+**Optional Params**
+
++-----------+-----------------------------------------------------------------------------------------+
+| Parameter | Values                                                                                  |
++===========+=========================================================================================+
+| full      | 'true', 'false'                                                                         |
++-----------+-----------------------------------------------------------------------------------------+
+| limit     | Limit the number of results                                                             |
++-----------+-----------------------------------------------------------------------------------------+
+| offset    | Start the results from offset                                                           |
++-----------+-----------------------------------------------------------------------------------------+
+
+
+**Examples**
+
+Search agendas for a specific term
+::
+   /api/3/agendas/2017/search?term=crime&full=false&limit=10&offset=5
+
+
+
+Get updated agenda Id's
+-----------------------
+
+**Usage**
+
+Return a list of agenda ids that have changed during a specified date/time range
+::
+    (GET) /api/3/agendas/updates/
+
+.. note:: This api call gets updates in the last 7 days
+
+**Examples**
+
+Get all of the data in the last week
+::
+    /api/3/agendas/updates/
+
+**Usage**
+
+Get updates from the time specified to now
+::
+    (GET) /api/3/agendas/updates/{from}
+
+**Examples**
+
+Get updates for all of the 2017 session
+::
+    /api/3/agendas/updates/2017-01-01/
+
+**Usage**
+
+::
+    (GET) /api/3/agendas/updates/{from}/{to}
+
+**Examples**
+
+Get updates for all of January 2018
+::
+    /api/3/agendas/updates/2018-01-01/2018-01-31
+
+
+
+Get updated agenda digests
+--------------------------
+
+**Usage**
+
+This api call gets all digests for an agenda in a calendar year
+::
+    (GET) /api/3/agendas/{year}/{agendaNo}/updates
+
+**Examples**
+
+Get all updates for agenda 15 in 2017
+::
+    /api/3/agendas/2017/15/updates
+
+**Usage**
+
+Get a list of agenda digests in a specific time range of the calendar year to now
+::
+    (GET) /api/3/agendas/{year}/{agendaNo}/updates/{from}
+
+.. note:: Where 'from' is an ISO date time
+
+**Examples**
+
+Get updates for agenda 12 in 2017 from Feb 1st, 2017 to now
+::
+    /api/3/agendas/2017/12/updates/2017-02-01
+
+**Usage**
+
+Return agenda digests that have changed during a specified date/time range
+::
+    (GET) /api/3/agendas/{year}/{agendaNo}/updates/{from}/{to}
+
+.. note:: Where 'from' and 'to' are ISO date times
+
+**Examples**
+
+Get updates for agenda 12 in 2017 from Jan 1st, 2017 to Dec 1st, 2017
+::
+    /api/3/agendas/2017/12/updates/2017-01-01/2017-12-01

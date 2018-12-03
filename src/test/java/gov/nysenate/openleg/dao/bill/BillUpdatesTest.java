@@ -6,17 +6,18 @@ import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.dao.bill.data.BillUpdatesDao;
-import gov.nysenate.openleg.dao.sobi.SobiDao;
+import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
-import gov.nysenate.openleg.model.sobi.SobiFile;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateType;
+import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.util.OutputUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -25,7 +26,6 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +36,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-@Transactional
 @Category(SillyTest.class)
 public class BillUpdatesTest extends BaseTests {
 
     private static final Logger logger = LoggerFactory.getLogger(BillUpdatesTest.class);
 
-    @Autowired private BillDao billDao;
+    @Autowired private BillDataService billDataService;
     @Autowired private BillUpdatesDao billUpdatesDao;
-    @Autowired private SobiDao sobiDao;
+    @Autowired private SourceFileRefDao sourceFileRefDao;
+    @Autowired private SobiFragmentDao fragmentDao;
 
     private static final BaseBillId testBillId = new BaseBillId("S1537", 2017);
     private static final String testSobiFileName =
@@ -63,10 +63,10 @@ public class BillUpdatesTest extends BaseTests {
             throw new IllegalStateException(testFile + " was not created as expected");
         }
         SobiFile testSobiFile = new SobiFile(testFile);
-        sobiDao.updateSobiFile(testSobiFile);
+        sourceFileRefDao.updateSourceFile(testSobiFile);
         testFragment = new SobiFragment(testSobiFile, SobiFragmentType.BILL, "test", 1);
-        sobiDao.updateSobiFragment(testFragment);
-        testBill = billDao.getBill(testBillId);
+        fragmentDao.updateSobiFragment(testFragment);
+        testBill = billDataService.getBill(testBillId);
     }
 
     @After
@@ -92,7 +92,7 @@ public class BillUpdatesTest extends BaseTests {
         testBill.updatePublishStatus(nextVersion, new PublishStatus(false, LocalDateTime.now()));
         testBill.setActiveVersion(nextVersion);
 
-        billDao.updateBill(testBill, testFragment);
+        billDataService.saveBill(testBill, testFragment, false);
         testBill.updatePublishStatus(nextVersion, new PublishStatus(true, LocalDateTime.now()));
         updateBillAndLogUpdates();
     }
@@ -104,13 +104,13 @@ public class BillUpdatesTest extends BaseTests {
         sameAs.add(new BillId("A100B", 2017));
         activeAmendment.setSameAs(sameAs);
 
-        billDao.updateBill(testBill, testFragment);
+        billDataService.saveBill(testBill, testFragment, false);
 
         sameAs = new HashSet<>(activeAmendment.getSameAs());
         sameAs.add(new BillId("A200B", 2017));
         activeAmendment.setSameAs(sameAs);
 
-        billDao.updateBill(testBill, testFragment);
+        billDataService.saveBill(testBill, testFragment, false);
 
         activeAmendment.setSameAs(Collections.emptySet());
 
@@ -135,7 +135,7 @@ public class BillUpdatesTest extends BaseTests {
     public void newPrevVersionTest() {
         testBill.setDirectPreviousVersion(new BaseBillId("S123", 2017));
 
-        billDao.updateBill(testBill, testFragment);
+        billDataService.saveBill(testBill, testFragment, false);
         testBill.setDirectPreviousVersion(new BaseBillId("S1234", 2017));
 
         updateBillAndLogUpdates();
@@ -150,7 +150,7 @@ public class BillUpdatesTest extends BaseTests {
     }
 
     private void updateBillAndLogUpdates() {
-        billDao.updateBill(testBill, testFragment);
+        billDataService.saveBill(testBill, testFragment, false);
         PaginatedList<UpdateDigest<BaseBillId>> detailedUpdates = getUpdates();
 
         logger.info(OutputUtils.toJson(detailedUpdates));

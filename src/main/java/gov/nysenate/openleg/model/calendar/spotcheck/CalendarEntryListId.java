@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.calendar.*;
+import gov.nysenate.openleg.model.calendar.CalendarId;
+import gov.nysenate.openleg.model.calendar.CalendarType;
 
 import static gov.nysenate.openleg.model.calendar.CalendarType.ACTIVE_LIST;
 import static gov.nysenate.openleg.model.calendar.CalendarType.SUPPLEMENTAL_CALENDAR;
+
+import static gov.nysenate.openleg.model.calendar.CalendarType.*;
 
 /**
  * Identifies a data type that contains a calendar entry list
@@ -36,13 +40,6 @@ public class CalendarEntryListId extends CalendarId {
 
     public CalendarEntryListId(CalendarSupplementalId calSupId) {
         this(calSupId, SUPPLEMENTAL_CALENDAR, calSupId.getVersion(), null);
-    }
-
-    /* --- Functional Getters --- */
-
-    @JsonIgnore
-    public CalendarId getCalendarId(){
-        return this;
     }
 
     /* --- Overridden Methods --- */
@@ -108,11 +105,12 @@ public class CalendarEntryListId extends CalendarId {
         }
     }
 
-    /* --- Basic Getters --- */
-
-    public CalendarType getType(){
-        return type;
+    @JsonIgnore
+    public CalendarId getCalendarId(){
+        return this;
     }
+
+    public CalendarType getType() { return type; }
 
     public Version getVersion(){
         return version;

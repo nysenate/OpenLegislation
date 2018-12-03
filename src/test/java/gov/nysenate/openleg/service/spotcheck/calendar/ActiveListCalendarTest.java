@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.processor.spotcheck.calendar.CalendarAlertProcessor;
+import gov.nysenate.openleg.util.FileIOUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,7 +24,7 @@ import static junit.framework.TestCase.assertTrue;
  * Created by senateuser on 5/24/2017.
  */
 public class ActiveListCalendarTest extends BaseTests {
-    private final File alertFile = new File(getClass().getClassLoader().getResource("calendarAlerts/active_list_alert-2015-10-20150224T193238.html").getFile());
+    private final File alertFile = FileIOUtils.getResourceFile("calendarAlerts/active_list_alert-2015-10-20150224T193238.html");
 
     @Autowired
     private CalendarAlertProcessor process;

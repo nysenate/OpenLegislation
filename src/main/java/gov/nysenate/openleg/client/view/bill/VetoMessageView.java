@@ -1,10 +1,11 @@
 package gov.nysenate.openleg.client.view.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 
 import java.time.LocalDate;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VetoMessageView implements ViewObject
 {
     protected BillIdView billId;
@@ -19,6 +20,7 @@ public class VetoMessageView implements ViewObject
     protected String signer;
     protected LocalDate signedDate;
 
+    public VetoMessageView(){}
     public VetoMessageView(VetoMessage vetoMessage) {
         if (vetoMessage != null) {
             this.billId = new BillIdView(vetoMessage.getBillId());
@@ -79,6 +81,14 @@ public class VetoMessageView implements ViewObject
         return signedDate;
     }
 
+    /**
+     * Use by jackson serialization
+     * @param date the date in String form
+     */
+    public void setSignedDate(String date){
+        if (date!=null)
+        signedDate = LocalDate.parse(date);
+    }
     @Override
     public String getViewType() {
         return "veto-message";

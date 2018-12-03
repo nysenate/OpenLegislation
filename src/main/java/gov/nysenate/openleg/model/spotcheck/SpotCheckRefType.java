@@ -4,18 +4,20 @@ import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.util.OutputUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.notification.NotificationType.*;
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckDataSource.*;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckContentType.*;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckDataSource.*;
 
 /**
  * Enumeration of the types of sources that can provide data for QA purposes.
  */
-
 public enum SpotCheckRefType
 {
     LBDC_DAYBREAK("daybreak", "Daybreak", LBDC, BILL, DAYBREAK_SPOTCHECK),
@@ -30,8 +32,13 @@ public enum SpotCheckRefType
 
     SENATE_SITE_CALENDAR("senate-site-calendar", "Nysenate.gov Calendar", NYSENATE, CALENDAR, SENSITE_CALENDAR_SPOTCHECK),
 
-    SENATE_SITE_AGENDA("senate-site-agenda", "Nysenate.gov Agenda", NYSENATE, AGENDA, SENSITE_AGENDA_SPOTCHECK)
+    SENATE_SITE_AGENDA("senate-site-agenda", "Nysenate.gov Agenda", NYSENATE, AGENDA, SENSITE_AGENDA_SPOTCHECK),
 
+    OPENLEG_BILL ("openleg-bill", "Openleg Bill", OPENLEG, BILL,OPENLEG_SPOTCHECK),
+
+    OPENLEG_CAL ("openleg-cal", "Openleg Cal", OPENLEG, CALENDAR ,OPENLEG_SPOTCHECK),
+
+    OPENLEG_AGENDA ("openleg-agenda", "Openleg Agenda", OPENLEG, AGENDA ,OPENLEG_SPOTCHECK)
     ;
 
     private String refName;
@@ -117,5 +124,6 @@ public enum SpotCheckRefType
         return OutputUtils.toJson(EnumSet.allOf(SpotCheckRefType.class).stream()
                 .collect(Collectors.toMap(SpotCheckRefType::name, SpotCheckRefType::getContentType)));
     }
+
 
 }

@@ -4,9 +4,13 @@ import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +25,9 @@ import java.util.regex.Pattern;
  */
 public class BillActionParser
 {
+    @Autowired
+    private XmlHelper xmlHelper;
+
     private static final Logger logger = LoggerFactory.getLogger(BillActionParser.class);
 
     /** --- Patterns --- */
@@ -38,7 +45,7 @@ public class BillActionParser
         // Impose a strict order to the actions.
         int sequenceNo = 0;
         // Each action should be on its own line
-        for (String line : data.split("\n")) {
+        for (String line : data.split("\n+")) {
             Matcher billEvent = billEventPattern.matcher(line);
             if (billEvent.find()) {
                 LocalDate eventDate;
@@ -65,5 +72,15 @@ public class BillActionParser
             }
         }
         return billActions;
+    }
+
+    public static int getCalendarYear(Node data, XmlHelper xmlHelper) {
+        try {
+            final NodeList billActionNodeList = data.getChildNodes();
+            return xmlHelper.getInteger("@no", billActionNodeList.item(billActionNodeList.getLength()-2));
+        }
+        catch (Exception e) {
+            throw new ParseError("Bill Year Could Not Be Extracted");
+        }
     }
 }

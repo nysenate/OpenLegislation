@@ -1,0 +1,6 @@
+<digestsummary sessyr="2017" billhse="S" billno="99999" action="replace">
+<summaryamendment></summaryamendment>
+<oldbill><oldyear>2016</oldyear><oldhse>S</oldhse><oldno>88888</oldno><oldamd></oldamd></oldbill>
+<law><![CDATA[test digest bill law]]></law>
+<summary><![CDATA[test digest bill summary]]></summary>
+</digestsummary>

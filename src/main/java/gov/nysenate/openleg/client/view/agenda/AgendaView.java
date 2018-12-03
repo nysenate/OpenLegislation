@@ -22,6 +22,9 @@ public class AgendaView extends AgendaSummaryView implements ViewObject
         }
     }
 
+    //Added for Json Deserialization
+    protected AgendaView() {}
+
     public ListView<AgendaCommView> getCommitteeAgendas() {
         return committeeAgendas;
     }

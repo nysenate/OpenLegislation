@@ -27,6 +27,13 @@ public class CalendarSupEntryView extends CalendarEntryView {
         }
     }
 
+    //Added for Json deserialization
+    protected CalendarSupEntryView() {}
+
+    public boolean getBillHigh() {
+        return billHigh;
+    }
+
     public String getSectionType() {
         return sectionType;
     }
@@ -40,10 +47,16 @@ public class CalendarSupEntryView extends CalendarEntryView {
     }
 
     public static Comparator<CalendarSupEntryView> supEntryViewComparator =
-            (ent1, ent2) -> Integer.compare(ent1.billCalNo, ent2.billCalNo);
+            Comparator.comparingInt(CalendarSupEntryView::getBillCalNo);
 
     @Override
     public String getViewType() {
         return "calendar-floor-entry";
     }
+
+    public String toString() {
+        return " Bill Cal No: " + this.getBillCalNo()  +"\n"+ " Selected Version: " + this.getSelectedVersion() +"\n"+
+                " Section Type: " + this.getSectionType() +"\n"+ " BillHigh: " + this.getBillHigh() +"\n"+ " View Type: " + this.getViewType() + "\n\n";
+    }
+
 }

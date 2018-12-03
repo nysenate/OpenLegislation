@@ -1,24 +1,21 @@
 package gov.nysenate.openleg.dao.bill.scrape;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Range;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeQueueEntry;
-import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.service.scraping.bill.BillScrapeFile;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -27,14 +24,12 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.bill.scrape.SqlBillScrapeReferenceQuery.*;
@@ -47,6 +42,8 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
 
     private static final Logger logger = LoggerFactory.getLogger(SqlFsBillScrapeReferenceDao.class);
     private static final String FILE_TEMPLATE = "${sessionYear}-${printNo}-${scrapedTime}.html";
+    private static final Pattern scrapeFilePattern =
+            Pattern.compile("^(\\d{4})-([A-Z]\\d+[A-Z]?)-(\\d{8}T\\d{6})\\.html$");
 
     @Autowired
     private Environment environment;
@@ -68,16 +65,9 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
 
     @Override
     public void saveScrapedBillContent(String content, BaseBillId scrapedBill) throws IOException {
-        // Save file
+        // Save file to incoming directory
         File scrapeFile = createScrapeFile(scrapedBillIncomingDir, scrapedBill);
         FileIOUtils.writeStringToFile(scrapeFile, content, StandardCharsets.UTF_8);
-
-        // Save to db
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("fileName", scrapeFile.getName())
-                .addValue("filePath", FilenameUtils.getFullPath(scrapeFile.getPath()));
-        String sql = SqlBillScrapeReferenceQuery.INSERT_BILL_SCRAPE_FILE.getSql(schema());
-        jdbcNamed.update(sql, params);
     }
 
     private File createScrapeFile(File stagingDir, BaseBillId baseBillId) {
@@ -90,8 +80,28 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     }
 
     @Override
+    public List<BillScrapeFile> registerIncomingScrapedBills() throws IOException {
+        Set<String> registeredFilenames = getIncomingScrapedBills().stream()
+                .map(BillScrapeFile::getFileName)
+                .collect(Collectors.toSet());
+
+        Collection<File> incomingDirFiles =
+                FileUtils.listFiles(scrapedBillIncomingDir, FileFilterUtils.trueFileFilter(), null);
+
+        List<BillScrapeFile> newFiles = incomingDirFiles.stream()
+                .filter(f -> scrapeFilePattern.matcher(f.getName()).matches())
+                .filter(f -> !registeredFilenames.contains(f.getName()))
+                .map(f -> new BillScrapeFile(f.getName(), FilenameUtils.getFullPath(f.getPath())))
+                .collect(Collectors.toList());
+
+        newFiles.forEach(this::updateScrapedBill);
+
+        return newFiles;
+    }
+
+    @Override
     public List<BillScrapeFile> getIncomingScrapedBills() {
-        String sql = SqlBillScrapeReferenceQuery.SELECT_INCOMING_BILL_SCRAPE_FILES.getSql(schema());
+        String sql = SELECT_INCOMING_BILL_SCRAPE_FILES.getSql(schema());
         List<BillScrapeFile> scrapeFiles = jdbcNamed.query(sql, billScrapeFileMapper);
         return scrapeFiles;
     }
@@ -115,14 +125,31 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
 
     @Override
     public void updateScrapedBill(BillScrapeFile scrapeFile) {
-        String sql = SqlBillScrapeReferenceQuery.UPDATE_BILL_SCRAPE_FILE.getSql(schema());
-        jdbcNamed.update(sql, billScrapeParams(scrapeFile));
+        MapSqlParameterSource params = billScrapeParams(scrapeFile);
+        String updateSql = UPDATE_BILL_SCRAPE_FILE.getSql(schema());
+        int updated = jdbcNamed.update(updateSql, params);
+
+        if (updated == 0) {
+            // Insert if no rows updated.
+            String insertSql = INSERT_BILL_SCRAPE_FILE.getSql(schema());
+            jdbcNamed.update(insertSql, params);
+        }
     }
 
     @Override
-    public List<BillScrapeFile> pendingScrapeBills() {
-        String sql = SqlBillScrapeReferenceQuery.SELECT_PENDING_BILL_SCRAPE_FILES.getSql(schema());
-        return jdbcNamed.query(sql, billScrapeFileMapper);
+    public PaginatedList<BillScrapeFile> getPendingScrapeBills(LimitOffset limitOffset) {
+        String sql = SELECT_PENDING_BILL_SCRAPE_FILES.getSql(schema(), limitOffset);
+        PaginatedRowHandler<BillScrapeFile> rowHandler =
+                new PaginatedRowHandler<>(limitOffset, "total", billScrapeFileMapper);
+        jdbcNamed.query(sql, rowHandler);
+        return rowHandler.getList();
+    }
+
+    @Override
+    public int stageArchivedScrapeFiles(SessionYear sessionYear) {
+        String sql = STAGE_RELEVANT_SCRAPE_FILES_FOR_SESSION.getSql(schema());
+        MapSqlParameterSource params = new MapSqlParameterSource("session", sessionYear.getYear());
+        return jdbcNamed.update(sql, params);
     }
 
     @Override
@@ -146,10 +173,9 @@ public class SqlFsBillScrapeReferenceDao extends SqlBaseDao implements BillScrap
     @Override
     public void addBillToScrapeQueue(BaseBillId id, int priority) {
         MapSqlParameterSource params = getQueueParams(id, priority);
-        try {
+        int updated = jdbcNamed.update(UPDATE_SCRAPE_QUEUE.getSql(schema()), params);
+        if (updated == 0) {
             jdbcNamed.update(INSERT_SCRAPE_QUEUE.getSql(schema()), params);
-        }catch(DuplicateKeyException ex){
-            jdbcNamed.update(UPDATE_SCRAPE_QUEUE.getSql(schema()), params);
         }
     }
 

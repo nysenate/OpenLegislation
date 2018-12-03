@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
+
 /**
  * The Bill class serves as a container for all the entities that can be classified under a print number
  * and session year. It contains a collection of amendments (including the base amendment) as well as
@@ -35,6 +37,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** The status of the bill which is derived via the actions list. */
     protected BillStatus status;
+
+    /** Holds the contents of the LDBlurb field */
+    protected String ldblurb ="";
 
     /** A set of statuses that are considered milestones. */
     protected List<BillStatus> milestones = Collections.synchronizedList(new LinkedList<>());
@@ -68,6 +73,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** If the bill has been substituted by another, store the reference of that bill's id. */
     protected BaseBillId substitutedBy;
+
+    /** If this bill was a reprint of another bill*/
+    protected BillId reprintOf;
 
     /** A list of ids for versions of this legislation in previous sessions.
      *  This set of will contain only previous versions that have been directly linked to this bill*/
@@ -115,13 +123,7 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     @Override
     public void setPublishedDateTime(LocalDateTime publishDateTime) {
         super.setPublishedDateTime(publishDateTime);
-        if (this.publishedDateTime != null) {
-            // Sometimes bills are pre-filed before the session actually starts so we account for this.
-            super.setYear(Integer.max(this.session.getYear(), publishDateTime.getYear()));
-        }
-        else {
-            super.setYear(this.session.getYear());
-        }
+
     }
 
     @Override
@@ -170,6 +172,13 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
      */
     public Chamber getChamber() {
         return this.baseBillId.getChamber();
+    }
+
+    /**
+     * @return the LDBlurb contents of this bill
+     */
+    public String getLDBlurb() {
+        return this.ldblurb;
     }
 
     /**
@@ -343,9 +352,9 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
 
     /** --- Delegates --- */
 
-    public String getFullText() {
+    public String getFullTextPlain() {
         if (this.hasActiveAmendment()) {
-            return this.getActiveAmendment().getFullText();
+            return this.getActiveAmendment().getFullText(PLAIN);
         }
         return "";
     }
@@ -460,6 +469,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
         this.sponsor = sponsor;
     }
 
+    public void setLDBlurb(String blurb){this.ldblurb=blurb;}
+
     public SortedSet<CommitteeVersionId> getPastCommittees() {
         return pastCommittees;
     }
@@ -515,4 +526,8 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     public void setChapterYear(Integer chapterYear) {
         this.chapterYear = chapterYear;
     }
+
+    public void setReprintOf(BillId reprintOf) {this.reprintOf = reprintOf;}
+
+    public BillId getReprintOf() {return reprintOf;}
 }

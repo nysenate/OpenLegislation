@@ -60,6 +60,9 @@ public class Environment
     /** --- Processing settings --- */
 
     /** Enable processing of data. */
+    @Value("${sobi.process.enabled:true}")
+    private boolean sobiProcessEnabled;
+
     @Value("${data.process.enabled}") private boolean processingEnabled;
 
     /** Allows for the option to enable/disable logging. */
@@ -90,7 +93,12 @@ public class Environment
     /** Enables periodic checking for email spotcheck references */
     @Value("${spotcheck.checkmail.enabled:true}") private boolean checkmailEnabled;
 
-    
+    /** ---- Openleg Reference ---*/
+
+    @Value ("${spotcheck.openleg_ref.api.key}") private String openlegRefApiKey;
+
+    @Value ("${spotcheck.openleg_ref.url}") private String openlegRefUrl;
+
     /** Sets queue sizes for nysenate.gov bill report */
     @Value("${spotcheck.website.bill.ref_queue_size:500}")
     private int sensiteBillRefQueueSize;
@@ -348,6 +356,26 @@ public class Environment
 
     public LocalDateTime getDeployedDateTime() {
         return deployedDateTime;
+    }
+
+    public boolean getSobiProcessEnabled() {
+        return sobiProcessEnabled;
+    }
+
+    public String getOpenlegRefApiKey() {
+        return openlegRefApiKey;
+    }
+
+    public void setOpenlegRefApiKey(String refApiKey) {
+        this.openlegRefApiKey = refApiKey;
+    }
+
+    public String getOpenlegRefUrl() {
+        return openlegRefUrl;
+    }
+
+    public void setOpenlegRefUrl(String refUrl) {
+        this.openlegRefUrl = refUrl;
     }
 
     public String getSenSiteUrl() {

@@ -118,7 +118,7 @@ public class ElasticBillSearchServiceTests extends BaseTests
                         text = bill.getTitle();
                         break;
                     case 1:
-                        text = bill.getFullText();
+                        text = bill.getFullTextPlain();
                         break;
                     case 2:
                         text = bill.getStatus().toString();

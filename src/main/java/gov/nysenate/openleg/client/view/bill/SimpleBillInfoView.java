@@ -18,6 +18,8 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
     protected LocalDateTime publishedDateTime;
     protected BaseBillIdView substitutedBy;
     protected SponsorView sponsor;
+    protected BaseBillIdView reprintOf;
+
 
     public SimpleBillInfoView(BillInfo billInfo) {
         super(billInfo != null ? billInfo.getBillId() : null);
@@ -31,6 +33,7 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
             sponsor = billInfo.getSponsor() != null ? new SponsorView(billInfo.getSponsor()) : null;
             billType = billInfo.getBillId() != null && billInfo.getBillId().getBillType() != null
                     ? new BillTypeView(billInfo.getBillId().getBillType()) : null;
+            reprintOf = billInfo.getReprintOf() != null ? new BaseBillIdView( billInfo.getReprintOf() ): null;
         }
     }
 
@@ -68,6 +71,18 @@ public class SimpleBillInfoView extends BaseBillIdView implements ViewObject
 
     public SponsorView getSponsor() {
         return sponsor;
+    }
+
+    public BaseBillIdView getReprintOf() {
+        return reprintOf;
+    }
+
+    /**
+     * Use by jackson serialization
+     * @param date the date in String form
+     */
+    public void setPublishedDateTime(String date){
+        publishedDateTime = LocalDateTime.parse(date);
     }
 
     @Override

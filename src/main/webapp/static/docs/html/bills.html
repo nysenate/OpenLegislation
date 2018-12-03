@@ -182,8 +182,8 @@
 <p><strong>Optional Params</strong></p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="11%" />
-<col width="89%" />
+<col width="15%" />
+<col width="85%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Parameter</th>
@@ -196,6 +196,9 @@
 </tr>
 <tr class="row-odd"><td>version</td>
 <td>If view=only_fulltext, use the version to specify the amendment letter, e.g. version=A</td>
+</tr>
+<tr class="row-even"><td>fullTextFormat</td>
+<td>(PLAIN or HTML) Which bill text formats will be included. Multiple formats can be requested.</td>
 </tr>
 </tbody>
 </table>
@@ -517,9 +520,9 @@ the base print no (e.g. S1234).</p>
 <p id="bill-listing-params"><strong>Optional Params</strong></p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="13%" />
-<col width="23%" />
-<col width="64%" />
+<col width="17%" />
+<col width="22%" />
+<col width="61%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Parameter</th>
@@ -548,6 +551,11 @@ for each bill.  (overrides ‘full’ parameter)</td>
 <tr class="row-even"><td>sort</td>
 <td>string</td>
 <td>Sort by any field from the response.</td>
+</tr>
+<tr class="row-odd"><td>fullTextFormat</td>
+<td>(PLAIN or HTML)</td>
+<td>Which bill text formats will be included.
+Multiple formats can be requested.</td>
 </tr>
 </tbody>
 </table>
@@ -673,9 +681,9 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
 <p><strong>Optional Params</strong></p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="12%" />
-<col width="25%" />
-<col width="63%" />
+<col width="17%" />
+<col width="23%" />
+<col width="60%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Parameter</th>
@@ -703,6 +711,16 @@ The fromDateTime and toDateTime range is exclusive/inclusive respectively.</p>
 <tr class="row-even"><td>summary</td>
 <td>boolean</td>
 <td>Include a bill info response per item</td>
+</tr>
+<tr class="row-odd"><td>fullBill</td>
+<td>boolean</td>
+<td>Include a bill info response per item</td>
+</tr>
+<tr class="row-even"><td>fullTextFormat</td>
+<td>(PLAIN or HTML)</td>
+<td>Which bill text formats will be included
+if full bills are requested.
+Multiple formats can be requested.</td>
 </tr>
 </tbody>
 </table>

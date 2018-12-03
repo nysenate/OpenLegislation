@@ -6,12 +6,12 @@ import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,11 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.text.Collator;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 /**
@@ -90,14 +90,30 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
      * normalization if there was a mismatch in the no-whitespace text
      */
     private void checkBillText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
-        String dataText = billAmendment.getFullText();
+        String dataText = billAmendment.getFullText(PLAIN);
         String refText = reference.getText();
-        String strippedDataText = stripNonAlpha(dataText);
-        String strippedRefText = stripNonAlpha(refText);
+        String strippedDataText = basicNormalize(dataText);
+        String strippedRefText = basicNormalize(refText);
         // Check normalized text and report on non-normalized text as well if there is a mismatch
         if (!StringUtils.equals(strippedRefText, strippedDataText)) {
-            String pureContentRefText = stripNonContent(refText);
-            String pureContentDataText = stripNonContent(dataText);
+            // If its a resolution, check if its a header problem
+            if (billAmendment.getBillId().getBillType().isResolution()) {
+                // Try removing the resolution header from the ref in case we are checking against sobi data
+                String refTextNoHeader = basicNormalize(BillTextUtils.formatHtmlExtractedResoText(refText));
+                if (StringUtils.equals(strippedDataText, refTextNoHeader)) {
+                    // todo remove this when we have bill text for all sobi years.
+                    return;
+                }
+                // Try stripping the data header as well, to see if the header is the only issue.
+                String dataTextNoHeader = basicNormalize(BillTextUtils.formatHtmlExtractedResoText(dataText));
+                if (StringUtils.equals(refTextNoHeader, dataTextNoHeader)) {
+                    obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_RESO_HEADER, dataText, refText));
+                    return;
+                }
+            }
+
+            String pureContentRefText = ultraNormalize(refText);
+            String pureContentDataText = ultraNormalize(dataText);
             if (!StringUtils.equals(pureContentRefText, pureContentDataText)) {
                 obsrv.addMismatch(new SpotCheckMismatch(BILL_TEXT_CONTENT, dataText, refText));
             } else {
@@ -148,10 +164,16 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     }
 
     /**
+     * Performs a simple normalization to eliminate potential for mismatches that we would never care about.
+     *
      * Removes all non alpha characters
+     * Replace section symbol(§) with S
+     * CAPITALIZE EVERYTHING.
      */
-    private String stripNonAlpha(String text) {
-        return text.replaceAll("(?:[^\\w]|_)+", "");
+    private String basicNormalize(String text) {
+        return text.replaceAll("§", "S")
+                .replaceAll("(?:[^\\w]|_)+", "")
+                .toUpperCase();
     }
 
     private static final String lineNumberRegex = "(?:^( {4}\\d| {3}\\d\\d))";
@@ -162,11 +184,15 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     private static final String ultraNormalizeRegex = "(?m)" + String.join("|", Arrays.asList(
             lineNumberRegex, pageMarkerRegex, budgetPageMargerRegex, explanationRegex, explanationRegex2));
     /**
+     * Performs a more advanced normalization of text,
+     * removing specific sections that do not contribute to overall content.
+     *
      * Removes all whitespace, line numbers, and page numbers
+     * also performs {@link #basicNormalize(String)}
      */
-    private String stripNonContent(String text) {
+    private String ultraNormalize(String text) {
         String stripped = text.replaceAll(ultraNormalizeRegex, "");
-        return stripNonAlpha(stripped);
+        return basicNormalize(stripped);
     }
 
 }

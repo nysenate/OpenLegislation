@@ -1,15 +1,15 @@
 package gov.nysenate.openleg.processor.base;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
+import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
-import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.base.Version;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -18,26 +18,38 @@ import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.agenda.event.BulkAgendaUpdateEvent;
+import gov.nysenate.openleg.service.bill.data.ApprovalDataService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
+import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
 import gov.nysenate.openleg.service.calendar.event.BulkCalendarUpdateEvent;
 import gov.nysenate.openleg.service.entity.committee.data.CommitteeDataService;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
+import gov.nysenate.openleg.util.XmlHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import javax.annotation.Resource;
+import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -50,9 +62,12 @@ public abstract class AbstractDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractDataProcessor.class);
 
+    protected static final Pattern rulesSponsorPattern =
+            Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
+
     @Autowired protected Environment env;
 
-    /** --- Data Services --- */
+    /* --- Data Services --- */
 
     @Autowired protected AgendaDataService agendaDataService;
     @Autowired protected BillDataService billDataService;
@@ -60,16 +75,21 @@ public abstract class AbstractDataProcessor
     @Autowired protected CommitteeDataService committeeDataService;
     @Autowired protected MemberService memberService;
     @Autowired protected VetoDataService vetoDataService;
+    @Autowired protected ApprovalDataService apprDataService;
 
-    /** --- Events --- */
+    /* --- Events --- */
 
     @Autowired protected EventBus eventBus;
 
-    /** --- Ingest Caches --- */
+    /* --- Ingest Caches --- */
 
     @Resource(name = "agendaIngestCache") protected IngestCache<AgendaId, Agenda, SobiFragment> agendaIngestCache;
     @Resource(name = "billIngestCache") protected IngestCache<BaseBillId, Bill, SobiFragment> billIngestCache;
     @Resource(name = "calendarIngestCache") protected IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache;
+
+    /* --- Utilities --- */
+
+    @Autowired protected XmlHelper xmlHelper;
 
     public abstract void init();
 
@@ -77,7 +97,7 @@ public abstract class AbstractDataProcessor
         eventBus.register(this);
     }
 
-    /** --- Common Methods --- */
+    /* --- Common Methods --- */
 
     protected DataProcessUnit createProcessUnit(SobiFragment sobiFragment) {
         return new DataProcessUnit("SOBI-" + sobiFragment.getType().name(), sobiFragment.getFragmentId(),
@@ -93,29 +113,28 @@ public abstract class AbstractDataProcessor
         eventBus.post(new DataProcessUnitEvent(unit));
     }
 
-    /** --- Bill Methods --- */
+    /* --- Bill Methods --- */
 
     /**
      * Retrieves the base Bill container using the given billId from either the cache or the service layer.
      * If this base bill does not exist, it will be created. The amendment instance will also be created
      * if it does not exist.
      *
-     * @param publishDate Date - Typically the date of the source data file. Only used when bill information
-     *                           does not already exist and must be created.
      * @param billId BillId - The BillId to find a matching Bill for.
      * @return Bill
      */
-    protected final Bill getOrCreateBaseBill(LocalDateTime publishDate, BillId billId, SobiFragment fragment) {
+    protected final Bill getOrCreateBaseBill(BillId billId, SobiFragment fragment) {
         boolean isBaseVersion = BillId.isBaseVersion(billId.getVersion());
         BaseBillId baseBillId = BillId.getBaseId(billId);
         Bill baseBill;
+        LocalDateTime publishedDateTime = fragment.getPublishedDateTime();
         // Check the cache, or hit the data service otherwise
         if (billIngestCache.has(baseBillId)) {
             baseBill = billIngestCache.get(baseBillId).getLeft();
         }
         else {
             try {
-                baseBill = billDataService.getBill(baseBillId);
+                baseBill = billDataService.getBill(baseBillId, EnumSet.allOf(BillTextFormat.class));
             }
             catch (BillNotFoundEx ex) {
                 // Create the bill since it does not exist and add it to the ingest cache.
@@ -123,8 +142,8 @@ public abstract class AbstractDataProcessor
                     logger.warn("Bill Amendment {} filed without initial bill.", billId);
                 }
                 baseBill = new Bill(baseBillId);
-                baseBill.setModifiedDateTime(publishDate);
-                baseBill.setPublishedDateTime(publishDate);
+                baseBill.setModifiedDateTime(publishedDateTime);
+                baseBill.setPublishedDateTime(publishedDateTime);
                 billIngestCache.set(baseBillId, baseBill, fragment);
             }
             billIngestCache.set(baseBillId, baseBill, fragment);
@@ -179,7 +198,8 @@ public abstract class AbstractDataProcessor
         }
     }
 
-    /** --- Member Methods --- */
+    /* --- Member Methods --- */
+
 
     /**
      * Retrieves a member from the LBDC short name.  Creates a new unverified session member entry if no member can be retrieved.
@@ -188,7 +208,54 @@ public abstract class AbstractDataProcessor
         return memberService.getMemberByShortNameEnsured(shortName, sessionYear, chamber);
     }
 
-    /** --- Agenda Methods --- */
+    /**
+     * This method is responsible for getting a list of Session Members from a line by parsing it.
+     *
+     * @param sponsors String of the line to be parsed
+     * @param session Bill Session for getting ShortName
+     * @param chamber Bill Chamber for getting ShortName
+     * @return
+     */
+    protected List<SessionMember> getSessionMember(String sponsors, SessionYear session, Chamber chamber, Bill baseBill) {
+        List<String> shortNames = Lists.newArrayList(
+                Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsors.toUpperCase()));
+        List<SessionMember> sessionMembers = new ArrayList<>();
+        List<String> badSponsors = new ArrayList<>();
+        for (String shortName : shortNames) {
+            SessionMember sessionMember = getMemberFromShortName(shortName, session, chamber);
+            if (sessionMember != null) {
+                sessionMembers.add(sessionMember);
+            }
+            else {
+                badSponsors.add(shortName);
+            }
+        }
+        if (!badSponsors.isEmpty()) {
+            throw new ParseError(String.format("Could not parse %s multi sponsors: %s",
+                    baseBill.getBaseBillId(), StringUtils.join(shortNames, ", ")));
+        }
+        return sessionMembers;
+    }
+
+    /**
+     * Gets the xml root node from the given fragment.
+     *
+     * Some legacy fragments are wrapped in a <SENATEDATA> tag and this method unwraps them.
+     *
+     * @param xmlText String
+     * @return Node
+     */
+    protected Node getXmlRoot(String xmlText) throws XPathExpressionException, IOException, SAXException {
+        Node root = xmlHelper.parse(xmlText);
+        // some fragments will be wrapped in a senatedata tag.
+        Node senateDataNode = xmlHelper.getNode("SENATEDATA", root);
+        if (senateDataNode != null) {
+            root = senateDataNode;
+        }
+        return root;
+    }
+
+    /* --- Agenda Methods --- */
 
     /**
      * Retrieve an Agenda instance from the cache/backing store or create it if it does not exist.
@@ -231,7 +298,7 @@ public abstract class AbstractDataProcessor
         }
     }
 
-    /** --- Calendar Methods --- */
+    /* --- Calendar Methods --- */
 
     /**
      * Retrieve a Calendar from the cache/backing store or create it if it does not exist.

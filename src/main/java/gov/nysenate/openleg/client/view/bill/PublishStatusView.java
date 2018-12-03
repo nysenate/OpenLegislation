@@ -17,9 +17,7 @@ public class PublishStatusView implements ViewObject
         }
     }
 
-    protected PublishStatusView() {
-        super();
-    }
+    protected PublishStatusView() {}
 
     @Override
     public String getViewType() {

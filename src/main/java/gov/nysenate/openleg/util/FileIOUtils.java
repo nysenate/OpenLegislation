@@ -97,6 +97,16 @@ public class FileIOUtils
     }
 
     /**
+     * Moves the file into the destination quietly.
+     */
+    public static void moveFile(File sourceFile, File destFile) throws IOException {
+        if (destFile.exists()) {
+            FileUtils.deleteQuietly(destFile);
+        }
+        FileUtils.moveFile(sourceFile, destFile);
+    }
+
+    /**
      * Moves a file, deleting the destination file if it already exists.
      *
      * @param file File
@@ -251,6 +261,31 @@ public class FileIOUtils
         FileUtils.copyInputStreamToFile(stream, file);
         setCommonFilePermissions(file);
     }
+
+    /**
+     * Gets a file from the resource directory given its relative path.
+     *
+     * @param relativePath String - file path relative to the resource directory
+     * @return File
+     */
+    public static File getResourceFile(String relativePath) {
+        return new File(
+                FileIOUtils.class.getClassLoader().getResource(relativePath).getFile()
+        );
+    }
+
+    /**
+     * Gets a the contents of a file from the resource directory given its relative path.
+     *
+     * @param relativePath String - file path relative to the resource directory
+     * @return File
+     * @throws IOException
+     */
+    public static String getResourceFileContents(String relativePath) throws IOException {
+        return FileUtils.readFileToString(getResourceFile(relativePath));
+    }
+
+    /* --- Internal Methods --- */
 
     private static void setCommonFilePermissions(File file) throws IOException {
         Files.setPosixFilePermissions(Paths.get(file.getAbsolutePath()), filePermissions);

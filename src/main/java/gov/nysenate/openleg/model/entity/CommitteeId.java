@@ -28,6 +28,9 @@ public class CommitteeId implements Serializable, Comparable<CommitteeId>
         this.chamber = chamber;
         this.name = name;
     }
+
+    //Added for Json Deserialization
+    protected CommitteeId() {}
     
     public CommitteeId(CommitteeId committeeId) {
         this (committeeId.getChamber(), committeeId.getName());

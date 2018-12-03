@@ -20,6 +20,9 @@ public class SimpleCalendarSupView extends CalendarSupIdView{
         this.totalEntries = calendarSupplemental.getAllEntries().size();
     }
 
+    //Added for Json deserialization
+    protected SimpleCalendarSupView() {}
+
     public LocalDate getCalDate() {
         return calDate;
     }

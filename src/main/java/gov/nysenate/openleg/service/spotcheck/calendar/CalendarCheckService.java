@@ -143,7 +143,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
         String contentDate = contentSuppDiff.getCalDate() == null ? "" : contentSuppDiff.getCalDate().toString();
         String referenceDate = referenceSuppDiff.getCalDate() == null ? "" : referenceSuppDiff.getCalDate().toString();
         if (!StringUtils.equals(contentDate, referenceDate)) {
-            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.SUPPLEMENTAL_CAL_DATE, contentDate, referenceDate));
+            observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_CAL_DATE, contentDate, referenceDate));
         }
 
     }
@@ -152,7 +152,7 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
                                       Set<CalendarSectionType> referenceSectionTypes) {
         if (!Sets.symmetricDifference(contentSectionTypes, referenceSectionTypes).isEmpty()) {
             observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.SUPPLEMENTAL_SECTION_TYPE, StringUtils.join(contentSectionTypes, "\n"), StringUtils.join(referenceSectionTypes, "\n")
+                    SpotCheckMismatchType.FLOOR_SECTION_TYPE, StringUtils.join(contentSectionTypes, "\n"), StringUtils.join(referenceSectionTypes, "\n")
             ));
         }
     }

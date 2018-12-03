@@ -2,6 +2,7 @@ package gov.nysenate.openleg.controller.api.admin;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
@@ -29,6 +30,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -289,6 +291,33 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     /**
+     * Spotcheck Report Run API
+     *
+     * Attempts to run spotcheck reports for the given report types
+     * Will run the spot check reports on the session specified by start year
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/run/{startYear}
+     *
+     * Request Parameters: reportType - string[] or string (in path variable) - specifies which kinds of report summaries
+     *                                  are retrieved - defaults to all
+     *                                  @see SpotCheckRefType
+     */
+    @RequiresPermissions("admin:view")
+    @RequestMapping(value = "/run/{startYear}")
+    public BaseResponse runReports(@RequestParam String[] reportType, @PathVariable String startYear ) {
+        Set<SpotCheckRefType> refTypes = getSpotcheckRefTypes(reportType, "reportType");
+        String endYear = String.valueOf( Integer.parseInt(startYear) + 2 );
+        Range<LocalDateTime> reportRange = Range.closedOpen( LocalDateTime.parse(startYear +"-01-01T00:00:00"),LocalDateTime.parse(endYear+"-01-01T00:00:00") );
+        for (SpotCheckRefType refType: refTypes) {
+            spotcheckRunService.runReports(refType, reportRange);
+        }
+        refTypes.forEach(spotcheckRunService::runReports);
+        return new ViewObjectResponse<>(ListView.ofStringList(
+                refTypes.stream().map(SpotCheckRefType::toString).collect(Collectors.toList())),
+                "spotcheck reports run");
+    }
+
+    /**
      * Spotcheck Interval Report Run API
      *
      * Attempts to run all spotcheck reports designated as interval reports
@@ -423,4 +452,5 @@ public class SpotCheckCtrl extends BaseCtrl
                         .map(param -> getSpotcheckRefType(param, paramName))
                         .collect(Collectors.toSet());
     }
+
 }

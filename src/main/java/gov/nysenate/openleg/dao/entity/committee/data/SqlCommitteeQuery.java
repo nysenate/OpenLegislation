@@ -8,6 +8,10 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
     SELECT_COMMITTEE_ID(
             "SELECT chamber, name FROM ${schema}." + SqlTable.COMMITTEE
     ),
+    TEST_COMMITTEE_ID(
+            "SELECT * FROM ${schema}." + SqlTable.COMMITTEE +
+                    " WHERE name=:committeeName::citext AND chamber=CAST(:chamber AS chamber)"
+    ),
     SELECT_SESSION_YEARS(
             "SELECT DISTINCT session_year FROM ${schema}." + SqlTable.COMMITTEE_VERSION
     ),
@@ -26,7 +30,7 @@ public enum SqlCommitteeQuery implements BasicSqlQuery
     ),
     SELECT_COMMITTEE_CURRENT_SQL(
             SELECT_COMMITTEE_VERSION_HISTORY.sql + "\n" +
-            "WHERE cv.reformed = 'infinity'::timestamp without time zone"
+            "AND cv.reformed = 'infinity'::timestamp without time zone"
     ),
     SELECT_COMMITTEE_AT_DATE_SQL(
             SELECT_COMMITTEE_VERSION_HISTORY.sql + "\n" +

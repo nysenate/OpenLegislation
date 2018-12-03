@@ -42,6 +42,7 @@ public class DataProcessor
     @Autowired private AsyncUtils asyncUtils;
 
     @Autowired private SobiProcessService sobiProcessService;
+
     @Autowired private TranscriptProcessService transcriptProcessService;
     @Autowired private PublicHearingProcessService publicHearingProcessService;
     @Autowired private LawProcessService lawProcessService;
@@ -187,7 +188,7 @@ public class DataProcessor
     }
 
     public Optional<DataProcessRun> getCurrentRun() {
-        return Optional.of(currentRun);
+        return Optional.ofNullable(currentRun);
     }
 
     /* --- Internal Methods --- */

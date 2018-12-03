@@ -14,7 +14,6 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +32,6 @@ I have run the sql script qa-redesign/mismatch-refactor.sql
  -Sam
  */
 @Category(SillyTest.class)
-@Transactional
 public class SpotcheckReportDaoTest extends BaseTests {
 
     private static final Logger logger = LoggerFactory.getLogger(SpotcheckReportDaoTest.class);

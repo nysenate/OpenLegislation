@@ -64,6 +64,14 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
         return new SessionYear(year);
     }
 
+    public static SessionYear of(LocalDate localDate) {
+        return SessionYear.of(localDate.getYear());
+    }
+
+    public static SessionYear of(LocalDateTime localDateTime) {
+        return SessionYear.of(localDateTime.getYear());
+    }
+
     public static SessionYear current() {
         return new SessionYear();
     }
@@ -73,7 +81,7 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
      * subtracted from it.
      */
     private void setYear(int year) {
-        if (year < 0) throw new IllegalArgumentException("Session year cannot be negative!");
+        if (year < 0) throw new IllegalArgumentException("Session year cannot be negative! " + year);
         this.year = (year % 2 == 0) ? year - 1 : year;
     }
 

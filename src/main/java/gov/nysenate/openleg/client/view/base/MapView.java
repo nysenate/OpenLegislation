@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.client.view.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MapView<KeyType, ViewType> implements ViewObject
 {
     protected ImmutableMap<KeyType, ViewType> items;
@@ -18,7 +20,9 @@ public class MapView<KeyType, ViewType> implements ViewObject
         return new MapView<>(items);
     }
 
-    private MapView(Map<KeyType, ViewType> map) {
+    protected MapView() {}
+
+    public MapView(Map<KeyType, ViewType> map) {
         if (map != null) {
             items = ImmutableMap.copyOf(map);
         }
@@ -26,8 +30,6 @@ public class MapView<KeyType, ViewType> implements ViewObject
             items = ImmutableMap.of();
         }
     }
-
-    private MapView() {}
 
     public Map<KeyType, ViewType> getItems() {
         return items;

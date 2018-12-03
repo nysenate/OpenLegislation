@@ -11,10 +11,7 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
@@ -35,10 +32,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -86,6 +86,7 @@ public class BillGetCtrl extends BaseCtrl
      *                     full - If true, the full bill view should be returned. Otherwise just the info.
      *                     limit - Limit the number of results.
      *                     offset - Start results from an offset.
+     *                     fullTextFormat - String[] - default PLAIN - desired formats for bill text
      *
      * Expected Output: List of BillInfoView or BillView
      */
@@ -107,7 +108,7 @@ public class BillGetCtrl extends BaseCtrl
                         return new BaseBillIdView(baseBillId);
                     }
                     if (full) {
-                        return new BillView(billData.getBill(baseBillId));
+                        return new BillView(billData.getBill(baseBillId, getFullTextFormats(webRequest)));
                     }
                     return new BillInfoView(billData.getBillInfo(baseBillId));
                 })
@@ -122,6 +123,7 @@ public class BillGetCtrl extends BaseCtrl
      * The version on the printNo is not needed since bills are returned with all amendments.
      *
      * Request Parameters: view - Specify the level of detail (defaults to BillViewLevel.DEFAULT)
+     *                     fullTextFormat - String[] - default PLAIN - desired formats for bill text
      *
      * Expected Output: BillView, DetailedBillView, or BillInfoView
      */
@@ -130,21 +132,35 @@ public class BillGetCtrl extends BaseCtrl
         BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
         BillViewLevel level = BillViewLevel.getValue(request.getParameter("view"));
         ViewObject viewObject;
+        LinkedHashSet<BillTextFormat> fullTextFormats = getFullTextFormats(request);
         switch (level) {
-            case INFO: viewObject = new BillInfoView(billData.getBillInfo(baseBillId)); break;
-            case WITH_REFS: viewObject = new DetailBillView(billData.getBill(baseBillId), billData); break;
-            case NO_FULLTEXT: viewObject = new BillView(getFullTextStrippedBill(baseBillId)); break;
-            case WITH_REFS_NO_FULLTEXT: viewObject = new DetailBillView(getFullTextStrippedBill(baseBillId), billData); break;
+            case INFO:
+                viewObject = new BillInfoView(billData.getBillInfo(baseBillId));
+                break;
+            case WITH_REFS:
+                viewObject = new DetailBillView(billData.getBill(baseBillId, fullTextFormats), billData);
+                break;
+            case NO_FULLTEXT:
+                viewObject = new BillView(getFullTextStrippedBill(baseBillId));
+                break;
+            case WITH_REFS_NO_FULLTEXT:
+                viewObject = new DetailBillView(getFullTextStrippedBill(baseBillId), billData);
+                break;
             case ONLY_FULLTEXT: {
                 Version amdVersion = Version.ORIGINAL;
                 if (request.getParameter("version") != null) {
                     amdVersion = parseVersion(request.getParameter("version"), "version");
                 }
-                Bill bill = billData.getBill(baseBillId);
-                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.toString(), bill.getAmendment(amdVersion).getFullText());
+                BillTextFormat firstFormat = fullTextFormats.stream().findFirst()
+                        .orElseThrow(() -> new IllegalStateException("No bill text formats available!"));
+                Bill bill = billData.getBill(baseBillId, Collections.singleton(firstFormat));
+
+                String fullText = bill.getAmendment(amdVersion).getFullText(firstFormat);
+                viewObject = new BillFullTextView(bill.getBaseBillId(), amdVersion.toString(),
+                        fullText, firstFormat);
                 break;
             }
-            default: viewObject = new BillView(billData.getBill(baseBillId));
+            default: viewObject = new BillView(billData.getBill(baseBillId, fullTextFormats));
         }
         return new ViewObjectResponse<>(viewObject, "Data for bill " + baseBillId);
     }
@@ -155,9 +171,7 @@ public class BillGetCtrl extends BaseCtrl
      * @return Bill
      */
     private Bill getFullTextStrippedBill(BaseBillId baseBillId) {
-        Bill strippedBill = billData.getBill(baseBillId);
-        strippedBill.getAmendmentList().forEach(a -> a.setFullText(""));
-        return strippedBill;
+        return billData.getBill(baseBillId, Collections.emptySet());
     }
 
     /**
@@ -175,7 +189,7 @@ public class BillGetCtrl extends BaseCtrl
     public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo)
                            throws Exception {
         BillId billId = getBillId(printNo, sessionYear, "printNo");
-        Bill bill = billData.getBill(BaseBillId.of(billId));
+        Bill bill = billData.getBill(BaseBillId.of(billId), Collections.singleton(PLAIN));
         ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
         BillPdfView.writeBillPdf(bill, billId.getVersion(), pdfBytes);
         HttpHeaders headers = new HttpHeaders();
@@ -196,11 +210,11 @@ public class BillGetCtrl extends BaseCtrl
                             @PathVariable String version2) {
         StringDiffer stringDiffer = new StringDiffer();
         BaseBillId baseBillId = getBaseBillId(printNo, sessionYear, "printNo");
-        Bill bill = billData.getBill(baseBillId);
+        Bill bill = billData.getBill(baseBillId, Collections.singleton(PLAIN));
         BillAmendment amend1 = bill.getAmendment(parseVersion(version1, "version1"));
         BillAmendment amend2 = bill.getAmendment(parseVersion(version2, "version2"));
-        String fullText1 = BillTextUtils.formatBillText(bill.isResolution(), amend1.getFullText());
-        String fullText2 = BillTextUtils.formatBillText(bill.isResolution(), amend2.getFullText());
+        String fullText1 = BillTextUtils.formatBillText(bill.isResolution(), amend1.getFullText(PLAIN));
+        String fullText2 = BillTextUtils.formatBillText(bill.isResolution(), amend2.getFullText(PLAIN));
         LinkedList<StringDiffer.Diff> diffs = stringDiffer.diff_main(fullText1, fullText2);
         stringDiffer.diff_cleanupEfficiency(diffs);
         stringDiffer.diff_cleanupSemantic(diffs);

@@ -54,6 +54,8 @@ env.schema = master
 
 # --- Processing Configuration ------------------------------------------------
 
+sobi.process.enabled = false
+
 # Allow for processing of data
 # (Default: true)
 
@@ -173,6 +175,9 @@ scheduler.process.cron = 0 */5 * * * *
 # When to run interval spotcheck reports. (Default: 0 45 23 * * *)
 scheduler.spotcheck.interval.cron = 0 45 23 * * *
 
+# Budget Bill Text Alert Redminder
+scheduler.budget.bill.reminder = 0 0 10,13,16 * * *
+
 # --- Spotcheck Configuration -------------------------------------------------
 
 # The amount of time (in minutes) allowed after an alert arrival for data to come in
@@ -187,6 +192,13 @@ bill.scrape.queue.enabled = true
 # Enables periodic checking for email spotcheck references
 # e.g. Daybreaks, agenda/calendar alerts
 spotcheck.checkmail.enabled = true
+
+# --- Openleg Ref to Openleg Source--------------------------------------------
+#Api Key for the reference instance of Openleg
+spotcheck.openleg_ref.api.key =
+
+#Openleg-ref url (include trailing slash)
+spotcheck.openleg_ref.url = http://legislation.nysenate.gov/
 
 # Configure processing queue limits for NYSenate.gov bill spotchecks
 # Lower these sizes if your system is running out of memory during this report
@@ -243,4 +255,3 @@ domain.url = http://localhost:8080/legislation
 # The base url of the NYSenate public website
 # Useful when testing openleg alongside a development instance of NYSenate.gov
 nysenate.gov.url = https://www.NYSenate.gov
-

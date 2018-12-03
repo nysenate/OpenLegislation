@@ -1292,9 +1292,10 @@ md-dialog.detail-diff-dialog {
 
 .mismatch-diff-view-exit {
   font-size: 25px;
-  position: fixed;
+  position: absolute;
   right: 0;
   z-index: 1;
+  cursor: pointer;
 }
 
 .mismatch-diff-view-top-half {

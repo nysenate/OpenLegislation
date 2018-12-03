@@ -1,20 +1,19 @@
 package gov.nysenate.openleg.service.scraping.bill;
 
-import com.google.common.collect.*;
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.TreeMultimap;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.processor.base.ParseError;
+import gov.nysenate.openleg.util.BillTextUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -75,28 +74,7 @@ public class BillScrapeReferenceHtmlParser {
             }
         }
 
-        StringBuilder textBuilder = new StringBuilder();
-        textEles.forEach(ele -> processTextNode(ele, textBuilder));
-        return textBuilder.toString();
-    }
-
-    /**
-     * Extracts bill/memo text from an element recursively
-     */
-    private void processTextNode(Element ele, StringBuilder stringBuilder) {
-        for (Node t : ele.childNodes()) {
-            if (t instanceof Element) {
-                Element e = (Element) t;
-                // TEXT IN <U> TAGS IS REPRESENTED IN CAPS FOR SOBI BILL TEXT
-                if ("u".equals(e.tag().getName())) {
-                    stringBuilder.append(e.text().toUpperCase());
-                } else {
-                    processTextNode(e, stringBuilder);
-                }
-            } else if (t instanceof TextNode) {
-                stringBuilder.append(((TextNode) t).getWholeText());
-            }
-        }
+        return BillTextUtils.parseHTMLText(textEles);
     }
 
     /**
@@ -106,14 +84,11 @@ public class BillScrapeReferenceHtmlParser {
      */
     public String parseMemo(Document doc) {
         Element memoElement = doc.select("pre:last-of-type").first(); // you are the first and last of your kind
+        String memoText = "";
         if (memoElement != null) {
-            StringBuilder memoBuilder = new StringBuilder();
-            processTextNode(memoElement, memoBuilder);
-            // todo format text
-            return memoBuilder.toString();
+            memoText = BillTextUtils.parseHTMLText(memoElement);
         }
-        // TODO: add parse exception here if element is null like other methods.
-        return "";
+        return memoText;
     }
 
     /**

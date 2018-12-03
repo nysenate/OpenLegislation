@@ -1,16 +1,13 @@
 package gov.nysenate.openleg.service.sobi;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.annotation.SillyTest;
-import gov.nysenate.openleg.model.sobi.SobiProcessOptions;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processor.sobi.SobiProcessService;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Category(SillyTest.class)
 public class ManagedSobiProcessServiceTest extends BaseTests
 {
     private static final Logger logger = LoggerFactory.getLogger(ManagedSobiProcessServiceTest.class);
@@ -25,7 +22,7 @@ public class ManagedSobiProcessServiceTest extends BaseTests
 
     @Test
     public void testCollateSobiFiles() throws Exception {
-        int collated = sobiProcessService.collateSobiFiles();
+        int collated = sobiProcessService.collateSourceFiles();
         logger.info("Collated {} sobis", collated);
     }
 

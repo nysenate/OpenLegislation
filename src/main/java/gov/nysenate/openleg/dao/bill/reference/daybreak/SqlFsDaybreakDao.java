@@ -306,7 +306,7 @@ public class SqlFsDaybreakDao extends SqlBaseDao implements DaybreakDao
     @Override
     public void archiveDaybreakFile(DaybreakFile daybreakFile) throws IOException {
         File archivedFile = new File(this.archiveDaybreakDir, daybreakFile.getFile().getName());
-        moveFile(daybreakFile.getFile(), archivedFile);
+        FileIOUtils.moveFile(daybreakFile.getFile(), archivedFile);
         MapSqlParameterSource params = getDaybreakFileParams(daybreakFile);
         jdbcNamed.update(SqlDaybreakQuery.UPDATE_DAYBREAK_FILE_ARCHIVED.getSql(schema()), params);
         daybreakFile.setArchived(true);

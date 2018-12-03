@@ -12,30 +12,31 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.*;
 /**
  * Enumeration of the different bill fields that we can check for data quality issues.
  */
-public enum SpotCheckMismatchType
-{
-    /** --- General --- */
+public enum SpotCheckMismatchType {
+    /* --- General --- */
 
     All("All", SpotCheckRefType.values()),
     REFERENCE_DATA_MISSING("Ref. Missing", SpotCheckRefType.values()),
     OBSERVE_DATA_MISSING("Source Missing", SpotCheckRefType.values()),
 
-    /** --- Bill data mismatches --- */
+    /* --- Bill data mismatches --- */
 
-    BILL_ACTION("Action", LBDC_DAYBREAK, SENATE_SITE_BILLS),
-    BILL_ACTIVE_AMENDMENT("Active Amendment", LBDC_DAYBREAK, LBDC_SCRAPED_BILL, SENATE_SITE_BILLS),
+    BILL_ACTION("Action", LBDC_DAYBREAK, SENATE_SITE_BILLS, OPENLEG_BILL),
+    BILL_ACTIVE_AMENDMENT("Active Amendment", LBDC_DAYBREAK, LBDC_SCRAPED_BILL, SENATE_SITE_BILLS, OPENLEG_BILL),
     BILL_AMENDMENT_PUBLISH("Published Status", LBDC_DAYBREAK, SENATE_SITE_BILLS),
-    BILL_COSPONSOR("Co Sponsor", LBDC_DAYBREAK, SENATE_SITE_BILLS),
+    BILL_COSPONSOR("Co Sponsor", LBDC_DAYBREAK, SENATE_SITE_BILLS, OPENLEG_BILL),
     BILL_FULLTEXT_PAGE_COUNT("Page Count", LBDC_DAYBREAK),
     BILL_TEXT_LINE_OFFSET("Text Line Offset", LBDC_SCRAPED_BILL, SENATE_SITE_BILLS),
     BILL_TEXT_CONTENT("Text Content", LBDC_SCRAPED_BILL, SENATE_SITE_BILLS),
+    BILL_TEXT_RESO_HEADER("Reso. Header", LBDC_SCRAPED_BILL),
     BILL_LAW_CODE_SUMMARY("Law/Summary", LBDC_DAYBREAK),
-    BILL_LAW_SECTION("Law Section", LBDC_DAYBREAK, SENATE_SITE_BILLS),
+    BILL_LAW_SECTION("Law Section", LBDC_DAYBREAK, SENATE_SITE_BILLS, OPENLEG_BILL),
     BILL_MEMO("Memo", LBDC_SCRAPED_BILL, SENATE_SITE_BILLS),
-    BILL_MULTISPONSOR("Multi Sponsor", LBDC_DAYBREAK, SENATE_SITE_BILLS),
-    BILL_SESSION_YEAR("Session Year", LBDC_DAYBREAK),
-    BILL_SPONSOR("Sponsor", LBDC_DAYBREAK, SENATE_SITE_BILLS),
-    BILL_TITLE("Title", LBDC_DAYBREAK, SENATE_SITE_BILLS),
+    BILL_MULTISPONSOR("Multi Sponsor", LBDC_DAYBREAK, SENATE_SITE_BILLS, OPENLEG_BILL),
+    BILL_SESSION_YEAR("Session Year", LBDC_DAYBREAK, OPENLEG_BILL),
+    BILL_SPONSOR("Sponsor", LBDC_DAYBREAK, SENATE_SITE_BILLS, OPENLEG_BILL),
+    BILL_ADDITIONAL_SPONSOR("Bill Additional Sponsor", OPENLEG_BILL),
+    BILL_TITLE("Title", LBDC_DAYBREAK, SENATE_SITE_BILLS, OPENLEG_BILL),
 
     BILL_BASE_PRINT_NO("Base Print No", SENATE_SITE_BILLS),
     BILL_CHAMBER("Chamber", SENATE_SITE_BILLS),
@@ -45,48 +46,56 @@ public enum SpotCheckMismatchType
     BILL_HAS_SAME_AS("Has Same As", SENATE_SITE_BILLS),
     BILL_PUBLISH_DATE("Publish Date", SENATE_SITE_BILLS),
     BILL_MILESTONES("Milestones", SENATE_SITE_BILLS),
-    BILL_LAST_STATUS("Last Status", SENATE_SITE_BILLS),
+    BILL_LAST_STATUS("Last Status", SENATE_SITE_BILLS, OPENLEG_BILL),
     BILL_LAST_STATUS_COMM("Last Status Committee", SENATE_SITE_BILLS),
     BILL_LAST_STATUS_DATE("Last Status Date", SENATE_SITE_BILLS),
-    BILL_SUMMARY("Summary", SENATE_SITE_BILLS),
-    BILL_LAW_CODE("Law Code", SENATE_SITE_BILLS),
+    BILL_SUMMARY("Summary", SENATE_SITE_BILLS, OPENLEG_BILL),
+    BILL_LAW_CODE("Law Code", SENATE_SITE_BILLS, OPENLEG_BILL),
     BILL_TEXT("Full Text", SENATE_SITE_BILLS),
-    BILL_VOTE_INFO("Bill Vote Info", SENATE_SITE_BILLS),
-    BILL_VOTE_ROLL("Bill Vote Roll", SENATE_SITE_BILLS),
+    BILL_VOTE_INFO("Bill Vote Info", SENATE_SITE_BILLS, OPENLEG_BILL),
+    BILL_VOTE_ROLL("Bill Vote Roll", SENATE_SITE_BILLS, OPENLEG_BILL),
     BILL_SCRAPE_VOTE("Bill Scrape Vote", LBDC_SCRAPED_BILL),
 
+    BILL_APPROVAL_MESSAGE("Bill Approve Message", OPENLEG_BILL),
+    BILL_COMMITTEE_AGENDAS("Bill Committee Agendas", OPENLEG_BILL),
+    BILL_PAST_COMMITTEES("Bill Past Committees", OPENLEG_BILL),
+    BILL_CALENDARS("Bill Calendars", OPENLEG_BILL),
 
-    /** --- Active List data mismatches --- */
+    /* --- Agenda mismatches --- */
+    AGENDA_ID("Agenda Id", SENATE_SITE_AGENDA),
 
-    LIST_CAL_DATE("Cal Date", LBDC_CALENDAR_ALERT),
-    LIST_RELEASE_DATE_TIME("Release Time", LBDC_CALENDAR_ALERT),
-    LIST_CALENDAR_MISMATCH("Calendar Data", LBDC_CALENDAR_ALERT),
-    LIST_ENTRY_MISMATCH("Cal Entry", LBDC_CALENDAR_ALERT),
+    /* --- Agenda Committee Meeting info mismatches --- */
 
-    /** --- Agenda Committee Meeting info mismatches --- */
+    AGENDA_BILL_LISTING("Bill List", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
+    AGENDA_CHAIR("Chair", LBDC_AGENDA_ALERT, OPENLEG_AGENDA),
+    AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
+    AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
+    AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
+    AGENDA_BILLS("Bills", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA, OPENLEG_AGENDA),
+    AGENDA_MODIFIED_DATE_TIME("Modified Date Time", OPENLEG_AGENDA),
+    AGENDA_HAS_VOTES("Has Votes", OPENLEG_AGENDA),
+    AGENDA_ATTENDANCE_LIST("Agenda Attendance List", OPENLEG_AGENDA),
+    AGENDA_VOTES_LIST("Agenda Votes List", OPENLEG_AGENDA),
 
-    AGENDA_BILL_LISTING("Bill List", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
-    AGENDA_CHAIR("Chair", LBDC_AGENDA_ALERT),
-    AGENDA_MEETING_TIME("Meeting Time", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
-    AGENDA_LOCATION("Location", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
-    AGENDA_NOTES("Notes", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
-    AGENDA_BILLS("Bills", LBDC_AGENDA_ALERT, SENATE_SITE_AGENDA),
-
-    /** --- Supplemental mismatches --- */
-    SUPPLEMENTAL_CAL_DATE("Supplemental Calendar Date", LBDC_CALENDAR_ALERT),
-    SUPPLEMENTAL_SECTION_TYPE("Supplemental Section", LBDC_CALENDAR_ALERT),
-    SUPPLEMENTAL_ENTRY("Supplemental Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_CALENDAR),
-    FLOOR_ENTRY("Floor Entry", SENATE_SITE_CALENDAR),
-
-    /** --- Active list mismatches --- */
-    ACTIVE_LIST_CAL_DATE("Active List Calendar Date", LBDC_CALENDAR_ALERT),
-    ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_BILLS),
-
-    /** --- Calendar mismatches --- */
+    /* --- Calendar mismatches --- */
     CALENDAR_ID("Calendar Id", SENATE_SITE_CALENDAR),
 
-    /** --- Agenda mismatches --- */
-    AGENDA_ID("Agenda Id", SENATE_SITE_AGENDA),
+    /* --- Floor / Supplemental mismatches --- */
+    SUPPLEMENTAL_ENTRY("Supplemental Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_CALENDAR, OPENLEG_CAL),
+    FLOOR_ENTRY("Floor Entry", SENATE_SITE_CALENDAR, OPENLEG_CAL),
+
+    FLOOR_CAL_DATE("Floor Calendar Date", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
+    FLOOR_CAL_YEAR("Floor Calendar Year", OPENLEG_CAL),
+    FLOOR_RELEASE_DATE_TIME("Floor Release Date Time", OPENLEG_CAL),
+    FLOOR_SECTION_TYPE("Floor Section", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
+
+    /* --- Active list mismatches --- */
+    ACTIVE_LIST_CAL_DATE("Active List Calendar Date", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
+    ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_BILLS, OPENLEG_CAL),
+
+    /* --- Active List data mismatches --- */
+    ACTIVE_LIST_RELEASE_DATE_TIME("Active List Release Time", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
+    ACTIVE_LIST_NOTES("Active List Notes", OPENLEG_CAL),
 
     ;
 
@@ -126,7 +135,7 @@ public enum SpotCheckMismatchType
     }
 
     public static SpotCheckMismatchType getSpotCheckMismatchByDisplayName(String displayName) {
-        for (SpotCheckMismatchType spotCheckMismatchType : SpotCheckMismatchType.values()){
+        for (SpotCheckMismatchType spotCheckMismatchType : SpotCheckMismatchType.values()) {
             if (spotCheckMismatchType.displayName.equals(displayName))
                 return spotCheckMismatchType;
         }

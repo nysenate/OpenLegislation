@@ -26,8 +26,9 @@ public class BillInfo
     protected Map<Version, PublishStatus> amendPublishStatusMap = new EnumMap<>(Version.class);
     protected BillId substitutedBy;
     protected ProgramInfo programInfo;
+    protected BillId reprintOf;
 
-    /** --- Constructors --- */
+    /* --- Constructors --- */
 
     public BillInfo() {}
 
@@ -45,9 +46,21 @@ public class BillInfo
         this.milestones = bill.getMilestones();
         this.actions = bill.getActions();
         this.amendPublishStatusMap = new TreeMap<>(bill.getAmendPublishStatusMap());
+        this.reprintOf = bill.getReprintOf();
     }
 
-    /** --- Basic Getters/Setters --- */
+    /* --- Functional Getters / Setters --- */
+
+    /**
+     * Indicates if the base amendment is published.
+     * @return boolean
+     */
+    public boolean isBaseVersionPublished() {
+        return (this.amendPublishStatusMap.containsKey(Version.ORIGINAL) &&
+                this.amendPublishStatusMap.get(Version.ORIGINAL).isPublished());
+    }
+
+    /* --- Basic Getters/Setters --- */
 
     public BillId getBillId() {
         return billId;
@@ -140,4 +153,8 @@ public class BillInfo
     public void setAmendPublishStatusMap(Map<Version, PublishStatus> amendPublishStatusMap) {
         this.amendPublishStatusMap = amendPublishStatusMap;
     }
+
+    public BillId getReprintOf() {return reprintOf;}
+
+    public void setReprintOf(BillId reprintOf) {this.reprintOf = reprintOf;}
 }

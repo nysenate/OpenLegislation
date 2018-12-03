@@ -8,16 +8,22 @@ public class BillNotFoundEx extends RuntimeException
 
     protected BillId billId;
 
+    public BillNotFoundEx(BillId billId) {
+        this(billId, null);
+    }
+
     public BillNotFoundEx(BillId billId, Exception ex) {
-        super(
-            (billId != null) ? "Bill " + billId.toString() + " could not be retrieved."
-                             : "Bill could not be retrieved since the given BillId was null",
-            ex
-        );
+        super(getMessage(billId), ex);
         this.billId = billId;
     }
 
     public BillId getBillId() {
         return billId;
+    }
+
+    private static String getMessage(BillId billId) {
+        return (billId != null)
+                ? "Bill " + billId.toString() + " could not be retrieved."
+                : "Bill could not be retrieved since the given BillId was null";
     }
 }

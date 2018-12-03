@@ -16,13 +16,15 @@ Retrieve bill by session year and print no
 
 **Optional Params**
 
-+-----------+-----------------------------------------------------------------------------------------+
-| Parameter | Values                                                                                  |
-+===========+=========================================================================================+
-| view      | 'default', 'info', 'no_fulltext', 'only_fulltext', 'with_refs', 'with_refs_no_fulltext' |
-+-----------+-----------------------------------------------------------------------------------------+
-| version   | If view=only_fulltext, use the version to specify the amendment letter, e.g. version=A  |
-+-----------+-----------------------------------------------------------------------------------------+
++----------------+----------------------------------------------------------------------------------------------+
+| Parameter      | Values                                                                                       |
++================+==============================================================================================+
+| view           | 'default', 'info', 'no_fulltext', 'only_fulltext', 'with_refs', 'with_refs_no_fulltext'      |
++----------------+----------------------------------------------------------------------------------------------+
+| version        | If view=only_fulltext, use the version to specify the amendment letter, e.g. version=A       |
++----------------+----------------------------------------------------------------------------------------------+
+| fullTextFormat | (PLAIN or HTML) Which bill text formats will be included. Multiple formats can be requested. |
++----------------+----------------------------------------------------------------------------------------------+
 
 View options
 
@@ -340,20 +342,23 @@ List bills within a session year
 
 **Optional Params**
 
-+-----------+--------------------+--------------------------------------------------------+
-| Parameter | Values             | Description                                            |
-+===========+====================+========================================================+
-| limit     | 1 - 1000           | Number of results to return                            |
-+-----------+--------------------+--------------------------------------------------------+
-| offset    | >= 1               | Result number to start from                            |
-+-----------+--------------------+--------------------------------------------------------+
-| full      | boolean            | Set to true to see the full bill responses.            |
-+-----------+--------------------+--------------------------------------------------------+
-| idsOnly   | boolean            | Set to true to see only the printNo and session        |
-|           |                    | for each bill.  (overrides 'full' parameter)           |
-+-----------+--------------------+--------------------------------------------------------+
-| sort      | string             | Sort by any field from the response.                   |
-+-----------+--------------------+--------------------------------------------------------+
++----------------+--------------------+--------------------------------------------------------+
+| Parameter      | Values             | Description                                            |
++================+====================+========================================================+
+| limit          | 1 - 1000           | Number of results to return                            |
++----------------+--------------------+--------------------------------------------------------+
+| offset         | >= 1               | Result number to start from                            |
++----------------+--------------------+--------------------------------------------------------+
+| full           | boolean            | Set to true to see the full bill responses.            |
++----------------+--------------------+--------------------------------------------------------+
+| idsOnly        | boolean            | Set to true to see only the printNo and session        |
+|                |                    | for each bill.  (overrides 'full' parameter)           |
++----------------+--------------------+--------------------------------------------------------+
+| sort           | string             | Sort by any field from the response.                   |
++----------------+--------------------+--------------------------------------------------------+
+| fullTextFormat | (PLAIN or HTML)    | Which bill text formats will be included.              |
+|                |                    | Multiple formats can be requested.                     |
++----------------+--------------------+--------------------------------------------------------+
 
 **Default Sort Order**
 
@@ -476,19 +481,25 @@ List of bills updated since the given date/time
 
 **Optional Params**
 
-+-----------+----------------------+--------------------------------------------------------+
-| Parameter | Values               | Description                                            |
-+===========+======================+========================================================+
-| type      | (processed|published)| The type of bill update (see below for explanation)    |
-+-----------+----------------------+--------------------------------------------------------+
-| detail    | boolean              | Set to true to see `detailed update digests`_          |
-+-----------+----------------------+--------------------------------------------------------+
-| filter    | string               | Filter by update type. See `update filters`_           |
-+-----------+----------------------+--------------------------------------------------------+
-| order     | string (asc|desc)    | Order the results by update date/time                  |
-+-----------+----------------------+--------------------------------------------------------+
-| summary   | boolean              | Include a bill info response per item                  |
-+-----------+----------------------+--------------------------------------------------------+
++----------------+----------------------+--------------------------------------------------------+
+| Parameter      | Values               | Description                                            |
++================+======================+========================================================+
+| type           | (processed|published)| The type of bill update (see below for explanation)    |
++----------------+----------------------+--------------------------------------------------------+
+| detail         | boolean              | Set to true to see `detailed update digests`_          |
++----------------+----------------------+--------------------------------------------------------+
+| filter         | string               | Filter by update type. See `update filters`_           |
++----------------+----------------------+--------------------------------------------------------+
+| order          | string (asc|desc)    | Order the results by update date/time                  |
++----------------+----------------------+--------------------------------------------------------+
+| summary        | boolean              | Include a bill info response per item                  |
++----------------+----------------------+--------------------------------------------------------+
+| fullBill       | boolean              | Include a bill info response per item                  |
++----------------+----------------------+--------------------------------------------------------+
+| fullTextFormat | (PLAIN or HTML)      | Which bill text formats will be included               |
+|                |                      | if full bills are requested.                           |
+|                |                      | Multiple formats can be requested.                     |
++----------------+----------------------+--------------------------------------------------------+
 
 There are two types of updates, 'processed' and 'published'. Processed refers to the date that OpenLeg processed
 the data which is useful if you are trying to stay synchronized with OpenLeg. Published refers to the date during

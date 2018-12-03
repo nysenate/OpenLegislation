@@ -10,8 +10,9 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
-import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
+import gov.nysenate.openleg.model.bill.BillInfo;
 import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import org.slf4j.Logger;
@@ -21,7 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
@@ -100,7 +102,7 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
                     SpotCheckMismatch mismatch = null;
                     if (openlegBillIds.contains(id)) {
                         // openleg has the bill but daybreak does not, add reference missing mismatch if bill is published.
-                        Bill bill = billDataService.getBill(id);
+                        BillInfo bill = billDataService.getBillInfo(id);
                         if (billIsPublished(bill)) {
                             logger.info("Missing Daybreak bill {}", id);
                             mismatch = new SpotCheckMismatch(REFERENCE_DATA_MISSING, id, "");
@@ -130,10 +132,10 @@ public class DaybreakReportService extends BaseSpotCheckReportService<BaseBillId
 
     /** --- Internal Methods --- */
 
-    private boolean billIsPublished(Bill bill) {
-        Version activeVersion = bill.getActiveVersion();
-        Optional<PublishStatus> pubStatus = bill.getPublishStatus(activeVersion);
-        return pubStatus.isPresent() && pubStatus.get().isPublished();
+    private boolean billIsPublished(BillInfo billInfo) {
+        Version activeVersion = billInfo.getActiveVersion();
+        PublishStatus pubStatus = billInfo.getAmendPublishStatusMap().get(activeVersion);
+        return pubStatus != null && pubStatus.isPublished();
     }
 
     private void recordMismatch(SpotCheckReport<BaseBillId> report, SpotCheckObservation<BaseBillId> sourceMissingObs, SpotCheckMismatch mismatch) {

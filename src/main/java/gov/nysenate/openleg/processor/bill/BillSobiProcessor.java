@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.processor.bill;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import gov.nysenate.openleg.config.process.ProcessConfig;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
@@ -10,17 +8,17 @@ import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sobi.SobiBlock;
-import gov.nysenate.openleg.model.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sobi.SobiFragmentType;
-import gov.nysenate.openleg.model.sobi.SobiLineType;
-import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiLineType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.sobi.SobiProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -28,9 +26,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 
 /**
  * The BillProcessor parses bill sobi fragments, applies bill updates, and persists into the backing
@@ -38,7 +41,7 @@ import java.util.regex.Pattern;
  * are applied to the bills via these fragments.
  */
 @Service
-public class BillSobiProcessor extends AbstractDataProcessor implements SobiProcessor
+public class BillSobiProcessor extends AbstractBillProcessor implements SobiProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
 
@@ -72,6 +75,9 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
     protected static final String vetoApprovalSplitter =
         "(?<=00000.SO DOC (?:VETO\\d{4}|APPR\\d{3}\\s)\\s{8}(?:\\*END\\*.{3}|\\*DELETE\\*).{42})\\n";
 
+    @Autowired
+    private ProcessConfig processConfig;
+
     /** --- Constructors --- */
 
     public BillSobiProcessor() {}
@@ -99,10 +105,10 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
         List<SobiBlock> blocks = sobiFragment.getSobiBlocks();
         logger.info("Processing " + sobiFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
         DataProcessUnit unit = createProcessUnit(sobiFragment);
-        for (SobiBlock block : blocks) {
+        for (SobiBlock block : processConfig.filterSobiBlocks(blocks)) {
             String data = block.getData();
             BillId billId = block.getBillId();
-            Bill baseBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), billId, sobiFragment);
+            Bill baseBill = getOrCreateBaseBill(billId, sobiFragment);
             Version specifiedVersion = billId.getVersion();
             BillAmendment specifiedAmendment = baseBill.getAmendment(specifiedVersion);
             BillAmendment activeAmendment = baseBill.getActiveAmendment();
@@ -113,19 +119,19 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
                     case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
                     case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT: applyBillActions(data, baseBill, specifiedAmendment, sobiFragment); break;
-                    case SAME_AS: applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
-                    case SPONSOR: applySponsor(data, baseBill, specifiedAmendment, date); break;
-                    case CO_SPONSOR: applyCosponsors(data, baseBill); break;
-                    case MULTI_SPONSOR: applyMultisponsors(data, baseBill); break;
-                    case PROGRAM_INFO: applyProgramInfo(data, baseBill, date); break;
-                    case ACT_CLAUSE: applyActClause(data, specifiedAmendment); break;
+                    case BILL_EVENT:  parseActions(data, baseBill, specifiedAmendment, sobiFragment); break;
+                    case SAME_AS:  applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
+                    case SPONSOR:  applySponsor(data, baseBill, specifiedAmendment, date); break;
+                    case CO_SPONSOR:  applyCosponsors(data, baseBill); break;
+                    case MULTI_SPONSOR:  applyMultisponsors(data, baseBill); break;
+                    case PROGRAM_INFO:  applyProgramInfo(data, baseBill, date); break;
+                    case ACT_CLAUSE:  applyActClause(data, specifiedAmendment); break;
                     case LAW: applyLaw(data, baseBill, specifiedAmendment, date); break;
-                    case SUMMARY: applySummary(data, baseBill, date); break;
+                    case SUMMARY:  applySummary(data, baseBill, date); break;
                     case SPONSOR_MEMO:
                     case RESOLUTION_TEXT:
                     case TEXT: applyText(data, specifiedAmendment, date, block.getType(), sobiFragment); break;
-                    case VETO_APPROVE_MEMO: applyVetoApprovalMessage(data, baseBill, date); break;
+                    case VETO_APPROVE_MEMO:  applyVetoApprovalMessage(data, baseBill, date); break;
                     case VOTE_MEMO: applyVoteMemo(data, specifiedAmendment, date); break;
                     default: {
                         throw new ParseError("Invalid Line Code " + block.getType());
@@ -138,16 +144,15 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
             }
             billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
 
-            if (billIngestCache.exceedsCapacity()) {
-                logger.info("Flushing bill ingest cache with {} bills!", billIngestCache.getSize());
-                flushBillUpdates();
-            }
+            checkIngestCache();
         }
         // Notify the data processor that a bill fragment has finished processing
         postDataUnitEvent(unit);
+    }
 
-        // Flush cache after each fragment when doing incremental updates
-        if (!env.isSobiBatchEnabled()) {
+    @Override
+    public void checkIngestCache() {
+        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }
@@ -177,7 +182,6 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
      * Sponsor           | 1YOUNG               00000 MachiasVolunteerFireDept.100thAnn 00000 91989011
      * -----------------------------------------------------------------------------------------------------------
      * Prev Version      | 1                    00000                                  S07213              2010
-     * -----------------------------------------------------------------------------------------------------------
      *
      * @throws ParseError
      */
@@ -203,7 +207,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
             String sponsor = billData.group(1).trim();
             if (!StringUtils.isEmpty(sponsor) && baseBill.getSponsor() == null) {
                 // Apply the sponsor from bill info when the sponsor has not yet been set.
-                setBillSponsorFromSponsorLine(baseBill, sponsor, baseBill.getSession());
+                handlePrimaryMemberParsing(baseBill, sponsor, baseBill.getSession());
                 baseBill.setModifiedDateTime(date);
             }
             String prevPrintNo = billData.group(4).trim();
@@ -267,61 +271,6 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
     private void applyTitle(String data, Bill baseBill, LocalDateTime date) {
         baseBill.setTitle(data.replace("\n", " ").trim());
         baseBill.setModifiedDateTime(date);
-    }
-
-    /**
-     * Applies information to bill events; replaces existing information in full.
-     * Events are uniquely identified by text/date/sequenceNo/bill.
-     *
-     * Also parses bill events to apply several other bits of meta data to bills (see examples)
-     *
-     * Examples
-     * --------------------------------------------------------------------
-     * Same as             | 406/11/14 SUBSTITUTED BY A9504
-     * --------------------------------------------------------------------
-     * Stricken            | 403/10/14 RECOMMIT, ENACTING CLAUSE STRICKEN
-     * --------------------------------------------------------------------
-     * Current committee   | 406/21/13 COMMITTED TO RULES
-     * --------------------------------------------------------------------
-     *
-     * There are currently no checks for the action list starting over again which
-     * could lead back to back action blocks for a bill to produce a double long list.
-     *
-     * Bill events cannot be deleted, only replaced.
-     *
-     * @see BillActionParser
-     * @throws ParseError
-     */
-    private void applyBillActions(String data, Bill baseBill, BillAmendment specifiedAmendment, SobiFragment fragment)
-                                throws ParseError {
-        // Use the BillActionParser to convert the actions string into objects.
-        List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
-        baseBill.setActions(billActions);
-        // Use the BillActionAnalyzer to derive other data from the actions list.
-        Optional<PublishStatus> defaultPubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
-        BillActionAnalyzer analyzer = new BillActionAnalyzer(specifiedAmendment.getBillId(), billActions, defaultPubStatus);
-        analyzer.analyze();
-
-        // Apply the results to the bill
-        baseBill.setSubstitutedBy(analyzer.getSubstitutedBy().orElse(null));
-        baseBill.setActiveVersion(analyzer.getActiveVersion());
-        baseBill.setStatus(analyzer.getBillStatus());
-        baseBill.setMilestones(analyzer.getMilestones());
-        baseBill.setPastCommittees(analyzer.getPastCommittees());
-        baseBill.setPublishStatuses(analyzer.getPublishStatusMap());
-        // Ensure that amendments exist for all versions in the publish status map
-        baseBill.getAmendPublishStatusMap().keySet().forEach(version ->
-                getOrCreateBaseBill(
-                        fragment.getPublishedDateTime(),
-                        baseBill.getBaseBillId().withVersion(version),
-                        fragment)
-        );
-        analyzer.getSameAsMap().forEach((k, v) -> {
-            if (baseBill.hasAmendment(k)) {
-                baseBill.getAmendment(k).setSameAs(Sets.newHashSet(v));
-            }
-        });
-        specifiedAmendment.setStricken(analyzer.isStricken());
     }
 
     /**
@@ -394,7 +343,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
                 specifiedAmendment.setMultiSponsors(new ArrayList<>());
             }
             else {
-                setBillSponsorFromSponsorLine(baseBill, line, sessionYear);
+                handlePrimaryMemberParsing(baseBill, line, sessionYear);
             }
         }
         baseBill.setModifiedDateTime(date);
@@ -562,7 +511,7 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
                 billAmendment.setMemo(fullText);
             }
             else if (lineType == SobiLineType.RESOLUTION_TEXT || lineType == SobiLineType.TEXT) {
-                billAmendment.setFullText(fullText);
+                billAmendment.setFullText(PLAIN, fullText);
                 if (billAmendment.isUniBill()) {
                     syncUniBillText(billAmendment, fragment);
                 }
@@ -716,69 +665,5 @@ public class BillSobiProcessor extends AbstractDataProcessor implements SobiProc
             }
         }
         specifiedAmendment.updateVote(vote);
-    }
-
-    /** --- Post Process Methods --- */
-
-    /**
-     * Uni-bills share text with their counterpart house. Ensure that the full text of bill amendments that
-     * have a uni-bill designator are kept in sync.
-     */
-    protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
-        billAmendment.getSameAs().forEach(uniBillId -> {
-            Bill uniBill = getOrCreateBaseBill(sobiFragment.getPublishedDateTime(), uniBillId, sobiFragment);
-            BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
-            // If this is the senate bill amendment, copy text to the assembly bill amendment
-            if (billAmendment.getBillType().getChamber().equals(Chamber.SENATE)) {
-                uniBillAmend.setFullText(billAmendment.getFullText());
-            }
-            // Otherwise copy the text to this assembly bill amendment
-            else if (!uniBillAmend.getFullText().isEmpty()) {
-                billAmendment.setFullText(uniBillAmend.getFullText());
-            }
-        });
-    }
-
-    /**
-     * Constructs a BillSponsor via the sponsorLine string and applies it to the bill.
-     */
-    protected void setBillSponsorFromSponsorLine(Bill baseBill, String sponsorLine, SessionYear sessionYear) throws ParseError {
-        // Get the chamber from the Bill
-        Chamber chamber = baseBill.getBillType().getChamber();
-        // New Sponsor instance
-        BillSponsor billSponsor = new BillSponsor();
-        // Format the sponsor line
-        sponsorLine = sponsorLine.replace("(MS)", "").toUpperCase().trim();
-        // Check for RULES sponsors
-        if (sponsorLine.startsWith("RULES")) {
-            billSponsor.setRules(true);
-            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
-            if (!"RULES COM".equals(sponsorLine) && rules.matches()) {
-                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
-                billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
-            }
-        }
-        // Budget bills don't have a specific sponsor
-        else if (sponsorLine.startsWith("BUDGET")) {
-            billSponsor.setBudget(true);
-        }
-        // Apply the sponsor by looking up the member
-        else {
-            // In rare cases multiple sponsors can be listed on a single line. We can handle this
-            // by setting the first contact as the sponsor, and subsequent ones as additional sponsors.
-            if (sponsorLine.contains(",")) {
-                List<String> sponsors = Lists.newArrayList(
-                        Splitter.on(",").omitEmptyStrings().trimResults().splitToList(sponsorLine));
-                if (!sponsors.isEmpty()) {
-                    sponsorLine = sponsors.remove(0);
-                    for (String sponsor : sponsors) {
-                        baseBill.getAdditionalSponsors().add(getMemberFromShortName(sponsor, sessionYear, chamber));
-                    }
-                }
-            }
-            // Set the member into the sponsor instance
-            billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
-        }
-        baseBill.setSponsor(billSponsor);
     }
 }

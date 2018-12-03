@@ -1,0 +1,66 @@
+<senagendavote no="5" sessyr="2017" year="2017">
+<addendum id="C">
+<committees>
+<committee action="replace">
+<name><![CDATA[Rules]]></name>
+<chair><![CDATA[John J. Flanagan]]></chair>
+<meetdate>2017-02-06</meetdate>
+<meettime>T00.00.00Z</meettime>
+<attendancelist>
+<member>
+<name><![CDATA[Flanagan]]></name>
+<rank>1</rank>
+<party>R</party>
+<attendance>Present</attendance></member>
+<member>
+<name><![CDATA[DeFrancisco]]></name>
+<rank>2</rank>
+<party>R</party>
+<attendance>Present</attendance></member>
+</attendancelist>
+<bills>
+<bill no="S02956A">
+<sponsor><![CDATA[Boyle]]></sponsor>
+<action>3  </action>
+<refercomm></refercomm>
+<withamd></withamd>
+<votes>
+<member>
+<name><![CDATA[Flanagan]]></name>
+<rank>1</rank>
+<party>R</party>
+<vote>Aye</vote>
+</member>
+<member>
+<name><![CDATA[DeFrancisco]]></name>
+<rank>2</rank>
+<party>R</party>
+<vote>Aye</vote>
+</member>
+</votes>
+</bill>
+<bill no="S03505">
+<sponsor><![CDATA[Young]]></sponsor>
+<action>3  </action>
+<refercomm></refercomm>
+<withamd></withamd>
+<votes>
+<member>
+<name><![CDATA[Flanagan]]></name>
+<rank>1</rank>
+<party>R</party>
+<vote>Aye</vote>
+</member>
+<member>
+<name><![CDATA[DeFrancisco]]></name>
+<rank>2</rank>
+<party>R</party>
+<vote>Aye</vote>
+</member>
+</votes>
+</bill>
+</bills>
+</committee>
+</committees>
+</addendum>
+</senagendavote>
