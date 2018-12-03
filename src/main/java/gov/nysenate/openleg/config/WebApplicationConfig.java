@@ -46,7 +46,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
 
     @PostConstruct
     public void init() {
-        logger.info("{}", AsciiArt.OPENLEG_2_LOGO.getText().replace("DATE", LocalDateTime.now().toString()));
+        logger.info("{}", AsciiArt.OPENLEG_LOGO.getText().replace("DATE", LocalDateTime.now().toString()));
     }
 
     /** Sets paths that should not be intercepted by a controller (e.g css/ js/). */
