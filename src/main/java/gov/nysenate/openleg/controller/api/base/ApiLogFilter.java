@@ -4,8 +4,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.service.auth.ApiUserService;
-import gov.nysenate.openleg.service.log.data.ApiLogDataService;
 import gov.nysenate.openleg.service.log.event.ApiLogEvent;
+import gov.nysenate.openleg.service.log.search.ApiLogSearchService;
+import gov.nysenate.openleg.util.AsyncUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,9 @@ public class ApiLogFilter implements Filter
     private static final Logger logger = LoggerFactory.getLogger(ApiLogFilter.class);
 
     @Autowired protected EventBus eventBus;
-    @Autowired protected ApiLogDataService logDataService;
+    @Autowired protected ApiLogSearchService logSearchService;
     @Autowired protected ApiUserService apiUserService;
+    @Autowired protected AsyncUtils asyncUtils;
 
     private static String[] IGNORED_PATHS = new String[]{"/api/3/admin/apiLog", "/api/3/admin/process/runs/"};
 
@@ -69,7 +71,7 @@ public class ApiLogFilter implements Filter
      */
     @Subscribe
     public void handleApiLogEvent(ApiLogEvent apiLogEvent) {
-        logDataService.saveApiResponseAsync(apiLogEvent, true);
+        asyncUtils.run(() -> logSearchService.updateIndex(apiLogEvent.getApiResponse()));
     }
 
     @Override
