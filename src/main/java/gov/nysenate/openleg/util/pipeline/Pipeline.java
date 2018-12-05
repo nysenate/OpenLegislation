@@ -18,15 +18,14 @@ import java.util.concurrent.Executor;
  * @see PipelineFactory for instantiation details.
  *
  * @param <T>
- * @param <R>
  */
-public class Pipeline<T, R> {
+public class Pipeline<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(Pipeline.class);
 
     private LinkedList<PipelineTask> tasks;
     private Executor executor;
-    private CompletableFuture<ImmutableList<R>> result = null;
+    private CompletableFuture<ImmutableList<T>> result = null;
 
     Pipeline(Collection<PipelineTask> tasks, Executor executor) {
         this.tasks = new LinkedList<>(tasks);
@@ -34,20 +33,11 @@ public class Pipeline<T, R> {
     }
 
     /**
-     * Adds the given input items to the incoming queue for the first pipeline task.
-     *
-     * @param input Collection<T>
-     */
-    public void addInput(Collection<T> input) {
-        tasks.getFirst().addInputs(input);
-    }
-
-    /**
      * Sets the pipeline in motion, returning a future that is completed when everything is processed.
      *
      * @return CompletableFuture<ImmutableList<R>>
      */
-    public CompletableFuture<ImmutableList<R>> run() {
+    public CompletableFuture<ImmutableList<T>> run() {
         if (tasks.isEmpty()) {
             return CompletableFuture.completedFuture(ImmutableList.of());
         }
@@ -59,7 +49,7 @@ public class Pipeline<T, R> {
             futures.add(cf);
         }
         // Set the result future to return the result of the last task when its future completes
-        PipelineTask<?, R> lastTask = tasks.getLast();
+        PipelineTask<?, T> lastTask = tasks.getLast();
         CompletableFuture<Void> lastTaskFuture = futures.getLast();
         result = lastTaskFuture.thenApply(v -> lastTask.getOutputs());
 

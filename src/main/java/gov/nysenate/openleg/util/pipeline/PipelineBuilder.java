@@ -7,25 +7,31 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 /**
  * Constructs a {@link Pipeline} by adding tasks one at a time.
  *
  * @param <T>
- * @param <R>
  */
-public class PipelineBuilder<T, R> {
+public class PipelineBuilder<T> {
 
-    private Executor executor;
+    private final Executor executor;
 
     private List<PipelineTask> tasks;
 
-    private PipelineTask<?, R> lastTask = null;
+    private PipelineTask<?, T> lastTask = null;
 
-    PipelineBuilder(Executor executor) {
+    private final BlockingQueue inputQueue;
+
+    private final AtomicBoolean inputFinal;
+
+    PipelineBuilder(Executor executor, BlockingQueue<T> inputQueue, AtomicBoolean inputFinal) {
         this.executor = executor;
         this.tasks = new LinkedList<>();
+        this.inputQueue = inputQueue;
+        this.inputFinal = inputFinal;
     }
 
     /**
@@ -34,9 +40,12 @@ public class PipelineBuilder<T, R> {
      * @param pb {@link PipelineBuilder}
      * @param newTasks {@link PipelineTask}
      */
-    private PipelineBuilder(PipelineBuilder<T, ?> pb, LinkedList<PipelineTask<?, R>> newTasks) {
+    private PipelineBuilder(PipelineBuilder<?> pb, LinkedList<PipelineTask<?, T>> newTasks) {
         this.executor = pb.executor;
         this.tasks = pb.tasks;
+        this.inputQueue = pb.inputQueue;
+        this.inputFinal = pb.inputFinal;
+
         this.tasks.addAll(newTasks);
         this.lastTask = newTasks.getLast();
     }
@@ -55,14 +64,14 @@ public class PipelineBuilder<T, R> {
      * @param <E>
      * @return {@link PipelineBuilder}
      */
-    public <E> PipelineBuilder<T, E> addTask(Function<R, Collection<E>> task,
+    public <E> PipelineBuilder<E> addTask(Function<T, Collection<E>> task,
                                              int outputCapacity, int instances) {
         if (instances < 1) {
             throw new IllegalStateException("You must create at least one instance of a task.");
         }
-        BlockingQueue<R> inputQueue;
+        final BlockingQueue<T> inputQueue;
         if (lastTask == null) {
-            inputQueue = new LinkedBlockingQueue<>();
+            inputQueue = (BlockingQueue<T>) this.inputQueue;
         } else {
             inputQueue = lastTask.getOutputQueue();
         }
@@ -75,10 +84,8 @@ public class PipelineBuilder<T, R> {
         LinkedList<PipelineTask<?, E>> newTasks = new LinkedList<>();
         PipelineTask prevTask = lastTask;
         for (int i = 0; i < instances; i++) {
-            PipelineTask<R, E> newTask = new PipelineTask<>(task, inputQueue, outputQueue);
-            if (prevTask != null) {
-                newTask.registerPreviousTask(prevTask);
-            }
+            final AtomicBoolean prevFinished = prevTask == null ? this.inputFinal : prevTask.getFinished();
+            PipelineTask<T, E> newTask = new PipelineTask<>(task, inputQueue, outputQueue, prevFinished);
             prevTask = newTask;
             newTasks.add(newTask);
         }
@@ -94,7 +101,7 @@ public class PipelineBuilder<T, R> {
      * @param <E>
      * @return {@link PipelineBuilder}
      */
-    public <E> PipelineBuilder<T, E> addTask(Function<R, Collection<E>> task,
+    public <E> PipelineBuilder<E> addTask(Function<T, Collection<E>> task,
                                              int outputCapacity) {
         return addTask(task, outputCapacity, 1);
     }
@@ -107,7 +114,7 @@ public class PipelineBuilder<T, R> {
      * @param <E>
      * @return {@link PipelineBuilder}
      */
-    public <E> PipelineBuilder<T, E> addTask(Function<R, Collection<E>> task) {
+    public <E> PipelineBuilder<E> addTask(Function<T, Collection<E>> task) {
         return addTask(task, -1);
     }
 
@@ -116,7 +123,7 @@ public class PipelineBuilder<T, R> {
      *
      * @return {@link Pipeline}
      */
-    public Pipeline<T, R> build() {
+    public Pipeline<T> build() {
         return new Pipeline<>(tasks, executor);
     }
 
