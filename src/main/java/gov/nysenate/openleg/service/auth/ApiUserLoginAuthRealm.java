@@ -5,8 +5,10 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.model.auth.ApiKeyLoginToken;
 import gov.nysenate.openleg.model.auth.ApiUserAuthEvictEvent;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -18,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -65,7 +66,7 @@ public class ApiUserLoginAuthRealm extends OpenLegAuthorizingRealm
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         if (token != null && token instanceof ApiKeyLoginToken) {
             ApiKeyLoginToken apiToken = (ApiKeyLoginToken) token;
-            logger.info("Attempting login with API Realm from {} with key {}", apiToken.getHost(), apiToken.getApiKey());
+            logger.debug("Attempting login with API Realm from {} with key {}", apiToken.getHost(), apiToken.getApiKey());
             return queryForAuthenticationInfo(apiToken);
         }
         throw new UnsupportedTokenException("OpenLeg 2.0 only supports UsernamePasswordToken");

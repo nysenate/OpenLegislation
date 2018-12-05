@@ -43,7 +43,7 @@ public class BillPdfCtrl extends BaseCtrl
                                              WebRequest request, HttpServletResponse response)
             throws IOException {
         try {
-            BillId billId = new BillId(printNo, sessionYear);
+            BillId billId = getBillId(printNo, sessionYear, "printNo");
             Optional<String> alternateUrl = billData.getAlternateBillPdfUrl(billId);
             if (alternateUrl.isPresent()) {
                 String urlString = alternateUrl.get();
