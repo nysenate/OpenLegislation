@@ -103,14 +103,13 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         int refQueueSize = env.getSensiteBillRefQueueSize();
         int dataQueueSize = env.getSensiteBillDataQueueSize();
 
-        Pipeline<SenateSiteDumpFragment, SpotCheckObservation<BillId>> pipeline =
-                pipelineFactory.<SenateSiteDumpFragment>pipelineBuilder()
+        Pipeline<SpotCheckObservation<BillId>> pipeline =
+                pipelineFactory.pipelineBuilder(billDump.getDumpFragments())
                         .addTask(new FragmentParser(), refQueueSize)
                         .addTask(new BillLoader(), dataQueueSize, 2)
                         .addTask(billChecker)
                         .build();
 
-        pipeline.addInput(billDump.getDumpFragments());
         // Wait for pipeline to finish and add observations to report
         CompletableFuture<ImmutableList<SpotCheckObservation<BillId>>> obsFuture = pipeline.run();
         List<SpotCheckObservation<BillId>> observations;

@@ -4,9 +4,11 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckNotificationService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -16,23 +18,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.regex.Pattern;
 
 /**
  * Created by kyle on 11/3/14.
  */
 public abstract class LRSScraper {
+
     private static final Logger logger = LogManager.getLogger(LRSScraper.class);
-    @Autowired protected Environment environment;
-    @Autowired private EventBus eventBus;
 
     protected final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("'D'yyyyMMdd'.T'HHmmss");
-    protected final Pattern relativeBasePattern = Pattern.compile("(http://.+/).*");
-    protected final Pattern absoluteBasePattern = Pattern.compile("(http://.+?)/.*");
-    protected final Pattern linkPattern = Pattern.compile("<a href=\\\"(.*?)\\\">(.+?)</a>");
-    protected final Pattern bottomPattern = Pattern.compile("src=\\\"(frmload\\.cgi\\?BOT-([0-9]+))\\\">");
+
+    @Autowired protected Environment environment;
+    @Autowired private EventBus eventBus;
+    @Autowired private SpotCheckNotificationService notificationService;
+
+    /**
+     * Duration of tolerance for scrape failure to account for routine outages.
+     */
+    private static final Duration scrapeFailTolerance = Duration.ofHours(12);
+
+    /** Tracks the start of a consecutive run of scrape failures */
+    private LocalDateTime outageStart = null;
+
+    /** Number of consecutive scrape failures that have occurred since the last scrape success */
+    private int consecutiveFails = 0;
 
     /**
      * Attempts to scrape LRS data.
@@ -41,38 +53,63 @@ public abstract class LRSScraper {
      * @throws IOException
      */
     public int scrape() throws IOException {
+        int scraped = 0;
         try {
-            return doScrape();
-        } catch (ScrapingIOException ex) {
-            handleScrapingTimeout(ex);
-            return 0;
+            scraped = doScrape();
+            outageStart = null;
+            consecutiveFails = 0;
+        } catch (ScrapingException ex) {
+            handleScrapeException(ex);
         }
+        return scraped;
     }
 
     /**
      * An abstract method that performs the scraping
      */
-    protected abstract int doScrape() throws IOException, ScrapingIOException;
+    protected abstract int doScrape() throws IOException, ScrapingException;
 
     /**
      * Logs and sends a notification for a scraping exception
      */
-    protected void handleScrapingTimeout(ScrapingIOException ex) {
-        logger.error("scraping exception: \n" + ExceptionUtils.getStackTrace(ex));
-        eventBus.post(
-            new Notification(
-                    NotificationType.SCRAPING_EXCEPTION,
+    private void handleScrapeException(ScrapingException ex) {
+        if (outageStart == null) {
+            outageStart = LocalDateTime.now();
+        }
+        consecutiveFails++;
+
+        Duration outageDuration = Duration.between(outageStart, LocalDateTime.now());
+        String outageSummary = consecutiveFails + " consecutive scrape errors since " + outageStart +
+                " (tolerated up to " +
+                DurationFormatUtils.formatDurationWords(scrapeFailTolerance.toMillis(), true, true) +
+                ")";
+
+        // If there has been a long outage with multiple failures, raise the alarm.
+        if (consecutiveFails > 2 && outageDuration.compareTo(scrapeFailTolerance) > 0) {
+            String notifSummary = "Abnormal LRS Outage Detected: " + outageSummary;
+            String notifBody = notifSummary + "\nLast error:\n" + ExceptionUtils.getStackTrace(ex);
+            logger.error(notifSummary, ex);
+            eventBus.post(new Notification(
+                    NotificationType.LRS_OUTAGE,
                     LocalDateTime.now(),
-                    "Scraping exception: " + ExceptionUtils.getStackFrames(ex)[0],
-                    ExceptionUtils.getStackTrace(ex)
-        ));
+                    notifSummary,
+                    notifBody
+            ));
+            // Reset outage so as to not spam error notifications
+            outageStart = LocalDateTime.now();
+            consecutiveFails = 0;
+        } else {
+            // If it isn't a big outage, just log a summary of the exception.
+            logger.warn("Ignoring scraping exception: " + ExceptionUtils.getStackFrames(ex)[0]);
+            logger.warn(outageSummary);
+        }
     }
 
     protected Document getJsoupDocument(String url) {
         try {
             return Jsoup.connect(url).timeout(10000).get();
         } catch (IOException ex) {
-            throw new ScrapingIOException(url, ex);
+            throw new ScrapingException(url, ex);
         }
     }
 
@@ -80,7 +117,7 @@ public abstract class LRSScraper {
         try {
             return IOUtils.toString(url);
         } catch (IOException ex) {
-            throw new ScrapingIOException(url, ex);
+            throw new ScrapingException(url, ex);
         }
     }
 
@@ -88,7 +125,7 @@ public abstract class LRSScraper {
         try {
             FileUtils.copyURLToFile(url, file, 10000, 10000);
         } catch (IOException ex) {
-            throw new ScrapingIOException(url, ex);
+            throw new ScrapingException(url, ex);
         }
     }
 }

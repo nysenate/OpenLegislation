@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -41,15 +40,16 @@ class PipelineTask<T, R> implements Runnable {
      */
     private final AtomicBoolean finished = new AtomicBoolean(false);
 
-    /** Reference to previous task in the pipeline */
-    private PipelineTask previousTask;
+    private final AtomicBoolean prevFinished;
 
     PipelineTask(Function<T, Collection<R>> task,
-                         BlockingQueue<T> inputQueue,
-                         BlockingQueue<R> outputQueue) {
+                 BlockingQueue<T> inputQueue,
+                 BlockingQueue<R> outputQueue,
+                 AtomicBoolean prevFinished) {
         this.task = task;
         this.inputQueue = inputQueue;
         this.outputQueue = outputQueue;
+        this.prevFinished = prevFinished;
     }
 
     /**
@@ -66,7 +66,7 @@ class PipelineTask<T, R> implements Runnable {
                 T inputValue = inputQueue.poll(queueIOTimeout, TimeUnit.MILLISECONDS);
 
                 // Throw exception for early termination
-                if (isFinished()) {
+                if (finished.get()) {
                     throw new PipelineTaskCancellationEx();
                 }
 
@@ -97,8 +97,8 @@ class PipelineTask<T, R> implements Runnable {
     /**
      * @return true iff this task is finished processing
      */
-    boolean isFinished() {
-        return finished.get();
+    AtomicBoolean getFinished() {
+        return finished;
     }
 
     /**
@@ -106,16 +106,6 @@ class PipelineTask<T, R> implements Runnable {
      */
     void terminate() {
         this.finished.set(true);
-    }
-
-    /**
-     * Register another task as the preceeding task.
-     * This task watches for the previous task to be finished before finishing itself.
-     *
-     * @param previousTask {@link PipelineTask}
-     */
-    void registerPreviousTask(PipelineTask previousTask) {
-        this.previousTask = previousTask;
     }
 
     BlockingQueue<R> getOutputQueue() {
@@ -143,9 +133,7 @@ class PipelineTask<T, R> implements Runnable {
      * Returns true if the previous node is done
      */
     private boolean isPrevFinished() {
-        return Optional.ofNullable(previousTask)
-                .map(PipelineTask::isFinished)
-                .orElse(true);
+        return prevFinished.get();
     }
 
     /**
@@ -156,7 +144,7 @@ class PipelineTask<T, R> implements Runnable {
             try {
                 // Try to add the item to the queue, and check for early termination if the queue is blocked.
                 while(!queue.offer(value, queueIOTimeout, TimeUnit.MILLISECONDS)) {
-                    if (isFinished()) {
+                    if (finished.get()) {
                         throw new PipelineTaskCancellationEx();
                     }
                 }

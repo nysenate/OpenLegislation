@@ -91,7 +91,7 @@ public enum SpotCheckMismatchType {
 
     /* --- Active list mismatches --- */
     ACTIVE_LIST_CAL_DATE("Active List Calendar Date", LBDC_CALENDAR_ALERT, OPENLEG_CAL),
-    ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_BILLS, OPENLEG_CAL),
+    ACTIVE_LIST_ENTRY("Active List Entry", LBDC_CALENDAR_ALERT, SENATE_SITE_CALENDAR, OPENLEG_CAL),
 
     /* --- Active List data mismatches --- */
     ACTIVE_LIST_RELEASE_DATE_TIME("Active List Release Time", LBDC_CALENDAR_ALERT, OPENLEG_CAL),

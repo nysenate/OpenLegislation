@@ -20,6 +20,7 @@
 # Revised: 2017-10-10 - Add --accum option to run Drupal accumulator integrity
 # Revised: 2018-02-22 - Add new process-queues drush command
 # Revised: 2018-05-01 - Add --import-all and --import-leg options
+# Revised: 2018-12-14 - Add --styles to update styles
 #
 
 PATH=$PATH:/usr/local/bin
@@ -29,7 +30,7 @@ prog=`basename $0`
 penv=$DEFAULT_ENV
 
 usage() {
-  echo "Usage: $prog [--import-all | --import-leg | --qa | --maint | --accum | --update-statutes | --disqus] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
+  echo "Usage: $prog [--import-all | --import-leg | --qa | --maint | --accum | --update-statutes | --disqus | --styles] [--arg drush_arg [--arg drush_arg ...]] [--help] [environ]" >&2
   echo "  where 'environ' is typically one of: live, test, dev" >&2
 }
 
@@ -54,6 +55,7 @@ while [ $# -gt 0 ]; do
     --accum) mode=accum ;;
     --update-statutes|--uas) mode=uas ;;
     --disqus) mode=disqus ;;
+    --styles|--esu) mode=esu ;;
     --arg) shift; drush_args="$drush_args $1" ;;
     --help|-h) usage; exit 0 ;;
     -*) echo "$prog: $1: Invalid option" >&2; exit 1 ;;
@@ -80,6 +82,11 @@ elif [ "$mode" = "disqus" ]; then
 
   echo "About to run Disqus integration"
   pdrush @$penv disqus-identifier-migration
+
+elif [ "$mode" = "esu" ]; then
+
+  echo "About to update enhanced styles"
+  pdrush @$penv enhanced-styles-update
 
 elif [ "$mode" = "maint" ]; then
 
