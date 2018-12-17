@@ -13,7 +13,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -192,7 +191,7 @@ public class BillScrapeReferenceHtmlParser {
      * @return {@code true} if the Bill represented by this Document was missing from LRS,
      *         {@code false} if the bill exists on LRS.
      */
-    public boolean isBillMissing(Document doc) {
+    boolean isBillMissing(Document doc) {
         Element botContents = doc.getElementById("nv_bot_contents");
         if (botContents == null) {
             return false;
@@ -206,7 +205,7 @@ public class BillScrapeReferenceHtmlParser {
      * Detects if the document indicates an lrs outage
      * returns true if so
      */
-    public boolean isLrsOutage(String content) throws IOException {
+    boolean isLrsOutage(String content) {
         Document doc = Jsoup.parse(content, "UTF-8");
         Elements h2Eles = doc.getElementsByTag("h2");
         if (h2Eles.isEmpty()) {
