@@ -13,17 +13,27 @@ public enum SearchIndex
     HEARING("hearings"),
     LAW("laws"),
     MEMBER("members"),
-    NOTIFICATION("notifications"),
-    API_LOG("apilog")
+    NOTIFICATION("notifications", true),
+    API_LOG("apilog", true)
     ;
 
     String indexName;
+    boolean primaryStore = false;
 
     SearchIndex(String indexName) {
         this.indexName = indexName;
     }
 
+    SearchIndex(String indexName, boolean primaryStore) {
+        this(indexName);
+        this.primaryStore = primaryStore;
+    }
+
     public String getIndexName() {
         return indexName;
+    }
+
+    public boolean isPrimaryStore() {
+        return primaryStore;
     }
 }

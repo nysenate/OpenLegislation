@@ -48,7 +48,7 @@ adminModule.controller('IndicesCtrl', ['$scope', '$timeout', '$mdDialog', 'Index
         $scope.indexResp = IndexAPI.get({}, function() {
             if ($scope.indexResp.success === true) {
                 $scope.indices = $scope.indexResp.result.items;
-                $scope.indices.unshift("ALL");
+                $scope.indices.unshift({name: "ALL", indexName:"all", primaryStore: false});
             }
         }, $scope.showErrorMessage);
     };
