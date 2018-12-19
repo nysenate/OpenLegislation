@@ -193,9 +193,20 @@ public abstract class ElasticBaseDao
      * @param object - Object to be indexed
      */
     protected IndexResponse indexJsonDoc(String indexName, String id, Object object) {
+        IndexRequest jsonIndexRequest = getJsonIndexRequest(indexName, id, object);
+        return executeIndexRequest(jsonIndexRequest);
+    }
+
+    /**
+     * Executes the given {@link IndexRequest}
+     *
+     * @param indexRequest {@link IndexRequest}
+     * @return {@link IndexResponse}
+     * @throws ElasticsearchException if something goes wrong
+     */
+    protected IndexResponse executeIndexRequest(IndexRequest indexRequest) throws ElasticsearchException {
         try {
-            IndexRequest jsonIndexRequest = getJsonIndexRequest(indexName, id, object);
-            return searchClient.index(jsonIndexRequest, RequestOptions.DEFAULT);
+            return searchClient.index(indexRequest, RequestOptions.DEFAULT);
         } catch (IOException ex) {
             throw new ElasticsearchException("Index request failed", ex);
         }
