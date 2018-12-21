@@ -47,26 +47,26 @@
                         <h2 class="verify-card-margin" ng-show="!linking">Name: </h2>
                         <md-input-container class="md-block" flex-gt-sm="">
                             <label>First Name</label>
-                            <input ng-model="inputMember.firstName" name="firstName" ng-disabled="linking" ng-class="{'verify-disabled' : linking}" required md-no-asterisk>
+                            <input ng-model="inputMember.firstName" name="firstName" required md-no-asterisk>
 
                             <span ng-show="verificationForm.firstName.$error.required" class="verify-required red">This field is required</span>
                         </md-input-container>
 
                         <md-input-container class="md-block" flex-gt-sm="">
                             <label>Middle Name</label>
-                            <input ng-model="inputMember.middleName" name="middleName" ng-disabled="linking" ng-class="{'verify-disabled' : linking}">
+                            <input ng-model="inputMember.middleName" name="middleName">
                         </md-input-container>
 
                         <md-input-container class="md-block" flex-gt-sm="">
                             <label>Last Name</label>
-                            <input ng-model="inputMember.lastName" name="lastName" ng-disabled="linking" ng-class="{'verify-disabled' : linking}" required md-no-asterisk>
+                            <input ng-model="inputMember.lastName" name="lastName" required md-no-asterisk>
 
                             <span ng-show="verificationForm.lastName.$error.required" class="verify-required red">This field is required</span>
                         </md-input-container>
 
                         <md-input-container class="md-block" flex-gt-sm="">
                             <label>Suffix</label>
-                            <input ng-model="inputMember.suffix" ng-disabled="linking" ng-class="{'verify-disabled' : linking}">
+                            <input ng-model="inputMember.suffix">
                         </md-input-container>
                     </div>
 
@@ -74,7 +74,7 @@
                         <h2 class="verify-card-margin" ng-show="!linking">Email: </h2>
                         <md-input-container class="md-block" flex-gt-sm="">
                             <label>Email</label>
-                            <input ng-model="inputMember.email" type="email" name="email" ng-disabled="linking" ng-class="{'verify-disabled' : linking}">
+                            <input ng-model="inputMember.email" type="email" name="email">
 
                             <span ng-show="verificationForm.email.$error.email" class="verify-required red">Not valid email</span>
                         </md-input-container>
