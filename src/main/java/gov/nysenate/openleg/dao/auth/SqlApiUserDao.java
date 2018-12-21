@@ -115,15 +115,7 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
                 .addValue("role", role.name());
     }
 
-    private static final RowMapper <ApiUser> apiUserMapper = (rs, rowNum) -> {
-        ApiUser user = new ApiUser(rs.getString("email_addr"));
-        user.setAuthenticated(rs.getBoolean("authenticated"));
-        user.setName(rs.getString("users_name"));
-        user.setRegistrationToken(rs.getString("reg_token"));
-        user.setApiKey(rs.getString("apikey"));
-        user.setOrganizationName(rs.getString("org_name"));
-        return user;
-    };
+    private static final RowMapper<ApiUser> apiUserMapper = new ApiUserRowMapper();
 
     private static final class ApiUserRowHandler implements RowCallbackHandler
     {

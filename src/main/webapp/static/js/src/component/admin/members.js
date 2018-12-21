@@ -4,10 +4,10 @@ adminModule.factory('MemberSearchAPI', ['$resource', function ($resource) {
     return $resource(window.ctxPath + '/api/3/members/search');
 }]);
 
-adminModule.controller('MembersCtrl', ['$scope', '$timeout', '$mdDialog', 'MemberSearchAPI', 'PaginationModel',
-                        function($scope, $timeout, $mdDialog, MemberSearchAPI, PaginationModel) {
+adminModule.controller('MembersCtrl', ['$scope', '$timeout', '$mdDialog', '$routeParams', '$location', 'MemberSearchAPI', 'PaginationModel',
+                        function($scope, $timeout, $mdDialog, $routeParams, $location, MemberSearchAPI, PaginationModel) {
 
-    $scope.unverifiedOnly = false;
+    $scope.unverifiedOnly = $routeParams.unverifiedOnly !== "false";
     $scope.membersList = [];
     $scope.loadingMembers = false;
     $scope.pagination = angular.extend({}, PaginationModel);
@@ -19,6 +19,7 @@ adminModule.controller('MembersCtrl', ['$scope', '$timeout', '$mdDialog', 'Membe
         $scope.pagination.reset();
         $scope.unverifiedOnly = !$scope.unverifiedOnly;
         $scope.updateMembersList(($scope.unverifiedOnly ? '(verified:false)' : '(*)') + 'AND' + '(' + $scope.searchInput + '*)');
+        $location.search("unverifiedOnly", $scope.unverifiedOnly);
     };
 
     $scope.init = function() {
@@ -44,6 +45,7 @@ adminModule.controller('MembersCtrl', ['$scope', '$timeout', '$mdDialog', 'Membe
         $scope.loadingMembers = true;
         var params = {
             term: termParam,
+            sort: 'sessionYear:desc,shortName:asc',
             limit: $scope.pagination.getLimit(),
             offset: $scope.pagination.getOffset(),
             full: true

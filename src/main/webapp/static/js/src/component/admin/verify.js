@@ -42,7 +42,7 @@ adminModule.controller('VerifyCtrl', ['$scope', '$timeout', '$routeParams', '$md
             };
             MemberSearchAPI.get(params, function(resp) {
                 if (resp.success === true) {
-                    if (resp.total != 1) { // if we find more than one member with the given id then we have an error
+                    if (resp.total !== 1) { // if we find more than one member with the given id then we have an error
                         var errorResp = {
                             "status" : null,
                             "data" : {
@@ -91,9 +91,8 @@ adminModule.controller('VerifyCtrl', ['$scope', '$timeout', '$routeParams', '$md
             } else { // link to existing member
                 $scope.verifyInformation = ' by linking to existing member.';
                 $scope.linking = true;
-                $scope.inputMember = member;
-                $scope.inputMember.incumbent = false;
-                $scope.inputMember.districtCode = null;
+                $scope.inputMember = angular.copy(member);
+                $scope.inputMember.incumbent = true;
             }
             console.log($scope.inputMember);
         };

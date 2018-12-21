@@ -5,22 +5,19 @@ import gov.nysenate.openleg.dao.base.SqlTable;
 
 public enum ApiRequestResponseQuery implements BasicSqlQuery
 {
-    SELECT_BY_KEY(
-        "SELECT * FROM public." + SqlTable.API_REQUEST + " where apikey = :apikey"
-     ),
-    GET_ALL_REQUESTS(
-        "SELECT * FROM public." + SqlTable.API_REQUEST
-    ),
-    GET_ALL_REQUESTS_BY_DATETIME(
-        GET_ALL_REQUESTS.sql + " WHERE request_time BETWEEN :startDateTime AND :endDateTime"
-    ),
 
     GET_ALL_RESPONSES(
-        "SELECT * FROM public." + SqlTable.API_RESPONSE + " res\n" +
-        "JOIN public." + SqlTable.API_REQUEST + " req ON res.req_id = req.request_id"
+        "SELECT req.request_id, req.request_time, req.url, req.ipaddress, req.method, req.agent,\n" +
+        "  res.response_time, res.status_code, res.content_type, res.process_time,\n" +
+        "  au.apikey, au.email_addr, au.authenticated, au.users_name, au.reg_token, au.org_name\n" +
+        "FROM public." + SqlTable.API_RESPONSE + " res\n" +
+        "JOIN public." + SqlTable.API_REQUEST + " req ON res.req_id = req.request_id\n" +
+        "LEFT JOIN public." + SqlTable.API_USER + " au ON req.apikey = au.apikey"
     ),
+
     GET_ALL_RESPONSES_BY_DATETIME(
-        GET_ALL_RESPONSES.sql + " WHERE req.request_time BETWEEN :startDateTime AND :endDateTime"
+        GET_ALL_RESPONSES.sql + "\n" +
+                "WHERE req.request_time BETWEEN :startDateTime AND :endDateTime"
     ),
 
     INSERT_REQUEST(

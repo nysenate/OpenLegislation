@@ -24,12 +24,6 @@
             <dir-pagination-controls class="member-text-center" pagination-id="paginationId" boundary-links="true"
                                      on-page-change="onPageChange(newPageNumber, type)" max-size="12">
             </dir-pagination-controls>
-            <!--
-            <div class="spotcheck-table-goto" ng-show="showGoto">
-                Go to:
-                <input ng-model="pagination.currPage" ng-change="onPageChange(pagination.currPage, type)" type="text">
-            </div>
-            -->
         </md-card-content>
     </md-card>
 </div>

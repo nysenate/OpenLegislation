@@ -1,9 +1,11 @@
 package gov.nysenate.openleg.dao.log.data;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.dao.auth.ApiUserRowMapper;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.auth.ApiRequest;
 import gov.nysenate.openleg.model.auth.ApiResponse;
+import gov.nysenate.openleg.model.auth.ApiUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -24,9 +26,14 @@ public class SqlApiLogDao extends SqlBaseDao implements ApiLogDao
 {
     private static final Logger logger = LoggerFactory.getLogger(SqlApiLogDao.class);
 
+    private static final RowMapper<ApiUser> apiUserMapper = new ApiUserRowMapper();
+
     private static final RowMapper<ApiRequest> apiRequestMapper = (rs, rowNum) -> {
         ApiRequest request = new ApiRequest();
         request.setApiKey(rs.getString("apikey"));
+        if (request.getApiKey() != null) {
+            request.setApiUser(apiUserMapper.mapRow(rs, rowNum));
+        }
         request.setRequestId(rs.getInt(("request_id")));
         request.setRequestMethod(rs.getString("method"));
         request.setRequestTime(getLocalDateTimeFromRs(rs, "request_time"));
