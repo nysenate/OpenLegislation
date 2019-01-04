@@ -6,7 +6,6 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.entity.XmlSenCommProcessor;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +21,26 @@ import static org.junit.Assert.assertEquals;
  */
 @Category(IntegrationTest.class)
 public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
-    @Autowired
-    private XmlSenCommProcessor process;
 
-    @Autowired
-    private CommitteeDao committeeDao;
-
-
-  private String path  = "processor/bill/senCommitte/2017-01-31-04.51.42.526466_SENCOMM_BSCXB_SENATE.XML";
+    @Autowired private CommitteeDao committeeDao;
 
     @Test
     public void processCommittee() throws ParseError {
-        CommitteeId committeeId = new CommitteeId(Chamber.SENATE,"Agriculture");
+        CommitteeVersionId committeeId = new CommitteeVersionId(
+                Chamber.SENATE,
+                "Agriculture",
+                SessionYear.of(2017),
+                LocalDateTime.parse("2017-01-31T04:51:43")
+        );
+
+        String path = "processor/bill/senCommittee/2017-01-31-04.51.42.526466_SENCOMM_BSCXB_SENATE.XML";
         processXmlFile(path);
+
         Committee actual = committeeDao.getCommittee(committeeId);
         Committee expected = new Committee("Agriculture", Chamber.SENATE);
-        expected.setPublishedDateTime(LocalDateTime.of(2017,1,31,4,51));
+        expected.setPublishedDateTime(LocalDateTime.parse("2017-01-31T04:51:42"));
         expected.setMeetDay(DayOfWeek.TUESDAY);
-        expected.setMeetTime(LocalTime.of(9,00));
+        expected.setMeetTime(LocalTime.of(9, 0));
         expected.setLocation("Room 412 LOB");
         expected.setSession(SessionYear.of(2017));
         CommitteeMember committeeMember = new CommitteeMember();
@@ -62,17 +63,17 @@ public class XmlSenCommProcessorIT extends BaseXmlProcessorTest {
         /*
          * Comparision
          */
-        assertEquals(expected.getChamber(),actual.getChamber());
-        assertEquals(expected.getId(),actual.getId());
-        assertEquals(expected.getMeetDay(),actual.getMeetDay());
-        assertEquals(expected.getName(),actual.getName());
-        assertEquals(expected.getReformed(),actual.getReformed());
-        assertEquals(expected.getSessionId().getChamber(),actual.getSessionId().getChamber());
-        assertEquals(expected.getSessionId().getSession(),actual.getSessionId().getSession());
-        assertEquals(expected.getLocation(),actual.getLocation());
-        assertEquals(expected.getVersionId().getChamber(),actual.getVersionId().getChamber());
-        assertEquals(expected.getVersionId().getName(),actual.getVersionId().getName());
-        assertEquals(expected.getVersionId().getSession(),actual.getVersionId().getSession());
+        assertEquals(expected.getChamber(), actual.getChamber());
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getMeetDay(), actual.getMeetDay());
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getReformed(), actual.getReformed());
+        assertEquals(expected.getSessionId().getChamber(), actual.getSessionId().getChamber());
+        assertEquals(expected.getSessionId().getSession(), actual.getSessionId().getSession());
+        assertEquals(expected.getLocation(), actual.getLocation());
+        assertEquals(expected.getVersionId().getChamber(), actual.getVersionId().getChamber());
+        assertEquals(expected.getVersionId().getName(), actual.getVersionId().getName());
+        assertEquals(expected.getVersionId().getSession(), actual.getVersionId().getSession());
 
     }
 

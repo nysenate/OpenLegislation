@@ -171,7 +171,8 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
      * CAPITALIZE EVERYTHING.
      */
     private String basicNormalize(String text) {
-        return text.replaceAll("§", "S")
+        return Optional.ofNullable(text).orElse("")
+                .replaceAll("§", "S")
                 .replaceAll("(?:[^\\w]|_)+", "")
                 .toUpperCase();
     }
@@ -191,7 +192,7 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
      * also performs {@link #basicNormalize(String)}
      */
     private String ultraNormalize(String text) {
-        String stripped = text.replaceAll(ultraNormalizeRegex, "");
+        String stripped = Optional.ofNullable(text).orElse("").replaceAll(ultraNormalizeRegex, "");
         return basicNormalize(stripped);
     }
 
