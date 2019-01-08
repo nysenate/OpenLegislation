@@ -145,10 +145,10 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkIsAmended(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        String amendVersion = Optional.ofNullable(reference.getBillId())
-                .map(billid -> billid.getVersion().toString())
-                .orElse("");
-        boolean olIsAmended = !amendVersion.equals(content.getActiveVersion());
+        List<PublishStatusView> published = content.getPublishStatusMap().getItems().values().stream()
+                .filter(PublishStatusView::isPublished)
+                .collect(toList());
+        boolean olIsAmended = published.size() > 1;
         boolean refIsAmended = reference.isAmended();
         checkBoolean(olIsAmended, refIsAmended, "Amended", observation, BILL_IS_AMENDED);
     }
