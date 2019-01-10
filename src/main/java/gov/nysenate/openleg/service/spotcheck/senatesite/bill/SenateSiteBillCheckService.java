@@ -6,12 +6,10 @@ import gov.nysenate.openleg.client.view.base.ListView;
 import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.bill.*;
 import gov.nysenate.openleg.client.view.entity.MemberView;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
-import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.CommitteeId;
-import gov.nysenate.openleg.model.entity.FullMember;
-import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
@@ -226,32 +224,69 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         checkObject(contentStatusDate, reference.getLastStatusDate(), observation, BILL_LAST_STATUS_DATE);
     }
 
+    /**
+     * Given a shortname and session, return the primary shortname for that member/session
+     */
+    private String getPrimaryShortname(SessionYear sessionYear, Chamber chamber, String shortname) {
+        SessionMember member;
+        try {
+            member = memberService.getMemberByShortName(shortname, sessionYear, chamber);
+        } catch (MemberNotFoundEx ex) {
+            return "<unknown shortname: " + sessionYear + " " + chamber + " " + shortname + ">";
+        }
+        return getPrimaryShortname(sessionYear, member.getMemberId());
+    }
+
+    /**
+     * Get the primary shortname of the given member for the given session
+     */
+    private String getPrimaryShortname(SessionYear sessionYear, int memberId) {
+        try {
+            SessionMember sessionMember = memberService.getMemberById(memberId, sessionYear);
+            return sessionMember.getLbdcShortName();
+        } catch (MemberNotFoundEx ex) {
+            return "<invalid session/memberId: " + sessionYear + "/" + memberId + ">";
+        }
+    }
+
     private void checkSponsor(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
+        SessionYear session = observation.getKey().getSession();
+        Chamber chamber = observation.getKey().getChamber();
         String contentSponsor = Optional.ofNullable(content.getSponsor())
                 .map(SponsorView::getMember)
-                .map(MemberView::getShortName)
+                .map(m -> getPrimaryShortname(session, m.getMemberId()))
                 .orElse(null);
-        checkString(contentSponsor, reference.getSponsor(), observation, BILL_SPONSOR);
+        String refSponsor = getPrimaryShortname(session, chamber, reference.getSponsor());
+        checkString(contentSponsor, refSponsor, observation, BILL_SPONSOR);
+    }
+
+    private List<String> extractShortnames(SessionYear session, ListView<MemberView> sponsorList) {
+        return Optional.ofNullable(sponsorList)
+                .map(ListView::getItems)
+                .orElse(ImmutableList.of())
+                .stream()
+                .map(mv -> getPrimaryShortname(session, mv.getMemberId()))
+                .collect(toList());
     }
 
     private void checkCoSponsors(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        List<String> contentCoSponsors = Optional.ofNullable(content.getCoSponsors())
-                .map(ListView::getItems)
-                .orElse(ImmutableList.of())
-                .stream()
-                .map(MemberView::getShortName)
+        SessionYear session = observation.getKey().getSession();
+        Chamber chamber = observation.getKey().getChamber();
+        List<String> contentCoSponsors = extractShortnames(session, content.getCoSponsors());
+        List<String> refCoSponsors = reference.getCoSponsors().stream()
+                .map(sn -> getPrimaryShortname(session, chamber, sn))
                 .collect(toList());
-        checkCollection(contentCoSponsors, reference.getCoSponsors(), observation, BILL_COSPONSOR);
+        checkCollection(contentCoSponsors, refCoSponsors, observation, BILL_COSPONSOR);
     }
 
     private void checkMultiSponsors(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        List<String> contentMultiSponsors = Optional.ofNullable(content.getMultiSponsors())
-                .map(ListView::getItems)
-                .orElse(ImmutableList.of())
-                .stream()
-                .map(MemberView::getShortName)
+        SessionYear session = observation.getKey().getSession();
+        Chamber chamber = observation.getKey().getChamber();
+        List<String> contentMultiSponsors = extractShortnames(session, content.getMultiSponsors());
+        List<String> refMultiSponsors = reference.getMultiSponsors().stream()
+                .map(sn -> getPrimaryShortname(session, chamber, sn))
                 .collect(toList());
-        checkCollection(contentMultiSponsors, reference.getMultiSponsors(), observation, BILL_MULTISPONSOR);
+        checkCollection(contentMultiSponsors, refMultiSponsors, observation, BILL_MULTISPONSOR);
     }
 
     private void checkTitle(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
