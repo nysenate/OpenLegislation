@@ -113,7 +113,7 @@ public class BillId implements Serializable, Comparable<BillId>
     }
 
 
-    /** --- Methods --- */
+    /* --- Methods --- */
 
     /**
      * Returns a BaseBillId instance from the given bill id which ensures that no amendment
@@ -190,7 +190,7 @@ public class BillId implements Serializable, Comparable<BillId>
         return "";
     }
 
-    /** --- Overrides --- */
+    /* --- Overrides --- */
 
     /**
      * Given {basePrint:'S1234', version:'A', session:2013}, Output: 'S1234A-2013'
@@ -246,7 +246,7 @@ public class BillId implements Serializable, Comparable<BillId>
             .result();
     }
 
-    /** --- Internal --- */
+    /* --- Internal --- */
 
     /**
      * Converts the printNo into a normalized form (no whitespace, all caps, all alphanumeric) and performs
@@ -263,6 +263,14 @@ public class BillId implements Serializable, Comparable<BillId>
         }
         // Remove all non-alphanumeric characters from the printNo.
         printNo = printNo.trim().toUpperCase().replaceAll("[^0-9A-Z]", "");
+        // Check that printNo matches the pattern
+        if (!printNumberPattern.matcher(printNo).matches()) {
+            throw new IllegalArgumentException(
+                    "PrintNo (" + printNo + ") " +
+                            "does not match print no pattern " +
+                            "(" + printNumberPattern.pattern() + ")"
+            );
+        }
         // Check that printNo starts with a valid bill type designator
         try {
             BillType.valueOf(String.valueOf(printNo.charAt(0)));
@@ -300,7 +308,7 @@ public class BillId implements Serializable, Comparable<BillId>
     }
 
 
-    /** --- Basic Getters/Setters --- */
+    /* --- Basic Getters/Setters --- */
 
     public String getBasePrintNo() {
         return basePrintNo;
