@@ -1,1 +1,0 @@
-ALTER TABLE master.bill ADD COLUMN blurb text;

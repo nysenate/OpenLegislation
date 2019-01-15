@@ -80,6 +80,23 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-maven-plugin</artifactId>
+        <version>5.2.4</version>
+        <configuration>
+          <configFile>src/main/resources/flyway.conf</configFile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flyway-migrate</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>migrate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

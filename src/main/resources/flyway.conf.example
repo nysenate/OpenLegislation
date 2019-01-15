@@ -1,0 +1,25 @@
+#Flyway config docs: https://flywaydb.org/documentation/configfiles
+
+# JDBC url to use to connect to the database
+flyway.url = jdbc:postgresql://localhost:5432/openleg
+
+# Database user
+flyway.user = postgres
+
+# Database user password
+flyway.password =
+
+# Schemas managed by flyway
+flyway.schemas = public, master
+
+# Version set when using flyway:baseline
+flyway.baselineVersion = 20181218.0000
+
+# Location of migration scripts
+flyway.locations = classpath:sql/migrations
+
+# Allow execution of migration scripts with version before current version
+flyway.outOfOrder = true
+
+# Whether to allow mixing transactional and non-transactional statements within the same migration.
+flyway.mixed = true

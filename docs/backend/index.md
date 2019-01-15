@@ -16,9 +16,9 @@
 1. Create the database (in `psql` or your preferred client). `CREATE DATABASE openleg;`
 1. Connect to the openleg database.  `\c openleg`
 1. Run the following scripts in order (`\i script_name` in `psql`)
-   1. `openleg.db-init.sql`
-   1. `openleg.schema.sql`
-   1. `openleg.data.sql`
+   1. `V1__openleg.db-init.sql`
+   1. `V2__openleg.schema.sql`
+   1. `V3__openleg.data.sql`
   
 ### Create Login User and Grant Permissions
 

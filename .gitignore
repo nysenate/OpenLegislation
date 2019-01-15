@@ -25,3 +25,4 @@ build
 src/test/java/gov/nysenate/openleg/SillyTests.java
 
 grunt.properties.json
+src/main/resources/flyway.conf
