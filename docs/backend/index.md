@@ -5,44 +5,30 @@
 * Java 8
 * Maven
 * Tomcat 8
-* Postgresql 9.6
-* Elasticsearch 2.4.4
+* Postgresql 11.1
+* Elasticsearch 6.4
 
 ## Database Setup
 
-### Initalize Schema and Static Data
-
-1. (From the project root) navigate to `src/main/resources/sql`
-1. Create the database (in `psql` or your preferred client). `CREATE DATABASE openleg;`
-1. Connect to the openleg database.  `\c openleg`
-1. Run the following scripts in order (`\i script_name` in `psql`)
-   1. `V1__openleg.db-init.sql`
-   1. `V2__openleg.schema.sql`
-   1. `V3__openleg.data.sql`
-  
-### Create Login User and Grant Permissions
+### Create Database User
 
 Using example user `openleg` with the password `ol_pass`
 
 1. Create a new role in postgres. 
    `CREATE USER openleg WITH LOGIN PASSWORD ol_pass`
-1. Grant permissions
-   * `GRANT ALL PRIVILEGES ON SCHEMA master,public TO openleg`
-   * `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA master,public TO openleg`
-   * `GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA master,public TO openleg`
-  
-## Elasticsearch setup
 
-Add or modify the field `cluster.name` in `elasticsearch.yml` to be unique to your openleg instance e.g.
-```
-cluster.name: sam-openleg
-```
+### Create Open Legislation Database
+
+1. Enter psql in a terminal with the database user you created in the previous step: `psql -U openleg postgres`
+1. Create a database for Open Legislation: `CREATE DATABSE openleg;`
+1. Exit psql with `\q`
 
 ## Property Files
 
 Navigate to `src/main/resources` and copy the following files:
 * `app.properties.example` -> `app.properties`
 * `log4j.properties.example` -> `log4j.properties`
+* `flyway.conf.example` -> `flyway.conf`
 
 ### `app.properties` Configuration
 
@@ -94,7 +80,22 @@ Point the `mail.smtp` properties at an smtp server to enable email sending.  Thi
 
 Set `domain.url` to the hostname and context path you will be using.  This affects urls for automated emails sent by 
 
+### `flyway.conf` Configuration
+
+These configurations are needed for automatic database migrations.
+
+Set `flyway.user` to the database user you created.
+
+Set `flyway.password` to the database user password.
+
+## Elasticsearch setup
+
+Add or modify the field `cluster.name` in `elasticsearch.yml` to be unique to your openleg instance e.g.
+```
+cluster.name: sam-openleg
+```
+
 ## Building
 
-Run `mvn compile` to generate a build that is deployable by tomcat.  Our unit tests are currently not in a good state, so we can't get any further in the Maven build process.
+Run `mvn compile flyway:migrate` to generate a build that is deployable by tomcat.  Our unit tests are currently not in a good state, so we can't get any further in the Maven build process.
 
