@@ -1,12 +1,69 @@
 # Open Legislation Setup
 
-## Required Software
+## Install Software
 
-* Java 8
-* Maven
-* Tomcat 8
-* Postgresql 11.1
-* Elasticsearch 6.4
+General installation instructions for Ubuntu.
+
+### Java 8
+1. `sudo apt-get install openjdk-8-jdk`
+1. Set `$JAVA_HOME` environment variable
+    * https://askubuntu.com/questions/175514/how-to-set-java-home-for-java
+
+### Git
+1. `sudo apt-get install git`
+1. Configuration
+    1. `git config --global user.name "<<Name>>"`
+    1. `git config --global user.email <<Email>>`
+
+### IntelliJ
+
+1. Download the Ultimate Edition from https://www.jetbrains.com/idea/download/#section=linux
+1. Extract: `sudo tar -xzvf <<downloaded_file_name>> -C /usr/share/`
+1. Run: `bin/idea.sh` which will be located in the directory extracted in the previous step.
+
+### Tomcat
+
+1. Download the latest version of Tomcat from https://tomcat.apache.org/download-90.cgi
+    * You want the Core tar.gz distribution.
+1. `mkdir ~/tomcat8`
+1. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat8`
+
+### Elasticsearch
+
+1. `wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.5.4.deb`
+1. `sudo dpkg -i elasticsearch-6.5.4.deb`
+1. `sudo systemctl enable elasticsearch.service`
+
+### Postgresql, Maven, Nodejs
+
+1. `sudo apt-get install postgresql postgresql-contrib maven nodejs`
+
+### Bower and Grunt
+
+1. `sudo npm install -g bower grunt`
+
+## Source Code Setup
+
+### Clone Repository
+
+Clone the Open Legislation codebase to your computer.
+
+1. `cd <<dev directory>>` Move into the directory where you want to keep the source code.
+1. `git clone https://github.com/nysenate/OpenLegislation `
+
+### Open Code in Intellij
+
+1. From the start screen, click Import project
+    * If you are already in an open project, go to File->New->Project from Existing Sources
+1. Select the Open Legislation directory that was cloned from GitHub
+1. In the Import Project screen, select "Import project from external model" and choose Maven from the list of models
+1. The next screen will be a bunch of checkbox options. Ensure the following are checked:
+    * Search for projects recursively
+    * Import Maven projects automatically
+    * Automatically download
+        * Sources
+        * Documentation
+1. Be sure to use Java 8 on this project
 
 ## Database Setup
 
@@ -62,7 +119,11 @@ Ensure that elasticsearch is running prior to Open Legislation startup.
 
 Set these properties according to the values you set in the Database Setup section.
 
-You will probably just need to set `postgresdb.user` and `postgresdb.pass`
+You will probably just need to set `postgresdb.name`, `postgresdb.user`, and `postgresdb.pass`
+
+#### Scheduler Config
+
+Set `scheduler.process.enabled` = `false`
 
 #### Spotcheck Configuration
 
@@ -90,7 +151,7 @@ Set `flyway.password` to the database user password.
 
 ## Elasticsearch setup
 
-Add or modify the field `cluster.name` in `elasticsearch.yml` to be unique to your openleg instance e.g.
+Add or modify the field `cluster.name` in `/etc/elasticsearch/elasticsearch.yml` to be unique to your openleg instance e.g.
 ```
 cluster.name: sam-openleg
 ```
@@ -99,3 +160,38 @@ cluster.name: sam-openleg
 
 Run `mvn compile flyway:migrate` to generate a build that is deployable by tomcat.  Our unit tests are currently not in a good state, so we can't get any further in the Maven build process.
 
+## Running Open Legislation
+
+We typically run Open Legislation in Tomcat through IntelliJ.
+
+1. Open Intellij and go to menu: Run -> Edit Configurations
+1. Click the plus sign in the top left corner
+1. Scroll down until you find Tomcat Server. Select local server
+1. In the Server tab -> application server link your download of tomcat from before
+1. In the Deployment tab -> hit the plus sign again and select legislation:war exploded
+1. Apply these changes
+
+Now you can run Tomcat by selecting it and pressing the green play button towards the top right of the Intellij UI.
+Once running you should be able to view the application at: http://localhost:8080
+
+## Legislative Data
+
+### Setup Open Legislation Environment Directories
+
+1. `sudo mkdir /data`
+1. `sudo chown -R $USER:$USER /data`
+1. `mkdir /data/openleg /data/openleg/archive /data/openleg/staging /data/openleg/staging/xmls`
+
+### Rsync Legislative Data
+
+1. `rsync -a --info=progress2 '<<username>>@tyrol.nysenate.gov:/data/2017-18_xml_files' /data/openleg/staging/xmls`
+
+### Process Data
+
+Now we can process the xml data we downloaded in our local Open Legislation environment. This process can take a long time so be prepared to leave it running for up to a day or two.
+
+1. `curl -XPOST -v -u '<<username>>:<<password>>' localhost:8080/api/3/admin/process/run`
+
+**NOTE**
+* Do not attempt this on a system with 4GB of ram without changing the cache limits in app.properties
+* Using a SSD can help the performance of this process significantly
