@@ -189,41 +189,41 @@ COPY committee_version (id, location, meetday, meetaltweek, meetaltweektext, mee
 32	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Elections	senate	\N
 33	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Crime Victims, Crime and Correction	senate	\N
 34	\N	\N	f	\N	\N	2011	2011-01-01 00:00:00	infinity	Insurance	senate	\N
-57	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Aging	senate	\N
-47	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Agriculture	senate	\N
-45	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Alcoholism and Drug Abuse	senate	\N
-65	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Banks	senate	\N
-61	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Children and Families	senate	\N
-59	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Cities	senate	\N
-48	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Civil Service and Pensions	senate	\N
-64	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Codes	senate	\N
-52	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Commerce, Economic Development and Small Business	senate	\N
-49	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Consumer Protection	senate	\N
-36	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Corporations, Authorities and Commissions	senate	\N
-68	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Crime Victims, Crime and Correction	senate	\N
-53	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
-42	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Education	senate	\N
-67	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Elections	senate	\N
-66	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Energy and Telecommunications	senate	\N
-50	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Environmental Conservation	senate	\N
-37	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Ethics	senate	\N
-54	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Finance	senate	\N
-39	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Health	senate	\N
-56	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Higher Education	senate	\N
-62	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Housing, Construction and Community Development	senate	\N
-58	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Infrastructure and Capital Investment	senate	\N
-69	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Insurance	senate	\N
-35	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Investigations and Government Operations	senate	\N
-38	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Judiciary	senate	\N
-44	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Labor	senate	\N
-55	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Local Government	senate	\N
-60	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Mental Health and Developmental Disabilities	senate	\N
-40	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Racing, Gaming and Wagering	senate	\N
-51	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Rules	senate	\N
-46	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Social Services	senate	\N
-43	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Transportation	senate	\N
-41	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	Veterans, Homeland Security and Military Affairs	senate	\N
-63	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00 infinity	New York City Education Subcommittee	senate	\N
+57	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Aging	senate	\N
+47	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Agriculture	senate	\N
+45	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Alcoholism and Drug Abuse	senate	\N
+65	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Banks	senate	\N
+61	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Children and Families	senate	\N
+59	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Cities	senate	\N
+48	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Civil Service and Pensions	senate	\N
+64	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Codes	senate	\N
+52	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Commerce, Economic Development and Small Business	senate	\N
+49	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Consumer Protection	senate	\N
+36	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Corporations, Authorities and Commissions	senate	\N
+68	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Crime Victims, Crime and Correction	senate	\N
+53	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Cultural Affairs, Tourism, Parks and Recreation	senate	\N
+42	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Education	senate	\N
+67	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Elections	senate	\N
+66	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Energy and Telecommunications	senate	\N
+50	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Environmental Conservation	senate	\N
+37	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Ethics	senate	\N
+54	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Finance	senate	\N
+39	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Health	senate	\N
+56	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Higher Education	senate	\N
+62	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Housing, Construction and Community Development	senate	\N
+58	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Infrastructure and Capital Investment	senate	\N
+69	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Insurance	senate	\N
+35	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Investigations and Government Operations	senate	\N
+38	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Judiciary	senate	\N
+44	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Labor	senate	\N
+55	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Local Government	senate	\N
+60	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Mental Health and Developmental Disabilities	senate	\N
+40	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Racing, Gaming and Wagering	senate	\N
+51	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Rules	senate	\N
+46	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Social Services	senate	\N
+43	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Transportation	senate	\N
+41	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	Veterans, Homeland Security and Military Affairs	senate	\N
+63	\N	\N	f	\N	\N	2013	2013-01-01 00:00:00	infinity	New York City Education Subcommittee	senate	\N
 \.
 
 
