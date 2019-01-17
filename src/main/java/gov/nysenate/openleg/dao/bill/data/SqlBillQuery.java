@@ -119,9 +119,13 @@ public enum SqlBillQuery implements BasicSqlQuery
                 "where s.bill_print_no = a.bill_print_no\n" +
                 "  and s.bill_session_year = :sessionYear\n" +
                 "  and a.bill_session_year = :sessionYear2\n" +
-                "  and a.full_text = ''\n" +
+                "  and a.full_text IS NULL\n" +
                 "  and a.bill_amend_version = ''\n" +
                 "  and s.budget_bill = 'TRUE';"
+    ),
+
+    SELECT_BUGET_BILLS_IDS_WITH_PDF_TEXT (
+            "select bill_print_no, bill_session_year from ${schema}." + SqlTable.BILL_ALTERNATE_PDF + " where bill_session_year = :sessionYear;"
     ),
 
     /** --- Bill Amendment Publish Status --- */

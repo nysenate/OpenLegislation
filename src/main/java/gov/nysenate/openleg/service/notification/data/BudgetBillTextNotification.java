@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -23,7 +24,6 @@ public class BudgetBillTextNotification {
     private SqlBillDao sqlBillDao;
 
     String summary = "MISSING BUDGET BILL TEXT";
-    String message = "The following Budget Bill(s) text must be aquired from https://www.budget.ny.gov/pubs/archive/ : \n";
 
     @Autowired
     public BudgetBillTextNotification(EventBus eventBus, SqlBillDao sqlBillDao) {
@@ -33,15 +33,25 @@ public class BudgetBillTextNotification {
 
     @Scheduled(cron = "${scheduler.budget.bill.reminder}")
     private void sendBudgetNotifications() {
+        String message = "The following Budget Bill(s) text must be aquired from https://www.budget.ny.gov/pubs/archive/ : \n";
         LocalDateTime now = LocalDateTime.now();
         SessionYear sessionYear = new SessionYear(now.getYear());
         logger.info("Starting check for missing budget bill(s) text for session year " + sessionYear);
 
-        List<BillId> billIds = getBudgetBillPrintNumbers(sessionYear.getYear());
+        ArrayList<BillId> missingText = new ArrayList<>();
+        List<BillId> billIdsWithoutText = getBudgetBillPrintNumbers(sessionYear.getYear());
+        List<BillId> billIdsWithPdf = getBudgetBillIdsWithPDFText(sessionYear.getYear());
 
-        if (billIds.size() >= 1) {
-            logger.info("Found " + billIds.size() + " issues");
-            for (BillId billId: billIds) {
+        for (BillId billId: billIdsWithoutText) {
+            if (!billIdsWithPdf.contains(billId)) {
+                missingText.add(billId);
+            }
+        }
+
+        if (missingText.size() >= 1) {
+
+            logger.info("Found " + missingText.size() + " issues");
+            for (BillId billId: missingText) {
                 message = message + billId.toString() + "\n";
             }
             eventBus.post(new Notification(NotificationType.WARNING,
@@ -54,6 +64,10 @@ public class BudgetBillTextNotification {
 
     private List<BillId> getBudgetBillPrintNumbers(Integer sessionYear) {
          return sqlBillDao.getBudgetBillIdsWithoutText(sessionYear);
+    }
+
+    private List<BillId> getBudgetBillIdsWithPDFText(Integer sessionyear) {
+        return sqlBillDao.getBudgetBillIdsWithPDFText(sessionyear);
     }
 
 }
