@@ -23,6 +23,7 @@ import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpHost;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
@@ -123,7 +124,7 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
             logger.info("Connecting to elastic search cluster {} ...", elasticSearchCluster);
             try {
                 // Test the connection with a ping.
-                if (!client.ping()) {
+                if (!client.ping(RequestOptions.DEFAULT)) {
                     throw new ElasticsearchException("Could not ping elasticsearch cluster.");
                 }
                 logger.info("Successfully connected to elastic search cluster {}", elasticSearchCluster);

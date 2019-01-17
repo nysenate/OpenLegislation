@@ -101,7 +101,7 @@
   </build>
 
   <properties>
-    <c3p0.version>0.9.1.2</c3p0.version>
+    <c3p0.version>0.9.5.2</c3p0.version>
     <commons-cli.version>1.2</commons-cli.version>
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>3.3.2</commons-lang.version>
@@ -110,7 +110,7 @@
     <guava.version>18.0</guava.version>
     <guava.jackson.version>2.4.0</guava.jackson.version>
     <http-client.version>4.5.6</http-client.version>
-    <jackson.version>2.6.6</jackson.version>
+    <jackson.version>2.9.4</jackson.version>
     <jbcrypt.version>0.3m</jbcrypt.version>
     <jsoup.version>1.8.1</jsoup.version>
     <jstl.version>1.2</jstl.version>
@@ -120,7 +120,7 @@
     <postgres-jdbc.version>9.4.1209</postgres-jdbc.version>
     <shiro.version>1.2.3</shiro.version>
     <slf4j.version>1.7.25</slf4j.version>
-    <spring.version>4.3.9.RELEASE</spring.version>
+    <spring.version>5.1.3.RELEASE</spring.version>
     <tomcat.servlet.version>8.0.29</tomcat.servlet.version>
     <woodstox.version>4.2.0</woodstox.version>
   </properties>
@@ -375,7 +375,7 @@
     </dependency>
 
     <dependency>
-      <groupId>c3p0</groupId>
+      <groupId>com.mchange</groupId>
       <artifactId>c3p0</artifactId>
       <version>${c3p0.version}</version>
     </dependency>
