@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.mail.*;
 import java.util.Properties;
 
@@ -56,6 +57,10 @@ public class MailUtils {
 
         mailProperties.put("mail.store.protocol", storeProtocol);
         mailProperties.put("mail.imaps.ssl.protocols", imapsSSLProtocol);
+    }
+    @PreDestroy
+    public void destroy() {
+        mailProperties = null;
     }
 
     /**

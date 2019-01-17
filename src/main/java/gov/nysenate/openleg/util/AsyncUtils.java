@@ -4,6 +4,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -20,5 +21,10 @@ public class AsyncUtils {
 
     public <T> CompletableFuture<T> get(Supplier<T> supplier) {
         return CompletableFuture.supplyAsync(supplier, executor);
+    }
+
+    @PreDestroy
+    public void destroy() {
+    executor.shutdown();
     }
 }
