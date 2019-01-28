@@ -73,6 +73,11 @@ public class AgendaAlertInfoCommittee
 
     /** --- Functional Getters / Setters --- */
 
+    public AgendaAlertCheckId getAgendaAlertCheckId() {
+        return new AgendaAlertCheckId(getMeetingDateTime().getYear(), getWeekOf(),
+                getAddendum(), getCommitteeId().getChamber(), getCommitteeId().getName());
+    }
+
     public ImmutableList<AgendaInfoCommitteeItem> getItems() {
         return ImmutableList.copyOf(items);
     }
@@ -153,5 +158,9 @@ public class AgendaAlertInfoCommittee
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public void setItems(List<AgendaInfoCommitteeItem> items) {
+        this.items = items;
     }
 }
