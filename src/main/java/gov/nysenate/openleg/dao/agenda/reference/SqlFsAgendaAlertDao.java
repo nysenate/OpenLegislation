@@ -2,23 +2,23 @@ package gov.nysenate.openleg.dao.agenda.reference;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Range;
-import com.google.common.io.Files;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.dao.bill.reference.daybreak.SqlFsDaybreakDao;
 import gov.nysenate.openleg.model.agenda.AgendaInfoCommitteeItem;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertId;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommId;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertId;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommId;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -88,7 +91,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     /** {@inheritDoc} */
     @Override
     public void archiveAgendaAlert(File agendaAlert) throws IOException {
-        Files.move(agendaAlert, new File(archiveAgendaAlertDir, agendaAlert.getName()));
+        FileUtils.moveToDirectory(agendaAlert, archiveAgendaAlertDir, true);
     }
 
     /** {@inheritDoc} */
