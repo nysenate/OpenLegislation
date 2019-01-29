@@ -114,18 +114,18 @@ public enum SqlBillQuery implements BasicSqlQuery
         "    :stricken, :uniBill, :lastFragmentId, :lawSection, :lawCode)"
     ),
     SELECT_EMPTY_TEXT_BUDGET_BILL_PRINT_NOS (
-        "select s.bill_print_no, s.bill_session_year\n" +
-                "from ${schema}." + SqlTable.BILL_SPONSOR + " s, ${schema}." + SqlTable.BILL_AMENDMENT + " a\n" +
-                "where s.bill_print_no = a.bill_print_no\n" +
-                "  and s.bill_session_year = :sessionYear\n" +
-                "  and a.bill_session_year = :sessionYear2\n" +
-                "  and a.full_text IS NULL\n" +
-                "  and a.bill_amend_version = ''\n" +
-                "  and s.budget_bill = 'TRUE';"
-    ),
-
-    SELECT_BUGET_BILLS_IDS_WITH_PDF_TEXT (
-            "select bill_print_no, bill_session_year from ${schema}." + SqlTable.BILL_ALTERNATE_PDF + " where bill_session_year = :sessionYear;"
+            "SELECT a.bill_print_no, a.bill_session_year, a.bill_amend_version\n" +
+                    "FROM ${schema}." + SqlTable.BILL_SPONSOR + " s\n" +
+                    "JOIN ${schema}." + SqlTable.BILL_AMENDMENT + " a\n" +
+                    "  ON s.bill_print_no = a.bill_print_no AND s.bill_session_year = a.bill_session_year\n" +
+                    "LEFT JOIN ${schema}." + SqlTable.BILL_ALTERNATE_PDF + " p\n" +
+                    "  ON a.bill_print_no = p.bill_print_no\n" +
+                    "  AND a.bill_session_year = p.bill_session_year\n" +
+                    "  AND a.bill_amend_version = p.bill_amend_version\n" +
+                    "WHERE s.bill_session_year = :sessionYear\n" +
+                    "  AND (a.full_text IS NULL OR a.full_text = '')\n" +
+                    "  AND s.budget_bill = 'TRUE'\n" +
+                    "  AND p.bill_print_no IS NULL"
     ),
 
     /** --- Bill Amendment Publish Status --- */

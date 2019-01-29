@@ -20,6 +20,7 @@ public enum NotificationType {
     LRS_OUTAGE              (WARNING),
     UNVERIFIED_MEMBER       (WARNING),
     SPOTCHECK               (WARNING),
+    BUDGET_BILL_EMPTY_TEXT  (WARNING),
     DAYBREAK_SPOTCHECK      (SPOTCHECK),
     CALENDAR_SPOTCHECK      (SPOTCHECK),
     AGENDA_SPOTCHECK        (SPOTCHECK),

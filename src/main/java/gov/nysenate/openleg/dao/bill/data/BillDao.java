@@ -103,4 +103,12 @@ public interface BillDao
      * @throws DataAccessException - If there was an error while trying to save the Bill.
      */
     void updateBill(Bill bill, SobiFragment sobiFragment) throws DataAccessException;
+
+    /**
+     * Queries for budget bills that don't have full text or an alternate pdf entry, returning their ids.
+     *
+     * @param sessionYear {@link SessionYear} - session year to query
+     * @return {@link List<BillId>}
+     */
+    List<BillId> getBudgetBillIdsWithoutText(SessionYear sessionYear);
 }
