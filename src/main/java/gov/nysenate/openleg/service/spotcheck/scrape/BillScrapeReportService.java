@@ -7,6 +7,7 @@ import gov.nysenate.openleg.dao.spotcheck.BaseBillIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.processor.base.ParseError;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
@@ -119,7 +121,7 @@ public class BillScrapeReportService extends BaseSpotCheckReportService {
     private SpotCheckObservation<BaseBillId> generateObservation(BillScrapeReference btr) {
         //Gets bill from openleg processed info
         try {
-            Bill bill = billDataService.getBill(new BaseBillId(btr.getPrintNo(), btr.getSessionYear()));
+            Bill bill = billDataService.getBill(new BaseBillId(btr.getPrintNo(), btr.getSessionYear()), EnumSet.allOf(BillTextFormat.class));
             return billScrapeCheckService.check(bill, btr);
         } catch (BillNotFoundEx e) {
             SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(btr.getReferenceId(), btr.getBaseBillId());
