@@ -79,6 +79,8 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
                 // Compare content
                 report.addObservation(checkService.check(observedMap.get(refKey), referenceMap.get(refKey)));
             }
+            // Mark reference as checked
+            setReferenceChecked(referenceMap.get(refKey));
         }
 
         report.setNotes(getNotes());
