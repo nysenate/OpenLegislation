@@ -21,10 +21,10 @@ public class BillId implements Serializable, Comparable<BillId>
 {
     private static final long serialVersionUID = 6494036869654732240L;
 
-    public static String printNumberRegex = "([ASLREJKBC])(\\d{1,5})([A-Z]?)";
+    public static final String printNumberRegex = "([ASLREJKBC])(\\d+)([A-Z]?)";
 
-    public static Pattern printNumberPattern = Pattern.compile(printNumberRegex);
-    public static Pattern billIdPattern = Pattern.compile("(?<printNo>" + printNumberRegex + ")-?(?<year>\\d{4})");
+    public static final Pattern printNumberPattern = Pattern.compile(printNumberRegex);
+    public static final Pattern billIdPattern = Pattern.compile("(?<printNo>" + printNumberRegex + ")-?(?<year>\\d{4})");
 
     /** The default amendment version letter. */
     public static final Version DEFAULT_VERSION = Version.ORIGINAL;
