@@ -33,6 +33,9 @@ public class BillTextUtils
      */
     public static List<List<String>> getBillPages(String fullText) {
         List<List<String>> pages = new ArrayList<>();
+        if (StringUtils.isEmpty(fullText)) {
+            return pages;
+        }
         List<String> lines = Splitter.on("\n").splitToList(fullText);
         int startLine = 0;
         for (int newPageLine : getNewPageLines(lines)) {
@@ -51,6 +54,9 @@ public class BillTextUtils
      */
     public static List<List<String>> getResolutionPages(String fullText) {
         List<List<String>> pages = new ArrayList<>();
+        if (StringUtils.isEmpty(fullText)) {
+            return pages;
+        }
         List<String> lines = Splitter.on("\n").splitToList(fullText);
         int numPages = new Double(Math.ceil((double) lines.size() / MAX_LINES_RES_PAGE)).intValue();
         for (int page = 0; page < numPages; page++) {
