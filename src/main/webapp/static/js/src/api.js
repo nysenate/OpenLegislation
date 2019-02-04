@@ -142,6 +142,12 @@ apiModule.factory('AgendaGetApi', ['$resource', function($resource) {
     });
 }]);
 
+apiModule.factory('AgendaWeekOfApi', ['$resource', function($resource) {
+    return $resource(apiPath + '/agendas/:weekOf', {
+        weekOf: '@weekOf'
+    });
+}]);
+
 apiModule.factory('AgendaUpdatesApi', ['$resource', function($resource) {
     return $resource(apiPath + '/agendas/:year/:agendaNo/updates', {
         year: '@year',

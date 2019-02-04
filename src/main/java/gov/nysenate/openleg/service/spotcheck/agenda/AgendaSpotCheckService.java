@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.agenda;
 
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertCheckId;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaMeetingWeekId;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
@@ -18,14 +18,14 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 @Service
 public class AgendaSpotCheckService
-        implements SpotCheckService<AgendaAlertCheckId, AgendaAlertInfoCommittee, AgendaAlertInfoCommittee> {
+        implements SpotCheckService<AgendaMeetingWeekId, AgendaAlertInfoCommittee, AgendaAlertInfoCommittee> {
 
     private static final Logger logger = LoggerFactory.getLogger(AgendaSpotCheckService.class);
 
     /** {@inheritDoc} */
     @Override
-    public SpotCheckObservation<AgendaAlertCheckId> check(AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
-        final SpotCheckObservation<AgendaAlertCheckId> observation =
+    public SpotCheckObservation<AgendaMeetingWeekId> check(AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
+        final SpotCheckObservation<AgendaMeetingWeekId> observation =
                 new SpotCheckObservation<>(reference.getReferenceId(), reference.getAgendaAlertCheckId());
 
         checkBills(observation, observed, reference);
@@ -45,7 +45,7 @@ public class AgendaSpotCheckService
 
     /** --- Internal Methods --- */
 
-    private void checkBills(SpotCheckObservation<AgendaAlertCheckId> obs,
+    private void checkBills(SpotCheckObservation<AgendaMeetingWeekId> obs,
                             AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         Set<String> refBills = new TreeSet<>();
         Set<String> obsBills = new TreeSet<>();
@@ -58,7 +58,7 @@ public class AgendaSpotCheckService
         }
     }
 
-    private void checkChair(SpotCheckObservation<AgendaAlertCheckId> obs,
+    private void checkChair(SpotCheckObservation<AgendaMeetingWeekId> obs,
                             AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         String refChair = StringUtils.trim(reference.getChair());
         String obsChair = StringUtils.trim(observed.getChair());
@@ -67,7 +67,7 @@ public class AgendaSpotCheckService
         }
     }
 
-    private void checkMeetingTime(SpotCheckObservation<AgendaAlertCheckId> obs,
+    private void checkMeetingTime(SpotCheckObservation<AgendaMeetingWeekId> obs,
                                   AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         if (observed.getMeetingDateTime() == null
                 || !observed.getMeetingDateTime().equals(reference.getMeetingDateTime())) {
@@ -76,7 +76,7 @@ public class AgendaSpotCheckService
         }
     }
 
-    private void checkLocation(SpotCheckObservation<AgendaAlertCheckId> obs,
+    private void checkLocation(SpotCheckObservation<AgendaMeetingWeekId> obs,
                                AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         String refLocation = StringUtils.trim(reference.getLocation());
         String obsLocation = StringUtils.trim(observed.getLocation());
@@ -85,7 +85,7 @@ public class AgendaSpotCheckService
         }
     }
 
-    private void checkNotes(SpotCheckObservation<AgendaAlertCheckId> obs,
+    private void checkNotes(SpotCheckObservation<AgendaMeetingWeekId> obs,
                             AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         String refNotes = StringUtils.trim(reference.getNotes());
         String obsNotes = StringUtils.trim(observed.getNotes());

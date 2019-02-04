@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.spotcheck;
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertCheckId;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaMeetingWeekId;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -12,18 +12,18 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * This converts a {@link AgendaAlertCheckId} to a Map<String,String> and vice versa.
+ * This converts a {@link AgendaMeetingWeekId} to a Map<String,String> and vice versa.
  * The Map<String, String> is used to store hstore values for the database.
  */
 @Repository
-public class AgendaAlertReportDao extends AbstractSpotCheckReportDao<AgendaAlertCheckId> {
+public class AgendaMeetingWeekReportDao extends AbstractSpotCheckReportDao<AgendaMeetingWeekId> {
 
-    private DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
 
     @Override
-    public AgendaAlertCheckId getKeyFromMap(Map<String, String> keyMap) {
+    public AgendaMeetingWeekId getKeyFromMap(Map<String, String> keyMap) {
         Objects.requireNonNull(keyMap);
-        return new AgendaAlertCheckId(
+        return new AgendaMeetingWeekId(
                 Integer.valueOf(keyMap.get("year")),
                 LocalDate.parse(keyMap.get("week_of"), DATE_FORMAT),
                 Version.of(keyMap.get("addendum")),
@@ -33,14 +33,14 @@ public class AgendaAlertReportDao extends AbstractSpotCheckReportDao<AgendaAlert
     }
 
     @Override
-    public Map<String, String> getMapFromKey(AgendaAlertCheckId alertId) {
+    public Map<String, String> getMapFromKey(AgendaMeetingWeekId alertId) {
         Objects.requireNonNull(alertId);
         return ImmutableMap.<String, String>builder()
                 .put("year", String.valueOf(alertId.getYear()))
                 .put("week_of", alertId.getWeekOf().format(DATE_FORMAT))
                 .put("addendum", alertId.getAddendum().name())
-                .put("chamber", alertId.getChamber().asSqlEnum())
-                .put("committee_name", alertId.getCommitteeName())
+                .put("chamber", alertId.getCommitteeId().getChamber().asSqlEnum())
+                .put("committee_name", alertId.getCommitteeId().getName())
                 .build();
     }
 }

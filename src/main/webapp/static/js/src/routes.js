@@ -11,6 +11,7 @@ angular.module('open').config(['$routeProvider', '$locationProvider', function($
         /** --- Agendas --- */
 
         .when(ctxPath + '/agendas', { templateUrl: ctxPath + '/partial/content/agenda/agenda-search', reloadOnSearch: false})
+        .when(ctxPath + '/agendas/:weekOf', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view', reloadOnSearch: false })
         .when(ctxPath + '/agendas/:year/:agendaNo', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view', reloadOnSearch: false })
         .when(ctxPath + '/agendas/:year/:agendaNo/:comm', { templateUrl: ctxPath + '/partial/content/agenda/agenda-view', reloadOnSearch: false })
 

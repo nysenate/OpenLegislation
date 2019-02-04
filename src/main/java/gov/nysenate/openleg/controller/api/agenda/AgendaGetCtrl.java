@@ -11,16 +11,17 @@ import gov.nysenate.openleg.client.view.agenda.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.agenda.*;
+import gov.nysenate.openleg.model.agenda.Agenda;
+import gov.nysenate.openleg.model.agenda.AgendaId;
+import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
+import gov.nysenate.openleg.model.agenda.CommitteeAgendaId;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.agenda.search.AgendaSearchService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
-import gov.nysenate.openleg.util.OutputUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class AgendaGetCtrl extends BaseCtrl
      * Get agenda list by year: (GET) /api/3/agendas/{year}
      * Returns a list of agenda ids in ascending order that occur in the given 'year'.
      */
-    @RequestMapping(value = "/{year}")
+    @RequestMapping(value = "/{year:\\d{4}}")
     public BaseResponse getAgendas(@PathVariable int year) {
         List<AgendaId> agendaIds = agendaData.getAgendaIds(year, SortOrder.ASC);
         return ListViewResponse.of(
@@ -73,6 +74,22 @@ public class AgendaGetCtrl extends BaseCtrl
     @RequestMapping(value = "/{year:[\\d]{4}}/{agendaNo}")
     public BaseResponse getAgenda(@PathVariable int year, @PathVariable int agendaNo) {
         Agenda agenda = agendaData.getAgenda(new AgendaId(agendaNo, year));
+        return new ViewObjectResponse<>(new AgendaView(agenda, billData));
+    }
+
+    /**
+     * Agenda WeekOf Retrieval API
+     * --------------------
+     *
+     * Retrieve a specific agenda in full:
+     * (GET) /api/3/agendas/{weekOf}
+     *
+     * where 'weekOf' is the week of the agenda as an ISO date
+     */
+    @RequestMapping(value = "/{weekOf:\\d{4}-\\d{2}-\\d{2}}")
+    public ViewObjectResponse<AgendaView> getAgenda(@PathVariable String weekOf) {
+        LocalDate weekOfDate = parseISODate(weekOf, "weekOf");
+        Agenda agenda = agendaData.getAgenda(weekOfDate);
         return new ViewObjectResponse<>(new AgendaView(agenda, billData));
     }
 

@@ -2,13 +2,11 @@ package gov.nysenate.openleg.service.spotcheck.agenda;
 
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.agenda.reference.AgendaAlertDao;
-import gov.nysenate.openleg.dao.spotcheck.AgendaAlertReportDao;
-import gov.nysenate.openleg.dao.spotcheck.CommitteeAgendaReportDao;
+import gov.nysenate.openleg.dao.spotcheck.AgendaMeetingWeekReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.agenda.*;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertCheckId;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaMeetingWeekId;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
-import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import org.slf4j.Logger;
@@ -20,12 +18,12 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportService<AgendaAlertCheckId> {
+public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportService<AgendaMeetingWeekId> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseAgendaCheckReportService.class);
 
     @Autowired
-    AgendaAlertReportDao reportDao;
+    AgendaMeetingWeekReportDao reportDao;
 
     @Autowired
     AgendaSpotCheckService checkService;
@@ -46,7 +44,7 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
     }
 
     @Override
-    protected SpotCheckReportDao<AgendaAlertCheckId> getReportDao() {
+    protected SpotCheckReportDao<AgendaMeetingWeekId> getReportDao() {
         return reportDao;
     }
 
@@ -54,25 +52,25 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
      * {@inheritDoc}
      */
     @Override
-    public SpotCheckReport<AgendaAlertCheckId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
+    public SpotCheckReport<AgendaMeetingWeekId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
         logger.info("Getting agenda references...");
         // Get all unchecked references outside of the grace period.
         List<AgendaAlertInfoCommittee> references = getReferences(start, end).stream()
                 .filter(this::outsideGracePeriod).collect(Collectors.toList());
 
-        SpotCheckReport<AgendaAlertCheckId> report = initSpotcheckReport(references);
+        SpotCheckReport<AgendaMeetingWeekId> report = initSpotcheckReport(references);
 
         // Add references to a map, keyed by AgendaAlertCheckId
-        Map<AgendaAlertCheckId, AgendaAlertInfoCommittee> referenceMap = references.stream()
+        Map<AgendaMeetingWeekId, AgendaAlertInfoCommittee> referenceMap = references.stream()
                 .collect(Collectors.toMap(AgendaAlertInfoCommittee::getAgendaAlertCheckId, Function.identity()));
         // Get associated Openleg data and transform it into the same data types to make comparisons easy.
-        Map<AgendaAlertCheckId, AgendaAlertInfoCommittee> observedMap = createObservedMap(references);
+        Map<AgendaMeetingWeekId, AgendaAlertInfoCommittee> observedMap = createObservedMap(references);
 
         logger.info("Checking references...");
-        for (AgendaAlertCheckId refKey : referenceMap.keySet()) {
+        for (AgendaMeetingWeekId refKey : referenceMap.keySet()) {
             // Check for observedDataMissing mismatches
             if (observedMap.get(refKey) == null) {
-                SpotCheckObservation<AgendaAlertCheckId> ob = new SpotCheckObservation<>(referenceMap.get(refKey).getReferenceId(), refKey);
+                SpotCheckObservation<AgendaMeetingWeekId> ob = new SpotCheckObservation<>(referenceMap.get(refKey).getReferenceId(), refKey);
                 ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", refKey));
                 report.addObservation(ob);
             } else {
@@ -97,8 +95,8 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
                 .isAfter(ref.getReferenceId().getRefActiveDateTime());
     }
 
-    private SpotCheckReport<AgendaAlertCheckId> initSpotcheckReport(List<AgendaAlertInfoCommittee> references) {
-        SpotCheckReport<AgendaAlertCheckId> report = new SpotCheckReport<>();
+    private SpotCheckReport<AgendaMeetingWeekId> initSpotcheckReport(List<AgendaAlertInfoCommittee> references) {
+        SpotCheckReport<AgendaMeetingWeekId> report = new SpotCheckReport<>();
 
         // Use the earliest reference date as the report reference date
         references.sort(Comparator.comparing(a -> a.getReferenceId().getRefActiveDateTime()));
@@ -110,8 +108,8 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
 
     // Fetches Openleg Agenda data corresponding to the given references.
     // Transforms Openleg data into AgendaAlertInfoCommittee objects for simpler comparisons.
-    private Map<AgendaAlertCheckId, AgendaAlertInfoCommittee> createObservedMap(List<AgendaAlertInfoCommittee> references) {
-        Map<AgendaAlertCheckId, AgendaAlertInfoCommittee> observedMap = new HashMap<>();
+    private Map<AgendaMeetingWeekId, AgendaAlertInfoCommittee> createObservedMap(List<AgendaAlertInfoCommittee> references) {
+        Map<AgendaMeetingWeekId, AgendaAlertInfoCommittee> observedMap = new HashMap<>();
         for (AgendaAlertInfoCommittee ref : references) {
             Agenda observedAgenda = getAgendaOrNull(ref);
             if (observedAgenda == null) {

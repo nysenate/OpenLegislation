@@ -73,8 +73,8 @@ public class AgendaAlertInfoCommittee
 
     /** --- Functional Getters / Setters --- */
 
-    public AgendaAlertCheckId getAgendaAlertCheckId() {
-        return new AgendaAlertCheckId(getMeetingDateTime().getYear(), getWeekOf(),
+    public AgendaMeetingWeekId getAgendaAlertCheckId() {
+        return new AgendaMeetingWeekId(getMeetingDateTime().getYear(), getWeekOf(),
                 getAddendum(), getCommitteeId().getChamber(), getCommitteeId().getName());
     }
 
