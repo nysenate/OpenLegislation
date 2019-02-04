@@ -92,8 +92,6 @@ public class CalendarEntryListId extends CalendarId {
     public String toString() {
         String calendarStr = super.toString();
         switch (type){
-            case ALL:
-                return calendarStr;
             case ACTIVE_LIST:
                 return calendarStr + " " + sequenceNo;
             case FLOOR_CALENDAR:
