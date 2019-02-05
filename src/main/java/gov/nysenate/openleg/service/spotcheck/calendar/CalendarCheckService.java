@@ -15,138 +15,127 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class CalendarCheckService implements SpotCheckService<CalendarEntryListId, Calendar, Calendar> {
+
+    private static final SpotCheckRefType REF_TYPE = SpotCheckRefType.LBDC_CALENDAR_ALERT;
 
     public SpotCheckObservation<CalendarEntryListId> check(Calendar content, Calendar reference) {
         throw new NotImplementedException(":P");
     }
 
-    public List<SpotCheckObservation<CalendarEntryListId>> checkAll(Calendar content, Calendar reference) {
-        List<SpotCheckObservation<CalendarEntryListId>> observations = new ArrayList<>();
-        if (calendarsAreEqual(content, reference)) {
-            // Add empty observations if no mismatches
-            observations.addAll(createEmptyObservations(reference));
-        } else {
-            if (reference.getSupplementalMap().size() != 0) { // if the alert is supplemental
-                SpotCheckObservation<CalendarEntryListId> supplementalObservation = initializeFloorAndSupplementalObservation(reference);
-                compareFloorAndSupplemental(supplementalObservation, content, reference);
-
-                observations.add(supplementalObservation);
-            }
-            if (reference.getActiveListMap().size() != 0) { // if the alert is active list
-                SpotCheckObservation<CalendarEntryListId> activeListObservation = initializeActivelistObservation(reference);
-                compareActiveLists(activeListObservation, content, reference);
-                observations.add(activeListObservation);
-            }
-        }
-        return observations;
-    }
-
-    private List<SpotCheckObservation<CalendarEntryListId>> createEmptyObservations(Calendar reference) {
-        List<SpotCheckObservation<CalendarEntryListId>> observations = new ArrayList<>();
-        SpotCheckReferenceId spotcheckRefId = new SpotCheckReferenceId(
-                SpotCheckRefType.LBDC_CALENDAR_ALERT, reference.getPublishedDateTime());
-        if (reference.getSupplementalMap().size() != 0) {
-            SpotCheckObservation<CalendarEntryListId> ob = new SpotCheckObservation<>(spotcheckRefId,
-                    new CalendarEntryListId(reference.getId(), CalendarType.FLOOR_CALENDAR, reference.getSupplemental(Version.ORIGINAL).getVersion(), 0));
-            observations.add(ob);
-        }
-        if (reference.getActiveListMap().size() != 0) {
-            SpotCheckObservation<CalendarEntryListId> ob = new SpotCheckObservation<>(spotcheckRefId,
-                    new CalendarEntryListId(reference.getId(), CalendarType.ACTIVE_LIST, Version.ORIGINAL, reference.getActiveList(0).getSequenceNo()));
-            observations.add(ob);
-        }
-        return observations;
-    }
-
-    private SpotCheckObservation<CalendarEntryListId> initializeFloorAndSupplementalObservation(Calendar reference) {
-        SpotCheckReferenceId referenceId = new SpotCheckReferenceId(
-                SpotCheckRefType.LBDC_CALENDAR_ALERT, reference.getPublishedDateTime());
-        if (reference.getSupplementalMap().containsKey(Version.ORIGINAL)) // if it has the default version then it is floor
-            return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(), CalendarType.FLOOR_CALENDAR, reference.getSupplemental(Version.ORIGINAL).getVersion(), 0));
-        else// otherwise it is supplemental
-            return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(), CalendarType.SUPPLEMENTAL_CALENDAR, reference.getSupplementalMap().keySet().iterator().next(), 0));
-    }
-
-    private SpotCheckObservation<CalendarEntryListId> initializeActivelistObservation(Calendar reference) {
-        SpotCheckReferenceId referenceId = new SpotCheckReferenceId(
-                SpotCheckRefType.LBDC_CALENDAR_ALERT, reference.getPublishedDateTime());
-        return new SpotCheckObservation<>(referenceId, new CalendarEntryListId(reference.getId(), CalendarType.ACTIVE_LIST, Version.ORIGINAL, reference.getActiveList(0).getSequenceNo()));
-    }
-
     /**
-     * Compare Calendar equality, ignoring published date.
+     * Compares the content of openleg and alert calendars.
      *
-     * @return <code>true</code> if calendar's id's, supplemental's, and active list's are equal. <code>false</code> otherwise.
+     * @param content   Openleg Calendar object, may be null if openleg is missing the calendar.
+     * @param reference Alert Calendar object, should not be null.
+     * @return List of all observations from checking this calendar. Returns empty observations if no mismatches are found.
      */
-    private boolean calendarsAreEqual(Calendar content, Calendar other) {
-        return Objects.equals(content.getId(), other.getId()) &&
-                Objects.equals(content.getSupplementalMap(), other.getSupplementalMap()) &&
-                Objects.equals(content.getActiveListMap(), other.getActiveListMap());
-    }
-
-    private void compareFloorAndSupplemental(SpotCheckObservation<CalendarEntryListId> observation, Calendar content, Calendar reference) {
-        Set<CalendarSupplemental> contentSupplementals = ImmutableSet.copyOf(content.getSupplementalMap().values());
-        Set<CalendarSupplemental> referenceSupplementals = ImmutableSet.copyOf(reference.getSupplementalMap().values());
-
-        Set<CalendarSupplemental> differenceSet = Sets.symmetricDifference(contentSupplementals, referenceSupplementals).immutableCopy();
-        for (CalendarSupplemental diff : differenceSet) {
-            recordMismatch(observation, content, reference, diff);
-        }
-    }
-
-    private void recordMismatch(SpotCheckObservation<CalendarEntryListId> observation, Calendar content, Calendar reference, CalendarSupplemental diff) {
-        CalendarSupplemental contentSuppDiff = getMatchingSupplementalIfExists(content, diff);
-        CalendarSupplemental referenceSuppDiff = getMatchingSupplementalIfExists(reference, diff);
-
-        // They should never both be null, if they are, no mismatch to record.
-        if (contentSuppDiff == null && referenceSuppDiff == null) {
-            return;
+    public List<SpotCheckObservation<CalendarEntryListId>> checkAll(Calendar content, Calendar reference) {
+        if (content == null) {
+            return createObsMissingObservations(reference);
         }
 
-        if (contentSuppDiff == null) {
-            recordObservationDataMismatch(observation, referenceSuppDiff);
-        } else if (referenceSuppDiff == null) {
-            recordReferenceDataMismatch(observation, contentSuppDiff);
-        } else {
-            checkForSupplementalCalDateMismatch(observation, contentSuppDiff, referenceSuppDiff);
+        List<SpotCheckObservation<CalendarEntryListId>> observations = new ArrayList<>();
+        observations.addAll(checkSupplementals(content, reference));
+        observations.addAll(checkActiveLists(content, reference));
+        return observations;
+    }
 
-            Set<CalendarSectionType> contentSectionTypes = contentSuppDiff.getSectionEntries().keySet();
-            Set<CalendarSectionType> referenceSectionTypes = referenceSuppDiff.getSectionEntries().keySet();
-
-            checkForTypeMismatch(observation, contentSectionTypes, referenceSectionTypes);
-            checkForSuppEntryMismatch(observation, contentSuppDiff, referenceSuppDiff);
+    // Returns an observation containing a OBSERVE_DATA_MISSING mismatch for each supplemental and active list in calendar.
+    private List<SpotCheckObservation<CalendarEntryListId>> createObsMissingObservations(Calendar reference) {
+        List<SpotCheckObservation<CalendarEntryListId>> observations = new ArrayList<>();
+        SpotCheckReferenceId spotcheckRefId = new SpotCheckReferenceId(REF_TYPE, reference.getPublishedDateTime());
+        for (CalendarSupplemental sup : reference.getSupplementalMap().values()) {
+            SpotCheckObservation<CalendarEntryListId> ob = createSupplementalObsMissingObservation(spotcheckRefId, sup);
+            observations.add(ob);
         }
-    }
-
-    private void recordObservationDataMismatch(SpotCheckObservation<CalendarEntryListId> observation, CalendarSupplemental reference) {
-        observation.addMismatch(new SpotCheckMismatch(
-                SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", getVersionString(reference)));
-    }
-
-    private void recordReferenceDataMismatch(SpotCheckObservation<CalendarEntryListId> observation, CalendarSupplemental content) {
-        observation.addMismatch(new SpotCheckMismatch(
-                SpotCheckMismatchType.REFERENCE_DATA_MISSING, getVersionString(content), ""));
-    }
-
-    /**
-     * Converts a supplemental's {@link Version} into a more informative string for mismatches.
-     * <p>Returns:</p>
-     * <ul>
-     * <li>Empty string if the supplemental is null</li>
-     * <li>"BASE" if the Version = Version.ORIGINAL</li>
-     * </ul>
-     * This is different from the Version.toString() behavior of returning "ORIGINAL" for the Default/Base version.
-     */
-    private String getVersionString(CalendarSupplemental contentSuppDiff) {
-        String versionString = "";
-        if (contentSuppDiff != null) {
-            Version v = contentSuppDiff.getVersion();
-            versionString = (v == Version.ORIGINAL) ? "BASE" : v.toString();
+        for (CalendarActiveList al : reference.getActiveListMap().values()) {
+            SpotCheckObservation<CalendarEntryListId> ob = createActiveListObsMissingObservation(spotcheckRefId, al);
+            observations.add(ob);
         }
-        return versionString;
+        return observations;
+    }
+
+    private SpotCheckObservation<CalendarEntryListId> createSupplementalObsMissingObservation(SpotCheckReferenceId spotcheckRefId, CalendarSupplemental sup) {
+        SpotCheckObservation<CalendarEntryListId> ob = createSupplementalObservation(spotcheckRefId, sup);
+        ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", sup.getCalendarSupplementalId().toString()));
+        return ob;
+    }
+
+    private SpotCheckObservation<CalendarEntryListId> createSupplementalRefMissingObservation(SpotCheckReferenceId spotcheckRefId, CalendarSupplemental sup) {
+        SpotCheckObservation<CalendarEntryListId> ob = createSupplementalObservation(spotcheckRefId, sup);
+        ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING, sup.getCalendarSupplementalId().toString(), ""));
+        return ob;
+    }
+
+    private SpotCheckObservation<CalendarEntryListId> createActiveListObsMissingObservation(SpotCheckReferenceId spotcheckRefId, CalendarActiveList al) {
+        SpotCheckObservation<CalendarEntryListId> ob = createActiveListObservation(spotcheckRefId, al);
+        ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", al.getCalendarActiveListId().toString()));
+        return ob;
+    }
+
+    private SpotCheckObservation<CalendarEntryListId> createActiveListRefMissingObservation(SpotCheckReferenceId spotcheckRefId, CalendarActiveList al) {
+        SpotCheckObservation<CalendarEntryListId> ob = createActiveListObservation(spotcheckRefId, al);
+        ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.REFERENCE_DATA_MISSING, al.getCalendarActiveListId().toString(), ""));
+        return ob;
+    }
+
+    private SpotCheckObservation<CalendarEntryListId> createSupplementalObservation(SpotCheckReferenceId refId, CalendarSupplemental supplemental) {
+        return new SpotCheckObservation<>(refId, new CalendarEntryListId(supplemental.getCalendarSupplementalId()));
+    }
+
+    private SpotCheckObservation<CalendarEntryListId> createActiveListObservation(SpotCheckReferenceId refId, CalendarActiveList activeList) {
+        return new SpotCheckObservation<>(refId, new CalendarEntryListId(activeList.getCalendarActiveListId()));
+    }
+
+    @SuppressWarnings("Duplicates")
+    private List<SpotCheckObservation<CalendarEntryListId>> checkSupplementals(Calendar content, Calendar reference) {
+        List<SpotCheckObservation<CalendarEntryListId>> observations = new ArrayList<>();
+        ImmutableSet<Version> contentVersions = ImmutableSet.copyOf(content.getSupplementalMap().keySet());
+        ImmutableSet<Version> referenceVersions = ImmutableSet.copyOf(reference.getSupplementalMap().keySet());
+        ImmutableSet<Version> allVersions = Stream.concat(contentVersions.stream(), referenceVersions.stream())
+                .collect(ImmutableSet.toImmutableSet());
+        SpotCheckReferenceId spotcheckRefId = new SpotCheckReferenceId(REF_TYPE, reference.getPublishedDateTime());
+
+        // Check supplementals for observation/reference missing mismatches.
+        ImmutableSet<Version> versionDifferences = Sets.symmetricDifference(contentVersions, referenceVersions).immutableCopy();
+        for (Version v : versionDifferences) {
+            if (referenceVersions.contains(v)) {
+                // this version is missing from content, create obs missing mismatch.
+                observations.add(createSupplementalObsMissingObservation(spotcheckRefId, reference.getSupplemental(v)));
+            } else if (contentVersions.contains(v)) {
+                // This version is missing from reference, create a ref missing mismatch.
+                observations.add(createSupplementalRefMissingObservation(spotcheckRefId, content.getSupplemental(v)));
+            }
+        }
+
+        // Find Versions in both calendars.
+        ImmutableSet<Version> commonVersions = allVersions.stream()
+                .filter(v -> !versionDifferences.contains(v))
+                .collect(ImmutableSet.toImmutableSet());
+
+        // Check fields of common supplementals.
+        for (Version v : commonVersions) {
+            CalendarSupplemental contentSup = content.getSupplemental(v);
+            CalendarSupplemental referenceSup = reference.getSupplemental(v);
+
+            // Doesn't matter which supplemental is used to create the observation, CalNo, CalYear, and Version should always be equal.
+            SpotCheckObservation<CalendarEntryListId> ob = createSupplementalObservation(spotcheckRefId, referenceSup);
+            observations.add(ob);
+            checkSupplementalFields(ob, contentSup, referenceSup);
+
+        }
+        return observations;
+    }
+
+    private void checkSupplementalFields(SpotCheckObservation<CalendarEntryListId> observation, CalendarSupplemental contentSup, CalendarSupplemental referenceSup) {
+        checkForSupplementalCalDateMismatch(observation, contentSup, referenceSup);
+        checkForSuppEntryMismatch(observation, contentSup, referenceSup);
+        checkForTypeMismatch(observation, contentSup, referenceSup);
     }
 
     private void checkForSupplementalCalDateMismatch(SpotCheckObservation<CalendarEntryListId> observation, CalendarSupplemental contentSuppDiff,
@@ -155,15 +144,6 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
         String referenceDate = referenceSuppDiff.getCalDate() == null ? "" : referenceSuppDiff.getCalDate().toString();
         if (!StringUtils.equals(contentDate, referenceDate)) {
             observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.FLOOR_CAL_DATE, contentDate, referenceDate));
-        }
-    }
-
-    private void checkForTypeMismatch(SpotCheckObservation<CalendarEntryListId> observation, Set<CalendarSectionType> contentSectionTypes,
-                                      Set<CalendarSectionType> referenceSectionTypes) {
-        if (!Sets.symmetricDifference(contentSectionTypes, referenceSectionTypes).isEmpty()) {
-            observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.FLOOR_SECTION_TYPE, StringUtils.join(contentSectionTypes, "\n"), StringUtils.join(referenceSectionTypes, "\n")
-            ));
         }
     }
 
@@ -183,6 +163,17 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
         }
     }
 
+    private void checkForTypeMismatch(SpotCheckObservation<CalendarEntryListId> observation, CalendarSupplemental contentSup, CalendarSupplemental referenceSup) {
+        Set<CalendarSectionType> contentSectionTypes = contentSup.getSectionEntries().keySet();
+        Set<CalendarSectionType> referenceSectionTypes = referenceSup.getSectionEntries().keySet();
+
+        if (!Sets.symmetricDifference(contentSectionTypes, referenceSectionTypes).isEmpty()) {
+            observation.addMismatch(new SpotCheckMismatch(
+                    SpotCheckMismatchType.FLOOR_SECTION_TYPE, StringUtils.join(contentSectionTypes, "\n"), StringUtils.join(referenceSectionTypes, "\n")
+            ));
+        }
+    }
+
     private Map<String, CalendarSupplementalEntry> getStringToEntryMap(CalendarSupplemental supplemental) {
         Map<String, CalendarSupplementalEntry> stringToEntryMap = new HashMap<>();
         for (CalendarSupplementalEntry entry : supplemental.getAllEntries()) {
@@ -191,57 +182,46 @@ public class CalendarCheckService implements SpotCheckService<CalendarEntryListI
         return stringToEntryMap;
     }
 
-    /**
-     * Returns the matching supplemental from a calendar, null if it no match exists.
-     */
-    private CalendarSupplemental getMatchingSupplementalIfExists(Calendar calendar, CalendarSupplemental diff) {
-        return calendar.getSupplementalMap().keySet().contains(diff.getVersion()) ? calendar.getSupplemental(diff.getVersion()) : null;
-    }
+    @SuppressWarnings("Duplicates")
+    private List<SpotCheckObservation<CalendarEntryListId>> checkActiveLists(Calendar content, Calendar reference) {
+        List<SpotCheckObservation<CalendarEntryListId>> observations = new ArrayList<>();
+        ImmutableSet<Integer> contentSequenceNums = ImmutableSet.copyOf(content.getActiveListMap().keySet());
+        ImmutableSet<Integer> referenceSequenceNums = ImmutableSet.copyOf(reference.getActiveListMap().keySet());
+        ImmutableSet<Integer> allSequenceNums = Stream.concat(contentSequenceNums.stream(), referenceSequenceNums.stream())
+                .collect(ImmutableSet.toImmutableSet());
+        SpotCheckReferenceId spotcheckRefId = new SpotCheckReferenceId(REF_TYPE, reference.getPublishedDateTime());
 
-    /**
-     * Does NOT do a full comparison of active lists.
-     * We only compare the most recent (by release date time) versions against each other.
-     * This is done because we don't get sequence num info in alert emails. Active lists in alert emails
-     * can either be new supplementals(with an incremented sequence num) or an update to a previous supplemental,
-     * but we can't tell which.
-     *
-     * @param observation
-     * @param content
-     * @param reference
-     */
-    private void compareActiveLists(SpotCheckObservation<CalendarEntryListId> observation, Calendar content, Calendar reference) {
-        TreeMap<Integer, CalendarActiveList> contentActiveListMap = content.getActiveListMap();
-        TreeMap<Integer, CalendarActiveList> referenceActiveListMap = reference.getActiveListMap();
-
-        if (contentActiveListMap.size() == 0 && referenceActiveListMap.size() == 0) {
-            return; // No mismatches.
-        }
-
-        if (contentActiveListMap.size() == 0) {
-            observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", referenceActiveListMap.get(referenceActiveListMap.size() - 1).getSequenceNo()));
-        } else if (referenceActiveListMap.size() == 0) {
-            observation.addMismatch(new SpotCheckMismatch(
-                    SpotCheckMismatchType.REFERENCE_DATA_MISSING, contentActiveListMap.get(contentActiveListMap.size() - 1).getSequenceNo(), ""));
-        } else {
-            CalendarActiveList contentMostRecent = getMostRecentActiveList(content);
-            CalendarActiveList referenceMostRecent = getMostRecentActiveList(reference);
-
-            checkForActiveListCalDateMismatch(observation, contentMostRecent, referenceMostRecent);
-            checkForActiveListEntryMismatch(observation, contentMostRecent, referenceMostRecent);
-        }
-    }
-
-    private CalendarActiveList getMostRecentActiveList(Calendar calendar) {
-        int seqNo = 0;
-        LocalDateTime releaseDateTime = DateUtils.LONG_AGO.atStartOfDay();
-        for (CalendarActiveList activeList : calendar.getActiveListMap().values()) {
-            if (activeList.getReleaseDateTime().isAfter(releaseDateTime)) {
-                seqNo = activeList.getSequenceNo();
-                releaseDateTime = activeList.getReleaseDateTime();
+        // Check Active Lists for observation/reference missing mismatches.
+        ImmutableSet<Integer> sequenceNoDifferences = Sets.symmetricDifference(contentSequenceNums, referenceSequenceNums).immutableCopy();
+        for (Integer seqNo : sequenceNoDifferences) {
+            if (referenceSequenceNums.contains(seqNo)) {
+                // This sequenceNo is missing from content, create obs missing mismatch
+                observations.add(createActiveListObsMissingObservation(spotcheckRefId, reference.getActiveList(seqNo)));
+            }
+            else if (contentSequenceNums.contains(seqNo)) {
+                // This sequenceNo is missing from reference, create ref missing mismatch.
+                observations.add(createActiveListRefMissingObservation(spotcheckRefId, content.getActiveList(seqNo)));
             }
         }
-        return calendar.getActiveList(seqNo);
+
+        // Find sequenceNo's in both calendars.
+        ImmutableSet<Integer> commonSequenceNums = allSequenceNums.stream()
+                .filter(n -> !sequenceNoDifferences.contains(n))
+                .collect(ImmutableSet.toImmutableSet());
+
+        // Check fields of common active lists.
+        for (Integer seqNo : commonSequenceNums) {
+            CalendarActiveList contentActiveList = content.getActiveList(seqNo);
+            CalendarActiveList referenceActiveList = reference.getActiveList(seqNo);
+
+            // Doesn't matter which supplemental is used to create the observation, CalNo, CalYear, and SequenceNo should always be equal.
+            SpotCheckObservation<CalendarEntryListId> ob = createActiveListObservation(spotcheckRefId, referenceActiveList);
+            observations.add(ob);
+            checkForActiveListCalDateMismatch(ob, contentActiveList, referenceActiveList);
+            checkForActiveListEntryMismatch(ob, contentActiveList, referenceActiveList);
+        }
+
+        return observations;
     }
 
     private void checkForActiveListCalDateMismatch(SpotCheckObservation<CalendarEntryListId> observation, CalendarActiveList contentDiff,

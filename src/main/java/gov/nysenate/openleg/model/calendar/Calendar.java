@@ -78,22 +78,6 @@ public class Calendar extends BaseLegislativeContent
         }
     }
 
-    /**
-     * @return {@link List<CalendarEntryListId>} - entry list ids for each active list and supplemental
-     */
-    public Set<CalendarEntryListId> getEntryListIds() {
-        Set<CalendarEntryListId> entryListIds = new HashSet<>();
-        supplementalMap.values().stream()
-                .map(CalendarSupplemental::getCalendarSupplementalId)
-                .map(CalendarEntryListId::new)
-                .forEach(entryListIds::add);
-        activeListMap.values().stream()
-                .map(CalendarActiveList::getCalendarActiveListId)
-                .map(CalendarEntryListId::new)
-                .forEach(entryListIds::add);
-        return entryListIds;
-    }
-
     /** --- Overrides --- */
 
     @Override

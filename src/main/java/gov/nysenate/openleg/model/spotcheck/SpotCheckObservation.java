@@ -41,12 +41,6 @@ public class SpotCheckObservation<ContentKey>
 
     /* --- Constructors --- */
 
-    public SpotCheckObservation() {}
-
-    public SpotCheckObservation(ContentKey key) {
-        this.key = key;
-    }
-
     public SpotCheckObservation(SpotCheckReferenceId referenceId, ContentKey key) {
         this.referenceId = referenceId;
         this.key = key;

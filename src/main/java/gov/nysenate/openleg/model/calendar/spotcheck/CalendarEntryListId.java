@@ -7,6 +7,8 @@ import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.calendar.CalendarType;
 
+import java.util.Objects;
+
 import static gov.nysenate.openleg.model.calendar.CalendarType.ACTIVE_LIST;
 import static gov.nysenate.openleg.model.calendar.CalendarType.SUPPLEMENTAL_CALENDAR;
 
@@ -18,11 +20,17 @@ import static gov.nysenate.openleg.model.calendar.CalendarType.*;
  */
 public class CalendarEntryListId extends CalendarId {
 
-    /** Indicates type of calendar entry list */
+    /**
+     * Indicates type of calendar entry list
+     */
     protected CalendarType type;
-    /** Indicates Version if the entry list is for a supplemental calendar */
+    /**
+     * Indicates Version if the entry list is for a supplemental calendar
+     */
     protected Version version;
-    /** Indicates sequence number if the entry list is for an active list */
+    /**
+     * Indicates sequence number if the entry list is for an active list
+     */
     protected Integer sequenceNo;
 
     /* --- Constructors --- */
@@ -39,7 +47,10 @@ public class CalendarEntryListId extends CalendarId {
     }
 
     public CalendarEntryListId(CalendarSupplementalId calSupId) {
-        this(calSupId, SUPPLEMENTAL_CALENDAR, calSupId.getVersion(), null);
+        this(calSupId,
+                calSupId.getVersion() == Version.ORIGINAL ? FLOOR_CALENDAR : SUPPLEMENTAL_CALENDAR,
+                calSupId.getVersion(),
+                null);
     }
 
     /* --- Overridden Methods --- */
@@ -70,19 +81,19 @@ public class CalendarEntryListId extends CalendarId {
     @Override
     public int compareTo(CalendarId o) {
         int result = super.compareTo(o);
-        switch (result){
+        switch (result) {
             case 1:
             case -1:
                 return result;
             case 0:
-                if(o instanceof CalendarEntryListId){
+                if (o instanceof CalendarEntryListId) {
                     CalendarEntryListId c = (CalendarEntryListId) o;
                     return ComparisonChain.start()
-                            .compare(this.getType(),c.getType())
-                            .compare(this.getSequenceNo(),c.getSequenceNo())
-                            .compare(this.getVersion(),c.getVersion())
+                            .compare(this.getType(), c.getType())
+                            .compare(this.getSequenceNo(), c.getSequenceNo())
+                            .compare(this.getVersion(), c.getVersion())
                             .result();
-                }else return result;
+                } else return result;
             default:
                 throw new IllegalArgumentException("Invalid Comparision Result" + result);
         }
@@ -91,7 +102,7 @@ public class CalendarEntryListId extends CalendarId {
     @Override
     public String toString() {
         String calendarStr = super.toString();
-        switch (type){
+        switch (type) {
             case ACTIVE_LIST:
                 return calendarStr + " " + sequenceNo;
             case FLOOR_CALENDAR:
@@ -104,17 +115,19 @@ public class CalendarEntryListId extends CalendarId {
     }
 
     @JsonIgnore
-    public CalendarId getCalendarId(){
+    public CalendarId getCalendarId() {
         return this;
     }
 
-    public CalendarType getType() { return type; }
+    public CalendarType getType() {
+        return type;
+    }
 
-    public Version getVersion(){
+    public Version getVersion() {
         return version;
     }
 
-    public Integer getSequenceNo(){
+    public Integer getSequenceNo() {
         return sequenceNo;
     }
 }

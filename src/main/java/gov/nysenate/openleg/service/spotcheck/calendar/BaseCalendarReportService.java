@@ -47,7 +47,6 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
      */
     protected abstract Calendar getActualCalendar(CalendarId id, LocalDate calDate);
 
-
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_CALENDAR_ALERT;
@@ -98,11 +97,7 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
         for (Calendar reference : references) {
             CalendarId id = reference.getId();
             Calendar actual = getActualCalendar(id, reference.getCalDate());
-            if (actual == null) {
-                recordMismatch(observations, reference, id);
-            } else {
-                observations.addAll(checkService.checkAll(actual, reference));
-            }
+            observations.addAll(checkService.checkAll(actual, reference));
             markAsChecked(id);
         }
         // Cancel the report if there are no observations
@@ -110,22 +105,6 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
             throw new SpotCheckAbortException();
         }
         return observations;
-    }
-
-    private void recordMismatch(List<SpotCheckObservation<CalendarEntryListId>> observations, Calendar reference, CalendarId id) {
-        SpotCheckReferenceId obsRefId = new SpotCheckReferenceId(getSpotcheckRefType(), reference.getPublishedDateTime());
-        if (reference.getSupplementalMap().size() != 0) {
-            SpotCheckObservation<CalendarEntryListId> ob = new SpotCheckObservation<>(obsRefId,
-                    new CalendarEntryListId(id, CalendarType.FLOOR_CALENDAR, reference.getSupplemental(Version.ORIGINAL).getVersion(), 0));
-            ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", id.toString()));
-            observations.add(ob);
-        }
-        if (reference.getActiveListMap().size() != 0) {
-            SpotCheckObservation<CalendarEntryListId> ob = new SpotCheckObservation<>(obsRefId,
-                    new CalendarEntryListId(id, CalendarType.ACTIVE_LIST, Version.ORIGINAL, reference.getActiveList(0).getSequenceNo()));
-            ob.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING, "", id.toString()));
-            observations.add(ob);
-        }
     }
 
     private LocalDateTime getMostRecentReference(List<Calendar> references) {
