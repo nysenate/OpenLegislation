@@ -34,6 +34,11 @@ public class BillIdTest
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void testBillIdConstructor_oneLetterPrintNo() throws Exception {
+        new BillId("A", 2019);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void testBillIdConstructor_missingDesignator() throws Exception {
         new BillId("1234", 2013);
     }

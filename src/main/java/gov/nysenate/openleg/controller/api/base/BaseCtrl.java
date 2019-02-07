@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -459,6 +460,13 @@ public abstract class BaseCtrl
         logger.debug(ExceptionUtils.getStackTrace(ex));
         return new ViewObjectErrorResponse(ErrorCode.MISSING_PARAMETERS,
             new ParameterView(ex.getParameterName(), ex.getParameterType()));
+    }
+
+    @ExceptionHandler(HttpMediaTypeException.class)
+    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
+    protected void handleMediaTypeException(HttpMediaTypeException ex) {
+        logger.debug(ExceptionUtils.getStackTrace(ex));
+        // Do not send any data back with the response, because that may produce another media type exception.
     }
 
     @ExceptionHandler(UnexpectedSearchException.class)
