@@ -2,7 +2,7 @@ package gov.nysenate.openleg.controller.api.committee;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
-import gov.nysenate.openleg.client.view.base.SearchResultView;
+import gov.nysenate.openleg.client.view.search.SearchResultView;
 import gov.nysenate.openleg.client.view.committee.CommitteeVersionIdView;
 import gov.nysenate.openleg.client.view.committee.CommitteeView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;

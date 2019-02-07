@@ -7,12 +7,12 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ErrorResponse;
+import gov.nysenate.openleg.client.view.search.SearchIndexInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SearchIndex;
 import gov.nysenate.openleg.model.search.ClearIndexEvent;
 import gov.nysenate.openleg.model.search.RebuildIndexEvent;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,9 +89,11 @@ public class SearchIndexCtrl extends BaseCtrl
     // returns the index names. Can later be expanded to return index information as well.
     @RequiresPermissions("admin:searchIndexEdit")
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ListViewResponse<String> getIndexNames() {
-        List<String> names = Arrays.stream(SearchIndex.values()).map(Enum::name).collect(Collectors.toList());
-        return ListViewResponse.ofStringList(names, names.size(), LimitOffset.ALL);
+    public ListViewResponse<SearchIndexInfoView> getIndices() {
+        List<SearchIndexInfoView> names = Arrays.stream(SearchIndex.values())
+                .map(SearchIndexInfoView::new)
+                .collect(Collectors.toList());
+        return ListViewResponse.of(names, names.size(), LimitOffset.ALL);
     }
 
     /** --- Internal --- */
@@ -99,7 +101,10 @@ public class SearchIndexCtrl extends BaseCtrl
     private Set<SearchIndex> getTargetIndices(String indexType) throws IllegalArgumentException {
         Set<SearchIndex> targetIndices;
         if (indexType.equalsIgnoreCase("all")) {
-            targetIndices = Sets.newHashSet(SearchIndex.values());
+            // Exclude principal indices from "all" grouping.
+            targetIndices = Arrays.stream(SearchIndex.values())
+                    .filter(i -> !i.isPrimaryStore())
+                    .collect(Collectors.toSet());
         }
         else {
             targetIndices = Sets.newHashSet(SearchIndex.valueOf(indexType.toUpperCase()));

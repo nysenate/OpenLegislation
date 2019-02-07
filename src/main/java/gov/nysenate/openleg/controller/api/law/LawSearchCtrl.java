@@ -2,8 +2,7 @@ package gov.nysenate.openleg.controller.api.law;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
-import gov.nysenate.openleg.client.view.base.SearchResultView;
-import gov.nysenate.openleg.client.view.law.LawDocIdView;
+import gov.nysenate.openleg.client.view.search.SearchResultView;
 import gov.nysenate.openleg.client.view.law.LawDocInfoView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
