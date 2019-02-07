@@ -3,7 +3,7 @@
   <groupId>gov.nysenate</groupId>
   <artifactId>legislation</artifactId>
   <packaging>war</packaging>
-  <version>3.0.3</version>
+  <version>3.1</version>
 
   <!-- NY Senate Maven Repository -->
 

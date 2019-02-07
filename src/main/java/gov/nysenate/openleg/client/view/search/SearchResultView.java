@@ -1,5 +1,6 @@
-package gov.nysenate.openleg.client.view.base;
+package gov.nysenate.openleg.client.view.search;
 
+import gov.nysenate.openleg.client.view.base.ViewObject;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 
 import java.math.BigDecimal;

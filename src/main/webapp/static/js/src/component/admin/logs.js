@@ -27,7 +27,7 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     /** Watch for changes to the current view. */
     $scope.$watch('view', function(n, o) {
         if (n !== o && $routeParams.view !== n) {
-            $scope.setSearchParam('view', $scope.view);
+            $scope.setSearchParam('view', $scope.view || null);
         }
         if (n === TAB.API_MONITOR) {
             $scope.resetRunningLog();
@@ -44,6 +44,7 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     $scope.now = moment();
     $scope.newApiRequestsCount = 0;
     $scope.newApiRequests = [];
+    $scope.newApiRequestLimit = 100;
     $scope.connectToSocket = function() {
         var socket = new SockJS(window.ctxPath + '/sock');
         $scope.stompClient = Stomp.over(socket);
@@ -53,8 +54,8 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
             $scope.stompClient.subscribe('/event/apiLogs', function(logEvent) {
                 $scope.$apply(function() {
                     $scope.newApiRequests.unshift(JSON.parse(logEvent.body));
-                    if ($scope.newApiRequests.length > 2000) {
-                        $scope.newApiRequests = [];
+                    if ($scope.newApiRequests.length > $scope.newApiRequestLimit) {
+                        $scope.newApiRequests = $scope.newApiRequests.slice(0, $scope.newApiRequestLimit);
                     }
                     $scope.newApiRequestsCount++;
                 });
@@ -86,9 +87,14 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     // Api log search
 
     $scope.apiLogTerm = $routeParams.apiLogTerm || '';
-    $scope.apiLogSort = $routeParams.apiLogSort || 'requestTime:desc';
+    const defaultLogSort = 'requestTime:desc';
+    $scope.apiLogSort = $routeParams.apiLogSort || defaultLogSort;
+
+    function getDefaultFromDate() {
+        return moment().subtract('days', 1).startOf('day');
+    }
     $scope.apiLogFromDate = ($routeParams.apiLogStart) ? moment($routeParams.apiLogStart).toDate()
-                                                       : moment().subtract('days', 1).toDate();
+                                                       : getDefaultFromDate().toDate();
     $scope.apiLogToDate = ($routeParams.apiLogEnd) ? moment($routeParams.apiLogEnd).toDate()
                                                    : moment().add('days', 1).toDate();
     $scope.apiLogSearchPagination = angular.extend({}, PaginationModel);
@@ -96,15 +102,17 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     $scope.apiLogSearchPagination.itemsPerPage = 20;
 
     $scope.searchLogs = function() {
-        var start = $scope.toZonelessISOString(moment($scope.apiLogFromDate));
-        var end = $scope.toZonelessISOString(moment($scope.apiLogToDate));
-        $scope.setSearchParam('apiLogStart', start);
-        $scope.setSearchParam('apiLogEnd', end);
-        $scope.setSearchParam('apiLogTerm', $scope.apiLogTerm);
-        $scope.setSearchParam('apiLogSort', $scope.apiLogSort);
+        var start = moment($scope.apiLogFromDate);
+        var end = moment($scope.apiLogToDate);
+        var startStr = $scope.toZonelessISOString(start);
+        var endStr = $scope.toZonelessISOString(end);
+        $scope.setSearchParam('apiLogStart', getDefaultFromDate().isSame(start) ? null : startStr);
+        $scope.setSearchParam('apiLogEnd', moment().isBefore(end) ? null : endStr);
+        $scope.setSearchParam('apiLogTerm', $scope.apiLogTerm || null);
+        $scope.setSearchParam('apiLogSort', $scope.apiLogSort !== defaultLogSort ? $scope.apiLogSort : null);
 
         var term = '(' + ($scope.apiLogTerm || '*') + ')' +
-            ' AND requestTime:[' + start + ' TO ' + end + ']';
+            ' AND requestTime:[' + startStr + ' TO ' + endStr + ']';
         LogSearchAPI.get({
             term: term, sort: $scope.apiLogSort,
             limit: $scope.apiLogSearchPagination.getLimit(),
@@ -117,7 +125,7 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     };
 
     $scope.apiLogSearchPageChange = function(newPageNumber) {
-        $scope.setSearchParam('page', newPageNumber);
+        $scope.setSearchParam('page', newPageNumber > 1 ? newPageNumber : null);
         $scope.searchLogs();
     };
 
@@ -127,7 +135,7 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     $scope.pollPromise = null;
     $scope.hideEmptyRuns = $routeParams.hideEmptyRuns !== 'false';
     $scope.runsFromDate = ($routeParams.runsStart) ? moment($routeParams.runsStart).toDate()
-        : moment().subtract('days', 1).toDate();
+        : getDefaultFromDate().toDate();
     $scope.runsToDate = ($routeParams.runsEnd) ? moment($routeParams.runsEnd).toDate()
         : moment().add('days', 1).toDate();
     $scope.runsPagination = angular.extend({}, PaginationModel);
@@ -135,13 +143,16 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
     $scope.runsPagination.itemsPerPage = 20;
 
     $scope.getRuns = function() {
-        var fromDate = $scope.toZonelessISOString(moment($scope.runsFromDate));
-        var toDate = $scope.toZonelessISOString(moment($scope.runsToDate));
-        $scope.setSearchParam('hideEmptyRuns', $scope.hideEmptyRuns);
-        $scope.setSearchParam('runsStart', fromDate);
-        $scope.setSearchParam('runsEnd', toDate);
+        var fromDate = moment($scope.runsFromDate);
+        var toDate = moment($scope.runsToDate);
+        var fromStr = $scope.toZonelessISOString(fromDate);
+        var toStr = $scope.toZonelessISOString(toDate);
+        $scope.setSearchParam('hideEmptyRuns', $scope.hideEmptyRuns && null);
+        $scope.setSearchParam('runsStart', getDefaultFromDate().isSame(fromDate) ? null : fromStr);
+        $scope.setSearchParam('runsEnd', moment().isBefore(toDate) ? null : toStr);
         DataProcessRunsAPI.get({
-            from: fromDate, to: toDate,
+            from: fromStr,
+            to: toStr,
             full: !$scope.hideEmptyRuns,
             detail: true,
             limit: $scope.runsPagination.getLimit(),
@@ -168,7 +179,7 @@ adminModule.controller('LogsCtrl', ['$scope', '$routeParams', '$timeout', 'Pagin
             $timeout.cancel($scope.pollPromise);
         }
         $scope.getRunsPolling();
-        $scope.setSearchParam('runLogPage', newPageNumber);
+        $scope.setSearchParam('runLogPage', newPageNumber > 1 ? newPageNumber : null);
     };
 
     /** --- Initialize --- */

@@ -33,8 +33,7 @@
             </thead>
             <tbody>
             <tr class="new-request" ng-repeat="event in newApiRequests | filter:logFilter" ng-init="baseRequest = event.apiResponse.baseRequest">
-              <td class="time-td">
-                {{baseRequest.requestTime.year}}-{{baseRequest.requestTime.monthValue}}-{{baseRequest.requestTime.dayOfMonth}} {{padLeft(baseRequest.requestTime.hour)}}:{{padLeft(baseRequest.requestTime.minute)}}:{{padLeft(baseRequest.requestTime.second)}}</td>
+              <td class="time-td" ng-bind="baseRequest.requestTime.slice(0,6) | moment:'YYYY-MM-DD HH:mm:ss'"></td>
               <td>{{baseRequest.ipAddress}}</td>
               <td>{{baseRequest.apiUser.name | default:'None'}}</td>
               <td>{{baseRequest.requestMethod}}</td>
@@ -45,6 +44,9 @@
             </tbody>
           </table>
         </div>
+        <p ng-show="newApiRequestsCount > newApiRequestLimit">
+          {{newApiRequestsCount - newApiRequestLimit}} requests truncated.  See Api Log Search Tab for full history.
+        </p>
       </div>
     </md-tab>
     <md-tab label="API Log Search">

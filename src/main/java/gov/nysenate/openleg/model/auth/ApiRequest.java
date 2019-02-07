@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class ApiRequest
 {
@@ -30,7 +29,7 @@ public class ApiRequest
     private ApiUser apiUser;
 
     /** A unique identifier used to specify each request made */
-    private Integer requestId;
+    private String requestId;
 
     /** --- Constructors --- */
 
@@ -109,11 +108,11 @@ public class ApiRequest
         this.apiUser = apiUser;
     }
 
-    public Integer getRequestId() {
+    public String getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(int requestId) {
+    public void setRequestId(String requestId) {
         this.requestId = requestId;
     }
 }

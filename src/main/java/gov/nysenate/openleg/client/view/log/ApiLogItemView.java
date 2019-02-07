@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  */
 public class ApiLogItemView implements ViewObject
 {
-    private int requestId;
+    private String requestId;
     private LocalDateTime requestTime;
     private String url;
     private String ipAddress;
@@ -28,8 +28,6 @@ public class ApiLogItemView implements ViewObject
     /** --- Constructors --- */
 
     public ApiLogItemView() {}
-
-    public ApiLogItemView(String json) {}
 
     public ApiLogItemView(ApiResponse apiResponse) {
         if (apiResponse != null) {
@@ -61,7 +59,7 @@ public class ApiLogItemView implements ViewObject
 
     /** --- Basic Getters --- */
 
-    public int getRequestId() {
+    public String getRequestId() {
         return requestId;
     }
 

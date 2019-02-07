@@ -2,7 +2,7 @@ package gov.nysenate.openleg.controller.api.bill;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
-import gov.nysenate.openleg.client.view.base.SearchResultView;
+import gov.nysenate.openleg.client.view.search.SearchResultView;
 import gov.nysenate.openleg.client.view.bill.BillIdView;
 import gov.nysenate.openleg.client.view.bill.BillInfoView;
 import gov.nysenate.openleg.client.view.bill.BillView;

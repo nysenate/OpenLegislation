@@ -8,7 +8,7 @@ import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
 import gov.nysenate.openleg.client.response.error.ViewObjectErrorResponse;
-import gov.nysenate.openleg.client.view.base.SearchResultView;
+import gov.nysenate.openleg.client.view.search.SearchResultView;
 import gov.nysenate.openleg.client.view.notification.NotificationSummaryView;
 import gov.nysenate.openleg.client.view.notification.NotificationView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;

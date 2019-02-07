@@ -2,7 +2,7 @@ package gov.nysenate.openleg.controller.api.hearing;
 
 import gov.nysenate.openleg.client.response.base.BaseResponse;
 import gov.nysenate.openleg.client.response.base.ListViewResponse;
-import gov.nysenate.openleg.client.view.base.SearchResultView;
+import gov.nysenate.openleg.client.view.search.SearchResultView;
 import gov.nysenate.openleg.client.view.hearing.PublicHearingIdView;
 import gov.nysenate.openleg.client.view.hearing.PublicHearingInfoView;
 import gov.nysenate.openleg.client.view.hearing.PublicHearingView;
