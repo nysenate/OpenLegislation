@@ -228,13 +228,15 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
      * Given a shortname and session, return the primary shortname for that member/session
      */
     private String getPrimaryShortname(SessionYear sessionYear, Chamber chamber, String shortname) {
-        SessionMember member;
+        if (StringUtils.isBlank(shortname)) {
+            return null;
+        }
         try {
-            member = memberService.getMemberByShortName(shortname, sessionYear, chamber);
+            SessionMember member = memberService.getMemberByShortName(shortname, sessionYear, chamber);
+            return getPrimaryShortname(sessionYear, member.getMemberId());
         } catch (MemberNotFoundEx ex) {
             return "<unknown shortname: " + sessionYear + " " + chamber + " " + shortname + ">";
         }
-        return getPrimaryShortname(sessionYear, member.getMemberId());
     }
 
     /**
