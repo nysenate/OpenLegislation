@@ -151,7 +151,7 @@ function spotcheckMismatchApi($resource) {
 
         switch (mismatch.key.type) {
             case 'FLOOR_CALENDAR':
-                return calNo + 'Floor';
+                return calNo;
             case 'SUPPLEMENTAL_CALENDAR':
                 return calNo + mismatch.key.version;
             case 'ACTIVE_LIST':
