@@ -53,11 +53,12 @@ function spotcheckMismatchApi($resource) {
             issueInput: parseIssues(mismatch),
             refTypeLabel: parseRefTypeLabel(mismatch),
             refType: parseRefType(mismatch),
-            bill: parseBill(mismatch),
+            printNo: printNo(mismatch),
             billId: parseBillId(mismatch),
             calNo: parseCalNo(mismatch),
             calType:parseCalType(mismatch),
             session: parseSession(mismatch),
+            year: mismatch.key.year || '',
             basePrintNo: parseBasePrintNo(mismatch),
             referenceData: parseReferenceData(mismatch),
             observedData: parseObserveredData(mismatch),
@@ -83,7 +84,7 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseSession(mismatch) {
-        return mismatch.key.session || {};
+        return (mismatch.key.session || {}).year || "";
     }
 
     function parseBasePrintNo(mismatch) {
@@ -134,12 +135,12 @@ function spotcheckMismatchApi($resource) {
         return mismatch.referenceType;
     }
 
-    function parseBill(mismatch) {
+    function printNo(mismatch) {
         return mismatch.key.printNo || "";
     }
 
     function parseBillId(mismatch) {
-        return parseBill(mismatch) + '-' + parseSession(mismatch).year;
+        return printNo(mismatch) + '-' + parseSession(mismatch);
     }
 
     function parseCalNo(mismatch) {

@@ -22,12 +22,15 @@ public enum MismatchOrderBy {
 
     /** Bill fields */
     PRINT_NO("key->'print_no'"),
+    SESSION_YEAR("key->'session_year'"),
 
     /** Calendar Fields */
+    CAL_YEAR("key->'year'"),
     CAL_NO("key->'calNo'"),
     CAL_TYPE("key->'type'"),
 
     /** Agenda Fields */
+    AGENDA_YEAR("key->'year'"),
     AGENDA_NO("(key->'agendaNo')::smallint"),
     AGENDA_WEEK_OF("(key->'weekOf')::smallint"),
     AGENDA_COMMITTEE("key->'committee_name'")

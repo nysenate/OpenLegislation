@@ -1,8 +1,9 @@
 angular.module('open.spotcheck')
     .controller('detailDialogCtrl', ['$scope', '$mdDialog', '$filter',
-                                     'mismatchList', 'index', 'source', 'contentType', 'CalendarGetApi', detailDialogCtrl]);
+                                     'mismatchList', 'index', 'source', 'contentType', 'idCols',
+                                     'CalendarGetApi', detailDialogCtrl]);
 
-function detailDialogCtrl($scope, $mdDialog, $filter, mismatchList, index, source, contentType, calendarGetApi) {
+function detailDialogCtrl($scope, $mdDialog, $filter, mismatchList, index, source, contentType, idCols, calendarGetApi) {
 
     $scope.reportType = mismatchList[index].refType;
 
@@ -164,6 +165,7 @@ function detailDialogCtrl($scope, $mdDialog, $filter, mismatchList, index, sourc
         $scope.date = moment().format('l');
         $scope.mismatchList = mismatchList;
         $scope.index = index;
+        $scope.idCols = idCols;
         setMismatchFields();
     }
 
