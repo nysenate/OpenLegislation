@@ -104,7 +104,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
         if (sponsorLine.startsWith("RULES")) {
             billSponsor.setRules(true);
             Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
-            if (sponsorLine.contains("RULES COM") && rules.matches() && !sponsorLine.trim().equals("RULES COM")) {
+            if (sponsorLine.contains("RULES") && rules.matches() && ( !sponsorLine.trim().equals("RULES COM") || !sponsorLine.trim().equals("RULES")) ) {
                 sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
                 billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
             }

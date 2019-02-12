@@ -27,7 +27,7 @@
       <div class="spotcheck-col-state">State</div>
 
       <!-- Id column headers -->
-      <div ng-repeat="col in idColumns[type]"
+      <div ng-repeat="col in getIdColumns(type, datasource.selected.value)"
            ng-click="updateOrder(col.orderId, $event)"
            class="{{col.class}}"
            ng-bind="col.name"></div>
@@ -55,7 +55,10 @@
         <div class="spotcheck-col-state">{{mismatch.status}}</div>
 
         <!-- Id column data -->
-        <div ng-repeat="col in idColumns[type]" class="{{col.class}}" ng-bind="mismatch[col.field]"></div>
+        <div ng-repeat="col in getIdColumns(type, datasource.selected.value)"
+             class="{{col.class}}"
+             ng-bind="mismatch[col.field]">
+        </div>
 
         <div class="spotcheck-col-type">{{mismatch.mismatchType | mismatchType:mismatch.datasource}}</div>
         <div class="spotcheck-col-date">{{mismatch.observedDate}}</div>

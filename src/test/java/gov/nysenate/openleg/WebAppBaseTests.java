@@ -1,6 +1,7 @@
 package gov.nysenate.openleg;
 
 import gov.nysenate.openleg.TestConfig;
+import gov.nysenate.openleg.config.ApplicationConfig;
 import gov.nysenate.openleg.config.WebApplicationConfig;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -16,7 +17,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TestConfig.class, WebApplicationConfig.class})
+@ContextConfiguration(classes = {TestConfig.class, WebApplicationConfig.class, ApplicationConfig.class})
 @ActiveProfiles("test")
 public abstract class WebAppBaseTests
 {

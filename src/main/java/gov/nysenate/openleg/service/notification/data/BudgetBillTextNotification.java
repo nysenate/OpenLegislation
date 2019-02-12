@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.service.notification.data;
 
 import com.google.common.eventbus.EventBus;
-import gov.nysenate.openleg.dao.bill.data.SqlBillDao;
+import gov.nysenate.openleg.dao.bill.data.BillDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.notification.Notification;
@@ -20,40 +20,36 @@ public class BudgetBillTextNotification {
 
     private static final Logger logger = LoggerFactory.getLogger(BudgetBillTextNotification.class);
     private final EventBus eventBus;
-    private SqlBillDao sqlBillDao;
+    private BillDao billDao;
 
-    String summary = "MISSING BUDGET BILL TEXT";
-    String message = "The following Budget Bill(s) text must be aquired from https://www.budget.ny.gov/pubs/archive/ : \n";
+    private static final String summary = "MISSING BUDGET BILL TEXT";
 
     @Autowired
-    public BudgetBillTextNotification(EventBus eventBus, SqlBillDao sqlBillDao) {
+    public BudgetBillTextNotification(EventBus eventBus, BillDao billDao) {
         this.eventBus = eventBus;
-        this.sqlBillDao = sqlBillDao;
+        this.billDao = billDao;
     }
 
     @Scheduled(cron = "${scheduler.budget.bill.reminder}")
     private void sendBudgetNotifications() {
-        LocalDateTime now = LocalDateTime.now();
-        SessionYear sessionYear = new SessionYear(now.getYear());
+        String message = "The following Budget Bill(s) text must be acquired from https://www.budget.ny.gov/pubs/archive/ : \n";
+        SessionYear sessionYear = SessionYear.current();
         logger.info("Starting check for missing budget bill(s) text for session year " + sessionYear);
 
-        List<BillId> billIds = getBudgetBillPrintNumbers(sessionYear.getYear());
+        List<BillId> missingText = billDao.getBudgetBillIdsWithoutText(sessionYear);
 
-        if (billIds.size() >= 1) {
-            logger.info("Found " + billIds.size() + " issues");
-            for (BillId billId: billIds) {
+        if (missingText.size() >= 1) {
+
+            logger.info("Found " + missingText.size() + " issues");
+            for (BillId billId: missingText) {
                 message = message + billId.toString() + "\n";
             }
-            eventBus.post(new Notification(NotificationType.WARNING,
-                    now,
+            eventBus.post(new Notification(
+                    NotificationType.BUDGET_BILL_EMPTY_TEXT,
+                    LocalDateTime.now(),
                     summary,
                     message));
         }
         logger.info("The check for missing budget bill text has been completed");
     }
-
-    private List<BillId> getBudgetBillPrintNumbers(Integer sessionYear) {
-         return sqlBillDao.getBudgetBillIdsWithoutText(sessionYear);
-    }
-
 }

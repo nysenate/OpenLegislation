@@ -9,23 +9,9 @@
           <md-card class="mismatch-diff-info-card">
             <p>Last Reported: {{currentMismatch.observedDate}}</p>
 
-            <!-- Bill Id Fields -->
-            <p ng-if="contentType == 'BILL'">
-              {{reportType | contentType}} Number:
-              <a class="white-2-blue inactive-link" target="_blank">
-                {{currentMismatch.bill}}
-              </a>
+            <p ng-repeat="col in idCols">
+              {{col.name}}: {{currentMismatch[col.field]}}
             </p>
-            <p ng-if="contentType == 'BILL'">Session Year: {{currentMismatch.session.year}}</p>
-
-            <!-- Calendar Id Fields -->
-            <p ng-if="contentType == 'CALENDAR'">Calendar Number: {{currentMismatch.calNo}}</p>
-            <p ng-if="contentType == 'CALENDAR'">Session Date: {{currentMismatch.calDate}}</p>
-
-            <!-- Agenda Id Fields -->
-            <p ng-if="contentType == 'AGENDA'">Year: {{currentMismatch.key.agendaId.year}}</p>
-            <p ng-if="contentType == 'AGENDA'">Agenda: {{currentMismatch.agendaNo}}</p>
-            <p ng-if="contentType == 'AGENDA'">Committee: {{currentMismatch.key.committeeId.name}}</p>
 
             <p>Error Type: {{currentMismatch.mismatchType | mismatchType:currentMismatch.datasource}}</p>
           </md-card>

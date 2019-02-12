@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,17 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
 
     private ThreadFactory threadFactory = new OpenlegThreadFactory("daybreak-process");
 
+    private ArrayList<ExecutorService> threadServices = new ArrayList<>();
+
     /** --- Interfaced Methods --- */
+
+    @PreDestroy
+    public void destroy() {
+        for (ExecutorService executorService: threadServices) {
+            executorService.shutdownNow();
+        }
+        threadServices.clear();
+    }
 
     @Override
     public int collate() {
@@ -93,6 +104,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
     public int processFragments(List<DaybreakFragment> fragments) {
         if (fragments.size() > 0) {
             ExecutorService executorService = Executors.newFixedThreadPool(4, threadFactory);
+            threadServices.add(executorService);
             logger.info("Processing " + fragments.size() + " daybreak fragments");
             for (DaybreakFragment daybreakFragment : fragments) {
                 executorService.submit(() -> processFragment(daybreakFragment));
@@ -101,6 +113,7 @@ public class ManagedDaybreakProcessService implements DaybreakProcessService{
             try {
                 // Allow maximum of 30 minutes before un-blocking
                 executorService.awaitTermination(30, TimeUnit.MINUTES);
+                threadServices.remove(executorService);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

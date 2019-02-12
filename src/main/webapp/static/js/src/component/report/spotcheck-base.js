@@ -243,10 +243,18 @@
     };
 
     function getLocalAgendaUrl(key) {
-        if (key.agendaId.year > 0) {
-            return ctxPath + "/agendas/" + key.agendaId.year + "/" + key.agendaId.number + "?comm=" + key.committeeId.name;
+        var url = ctxPath + "/agendas/";
+        if (key.agendaId) {
+            url += key.agendaId.year + "/" + key.agendaId.number
+        } else if (key.weekOf) {
+            url += key.weekOf;
+        } else {
+            return "";
         }
-        return "";
+        if (key.committeeId) {
+            url += "?comm=" + key.committeeId.name;
+        }
+        return url;
     }
 
     function getLocalBillUrl(key) {

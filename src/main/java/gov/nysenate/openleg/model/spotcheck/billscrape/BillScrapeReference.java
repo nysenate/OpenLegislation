@@ -15,13 +15,15 @@ import java.util.Set;
  */
 public class BillScrapeReference {
 
-    //print number for referenced bill eg. "S100"
+    /** Base print number for referenced bill eg. "S100" */
     private BaseBillId baseBillId;
-    //DateTime this reference was generated
+    /** DateTime this reference was generated */
     private LocalDateTime referenceDate;
-    //main text of the bill
+    /** Plain text of the bill */
     private String text;
-    //text in the memo of the bill
+    /** Html text of the bill */
+    private String htmlText;
+    /** Memo text of the bill */
     private String memo;
     private Set<BillScrapeVote> votes;
     private Version activeVersion;
@@ -29,34 +31,26 @@ public class BillScrapeReference {
     /** If a scraped reference could not be found/parsed this is set to true */
     private boolean notFound = false;
 
-    public BillScrapeReference(){}
-
-    /**
-     *  @param billId
-     * @param referenceDate
-     * @param text
-     * @param memo
-     * @param notFound
-     */
-    private BillScrapeReference(BillId billId, LocalDateTime referenceDate, String text, String memo,
-                                boolean notFound){
+    private BillScrapeReference(BillId billId, LocalDateTime referenceDate, String plainText, String htmlText, String memo,
+                                boolean notFound) {
         this.baseBillId = BillId.getBaseId(billId);
         this.activeVersion = billId.getVersion();
+        this.htmlText = htmlText;
         this.votes = new HashSet<>();
 
         this.referenceDate = referenceDate;
-        this.text = text;
+        this.text = plainText;
         this.memo = memo;
         this.notFound = notFound;
     }
 
-    public BillScrapeReference(BillId billId, LocalDateTime referenceDate, String text, String memo) {
-        this(billId, referenceDate, text, memo, false);
+    public BillScrapeReference(BillId billId, LocalDateTime referenceDate, String plainText, String htmlText, String memo) {
+        this(billId, referenceDate, plainText, htmlText, memo, false);
     }
 
     public static BillScrapeReference getErrorBtr(BillId billId, LocalDateTime referenceDate,
                                                   String text) {
-        return new BillScrapeReference(billId, referenceDate, text, "", true);
+        return new BillScrapeReference(billId, referenceDate, text, "", "", true);
     }
 
     /* --- Functional Getters --- */
@@ -91,9 +85,18 @@ public class BillScrapeReference {
         this.text = text;
     }
 
+    public String getHtmlText() {
+        return htmlText;
+    }
+
+    public void setHtmlText(String htmlText) {
+        this.htmlText = htmlText;
+    }
+
     public LocalDateTime getReferenceDate() {
         return referenceDate;
     }
+
     public void setReferenceDate(LocalDateTime referenceDate) {
         this.referenceDate = referenceDate;
     }
@@ -102,15 +105,18 @@ public class BillScrapeReference {
         return baseBillId.getSession().getYear();
     }
 
-    public String getMemo(){
+    public String getMemo() {
         return memo;
     }
+
     public void setMemo(String memo) {
         this.memo = memo;
     }
-    public Version getActiveVersion(){
+
+    public Version getActiveVersion() {
         return activeVersion;
     }
+
     public void setActiveVersion(Version activeVersion) {
         this.activeVersion = activeVersion;
     }

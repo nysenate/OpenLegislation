@@ -22,7 +22,7 @@ public class XmlFile extends BaseSourceFile {
     private static final String xmlPattern = "yyyy'-'MM'-'dd'T'HH'.'mm'.'ss'.'SSSSSS";
 
     private static final Pattern fileNamePattern = Pattern.compile(
-            "(?<date>[0-9-]{10})-(?<time>[0-9.]{15})_(?<type>[A-Z]+)_(?<target>.*)\\.XML");
+            "(?<date>[0-9-]{10})-(?<time>[0-9.]{15})_(?<type>[A-Z]+)_(?<target>.*)\\.XML", Pattern.CASE_INSENSITIVE);
     private final String stagingDir="/data/openleg/staging/xmls/";
 
     /**

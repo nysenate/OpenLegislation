@@ -43,46 +43,106 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
         selected: {}
     };
 
+    /* --- Datatype-specific column Definitions --- */
+
+    const printNoCols = [
+        {
+            name: "Session",
+            orderId: "SESSION_YEAR",
+            field: "session",
+            class: "spotcheck-col-session"
+        },
+        {
+            name: "Print No.",
+            orderId: "PRINT_NO",
+            field: "printNo",
+            class: "spotcheck-col-bill-id"
+        }
+    ];
+
+    const calCols = [
+        {
+            name: "Year",
+            orderId: "CAL_YEAR",
+            field: "year",
+            class: "spotcheck-col-year"
+        },
+        {
+            name: "Num",
+            orderId: "CAL_NO",
+            field: "calNo",
+            class: "spotcheck-col-cal-no"
+        },
+        {
+            name: "Type",
+            orderId: "CAL_TYPE",
+            field: "calType",
+            class: "spotcheck-col-cal-type"
+        }
+    ];
+
+    const agendaNumCols = [
+        {
+            name: "Year",
+            orderId: "AGENDA_YEAR",
+            field: "year",
+            class: "spotcheck-col-year"
+        },
+        {
+            name: "Num",
+            orderId: "AGENDA_NO",
+            field: "agendaNo",
+            class: "spotcheck-col-agenda-no"
+        },
+        {
+            name: "Committee",
+            orderId: "AGENDA_COMMITTEE",
+            field: "committee",
+            class: "spotcheck-col-agenda-comm"
+        }
+    ];
+
+    const agendaWeekCols = [
+        {
+            name: "Week Of",
+            orderId: "AGENDA_WEEK_OF",
+            field: "weekOfDisp",
+            class: "spotcheck-col-agenda-week-of"
+        },
+        {
+            name: "Committee",
+            orderId: "AGENDA_COMMITTEE",
+            field: "committee",
+            class: "spotcheck-col-agenda-comm"
+        }
+    ];
+
     /**
-     * Defines unique id columns that are used for each content type
+     * The type-specific columns used for all types by default for all data sources
      */
-    $scope.idColumns = {
-        BILL: [
-            {
-                name: "Bill",
-                orderId: "PRINT_NO",
-                field: "billId",
-                class: "spotcheck-col-bill-id"
-            }
-        ],
-        CALENDAR: [
-            {
-                name: "Num",
-                orderId: "CAL_NO",
-                field: "calNo",
-                class: "spotcheck-col-cal-no"
-            },
-            {
-                name: "Type",
-                orderId: "CAL_TYPE",
-                field: "calType",
-                class: "spotcheck-col-cal-type"
-            }
-        ],
-        AGENDA: [
-            {
-                name: "Num",
-                orderId: "AGENDA_NO",
-                field: "agendaNo",
-                class: "spotcheck-col-agenda-no"
-            },
-            {
-                name: "Committee",
-                orderId: "AGENDA_COMMITTEE",
-                field: "committee",
-                class: "spotcheck-col-agenda-comm"
-            }
-        ]
+    const defaultTypeCols = {
+        BILL: printNoCols,
+        CALENDAR: calCols,
+        AGENDA: agendaNumCols
+    };
+
+    /**
+     * Type/Datasources that use non-default columns
+     */
+    const overrideTypeCols = {
+        AGENDA: {
+            LBDC: agendaWeekCols
+        }
+    };
+
+    /**
+     * Get unique id columns that are used for each content type / data source
+     */
+    $scope.getIdColumns = function (type, datasource) {
+        if (overrideTypeCols.hasOwnProperty(type) && overrideTypeCols[type].hasOwnProperty(datasource)) {
+            return overrideTypeCols[type][datasource];
+        }
+        return defaultTypeCols[type]
     };
 
 
@@ -343,6 +403,10 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
     // show the diff window.
     $scope.showDetailedDiff = function (mismatchList, index) {
         mismatchList[index].diffLoading = true;
+        var dataSource = $scope.datasource.selected.value;
+        var contentType = selectedContentType();
+        var idCols = $scope.getIdColumns(contentType, dataSource);
+        console.log(idCols);
         setTimeout(function () {
             $mdDialog.show({
                 templateUrl: 'mismatchDetailWindow',
@@ -350,8 +414,9 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
                 locals: {
                     mismatchList: mismatchList,
                     index: index,
-                    source: $scope.datasource.selected.value,
-                    contentType: selectedContentType()
+                    source: dataSource,
+                    contentType: contentType,
+                    idCols: idCols
                 }
             });
             mismatchList[index].diffLoading = false;

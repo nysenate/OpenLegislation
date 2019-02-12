@@ -22,7 +22,7 @@ public class BillIdTest
         assertEquals("S214", id.getBasePrintNo());
         assertEquals(Version.A, id.getVersion());
 
-        id = new BillId("S0002143", 2013, "a");
+        id = new BillId("S02143", 2013, "a");
         assertEquals("S2143", id.getBasePrintNo());
         assertEquals(2013, id.getSession().getYear());
         assertEquals(Version.A, id.getVersion());

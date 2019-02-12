@@ -19,9 +19,6 @@ SET row_security = off;
 
 CREATE SCHEMA master;
 
-
-ALTER SCHEMA master OWNER TO postgres;
-
 --
 -- Name: SCHEMA master; Type: COMMENT; Schema: -; Owner: postgres
 --
@@ -84,8 +81,6 @@ CREATE TYPE cmt AS ENUM (
 );
 
 
-ALTER TYPE cmt OWNER TO postgres;
-
 --
 -- Name: committee_member_title; Type: TYPE; Schema: master; Owner: postgres
 --
@@ -96,8 +91,6 @@ CREATE TYPE committee_member_title AS ENUM (
     'member'
 );
 
-
-ALTER TYPE committee_member_title OWNER TO postgres;
 
 --
 -- Name: daybreak_file_type; Type: TYPE; Schema: master; Owner: postgres
@@ -111,8 +104,6 @@ CREATE TYPE daybreak_file_type AS ENUM (
     'assembly_high'
 );
 
-
-ALTER TYPE daybreak_file_type OWNER TO postgres;
 
 --
 -- Name: sobi_fragment_type; Type: TYPE; Schema: master; Owner: postgres
@@ -129,8 +120,6 @@ CREATE TYPE sobi_fragment_type AS ENUM (
 );
 
 
-ALTER TYPE sobi_fragment_type OWNER TO postgres;
-
 --
 -- Name: sponsor_type; Type: TYPE; Schema: master; Owner: postgres
 --
@@ -141,8 +130,6 @@ CREATE TYPE sponsor_type AS ENUM (
 );
 
 
-ALTER TYPE sponsor_type OWNER TO postgres;
-
 --
 -- Name: veto_type; Type: TYPE; Schema: master; Owner: postgres
 --
@@ -152,8 +139,6 @@ CREATE TYPE veto_type AS ENUM (
     'line_item'
 );
 
-
-ALTER TYPE veto_type OWNER TO postgres;
 
 --
 -- Name: vote_code; Type: TYPE; Schema: master; Owner: postgres
@@ -169,8 +154,6 @@ CREATE TYPE vote_code AS ENUM (
 );
 
 
-ALTER TYPE vote_code OWNER TO postgres;
-
 --
 -- Name: vote_type; Type: TYPE; Schema: master; Owner: postgres
 --
@@ -180,8 +163,6 @@ CREATE TYPE vote_type AS ENUM (
     'committee'
 );
 
-
-ALTER TYPE vote_type OWNER TO postgres;
 
 SET search_path = public, pg_catalog;
 
@@ -195,8 +176,6 @@ CREATE TYPE chamber AS ENUM (
 );
 
 
-ALTER TYPE chamber OWNER TO postgres;
-
 --
 -- Name: committee_member_title; Type: TYPE; Schema: public; Owner: postgres
 --
@@ -207,8 +186,6 @@ CREATE TYPE committee_member_title AS ENUM (
     'member'
 );
 
-
-ALTER TYPE committee_member_title OWNER TO postgres;
 
 SET search_path = master, pg_catalog;
 
@@ -276,8 +253,6 @@ BEGIN
   END IF;
 END;$$;
 
-
-ALTER FUNCTION master.log_agenda_updates() OWNER TO postgres;
 
 --
 -- Name: log_bill_updates(); Type: FUNCTION; Schema: master; Owner: postgres
@@ -352,8 +327,6 @@ BEGIN
 END;$$;
 
 
-ALTER FUNCTION master.log_bill_updates() OWNER TO postgres;
-
 --
 -- Name: log_calendar_updates(); Type: FUNCTION; Schema: master; Owner: postgres
 --
@@ -426,8 +399,6 @@ BEGIN
 END;$$;
 
 
-ALTER FUNCTION master.log_calendar_updates() OWNER TO postgres;
-
 --
 -- Name: log_law_updates(); Type: FUNCTION; Schema: master; Owner: postgres
 --
@@ -490,8 +461,6 @@ BEGIN
 END;$$;
 
 
-ALTER FUNCTION master.log_law_updates() OWNER TO postgres;
-
 SET search_path = public, pg_catalog;
 
 --
@@ -502,8 +471,6 @@ CREATE FUNCTION date_to_search_str(d date) RETURNS text
     LANGUAGE sql
     AS $$SELECT to_char(d, 'YYYY MM DD FMMM MON MONTH FMDD');$$;
 
-
-ALTER FUNCTION public.date_to_search_str(d date) OWNER TO postgres;
 
 --
 -- Name: FUNCTION date_to_search_str(d date); Type: COMMENT; Schema: public; Owner: postgres
@@ -579,8 +546,6 @@ ALTER TEXT SEARCH CONFIGURATION openleg_fts_config
     ADD MAPPING FOR uint WITH simple;
 
 
-ALTER TEXT SEARCH CONFIGURATION openleg_fts_config OWNER TO postgres;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -599,8 +564,6 @@ CREATE TABLE active_list_reference (
     reference_date timestamp without time zone
 );
 
-
-ALTER TABLE active_list_reference OWNER TO postgres;
 
 --
 -- Name: TABLE active_list_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -623,8 +586,6 @@ CREATE TABLE active_list_reference_entry (
 );
 
 
-ALTER TABLE active_list_reference_entry OWNER TO postgres;
-
 --
 -- Name: TABLE active_list_reference_entry; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -643,8 +604,6 @@ CREATE SEQUENCE active_list_reference_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE active_list_reference_id_seq OWNER TO postgres;
 
 --
 -- Name: active_list_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -666,8 +625,6 @@ CREATE TABLE agenda (
     last_fragment_id text
 );
 
-
-ALTER TABLE agenda OWNER TO postgres;
 
 --
 -- Name: TABLE agenda; Type: COMMENT; Schema: master; Owner: postgres
@@ -695,8 +652,6 @@ CREATE TABLE agenda_alert_info_committee (
     prod_checked boolean DEFAULT false NOT NULL
 );
 
-
-ALTER TABLE agenda_alert_info_committee OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_alert_info_committee; Type: COMMENT; Schema: master; Owner: postgres
@@ -794,8 +749,6 @@ CREATE SEQUENCE agenda_alert_info_committee_id_seq
     CACHE 1;
 
 
-ALTER TABLE agenda_alert_info_committee_id_seq OWNER TO postgres;
-
 --
 -- Name: agenda_alert_info_committee_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -816,8 +769,6 @@ CREATE TABLE agenda_alert_info_committee_item (
 );
 
 
-ALTER TABLE agenda_alert_info_committee_item OWNER TO postgres;
-
 --
 -- Name: COLUMN agenda_alert_info_committee_item.alert_info_committee_id; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -837,8 +788,6 @@ CREATE SEQUENCE agenda_change_log_seq
     CACHE 1;
 
 
-ALTER TABLE agenda_change_log_seq OWNER TO postgres;
-
 --
 -- Name: agenda_change_log; Type: TABLE; Schema: master; Owner: postgres
 --
@@ -855,8 +804,6 @@ CREATE TABLE agenda_change_log (
     published_date_time timestamp without time zone
 );
 
-
-ALTER TABLE agenda_change_log OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_change_log; Type: COMMENT; Schema: master; Owner: postgres
@@ -880,8 +827,6 @@ CREATE TABLE agenda_info_addendum (
     week_of date
 );
 
-
-ALTER TABLE agenda_info_addendum OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_info_addendum; Type: COMMENT; Schema: master; Owner: postgres
@@ -910,8 +855,6 @@ CREATE TABLE agenda_info_committee (
 );
 
 
-ALTER TABLE agenda_info_committee OWNER TO postgres;
-
 --
 -- Name: TABLE agenda_info_committee; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -930,8 +873,6 @@ CREATE SEQUENCE agenda_info_committee_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE agenda_info_committee_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_info_committee_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -956,8 +897,6 @@ CREATE TABLE agenda_info_committee_item (
 );
 
 
-ALTER TABLE agenda_info_committee_item OWNER TO postgres;
-
 --
 -- Name: TABLE agenda_info_committee_item; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -976,8 +915,6 @@ CREATE SEQUENCE agenda_info_committee_item_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE agenda_info_committee_item_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_info_committee_item_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1001,8 +938,6 @@ CREATE TABLE agenda_vote_addendum (
 );
 
 
-ALTER TABLE agenda_vote_addendum OWNER TO postgres;
-
 --
 -- Name: TABLE agenda_vote_addendum; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1022,8 +957,6 @@ CREATE SEQUENCE agenda_vote_commitee_id_seq
     CACHE 1;
 
 
-ALTER TABLE agenda_vote_commitee_id_seq OWNER TO postgres;
-
 --
 -- Name: agenda_vote_committee; Type: TABLE; Schema: master; Owner: postgres
 --
@@ -1041,8 +974,6 @@ CREATE TABLE agenda_vote_committee (
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
-
-ALTER TABLE agenda_vote_committee OWNER TO postgres;
 
 --
 -- Name: TABLE agenda_vote_committee; Type: COMMENT; Schema: master; Owner: postgres
@@ -1069,8 +1000,6 @@ CREATE TABLE agenda_vote_committee_attend (
 );
 
 
-ALTER TABLE agenda_vote_committee_attend OWNER TO postgres;
-
 --
 -- Name: TABLE agenda_vote_committee_attend; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1089,8 +1018,6 @@ CREATE SEQUENCE agenda_vote_committee_attend_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE agenda_vote_committee_attend_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_vote_committee_attend_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1116,8 +1043,6 @@ CREATE TABLE agenda_vote_committee_vote (
 );
 
 
-ALTER TABLE agenda_vote_committee_vote OWNER TO postgres;
-
 --
 -- Name: TABLE agenda_vote_committee_vote; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1136,8 +1061,6 @@ CREATE SEQUENCE agenda_vote_committee_vote_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE agenda_vote_committee_vote_id_seq OWNER TO postgres;
 
 --
 -- Name: agenda_vote_committee_vote_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1160,8 +1083,6 @@ CREATE TABLE alert_active_list_entry_reference (
     last_file text
 );
 
-
-ALTER TABLE alert_active_list_entry_reference OWNER TO postgres;
 
 --
 -- Name: TABLE alert_active_list_entry_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -1189,8 +1110,6 @@ CREATE TABLE alert_active_list_reference (
 );
 
 
-ALTER TABLE alert_active_list_reference OWNER TO postgres;
-
 --
 -- Name: TABLE alert_active_list_reference; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1209,8 +1128,6 @@ CREATE SEQUENCE alert_active_list_reference_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE alert_active_list_reference_id_seq OWNER TO postgres;
 
 --
 -- Name: alert_active_list_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1232,8 +1149,6 @@ CREATE TABLE alert_calendar_file (
     archived boolean DEFAULT false NOT NULL
 );
 
-
-ALTER TABLE alert_calendar_file OWNER TO postgres;
 
 --
 -- Name: COLUMN alert_calendar_file.processed_date_time; Type: COMMENT; Schema: master; Owner: postgres
@@ -1286,8 +1201,6 @@ CREATE TABLE alert_calendar_reference (
 );
 
 
-ALTER TABLE alert_calendar_reference OWNER TO postgres;
-
 --
 -- Name: TABLE alert_calendar_reference; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1329,8 +1242,6 @@ CREATE TABLE alert_supplemental_entry_reference (
     last_file text
 );
 
-
-ALTER TABLE alert_supplemental_entry_reference OWNER TO postgres;
 
 --
 -- Name: TABLE alert_supplemental_entry_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -1379,8 +1290,6 @@ CREATE SEQUENCE alert_supplemental_entry_reference_id_seq
     CACHE 1;
 
 
-ALTER TABLE alert_supplemental_entry_reference_id_seq OWNER TO postgres;
-
 --
 -- Name: alert_supplemental_entry_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -1406,8 +1315,6 @@ CREATE TABLE calendar_supplemental (
 );
 
 
-ALTER TABLE calendar_supplemental OWNER TO postgres;
-
 --
 -- Name: TABLE calendar_supplemental; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1426,8 +1333,6 @@ CREATE SEQUENCE alert_supplemental_reference_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE alert_supplemental_reference_id_seq OWNER TO postgres;
 
 --
 -- Name: alert_supplemental_reference_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -1453,8 +1358,6 @@ CREATE TABLE alert_supplemental_reference (
     last_file text
 );
 
-
-ALTER TABLE alert_supplemental_reference OWNER TO postgres;
 
 --
 -- Name: TABLE alert_supplemental_reference; Type: COMMENT; Schema: master; Owner: postgres
@@ -1490,8 +1393,6 @@ CREATE TABLE bill (
     reprint_no text
 );
 
-
-ALTER TABLE bill OWNER TO postgres;
 
 --
 -- Name: TABLE bill; Type: COMMENT; Schema: master; Owner: postgres
@@ -1660,8 +1561,6 @@ CREATE TABLE bill_amendment (
 );
 
 
-ALTER TABLE bill_amendment OWNER TO postgres;
-
 --
 -- Name: TABLE bill_amendment; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1707,8 +1606,6 @@ CREATE TABLE bill_amendment_action (
 );
 
 
-ALTER TABLE bill_amendment_action OWNER TO postgres;
-
 --
 -- Name: TABLE bill_amendment_action; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1731,8 +1628,6 @@ CREATE TABLE bill_amendment_cosponsor (
 );
 
 
-ALTER TABLE bill_amendment_cosponsor OWNER TO postgres;
-
 --
 -- Name: TABLE bill_amendment_cosponsor; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1754,8 +1649,6 @@ CREATE TABLE bill_amendment_multi_sponsor (
     last_fragment_id text
 );
 
-
-ALTER TABLE bill_amendment_multi_sponsor OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_multi_sponsor; Type: COMMENT; Schema: master; Owner: postgres
@@ -1780,8 +1673,6 @@ CREATE TABLE bill_amendment_publish_status (
     last_fragment_id text
 );
 
-
-ALTER TABLE bill_amendment_publish_status OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_publish_status; Type: COMMENT; Schema: master; Owner: postgres
@@ -1869,8 +1760,6 @@ CREATE TABLE bill_amendment_same_as (
 );
 
 
-ALTER TABLE bill_amendment_same_as OWNER TO postgres;
-
 --
 -- Name: TABLE bill_amendment_same_as; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -1898,8 +1787,6 @@ CREATE TABLE bill_amendment_vote_info (
     last_fragment_id text
 );
 
-
-ALTER TABLE bill_amendment_vote_info OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_vote_info; Type: COMMENT; Schema: master; Owner: postgres
@@ -1955,8 +1842,6 @@ CREATE SEQUENCE bill_amendment_vote_id_seq
     CACHE 1;
 
 
-ALTER TABLE bill_amendment_vote_id_seq OWNER TO postgres;
-
 --
 -- Name: bill_amendment_vote_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -1978,8 +1863,6 @@ CREATE TABLE bill_amendment_vote_roll (
     last_fragment_id text
 );
 
-
-ALTER TABLE bill_amendment_vote_roll OWNER TO postgres;
 
 --
 -- Name: TABLE bill_amendment_vote_roll; Type: COMMENT; Schema: master; Owner: postgres
@@ -2007,8 +1890,6 @@ CREATE TABLE bill_approval (
 );
 
 
-ALTER TABLE bill_approval OWNER TO postgres;
-
 --
 -- Name: TABLE bill_approval; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2028,8 +1909,6 @@ CREATE SEQUENCE bill_change_log_seq
     CACHE 1;
 
 
-ALTER TABLE bill_change_log_seq OWNER TO postgres;
-
 --
 -- Name: bill_change_log; Type: TABLE; Schema: master; Owner: postgres
 --
@@ -2046,8 +1925,6 @@ CREATE TABLE bill_change_log (
     published_date_time timestamp without time zone
 );
 
-
-ALTER TABLE bill_change_log OWNER TO postgres;
 
 --
 -- Name: TABLE bill_change_log; Type: COMMENT; Schema: master; Owner: postgres
@@ -2070,8 +1947,6 @@ CREATE TABLE bill_committee (
     last_fragment_id text
 );
 
-
-ALTER TABLE bill_committee OWNER TO postgres;
 
 --
 -- Name: TABLE bill_committee; Type: COMMENT; Schema: master; Owner: postgres
@@ -2106,8 +1981,6 @@ CREATE TABLE bill_milestone (
 );
 
 
-ALTER TABLE bill_milestone OWNER TO postgres;
-
 --
 -- Name: TABLE bill_milestone; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2130,8 +2003,6 @@ CREATE TABLE bill_previous_version (
 );
 
 
-ALTER TABLE bill_previous_version OWNER TO postgres;
-
 --
 -- Name: TABLE bill_previous_version; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2151,8 +2022,6 @@ CREATE TABLE bill_scrape_queue (
 );
 
 
-ALTER TABLE bill_scrape_queue OWNER TO postgres;
-
 --
 -- Name: bill_sponsor; Type: TABLE; Schema: master; Owner: postgres
 --
@@ -2167,8 +2036,6 @@ CREATE TABLE bill_sponsor (
     last_fragment_id text
 );
 
-
-ALTER TABLE bill_sponsor OWNER TO postgres;
 
 --
 -- Name: TABLE bill_sponsor; Type: COMMENT; Schema: master; Owner: postgres
@@ -2191,8 +2058,6 @@ CREATE TABLE bill_sponsor_additional (
 );
 
 
-ALTER TABLE bill_sponsor_additional OWNER TO postgres;
-
 --
 -- Name: TABLE bill_sponsor_additional; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2209,8 +2074,6 @@ CREATE TABLE IF NOT EXISTS bill_scrape_file (
   is_pending_processing boolean DEFAULT true NOT NULL,
   CONSTRAINT bill_scrape_file_pk PRIMARY KEY(file_name)
 );
-
-ALTER TABLE bill_scrape_file OWNER TO postgres;
 
 COMMENT ON COLUMN master.bill_scrape_file.file_path IS 'The directory where this file is located';
 
@@ -2243,8 +2106,6 @@ CREATE TABLE bill_veto (
 );
 
 
-ALTER TABLE bill_veto OWNER TO postgres;
-
 --
 -- Name: TABLE bill_veto; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2264,8 +2125,6 @@ CREATE SEQUENCE bill_veto_year_seq
     CACHE 1;
 
 
-ALTER TABLE bill_veto_year_seq OWNER TO postgres;
-
 --
 -- Name: calendar; Type: TABLE; Schema: master; Owner: postgres
 --
@@ -2279,8 +2138,6 @@ CREATE TABLE calendar (
     last_fragment_id text
 );
 
-
-ALTER TABLE calendar OWNER TO postgres;
 
 --
 -- Name: TABLE calendar; Type: COMMENT; Schema: master; Owner: postgres
@@ -2322,8 +2179,6 @@ CREATE TABLE calendar_active_list (
 );
 
 
-ALTER TABLE calendar_active_list OWNER TO postgres;
-
 --
 -- Name: TABLE calendar_active_list; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2346,8 +2201,6 @@ CREATE TABLE calendar_active_list_entry (
 );
 
 
-ALTER TABLE calendar_active_list_entry OWNER TO postgres;
-
 --
 -- Name: TABLE calendar_active_list_entry; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2366,8 +2219,6 @@ CREATE SEQUENCE calendar_active_list_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE calendar_active_list_id_seq OWNER TO postgres;
 
 --
 -- Name: calendar_active_list_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2388,8 +2239,6 @@ CREATE SEQUENCE calendar_change_log_seq
     CACHE 1;
 
 
-ALTER TABLE calendar_change_log_seq OWNER TO postgres;
-
 --
 -- Name: calendar_change_log; Type: TABLE; Schema: master; Owner: postgres
 --
@@ -2406,8 +2255,6 @@ CREATE TABLE calendar_change_log (
     published_date_time timestamp without time zone
 );
 
-
-ALTER TABLE calendar_change_log OWNER TO postgres;
 
 --
 -- Name: TABLE calendar_change_log; Type: COMMENT; Schema: master; Owner: postgres
@@ -2436,8 +2283,6 @@ CREATE TABLE calendar_supplemental_entry (
     last_fragment_id text
 );
 
-
-ALTER TABLE calendar_supplemental_entry OWNER TO postgres;
 
 --
 -- Name: TABLE calendar_supplemental_entry; Type: COMMENT; Schema: master; Owner: postgres
@@ -2486,8 +2331,6 @@ CREATE SEQUENCE calendar_supplemental_entry_id_seq
     CACHE 1;
 
 
-ALTER TABLE calendar_supplemental_entry_id_seq OWNER TO postgres;
-
 --
 -- Name: calendar_supplemental_entry_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -2506,8 +2349,6 @@ CREATE SEQUENCE calendar_supplemental_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE calendar_supplemental_id_seq OWNER TO postgres;
 
 --
 -- Name: calendar_supplemental_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2529,8 +2370,6 @@ CREATE TABLE committee (
     full_name text
 );
 
-
-ALTER TABLE committee OWNER TO postgres;
 
 --
 -- Name: TABLE committee; Type: COMMENT; Schema: master; Owner: postgres
@@ -2558,8 +2397,6 @@ CREATE SEQUENCE committee_id_seq
     CACHE 1;
 
 
-ALTER TABLE committee_id_seq OWNER TO postgres;
-
 --
 -- Name: committee_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -2583,8 +2420,6 @@ CREATE TABLE committee_member (
     chamber public.chamber NOT NULL
 );
 
-
-ALTER TABLE committee_member OWNER TO postgres;
 
 --
 -- Name: TABLE committee_member; Type: COMMENT; Schema: master; Owner: postgres
@@ -2612,8 +2447,6 @@ CREATE SEQUENCE committee_member_id_seq
     CACHE 1;
 
 
-ALTER TABLE committee_member_id_seq OWNER TO postgres;
-
 --
 -- Name: committee_member_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -2640,8 +2473,6 @@ CREATE TABLE committee_version (
     last_fragment_id text
 );
 
-
-ALTER TABLE committee_version OWNER TO postgres;
 
 --
 -- Name: TABLE committee_version; Type: COMMENT; Schema: master; Owner: postgres
@@ -2683,8 +2514,6 @@ CREATE SEQUENCE committee_version_id_seq
     CACHE 1;
 
 
-ALTER TABLE committee_version_id_seq OWNER TO postgres;
-
 --
 -- Name: committee_version_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -2709,8 +2538,6 @@ CREATE TABLE data_process_run_unit (
 );
 
 
-ALTER TABLE data_process_run_unit OWNER TO postgres;
-
 --
 -- Name: TABLE data_process_run_unit; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2729,8 +2556,6 @@ CREATE SEQUENCE data_process_log_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE data_process_log_id_seq OWNER TO postgres;
 
 --
 -- Name: data_process_log_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2751,8 +2576,6 @@ CREATE TABLE data_process_run (
     exceptions text
 );
 
-
-ALTER TABLE data_process_run OWNER TO postgres;
 
 --
 -- Name: TABLE data_process_run; Type: COMMENT; Schema: master; Owner: postgres
@@ -2778,8 +2601,6 @@ CREATE TABLE daybreak_bill (
 );
 
 
-ALTER TABLE daybreak_bill OWNER TO postgres;
-
 --
 -- Name: TABLE daybreak_bill; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2802,8 +2623,6 @@ CREATE TABLE daybreak_bill_action (
 );
 
 
-ALTER TABLE daybreak_bill_action OWNER TO postgres;
-
 --
 -- Name: TABLE daybreak_bill_action; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2822,8 +2641,6 @@ CREATE SEQUENCE daybreak_bill_action_sequence_no_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE daybreak_bill_action_sequence_no_seq OWNER TO postgres;
 
 --
 -- Name: daybreak_bill_action_sequence_no_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -2847,8 +2664,6 @@ CREATE TABLE daybreak_bill_amendment (
 );
 
 
-ALTER TABLE daybreak_bill_amendment OWNER TO postgres;
-
 --
 -- Name: TABLE daybreak_bill_amendment; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2869,8 +2684,6 @@ CREATE TABLE daybreak_bill_sponsor (
 );
 
 
-ALTER TABLE daybreak_bill_sponsor OWNER TO postgres;
-
 --
 -- Name: TABLE daybreak_bill_sponsor; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2890,8 +2703,6 @@ CREATE TABLE daybreak_file (
     type daybreak_file_type NOT NULL
 );
 
-
-ALTER TABLE daybreak_file OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_file; Type: COMMENT; Schema: master; Owner: postgres
@@ -2919,8 +2730,6 @@ CREATE TABLE daybreak_fragment (
 );
 
 
-ALTER TABLE daybreak_fragment OWNER TO postgres;
-
 --
 -- Name: TABLE daybreak_fragment; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2946,8 +2755,6 @@ CREATE TABLE daybreak_page_file_entry (
 );
 
 
-ALTER TABLE daybreak_page_file_entry OWNER TO postgres;
-
 --
 -- Name: TABLE daybreak_page_file_entry; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -2965,8 +2772,6 @@ CREATE TABLE daybreak_report (
     checked boolean DEFAULT false NOT NULL
 );
 
-
-ALTER TABLE daybreak_report OWNER TO postgres;
 
 --
 -- Name: TABLE daybreak_report; Type: COMMENT; Schema: master; Owner: postgres
@@ -2991,8 +2796,6 @@ CREATE TABLE law_change_log (
 );
 
 
-ALTER TABLE law_change_log OWNER TO postgres;
-
 --
 -- Name: TABLE law_change_log; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -3011,8 +2814,6 @@ CREATE SEQUENCE law_change_log_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE law_change_log_id_seq OWNER TO postgres;
 
 --
 -- Name: law_change_log_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -3038,8 +2839,6 @@ CREATE TABLE law_document (
     law_file_name text
 );
 
-
-ALTER TABLE law_document OWNER TO postgres;
 
 --
 -- Name: TABLE law_document; Type: COMMENT; Schema: master; Owner: postgres
@@ -3133,8 +2932,6 @@ CREATE TABLE law_file (
 );
 
 
-ALTER TABLE law_file OWNER TO postgres;
-
 --
 -- Name: TABLE law_file; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -3204,8 +3001,6 @@ CREATE TABLE law_info (
 );
 
 
-ALTER TABLE law_info OWNER TO postgres;
-
 --
 -- Name: TABLE law_info; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -3231,8 +3026,6 @@ CREATE TABLE law_tree (
     repealed_date date
 );
 
-
-ALTER TABLE law_tree OWNER TO postgres;
 
 --
 -- Name: TABLE law_tree; Type: COMMENT; Schema: master; Owner: postgres
@@ -3319,8 +3112,6 @@ CREATE TABLE bill_text_alternate_pdf (
 );
 
 
-ALTER TABLE master.bill_text_alternate_pdf OWNER TO postgres;
-
 --
 -- Name: TABLE bill_text_alternate_pdf; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -3333,22 +3124,6 @@ COMMENT ON TABLE bill_text_alternate_pdf IS 'Mapping of urls to redirect to for 
 --
 
 COMMENT ON COLUMN bill_text_alternate_pdf.url_path IS 'Specify protocol for absolute urls';
-
-
---
--- Data for Name: bill_text_alternate_pdf; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-INSERT INTO bill_text_alternate_pdf VALUES ('S6401', 2015, ' ', true, '/static/pdf/S6401-A9001.pdf');
-INSERT INTO bill_text_alternate_pdf VALUES ('A9001', 2015, ' ', true, '/static/pdf/S6401-A9001.pdf');
-INSERT INTO bill_text_alternate_pdf VALUES ('S6402', 2015, ' ', true, '/static/pdf/S6402-A9002.pdf');
-INSERT INTO bill_text_alternate_pdf VALUES ('A9002', 2015, ' ', true, '/static/pdf/S6402-A9002.pdf');
-INSERT INTO bill_text_alternate_pdf VALUES ('S6403', 2015, ' ', true, '/static/pdf/S6403-A9003.pdf');
-INSERT INTO bill_text_alternate_pdf VALUES ('A9003', 2015, ' ', true, '/static/pdf/S6403-A9003.pdf');
-INSERT INTO bill_text_alternate_pdf VALUES ('S6404', 2015, ' ', true, '/static/pdf/S6404-A9004.pdf');
-INSERT INTO bill_text_alternate_pdf VALUES ('A9004', 2015, ' ', true, '/static/pdf/S6404-A9004.pdf');
-INSERT INTO bill_text_alternate_pdf VALUES ('S6400', 2015, ' ', true, '/static/pdf/S6400-A9000.pdf');
-INSERT INTO bill_text_alternate_pdf VALUES ('A9000', 2015, ' ', true, '/static/pdf/S6400-A9000.pdf');
 
 
 --
@@ -3370,8 +3145,6 @@ CREATE TABLE notification (
     message text
 );
 
-
-ALTER TABLE notification OWNER TO postgres;
 
 --
 -- Name: TABLE notification; Type: COMMENT; Schema: master; Owner: postgres
@@ -3424,8 +3197,6 @@ CREATE TABLE notification_digest_subscription (
     "full" boolean DEFAULT false NOT NULL
 );
 
-
-ALTER TABLE notification_digest_subscription OWNER TO postgres;
 
 --
 -- Name: TABLE notification_digest_subscription; Type: COMMENT; Schema: master; Owner: postgres
@@ -3502,8 +3273,6 @@ CREATE SEQUENCE notification_digest_subscription_id_seq
     CACHE 1;
 
 
-ALTER TABLE notification_digest_subscription_id_seq OWNER TO postgres;
-
 --
 -- Name: notification_digest_subscription_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -3522,8 +3291,6 @@ CREATE SEQUENCE notification_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE notification_id_seq OWNER TO postgres;
 
 --
 -- Name: notification_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
@@ -3544,8 +3311,6 @@ CREATE TABLE notification_subscription (
     address text
 );
 
-
-ALTER TABLE notification_subscription OWNER TO postgres;
 
 --
 -- Name: TABLE notification_subscription; Type: COMMENT; Schema: master; Owner: postgres
@@ -3594,8 +3359,6 @@ CREATE SEQUENCE notification_subscription_id_seq
     CACHE 1;
 
 
-ALTER TABLE notification_subscription_id_seq OWNER TO postgres;
-
 --
 -- Name: notification_subscription_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -3623,8 +3386,6 @@ CREATE TABLE sobi_fragment (
     manual_fix_notes text
 );
 
-
-ALTER TABLE sobi_fragment OWNER TO postgres;
 
 --
 -- Name: TABLE sobi_fragment; Type: COMMENT; Schema: master; Owner: postgres
@@ -3743,8 +3504,6 @@ CREATE VIEW psf AS
   WHERE (sobi_fragment.pending_processing = true);
 
 
-ALTER TABLE psf OWNER TO postgres;
-
 --
 -- Name: VIEW psf; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -3769,8 +3528,6 @@ CREATE TABLE public_hearing (
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
-
-ALTER TABLE public_hearing OWNER TO postgres;
 
 --
 -- Name: TABLE public_hearing; Type: COMMENT; Schema: master; Owner: postgres
@@ -3839,8 +3596,6 @@ CREATE TABLE public_hearing_committee (
 );
 
 
-ALTER TABLE public_hearing_committee OWNER TO postgres;
-
 --
 -- Name: COLUMN public_hearing_committee.committee_name; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -3875,8 +3630,6 @@ CREATE TABLE public_hearing_file (
     archived boolean DEFAULT false NOT NULL
 );
 
-
-ALTER TABLE public_hearing_file OWNER TO postgres;
 
 --
 -- Name: TABLE public_hearing_file; Type: COMMENT; Schema: master; Owner: postgres
@@ -3940,8 +3693,6 @@ CREATE TABLE sobi_file (
 );
 
 
-ALTER TABLE sobi_file OWNER TO postgres;
-
 --
 -- Name: TABLE sobi_file; Type: COMMENT; Schema: master; Owner: postgres
 --
@@ -3996,8 +3747,6 @@ CREATE SEQUENCE sobi_fragment_process_id_seq
     CACHE 1;
 
 
-ALTER TABLE sobi_fragment_process_id_seq OWNER TO postgres;
-
 --
 -- Name: sobi_fragment_process_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -4018,8 +3767,6 @@ CREATE TABLE spotcheck_report (
     notes text DEFAULT ''::text
 );
 
-
-ALTER TABLE spotcheck_report OWNER TO postgres;
 
 --
 -- Name: TABLE spotcheck_report; Type: COMMENT; Schema: master; Owner: postgres
@@ -4047,8 +3794,6 @@ CREATE SEQUENCE spotcheck_report_id_seq
     CACHE 1;
 
 
-ALTER TABLE spotcheck_report_id_seq OWNER TO postgres;
-
 --
 -- Name: spotcheck_report_id_seq; Type: SEQUENCE OWNED BY; Schema: master; Owner: postgres
 --
@@ -4067,8 +3812,6 @@ CREATE SEQUENCE spotcheck_mismatch_mismatch_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE spotcheck_mismatch_mismatch_id_seq OWNER TO postgres;
 
 
 --
@@ -4096,8 +3839,6 @@ CREATE TABLE spotcheck_mismatch (
     created_date_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
-
-ALTER TABLE spotcheck_mismatch OWNER TO postgres;
 
 
 --
@@ -4134,8 +3875,6 @@ CREATE TABLE transcript (
     transcript_filename text NOT NULL
 );
 
-
-ALTER TABLE transcript OWNER TO postgres;
 
 --
 -- Name: TABLE transcript; Type: COMMENT; Schema: master; Owner: postgres
@@ -4199,8 +3938,6 @@ CREATE TABLE transcript_file (
     archived boolean DEFAULT false NOT NULL
 );
 
-
-ALTER TABLE transcript_file OWNER TO postgres;
 
 --
 -- Name: TABLE transcript_file; Type: COMMENT; Schema: master; Owner: postgres
@@ -4267,8 +4004,6 @@ CREATE TABLE adminuser (
 );
 
 
-ALTER TABLE adminuser OWNER TO postgres;
-
 --
 -- Name: TABLE adminuser; Type: COMMENT; Schema: public; Owner: postgres
 --
@@ -4332,8 +4067,6 @@ CREATE TABLE apiuser (
     reg_token text NOT NULL
 );
 
-
-ALTER TABLE apiuser OWNER TO postgres;
 
 --
 -- Name: TABLE apiuser; Type: COMMENT; Schema: public; Owner: postgres
@@ -4402,8 +4135,6 @@ CREATE TABLE apiuser_roles (
 );
 
 
-ALTER TABLE apiuser_roles OWNER TO postgres;
-
 --
 -- Name: TABLE apiuser_roles; Type: COMMENT; Schema: public; Owner: postgres
 --
@@ -4437,8 +4168,6 @@ CREATE SEQUENCE apiuser_roles_id_seq
     CACHE 1;
 
 
-ALTER TABLE apiuser_roles_id_seq OWNER TO postgres;
-
 --
 -- Name: apiuser_roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -4458,8 +4187,6 @@ CREATE TABLE member (
     full_name character varying
 );
 
-
-ALTER TABLE member OWNER TO postgres;
 
 --
 -- Name: TABLE member; Type: COMMENT; Schema: public; Owner: postgres
@@ -4515,8 +4242,6 @@ CREATE SEQUENCE member_id_seq
     CACHE 1;
 
 
-ALTER TABLE member_id_seq OWNER TO postgres;
-
 --
 -- Name: member_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -4535,8 +4260,6 @@ CREATE SEQUENCE member_person_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE member_person_id_seq OWNER TO postgres;
 
 --
 -- Name: member_person_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -4562,8 +4285,6 @@ CREATE TABLE person (
     img_name text
 );
 
-
-ALTER TABLE person OWNER TO postgres;
 
 --
 -- Name: TABLE person; Type: COMMENT; Schema: public; Owner: postgres
@@ -4640,8 +4361,6 @@ CREATE SEQUENCE person_id_seq
     CACHE 1;
 
 
-ALTER TABLE person_id_seq OWNER TO postgres;
-
 --
 -- Name: person_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -4663,8 +4382,6 @@ CREATE TABLE request (
     request_id integer NOT NULL
 );
 
-
-ALTER TABLE request OWNER TO postgres;
 
 --
 -- Name: TABLE request; Type: COMMENT; Schema: public; Owner: postgres
@@ -4727,8 +4444,6 @@ CREATE SEQUENCE request_request_id_seq
     CACHE 1;
 
 
-ALTER TABLE request_request_id_seq OWNER TO postgres;
-
 --
 -- Name: request_request_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -4748,8 +4463,6 @@ CREATE TABLE response (
     process_time numeric
 );
 
-
-ALTER TABLE response OWNER TO postgres;
 
 --
 -- Name: TABLE response; Type: COMMENT; Schema: public; Owner: postgres
@@ -4772,8 +4485,6 @@ CREATE TABLE session_member (
     alternate boolean DEFAULT false
 );
 
-
-ALTER TABLE session_member OWNER TO postgres;
 
 --
 -- Name: TABLE session_member; Type: COMMENT; Schema: public; Owner: postgres
@@ -4799,8 +4510,6 @@ CREATE SEQUENCE session_member_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE session_member_id_seq OWNER TO postgres;
 
 --
 -- Name: session_member_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -6955,910 +6664,6 @@ ALTER TABLE ONLY response
 
 ALTER TABLE ONLY session_member
     ADD CONSTRAINT session_member_member_id_fkey FOREIGN KEY (member_id) REFERENCES member(id);
-
-
---
--- Name: master; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA master FROM PUBLIC;
-REVOKE ALL ON SCHEMA master FROM postgres;
-GRANT ALL ON SCHEMA master TO postgres;
-
-
---
--- Name: public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
-SET search_path = master, pg_catalog;
-
---
--- Name: active_list_reference; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE active_list_reference FROM PUBLIC;
-REVOKE ALL ON TABLE active_list_reference FROM postgres;
-GRANT ALL ON TABLE active_list_reference TO postgres;
-
-
---
--- Name: active_list_reference_entry; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE active_list_reference_entry FROM PUBLIC;
-REVOKE ALL ON TABLE active_list_reference_entry FROM postgres;
-GRANT ALL ON TABLE active_list_reference_entry TO postgres;
-
-
---
--- Name: active_list_reference_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE active_list_reference_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE active_list_reference_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE active_list_reference_id_seq TO postgres;
-
-
---
--- Name: agenda; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda FROM PUBLIC;
-REVOKE ALL ON TABLE agenda FROM postgres;
-GRANT ALL ON TABLE agenda TO postgres;
-
-
---
--- Name: agenda_change_log_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE agenda_change_log_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE agenda_change_log_seq FROM postgres;
-GRANT ALL ON SEQUENCE agenda_change_log_seq TO postgres;
-
-
---
--- Name: agenda_change_log; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_change_log FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_change_log FROM postgres;
-GRANT ALL ON TABLE agenda_change_log TO postgres;
-
-
---
--- Name: agenda_info_addendum; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_info_addendum FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_info_addendum FROM postgres;
-GRANT ALL ON TABLE agenda_info_addendum TO postgres;
-
-
---
--- Name: agenda_info_committee; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_info_committee FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_info_committee FROM postgres;
-GRANT ALL ON TABLE agenda_info_committee TO postgres;
-
-
---
--- Name: agenda_info_committee_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE agenda_info_committee_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE agenda_info_committee_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE agenda_info_committee_id_seq TO postgres;
-
-
---
--- Name: agenda_info_committee_item; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_info_committee_item FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_info_committee_item FROM postgres;
-GRANT ALL ON TABLE agenda_info_committee_item TO postgres;
-
-
---
--- Name: agenda_info_committee_item_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE agenda_info_committee_item_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE agenda_info_committee_item_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE agenda_info_committee_item_id_seq TO postgres;
-
-
---
--- Name: agenda_vote_addendum; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_vote_addendum FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_vote_addendum FROM postgres;
-GRANT ALL ON TABLE agenda_vote_addendum TO postgres;
-
-
---
--- Name: agenda_vote_commitee_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE agenda_vote_commitee_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE agenda_vote_commitee_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE agenda_vote_commitee_id_seq TO postgres;
-
-
---
--- Name: agenda_vote_committee; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_vote_committee FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_vote_committee FROM postgres;
-GRANT ALL ON TABLE agenda_vote_committee TO postgres;
-
-
---
--- Name: agenda_vote_committee_attend; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_vote_committee_attend FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_vote_committee_attend FROM postgres;
-GRANT ALL ON TABLE agenda_vote_committee_attend TO postgres;
-
-
---
--- Name: agenda_vote_committee_attend_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE agenda_vote_committee_attend_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE agenda_vote_committee_attend_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE agenda_vote_committee_attend_id_seq TO postgres;
-
-
---
--- Name: agenda_vote_committee_vote; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE agenda_vote_committee_vote FROM PUBLIC;
-REVOKE ALL ON TABLE agenda_vote_committee_vote FROM postgres;
-GRANT ALL ON TABLE agenda_vote_committee_vote TO postgres;
-
-
---
--- Name: agenda_vote_committee_vote_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE agenda_vote_committee_vote_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE agenda_vote_committee_vote_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE agenda_vote_committee_vote_id_seq TO postgres;
-
-
---
--- Name: calendar_supplemental; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE calendar_supplemental FROM PUBLIC;
-REVOKE ALL ON TABLE calendar_supplemental FROM postgres;
-GRANT ALL ON TABLE calendar_supplemental TO postgres;
-
-
---
--- Name: bill; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill FROM PUBLIC;
-REVOKE ALL ON TABLE bill FROM postgres;
-GRANT ALL ON TABLE bill TO postgres;
-
-
---
--- Name: bill_amendment; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_amendment FROM PUBLIC;
-REVOKE ALL ON TABLE bill_amendment FROM postgres;
-GRANT ALL ON TABLE bill_amendment TO postgres;
-
-
---
--- Name: bill_amendment_action; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_amendment_action FROM PUBLIC;
-REVOKE ALL ON TABLE bill_amendment_action FROM postgres;
-GRANT ALL ON TABLE bill_amendment_action TO postgres;
-
-
---
--- Name: bill_amendment_cosponsor; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_amendment_cosponsor FROM PUBLIC;
-REVOKE ALL ON TABLE bill_amendment_cosponsor FROM postgres;
-GRANT ALL ON TABLE bill_amendment_cosponsor TO postgres;
-
-
---
--- Name: bill_amendment_multi_sponsor; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_amendment_multi_sponsor FROM PUBLIC;
-REVOKE ALL ON TABLE bill_amendment_multi_sponsor FROM postgres;
-GRANT ALL ON TABLE bill_amendment_multi_sponsor TO postgres;
-
-
---
--- Name: bill_amendment_publish_status; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_amendment_publish_status FROM PUBLIC;
-REVOKE ALL ON TABLE bill_amendment_publish_status FROM postgres;
-GRANT ALL ON TABLE bill_amendment_publish_status TO postgres;
-
-
---
--- Name: bill_amendment_same_as; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_amendment_same_as FROM PUBLIC;
-REVOKE ALL ON TABLE bill_amendment_same_as FROM postgres;
-GRANT ALL ON TABLE bill_amendment_same_as TO postgres;
-
-
---
--- Name: bill_amendment_vote_info; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_amendment_vote_info FROM PUBLIC;
-REVOKE ALL ON TABLE bill_amendment_vote_info FROM postgres;
-GRANT ALL ON TABLE bill_amendment_vote_info TO postgres;
-
-
---
--- Name: bill_amendment_vote_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE bill_amendment_vote_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE bill_amendment_vote_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE bill_amendment_vote_id_seq TO postgres;
-
-
---
--- Name: bill_amendment_vote_roll; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_amendment_vote_roll FROM PUBLIC;
-REVOKE ALL ON TABLE bill_amendment_vote_roll FROM postgres;
-GRANT ALL ON TABLE bill_amendment_vote_roll TO postgres;
-
-
---
--- Name: bill_approval; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_approval FROM PUBLIC;
-REVOKE ALL ON TABLE bill_approval FROM postgres;
-GRANT ALL ON TABLE bill_approval TO postgres;
-
-
---
--- Name: bill_change_log_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE bill_change_log_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE bill_change_log_seq FROM postgres;
-GRANT ALL ON SEQUENCE bill_change_log_seq TO postgres;
-
-
---
--- Name: bill_change_log; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_change_log FROM PUBLIC;
-REVOKE ALL ON TABLE bill_change_log FROM postgres;
-GRANT ALL ON TABLE bill_change_log TO postgres;
-
-
---
--- Name: bill_committee; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_committee FROM PUBLIC;
-REVOKE ALL ON TABLE bill_committee FROM postgres;
-GRANT ALL ON TABLE bill_committee TO postgres;
-
-
---
--- Name: bill_milestone; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_milestone FROM PUBLIC;
-REVOKE ALL ON TABLE bill_milestone FROM postgres;
-GRANT ALL ON TABLE bill_milestone TO postgres;
-
-
---
--- Name: bill_previous_version; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_previous_version FROM PUBLIC;
-REVOKE ALL ON TABLE bill_previous_version FROM postgres;
-GRANT ALL ON TABLE bill_previous_version TO postgres;
-
-
---
--- Name: bill_sponsor; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_sponsor FROM PUBLIC;
-REVOKE ALL ON TABLE bill_sponsor FROM postgres;
-GRANT ALL ON TABLE bill_sponsor TO postgres;
-
-
---
--- Name: bill_sponsor_additional; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_sponsor_additional FROM PUBLIC;
-REVOKE ALL ON TABLE bill_sponsor_additional FROM postgres;
-GRANT ALL ON TABLE bill_sponsor_additional TO postgres;
-
-
---
--- Name: bill_veto; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE bill_veto FROM PUBLIC;
-REVOKE ALL ON TABLE bill_veto FROM postgres;
-GRANT ALL ON TABLE bill_veto TO postgres;
-
-
---
--- Name: bill_veto_year_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE bill_veto_year_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE bill_veto_year_seq FROM postgres;
-GRANT ALL ON SEQUENCE bill_veto_year_seq TO postgres;
-
-
---
--- Name: calendar; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE calendar FROM PUBLIC;
-REVOKE ALL ON TABLE calendar FROM postgres;
-GRANT ALL ON TABLE calendar TO postgres;
-
-
---
--- Name: calendar_active_list; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE calendar_active_list FROM PUBLIC;
-REVOKE ALL ON TABLE calendar_active_list FROM postgres;
-GRANT ALL ON TABLE calendar_active_list TO postgres;
-
-
---
--- Name: calendar_active_list_entry; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE calendar_active_list_entry FROM PUBLIC;
-REVOKE ALL ON TABLE calendar_active_list_entry FROM postgres;
-GRANT ALL ON TABLE calendar_active_list_entry TO postgres;
-
-
---
--- Name: calendar_active_list_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE calendar_active_list_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE calendar_active_list_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE calendar_active_list_id_seq TO postgres;
-
-
---
--- Name: calendar_change_log_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE calendar_change_log_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE calendar_change_log_seq FROM postgres;
-GRANT ALL ON SEQUENCE calendar_change_log_seq TO postgres;
-
-
---
--- Name: calendar_change_log; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE calendar_change_log FROM PUBLIC;
-REVOKE ALL ON TABLE calendar_change_log FROM postgres;
-GRANT ALL ON TABLE calendar_change_log TO postgres;
-
-
---
--- Name: calendar_supplemental_entry; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE calendar_supplemental_entry FROM PUBLIC;
-REVOKE ALL ON TABLE calendar_supplemental_entry FROM postgres;
-GRANT ALL ON TABLE calendar_supplemental_entry TO postgres;
-
-
---
--- Name: calendar_supplemental_entry_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE calendar_supplemental_entry_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE calendar_supplemental_entry_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE calendar_supplemental_entry_id_seq TO postgres;
-
-
---
--- Name: calendar_supplemental_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE calendar_supplemental_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE calendar_supplemental_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE calendar_supplemental_id_seq TO postgres;
-
-
---
--- Name: committee; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE committee FROM PUBLIC;
-REVOKE ALL ON TABLE committee FROM postgres;
-GRANT ALL ON TABLE committee TO postgres;
-
-
---
--- Name: committee_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE committee_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE committee_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE committee_id_seq TO postgres;
-
-
---
--- Name: committee_member; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE committee_member FROM PUBLIC;
-REVOKE ALL ON TABLE committee_member FROM postgres;
-GRANT ALL ON TABLE committee_member TO postgres;
-
-
---
--- Name: committee_member_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE committee_member_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE committee_member_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE committee_member_id_seq TO postgres;
-
-
---
--- Name: committee_version; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE committee_version FROM PUBLIC;
-REVOKE ALL ON TABLE committee_version FROM postgres;
-GRANT ALL ON TABLE committee_version TO postgres;
-
-
---
--- Name: committee_version_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE committee_version_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE committee_version_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE committee_version_id_seq TO postgres;
-
-
---
--- Name: data_process_run_unit; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE data_process_run_unit FROM PUBLIC;
-REVOKE ALL ON TABLE data_process_run_unit FROM postgres;
-GRANT ALL ON TABLE data_process_run_unit TO postgres;
-
-
---
--- Name: data_process_log_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE data_process_log_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE data_process_log_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE data_process_log_id_seq TO postgres;
-
-
---
--- Name: data_process_run; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE data_process_run FROM PUBLIC;
-REVOKE ALL ON TABLE data_process_run FROM postgres;
-GRANT ALL ON TABLE data_process_run TO postgres;
-
-
---
--- Name: daybreak_bill; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE daybreak_bill FROM PUBLIC;
-REVOKE ALL ON TABLE daybreak_bill FROM postgres;
-GRANT ALL ON TABLE daybreak_bill TO postgres;
-
-
---
--- Name: daybreak_bill_action; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE daybreak_bill_action FROM PUBLIC;
-REVOKE ALL ON TABLE daybreak_bill_action FROM postgres;
-GRANT ALL ON TABLE daybreak_bill_action TO postgres;
-
-
---
--- Name: daybreak_bill_action_sequence_no_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq FROM postgres;
-GRANT ALL ON SEQUENCE daybreak_bill_action_sequence_no_seq TO postgres;
-
-
---
--- Name: daybreak_bill_amendment; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE daybreak_bill_amendment FROM PUBLIC;
-REVOKE ALL ON TABLE daybreak_bill_amendment FROM postgres;
-GRANT ALL ON TABLE daybreak_bill_amendment TO postgres;
-
-
---
--- Name: daybreak_bill_sponsor; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE daybreak_bill_sponsor FROM PUBLIC;
-REVOKE ALL ON TABLE daybreak_bill_sponsor FROM postgres;
-GRANT ALL ON TABLE daybreak_bill_sponsor TO postgres;
-
-
---
--- Name: daybreak_file; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE daybreak_file FROM PUBLIC;
-REVOKE ALL ON TABLE daybreak_file FROM postgres;
-GRANT ALL ON TABLE daybreak_file TO postgres;
-
-
---
--- Name: daybreak_fragment; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE daybreak_fragment FROM PUBLIC;
-REVOKE ALL ON TABLE daybreak_fragment FROM postgres;
-GRANT ALL ON TABLE daybreak_fragment TO postgres;
-
-
---
--- Name: daybreak_page_file_entry; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE daybreak_page_file_entry FROM PUBLIC;
-REVOKE ALL ON TABLE daybreak_page_file_entry FROM postgres;
-GRANT ALL ON TABLE daybreak_page_file_entry TO postgres;
-
-
---
--- Name: daybreak_report; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE daybreak_report FROM PUBLIC;
-REVOKE ALL ON TABLE daybreak_report FROM postgres;
-GRANT ALL ON TABLE daybreak_report TO postgres;
-
-
---
--- Name: law_change_log; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE law_change_log FROM PUBLIC;
-REVOKE ALL ON TABLE law_change_log FROM postgres;
-GRANT ALL ON TABLE law_change_log TO postgres;
-
-
---
--- Name: law_change_log_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE law_change_log_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE law_change_log_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE law_change_log_id_seq TO postgres;
-
-
---
--- Name: law_document; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE law_document FROM PUBLIC;
-REVOKE ALL ON TABLE law_document FROM postgres;
-GRANT ALL ON TABLE law_document TO postgres;
-
-
---
--- Name: law_file; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE law_file FROM PUBLIC;
-REVOKE ALL ON TABLE law_file FROM postgres;
-GRANT ALL ON TABLE law_file TO postgres;
-
-
---
--- Name: law_info; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE law_info FROM PUBLIC;
-REVOKE ALL ON TABLE law_info FROM postgres;
-GRANT ALL ON TABLE law_info TO postgres;
-
-
---
--- Name: law_tree; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE law_tree FROM PUBLIC;
-REVOKE ALL ON TABLE law_tree FROM postgres;
-GRANT ALL ON TABLE law_tree TO postgres;
-
---
--- Name: notification; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE notification FROM PUBLIC;
-REVOKE ALL ON TABLE notification FROM postgres;
-GRANT ALL ON TABLE notification TO postgres;
-
-
---
--- Name: notification_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE notification_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE notification_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE notification_id_seq TO postgres;
-
-
---
--- Name: notification_subscription; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE notification_subscription FROM PUBLIC;
-REVOKE ALL ON TABLE notification_subscription FROM postgres;
-GRANT ALL ON TABLE notification_subscription TO postgres;
-
-
---
--- Name: notification_subscription_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE notification_subscription_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE notification_subscription_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE notification_subscription_id_seq TO postgres;
-
-
---
--- Name: sobi_fragment; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE sobi_fragment FROM PUBLIC;
-REVOKE ALL ON TABLE sobi_fragment FROM postgres;
-GRANT ALL ON TABLE sobi_fragment TO postgres;
-
-
---
--- Name: psf; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE psf FROM PUBLIC;
-REVOKE ALL ON TABLE psf FROM postgres;
-GRANT ALL ON TABLE psf TO postgres;
-
-
---
--- Name: public_hearing; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE public_hearing FROM PUBLIC;
-REVOKE ALL ON TABLE public_hearing FROM postgres;
-GRANT ALL ON TABLE public_hearing TO postgres;
-
-
---
--- Name: public_hearing_committee; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE public_hearing_committee FROM PUBLIC;
-REVOKE ALL ON TABLE public_hearing_committee FROM postgres;
-GRANT ALL ON TABLE public_hearing_committee TO postgres;
-
-
---
--- Name: public_hearing_file; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE public_hearing_file FROM PUBLIC;
-REVOKE ALL ON TABLE public_hearing_file FROM postgres;
-GRANT ALL ON TABLE public_hearing_file TO postgres;
-
-
---
--- Name: sobi_file; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE sobi_file FROM PUBLIC;
-REVOKE ALL ON TABLE sobi_file FROM postgres;
-GRANT ALL ON TABLE sobi_file TO postgres;
-
-
---
--- Name: sobi_fragment_process_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE sobi_fragment_process_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE sobi_fragment_process_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE sobi_fragment_process_id_seq TO postgres;
-
-
---
--- Name: spotcheck_report; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE spotcheck_report FROM PUBLIC;
-REVOKE ALL ON TABLE spotcheck_report FROM postgres;
-GRANT ALL ON TABLE spotcheck_report TO postgres;
-
-
---
--- Name: spotcheck_report_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE spotcheck_report_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE spotcheck_report_id_seq TO postgres;
-
-
---
--- Name: spotcheck_mismatch; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE spotcheck_mismatch FROM PUBLIC;
-REVOKE ALL ON TABLE spotcheck_mismatch FROM postgres;
-GRANT ALL ON TABLE spotcheck_mismatch TO postgres;
-
-
---
--- Name: spotcheck_mismatch_mismatch_id_seq; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE spotcheck_mismatch_mismatch_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE spotcheck_mismatch_mismatch_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE spotcheck_mismatch_mismatch_id_seq TO postgres;
-
-
---
--- Name: transcript; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE transcript FROM PUBLIC;
-REVOKE ALL ON TABLE transcript FROM postgres;
-GRANT ALL ON TABLE transcript TO postgres;
-
-
---
--- Name: transcript_file; Type: ACL; Schema: master; Owner: postgres
---
-
-REVOKE ALL ON TABLE transcript_file FROM PUBLIC;
-REVOKE ALL ON TABLE transcript_file FROM postgres;
-GRANT ALL ON TABLE transcript_file TO postgres;
-
-
-SET search_path = public, pg_catalog;
-
---
--- Name: adminuser; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE adminuser FROM PUBLIC;
-REVOKE ALL ON TABLE adminuser FROM postgres;
-GRANT ALL ON TABLE adminuser TO postgres;
-
-
---
--- Name: apiuser; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE apiuser FROM PUBLIC;
-REVOKE ALL ON TABLE apiuser FROM postgres;
-GRANT ALL ON TABLE apiuser TO postgres;
-
-
---
--- Name: member; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE member FROM PUBLIC;
-REVOKE ALL ON TABLE member FROM postgres;
-GRANT ALL ON TABLE member TO postgres;
-
-
---
--- Name: member_id_seq; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE member_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE member_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE member_id_seq TO postgres;
-
-
---
--- Name: member_person_id_seq; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE member_person_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE member_person_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE member_person_id_seq TO postgres;
-
-
---
--- Name: person; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE person FROM PUBLIC;
-REVOKE ALL ON TABLE person FROM postgres;
-GRANT ALL ON TABLE person TO postgres;
-
-
---
--- Name: person_id_seq; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE person_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE person_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE person_id_seq TO postgres;
-
-
---
--- Name: session_member; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE session_member FROM PUBLIC;
-REVOKE ALL ON TABLE session_member FROM postgres;
-GRANT ALL ON TABLE session_member TO postgres;
-
-
---
--- Name: session_member_id_seq; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE session_member_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE session_member_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE session_member_id_seq TO postgres;
 
 
 --

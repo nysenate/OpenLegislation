@@ -53,17 +53,20 @@ function spotcheckMismatchApi($resource) {
             issueInput: parseIssues(mismatch),
             refTypeLabel: parseRefTypeLabel(mismatch),
             refType: parseRefType(mismatch),
-            bill: parseBill(mismatch),
+            printNo: printNo(mismatch),
             billId: parseBillId(mismatch),
             calNo: parseCalNo(mismatch),
             calType:parseCalType(mismatch),
             session: parseSession(mismatch),
+            year: mismatch.key.year || '',
             basePrintNo: parseBasePrintNo(mismatch),
             referenceData: parseReferenceData(mismatch),
             observedData: parseObserveredData(mismatch),
             diffLoading: false,
             agendaNo: parseAgendaNo(mismatch),
-            committee: parseCommittee(mismatch)
+            weekOf: mismatch.key.weekOf || "",
+            weekOfDisp: parseWeekOfDisp(mismatch),
+            committee: parseCommitteeAddendum(mismatch)
         }
     }
 
@@ -81,7 +84,7 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseSession(mismatch) {
-        return mismatch.key.session || {};
+        return (mismatch.key.session || {}).year || "";
     }
 
     function parseBasePrintNo(mismatch) {
@@ -132,12 +135,12 @@ function spotcheckMismatchApi($resource) {
         return mismatch.referenceType;
     }
 
-    function parseBill(mismatch) {
+    function printNo(mismatch) {
         return mismatch.key.printNo || "";
     }
 
     function parseBillId(mismatch) {
-        return parseBill(mismatch) + '-' + parseSession(mismatch).year;
+        return printNo(mismatch) + '-' + parseSession(mismatch);
     }
 
     function parseCalNo(mismatch) {
@@ -148,7 +151,7 @@ function spotcheckMismatchApi($resource) {
 
         switch (mismatch.key.type) {
             case 'FLOOR_CALENDAR':
-                return calNo + 'Floor';
+                return calNo;
             case 'SUPPLEMENTAL_CALENDAR':
                 return calNo + mismatch.key.version;
             case 'ACTIVE_LIST':
@@ -161,28 +164,40 @@ function spotcheckMismatchApi($resource) {
     }
 
     function parseAgendaNo(mismatch) {
-        if (mismatch.key.agendaId == undefined || mismatch.key.agendaId == null)
-            return "";
-        if (mismatch.key.agendaId.number == -1) // if the missing data is the agenda number, we set it to -1
-            return "N/A";
-        if (mismatch.key.addendum == 'DEFAULT')
-            return mismatch.key.agendaId.number;
-         return mismatch.key.agendaId.number + patternWords(mismatch.key.addendum);
-    }
-
-    function parseCommittee(mismatch) {
-        if (mismatch.key.committeeId == null) {
+        if (!mismatch.key.agendaId) {
             return "";
         }
-        return mismatch.key.committeeId.name;
+        return mismatch.key.agendaId.number;
+    }
+
+    function parseWeekOfDisp(mismatch) {
+        var date = moment(mismatch.key.weekOf, 'YYYY-MM-DD');
+        if (!mismatch.key.weekOf || !date.isValid()) {
+            return ""
+        }
+        return date.format("M/D/YY");
+    }
+
+    function parseCommitteeAddendum(mismatch) {
+        if (!mismatch.key.committeeId || !mismatch.key.committeeId.name) {
+            return "";
+        }
+
+        var committee = mismatch.key.committeeId.name || "";
+        var addendum = mismatch.key.addendum || "";
+        // Add addendum label if unoriginal
+        if (addendum && addendum !== "ORIGINAL") {
+            committee += " - " + addendum;
+        }
+        return committee;
     }
 
     return {
         getMismatches: getMismatches
-    }
+    };
 
     function patternWords(input) {
         var lower =  input.toLowerCase();
-        return lower.charAt(0).toUpperCase()+lower.slice(1);
+        return lower.charAt(0).toUpperCase() + lower.slice(1);
     }
 }

@@ -18,10 +18,7 @@ import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConvert
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.annotation.PostConstruct;
@@ -35,7 +32,7 @@ import java.util.List;
 @EnableScheduling
 @ComponentScan("gov.nysenate.openleg")
 @Import({DatabaseConfig.class, SecurityConfig.class, ApplicationConfig.class, WebSocketsConfig.class})
-public class WebApplicationConfig extends WebMvcConfigurerAdapter
+public class WebApplicationConfig implements WebMvcConfigurer
 {
     private static final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
 

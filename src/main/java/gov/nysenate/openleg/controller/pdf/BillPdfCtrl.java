@@ -27,8 +27,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
+
+import static gov.nysenate.openleg.model.bill.BillTextFormat.*;
 
 @RestController
 @RequestMapping(value = "/pdf/bills")
@@ -53,7 +56,7 @@ public class BillPdfCtrl extends BaseCtrl
                 }
                 response.sendRedirect(urlString);
             } else {
-                Set<BillTextFormat> fullTextFormats = getFullTextFormats(request);
+                Set<BillTextFormat> fullTextFormats = EnumSet.of(PLAIN, HTML);
                 Bill bill = billData.getBill(BaseBillId.of(billId), fullTextFormats);
                 ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
                 BillPdfView.writeBillPdf(bill, billId.getVersion(), pdfBytes);

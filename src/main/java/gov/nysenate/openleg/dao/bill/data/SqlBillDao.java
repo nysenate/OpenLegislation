@@ -39,6 +39,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.dao.base.SortOrder.ASC;
 import static gov.nysenate.openleg.dao.bill.data.SqlBillQuery.*;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
@@ -249,7 +250,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      * Get a list of all the bill actions for the base bill id in the params.
      */
     public List<BillAction> getBillActions(ImmutableParams baseParams) {
-        OrderBy orderBy = new OrderBy("sequence_no", SortOrder.ASC);
+        OrderBy orderBy = new OrderBy("sequence_no", ASC);
         LimitOffset limOff = LimitOffset.ALL;
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_ACTIONS.getSql(schema(), orderBy, limOff), baseParams, new BillActionRowMapper());
     }
@@ -307,7 +308,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      */
     public List<SessionMember> getAdditionalSponsors(ImmutableParams baseParams) {
         try {
-            OrderBy orderBy = new OrderBy("sequence_no", SortOrder.ASC);
+            OrderBy orderBy = new OrderBy("sequence_no", ASC);
             return jdbcNamed.query(SqlBillQuery.SELECT_ADDTL_BILL_SPONSORS.getSql(schema(), orderBy, LimitOffset.ALL),
                     baseParams, new BillMemberRowMapper(memberService));
         } catch (EmptyResultDataAccessException ex) {
@@ -319,7 +320,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      * Get the bill's milestone list.
      */
     public LinkedList<BillStatus> getBillMilestones(ImmutableParams baseParams) {
-        OrderBy orderBy = new OrderBy("rank", SortOrder.ASC);
+        OrderBy orderBy = new OrderBy("rank", ASC);
         return new LinkedList<>(jdbcNamed.query(SqlBillQuery.GET_BILL_MILESTONES.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
                 (rs, rowNum) -> {
                     BillStatus status = new BillStatus(BillStatusType.valueOf(rs.getString("status")), getLocalDateFromRs(rs, "date"));
@@ -394,7 +395,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      * Get a list of the associated committee agenda ids.
      */
     public List<CommitteeAgendaId> getCommitteeAgendas(ImmutableParams baseParams) {
-        OrderBy orderBy = new OrderBy("aic.meeting_date_time", SortOrder.ASC);
+        OrderBy orderBy = new OrderBy("aic.meeting_date_time", ASC);
         return jdbcNamed.query(SqlBillQuery.SELECT_COMM_AGENDA_IDS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
                 (rs, rowNum) ->
                         new CommitteeAgendaId(new AgendaId(rs.getInt("agenda_no"), rs.getInt("year")),
@@ -406,7 +407,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
      * Get a list of the associated calendar ids.
      */
     public List<CalendarId> getCalendars(ImmutableParams baseParams) {
-        OrderBy orderBy = new OrderBy("cs.calendar_year", SortOrder.ASC, "cs.calendar_no", SortOrder.ASC);
+        OrderBy orderBy = new OrderBy("cs.calendar_year", ASC, "cs.calendar_no", ASC);
         return jdbcNamed.query(SqlBillQuery.SELECT_CALENDAR_IDS.getSql(schema(), orderBy, LimitOffset.ALL), baseParams,
                 (rs, rowNum) -> {
                     return new CalendarId(rs.getInt("calendar_no"), rs.getInt("calendar_year"));
@@ -654,19 +655,25 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
         }
     }
 
-
-    public List<BillId> getBudgetBillIdsWithoutText(Integer sessionYear) {
+    public List<BillId> getBudgetBillIdsWithoutText(SessionYear sessionYear) {
         MapSqlParameterSource billParams = new MapSqlParameterSource();
-        billParams.addValue("sessionYear",sessionYear);
-        billParams.addValue("sessionYear2",sessionYear);
+        billParams.addValue("sessionYear", sessionYear.getYear());
+        OrderBy orderBy = new OrderBy(
+                "bill_session_year", ASC,
+                "bill_print_no", ASC,
+                "bill_amend_version", ASC
+        );
 
-        return jdbcNamed.query(SqlBillQuery.SELECT_EMPTY_TEXT_BUDGET_BILL_PRINT_NOS.getSql(schema()), billParams,
-                (rs, rowNum) -> new BillId(rs.getString("bill_print_no"), rs.getInt("bill_session_year")) );
+        return jdbcNamed.query(SqlBillQuery.SELECT_EMPTY_TEXT_BUDGET_BILL_PRINT_NOS.getSql(schema(), orderBy),
+                billParams,
+                (rs, rowNum) -> new BillId(
+                        rs.getString("bill_print_no"),
+                        rs.getInt("bill_session_year"),
+                        rs.getString("bill_amend_version")
+                ));
     }
 
-    /**
-     * --- Helper Classes ---
-     */
+    /* --- Helper Classes --- */
 
     private List<Integer> getCoSponsorIds(SqlParameterSource params) {
         return jdbcNamed.query(SqlBillQuery.SELECT_BILL_COSPONSORS.getSql(schema()), params,

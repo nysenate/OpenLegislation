@@ -7,9 +7,10 @@ var agendaModule = angular.module('open.agenda');
  * Handles the fetch/display for single week committee agendas.
  * Includes change log for the given agenda.
  */
-agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams', 'PaginationModel', 'AgendaGetApi',
+agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams', 'PaginationModel',
+    'AgendaGetApi', 'AgendaWeekOfApi',
     'AgendaUpdatesApi', '$timeout',
-    function($scope, $location, $routeParams, PaginationModel, AgendaGetApi, AgendaUpdatesApi, $timeout) {
+    function($scope, $location, $routeParams, PaginationModel, AgendaGetApi, AgendaWeekOfApi, AgendaUpdatesApi, $timeout) {
         $scope.searchTabName = ($scope.viewMap.hasOwnProperty($routeParams['sview'])
             ? $routeParams['sview'] : 'browse');
         $scope.searchTabIdx = $scope.viewMap[$scope.searchTabName];
@@ -20,6 +21,7 @@ agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams'
         // Identify the agenda
         $scope.year = $routeParams.year;
         $scope.no = $routeParams.agendaNo;
+        $scope.weekOf = $routeParams.weekOf;
         $scope.commName = $routeParams.comm;
 
         // Indicates if a committee toggle panel should be open when the page loads.
@@ -48,9 +50,28 @@ agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams'
                 $scope.selectedComm[$scope.commName.toLowerCase()] = true;
             }
             $scope.curr.loading = true;
-            $scope.response = AgendaGetApi.get({year: $scope.year, agendaNo: $scope.no}, function() {
+            // Determine which api to use based on passed in params
+            var agendaApi, params;
+            if ($scope.weekOf) {
+                agendaApi = AgendaWeekOfApi;
+                params = {weekOf: $scope.weekOf};
+            } else {
+                agendaApi = AgendaGetApi;
+                params = {
+                    year: $scope.year,
+                    agendaNo: $scope.no
+                };
+            }
+            // Make the request using the selected api.
+            agendaApi.get(params, function(response) {
+                console.log('got agenda');
+                $scope.response = response;
                 $scope.agenda = $scope.response.result;
                 $scope.setHeaderText('Agenda ' + $scope.agenda.id.number + ' - ' + $scope.agenda.id.year);
+                $scope.setHeaderText('Agenda ' + $scope.agenda.id.number + ' - ' + $scope.agenda.id.year);
+                $scope.year = $scope.agenda.id.year;
+                $scope.no = $scope.agenda.id.number;
+                $scope.weekOf = $scope.agenda.weekOf;
                 // A lookup map needs to created to render a single bill listing for both info and vote addenda.
                 $scope.generateVoteLookup();
                 // Scroll down to a committee if specified in the params
@@ -61,10 +82,10 @@ agendaModule.controller('AgendaViewCtrl', ['$scope', '$location', '$routeParams'
                         })
                     }, 0);
                 }
-                $scope.curr.loading = false;
             }, function(resp) {
                 $scope.setHeaderText(resp.status);
                 $scope.response.success = false;
+            }).$promise.finally(function () {
                 $scope.curr.loading = false;
             });
         };

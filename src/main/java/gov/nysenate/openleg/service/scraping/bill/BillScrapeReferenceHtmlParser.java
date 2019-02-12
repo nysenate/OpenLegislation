@@ -53,11 +53,12 @@ public class BillScrapeReferenceHtmlParser {
     }
 
     /**
-     * Parse the bill text from an LRS bill scrape html file.
-     * @param doc
-     * @return
+     * Extract the elements containing bill text from an LRS bill scrape html file.
+     *
+     * @param doc Document
+     * @return Elements
      */
-    public String parseText(Document doc) {
+    public Elements getBillTextElements(Document doc) {
         Element contents = doc.getElementById("nv_bot_contents");
         if (contents == null) {
             throw new ParseError("Could not locate scraped bill contents");
@@ -72,8 +73,7 @@ public class BillScrapeReferenceHtmlParser {
                 break;
             }
         }
-
-        return BillTextUtils.parseHTMLText(textEles);
+        return textEles;
     }
 
     /**

@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.service.spotcheck.agenda;
 
 import com.google.common.collect.Sets;
-import gov.nysenate.openleg.dao.agenda.reference.AgendaAlertDao;
-import gov.nysenate.openleg.model.agenda.AgendaInfoCommittee;
-import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaMeetingWeekId;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
@@ -11,7 +9,6 @@ import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -21,79 +18,79 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 @Service
 public class AgendaSpotCheckService
-        implements SpotCheckService<CommitteeAgendaAddendumId, AgendaInfoCommittee, AgendaAlertInfoCommittee> {
+        implements SpotCheckService<AgendaMeetingWeekId, AgendaAlertInfoCommittee, AgendaAlertInfoCommittee> {
 
     private static final Logger logger = LoggerFactory.getLogger(AgendaSpotCheckService.class);
 
-    @Autowired
-    AgendaAlertDao agendaAlertDao;
-
     /** {@inheritDoc} */
     @Override
-    public SpotCheckObservation<CommitteeAgendaAddendumId> check(AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
-        final SpotCheckObservation<CommitteeAgendaAddendumId> observation =
-                new SpotCheckObservation<>(reference.getReferenceId(), content.getId());
-        checkBills(observation, content, reference);
-        checkChair(observation, content, reference);
-        checkMeetingTime(observation, content, reference);
-        checkLocation(observation, content, reference);
-        checkNotes(observation, content, reference);
+    public SpotCheckObservation<AgendaMeetingWeekId> check(AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
+        final SpotCheckObservation<AgendaMeetingWeekId> observation =
+                new SpotCheckObservation<>(reference.getReferenceId(), reference.getAgendaAlertCheckId());
+
+        checkBills(observation, observed, reference);
+        checkChair(observation, observed, reference);
+        checkMeetingTime(observation, observed, reference);
+        checkLocation(observation, observed, reference);
+        checkNotes(observation, observed, reference);
+
         // Some friendly logging
-        int mismatchCount = observation.getMismatches().size();
-        if (mismatchCount > 0) {
-            logger.info("Committee Meeting Agenda {} | {} mismatch(es). | {}", content.getId(), mismatchCount, observation.getMismatchTypes(false));
+        if (observation.getMismatches().size() > 0) {
+            logger.info("Agenda Alert Check Id {} | {} mismatch(es). | {}",
+                    reference.getAgendaAlertCheckId(), observation.getMismatches().size(), observation.getMismatchTypes(false));
         }
+
         return observation;
     }
 
     /** --- Internal Methods --- */
 
-    private void checkBills(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
-                            AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
+    private void checkBills(SpotCheckObservation<AgendaMeetingWeekId> obs,
+                            AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         Set<String> refBills = new TreeSet<>();
-        Set<String> contentBills = new TreeSet<>();
+        Set<String> obsBills = new TreeSet<>();
         reference.getItems().forEach(item -> refBills.add(item.getBillId() + " " + item.getMessage()));
-        content.getItems().forEach(item -> contentBills.add(item.getBillId() + " " + item.getMessage()));
+        observed.getItems().forEach(item -> obsBills.add(item.getBillId() + " " + item.getMessage()));
 
-        if (!Sets.symmetricDifference(refBills, contentBills).isEmpty()) {
+        if (!Sets.symmetricDifference(refBills, obsBills).isEmpty()) {
             obs.addMismatch(new SpotCheckMismatch(AGENDA_BILL_LISTING,
-                    StringUtils.join(contentBills, "\n"), StringUtils.join(refBills, "\n")));
+                    StringUtils.join(obsBills, "\n"), StringUtils.join(refBills, "\n")));
         }
     }
 
-    private void checkChair(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
-                            AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
+    private void checkChair(SpotCheckObservation<AgendaMeetingWeekId> obs,
+                            AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         String refChair = StringUtils.trim(reference.getChair());
-        String contentChair = StringUtils.trim(content.getChair());
-        if (!StringUtils.equals(refChair, contentChair)) {
-            obs.addMismatch(new SpotCheckMismatch(AGENDA_CHAIR, contentChair, refChair));
+        String obsChair = StringUtils.trim(observed.getChair());
+        if (!StringUtils.equals(refChair, obsChair)) {
+            obs.addMismatch(new SpotCheckMismatch(AGENDA_CHAIR, obsChair, refChair));
         }
     }
 
-    private void checkMeetingTime(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
-                                  AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
-        if (content.getMeetingDateTime() == null
-                || !content.getMeetingDateTime().equals(reference.getMeetingDateTime())) {
+    private void checkMeetingTime(SpotCheckObservation<AgendaMeetingWeekId> obs,
+                                  AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
+        if (observed.getMeetingDateTime() == null
+                || !observed.getMeetingDateTime().equals(reference.getMeetingDateTime())) {
             obs.addMismatch(new SpotCheckMismatch(AGENDA_MEETING_TIME,
-                    String.valueOf(content.getMeetingDateTime()), String.valueOf(reference.getMeetingDateTime())));
+                    String.valueOf(observed.getMeetingDateTime()), String.valueOf(reference.getMeetingDateTime())));
         }
     }
 
-    private void checkLocation(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
-                               AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
+    private void checkLocation(SpotCheckObservation<AgendaMeetingWeekId> obs,
+                               AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         String refLocation = StringUtils.trim(reference.getLocation());
-        String contentLocation = StringUtils.trim(content.getLocation());
-        if (!StringUtils.equals(refLocation, contentLocation)) {
-            obs.addMismatch(new SpotCheckMismatch(AGENDA_LOCATION, contentLocation, refLocation));
+        String obsLocation = StringUtils.trim(observed.getLocation());
+        if (!StringUtils.equals(refLocation, obsLocation)) {
+            obs.addMismatch(new SpotCheckMismatch(AGENDA_LOCATION, obsLocation, refLocation));
         }
     }
 
-    private void checkNotes(SpotCheckObservation<CommitteeAgendaAddendumId> obs,
-                            AgendaInfoCommittee content, AgendaAlertInfoCommittee reference) {
+    private void checkNotes(SpotCheckObservation<AgendaMeetingWeekId> obs,
+                            AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         String refNotes = StringUtils.trim(reference.getNotes());
-        String contentNotes = StringUtils.trim(content.getNotes());
-        if (!StringUtils.equals(refNotes, contentNotes)) {
-            obs.addMismatch(new SpotCheckMismatch(AGENDA_NOTES, contentNotes, refNotes));
+        String obsNotes = StringUtils.trim(observed.getNotes());
+        if (!StringUtils.equals(refNotes, obsNotes)) {
+            obs.addMismatch(new SpotCheckMismatch(AGENDA_NOTES, obsNotes, refNotes));
         }
     }
 }

@@ -10,11 +10,14 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
-import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
 import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
@@ -30,7 +34,7 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
  * Created by kyle on 2/19/15.
  */
 @Service
-public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill, BillScrapeReference>{
+public class BillScrapeCheckService extends BaseSpotCheckService<BaseBillId, Bill, BillScrapeReference> {
     private static final Logger logger = LogManager.getLogger(BillScrapeCheckService.class);
 
     @Autowired
@@ -66,6 +70,10 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
             if (bill.hasAmendment(reference.getActiveVersion())) {
                 BillAmendment amendment = bill.getAmendment(reference.getActiveVersion());
                 checkBillText(amendment, reference, observation);
+                // TODO remove session check when we get xml bill text for previous years
+                if (bill.getSession().getYear() >= 2017) {
+                    checkHtmlBillText(amendment, reference, observation);
+                }
                 // Only check senate, non-resolution bills for sponsor memos
                 // Todo find a better way of checking memo text
                 //  currently, memos are sent daily in batches and are not guaranteed to be present in sobi data if on lrs
@@ -86,10 +94,34 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     }
 
     /**
+     * Cleans unnecessary elements e.g. style from observation html bill text
+     */
+    public String cleanHtml(String rawHtml) {
+        Document doc = Jsoup.parse(rawHtml);
+        Elements billTextElements = doc.getElementsByTag("pre");
+        String preHtml = billTextElements.html();
+        return preHtml
+                .replaceAll("\r\n", "\n")
+                .replaceAll(" +(?=$|\n)", "");
+    }
+
+    /**
+     * Check the html version of bill text.
+     */
+    private void checkHtmlBillText(BillAmendment amend, BillScrapeReference reference,
+                                   SpotCheckObservation<BaseBillId> obs) {
+        ensureTextFormatExists(amend, HTML);
+        String contentHtmlText = cleanHtml(amend.getFullText(HTML));
+        String refHtmlText = cleanHtml(reference.getHtmlText());
+        checkString(contentHtmlText, refHtmlText, obs, BILL_HTML_TEXT);
+    }
+
+    /**
      * Checks text with all whitespace removed, and generates several mismatches with different levels of text
      * normalization if there was a mismatch in the no-whitespace text
      */
     private void checkBillText(BillAmendment billAmendment, BillScrapeReference reference, SpotCheckObservation<BaseBillId> obsrv){
+        ensureTextFormatExists(billAmendment, PLAIN);
         String dataText = billAmendment.getFullText(PLAIN);
         String refText = reference.getText();
         String strippedDataText = basicNormalize(dataText);
@@ -194,6 +226,13 @@ public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill
     private String ultraNormalize(String text) {
         String stripped = Optional.ofNullable(text).orElse("").replaceAll(ultraNormalizeRegex, "");
         return basicNormalize(stripped);
+    }
+
+    private void ensureTextFormatExists(BillAmendment billAmendment, BillTextFormat format) {
+        if (!billAmendment.hasTextInFormat(format)) {
+            throw new IllegalStateException("Bill text format " + format +
+                    " is not represented in bill reference for " + billAmendment.getBillId());
+        }
     }
 
 }

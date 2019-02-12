@@ -1,1 +1,0 @@
-ALTER TABLE master.bill ADD COLUMN reprint_of_bill text;

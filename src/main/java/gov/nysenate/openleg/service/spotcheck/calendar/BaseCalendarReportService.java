@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.calendar;
 
 import gov.nysenate.openleg.config.Environment;
-import gov.nysenate.openleg.dao.spotcheck.CalendarAlertReportDao;
 import gov.nysenate.openleg.dao.spotcheck.CalendarEntryListIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.Version;
@@ -21,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public abstract class BaseCalendarReportService extends BaseSpotCheckReportService<CalendarEntryListId> {
@@ -47,8 +47,6 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
      */
     protected abstract Calendar getActualCalendar(CalendarId id, LocalDate calDate);
 
-
-
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
         return SpotCheckRefType.LBDC_CALENDAR_ALERT;
@@ -61,12 +59,10 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
 
     @Override
     public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
-        List<Calendar> references = retrieveReferences(start, end);
-        LocalDateTime referenceDateTime = getMostRecentReference(references);
-        SpotCheckReportId reportId = new SpotCheckReportId(getSpotcheckRefType(),
-                                                           referenceDateTime,
-                                                           LocalDateTime.now());
-        SpotCheckReport<CalendarEntryListId> report = new SpotCheckReport<>(reportId);
+        List<Calendar> references = retrieveReferences(start, end).stream()
+                .filter(this::outsideGracePeriod)
+                .collect(Collectors.toList());
+        SpotCheckReport<CalendarEntryListId> report = initSpotCheckReport(references);
         report.setNotes(getNotes());
         report.addObservations(createObservations(references));
         return report;
@@ -81,21 +77,27 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
         return references;
     }
 
+    // Returns true if this references is outside of the specified grace period.
+    // This ensures openleg has time to process the data before we create a mismatch.
+    private boolean outsideGracePeriod(Calendar cal) {
+        return LocalDateTime.now().minus(environment.getSpotcheckAlertGracePeriod())
+                .isAfter(cal.getPublishedDateTime());
+    }
+
+    private SpotCheckReport<CalendarEntryListId> initSpotCheckReport(List<Calendar> references) {
+        LocalDateTime referenceDateTime = getMostRecentReference(references);
+        SpotCheckReportId reportId = new SpotCheckReportId(getSpotcheckRefType(),
+                referenceDateTime,
+                LocalDateTime.now());
+        return new SpotCheckReport<>(reportId);
+    }
+
     private List<SpotCheckObservation<CalendarEntryListId>> createObservations(List<Calendar> references) {
         List<SpotCheckObservation<CalendarEntryListId>> observations = new ArrayList<>();
         for (Calendar reference : references) {
             CalendarId id = reference.getId();
             Calendar actual = getActualCalendar(id, reference.getCalDate());
-            if (actual == null) {
-                if (LocalDateTime.now()
-                        .minus(environment.getSpotcheckAlertGracePeriod())
-                        .isBefore(reference.getPublishedDateTime())) {
-                    continue; // Do not add a not found mismatch if reference publish date is within grace period
-                }
-                recordMismatch(observations, reference, id);
-            } else {
-                observations.addAll(checkService.checkAll(actual, reference));
-            }
+            observations.addAll(checkService.checkAll(actual, reference));
             markAsChecked(id);
         }
         // Cancel the report if there are no observations
@@ -103,16 +105,6 @@ public abstract class BaseCalendarReportService extends BaseSpotCheckReportServi
             throw new SpotCheckAbortException();
         }
         return observations;
-    }
-
-    private void recordMismatch(List<SpotCheckObservation<CalendarEntryListId>> observations, Calendar reference, CalendarId id) {
-        SpotCheckReferenceId obsRefId = new SpotCheckReferenceId(
-                getSpotcheckRefType(), reference.getPublishedDateTime());
-
-        SpotCheckObservation<CalendarEntryListId> observation = new SpotCheckObservation<>(obsRefId, new CalendarEntryListId(id, CalendarType.ALL, Version.ORIGINAL, Integer.MAX_VALUE)); // dummy observation for unfound mismatch
-        observation.addMismatch(new SpotCheckMismatch(SpotCheckMismatchType.OBSERVE_DATA_MISSING,
-                "", id.toString()));
-        observations.add(observation);
     }
 
     private LocalDateTime getMostRecentReference(List<Calendar> references) {

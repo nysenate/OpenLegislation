@@ -1,18 +1,14 @@
 package gov.nysenate.openleg.controller.api.base;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.service.log.event.ApiLogEvent;
-import gov.nysenate.openleg.service.log.search.ApiLogSearchService;
-import gov.nysenate.openleg.util.AsyncUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -28,19 +24,12 @@ public class ApiLogFilter implements Filter
     private static final Logger logger = LoggerFactory.getLogger(ApiLogFilter.class);
 
     @Autowired protected EventBus eventBus;
-    @Autowired protected ApiLogSearchService logSearchService;
     @Autowired protected ApiUserService apiUserService;
-    @Autowired protected AsyncUtils asyncUtils;
 
     private static String[] IGNORED_PATHS = new String[]{"/api/3/admin/apiLog", "/api/3/admin/process/runs/"};
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}
-
-    @PostConstruct
-    public void postInit() {
-        this.eventBus.register(this);
-    }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
@@ -63,15 +52,6 @@ public class ApiLogFilter implements Filter
             }
             eventBus.post(apiLogEvent);
         }
-    }
-
-    /**
-     * The log event is handled here so that the data service can occur asynchronously.
-     * @param apiLogEvent ApiLogEvent
-     */
-    @Subscribe
-    public void handleApiLogEvent(ApiLogEvent apiLogEvent) {
-        asyncUtils.run(() -> logSearchService.updateIndex(apiLogEvent.getApiResponse()));
     }
 
     @Override

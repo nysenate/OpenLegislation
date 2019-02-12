@@ -7,6 +7,7 @@ import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +29,12 @@ public class BillScrapeReferenceFactory {
             return errorBillScrapeReference(btrFile);
         }
         BillId billId = new BillId(htmlParser.parsePrintNo(doc), btrFile.getBaseBillId().getSession());
-        String text = htmlParser.parseText(doc);
-        text = formatText(text, billId.getBillType());
+        Elements billTextElements = htmlParser.getBillTextElements(doc);
+        String htmlText = billTextElements.outerHtml();
+        String plain = formatText(BillTextUtils.parseHTMLText(billTextElements), billId.getBillType());
         // Only parse memo's for non resolutions.
         String memo = billId.getBillType().isResolution() ? "" : htmlParser.parseMemo(doc);
-        BillScrapeReference reference = new BillScrapeReference(billId, btrFile.getReferenceDateTime(), text, memo);
+        BillScrapeReference reference = new BillScrapeReference(billId, btrFile.getReferenceDateTime(), plain, htmlText, memo);
         reference.setVotes(htmlParser.parseVotes(doc));
         return reference;
     }
