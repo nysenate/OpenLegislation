@@ -177,7 +177,9 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
     public ThreadPoolTaskExecutor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadFactory(new OpenlegThreadFactory("spring-async"));
-        executor.setCorePoolSize(10);
+        executor.setCorePoolSize(8);
+        executor.setMaxPoolSize(12);
+        executor.setQueueCapacity(100);
         executor.initialize();
         return executor;
     }
