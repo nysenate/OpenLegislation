@@ -96,7 +96,10 @@ public class BillScrapeCheckService extends BaseSpotCheckService<BaseBillId, Bil
     /**
      * Cleans unnecessary elements e.g. style from observation html bill text
      */
-    public String cleanHtml(String rawHtml) {
+    private String cleanHtml(String rawHtml) {
+        if (StringUtils.isBlank(rawHtml)) {
+            return "";
+        }
         Document doc = Jsoup.parse(rawHtml);
         Elements billTextElements = doc.getElementsByTag("pre");
         String preHtml = billTextElements.html();
