@@ -465,6 +465,14 @@ Get bill updates
 
 To identify which bills have received updates within a given time period you can use the bill updates api.
 
+
+.. warning::
+    There are two types of updates, 'processed' and 'published'.
+    Processed refers to the date that OpenLeg processed the data which is useful if you are trying to stay synchronized with OpenLeg.
+    Published refers to the date during which data was intended to be published.
+    This can differ from the processed date because OpenLeg can periodically reprocess it's data to fix issues.
+    By default the type is set to 'processed'.
+
 **Usage**
 
 List of bills updated during the given date/time range
@@ -501,16 +509,13 @@ List of bills updated since the given date/time
 |                |                      | Multiple formats can be requested.                     |
 +----------------+----------------------+--------------------------------------------------------+
 
-There are two types of updates, 'processed' and 'published'. Processed refers to the date that OpenLeg processed
-the data which is useful if you are trying to stay synchronized with OpenLeg. Published refers to the date during
-which data was intended to be published. This can differ from the processed date because OpenLeg can periodically
-reprocess it's data to fix issues. By default the type is set to 'processed'.
+.. warning:: By default the type is set to 'processed'. Ensure you have the right type in the api request so you receive the results you are looking for
 
 **Examples**
 
-Bills that were updated between November 1, 2014 and November 5, 2014
+Bills that were updated between February 13, 2019 8:00:00AM and February 13, 2019 at 10:55:48AM
 ::
-    /api/3/bills/updates/2014-11-01T00:00:00/2014-11-05T00:00:00
+    /api/3/bills/updates/2019-02-13T08:00:00/2019-02-13T10:55:48
 
 .. _bill-update-token-response:
 
@@ -519,23 +524,25 @@ Bills that were updated between November 1, 2014 and November 5, 2014
 .. code-block:: javascript
 
     {
-        "success": true,
-        "message": "",
-        "responseType": "base-bill-id-update-token list",
-        "total": 4,
-        "offsetStart": 1,
-        "offsetEnd": 4,
-        "limit": 50,
+        success: true,
+        message: "",
+        responseType: "update-token list",
+        total: 74,
+        offsetStart: 1,
+        offsetEnd: 50,
+        limit: 50,
         "result": {
             "items": [
                 {
-                    "id": {
-                        "basePrintNo": "A242",
-                        "session": 2013
+                   id: {
+                        basePrintNo: "S1826",
+                        session: 2019,
+                        basePrintNoStr: "S1826-2019"
                     },
-                    "sourceId": "SOBI.D141103.T092258.TXT-0-BILL",
-                    "sourceDateTime": "2014-11-03T09:22:58",
-                    "processedDateTime": "2014-12-17T16:54:24.065500"
+                    contentType: "BILL",
+                    sourceId: "2019-02-13-09.01.14.643609_LDSPON_S01826.XML-1-LDSPON",
+                    sourceDateTime: "2019-02-13T09:01:14.643609",
+                    processedDateTime: "2019-02-13T09:06:09.796845"
                 },
                 ... (truncated)
     }

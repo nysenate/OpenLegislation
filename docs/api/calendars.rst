@@ -317,9 +317,9 @@ List of calendars updated during the given date/time range
 
 **Examples**
 
-Calendars that were updated between June 15th and June 20th of 2014
+Calendars that were updated between January 1st and January 20th of 2019
 ::
-    (GET) /api/3/calendars/updates/2014-06-15T00:00:00/2014-06-20T00:00:00
+    (GET) /api/3/calendars/updates/2019-01-01T00:00:00/2019-01-20T00:00:00
 
 .. _calendar-update-token-response:
 
@@ -339,19 +339,19 @@ Calendars that were updated between June 15th and June 20th of 2014
         "items" : [
           {
             "id" : {        // The year and calendar number of the updated calendar
-              "year" : 2014,
-              "calendarNumber" : 53
+              "year" : 2019,
+              "calendarNumber" : 1
             },
             // The id of the reference that triggered the update
-            "sourceId" : "SOBI.D140619.T221836.TXT-2-CALENDAR",
+            "sourceId" : "2019-01-14-15.55.39.563595_SENCAL_00001.XML-1-CALENDAR",
             // The publish date time of the reference source
-            "sourceDateTime" : "2014-06-19T22:18:36",
+            "sourceDateTime" : "2019-01-14T15:55:39.563595",
             // The date and time that the reference was processed
-            "processedDateTime" : "2014-12-15T15:21:07.002331"
+            "processedDateTime" : "2019-01-14T16:01:20.389704"
           },
           ... (truncated)
         ],
-        "size" : 4
+        "size" : 2
       }
     }
 
@@ -370,15 +370,17 @@ Get all updates for a calendar
 
 **Optional Params**
 
-+-----------+--------------------+--------------------------------------------------------+
-| Parameter | Values             | Description                                            |
-+===========+====================+========================================================+
-| order     | string (asc|desc)  | Order the results by update date/time                  |
-+-----------+--------------------+--------------------------------------------------------+
-| limit     | string             | (default 100) Limit the number of results              |
-+-----------+--------------------+--------------------------------------------------------+
-| offset    | number             | (default 1) Start results from offset                  |
-+-----------+--------------------+--------------------------------------------------------+
++-----------+----------------------+---------------------------------------------------------------+
+| Parameter | Values               | Description                                                   |
++===========+======================+===============================================================+
+| type      |(processed|published) | The type of bill update (see below for explanation)           |
++-----------+----------------------+---------------------------------------------------------------+
+| order     | string (asc|desc)    | Order the results by update date/time                         |
++-----------+----------------------+---------------------------------------------------------------+
+| limit     | string               | (default 100) Limit the number of results                     |
++-----------+----------------------+---------------------------------------------------------------+
+| offset    | number               | (default 1) Start results from offset                         |
++-----------+----------------------+---------------------------------------------------------------+
 
 **Examples**
 
@@ -388,7 +390,7 @@ Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 
 
 .. _calendar-update-digest-response:
 
-**Response**
+**Response (type=published)**
 
 .. _`detailed update digests`:
 

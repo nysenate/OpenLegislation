@@ -37,7 +37,6 @@ Returns a list of agenda ids in ascending order that occur in the given year
 
 **Examples**
 
-Request agenda 2 of session year 2017
 ::
    /api/3/agendas/2017
 
@@ -124,6 +123,9 @@ Search agendas across all years for a term
 +-----------+-----------------------------------------------------------------------------------------+
 | offset    | Start the results from offset                                                           |
 +-----------+-----------------------------------------------------------------------------------------+
++-----------+-----------------------------------------------------------------------------------------+
+| type      | Determine wether to use process date time or published date time                        |
++-----------+-----------------------------------------------------------------------------------------+
 
 
 **Examples**
@@ -145,12 +147,6 @@ Return a list of agenda ids that have changed during a specified date/time range
 
 .. note:: This api call gets updates in the last 7 days
 
-**Examples**
-
-Get all of the data in the last week
-::
-    /api/3/agendas/updates/
-
 **Usage**
 
 Get updates from the time specified to now
@@ -165,6 +161,7 @@ Get updates for all of the 2017 session
 
 **Usage**
 
+Get updates for a specified time range
 ::
     (GET) /api/3/agendas/updates/{from}/{to}
 
@@ -217,4 +214,4 @@ Return agenda digests that have changed during a specified date/time range
 
 Get updates for agenda 12 in 2017 from Jan 1st, 2017 to Dec 1st, 2017
 ::
-    /api/3/agendas/2017/12/updates/2017-01-01/2017-12-01
+    /api/3/agendas/2017/12/updates/2017-01-01/2017-12-01?type=published

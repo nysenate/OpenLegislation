@@ -44,7 +44,7 @@ reprocess it's data to fix issues. By default the type is set to published.
 
 Get a detailed view of the first 50 agenda, bill, and calendar updates processed on March 17 2015
 ::
-    /api/3/updates/2015-03-17T00:00:00/2015-03-18T00:00:00?type=processed
+    /api/3/updates/2019-01-17T00:00:00/2019-01-18T00:00:00?type=processed
                     &content-type=AGENDA&content-type=BILL&content-type=CALENDAR
                     &detail=true&fields=true&limit=50
 
@@ -73,18 +73,20 @@ See the following pages for info on the unique updates responses for each conten
         "items" : [
           {
             "id" : {                        // Content identifier
-              "lawId" : "BNK",              // See content-specific updates pages
-              "activeDate" : "2014-09-26"
+              "basePrintNo": "S1948",         // See content-specific updates pages
+                "session": 2019,
+                "basePrintNoStr": "S1948-2019"
             },
-            "contentType" : "LAW",
-            "sourceId" : "DATABASE.LAW6",   // Id of the source that triggered the update
-            "sourceDateTime" : "2014-09-26T00:00",  // Published date of the source document
-            "processedDateTime" : "2015-03-18T10:48:35.023101", // Time when the update occurred
+            "contentType" : "BILL",
+            "sourceId": "2019-01-17-20.22.35.839069_SENMEMO_S01948.XML-1-SENMEMO",,   // Id of the source that triggered the update
+            "sourceDateTime" : "2019-01-17T20:22:35.839069",  // Published date of the source document
+            "processedDateTime" : "2019-01-17T20:26:24.673778", // Time when the update occurred
 
             // --- The following fields are returned only for update digests -------------------
-            "action" : "Insert",    // Update action (Insert|Update|Delete)
-            "scope" : "Law Tree",   // Designates which part of the content was updated
+            "action" : "Update",    // Update action (Insert|Update|Delete)
+            "scope" : "Bill Amendment",   // Designates which part of the content was updated
             "fields" : { }  // The updated fields, returned only if fields parameter is true
+            "fieldCount": 1
             // ---------------------------------------------------------------------------------
           },
           ...

@@ -24,19 +24,27 @@
 
   
 
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Search APIs" href="search_api.html" />
-    <link rel="prev" title="Senate Members API" href="members.html" /> 
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
+        <link rel="next" title="Search APIs" href="search_api.html"/>
+        <link rel="prev" title="Senate Members API" href="members.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -108,7 +116,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="reference.html">Open Legislation</a>
@@ -116,10 +124,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -168,7 +175,7 @@
 <h2>Get aggregate updates<a class="headerlink" href="#get-aggregate-updates" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>List of content that was updated during the given date/time range</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span>
 <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">fromDateTime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">toDateTime</span><span class="p">}</span>
 </pre></div>
 </div>
@@ -226,7 +233,7 @@ which data was intended to be published. This can differ from the processed date
 reprocess it’s data to fix issues. By default the type is set to published.</p>
 <p><strong>Example</strong></p>
 <p>Get a detailed view of the first 50 agenda, bill, and calendar updates processed on March 17 2015</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/updates/2015-03-17T00:00:00/2015-03-18T00:00:00?type=processed
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/updates/2019-01-17T00:00:00/2019-01-18T00:00:00?type=processed
                 &amp;content-type=AGENDA&amp;content-type=BILL&amp;content-type=CALENDAR
                 &amp;detail=true&amp;fields=true&amp;limit=50
 </pre></div>
@@ -240,7 +247,7 @@ reprocess it’s data to fix issues. By default the type is set to published.</p
 <div class="line"><span class="xref std std-ref">law update token response</span>, <span class="xref std std-ref">law update digest response</span></div>
 </div>
 <hr class="docutils" />
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;update-token list&quot;</span><span class="p">,</span>
@@ -252,18 +259,20 @@ reprocess it’s data to fix issues. By default the type is set to published.</p
     <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span>
       <span class="p">{</span>
         <span class="s2">&quot;id&quot;</span> <span class="o">:</span> <span class="p">{</span>                        <span class="c1">// Content identifier</span>
-          <span class="s2">&quot;lawId&quot;</span> <span class="o">:</span> <span class="s2">&quot;BNK&quot;</span><span class="p">,</span>              <span class="c1">// See content-specific updates pages</span>
-          <span class="s2">&quot;activeDate&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-09-26&quot;</span>
+          <span class="s2">&quot;basePrintNo&quot;</span><span class="o">:</span> <span class="s2">&quot;S1948&quot;</span><span class="p">,</span>         <span class="c1">// See content-specific updates pages</span>
+            <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="mi">2019</span><span class="p">,</span>
+            <span class="s2">&quot;basePrintNoStr&quot;</span><span class="o">:</span> <span class="s2">&quot;S1948-2019&quot;</span>
         <span class="p">},</span>
-        <span class="s2">&quot;contentType&quot;</span> <span class="o">:</span> <span class="s2">&quot;LAW&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;sourceId&quot;</span> <span class="o">:</span> <span class="s2">&quot;DATABASE.LAW6&quot;</span><span class="p">,</span>   <span class="c1">// Id of the source that triggered the update</span>
-        <span class="s2">&quot;sourceDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2014-09-26T00:00&quot;</span><span class="p">,</span>  <span class="c1">// Published date of the source document</span>
-        <span class="s2">&quot;processedDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2015-03-18T10:48:35.023101&quot;</span><span class="p">,</span> <span class="c1">// Time when the update occurred</span>
+        <span class="s2">&quot;contentType&quot;</span> <span class="o">:</span> <span class="s2">&quot;BILL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sourceId&quot;</span><span class="o">:</span> <span class="s2">&quot;2019-01-17-20.22.35.839069_SENMEMO_S01948.XML-1-SENMEMO&quot;</span><span class="p">,,</span>   <span class="c1">// Id of the source that triggered the update</span>
+        <span class="s2">&quot;sourceDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2019-01-17T20:22:35.839069&quot;</span><span class="p">,</span>  <span class="c1">// Published date of the source document</span>
+        <span class="s2">&quot;processedDateTime&quot;</span> <span class="o">:</span> <span class="s2">&quot;2019-01-17T20:26:24.673778&quot;</span><span class="p">,</span> <span class="c1">// Time when the update occurred</span>
 
         <span class="c1">// --- The following fields are returned only for update digests -------------------</span>
-        <span class="s2">&quot;action&quot;</span> <span class="o">:</span> <span class="s2">&quot;Insert&quot;</span><span class="p">,</span>    <span class="c1">// Update action (Insert|Update|Delete)</span>
-        <span class="s2">&quot;scope&quot;</span> <span class="o">:</span> <span class="s2">&quot;Law Tree&quot;</span><span class="p">,</span>   <span class="c1">// Designates which part of the content was updated</span>
+        <span class="s2">&quot;action&quot;</span> <span class="o">:</span> <span class="s2">&quot;Update&quot;</span><span class="p">,</span>    <span class="c1">// Update action (Insert|Update|Delete)</span>
+        <span class="s2">&quot;scope&quot;</span> <span class="o">:</span> <span class="s2">&quot;Bill Amendment&quot;</span><span class="p">,</span>   <span class="c1">// Designates which part of the content was updated</span>
         <span class="s2">&quot;fields&quot;</span> <span class="o">:</span> <span class="p">{</span> <span class="p">}</span>  <span class="c1">// The updated fields, returned only if fields parameter is true</span>
+        <span class="s2">&quot;fieldCount&quot;</span><span class="o">:</span> <span class="mi">1</span>
         <span class="c1">// ---------------------------------------------------------------------------------</span>
       <span class="p">},</span>
       <span class="p">...</span>
@@ -280,7 +289,9 @@ reprocess it’s data to fix issues. By default the type is set to published.</p
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -298,11 +309,11 @@ reprocess it’s data to fix issues. By default the type is set to published.</p
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services
+        &copy; Copyright 2014, NY State Senate Technology Services.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -317,24 +328,35 @@ reprocess it’s data to fix issues. By default the type is set to published.</p
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0-alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
 
   
 
-  <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>
