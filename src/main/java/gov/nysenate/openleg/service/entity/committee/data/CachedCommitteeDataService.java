@@ -166,11 +166,6 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     }
 
     @Override
-    public List<SessionYear> getEligibleYears() {
-        return committeeDao.getEligibleYears();
-    }
-
-    @Override
     public List<CommitteeSessionId> getAllCommitteeSessionIds() {
         return committeeDao.getAllSessionIds();
     }
@@ -260,12 +255,4 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         eventBus.post(new CommitteeUpdateEvent(committee, LocalDateTime.now()));
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void deleteCommittee(CommitteeId committeeId) {
-        if(committeeId==null) {
-            throw new IllegalArgumentException("CommitteeId cannot be null!");
-        }
-        committeeDao.deleteCommittee(committeeId);
-    }
 }
