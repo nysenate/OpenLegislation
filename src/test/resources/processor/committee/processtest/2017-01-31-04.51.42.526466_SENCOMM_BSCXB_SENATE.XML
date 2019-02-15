@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<sencommmem sessyr="2017" year="2017" action="replace">
+<committees>
+<committee>
+<name><![CDATA[AgricultureTEST]]></name>
+<location><![CDATA[Room 412 LOB]]></location>
+<meetday><![CDATA[Tuesday]]></meetday>
+<meettime><![CDATA[09:00 AM]]></meettime>
+<meetaltweek>No</meetaltweek>
+<meetaltweektext></meetaltweektext>
+<membership>
+<member seqno="0001">
+<name><![CDATA[Ritchie]]></name>
+<title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+</membership>
+</committee>
+</committees>
+</sencommmem>

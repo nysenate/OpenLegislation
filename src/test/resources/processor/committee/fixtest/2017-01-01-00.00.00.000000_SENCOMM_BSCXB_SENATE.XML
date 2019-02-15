@@ -2,16 +2,21 @@
 <sencommmem sessyr="2017" year="2017" action="replace">
 <committees>
 <committee>
-<name><![CDATA[Agriculture]]></name>
-<location><![CDATA[Room 412 LOB]]></location>
-<meetday><![CDATA[Tuesday]]></meetday>
-<meettime><![CDATA[09:00 AM]]></meettime>
+<name><![CDATA[Nonsense]]></name>
+<location></location>
+<meetday></meetday>
+<meettime></meettime>
 <meetaltweek>No</meetaltweek>
 <meetaltweektext></meetaltweektext>
 <membership>
 <member seqno="0001">
-<name><![CDATA[Ritchie]]></name>
+<name><![CDATA[Deb]]></name>
 <title>Chairperson</title>
+<memberlist>Majority</memberlist>
+</member>
+<member seqno="0002">
+<name><![CDATA[Tom]]></name>
+<title></title>
 <memberlist>Majority</memberlist>
 </member>
 </membership>
