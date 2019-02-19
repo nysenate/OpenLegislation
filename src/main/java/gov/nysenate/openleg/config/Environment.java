@@ -60,19 +60,19 @@ public class Environment
     /** --- Processing settings --- */
 
     /** Enable processing of data. */
-    @Value("${sobi.process.enabled:true}")
-    private boolean sobiProcessEnabled;
+    @Value("${leg.data.process.enabled:true}")
+    private boolean legDataProcessEnabled;
 
     @Value("${data.process.enabled}") private boolean processingEnabled;
 
     /** Allows for the option to enable/disable logging. */
     @Value("${data.process.log.enabled}") private boolean processLoggingEnabled;
 
-    /** Enable batch processing of SOBI files. */
-    @Value("${sobi.batch.process.enabled}") private boolean sobiBatchEnabled;
+    /** Enable batch processing of legislative data files. */
+    @Value("${leg.data.batch.process.enabled}") private boolean legDataBatchEnabled;
 
     /** If SOBI batch is enabled, this specifies the maximum batch size. */
-    @Value("${sobi.batch.process.size}") private int sobiBatchSize;
+    @Value("${leg.data.batch.process.size}") private int legDataBatchSize;
 
     /** --- Scheduling Settings --- */
 
@@ -198,20 +198,20 @@ public class Environment
         this.processLoggingEnabled = processLoggingEnabled;
     }
 
-    public boolean isSobiBatchEnabled() {
-        return sobiBatchEnabled;
+    public boolean isLegDataBatchEnabled() {
+        return legDataBatchEnabled;
     }
 
-    public void setSobiBatchEnabled(boolean sobiBatchEnabled) {
-        this.sobiBatchEnabled = sobiBatchEnabled;
+    public void setLegDataBatchEnabled(boolean legDataBatchEnabled) {
+        this.legDataBatchEnabled = legDataBatchEnabled;
     }
 
-    public int getSobiBatchSize() {
-        return sobiBatchSize;
+    public int getLegDataBatchSize() {
+        return legDataBatchSize;
     }
 
-    public void setSobiBatchSize(int sobiBatchSize) {
-        this.sobiBatchSize = sobiBatchSize;
+    public void setLegDataBatchSize(int legDataBatchSize) {
+        this.legDataBatchSize = legDataBatchSize;
     }
 
     public String getApiSecret() {
@@ -358,8 +358,8 @@ public class Environment
         return deployedDateTime;
     }
 
-    public boolean getSobiProcessEnabled() {
-        return sobiProcessEnabled;
+    public boolean getLegDataProcessEnabled() {
+        return legDataProcessEnabled;
     }
 
     public String getOpenlegRefApiKey() {

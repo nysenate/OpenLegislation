@@ -3,8 +3,8 @@ package gov.nysenate.openleg.dao.sourcefiles.sobi;
 import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class FsSobiDaoTest /*extends BaseTests */ {
     private FsSobiDao sobiDao;
     
     @Autowired
-    private SobiFragmentDao fragmentDao;
+    private LegDataFragmentDao fragmentDao;
 
     @Test
     public void testGetSobiFile() throws Exception{
@@ -45,7 +45,7 @@ public class FsSobiDaoTest /*extends BaseTests */ {
     
     @Test
     public void testGetSobiFragment() throws Exception{
-        logger.info("{}", fragmentDao.getSobiFragment("SOBI.D130110.T120242.TXT-0-BILL"));
+        logger.info("{}", fragmentDao.getLegDataFragment("SOBI.D130110.T120242.TXT-0-BILL"));
     }
     
     @Test
@@ -65,9 +65,9 @@ public class FsSobiDaoTest /*extends BaseTests */ {
     
     @Test
     public void testGetPendingSobiFragments_filterSet() throws Exception{
-        ImmutableSet<SobiFragmentType> types = ImmutableSet.of(SobiFragmentType.AGENDA);
-        List<SobiFragment> fragments =
-                fragmentDao.getPendingSobiFragments(types, SortOrder.ASC, LimitOffset.ALL);
+        ImmutableSet<LegDataFragmentType> types = ImmutableSet.of(LegDataFragmentType.AGENDA);
+        List<LegDataFragment> fragments =
+                fragmentDao.getPendingLegDataFragments(types, SortOrder.ASC, LimitOffset.ALL);
         fragments.stream().forEach(f -> logger.info(f.getFragmentId()));
     }
     

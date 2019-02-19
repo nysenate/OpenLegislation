@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.agenda.data;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.time.LocalDate;
@@ -42,14 +42,14 @@ public interface AgendaDao
 
     /**
      * Updates the agenda or inserts it if it does not yet exist. This includes all the
-     * addenda that are stored within the agenda. Associates the the SobiFragment that
+     * addenda that are stored within the agenda. Associates the the LegDataFragment that
      * triggered the update (set null if not applicable).
      *
      * @param agenda Agenda - The agenda to save.
-     * @param sobiFragment SobiFragment - The fragment that triggered this update.
+     * @param legDataFragment LegDataFragment - The fragment that triggered this update.
      * @throws DataAccessException
      */
-    public void updateAgenda(Agenda agenda, SobiFragment sobiFragment) throws DataAccessException;
+    public void updateAgenda(Agenda agenda, LegDataFragment legDataFragment) throws DataAccessException;
 
     /**
      * Deletes an agenda and all of it's associated addenda.

@@ -2,11 +2,11 @@ package gov.nysenate.openleg.processor.bill.ldblurb;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import java.io.IOException;
  * Created by Robert Bebber on 3/16/17.
  */
 @Service
-public class XmlLDBlurbProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlLDBlurbProcessor extends AbstractDataProcessor implements LegDataProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlLDBlurbProcessor.class);
     @Autowired
@@ -38,12 +38,12 @@ public class XmlLDBlurbProcessor extends AbstractDataProcessor implements SobiPr
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.LDBLURB;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.LDBLURB;
     }
 
     @Override
-    public void process(SobiFragment fragment) {
+    public void process(LegDataFragment fragment) {
         logger.info("Processing LDBlurb...");
         logger.info("Processing " + fragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(fragment);
@@ -78,7 +78,7 @@ public class XmlLDBlurbProcessor extends AbstractDataProcessor implements SobiPr
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }

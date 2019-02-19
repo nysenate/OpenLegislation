@@ -10,12 +10,11 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileFsDao;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.LegDataFragmentDao;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
-import gov.nysenate.openleg.model.sourcefiles.SourceFile;
-import gov.nysenate.openleg.model.sourcefiles.SourceType;
+import gov.nysenate.openleg.model.sourcefiles.*;
 import gov.nysenate.openleg.model.sourcefiles.sobi.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +30,11 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * This SobiProcessService implementation processes every type of sobi fragment.
+ * This LegDataProcessService implementation processes every type of sobi fragment.
  */
 @Service
-public class ManagedSobiProcessService implements SobiProcessService {
-    private static final Logger logger = LoggerFactory.getLogger(ManagedSobiProcessService.class);
+public class ManagedLegDataProcessService implements LegDataProcessService {
+    private static final Logger logger = LoggerFactory.getLogger(ManagedLegDataProcessService.class);
 
     private static final Pattern patchTagPattern = Pattern.compile("^\\s*</?PATCH>\\s*$");
 
@@ -44,7 +43,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
     @Autowired
     private SourceFileRefDao sourceFileRefDao;
     @Autowired
-    private SobiFragmentDao sobiFragmentDao;
+    private LegDataFragmentDao legDataFragmentDao;
     @Autowired
     private EventBus eventBus;
     @Autowired
@@ -52,7 +51,7 @@ public class ManagedSobiProcessService implements SobiProcessService {
     @Autowired
     private ProcessConfig processConfig;
 
-    private boolean sobiProcessEnabled = true;
+    private boolean legDataProcessEnabled = true;
     /**
      * Map of source file types to daos.
      */
@@ -60,18 +59,18 @@ public class ManagedSobiProcessService implements SobiProcessService {
 
     /** --- Processor Dependencies --- */
 
-    @Autowired private List<SobiProcessor> sobiProcessors;
+    @Autowired private List<LegDataProcessor> legDataProcessors;
 
     /**
-     * Register processors to handle a specific SobiFragment via this mapping.
+     * Register processors to handle a specific LegDataFragment via this mapping.
      */
-    private ImmutableMap<SobiFragmentType, SobiProcessor> processorMap;
+    private ImmutableMap<LegDataFragmentType, LegDataProcessor> processorMap;
 
     @PostConstruct
     protected void init() {
         eventBus.register(this);
 
-        processorMap = Maps.uniqueIndex(sobiProcessors, SobiProcessor::getSupportedType);
+        processorMap = Maps.uniqueIndex(legDataProcessors, LegDataProcessor::getSupportedType);
 
         sourceFileDaoMap = Maps.uniqueIndex(sourceFileFsDaos, SourceFileFsDao::getSourceType);
     }
@@ -131,29 +130,29 @@ public class ManagedSobiProcessService implements SobiProcessService {
      * {@inheritDoc}
      */
     @Override
-    public List<SobiFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset) {
-        return sobiFragmentDao.getPendingSobiFragments(sortByPubDate, limitOffset);
+    public List<LegDataFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset) {
+        return legDataFragmentDao.getPendingLegDataFragments(sortByPubDate, limitOffset);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int processFragments(List<SobiFragment> fragments, SobiProcessOptions options) {
+    public int processFragments(List<LegDataFragment> fragments, SobiProcessOptions options) {
         logger.debug((fragments.isEmpty()) ? "No more fragments to process"
                 : "Iterating through {} fragments", fragments.size());
-        final List<SobiFragment> filteredFragments = processConfig.filterFileFragments(fragments);
+        final List<LegDataFragment> filteredFragments = processConfig.filterFileFragments(fragments);
         if (fragments.size() > 1) {
             logger.info("Processing {} fragments ({} ignored)", filteredFragments.size(), fragments.size() - filteredFragments.size());
         } else if (fragments.size() == 1 && filteredFragments.isEmpty()) {
             logger.info("Ignoring fragment {} due to process config.", fragments.get(0).getFragmentId());
         }
-        for (SobiFragment fragment : filteredFragments) {
+        for (LegDataFragment fragment : filteredFragments) {
             fragment.startProcessing();
-            sobiFragmentDao.updateSobiFragment(fragment);
+            legDataFragmentDao.updateLegDataFragment(fragment);
             // Hand off processing to specific implementations based on fragment type.
             if (processorMap.containsKey(fragment.getType())) {
-                SobiProcessor currentProcessor = processorMap.get(fragment.getType());
+                LegDataProcessor currentProcessor = processorMap.get(fragment.getType());
                 currentProcessor.process(fragment);
                 currentProcessor.checkIngestCache();
             } else {
@@ -163,9 +162,9 @@ public class ManagedSobiProcessService implements SobiProcessService {
             fragment.setProcessedDateTime(LocalDateTime.now());
         }
         // Perform any necessary post-processing/cleanup
-        processorMap.values().forEach(SobiProcessor::postProcess);
+        processorMap.values().forEach(LegDataProcessor::postProcess);
         // Set the fragments as processed and update
-        sobiFragmentDao.setPendProcessingFalse(fragments);
+        legDataFragmentDao.setPendProcessingFalse(fragments);
         return fragments.size();
     }
 
@@ -176,18 +175,18 @@ public class ManagedSobiProcessService implements SobiProcessService {
      */
     @Override
     public int processPendingFragments(SobiProcessOptions options) {
-        List<SobiFragment> fragments;
+        List<LegDataFragment> fragments;
         int processCount = 0;
 
         do {
-            ImmutableSet<SobiFragmentType> allowedTypes = options.getAllowedFragmentTypes();
-            LimitOffset limOff = new LimitOffset(env.getSobiBatchSize());
-            fragments = sobiFragmentDao.getPendingSobiFragments(allowedTypes, SortOrder.ASC, limOff);
+            ImmutableSet<LegDataFragmentType> allowedTypes = options.getAllowedFragmentTypes();
+            LimitOffset limOff = new LimitOffset(env.getLegDataBatchSize());
+            fragments = legDataFragmentDao.getPendingLegDataFragments(allowedTypes, SortOrder.ASC, limOff);
             // Process fragments in a batch, or one by one depending on sobi batch config.
-            if (env.isSobiBatchEnabled()) {
+            if (env.isLegDataBatchEnabled()) {
                 processCount += processFragments(fragments, options);
             } else {
-                for (SobiFragment fragment : fragments) {
+                for (LegDataFragment fragment : fragments) {
                     processCount += processFragments(Collections.singletonList(fragment), options);
                 }
             }
@@ -201,13 +200,13 @@ public class ManagedSobiProcessService implements SobiProcessService {
      */
     @Override
     public void updatePendingProcessing(String fragmentId, boolean pendingProcessing)
-            throws SobiFragmentNotFoundEx {
+            throws LegDataFragmentNotFoundEx {
         try {
-            SobiFragment fragment = sobiFragmentDao.getSobiFragment(fragmentId);
+            LegDataFragment fragment = legDataFragmentDao.getLegDataFragment(fragmentId);
             fragment.setPendingProcessing(pendingProcessing);
-            sobiFragmentDao.updateSobiFragment(fragment);
+            legDataFragmentDao.updateLegDataFragment(fragment);
         } catch (DataAccessException ex) {
-            throw new SobiFragmentNotFoundEx();
+            throw new LegDataFragmentNotFoundEx();
         }
     }
 
@@ -220,8 +219,8 @@ public class ManagedSobiProcessService implements SobiProcessService {
      */
     private List<SourceFile> getIncomingSourceFiles() throws IOException {
         List<SourceFile> incomingSourceFiles = new ArrayList<>();
-        final int batchSize = env.getSobiBatchSize();
-        sobiProcessEnabled = env.getSobiProcessEnabled();
+        final int batchSize = env.getLegDataBatchSize();
+        legDataProcessEnabled = env.getLegDataProcessEnabled();
         for (SourceFileFsDao<?> sourceFsDao : sourceFileFsDaos) {
             LimitOffset remainingLimit = new LimitOffset(batchSize - incomingSourceFiles.size());
             incomingSourceFiles.addAll(sourceFsDao.getIncomingSourceFiles(SortOrder.ASC, remainingLimit));
@@ -241,16 +240,16 @@ public class ManagedSobiProcessService implements SobiProcessService {
                 sourceFile.getSourceType().name(), sourceFile.getFileName(),
                 LocalDateTime.now(), DataProcessAction.COLLATE);
 
-        List<SobiFragment> fragments = createFragments(sourceFile); //When Switching to XML Only we can get rid of the list and save some memory
+        List<LegDataFragment> fragments = createFragments(sourceFile); //When Switching to XML Only we can get rid of the list and save some memory
         logger.info("Created {} fragments", fragments.size());
 
         // Record the source file in the backing store.
         sourceFileRefDao.updateSourceFile(sourceFile);
         // Save the extracted fragments. They will be marked as pending processing.
-        for (SobiFragment fragment : fragments) {
+        for (LegDataFragment fragment : fragments) {
             logger.info("Saving fragment {}", fragment.getFragmentId());
             fragment.setPendingProcessing(true);
-            sobiFragmentDao.updateSobiFragment(fragment);
+            legDataFragmentDao.updateLegDataFragment(fragment);
             unit.addMessage("Saved " + fragment.getFragmentId());
         }
         // Done with this source file so let's archive it.
@@ -264,8 +263,8 @@ public class ManagedSobiProcessService implements SobiProcessService {
     /**
      * Extracts a list of SobiFragments from the given SobiFile.
      */
-    private List<SobiFragment> createFragments(SourceFile sourceFile) throws IOException {
-        List<SobiFragment> sobiFragments = new ArrayList<>();
+    private List<LegDataFragment> createFragments(SourceFile sourceFile) throws IOException {
+        List<LegDataFragment> legDataFragments = new ArrayList<>();
 
         // Else continue with splitting the SOBI file into fragments
         StringBuilder billBuffer = new StringBuilder();
@@ -288,10 +287,10 @@ public class ManagedSobiProcessService implements SobiProcessService {
                 isPatch = true;
                 extractPatchMessage(lineIterator, patchMessage);
             }
-            SobiFragmentType fragmentType = SobiFragmentType.matchFragmentType(line);
+            LegDataFragmentType fragmentType = LegDataFragmentType.matchFragmentType(line);
             if (fragmentType != null) {
                 // Bill fragments are in the sobi format and appended into a single buffer
-                if (fragmentType.equals(SobiFragmentType.BILL)) {
+                if (fragmentType.equals(LegDataFragmentType.BILL)) {
                     // Memos need to be converted to latin1 encoding
                     if (line.charAt(11) == SobiLineType.SPONSOR_MEMO.getTypeCode()) {
                         line = new String(line.getBytes(sourceFile.getEncoding()), "latin1");
@@ -303,25 +302,25 @@ public class ManagedSobiProcessService implements SobiProcessService {
                 // tag and the xml text is stored in the fragment.
                 else {
                     String xmlText = extractXmlText(fragmentType, line, lineIterator);
-                    SobiFragment fragment = new SobiFragment(sourceFile, fragmentType, xmlText, sequenceNo++);
-                    sobiFragments.add(fragment);
+                    LegDataFragment fragment = new LegDataFragment(sourceFile, fragmentType, xmlText, sequenceNo++);
+                    legDataFragments.add(fragment);
                 }
             }
         }
         // Convert the billBuffer into a single bill fragment (if applicable) with sequence no set to 0.
         if (billBuffer.length() > 0) {
-            SobiFragment billFragment = new SobiFragment(sourceFile, SobiFragmentType.BILL, billBuffer.toString(), 0);
-            sobiFragments.add(billFragment);
+            LegDataFragment billFragment = new LegDataFragment(sourceFile, LegDataFragmentType.BILL, billBuffer.toString(), 0);
+            legDataFragments.add(billFragment);
         }
         // Set manual fix flag and add notes if this file was a patch
         if (isPatch) {
             String notes = patchMessage.toString();
-            sobiFragments.forEach(fragment -> {
+            legDataFragments.forEach(fragment -> {
                 fragment.setManualFix(true);
                 fragment.setManualFixNotes(notes);
             });
         }
-        return sobiFragments;
+        return legDataFragments;
     }
 
     /**
@@ -348,13 +347,13 @@ public class ManagedSobiProcessService implements SobiProcessService {
      * file. This depends strongly on escape sequences being on their own line; otherwise
      * we'll get malformed XML docs.
      *
-     * @param fragmentType SobiFragmentType
+     * @param fragmentType LegDataFragmentType
      * @param line         String - The starting line of the document
      * @param iterator     Iterator<String> - Current iterator from the sobi file's text body
      * @return String - The resulting XML string.
      * @throws java.io.IOException
      */
-    private String extractXmlText(SobiFragmentType fragmentType, String line, Iterator<String> iterator) throws IOException {
+    private String extractXmlText(LegDataFragmentType fragmentType, String line, Iterator<String> iterator) throws IOException {
         String endPattern = fragmentType.getEndPattern();
         StringBuffer xmlBuffer = new StringBuffer(
                 "<?xml version='1.0' encoding='UTF-8'?>&newl;" + line + "&newl;"

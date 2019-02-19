@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.model.sourcefiles.sobi;
 
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -46,8 +47,8 @@ public class SobiBlock
     /** The file name of the fragment that generated this block. */
     private String fragmentFileName;
 
-    /** The type of SobiFragment that generated this block. */
-    private SobiFragmentType fragmentType;
+    /** The type of LegDataFragment that generated this block. */
+    private LegDataFragmentType fragmentType;
 
     /** The published date time of the fragment that generated this block */
     private LocalDateTime publishedDateTime;
@@ -97,7 +98,7 @@ public class SobiBlock
      * the source file and line number the block was initialized from. The line is assumed to be
      * valid SOBI file and is NOT checked for performance reasons.
      */
-    public SobiBlock(String fragmentFileName, SobiFragmentType type, LocalDateTime publishedDateTime, int startLineNo, String line) {
+    public SobiBlock(String fragmentFileName, LegDataFragmentType type, LocalDateTime publishedDateTime, int startLineNo, String line) {
         this(line);
         this.fragmentFileName = fragmentFileName;
         this.publishedDateTime = publishedDateTime;
@@ -201,11 +202,11 @@ public class SobiBlock
         this.fragmentFileName = fragmentFileName;
     }
 
-    public SobiFragmentType getFragmentType() {
+    public LegDataFragmentType getFragmentType() {
         return fragmentType;
     }
 
-    public void setFragmentType(SobiFragmentType fragmentType) {
+    public void setFragmentType(LegDataFragmentType fragmentType) {
         this.fragmentType = fragmentType;
     }
 

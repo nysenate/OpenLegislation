@@ -5,13 +5,13 @@ import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.LegDataFragmentDao;
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
-import gov.nysenate.openleg.processor.sobi.ManagedSobiProcessService;
+import gov.nysenate.openleg.processor.sobi.ManagedLegDataProcessService;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Robert Bebber on 4/24/17.
  */
-public class ManagedSobiProcessServiceTest extends BaseTests {
+public class ManagedLegDataProcessServiceTest extends BaseTests {
     // get sobi/xml collate properly
     // make dummy sobi/xml file (cleaned)
     // run process service
@@ -38,21 +38,21 @@ public class ManagedSobiProcessServiceTest extends BaseTests {
     //pull unprocessed sobifragments set to processed( method::getPending setProcessed in sobifragdao)
 
     @Autowired
-    SobiFragmentDao sobiFragmentDao;
+    LegDataFragmentDao legDataFragmentDao;
     @Autowired
-    ManagedSobiProcessService managedSobiProcessService;
+    ManagedLegDataProcessService managedSobiProcessService;
     @Autowired
     Environment environment;
     @Autowired
     SourceFileRefDao sourceFileRefDao;
 
-    private static final Logger logger = LoggerFactory.getLogger(ManagedSobiProcessServiceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManagedLegDataProcessServiceTest.class);
 
 
     public File preTestSetup(String sourceName, File original, String destDirName) throws IOException {
-        List<SobiFragment> sobiFragments = sobiFragmentDao.getPendingSobiFragments(SortOrder.NONE, LimitOffset.ALL);
-        for (SobiFragment sobiFragment : sobiFragments) {
-            sobiFragment.setPendingProcessing(false);
+        List<LegDataFragment> legDataFragments = legDataFragmentDao.getPendingLegDataFragments(SortOrder.NONE, LimitOffset.ALL);
+        for (LegDataFragment legDataFragment : legDataFragments) {
+            legDataFragment.setPendingProcessing(false);
         }
         File temp = new File(destDirName, sourceName);
 
@@ -91,9 +91,9 @@ public class ManagedSobiProcessServiceTest extends BaseTests {
             SourceFile sourceFile = new XmlFile(stagingFile);
             sourceFileRefDao.updateSourceFile(sourceFile);
             managedSobiProcessService.collateSourceFiles();
-            List<SobiFragment> sobiFragments = sobiFragmentDao.getSobiFragments(sourceFile, SortOrder.ASC);
-            for (SobiFragment sobiFragment : sobiFragments) {
-                assertEquals("Ldsumm Collade", SobiFragmentType.LDSUMM, sobiFragment.getType());
+            List<LegDataFragment> legDataFragments = legDataFragmentDao.getLegDataFragments(sourceFile, SortOrder.ASC);
+            for (LegDataFragment legDataFragment : legDataFragments) {
+                assertEquals("Ldsumm Collade", LegDataFragmentType.LDSUMM, legDataFragment.getType());
             }
         } finally {
             cleanUpFiles(stagingFile, expectedArchiveFile);
@@ -112,9 +112,9 @@ public class ManagedSobiProcessServiceTest extends BaseTests {
             SourceFile sourceFile = new SobiFile(stagingFile);
             sourceFileRefDao.updateSourceFile(sourceFile);
             managedSobiProcessService.collateSourceFiles();
-            List<SobiFragment> sobiFragments = sobiFragmentDao.getSobiFragments(sourceFile, SortOrder.ASC);
-            assertEquals("Bill Fragment", SobiFragmentType.BILL, sobiFragments.get(0).getType());
-            assertEquals("AGENDA Fragment", SobiFragmentType.AGENDA, sobiFragments.get(1).getType());
+            List<LegDataFragment> legDataFragments = legDataFragmentDao.getLegDataFragments(sourceFile, SortOrder.ASC);
+            assertEquals("Bill Fragment", LegDataFragmentType.BILL, legDataFragments.get(0).getType());
+            assertEquals("AGENDA Fragment", LegDataFragmentType.AGENDA, legDataFragments.get(1).getType());
         } finally {
             cleanUpFiles(stagingFile, expectedArchiveFile);
         }
@@ -132,8 +132,8 @@ public class ManagedSobiProcessServiceTest extends BaseTests {
             SourceFile sourceFile = new SobiFile(stagingFile);
             sourceFileRefDao.updateSourceFile(sourceFile);
             managedSobiProcessService.collateSourceFiles();
-            List<SobiFragment> sobiFragments = sobiFragmentDao.getSobiFragments(sourceFile, SortOrder.ASC);
-            assertEquals("Calendar Fragment", SobiFragmentType.CALENDAR_ACTIVE, sobiFragments.get(0).getType());
+            List<LegDataFragment> legDataFragments = legDataFragmentDao.getLegDataFragments(sourceFile, SortOrder.ASC);
+            assertEquals("Calendar Fragment", LegDataFragmentType.CALENDAR_ACTIVE, legDataFragments.get(0).getType());
         } finally {
             cleanUpFiles(stagingFile, expectedArchiveFile);
         }

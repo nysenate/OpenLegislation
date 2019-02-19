@@ -3,11 +3,11 @@ package gov.nysenate.openleg.processor.entity;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiProcessor
+public class XmlSenCommProcessor extends AbstractDataProcessor implements LegDataProcessor
 {
     private static final Logger logger = LogManager.getLogger(XmlSenCommProcessor.class);
 
@@ -49,16 +49,16 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiPr
 
     /** {@inheritDoc  */
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.COMMITTEE;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.COMMITTEE;
     }
 
     /** {@inheritDoc  */
     @Override
-    public void process(SobiFragment sobiFragment) {
+    public void process(LegDataFragment legDataFragment) {
         logger.info("Called committee processor");
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
-        String xmlString = sobiFragment.getText();
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
+        String xmlString = legDataFragment.getText();
         try {
             Node root = getXmlRoot(xmlString);
             Node committeeRoot = xml.getNode("sencommmem", root);
@@ -66,7 +66,7 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiPr
             int year = Integer.parseInt(xml.getString("@year", committeeRoot));
             Chamber chamber = Chamber.SENATE;
             logger.info("Processing " + chamber + "committees for s" + sessionYear + " y" + year + "\t" +
-                    sobiFragment.getPublishedDateTime());
+                    legDataFragment.getPublishedDateTime());
 
             committeeRoot = xml.getNode("committees", committeeRoot);
             NodeList committeeNodes = committeeRoot.getChildNodes();
@@ -75,10 +75,10 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiPr
                 if (committeeNode.getNodeName().equals("committee")) {
                     Committee committee = new Committee();
                     committee.setSession(sessionYear);
-                    committee.setPublishedDateTime(sobiFragment.getPublishedDateTime());
+                    committee.setPublishedDateTime(legDataFragment.getPublishedDateTime());
                     committee.setChamber(chamber);
                     processCommittee(committeeNode, committee);
-                    committeeDataService.saveCommittee(committee, sobiFragment);
+                    committeeDataService.saveCommittee(committee, legDataFragment);
                 }
             }
         } catch (Exception e) {
@@ -101,7 +101,7 @@ public class XmlSenCommProcessor extends AbstractDataProcessor implements SobiPr
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled()) {
+        if (!env.isLegDataBatchEnabled()) {
             flushAllUpdates();
         }
     }

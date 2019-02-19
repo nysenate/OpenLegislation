@@ -11,7 +11,7 @@ import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.service.calendar.event.CalendarUpdateEvent;
 import net.sf.ehcache.Cache;
@@ -257,9 +257,9 @@ public class CachedCalendarDataService implements CalendarDataService, CachingSe
 
     /** {@inheritDoc} */
     @Override
-    public void saveCalendar(Calendar calendar, SobiFragment sobiFragment, boolean postUpdateEvent) {
+    public void saveCalendar(Calendar calendar, LegDataFragment legDataFragment, boolean postUpdateEvent) {
         logger.debug("Persisting {}", calendar);
-        calendarDao.updateCalendar(calendar, sobiFragment);
+        calendarDao.updateCalendar(calendar, legDataFragment);
         calendarCache.put(new Element(calendar.getId(), calendar));
         if (postUpdateEvent) {
             eventBus.post(new CalendarUpdateEvent(calendar));

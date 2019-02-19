@@ -18,11 +18,11 @@ import static org.junit.Assert.*;
  * Created by senateuser on 3/2/17.
  */
 @Category(IntegrationTest.class)
-public class ApprmemoSobiProcessorIT extends BaseXmlProcessorTest {
+public class ApprmemoLegDataProcessorIT extends BaseXmlProcessorTest {
 
     @Autowired private BillDataService billDataService;
 
-    private static final Logger logger = LoggerFactory.getLogger(ApprmemoSobiProcessorIT.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApprmemoLegDataProcessorIT.class);
 
     @Test
     public void replaceProcessor() {

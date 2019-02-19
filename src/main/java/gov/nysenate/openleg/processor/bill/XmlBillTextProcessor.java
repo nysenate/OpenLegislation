@@ -3,11 +3,11 @@ package gov.nysenate.openleg.processor.bill;
 import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.XmlHelper;
@@ -34,7 +34,7 @@ import static gov.nysenate.openleg.model.bill.BillTextFormat.*;
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
 @Service
-public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDataProcessor {
     private static final Logger logger = LoggerFactory.getLogger(XmlBillTextProcessor.class);
 
     private static final Pattern filenamePrintNoPattern = Pattern.compile(
@@ -56,16 +56,16 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.BILLTEXT;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.BILLTEXT;
     }
 
     @Override
-    public void process(SobiFragment sobiFragment) {
-        logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+    public void process(LegDataFragment legDataFragment) {
+        logger.info("Processing " + legDataFragment.getFragmentId() + " (xml file).");
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
-            final Document doc = xmlHelper.parse(sobiFragment.getText());
+            final Document doc = xmlHelper.parse(legDataFragment.getText());
             final Node billTextNode = xmlHelper.getNode("billtext_html", doc);
 
             final int sessionYear = xmlHelper.getInteger("@sessyr", billTextNode);
@@ -85,11 +85,11 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
 
             Set<BillId> updatedBills = new HashSet<>();
 
-            BillId filenamePrintNo = getFilenamePrintNo(sessionYear, sobiFragment);
+            BillId filenamePrintNo = getFilenamePrintNo(sessionYear, legDataFragment);
 
             // For Resolutions only apply to the bill from the filename
             if (filenamePrintNo.getBillType().isResolution()) {
-                applyBillText(filenamePrintNo, billText, strippedBillText, sobiFragment);
+                applyBillText(filenamePrintNo, billText, strippedBillText, legDataFragment);
                 updatedBills.add(filenamePrintNo);
             } else {
                 // Apply special formatting for bill text
@@ -97,12 +97,12 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
                 // Apply to senate and/or assembly versions if referenced
                 if (!StringUtils.isBlank(senhse)) {
                     BillId senateId = new BillId(senhse + senno, sessionYear, senamd);
-                    applyBillText(senateId, billText, strippedBillText, sobiFragment);
+                    applyBillText(senateId, billText, strippedBillText, legDataFragment);
                     updatedBills.add(senateId);
                 }
                 if (!StringUtils.isBlank(asmhse)) {
                     BillId assemblyId = new BillId(asmhse + asmno, sessionYear, asmamd);
-                    applyBillText(assemblyId, billText, strippedBillText, sobiFragment);
+                    applyBillText(assemblyId, billText, strippedBillText, legDataFragment);
                     updatedBills.add(assemblyId);
                 }
             }
@@ -121,7 +121,7 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }
@@ -138,7 +138,7 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
      */
     private void applyBillText(BillId billId,
                                String billText, String strippedBillText,
-                               SobiFragment fragment) {
+                               LegDataFragment fragment) {
         final Bill baseBill = getOrCreateBaseBill(billId, fragment);
         BillAmendment amendment = baseBill.getAmendment(billId.getVersion());
         amendment.setFullText(HTML, billText);
@@ -149,7 +149,7 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements SobiP
     /**
      * Parse the print no from the sobi fragment's filename
      */
-    private BillId getFilenamePrintNo(int session, SobiFragment fragment) {
+    private BillId getFilenamePrintNo(int session, LegDataFragment fragment) {
         String filename = fragment.getParentSobiFile().getFileName();
         Matcher matcher = filenamePrintNoPattern.matcher(filename);
         if (!matcher.find()) {

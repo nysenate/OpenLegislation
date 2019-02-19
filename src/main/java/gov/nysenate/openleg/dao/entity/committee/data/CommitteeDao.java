@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.entity.Committee;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.CommitteeSessionId;
 import gov.nysenate.openleg.model.entity.CommitteeVersionId;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -56,8 +56,8 @@ public interface CommitteeDao
      * Retrieves a list of committee versions for a given committee, ordered from first version to most recent
      *
      * @param committee
-     * @param sobiFragment
+     * @param legDataFragment
      */
-    void updateCommittee(Committee committee, SobiFragment sobiFragment);
+    void updateCommittee(Committee committee, LegDataFragment legDataFragment);
 
 }

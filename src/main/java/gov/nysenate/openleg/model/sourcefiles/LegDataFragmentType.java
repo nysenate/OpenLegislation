@@ -1,11 +1,11 @@
-package gov.nysenate.openleg.model.sourcefiles.sobi;
+package gov.nysenate.openleg.model.sourcefiles;
 
 /**
  * SOBIFragments are constructed to delineate a SOBI file into components based on a
- * common entity type. The SobiFragmentType enum lists all the available entities
- * that a SobiFragment can represent and regex patterns to extract them.
+ * common entity type. The LegDataFragmentType enum lists all the available entities
+ * that a LegDataFragment can represent and regex patterns to extract them.
  */
-public enum SobiFragmentType
+public enum LegDataFragmentType
 {
     // Original SOBI types
 
@@ -35,7 +35,7 @@ public enum SobiFragmentType
     String startPattern;
     String endPattern;
 
-    SobiFragmentType(boolean isXml, String startPattern, String endPattern) {
+    LegDataFragmentType(boolean isXml, String startPattern, String endPattern) {
         this.isXml = isXml;
         this.startPattern = startPattern;
         this.endPattern = endPattern;
@@ -54,14 +54,14 @@ public enum SobiFragmentType
     }
 
     /**
-     * Attempt to identify a {@link SobiFragmentType} by the given line text.
+     * Attempt to identify a {@link LegDataFragmentType} by the given line text.
      *
      * Returns null if no type matches.
      * @param line String
-     * @return {@link SobiFragmentType}
+     * @return {@link LegDataFragmentType}
      */
-    public static SobiFragmentType matchFragmentType(String line) {
-        for (SobiFragmentType fragmentType : SobiFragmentType.values()) {
+    public static LegDataFragmentType matchFragmentType(String line) {
+        for (LegDataFragmentType fragmentType : LegDataFragmentType.values()) {
             if (line.matches(fragmentType.getStartPattern())) {
                 return fragmentType;
             }

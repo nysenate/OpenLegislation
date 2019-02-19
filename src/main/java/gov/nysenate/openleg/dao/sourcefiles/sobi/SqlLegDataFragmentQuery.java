@@ -3,36 +3,36 @@ package gov.nysenate.openleg.dao.sourcefiles.sobi;
 import gov.nysenate.openleg.dao.base.BasicSqlQuery;
 import gov.nysenate.openleg.dao.base.SqlTable;
 
-public enum SqlSobiFragmentQuery implements BasicSqlQuery
+public enum SqlLegDataFragmentQuery implements BasicSqlQuery
 {
 
-    /** --- Sobi Fragments --- */
+    /** --- Leg Data Fragments --- */
 
-    CHECK_SOBI_FRAGMENT_EXISTS(
-        "SELECT 1 FROM ${schema}." + SqlTable.SOBI_FRAGMENT + "\n" +
+    CHECK_LEG_DATA_FRAGMENT_EXISTS(
+        "SELECT 1 FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
         "WHERE fragment_id = :fragmentId"
     ),
-    GET_SOBI_FRAGMENT_BY_FILE_NAME(
-        "SELECT * FROM ${schema}." + SqlTable.SOBI_FRAGMENT + "\n" +
+    GET_LEG_DATA_FRAGMENT_BY_FILE_NAME(
+        "SELECT * FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
         "WHERE fragment_id = :fragmentId"
     ),
-    GET_SOBI_FRAGMENTS_BY_SOBI_FILE(
-        "SELECT * FROM ${schema}." + SqlTable.SOBI_FRAGMENT + "\n" +
+    GET_LEG_DATA_FRAGMENTS_BY_LEG_DATA_FILE(
+        "SELECT * FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
         "WHERE sobi_file_name = :sobiFileName"
     ),
-    GET_SOBI_FRAGMENTS_BY_SOBI_FILE_AND_TYPE(
-        "SELECT * FROM ${schema}." + SqlTable.SOBI_FRAGMENT + "\n" +
+    GET_LEG_DATA_FRAGMENTS_BY_LEG_DATA_FILE_AND_TYPE(
+        "SELECT * FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
         "WHERE sobi_file_name = :sobiFileName AND fragment_type = :fragmentType"
     ),
-    GET_PENDING_SOBI_FRAGMENTS(
-        "SELECT * FROM ${schema}." + SqlTable.SOBI_FRAGMENT + "\n" +
+    GET_PENDING_LEG_DATA_FRAGMENTS(
+        "SELECT * FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
         "WHERE pending_processing = true"
     ),
-    GET_PENDING_SOBI_FRAGMENTS_BY_TYPE(
-        GET_PENDING_SOBI_FRAGMENTS.sql + " AND fragment_type IN (:fragmentTypes)"
+    GET_PENDING_LEG_DATA_FRAGMENTS_BY_TYPE(
+        GET_PENDING_LEG_DATA_FRAGMENTS.sql + " AND fragment_type IN (:fragmentTypes)"
     ),
-    UPDATE_SOBI_FRAGMENT(
-        "UPDATE ${schema}." + SqlTable.SOBI_FRAGMENT + "\n" +
+    UPDATE_LEG_DATA_FRAGMENT(
+        "UPDATE ${schema}." + SqlTable.LEG_DATA_FRAGMENT + "\n" +
         "SET sobi_file_name = :sobiFileName, published_date_time = :publishedDateTime, " +
         "    fragment_type = :fragmentType, text = :text, sequence_no = :sequenceNo, " +
         "    processed_count = :processedCount, processed_date_time = :processedDateTime, " +
@@ -40,8 +40,8 @@ public enum SqlSobiFragmentQuery implements BasicSqlQuery
         "    process_start_date_time = :processStartDateTime\n" +
         "WHERE fragment_id = :fragmentId"
     ),
-    INSERT_SOBI_FRAGMENT(
-        "INSERT INTO ${schema}." + SqlTable.SOBI_FRAGMENT +
+    INSERT_LEG_DATA_FRAGMENT(
+        "INSERT INTO ${schema}." + SqlTable.LEG_DATA_FRAGMENT +
         "(sobi_file_name, fragment_id, published_date_time, fragment_type, text, sequence_no, " +
         " processed_count, processed_date_time, pending_processing, manual_fix, manual_fix_notes,\n" +
         " process_start_date_time)\n" +
@@ -49,13 +49,13 @@ public enum SqlSobiFragmentQuery implements BasicSqlQuery
         "        :processedCount, :processedDateTime, :pendingProcessing, :manualFix, :manualFixNotes,\n" +
         "        :processStartDateTime)"
     ),
-    DELETE_SOBI_FRAGMENTS(
-        "DELETE FROM ${schema}." + SqlTable.SOBI_FRAGMENT + " WHERE sobi_file_name = :sobiFileName"
+    DELETE_LEG_DATA_FRAGMENTS(
+        "DELETE FROM ${schema}." + SqlTable.LEG_DATA_FRAGMENT + " WHERE sobi_file_name = :sobiFileName"
     );
 
     private String sql;
 
-    SqlSobiFragmentQuery(String sql) {
+    SqlLegDataFragmentQuery(String sql) {
         this.sql = sql;
     }
 

@@ -6,10 +6,10 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * Created by uros on 2/16/17.
  */
 @Service
-public class XmlSameAsProcessor extends AbstractBillProcessor implements SobiProcessor {
+public class XmlSameAsProcessor extends AbstractBillProcessor implements LegDataProcessor {
 
     @Autowired
     XmlHelper xmlHelper;
@@ -39,12 +39,12 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements SobiPro
             Pattern.compile("Same as( Uni\\.)? (([A-Z] ?[0-9]{1,5}-?[A-Z]?(, *)?)+)");
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.SAMEAS;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.SAMEAS;
     }
 
     @Override
-    public void process(SobiFragment fragment) {
+    public void process(LegDataFragment fragment) {
         DataProcessUnit unit = createProcessUnit(fragment);
         try {
             final Document doc = xmlHelper.parse(fragment.getText());
@@ -114,7 +114,7 @@ public class XmlSameAsProcessor extends AbstractBillProcessor implements SobiPro
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }

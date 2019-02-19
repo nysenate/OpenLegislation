@@ -7,10 +7,10 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.SourceType;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
-public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiProcessor
+public class XmlSenAgenProcessor extends AbstractDataProcessor implements LegDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenAgenProcessor.class);
 
@@ -41,18 +41,18 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
 
     /** {@inheritDoc} */
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.AGENDA;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.AGENDA;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void process(SobiFragment sobiFragment) {
+    public void process(LegDataFragment legDataFragment) {
         logger.info("Processing Agenda...");
-        LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+        LocalDateTime modifiedDate = legDataFragment.getPublishedDateTime();
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
-            Node root = getXmlRoot(sobiFragment.getText().replaceAll("\u001a",""));
+            Node root = getXmlRoot(legDataFragment.getText().replaceAll("\u001a",""));
             Node xmlAgenda = xml.getNode("senagenda", root);
             Integer agendaNo = xml.getInteger("@no", xmlAgenda);
             Integer year = xml.getInteger("@year", xmlAgenda);
@@ -65,7 +65,7 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
             }
             // Otherwise update/insert any associated addenda.
             else if (action.equalsIgnoreCase("replace")) {
-                Agenda agenda = getOrCreateAgenda(agendaId, sobiFragment);
+                Agenda agenda = getOrCreateAgenda(agendaId, legDataFragment);
                 agenda.setModifiedDateTime(modifiedDate);
                 NodeList xmlAddendums = xml.getNodeList("addendum", xmlAgenda);
 
@@ -96,7 +96,7 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
                                 .replaceAll(" +"," ");
 
                         // Format specific replacements
-                        if (sobiFragment.getParentSobiFile().getSourceType() == SourceType.XML) {
+                        if (legDataFragment.getParentSobiFile().getSourceType() == SourceType.XML) {
                             notes = notes.replaceAll("\\|", "\n");
                         } else {
                             notes = notes.replaceAll("\\\\n", "\n");
@@ -128,7 +128,7 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
             }
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
-            logger.error("Failed to parse agenda fragment {}", sobiFragment.getFragmentId(), ex);
+            logger.error("Failed to parse agenda fragment {}", legDataFragment.getFragmentId(), ex);
             unit.addException("Failed to parse Agenda: " + ex.getMessage());
         }
         // Notify the data processor that an agenda fragment has finished processing
@@ -144,7 +144,7 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements SobiPr
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
             flushAllUpdates();
         }
     }

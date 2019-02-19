@@ -12,7 +12,7 @@ import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.service.bill.event.BillUpdateEvent;
 import net.sf.ehcache.*;
@@ -243,7 +243,7 @@ public class CachedBillDataService implements BillDataService, CachingService<Ba
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void saveBill(Bill bill, SobiFragment fragment, boolean postUpdateEvent) {
+    public synchronized void saveBill(Bill bill, LegDataFragment fragment, boolean postUpdateEvent) {
         logger.debug("Persisting bill {}", bill);
         billDao.updateBill(bill, fragment);
         putStrippedBillInCache(bill);

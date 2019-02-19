@@ -4,7 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 
 import java.util.Collections;
 import java.util.List;
@@ -89,11 +89,11 @@ public interface BillDataService
      * data will be updated with the changed values.
      *
      * @param bill Bill
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      * @param postUpdateEvent boolean - Set to true if this method should post a BillUpdateEvent
      *                                  to the event bus indicating to subscribers that the bill may have changed.
      */
-    void saveBill(Bill bill, SobiFragment fragment, boolean postUpdateEvent);
+    void saveBill(Bill bill, LegDataFragment fragment, boolean postUpdateEvent);
 
     /**
      * Returns a closed Range containing the session years for which bill data exists.

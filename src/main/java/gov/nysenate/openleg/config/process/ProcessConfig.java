@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableRangeMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -49,10 +49,10 @@ public class ProcessConfig {
      * This method filters the given list of fragments,
      * returning a list that is filtered according to the process config.
      *
-     * @param fragments {@link SobiFragment}
-     * @return {@link List<SobiFragment>}
+     * @param fragments {@link LegDataFragment}
+     * @return {@link List< LegDataFragment >}
      */
-    public List<SobiFragment> filterFileFragments(List<SobiFragment> fragments) {
+    public List<LegDataFragment> filterFileFragments(List<LegDataFragment> fragments) {
         return fragments.stream()
                 .filter(this::acceptFragment)
                 .collect(Collectors.toList());
@@ -82,7 +82,7 @@ public class ProcessConfig {
         return applicableFilter;
     }
 
-    private boolean acceptFragment(SobiFragment fragment) {
+    private boolean acceptFragment(LegDataFragment fragment) {
         SourceFilter applicableFilter = getApplicableFilter(fragment.getPublishedDateTime());
         return applicableFilter.acceptFragment(fragment);
     }

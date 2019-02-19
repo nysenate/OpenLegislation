@@ -8,12 +8,12 @@ import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiLineType;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
  * are applied to the bills via these fragments.
  */
 @Service
-public class BillSobiProcessor extends AbstractBillProcessor implements SobiProcessor
+public class BillSobiProcessor extends AbstractBillProcessor implements LegDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
 
@@ -90,25 +90,25 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
     /** --- Implementation methods --- */
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.BILL;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.BILL;
     }
 
     /**
      * Performs processing of the SOBI bill fragments.
      *
-     * @param sobiFragment SobiFragment
+     * @param legDataFragment LegDataFragment
      */
     @Override
-    public void process(SobiFragment sobiFragment) {
-        LocalDateTime date = sobiFragment.getPublishedDateTime();
-        List<SobiBlock> blocks = sobiFragment.getSobiBlocks();
-        logger.info("Processing " + sobiFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+    public void process(LegDataFragment legDataFragment) {
+        LocalDateTime date = legDataFragment.getPublishedDateTime();
+        List<SobiBlock> blocks = legDataFragment.getSobiBlocks();
+        logger.info("Processing " + legDataFragment.getFragmentId() + " with (" + blocks.size() + ") blocks.");
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         for (SobiBlock block : processConfig.filterSobiBlocks(blocks)) {
             String data = block.getData();
             BillId billId = block.getBillId();
-            Bill baseBill = getOrCreateBaseBill(billId, sobiFragment);
+            Bill baseBill = getOrCreateBaseBill(billId, legDataFragment);
             Version specifiedVersion = billId.getVersion();
             BillAmendment specifiedAmendment = baseBill.getAmendment(specifiedVersion);
             BillAmendment activeAmendment = baseBill.getActiveAmendment();
@@ -119,8 +119,8 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
                     case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
                     case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT:  parseActions(data, baseBill, specifiedAmendment, sobiFragment); break;
-                    case SAME_AS:  applySameAs(data, specifiedAmendment, sobiFragment, unit); break;
+                    case BILL_EVENT:  parseActions(data, baseBill, specifiedAmendment, legDataFragment); break;
+                    case SAME_AS:  applySameAs(data, specifiedAmendment, legDataFragment, unit); break;
                     case SPONSOR:  applySponsor(data, baseBill, specifiedAmendment, date); break;
                     case CO_SPONSOR:  applyCosponsors(data, baseBill); break;
                     case MULTI_SPONSOR:  applyMultisponsors(data, baseBill); break;
@@ -130,7 +130,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
                     case SUMMARY:  applySummary(data, baseBill, date); break;
                     case SPONSOR_MEMO:
                     case RESOLUTION_TEXT:
-                    case TEXT: applyText(data, specifiedAmendment, date, block.getType(), sobiFragment); break;
+                    case TEXT: applyText(data, specifiedAmendment, date, block.getType(), legDataFragment); break;
                     case VETO_APPROVE_MEMO:  applyVetoApprovalMessage(data, baseBill, date); break;
                     case VOTE_MEMO: applyVoteMemo(data, specifiedAmendment, date); break;
                     default: {
@@ -142,7 +142,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
                 logger.error("Bill Processing Parse Error!", ex);
                 unit.addException("Bill Processing Parse Error",  ex);
             }
-            billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+            billIngestCache.set(baseBill.getBaseBillId(), baseBill, legDataFragment);
 
             checkIngestCache();
         }
@@ -152,7 +152,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }
@@ -289,7 +289,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
      *                              | 2009S51106 5No same as
      * ----------------------------------------------------------------------
      */
-    private void applySameAs(String data, BillAmendment specifiedAmendment, SobiFragment fragment, DataProcessUnit unit) {
+    private void applySameAs(String data, BillAmendment specifiedAmendment, LegDataFragment fragment, DataProcessUnit unit) {
         if (data.trim().equalsIgnoreCase("No same as") || data.trim().equalsIgnoreCase("DELETE")) {
             specifiedAmendment.getSameAs().clear();
             specifiedAmendment.setUniBill(false);
@@ -503,7 +503,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements SobiProc
      * @param date
      */
     private void applyText(String data, BillAmendment billAmendment, LocalDateTime date, SobiLineType lineType,
-                           SobiFragment fragment) throws ParseError {
+                           LegDataFragment fragment) throws ParseError {
         BillTextParser billTextParser = new BillTextParser(data, BillTextType.getTypeString(lineType), date);
         String fullText = billTextParser.extractText();
         if (fullText != null) {

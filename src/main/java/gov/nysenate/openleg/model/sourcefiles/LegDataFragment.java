@@ -1,8 +1,9 @@
-package gov.nysenate.openleg.model.sourcefiles.sobi;
+package gov.nysenate.openleg.model.sourcefiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.nysenate.openleg.model.base.BaseSourceData;
-import gov.nysenate.openleg.model.sourcefiles.SourceFile;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
+import gov.nysenate.openleg.model.sourcefiles.sobi.SobiLineType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,20 +12,20 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 /**
- * The SobiFragment class represents a portion of a SobiFile file that contains data pertaining
+ * The LegDataFragment class represents a portion of a SobiFile file that contains data pertaining
  * to a certain entity type (Bill, Calendar, etc).
  *
  * For example if a SOBI file contains bill data and agenda data, the file can be broken down
  * into two SOBIFragments, one containing the portion for just the bill data and the other with
  * just the agenda data.
  */
-public class SobiFragment extends BaseSourceData
+public class LegDataFragment extends BaseSourceData
 {
     /** Reference to the original SobiFile object that created this fragment. */
     private SourceFile parentSobiFile;
 
     /** The type of fragment, e.g bill, agenda, etc. */
-    private SobiFragmentType type;
+    private LegDataFragmentType type;
 
     /** The unique id of the fragment which is derived from the other fields.
      *  The fragmentId is created such that it can be used for sorting. */
@@ -41,12 +42,12 @@ public class SobiFragment extends BaseSourceData
 
     /** --- Constructors --- */
 
-    public SobiFragment(SourceFile parentSobiFile, SobiFragmentType type, String text, int sequenceNo) {
+    public LegDataFragment(SourceFile parentSobiFile, LegDataFragmentType type, String text, int sequenceNo) {
         this(generateFragmentId(parentSobiFile, type, sequenceNo),
              parentSobiFile, type, text, sequenceNo);
     }
 
-    public SobiFragment(String fragmentId, SourceFile parentSobiFile, SobiFragmentType type, String text, int sequenceNo) {
+    public LegDataFragment(String fragmentId, SourceFile parentSobiFile, LegDataFragmentType type, String text, int sequenceNo) {
         this.fragmentId = fragmentId;
         this.parentSobiFile = parentSobiFile;
         this.type = type;
@@ -61,7 +62,7 @@ public class SobiFragment extends BaseSourceData
      * @return boolean
      */
     public boolean isBlockFormat() {
-        return type.equals(SobiFragmentType.BILL);
+        return type.equals(LegDataFragmentType.BILL);
     }
 
     /**
@@ -122,7 +123,7 @@ public class SobiFragment extends BaseSourceData
     /**
      * Creates a unique fragment id using the given parameters.
      */
-    public static String generateFragmentId(SourceFile sf, SobiFragmentType type, int sequenceNo) {
+    public static String generateFragmentId(SourceFile sf, LegDataFragmentType type, int sequenceNo) {
         return String.format("%s-%d-%s", sf.getFileName(), sequenceNo, type.name());
     }
 
@@ -130,7 +131,7 @@ public class SobiFragment extends BaseSourceData
 
     @Override
     public String toString() {
-        return "SobiFragment{" + "fragmentType=" + type + ", fileName='" + fragmentId + '\'' +
+        return "LegDataFragment{" + "fragmentType=" + type + ", fileName='" + fragmentId + '\'' +
                 ", parentSobiFile=" + parentSobiFile + '}';
     }
 
@@ -150,7 +151,7 @@ public class SobiFragment extends BaseSourceData
         return parentSobiFile;
     }
 
-    public SobiFragmentType getType() {
+    public LegDataFragmentType getType() {
         return type;
     }
 

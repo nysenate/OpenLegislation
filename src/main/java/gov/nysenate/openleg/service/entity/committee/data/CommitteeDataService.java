@@ -4,7 +4,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 
 import java.util.List;
 
@@ -108,8 +108,8 @@ public interface CommitteeDataService
     /**
      * Retrieves a list of committee versions for a given committee, ordered from first version to most recent
      * @param committee
-     * @param sobiFragment
+     * @param legDataFragment
      */
-    void saveCommittee(Committee committee, SobiFragment sobiFragment);
+    void saveCommittee(Committee committee, LegDataFragment legDataFragment);
 
 }

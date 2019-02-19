@@ -2,18 +2,18 @@ package gov.nysenate.openleg.service.sobi;
 
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiProcessOptions;
-import gov.nysenate.openleg.processor.sobi.SobiProcessService;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessService;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ManagedSobiProcessServiceTest extends BaseTests
+public class ManagedLegDataProcessServiceTest extends BaseTests
 {
-    private static final Logger logger = LoggerFactory.getLogger(ManagedSobiProcessServiceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManagedLegDataProcessServiceTest.class);
 
     @Autowired
-    private SobiProcessService sobiProcessService;
+    private LegDataProcessService legDataProcessService;
 
     @Test
     public void randomTest() throws Exception {
@@ -22,7 +22,7 @@ public class ManagedSobiProcessServiceTest extends BaseTests
 
     @Test
     public void testCollateSobiFiles() throws Exception {
-        int collated = sobiProcessService.collateSourceFiles();
+        int collated = legDataProcessService.collateSourceFiles();
         logger.info("Collated {} sobis", collated);
     }
 
@@ -39,7 +39,7 @@ public class ManagedSobiProcessServiceTest extends BaseTests
     @Test
     public void testProcessPendingFragments() throws Exception {
         SobiProcessOptions options = SobiProcessOptions.builder().build();
-        sobiProcessService.processPendingFragments(options);
+        legDataProcessService.processPendingFragments(options);
     }
 
     @Test

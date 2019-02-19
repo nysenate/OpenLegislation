@@ -61,12 +61,12 @@ public class ProcessDataCLI extends BaseScript
             env.setElasticIndexing(false);
         }
 
-        env.setSobiBatchEnabled(opts.hasOption("batch-sobis"));
+        env.setLegDataBatchEnabled(opts.hasOption("batch-sobis"));
 
         logger.info("Data processing settings: \n" +
                     "Sobi Batch Processing: {}\n" +
                     "Search indexing: {}\n",
-             env.isSobiBatchEnabled(), env.isElasticIndexing());
+             env.isLegDataBatchEnabled(), env.isElasticIndexing());
 
         if (!collate && !ingest) {
             dataProcessor.run(this.getClass().getName() + " script");

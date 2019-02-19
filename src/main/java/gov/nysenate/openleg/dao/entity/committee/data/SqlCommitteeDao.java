@@ -4,7 +4,7 @@ import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -111,7 +111,7 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
      */
     @Override
     @Transactional
-    public void updateCommittee(Committee committee, SobiFragment sobiFragment) {
+    public void updateCommittee(Committee committee, LegDataFragment legDataFragment) {
         logger.info("Updating committee " + committee.getChamber() + " " + committee.getName());
         // Make sure that there is a record for the given committee name
         ensureCommitteeExists(committee.getId());
@@ -130,13 +130,13 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
         if (prevVersion == null || !committee.membersEquals(prevVersion)) {
             // If there was no previous version, or the previous version had different membership,
             // insert the committee as a new version.
-            insertCommitteeVersion(committee, sobiFragment);
+            insertCommitteeVersion(committee, legDataFragment);
         } else if (!committee.meetingEquals(prevVersion)) {
-            logger.info("UPDATING MEETING INFO for {} {}", committee.getName(), sobiFragment.getPublishedDateTime());
+            logger.info("UPDATING MEETING INFO for {} {}", committee.getName(), legDataFragment.getPublishedDateTime());
             // If the only difference from the prev version was meeting info,
             // just update the prev version's meeting info.
             prevVersion.updateMeetingInfo(committee);
-            updateCommitteeMeetingInfo(prevVersion, sobiFragment);
+            updateCommitteeMeetingInfo(prevVersion, legDataFragment);
         }
     }
 
@@ -179,10 +179,10 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
      * Creates a record for a new version of a committee
      * @param committee
      */
-    private void insertCommitteeVersion(Committee committee, SobiFragment sobiFragment){
+    private void insertCommitteeVersion(Committee committee, LegDataFragment legDataFragment){
         logger.debug("Inserting new version of " + committee.getVersionId());
         MapSqlParameterSource params = getCommitteeVersionParams(committee);
-        addLastFragmentParam(sobiFragment, params);
+        addLastFragmentParam(legDataFragment, params);
         jdbcNamed.update(INSERT_COMMITTEE_VERSION.getSql(schema()), params);
         insertCommitteeMembers(committee);
     }
@@ -215,9 +215,9 @@ public class SqlCommitteeDao extends SqlBaseDao implements CommitteeDao
      * Modifies the record of a given committee version update data relating to meetings
      * @param committee
      */
-    private void updateCommitteeMeetingInfo(Committee committee, SobiFragment sobiFragment){
+    private void updateCommitteeMeetingInfo(Committee committee, LegDataFragment legDataFragment){
         MapSqlParameterSource params = getCommitteeVersionParams(committee);
-        addLastFragmentParam(sobiFragment, params);
+        addLastFragmentParam(legDataFragment, params);
         jdbcNamed.update(UPDATE_COMMITTEE_MEETING_INFO.getSql(schema()), params);
     }
 

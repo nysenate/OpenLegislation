@@ -8,11 +8,11 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
  * The AbstractBillProcessor serves as a base class for actual bill processor implementations to provide unified
  * helper methods to address some of the quirks that are present when processing bill data.
  */
-public abstract class AbstractBillProcessor extends AbstractDataProcessor implements SobiProcessor
+public abstract class AbstractBillProcessor extends AbstractDataProcessor implements LegDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(BillSobiProcessor.class);
 
@@ -71,13 +71,13 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
     /* --- Abstract methods --- */
 
     /** {@inheritDoc} */
-    public abstract SobiFragmentType getSupportedType();
+    public abstract LegDataFragmentType getSupportedType();
 
     /**
      * Performs processing of the SOBI bill fragments.
-     * @param sobiFragment SobiFragment
+     * @param legDataFragment LegDataFragment
      */
-    public abstract void process(SobiFragment sobiFragment);
+    public abstract void process(LegDataFragment legDataFragment);
 
     /**
      * Make sure that the global ingest cache is purged.
@@ -142,10 +142,10 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * Un-publishes the specified bill amendment.
      * @param baseBill Bill
      * @param version Version
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      * @param source String - Indicates the origin of this un-publish request, e.g. restore amend in actions list.
      */
-    protected void unpublishBillAmendment(Bill baseBill, Version version, SobiFragment fragment, String source) {
+    protected void unpublishBillAmendment(Bill baseBill, Version version, LegDataFragment fragment, String source) {
         baseBill.updatePublishStatus(version, new PublishStatus(false, fragment.getPublishedDateTime(), false, source));
         setModifiedDateTime(baseBill, fragment);
     }
@@ -154,10 +154,10 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * Checks that the base bill's default amendment is published. If it isn't it will be set to published using
      * the source file's published date.
      * @param baseBill Bill
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      * @param source String - Indicates the origin of this publishing request, e.g. bill info line.
      */
-    protected void ensureBaseBillIsPublished(Bill baseBill, SobiFragment fragment, String source) {
+    protected void ensureBaseBillIsPublished(Bill baseBill, LegDataFragment fragment, String source) {
         Optional<PublishStatus> pubStatus = baseBill.getPublishStatus(Version.ORIGINAL);
         if (!pubStatus.isPresent() || !pubStatus.get().isPublished()) {
             baseBill.updatePublishStatus(Version.ORIGINAL, new PublishStatus(true, fragment.getPublishedDateTime(), false, source));
@@ -171,9 +171,9 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * @param baseBill Bill
      * @param prevPrintNo String
      * @param prevSessionYear Integer
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      */
-    protected void addPreviousBillId(Bill baseBill, String prevPrintNo, Integer prevSessionYear, SobiFragment fragment) {
+    protected void addPreviousBillId(Bill baseBill, String prevPrintNo, Integer prevSessionYear, LegDataFragment fragment) {
         baseBill.setDirectPreviousVersion(new BillId(prevPrintNo, prevSessionYear));
         setModifiedDateTime(baseBill, fragment);
     }
@@ -183,9 +183,9 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * @param baseBill Bill
      * @param specificVersion Version
      * @param lawSection String
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      */
-    protected void setLawSection(Bill baseBill, Version specificVersion, String lawSection, SobiFragment fragment) {
+    protected void setLawSection(Bill baseBill, Version specificVersion, String lawSection, LegDataFragment fragment) {
         if (lawSection == null) lawSection = "";
         baseBill.getAmendment(specificVersion).setLawSection(lawSection.trim());
         setModifiedDateTime(baseBill, fragment);
@@ -195,9 +195,9 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * Sets the title to the base bill.
      * @param baseBill Bill
      * @param title String
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      */
-    protected void setTitle(Bill baseBill, String title, SobiFragment fragment) {
+    protected void setTitle(Bill baseBill, String title, LegDataFragment fragment) {
         if (title == null) title = "";
         baseBill.setTitle(title.replace("\n", " ").trim());
         setModifiedDateTime(baseBill, fragment);
@@ -209,7 +209,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * @param summary String
      * @param fragment SoboFragment
      */
-    protected void setSummary(Bill baseBill, String summary, SobiFragment fragment) {
+    protected void setSummary(Bill baseBill, String summary, LegDataFragment fragment) {
         if (summary == null) summary = "";
         baseBill.setSummary(summary.replace("\n", " ").trim());
         setModifiedDateTime(baseBill, fragment);
@@ -241,7 +241,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
     protected void parseActions(String data,
                                 Bill bill,
                                 BillAmendment specifiedAmendment,
-                                SobiFragment fragment)
+                                LegDataFragment fragment)
             throws ParseError {
         // Use the BillActionParser to convert the actions string into objects.
         List<BillAction> billActions = BillActionParser.parseActionsList(specifiedAmendment.getBillId(), data);
@@ -288,9 +288,9 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * to false.
      * @param baseBill Bill
      * @param version Version
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      */
-    protected void clearSameAs(Bill baseBill, Version version, SobiFragment fragment) {
+    protected void clearSameAs(Bill baseBill, Version version, LegDataFragment fragment) {
         baseBill.getAmendment(version).getSameAs().clear();
         baseBill.getAmendment(version).setUniBill(false);
         setModifiedDateTime(baseBill, fragment);
@@ -303,10 +303,10 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * @param baseBill Bill
      * @param version Version
      * @param sameAsData String
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      * @throws ParseError
      */
-    protected void processSameAs(Bill baseBill, Version version, String sameAsData, SobiFragment fragment) throws ParseError {
+    protected void processSameAs(Bill baseBill, Version version, String sameAsData, LegDataFragment fragment) throws ParseError {
         Matcher sameAsMatcher = sameAsPattern.matcher(sameAsData);
         BillAmendment billAmendment = baseBill.getAmendment(version);
         if (sameAsMatcher.find()) {
@@ -334,9 +334,9 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * @param baseBill Bill
      * @param version Version
      * @param text String
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      */
-    protected void setSponsorMemo(Bill baseBill, Version version, String text, SobiFragment fragment) {
+    protected void setSponsorMemo(Bill baseBill, Version version, String text, LegDataFragment fragment) {
         baseBill.getAmendment(version).setMemo(text);
         setModifiedDateTime(baseBill, fragment);
     }
@@ -347,7 +347,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * @param baseBill Bill
      * @param fragment SoboFragment
      */
-    protected void setModifiedDateTime(Bill baseBill, SobiFragment fragment) {
+    protected void setModifiedDateTime(Bill baseBill, LegDataFragment fragment) {
         baseBill.setModifiedDateTime(fragment.getPublishedDateTime());
     }
 
@@ -357,9 +357,9 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
      * Uni-bills share text with their counterpart house. Ensure that the full text of bill amendments that
      * have a uni-bill designator are kept in sync.
      */
-    protected void syncUniBillText(BillAmendment billAmendment, SobiFragment sobiFragment) {
+    protected void syncUniBillText(BillAmendment billAmendment, LegDataFragment legDataFragment) {
         billAmendment.getSameAs().forEach(uniBillId -> {
-            Bill uniBill = getOrCreateBaseBill(uniBillId, sobiFragment);
+            Bill uniBill = getOrCreateBaseBill(uniBillId, legDataFragment);
             BillAmendment uniBillAmend = uniBill.getAmendment(uniBillId.getVersion());
             BaseBillId updatedBillId = null;
             // If this is the senate bill amendment, copy text to the assembly bill amendment

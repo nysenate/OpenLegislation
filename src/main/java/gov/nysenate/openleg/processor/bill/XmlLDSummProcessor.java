@@ -5,11 +5,11 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ import java.io.IOException;
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
  */
 @Service
-public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlLDSummProcessor extends AbstractDataProcessor implements LegDataProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSummProcessor.class);
 
@@ -37,16 +37,16 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.LDSUMM;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.LDSUMM;
     }
 
     @Override
-    public void process(SobiFragment sobiFragment) {
-        logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+    public void process(LegDataFragment legDataFragment) {
+        logger.info("Processing " + legDataFragment.getFragmentId() + " (xml file).");
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
-            final Document doc = xmlHelper.parse(sobiFragment.getText());
+            final Document doc = xmlHelper.parse(legDataFragment.getText());
             final Node billTextNode = xmlHelper.getNode("digestsummary", doc);
             final int sessionYear = xmlHelper.getInteger("@sessyr", billTextNode);
             final String billhse = xmlHelper.getString("@billhse", billTextNode);
@@ -56,7 +56,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
             final String amd = xmlHelper.getString("digestsummary/summaryamendment", doc);
             final Version version = Version.of(amd);
             final String law = xmlHelper.getString("law", billTextNode).replaceAll("Â", "¶").replaceAll("º","§").replaceAll("\n"," ").replaceAll("\t", " ").replaceAll(" +"," ").trim();
-            final Bill baseBill = getOrCreateBaseBill(new BillId(billhse + billno, new SessionYear(sessionYear), version), sobiFragment);
+            final Bill baseBill = getOrCreateBaseBill(new BillId(billhse + billno, new SessionYear(sessionYear), version), legDataFragment);
             baseBill.setSummary(summary);
             baseBill.getAmendment(version).setLaw(law);
             if (action.equals("replace")) { //replace bill
@@ -79,12 +79,12 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
                 baseBill.getAllPreviousVersions().clear();
                 baseBill.setDirectPreviousVersion(null);
             }
-            billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+            billIngestCache.set(baseBill.getBaseBillId(), baseBill, legDataFragment);
             logger.info("Put base bill in the ingest cache.");
 
         } catch (IOException | SAXException | XPathExpressionException e) {
             unit.addException("XML LD Summ parsing error", e);
-            throw new ParseError("Error While Parsing Bill Digest XML : " + sobiFragment.getFragmentId(), e);
+            throw new ParseError("Error While Parsing Bill Digest XML : " + legDataFragment.getFragmentId(), e);
         } finally {
             postDataUnitEvent(unit);
             checkIngestCache();
@@ -93,7 +93,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements SobiPro
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }

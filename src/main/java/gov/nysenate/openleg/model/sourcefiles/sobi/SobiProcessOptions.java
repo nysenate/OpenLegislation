@@ -1,15 +1,16 @@
 package gov.nysenate.openleg.model.sourcefiles.sobi;
 
 import com.google.common.collect.ImmutableSet;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 
 public class SobiProcessOptions
 {
     /** This Builder class is used to construct immutable SobiProcessOption instances. */
     public static class Builder
     {
-        ImmutableSet<SobiFragmentType> allowedFragmentTypes = ImmutableSet.copyOf(SobiFragmentType.values());
+        ImmutableSet<LegDataFragmentType> allowedFragmentTypes = ImmutableSet.copyOf(LegDataFragmentType.values());
 
-        public Builder setAllowedFragmentTypes(ImmutableSet<SobiFragmentType> allowedFragmentTypes) {
+        public Builder setAllowedFragmentTypes(ImmutableSet<LegDataFragmentType> allowedFragmentTypes) {
             this.allowedFragmentTypes = allowedFragmentTypes;
             return this;
         }
@@ -24,7 +25,7 @@ public class SobiProcessOptions
 
     /** --- Begin SobiProcessOptions --- */
 
-    private ImmutableSet<SobiFragmentType> allowedFragmentTypes;
+    private ImmutableSet<LegDataFragmentType> allowedFragmentTypes;
 
     /** --- Constructors --- */
 
@@ -40,7 +41,7 @@ public class SobiProcessOptions
 
     /** --- Basic Getters --- */
 
-    public ImmutableSet<SobiFragmentType> getAllowedFragmentTypes() {
+    public ImmutableSet<LegDataFragmentType> getAllowedFragmentTypes() {
         return allowedFragmentTypes;
     }
 }

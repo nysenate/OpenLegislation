@@ -13,9 +13,9 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.LegDataFragmentDao;
 import gov.nysenate.openleg.model.sourcefiles.SourceFile;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class SourceGetCtrl extends BaseCtrl {
     @Autowired
     private SourceFileRefDao sourceFileDao;
     @Autowired
-    private SobiFragmentDao sobiFragmentDao;
+    private LegDataFragmentDao legDataFragmentDao;
 
     /**
      * SOBI File API
@@ -83,7 +83,7 @@ public class SourceGetCtrl extends BaseCtrl {
     @RequestMapping("/{sourceFileName:.+}")
     public BaseResponse getSourceFile(@PathVariable String sourceFileName) {
         SourceFile sobiFile = sourceFileDao.getSourceFile(sourceFileName);
-        List<SourceFileView> fragList = sobiFragmentDao.getSobiFragments(sobiFile, SortOrder.ASC).stream()
+        List<SourceFileView> fragList = legDataFragmentDao.getLegDataFragments(sobiFile, SortOrder.ASC).stream()
                 .map(sf -> new SourceFileView(sf.getType().name(), sf.getFragmentId(),
                         sf.getPublishedDateTime(), sf.getText()))
                 .collect(Collectors.toList());
@@ -101,7 +101,7 @@ public class SourceGetCtrl extends BaseCtrl {
      */
     @RequestMapping("/fragment/{fragmentId:.+}")
     public BaseResponse getSobiFragmentSource(@PathVariable String fragmentId) {
-        SobiFragment fragment = sobiFragmentDao.getSobiFragment(fragmentId);
+        LegDataFragment fragment = legDataFragmentDao.getLegDataFragment(fragmentId);
         return new ViewObjectResponse<>(
                 new SourceFileView(fragment.getType().name(), fragment.getFragmentId(),
                         fragment.getPublishedDateTime(), fragment.getText()));

@@ -1,15 +1,15 @@
-package gov.nysenate.openleg.model.sourcefiles.sobi;
+package gov.nysenate.openleg.model.sourcefiles;
 
 /**
  * An exception that is raised when a sobi file has an invalid name that cannot be parsed
  */
-public class InvalidSobiNameEx extends RuntimeException {
+public class InvalidLegDataFileNameEx extends RuntimeException {
     private static final long serialVersionUID = 7009147657784905061L;
 
     private String fileName;
 
-    public InvalidSobiNameEx(String fileName, Throwable cause) {
-        super("Sobi file " + fileName + " does not conform to sobi file naming conventions", cause);
+    public InvalidLegDataFileNameEx(String fileName, Throwable cause) {
+        super("Leg data file " + fileName + " does not conform to leg data file naming conventions", cause);
         this.fileName = fileName;
     }
 

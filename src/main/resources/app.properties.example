@@ -54,7 +54,7 @@ env.schema = master
 
 # --- Processing Configuration ------------------------------------------------
 
-sobi.process.enabled = false
+leg.data.process.enabled = false
 
 # Allow for processing of data
 # (Default: true)
@@ -71,14 +71,14 @@ data.process.log.enabled = true
 # of writes.
 # NOTE: Enabling this will make the change log inaccurate. (Default: false)
 
-sobi.batch.process.enabled = false
+leg.data.batch.process.enabled = false
 
-# The maximum number of SOBIs that can be processed without flushing to the
+# The maximum number of legislative data files that can be processed without flushing to the
 # database. However, the data processors may flush before this limit if they need
 # to in order to maintain consistency.
 # NOTE: Don't set this too high if the machine doesn't have a lot of JVM memory! (Default: 100)
 
-sobi.batch.process.size = 100
+leg.data.batch.process.size = 100
 
 # --- Elastic Search Configuration --------------------------------------------
 

@@ -4,11 +4,11 @@ import gov.nysenate.openleg.dao.bill.data.VetoDao;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * Created by uros on 3/2/17.
  */
 @Service
-public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiProcessor {
+public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements LegDataProcessor {
 
     @Autowired
     XmlHelper xmlHelper;
@@ -54,12 +54,12 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
 
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.VETOMSG;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.VETOMSG;
     }
 
     @Override
-    public void process(SobiFragment fragment) {
+    public void process(LegDataFragment fragment) {
         VetoMessage vetoMessage = new VetoMessage();
         LocalDateTime date = fragment.getPublishedDateTime();
         try {
@@ -115,7 +115,7 @@ public class XmlVetoMsgProcessor extends AbstractMemoProcessor implements SobiPr
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }

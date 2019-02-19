@@ -3,7 +3,7 @@ package gov.nysenate.openleg.service.bill.data;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 
 import java.util.Map;
 
@@ -30,10 +30,10 @@ public interface VetoDataService
     /**
      * Updates or inserts the given vetoMessage
      *
-     * @param sobiFragment
+     * @param legDataFragment
      * @param vetoMessage
      */
-    public void updateVetoMessage(VetoMessage vetoMessage, SobiFragment sobiFragment);
+    public void updateVetoMessage(VetoMessage vetoMessage, LegDataFragment legDataFragment);
 
     /**
      * Deletes a veto message specified by the given veto id

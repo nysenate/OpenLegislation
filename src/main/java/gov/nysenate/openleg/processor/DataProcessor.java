@@ -8,7 +8,7 @@ import gov.nysenate.openleg.model.process.*;
 import gov.nysenate.openleg.processor.base.ProcessService;
 import gov.nysenate.openleg.processor.hearing.PublicHearingProcessService;
 import gov.nysenate.openleg.processor.law.LawProcessService;
-import gov.nysenate.openleg.processor.sobi.SobiProcessService;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;
@@ -41,7 +41,7 @@ public class DataProcessor
     @Autowired private DataProcessLogService processLogService;
     @Autowired private AsyncUtils asyncUtils;
 
-    @Autowired private SobiProcessService sobiProcessService;
+    @Autowired private LegDataProcessService legDataProcessService;
 
     @Autowired private TranscriptProcessService transcriptProcessService;
     @Autowired private PublicHearingProcessService publicHearingProcessService;
@@ -58,7 +58,7 @@ public class DataProcessor
     public void init() {
         eventBus.register(this);
         processServices = ImmutableList.<ProcessService>builder()
-            .add(sobiProcessService)
+            .add(legDataProcessService)
             .add(transcriptProcessService)
             .add(publicHearingProcessService)
             .add(lawProcessService)

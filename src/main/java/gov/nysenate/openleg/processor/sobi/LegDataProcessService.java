@@ -2,19 +2,19 @@ package gov.nysenate.openleg.processor.sobi;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentNotFoundEx;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentNotFoundEx;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiProcessOptions;
 import gov.nysenate.openleg.processor.base.ProcessService;
 
 import java.util.List;
 
 /**
- * The SobiProcessService interface provides the necessary methods for collating
+ * The LegDataProcessService interface provides the necessary methods for collating
  * and processing sobi files. These methods should typically be used via a
  * process intended to parse new sobi files.
  */
-public interface SobiProcessService extends ProcessService
+public interface LegDataProcessService extends ProcessService
 {
     /**
      * Looks for sobi files that have been placed in the incoming directory and
@@ -31,16 +31,16 @@ public interface SobiProcessService extends ProcessService
      *
      * @param sortByPubDate SortOrder - Sort order for the fragment id.
      * @param limitOffset LimitOffset - Restrict the results list.
-     * @return List<SobiFragment>
+     * @return List<LegDataFragment>
      */
-    public List<SobiFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset);
+    public List<LegDataFragment> getPendingFragments(SortOrder sortByPubDate, LimitOffset limitOffset);
 
     /**
      * Process the list of supplied SobiFragments.
-     *  @param fragments List<SobiFragment> - List of fragments to process.
+     *  @param fragments List<LegDataFragment> - List of fragments to process.
      * @param options - SobiProcessOptions - Provide custom processing options or
      */
-    public int processFragments(List<SobiFragment> fragments, SobiProcessOptions options);
+    public int processFragments(List<LegDataFragment> fragments, SobiProcessOptions options);
 
     /**
      * Retrieves all pending fragments and processes them. This is essentially a shorthand
@@ -53,12 +53,12 @@ public interface SobiProcessService extends ProcessService
     public int processPendingFragments(SobiProcessOptions options);
 
     /**
-     * Toggle the pending processing status of a SobiFragment via it's fragmentId.
+     * Toggle the pending processing status of a LegDataFragment via it's fragmentId.
      *
      * @param fragmentId String - The fragment id
      * @param pendingProcessing boolean - Indicate if fragment is pending processing
-     * @throws SobiFragmentNotFoundEx - If the fragmentId did not match a stored fragment
+     * @throws LegDataFragmentNotFoundEx - If the fragmentId did not match a stored fragment
      */
     public void updatePendingProcessing(String fragmentId, boolean pendingProcessing)
-                                        throws SobiFragmentNotFoundEx;
+                                        throws LegDataFragmentNotFoundEx;
 }

@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.bill.data;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.Map;
@@ -32,10 +32,10 @@ public interface VetoDao
      * Updates or inserts the given vetoMessage
      *
      * @param vetoMessage
-     * @param sobiFragment
+     * @param legDataFragment
      * @throws DataAccessException if there is an error inserting/updating the vetoMessage
      */
-    public void updateVetoMessage(VetoMessage vetoMessage, SobiFragment sobiFragment) throws DataAccessException;
+    public void updateVetoMessage(VetoMessage vetoMessage, LegDataFragment legDataFragment) throws DataAccessException;
 
     /**
      * Deletes a veto message specified by the given veto id

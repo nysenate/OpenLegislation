@@ -5,7 +5,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -64,10 +64,10 @@ public abstract class SqlBaseDao
     }
 
     /**
-     * Applies the 'last SobiFragment id' column value. Useful for tracking which sobiFragment
+     * Applies the 'last LegDataFragment id' column value. Useful for tracking which sobiFragment
      * serves as the source data for the update.
      */
-    protected static void addLastFragmentParam(SobiFragment fragment, MapSqlParameterSource params) {
+    protected static void addLastFragmentParam(LegDataFragment fragment, MapSqlParameterSource params) {
         params.addValue("lastFragmentId", (fragment != null) ? fragment.getFragmentId() : null);
     }
 

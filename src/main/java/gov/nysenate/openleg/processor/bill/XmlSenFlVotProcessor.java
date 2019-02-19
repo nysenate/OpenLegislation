@@ -5,11 +5,11 @@ import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @Service
-public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiProcessor {
+public class XmlSenFlVotProcessor extends AbstractDataProcessor implements LegDataProcessor {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenFlVotProcessor.class);
 
     /** Date format found in SobiBlock[V] vote memo blocks. e.g. 02/05/2013 */
@@ -45,18 +45,18 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.SENFLVOTE;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.SENFLVOTE;
     }
 
     @Override
-    public void process(SobiFragment sobiFragment) {
+    public void process(LegDataFragment legDataFragment) {
         logger.info("Processing SenFlVot...");
-        logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+        logger.info("Processing " + legDataFragment.getFragmentId() + " (xml file).");
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
-            LocalDateTime date = sobiFragment.getPublishedDateTime();
-            final Document doc = xmlHelper.parse(sobiFragment.getText());
+            LocalDateTime date = legDataFragment.getPublishedDateTime();
+            final Document doc = xmlHelper.parse(legDataFragment.getText());
             final Node senFloorVote = xmlHelper.getNode("senfloorvote", doc);
             //File Print number
             final Integer sessyr = xmlHelper.getInteger("@sessyr", senFloorVote);
@@ -67,7 +67,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
             final String action = xmlHelper.getString("@action", senFloorVote).trim();
             final String dateofvote = xmlHelper.getString("@dateofvote", senFloorVote).trim();
 
-            Bill baseBill = getOrCreateBaseBill(billId, sobiFragment);
+            Bill baseBill = getOrCreateBaseBill(billId, legDataFragment);
             BillAmendment billAmendment;
             if (!baseBill.hasAmendment( Version.of(version) )) {
                 billAmendment = new BillAmendment(baseBill.getBaseBillId(), Version.of(version));
@@ -116,7 +116,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
             }
             billAmendment.updateVote(vote);
 
-            billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+            billIngestCache.set(baseBill.getBaseBillId(), baseBill, legDataFragment);
         }
 
         catch (IOException | SAXException | XPathExpressionException | NullPointerException e) {
@@ -132,7 +132,7 @@ public class XmlSenFlVotProcessor extends AbstractDataProcessor implements SobiP
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }
