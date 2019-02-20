@@ -13,7 +13,7 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiLineType;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

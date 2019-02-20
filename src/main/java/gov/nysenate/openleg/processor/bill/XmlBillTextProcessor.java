@@ -7,7 +7,7 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.XmlHelper;
@@ -150,7 +150,7 @@ public class XmlBillTextProcessor extends AbstractDataProcessor implements LegDa
      * Parse the print no from the sobi fragment's filename
      */
     private BillId getFilenamePrintNo(int session, LegDataFragment fragment) {
-        String filename = fragment.getParentSobiFile().getFileName();
+        String filename = fragment.getParentLegDataFile().getFileName();
         Matcher matcher = filenamePrintNoPattern.matcher(filename);
         if (!matcher.find()) {
             throw new ParseError("Could not parse BILLTEXT filename: " + filename);

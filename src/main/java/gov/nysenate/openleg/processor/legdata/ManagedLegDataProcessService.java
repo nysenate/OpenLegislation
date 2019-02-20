@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processor.sobi;
+package gov.nysenate.openleg.processor.legdata;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -95,12 +95,12 @@ public class ManagedLegDataProcessService implements LegDataProcessService {
 
     @Override
     public String getCollateType() {
-        return "sobi file";
+        return "leg_data file";
     }
 
     @Override
     public String getIngestType() {
-        return "sobi fragment";
+        return "leg_data fragment";
     }
 
     /**

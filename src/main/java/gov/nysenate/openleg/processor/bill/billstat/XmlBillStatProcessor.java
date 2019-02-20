@@ -11,7 +11,7 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractBillProcessor;
 import gov.nysenate.openleg.processor.bill.BillActionParser;
-import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

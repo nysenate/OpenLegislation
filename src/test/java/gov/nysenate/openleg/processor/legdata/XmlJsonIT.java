@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processor.sobi;
+package gov.nysenate.openleg.processor.legdata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

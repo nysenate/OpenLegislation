@@ -8,7 +8,7 @@ import gov.nysenate.openleg.model.process.*;
 import gov.nysenate.openleg.processor.base.ProcessService;
 import gov.nysenate.openleg.processor.hearing.PublicHearingProcessService;
 import gov.nysenate.openleg.processor.law.LawProcessService;
-import gov.nysenate.openleg.processor.sobi.LegDataProcessService;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessService;
 import gov.nysenate.openleg.processor.transcript.TranscriptProcessService;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
 import gov.nysenate.openleg.service.spotcheck.base.BaseSpotcheckProcessService;

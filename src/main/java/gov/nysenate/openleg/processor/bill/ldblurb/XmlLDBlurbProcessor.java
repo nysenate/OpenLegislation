@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

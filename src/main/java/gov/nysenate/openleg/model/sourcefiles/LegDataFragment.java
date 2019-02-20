@@ -147,7 +147,7 @@ public class LegDataFragment extends BaseSourceData
 
     /** --- Basic Getters/Setters --- */
 
-    public SourceFile getParentSobiFile() {
+    public SourceFile getParentLegDataFile() {
         return parentSobiFile;
     }
 

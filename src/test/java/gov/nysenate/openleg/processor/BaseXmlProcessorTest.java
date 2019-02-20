@@ -12,7 +12,7 @@ import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
-import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.CachedBillDataService;

@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.sourcefiles.SourceType;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.processor.sobi.LegDataProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -96,7 +96,7 @@ public class XmlSenAgenProcessor extends AbstractDataProcessor implements LegDat
                                 .replaceAll(" +"," ");
 
                         // Format specific replacements
-                        if (legDataFragment.getParentSobiFile().getSourceType() == SourceType.XML) {
+                        if (legDataFragment.getParentLegDataFile().getSourceType() == SourceType.XML) {
                             notes = notes.replaceAll("\\|", "\n");
                         } else {
                             notes = notes.replaceAll("\\\\n", "\n");

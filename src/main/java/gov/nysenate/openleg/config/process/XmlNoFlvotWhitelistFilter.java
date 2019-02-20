@@ -16,7 +16,7 @@ public class XmlNoFlvotWhitelistFilter implements SourceFilter {
 
     @Override
     public boolean acceptFragment(LegDataFragment legDataFragment) {
-        SourceType sourceType = legDataFragment.getParentSobiFile().getSourceType();
+        SourceType sourceType = legDataFragment.getParentLegDataFile().getSourceType();
         LegDataFragmentType fragmentType = legDataFragment.getType();
         // Allow either non-floor-vote xmls or bill sobis (which contain floor votes)
         return sourceType == XML && fragmentType != SENFLVOTE

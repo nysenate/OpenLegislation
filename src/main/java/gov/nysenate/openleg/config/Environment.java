@@ -71,7 +71,7 @@ public class Environment
     /** Enable batch processing of legislative data files. */
     @Value("${leg.data.batch.process.enabled}") private boolean legDataBatchEnabled;
 
-    /** If SOBI batch is enabled, this specifies the maximum batch size. */
+    /** If leg data batch is enabled, this specifies the maximum batch size. */
     @Value("${leg.data.batch.process.size}") private int legDataBatchSize;
 
     /** --- Scheduling Settings --- */

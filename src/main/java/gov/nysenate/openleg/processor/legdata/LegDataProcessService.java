@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processor.sobi;
+package gov.nysenate.openleg.processor.legdata;
 
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;

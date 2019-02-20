@@ -204,12 +204,12 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
     /** --- Processing Instances --- */
 
-    @Value("${sobi.batch.process.size:100}")
-    private int sobiBatchSize;
+    @Value("${leg.data.batch.process.size:100}")
+    private int legDataBatchSize;
 
     @Bean(name = "billIngestCache")
     public IngestCache<BaseBillId, Bill, LegDataFragment> billIngestCache() {
-        return new IngestCache<>(sobiBatchSize);
+        return new IngestCache<>(legDataBatchSize);
     }
 
     @Bean(name = "agendaIngestCache")

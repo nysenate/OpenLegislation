@@ -21,7 +21,7 @@ public class XmlDumpWhitelistFilter implements SourceFilter {
 
     @Override
     public boolean acceptFragment(LegDataFragment legDataFragment) {
-        SourceType sourceType = legDataFragment.getParentSobiFile().getSourceType();
+        SourceType sourceType = legDataFragment.getParentLegDataFile().getSourceType();
         LegDataFragmentType fragmentType = legDataFragment.getType();
         // Accept all SOBI fragments and xml BILLTEXT fragments
         return sourceType == SOBI || sourceType == XML && fragmentType == BILLTEXT;

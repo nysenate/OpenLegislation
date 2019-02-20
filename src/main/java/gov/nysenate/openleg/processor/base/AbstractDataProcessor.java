@@ -97,7 +97,7 @@ public abstract class AbstractDataProcessor
     /* --- Common Methods --- */
 
     protected DataProcessUnit createProcessUnit(LegDataFragment legDataFragment) {
-        return new DataProcessUnit("SOBI-" + legDataFragment.getType().name(), legDataFragment.getFragmentId(),
+        return new DataProcessUnit(legDataFragment.getParentLegDataFile().getSourceType() + "-" + legDataFragment.getType().name(), legDataFragment.getFragmentId(),
             LocalDateTime.now(), DataProcessAction.INGEST);
     }
 

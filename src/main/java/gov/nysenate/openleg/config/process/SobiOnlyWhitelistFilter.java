@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 public class SobiOnlyWhitelistFilter implements SourceFilter {
 
     public boolean acceptFragment(LegDataFragment legDataFragment) {
-        return legDataFragment.getParentSobiFile().getSourceType() == SourceType.SOBI;
+        return legDataFragment.getParentLegDataFile().getSourceType() == SourceType.SOBI;
     }
 
     public boolean acceptBlock(SobiBlock sobiBlock) {

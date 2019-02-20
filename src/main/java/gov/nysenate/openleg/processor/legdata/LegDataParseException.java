@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.processor.sobi;
+package gov.nysenate.openleg.processor.legdata;
 
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.processor.base.ParseError;

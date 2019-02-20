@@ -11,7 +11,7 @@ import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
-import gov.nysenate.openleg.processor.sobi.ManagedLegDataProcessService;
+import gov.nysenate.openleg.processor.legdata.ManagedLegDataProcessService;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
