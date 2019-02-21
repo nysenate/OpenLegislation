@@ -52,11 +52,19 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
      * {@inheritDoc}
      */
     @Override
-    public SpotCheckReport<AgendaMeetingWeekId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
+    public SpotCheckReport<AgendaMeetingWeekId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
         logger.info("Getting agenda references...");
         // Get all unchecked references outside of the grace period.
-        List<AgendaAlertInfoCommittee> references = getReferences(start, end).stream()
-                .filter(this::outsideGracePeriod).collect(Collectors.toList());
+        List<AgendaAlertInfoCommittee> allReferences = getReferences(start, end);
+        List<AgendaAlertInfoCommittee> references = allReferences.stream()
+                .filter(this::outsideGracePeriod)
+                .collect(Collectors.toList());
+
+        if (references.isEmpty()) {
+            throw new ReferenceDataNotFoundEx( "All unchecked agenda references (" +
+                            allReferences.size() +
+                            ") were still in their grace period.");
+        }
 
         SpotCheckReport<AgendaMeetingWeekId> report = initSpotcheckReport(references);
 
