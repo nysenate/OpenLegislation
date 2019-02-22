@@ -31,7 +31,7 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
     public List<LegDataFragment> getLegDataFragments(SobiFile sobiFile, LegDataFragmentType fragmentType,
                                                      SortOrder pubDateOrder) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("sobiFileName", sobiFile.getFileName());
+        params.addValue("legDataFileName", sobiFile.getFileName());
         params.addValue("fragmentType", fragmentType.name());
         OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder, "sequence_no", pubDateOrder);
         return jdbcNamed.query(
@@ -103,7 +103,7 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
      */
     @Override
     public List<LegDataFragment> getLegDataFragments(SourceFile sobiFile, SortOrder pubDateOrder) {
-        MapSqlParameterSource params = new MapSqlParameterSource("sobiFileName",
+        MapSqlParameterSource params = new MapSqlParameterSource("legDataFileName",
                 sobiFile.getFileName());
         OrderBy orderBy = new OrderBy("published_date_time", pubDateOrder, "sequence_no", pubDateOrder);
         return jdbcNamed.query(SqlLegDataFragmentQuery.GET_LEG_DATA_FRAGMENTS_BY_LEG_DATA_FILE.getSql(schema(), orderBy, LimitOffset.ALL),
@@ -116,7 +116,7 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
     private MapSqlParameterSource getLegDataFragmentParams(LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("fragmentId", fragment.getFragmentId());
-        params.addValue("sobiFileName", fragment.getParentSobiFile().getFileName());
+        params.addValue("legDataFileName", fragment.getParentLegDataFile().getFileName());
         params.addValue("publishedDateTime", toDate(fragment.getPublishedDateTime()));
         params.addValue("fragmentType", fragment.getType().name());
         params.addValue("sequenceNo", fragment.getSequenceNo());
@@ -136,32 +136,32 @@ public class SqlLegDataFragmentDao extends SqlBaseDao implements LegDataFragment
      */
     protected class LegDataFragmentRowMapper implements RowMapper<LegDataFragment> {
         private String pfx = "";
-        private Map<String, SourceFile> sobiFileMap = new HashMap<>();
+        private Map<String, SourceFile> legDataFileMap = new HashMap<>();
 
         public LegDataFragmentRowMapper() {
             this("", Collections.emptyList());
         }
 
-        public LegDataFragmentRowMapper(SourceFile sobiFile) {
-            this("", Arrays.asList(sobiFile));
+        public LegDataFragmentRowMapper(SourceFile legDataFile) {
+            this("", Arrays.asList(legDataFile));
         }
 
-        public LegDataFragmentRowMapper(String pfx, List<SourceFile> sobiFiles) {
+        public LegDataFragmentRowMapper(String pfx, List<SourceFile> legDataFiles) {
             this.pfx = pfx;
-            for (SourceFile sobiFile : sobiFiles) {
-                sobiFileMap.put(sobiFile.getFileName(), sobiFile);
+            for (SourceFile sobiFile : legDataFiles) {
+                legDataFileMap.put(sobiFile.getFileName(), sobiFile);
             }
         }
 
         @Override
         public LegDataFragment mapRow(ResultSet rs, int rowNum) throws SQLException {
-            String sobiFileName = rs.getString(pfx + "sobi_file_name");
+            String legDataFileName = rs.getString(pfx + "leg_data_file_name");
             // Passing the sobi file objects in the constructor is a means of caching the objects
             // so that they don't have to be re-mapped. If not supplied, an extra call will be
             // made to fetch the sobi file.
-            SourceFile sourceFile = sobiFileMap.get(sobiFileName);
+            SourceFile sourceFile = legDataFileMap.get(legDataFileName);
             if (sourceFile == null) {
-                sourceFile = sourceFileRefDao.getSourceFile(sobiFileName);
+                sourceFile = sourceFileRefDao.getSourceFile(legDataFileName);
             }
             LegDataFragmentType type = LegDataFragmentType.valueOf(rs.getString(pfx + "fragment_type").toUpperCase());
             int sequenceNo = rs.getInt(pfx + "sequence_no");

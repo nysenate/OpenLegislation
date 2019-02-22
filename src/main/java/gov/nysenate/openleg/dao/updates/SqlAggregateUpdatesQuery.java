@@ -23,7 +23,7 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
 
     STANDARD_UPDATE_SUBQUERY(
         "\tSELECT %s AS id,\n" +            // id selector e.g. ARRAY['id_col1', id_val1, 'id_col2', id_val2, ...]
-        "\t\t'%s' as content_type, %s\n" +  // content type, column replace string e.g. "${sobiColumns}"
+        "\t\t'%s' as content_type, %s\n" +  // content type, column replace string e.g. "${legDataColumns}"
         "\tFROM ${schema}.%s\n" +           // table name
         "\tWHERE ${dateColumn} BETWEEN :startDateTime AND :endDateTime"
     ),
@@ -36,14 +36,14 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
         "MAX(%s) AS last_source_id, MAX(action_date_time) AS last_processed_date_time, \n" +
         "\t\tMAX(published_date_time) AS last_published_date_time"
     ),
-    SOBI_DIGEST_COLUMNS(
-        String.format(STANDARD_DIGEST_COLUMNS.sql, "sobi_fragment_id")
+    LEG_DATA_DIGEST_COLUMNS(
+        String.format(STANDARD_DIGEST_COLUMNS.sql, "leg_data_fragment_id")
     ),
-    SOBI_DETAIL_DIGEST_COLUMNS(
-        SOBI_DIGEST_COLUMNS.sql + ", hstore_to_array(data) AS data"
+    LEG_DATA_DETAIL_DIGEST_COLUMNS(
+        LEG_DATA_DIGEST_COLUMNS.sql + ", hstore_to_array(data) AS data"
     ),
-    SOBI_TOKEN_COLUMNS(
-        String.format(STANDARD_TOKEN_COLUMNS.sql, "sobi_fragment_id")
+    LEG_DATA_TOKEN_COLUMNS(
+        String.format(STANDARD_TOKEN_COLUMNS.sql, "leg_data_fragment_id")
     ),
 
     /** --- Agenda Update Subquery --- */
@@ -51,7 +51,7 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     AGENDA_UPDATE_SUBQUERY(
         String.format(STANDARD_UPDATE_SUBQUERY.sql,
             "ARRAY['agendaNumber', agenda_no::text, 'year', year::text]",
-            "AGENDA", "${sobiColumns}", SqlTable.AGENDA_CHANGE_LOG)
+            "AGENDA", "${legDataColumns}", SqlTable.AGENDA_CHANGE_LOG)
     ),
     AGENDA_UPDATE_TOKEN_SUBQUERY(
         AGENDA_UPDATE_SUBQUERY.sql + "\n\tGROUP BY agenda_no, year"
@@ -62,7 +62,7 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     BILL_UPDATE_SUBQUERY(
         String.format(STANDARD_UPDATE_SUBQUERY.sql,
             "ARRAY['printNo', bill_print_no, 'session', bill_session_year::text]",
-            "BILL", "${sobiColumns}", SqlTable.BILL_CHANGE_LOG)
+            "BILL", "${legDataColumns}", SqlTable.BILL_CHANGE_LOG)
     ),
     BILL_UPDATE_TOKEN_SUBQUERY(
         BILL_UPDATE_SUBQUERY.sql + "\n\tGROUP BY bill_print_no, bill_session_year"
@@ -73,7 +73,7 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     CALENDAR_UPDATE_SUBQUERY(
         String.format(STANDARD_UPDATE_SUBQUERY.sql,
             "ARRAY['calNo', calendar_no::text, 'year', calendar_year::text]",
-            "CALENDAR", "${sobiColumns}", SqlTable.CALENDAR_CHANGE_LOG)
+            "CALENDAR", "${legDataColumns}", SqlTable.CALENDAR_CHANGE_LOG)
     ),
     CALENDAR_UPDATE_TOKEN_SUBQUERY(
         CALENDAR_UPDATE_SUBQUERY.sql + "\n\tGROUP BY calendar_no, calendar_year"
@@ -184,11 +184,11 @@ public enum SqlAggregateUpdatesQuery implements BasicSqlQuery {
     private static Map<String, String> getColumnReplaceMap(UpdateReturnType returnType) {
         switch (returnType) {
             case TOKEN:
-                return ImmutableMap.of("sobiColumns", SOBI_TOKEN_COLUMNS.sql, "lawColumns", LAW_TOKEN_COLUMNS.sql);
+                return ImmutableMap.of("legDataColumns", LEG_DATA_TOKEN_COLUMNS.sql, "lawColumns", LAW_TOKEN_COLUMNS.sql);
             case DIGEST:
-                return ImmutableMap.of("sobiColumns", SOBI_DIGEST_COLUMNS.sql, "lawColumns", LAW_DIGEST_COLUMNS.sql);
+                return ImmutableMap.of("legDataColumns", LEG_DATA_DIGEST_COLUMNS.sql, "lawColumns", LAW_DIGEST_COLUMNS.sql);
             case DETAIL_DIGEST:
-                return ImmutableMap.of("sobiColumns", SOBI_DETAIL_DIGEST_COLUMNS.sql, "lawColumns", LAW_DETAIL_DIGEST_COLUMNS.sql);
+                return ImmutableMap.of("legDataColumns", LEG_DATA_DETAIL_DIGEST_COLUMNS.sql, "lawColumns", LAW_DETAIL_DIGEST_COLUMNS.sql);
         }
         return ImmutableMap.of();
     }

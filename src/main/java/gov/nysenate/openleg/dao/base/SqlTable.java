@@ -105,8 +105,8 @@ public enum SqlTable
     PERSON                       ("person"),
     SESSION_MEMBER               ("session_member"),
 
-    LEG_DATA_FILE                ("sobi_file"),
-    LEG_DATA_FRAGMENT            ("sobi_fragment"),
+    LEG_DATA_FILE                ("leg_data_file"),
+    LEG_DATA_FRAGMENT            ("leg_data_fragment"),
 
     SPOTCHECK_REPORT             ("spotcheck_report"),
     SPOTCHECK_OBSERVATION        ("spotcheck_observation"),

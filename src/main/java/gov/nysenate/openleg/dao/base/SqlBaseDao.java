@@ -220,7 +220,7 @@ public abstract class SqlBaseDao
      * @param fragmentId String
      * @return LocalDateTime
      */
-    public static LocalDateTime getLocalDateTimeFromSobiFragmentId(String fragmentId) {
+    public static LocalDateTime getLocalDateTimeFromLegDataFragmentId(String fragmentId) {
         if (fragmentId != null && !fragmentId.isEmpty()) {
             List<String> parts = Splitter.on(".").splitToList(fragmentId);
             if (parts.size() == 4) {
@@ -229,7 +229,7 @@ public abstract class SqlBaseDao
                             DateTimeFormatter.ofPattern("yyMMddHHmmss"));
                 }
                 catch (DateTimeParseException ex) {
-                    logger.warn("Failed to parse date time from sobi fragment {}", fragmentId, ex);
+                    logger.warn("Failed to parse date time from leg data fragment {}", fragmentId, ex);
                 }
             }
         }

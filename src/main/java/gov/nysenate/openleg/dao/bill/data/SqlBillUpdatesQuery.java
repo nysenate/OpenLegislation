@@ -15,7 +15,7 @@ public enum SqlBillUpdatesQuery implements BasicSqlQuery
         "%s"),  // GROUP BY clause if necessary
 
     SELECT_COLUMNS_FOR_DIGEST_FRAGMENT(
-        "sobi_fragment_id AS last_fragment_id, action_date_time AS last_processed_date_time, \n" +
+        "leg_data_fragment_id AS last_fragment_id, action_date_time AS last_processed_date_time, \n" +
         "published_date_time AS last_published_date_time, COUNT(*) OVER () AS total_updated,\n" +
         "table_name, action, hstore_to_array(data) AS data\n"
     ),
@@ -23,7 +23,7 @@ public enum SqlBillUpdatesQuery implements BasicSqlQuery
     SELECT_BILL_UPDATE_TOKENS(
         String.format(SELECT_BILL_UPDATES_FRAGMENT.sql,
             // Select columns
-            "MAX(sobi_fragment_id) AS last_fragment_id, MAX(action_date_time) AS last_processed_date_time, \n" +
+            "MAX(leg_data_fragment_id) AS last_fragment_id, MAX(action_date_time) AS last_processed_date_time, \n" +
             "MAX(published_date_time) AS last_published_date_time, COUNT(*) OVER () AS total_updated\n",
             // No extra where clause
             "",
