@@ -37,6 +37,6 @@ public class AgendaReportService extends BaseAgendaCheckReportService {
     /** {@inheritDoc} */
     @Override
     protected void setReferenceChecked(AgendaAlertInfoCommittee reference) {
-        agendaAlertDao.setAgendaAlertChecked(reference.getAgendaAlertInfoCommId(), true);
+        agendaAlertDao.setAgendaAlertChecked(reference.getAgendaMeetingWeekId(), true);
     }
 }

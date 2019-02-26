@@ -13,9 +13,8 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertId;
-import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommId;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
+import gov.nysenate.openleg.model.spotcheck.agenda.AgendaMeetingWeekId;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.FileIOUtils;
 import org.apache.commons.io.FileUtils;
@@ -96,10 +95,10 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
 
     /** {@inheritDoc} */
     @Override
-    public AgendaAlertInfoCommittee getAgendaAlertInfoCommittee(AgendaAlertInfoCommId agendaCommInfoId) {
+    public AgendaAlertInfoCommittee getAgendaAlertInfoCommittee(AgendaMeetingWeekId meetingWeekId) {
         AgendaAlertInfoCommRowHandler rowHandler = new AgendaAlertInfoCommRowHandler();
-        jdbcNamed.query(SELECT_INFO_COMMITTEE_BY_ID.getSql(schema(), LimitOffset.ONE),
-                getAgendaAlertInfoCommIdParams(agendaCommInfoId), rowHandler);
+        String sql = SELECT_INFO_COMMITTEE_BY_ID.getSql(schema(), LimitOffset.ONE);
+        jdbcNamed.query(sql, getAgendaMeetingWeekIdParams(meetingWeekId), rowHandler);
         List<AgendaAlertInfoCommittee> result = rowHandler.getAlertInfoCommittees();
         if (result.size() == 1) {
             return result.get(0);
@@ -143,7 +142,7 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
     /** {@inheritDoc} */
     @Override
     public void updateAgendaAlertInfoCommittee(AgendaAlertInfoCommittee aaic) {
-        deleteAAIC(aaic.getAgendaAlertInfoCommId());
+        deleteAAIC(aaic.getAgendaMeetingWeekId());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamed.update(INSERT_INFO_COMMITTEE.getSql(schema()), getAgendaAlertInfoCommParams(aaic),
@@ -154,8 +153,8 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
 
     /** {@inheritDoc} */
     @Override
-    public void setAgendaAlertChecked(AgendaAlertInfoCommId agendaAlertId, boolean checked) {
-        MapSqlParameterSource params = getAgendaAlertInfoCommIdParams(agendaAlertId);
+    public void setAgendaAlertChecked(AgendaMeetingWeekId meetingWeekId, boolean checked) {
+        MapSqlParameterSource params = getAgendaMeetingWeekIdParams(meetingWeekId);
         params.addValue("checked", checked);
         jdbcNamed.update(SET_INFO_COMMITTEE_CHECKED.getSql(schema()), params);
     }
@@ -172,10 +171,10 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
 
     /**
      * Deletes an AgendaAlertInfoCommittee
-     * @param aaicID AgendaAlertInfoCommId
+     * @param meetingWeekId {@link AgendaMeetingWeekId}
      */
-    private void deleteAAIC(AgendaAlertInfoCommId aaicID) {
-        jdbcNamed.update(DELETE_INFO_COMMITTEE.getSql(schema()), getAgendaAlertInfoCommIdParams(aaicID));
+    private void deleteAAIC(AgendaMeetingWeekId meetingWeekId) {
+        jdbcNamed.update(DELETE_INFO_COMMITTEE.getSql(schema()), getAgendaMeetingWeekIdParams(meetingWeekId));
     }
 
     /**
@@ -254,23 +253,19 @@ public class SqlFsAgendaAlertDao extends SqlBaseDao implements AgendaAlertDao {
 
     /** --- Parameter Mappers --- */
 
-    private MapSqlParameterSource getAgendaAlertIdParams(AgendaAlertId alertId) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("referenceDateTime", DateUtils.toDate(alertId.getReferenceDateTime()));
-        params.addValue("weekOf", DateUtils.toDate(alertId.getWeekOf()));
-        return params;
-    }
-
-    private MapSqlParameterSource getAgendaAlertInfoCommIdParams(AgendaAlertInfoCommId commId) {
-        MapSqlParameterSource params = getAgendaAlertIdParams(commId);
-        params.addValue("addendumId", commId.getAddendum().toString());
-        params.addValue("chamber", commId.getCommitteeId().getChamber().asSqlEnum());
-        params.addValue("committeeName", commId.getCommitteeId().getName());
+    private MapSqlParameterSource getAgendaMeetingWeekIdParams(AgendaMeetingWeekId meetingWeekId) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("year", meetingWeekId.getYear())
+        .addValue("weekOf", DateUtils.toDate(meetingWeekId.getWeekOf()))
+        .addValue("addendumId", meetingWeekId.getAddendum().toString())
+        .addValue("chamber", meetingWeekId.getCommitteeId().getChamber().asSqlEnum())
+        .addValue("committeeName", meetingWeekId.getCommitteeId().getName());
         return params;
     }
 
     private MapSqlParameterSource getAgendaAlertInfoCommParams(AgendaAlertInfoCommittee aaic) {
-        MapSqlParameterSource params = getAgendaAlertInfoCommIdParams(aaic.getAgendaAlertInfoCommId());
+        MapSqlParameterSource params = getAgendaMeetingWeekIdParams(aaic.getAgendaMeetingWeekId());
+        params.addValue("referenceDateTime", DateUtils.toDate(aaic.getReferenceId().getRefActiveDateTime()));
         params.addValue("chair", aaic.getChair());
         params.addValue("location", aaic.getLocation());
         params.addValue("meetingDateTime", DateUtils.toDate(aaic.getMeetingDateTime()));

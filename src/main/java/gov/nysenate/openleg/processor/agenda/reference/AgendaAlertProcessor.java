@@ -32,11 +32,12 @@ public class AgendaAlertProcessor {
                 List<AgendaAlertInfoCommittee> references = AgendaAlertParser.parseAgendaAlert(alertFile);
                 references.forEach(agendaAlertDao::updateAgendaAlertInfoCommittee);
                 processedCount++;
-            } catch (Exception ex) {
-                notificationService.handleSpotcheckException(ex, false);
-            } finally {
+
+                // Archive file
                 logger.info("archiving agenda alert {}", alertFile.getName());
                 agendaAlertDao.archiveAgendaAlert(alertFile);
+            } catch (Exception ex) {
+                notificationService.handleSpotcheckException(ex, false);
             }
         }
         return processedCount;

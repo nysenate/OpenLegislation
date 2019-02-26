@@ -50,6 +50,8 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
 
     /**
      * {@inheritDoc}
+     *
+     * @throws ReferenceDataNotFoundEx if no references are checked in the report.
      */
     @Override
     public SpotCheckReport<AgendaMeetingWeekId> generateReport(LocalDateTime start, LocalDateTime end) throws ReferenceDataNotFoundEx, Exception {
@@ -62,7 +64,7 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
 
         // Add references to a map, keyed by AgendaAlertCheckId
         Map<AgendaMeetingWeekId, AgendaAlertInfoCommittee> referenceMap = references.stream()
-                .collect(Collectors.toMap(AgendaAlertInfoCommittee::getAgendaAlertCheckId, Function.identity()));
+                .collect(Collectors.toMap(AgendaAlertInfoCommittee::getAgendaMeetingWeekId, Function.identity()));
         // Get associated Openleg data and transform it into the same data types to make comparisons easy.
         Map<AgendaMeetingWeekId, AgendaAlertInfoCommittee> observedMap = createObservedMap(references);
 
@@ -116,7 +118,7 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
                 continue;
             }
             AgendaAlertInfoCommittee observedAlertCommittee = transformToAgendaAlertInfoCommittee(observedAgenda, ref);
-            observedMap.put(observedAlertCommittee.getAgendaAlertCheckId(), observedAlertCommittee);
+            observedMap.put(observedAlertCommittee.getAgendaMeetingWeekId(), observedAlertCommittee);
         }
         return observedMap;
     }
@@ -126,7 +128,7 @@ public abstract class BaseAgendaCheckReportService extends BaseSpotCheckReportSe
         try {
             Agenda a = getAgenda(reference);
             if (isAgendaMissingInfoAddendum(a, reference) || isAgendaMissingInfoCommittee(a, reference)) {
-                throw new AgendaNotFoundEx("could not find committee meeting addendum " + reference.getAgendaAlertInfoCommId());
+                throw new AgendaNotFoundEx("could not find committee meeting addendum " + reference.getAgendaMeetingWeekId());
             }
             return a;
         } catch (AgendaNotFoundEx ex) {
