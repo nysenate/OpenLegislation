@@ -35,7 +35,7 @@ public class CachedMemberService implements MemberService
 
     private SessionMemberIdCache sessionMemberIdCache;
 
-    private MemberIdCache memberIdCache;
+    private FullMemberIdCache fullMemberIdCache;
 
     private SessionChamberShortNameCache sessionChamberShortNameCache;
 
@@ -44,10 +44,10 @@ public class CachedMemberService implements MemberService
 
     @Autowired
     public CachedMemberService(EventBus eventBus, SessionMemberIdCache sessionMemberIdCache,
-                               MemberIdCache memberIdCache, SessionChamberShortNameCache shortNameCache) {
+                               FullMemberIdCache fullMemberIdCache, SessionChamberShortNameCache shortNameCache) {
         this.eventBus = eventBus;
         this.sessionMemberIdCache = sessionMemberIdCache;
-        this.memberIdCache = memberIdCache;
+        this.fullMemberIdCache = fullMemberIdCache;
         this.sessionChamberShortNameCache = shortNameCache;
     }
 
@@ -62,8 +62,9 @@ public class CachedMemberService implements MemberService
     @Override
     public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
         SimpleKey key = new SimpleKey(memberId);
-        if (sessionMemberIdCache.isKeyInCache(key)) {
-            return (SessionMember) sessionMemberIdCache.getCache().get(key).getObjectValue();
+        if (fullMemberIdCache.isKeyInCache(key)) {
+            FullMember fullMember = (FullMember) fullMemberIdCache.getCache().get(key).getObjectValue();
+            return fullMember.getSessionMemberForYear(sessionYear).get();
         }
         try {
             return memberDao.getMemberById(memberId, sessionYear);
@@ -75,6 +76,10 @@ public class CachedMemberService implements MemberService
 
     @Override
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
+        SimpleKey key = new SimpleKey(memberId);
+        if (fullMemberIdCache.isKeyInCache(key)) {
+            return (FullMember) fullMemberIdCache.getCache().get(key).getObjectValue();
+        }
         return memberDao.getMemberById(memberId);
     }
 
@@ -132,17 +137,13 @@ public class CachedMemberService implements MemberService
     /** {@inheritDoc} */
     @Override
     public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
-            return memberDao.getAllMembers(sortOrder, limOff);
+        return fullMemberIdCache.getAllMembers(sortOrder, limOff);
     }
 
     /** {@inheritDoc} */
     @Override
     public List<FullMember> getAllFullMembers() {
-        return getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
-                .collect(Collectors.groupingBy(SessionMember::getMemberId, LinkedHashMap::new, Collectors.toList()))
-                .values().stream()
-                .map(FullMember::new)
-                .collect(Collectors.toList());
+        return fullMemberIdCache.getAllFullMembers();
     }
 
     /** {@inheritDoc} */
@@ -165,7 +166,7 @@ public class CachedMemberService implements MemberService
         // We need to rebuild cache and search index to account for session members that were
         //      tangentially modified via a person or member update
         eventBus.post(new CacheWarmEvent(Collections.singleton(ContentCache.SESSION_CHAMBER_SHORTNAME)));
-        eventBus.post(new CacheWarmEvent(Collections.singleton(ContentCache.REGULAR_MEMBER)));
+        eventBus.post(new CacheWarmEvent(Collections.singleton(ContentCache.FULL_MEMBER)));
         eventBus.post(new CacheWarmEvent(Collections.singleton(ContentCache.SESSION_MEMBER)));
         eventBus.post(new RebuildIndexEvent(Collections.singleton(SearchIndex.MEMBER)));
 

@@ -32,7 +32,7 @@ import java.util.List;
 @Component
 public class SessionChamberShortNameCache implements CachingService<String> {
 
-    private static final Logger logger = LoggerFactory.getLogger(MemberIdCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(FullMemberIdCache.class);
 
     private EventBus eventBus;
 

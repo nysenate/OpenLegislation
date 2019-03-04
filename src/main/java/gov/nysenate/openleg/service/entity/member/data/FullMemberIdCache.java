@@ -9,7 +9,7 @@ import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
-import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.FullMember;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.Cache;
@@ -26,12 +26,14 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
-public class MemberIdCache implements CachingService<Integer> {
+public class FullMemberIdCache implements CachingService<Integer> {
 
-    private static final Logger logger = LoggerFactory.getLogger(MemberIdCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(FullMemberIdCache.class);
 
     private EventBus eventBus;
 
@@ -42,7 +44,7 @@ public class MemberIdCache implements CachingService<Integer> {
     private MemberDao memberDao;
 
     @Autowired
-    public MemberIdCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager) {
+    public FullMemberIdCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager) {
         this.eventBus = eventBus;
         this.memberDao = memberDao;
         this.cacheManager = cacheManager;
@@ -58,11 +60,11 @@ public class MemberIdCache implements CachingService<Integer> {
     @PreDestroy
     private void cleanUp() {
         evictCaches();
-        cacheManager.removeCache(ContentCache.REGULAR_MEMBER.name());
+        cacheManager.removeCache(ContentCache.FULL_MEMBER.name());
     }
 
     public void setupCaches() {
-        this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.REGULAR_MEMBER.name()).eternal(true));
+        this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.FULL_MEMBER.name()).eternal(true));
         cacheManager.addCache(this.memberCache);
     }
 
@@ -77,7 +79,7 @@ public class MemberIdCache implements CachingService<Integer> {
     @Override
     @Subscribe
     public void handleCacheEvictEvent(CacheEvictEvent evictEvent) {
-        if (evictEvent.affects(ContentCache.REGULAR_MEMBER)) {
+        if (evictEvent.affects(ContentCache.FULL_MEMBER)) {
             evictCaches();
         }
     }
@@ -85,7 +87,7 @@ public class MemberIdCache implements CachingService<Integer> {
     @Subscribe
     @Override
     public void handleCacheEvictIdEvent(CacheEvictIdEvent<Integer> evictIdEvent) {
-        if (evictIdEvent.affects(ContentCache.REGULAR_MEMBER)) {
+        if (evictIdEvent.affects(ContentCache.FULL_MEMBER)) {
             evictContent(evictIdEvent.getContentId());
         }
     }
@@ -94,15 +96,15 @@ public class MemberIdCache implements CachingService<Integer> {
     public void warmCaches() {
         evictCaches();
         logger.info("Warming up member cache");
-        memberDao.getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
-                .forEach(this::convertSessionMemberToMemberAndPutInCache);
+        getAllFullMembers().stream()
+                .forEach(this::putMemberInCache);
         logger.info("Done warming up member cache");
     }
 
     @Override
     @Subscribe
     public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
-        if (warmEvent.affects(ContentCache.REGULAR_MEMBER)) {
+        if (warmEvent.affects(ContentCache.FULL_MEMBER)) {
             warmCaches();
         }
     }
@@ -111,28 +113,25 @@ public class MemberIdCache implements CachingService<Integer> {
         return memberCache.isKeyInCache(key);
     }
 
-    public void convertSessionMemberToMemberAndPutInCache(SessionMember sessionMember) {
-        Member member = new Member();
-        member.setChamber(sessionMember.getChamber());
-        member.setMemberId(sessionMember.getMemberId());
-        member.setPersonId(sessionMember.getPersonId());
-        member.setPrefix(sessionMember.getPrefix());
-        member.setFullName(sessionMember.getFullName());
-        member.setFirstName(sessionMember.getFirstName());
-        member.setMiddleName(sessionMember.getMiddleName());
-        member.setLastName(sessionMember.getLastName());
-        member.setSuffix(sessionMember.getSuffix());
-        member.setEmail(sessionMember.getEmail());
-        member.setImgName(sessionMember.getImgName());
-        member.setVerified(sessionMember.isVerified());
-        putMemberInCache(member);
-    }
-
-    public void putMemberInCache(Member member) {
+    public void putMemberInCache(FullMember member) {
         memberCache.put(new Element(new SimpleKey(member.getMemberId()), member, true));
     }
 
     public Cache getCache() {
         return memberCache;
+    }
+
+    /** {@inheritDoc} */
+    public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
+        return memberDao.getAllMembers(sortOrder, limOff);
+    }
+
+    /** {@inheritDoc} */
+    public List<FullMember> getAllFullMembers() {
+        return getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
+                .collect(Collectors.groupingBy(SessionMember::getMemberId, LinkedHashMap::new, Collectors.toList()))
+                .values().stream()
+                .map(FullMember::new)
+                .collect(Collectors.toList());
     }
 }

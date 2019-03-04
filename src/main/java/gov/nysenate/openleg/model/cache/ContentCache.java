@@ -16,7 +16,7 @@ public enum ContentCache
     LAW,
     COMMITTEE,
     SESSION_MEMBER, //Session Member
-    REGULAR_MEMBER, //Member
+    FULL_MEMBER, //Member
     SESSION_CHAMBER_SHORTNAME, //Session Member with a different key
     APIUSER,
     SHIRO,
