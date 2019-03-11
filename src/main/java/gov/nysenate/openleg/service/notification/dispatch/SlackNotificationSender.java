@@ -1,9 +1,7 @@
 package gov.nysenate.openleg.service.notification.dispatch;
 
-import gov.nysenate.openleg.model.notification.NotificationType;
-import gov.nysenate.openleg.model.notification.RegisteredNotification;
-import gov.nysenate.openleg.model.notification.NotificationSubscription;
-import gov.nysenate.openleg.model.notification.NotificationTarget;
+import com.google.common.collect.Lists;
+import gov.nysenate.openleg.model.notification.*;
 import gov.nysenate.openleg.model.slack.SlackAddress;
 import gov.nysenate.openleg.model.slack.SlackAttachment;
 import gov.nysenate.openleg.model.slack.SlackField;
@@ -12,10 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,8 +20,8 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
      * {@inheritDoc}
      */
     @Override
-    public NotificationTarget getTargetType() {
-        return NotificationTarget.SLACK;
+    public NotificationMedium getTargetType() {
+        return NotificationMedium.SLACK;
     }
 
     /**
@@ -42,15 +37,35 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
                         .setText(notification.getMessage())
                         .setFallback(truncateNotification(notification))
                         .setFields(getFields(notification))
-                        .setColor(getColor(notification)))
+                        .setColor(getColor(notification.getNotificationType())))
                 .setText("")
-                .setIcon(getIcon(notification));
-        List<SlackAddress> addresses = subscriptions.stream()
+                .setIcon(getIcon(notification.getNotificationType()));
+        Set<SlackAddress> addresses = subscriptions.stream()
                 .map(NotificationSubscription::getTargetAddress)
                 .map(this::parseAddress)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         slackChatService.sendMessage(message, addresses);
     }
+
+
+    @Override
+    public void sendDigest(NotificationDigest digest) {
+        String digestText = NotificationDigestFormatter.getDigestText(digest, this::getDisplayUrl);
+        SlackMessage message = new SlackMessage()
+                .addAttachments(new SlackAttachment()
+                        .setTitle(NotificationDigestFormatter.getSummary(digest))
+                        .setTitleLink(getDigestUrl(digest))
+                        .setText(digestText)
+                        .setFallback(truncateDigest(digest, digestText))
+                        .setColor(getColor(digest.getType()))
+                        .setFields(getDigestFields(digest)))
+                .setText("")
+                .setIcon(getIcon(digest.getType()));
+        slackChatService.sendMessage(message,
+                Collections.singleton(parseAddress(digest.getAddress())));
+    }
+
+    /* --- Internal Methods --- */
 
     private ArrayList<SlackField> getFields(RegisteredNotification notification) {
         return new ArrayList<>(Arrays.asList(
@@ -60,21 +75,28 @@ public class SlackNotificationSender extends BaseSlackNotificationSender impleme
         ));
     }
 
-    private String getColor(RegisteredNotification notification) {
-        if (NotificationType.EXCEPTION.covers(notification.getNotificationType())) {
+    private ArrayList<SlackField> getDigestFields(NotificationDigest digest) {
+        return Lists.newArrayList(
+                new SlackField("Type", digest.getType().toString()),
+                new SlackField("From", digest.getStartDateTime().toString()),
+                new SlackField("To", digest.getEndDateTime().toString()));
+    }
+
+    private String getColor(NotificationType type) {
+        if (NotificationType.EXCEPTION.covers(type)) {
             return "danger";
-        } else if (NotificationType.WARNING.covers(notification.getNotificationType())) {
+        } else if (NotificationType.WARNING.covers(type)) {
             return "warning";
         }
         return "good";
     }
 
-    private String getIcon(RegisteredNotification notification) {
-        if (NotificationType.EXCEPTION.covers(notification.getNotificationType())) {
+    private String getIcon(NotificationType type) {
+        if (NotificationType.EXCEPTION.covers(type)) {
             return ":scream_cat:";
-        } else if (NotificationType.WARNING.covers(notification.getNotificationType())) {
+        } else if (NotificationType.WARNING.covers(type)) {
             return ":pouting_cat:";
-        } else if (NotificationType.SPOTCHECK.covers(notification.getNotificationType())) {
+        } else if (NotificationType.SPOTCHECK.covers(type)) {
             return ":see_no_evil:";
         }
         return ":smile_cat:";

@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -294,10 +295,10 @@ public abstract class SqlBaseDao
         return new SessionYear(rs.getInt(column));
     }
 
-    public static String[] getArrayFromPgRs(ResultSet rs, String column) throws SQLException {
-        String arrayString = rs.getString(column);
-        arrayString = arrayString.replaceAll("[{}\" ]", "");
-        String[] split = arrayString.split(",");
-        return split;
+    public static String toPostgresArray(Collection<?> objects) {
+        String commaSeparatedList = objects.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        return "{" + commaSeparatedList + "}";
     }
 }

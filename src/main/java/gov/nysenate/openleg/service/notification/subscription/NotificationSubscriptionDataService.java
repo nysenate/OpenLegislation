@@ -1,11 +1,10 @@
 package gov.nysenate.openleg.service.notification.subscription;
 
-import gov.nysenate.openleg.model.notification.NotificationDigestSubscription;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationType;
+import gov.nysenate.openleg.model.notification.SubscriptionNotFoundEx;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 public interface NotificationSubscriptionDataService {
@@ -16,56 +15,51 @@ public interface NotificationSubscriptionDataService {
      * @param userName String
      * @return List<NotificationSubscription>
      */
-    public Set<NotificationSubscription> getSubscriptions(String userName);
+    Set<NotificationSubscription> getSubscriptions(String userName);
 
     /**
      * Get all subscriptions that cover notifications of the given type
      * @param type NotificationType
      * @return List<NotificationSubscription>
      */
-    public Set<NotificationSubscription> getSubscriptions(NotificationType type);
+    Set<NotificationSubscription> getSubscriptions(NotificationType type);
+
+    /**
+     * Get every single subscription.
+     * @return {@link Set<NotificationSubscription>}
+     */
+    Set<NotificationSubscription> getAllSubscriptions();
 
     /**
      * Insert a new subscription
      * @param subscription NotificationSubscription
+     * @return {@link NotificationSubscription} the updated subscription
      */
-    public void insertSubscription(NotificationSubscription subscription);
+    NotificationSubscription updateSubscription(NotificationSubscription subscription);
 
     /**
      * Remove a subscription
-     * @param subscription NotificationSubscription
+     * @param subscriptionId
      */
-    public void removeSubscription(NotificationSubscription subscription);
+    void removeSubscription(int subscriptionId);
 
     /**
      * Gets all notification digest subscriptions whose next digest is before the current time
      * @return Set<NotificationDigestSubscription>
      */
-    public Set<NotificationDigestSubscription> getPendingDigests();
+    Set<NotificationSubscription> getPendingDigests();
 
     /**
-     * Gets all notification digest subscriptions for the given user
-     * @param username String
-     * @return Set<NotificationDigestSubscription>
+     * Updates the last sent field for a subscription
+     * @param subscriptionId int
+     * @param lastSentDateTime LocalDateTime
      */
-    public Set<NotificationDigestSubscription> getDigestSubsForUser(String username);
+    void setLastSent(int subscriptionId, LocalDateTime lastSentDateTime) throws SubscriptionNotFoundEx;
 
     /**
-     * Inserts a new Notification Digest Subscription
-     * @param subscription NotificationDigestSubscription
+     * Sets the active status for the given notification id.
+     *  @param subscriptionId int
+     * @param active boolean
      */
-    public void insertDigestSubscription(NotificationDigestSubscription subscription);
-
-    /**
-     * Updates the next digest field of the subscription
-     * @param digestSubscriptionId int
-     * @param nextDigest LocalDateTime
-     */
-    public void updateNextDigest(int digestSubscriptionId, LocalDateTime nextDigest);
-
-    /**
-     * Removes the digest subscription with the given id
-     * @param digestSubscriptionId int
-     */
-    public void removeDigestSubscription(int digestSubscriptionId);
+    void setActive(int subscriptionId, boolean active) throws SubscriptionNotFoundEx;
 }

@@ -99,7 +99,8 @@ public enum SqlTable
 
     NOTIFICATION                 ("notification"),
     NOTIFICATION_SUBSCRIPTION    ("notification_subscription"),
-    NOTIFICATION_DIGEST_SUBSCRIPTION("notification_digest_subscription"),
+    NOTIFICATION_SCHEDULE        ("notification_schedule"),
+    NOTIFICATION_RATE_LIMIT      ("notification_rate_limit"),
 
     MEMBER                       ("member"),
     PERSON                       ("person"),

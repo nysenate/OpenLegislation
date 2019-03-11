@@ -1,7 +1,7 @@
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <%@ page import="gov.nysenate.openleg.model.notification.NotificationType" %>
 <%@ page import="gov.nysenate.openleg.util.OutputUtils" %>
-<%@ page import="gov.nysenate.openleg.model.notification.NotificationTarget" %>
+<%@ page import="gov.nysenate.openleg.model.notification.NotificationMedium" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <section ng-controller="AccountSettingsCtrl" ng-init="setHeaderVisible(true)" class="content-section">
@@ -49,7 +49,7 @@
 
     <%
       String notifTypeHierarchy = OutputUtils.toJson(NotificationType.getHierarchy());
-      String notifTargets = OutputUtils.toJson(NotificationTarget.values());
+      String notifTargets = OutputUtils.toJson(NotificationMedium.values());
     %>
 
     <md-tab label="Notification Settings">
