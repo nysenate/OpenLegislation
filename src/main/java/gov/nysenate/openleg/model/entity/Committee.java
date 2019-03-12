@@ -73,22 +73,22 @@ public class Committee extends BaseLegislativeContent implements Serializable
     /** --- Operators --- */
 
     public boolean membersEquals(Committee other) {
-        return
-            Objects.equals(this.name, other.name) &&
-            Objects.equals(this.session, other.session) &&
-            Objects.equals(this.members.size(), other.members.size()) &&
-            this.members.containsAll(other.members);
+        return other != null &&
+                Objects.equals(this.name, other.name) &&
+                Objects.equals(this.session, other.session) &&
+                Objects.equals(this.members.size(), other.members.size()) &&
+                this.members.containsAll(other.members);
     }
 
     public boolean meetingEquals(Committee other) {
-        return
-            Objects.equals(this.name, other.name) &&
-            Objects.equals(this.session, other.session) &&
-            Objects.equals(this.location, other.location) &&
-            Objects.equals(this.meetDay, other.meetDay) &&
-            Objects.equals(this.meetTime, other.meetTime) &&
-            Objects.equals(this.meetAltWeek, other.meetAltWeek) &&
-            Objects.equals(this.meetAltWeekText, other.meetAltWeekText);
+        return other != null &&
+                Objects.equals(this.name, other.name) &&
+                Objects.equals(this.session, other.session) &&
+                Objects.equals(this.location, other.location) &&
+                Objects.equals(this.meetDay, other.meetDay) &&
+                Objects.equals(this.meetTime, other.meetTime) &&
+                Objects.equals(this.meetAltWeek, other.meetAltWeek) &&
+                Objects.equals(this.meetAltWeekText, other.meetAltWeekText);
     }
 
     @Override

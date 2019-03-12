@@ -5,10 +5,10 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
-public class XmlSenCalProcessor extends AbstractDataProcessor implements SobiProcessor
+public class XmlSenCalProcessor extends AbstractDataProcessor implements LegDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenCalProcessor.class);
 
@@ -38,23 +38,23 @@ public class XmlSenCalProcessor extends AbstractDataProcessor implements SobiPro
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.CALENDAR;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.CALENDAR;
     }
 
     @Override
-    public void process(SobiFragment sobiFragment) {
-        logger.info("Processing Senate Calendar... {}", sobiFragment.getFragmentId());
-        LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+    public void process(LegDataFragment legDataFragment) {
+        logger.info("Processing Senate Calendar... {}", legDataFragment.getFragmentId());
+        LocalDateTime modifiedDate = legDataFragment.getPublishedDateTime();
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
-            Node root = getXmlRoot(sobiFragment.getText());
+            Node root = getXmlRoot(legDataFragment.getText());
             Node xmlCalendar = xml.getNode("sencalendar", root);
             Integer calendarNo = xml.getInteger("@no", xmlCalendar);
             Integer sessionYear = xml.getInteger("@sessyr", xmlCalendar);
             Integer year = xml.getInteger("@year", xmlCalendar);
             CalendarId calendarId = new CalendarId(calendarNo, year);
-            Calendar calendar = getOrCreateCalendar(calendarId, sobiFragment);
+            Calendar calendar = getOrCreateCalendar(calendarId, legDataFragment);
             calendar.setModifiedDateTime(modifiedDate);
 
             // Actions apply to supplemental and not the whole calendar
@@ -103,7 +103,7 @@ public class XmlSenCalProcessor extends AbstractDataProcessor implements SobiPro
             }
         }
         catch (IOException | SAXException | XPathExpressionException ex) {
-            logger.error("Failed to parse calendar sobi {}", sobiFragment.getFragmentId(), ex);
+            logger.error("Failed to parse calendar sobi {}", legDataFragment.getFragmentId(), ex);
             unit.addException("Failed to parse calendar: " + ex.getMessage());
         }
         // Notify the data processor that a calendar fragment has finished processing
@@ -119,7 +119,7 @@ public class XmlSenCalProcessor extends AbstractDataProcessor implements SobiPro
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
             flushAllUpdates();
         }
     }

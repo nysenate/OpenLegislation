@@ -5,7 +5,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,10 +65,10 @@ public abstract class SqlBaseDao
     }
 
     /**
-     * Applies the 'last SobiFragment id' column value. Useful for tracking which sobiFragment
+     * Applies the 'last LegDataFragment id' column value. Useful for tracking which sobiFragment
      * serves as the source data for the update.
      */
-    protected static void addLastFragmentParam(SobiFragment fragment, MapSqlParameterSource params) {
+    protected static void addLastFragmentParam(LegDataFragment fragment, MapSqlParameterSource params) {
         params.addValue("lastFragmentId", (fragment != null) ? fragment.getFragmentId() : null);
     }
 
@@ -220,7 +221,7 @@ public abstract class SqlBaseDao
      * @param fragmentId String
      * @return LocalDateTime
      */
-    public static LocalDateTime getLocalDateTimeFromSobiFragmentId(String fragmentId) {
+    public static LocalDateTime getLocalDateTimeFromLegDataFragmentId(String fragmentId) {
         if (fragmentId != null && !fragmentId.isEmpty()) {
             List<String> parts = Splitter.on(".").splitToList(fragmentId);
             if (parts.size() == 4) {
@@ -229,7 +230,7 @@ public abstract class SqlBaseDao
                             DateTimeFormatter.ofPattern("yyMMddHHmmss"));
                 }
                 catch (DateTimeParseException ex) {
-                    logger.warn("Failed to parse date time from sobi fragment {}", fragmentId, ex);
+                    logger.warn("Failed to parse date time from leg data fragment {}", fragmentId, ex);
                 }
             }
         }
@@ -294,10 +295,10 @@ public abstract class SqlBaseDao
         return new SessionYear(rs.getInt(column));
     }
 
-    public static String[] getArrayFromPgRs(ResultSet rs, String column) throws SQLException {
-        String arrayString = rs.getString(column);
-        arrayString = arrayString.replaceAll("[{}\" ]", "");
-        String[] split = arrayString.split(",");
-        return split;
+    public static String toPostgresArray(Collection<?> objects) {
+        String commaSeparatedList = objects.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        return "{" + commaSeparatedList + "}";
     }
 }

@@ -2,7 +2,7 @@ package gov.nysenate.openleg.model.sourcefiles.xml;
 
 import gov.nysenate.openleg.model.sourcefiles.BaseSourceFile;
 import gov.nysenate.openleg.model.sourcefiles.SourceType;
-import gov.nysenate.openleg.model.sourcefiles.sobi.InvalidSobiNameEx;
+import gov.nysenate.openleg.model.sourcefiles.InvalidLegDataFileNameEx;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class XmlFile extends BaseSourceFile {
      * @return LocalDateTime
      */
     @Override
-    public LocalDateTime getPublishedDateTime() throws InvalidSobiNameEx {
+    public LocalDateTime getPublishedDateTime() throws InvalidLegDataFileNameEx {
         try {
             String fileName=getFileName();
             Matcher m = fileNamePattern.matcher(fileName);

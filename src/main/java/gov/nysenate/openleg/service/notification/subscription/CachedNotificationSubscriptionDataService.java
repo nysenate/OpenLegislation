@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.notification.subscription;
 
+import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.notification.NotificationSubscriptionDao;
@@ -7,9 +8,9 @@ import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
-import gov.nysenate.openleg.model.notification.NotificationDigestSubscription;
 import gov.nysenate.openleg.model.notification.NotificationSubscription;
 import gov.nysenate.openleg.model.notification.NotificationType;
+import gov.nysenate.openleg.model.notification.SubscriptionNotFoundEx;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -18,15 +19,12 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,14 +53,14 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
         cacheManager.removeCache(ContentCache.NOTIFICATION_SUBSCRIPTION.name());
     }
 
-    /** --- NotificationSubscriptionDataService Implementation --- */
+    /* --- NotificationSubscriptionDataService Implementation --- */
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Set<NotificationSubscription> getSubscriptions(String userName) {
-        return getSubscriptions().stream()
+        return getSubscriptionMap().values().stream()
                 .filter(subscription -> StringUtils.equals(userName, subscription.getUserName()))
                 .collect(Collectors.toSet());
     }
@@ -72,62 +70,64 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
      */
     @Override
     public Set<NotificationSubscription> getSubscriptions(NotificationType type) {
-        return getSubscriptions().stream()
-                .filter(subscription -> subscription.getType().covers(type))
+        return getSubscriptionMap().values().stream()
+                .filter(subscription -> subscription.getNotificationType().covers(type))
                 .collect(Collectors.toSet());
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void insertSubscription(NotificationSubscription subscription) {
-        try {
-            subscriptionDao.insertSubscription(subscription);
-            evictCaches();
-        } catch (DuplicateKeyException ignored){}
+    public Set<NotificationSubscription> getAllSubscriptions() {
+        return new HashSet<>(getSubscriptionMap().values());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void removeSubscription(NotificationSubscription subscription) {
-        subscriptionDao.removeSubscription(subscription);
-        evictCaches();
+    public NotificationSubscription updateSubscription(NotificationSubscription subscription) {
+        NotificationSubscription updated = subscriptionDao.updateSubscription(subscription);
+        updateCachedSubscription(updated);
+        return updated;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeSubscription(int subscriptionId) {
+        subscriptionDao.removeSubscription(subscriptionId);
+        getSubscriptionMap().remove(subscriptionId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<NotificationDigestSubscription> getPendingDigests() {
-        return subscriptionDao.getPendingDigests();
+    public Set<NotificationSubscription> getPendingDigests() {
+        return getSubscriptionMap().values().stream()
+                .filter(sub -> sub.canDispatchNow() && !sub.sendInstantly())
+                .collect(Collectors.toSet());
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<NotificationDigestSubscription> getDigestSubsForUser(String username) {
-        return subscriptionDao.getDigestSubsForUser(username);
+    public void setLastSent(int id, LocalDateTime lastSent) throws SubscriptionNotFoundEx {
+        NotificationSubscription notificationSubscription = subscriptionDao.getSubscription(id);
+        subscriptionDao.setLastSent(id, lastSent);
+        NotificationSubscription updated = notificationSubscription.copy().setLastSent(lastSent).build();
+        updateCachedSubscription(updated);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void insertDigestSubscription(NotificationDigestSubscription subscription) {
-        subscriptionDao.insertDigestSubscription(subscription);
+    public void setActive(int subscriptionId, boolean active) throws SubscriptionNotFoundEx {
+        NotificationSubscription subscription = subscriptionDao.getSubscription(subscriptionId);
+        NotificationSubscription modified = subscription.copy().setActive(active).build();
+        NotificationSubscription updated = subscriptionDao.updateSubscription(modified);
+        updateCachedSubscription(updated);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void updateNextDigest(int digestSubscriptionId, LocalDateTime nextDigest) {
-        subscriptionDao.updateNextDigest(digestSubscriptionId, nextDigest);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void removeDigestSubscription(int digestSubscriptionId) {
-        subscriptionDao.removeDigestSubscription(digestSubscriptionId);
-    }
-
-    /** --- CachingService Implementations --- */
+    /* --- CachingService Implementations --- */
 
     /**
      * {@inheritDoc}
@@ -145,7 +145,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
      */
     @Override
     public List<Ehcache> getCaches() {
-        return Arrays.asList(subCache);
+        return Collections.singletonList(subCache);
     }
 
     /**
@@ -179,7 +179,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
      */
     @Override
     public void warmCaches() {
-        getSubscriptions();
+        getSubscriptionMap();
     }
 
     /**
@@ -195,13 +195,20 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
 
     /** --- Internal Methods --- */
 
-    private Set<NotificationSubscription> getSubscriptions() {
+    @SuppressWarnings("unchecked")
+    private HashMap<Integer, NotificationSubscription> getSubscriptionMap() {
         Element element = subCache.get(subCacheKey);
         if (element != null) {
-            return (Set<NotificationSubscription>) element.getObjectValue();
+            return (HashMap<Integer, NotificationSubscription>) element.getObjectValue();
         }
-        Set<NotificationSubscription> subscriptions = subscriptionDao.getSubscriptions();
-        subCache.put(new Element(subCacheKey, subscriptions));
-        return subscriptions;
+        Set<NotificationSubscription> subscriptionSet = subscriptionDao.getSubscriptions();
+        HashMap<Integer, NotificationSubscription> subMap =
+                new HashMap<>(Maps.uniqueIndex(subscriptionSet, NotificationSubscription::getId));
+        subCache.put(new Element(subCacheKey, subMap));
+        return subMap;
+    }
+
+    private void updateCachedSubscription(NotificationSubscription newSub) {
+        getSubscriptionMap().put(newSub.getId(), newSub);
     }
 }

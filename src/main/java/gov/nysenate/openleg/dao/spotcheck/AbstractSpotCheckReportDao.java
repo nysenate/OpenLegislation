@@ -7,7 +7,6 @@ import gov.nysenate.openleg.model.spotcheck.*;
 import gov.nysenate.openleg.service.spotcheck.base.MismatchNotFoundEx;
 import gov.nysenate.openleg.service.spotcheck.base.MismatchUtils;
 import gov.nysenate.openleg.util.SpotCheckReportUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -24,8 +23,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.*;
-import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.INSERT_MISMATCH;
-import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.INSERT_REPORT;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
 /**
@@ -247,10 +244,6 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
                 .addValue("referenceActiveDateTime", mismatch.getReferenceId().getRefActiveDateTime());
     }
 
-    private String toPostgresArray(Set<String> strings) {
-        return "{" + StringUtils.join(strings, ',') + "}";
-    }
-
     /**
      * Converts SpotCheckMismatches in a SpotCheckReport into DeNormSpotCheckMismaches.
      * Initializes firstSeenDateTime to the observedDateTime.
@@ -373,8 +366,8 @@ public abstract class AbstractSpotCheckReportDao<ContentKey> extends SqlBaseDao
             mismatch.setFirstSeenDateTime(getLocalDateTimeFromRs(rs, "first_seen_date_time"));
             mismatch.setNotes(rs.getString("notes"));
             mismatch.setIgnoreStatus(SpotCheckMismatchIgnore.valueOf(rs.getString("ignore_status")));
-            String[] issue_idss = getArrayFromPgRs(rs, "issue_ids");
-            mismatch.setIssueIds(Sets.newHashSet(issue_idss));
+            String[] issueIds = (String[]) rs.getArray("issue_ids").getArray();
+            mismatch.setIssueIds(Sets.newHashSet(issueIds));
 
             SpotCheckRefType refType = SpotCheckRefType.valueOf(rs.getString("reference_type"));
             LocalDateTime refActiveDateTime = getLocalDateTimeFromRs(rs, "reference_active_date_time");

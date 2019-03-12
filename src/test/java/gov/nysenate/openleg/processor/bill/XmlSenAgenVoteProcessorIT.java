@@ -11,7 +11,7 @@ import gov.nysenate.openleg.model.bill.BillVoteType;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.SessionMember;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import gov.nysenate.openleg.util.DateUtils;
@@ -46,8 +46,8 @@ public class XmlSenAgenVoteProcessorIT extends BaseXmlProcessorTest {
 
         String xmlPath = "processor/bill/senAgendaVote/2017-02-06-16.54.35.038848_SENAGENV_RULES.XML";
 
-        SobiFragment sobiFragment = generateXmlSobiFragment(xmlPath);
-        processFragment(sobiFragment);
+        LegDataFragment legDataFragment = generateXmlSobiFragment(xmlPath);
+        processFragment(legDataFragment);
 
         Agenda agenda = agendaDao.getAgenda(agendaId);
         AgendaVoteAddendum actual = agenda.getAgendaVoteAddendum("C");
@@ -55,8 +55,8 @@ public class XmlSenAgenVoteProcessorIT extends BaseXmlProcessorTest {
         AgendaVoteAddendum expected = new AgendaVoteAddendum();
         expected.setAgendaId(agendaId);
         expected.setId("C");
-        expected.setPublishedDateTime(sobiFragment.getPublishedDateTime());
-        expected.setModifiedDateTime(sobiFragment.getPublishedDateTime());
+        expected.setPublishedDateTime(legDataFragment.getPublishedDateTime());
+        expected.setModifiedDateTime(legDataFragment.getPublishedDateTime());
         CommitteeId committeeId = new CommitteeId(Chamber.SENATE, "Rules");
         String chair = "John J. Flanagan";
         LocalDateTime meetDataTime = DateUtils.getLrsDateTime("2017-02-06T00.00.00Z");

@@ -26,7 +26,7 @@ public class AgendaSpotCheckService
     @Override
     public SpotCheckObservation<AgendaMeetingWeekId> check(AgendaAlertInfoCommittee observed, AgendaAlertInfoCommittee reference) {
         final SpotCheckObservation<AgendaMeetingWeekId> observation =
-                new SpotCheckObservation<>(reference.getReferenceId(), reference.getAgendaAlertCheckId());
+                new SpotCheckObservation<>(reference.getReferenceId(), reference.getAgendaMeetingWeekId());
 
         checkBills(observation, observed, reference);
         checkChair(observation, observed, reference);
@@ -37,7 +37,7 @@ public class AgendaSpotCheckService
         // Some friendly logging
         if (observation.getMismatches().size() > 0) {
             logger.info("Agenda Alert Check Id {} | {} mismatch(es). | {}",
-                    reference.getAgendaAlertCheckId(), observation.getMismatches().size(), observation.getMismatchTypes(false));
+                    reference.getAgendaMeetingWeekId(), observation.getMismatches().size(), observation.getMismatchTypes(false));
         }
 
         return observation;

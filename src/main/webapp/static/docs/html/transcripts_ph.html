@@ -24,19 +24,27 @@
 
   
 
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Senate Members API" href="members.html" />
-    <link rel="prev" title="Senate Floor Transcripts API" href="transcripts_floor.html" /> 
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
+        <link rel="next" title="Senate Members API" href="members.html"/>
+        <link rel="prev" title="Senate Floor Transcripts API" href="transcripts_floor.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -110,7 +118,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="reference.html">Open Legislation</a>
@@ -118,10 +126,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -173,17 +180,17 @@
 <h2>Get a single Public Hearing<a class="headerlink" href="#get-a-single-public-hearing" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve public hearing by filename</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request public hearing “10-29-13 NYsenate_Flanagan_Education_FINAL.txt”</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="mi">29</span><span class="o">-</span><span class="mi">13</span> <span class="n">NYsenate_Flanagan_Education_FINAL</span><span class="o">.</span><span class="n">txt</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="mi">29</span><span class="o">-</span><span class="mi">13</span> <span class="n">NYsenate_Flanagan_Education_FINAL</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
 <p>Full Public Hearing Response</p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                               <span class="c1">// Indicates if a public hearing was found.</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;Data for public hearing 10-29..&quot;</span><span class="p">,</span>  <span class="c1">// Response description</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;hearing&quot;</span><span class="p">,</span>                     <span class="c1">// Response data type</span>
@@ -208,12 +215,12 @@
 <h2>Get a public hearing pdf<a class="headerlink" href="#get-a-public-hearing-pdf" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve public hearing pdf by filename</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request public hearing 09-12-13 NYSsenate_DeFrancisco_Buffalo_FINAL.txt</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="mi">09</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">13</span> <span class="n">NYSsenate_DeFrancisco_Buffalo_FINAL</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">pdf</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="mi">09</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">13</span> <span class="n">NYSsenate_DeFrancisco_Buffalo_FINAL</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
 </div>
 </div>
@@ -222,7 +229,7 @@
 <h2>Get a list of public hearings<a class="headerlink" href="#get-a-list-of-public-hearings" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>List public hearings within a year</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">hearings</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Optional Params</strong></p>
@@ -259,19 +266,19 @@
 </table>
 <p><strong>Examples</strong></p>
 <p>List 50 public hearings from 2014</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=50
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=50
 </pre></div>
 </div>
 <p>List 50 complete public hearings starting from 51</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=50%offset=51&amp;full=true
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=50%offset=51&amp;full=true
 </pre></div>
 </div>
 <p>List 10 complete public hearings sorted by increasing date</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/hearings/2014?limit=10&amp;full=true&amp;sort=dateTime:ASC
 </pre></div>
 </div>
 <p><strong>Response</strong></p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>                               <span class="c1">// True if request was fine.</span>
   <span class="s2">&quot;message&quot;</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span> <span class="o">:</span> <span class="s2">&quot;hearing-id list&quot;</span><span class="p">,</span>
@@ -291,7 +298,9 @@
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -309,11 +318,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services
+        &copy; Copyright 2014, NY State Senate Technology Services.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -328,24 +337,35 @@
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0-alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
 
   
 
-  <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>

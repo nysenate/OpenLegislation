@@ -8,7 +8,6 @@ import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
@@ -18,14 +17,13 @@ import gov.nysenate.openleg.model.law.LawFile;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.agenda.event.BulkAgendaUpdateEvent;
 import gov.nysenate.openleg.service.bill.data.ApprovalDataService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.VetoDataService;
-import gov.nysenate.openleg.service.bill.event.BillFieldUpdateEvent;
 import gov.nysenate.openleg.service.bill.event.BulkBillUpdateEvent;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarNotFoundEx;
@@ -48,7 +46,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -83,9 +80,9 @@ public abstract class AbstractDataProcessor
 
     /* --- Ingest Caches --- */
 
-    @Resource(name = "agendaIngestCache") protected IngestCache<AgendaId, Agenda, SobiFragment> agendaIngestCache;
-    @Resource(name = "billIngestCache") protected IngestCache<BaseBillId, Bill, SobiFragment> billIngestCache;
-    @Resource(name = "calendarIngestCache") protected IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache;
+    @Resource(name = "agendaIngestCache") protected IngestCache<AgendaId, Agenda, LegDataFragment> agendaIngestCache;
+    @Resource(name = "billIngestCache") protected IngestCache<BaseBillId, Bill, LegDataFragment> billIngestCache;
+    @Resource(name = "calendarIngestCache") protected IngestCache<CalendarId, Calendar, LegDataFragment> calendarIngestCache;
 
     /* --- Utilities --- */
 
@@ -99,8 +96,8 @@ public abstract class AbstractDataProcessor
 
     /* --- Common Methods --- */
 
-    protected DataProcessUnit createProcessUnit(SobiFragment sobiFragment) {
-        return new DataProcessUnit("SOBI-" + sobiFragment.getType().name(), sobiFragment.getFragmentId(),
+    protected DataProcessUnit createProcessUnit(LegDataFragment legDataFragment) {
+        return new DataProcessUnit(legDataFragment.getParentLegDataFile().getSourceType() + "-" + legDataFragment.getType().name(), legDataFragment.getFragmentId(),
             LocalDateTime.now(), DataProcessAction.INGEST);
     }
 
@@ -123,7 +120,7 @@ public abstract class AbstractDataProcessor
      * @param billId BillId - The BillId to find a matching Bill for.
      * @return Bill
      */
-    protected final Bill getOrCreateBaseBill(BillId billId, SobiFragment fragment) {
+    protected final Bill getOrCreateBaseBill(BillId billId, LegDataFragment fragment) {
         boolean isBaseVersion = BillId.isBaseVersion(billId.getVersion());
         BaseBillId baseBillId = BillId.getBaseId(billId);
         Bill baseBill;
@@ -261,10 +258,10 @@ public abstract class AbstractDataProcessor
      * Retrieve an Agenda instance from the cache/backing store or create it if it does not exist.
      *
      * @param agendaId AgendaId - Retrieve Agenda via this agendaId.
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      * @return Agenda
      */
-    protected final Agenda getOrCreateAgenda(AgendaId agendaId, SobiFragment fragment) {
+    protected final Agenda getOrCreateAgenda(AgendaId agendaId, LegDataFragment fragment) {
         Agenda agenda;
         try {
             if (agendaIngestCache.has(agendaId)) {
@@ -304,10 +301,10 @@ public abstract class AbstractDataProcessor
      * Retrieve a Calendar from the cache/backing store or create it if it does not exist.
      *
      * @param calendarId CalendarId - Retrieve Calendar via this calendarId.
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      * @return Calendar
      */
-    protected final Calendar getOrCreateCalendar(CalendarId calendarId, SobiFragment fragment) {
+    protected final Calendar getOrCreateCalendar(CalendarId calendarId, LegDataFragment fragment) {
         Calendar calendar;
         try {
             if (calendarIngestCache.has(calendarId)) {

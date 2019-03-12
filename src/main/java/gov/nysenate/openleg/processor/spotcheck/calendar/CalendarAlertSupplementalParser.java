@@ -1,10 +1,19 @@
 package gov.nysenate.openleg.processor.spotcheck.calendar;
 
+import gov.nysenate.openleg.dao.base.LimitOffset;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarSectionType;
 import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.Member;
+import gov.nysenate.openleg.model.entity.SessionMember;
+import gov.nysenate.openleg.model.search.SearchException;
+import gov.nysenate.openleg.model.search.SearchResults;
+import gov.nysenate.openleg.service.entity.member.data.MemberService;
+import gov.nysenate.openleg.service.entity.member.search.MemberSearchService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -13,6 +22,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -26,6 +36,9 @@ import java.util.regex.Pattern;
 
 @Service
 public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
+
+    @Autowired
+    private MemberService memberService;
 
     private static final Logger logger = LoggerFactory.getLogger(CalendarAlertSupplementalParser.class);
 
@@ -66,12 +79,35 @@ public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
     private CalendarSupplementalEntry createSupplementalEntry(CalendarSupplemental supplemental, CalendarSectionType calendarSectionType, Element entryTable) {
         Elements columns = entryTable.select("td");
         int billCalNo = Integer.valueOf(columns.get(0).text());
-        String printNo = "S" + columns.get(2).text();
+        String sponsor = columns.get(1).text();
+        String billNo = columns.get(2).text();
+
+        Chamber chamber = getChamber(supplemental.getSession(), sponsor);
+        String printNo = chamber.getAbbreviation() + billNo;
+
         BillId billId = new BillId(printNo, supplemental.getSession());
         // TODO find examples of these
 //        BillId subBillId;
 //        boolean high; // high status is not available in alert emails.
         return new CalendarSupplementalEntry(billCalNo, calendarSectionType, billId, null, null);
+    }
+
+    /**
+     * Attempt to determine the chamber of a supplemental entry bill.
+     * <p>
+     * Checks if the sponsor is in the Assembly, if not, or if any errors occur, assume its a Senate bill.
+     *
+     * @param sessionYear
+     * @param sponsor
+     * @return
+     */
+    private Chamber getChamber(SessionYear sessionYear, String sponsor) {
+        try {
+            memberService.getMemberByShortName(sponsor, sessionYear, Chamber.ASSEMBLY);
+            return Chamber.ASSEMBLY;
+        } catch (Exception ex) {
+            return Chamber.SENATE;
+        }
     }
 
     private LocalDate parseCalendarDate(File file) {

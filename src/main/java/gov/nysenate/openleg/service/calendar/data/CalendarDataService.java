@@ -4,7 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.calendar.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 
 import java.util.List;
 import java.util.Optional;
@@ -114,8 +114,8 @@ public interface CalendarDataService
      * data will be updated with the changed values.
      *
      * @param calendar Calendar
-     * @param sobiFragment SobiFragment
+     * @param legDataFragment LegDataFragment
      * @param postUpdateEvent
      */
-    public void saveCalendar(Calendar calendar, SobiFragment sobiFragment, boolean postUpdateEvent);
+    public void saveCalendar(Calendar calendar, LegDataFragment legDataFragment, boolean postUpdateEvent);
 }

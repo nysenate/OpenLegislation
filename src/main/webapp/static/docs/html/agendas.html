@@ -24,19 +24,27 @@
 
   
 
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Senate Committee API" href="committees.html" />
-    <link rel="prev" title="Senate Calendar API" href="calendars.html" /> 
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
+        <link rel="next" title="Senate Committee API" href="committees.html"/>
+        <link rel="prev" title="Senate Calendar API" href="calendars.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -115,7 +123,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="reference.html">Open Legislation</a>
@@ -123,10 +131,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -178,12 +185,12 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <h2>Get a single agenda<a class="headerlink" href="#get-a-single-agenda" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve an agenda by year and agenda no</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request agenda 2 of session year 2017</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">2</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">2</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -195,25 +202,25 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <h2>Get a list of agendas for a single year<a class="headerlink" href="#get-a-list-of-agendas-for-a-single-year" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Returns a list of agenda ids in ascending order that occur in the given year</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
-<p>Request agenda 2 of session year 2017</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span>
-</pre></div>
-</div>
+<dl class="docutils">
+<dt>::</dt>
+<dd>/api/3/agendas/2017</dd>
+</dl>
 </div>
 <div class="section" id="get-a-specific-committee-with-an-agenda">
 <h2>Get a specific committee with an agenda<a class="headerlink" href="#get-a-specific-committee-with-an-agenda" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve a specific committee within an agenda</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">committeeName</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Request the Rules commitee agenda 2 of session year 2017</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">Rules</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">Rules</span>
 </pre></div>
 </div>
 </div>
@@ -221,12 +228,12 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <h2>Get a list of committee meeting times in a time range<a class="headerlink" href="#get-a-list-of-committee-meeting-times-in-a-time-range" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Retrieve a list of committee meetings between from and to date/time, ordered by earliest first</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">meetings</span><span class="o">/</span><span class="p">{</span><span class="kn">from</span> <span class="nn">datetime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span> <span class="n">datetime</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">meetings</span><span class="o">/</span><span class="p">{</span><span class="kn">from</span> <span class="nn">datetime</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span> <span class="n">datetime</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Retrieve a list of committee meetings between Jan 1st, 2017 to Feb 1st, 2017</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">meetings</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">01</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">meetings</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">01</span>
 </pre></div>
 </div>
 </div>
@@ -234,7 +241,7 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <h2>Search an Agenda for a term<a class="headerlink" href="#search-an-agenda-for-a-term" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Search agendas across all years for a term</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">search</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">search</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -260,7 +267,7 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 </table>
 <p><strong>Examples</strong></p>
 <p>Search agendas for the term crime</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/agendas/search?term=crime&amp;full=false
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/agendas/search?term=crime&amp;full=false
 </pre></div>
 </div>
 </div>
@@ -268,7 +275,7 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <h2>Search all agendas in a calendar year for a term<a class="headerlink" href="#search-all-agendas-in-a-calendar-year-for-a-term" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Search agendas across all years for a term</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="n">search</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="n">search</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -296,11 +303,17 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <tr class="row-even"><td>offset</td>
 <td>Start the results from offset</td>
 </tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>type</td>
+<td>Determine wether to use process date time or published date time</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
 <p>Search agendas for a specific term</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/agendas/2017/search?term=crime&amp;full=false&amp;limit=10&amp;offset=5
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/agendas/2017/search?term=crime&amp;full=false&amp;limit=10&amp;offset=5
 </pre></div>
 </div>
 </div>
@@ -308,36 +321,31 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <h2>Get updated agenda Id’s<a class="headerlink" href="#get-updated-agenda-id-s" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>Return a list of agenda ids that have changed during a specified date/time range</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This api call gets updates in the last 7 days</p>
 </div>
-<p><strong>Examples</strong></p>
-<p>Get all of the data in the last week</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
-</pre></div>
-</div>
 <p><strong>Usage</strong></p>
 <p>Get updates from the time specified to now</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Get updates for all of the 2017 session</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span>
 </pre></div>
 </div>
 <p><strong>Usage</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>(GET) /api/3/agendas/updates/{from}/{to}</dd>
-</dl>
+<p>Get updates for a specified time range</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
+</pre></div>
+</div>
 <p><strong>Examples</strong></p>
 <p>Get updates for all of January 2018</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">31</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2018</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">31</span>
 </pre></div>
 </div>
 </div>
@@ -345,17 +353,17 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <h2>Get updated agenda digests<a class="headerlink" href="#get-updated-agenda-digests" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage</strong></p>
 <p>This api call gets all digests for an agenda in a calendar year</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
 <p>Get all updates for agenda 15 in 2017</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="n">updates</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="n">updates</span>
 </pre></div>
 </div>
 <p><strong>Usage</strong></p>
 <p>Get a list of agenda digests in a specific time range of the calendar year to now</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -364,12 +372,12 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 </div>
 <p><strong>Examples</strong></p>
 <p>Get updates for agenda 12 in 2017 from Feb 1st, 2017 to now</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">12</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">01</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">12</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">01</span>
 </pre></div>
 </div>
 <p><strong>Usage</strong></p>
 <p>Return agenda digests that have changed during a specified date/time range</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="p">{</span><span class="n">year</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">agendaNo</span><span class="p">}</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="p">{</span><span class="n">from</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">to</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -378,7 +386,7 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 </div>
 <p><strong>Examples</strong></p>
 <p>Get updates for agenda 12 in 2017 from Jan 1st, 2017 to Dec 1st, 2017</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">12</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="mi">2017</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">01</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/agendas/2017/12/updates/2017-01-01/2017-12-01?type=published
 </pre></div>
 </div>
 </div>
@@ -386,7 +394,9 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -404,11 +414,11 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services
+        &copy; Copyright 2014, NY State Senate Technology Services.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -423,24 +433,35 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0-alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
 
   
 
-  <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>

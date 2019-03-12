@@ -221,8 +221,8 @@ Search for law documents
 
 **Usage**
 ::
-    (GET) /api/3/laws/search           // Search across all law volumes
-    (GET) /api/3/laws/{lawId}/search   // Search within a specific law volume
+    (GET) /api/3/laws/search?term=           // Search across all law volumes
+    (GET) /api/3/laws/{lawId}/search?term=   // Search within a specific law volume
 
 **Required Params**
 
@@ -247,37 +247,6 @@ Search for law documents
 **Examples**
 ::
     /api/3/laws/search?term=chickens                            // Search all law volumes for the word 'chickens'
-    /api/3/laws/EDN/search?term=teacher&sort=activeDate:desc    // Search education law for documents containing 'teacher'
-                                                                // sorted by the activeDate in descending order.
-
-**Response**
-
-.. code-block:: javascript
-
-    {
-      "success" : true,
-      "message" : "",
-      "responseType" : "search-results list",
-      "total" : 178,                              // Total number of results
-      "offsetStart" : 1,                          // Pagination
-      "offsetEnd" : 25,
-      "limit" : 25,
-      "result" : {
-        "items" : [ {
-          "result" : {
-            "lawId" : "EDN",
-            "lawName" : "Education",
-            "locationId" : "3602",
-            "title" : "Apportionment of public moneys to school districts employing eight or more teachers",
-            "docType" : "SECTION",
-            "docLevelId" : "3602",
-            "activeDate" : "2014-12-26"
-          },
-          "rank" : 1,                             // Document score
-          "highlights" : {                        // Highlights contain the snippets where the match occurred.
-            "text" : [ " assistance of <em>teacher</em> aides or consultation\\nwith appropriate personnel. When a committee on special", " consultant <em>teacher</em>\\nservices, in accordance with regulations of the commissioner adopted for\\nsuch", " or indirect consultant <em>teacher</em>\\nservices, in accordance with regulations of the commissioner adopted", " under paragraph five of\\nsubdivision nineteen of this section;\\n  (11) <em>teacher</em> support payments made", ". Parent-<em>teacher</em> conferences or workshops. Notwithstanding any other\\nprovision of this section to" ]
-          }
-        }, .... (more results)
 
 Get law document updates
 ------------------------
@@ -328,7 +297,7 @@ All updates made on a specific body of law during a date/time range
 
 Global law updates
 ::
-    e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00
+    e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?type=published
 
 .. code-block:: javascript
 
@@ -355,7 +324,7 @@ Global law updates
 
 Detailed law doc updates
 ::
-    e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true
+    e.g. /api/3/laws/updates/2015-09-01T00:00:00/2015-10-01T00:00:00?detail=true&type=published
          /api/3/laws/ABC/updates/
 
 .. code-block:: javascript
@@ -398,8 +367,8 @@ To see updates to the content of law documents, see `Get law document updates`_.
 List of laws with tree updates during the given date/time range
 ::
     /api/3/laws/tree/updates
-    /api/3/laws/tree/updates/{fromDateTime}
-    /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}
+    /api/3/laws/tree/updates/{fromDateTime}?type=published
+    /api/3/laws/tree/updates/{fromDateTime}/{toDateTime}?type=published
 
 The fromDateTime and toDateTime should be formatted as the ISO Date Time format.
 For example December 10, 2014, 1:30:02 PM should be inputted as 2014-12-10T13:30:02.

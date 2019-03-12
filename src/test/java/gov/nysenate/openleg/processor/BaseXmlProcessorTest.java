@@ -5,14 +5,14 @@ import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.LegDataFragmentDao;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.xml.XmlFile;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.bill.data.CachedBillDataService;
@@ -31,18 +31,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Contains common methods used when testing {@link SobiProcessor}s
+ * Contains common methods used when testing {@link LegDataProcessor}s
  */
 public abstract class BaseXmlProcessorTest extends BaseTests {
 
     @Autowired private CachedBillDataService billDataService;
     @Autowired private SourceFileRefDao sourceFileRefDao;
-    @Autowired private SobiFragmentDao sobiFragmentDao;
+    @Autowired private LegDataFragmentDao legDataFragmentDao;
     @Autowired private Environment env;
     @Autowired private EventBus eventBus;
-    @Autowired private List<SobiProcessor> processors;
+    @Autowired private List<LegDataProcessor> processors;
 
-    private Map<SobiFragmentType, SobiProcessor> processorMap;
+    private Map<LegDataFragmentType, LegDataProcessor> processorMap;
 
     private boolean originalIndexingSetting;
     private boolean originalScrapeQueueSetting;
@@ -50,7 +50,7 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
 
     @PostConstruct
     public void init() {
-        processorMap = Maps.uniqueIndex(processors, SobiProcessor::getSupportedType);
+        processorMap = Maps.uniqueIndex(processors, LegDataProcessor::getSupportedType);
     }
 
     /**
@@ -84,9 +84,9 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
      * Generates a dummy sobi fragment from an xml file
      *
      * @param xmlFilePath String - relative path to the xml file
-     * @return {@link SobiFragment}
+     * @return {@link LegDataFragment}
      */
-    protected SobiFragment generateXmlSobiFragment(String xmlFilePath) {
+    protected LegDataFragment generateXmlSobiFragment(String xmlFilePath) {
         try {
             File file = FileIOUtils.getResourceFile(xmlFilePath);
 
@@ -94,13 +94,13 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
 
             XmlFile xmlFile = new XmlFile(file);
 
-            SobiFragmentType type = getFragmentType(contents);
-            SobiFragment sobiFragment = new SobiFragment(xmlFile, type, contents, 0);
+            LegDataFragmentType type = getFragmentType(contents);
+            LegDataFragment legDataFragment = new LegDataFragment(xmlFile, type, contents, 0);
 
             sourceFileRefDao.updateSourceFile(xmlFile);
-            sobiFragmentDao.updateSobiFragment(sobiFragment);
+            legDataFragmentDao.updateLegDataFragment(legDataFragment);
 
-            return sobiFragment;
+            return legDataFragment;
 
         } catch (IOException | NullPointerException ex) {
             throw new IllegalArgumentException("Could not locate/read file " + xmlFilePath, ex);
@@ -108,12 +108,12 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     }
 
     /**
-     * Processes the given {@link SobiFragment} using the appropriate {@link SobiProcessor}
+     * Processes the given {@link LegDataFragment} using the appropriate {@link LegDataProcessor}
      *
-     * @param fragment {@link SobiFragment}
+     * @param fragment {@link LegDataFragment}
      */
-    protected void processFragment(SobiFragment fragment) {
-        SobiProcessor processor = processorMap.get(fragment.getType());
+    protected void processFragment(LegDataFragment fragment) {
+        LegDataProcessor processor = processorMap.get(fragment.getType());
         processor.process(fragment);
         processor.postProcess();
         // Clear caches to ensure proper saves
@@ -121,14 +121,14 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
     }
 
     /**
-     * Process the given xml file using this test's {@link SobiProcessor}
-     * This will perform all of the overhead steps to generate a {@link SobiFragment} and process it
+     * Process the given xml file using this test's {@link LegDataProcessor}
+     * This will perform all of the overhead steps to generate a {@link LegDataFragment} and process it
      *
      * @param xmlFilePath String - relative path to xml file
      */
     protected void processXmlFile(String xmlFilePath) {
-        SobiFragment sobiFragment = generateXmlSobiFragment(xmlFilePath);
-        processFragment(sobiFragment);
+        LegDataFragment legDataFragment = generateXmlSobiFragment(xmlFilePath);
+        processFragment(legDataFragment);
     }
 
     /* --- Test helper methods --- */
@@ -170,9 +170,9 @@ public abstract class BaseXmlProcessorTest extends BaseTests {
 
     /* --- Internal Methods --- */
 
-    private SobiFragmentType getFragmentType(String text) {
+    private LegDataFragmentType getFragmentType(String text) {
         for (String line : text.split("\n")) {
-            SobiFragmentType type = SobiFragmentType.matchFragmentType(line);
+            LegDataFragmentType type = LegDataFragmentType.matchFragmentType(line);
             if (type != null) {
                 return type;
             }

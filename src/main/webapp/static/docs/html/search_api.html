@@ -24,18 +24,26 @@
 
   
 
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Aggregate Updates API" href="agg_updates.html" /> 
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Open Legislation 2.0-alpha documentation" href="index.html"/>
+        <link rel="prev" title="Aggregate Updates API" href="agg_updates.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -109,7 +117,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="reference.html">Open Legislation</a>
@@ -117,10 +125,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -172,7 +179,7 @@ and we aim to provide as much elasticsearch functionality as possible through th
 <p>The term parameter takes in an <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_field_names">elasticsearch query string</a>.</p>
 <p>The simplest way to search is to send a general search term.
 For example, to search for legislation pertaining to apples, the following query will do the job.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/search?term=apples
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/bills/search?term=apples
 </pre></div>
 </div>
 <p>In addition to a simple search term, there are a number of advanced features available.  Our search index is generated
@@ -180,7 +187,7 @@ with data in the same JSON format as the API responses, so any response field th
 for search.  Going back to the previous example, a number of resolutions appear in the results for the apples search query.
 Looking back at the <a class="reference internal" href="bills.html#bill-response"><span class="std std-ref">bill response</span></a>, we see that resolutions are designated by the “resolution” boolean under “billType”.
 In order to filter resolutions out of the search results, a field query can be chained to the original query using “AND”.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/search?term=apples%20AND%20billType.resolution:false
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/bills/search?term=apples%20AND%20billType.resolution:false
 </pre></div>
 </div>
 <p>For a full enumeration of query features see the <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_field_names">elasticsearch query string</a> syntax.</p>
@@ -192,24 +199,24 @@ which takes a comma separated string of response fields, each designated with a 
 from the field with a colon.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">When sorting using a text field, you must suffix the field name with <code class="docutils literal notranslate"><span class="pre">.keyword</span></code>
-e.g. <code class="docutils literal notranslate"><span class="pre">...&amp;sort=printNo.keyword:ASC...</span></code>
+<p class="last">When sorting using a text field, you must suffix the field name with <code class="docutils literal"><span class="pre">.keyword</span></code>
+e.g. <code class="docutils literal"><span class="pre">...&amp;sort=printNo.keyword:ASC...</span></code>
 This does not apply to date and time fields, which are indexed in a different manner.</p>
 </div>
 <p>For example, to get the 2013 governor’s program bills in canonical order:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
                         &amp;sort=programInfo.sequenceNo:ASC
 </pre></div>
 </div>
 <p>Or, you may want to order them by their status and action date:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
+<div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/bills/2013/search?term=programInfo.name:Governor%20AND%20NOT%20_exists_:substitutedBy
                         &amp;sort=status.statusType.keyword:ASC,status.actionDate:DESC
 </pre></div>
 </div>
 </div>
 <div class="section" id="search-response">
 <h2>Search Response<a class="headerlink" href="#search-response" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;success&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="s2">&quot;responseType&quot;</span><span class="o">:</span> <span class="s2">&quot;search-results list&quot;</span><span class="p">,</span>
@@ -235,7 +242,9 @@ This does not apply to date and time fields, which are indexed in a different ma
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -251,11 +260,11 @@ This does not apply to date and time fields, which are indexed in a different ma
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, NY State Senate Technology Services
+        &copy; Copyright 2014, NY State Senate Technology Services.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -270,24 +279,35 @@ This does not apply to date and time fields, which are indexed in a different ma
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0-alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
 
   
 
-  <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>

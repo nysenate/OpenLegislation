@@ -1,27 +1,36 @@
 package gov.nysenate.openleg.service.notification.dispatch;
 
+import gov.nysenate.openleg.model.notification.NotificationDigest;
+import gov.nysenate.openleg.model.notification.NotificationMedium;
 import gov.nysenate.openleg.model.notification.RegisteredNotification;
-import gov.nysenate.openleg.model.notification.NotificationSubscription;
-import gov.nysenate.openleg.model.notification.NotificationTarget;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 
 @Service
 public class FullEmailNotificationSender extends EmailNotificationSender {
 
     @Override
-    public NotificationTarget getTargetType() {
-        return NotificationTarget.EMAIL;
+    public NotificationMedium getTargetType() {
+        return NotificationMedium.EMAIL;
     }
 
+    /**
+     * Override to include full notification text in the message
+     */
     @Override
-    public void sendNotification(RegisteredNotification registeredNotification, Collection<NotificationSubscription> subscriptions) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setSubject(registeredNotification.getSummary());
-        message.setText(registeredNotification.getMessage());
+    protected SimpleMailMessage getNotificationMessage(RegisteredNotification notification) {
+        SimpleMailMessage message = super.getNotificationMessage(notification);
+        message.setText(notification.getMessage());
+        return message;
+    }
 
-        sendNotificationEmail(message, subscriptions);
+    /**
+     * Override to include full digest text in the message
+     */
+    @Override
+    protected SimpleMailMessage getDigestMessage(NotificationDigest digest) {
+        SimpleMailMessage message = super.getDigestMessage(digest);
+        message.setText(NotificationDigestFormatter.getDigestText(digest, this::getDisplayUrl));
+        return message;
     }
 }

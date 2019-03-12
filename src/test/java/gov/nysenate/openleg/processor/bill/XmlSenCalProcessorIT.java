@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.processor.BaseXmlProcessorTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -30,10 +30,10 @@ public class XmlSenCalProcessorIT extends BaseXmlProcessorTest {
     public void processCal()    {
         String xmlPath = "processor/bill/senCalendar/2017-01-30-17.47.57.088118_SENCAL_00008.XML";
 
-        SobiFragment sobiFragment = generateXmlSobiFragment(xmlPath);
-        processFragment(sobiFragment);
+        LegDataFragment legDataFragment = generateXmlSobiFragment(xmlPath);
+        processFragment(legDataFragment);
 
-        LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
+        LocalDateTime modifiedDate = legDataFragment.getPublishedDateTime();
 
         CalendarId calendarId = new CalendarId(8,2017);
 

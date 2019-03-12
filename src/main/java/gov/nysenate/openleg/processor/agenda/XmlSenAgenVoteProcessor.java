@@ -7,11 +7,11 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Service
-public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements SobiProcessor
+public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements LegDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenAgenVoteProcessor.class);
 
@@ -40,25 +40,25 @@ public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements So
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.AGENDA_VOTE;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.AGENDA_VOTE;
     }
 
     @Override
-    public void process(SobiFragment sobiFragment) {
-        LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+    public void process(LegDataFragment legDataFragment) {
+        LocalDateTime modifiedDate = legDataFragment.getPublishedDateTime();
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
-            Node root = getXmlRoot(sobiFragment.getText());
+            Node root = getXmlRoot(legDataFragment.getText());
             Node xmlAgendaVote = xml.getNode("senagendavote", root);
             Integer agendaNo = xml.getInteger("@no", xmlAgendaVote);
             SessionYear session = new SessionYear(xml.getInteger("@sessyr", xmlAgendaVote));
             Integer year = xml.getInteger("@year", xmlAgendaVote);
             AgendaId agendaId = new AgendaId(agendaNo, year);
-            Agenda agenda = getOrCreateAgenda(agendaId, sobiFragment);
+            Agenda agenda = getOrCreateAgenda(agendaId, legDataFragment);
             agenda.setModifiedDateTime(modifiedDate);
 
-            logger.info("Processing Votes for {} - {}", agendaId, sobiFragment);
+            logger.info("Processing Votes for {} - {}", agendaId, legDataFragment);
 
             NodeList xmlAddenda = xml.getNodeList("addendum", xmlAgendaVote);
             for (int i = 0; i < xmlAddenda.getLength(); i++) {
@@ -143,7 +143,7 @@ public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements So
                         voteCommittee.addVoteBill(voteBill);
 
                         // Update the actual Bill with the vote information and persist it.
-                        Bill bill = getOrCreateBaseBill(billId, sobiFragment);
+                        Bill bill = getOrCreateBaseBill(billId, legDataFragment);
                         bill.getAmendment(billId.getVersion()).updateVote(vote);
                     }
                     addendum.putCommittee(voteCommittee);
@@ -167,7 +167,7 @@ public class XmlSenAgenVoteProcessor extends AbstractDataProcessor implements So
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || agendaIngestCache.exceedsCapacity()) {
             flushAllUpdates();
         }
     }

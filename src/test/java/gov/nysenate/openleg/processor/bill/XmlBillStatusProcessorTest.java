@@ -1,7 +1,7 @@
 package gov.nysenate.openleg.processor.bill;
 
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.junit.Test;
 
 /**
@@ -14,7 +14,7 @@ public class XmlBillStatusProcessorTest extends BaseTests {
         process("billstatfile.xml");
     }
 
-    private SobiFragment process(String filename)   {
+    private LegDataFragment process(String filename)   {
 
         return null;
     }

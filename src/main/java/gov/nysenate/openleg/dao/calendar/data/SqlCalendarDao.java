@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -141,7 +141,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
 
     /** {@inheritDoc} */
     @Override
-    public void updateCalendar(Calendar calendar, SobiFragment fragment) throws DataAccessException {
+    public void updateCalendar(Calendar calendar, LegDataFragment fragment) throws DataAccessException {
         logger.trace("Updating calendar {} in database...", calendar);
         ImmutableParams calParams = ImmutableParams.from(getCalendarParams(calendar, fragment));
         // Update base calendar
@@ -183,7 +183,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
      * Updates the calendar supplementals. Entries belonging to supplementals that have not changed will not
      * be affected.
      */
-    private void updateCalSupplementals(Calendar calendar, SobiFragment fragment, ImmutableParams calParams) {
+    private void updateCalSupplementals(Calendar calendar, LegDataFragment fragment, ImmutableParams calParams) {
         Map<Version, CalendarSupplemental> existingCalSupMap = getCalSupplementals(calParams);
         // Get the difference between the existing and current supplemental mappings
         MapDifference<Version, CalendarSupplemental> diff =
@@ -230,7 +230,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
      * Updates the calendar active lists. Entries belonging to active lists that have not changed will not
      * be affected.
      */
-    private void updateCalActiveLists(Calendar calendar, SobiFragment fragment, ImmutableParams calParams) {
+    private void updateCalActiveLists(Calendar calendar, LegDataFragment fragment, ImmutableParams calParams) {
         Map<Integer, CalendarActiveList> existingActiveListMap = getActiveListMap(calParams);
         // Get the difference between the existing and current active list mappings.
         MapDifference<Integer, CalendarActiveList> diff =
@@ -430,7 +430,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         return params;
     }
 
-    protected static MapSqlParameterSource getCalendarParams(Calendar calendar, SobiFragment fragment) {
+    protected static MapSqlParameterSource getCalendarParams(Calendar calendar, LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(calendar.getId(), params);
         addModPubDateParams(calendar.getModifiedDateTime(), calendar.getPublishedDateTime(), params);
@@ -438,7 +438,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         return params;
     }
 
-    protected static MapSqlParameterSource getCalSupplementalParams(CalendarSupplemental sup, SobiFragment fragment) {
+    protected static MapSqlParameterSource getCalSupplementalParams(CalendarSupplemental sup, LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(sup.getCalendarId(), params);
         params.addValue("supVersion", sup.getVersion().toString());
@@ -450,7 +450,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     }
 
     protected static MapSqlParameterSource getCalSupEntryParams(CalendarSupplemental sup, CalendarSupplementalEntry entry,
-                                                                SobiFragment fragment) {
+                                                                LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(sup.getCalendarId(), params);
         params.addValue("supVersion", sup.getVersion().toString());
@@ -466,7 +466,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
         return params;
     }
 
-    protected static MapSqlParameterSource getCalActiveListParams(CalendarActiveList actList, SobiFragment fragment) {
+    protected static MapSqlParameterSource getCalActiveListParams(CalendarActiveList actList, LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(actList.getCalendarId(), params);
         params.addValue("sequenceNo", actList.getSequenceNo());
@@ -479,7 +479,7 @@ public class SqlCalendarDao extends SqlBaseDao implements CalendarDao
     }
 
     protected static MapSqlParameterSource getCalActiveListEntryParams(CalendarActiveList actList,
-                                                                       CalendarEntry entry, SobiFragment fragment) {
+                                                                       CalendarEntry entry, LegDataFragment fragment) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         addCalendarIdParams(actList.getCalendarId(), params);
         params.addValue("sequenceNo", actList.getSequenceNo());

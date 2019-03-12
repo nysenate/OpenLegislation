@@ -15,7 +15,9 @@ public enum ContentCache
     CALENDAR,
     LAW,
     COMMITTEE,
-    MEMBER,
+    SESSION_MEMBER, //Session Member
+    FULL_MEMBER, //Member
+    SESSION_CHAMBER_SHORTNAME, //Session Member with a different key
     APIUSER,
     SHIRO,
     NOTIFICATION_SUBSCRIPTION;

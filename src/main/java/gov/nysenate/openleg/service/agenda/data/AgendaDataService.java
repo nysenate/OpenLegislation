@@ -2,7 +2,7 @@ package gov.nysenate.openleg.service.agenda.data;
 
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.agenda.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -45,10 +45,10 @@ public interface AgendaDataService
      * use the {@link #deleteAgenda(AgendaId)} method.
      *
      * @param agenda Agenda
-     * @param sobiFragment SobiFragment
+     * @param legDataFragment LegDataFragment
      * @param postUpdateEvent boolean
      */
-    public void saveAgenda(Agenda agenda, SobiFragment sobiFragment, boolean postUpdateEvent);
+    public void saveAgenda(Agenda agenda, LegDataFragment legDataFragment, boolean postUpdateEvent);
 
     /**
      * Deletes an Agenda from the persistence layer that matches the given agenda id.

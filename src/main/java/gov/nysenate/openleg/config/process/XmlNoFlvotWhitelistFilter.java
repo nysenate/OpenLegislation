@@ -1,13 +1,13 @@
 package gov.nysenate.openleg.config.process;
 
 import gov.nysenate.openleg.model.sourcefiles.SourceType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiBlock;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiLineType;
 
 import static gov.nysenate.openleg.model.sourcefiles.SourceType.*;
-import static gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType.*;
+import static gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType.*;
 
 /**
  * Accepts only xml data with the exception of floor votes.
@@ -15,9 +15,9 @@ import static gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType.*;
 public class XmlNoFlvotWhitelistFilter implements SourceFilter {
 
     @Override
-    public boolean acceptFragment(SobiFragment sobiFragment) {
-        SourceType sourceType = sobiFragment.getParentSobiFile().getSourceType();
-        SobiFragmentType fragmentType = sobiFragment.getType();
+    public boolean acceptFragment(LegDataFragment legDataFragment) {
+        SourceType sourceType = legDataFragment.getParentLegDataFile().getSourceType();
+        LegDataFragmentType fragmentType = legDataFragment.getType();
         // Allow either non-floor-vote xmls or bill sobis (which contain floor votes)
         return sourceType == XML && fragmentType != SENFLVOTE
                 || sourceType == SOBI && fragmentType == BILL;

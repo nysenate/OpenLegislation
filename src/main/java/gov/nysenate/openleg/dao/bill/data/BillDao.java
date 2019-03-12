@@ -5,7 +5,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
@@ -96,13 +96,13 @@ public interface BillDao
 
     /**
      * Updates the bill or inserts it if it does not yet exist. Associates
-     * the SobiFragment that triggered the update (set null if not applicable).
+     * the LegDataFragment that triggered the update (set null if not applicable).
      *
      * @param bill Bill
-     * @param sobiFragment SobiFragment
+     * @param legDataFragment LegDataFragment
      * @throws DataAccessException - If there was an error while trying to save the Bill.
      */
-    void updateBill(Bill bill, SobiFragment sobiFragment) throws DataAccessException;
+    void updateBill(Bill bill, LegDataFragment legDataFragment) throws DataAccessException;
 
     /**
      * Queries for budget bills that don't have full text or an alternate pdf entry, returning their ids.

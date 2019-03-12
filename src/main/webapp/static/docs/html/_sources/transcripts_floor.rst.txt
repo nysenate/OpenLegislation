@@ -85,7 +85,7 @@ List 50 complete transcripts starting from 51
     /api/3/transcripts/2014?limit=50%offset=51&full=true
 List 10 complete transcripts sorted by increasing date
 ::
-    /api/3/transcripts/2014?limit=10&full=true&sort=dateTime:ASC
+    /api/3/transcripts/2014?limit=10&full=true
 
 **Response**
 

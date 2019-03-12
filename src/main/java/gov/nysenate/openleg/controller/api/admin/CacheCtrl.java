@@ -21,7 +21,6 @@ import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeSessionId;
 import gov.nysenate.openleg.model.law.LawVersionId;
 import net.sf.ehcache.CacheManager;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +126,7 @@ public class CacheCtrl extends BaseCtrl
      *                               committeeName (string) - the name of the committee
      *                               year (integer) - year of the committee
      *
-     * Request params for MEMBER: memberId (integer) - member id
+     * Request params for SESSION_MEMBER: memberId (integer) - member id
      *
      * Request params for APIUSER: key (string) - api user's key
      */
@@ -170,7 +169,7 @@ public class CacheCtrl extends BaseCtrl
                 return getLawVersionId(request);
             case COMMITTEE:
                 return getCommitteeSessionId(request);
-            case MEMBER:
+            case SESSION_MEMBER:
                 requireParameters(request, "memberId", "integer");
                 return getIntegerParam(request, "memberId");
             case APIUSER:

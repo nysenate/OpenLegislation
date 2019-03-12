@@ -1,10 +1,13 @@
 
 package gov.nysenate.openleg.dao.entity.committee.data;
 
-import gov.nysenate.openleg.model.base.SessionYear;
-import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.entity.Committee;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.CommitteeSessionId;
+import gov.nysenate.openleg.model.entity.CommitteeVersionId;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
 
@@ -16,7 +19,7 @@ public interface CommitteeDao
      * @param committeeId
      * @return Committee
      */
-    public Committee getCommittee(CommitteeId committeeId) throws DataAccessException;
+    Committee getCommittee(CommitteeId committeeId) throws EmptyResultDataAccessException;
 
     /**
      * Retrieves committee information for the specified committee name at a particular time
@@ -24,28 +27,21 @@ public interface CommitteeDao
      * @param committeeVersionId
      * @return Committee
      */
-    public Committee getCommittee(CommitteeVersionId committeeVersionId) throws DataAccessException;
+    Committee getCommittee(CommitteeVersionId committeeVersionId) throws EmptyResultDataAccessException;
 
     /**
      * Retrieves a list containing all committee ids
      *
      * @return List<Committee>
      */
-    public List<CommitteeId> getCommitteeList() throws DataAccessException;
-
-    /**
-     * Retrieves a list of all session years with committee data
-     * @return
-     * @throws DataAccessException
-     */
-    public List<SessionYear> getEligibleYears() throws DataAccessException;
+    List<CommitteeId> getCommitteeList();
 
     /**
      * Retrieves a list of all valid committee session ids
      * @return
      * @throws DataAccessException
      */
-    public List<CommitteeSessionId> getAllSessionIds() throws DataAccessException;
+    List<CommitteeSessionId> getAllSessionIds();
 
     /**
      * Retrieves a list of committee versions for a given committee that occur within the given date range
@@ -54,20 +50,14 @@ public interface CommitteeDao
      * @param committeeSessionId
      * @return List<Committee>
      */
-    public List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId) throws DataAccessException;
+    List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId) throws EmptyResultDataAccessException;
 
     /**
      * Retrieves a list of committee versions for a given committee, ordered from first version to most recent
      *
      * @param committee
-     * @param sobiFragment
+     * @param legDataFragment
      */
-    public void updateCommittee(Committee committee, SobiFragment sobiFragment) throws DataAccessException;
+    void updateCommittee(Committee committee, LegDataFragment legDataFragment);
 
-    /**
-     * Deletes all records for a given committee
-     *
-     * @param committeeId
-     */
-    public void deleteCommittee(CommitteeId committeeId) throws DataAccessException;
 }

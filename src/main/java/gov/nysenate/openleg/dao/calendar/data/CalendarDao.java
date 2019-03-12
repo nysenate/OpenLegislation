@@ -4,7 +4,7 @@ import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.calendar.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
@@ -108,10 +108,10 @@ public interface CalendarDao
 
     /**
      * Updates the calendar or inserts it if it does not yet exist. Associates the
-     * the SobiFragment that triggered the update (set null if not applicable).
+     * the LegDataFragment that triggered the update (set null if not applicable).
      *
      * @param calendar Calendar - The calendar to save.
-     * @param sobiFragment SobiFragment - The fragment that triggered this update.
+     * @param legDataFragment LegDataFragment - The fragment that triggered this update.
      */
-    public void updateCalendar(Calendar calendar, SobiFragment sobiFragment) throws DataAccessException;
+    public void updateCalendar(Calendar calendar, LegDataFragment legDataFragment) throws DataAccessException;
 }
