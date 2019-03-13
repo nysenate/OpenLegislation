@@ -14,7 +14,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.notification.Notification;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.processor.base.IngestCache;
 import gov.nysenate.openleg.util.AsciiArt;
 import gov.nysenate.openleg.util.OpenlegThreadFactory;
@@ -204,21 +204,21 @@ public class ApplicationConfig implements CachingConfigurer, SchedulingConfigure
 
     /** --- Processing Instances --- */
 
-    @Value("${sobi.batch.process.size:100}")
-    private int sobiBatchSize;
+    @Value("${leg.data.batch.process.size:100}")
+    private int legDataBatchSize;
 
     @Bean(name = "billIngestCache")
-    public IngestCache<BaseBillId, Bill, SobiFragment> billIngestCache() {
-        return new IngestCache<>(sobiBatchSize);
+    public IngestCache<BaseBillId, Bill, LegDataFragment> billIngestCache() {
+        return new IngestCache<>(legDataBatchSize);
     }
 
     @Bean(name = "agendaIngestCache")
-    public IngestCache<AgendaId, Agenda, SobiFragment> agendaIngestCache() {
+    public IngestCache<AgendaId, Agenda, LegDataFragment> agendaIngestCache() {
         return new IngestCache<>(100);
     }
 
     @Bean(name = "calendarIngestCache")
-    public IngestCache<CalendarId, Calendar, SobiFragment> calendarIngestCache() {
+    public IngestCache<CalendarId, Calendar, LegDataFragment> calendarIngestCache() {
         return new IngestCache<>(100);
     }
 

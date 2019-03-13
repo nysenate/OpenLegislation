@@ -12,7 +12,7 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
     ),
     SELECT_INFO_COMMITTEE_BY_ID(
         SELECT_INFO_COMMITTEE.sql + "\n" +
-        "WHERE a.reference_date_time = :referenceDateTime AND a.week_of = :weekOf AND a.addendum_id = :addendumId" +
+        "WHERE a.year = :year AND a.week_of = :weekOf AND a.addendum_id = :addendumId" +
         "   AND a.chamber = :chamber::chamber AND a.committee_name = :committeeName"
     ),
     SELECT_IN_RANGE(
@@ -40,10 +40,10 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
     ),
     INSERT_INFO_COMMITTEE(
         "INSERT INTO ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
-        "       ( reference_date_time, week_of, addendum_id, chamber,           committee_name, " +
-        "       chair,  location,  meeting_date_time, notes)" +
-        "VALUES (:referenceDateTime,  :weekOf, :addendumId, :chamber::chamber, :committeeName, " +
-        "      :chair, :location, :meetingDateTime,  :notes)"
+        "       ( reference_date_time, week_of, addendum_id, chamber, committee_name, " +
+        "       chair, location, meeting_date_time, notes, year)" +
+        "VALUES (:referenceDateTime, :weekOf, :addendumId, :chamber::chamber, :committeeName, " +
+        "      :chair, :location, :meetingDateTime, :notes, :year)"
     ),
     INSERT_INFO_COMMITTEE_ITEM(
         "INSERT INTO ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE_ITEM + "\n" +
@@ -53,7 +53,7 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
     SET_INFO_COMMITTEE_CHECKED(
         "UPDATE ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
         "SET checked = :checked\n" +
-        "WHERE reference_date_time = :referenceDateTime AND week_of = :weekOf AND chamber = :chamber::chamber\n" +
+        "WHERE year = :year AND week_of = :weekOf AND chamber = :chamber::chamber\n" +
         "       AND committee_name = :committeeName AND addendum_id = :addendumId"
     ),
     SET_MEETING_PROD_CHECKED(
@@ -63,7 +63,7 @@ public enum SqlAgendaAlertQuery implements BasicSqlQuery{
     ),
     DELETE_INFO_COMMITTEE(
         "DELETE FROM ${schema}." + SqlTable.AGENDA_ALERT_INFO_COMMITTEE + "\n" +
-        "WHERE reference_date_time = :referenceDateTime AND week_of = :weekOf AND addendum_id = :addendumId" +
+        "WHERE year = :year AND week_of = :weekOf AND addendum_id = :addendumId" +
         "   AND chamber = :chamber::chamber AND committee_name = :committeeName"
     ),
     ;

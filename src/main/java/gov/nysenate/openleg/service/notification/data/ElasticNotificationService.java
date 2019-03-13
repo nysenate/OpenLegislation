@@ -1,5 +1,6 @@
 package gov.nysenate.openleg.service.notification.data;
 
+import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
@@ -12,10 +13,10 @@ import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.model.search.UnexpectedSearchException;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
-import gov.nysenate.openleg.util.DateUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,11 +63,22 @@ public class ElasticNotificationService implements NotificationService {
             filterQuery.must(QueryBuilders.termsQuery("notificationType", typeValues));
         }
 
-        filterQuery.must(QueryBuilders.rangeQuery("occurred")
-                .from(DateUtils.startOfDateTimeRange(dateTimeRange).toString())
-                .to(DateUtils.endOfDateTimeRange(dateTimeRange).toString()));
+        if (dateTimeRange.hasUpperBound() || dateTimeRange.hasLowerBound()) {
+            RangeQueryBuilder rangeQuery = QueryBuilders.rangeQuery("occurred");
+            if (dateTimeRange.hasLowerBound()) {
+                rangeQuery.from(dateTimeRange.lowerEndpoint(),
+                        dateTimeRange.lowerBoundType() == BoundType.CLOSED);
+            }
+            if (dateTimeRange.hasUpperBound()) {
+                rangeQuery.to(dateTimeRange.upperEndpoint(),
+                        dateTimeRange.upperBoundType() == BoundType.CLOSED);
+            }
+            filterQuery.must(rangeQuery);
+        }
 
-        String sortString = "occurred:" + order;
+        String sortString = (order != null && order != SortOrder.NONE)
+                ? "occurred:" + order
+                : "";
 
         try {
             SearchResults<RegisteredNotification> results = notificationDao.searchNotifications(

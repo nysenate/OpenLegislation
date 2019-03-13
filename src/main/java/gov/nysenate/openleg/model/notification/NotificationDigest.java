@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.model.notification;
 
 import com.google.common.collect.Range;
-import gov.nysenate.openleg.util.DateUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,14 +10,17 @@ public class NotificationDigest {
     /** The type of notification this digest contains */
     private NotificationType type;
 
-    /** Contains notifications from between these dates */
-    private Range<LocalDateTime> digestRange;
+    /** Contains notifications generated after this time */
+    private LocalDateTime startDateTime;
+
+    /** Contains notifications up to this time */
+    private LocalDateTime endDateTime;
 
     /** The notifications to include in the digest */
     private List<RegisteredNotification> notifications;
 
     /** The medium through which the digest will be sent */
-    private NotificationTarget target;
+    private NotificationMedium medium;
 
     /** The address the digest will be sent to */
     private String address;
@@ -28,13 +30,14 @@ public class NotificationDigest {
 
     /** --- Constructor --- */
 
-    public NotificationDigest(NotificationType type, Range<LocalDateTime> digestRange,
+    public NotificationDigest(NotificationType type, LocalDateTime startDateTime, LocalDateTime endDateTime,
                               List<RegisteredNotification> notifications, boolean full,
-                              NotificationTarget target, String address) {
+                              NotificationMedium medium, String address) {
         this.type = type;
-        this.digestRange = digestRange;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.notifications = notifications;
-        this.target = target;
+        this.medium = medium;
         this.address = address;
         this.full = full;
     }
@@ -45,12 +48,8 @@ public class NotificationDigest {
         return notifications.isEmpty();
     }
 
-    public LocalDateTime getStartDateTime() {
-        return DateUtils.startOfDateTimeRange(digestRange);
-    }
-
-    public LocalDateTime getEndDateTime() {
-        return DateUtils.endOfDateTimeRange(digestRange);
+    public Range<LocalDateTime> getDigestRange() {
+        return Range.openClosed(startDateTime, endDateTime);
     }
 
     /** --- Getters / Setters --- */
@@ -59,16 +58,12 @@ public class NotificationDigest {
         return type;
     }
 
-    public Range<LocalDateTime> getDigestRange() {
-        return digestRange;
-    }
-
     public List<RegisteredNotification> getNotifications() {
         return notifications;
     }
 
-    public NotificationTarget getTarget() {
-        return target;
+    public NotificationMedium getMedium() {
+        return medium;
     }
 
     public String getAddress() {
@@ -77,5 +72,13 @@ public class NotificationDigest {
 
     public boolean isFull() {
         return full;
+    }
+
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public LocalDateTime getEndDateTime() {
+        return endDateTime;
     }
 }

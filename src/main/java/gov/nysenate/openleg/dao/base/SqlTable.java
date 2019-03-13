@@ -99,14 +99,15 @@ public enum SqlTable
 
     NOTIFICATION                 ("notification"),
     NOTIFICATION_SUBSCRIPTION    ("notification_subscription"),
-    NOTIFICATION_DIGEST_SUBSCRIPTION("notification_digest_subscription"),
+    NOTIFICATION_SCHEDULE        ("notification_schedule"),
+    NOTIFICATION_RATE_LIMIT      ("notification_rate_limit"),
 
     MEMBER                       ("member"),
     PERSON                       ("person"),
     SESSION_MEMBER               ("session_member"),
 
-    SOBI_FILE                    ("sobi_file"),
-    SOBI_FRAGMENT                ("sobi_fragment"),
+    LEG_DATA_FILE                ("leg_data_file"),
+    LEG_DATA_FRAGMENT            ("leg_data_fragment"),
 
     SPOTCHECK_REPORT             ("spotcheck_report"),
     SPOTCHECK_OBSERVATION        ("spotcheck_observation"),

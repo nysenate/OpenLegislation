@@ -10,7 +10,7 @@ import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.service.agenda.event.AgendaUpdateEvent;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.model.cache.ContentCache;
@@ -162,12 +162,12 @@ public class CachedAgendaDataService implements AgendaDataService, CachingServic
 
     /** {@inheritDoc} */
     @Override
-    public void saveAgenda(Agenda agenda, SobiFragment sobiFragment, boolean postUpdateEvent) {
+    public void saveAgenda(Agenda agenda, LegDataFragment legDataFragment, boolean postUpdateEvent) {
         if (agenda == null) {
             throw new IllegalArgumentException("Agenda cannot be null when saving.");
         }
         logger.debug("Persisting agenda {}", agenda.getId());
-        agendaDao.updateAgenda(agenda, sobiFragment);
+        agendaDao.updateAgenda(agenda, legDataFragment);
         agendaCache.put(agenda.getId(), agenda);
         if (postUpdateEvent) {
             eventBus.post(new AgendaUpdateEvent(agenda, LocalDateTime.now()));

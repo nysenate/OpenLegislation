@@ -4,7 +4,7 @@ import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface CommitteeDataService
      * @param committeeSessionId
      * @return Committee
      * */
-    public Committee getCommittee(CommitteeSessionId committeeSessionId) throws CommitteeNotFoundEx;
+    Committee getCommittee(CommitteeSessionId committeeSessionId) throws CommitteeNotFoundEx;
 
     /**
      * A convenient overload that gets the most recent information for the given committee for the current session year
@@ -24,7 +24,7 @@ public interface CommitteeDataService
      * @return
      * @throws CommitteeNotFoundEx
      */
-    default public Committee getCommittee(CommitteeId committeeId) throws CommitteeNotFoundEx {
+    default Committee getCommittee(CommitteeId committeeId) throws CommitteeNotFoundEx {
         return getCommittee(new CommitteeSessionId(committeeId, SessionYear.current()));
     }
 
@@ -33,26 +33,20 @@ public interface CommitteeDataService
      * @param committeeVersionId
      * @return Committee
      * */
-    public Committee getCommittee(CommitteeVersionId committeeVersionId) throws CommitteeNotFoundEx;
+    Committee getCommittee(CommitteeVersionId committeeVersionId) throws CommitteeNotFoundEx;
 
     /**
      * Retrieves a list containing all committee ids
      * @return
      */
-    public List<CommitteeId> getCommitteeIds();
-
-    /**
-     * Gets all session years that contain committee data
-     * @return
-     */
-    public List<SessionYear> getEligibleYears();
+    List<CommitteeId> getCommitteeIds();
 
     /**
      * Returns a list of committee session ids for every committee and all sessions that contain data
      *
      * @return
      */
-    public List<CommitteeSessionId> getAllCommitteeSessionIds();
+    List<CommitteeSessionId> getAllCommitteeSessionIds();
 
     /**
      * Retrieves a list containing the most recent version of each committee for the given session year
@@ -60,7 +54,7 @@ public interface CommitteeDataService
      * @param sessionYear
      *@param limitOffset  @return List<Committee>
      */
-    public List<Committee> getCommitteeList(Chamber chamber, SessionYear sessionYear, LimitOffset limitOffset);
+    List<Committee> getCommitteeList(Chamber chamber, SessionYear sessionYear, LimitOffset limitOffset);
 
     /**
      * A convenient overload that gets the current committee list for the current session year
@@ -69,7 +63,7 @@ public interface CommitteeDataService
      * @param limitOffset
      * @return
      */
-    default public List<Committee> getCommitteeList(Chamber chamber, LimitOffset limitOffset) {
+    default List<Committee> getCommitteeList(Chamber chamber, LimitOffset limitOffset) {
         return getCommitteeList(chamber, SessionYear.current(), limitOffset);
     }
 
@@ -79,17 +73,7 @@ public interface CommitteeDataService
      * @param sessionYear
      * @return
      */
-    public int getCommitteeListCount(Chamber chamber, SessionYear sessionYear);
-
-    /**
-     * A convenient overload that gets the current committee list count for the current session year
-     * @see #getCommitteeListCount(gov.nysenate.openleg.model.entity.Chamber, gov.nysenate.openleg.model.base.SessionYear)
-     * @param chamber
-     * @return
-     */
-    default public int getCommitteeListCount(Chamber chamber) {
-        return getCommitteeListCount(chamber, SessionYear.current());
-    }
+    int getCommitteeListCount(Chamber chamber, SessionYear sessionYear);
 
     /**
      * Retrieves a list of committee versions for a given committee and session year that occur within the specified date range
@@ -99,8 +83,8 @@ public interface CommitteeDataService
      * @param order
      * @return List<Committee>
      */
-    public List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId,
-                                               LimitOffset limitOffset, SortOrder order) throws CommitteeNotFoundEx;
+    List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId,
+                                        LimitOffset limitOffset, SortOrder order) throws CommitteeNotFoundEx;
 
     /**
      * A convenient overload of the get committee history function that has no limit
@@ -110,7 +94,7 @@ public interface CommitteeDataService
      * @return
      * @throws CommitteeNotFoundEx
      */
-    default public List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId) throws CommitteeNotFoundEx {
+    default List<Committee> getCommitteeHistory(CommitteeSessionId committeeSessionId) throws CommitteeNotFoundEx {
         return getCommitteeHistory(committeeSessionId, LimitOffset.ALL, SortOrder.DESC);
     }
 
@@ -119,18 +103,13 @@ public interface CommitteeDataService
      *
      * @param committeeSessionId@return
      */
-    public int getCommitteeHistoryCount(CommitteeSessionId committeeSessionId);
+    int getCommitteeHistoryCount(CommitteeSessionId committeeSessionId);
 
     /**
      * Retrieves a list of committee versions for a given committee, ordered from first version to most recent
      * @param committee
-     * @param sobiFragment
+     * @param legDataFragment
      */
-    public void saveCommittee(Committee committee, SobiFragment sobiFragment);
+    void saveCommittee(Committee committee, LegDataFragment legDataFragment);
 
-    /**
-     * Deletes all records for a given committee
-     * @param committeeId
-     */
-    public void deleteCommittee(CommitteeId committeeId);
 }

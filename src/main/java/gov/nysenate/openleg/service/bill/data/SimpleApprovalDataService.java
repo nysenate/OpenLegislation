@@ -4,7 +4,7 @@ import gov.nysenate.openleg.dao.bill.data.ApprovalDao;
 import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +56,8 @@ public class SimpleApprovalDataService implements ApprovalDataService
 
     /** {@inheritDoc} */
     @Override
-    public void updateApprovalMessage(ApprovalMessage approvalMessage, SobiFragment sobiFragment) {
-        approvalDao.updateApprovalMessage(approvalMessage, sobiFragment);
+    public void updateApprovalMessage(ApprovalMessage approvalMessage, LegDataFragment legDataFragment) {
+        approvalDao.updateApprovalMessage(approvalMessage, legDataFragment);
     }
 
     /** {@inheritDoc} */

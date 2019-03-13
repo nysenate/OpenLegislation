@@ -1,132 +1,196 @@
 package gov.nysenate.openleg.dao.notification;
 
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.model.notification.NotificationDigestSubscription;
-import gov.nysenate.openleg.model.notification.NotificationSubscription;
-import gov.nysenate.openleg.model.notification.NotificationTarget;
-import gov.nysenate.openleg.model.notification.NotificationType;
+import gov.nysenate.openleg.model.notification.*;
 import gov.nysenate.openleg.util.DateUtils;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.Period;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.notification.SqlNotificationSubscriptionQuery.*;
+import static gov.nysenate.openleg.util.DateUtils.toDate;
+import static gov.nysenate.openleg.util.DateUtils.toTime;
 
 @Repository
 public class SqlNotificationSubscriptionDao extends SqlBaseDao implements NotificationSubscriptionDao {
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Set<NotificationSubscription> getSubscriptions() {
         return new HashSet<>(
                 jdbcNamed.query(SELECT_ALL_SUBSCRIPTIONS.getSql(schema()),
-                    new MapSqlParameterSource(), subscriptionRowMapper)
+                    new MapSqlParameterSource(), notificationSubscriptionRowMapper)
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void insertSubscription(NotificationSubscription subscription) {
-        MapSqlParameterSource params = getSubscriptionParams(subscription);
-        jdbcNamed.update(INSERT_SUBSCRIPTION.getSql(schema()), params);
+    public NotificationSubscription getSubscription(int subscriptionId) throws SubscriptionNotFoundEx {
+        MapSqlParameterSource params = getSubscriptionIdParams(subscriptionId);
+        try {
+            return jdbcNamed.queryForObject(
+                    SELECT_SUBSCRIPTION_BY_ID.getSql(schema()),
+                    params,
+                    notificationSubscriptionRowMapper);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new SubscriptionNotFoundEx(subscriptionId);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void removeSubscription(NotificationSubscription subscription) {
+    public NotificationSubscription updateSubscription(NotificationSubscription subscription) {
         MapSqlParameterSource params = getSubscriptionParams(subscription);
+        Integer subId = subscription.getId();
+        // Insert if there is no valid id, or an update attempt affects no rows
+        if (subId == null || jdbcNamed.update(UPDATE_SUBSCRIPTION.getSql(schema()), params) == 0) {
+            KeyHolder subIdHolder = new GeneratedKeyHolder();
+            jdbcNamed.update(INSERT_SUBSCRIPTION.getSql(schema()), params, subIdHolder, new String[]{"id"});
+            subId = Objects.requireNonNull(subIdHolder.getKey()).intValue();
+            // Replace the subscription parameter with an id'd version
+            subscription = subscription.copy().setId(subId).build();
+        }
+
+        if (subscription instanceof ScheduledNotificationSubscription) {
+            updateScheduledSubscription((ScheduledNotificationSubscription) subscription);
+        } else if (subscription instanceof InstantNotificationSubscription) {
+            updateInstantSubscription((InstantNotificationSubscription) subscription);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unknown notification subscription subclass: " + subscription.getClass());
+        }
+        return subscription;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void removeSubscription(int subscriptionId) {
+        MapSqlParameterSource params = getSubscriptionIdParams(subscriptionId);
         jdbcNamed.update(DELETE_SUBSCRIPTION.getSql(schema()), params);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<NotificationDigestSubscription> getPendingDigests() {
-        return new HashSet<>(
-                jdbcNamed.query(SELECT_PENDING_DIGESTS.getSql(schema()),
-                        new MapSqlParameterSource(), digestSubscriptionRowMapper)
-        );
+    public void setLastSent(int subscriptionId, LocalDateTime lastSentDateTime) {
+        MapSqlParameterSource params = getSubscriptionIdParams(subscriptionId);
+        params.addValue("lastSent", toDate(lastSentDateTime));
+        jdbcNamed.update(UPDATE_SUBSCRIPTION_LAST_SENT.getSql(schema()), params);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Set<NotificationDigestSubscription> getDigestSubsForUser(String username) {
-        return new HashSet<>(
-                jdbcNamed.query(SELECT_DIGEST_SUBS_FOR_USER.getSql(schema()),
-                        new MapSqlParameterSource("user", username), digestSubscriptionRowMapper)
-        );
+    /* --- Internal Methods --- */
+
+    /** Updates fields unique to {@link ScheduledNotificationSubscription} */
+    private void updateScheduledSubscription(ScheduledNotificationSubscription subscription) {
+        MapSqlParameterSource params = getScheduledSubParams(subscription);
+        if (jdbcNamed.update(UPDATE_SCHEDULE.getSql(schema()), params) == 0) {
+            jdbcNamed.update(INSERT_SCHEDULE.getSql(schema()), params);
+        }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void insertDigestSubscription(NotificationDigestSubscription subscription) {
-        KeyHolder idHolder = new GeneratedKeyHolder();
-        jdbcNamed.update(INSERT_DIGEST_SUB.getSql(schema()), getDigestSubscriptionParams(subscription),
-                idHolder, new String[]{"id"});
-        subscription.setId(idHolder.getKey().intValue());
+    /** Updates fields unique to {@link InstantNotificationSubscription} */
+    private void updateInstantSubscription(InstantNotificationSubscription subscription) {
+        MapSqlParameterSource params = getInstantSubParams(subscription);
+        if (jdbcNamed.update(UPDATE_RATE_LIMIT.getSql(schema()), params) == 0) {
+            jdbcNamed.update(INSERT_RATE_LIMIT.getSql(schema()), params);
+        }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void updateNextDigest(int digestSubscriptionId, LocalDateTime nextDigest) {
-        MapSqlParameterSource params = new MapSqlParameterSource("id", digestSubscriptionId)
-                .addValue("nextDigest", DateUtils.toDate(nextDigest));
-        jdbcNamed.update(UPDATE_NEXT_DIGEST.getSql(schema()), params);
+    /* --- Row Mappers --- */
+
+    private static void mapSubscriptionFields(ResultSet rs, NotificationSubscription.Builder builder) throws SQLException {
+        builder
+                .setId(rs.getInt("id"))
+                .setUserName(rs.getString("user_name"))
+                .setNotificationType(NotificationType.valueOf(rs.getString("notification_type")))
+                .setMedium(NotificationMedium.getValue(rs.getString("medium")))
+                .setTargetAddress(rs.getString("address"))
+                .setLastSent(getLocalDateTimeFromRs(rs, "last_sent"))
+                .setDetail(rs.getBoolean("detail"))
+                .setActive(rs.getBoolean("active"))
+        ;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void removeDigestSubscription(int digestSubscriptionId) {
-        jdbcNamed.update(DELETE_DIGEST_SUB.getSql(schema()), new MapSqlParameterSource("id", digestSubscriptionId));
+    private static final RowMapper<ScheduledNotificationSubscription> schedNotifSubRowMapper = (rs, rowNum) -> {
+        ScheduledNotificationSubscription.Builder builder = ScheduledNotificationSubscription.builder();
+        mapSubscriptionFields(rs, builder);
+        List<Short> dayNums = Arrays.asList((Short[]) rs.getArray("days_of_week").getArray());
+        List<DayOfWeek> days = dayNums.stream()
+                .map(DayOfWeek::of)
+                .collect(Collectors.toList());
+        builder.setDaysOfWeek(days);
+        builder.setTimeOfDay(getLocalTimeFromRs(rs, "time_of_day"));
+        builder.setSendEmpty(rs.getBoolean("send_empty"));
+        return builder.build();
+    };
+
+    private static final RowMapper<InstantNotificationSubscription> instantNotifSubRowMapper = (rs, rowNum) -> {
+        InstantNotificationSubscription.Builder builder = InstantNotificationSubscription.builder();
+        mapSubscriptionFields(rs, builder);
+        builder.setRateLimit(getDurationFromRs(rs, "rate_limit"));
+        return builder.build();
+    };
+
+    private static final RowMapper<NotificationSubscription> notificationSubscriptionRowMapper = (rs, rowNum) -> {
+        String subTypeStr = rs.getString("subscription_type");
+        // (subTypeStr shouldn't be null)
+        NotificationSubscriptionType subType = NotificationSubscriptionType.valueOf(subTypeStr.toUpperCase());
+        // Use the appropriate mapper for the subscription type.
+        switch (subType) {
+            case INSTANT:
+                return instantNotifSubRowMapper.mapRow(rs, rowNum);
+            case SCHEDULED:
+                return schedNotifSubRowMapper.mapRow(rs, rowNum);
+            default:
+                throw new IllegalArgumentException("Unrecognized subscription type: " + subType);
+        }
+
+    };
+
+    /* --- Parameter Mapping --- */
+
+    private MapSqlParameterSource getSubscriptionIdParams(Integer subscriptionId) {
+        return new MapSqlParameterSource("id", subscriptionId);
     }
-
-    private static RowMapper<NotificationSubscription> subscriptionRowMapper = (rs, rowNum) ->
-            new NotificationSubscription(
-                    rs.getString("user_name"),
-                    NotificationType.valueOf(rs.getString("type")),
-                    NotificationTarget.valueOf(rs.getString("target")),
-                    rs.getString("address")
-            );
-
-    private static RowMapper<NotificationDigestSubscription> digestSubscriptionRowMapper = (rs, rowNum) ->
-            new NotificationDigestSubscription(
-                    subscriptionRowMapper.mapRow(rs, rowNum),
-                    rs.getInt("id"),
-                    getDurationFromRs(rs, "period"),
-                    getPeriodFromRs(rs, "period"),
-                    getLocalDateTimeFromRs(rs, "next_digest"),
-                    rs.getBoolean("send_empty_digest"),
-                    rs.getBoolean("full")
-            );
 
     private MapSqlParameterSource getSubscriptionParams(NotificationSubscription subscription) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
+        MapSqlParameterSource params = getSubscriptionIdParams(subscription.getId());
         params.addValue("user", subscription.getUserName());
-        params.addValue("type", subscription.getType().toString());
-        params.addValue("target", subscription.getTarget().toString());
+        params.addValue("subType", subscription.getSubscriptionType().toString().toLowerCase());
+        params.addValue("notifType", subscription.getNotificationType().toString());
+        params.addValue("medium", subscription.getMedium().toString());
         params.addValue("address", subscription.getTargetAddress());
+        params.addValue("detail", subscription.isDetail());
+        params.addValue("active", subscription.isActive());
+        params.addValue("lastSent", toDate(subscription.getLastSent()));
         return params;
     }
 
-    private MapSqlParameterSource getDigestSubscriptionParams(NotificationDigestSubscription subscription) {
-        return new MapSqlParameterSource()
-                .addValue("id", subscription.getId())
-                .addValue("user", subscription.getUserName())
-                .addValue("type", subscription.getType().toString())
-                .addValue("target", subscription.getTarget().toString())
-                .addValue("address", subscription.getTargetAddress())
-                .addValue("nextDigest", DateUtils.toDate(subscription.getNextDigest()))
-                .addValue("period", DateUtils.toInterval(subscription.getPeriodDays(), subscription.getPeriodHours()))
-                .addValue("sendEmptyDigest", subscription.isSendEmptyDigest())
-                .addValue("full", subscription.isFull());
+    private MapSqlParameterSource getInstantSubParams(InstantNotificationSubscription subscription) {
+        MapSqlParameterSource params = getSubscriptionIdParams(subscription.getId());
+        params.addValue("rateLimit", DateUtils.toInterval(Period.ZERO, subscription.getRateLimit()));
+        return params;
     }
+
+    private MapSqlParameterSource getScheduledSubParams(ScheduledNotificationSubscription subscription) {
+        MapSqlParameterSource params = getSubscriptionIdParams(subscription.getId());
+        params.addValue("daysOfWeek",
+                toPostgresArray(subscription.getDaysOfWeek().stream()
+                        .map(DayOfWeek::getValue)
+                        .map(Integer::shortValue)
+                        .collect(Collectors.toList())));
+        params.addValue("timeOfDay", toTime(subscription.getTimeOfDay()));
+        params.addValue("sendEmpty", subscription.sendEmpty());
+        return params;
+    }
+
 }

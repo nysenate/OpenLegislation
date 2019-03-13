@@ -6,12 +6,12 @@ import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractBillProcessor;
 import gov.nysenate.openleg.processor.bill.BillActionParser;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ import java.util.Optional;
  * Created by Robert Bebber on 3/20/17.
  */
 @Service
-public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiProcessor {
+public class XmlBillStatProcessor extends AbstractBillProcessor implements LegDataProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlBillStatProcessor.class);
 
@@ -45,16 +45,16 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiP
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.BILLSTAT;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.BILLSTAT;
     }
 
     @Override
-    public void process(SobiFragment sobiFragment) {
-        logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+    public void process(LegDataFragment legDataFragment) {
+        logger.info("Processing " + legDataFragment.getFragmentId() + " (xml file).");
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
-            final Document doc = xmlHelper.parse(sobiFragment.getText());
+            final Document doc = xmlHelper.parse(legDataFragment.getText());
             final Node billStatusNode = xmlHelper.getNode("billstatus", doc);
 
             // extract bill id
@@ -64,22 +64,22 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiP
             final String version = xmlHelper.getString("currentamd", billStatusNode).trim();
 
             BillId billId = new BillId(billhse + billno, sessyr, version);
-            Bill bill = getOrCreateBaseBill(billId, sobiFragment);
+            Bill bill = getOrCreateBaseBill(billId, legDataFragment);
 
             final String action = xmlHelper.getString("@action", billStatusNode).trim();
             switch (action) {
                 case "remove":
-                    removeCase(bill, sobiFragment);
+                    removeCase(bill, legDataFragment);
                     break;
                 case "replace":
-                    replaceCase(billStatusNode, bill, billId, sobiFragment);
+                    replaceCase(billStatusNode, bill, billId, legDataFragment);
                     break;
                 default:
                     throw new IllegalArgumentException(
-                            "Unrecognized xml action: " + action + " in fragment: " + sobiFragment);
+                            "Unrecognized xml action: " + action + " in fragment: " + legDataFragment);
             }
 
-            billIngestCache.set(bill.getBaseBillId(), bill, sobiFragment);
+            billIngestCache.set(bill.getBaseBillId(), bill, legDataFragment);
             postDataUnitEvent(unit);
             checkIngestCache();
         } catch (IOException | SAXException | XPathExpressionException e) {
@@ -90,7 +90,7 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiP
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }
@@ -99,9 +99,9 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiP
      * Un-publish this bill.
      *
      * @param baseBill      The Bill in alteration
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      */
-    private void removeCase(Bill baseBill, SobiFragment fragment) {
+    private void removeCase(Bill baseBill, LegDataFragment fragment) {
         baseBill.updatePublishStatus(
                 Version.ORIGINAL,
                 new PublishStatus(false, fragment.getPublishedDateTime()));
@@ -113,10 +113,10 @@ public class XmlBillStatProcessor extends AbstractBillProcessor implements SobiP
      * @param billStatusNode Node
      * @param bill Bill
      * @param billId BillId
-     * @param fragment SobiFragment
+     * @param fragment LegDataFragment
      * @throws XPathExpressionException if improper x-paths are used
      */
-    private void replaceCase(Node billStatusNode, Bill bill, BillId billId, SobiFragment fragment) throws XPathExpressionException {
+    private void replaceCase(Node billStatusNode, Bill bill, BillId billId, LegDataFragment fragment) throws XPathExpressionException {
         BillAmendment billAmendment = bill.getAmendment(billId.getVersion());
 
         // Publish the base version if not already done

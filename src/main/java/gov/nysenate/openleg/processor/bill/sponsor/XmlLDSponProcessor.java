@@ -7,11 +7,11 @@ import gov.nysenate.openleg.model.bill.ProgramInfo;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractBillProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * Created by Robert Bebber on 2/22/17.
  */
 @Service
-public class XmlLDSponProcessor extends AbstractBillProcessor implements SobiProcessor {
+public class XmlLDSponProcessor extends AbstractBillProcessor implements LegDataProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlLDSponProcessor.class);
 
@@ -55,24 +55,24 @@ public class XmlLDSponProcessor extends AbstractBillProcessor implements SobiPro
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.LDSPON;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.LDSPON;
     }
 
     /**
      * This method gets the specific identifiers for the fragment and then based on the prime tag, the method will
      * call separate methods depending on if the prime(sponsor) is a Budget Bill, Rule, or a standard sponsor.
      *
-     * @param sobiFragment This is the fragment being worked on during this process
+     * @param legDataFragment This is the fragment being worked on during this process
      */
     @Override
-    public void process(SobiFragment sobiFragment) {
+    public void process(LegDataFragment legDataFragment) {
         logger.info("Processing Sponsor...");
-        LocalDateTime date = sobiFragment.getPublishedDateTime();
-        logger.info("Processing " + sobiFragment.getFragmentId() + " (xml file).");
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+        LocalDateTime date = legDataFragment.getPublishedDateTime();
+        logger.info("Processing " + legDataFragment.getFragmentId() + " (xml file).");
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
-            final Document doc = xmlHelper.parse(sobiFragment.getText());
+            final Document doc = xmlHelper.parse(legDataFragment.getText());
             final Node billTextNode = xmlHelper.getNode("sponsor_data", doc);
 
             final Integer sessyr = xmlHelper.getInteger("@sessyr", billTextNode);
@@ -86,7 +86,7 @@ public class XmlLDSponProcessor extends AbstractBillProcessor implements SobiPro
             if (sponsorno == 0) // if it is a LDBC error
                 return;
             Bill baseBill = getOrCreateBaseBill(new BillId(sponsorhse +
-                    sponsorno, sessyr), sobiFragment);
+                    sponsorno, sessyr), legDataFragment);
             Chamber chamber = baseBill.getBillType().getChamber();
             BillAmendment amendment = baseBill.getAmendment(baseBill.getActiveVersion());
 
@@ -116,7 +116,7 @@ public class XmlLDSponProcessor extends AbstractBillProcessor implements SobiPro
                     baseBill.setModifiedDateTime(date);
                 }
             }
-            billIngestCache.set(baseBill.getBaseBillId(), baseBill, sobiFragment);
+            billIngestCache.set(baseBill.getBaseBillId(), baseBill, legDataFragment);
 
         } catch (IOException | SAXException | XPathExpressionException e) {
             unit.addException("XML LD Spon parsing error", e);
@@ -129,7 +129,7 @@ public class XmlLDSponProcessor extends AbstractBillProcessor implements SobiPro
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }

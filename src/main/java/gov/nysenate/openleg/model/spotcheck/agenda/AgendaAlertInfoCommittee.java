@@ -73,7 +73,7 @@ public class AgendaAlertInfoCommittee
 
     /** --- Functional Getters / Setters --- */
 
-    public AgendaMeetingWeekId getAgendaAlertCheckId() {
+    public AgendaMeetingWeekId getAgendaMeetingWeekId() {
         return new AgendaMeetingWeekId(getMeetingDateTime().getYear(), getWeekOf(),
                 getAddendum(), getCommitteeId().getChamber(), getCommitteeId().getName());
     }
@@ -84,10 +84,6 @@ public class AgendaAlertInfoCommittee
 
     public void addInfoCommitteeItem(AgendaInfoCommitteeItem item) {
         items.add(item);
-    }
-
-    public AgendaAlertInfoCommId getAgendaAlertInfoCommId() {
-        return new AgendaAlertInfoCommId(referenceId.getRefActiveDateTime(), weekOf, committeeId, addendum);
     }
 
     public AgendaAlertId getAlertId() {

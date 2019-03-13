@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
-import gov.nysenate.openleg.model.sourcefiles.sobi.UnreadableSobiEx;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import gov.nysenate.openleg.model.sourcefiles.sobi.InvalidSobiNameEx;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFileNotFoundEx;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class BaseSourceFile implements SourceFile {
@@ -46,11 +43,11 @@ public abstract class BaseSourceFile implements SourceFile {
     
     /** --- Constructors --- */
     
-    public BaseSourceFile(File sobiFile) throws IOException, SobiFileNotFoundEx{
+    public BaseSourceFile(File sobiFile) throws IOException, LegDataFileNotFoundEx {
         this(sobiFile, DEFAULT_ENCODING);
     }
     
-    public BaseSourceFile(File infile, String encoding) throws IOException, SobiFileNotFoundEx{
+    public BaseSourceFile(File infile, String encoding) throws IOException, LegDataFileNotFoundEx {
         if(infile.exists()){
             this.file = infile;
             this.encoding = encoding;
@@ -82,12 +79,12 @@ public abstract class BaseSourceFile implements SourceFile {
             return FileUtils.readFileToString(file, encoding);
         }
         catch(IOException e){
-            throw new UnreadableSobiEx(this, e);
+            throw new UnreadableLegDataEx(this, e);
         }
     }
     
     @Override
-    public LocalDateTime getPublishedDateTime() throws InvalidSobiNameEx{
+    public LocalDateTime getPublishedDateTime() throws InvalidLegDataFileNameEx {
         return null;
     }
     

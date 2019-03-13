@@ -8,13 +8,13 @@ import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.bill.data.BillUpdatesDao;
 import gov.nysenate.openleg.dao.sourcefiles.SourceFileRefDao;
-import gov.nysenate.openleg.dao.sourcefiles.sobi.SobiFragmentDao;
+import gov.nysenate.openleg.dao.sourcefiles.sobi.LegDataFragmentDao;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFile;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.model.updates.UpdateDigest;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
@@ -44,7 +44,7 @@ public class BillUpdatesTest extends BaseTests {
     @Autowired private BillDataService billDataService;
     @Autowired private BillUpdatesDao billUpdatesDao;
     @Autowired private SourceFileRefDao sourceFileRefDao;
-    @Autowired private SobiFragmentDao fragmentDao;
+    @Autowired private LegDataFragmentDao fragmentDao;
 
     private static final BaseBillId testBillId = new BaseBillId("S1537", 2017);
     private static final String testSobiFileName =
@@ -52,7 +52,7 @@ public class BillUpdatesTest extends BaseTests {
     private static final File testFile = new File("/tmp/" + testSobiFileName);
 
     private Bill testBill;
-    private SobiFragment testFragment;
+    private LegDataFragment testFragment;
     private LocalDateTime testStart;
 
     @Before
@@ -64,8 +64,8 @@ public class BillUpdatesTest extends BaseTests {
         }
         SobiFile testSobiFile = new SobiFile(testFile);
         sourceFileRefDao.updateSourceFile(testSobiFile);
-        testFragment = new SobiFragment(testSobiFile, SobiFragmentType.BILL, "test", 1);
-        fragmentDao.updateSobiFragment(testFragment);
+        testFragment = new LegDataFragment(testSobiFile, LegDataFragmentType.BILL, "test", 1);
+        fragmentDao.updateLegDataFragment(testFragment);
         testBill = billDataService.getBill(testBillId);
     }
 

@@ -1,14 +1,11 @@
 package gov.nysenate.openleg.service.notification.dispatch;
 
-import gov.nysenate.openleg.model.notification.NotificationSubscription;
-import gov.nysenate.openleg.model.notification.NotificationTarget;
-import gov.nysenate.openleg.model.notification.RegisteredNotification;
-import gov.nysenate.openleg.service.notification.dispatch.EmailNotificationSender;
-import org.springframework.mail.SimpleMailMessage;
+import gov.nysenate.openleg.model.notification.NotificationMedium;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-
+/**
+ * Uses the base functionality in {@link EmailNotificationSender}
+ */
 @Service
 public class SimpleEmailNotificationSender extends EmailNotificationSender {
 
@@ -16,21 +13,8 @@ public class SimpleEmailNotificationSender extends EmailNotificationSender {
      * {@inheritDoc}
      */
     @Override
-    public NotificationTarget getTargetType() {
-        return NotificationTarget.EMAIL_SIMPLE;
+    public NotificationMedium getTargetType() {
+        return NotificationMedium.EMAIL_SIMPLE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void sendNotification(RegisteredNotification registeredNotification, Collection<NotificationSubscription> subscriptions) {
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setSubject(registeredNotification.getSummary());
-        message.setText(getDisplayUrl(registeredNotification
-        ));
-
-        sendNotificationEmail(message, subscriptions);
-    }
 }

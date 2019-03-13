@@ -60,7 +60,7 @@ public class EnvironmentCtrl extends BaseCtrl
                 .put("notificationsEnabled", setBoolean(env::setNotificationsEnabled))
                 .put("billScrapeQueueEnabled", setBoolean(env::setBillScrapeQueueEnabled))
                 .put("checkmailEnabled", setBoolean(env::setCheckmailEnabled))
-                .put("sobiBatchEnabled", setBoolean(env::setSobiBatchEnabled))
+                .put("sobiBatchEnabled", setBoolean(env::setLegDataBatchEnabled))
                 .build();
     }
 

@@ -1,7 +1,6 @@
 package gov.nysenate.openleg.model.sourcefiles.sobi;
 
-import gov.nysenate.openleg.model.sourcefiles.BaseSourceFile;
-import gov.nysenate.openleg.model.sourcefiles.SourceType;
+import gov.nysenate.openleg.model.sourcefiles.*;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.File;
@@ -15,7 +14,7 @@ import java.time.ZoneId;
  * SobiFiles can be broken down into SobiFragments which store data about the type of content in
  * the file and various processing related meta data.
  *
- * @see SobiFragment
+ * @see LegDataFragment
  */
 public class SobiFile extends BaseSourceFile {
 
@@ -35,11 +34,11 @@ public class SobiFile extends BaseSourceFile {
      * --- Constructors ---
      */
 
-    public SobiFile(File sobiFile) throws IOException, SobiFileNotFoundEx {
+    public SobiFile(File sobiFile) throws IOException, LegDataFileNotFoundEx {
         super(sobiFile);
     }
 
-    public SobiFile(File sobiFile, String encoding) throws IOException, SobiFileNotFoundEx {
+    public SobiFile(File sobiFile, String encoding) throws IOException, LegDataFileNotFoundEx {
         super(sobiFile, encoding);
     }
 
@@ -53,10 +52,10 @@ public class SobiFile extends BaseSourceFile {
      * The published datetime is determined via the file name. If an error is encountered when
      * parsing the date, the last modified datetime of the file will be used instead.
      *
-     * @throws InvalidSobiNameEx if this sobi has a filename that cannot be parsed
+     * @throws InvalidLegDataFileNameEx if this sobi has a filename that cannot be parsed
      */
     @Override
-    public LocalDateTime getPublishedDateTime() throws InvalidSobiNameEx {
+    public LocalDateTime getPublishedDateTime() throws InvalidLegDataFileNameEx {
         String fileName = getFileName();
         if ("xml".equals(fileName.substring(fileName.length() - 3).toLowerCase())) {
             fileName = fileName.substring(0, 23);
@@ -65,7 +64,7 @@ public class SobiFile extends BaseSourceFile {
             return LocalDateTime.ofInstant(DateUtils.parseDate(fileName, sobiDateFullPattern,
                     sobiDateNoSecsPattern).toInstant(), ZoneId.systemDefault());
         } catch (ParseException ex) {
-            throw new InvalidSobiNameEx(fileName, ex);
+            throw new InvalidLegDataFileNameEx(fileName, ex);
         }
     }
 }

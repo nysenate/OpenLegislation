@@ -6,7 +6,7 @@ import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -45,8 +45,8 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao
 
     /** {@inheritDoc} */
     @Override
-    public void updateApprovalMessage(ApprovalMessage approvalMessage, SobiFragment sobiFragment) {
-        MapSqlParameterSource params = getApprovalMessageParams(approvalMessage, sobiFragment);
+    public void updateApprovalMessage(ApprovalMessage approvalMessage, LegDataFragment legDataFragment) {
+        MapSqlParameterSource params = getApprovalMessageParams(approvalMessage, legDataFragment);
         if(jdbcNamed.update(SqlApprovalQuery.UPDATE_APPROVAL.getSql(schema()), params) == 0){
             jdbcNamed.update(SqlApprovalQuery.INSERT_APPROVAL.getSql(schema()), params);
         }
@@ -105,7 +105,7 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao
         return params;
     }
 
-    private MapSqlParameterSource getApprovalMessageParams(ApprovalMessage approvalMessage, SobiFragment sobiFragment){
+    private MapSqlParameterSource getApprovalMessageParams(ApprovalMessage approvalMessage, LegDataFragment legDataFragment){
         MapSqlParameterSource params = getApprovalIdParams(approvalMessage.getApprovalId());
         params.addValue("billPrintNo", approvalMessage.getBillId().getBasePrintNo());
         params.addValue("sessionYear", approvalMessage.getBillId().getSession().getYear());
@@ -113,7 +113,7 @@ public class SqlApprovalDao extends SqlBaseDao implements ApprovalDao
         params.addValue("chapter", approvalMessage.getChapter());
         params.addValue("signer", approvalMessage.getSigner());
         params.addValue("memoText", approvalMessage.getMemoText());
-        addLastFragmentParam(sobiFragment, params);
+        addLastFragmentParam(legDataFragment, params);
         return params;
     }
 }

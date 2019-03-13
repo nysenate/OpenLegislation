@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.bill.data;
 import gov.nysenate.openleg.model.bill.ApprovalId;
 import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.BaseBillId;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
@@ -37,9 +37,9 @@ public interface ApprovalDao {
     /**
      * Updates or inserts the given approval message into the persistence layer
      * @param approvalMessage
-     * @param sobiFragment
+     * @param legDataFragment
      */
-    public void updateApprovalMessage(ApprovalMessage approvalMessage, SobiFragment sobiFragment);
+    public void updateApprovalMessage(ApprovalMessage approvalMessage, LegDataFragment legDataFragment);
 
     /**
      * Deletes any approval message with the given approval id

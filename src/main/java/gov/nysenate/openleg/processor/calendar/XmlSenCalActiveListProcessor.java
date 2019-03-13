@@ -7,10 +7,10 @@ import gov.nysenate.openleg.model.calendar.CalendarActiveList;
 import gov.nysenate.openleg.model.calendar.CalendarEntry;
 import gov.nysenate.openleg.model.calendar.CalendarId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.util.DateUtils;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
-public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implements SobiProcessor
+public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implements LegDataProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(XmlSenCalActiveListProcessor.class);
 
@@ -40,23 +40,23 @@ public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implemen
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.CALENDAR_ACTIVE;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.CALENDAR_ACTIVE;
     }
 
     @Override
-    public void process(SobiFragment sobiFragment) {
-        logger.info("Processing Senate Calendar Active List... {}", sobiFragment.getFragmentId());
-        LocalDateTime modifiedDate = sobiFragment.getPublishedDateTime();
-        DataProcessUnit unit = createProcessUnit(sobiFragment);
+    public void process(LegDataFragment legDataFragment) {
+        logger.info("Processing Senate Calendar Active List... {}", legDataFragment.getFragmentId());
+        LocalDateTime modifiedDate = legDataFragment.getPublishedDateTime();
+        DataProcessUnit unit = createProcessUnit(legDataFragment);
         try {
-            Node root = getXmlRoot(sobiFragment.getText());
+            Node root = getXmlRoot(legDataFragment.getText());
             Node xmlCalendarActive = xml.getNode("sencalendaractive", root);
             Integer calendarNo = xml.getInteger("@no", xmlCalendarActive);
             Integer sessionYear = xml.getInteger("@sessyr", xmlCalendarActive);
             Integer year = xml.getInteger("@year", xmlCalendarActive);
             CalendarId calendarId = new CalendarId(calendarNo, year);
-            final Calendar calendar = getOrCreateCalendar(calendarId, sobiFragment);
+            final Calendar calendar = getOrCreateCalendar(calendarId, legDataFragment);
             calendar.setModifiedDateTime(modifiedDate);
 
             String action = xml.getString("@action", xmlCalendarActive);
@@ -110,7 +110,7 @@ public class XmlSenCalActiveListProcessor extends AbstractDataProcessor implemen
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || calendarIngestCache.exceedsCapacity()) {
             flushAllUpdates();
         }
     }

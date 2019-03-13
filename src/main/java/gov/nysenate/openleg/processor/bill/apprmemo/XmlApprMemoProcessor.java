@@ -5,11 +5,11 @@ import gov.nysenate.openleg.model.bill.ApprovalMessage;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragmentType;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
 import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.processor.bill.AbstractMemoProcessor;
-import gov.nysenate.openleg.processor.sobi.SobiProcessor;
+import gov.nysenate.openleg.processor.legdata.LegDataProcessor;
 import gov.nysenate.openleg.service.bill.data.ApprovalNotFoundException;
 import gov.nysenate.openleg.util.XmlHelper;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import java.io.IOException;
  * Created by Robert Bebber on 3/6/17.
  */
 @Service
-public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiProcessor {
+public class XmlApprMemoProcessor extends AbstractMemoProcessor implements LegDataProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlApprMemoProcessor.class);
     @Autowired
@@ -42,12 +42,12 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
     }
 
     @Override
-    public SobiFragmentType getSupportedType() {
-        return SobiFragmentType.APPRMEMO;
+    public LegDataFragmentType getSupportedType() {
+        return LegDataFragmentType.APPRMEMO;
     }
 
     @Override
-    public void process(SobiFragment fragment) {
+    public void process(LegDataFragment fragment) {
         logger.info("Processing " + fragment.getFragmentId() + " (xml file).");
         DataProcessUnit unit = createProcessUnit(fragment);
         try {
@@ -76,7 +76,7 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
 
     @Override
     public void checkIngestCache() {
-        if (!env.isSobiBatchEnabled() || billIngestCache.exceedsCapacity()) {
+        if (!env.isLegDataBatchEnabled() || billIngestCache.exceedsCapacity()) {
             flushBillUpdates();
         }
     }
@@ -88,7 +88,7 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
 
     /* --- Internal Methods --- */
 
-    private void removeApprovalMemo(SobiFragment fragment, int apprNo, int year) {
+    private void removeApprovalMemo(LegDataFragment fragment, int apprNo, int year) {
         ApprovalId approvalId = new ApprovalId(year, apprNo);
         try {
             ApprovalMessage approvalMessage = apprDataService.getApprovalMessage(approvalId);
@@ -102,7 +102,7 @@ public class XmlApprMemoProcessor extends AbstractMemoProcessor implements SobiP
         }
     }
 
-    private void replaceApprovalMemo(SobiFragment fragment, Node apprMemoNode, int apprNo, int year) {
+    private void replaceApprovalMemo(LegDataFragment fragment, Node apprMemoNode, int apprNo, int year) {
         NodeList childNodes = apprMemoNode.getChildNodes();
         String billhse = null;
         Integer billno = null;

@@ -12,7 +12,7 @@ import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.entity.*;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import gov.nysenate.openleg.service.entity.committee.event.CommitteeUpdateEvent;
 import net.sf.ehcache.Cache;
@@ -166,11 +166,6 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     }
 
     @Override
-    public List<SessionYear> getEligibleYears() {
-        return committeeDao.getEligibleYears();
-    }
-
-    @Override
     public List<CommitteeSessionId> getAllCommitteeSessionIds() {
         return committeeDao.getAllSessionIds();
     }
@@ -251,21 +246,13 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
 
     /** {@inheritDoc} */
     @Override
-    public void saveCommittee(Committee committee, SobiFragment sobiFragment) {
+    public void saveCommittee(Committee committee, LegDataFragment legDataFragment) {
         if(committee==null) {
             throw new IllegalArgumentException("Committee cannot be null.");
         }
-        committeeDao.updateCommittee(committee, sobiFragment);
+        committeeDao.updateCommittee(committee, legDataFragment);
         committeeCache.remove(committee.getSessionId());
         eventBus.post(new CommitteeUpdateEvent(committee, LocalDateTime.now()));
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void deleteCommittee(CommitteeId committeeId) {
-        if(committeeId==null) {
-            throw new IllegalArgumentException("CommitteeId cannot be null!");
-        }
-        committeeDao.deleteCommittee(committeeId);
-    }
 }

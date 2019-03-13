@@ -8,7 +8,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.VetoId;
 import gov.nysenate.openleg.model.bill.VetoMessage;
 import gov.nysenate.openleg.model.bill.VetoType;
-import gov.nysenate.openleg.model.sourcefiles.sobi.SobiFragment;
+import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +53,8 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
 
     /** @inheritDoc */
     @Override
-    public void updateVetoMessage(VetoMessage vetoMessage, SobiFragment sobiFragment) throws DataAccessException {
-        MapSqlParameterSource params = getVetoParams(vetoMessage, sobiFragment);
+    public void updateVetoMessage(VetoMessage vetoMessage, LegDataFragment legDataFragment) throws DataAccessException {
+        MapSqlParameterSource params = getVetoParams(vetoMessage, legDataFragment);
         if (jdbcNamed.update(SqlVetoQuery.UPDATE_VETO_MESSAGE_SQL.getSql(schema()), params) == 0){
            jdbcNamed.update(SqlVetoQuery.INSERT_VETO_MESSAGE_SQL.getSql(schema()), params);
         }
@@ -103,7 +103,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
         return params;
     }
 
-    private MapSqlParameterSource getVetoParams(VetoMessage vetoMessage, SobiFragment sobiFragment){
+    private MapSqlParameterSource getVetoParams(VetoMessage vetoMessage, LegDataFragment legDataFragment){
         MapSqlParameterSource params = getVetoIdParams(vetoMessage.getVetoId());
         params.addValue("printNum", vetoMessage.getBillId().getBasePrintNo());
         params.addValue("sessionYear", vetoMessage.getSession().getYear());
@@ -115,7 +115,7 @@ public class SqlVetoDao extends SqlBaseDao implements VetoDao
         params.addValue("date", toDate(vetoMessage.getSignedDate()));
         params.addValue("memoText", vetoMessage.getMemoText());
         params.addValue("type", vetoMessage.getType().toString().toLowerCase());
-        addLastFragmentParam(sobiFragment, params);
+        addLastFragmentParam(legDataFragment, params);
         addModPubDateParams(vetoMessage.getModifiedDateTime(), vetoMessage.getPublishedDateTime(), params);
         return params;
     }
