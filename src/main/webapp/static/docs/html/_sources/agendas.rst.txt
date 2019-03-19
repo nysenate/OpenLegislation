@@ -53,7 +53,7 @@ Retrieve a specific committee within an agenda
 
 **Examples**
 
-Request the Rules commitee agenda 2 of session year 2017
+Request the Rules committee agenda 2 of session year 2017
 ::
    /api/3/agendas/2017/2/Rules
 
@@ -124,7 +124,7 @@ Search agendas across all years for a term
 | offset    | Start the results from offset                                                           |
 +-----------+-----------------------------------------------------------------------------------------+
 +-----------+-----------------------------------------------------------------------------------------+
-| type      | Determine wether to use process date time or published date time                        |
+| type      | Determine whether to use process date time or published date time                        |
 +-----------+-----------------------------------------------------------------------------------------+
 
 
@@ -138,6 +138,8 @@ Search agendas for a specific term
 
 Get updated agenda Id's
 -----------------------
+
+.. warning:: The following api calls work (by default) on the process date time. If we reprocess our data, the timestamps listed may not produce the same results. You can use the published date time to get updates from an earlier time
 
 **Usage**
 

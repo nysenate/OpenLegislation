@@ -219,7 +219,7 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 </pre></div>
 </div>
 <p><strong>Examples</strong></p>
-<p>Request the Rules commitee agenda 2 of session year 2017</p>
+<p>Request the Rules committee agenda 2 of session year 2017</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="mi">2017</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">Rules</span>
 </pre></div>
 </div>
@@ -283,34 +283,6 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 <p class="last">The param term is required and the value of this parameter is whatever you are looking to find</p>
 </div>
 <p><strong>Optional Params</strong></p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="11%" />
-<col width="89%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>full</td>
-<td>‘true’, ‘false’</td>
-</tr>
-<tr class="row-odd"><td>limit</td>
-<td>Limit the number of results</td>
-</tr>
-<tr class="row-even"><td>offset</td>
-<td>Start the results from offset</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>type</td>
-<td>Determine wether to use process date time or published date time</td>
-</tr>
-</tbody>
-</table>
 <p><strong>Examples</strong></p>
 <p>Search agendas for a specific term</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>/api/3/agendas/2017/search?term=crime&amp;full=false&amp;limit=10&amp;offset=5
@@ -319,6 +291,10 @@ start of every year. Therefore a weekly agenda can be uniquely identified using 
 </div>
 <div class="section" id="get-updated-agenda-id-s">
 <h2>Get updated agenda Id’s<a class="headerlink" href="#get-updated-agenda-id-s" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The following api calls work (by default) on the process date time. If we reprocess our data, the timestamps listed may not produce the same results. You can use the published date time to get updates from an earlier time</p>
+</div>
 <p><strong>Usage</strong></p>
 <p>Return a list of agenda ids that have changed during a specified date/time range</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">GET</span><span class="p">)</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="n">agendas</span><span class="o">/</span><span class="n">updates</span><span class="o">/</span>
