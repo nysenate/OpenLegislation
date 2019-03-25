@@ -51,6 +51,8 @@ public class WebApplicationConfig implements WebMvcConfigurer
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         logger.info("Registering resource path {} for files under {}", resourcePath, resourceLocation);
         registry.addResourceHandler(resourcePath).addResourceLocations(resourceLocation).setCachePeriod(64000);
+        logger.info("Registering resource path {} for files under {}", "/favicon.ico", resourceLocation);
+        registry.addResourceHandler("/favicon.ico").addResourceLocations(resourceLocation).setCachePeriod(64000);
     }
 
     /**
