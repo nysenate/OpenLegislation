@@ -53,6 +53,8 @@ public class WebApplicationConfig implements WebMvcConfigurer
         registry.addResourceHandler(resourcePath).addResourceLocations(resourceLocation).setCachePeriod(64000);
         logger.info("Registering resource path {} for files under {}", "/favicon.ico", resourceLocation);
         registry.addResourceHandler("/favicon.ico").addResourceLocations(resourceLocation).setCachePeriod(64000);
+        logger.info("Registering resource path {} for files under {}", "/apple-touch-icon.png", resourceLocation);
+        registry.addResourceHandler("/apple-touch-icon.png").addResourceLocations(resourceLocation).setCachePeriod(64000);
     }
 
     /**
