@@ -1,6 +1,6 @@
-<billstatus  sessyr="1975" billhse="A" billno="1010101" action="replace">
+<billstatus  sessyr="1975" billhse="A" billno="10101" action="replace">
 <deadtag></deadtag>
-<currentamd>A</currentamd>
+<currentamd></currentamd>
 <sponsor><![CDATA[MAINSPON]]></sponsor>
 <reprint>
 <rprtbillhse></rprtbillhse>
@@ -15,7 +15,6 @@
 <title><![CDATA[Relates to absolutely nothing]]></title>
 <billactions><![CDATA[
 01/01/75 referred to education
-01/04/75 amended 1010101A
 ]]></billactions>
 <actions>
 <action no="1">
@@ -30,27 +29,15 @@
 <actionpostdate>1975-01-01</actionpostdate>
 <actionactsessyr>1975</actionactsessyr>
 </action>
-<action no="2">
-<actionbillamd></actionbillamd>
-<actionhouse>A</actionhouse>
-<actioncode>75</actioncode>
-<actiontype>B</actiontype>
-<actiondata>1010101</actiondata>
-<actiondataamd>A</actiondataamd>
-<actiondate>1975-01-04</actiondate>
-<actiondesc><![CDATA[amended 1010101A]]></actiondesc>
-<actionpostdate>1975-01-01</actionpostdate>
-<actionactsessyr>1975</actionactsessyr>
-</action>
 <action no="1975">
 <actionbillamd></actionbillamd>
 <actionhouse>A</actionhouse>
-<actioncode>75</actioncode>
-<actiontype>B</actiontype>
-<actiondata>1010101</actiondata>
-<actiondataamd>A</actiondataamd>
-<actiondate>1975-01-04</actiondate>
-<actiondesc><![CDATA[amended 1010101A]]></actiondesc>
+<actioncode>1</actioncode>
+<actiontype>S</actiontype>
+<actiondata>11</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>1975-01-01</actiondate>
+<actiondesc><![CDATA[referred to education]]></actiondesc>
 <actionpostdate>1975-01-01</actionpostdate>
 <actionactsessyr>1975</actionactsessyr>
 </action>

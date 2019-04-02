@@ -115,52 +115,48 @@ public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
 
     /**
      * Tests the transfer of sponsors as the active amendment changes.
-     *
-     * This test no longer functions as originally designed.
-     * We cant create billId's with print numbers longer than 5 integers
-     * A1010101 is an invalid print number and causes exceptions as it should
      */
-//    @Test
-//    public void amendmentTransferTest() {
-//        BaseBillId baseBillId = new BaseBillId("A10101", 1975);
-//        BillId orig = baseBillId.withVersion(Version.ORIGINAL);
-//        BillId amdA = baseBillId.withVersion(Version.A);
-//        assertFalse("Test bill should not exist in db", doesBillExist(baseBillId));
-//
-//        final String testXmlDir = "processor/bill/sponsor/amend_transfer/";
-//
-//        // Initialize bill
-//        processXmlFile(testXmlDir + "1975-01-01-00.00.00.000000_BILLSTAT_A1010101.XML");
-//        processXmlFile(testXmlDir + "1975-01-01-00.00.00.000000_LDSPON_A1010101.XML");
-//        final String mainSponsor = "MAINSPON";
-//        final List<String> firstCoSpon = ImmutableList.of("COSPONONE");
-//        final List<String> firstMultiSpon = ImmutableList.of("MUSPONONE");
-//        verifySponsors(orig, mainSponsor, firstCoSpon, firstMultiSpon);
-//        // Add unpublished amend A
-//        processXmlFile(testXmlDir + "1975-01-02-00.00.00.000000_BILLTEXT_A1010101A.XML");
-//        verifySponsors(orig, mainSponsor, firstCoSpon, firstMultiSpon);
-//        verifySponsors(amdA, mainSponsor, firstCoSpon, firstMultiSpon);
-//        // Add second co/multi sponsors
-//        processXmlFile(testXmlDir + "1975-01-03-00.00.00.000000_LDSPON_A1010101.XML");
-//        final List<String> secondCoSpon = ImmutableList.<String>builder().addAll(firstCoSpon).add("COSPONTWO").build();
-//        final List<String> secondMultiSpon = ImmutableList.<String>builder().addAll(firstMultiSpon).add("MUSPONTWO").build();
-//        verifySponsors(orig, mainSponsor, secondCoSpon, secondMultiSpon);
-//        verifySponsors(amdA, mainSponsor, firstCoSpon, firstMultiSpon);
-//        // Make A active amendment
-//        processXmlFile(testXmlDir + "1975-01-04-00.00.00.000000_BILLSTAT_A1010101A.XML");
-//        verifySponsors(orig, mainSponsor, secondCoSpon, secondMultiSpon);
-//        verifySponsors(amdA, mainSponsor, secondCoSpon, secondMultiSpon);
-//        // Add third co/multi sponsors
-//        processXmlFile(testXmlDir + "1975-01-05-00.00.00.000000_LDSPON_A1010101A.XML");
-//        final List<String> thirdCoSpon = ImmutableList.<String>builder().addAll(secondCoSpon).add("COSPONTHREE").build();
-//        final List<String> thirdMultiSpon = ImmutableList.<String>builder().addAll(secondMultiSpon).add("MUSPONTHREE").build();
-//        verifySponsors(orig, mainSponsor, secondCoSpon, secondMultiSpon);
-//        verifySponsors(amdA, mainSponsor, thirdCoSpon, thirdMultiSpon);
-//        // Restore to original amend
-//        processXmlFile(testXmlDir + "1975-01-06-00.00.00.000000_BILLSTAT_A1010101.XML");
-//        verifySponsors(orig, mainSponsor, thirdCoSpon, thirdMultiSpon);
-//        verifySponsors(amdA, mainSponsor, thirdCoSpon, thirdMultiSpon);
-//    }
+    @Test
+    public void amendmentTransferTest() {
+        BaseBillId baseBillId = new BaseBillId("A10101", 1975);
+        BillId orig = baseBillId.withVersion(Version.ORIGINAL);
+        BillId amdA = baseBillId.withVersion(Version.A);
+        assertFalse("Test bill should not exist in db", doesBillExist(baseBillId));
+
+        final String testXmlDir = "processor/bill/sponsor/amend_transfer/";
+
+        // Initialize bill
+        processXmlFile(testXmlDir + "1975-01-01-00.00.00.000000_BILLSTAT_A10101.XML");
+        processXmlFile(testXmlDir + "1975-01-01-00.00.00.000000_LDSPON_A10101.XML");
+        final String mainSponsor = "MAINSPON";
+        final List<String> firstCoSpon = ImmutableList.of("COSPONONE");
+        final List<String> firstMultiSpon = ImmutableList.of("MUSPONONE");
+        verifySponsors(orig, mainSponsor, firstCoSpon, firstMultiSpon);
+        // Add unpublished amend A
+        processXmlFile(testXmlDir + "1975-01-02-00.00.00.000000_BILLTEXT_A10101A.XML");
+        verifySponsors(orig, mainSponsor, firstCoSpon, firstMultiSpon);
+        verifySponsors(amdA, mainSponsor, firstCoSpon, firstMultiSpon);
+        // Add second co/multi sponsors
+        processXmlFile(testXmlDir + "1975-01-03-00.00.00.000000_LDSPON_A10101.XML");
+        final List<String> secondCoSpon = ImmutableList.<String>builder().addAll(firstCoSpon).add("COSPONTWO").build();
+        final List<String> secondMultiSpon = ImmutableList.<String>builder().addAll(firstMultiSpon).add("MUSPONTWO").build();
+        verifySponsors(orig, mainSponsor, secondCoSpon, secondMultiSpon);
+        verifySponsors(amdA, mainSponsor, firstCoSpon, firstMultiSpon);
+        // Make A active amendment
+        processXmlFile(testXmlDir + "1975-01-04-00.00.00.000000_BILLSTAT_A10101A.XML");
+        verifySponsors(orig, mainSponsor, secondCoSpon, secondMultiSpon);
+        verifySponsors(amdA, mainSponsor, secondCoSpon, secondMultiSpon);
+        // Add third co/multi sponsors
+        processXmlFile(testXmlDir + "1975-01-05-00.00.00.000000_LDSPON_A10101A.XML");
+        final List<String> thirdCoSpon = ImmutableList.<String>builder().addAll(secondCoSpon).add("COSPONTHREE").build();
+        final List<String> thirdMultiSpon = ImmutableList.<String>builder().addAll(secondMultiSpon).add("MUSPONTHREE").build();
+        verifySponsors(orig, mainSponsor, secondCoSpon, secondMultiSpon);
+        verifySponsors(amdA, mainSponsor, thirdCoSpon, thirdMultiSpon);
+        // Restore to original amend
+        processXmlFile(testXmlDir + "1975-01-06-00.00.00.000000_BILLSTAT_A10101.XML");
+        verifySponsors(orig, mainSponsor, thirdCoSpon, thirdMultiSpon);
+        verifySponsors(amdA, mainSponsor, thirdCoSpon, thirdMultiSpon);
+    }
 
     /**
      * This method is responsible checking each segment of the bill sponsor section. and checks if it asserts equals.
