@@ -158,6 +158,25 @@ public class XmlLDSponProcessorIT extends BaseXmlProcessorTest {
         verifySponsors(amdA, mainSponsor, thirdCoSpon, thirdMultiSpon);
     }
 
+    @Test
+    public void emptyComTest() {
+        final BillId billId = new BillId("S99999", 2017);
+        assertFalse("Test bill should not exist in db", doesBillExist(billId));
+        final String testXmlDir = "processor/bill/sponsor/empty_com/";
+        final String validSponXML = testXmlDir + "2017-02-09-00.00.00.000000_LDSPON_S99999.XML";
+        final String emptyComXml = testXmlDir + "2017-02-09-01.00.00.000000_LDSPON_S99999.XML";
+
+        processXmlFile(validSponXML);
+        verifySponsors(billId, "TESTSPON AB", true, false,
+                Collections.emptyList(), Collections.emptyList());
+
+        processXmlFile(emptyComXml);
+        verifySponsors(billId, null, true, false,
+                Collections.emptyList(), Collections.emptyList());
+    }
+
+    /* --- Internal Methods --- */
+
     /**
      * This method is responsible checking each segment of the bill sponsor section. and checks if it asserts equals.
      *
