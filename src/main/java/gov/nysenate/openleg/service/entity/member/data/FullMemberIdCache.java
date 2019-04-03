@@ -5,11 +5,13 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.member.data.MemberDao;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.entity.FullMember;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.Cache;
@@ -21,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.SimpleKey;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +31,7 @@ import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -133,5 +137,36 @@ public class FullMemberIdCache implements CachingService<Integer> {
                 .values().stream()
                 .map(FullMember::new)
                 .collect(Collectors.toList());
+    }
+
+
+
+    //CachedMemberService Methods
+
+    public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
+        if (memberCache.isKeyInCache(memberId)) {
+
+            Optional<FullMember> fullMemberOptional = Optional.ofNullable((FullMember)
+                    memberCache.get(memberId).getObjectValue());
+            if (fullMemberOptional.isPresent()) {
+                FullMember fullMember = fullMemberOptional.get();
+                Optional<SessionMember> sessionMemberOptional = fullMember.getSessionMemberForYear(sessionYear);
+                if (sessionMemberOptional.isPresent()) {
+                    return sessionMemberOptional.get();
+                }
+            }
+        }
+        return null;
+    }
+
+    public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
+        if (memberCache.isKeyInCache(memberId)) {
+
+            Optional<FullMember> fullMemberOptional = Optional.ofNullable((FullMember) memberCache.get(memberId).getObjectValue());
+            if (fullMemberOptional.isPresent()) {
+                return fullMemberOptional.get();
+            }
+        }
+        return null;
     }
 }

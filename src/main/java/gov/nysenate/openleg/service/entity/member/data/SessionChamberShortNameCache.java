@@ -11,6 +11,7 @@ import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.Cache;
@@ -22,12 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.SimpleKey;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class SessionChamberShortNameCache implements CachingService<String> {
@@ -132,5 +135,23 @@ public class SessionChamberShortNameCache implements CachingService<String> {
 
     public Cache getCache() {
         return memberCache;
+    }
+
+
+
+    //CachedMemberService Methods
+
+    public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
+        if (lbdcShortName == null || chamber == null) {
+            throw new IllegalArgumentException("Shortname and/or chamber cannot be null.");
+        }
+        SimpleKey key = new SimpleKey(genCacheKey(lbdcShortName, sessionYear, chamber));
+        if (memberCache.isKeyInCache(key)) {
+            Optional<SessionMember> sessionMemberOptional = Optional.ofNullable((SessionMember) memberCache.get(key).getObjectValue());
+            if (sessionMemberOptional.isPresent()) {
+                return sessionMemberOptional.get();
+            }
+        }
+        return null;
     }
 }

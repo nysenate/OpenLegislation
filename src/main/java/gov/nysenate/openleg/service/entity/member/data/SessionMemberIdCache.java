@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.Cache;
@@ -20,12 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.SimpleKey;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class SessionMemberIdCache implements CachingService<Integer> {
@@ -115,6 +118,21 @@ public class SessionMemberIdCache implements CachingService<Integer> {
 
     public Cache getCache() {
         return memberCache;
+    }
+
+
+
+    //CachedMemberService Methods
+
+    public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
+        if (memberCache.isKeyInCache(sessionMemberId)) {
+            Optional<SessionMember> sessionMemberIdOptional = Optional.ofNullable((SessionMember)
+                    memberCache.get(sessionMemberId).getObjectValue());
+            if (sessionMemberIdOptional.isPresent()) {
+                return sessionMemberIdOptional.get();
+            }
+        }
+        return null;
     }
 
 }
