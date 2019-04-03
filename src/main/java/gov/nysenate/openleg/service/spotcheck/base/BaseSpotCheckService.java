@@ -1,9 +1,15 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
+import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
+import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.service.entity.member.data.MemberService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,8 +22,11 @@ import java.util.stream.Stream;
 public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceType>
         implements SpotCheckService<ContentKey, ContentType, ReferenceType> {
 
+    @Autowired
+    private MemberService memberService;
+
     protected void checkString(String content, String reference,
-                                    SpotCheckObservation<ContentKey> observation, SpotCheckMismatchType mismatchType) {
+                               SpotCheckObservation<ContentKey> observation, SpotCheckMismatchType mismatchType) {
         // Ensure that the mismatch can be reported in the observation.
         observation.checkReportable(mismatchType);
 
@@ -70,6 +79,34 @@ public abstract class BaseSpotCheckService<ContentKey, ContentType, ReferenceTyp
                                        SpotCheckMismatchType mismatchType) {
         checkCollection(content, reference, observation, mismatchType, Objects::toString, " ");
     }
+
+    /**
+     * Given a shortname and session, return the primary shortname for that member/session
+     */
+    protected String getPrimaryShortname(SessionYear sessionYear, Chamber chamber, String shortname) {
+        if (StringUtils.isBlank(shortname)) {
+            return null;
+        }
+        try {
+            SessionMember member = memberService.getMemberByShortName(shortname, sessionYear, chamber);
+            return getPrimaryShortname(sessionYear, member.getMemberId());
+        } catch (MemberNotFoundEx ex) {
+            return "<unknown shortname: " + sessionYear + " " + chamber + " " + shortname + ">";
+        }
+    }
+
+    /**
+     * Get the primary shortname of the given member for the given session
+     */
+    protected String getPrimaryShortname(SessionYear sessionYear, int memberId) {
+        try {
+            SessionMember sessionMember = memberService.getMemberById(memberId, sessionYear);
+            return sessionMember.getLbdcShortName();
+        } catch (MemberNotFoundEx ex) {
+            return "<invalid session/memberId: " + sessionYear + "/" + memberId + ">";
+        }
+    }
+
 
     /* --- Internal Methods --- */
 

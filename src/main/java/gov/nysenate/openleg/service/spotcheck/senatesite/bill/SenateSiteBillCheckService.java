@@ -224,32 +224,6 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         checkObject(contentStatusDate, reference.getLastStatusDate(), observation, BILL_LAST_STATUS_DATE);
     }
 
-    /**
-     * Given a shortname and session, return the primary shortname for that member/session
-     */
-    private String getPrimaryShortname(SessionYear sessionYear, Chamber chamber, String shortname) {
-        if (StringUtils.isBlank(shortname)) {
-            return null;
-        }
-        try {
-            SessionMember member = memberService.getMemberByShortName(shortname, sessionYear, chamber);
-            return getPrimaryShortname(sessionYear, member.getMemberId());
-        } catch (MemberNotFoundEx ex) {
-            return "<unknown shortname: " + sessionYear + " " + chamber + " " + shortname + ">";
-        }
-    }
-
-    /**
-     * Get the primary shortname of the given member for the given session
-     */
-    private String getPrimaryShortname(SessionYear sessionYear, int memberId) {
-        try {
-            SessionMember sessionMember = memberService.getMemberById(memberId, sessionYear);
-            return sessionMember.getLbdcShortName();
-        } catch (MemberNotFoundEx ex) {
-            return "<invalid session/memberId: " + sessionYear + "/" + memberId + ">";
-        }
-    }
 
     private void checkSponsor(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
         SessionYear session = observation.getKey().getSession();
