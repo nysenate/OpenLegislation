@@ -21,7 +21,8 @@ public class SenateSiteBillDumpTest extends BaseTests {
     private static final Logger logger = LoggerFactory.getLogger(SenateSiteBillDumpTest.class);
 
     @Autowired SenateSiteDao senateSiteDao;
-    @Autowired SenateSiteBillJsonParser billJsonParser;
+    @Autowired
+    SenateSiteBillJsonParser billJsonParser;
 
     @Test
     public void parseDumps() throws Exception {

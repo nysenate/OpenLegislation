@@ -1,27 +1,18 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.calendar;
 
-import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
-import gov.nysenate.openleg.dao.calendar.data.CalendarUpdatesDao;
 import gov.nysenate.openleg.dao.spotcheck.CalendarEntryListIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
-import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
-import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.calendar.SenateSiteCalendar;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import gov.nysenate.openleg.service.spotcheck.senatesite.base.BaseSenateSiteReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -35,14 +26,10 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.SENATE_SITE_
  * Generates calendar spotcheck reports based on data from NYSenate.gov
  */
 @Service
-public class SenateSiteCalendarReportService extends BaseSpotCheckReportService<CalendarEntryListId> {
+public class SenateSiteCalendarReportService extends BaseSenateSiteReportService<CalendarEntryListId> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SenateSiteCalendarReportService.class);
-
-    @Autowired private SenateSiteDao senateSiteDao;
     @Autowired private SenateSiteCalendarCheckService senateSiteCalendarCheckService;
     @Autowired private CalendarJsonParser calendarJsonParser;
-    @Autowired private CalendarUpdatesDao calendarUpdatesDao;
     @Autowired private CalendarDataService calendarDataService;
     @Autowired private CalendarEntryListIdSpotCheckReportDao calendarEntryListIdSpotCheckReportDao;
 
@@ -52,28 +39,14 @@ public class SenateSiteCalendarReportService extends BaseSpotCheckReportService<
     }
 
     @Override
-    public SpotCheckReport<CalendarEntryListId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
-        SenateSiteDump calendarDump = getMostRecentDump();
-        SenateSiteDumpId dumpId = calendarDump.getDumpId();
-        SpotCheckReportId reportId = new SpotCheckReportId(SENATE_SITE_CALENDAR, dumpId.getDumpTime(), LocalDateTime.now());
-        SpotCheckReport<CalendarEntryListId> report = new SpotCheckReport<>(reportId);
-        report.setNotes(dumpId.getNotes());
-        try {
+    protected void checkDump(SenateSiteDump dump, SpotCheckReport<CalendarEntryListId> report) {
+        //Get openleg calendars for session
+        List<Calendar> openlegCalendars = calendarDataService.getCalendars(dump.getDumpId().getYear(), ASC, ALL);
 
-            //Get openleg calendars for session
-            List<Calendar> openlegCalendars = calendarDataService.getCalendars(dumpId.getYear(), ASC, ALL);
+        // Parse senate site calendars from dump
+        List<SenateSiteCalendar> senSiteCalendars = calendarJsonParser.parseCalendars(dump);
 
-            // Parse senate site calendars from dump
-            List<SenateSiteCalendar> senSiteCalendars = calendarJsonParser.parseCalendars(calendarDump);
-
-            checkCalendars(report, openlegCalendars, senSiteCalendars);
-
-            logger.info("done: {} mismatches", report.getOpenMismatchCount(false));
-        } finally {
-            logger.info("archiving calendar dump...");
-            senateSiteDao.setProcessed(calendarDump);
-        }
-        return report;
+        checkCalendars(report, openlegCalendars, senSiteCalendars);
     }
 
     @Override
@@ -114,12 +87,5 @@ public class SenateSiteCalendarReportService extends BaseSpotCheckReportService<
 
         // Add observed data missing mismatches for all remaining senate site calendars
         senSiteCalMap.keySet().forEach(report::addObservedDataMissingObs);
-    }
-
-    private SenateSiteDump getMostRecentDump() throws IOException, ReferenceDataNotFoundEx {
-        return senateSiteDao.getPendingDumps(SENATE_SITE_CALENDAR).stream()
-                .filter(SenateSiteDump::isComplete)
-                .max(SenateSiteDump::compareTo)
-                .orElseThrow(() -> new ReferenceDataNotFoundEx("Found no full senate site calendar dumps"));
     }
 }

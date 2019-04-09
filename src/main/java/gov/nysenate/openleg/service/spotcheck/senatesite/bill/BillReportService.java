@@ -3,32 +3,29 @@ package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.bill.reference.senatesite.SenateSiteDao;
 import gov.nysenate.openleg.dao.spotcheck.BillIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillId;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
 import gov.nysenate.openleg.service.spotcheck.base.SpotCheckException;
+import gov.nysenate.openleg.service.spotcheck.senatesite.base.BaseSenateSiteReportService;
 import gov.nysenate.openleg.util.pipeline.Pipeline;
 import gov.nysenate.openleg.util.pipeline.PipelineFactory;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -37,27 +34,23 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 @Service
-public class BillReportService extends BaseSpotCheckReportService<BillId> {
-
-    private static final Logger logger = LoggerFactory.getLogger(BillReportService.class);
+public class BillReportService extends BaseSenateSiteReportService<BillId> {
 
     private final Environment env;
     private final PipelineFactory pipelineFactory;
     private final BillIdSpotCheckReportDao billReportDao;
-    private final SenateSiteDao senateSiteDao;
     private final SenateSiteBillJsonParser billJsonParser;
     private final BillDataService billDataService;
     private final SenateSiteBillCheckService billCheckService;
 
     @Autowired
     public BillReportService(Environment env, PipelineFactory pipelineFactory,
-                             BillIdSpotCheckReportDao billReportDao, SenateSiteDao senateSiteDao,
+                             BillIdSpotCheckReportDao billReportDao,
                              SenateSiteBillJsonParser billJsonParser, BillDataService billDataService,
                              SenateSiteBillCheckService billCheckService) {
         this.env = env;
         this.pipelineFactory = pipelineFactory;
         this.billReportDao = billReportDao;
-        this.senateSiteDao = senateSiteDao;
         this.billJsonParser = billJsonParser;
         this.billDataService = billDataService;
         this.billCheckService = billCheckService;
@@ -73,28 +66,11 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         return SpotCheckRefType.SENATE_SITE_BILLS;
     }
 
-    @Override
-    public synchronized SpotCheckReport<BillId> generateReport(LocalDateTime start, LocalDateTime end) throws Exception {
-        SenateSiteDump billDump = getMostRecentDump();
-        SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.SENATE_SITE_BILLS,
-                billDump.getDumpId().getDumpTime(), LocalDateTime.now());
-        SpotCheckReport<BillId> report = new SpotCheckReport<>(reportId);
-        report.setNotes(billDump.getDumpId().getNotes());
-        try {
-            generateReport(billDump, report);
-        } finally {
-            logger.info("archiving bill dump...");
-            senateSiteDao.setProcessed(billDump);
-        }
-        return report;
-    }
-
-    /* --- Internal Methods --- */
-
     /**
      * Populate report with observations given senate site dump
      */
-    private void generateReport(SenateSiteDump billDump, SpotCheckReport<BillId> report) {
+    @Override
+    protected void checkDump(SenateSiteDump billDump, SpotCheckReport<BillId> report) {
 
         // Set up a pipeline: dump parsing -> bill retrieval -> checking
 
@@ -208,13 +184,6 @@ public class BillReportService extends BaseSpotCheckReportService<BillId> {
         public Set<BaseBillId> getUncheckedBaseBillIds() {
             return uncheckedBaseBillIds;
         }
-    }
-
-    private SenateSiteDump getMostRecentDump() throws IOException, ReferenceDataNotFoundEx {
-        return senateSiteDao.getPendingDumps(SpotCheckRefType.SENATE_SITE_BILLS).stream()
-                .filter(SenateSiteDump::isComplete)
-                .max(SenateSiteDump::compareTo)
-                .orElseThrow(() -> new ReferenceDataNotFoundEx("Found no full senate site bill dumps"));
     }
 
     /**

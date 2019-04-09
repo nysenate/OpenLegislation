@@ -21,7 +21,7 @@ import java.util.function.Function;
 /**
  * Created by PKS on 2/25/16.
  */
-public class JsonParser {
+public abstract class SenateSiteJsonParser {
 
     private static final String LANGUAGE_NONE = "und";
 
@@ -40,18 +40,22 @@ public class JsonParser {
         });
     }
 
-    protected String getValue(JsonNode parentNode, String fieldName) {
+    protected String getValue(JsonNode parentNode, String fieldName, String valueFieldName) {
         JsonNode undNode = parentNode.path(fieldName)
                 .path(LANGUAGE_NONE);
         if (!undNode.isArray() || !undNode.elements().hasNext()) {
             return null;
         }
         JsonNode valueNode = undNode.elements().next()
-                .path("value");
+                .path(valueFieldName);
         if (valueNode.isTextual() || valueNode.isNull()) {
             return valueNode.textValue();
         }
         return null;
+    }
+
+    protected String getValue(JsonNode parentNode, String fieldName) {
+        return getValue(parentNode, fieldName, "value");
     }
 
     protected int getIntValue(JsonNode parentNode, String fieldName) {
