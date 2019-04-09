@@ -9,19 +9,16 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeReference;
 import gov.nysenate.openleg.model.spotcheck.billscrape.BillScrapeVote;
-import gov.nysenate.openleg.service.bill.data.BillDataService;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
 import gov.nysenate.openleg.util.BillTextUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,18 +31,10 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
  * Created by kyle on 2/19/15.
  */
 @Service
-public class BillScrapeCheckService extends BaseSpotCheckService<BaseBillId, Bill, BillScrapeReference> {
-    private static final Logger logger = LogManager.getLogger(BillScrapeCheckService.class);
+public class BillScrapeCheckService implements SpotCheckService<BaseBillId, Bill, BillScrapeReference> {
 
-    @Autowired
-    BillDataService billDataService;
-    @Autowired
-    private BillScrapeVoteMismatchService voteMismatchService;
-
-    @PostConstruct
-    public void init(){
-
-    }
+    @Autowired private SpotCheckUtils spotCheckUtils;
+    @Autowired private BillScrapeVoteMismatchService voteMismatchService;
 
     @Override
     public SpotCheckObservation<BaseBillId> check(Bill bill, BillScrapeReference reference) {
@@ -116,7 +105,7 @@ public class BillScrapeCheckService extends BaseSpotCheckService<BaseBillId, Bil
         ensureTextFormatExists(amend, HTML);
         String contentHtmlText = cleanHtml(Optional.ofNullable(amend.getFullText(HTML)).orElse(""));
         String refHtmlText = cleanHtml(reference.getHtmlText());
-        checkString(contentHtmlText, refHtmlText, obs, BILL_HTML_TEXT);
+        spotCheckUtils.checkString(contentHtmlText, refHtmlText, obs, BILL_HTML_TEXT);
     }
 
     /**

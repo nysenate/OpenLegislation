@@ -9,14 +9,18 @@ import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
-import gov.nysenate.openleg.model.entity.*;
+import gov.nysenate.openleg.model.entity.Chamber;
+import gov.nysenate.openleg.model.entity.CommitteeId;
+import gov.nysenate.openleg.model.entity.FullMember;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBill;
 import gov.nysenate.openleg.model.spotcheck.senatesite.bill.SenateSiteBillVote;
 import gov.nysenate.openleg.service.bill.data.BillAmendNotFoundEx;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,13 +37,15 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Service
-public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bill, SenateSiteBill> {
+public class SenateSiteBillCheckService implements SpotCheckService<BillId, Bill, SenateSiteBill> {
 
+    private final SpotCheckUtils spotCheckUtils;
     private final MemberService memberService;
 
     @Autowired
-    public SenateSiteBillCheckService(MemberService memberService) {
+    public SenateSiteBillCheckService(MemberService memberService, SpotCheckUtils spotCheckUtils) {
         this.memberService = memberService;
+        this.spotCheckUtils = spotCheckUtils;
     }
 
     /**
@@ -107,16 +113,16 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
     }
 
     private void checkBasePrintNo(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkString(content.getBasePrintNo(), reference.getBasePrintNo(), observation, BILL_BASE_PRINT_NO);
+        spotCheckUtils.checkString(content.getBasePrintNo(), reference.getBasePrintNo(), observation, BILL_BASE_PRINT_NO);
     }
 
     private void checkChamber(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
         Chamber contentChamber = new BillId(content.getPrintNo(), content.getSession()).getChamber();
-        checkObject(contentChamber, StringUtils.upperCase(reference.getChamber()), observation, BILL_CHAMBER);
+        spotCheckUtils.checkObject(contentChamber, StringUtils.upperCase(reference.getChamber()), observation, BILL_CHAMBER);
     }
 
     private void checkActiveVersion(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkObject(content.getActiveVersion(), StringUtils.upperCase(reference.getActiveVersion()),
+        spotCheckUtils.checkObject(content.getActiveVersion(), StringUtils.upperCase(reference.getActiveVersion()),
                 observation, BILL_ACTIVE_AMENDMENT);
     }
 
@@ -128,7 +134,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
                 .map(BillIdView::toBillId)
                 .collect(Collectors.toCollection(TreeSet::new));
         TreeSet<BillId> refSameAs = new TreeSet<>(reference.getSameAs());
-        checkCollection(olSameAs, refSameAs, observation, BILL_SAME_AS);
+        spotCheckUtils.checkCollection(olSameAs, refSameAs, observation, BILL_SAME_AS);
     }
 
     private void checkPrevVersions(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
@@ -139,7 +145,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
                 .map(BillIdView::toBillId)
                 .collect(Collectors.toCollection(TreeSet::new));
         TreeSet<BillId> refPrevVers = new TreeSet<>(reference.getPreviousVersions());
-        checkCollection(olPrevVers, refPrevVers, observation, BILL_PREVIOUS_VERSIONS);
+        spotCheckUtils.checkCollection(olPrevVers, refPrevVers, observation, BILL_PREVIOUS_VERSIONS);
     }
 
     private void checkIsAmended(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
@@ -148,24 +154,24 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
                 .collect(toList());
         boolean olIsAmended = published.size() > 1;
         boolean refIsAmended = reference.isAmended();
-        checkBoolean(olIsAmended, refIsAmended, "Amended", observation, BILL_IS_AMENDED);
+        spotCheckUtils.checkBoolean(olIsAmended, refIsAmended, "Amended", observation, BILL_IS_AMENDED);
     }
 
     private void checkHasSameAs(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
         boolean contentHasSameAs = Optional.ofNullable(content.getSameAs())
                 .map(ListView::getSize)
                 .orElse(0) > 0;
-        checkBoolean(contentHasSameAs, reference.isHasSameAs(), "Has SameAs", observation, BILL_HAS_SAME_AS);
+        spotCheckUtils.checkBoolean(contentHasSameAs, reference.isHasSameAs(), "Has SameAs", observation, BILL_HAS_SAME_AS);
     }
 
     private void checkPublishDate(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
         LocalDateTime olPubDateTime = content.getPublishedDateTime().withNano(0);
         LocalDateTime refPubDateTime = reference.getPublishDate();
-        checkObject(olPubDateTime, refPubDateTime, observation, BILL_PUBLISH_DATE);
+        spotCheckUtils.checkObject(olPubDateTime, refPubDateTime, observation, BILL_PUBLISH_DATE);
     }
 
     private String billActionToString(BillAction action) {
-        return String.valueOf(action.getSequenceNo()) + " " +
+        return action.getSequenceNo() + " " +
                 // Only check base print number, don't check the amendment version associated with the action.
                 // Public website models this differently causing amendment errors we are not interested in.
                 action.getBillId().getBasePrintNo() + " " +
@@ -181,12 +187,12 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
                 .stream()
                 .map(BillActionView::toBillAction)
                 .collect(toList());
-        checkCollection(contentActions, reference.getActions(), observation, BILL_ACTION,
+        spotCheckUtils.checkCollection(contentActions, reference.getActions(), observation, BILL_ACTION,
                 this::billActionToString, "\n");
     }
 
     private String billStatusToString(BillStatusView status) {
-        return String.valueOf(status.getBillCalNo()) + " " +
+        return status.getBillCalNo() + " " +
                 status.getActionDate() + " " +
                 status.getCommitteeName() + " " +
                 status.getStatusType() + " " +
@@ -197,7 +203,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         List<BillStatusView> contentMilestones = Optional.ofNullable(content.getMilestones())
                 .map(ListView::getItems)
                 .orElse(ImmutableList.of());
-        checkCollection(contentMilestones, reference.getMilestones(), observation, BILL_MILESTONES,
+        spotCheckUtils.checkCollection(contentMilestones, reference.getMilestones(), observation, BILL_MILESTONES,
                 this::billStatusToString, "\n");
     }
 
@@ -205,14 +211,14 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         String contentStatus = Optional.ofNullable(content.getStatus())
                 .map(BillStatusView::getStatusType)
                 .orElse(null);
-        checkObject(contentStatus, reference.getLastStatus(), observation, BILL_LAST_STATUS);
+        spotCheckUtils.checkObject(contentStatus, reference.getLastStatus(), observation, BILL_LAST_STATUS);
     }
 
     private void checkLastStatusComm(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
         String contentLastStatusComm = Optional.ofNullable(content.getStatus())
                 .map(BillStatusView::getCommitteeName)
                 .orElse(null);
-        checkStringUpper(contentLastStatusComm, reference.getLatestStatusCommittee(),
+        spotCheckUtils.checkStringUpper(contentLastStatusComm, reference.getLatestStatusCommittee(),
                 observation, BILL_LAST_STATUS_COMM);
     }
 
@@ -221,7 +227,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
                 .map(BillStatusView::getActionDate)
                 .map(LocalDate::atStartOfDay)
                 .orElse(null);
-        checkObject(contentStatusDate, reference.getLastStatusDate(), observation, BILL_LAST_STATUS_DATE);
+        spotCheckUtils.checkObject(contentStatusDate, reference.getLastStatusDate(), observation, BILL_LAST_STATUS_DATE);
     }
 
 
@@ -230,10 +236,10 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         Chamber chamber = observation.getKey().getChamber();
         String contentSponsor = Optional.ofNullable(content.getSponsor())
                 .map(SponsorView::getMember)
-                .map(m -> getPrimaryShortname(session, m.getMemberId()))
+                .map(m -> spotCheckUtils.getPrimaryShortname(session, m.getMemberId()))
                 .orElse(null);
-        String refSponsor = getPrimaryShortname(session, chamber, reference.getSponsor());
-        checkString(contentSponsor, refSponsor, observation, BILL_SPONSOR);
+        String refSponsor = spotCheckUtils.getPrimaryShortname(session, chamber, reference.getSponsor());
+        spotCheckUtils.checkString(contentSponsor, refSponsor, observation, BILL_SPONSOR);
     }
 
     private List<String> extractShortnames(SessionYear session, ListView<MemberView> sponsorList) {
@@ -241,7 +247,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
                 .map(ListView::getItems)
                 .orElse(ImmutableList.of())
                 .stream()
-                .map(mv -> getPrimaryShortname(session, mv.getMemberId()))
+                .map(mv -> spotCheckUtils.getPrimaryShortname(session, mv.getMemberId()))
                 .collect(toList());
     }
 
@@ -250,9 +256,9 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         Chamber chamber = observation.getKey().getChamber();
         List<String> contentCoSponsors = extractShortnames(session, content.getCoSponsors());
         List<String> refCoSponsors = reference.getCoSponsors().stream()
-                .map(sn -> getPrimaryShortname(session, chamber, sn))
+                .map(sn -> spotCheckUtils.getPrimaryShortname(session, chamber, sn))
                 .collect(toList());
-        checkCollection(contentCoSponsors, refCoSponsors, observation, BILL_COSPONSOR);
+        spotCheckUtils.checkCollection(contentCoSponsors, refCoSponsors, observation, BILL_COSPONSOR);
     }
 
     private void checkMultiSponsors(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
@@ -260,33 +266,33 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         Chamber chamber = observation.getKey().getChamber();
         List<String> contentMultiSponsors = extractShortnames(session, content.getMultiSponsors());
         List<String> refMultiSponsors = reference.getMultiSponsors().stream()
-                .map(sn -> getPrimaryShortname(session, chamber, sn))
+                .map(sn -> spotCheckUtils.getPrimaryShortname(session, chamber, sn))
                 .collect(toList());
-        checkCollection(contentMultiSponsors, refMultiSponsors, observation, BILL_MULTISPONSOR);
+        spotCheckUtils.checkCollection(contentMultiSponsors, refMultiSponsors, observation, BILL_MULTISPONSOR);
     }
 
     private void checkTitle(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkString(content.getTitle(), reference.getTitle(), observation, BILL_TITLE);
+        spotCheckUtils.checkString(content.getTitle(), reference.getTitle(), observation, BILL_TITLE);
     }
 
     private void checkSummary(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkString(content.getSummary(), reference.getSummary(), observation, BILL_SUMMARY);
+        spotCheckUtils.checkString(content.getSummary(), reference.getSummary(), observation, BILL_SUMMARY);
     }
 
     private void checkMemo(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkString(content.getMemo(), reference.getMemo(), observation, BILL_MEMO);
+        spotCheckUtils.checkString(content.getMemo(), reference.getMemo(), observation, BILL_MEMO);
     }
 
     private void checkText(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkString(content.getFullText(), reference.getText(), observation, BILL_TEXT);
+        spotCheckUtils.checkString(content.getFullText(), reference.getText(), observation, BILL_TEXT);
     }
 
     private void checkLawCode(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkString(content.getLawCode(), reference.getLawCode(), observation, BILL_LAW_CODE);
+        spotCheckUtils.checkString(content.getLawCode(), reference.getLawCode(), observation, BILL_LAW_CODE);
     }
 
     private void checkLawSection(BillAmendmentView content, SenateSiteBill reference, SpotCheckObservation<BillId> observation) {
-        checkString(content.getLawSection(), reference.getLawSection(), observation, BILL_LAW_SECTION);
+        spotCheckUtils.checkString(content.getLawSection(), reference.getLawSection(), observation, BILL_LAW_SECTION);
     }
 
     private void checkVotes(BillView content, SenateSiteBill reference, SpotCheckObservation<BillId> obs) {
@@ -301,7 +307,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
         Set<BillVoteId> contentVoteInfos = contentVoteMap.keySet();
         Set<BillVoteId> refVoteInfos = refVoteMap.keySet();
 
-        checkCollection(contentVoteInfos, refVoteInfos, obs, BILL_VOTE_INFO,
+        spotCheckUtils.checkCollection(contentVoteInfos, refVoteInfos, obs, BILL_VOTE_INFO,
                 this::getVoteInfoString, "\n");
 
         Set<BillVoteId> intersection = Sets.intersection(contentVoteMap.keySet(), refVoteMap.keySet());
@@ -323,7 +329,7 @@ public class SenateSiteBillCheckService extends BaseSpotCheckService<BillId, Bil
                 .map(refVoteMap::get)
                 .collect(toList());
 
-        checkCollection(checkedContentVotes, checkedRefVotes, obs, BILL_VOTE_ROLL, this::getVoteString, "\n");
+        spotCheckUtils.checkCollection(checkedContentVotes, checkedRefVotes, obs, BILL_VOTE_ROLL, this::getVoteString, "\n");
     }
 
     /**

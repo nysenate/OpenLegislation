@@ -13,7 +13,8 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.calendar.SenateSiteCalendar;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +30,9 @@ import java.util.stream.IntStream;
  */
 @Service
 public class SenateSiteCalendarCheckService
-        extends BaseSpotCheckService<CalendarEntryListId, Calendar, SenateSiteCalendar> {
+        implements SpotCheckService<CalendarEntryListId, Calendar, SenateSiteCalendar> {
 
+    @Autowired private SpotCheckUtils spotCheckUtils;
     @Autowired private BillDataService billDataService;
 
     @Override
@@ -53,7 +55,7 @@ public class SenateSiteCalendarCheckService
 
     private void checkCalendarId(Calendar content, SenateSiteCalendar reference,
                                  SpotCheckObservation<CalendarEntryListId> observation) {
-        checkString(content.getId().toString(), reference.getCalendarId().toString(),
+        spotCheckUtils.checkString(content.getId().toString(), reference.getCalendarId().toString(),
                 observation, SpotCheckMismatchType.CALENDAR_ID);
     }
 
@@ -64,7 +66,7 @@ public class SenateSiteCalendarCheckService
                 .getEntries()
                 .getItems().asList();
         List<CalendarEntryView> refCalEntryViews = getCalEntryViews(reference);
-        checkCollection(calendarEntryViews, refCalEntryViews,
+        spotCheckUtils.checkCollection(calendarEntryViews, refCalEntryViews,
                 observation, SpotCheckMismatchType.ACTIVE_LIST_ENTRY, this::calEntryViewDiffString, "\n");
     }
 
@@ -79,7 +81,7 @@ public class SenateSiteCalendarCheckService
                 .collect(Collectors.toList());
 
         List<CalendarEntryView> refcalendarEntryViews = getCalEntryViews(reference);
-        checkCollection(calendarEntryViews, refcalendarEntryViews,
+        spotCheckUtils.checkCollection(calendarEntryViews, refcalendarEntryViews,
                 observation, SpotCheckMismatchType.SUPPLEMENTAL_ENTRY,
                 this::calEntryViewDiffString, "\n");
     }
@@ -92,7 +94,7 @@ public class SenateSiteCalendarCheckService
                 .map(calendarSupEntryView -> (CalendarEntryView) calendarSupEntryView).collect(Collectors.toList());
 
         List<CalendarEntryView> refcalendarEntryViews = getCalEntryViews(reference);
-        checkCollection(calendarSupEntryViews, refcalendarEntryViews,
+        spotCheckUtils.checkCollection(calendarSupEntryViews, refcalendarEntryViews,
                 observation, SpotCheckMismatchType.FLOOR_ENTRY,
                 this::calEntryViewDiffString, "\n");
     }
@@ -116,10 +118,10 @@ public class SenateSiteCalendarCheckService
     }
 
     private String calEntryViewDiffString(CalendarEntryView entry) {
-        return String.valueOf(entry.getBillCalNo()) + " " +
+        return entry.getBillCalNo() + " " +
                 (entry.getBasePrintNo() == null ? "" : entry.getBasePrintNo()) +
                 (entry.getSelectedVersion() == null ? "" : entry.getSelectedVersion()) +
-                "-" + String.valueOf(entry.getSession());
+                "-" + entry.getSession();
     }
 
 }

@@ -10,7 +10,9 @@ import gov.nysenate.openleg.model.bill.BillVote;
 import gov.nysenate.openleg.model.bill.BillVoteCode;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgenda;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,7 +24,9 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
  */
 @Service
 public class SenateSiteAgendaCheckService
-        extends BaseSpotCheckService<CommitteeAgendaAddendumId, Agenda, SenateSiteAgenda> {
+        implements SpotCheckService<CommitteeAgendaAddendumId, Agenda, SenateSiteAgenda> {
+
+    @Autowired private SpotCheckUtils spotCheckUtils;
 
     @Override
     public SpotCheckObservation<CommitteeAgendaAddendumId> check(Agenda content, SenateSiteAgenda reference) {
@@ -50,17 +54,17 @@ public class SenateSiteAgendaCheckService
 
     private void checkLocation(AgendaInfoCommittee content, SenateSiteAgenda reference,
                                SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(content.getLocation(), reference.getLocation(), observation, AGENDA_LOCATION);
+        spotCheckUtils.checkString(content.getLocation(), reference.getLocation(), observation, AGENDA_LOCATION);
     }
 
     private void checkNotes(AgendaInfoCommittee content, SenateSiteAgenda reference,
                                SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkString(content.getNotes(), reference.getNotes(), observation, AGENDA_NOTES);
+        spotCheckUtils.checkString(content.getNotes(), reference.getNotes(), observation, AGENDA_NOTES);
     }
 
     private void checkMeetingTime(AgendaInfoCommittee content, SenateSiteAgenda reference,
                             SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkObject(content.getMeetingDateTime(), reference.getMeetingDateTime(), observation, AGENDA_LOCATION);
+        spotCheckUtils.checkObject(content.getMeetingDateTime(), reference.getMeetingDateTime(), observation, AGENDA_LOCATION);
     }
 
     /**
@@ -83,7 +87,7 @@ public class SenateSiteAgendaCheckService
         Table<BillId, BillVoteCode, Integer> olVoteTable = getOpenlegVoteTable(openlegAgenda, openlegInfoAddendum);
         Table<BillId, BillVoteCode, Integer> referenceVoteTable = getSenateSiteVoteTable(reference);
 
-        checkObject(getVoteTableString(olVoteTable), getVoteTableString(referenceVoteTable), observation, AGENDA_BILLS);
+        spotCheckUtils.checkObject(getVoteTableString(olVoteTable), getVoteTableString(referenceVoteTable), observation, AGENDA_BILLS);
     }
 
     private static final ImmutableMap<BillVoteCode, Integer> emptyVoteCountMap = ImmutableMap.copyOf(

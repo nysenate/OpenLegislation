@@ -9,13 +9,15 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckMismatch;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import gov.nysenate.openleg.model.spotcheck.daybreak.DaybreakBill;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
 import gov.nysenate.openleg.util.BillTextUtils;
 import gov.nysenate.openleg.util.DateUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,8 +29,10 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 import static java.util.stream.Collectors.*;
 
 @Service("daybreak")
-public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill, DaybreakBill> {
+public class DaybreakCheckService implements SpotCheckService<BaseBillId, Bill, DaybreakBill> {
     private static final Logger logger = LoggerFactory.getLogger(DaybreakCheckService.class);
+
+    @Autowired private SpotCheckUtils spotCheckUtils;
 
     /* --- Implemented Methods --- */
 
@@ -134,19 +138,19 @@ public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill,
                 .map(BillAmendment::getMultiSponsors)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(muSpon -> getPrimaryShortname(session, chamber, muSpon.getLbdcShortName()))
+                .map(muSpon -> spotCheckUtils.getPrimaryShortname(session, chamber, muSpon.getLbdcShortName()))
                 .sorted()
                 .collect(Collectors.toList());
 
         List<String> refMultiSponsors = daybreakBill.getMultiSponsors().stream()
                 .map(this::cleanDaybreakShortname)
-                .map(muSpon -> getPrimaryShortname(session, chamber, muSpon))
+                .map(muSpon -> spotCheckUtils.getPrimaryShortname(session, chamber, muSpon))
                 .sorted()
                 .collect(toList());
 
         // Only check for mismatch if a daybreak multisponsor is set. Sometimes the daybreaks omit the multisponsor.
         if (!refMultiSponsors.isEmpty()) {
-            checkCollection(contentMultiSponsors, refMultiSponsors, obsrv, BILL_MULTISPONSOR, Function.identity(), "\n");
+            spotCheckUtils.checkCollection(contentMultiSponsors, refMultiSponsors, obsrv, BILL_MULTISPONSOR, Function.identity(), "\n");
         }
     }
 
@@ -164,19 +168,19 @@ public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill,
                 .map(BillAmendment::getCoSponsors)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(coSpon -> getPrimaryShortname(session, chamber, coSpon.getLbdcShortName()))
+                .map(coSpon -> spotCheckUtils.getPrimaryShortname(session, chamber, coSpon.getLbdcShortName()))
                 .sorted()
                 .collect(Collectors.toList());
 
         List<String> refCoSponsors = daybreakBill.getCosponsors().stream()
                 .map(this::cleanDaybreakShortname)
-                .map(coSpon -> getPrimaryShortname(session, chamber, coSpon))
+                .map(coSpon -> spotCheckUtils.getPrimaryShortname(session, chamber, coSpon))
                 .sorted()
                 .collect(toList());
 
         // Only check for mismatch if a daybreak cosponsor is set. Sometimes the daybreaks omit the cosponsor.
         if (!refCoSponsors.isEmpty()) {
-            checkCollection(contentCoSponsors, refCoSponsors, obsrv, BILL_COSPONSOR, Function.identity(), "\n");
+            spotCheckUtils.checkCollection(contentCoSponsors, refCoSponsors, obsrv, BILL_COSPONSOR, Function.identity(), "\n");
         }
     }
 
@@ -198,10 +202,10 @@ public class DaybreakCheckService extends BaseSpotCheckService<BaseBillId, Bill,
         SessionYear session = bill.getSession();
         Chamber chamber = bill.getChamber();
         String contentSponsor = Optional.ofNullable(bill.getSponsor())
-                .map(s -> getPrimaryShortname(session, chamber, s.toString()))
+                .map(s -> spotCheckUtils.getPrimaryShortname(session, chamber, s.toString()))
                 .orElse(null);
-        String refSponsor = getPrimaryShortname(session, chamber, daybreakBill.getSponsor());
-        checkString(contentSponsor, refSponsor, obsrv, BILL_SPONSOR);
+        String refSponsor = spotCheckUtils.getPrimaryShortname(session, chamber, daybreakBill.getSponsor());
+        spotCheckUtils.checkString(contentSponsor, refSponsor, obsrv, BILL_SPONSOR);
     }
 
     /**
