@@ -52,7 +52,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
             final String billhse = xmlHelper.getString("@billhse", billTextNode);
             final String billno = xmlHelper.getString("@billno", billTextNode);
             final String action = xmlHelper.getString("@action", billTextNode);
-            final String summary = xmlHelper.getNode("digestsummary/summary", doc) == null ? "" : xmlHelper.getNode("digestsummary/summary", doc).getTextContent().replaceAll("\n"," ").trim();
+            final String summary = xmlHelper.getNode("digestsummary/summary", doc) == null ? "" : xmlHelper.getNode("digestsummary/summary", doc).getTextContent().replaceAll("º","§").replaceAll("\n"," ").trim();
             final String amd = xmlHelper.getString("digestsummary/summaryamendment", doc);
             final Version version = Version.of(amd);
             final String law = xmlHelper.getString("law", billTextNode).replaceAll("Â", "¶").replaceAll("º","§").replaceAll("\n"," ").replaceAll("\t", " ").replaceAll(" +"," ").trim();
