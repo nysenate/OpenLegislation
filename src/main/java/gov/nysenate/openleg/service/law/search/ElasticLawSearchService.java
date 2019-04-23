@@ -65,7 +65,9 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
     public SearchResults<LawDocId> searchLawDocs(String query, String lawId, String sort, LimitOffset limOff) throws SearchException {
         QueryBuilder queryBuilder = QueryBuilders.queryStringQuery(query);
         if (lawId != null) {
-            queryBuilder = QueryBuilders.boolQuery().must(queryBuilder).filter(QueryBuilders.typeQuery(lawId));
+            queryBuilder = QueryBuilders.boolQuery()
+                    .must(queryBuilder)
+                    .filter(QueryBuilders.termQuery("lawId", lawId.toLowerCase()));
         }
         try {
             return lawSearchDao.searchLawDocs(queryBuilder, null, null,
