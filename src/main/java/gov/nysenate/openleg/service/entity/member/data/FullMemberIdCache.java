@@ -146,15 +146,10 @@ public class FullMemberIdCache implements CachingService<Integer> {
     public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
         if (memberCache.isKeyInCache(memberId)) {
 
-            Optional<FullMember> fullMemberOptional = Optional.ofNullable((FullMember)
-                    memberCache.get(memberId).getObjectValue());
-            if (fullMemberOptional.isPresent()) {
-                FullMember fullMember = fullMemberOptional.get();
-                Optional<SessionMember> sessionMemberOptional = fullMember.getSessionMemberForYear(sessionYear);
-                if (sessionMemberOptional.isPresent()) {
-                    return sessionMemberOptional.get();
-                }
-            }
+            return Optional.ofNullable((FullMember)
+                    memberCache.get(memberId).getObjectValue())
+                    .flatMap(fullMember -> fullMember.getSessionMemberForYear(sessionYear))
+                    .orElse(null);
         }
         return null;
     }
@@ -162,10 +157,9 @@ public class FullMemberIdCache implements CachingService<Integer> {
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
         if (memberCache.isKeyInCache(memberId)) {
 
-            Optional<FullMember> fullMemberOptional = Optional.ofNullable((FullMember) memberCache.get(memberId).getObjectValue());
-            if (fullMemberOptional.isPresent()) {
-                return fullMemberOptional.get();
-            }
+            return Optional.ofNullable((FullMember)
+                            memberCache.get(memberId).getObjectValue())
+                            .orElse(null);
         }
         return null;
     }

@@ -126,11 +126,8 @@ public class SessionMemberIdCache implements CachingService<Integer> {
 
     public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
         if (memberCache.isKeyInCache(sessionMemberId)) {
-            Optional<SessionMember> sessionMemberIdOptional = Optional.ofNullable((SessionMember)
-                    memberCache.get(sessionMemberId).getObjectValue());
-            if (sessionMemberIdOptional.isPresent()) {
-                return sessionMemberIdOptional.get();
-            }
+            return Optional.ofNullable((SessionMember)
+                    memberCache.get(sessionMemberId).getObjectValue()).orElse(null);
         }
         return null;
     }

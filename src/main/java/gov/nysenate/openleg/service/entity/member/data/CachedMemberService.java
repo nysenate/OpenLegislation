@@ -58,14 +58,9 @@ public class CachedMemberService implements MemberService
 
     /** --- MemberService implementation --- */
 
-    /** {@inheritDoc} */ //
+    /** {@inheritDoc} */
     @Override
     public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
-//        SimpleKey key = new SimpleKey(memberId);
-//        if (fullMemberIdCache.isKeyInCache(key)) {
-//            FullMember fullMember = (FullMember) fullMemberIdCache.getCache().get(key).getObjectValue();
-//            return fullMember.getSessionMemberForYear(sessionYear).get();
-//        }
         SessionMember sessionMember = fullMemberIdCache.getMemberById(memberId, sessionYear);
 
         if( sessionMember != null) {
@@ -73,19 +68,17 @@ public class CachedMemberService implements MemberService
         }
 
         try {
-            return memberDao.getMemberById(memberId, sessionYear);
+            SessionMember sessionMember1 = memberDao.getMemberById(memberId, sessionYear);
+            eventBus.post(new CacheWarmEvent(Collections.singleton(ContentCache.FULL_MEMBER)));
+            return sessionMember1;
         }
         catch (EmptyResultDataAccessException ex) {
             throw new MemberNotFoundEx(memberId, sessionYear);
         }
     }
 
-    @Override //
+    @Override
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
-//        SimpleKey key = new SimpleKey(memberId);
-//        if (fullMemberIdCache.isKeyInCache(key)) {
-//            return (FullMember) fullMemberIdCache.getCache().get(key).getObjectValue();
-//        }
         FullMember fullMember = fullMemberIdCache.getMemberById(memberId);
         if (fullMember != null) {
             return fullMember;
@@ -95,13 +88,9 @@ public class CachedMemberService implements MemberService
         return fullMember1;
     }
 
-    /** {@inheritDoc} */ //
+    /** {@inheritDoc} */
     @Override
     public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
-//        SimpleKey key = new SimpleKey(sessionMemberId);
-//        if (sessionMemberIdCache.isKeyInCache(key)) {
-//            return (SessionMember) sessionMemberIdCache.getCache().get(key).getObjectValue();
-//        }
         SessionMember sessionMember = sessionMemberIdCache.getMemberBySessionId(sessionMemberId);
         if (sessionMember != null) {
             return sessionMember;
@@ -116,16 +105,12 @@ public class CachedMemberService implements MemberService
         }
     }
 
-    /** {@inheritDoc} */ //
+    /** {@inheritDoc} */
     @Override
     public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
         if (lbdcShortName == null || chamber == null) {
             throw new IllegalArgumentException("Shortname and/or chamber cannot be null.");
         }
-//        SimpleKey key = new SimpleKey(sessionChamberShortNameCache.genCacheKey(lbdcShortName, sessionYear, chamber));
-//        if (sessionChamberShortNameCache.isKeyInCache(key)) {
-//            return (SessionMember) sessionChamberShortNameCache.getCache().get(key).getObjectValue();
-//        }
         SessionMember sessionMember = sessionChamberShortNameCache.getMemberByShortName(lbdcShortName,sessionYear,chamber);
         if (sessionMember != null) {
             return sessionMember;
@@ -154,7 +139,9 @@ public class CachedMemberService implements MemberService
             memberDao.updateMember(member);
             memberDao.updateSessionMember(member);
             eventBus.post(new UnverifiedMemberEvent(member, LocalDateTime.now()));
-            updateCaches();
+            sessionChamberShortNameCache.putMemberInCache(
+                    sessionChamberShortNameCache.genCacheKey(lbdcShortName, sessionYear, chamber),
+                    member);
             return member;
         }
     }

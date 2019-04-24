@@ -147,10 +147,7 @@ public class SessionChamberShortNameCache implements CachingService<String> {
         }
         SimpleKey key = new SimpleKey(genCacheKey(lbdcShortName, sessionYear, chamber));
         if (memberCache.isKeyInCache(key)) {
-            Optional<SessionMember> sessionMemberOptional = Optional.ofNullable((SessionMember) memberCache.get(key).getObjectValue());
-            if (sessionMemberOptional.isPresent()) {
-                return sessionMemberOptional.get();
-            }
+            return Optional.ofNullable((SessionMember) memberCache.get(key).getObjectValue()).orElse(null);
         }
         return null;
     }
