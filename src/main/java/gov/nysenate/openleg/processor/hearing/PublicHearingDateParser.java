@@ -91,7 +91,7 @@ public class PublicHearingDateParser
                 return line.replaceFirst(", at", "");
             }
         }
-        return null;
+        throw new IllegalArgumentException("Could not find date/time match in first page of hearing.");
     }
 
     /** Returns the String containing time information.
@@ -154,6 +154,7 @@ public class PublicHearingDateParser
             line = removeLineNumbers(line);
             line = removeNewLineCharacters(line);
             line = removeBadCharacters(line);
+            line = removeDateTimeLabels(line);
             formattedLines.add(line);
         }
         return formattedLines;
@@ -171,6 +172,13 @@ public class PublicHearingDateParser
         line = line.replace(String.valueOf((char) 65533), "to");
         line = line.replace("- ", "");
         return line;
+    }
+
+    /**
+     * Strip labels for date and/or time
+     */
+    private String removeDateTimeLabels(String line) {
+        return line.replaceAll("\\s*(?:Date|Time):?\\s*", "");
     }
 
     /** Capitalize a.m./p.m and remove the all '.' characters. */

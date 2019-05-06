@@ -81,8 +81,12 @@ public class SessionYear implements Serializable, Comparable<SessionYear>
      * subtracted from it.
      */
     private void setYear(int year) {
-        if (year < 0) throw new IllegalArgumentException("Session year cannot be negative! " + year);
-        this.year = (year % 2 == 0) ? year - 1 : year;
+        int computedSession = (year % 2 == 0) ? year - 1 : year;
+        if (computedSession < 0) {
+            throw new IllegalArgumentException("Session year cannot be negative! " +
+                    "(" + computedSession + " computed from " + year + ")");
+        }
+        this.year = computedSession;
     }
 
     /**

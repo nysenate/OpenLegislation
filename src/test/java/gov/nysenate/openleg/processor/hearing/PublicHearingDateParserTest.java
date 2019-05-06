@@ -159,4 +159,22 @@ public class PublicHearingDateParserTest {
         assertThat(actualStartTime, is(expectedStartTime));
         assertThat(actualEndTime, is(expectedEndTime));
     }
+
+    @Test
+    public void dateTimeLabelsTest() throws IOException, URISyntaxException {
+        List<List<String>> pages = PublicHearingTestHelper.getPagesFromFileName(
+                "04-26-19 NYS Joint Farmworkers Hearing Long Island FINAL.txt");
+
+        LocalDate expectedDate = LocalDate.of(2019, 4, 26);
+        LocalTime expectedStartTime = LocalTime.of(14, 30);
+        LocalTime expectedEndTime = null;
+
+        LocalDate actualDate = dateParser.parseDate(pages.get(0));
+        LocalTime actualStartTime = dateParser.parseStartTime(pages.get(0));
+        LocalTime actualEndTime = dateParser.parseEndTime(pages.get(0));
+
+        assertThat(actualDate, is(expectedDate));
+        assertThat(actualStartTime, is(expectedStartTime));
+        assertThat(actualEndTime, is(expectedEndTime));
+    }
 }

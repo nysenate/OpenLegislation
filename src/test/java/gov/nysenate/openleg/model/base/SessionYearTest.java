@@ -17,6 +17,16 @@ public class SessionYearTest
         assertEquals(2013, sy.getYear());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void zeroSessionTest() {
+        new SessionYear(0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void negativeSessionTest() {
+        new SessionYear(-1);
+    }
+
     @Test
     public void testGetSessionStartYear() throws Exception {
 
