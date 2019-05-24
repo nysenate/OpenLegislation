@@ -90,9 +90,11 @@ public class BillAmendment implements Serializable, Cloneable
 
     /**
      * Checks that a {@link BillTextFormat} has been loaded for this amendment.
-     * This method does not care if the text for a format is null or empty, just that it has been loaded.
+     *
+     * When loading amendments from the DAO we can specify what formats we want loaded.
+     * This method allows us to verify a particular format has been loaded.
      */
-    public boolean hasTextInFormat(BillTextFormat format) {
+    public boolean isTextFormatLoaded(BillTextFormat format) {
         return fullTextMap.containsKey(format);
     }
 

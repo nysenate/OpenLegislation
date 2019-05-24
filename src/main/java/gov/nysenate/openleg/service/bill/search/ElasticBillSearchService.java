@@ -294,7 +294,7 @@ public class ElasticBillSearchService implements BillSearchService, IndexedSearc
      * Returns a version of the given bill that is guaranteed to contain plaintext versions of full text for all amendments
      */
     private Bill ensurePlainTextPresent(Bill bill) {
-        boolean allContainPlain = bill.getAmendmentList().stream().allMatch(a -> a.hasTextInFormat(PLAIN));
+        boolean allContainPlain = bill.getAmendmentList().stream().allMatch(a -> a.isTextFormatLoaded(PLAIN));
         if (!allContainPlain) {
             // If the bill doesn't have plain text for any amendments, reload bill with plain text
             logger.warn("Bill passed in for indexing does not contain plain text: {}", bill.getBaseBillId());
