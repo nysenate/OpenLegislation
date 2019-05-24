@@ -89,7 +89,7 @@ public class BillAmendment implements Serializable, Cloneable
     }
 
     public boolean hasTextInFormat(BillTextFormat format) {
-        return fullTextMap.containsKey(format);
+        return fullTextMap.containsKey(format) && fullTextMap.get(format) != null;
     }
 
     public String getFullText(BillTextFormat format) {
