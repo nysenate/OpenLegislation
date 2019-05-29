@@ -9,7 +9,6 @@ import gov.nysenate.openleg.client.view.base.ViewObject;
 import gov.nysenate.openleg.client.view.bill.*;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.search.SearchException;
@@ -100,7 +99,7 @@ public class BillGetCtrl extends BaseCtrl
                                  WebRequest webRequest) throws SearchException {
         LimitOffset limOff = getLimitOffset(webRequest, 50);
         SearchResults<BaseBillId> results =
-            billSearch.searchBills(SessionYear.of(sessionYear), sort, limOff);
+            billSearch.searchBills(getSessionYearParam(sessionYear, "sessionYear"), sort, limOff);
         // The bill data is retrieved from the data service so the data is always fresh.
         return ListViewResponse.of(
             results.getResults().stream()
