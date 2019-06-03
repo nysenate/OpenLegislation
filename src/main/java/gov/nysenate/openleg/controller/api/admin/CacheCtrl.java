@@ -10,7 +10,6 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.agenda.AgendaId;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
@@ -206,6 +205,6 @@ public class CacheCtrl extends BaseCtrl
         requireParameters(request, "chamber", "string", "committeeName", "string", "year", "integer");
             return new CommitteeSessionId(getEnumParameter("chamber", request.getParameter("chamber"), Chamber.class),
                     request.getParameter("committeeName"),
-                    SessionYear.of(getIntegerParam(request, "year")));
+                    getSessionYearParam(request, "year"));
     }
 }

@@ -3,7 +3,6 @@ package gov.nysenate.openleg.controller.api.admin;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.bill.scrape.BillScrapeReferenceDao;
-import gov.nysenate.openleg.model.base.SessionYear;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +27,7 @@ public class BillScrapeFileCtrl extends BaseCtrl {
     @RequestMapping(value = "/stagearchived/{session:\\d+}", method = RequestMethod.POST)
     @RequiresPermissions("admin:spotcheck:stage-scrape-file")
     public SimpleResponse stageArchivedScrapeFiles(@PathVariable int session) {
-        int staged = refDao.stageArchivedScrapeFiles(SessionYear.of(session));
+        int staged = refDao.stageArchivedScrapeFiles(getSessionYearParam(session, "session"));
         return new SimpleResponse(true, "Staged " + staged + " scrape files.",
                 "scrape-file-stage-success");
     }

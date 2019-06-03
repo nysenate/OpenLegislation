@@ -27,6 +27,9 @@ General installation instructions for Ubuntu.
     * You want the Core tar.gz distribution.
 1. `mkdir ~/tomcat8`
 1. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat8`
+1. If you need to run tomcat as a non-root user, e.g. in IntelliJ.  
+Make sure the contents of the tomcat directory are readable an executable for all users.
+e.g. `chmod -R +rx ~/tomcat8`
 
 ### Elasticsearch
 
@@ -86,6 +89,10 @@ Navigate to `src/main/resources` and copy the following files:
 * `app.properties.example` -> `app.properties`
 * `log4j.properties.example` -> `log4j.properties`
 * `flyway.conf.example` -> `flyway.conf`
+
+
+Also navigate to `src/main/webapp` and copy the following files:
+* `grunt.properties.example.json` -> `grunt.properties.json`
 
 ### `app.properties` Configuration
 
@@ -148,6 +155,10 @@ These configurations are needed for automatic database migrations.
 Set `flyway.user` to the database user you created.
 
 Set `flyway.password` to the database user password.
+
+### `grunt.properties.config` Configuration
+
+Set `deployDirectory` to `<<path to OpenLegislation codebase>>/target`
 
 ## Elasticsearch setup
 
