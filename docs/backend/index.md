@@ -87,6 +87,10 @@ Navigate to `src/main/resources` and copy the following files:
 * `log4j.properties.example` -> `log4j.properties`
 * `flyway.conf.example` -> `flyway.conf`
 
+
+Also navigate to `src/main/webapp` and copy the following files:
+* `grunt.properties.example.json` -> `grunt.properties.json`
+
 ### `app.properties` Configuration
 
 These are properties that need to be modified for a typical installation.  Many properties are ignored in this guide but may need to be set to fit your needs.
@@ -148,6 +152,10 @@ These configurations are needed for automatic database migrations.
 Set `flyway.user` to the database user you created.
 
 Set `flyway.password` to the database user password.
+
+### `grunt.properties.config` Configuration
+
+Set `deployDirectory` to `<<path to OpenLegislation codebase>>/target`
 
 ## Elasticsearch setup
 
