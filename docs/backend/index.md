@@ -27,6 +27,9 @@ General installation instructions for Ubuntu.
     * You want the Core tar.gz distribution.
 1. `mkdir ~/tomcat8`
 1. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat8`
+1. If you need to run tomcat as a non-root user, e.g. in IntelliJ.  
+Make sure the contents of the tomcat directory are readable an executable for all users.
+e.g. `chmod -R +rx ~/tomcat8`
 
 ### Elasticsearch
 
