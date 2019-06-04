@@ -27,6 +27,9 @@ General installation instructions for Ubuntu.
     * You want the Core tar.gz distribution.
 1. `mkdir ~/tomcat8`
 1. `tar -xzvf ~/Downloads/<<downloaded file>> -C ~/tomcat8`
+1. If you need to run tomcat as a non-root user, e.g. in IntelliJ.  
+Make sure the contents of the tomcat directory are readable an executable for all users.
+e.g. `chmod -R +rx ~/tomcat8`
 
 ### Elasticsearch
 
@@ -69,10 +72,15 @@ Clone the Open Legislation codebase to your computer.
 
 ### Create Database User
 
-Using example user `openleg` with the password `ol_pass`
+Log into psql as the postgres user.
+
+1.`sudo su - postgres`
+1.`psql -U postgres`
+
+In psql, create a user with the same name as you linux user.
 
 1. Create a new role in postgres. 
-   `CREATE USER openleg WITH LOGIN PASSWORD ol_pass`
+   `CREATE USER <<username>> WITH LOGIN SUPERUSER PASSWORD '<<password>>';`
 
 ### Create Open Legislation Database
 
@@ -80,12 +88,22 @@ Using example user `openleg` with the password `ol_pass`
 1. Create a database for Open Legislation: `CREATE DATABSE openleg;`
 1. Exit psql with `\q`
 
+## Elasticsearch setup
+
+Add or modify the field `cluster.name` in `/etc/elasticsearch/elasticsearch.yml` to be unique to your openleg instance e.g.
+```
+cluster.name: sam-openleg
+```
+
 ## Property Files
 
 Navigate to `src/main/resources` and copy the following files:
 * `app.properties.example` -> `app.properties`
-* `log4j.properties.example` -> `log4j.properties`
+* `log4j2.xml.example` -> `log4j2.xml`
 * `flyway.conf.example` -> `flyway.conf`
+
+Also navigate to `src/main/webapp` and copy the following files:
+* `grunt.properties.example.json` -> `grunt.properties.json`
 
 ### `app.properties` Configuration
 
@@ -149,12 +167,10 @@ Set `flyway.user` to the database user you created.
 
 Set `flyway.password` to the database user password.
 
-## Elasticsearch setup
+### `grunt.properties.config` Configuration
 
-Add or modify the field `cluster.name` in `/etc/elasticsearch/elasticsearch.yml` to be unique to your openleg instance e.g.
-```
-cluster.name: sam-openleg
-```
+Set `deployDirectory` to `<<path to OpenLegislation codebase>>/target`
+
 
 ## Building
 
@@ -168,7 +184,7 @@ We typically run Open Legislation in Tomcat through IntelliJ.
 1. Click the plus sign in the top left corner
 1. Scroll down until you find Tomcat Server. Select local server
 1. In the Server tab -> application server link your download of tomcat from before
-1. In the Deployment tab -> hit the plus sign again and select legislation:war exploded
+1. In the Deployment tab -> hit the plus sign again and select legislation:war exploded. Set the Application Context to `/`.
 1. Apply these changes
 
 Now you can run Tomcat by selecting it and pressing the green play button towards the top right of the Intellij UI.

@@ -10,6 +10,7 @@ import gov.nysenate.openleg.client.view.error.InvalidParameterView;
 import gov.nysenate.openleg.client.view.request.ParameterView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
+import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
@@ -176,6 +177,36 @@ public abstract class BaseCtrl
         } catch (InvalidRequestParamEx ex) {
             return defaultValue;
         }
+    }
+
+    /**
+     * Validate and return a session year given a year.
+     *
+     * @param year int
+     * @param paramName String
+     * @return {@link SessionYear}
+     */
+    protected SessionYear getSessionYearParam(int year, String paramName) {
+        try {
+            return SessionYear.of(year);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidRequestParamEx(
+                    Integer.toString(year), paramName, "int", "Must be a positive integer.");
+        }
+    }
+
+    /**
+     * Validate and return a session year from the given webrequest.
+     *
+     * @param request WebRequest
+     * @param paramName String
+     * @return {@link SessionYear}
+     */
+    protected SessionYear getSessionYearParam(WebRequest request, String paramName) {
+        return getSessionYearParam(
+                getIntegerParam(request, paramName),
+                paramName
+        );
     }
 
     /**

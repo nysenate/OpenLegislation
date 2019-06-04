@@ -192,7 +192,7 @@ public class ElasticBillSearchDao extends ElasticBaseDao implements BillSearchDa
     private Bill stripNonPlainText(Bill bill) {
         boolean allPlain = bill.getAmendmentList().stream().allMatch(a -> {
             // If no plain text is present, throw exception.
-            if (!a.hasTextInFormat(PLAIN)) {
+            if (!a.isTextFormatLoaded(PLAIN)) {
                 throw new IllegalArgumentException("Bills must have plain text loaded to index");
             }
             return Collections.singleton(PLAIN).equals(a.getFullTextFormats());

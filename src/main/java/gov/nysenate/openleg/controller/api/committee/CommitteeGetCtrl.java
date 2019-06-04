@@ -55,8 +55,8 @@ public class CommitteeGetCtrl extends BaseCtrl
                                                      @PathVariable int sessionYear)
             throws CommitteeNotFoundEx {
         return getCommitteeResponse(
-                committeeDataService.getCommittee( new CommitteeSessionId(
-                                Chamber.getValue(chamberName), committeeName, SessionYear.of(sessionYear)))
+                committeeDataService.getCommittee(new CommitteeSessionId(
+                        Chamber.getValue(chamberName), committeeName, getSessionYearParam(sessionYear, "sessionYear")))
         );
     }
 
@@ -76,7 +76,7 @@ public class CommitteeGetCtrl extends BaseCtrl
         return getCommitteeResponse(
                 committeeDataService.getCommittee(new CommitteeVersionId(
                         Chamber.getValue(chamberName), committeeName,
-                        SessionYear.of(sessionYear), parsedReferenceDateTime))
+                        getSessionYearParam(sessionYear, "sessionYear"), parsedReferenceDateTime))
         );
     }
 
@@ -93,7 +93,7 @@ public class CommitteeGetCtrl extends BaseCtrl
                                                 WebRequest webRequest) {
         LimitOffset limitOffset = getLimitOffset(webRequest, 50);
         Chamber chamber = Chamber.getValue(chamberName);
-        SessionYear session = SessionYear.of(sessionYear);
+        SessionYear session = getSessionYearParam(sessionYear, "sessionYear");
         return ListViewResponse.of(
                 committeeDataService.getCommitteeList(chamber, session, limitOffset).stream()
                         .map(committee -> full ? new CommitteeView(committee)
@@ -121,8 +121,9 @@ public class CommitteeGetCtrl extends BaseCtrl
                                             WebRequest webRequest) throws CommitteeNotFoundEx {
         LimitOffset limitOffset = getLimitOffset(webRequest, 50);
         SortOrder sortOrder = getSortOrder(webRequest, SortOrder.DESC);
+        SessionYear session = getSessionYearParam(sessionYear, "sessionYear");
         CommitteeSessionId committeeSessionId =
-                new CommitteeSessionId(Chamber.getValue(chamberName), committeeName, SessionYear.of(sessionYear));
+                new CommitteeSessionId(Chamber.getValue(chamberName), committeeName, session);
         List<Committee> history = committeeDataService.getCommitteeHistory(committeeSessionId, limitOffset, sortOrder);
         int totalCount = committeeDataService.getCommitteeHistoryCount(committeeSessionId);
         return getCommitteeListResponse(history, totalCount, limitOffset, full);
