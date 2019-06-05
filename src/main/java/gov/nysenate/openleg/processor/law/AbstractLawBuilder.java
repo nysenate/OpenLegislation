@@ -95,15 +95,16 @@ public abstract class AbstractLawBuilder implements LawBuilder
     public void addInitialBlock(LawBlock block, boolean isNewDoc) {
         final LawDocument lawDoc = new LawDocument(block);
         boolean isRootDoc = false;
+        Matcher specialChapter = specialChapterPattern.matcher(lawDoc.getLocationId());
 
         // For the initial law dumps, the first block that is processed for a law (usually) becomes the root node.
         if (rootNode == null) {
             logger.info("Processing root doc: {} for {} law.", lawDoc.getDocumentId(), lawDoc.getLawId());
             LawDocument chapterDoc;
             // If the block seems to be a chapter node, we'll treat this document as the root.
-            if (isLikelyChapterDoc(lawDoc)) {
+            if (specialChapter.matches() || isLikelyChapterDoc(lawDoc)) {
                 lawDoc.setDocType(LawDocumentType.CHAPTER);
-                lawDoc.setDocTypeId(lawDoc.getLocationId().replaceFirst("-CH", ""));
+                lawDoc.setDocTypeId(lawDoc.getLocationId().replaceFirst(specialChapter.matches() ? specialChapter.group(1) : "-CH", ""));
                 chapterDoc = lawDoc;
                 isRootDoc = true;
             }
@@ -111,7 +112,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             else {
                 chapterDoc = createRootDocument(block);
             }
-            lawInfo = deriveLawInfo(chapterDoc.getLawId(), (isRootDoc) ? chapterDoc.getDocTypeId() : "");
+            lawInfo = deriveLawInfo(chapterDoc.getLawId(), isRootDoc ? chapterDoc.getDocTypeId() : "");
             addRootDocument(chapterDoc, isNewDoc);
         }
 
@@ -319,7 +320,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @return boolean
      */
     protected boolean isLikelyChapterDoc(LawDocument doc) {
-        return (doc.getLocationId().startsWith("-CH") || specialChapterPattern.matcher(doc.getLocationId()).matches() ||
+        return (doc.getLocationId().startsWith("-CH") ||
                 (!doc.getLocationId().equals("1") && !locationPattern.matcher(doc.getLocationId()).matches()));
     }
 

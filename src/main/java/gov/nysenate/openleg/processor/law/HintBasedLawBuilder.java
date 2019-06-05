@@ -53,14 +53,12 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
                     logger.info("Possible mismatch for {}", locationId);
                     for (int i = 1; i < expectedOrder.size(); i++) {
                         if (expectedOrder.get(i).equals(docType)) {
-                            if (i != 0) {
-                                LawDocumentType expectedType = expectedOrder.get(i - 1);
-                                if (lastParentNodeOfType.containsKey(expectedType)) {
-                                    LawTreeNode expectedParent = lastParentNodeOfType.get(expectedType);
-                                    parentNodes = backup;
-                                    parentNodes.push(expectedParent);
-                                    logger.info("Guessing actual parent is {}", expectedParent);
-                                }
+                            LawDocumentType expectedType = expectedOrder.get(i - 1);
+                            if (lastParentNodeOfType.containsKey(expectedType)) {
+                                LawTreeNode expectedParent = lastParentNodeOfType.get(expectedType);
+                                parentNodes = backup;
+                                parentNodes.push(expectedParent);
+                                logger.info("Guessing actual parent is {}", expectedParent);
                             }
                             break;
                         }

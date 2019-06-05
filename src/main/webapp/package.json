@@ -10,7 +10,7 @@
     "bower": "^1.8.4",
     "caniuse-db": "^1.0.30000865",
     "cssnano": "^3.10.0",
-    "grunt": "^1.0.3",
+    "grunt": "^1.0.4",
     "grunt-beep": "^1.0.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
@@ -21,9 +21,9 @@
     "grunt-postcss": "^0.8.0",
     "grunt-sass": "^1.2.1",
     "grunt-shell": "^1.1.1",
-    "libxmljs": "=0.19.0",
+    "libxmljs": "^0.19.5",
     "node-gyp": "^3.7.0",
-    "node-sass": "^4.9.2",
+    "node-sass": "^4.12.0",
     "pixrem": "^3.0.2"
   },
   "scripts": {

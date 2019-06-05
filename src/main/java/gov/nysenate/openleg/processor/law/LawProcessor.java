@@ -49,10 +49,7 @@ public class LawProcessor extends AbstractDataProcessor
     }
 
     /** Set of law ids to ignore during processing. */
-    protected Set<String> ignoreLaws = Sets.newHashSet("CNS");
-
-    /** Set of law ids to only allow processing of. Overrides 'ignoreLaws'. */
-    protected Set<String> onlyLaws = Sets.newHashSet();
+    private Set<String> ignoreLaws = Sets.newHashSet("CNS");
 
     @Autowired private LawDataService lawDataService;
 
@@ -89,24 +86,6 @@ public class LawProcessor extends AbstractDataProcessor
         postDataUnitEvent(unit);
     }
 
-    /** --- Basic Getters/Setters --- */
-
-    public Set<String> getIgnoreLaws() {
-        return ignoreLaws;
-    }
-
-    public void setIgnoreLaws(String... ignoreLaws) {
-        this.ignoreLaws = Sets.newHashSet(ignoreLaws);
-    }
-
-    public Set<String> getOnlyLaws() {
-        return onlyLaws;
-    }
-
-    public void setOnlyLaws(String... lawIds) {
-        this.onlyLaws = Sets.newHashSet(lawIds);
-    }
-
     /** --- Internal Methods --- */
 
     /**
@@ -119,10 +98,11 @@ public class LawProcessor extends AbstractDataProcessor
     protected void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         for (LawBlock block : lawBlocks) {
-            if (!shouldProcessLaw(block)) continue;
+            boolean isSpecialChapter = AbstractLawBuilder.specialChapterPattern.matcher(block.getLocationId()).matches();
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                LawBuilder lawBuilder = createLawBuilder(new LawVersionId(block.getLawId(), block.getPublishedDate()), null);
+                LawBuilder lawBuilder = createLawBuilder(new LawVersionId(block.getLawId(), block.getPublishedDate()),
+                        null, isSpecialChapter);
                 lawBuilders.put(block.getLawId(), lawBuilder);
                 unit.addMessage("Processing initial docs for " + block.getLawId());
             }
@@ -145,7 +125,7 @@ public class LawProcessor extends AbstractDataProcessor
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         Map<String, LawTree> lawTrees = new HashMap<>();
         for (LawBlock block : lawBlocks) {
-            if (!shouldProcessLaw(block)) continue;
+            if (shouldSkipLaw(block)) continue;
             LawVersionId lawVersionId = new LawVersionId(block.getLawId(), block.getPublishedDate());
             logger.debug("Processing law version id: {}", lawVersionId);
             // Retrieve the existing law tree if it exists.
@@ -161,7 +141,8 @@ public class LawProcessor extends AbstractDataProcessor
             }
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                LawBuilder lawBuilder = createLawBuilder(lawVersionId, lawTrees.get(block.getLawId()));
+                boolean isSpecialChapter = AbstractLawBuilder.specialChapterPattern.matcher(block.getLocationId()).matches();
+                LawBuilder lawBuilder = createLawBuilder(lawVersionId, lawTrees.get(block.getLawId()), isSpecialChapter);
                 lawBuilders.put(block.getLawId(), lawBuilder);
             }
             // Process the update block
@@ -232,17 +213,15 @@ public class LawProcessor extends AbstractDataProcessor
         return rawDocList;
     }
 
-    protected boolean shouldProcessLaw(LawBlock block) {
-        return (onlyLaws.contains(block.getLawId())) ||
-               (onlyLaws.isEmpty() && !ignoreLaws.contains(block.getLawId()));
+    protected boolean shouldSkipLaw(LawBlock block) {
+        return ignoreLaws.contains(block.getLawId());
     }
 
-    protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
-        if (expectedLawOrdering.containsKey(lawVersionId.getLawId())) {
+    protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree, boolean isSpecialChapter) {
+        if (isSpecialChapter)
+            return new SpecialChapterLawBuilder(lawVersionId, previousTree);
+        if (expectedLawOrdering.containsKey(lawVersionId.getLawId()))
             return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawVersionId.getLawId()));
-        }
-        else {
-            return new IdBasedLawBuilder(lawVersionId, previousTree);
-        }
+        return new IdBasedLawBuilder(lawVersionId, previousTree);
     }
 }
