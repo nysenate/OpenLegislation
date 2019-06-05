@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.auth;
 
 import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import gov.nysenate.openleg.service.auth.OpenLegRole;
 import org.springframework.dao.DataAccessException;
 
@@ -47,11 +48,6 @@ public interface ApiUserDao
      */
     public List<ApiUser> getAllUsers() throws DataAccessException;
 
-    /**
-     * Remove an ApiUser from the database
-     * @param apiuser The apiuser to be deleted
-     */
-    public void deleteApiUser(ApiUser apiuser) throws DataAccessException;
 
     /**
      * Finds the user with the specified registration token
@@ -73,4 +69,16 @@ public interface ApiUserDao
      * @param role String
      */
     public void revokeRole(String apiKey, OpenLegRole role);
+
+    /**
+     * Adds an e-mail subscription for an api user
+     * @param subscription ApiUserSubscriptionType
+     */
+    public void addSubscription(String apiKey, ApiUserSubscriptionType subscription);
+
+    /**
+     * Removes an e-mail subscription for an api user
+     * @param subscription ApiUserSubscriptionType
+     */
+    public void removeSubscription(String apiKey, ApiUserSubscriptionType subscription);
 }

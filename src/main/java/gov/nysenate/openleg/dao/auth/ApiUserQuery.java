@@ -17,11 +17,11 @@ public enum ApiUserQuery implements BasicSqlQuery
         "WHERE email_addr = :email"
     ),
     SELECT_API_USERS(
-        "SELECT u.apikey, u.authenticated, u.num_requests, u.email_addr, u.org_name, u.users_name, u.reg_token,\n" +
-        "   r.role\n" +
-        "FROM public." + SqlTable.API_USER + " u\n" +
-        "LEFT JOIN public." + SqlTable.API_USER_ROLE + " r\n" +
-        "   ON u.apikey = r.apikey\n"
+        "SELECT u.apikey, u.authenticated, u.num_requests, u.email_addr, u.org_name, u.users_name, u.reg_token, " +
+        "array(SELECT r.role FROM public." + SqlTable.API_USER_ROLE + " r WHERE r.apikey = u.apikey) AS roles, " +
+        "array(SELECT s.subscription_type FROM public." + SqlTable.API_USER_SUBSCRIPTION +
+            " s WHERE s.apikey = u.apikey) AS subscriptions\n" +
+        "FROM public." + SqlTable.API_USER + " u\n"
     ),
     SELECT_BY_EMAIL(
         SELECT_API_USERS.getSql() + "WHERE u.email_addr ILIKE :email"
@@ -32,9 +32,7 @@ public enum ApiUserQuery implements BasicSqlQuery
     SELECT_BY_TOKEN(
         SELECT_API_USERS.getSql() + "WHERE u.reg_token = :registrationToken"
     ),
-    DELETE_USER(
-        "DELETE FROM public." + SqlTable.API_USER + " WHERE email_addr = :email"
-    ),
+
 
     INSERT_API_USER_ROLE(
         "INSERT INTO public." + SqlTable.API_USER_ROLE + "\n" +
@@ -45,6 +43,17 @@ public enum ApiUserQuery implements BasicSqlQuery
     DELETE_API_USER_ROLE(
         "DELETE FROM public." + SqlTable.API_USER_ROLE + "\n" +
         "WHERE apikey = :apiKey AND role = :role"
+    ),
+
+    INSERT_API_USER_SUBSCRIPTION(
+        "INSERT INTO public." + SqlTable.API_USER_SUBSCRIPTION + "\n" +
+        "      (apikey, subscription_type)\n" +
+        "VALUES(:apiKey, :subscription_type::public.apiuser_subscription_type)"
+    ),
+
+    DELETE_API_USER_SUBSCRIPTION(
+        "DELETE FROM public." + SqlTable.API_USER_SUBSCRIPTION + "\n" +
+        "WHERE apikey = :apiKey AND subscription_type = :subscription_type::public.apiuser_subscription_type"
     ),
 
     ;

@@ -3,6 +3,7 @@ package gov.nysenate.openleg.dao.auth;
 import gov.nysenate.openleg.dao.base.ImmutableParams;
 import gov.nysenate.openleg.dao.base.SqlBaseDao;
 import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import gov.nysenate.openleg.service.auth.OpenLegRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,43 +45,31 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
     /** {@inheritDoc} */
     @Override
     public List<ApiUser> getAllUsers() throws DataAccessException {
-        ApiUserRowHandler rowHandler = new ApiUserRowHandler();
-        jdbcNamed.query(ApiUserQuery.SELECT_API_USERS.getSql(schema()), new MapSqlParameterSource(), rowHandler);
-        return rowHandler.getUsers();
+        return jdbcNamed.query(ApiUserQuery.SELECT_API_USERS.getSql(schema()), new MapSqlParameterSource(),
+                new ApiUserRowMapper());
     }
 
     /** {@inheritDoc} */
     @Override
     public ApiUser getApiUserFromEmail(String email_addr) throws DataAccessException {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("email", email_addr));
-        ApiUserRowHandler rowHandler = new ApiUserRowHandler();
-        jdbcNamed.query(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params, rowHandler);
-        return rowHandler.getSingleUser();
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_EMAIL.getSql(schema()), params, new ApiUserRowMapper());
     }
 
     /** {@inheritDoc} */
     @Override
     public ApiUser getApiUserFromKey(String key) {
         ImmutableParams params = ImmutableParams.from(new MapSqlParameterSource("apikey", key));
-        ApiUserRowHandler rowHandler = new ApiUserRowHandler();
-        jdbcNamed.query(ApiUserQuery.SELECT_BY_KEY.getSql(schema()), params, rowHandler);
-        return rowHandler.getSingleUser();
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_KEY.getSql(schema()), params, new ApiUserRowMapper());
     }
 
     /** {@inheritDoc} */
     @Override
     public ApiUser getApiUserFromToken(String token) {
         MapSqlParameterSource params = new MapSqlParameterSource("registrationToken", token);
-        ApiUserRowHandler rowHandler = new ApiUserRowHandler();
-        jdbcNamed.query(ApiUserQuery.SELECT_BY_TOKEN.getSql(schema()), params, rowHandler);
-        return rowHandler.getSingleUser();
+        return jdbcNamed.queryForObject(ApiUserQuery.SELECT_BY_TOKEN.getSql(schema()), params, new ApiUserRowMapper());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void deleteApiUser(ApiUser user) throws DataAccessException {
-        jdbcNamed.update(ApiUserQuery.DELETE_USER.getSql(schema()), getUserParams(user));
-    }
 
     /** {@inheritDoc} */
     @Override
@@ -94,6 +83,20 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
     @Override
     public void revokeRole(String apiKey, OpenLegRole role) {
         jdbcNamed.update(ApiUserQuery.DELETE_API_USER_ROLE.getSql(schema()), getRoleParams(apiKey, role));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addSubscription(String apiKey, ApiUserSubscriptionType subscription) {
+        jdbcNamed.update(ApiUserQuery.INSERT_API_USER_SUBSCRIPTION.getSql(schema()),
+                getSubscriptionParams(apiKey, subscription));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void removeSubscription(String apiKey, ApiUserSubscriptionType subscription) {
+        jdbcNamed.update(ApiUserQuery.DELETE_API_USER_SUBSCRIPTION.getSql(schema()),
+                getSubscriptionParams(apiKey, subscription));
     }
 
     /** --- Internal Methods --- */
@@ -115,6 +118,12 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
                 .addValue("role", role.name());
     }
 
+    protected MapSqlParameterSource getSubscriptionParams(String apiKey, ApiUserSubscriptionType subscription) {
+        return new MapSqlParameterSource()
+                .addValue("apiKey", apiKey)
+                .addValue("subscription_type", subscription.name());
+    }
+
     private static final RowMapper<ApiUser> apiUserMapper = new ApiUserRowMapper();
 
     private static final class ApiUserRowHandler implements RowCallbackHandler
@@ -126,10 +135,6 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
             String apiKey = rs.getString("apikey");
             if (!apiUserMap.containsKey(apiKey)) {
                 apiUserMap.put(apiKey, apiUserMapper.mapRow(rs, rs.getRow()));
-            }
-            String roleStr = rs.getString("role");
-            if (roleStr != null) {
-                apiUserMap.get(apiKey).addRole(OpenLegRole.valueOf(roleStr));
             }
         }
 
