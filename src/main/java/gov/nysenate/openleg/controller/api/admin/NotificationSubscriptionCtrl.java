@@ -84,13 +84,13 @@ public class NotificationSubscriptionCtrl extends BaseCtrl
      *
      * Unsubscribe from a notification
      *
-     * (DELETE) /api/3/admin/notifications/{id}
+     * (DELETE) /api/3/admin/notifications/unsubscribe/{id}
      *
      * @param subscriptionId int - subscription id
      * @return {@link SimpleResponse}
      */
     @RequiresPermissions("admin:notification-subscribe")
-    @RequestMapping(value = "/{subscriptionId}", method = DELETE)
+    @RequestMapping(value = "/unsubscribe/{subscriptionId}", method = DELETE)
     public SimpleResponse unsubscribeFromNotification(@PathVariable int subscriptionId) {
         ensureOwned(subscriptionId);
         subscriptionDataService.removeSubscription(subscriptionId);
