@@ -218,8 +218,9 @@ public class LawProcessor extends AbstractDataProcessor
     }
 
     protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree, boolean isSpecialChapter) {
+        // TODO: impliment this for the Assembly and Senate rules.
         if (isSpecialChapter)
-            return new SpecialChapterLawBuilder(lawVersionId, previousTree);
+            return new ConstitutionBuilder(lawVersionId, previousTree);
         if (expectedLawOrdering.containsKey(lawVersionId.getLawId()))
             return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawVersionId.getLawId()));
         return new IdBasedLawBuilder(lawVersionId, previousTree);

@@ -116,6 +116,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             addRootDocument(chapterDoc, isNewDoc);
         }
 
+        // TODO: make specialChapter changes ?
         // If this block is not a root doc,
         if (!isRootDoc) {
             // Section docs are easy, since their location ids are simply numbers and they do not have any children.
