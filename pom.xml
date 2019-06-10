@@ -117,6 +117,7 @@
     <jstl.version>1.2</jstl.version>
     <junit.version>4.12</junit.version>
     <log4j.version>2.11.1</log4j.version>
+    <mockito.version>1.10.19</mockito.version>
     <pdfbox.version>1.8.16</pdfbox.version>
     <postgres-jdbc.version>42.2.5</postgres-jdbc.version>
     <shiro.version>1.2.3</shiro.version>
@@ -445,6 +446,13 @@
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.3.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

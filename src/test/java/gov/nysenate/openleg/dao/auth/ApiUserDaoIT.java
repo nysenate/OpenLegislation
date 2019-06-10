@@ -19,7 +19,6 @@ public class ApiUserDaoIT extends BaseTests {
     private static final Logger logger = LoggerFactory.getLogger(ApiUserDaoIT.class);
 
     @Autowired private ApiUserDao apiUserDao;
-    @Autowired protected NamedParameterJdbcTemplate jdbcNamed;
 
     @Test public void insertTest() {
         String email = "bogusBunny@nysenate.gov";
