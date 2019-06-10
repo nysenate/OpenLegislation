@@ -112,7 +112,12 @@ public class AgendaAlertParser {
         aaic.setCommitteeId(getCommitteeId(headerLines[0]));
         aaic.setChair(getChair(headerLines[1]));
         aaic.setMeetingDateTime(getMeetingTime(headerLines[2]));
-        aaic.setLocation(headerLines[3].trim());
+        if (headerLines.length == 4) {
+            // If meeting location is in the header.
+            aaic.setLocation(headerLines[3].trim());
+        } else {
+            aaic.setLocation("");
+        }
 
         aaic.setNotes(notesElement != null ? ScrapeUtils.getFormattedText(notesElement).trim() : "");
 
