@@ -959,6 +959,19 @@ a.slogan-link {
   padding: 10px;
 }
 
+.checkbox-list {
+  width: 100%;
+  padding-left: 17%;
+  padding-right: 17%;
+}
+
+.register-button {
+  align-self: center;
+  .md-button {
+    width: 160px;
+  }
+}
+
 /** --- Bill Page Styles --- */
 
 .bill-ms-container {
