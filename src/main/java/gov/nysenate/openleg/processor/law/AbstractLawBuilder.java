@@ -123,7 +123,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             if (isLikelySectionDoc(lawDoc)) {
                 logger.debug("Processing section {}", lawDoc.getDocumentId());
                 lawDoc.setDocType(LawDocumentType.SECTION);
-                lawDoc.setDocTypeId(lawDoc.getLocationId());
+                lawDoc.setDocTypeId(lawDoc.getLocationId().replaceAll("A\\d+S", ""));
                 if (isNewDoc) {
                     lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
                 }
@@ -146,7 +146,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         }
 
         // Set the title for the document
-        lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, lawDoc.getText()));
+        setLawDocTitle(lawDoc);
     }
 
     /**
@@ -353,5 +353,15 @@ public abstract class AbstractLawBuilder implements LawBuilder
         dummyParent.setText("");
         dummyParent.setTitle(LawTitleParser.extractTitleFromChapter(dummyParent));
         return dummyParent;
+    }
+
+    protected void setLawDocTitle(LawDocument lawDoc) {
+        lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, lawDoc.getText()));
+    }
+
+    private String getSectionNumber(String str) {
+        Pattern p = Pattern.compile("(A\\d+S)?(.*)");
+        Matcher m = p.matcher(str);
+        return m.group(2);
     }
 }
