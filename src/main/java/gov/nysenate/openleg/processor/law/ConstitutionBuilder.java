@@ -11,10 +11,11 @@ import java.util.regex.Pattern;
  */
 public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilder {
     private static final String CONS_STR = "CNS";
+    private static final Pattern FOR_ARTICLE = Pattern.compile("([IVX]+)\\\\n\\s+([A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(.*)");
+    private static final Pattern SECTION_TITLES = Pattern.compile("\\s*([^.]+)\\. ([^\\d]*)");
+
     // The title of article x section y can be found at sectionTitles.get(AxSy).
     private Map<String, String> allSectionTitles = new HashMap<>();
-    private static final String ARTICLE_TITLE = "\\s*ARTICLE [IVX]+\\\\n\\s*";
-    private static final Pattern SECTION_TITLES = Pattern.compile("\\s*(\\d+[-[a-z]]?)\\. ([^\\d]*)");
 
     public ConstitutionBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);
@@ -23,22 +24,24 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
     @Override
     protected void addRootDocument(LawDocument rootDoc, boolean isNewDoc) {
         super.addRootDocument(rootDoc, isNewDoc);
-        String[] articles = rootDoc.getText().split(ARTICLE_TITLE);
-        // TODO: The -1 adjustment is due to a note with a star at the end of this document.
+        String[] articles = rootDoc.getText().split("ARTICLE ");
         for (int i = 1; i < articles.length; i++) {
-            // Article info.
-            String[] titleAndSections = articles[i].split("\\s*Sec\\.");
-            articles[i] = titleAndSections[1];
+            // Article info. Split to remove notes.
+            Matcher articleMatch = FOR_ARTICLE.matcher(articles[i].split("\\*")[0]);
+            if (!articleMatch.find())
+                continue;
             LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i,
-                    CONS_STR, "A" + i, titleAndSections[0],
-                    LawDocumentType.ARTICLE, "A" + i, rootDoc.getPublishedDate());
-            LawDocument currDoc = new LawDocument(articleInfo, "IDK"+i);
+                    CONS_STR, "A" + i, articleMatch.group(2),
+                    LawDocumentType.ARTICLE, articleMatch.group(1),
+                    rootDoc.getPublishedDate());
+            LawDocument currDoc = new LawDocument(articleInfo, "ARTICLE " + articles[i]);
             super.addDocument(currDoc, isNewDoc);
+
             // Section info.
-            Matcher sections = SECTION_TITLES.matcher(articles[i]);
+            Matcher sections = SECTION_TITLES.matcher(articleMatch.group(3));
             while (sections.find()) {
                 allSectionTitles.put(currDoc.getLocationId() + "S" +
-                        sections.group(1), sections.group(2));
+                        sections.group(1).toUpperCase(), sections.group(2));
             }
         }
     }
