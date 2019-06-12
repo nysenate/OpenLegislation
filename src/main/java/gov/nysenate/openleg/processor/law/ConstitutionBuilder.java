@@ -57,7 +57,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
         if (node.getDocType() != LawDocumentType.SECTION)
             return;
 
-        String articleStr = node.getDocumentId().replaceAll("S\\d+", "");
+        String articleStr = CONS_STR + node.getLocationId().split("S")[0];
         Optional<LawTreeNode> nodeArticle = rootNode.findNode(articleStr, false);
         if (nodeArticle.isPresent())
            nodeArticle.get().addChild(node);
