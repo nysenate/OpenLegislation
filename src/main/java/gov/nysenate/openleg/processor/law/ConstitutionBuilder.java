@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilder {
     private static final String CONS_STR = "CNS";
     private static final Pattern FOR_ARTICLE = Pattern.compile("([IVX]+)\\\\n\\s+([A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(.*)");
-    private static final Pattern SECTION_TITLES = Pattern.compile("\\s*([^.]+)\\. ([^\\d]*)");
 
     // The title of article x section y can be found at sectionTitles.get(AxSy).
     private Map<String, String> allSectionTitles = new HashMap<>();
@@ -24,7 +23,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
     @Override
     protected void addRootDocument(LawDocument rootDoc, boolean isNewDoc) {
         super.addRootDocument(rootDoc, isNewDoc);
-        String[] articles = rootDoc.getText().split("ARTICLE ");
+        String[] articles = rootDoc.getText().split("\\s*ARTICLE ");
         for (int i = 1; i < articles.length; i++) {
             // Article info. Split to remove notes.
             Matcher articleMatch = FOR_ARTICLE.matcher(articles[i].split("\\*")[0]);
@@ -38,10 +37,10 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
             super.addDocument(currDoc, isNewDoc);
 
             // Section info.
-            Matcher sections = SECTION_TITLES.matcher(articleMatch.group(3));
-            while (sections.find()) {
-                allSectionTitles.put(currDoc.getLocationId() + "S" +
-                        sections.group(1).toUpperCase(), sections.group(2));
+            String[] sectionTitles = articleMatch.group(3).split("\\.\\\\n");
+            for (String sectionTitle : sectionTitles) {
+                String[] parts = sectionTitle.split("\\. ", 2);
+                allSectionTitles.put(currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase(), parts[1] + ".");
             }
         }
     }
@@ -53,16 +52,15 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
 
     @Override
     protected void addChildNode(LawTreeNode node) {
-        if (node.getDocType() == LawDocumentType.CHAPTER)
-            return;
         if (node.getDocType() == LawDocumentType.ARTICLE)
             rootNode.addChild(node);
-        else {
-            String articleStr = node.getDocumentId().replaceAll("S\\d+", "");
-            Optional<LawTreeNode> nodeArticle = rootNode.findNode(articleStr, false);
-            if (nodeArticle.isPresent())
-                nodeArticle.get().addChild(node);
-        }
+        if (node.getDocType() != LawDocumentType.SECTION)
+            return;
+
+        String articleStr = node.getDocumentId().replaceAll("S\\d+", "");
+        Optional<LawTreeNode> nodeArticle = rootNode.findNode(articleStr, false);
+        if (nodeArticle.isPresent())
+           nodeArticle.get().addChild(node);
     }
 
     @Override
