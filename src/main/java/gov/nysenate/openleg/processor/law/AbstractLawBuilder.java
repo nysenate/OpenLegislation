@@ -116,10 +116,11 @@ public abstract class AbstractLawBuilder implements LawBuilder
             addRootDocument(chapterDoc, isNewDoc);
         }
 
-        // TODO: make specialChapter changes ?
         // If this block is not a root doc,
         if (!isRootDoc) {
-            // Section docs are easy, since their location ids are simply numbers and they do not have any children.
+            // Section docs are easy, since their location ids are simply
+            // numbers (if it's not the Constitution) and they do not have
+            // any children.
             if (isLikelySectionDoc(lawDoc)) {
                 logger.debug("Processing section {}", lawDoc.getDocumentId());
                 lawDoc.setDocType(LawDocumentType.SECTION);

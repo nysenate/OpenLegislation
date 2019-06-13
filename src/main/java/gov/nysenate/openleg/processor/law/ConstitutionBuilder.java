@@ -67,6 +67,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
     protected boolean isNodeListEmpty() {
         return false;
     }
+
     @Override
     protected void clearParents() {}
 
