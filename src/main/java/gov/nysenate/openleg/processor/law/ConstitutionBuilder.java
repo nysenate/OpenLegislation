@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -10,57 +11,76 @@ import java.util.regex.Pattern;
  * A class for the special cases of the Constitution, Senate Rules, and Assembly Rules.
  */
 public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilder {
-    private static final String CONS_STR = "CNS";
+    protected static final String CONS_STR = "CNS";
+    private static final String CONS_CHAPTER = CONS_STR + "AS";
+    private static final Pattern TITLE_MATCHER = Pattern.compile("(" + CONS_STR + "A\\d+)S.*");
     private static final Pattern FOR_ARTICLE = Pattern.compile("([IVX]+)\\\\n\\s+([A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(.*)");
-
+    // The title of article x can be found at articleTitles.get(Ax).
+    private Map<String, String> articleTitles = new HashMap<>();
     // The title of article x section y can be found at sectionTitles.get(AxSy).
-    private Map<String, String> allSectionTitles = new HashMap<>();
+    private Map<String, String> sectionTitles = new HashMap<>();
 
     public ConstitutionBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);
+        // Replenish section titles.
+        if (previousTree != null) {
+            for (LawTreeNode article : previousTree.getRootNode().getChildNodeList()) {
+                articleTitles.put(article.getLocationId(), article.getLawDocInfo().getTitle());
+                for (LawTreeNode section : article.getChildNodeList())
+                    sectionTitles.put(section.getLocationId(), section.getLawDocInfo().getTitle());
+            }
+        }
     }
 
     @Override
     protected void addRootDocument(LawDocument rootDoc, boolean isNewDoc) {
         super.addRootDocument(rootDoc, isNewDoc);
+        // Creating empty space in sequence for Preamble later.
+        sequenceNo++;
         String[] articles = rootDoc.getText().split("\\s*ARTICLE ");
         for (int i = 1; i < articles.length; i++) {
             // Article info. Split to remove notes.
             Matcher articleMatch = FOR_ARTICLE.matcher(articles[i].split("\\*")[0]);
             if (!articleMatch.find())
                 continue;
+            String articleTitle = articleMatch.group(2);
+            articleTitles.put("A" + i, articleTitle);
             LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i,
-                    CONS_STR, "A" + i, articleMatch.group(2),
-                    LawDocumentType.ARTICLE, articleMatch.group(1),
-                    rootDoc.getPublishedDate());
+                    CONS_STR, "A" + i, articleTitle, LawDocumentType.ARTICLE,
+                    articleMatch.group(1), rootDoc.getPublishedDate());
             LawDocument currDoc = new LawDocument(articleInfo, "ARTICLE " + articles[i]);
             super.addDocument(currDoc, isNewDoc);
 
             // Section info.
-            String[] sectionTitles = articleMatch.group(3).split("\\.\\\\n");
-            for (String sectionTitle : sectionTitles) {
+            String[] sectionTitlesArray = articleMatch.group(3).split("\\.\\\\n");
+            for (String sectionTitle : sectionTitlesArray) {
                 String[] parts = sectionTitle.split("\\. ", 2);
-                allSectionTitles.put(currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase(), parts[1] + ".");
+                String locId = currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase();
+                String title = parts[1] + ".";
+                sectionTitles.put(locId, title);
+                // If the document was already processed, update its title.
+                Optional<LawTreeNode> existingNode = rootNode.findNode(CONS_STR + locId, false);
+                if (existingNode.isPresent())
+                    existingNode.get().getLawDocInfo().setTitle(title);
             }
         }
     }
 
     @Override
     protected String determineHierarchy(LawBlock block) {
-        return block.getDocumentId().replaceAll("A\\d+", "");
+        return block.getLocationId();
     }
 
     @Override
     protected void addChildNode(LawTreeNode node) {
-        if (node.getDocType() == LawDocumentType.ARTICLE)
+        if (node.getDocType() == LawDocumentType.SECTION) {
+            String articleStr = CONS_STR + node.getLocationId().split("S")[0];
+            Optional<LawTreeNode> nodeArticle = rootNode.findNode(articleStr, false);
+            if (nodeArticle.isPresent())
+                nodeArticle.get().addChild(node);
+        }
+        else if (node.getDocType() != LawDocumentType.CHAPTER)
             rootNode.addChild(node);
-        if (node.getDocType() != LawDocumentType.SECTION)
-            return;
-
-        String articleStr = CONS_STR + node.getLocationId().split("S")[0];
-        Optional<LawTreeNode> nodeArticle = rootNode.findNode(articleStr, false);
-        if (nodeArticle.isPresent())
-           nodeArticle.get().addChild(node);
     }
 
     @Override
@@ -78,9 +98,27 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
 
     @Override
     protected void setLawDocTitle(LawDocument lawDoc) {
-        if (lawDoc.getDocType() != LawDocumentType.SECTION)
-            super.setLawDocTitle(lawDoc);
+        if (lawDoc.getDocType() == LawDocumentType.ARTICLE)
+            lawDoc.setTitle(articleTitles.get(lawDoc.getLocationId()));
+        else if (lawDoc.getDocType() == LawDocumentType.SECTION)
+            lawDoc.setTitle(sectionTitles.get(lawDoc.getLocationId()));
         else
-            lawDoc.setTitle(allSectionTitles.get(lawDoc.getLocationId()));
+            super.setLawDocTitle(lawDoc);
+    }
+
+    @Override
+    public void rebuildTree(String masterDoc) {
+        Set<String> articleSet = new LinkedHashSet<>();
+        for (String docId : StringUtils.split(masterDoc, "\\n")) {
+            Matcher m = TITLE_MATCHER.matcher(docId);
+            // "Adds in article titles.
+            if (m.find())
+                articleSet.add(m.group(1) + "\\n");
+        }
+        // Always start with the chapter.
+        StringBuilder masterBuilder = new StringBuilder(CONS_CHAPTER + "\\n");
+        for (String article : articleSet)
+            masterBuilder.append(article);
+        super.rebuildTree(masterDoc.replace(CONS_CHAPTER + "\\n", masterBuilder.toString()));
     }
 }

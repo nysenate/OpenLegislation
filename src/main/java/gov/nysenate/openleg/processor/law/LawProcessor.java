@@ -48,9 +48,6 @@ public class LawProcessor extends AbstractDataProcessor
         expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
     }
 
-    /** Set of law ids to ignore during processing. */
-    private Set<String> ignoreLaws = Sets.newHashSet("CNS");
-
     @Autowired private LawDataService lawDataService;
 
     @Override
@@ -125,7 +122,6 @@ public class LawProcessor extends AbstractDataProcessor
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         Map<String, LawTree> lawTrees = new HashMap<>();
         for (LawBlock block : lawBlocks) {
-            if (shouldSkipLaw(block)) continue;
             LawVersionId lawVersionId = new LawVersionId(block.getLawId(), block.getPublishedDate());
             logger.debug("Processing law version id: {}", lawVersionId);
             // Retrieve the existing law tree if it exists.
@@ -141,7 +137,7 @@ public class LawProcessor extends AbstractDataProcessor
             }
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                boolean isSpecialChapter = AbstractLawBuilder.specialChapterPattern.matcher(block.getLocationId()).matches();
+                boolean isSpecialChapter = block.getLawId().equals(ConstitutionBuilder.CONS_STR);
                 LawBuilder lawBuilder = createLawBuilder(lawVersionId, lawTrees.get(block.getLawId()), isSpecialChapter);
                 lawBuilders.put(block.getLawId(), lawBuilder);
             }
@@ -213,12 +209,8 @@ public class LawProcessor extends AbstractDataProcessor
         return rawDocList;
     }
 
-    protected boolean shouldSkipLaw(LawBlock block) {
-        return ignoreLaws.contains(block.getLawId());
-    }
-
     protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree, boolean isSpecialChapter) {
-        // TODO: impliment this for the Assembly and Senate rules.
+        // TODO: implement this for the Assembly and Senate rules.
         if (isSpecialChapter)
             return new ConstitutionBuilder(lawVersionId, previousTree);
         if (expectedLawOrdering.containsKey(lawVersionId.getLawId()))

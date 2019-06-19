@@ -34,5 +34,6 @@ public enum LawDocumentType
     PARAGRAPH,
     SUB_PARAGRAPH,
     CLAUSE,
-    ITEM
+    ITEM,
+    PREAMBLE
 }

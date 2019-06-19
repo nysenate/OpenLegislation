@@ -5,21 +5,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractLawBuilder implements LawBuilder
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractLawBuilder.class);
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static Pattern locationPattern = Pattern.compile("^(ST|SP|SA|A|T|P|S|INDEX)(.*)");
+    protected static Pattern locationPattern = Pattern.compile("^(AA1|ST|SP|SA|A|T|P|S|INDEX)(.*)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     protected static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
@@ -35,6 +30,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         lawLevelCodes.put("SP", LawDocumentType.SUB_PART);
         lawLevelCodes.put("S", LawDocumentType.SECTION);
         lawLevelCodes.put("INDEX", LawDocumentType.INDEX);
+        lawLevelCodes.put("AA1", LawDocumentType.PREAMBLE);
     }
 
     /** A law version id that is obtained from the law blocks. */
@@ -145,7 +141,6 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 addDocument(lawDoc, isNewDoc);
             }
         }
-
         // Set the title for the document
         setLawDocTitle(lawDoc);
     }
@@ -154,50 +149,45 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * {@inheritDoc}
      */
     public void addUpdateBlock(LawBlock block) {
-        // Rebuild the law tree
-        if (block.getMethod().equals("*MASTER*")) {
-            rebuildTree(block.getText().toString());
-        }
-        // Repeal the document
-        else if (block.getMethod().equals("*REPEAL*")) {
-            logger.info("{} , {}", block.getDocumentId(), rootNode);
-            Optional<LawTreeNode> node = rootNode.findNode(block.getDocumentId(), false);
-            if (node.isPresent()) {
-                logger.info("Repealing {}", block.getDocumentId());
-                node.get().setRepealedDate(block.getPublishedDate());
-            }
-            else {
-                logger.warn("Failed to repeal document {} because it could not be located within the law tree!");
-            }
-        }
-        // Delete the document
-        else if (block.getMethod().equals("*DELETE*")) {
-            logger.info("Deleting {}", block.getDocumentId());
-            rootNode.findNode(block.getDocumentId(), true);
-        }
-        // Update the document
-        else if (block.getMethod().isEmpty()) {
-            if (rootNode != null) {
-                Optional<LawDocInfo> existingDocInfo = rootNode.find(block.getDocumentId());
-                if (existingDocInfo.isPresent()) {
-                    existingDocInfo.get().setPublishedDate(block.getPublishedDate());
-                    LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString());
-                    // Re-parse the titles
-                    lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, block.getText().toString()));
-                    lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
-                    logger.info("Updated {}", lawDoc.getDocumentId());
+        switch (block.getMethod()) {
+            // Rebuild the law tree
+            case "*MASTER*":
+                rebuildTree(block.getText().toString());
+                break;
+            // Repeal the document
+            case "*REPEAL*" :
+                logger.info("{} , {}", block.getDocumentId(), rootNode);
+                Optional<LawTreeNode> node = rootNode.findNode(block.getDocumentId(), false);
+                if (node.isPresent()) {
+                    logger.info("Repealing {}", block.getDocumentId());
+                    node.get().setRepealedDate(block.getPublishedDate());
                 }
-                else {
+                else
+                    logger.warn("Failed to repeal document {} because it could not be located within the law tree!", block.getDocumentId());
+                break;
+            // Delete the document
+            case "*DELETE*" :
+                logger.info("Deleting {}", block.getDocumentId());
+                rootNode.findNode(block.getDocumentId(), true);
+                break;
+            // Update the document
+            case "" :
+                if (rootNode == null)
+                    throw new LawParseException("Can't add law document " + block.getDocumentId() + " without a prior law tree.");
+                Optional<LawDocInfo> existingDocInfo = rootNode.find(block.getDocumentId());
+                if (!existingDocInfo.isPresent())
                     throw new LawParseException("Can't add law document " + block.getDocumentId() +
                             " without a prior law tree structure including it.");
-                }
-            }
-            else {
-                throw new LawParseException("Can't add law document " + block.getDocumentId() + " without a prior law tree.");
-            }
-        }
-        else {
-            throw new LawParseException("Don't know how to handle law block updates with method: " + block.getMethod());
+
+                existingDocInfo.get().setPublishedDate(block.getPublishedDate());
+                LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString());
+                // Re-parse the titles
+                setLawDocTitle(lawDoc);
+                lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
+                logger.info("Updated {}", lawDoc.getDocumentId());
+                break;
+            default :
+                throw new LawParseException("Don't know how to handle law block updates with method: " + block.getMethod());
         }
     }
 
@@ -253,7 +243,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * {@inheritDoc}
      */
     public List<LawDocument> getProcessedLawDocuments() {
-        return lawDocMap.values().stream().collect(toList());
+        return new ArrayList<>(lawDocMap.values());
     }
 
     /**
@@ -286,7 +276,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         if (isNewDoc) {
             lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
         }
-        LawTreeNode node = new LawTreeNode(lawDoc, ++sequenceNo);
+        LawTreeNode node = new LawTreeNode(lawDoc, lawDoc.getDocType() == LawDocumentType.PREAMBLE ? 2 : ++sequenceNo);
         addChildNode(node);
     }
 
@@ -358,11 +348,5 @@ public abstract class AbstractLawBuilder implements LawBuilder
 
     protected void setLawDocTitle(LawDocument lawDoc) {
         lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, lawDoc.getText()));
-    }
-
-    private String getSectionNumber(String str) {
-        Pattern p = Pattern.compile("(A\\d+S)?(.*)");
-        Matcher m = p.matcher(str);
-        return m.group(2);
     }
 }
