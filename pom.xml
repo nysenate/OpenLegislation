@@ -101,7 +101,7 @@
   </build>
 
   <properties>
-    <c3p0.version>0.9.5.2</c3p0.version>
+    <c3p0.version>0.9.5.3</c3p0.version>
     <commons-cli.version>1.2</commons-cli.version>
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>3.3.2</commons-lang.version>
@@ -111,13 +111,13 @@
     <guava.version>27.0.1-jre</guava.version>
     <guava.jackson.version>2.4.0</guava.jackson.version>
     <http-client.version>4.5.6</http-client.version>
-    <jackson.version>2.9.4</jackson.version>
+    <jackson.version>2.9.5</jackson.version>
     <jbcrypt.version>0.3m</jbcrypt.version>
     <jsoup.version>1.8.1</jsoup.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.12</junit.version>
     <log4j.version>2.11.1</log4j.version>
-    <pdfbox.version>1.8.7</pdfbox.version>
+    <pdfbox.version>1.8.16</pdfbox.version>
     <postgres-jdbc.version>42.2.5</postgres-jdbc.version>
     <shiro.version>1.2.3</shiro.version>
     <slf4j.version>1.7.25</slf4j.version>
