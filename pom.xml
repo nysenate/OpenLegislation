@@ -111,7 +111,7 @@
     <guava.version>27.0.1-jre</guava.version>
     <guava.jackson.version>2.4.0</guava.jackson.version>
     <http-client.version>4.5.6</http-client.version>
-    <jackson.version>2.9.5</jackson.version>
+    <jackson.version>2.9.9</jackson.version>
     <jbcrypt.version>0.3m</jbcrypt.version>
     <jsoup.version>1.8.1</jsoup.version>
     <jstl.version>1.2</jstl.version>
