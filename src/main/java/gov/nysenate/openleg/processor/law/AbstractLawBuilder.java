@@ -91,13 +91,13 @@ public abstract class AbstractLawBuilder implements LawBuilder
     public void addInitialBlock(LawBlock block, boolean isNewDoc) {
         final LawDocument lawDoc = new LawDocument(block);
         boolean isRootDoc = false;
-        Matcher specialChapter = specialChapterPattern.matcher(lawDoc.getLocationId());
 
         // For the initial law dumps, the first block that is processed for a law (usually) becomes the root node.
         if (rootNode == null) {
             logger.info("Processing root doc: {} for {} law.", lawDoc.getDocumentId(), lawDoc.getLawId());
             LawDocument chapterDoc;
             // If the block seems to be a chapter node, we'll treat this document as the root.
+            Matcher specialChapter = specialChapterPattern.matcher(lawDoc.getLocationId());
             if (specialChapter.matches() || isLikelyChapterDoc(lawDoc)) {
                 lawDoc.setDocType(LawDocumentType.CHAPTER);
                 lawDoc.setDocTypeId(lawDoc.getLocationId().replaceFirst(specialChapter.matches() ? specialChapter.group(1) : "-CH", ""));

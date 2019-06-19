@@ -95,11 +95,10 @@ public class LawProcessor extends AbstractDataProcessor
     protected void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         for (LawBlock block : lawBlocks) {
-            boolean isSpecialChapter = AbstractLawBuilder.specialChapterPattern.matcher(block.getLocationId()).matches();
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                LawBuilder lawBuilder = createLawBuilder(new LawVersionId(block.getLawId(), block.getPublishedDate()),
-                        null, isSpecialChapter);
+                LawBuilder lawBuilder = createLawBuilder(new LawVersionId
+                        (block.getLawId(), block.getPublishedDate()), null);
                 lawBuilders.put(block.getLawId(), lawBuilder);
                 unit.addMessage("Processing initial docs for " + block.getLawId());
             }
@@ -137,8 +136,7 @@ public class LawProcessor extends AbstractDataProcessor
             }
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                boolean isSpecialChapter = block.getLawId().equals(ConstitutionBuilder.CONS_STR);
-                LawBuilder lawBuilder = createLawBuilder(lawVersionId, lawTrees.get(block.getLawId()), isSpecialChapter);
+                LawBuilder lawBuilder = createLawBuilder(lawVersionId, lawTrees.get(block.getLawId()));
                 lawBuilders.put(block.getLawId(), lawBuilder);
             }
             // Process the update block
@@ -209,9 +207,9 @@ public class LawProcessor extends AbstractDataProcessor
         return rawDocList;
     }
 
-    protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree, boolean isSpecialChapter) {
+    protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         // TODO: implement this for the Assembly and Senate rules.
-        if (isSpecialChapter)
+        if (lawVersionId.getLawId().equals(ConstitutionBuilder.CONS_STR))
             return new ConstitutionBuilder(lawVersionId, previousTree);
         if (expectedLawOrdering.containsKey(lawVersionId.getLawId()))
             return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawVersionId.getLawId()));

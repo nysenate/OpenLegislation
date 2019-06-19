@@ -15,19 +15,17 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
     private static final String CONS_CHAPTER = CONS_STR + "AS";
     private static final Pattern TITLE_MATCHER = Pattern.compile("(" + CONS_STR + "A\\d+)S.*");
     private static final Pattern FOR_ARTICLE = Pattern.compile("([IVX]+)\\\\n\\s+([A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(.*)");
-    // The title of article x can be found at articleTitles.get(Ax).
-    private Map<String, String> articleTitles = new HashMap<>();
-    // The title of article x section y can be found at sectionTitles.get(AxSy).
-    private Map<String, String> sectionTitles = new HashMap<>();
+    // Maps locationIDs to titles.
+    private Map<String, String> titles = new HashMap<>();
 
     public ConstitutionBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);
         // Replenish section titles.
         if (previousTree != null) {
             for (LawTreeNode article : previousTree.getRootNode().getChildNodeList()) {
-                articleTitles.put(article.getLocationId(), article.getLawDocInfo().getTitle());
+                titles.put(article.getLocationId(), article.getLawDocInfo().getTitle());
                 for (LawTreeNode section : article.getChildNodeList())
-                    sectionTitles.put(section.getLocationId(), section.getLawDocInfo().getTitle());
+                    titles.put(section.getLocationId(), section.getLawDocInfo().getTitle());
             }
         }
     }
@@ -44,7 +42,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
             if (!articleMatch.find())
                 continue;
             String articleTitle = articleMatch.group(2);
-            articleTitles.put("A" + i, articleTitle);
+            titles.put("A" + i, articleTitle);
             LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i,
                     CONS_STR, "A" + i, articleTitle, LawDocumentType.ARTICLE,
                     articleMatch.group(1), rootDoc.getPublishedDate());
@@ -57,7 +55,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
                 String[] parts = sectionTitle.split("\\. ", 2);
                 String locId = currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase();
                 String title = parts[1] + ".";
-                sectionTitles.put(locId, title);
+                titles.put(locId, title);
                 // If the document was already processed, update its title.
                 Optional<LawTreeNode> existingNode = rootNode.findNode(CONS_STR + locId, false);
                 if (existingNode.isPresent())
@@ -98,10 +96,9 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
 
     @Override
     protected void setLawDocTitle(LawDocument lawDoc) {
-        if (lawDoc.getDocType() == LawDocumentType.ARTICLE)
-            lawDoc.setTitle(articleTitles.get(lawDoc.getLocationId()));
-        else if (lawDoc.getDocType() == LawDocumentType.SECTION)
-            lawDoc.setTitle(sectionTitles.get(lawDoc.getLocationId()));
+        if (lawDoc.getDocType() == LawDocumentType.ARTICLE ||
+                lawDoc.getDocType() == LawDocumentType.SECTION)
+            lawDoc.setTitle(titles.get(lawDoc.getLocationId()));
         else
             super.setLawDocTitle(lawDoc);
     }
