@@ -142,7 +142,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             }
         }
         // Set the title for the document
-        setLawDocTitle(lawDoc);
+        setLawDocTitle(lawDoc, isNewDoc);
     }
 
     /**
@@ -182,7 +182,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 existingDocInfo.get().setPublishedDate(block.getPublishedDate());
                 LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString());
                 // Re-parse the titles
-                setLawDocTitle(lawDoc);
+                setLawDocTitle(lawDoc, true);
                 lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
                 logger.info("Updated {}", lawDoc.getDocumentId());
                 break;
@@ -346,7 +346,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         return dummyParent;
     }
 
-    protected void setLawDocTitle(LawDocument lawDoc) {
+    protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
         lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, lawDoc.getText()));
     }
 }

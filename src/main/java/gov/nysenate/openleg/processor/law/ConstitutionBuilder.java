@@ -15,8 +15,20 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
     private static final String CONS_CHAPTER = CONS_STR + "AS";
     private static final Pattern TITLE_MATCHER = Pattern.compile("(" + CONS_STR + "A\\d+)S.*");
     private static final Pattern FOR_ARTICLE = Pattern.compile("([IVX]+)\\\\n\\s+([A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(.*)");
+    private static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
+
     // Maps locationIDs to titles.
     private Map<String, String> titles = new HashMap<>();
+
+    static {
+        NUMERALS.put(50, "L");
+        NUMERALS.put(40, "XL");
+        NUMERALS.put(10, "X");
+        NUMERALS.put(9, "IX");
+        NUMERALS.put(5, "V");
+        NUMERALS.put(4, "IV");
+        NUMERALS.put(1, "I");
+    }
 
     public ConstitutionBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);
@@ -31,40 +43,6 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
     }
 
     @Override
-    protected void addRootDocument(LawDocument rootDoc, boolean isNewDoc) {
-        super.addRootDocument(rootDoc, isNewDoc);
-        // Creating empty space in sequence for Preamble later.
-        sequenceNo++;
-        String[] articles = rootDoc.getText().split("\\s*ARTICLE ");
-        for (int i = 1; i < articles.length; i++) {
-            // Article info. Split to remove notes.
-            Matcher articleMatch = FOR_ARTICLE.matcher(articles[i].split("\\*")[0]);
-            if (!articleMatch.find())
-                continue;
-            String articleTitle = articleMatch.group(2);
-            titles.put("A" + i, articleTitle);
-            LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i,
-                    CONS_STR, "A" + i, articleTitle, LawDocumentType.ARTICLE,
-                    articleMatch.group(1), rootDoc.getPublishedDate());
-            LawDocument currDoc = new LawDocument(articleInfo, "ARTICLE " + articles[i]);
-            super.addDocument(currDoc, isNewDoc);
-
-            // Section info.
-            String[] sectionTitlesArray = articleMatch.group(3).split("\\.\\\\n");
-            for (String sectionTitle : sectionTitlesArray) {
-                String[] parts = sectionTitle.split("\\. ", 2);
-                String locId = currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase();
-                String title = parts[1] + ".";
-                titles.put(locId, title);
-                // If the document was already processed, update its title.
-                Optional<LawTreeNode> existingNode = rootNode.findNode(CONS_STR + locId, false);
-                if (existingNode.isPresent())
-                    existingNode.get().getLawDocInfo().setTitle(title);
-            }
-        }
-    }
-
-    @Override
     protected String determineHierarchy(LawBlock block) {
         return block.getLocationId();
     }
@@ -74,8 +52,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
         if (node.getDocType() == LawDocumentType.SECTION) {
             String articleStr = CONS_STR + node.getLocationId().split("S")[0];
             Optional<LawTreeNode> nodeArticle = rootNode.findNode(articleStr, false);
-            if (nodeArticle.isPresent())
-                nodeArticle.get().addChild(node);
+            nodeArticle.ifPresent(getNode -> getNode.addChild(node));
         }
         else if (node.getDocType() != LawDocumentType.CHAPTER)
             rootNode.addChild(node);
@@ -95,12 +72,19 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
     }
 
     @Override
-    protected void setLawDocTitle(LawDocument lawDoc) {
-        if (lawDoc.getDocType() == LawDocumentType.ARTICLE ||
-                lawDoc.getDocType() == LawDocumentType.SECTION)
-            lawDoc.setTitle(titles.get(lawDoc.getLocationId()));
-        else
-            super.setLawDocTitle(lawDoc);
+    protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
+        switch (lawDoc.getDocType()) {
+            case ARTICLE:
+                int articleNum = Integer.parseInt(lawDoc.getLocationId().replace("A", ""));
+                lawDoc.setDocTypeId(toNumeral(articleNum));
+            case SECTION:
+                lawDoc.setTitle(titles.get(lawDoc.getLocationId()));
+                break;
+            case CHAPTER:
+                parseTitles(lawDoc, isNewDoc);
+            default:
+                super.setLawDocTitle(lawDoc, isNewDoc);
+        }
     }
 
     @Override
@@ -108,7 +92,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
         Set<String> articleSet = new LinkedHashSet<>();
         for (String docId : StringUtils.split(masterDoc, "\\n")) {
             Matcher m = TITLE_MATCHER.matcher(docId);
-            // "Adds in article titles.
+            // Adds in article titles.
             if (m.find())
                 articleSet.add(m.group(1) + "\\n");
         }
@@ -117,5 +101,63 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
         for (String article : articleSet)
             masterBuilder.append(article);
         super.rebuildTree(masterDoc.replace(CONS_CHAPTER + "\\n", masterBuilder.toString()));
+    }
+
+    /**
+     * Parses out the titles of articles and sections in the Constitution and stores them.
+     * @param rootDoc chapter to parse.
+     * @param isNewDoc if the chapter is new.
+     */
+    private void parseTitles(final LawDocument rootDoc, boolean isNewDoc) {
+        boolean isInitial = rootNode.getChildNodeList().isEmpty();
+        // Creating empty space in sequence for Preamble later if initial.
+        if (rootNode.getChildNodeList().isEmpty())
+            sequenceNo++;
+        String[] articles = rootDoc.getText().split("\\s*ARTICLE ");
+        for (int i = 1; i < articles.length; i++) {
+            // Article info. Split to remove notes.
+            Matcher articleMatch = FOR_ARTICLE.matcher(articles[i].split("\\*")[0]);
+            if (!articleMatch.find())
+                continue;
+            String articleTitle = articleMatch.group(2);
+            titles.put("A" + i, articleTitle);
+            LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i,
+                    CONS_STR, "A" + i, articleTitle, LawDocumentType.ARTICLE,
+                    articleMatch.group(1), rootDoc.getPublishedDate());
+            LawDocument currDoc = new LawDocument(articleInfo, "ARTICLE " + articles[i]);
+            Optional<LawDocInfo> oldArticle = rootNode.find(currDoc.getDocumentId());
+            if (oldArticle.isPresent()) {
+                oldArticle.get().setPublishedDate(rootDoc.getPublishedDate());
+                setLawDocTitle(currDoc, isNewDoc);
+                lawDocMap.put(currDoc.getDocumentId(), currDoc);
+            }
+            else
+                super.addDocument(currDoc, isNewDoc);
+
+            // Section info.
+            String[] sectionTitlesArray = articleMatch.group(3).split("\\.\\\\n");
+            for (String sectionTitle : sectionTitlesArray) {
+                String[] parts = sectionTitle.split("\\. ", 2);
+                String locId = currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase();
+                String title = parts[1] + ".";
+                titles.put(locId, title);
+                // If the document was already processed, update its title.
+                Optional<LawTreeNode> existingNode = rootNode.findNode(CONS_STR + locId, false);
+                existingNode.ifPresent(node -> node.getLawDocInfo().setTitle(title));
+            }
+        }
+    }
+
+    /**
+     * Quickly converts a number to a Roman numeral. Used to display Articles
+     * as Roman numerals, as they are in the Constitution text.
+     * @param number to convert.
+     * @return a Roman numeral.
+     */
+    private static String toNumeral(int number) {
+        if (number == 0)
+            return "";
+        int next = NUMERALS.floorKey(number);
+        return NUMERALS.get(next) + toNumeral(number-next);
     }
 }
