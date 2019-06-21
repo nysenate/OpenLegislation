@@ -18,10 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
@@ -97,6 +94,18 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
     public void removeSubscription(String apiKey, ApiUserSubscriptionType subscription) {
         jdbcNamed.update(ApiUserQuery.DELETE_API_USER_SUBSCRIPTION.getSql(schema()),
                 getSubscriptionParams(apiKey, subscription));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setSubscriptions(String apiKey, Set<ApiUserSubscriptionType> subscriptions) {
+        //delete existing subscriptions
+        jdbcNamed.update(ApiUserQuery.DELETE_ALL_API_USER_SUBSCRIPTIONS.getSql(schema()),
+                new MapSqlParameterSource().addValue("apiKey", apiKey));
+        //add the new subscriptions
+        for(ApiUserSubscriptionType sub : subscriptions) {
+            addSubscription(apiKey, sub);
+        }
     }
 
     /** --- Internal Methods --- */

@@ -56,6 +56,10 @@ public enum ApiUserQuery implements BasicSqlQuery
         "WHERE apikey = :apiKey AND subscription_type = :subscription_type::public.apiuser_subscription_type"
     ),
 
+    DELETE_ALL_API_USER_SUBSCRIPTIONS(
+      "DELETE FROM public." + SqlTable.API_USER_SUBSCRIPTION + "\n"  +
+      "WHERE apikey = :apiKey"
+    ),
     ;
 
     private String sql;

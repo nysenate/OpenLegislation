@@ -6,6 +6,7 @@ import gov.nysenate.openleg.service.auth.OpenLegRole;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * DAO Interface for retrieving and persisting ApiUser data
@@ -81,4 +82,12 @@ public interface ApiUserDao
      * @param subscription ApiUserSubscriptionType
      */
     public void removeSubscription(String apiKey, ApiUserSubscriptionType subscription);
+
+    /**
+     * Removes all current subscriptions for a user and
+     * adds the subscriptions in the set parameter
+     * @param apiKey String
+     * @param subscriptions Set<ApiUserSubscriptionType>
+     */
+    public void setSubscriptions(String apiKey, Set<ApiUserSubscriptionType> subscriptions);
 }

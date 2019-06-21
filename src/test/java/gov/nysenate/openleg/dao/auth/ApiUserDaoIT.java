@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -137,4 +139,81 @@ public class ApiUserDaoIT extends BaseTests {
         checkSubs = checkUser.getSubscriptions();
         assertEquals("Removal of non-existent subscription failed.", 0, checkSubs.size());
     }
+
+    @Test public void setSetSubscriptionsTest() {
+        String sub1 = "BREAKING_CHANGES";
+        String sub2 = "NEW_FEATURES";
+        String email = "bogusBunny@nysenate.gov";
+        ApiUser apiUser = new ApiUser(email);
+        apiUser.setName("Bugs");
+        apiUser.setRegistrationToken("ABC123");
+        String apikey = apiUser.getApiKey();
+
+        Set<ApiUserSubscriptionType> subs = new HashSet<>();
+        subs.add(ApiUserSubscriptionType.valueOf(sub1));
+        subs.add(ApiUserSubscriptionType.valueOf(sub2));
+
+        apiUserDao.insertUser(apiUser);
+        apiUserDao.setSubscriptions(apikey, subs);
+        ApiUser checkUser = apiUserDao.getApiUserFromKey(apikey);
+        ImmutableSet<ApiUserSubscriptionType> checkSubs = checkUser.getSubscriptions();
+
+        //user should have two subscriptions
+        assertEquals("Wrong number of user subscriptions added.", 2, checkSubs.size());
+        assertTrue("BREAKING_CHANGES is not in user subscriptions.",
+                checkSubs.contains(ApiUserSubscriptionType.valueOf(sub1)));
+        assertTrue("NEW_FEATURES is not in user subscriptions.",
+                checkSubs.contains(ApiUserSubscriptionType.valueOf(sub2)));
+
+    }
+
+    @Test public void setSubscriptionsAlreadyExistTest() {
+        String sub1 = "BREAKING_CHANGES";
+        String sub2 = "NEW_FEATURES";
+        String email = "bogusBunny@nysenate.gov";
+        ApiUser apiUser = new ApiUser(email);
+        apiUser.setName("Bugs");
+        apiUser.setRegistrationToken("ABC123");
+        String apikey = apiUser.getApiKey();
+
+        Set<ApiUserSubscriptionType> sub2Set = new HashSet<>();
+        sub2Set.add(ApiUserSubscriptionType.valueOf(sub2));
+
+        apiUserDao.insertUser(apiUser);
+        apiUserDao.addSubscription(apikey, ApiUserSubscriptionType.valueOf(sub1));
+        apiUserDao.setSubscriptions(apikey, sub2Set);
+        ApiUser checkUser = apiUserDao.getApiUserFromKey(apikey);
+        ImmutableSet<ApiUserSubscriptionType> checkSubs = checkUser.getSubscriptions();
+
+        //user should have one subscription of 'NEW_FEATURES'
+        assertEquals("Wrong number of user subscriptions returned.", 1, checkSubs.size());
+        assertTrue("NEW_FEATURES is not in user subscriptions.",
+                checkSubs.contains(ApiUserSubscriptionType.valueOf(sub2)));
+        assertFalse("BREAKING_CHANGES should not be in user's subscriptions",
+                checkSubs.contains(ApiUserSubscriptionType.valueOf(sub1)));
+    }
+
+    /* Test deleting all current subscriptions */
+    @Test public void setSubscriptionsEmptySet() {
+        String sub1 = "BREAKING_CHANGES";
+        String sub2 = "NEW_FEATURES";
+        String email = "bogusBunny@nysenate.gov";
+        ApiUser apiUser = new ApiUser(email);
+        apiUser.setName("Bugs");
+        apiUser.setRegistrationToken("ABC123");
+        String apikey = apiUser.getApiKey();
+
+        Set<ApiUserSubscriptionType> subs = new HashSet<>();
+        subs.add(ApiUserSubscriptionType.valueOf(sub1));
+        subs.add(ApiUserSubscriptionType.valueOf(sub2));
+        Set<ApiUserSubscriptionType> emptySubs = new HashSet<>();
+
+        apiUserDao.insertUser(apiUser);
+        apiUserDao.setSubscriptions(apikey, subs);
+        apiUserDao.setSubscriptions(apikey, emptySubs);
+        ApiUser checkUser = apiUserDao.getApiUserFromKey(apikey);
+        ImmutableSet<ApiUserSubscriptionType> checkSubs = checkUser.getSubscriptions();
+        assertEquals("The user should have no subscriptions", 0, checkSubs.size());
+    }
+
 }

@@ -1,7 +1,6 @@
 @import url(//fonts.googleapis.com/css?family=Open+Sans);
 @import url(//fonts.googleapis.com/css?family=Roboto+Slab:300,400);
 @import url(//fonts.googleapis.com/css?family=Inconsolata);
-
 @import "colors";
 @import "icons";
 
@@ -22,6 +21,7 @@ body {
 
 table {
   border-spacing: 0;
+
   thead {
     tr {
       th {
@@ -60,17 +60,21 @@ p {
   height: 70px;
   max-height: 70px;
 }
+
 md-toolbar {
   min-height: 70px;
+
   .md-toolbar-tools {
     height: 70px;
     max-height: 70px;
   }
+
   &.auto-height {
     min-height: 0;
     height: auto;
     max-height: none;
   }
+
   &.md-info-tools {
     min-height: 0;
     width: auto;
@@ -79,26 +83,31 @@ md-toolbar {
 }
 
 .md-whiteframe-z0 {
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,.10);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .10);
 }
 
 md-card {
   &.content-card {
     @extend .md-whiteframe-z0;
     background: white;
+
     &.gray4-bg {
       @extend .gray4-bg;
     }
+
     padding: 0;
     margin: 10px 0;
+
     &.no-margin {
       margin: 0;
     }
+
     .md-subheader {
       background: #fcfcfc;
       border-bottom: 1px solid #f1f1f1;
       color: #444;
     }
+
     md-content {
       margin: 0;
       padding: 20px;
@@ -121,13 +130,16 @@ md-input-container {
   margin-left: 0;
   color: #333;
 }
+
 .md-default-theme.md-hue-2 .md-datepicker-input-container, .md-hue-2 .md-datepicker-input-container {
   padding: 0;
   border: 1px solid #ddd;
 }
+
 md-datepicker {
   background: transparent;
 }
+
 .md-calendar-day-header, .md-calendar-selected-date.md-focus .md-calendar-date-selection-indicator {
   background: $blue3 !important;
   color: white !important;
@@ -142,21 +154,27 @@ md-dialog {
 .fade {
   opacity: 1;
 }
+
 .fade.ng-enter, .fade.ng-leave {
   transition: all .25s ease;
 }
+
 .fade.ng-enter {
   opacity: 0;
 }
+
 .fade.ng-enter-active {
   opacity: 1;
 }
+
 .fade.fade-out.ng-leave {
   transition: all .5s ease;
 }
+
 .fade.ng-leave {
   opacity: 1;
 }
+
 .fade.ng-leave-active {
   opacity: 0;
 }
@@ -210,7 +228,8 @@ md-dialog {
 .thin-300 {
   font-weight: 300;
 }
-.columnWord{
+
+.columnWord {
   word-wrap: break-word;
   min-width: 50px;
 }
@@ -343,12 +362,14 @@ md-dialog {
   white-space: pre;
   font-family: 'Inconsolata', monospace;
   display: block;
+
   .line-numbers {
     float: left;
     margin: 0 1em 0 0;
     border-right: 1px solid;
     text-align: right;
     background: #fdd2a8;
+
     span {
       display: block;
       padding-right: 0.5em;
@@ -364,6 +385,7 @@ md-dialog {
 a.gray-2-blue {
   color: $gray10;
   transition: all .2s linear;
+
   &:hover {
     color: $blue2;
   }
@@ -372,6 +394,7 @@ a.gray-2-blue {
 a.white-2-blue {
   color: white;
   transition: all .2s linear;
+
   &:hover {
     background: transparentize(#fff, 0.9);
   }
@@ -397,10 +420,12 @@ a.result-link {
   width: 100%;
   text-decoration: none;
   color: #555;
+
   &:hover {
     color: $blue5;
     background: #fbfbfb;
   }
+
   em {
     background: #fff6b4;
   }
@@ -460,15 +485,19 @@ h5 {
   display: none;
   position: fixed;
   background: $blue3;
+
   h1 {
     //color: white;
   }
+
   @media (max-width: 768px) {
     font-size: 1.1rem;
   }
+
   &.header-visible {
     display: flex;
   }
+
   /* Content header should always be visible when there's no room for the left nav. */
   @media (max-width: 959px) {
     display: flex;
@@ -506,17 +535,19 @@ $left-nav-width: 305px;
   @media print {
     display: none;
   }
+
   &.md-locked-open + * {
     margin-left: $left-nav-width;
   }
 }
 
 #logo {
-  padding-left:10px;
+  padding-left: 10px;
   height: 70px;
-  margin:0;
+  margin: 0;
   font-size: 1.4rem;
   background: $blue3;
+
   a {
     font-family: 'Roboto Slab', serif;
     font-weight: normal;
@@ -525,6 +556,7 @@ $left-nav-width: 305px;
     color: white;
     margin-left: 10px;
   }
+
   img {
     top: 14px;
     height: 45px;
@@ -554,6 +586,7 @@ $left-nav-width: 305px;
   text-align: left;
   text-decoration: none;
 }
+
 .menu-item.ng-hide {
   max-height: 0;
   opacity: 0;
@@ -562,6 +595,7 @@ $left-nav-width: 305px;
 .menu-item:focus {
   font-weight: bold;
 }
+
 .menu-item.menu-title {
   color: #444;
   font-weight: bold;
@@ -570,6 +604,7 @@ $left-nav-width: 305px;
   text-align: left;
   text-transform: uppercase;
 }
+
 .menu-item.menu-title:hover,
 .menu-item.menu-title:focus,
 .menu-item.active {
@@ -577,6 +612,7 @@ $left-nav-width: 305px;
   background: $blue3;
   color: white;
 }
+
 .menu-item.menu-title.active {
   background: $blue4;
 }
@@ -585,9 +621,11 @@ $left-nav-width: 305px;
   &.active {
     background: $blue3;
   }
+
   &.menu-title.active {
     background: $blue4;
   }
+
   background: $gray3;
 }
 
@@ -597,6 +635,7 @@ $left-nav-width: 305px;
   color: #ffffff;
   font-family: 'Roboto Slab', sans-serif;
   font-weight: bold;
+
   .menu-icon {
     background: none;
     border: 1px solid #ddd;
@@ -609,6 +648,7 @@ $left-nav-width: 305px;
       display: none;
     }
   }
+
   @media only screen and (max-width: 600px) {
     font-size: 1.0rem;
   }
@@ -626,23 +666,28 @@ ul.pagination {
   margin: 0;
   padding: 10px;
   border: 1px solid #f1f1f1;
+
   li {
     display: inline;
     list-style-type: none;
     margin-right: 8px;
     text-align: center;
+
     &.active {
       a {
         font-weight: 600;
         color: $blue2;
       }
     }
+
     &:hover {
       background: #eee;
+
       a {
         color: $blue3;
       }
     }
+
     a {
       font-size: 0.9em;
       text-decoration: none;
@@ -666,6 +711,7 @@ ul.pagination {
   text-align: left;
   padding: 20px;
   font-size: 0.8rem;
+
   td {
     padding: 5px 0;
     border-bottom: 1px solid #ddd;
@@ -676,7 +722,7 @@ ul.pagination {
 
 .cal-tooltip {
   position: absolute;
-  width:140px;
+  width: 140px;
   color: #FFFFFF;
   background: $blue1;
   text-align: center;
@@ -686,22 +732,25 @@ ul.pagination {
   left: 50%;
   margin-left: -90px;
   z-index: 100 !important;
+
   &:after {
     content: '';
     position: absolute;
     top: 100%;
     left: 25%;
     margin-left: -8px;
-    width: 0; height: 0;
+    width: 0;
+    height: 0;
     border-top: 8px solid $blue1;
     border-right: 8px solid transparent;
     border-left: 8px solid transparent;
     z-index: 100;
   }
 }
+
 .cal-tooltip.agenda-meeting {
   bottom: 55px;
-  width:300px;
+  width: 300px;
   text-align: left;
   padding: 10px;
   font-size: 0.9rem;
@@ -710,19 +759,22 @@ ul.pagination {
 /** --- Toggle Panel ---  */
 
 .toggle-panel {
-  .toggle-panel-bar  {
+  .toggle-panel-bar {
     &:hover {
       background: #eee;
     }
+
     cursor: pointer;
     color: #555;
     border: 1px solid #ddd;
+
     .toggle-panel-label {
       font-size: 0.9rem;
       font-weight: bold;
       color: #555;
     }
   }
+
   &.open {
     > .toggle-panel-bar {
       background: #eee;
@@ -751,30 +803,36 @@ ul.pagination {
 
 .search-refine-panel {
   h3 {
-    background:white;
+    background: white;
     font-size: 1rem;
     padding: 10px 10px 10px 15px;
     margin: 0;
   }
+
   .refine-controls {
     padding: 5px 10px 5px 15px;
+
     label, .md-label {
       padding: 5px;
       font-size: 0.9rem;
       display: block;
+
       &.lit {
         margin-top: 3px;
         background: #fff6b4;
       }
     }
+
     select, input {
       width: 100%;
-      display:block;
+      display: block;
       border: 1px solid #ddd;
       padding: 5px;
     }
+
     md-checkbox, md-switch {
       margin: 10px 2px 0 2px;
+
       &.lit {
         .md-label {
           margin-top: 3px;
@@ -790,17 +848,61 @@ ul.pagination {
   background: #f5f5f5;
 }
 
+/** --- Subscription Page Styles --- */
+.hero-container-subscriptions {
+  margin-bottom: 0;
+  height: 300px;
+  background: #008cba;
+  position: relative;
+}
+
+.subscription-checkbox-list-updater {
+  width: 100%;
+  padding-left: 20%;
+  padding-right: 17%;
+}
+
+.submit-button {
+  align-self: center;
+
+  .md-button {
+    align-self: center;
+    width: 250px;
+    height: 40px;
+  }
+
+  p {
+    margin: 10px;
+  }
+}
+
+.unsubscribeInstructions {
+  margin-bottom: 5px;
+}
+
+
 /** --- Landing Page Styles --- */
 
 .public-home-page {
   background: #f1f1f1;
   min-height: 100vh;
   overflow: auto;
+
+  h1 {
+    margin: 0;
+    font-family: 'Roboto Slab', sans-serif;
+    font-weight: 400;
+    color: #fff;
+    line-height: 200px;
+    font-size: 4.5vw;
+    text-align: center;
+    text-shadow: 0 0 1px #235674;
+  }
 }
 
 .hero-container-public {
-  margin-bottom:0;
-  height:300px;
+  margin-bottom: 0;
+  height: 300px;
   background: #008cba;
   position: relative;
 
@@ -813,6 +915,7 @@ ul.pagination {
     font-size: 4.5vw;
     text-align: center;
     text-shadow: 0 0 1px #235674;
+
     img {
       height: 6.5vw;
       vertical-align: text-top;
@@ -826,10 +929,12 @@ ul.pagination {
   background: #00b0ef;
   box-shadow: 0 2px 3px #005474;
   border-radius: 2px;
+
   p {
     margin: 5px;
     text-align: center;
     cursor: pointer;
+
     a {
       text-decoration: none;
       color: white;
@@ -844,9 +949,11 @@ ul.pagination {
   padding: 40px 20px;
   margin: -110px auto 0 auto;
   box-shadow: 0 1px 3px #bbb;
+
   .project-desc {
     color: #444;
     font-weight: 400;
+
     a {
       color: #008cba;
     }
@@ -870,9 +977,11 @@ ul.pagination {
   font-size: 1.2em;
   text-align: center;
   font-family: 'Roboto Slab', 'Open Sans', sans-serif;
+
   .md-button {
     font-family: 'Open Sans', sans-serif;
   }
+
   color: #444;
   font-weight: 300;
 }
@@ -893,17 +1002,19 @@ ul.pagination {
 }
 
 .docs-iframe {
-  height:95vh;
+  height: 95vh;
   border: 0;
   overflow: visible
 }
 
 @media (max-width: 599px) {
-  .hero-container-public {
+  .hero-container-public, .hero-container-subscriptions {
     height: 150px;
+
     h1 {
       font-size: 28px;
       line-height: 150px;
+
       img {
         height: 40px;
       }
@@ -924,19 +1035,21 @@ ul.pagination {
 }
 
 a.slogan-link {
-  color:$blue5;
+  color: $blue5;
   text-decoration: none;
-  border-bottom:2px solid $blue5;
+  border-bottom: 2px solid $blue5;
 }
 
 .provide-data-container {
   padding: 5px;
   cursor: pointer;
+
   &:hover {
     .provide-data-type {
       color: $blue2;
     }
   }
+
   .provide-data-type {
     border-bottom: 1px solid #ccc;
     padding-bottom: 5px;
@@ -944,12 +1057,13 @@ a.slogan-link {
 }
 
 .provide-data-icon {
-  text-align:center;
-  height:75px;
-  width:75px;
+  text-align: center;
+  height: 75px;
+  width: 75px;
+
   i {
     font-size: 2rem;
-    line-height:75px;
+    line-height: 75px;
   }
 }
 
@@ -967,6 +1081,7 @@ a.slogan-link {
 
 .register-button {
   align-self: center;
+
   .md-button {
     width: 160px;
   }
@@ -986,8 +1101,10 @@ a.slogan-link {
   border-radius: 100%;
   float: left;
   cursor: pointer;
+
   &.filled {
     background: $blue3;
+
     &.vetoed {
       background: $red1;
       border: 1px solid $red1;
@@ -1028,7 +1145,7 @@ a.slogan-link {
   font-weight: 400;
   display: block;
   margin: 20px 0;
-  color: rgba(0,0,0,0.54);
+  color: rgba(0, 0, 0, 0.54);
   white-space: pre-line;
 }
 
@@ -1044,10 +1161,12 @@ a.slogan-link {
   font-size: 0.9rem;
   width: 100%;
   padding: 20px;
+
   tr {
     th {
       text-align: left;
     }
+
     td {
       padding: 5px 10px 5px 5px;
     }
@@ -1058,23 +1177,28 @@ a.slogan-link {
   font-size: 0.8rem;
   width: 100%;
   padding: 20px 0;
+
   tr {
     th {
       text-align: left;
     }
+
     td {
       &:nth-child(1) {
         font-size: 0.9rem;
         border-right: 1px solid #ddd;
       }
+
       &:nth-child(2) {
         padding-left: 10px;
       }
+
       pre {
         max-height: 300px;
         font-size: 0.9rem;
         white-space: normal;
       }
+
       border-bottom: 1px solid #ddd;
       overflow: auto;
     }
@@ -1111,16 +1235,21 @@ a.slogan-link {
   .law-node-toggle-icon {
     visibility: hidden;
   }
+
   background: #fff;
+
   &:hover {
     color: $blue3;
+
     .law-node-toggle-icon {
       visibility: visible;
     }
   }
+
   &.active {
     color: $blue4;
     background: #f1f1f1;
+
     .law-node-toggle-icon {
       visibility: visible;
     }
@@ -1137,12 +1266,13 @@ a.slogan-link {
   &.no-margin {
     margin: 0;
   }
-  padding:40px;
+
+  padding: 40px;
   margin: 0;
   white-space: pre-line;
   font-size: 0.85rem;
   background: white;
-  border-width:1px;
+  border-width: 1px;
   border-style: none solid solid solid;
   border-color: #ddd;
   width: 100%;
@@ -1164,10 +1294,12 @@ a.slogan-link {
     border-bottom-left-radius: 0 !important;
     color: $blue3;
     cursor: pointer;
+
     &:hover {
       backgrfound: white;
     }
   }
+
   .fc-event.fc-event-hori.no-agenda-month {
     background: white;
     color: $red1;
@@ -1179,9 +1311,11 @@ a.slogan-link {
   div {
     padding: 16px;
   }
+
   label:not(:first-child) {
     margin-left: 10px;
   }
+
   select, input {
     margin-left: 10px;
   }
@@ -1202,6 +1336,7 @@ a.slogan-link {
 .transcript-result-link {
   cursor: pointer;
   margin-bottom: 16px;
+
   &:hover {
     background: #eee;
   }
@@ -1219,12 +1354,15 @@ a.slogan-link {
 
 .open-mismatch-summary-item {
   border: 1px solid rgba(0, 0, 0, 0.12);
+
   &.not-first {
     border-top: none;
   }
+
   md-chips.md-default-theme .md-chips, md-chips .md-chips {
     box-shadow: none
   }
+
   .md-button {
     margin: 0;
     padding: 6px 24px;
@@ -1246,26 +1384,28 @@ a.slogan-link {
 }
 
 .new-error {
-  color:red;
+  color: red;
 }
 
 .closed-error {
-  color:green;
+  color: green;
 }
 
 .existing-error {
-  color:#aaa;
+  color: #aaa;
 }
 
 /** --- Styles for Spotcheck Mismatch Viewer --- */
 
 .spotcheck-mismatch {
   border: 1px solid rgba(0, 0, 0, 0.12);
+
   &.not-first {
     border-top: none;
   }
+
   &.open {
-    border: 2px solid rgba(22,91,129,0.24);
+    border: 2px solid rgba(22, 91, 129, 0.24);
   }
 
   .mismatch-snippet {
@@ -1278,9 +1418,11 @@ a.slogan-link {
   .NEW, .REGRESSION {
     color: red;
   }
+
   .EXISTING {
     color: #aaa;
   }
+
   .RESOLVED {
     color: green;
   }
@@ -1295,6 +1437,7 @@ md-dialog.detail-diff-dialog {
   height: 90vh;
   max-height: 100vh;
   max-width: 100vw;
+
   & > md-content {
     overflow: hidden;
     height: 100%;
@@ -1383,9 +1526,11 @@ diff-summary, mismatch-diff {
     font-weight: bold;
     text-decoration: none;
   }
+
   ins {
     background-color: $diff-ins-color;
   }
+
   del {
     background-color: $diff-del-color;
   }
@@ -1416,8 +1561,8 @@ diff-summary, mismatch-diff {
 .master-admin {
   background: #fefcea; /* Old browsers */
   background: -moz-linear-gradient(bottom, #fefcea 0%, #f1da36 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,#fefcea), color-stop(100%,#f1da36)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(bottom, #fefcea 0%,#f1da36 100%); /* Chrome10+,Safari5.1+ */
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0%, #fefcea), color-stop(100%, #f1da36)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(bottom, #fefcea 0%, #f1da36 100%); /* Chrome10+,Safari5.1+ */
 }
 
 .logout-circle {
@@ -1453,8 +1598,8 @@ md-list.env-list {
   height: 150px;
   border-bottom: 1px solid #ddd;
   padding-left: 16px;
-  padding-bottom : 20px;
-  padding-top:20px;
+  padding-bottom: 20px;
+  padding-top: 20px;
 }
 
 .cal-entry-sponsor-img {
@@ -1484,11 +1629,13 @@ md-list.env-list {
     color: $red1;
     border: 0;
   }
+
   .fc-event.session-day {
     background: #f1f1f1;
     border: 0;
     color: $blue3;
     padding: 3px;
+
     &:hover {
       cursor: pointer;
       background: $blue3;
@@ -1513,6 +1660,7 @@ md-list.env-list {
 
 .run-unit-summary {
   font-size: 0.9em;
+
   label {
     font-weight: bold;
   }
@@ -1521,7 +1669,7 @@ md-list.env-list {
 @-webkit-keyframes new-request {
   0% {
     background-color: transparent;
-    opacity:1;
+    opacity: 1;
   }
   50% {
     background-color: #b1c48e;
@@ -1534,6 +1682,7 @@ md-list.env-list {
 table.api-request-table {
   width: 100%;
   text-align: center;
+
   tr.new-request {
     -webkit-animation-name: new-request;
     -webkit-animation-duration: 2000ms;
@@ -1544,27 +1693,34 @@ table.api-request-table {
     -moz-animation-iteration-count: 1;
     -moz-animation-timing-function: linear;
   }
+
   th {
     font-size: 0.9rem;
     padding: 5px;
   }
+
   td {
     padding: 5px;
     font-size: 0.8rem;
+
     a {
       color: $blue3;
     }
+
     &.time-td {
       width: 165px;
     }
+
     &.url-td {
       max-width: 350px;
     }
   }
+
   tbody tr:nth-child(odd) {
     background: #f5f5f5;
   }
 }
+
 /**
 Spotcheck report page detail
  */
@@ -1581,14 +1737,16 @@ Spotcheck report page detail
 }
 
 button.md-button.md-default-theme.md-primary, button.md-button.md-default-theme.md-primary.md-focused {
-  color: rgb(255,255,255);
-  background-color: rgb(0,140,186);
+  color: rgb(255, 255, 255);
+  background-color: rgb(0, 140, 186);
 }
+
 md-dialog.issuedialog {
   width: 40vw;
   height: 30vh;
   max-height: 50vh;
   max-width: 30vw;
+
   & > md-content {
     overflow: hidden;
     height: 100%;
@@ -1596,13 +1754,15 @@ md-dialog.issuedialog {
     padding: 0 20px 20px;
   }
 }
-.md-button.md-fab.md-mini{
+
+.md-button.md-fab.md-mini {
   font-size: x-small;
   line-height: 25px;
   width: 50px;
   height: 25px;
 }
-.report-page-toast{
+
+.report-page-toast {
   color: red;
   font-size: 12px;
   text-align: center;
@@ -1615,8 +1775,9 @@ md-dialog.issuedialog {
   -moz-transition: $alert-info-saved-transition-in;
   -o-transition: $alert-info-saved-transition-in;
   transition: $alert-info-saved-transition-in;
+
   &.saved {
-    opacity:1;
+    opacity: 1;
     visibility: visible;
     $alert-info-saved-transition-out: opacity 0s;
     -webkit-transition: $alert-info-saved-transition-out;
@@ -1646,8 +1807,9 @@ md-dialog.issuedialog {
   select {
     margin-left: 20px;
   }
+
   h2:not(:first-child) {
-    margin-left:40px;
+    margin-left: 40px;
   }
 }
 
@@ -1657,6 +1819,7 @@ md-dialog.issuedialog {
 
 .spotcheck-report-inner-controls {
   margin-top: 20px;
+
   > * {
     margin-left: 20px;
   }
@@ -1680,17 +1843,19 @@ md-dialog.issuedialog {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+
   > * {
     margin-left: 10px;
     margin-right: 10px;
   }
+
   > md-input-container {
     margin-top: 35px;
   }
 }
 
 .spotcheck-table-mismatch-row {
-  float:left;
+  float: left;
   width: 75%;
 
   display: flex;
@@ -1809,20 +1974,20 @@ md-dialog.issuedialog {
 
 .member-toggle {
   text-decoration: underline;
-  position:relative;
-  bottom:0;
+  position: relative;
+  bottom: 0;
   padding-bottom: 7px;
   cursor: pointer;
 }
 
 .member-total-results {
-  display:inline;
+  display: inline;
   font-size: 16px;
   padding: 0 5px;
 }
 
 .member-table-row {
-  display:flex;
+  display: flex;
   height: 50px;
   align-items: center;
 }
@@ -1832,7 +1997,7 @@ md-dialog.issuedialog {
 }
 
 .member-table-row:nth-child(odd) {
-  background-color: rgb(238,238,239);
+  background-color: rgb(238, 238, 239);
 }
 
 .member-table-item {
@@ -1864,7 +2029,7 @@ md-dialog.issuedialog {
 }
 
 .verify-table-row {
-  display:flex;
+  display: flex;
   height: 90px;
   align-items: center;
   width: 80%;
@@ -1885,7 +2050,7 @@ md-dialog.issuedialog {
 }
 
 .verify-table-row:nth-child(odd) {
-  background-color: rgb(238,238,239);
+  background-color: rgb(238, 238, 239);
 }
 
 .verify-icon {
@@ -1907,13 +2072,13 @@ md-dialog.issuedialog {
 }
 
 .verify-search {
-  width:80%;
-  display:block;
-  margin:auto 10% 15px 10%;
+  width: 80%;
+  display: block;
+  margin: auto 10% 15px 10%;
 }
 
 .verify-button {
-  background-color:rgb(0,139,186) !important;
+  background-color: rgb(0, 139, 186) !important;
   color: white !important;
 }
 
@@ -1941,26 +2106,28 @@ md-dialog.issuedialog {
 .member-info {
   margin-left: 110px;
   margin-right: 50px;
-  float:left;
+  float: left;
 }
 
 .member-even-columns {
-  width:50%;
-  float:left;
+  width: 50%;
+  float: left;
 }
 
 .member-uneven-columns-1 {
-  float:left; width:33%;
+  float: left;
+  width: 33%;
 }
 
 .member-uneven-columns-2 {
-  float:left; width:67%;
+  float: left;
+  width: 67%;
 }
 
 .member-session-map-container {
-  display:block;
-  margin-left:110px;
-  margin-right:130px
+  display: block;
+  margin-left: 110px;
+  margin-right: 130px
 }
 
 .member-session-map:nth-child(even) {
@@ -1968,7 +2135,7 @@ md-dialog.issuedialog {
 }
 
 .member-session-map:nth-child(odd) {
-  background-color: rgb(238,238,239);
+  background-color: rgb(238, 238, 239);
 }
 
 .bold {
