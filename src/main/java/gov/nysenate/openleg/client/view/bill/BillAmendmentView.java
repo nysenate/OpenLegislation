@@ -31,6 +31,7 @@ public class BillAmendmentView extends BillIdView
     protected ListView<MemberView> multiSponsors;
     protected boolean uniBill;
     protected boolean isStricken;
+    protected String relatedLaws;
 
     protected BillAmendmentView(){}
 
@@ -56,6 +57,7 @@ public class BillAmendmentView extends BillIdView
                 .collect(Collectors.toList()));
             this.uniBill = billAmendment.isUniBill();
             this.isStricken = billAmendment.isStricken();
+            this.relatedLaws = billAmendment.getRelatedLawsJson();
         }
     }
 
@@ -118,5 +120,9 @@ public class BillAmendmentView extends BillIdView
 
     public String getFullTextHtml() {
         return fullTextHtml;
+    }
+
+    public String getRelatedLaws() {
+        return relatedLaws;
     }
 }

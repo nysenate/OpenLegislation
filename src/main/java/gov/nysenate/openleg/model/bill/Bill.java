@@ -351,7 +351,6 @@ public class Bill extends BaseLegislativeContent implements Serializable, Compar
     }
 
     /** --- Delegates --- */
-
     public String getFullTextPlain() {
         if (this.hasActiveAmendment()) {
             return this.getActiveAmendment().getFullText(PLAIN);

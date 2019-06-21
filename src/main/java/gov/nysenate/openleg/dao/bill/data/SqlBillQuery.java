@@ -67,7 +67,7 @@ public enum SqlBillQuery implements BasicSqlQuery
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     ),
 
-    /** --- Addtional Bill Sponsors --- */
+    /** --- Additional Bill Sponsors --- */
 
     SELECT_ADDTL_BILL_SPONSORS(
         "SELECT * FROM ${schema}." + SqlTable.BILL_ADDITIONAL_SPONSOR + "\n" +
@@ -93,7 +93,7 @@ public enum SqlBillQuery implements BasicSqlQuery
 
     SELECT_BILL_AMENDMENTS_TEMPLATE(
         "SELECT bill_print_no, bill_session_year, bill_amend_version,\n" +
-        "       sponsor_memo, act_clause, stricken, uni_bill, law_section, law_code\n" +
+        "       sponsor_memo, act_clause, stricken, uni_bill, law_section, law_code, related_laws\n" +
         "       ${fullTextFields}\n" +
         "FROM ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
@@ -103,15 +103,15 @@ public enum SqlBillQuery implements BasicSqlQuery
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause,\n" +
         "    full_text = :fullText, full_text_html = :fullTextHtml,\n" +
         "    stricken = :stricken, uni_bill = :uniBill, last_fragment_id = :lastFragmentId,\n" +
-        "    law_section = :lawSection, law_code = :lawCode\n" +
+        "    law_section = :lawSection, law_code = :lawCode, related_laws = CAST(:relatedLawsJson AS JSON)\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     INSERT_BILL_AMENDMENT(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "(bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, act_clause, full_text, full_text_html,\n" +
-        "    stricken, uni_bill, last_fragment_id, law_section, law_code)\n" +
+        "    stricken, uni_bill, last_fragment_id, law_section, law_code, related_laws)\n" +
         "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :fullTextHtml,\n" +
-        "    :stricken, :uniBill, :lastFragmentId, :lawSection, :lawCode)"
+        "    :stricken, :uniBill, :lastFragmentId, :lawSection, :lawCode, CAST(:relatedLawsJson AS JSON))"
     ),
     SELECT_EMPTY_TEXT_BUDGET_BILL_PRINT_NOS (
             "SELECT a.bill_print_no, a.bill_session_year, a.bill_amend_version\n" +
@@ -360,6 +360,7 @@ public enum SqlBillQuery implements BasicSqlQuery
         "JOIN ${schema}." + SqlTable.CALENDAR_SUPPLEMENTAL + " cs ON cse.calendar_sup_id = cs.id\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear"
     );
+
 
     private String sql;
 

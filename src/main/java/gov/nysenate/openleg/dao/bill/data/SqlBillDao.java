@@ -82,6 +82,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             amendment.setMultiSponsors(getMultiSponsors(amendParams));
             // Get the votes
             amendment.setVotesMap(getBillVotes(amendParams));
+
         }
         // Set the amendments
         bill.addAmendments(billAmendments);
@@ -414,6 +415,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 });
     }
 
+
     /**
      * Updates the bill's same as set.
      */
@@ -433,6 +435,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             });
         }
     }
+
 
     /**
      * Updates the bill's action list into the database.
@@ -736,6 +739,7 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             amend.setUniBill(rs.getBoolean("uni_bill"));
             amend.setLawSection(rs.getString("law_section"));
             amend.setLaw(rs.getString("law_code"));
+            amend.setRelatedLawsJson(rs.getString("related_laws"));
             return amend;
         }
     }
@@ -900,7 +904,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 .addValue("stricken", amendment.isStricken())
                 .addValue("lawSection", amendment.getLawSection())
                 .addValue("lawCode", amendment.getLaw())
-                .addValue("uniBill", amendment.isUniBill());
+                .addValue("uniBill", amendment.isUniBill())
+                .addValue("relatedLawsJson", amendment.getRelatedLawsJson());
         addLastFragmentParam(fragment, params);
         return params;
     }

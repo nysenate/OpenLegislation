@@ -36,6 +36,12 @@ public class BillAmendment implements Serializable, Cloneable
     /** The section of the law the bill affects. e.g (Vehicle And Traffic) */
     protected String lawSection = "";
 
+    /** The list of LawChapterCodes that this amendment affects */
+    // private Map<LawActionType, HashSet<String>> parsedLawCode = new HashMap<>();
+
+    /** The JSON version of the parsed law code */
+    private String relatedLawsJson;
+
     /** The law code of the bill. e.g (Amd §1373, Pub Health L) */
     protected String law = "";
 
@@ -261,7 +267,11 @@ public class BillAmendment implements Serializable, Cloneable
         return law;
     }
 
+    public String getRelatedLawsJson() { return relatedLawsJson;}
+
     public void setLaw(String law) {
         this.law = law;
     }
+
+    public void setRelatedLawsJson(String json) { relatedLawsJson = json; }
 }

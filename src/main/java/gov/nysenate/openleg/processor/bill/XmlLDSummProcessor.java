@@ -3,7 +3,9 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.Bill;
+import gov.nysenate.openleg.model.bill.BillAmendment;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.law.LawActionType;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragmentType;
@@ -21,6 +23,9 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Chenguang He(gaoyike@gmail.com) on 2016/12/1.
@@ -32,6 +37,9 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
 
     @Autowired
     private XmlHelper xmlHelper;
+
+    @Autowired
+    private BillLawCodeParser billLawCodeParser;
 
     public XmlLDSummProcessor() {
     }
@@ -58,8 +66,18 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
             final String law = xmlHelper.getString("law", billTextNode).replaceAll("Â", "¶").replaceAll("º","§").replaceAll("\n"," ").replaceAll("\t", " ").replaceAll(" +"," ").trim();
             final Bill baseBill = getOrCreateBaseBill(new BillId(billhse + billno, new SessionYear(sessionYear), version), legDataFragment);
             baseBill.setSummary(summary);
-            baseBill.getAmendment(version).setLaw(law);
+            BillAmendment amendment = baseBill.getAmendment(version);
+            amendment.setLaw(law);
+
             if (action.equals("replace")) { //replace bill
+
+                int startYear = 2017;
+                if (startYear <= sessionYear && sessionYear <= startYear+2) {
+                    billLawCodeParser.parse(law);
+                    baseBill.getAmendment(version).setRelatedLawsJson(billLawCodeParser.getJson());
+                    billLawCodeParser.clearMapping();
+                }
+
                 /**
                  * add previous bills
                  */
@@ -74,8 +92,6 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
                     baseBill.setDirectPreviousVersion(new BillId(oldhse + oldno, SessionYear.of(sess), Version.of(oldamd)));
                 }
             } else { //remove bill
-
-                // clear Set<BillID> pre version
                 baseBill.getAllPreviousVersions().clear();
                 baseBill.setDirectPreviousVersion(null);
             }
