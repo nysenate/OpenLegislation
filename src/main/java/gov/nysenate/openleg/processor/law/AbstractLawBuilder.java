@@ -14,7 +14,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
     private static final Logger logger = LoggerFactory.getLogger(AbstractLawBuilder.class);
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static Pattern locationPattern = Pattern.compile("^(AA1|ST|SP|SA|A|T|P|S|INDEX)(.*)");
+    protected static Pattern locationPattern = Pattern.compile("^(AA1|R|ST|SP|SA|A|T|P|S|INDEX)(.*)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     protected static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
@@ -31,6 +31,19 @@ public abstract class AbstractLawBuilder implements LawBuilder
         lawLevelCodes.put("S", LawDocumentType.SECTION);
         lawLevelCodes.put("INDEX", LawDocumentType.INDEX);
         lawLevelCodes.put("AA1", LawDocumentType.PREAMBLE);
+        lawLevelCodes.put("R", LawDocumentType.RULE);
+    }
+
+    // For use in Roman numeral conversion.
+    protected static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
+    static {
+        NUMERALS.put(50, "L");
+        NUMERALS.put(40, "XL");
+        NUMERALS.put(10, "X");
+        NUMERALS.put(9, "IX");
+        NUMERALS.put(5, "V");
+        NUMERALS.put(4, "IV");
+        NUMERALS.put(1, "I");
     }
 
     /** A law version id that is obtained from the law blocks. */
@@ -348,5 +361,18 @@ public abstract class AbstractLawBuilder implements LawBuilder
 
     protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
         lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, lawDoc.getText()));
+    }
+
+    /**
+     * Quickly converts a number to a Roman numeral. Used to display Articles
+     * as Roman numerals, as they are in the Constitution text.
+     * @param number to convert.
+     * @return a Roman numeral.
+     */
+    protected static String toNumeral(int number) {
+        if (number == 0)
+            return "";
+        int next = NUMERALS.floorKey(number);
+        return NUMERALS.get(next) + toNumeral(number-next);
     }
 }

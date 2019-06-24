@@ -14,6 +14,7 @@ public enum LawDocumentType
     SUBARTICLE,
     TITLE,
     SUBTITLE,
+    RULE,
     PART,
     SUB_PART,
     INDEX,

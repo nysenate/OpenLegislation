@@ -10,29 +10,18 @@ import java.util.regex.Pattern;
 /**
  * A class for the special cases of the Constitution, Senate Rules, and Assembly Rules.
  */
-public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilder {
+public class ConstitutionBuilder extends AbstractLawBuilder {
     protected static final String CONS_STR = "CNS";
     private static final String CONS_CHAPTER = CONS_STR + "AS";
     private static final Pattern TITLE_MATCHER = Pattern.compile("(" + CONS_STR + "A\\d+)S.*");
     private static final Pattern FOR_ARTICLE = Pattern.compile("([IVX]+)\\\\n\\s+([A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(.*)");
-    private static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
 
     // Maps locationIDs to titles.
     private Map<String, String> titles = new HashMap<>();
 
-    static {
-        NUMERALS.put(50, "L");
-        NUMERALS.put(40, "XL");
-        NUMERALS.put(10, "X");
-        NUMERALS.put(9, "IX");
-        NUMERALS.put(5, "V");
-        NUMERALS.put(4, "IV");
-        NUMERALS.put(1, "I");
-    }
-
     public ConstitutionBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);
-        // Replenish section titles.
+        // Replenish titles.
         if (previousTree != null) {
             for (LawTreeNode article : previousTree.getRootNode().getChildNodeList()) {
                 titles.put(article.getLocationId(), article.getLawDocInfo().getTitle());
@@ -126,6 +115,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
                     articleMatch.group(1), rootDoc.getPublishedDate());
             LawDocument currDoc = new LawDocument(articleInfo, "ARTICLE " + articles[i]);
             Optional<LawDocInfo> oldArticle = rootNode.find(currDoc.getDocumentId());
+            // Checks if we're updating an existing article, or adding a new one.
             if (oldArticle.isPresent()) {
                 oldArticle.get().setPublishedDate(rootDoc.getPublishedDate());
                 setLawDocTitle(currDoc, isNewDoc);
@@ -146,18 +136,5 @@ public class ConstitutionBuilder extends AbstractLawBuilder implements LawBuilde
                 existingNode.ifPresent(node -> node.getLawDocInfo().setTitle(title));
             }
         }
-    }
-
-    /**
-     * Quickly converts a number to a Roman numeral. Used to display Articles
-     * as Roman numerals, as they are in the Constitution text.
-     * @param number to convert.
-     * @return a Roman numeral.
-     */
-    private static String toNumeral(int number) {
-        if (number == 0)
-            return "";
-        int next = NUMERALS.floorKey(number);
-        return NUMERALS.get(next) + toNumeral(number-next);
     }
 }

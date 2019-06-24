@@ -208,11 +208,13 @@ public class LawProcessor extends AbstractDataProcessor
     }
 
     protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
-        // TODO: implement this for the Assembly and Senate rules.
-        if (lawVersionId.getLawId().equals(ConstitutionBuilder.CONS_STR))
+        String lawID = lawVersionId.getLawId();
+        if (lawID.equals(ConstitutionBuilder.CONS_STR))
             return new ConstitutionBuilder(lawVersionId, previousTree);
-        if (expectedLawOrdering.containsKey(lawVersionId.getLawId()))
-            return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawVersionId.getLawId()));
+        if (lawID.equals(RulesBuilder.ASSEMBLY_RULES_STR) || lawID.equals(RulesBuilder.SENATE_RULES_STR))
+            return new RulesBuilder(lawVersionId, previousTree);
+        if (expectedLawOrdering.containsKey(lawID))
+            return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawID));
         return new IdBasedLawBuilder(lawVersionId, previousTree);
     }
 }
