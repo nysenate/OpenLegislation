@@ -32,7 +32,7 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
      * that prefixes the current document's location id. The specific location id (the matched prefix from the parent
      * document removed) is returned.
      *
-     * For example given the locationId 'A2P1SP3', we will pop the parent stack until we find it's parent 'A2P1'
+     * For example given the locationId 'A2P1SP3', we will pop the parent stack until we find its parent 'A2P1'
      * or reach the root node. The new portion 'SP3' would be the returned value which serves as the docTypeId.
      *
      * @param block LawBlock

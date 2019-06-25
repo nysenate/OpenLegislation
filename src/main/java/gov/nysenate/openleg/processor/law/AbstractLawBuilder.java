@@ -355,7 +355,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         dummyParent.setDocTypeId("ROOT");
         dummyParent.setPublishedDate(block.getPublishedDate());
         dummyParent.setText("");
-        dummyParent.setTitle(LawTitleParser.extractTitleFromChapter(dummyParent));
+        setLawDocTitle(dummyParent, true);
         return dummyParent;
     }
 

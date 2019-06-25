@@ -14,47 +14,38 @@ import java.util.stream.Stream;
 
 public class LawTitleParser
 {
-    private static final Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
+    private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
 
-    protected static String sectionTitlePattern = "(?i)((?:Section|§)\\s*%s).?\\s(.+?)\\.(.*)";
-    protected static Pattern tocStartPattern = Pattern.compile("(Section|Article)\\s+\\n?[0-9a-zA-Z-.]+");
-    protected static Pattern nonSectionPrefixPattern = Pattern.compile("((\\*\\s*)?(SUB)?(ARTICLE|TITLE|PART)(.+?)(\\\\n|--))");
-    protected static Pattern uppercasePattern = Pattern.compile("([A-Z]{2,})");
-    private static Pattern endOfUppercasePattern = Pattern.compile("((\\\\n\\s*(\\d+)?(.)?\\s*[A-Z]{1}[a-z]+)|(\\\\nTITLE))");
+    private final static String sectionTitlePattern = "(?i)((?:Section|§)\\s*%s).?\\s(.+?)\\.(.*)";
+    private final static Pattern nonSectionPrefixPattern = Pattern.compile("((\\*\\s*)?(SUB)?(ARTICLE|TITLE|PART|RULE)(.+?)(\\\\n|--))");
+    private final static Pattern uppercasePattern = Pattern.compile("([A-Z]{2,})");
+    private final static Pattern endOfUppercasePattern = Pattern.compile("((\\\\n\\s*(\\d+)?(.)?\\s*[A-Z]{1}[a-z]+)|(\\\\nTITLE))");
 
     /** --- Methods --- */
 
     public static String extractTitle(LawDocInfo lawDocInfo, String bodyText) {
-        String title = "";
         if (lawDocInfo != null) {
             switch (lawDocInfo.getDocType()) {
                 case CHAPTER:
-                    title = extractTitleFromChapter(lawDocInfo);
-                    break;
+                    return extractTitleFromChapter(lawDocInfo);
                 case SUBTITLE:
                 case PART:
                 case SUB_PART:
                 case ARTICLE:
+                case RULE:
                 case TITLE:
-                    title = extractTitleFromNonSection(lawDocInfo, bodyText);
-                    break;
+                    return extractTitleFromNonSection(bodyText);
                 case SECTION:
-                    title = extractTitleFromSection(lawDocInfo, bodyText);
-                    break;
-                case INDEX:
-                    break;
-                case CONTENTS:
-                    break;
-                default: break;
+                    return extractTitleFromSection(lawDocInfo, bodyText);
             }
         }
-        return title;
+        return "";
     }
 
     /**
      * Extract the chapter title using the mapping of law id to LawChapterType if possible.
      */
-    protected static String extractTitleFromChapter(LawDocInfo docInfo) {
+    private static String extractTitleFromChapter(LawDocInfo docInfo) {
         try {
             LawChapterCode chapterType = LawChapterCode.valueOf(docInfo.getLawId());
             return chapterType.getName();
@@ -67,7 +58,7 @@ public class LawTitleParser
     /**
      * Parses the title for an article by assuming that most article titles are presented in all caps.
      */
-    protected static String extractTitleFromNonSection(LawDocInfo lawDocInfo, String bodyText) {
+    private static String extractTitleFromNonSection(String bodyText) {
         String title = bodyText;
         // Remove the location designator
         Matcher prefixMatcher = nonSectionPrefixPattern.matcher(bodyText);
@@ -86,7 +77,7 @@ public class LawTitleParser
         }
         // Otherwise, remove the 'body' and the title is what remains.
         else {
-            Pattern bodyPattern = Pattern.compile("((\\\\n|^)(  )?)(\\w.*)");
+            Pattern bodyPattern = Pattern.compile("((\\\\n|^)( {2})?)(\\w.*)");
             Matcher bodyMatcher = bodyPattern.matcher(title);
             if (bodyMatcher.find()) {
                 title = title.substring(0, bodyMatcher.start());
@@ -102,13 +93,14 @@ public class LawTitleParser
      * Extract the title from the section document using a common pattern if applicable or just getting the
      * first line or so.
      */
-    protected static String extractTitleFromSection(LawDocInfo docInfo, String text) {
+    private static String extractTitleFromSection(LawDocInfo docInfo, String text) {
         String title = "";
         if (text != null && !text.isEmpty()) {
             int asteriskLoc = docInfo.getLocationId().indexOf("*");
             String locationId = (asteriskLoc != -1)
                                 ? docInfo.getLocationId().substring(0, asteriskLoc) : docInfo.getLocationId();
-            Pattern titlePattern = Pattern.compile(String.format(sectionTitlePattern, locationId.toLowerCase()));
+            String toFormat = locationId.replaceFirst("[^S]*S", "").toLowerCase();
+            Pattern titlePattern = Pattern.compile(String.format(sectionTitlePattern, toFormat));
             int sectionIdx = text.indexOf("§");
             String trimText = (sectionIdx != -1) ? text.substring(sectionIdx).trim() : text.trim();
             Matcher titleMatcher = titlePattern.matcher(trimText);
@@ -123,7 +115,7 @@ public class LawTitleParser
         return StringUtils.abbreviate(title, 140);
     }
 
-    protected static String capitalizeTitle(String title) {
+    private static String capitalizeTitle(String title) {
         if (title != null && !title.isEmpty()) {
             String capStr = WordUtils.capitalizeFully(title);
             return capStr.substring(0, 1) + Stream.of(capStr.substring(1).split(" "))
