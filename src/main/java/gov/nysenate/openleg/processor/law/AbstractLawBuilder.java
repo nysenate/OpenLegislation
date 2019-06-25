@@ -9,15 +9,24 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gov.nysenate.openleg.model.law.LawDocumentType.*;
+
 public abstract class AbstractLawBuilder implements LawBuilder
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractLawBuilder.class);
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static Pattern locationPattern = Pattern.compile("^(AA1|R|ST|SP|SA|A|T|P|S|INDEX)(.*)");
+    protected static Pattern locationPattern = Pattern.compile("^(AA|R|ST|SP|SA|A|T|P|S|INDEX)(.+)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
-    protected static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
+    private static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
+
+    /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
+    private static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
+    static {
+        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUB_PART));
+        expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
+    }
 
     /** The location ids portions are prefixed with a code to indicate the different document types. */
     protected static Map<String, LawDocumentType> lawLevelCodes = new HashMap<>();
@@ -30,12 +39,12 @@ public abstract class AbstractLawBuilder implements LawBuilder
         lawLevelCodes.put("SP", LawDocumentType.SUB_PART);
         lawLevelCodes.put("S", LawDocumentType.SECTION);
         lawLevelCodes.put("INDEX", LawDocumentType.INDEX);
-        lawLevelCodes.put("AA1", LawDocumentType.PREAMBLE);
+        lawLevelCodes.put("AA", LawDocumentType.PREAMBLE);
         lawLevelCodes.put("R", LawDocumentType.RULE);
     }
 
-    // For use in Roman numeral conversion.
-    protected static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
+    /** For use in Roman numeral conversion. */
+    private static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
     static {
         NUMERALS.put(50, "L");
         NUMERALS.put(40, "XL");
@@ -73,6 +82,23 @@ public abstract class AbstractLawBuilder implements LawBuilder
             this.rootNode = previousTree.getRootNode();
             this.lawInfo = previousTree.getLawInfo();
         }
+    }
+
+    /**
+     * Used so other classes don't need to interact with subclasses directly.
+     * @param lawVersionId the 3 letter code.
+     * @param previousTree if the law has already existing data.
+     * @return the proper LawBuilder.
+     */
+    public static LawBuilder makeLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
+        String lawID = lawVersionId.getLawId();
+        if (lawID.equals(ConstitutionBuilder.CONS_STR))
+            return new ConstitutionBuilder(lawVersionId, previousTree);
+        if (lawID.equals(RulesBuilder.ASSEMBLY_RULES_STR) || lawID.equals(RulesBuilder.SENATE_RULES_STR))
+            return new RulesBuilder(lawVersionId, previousTree);
+        if (expectedLawOrdering.containsKey(lawID))
+            return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawID));
+        return new IdBasedLawBuilder(lawVersionId, previousTree);
     }
 
     /** --- Abstract Methods --- */
@@ -144,7 +170,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 Matcher locMatcher = locationPattern.matcher(specificLocId);
                 if (locMatcher.matches()) {
                     lawDoc.setDocType(lawLevelCodes.get(locMatcher.group(1)));
-                    lawDoc.setDocTypeId(locMatcher.group(2));
+                    lawDoc.setDocTypeId(lawDoc.getDocType() == PREAMBLE ? "" : locMatcher.group(2));
                 }
                 else {
                     logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
@@ -265,7 +291,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @param rootDoc LawDocument
      * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
      */
-    protected void addRootDocument(LawDocument rootDoc, boolean isNewDoc) {
+    private void addRootDocument(LawDocument rootDoc, boolean isNewDoc) {
         if (rootDoc == null) throw new IllegalArgumentException("Root document cannot be null!");
         sequenceNo = 0;
         rootNode = new LawTreeNode(rootDoc, ++sequenceNo);
@@ -300,7 +326,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @param chapterId String
      * @return LawInfo
      */
-    protected LawInfo deriveLawInfo(String lawId, String chapterId) {
+    private LawInfo deriveLawInfo(String lawId, String chapterId) {
         LawInfo chapter = new LawInfo();
         chapter.setLawId(lawId);
         chapter.setChapterId(chapterId);
@@ -324,7 +350,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @param doc LawDocument
      * @return boolean
      */
-    protected boolean isLikelyChapterDoc(LawDocument doc) {
+    private boolean isLikelyChapterDoc(LawDocument doc) {
         return (doc.getLocationId().startsWith("-CH") ||
                 (!doc.getLocationId().equals("1") && !locationPattern.matcher(doc.getLocationId()).matches()));
     }
@@ -346,7 +372,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
      *
      * @param block LawBlock
      */
-    protected LawDocument createRootDocument(LawBlock block) {
+    private LawDocument createRootDocument(LawBlock block) {
         LawDocument dummyParent = new LawDocument();
         dummyParent.setLawId(block.getLawId());
         dummyParent.setDocumentId(block.getLawId() + "-ROOT");

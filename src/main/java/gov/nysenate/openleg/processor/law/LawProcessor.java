@@ -20,8 +20,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gov.nysenate.openleg.model.law.LawDocumentType.*;
-
 /**
  * Processes the initial/update law dumps and persists the data.
  */
@@ -31,18 +29,11 @@ public class LawProcessor extends AbstractDataProcessor
     private static final Logger logger = LoggerFactory.getLogger(LawProcessor.class);
 
     /** The law files are most likely sent in CP850 encoding. */
-    protected static Charset LAWFILE_CHARSET = Charset.forName("CP850");
+    private static Charset LAWFILE_CHARSET = Charset.forName("CP850");
 
     /** Pattern for law doc headers.  */
-    protected static Pattern lawHeader =
+    private static Pattern lawHeader =
         Pattern.compile("\\.\\.SO DOC ((\\w{3})(.{13}))(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
-
-    /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
-    protected static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
-    static {
-        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUB_PART));
-        expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
-    }
 
     @Autowired private LawDataService lawDataService;
 
@@ -88,12 +79,12 @@ public class LawProcessor extends AbstractDataProcessor
      * @param lawFile LawFile
      * @param lawBlocks List<LawBlock>
      */
-    protected void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
+    private void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         for (LawBlock block : lawBlocks) {
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                LawBuilder lawBuilder = createLawBuilder(new LawVersionId
+                LawBuilder lawBuilder = AbstractLawBuilder.makeLawBuilder(new LawVersionId
                         (block.getLawId(), block.getPublishedDate()), null);
                 lawBuilders.put(block.getLawId(), lawBuilder);
                 unit.addMessage("Processing initial docs for " + block.getLawId());
@@ -113,7 +104,7 @@ public class LawProcessor extends AbstractDataProcessor
      * @param lawFile LawFile
      * @param lawBlocks List<LawBlock>
      */
-    protected void processLawUpdates(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
+    private void processLawUpdates(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         Map<String, LawTree> lawTrees = new HashMap<>();
         for (LawBlock block : lawBlocks) {
@@ -132,7 +123,7 @@ public class LawProcessor extends AbstractDataProcessor
             }
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                LawBuilder lawBuilder = createLawBuilder(lawVersionId, lawTrees.get(block.getLawId()));
+                LawBuilder lawBuilder = AbstractLawBuilder.makeLawBuilder(lawVersionId, lawTrees.get(block.getLawId()));
                 lawBuilders.put(block.getLawId(), lawBuilder);
             }
             // Process the update block
@@ -168,7 +159,7 @@ public class LawProcessor extends AbstractDataProcessor
      * @return List<ListBlock>
      * @throws IOException
      */
-    protected List<LawBlock> getLawBlocks(LawFile lawFile) throws IOException {
+    private List<LawBlock> getLawBlocks(LawFile lawFile) throws IOException {
         List<LawBlock> rawDocList = new ArrayList<>();
         logger.debug("Extracting law blocks...");
         File file = lawFile.getFile();
@@ -202,16 +193,5 @@ public class LawProcessor extends AbstractDataProcessor
         }
         rawDocList.sort(Comparator.comparing(LawBlock::getPublishedDate));
         return rawDocList;
-    }
-
-    private LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
-        String lawID = lawVersionId.getLawId();
-        if (lawID.equals(ConstitutionBuilder.CONS_STR))
-            return new ConstitutionBuilder(lawVersionId, previousTree);
-        if (lawID.equals(RulesBuilder.ASSEMBLY_RULES_STR) || lawID.equals(RulesBuilder.SENATE_RULES_STR))
-            return new RulesBuilder(lawVersionId, previousTree);
-        if (expectedLawOrdering.containsKey(lawID))
-            return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawID));
-        return new IdBasedLawBuilder(lawVersionId, previousTree);
     }
 }

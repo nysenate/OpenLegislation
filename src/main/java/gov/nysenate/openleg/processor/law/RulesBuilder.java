@@ -20,8 +20,10 @@ public class RulesBuilder extends IdBasedLawBuilder {
             super.addInitialBlock(block, isNewDoc);
     }
 
+
     @Override
     protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
+        // Similar to the Constitution, the rules are in Roman numerals.
         if (lawDoc.getDocType() == LawDocumentType.RULE) {
             String ruleNum = lawDoc.getLocationId().replace("R", "");
             lawDoc.setDocTypeId(toNumeral(Integer.parseInt(ruleNum)));
