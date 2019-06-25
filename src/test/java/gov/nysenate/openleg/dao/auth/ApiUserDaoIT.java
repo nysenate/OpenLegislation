@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -214,6 +215,59 @@ public class ApiUserDaoIT extends BaseTests {
         ApiUser checkUser = apiUserDao.getApiUserFromKey(apikey);
         ImmutableSet<ApiUserSubscriptionType> checkSubs = checkUser.getSubscriptions();
         assertEquals("The user should have no subscriptions", 0, checkSubs.size());
+    }
+
+    /* Test getting users by subscription when two users have subscriptions */
+    @Test public void getUserBySubscription() {
+        String sub1 = "BREAKING_CHANGES";
+        String sub2 = "NEW_FEATURES";
+        Set<ApiUserSubscriptionType> subs = new HashSet<>();
+        subs.add(ApiUserSubscriptionType.valueOf(sub1));
+        subs.add(ApiUserSubscriptionType.valueOf(sub2));
+
+        //first user
+        String email = "bogusBunny@nysenate.gov";
+        ApiUser apiUser = new ApiUser(email);
+        apiUser.setName("Bugs");
+        apiUser.setRegistrationToken("ABC123");
+        String apikey = apiUser.getApiKey();
+
+        //second user
+        String emailTwo = "world@nysenate.gov";
+        ApiUser apiUserTwo = new ApiUser(emailTwo);
+        apiUserTwo.setName("Hello");
+        apiUserTwo.setRegistrationToken("XYZ123");
+        String apikeyTwo = apiUserTwo.getApiKey();
+
+        //pre-conditions
+        List<ApiUser> subscribers_before = apiUserDao.getUsersWithSubscription(ApiUserSubscriptionType.valueOf(sub1));
+
+        //add the user and set their subscriptions
+        apiUserDao.insertUser(apiUser);
+        apiUserDao.setSubscriptions(apikey, subs);
+        apiUserDao.insertUser(apiUserTwo);
+        apiUserDao.setSubscriptions(apikeyTwo, subs);
+
+        //Get the list of users subscribed to 'BREAKING_FEATURES'
+        List<ApiUser> subscribers_after = apiUserDao.getUsersWithSubscription(ApiUserSubscriptionType.valueOf(sub1));
+        List<String> email_list = new ArrayList<>();
+        for(ApiUser user : subscribers_after) {
+            email_list.add(user.getEmail());
+        }
+
+        assertEquals("Number of users returned is incorrect.", 2,
+                subscribers_after.size()-subscribers_before.size());
+        assertTrue("Api User Bugs was not in the returned list.",
+                email_list.contains(apiUser.getEmail()));
+        assertTrue("Api User Hello was not in the returned List.",
+                email_list.contains(apiUserTwo.getEmail()));
+
+        //Get the list of users subscribed to 'NEW_FEATURES'
+        subscribers_after = apiUserDao.getUsersWithSubscription(ApiUserSubscriptionType.valueOf(sub2));
+        email_list.removeAll(email_list);
+        for(ApiUser user : subscribers_after) {
+            email_list.add(user.getEmail());
+        }
     }
 
 }

@@ -108,6 +108,13 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscription_type) {
+        return jdbcNamed.query(ApiUserQuery.SELECT_API_USERS_BY_SUBSCRIPTION.getSql(schema()),
+                new MapSqlParameterSource().addValue("subscription_type", subscription_type.name()), new ApiUserRowMapper());
+    }
+
     /** --- Internal Methods --- */
 
     protected MapSqlParameterSource getUserParams(ApiUser user) {

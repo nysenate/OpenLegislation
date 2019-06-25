@@ -3,30 +3,33 @@ package gov.nysenate.openleg.service.mail;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.util.MailUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.Transport;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.util.Collection;
 
 
 @Service
 public class MimeSendMailService implements SendMailService {
 
-    private final MailUtils mailUtils;
     private final Environment env;
 
-    private MailSender mailSender;
+    private final JavaMailSender mailSender;
 
     @Autowired
     public MimeSendMailService(MailUtils mailUtils, Environment env) {
-        this.mailUtils = mailUtils;
         this.env = env;
-    }
-
-    @PostConstruct
-    public void init() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setSession(mailUtils.getSmtpSession());
         this.mailSender = javaMailSender;
@@ -60,5 +63,39 @@ public class MimeSendMailService implements SendMailService {
     @Override
     public void sendMessage(SimpleMailMessage... messages) {
         mailSender.send(messages);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sendMessages(Collection<MimeMessage> messages) {
+        for (MimeMessage message : messages) {
+            mailSender.send(message);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MimeMessage createMessage() {
+        return mailSender.createMimeMessage();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MimeMultipart createMimeMultipart() {
+        return new MimeMultipart("alternative");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MimeBodyPart getMimeBodyPart() {
+        return new MimeBodyPart();
     }
 }

@@ -90,4 +90,11 @@ public interface ApiUserDao
      * @param subscriptions Set<ApiUserSubscriptionType>
      */
     public void setSubscriptions(String apiKey, Set<ApiUserSubscriptionType> subscriptions);
+
+    /**
+     * Gets all users with the given subscription
+     * @param subscription_type ApiUserSubscriptionType
+     * @return A list of ApiUsers
+     */
+    public List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscription_type);
 }
