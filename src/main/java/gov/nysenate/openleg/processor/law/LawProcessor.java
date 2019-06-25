@@ -1,10 +1,6 @@
 package gov.nysenate.openleg.processor.law;
 
-import com.google.common.collect.Sets;
-import gov.nysenate.openleg.model.law.LawDocumentType;
-import gov.nysenate.openleg.model.law.LawFile;
-import gov.nysenate.openleg.model.law.LawTree;
-import gov.nysenate.openleg.model.law.LawVersionId;
+import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.service.law.data.LawDataService;
@@ -204,10 +200,11 @@ public class LawProcessor extends AbstractDataProcessor
         if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId(), block.getPublishedDate())) {
             rawDocList.add(block);
         }
+        rawDocList.sort(Comparator.comparing(LawBlock::getPublishedDate));
         return rawDocList;
     }
 
-    protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
+    private LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         String lawID = lawVersionId.getLawId();
         if (lawID.equals(ConstitutionBuilder.CONS_STR))
             return new ConstitutionBuilder(lawVersionId, previousTree);
