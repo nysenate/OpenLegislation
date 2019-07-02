@@ -2154,3 +2154,217 @@ md-dialog.issuedialog {
   font-weight: bold;
 }
 
+/*  Admin Batch Email Page */
+.batch-email-content-section {
+  background: ghostwhite;
+  width: available;
+  text-align: center;
+  padding: 0px;
+  margin: 30px auto auto auto;
+  max-width: 1100px;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px -1px rgba(0,0,0,.12);
+}
+
+.batch-email-header {
+  background: rgb(241, 241, 241);
+  padding: 0px 16px;
+  h1 {
+    margin: 0px;
+    line-height: 80px;
+    font-style: normal;
+    font-family: Open Sans, sans-serif;
+    font-size: 20px;
+    font-weight: lighter;
+    text-align: left;
+  }
+}
+
+.batch-email-main-box {
+  height: available;
+  background: white;
+  margin: 0px;
+  padding: 0px 16px 0px 0px;
+
+}
+
+.batch-email-subscriptions {
+  width: 100%;
+  vertical-align: top;
+  h4 {
+    margin-top: 15px;
+    text-align: right;
+    width: 10%;
+    font-style: normal;
+    font-family: Open Sans, sans-serif;
+    font-size: 17px;
+    font-weight: lighter;
+  }
+  .checkbox-container{
+    align-items: normal;
+    width: 50%;
+    md-list {
+      width: 100%;
+      padding-left: 20px;
+      padding-top: 10px;
+
+    }
+  }
+}
+
+.batch-email-subs-checkbox-list-updater {
+  width: 100%;
+}
+
+.batch-email-subject-line {
+  width: 100%;
+  h4 {
+    margin-top: 0px;
+    margin-bottom: fill;
+    text-align: right;
+    width: 10%;
+    font-style: normal;
+    font-family: Open Sans, sans-serif;
+    font-size: 17px;
+    font-weight: lighter;
+  }
+  md-input-container {
+    width: available;
+    padding-top: 0px;
+    padding-left: 20px;
+    margin: 0px;
+    line-height: normal;
+
+  }
+  label {
+    height: 50%;
+  }
+}
+
+.batch-email-message-body {
+  width: 100%;
+  h4 {
+    margin-top: 0px;
+    text-align: right;
+    width: 10%;
+    font-style: normal;
+    font-family: Open Sans, sans-serif;
+    font-size: 17px;
+    font-weight: lighter;
+  }
+}
+
+#batch-email-subject-input {
+  margin-left: 20px;
+  margin-bottom: 10px;
+  width: 350px;
+  height: 30px;
+  resize: none;
+  line-height: 30px;
+}
+
+#batch-email-body-text {
+  margin-left: 20px;
+  margin-bottom: 10px;
+  min-height: 200px;
+  min-width: 400px;
+}
+
+.batch-email-submit-box {
+  .md-button.md-default-theme.md-raised, .md-button.md-raised{
+    align-self: center;
+    color: white;
+    background: rgba(0,140,186,0.87);
+    font-size: larger;
+    font-weight: bold;
+    width: 150px;
+    height: 40px;
+    margin-bottom: 20px;
+  }
+  .md-button.md-raised:hover {
+    background-color: rgba(0,140,186,0.4);
+  }
+}
+
+.batch-email-validation-message {
+  color: red;
+  padding-left: 40px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+#batch-email-send-error {
+  color: red;
+}
+
+#batch-email-preview-div {
+  z-index: 1;
+  background: rgb(245, 245, 245);
+  position: absolute;
+  width: 600px;
+  align-self: center;
+  height: 415px;
+  padding: 0px;
+  margin: 20px;
+  box-shadow: 0 0 2px 1px rgba(0,0,0,0.25);
+  h2 {
+    font-style: normal;
+    font-family: Open Sans, sans-serif;
+    font-size: 20px;
+    font-weight: lighter;
+    margin: 8px 0px;
+  }
+  .md-button.md-default-theme.md-raised, .md-button.md-raised {
+    margin: 20px;
+    align-self: center;
+    color: white;
+    background: rgba(0,100,180,0.87);
+    font-size: larger;
+    font-weight: bold;
+    width: 200px;
+  }
+  .md-button.md-raised:hover {
+    background-color: rgba(0,140,186,0.4);
+  }
+}
+
+#batch-email-preview {
+  background: #fcfcfc;
+  width: 500px;
+  height: 300px;
+  padding: 0px;
+  margin: 0px 50px;
+  align-self: center;
+  scroll-behavior: smooth;
+  overflow: auto;
+  text {
+    height: fit-content;
+    margin: 10px;
+    scroll-behavior: smooth;
+    overflow: auto;
+  }
+}
+
+#batch-email-dialog {
+  justify-content: space-evenly;
+  align-items: center;
+  md-dialog-actions {
+    justify-content: space-evenly;
+  }
+  h3,p {
+    padding: 10px 20px;
+    margin: 0px;
+    text-align: center;
+  }
+  #no-button {
+    background: grey;
+  }
+  #yes-button {
+    background: #0e90d2;
+  }
+}
+
+.batch-email-error-header {
+  font-weight: bold !important;
+  color: red !important;
+}
