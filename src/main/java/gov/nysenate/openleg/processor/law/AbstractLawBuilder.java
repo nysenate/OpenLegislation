@@ -16,10 +16,13 @@ public abstract class AbstractLawBuilder implements LawBuilder
     private static final Logger logger = LoggerFactory.getLogger(AbstractLawBuilder.class);
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static Pattern locationPattern = Pattern.compile("^(AA|R|ST|SP|SA|A|T|P|S|INDEX)(.+)");
+    protected static Pattern locationPattern = Pattern.compile("^(R|ST|SP|SA|A|T|P|S|INDEX)(.*)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     private static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
+
+    /** String for city personal income tax on residents, an odd clause in the GCT law. */
+    protected static final String CITY_TAX_STR = "GCT25-A";
 
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
     private static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
@@ -39,7 +42,6 @@ public abstract class AbstractLawBuilder implements LawBuilder
         lawLevelCodes.put("SP", LawDocumentType.SUB_PART);
         lawLevelCodes.put("S", LawDocumentType.SECTION);
         lawLevelCodes.put("INDEX", LawDocumentType.INDEX);
-        lawLevelCodes.put("AA", LawDocumentType.PREAMBLE);
         lawLevelCodes.put("R", LawDocumentType.RULE);
     }
 
@@ -153,27 +155,58 @@ public abstract class AbstractLawBuilder implements LawBuilder
 
         // If this block is not a root doc,
         if (!isRootDoc) {
+//            if (taxMatch.matches()) {
+//                if (taxMatch.group(1).startsWith("P1-")) {
+//                    lawDoc.setDocType(MISC);
+//                    lawDoc.setDocTypeId(lawDoc.getLocationId());
+//                    addDocument(lawDoc, isNewDoc);
+//                }
+//                else if (taxMatch.group(1).startsWith("P")) {
+//                    lawDoc.setDocType(PART);
+//                    lawDoc.setDocTypeId(taxMatch.group(1).substring(1));
+//                    addDocument(lawDoc, isNewDoc);
+//                }
+//                else {
+//                    lawDoc.setDocType(SECTION);
+//                    lawDoc.setDocTypeId(taxMatch.group(1).replaceFirst("-", ""));
+//                    addChildNode(new LawTreeNode(lawDoc, ++sequenceNo));
+//                }
+//            }
+
             // Section docs are easy, since their location ids are simply
             // numbers (if it's not the Constitution) and they do not have
             // any children.
             if (isLikelySectionDoc(lawDoc)) {
                 logger.debug("Processing section {}", lawDoc.getDocumentId());
                 lawDoc.setDocType(LawDocumentType.SECTION);
-                lawDoc.setDocTypeId(lawDoc.getLocationId().replaceAll("A\\d+S", ""));
+                String docTypeId = lawDoc.getLocationId();
+                if (lawDoc.getLawId().equals(ConstitutionBuilder.CONS_STR))
+                    docTypeId = docTypeId.replaceAll("A\\d+S", "");
+                if (lawDoc.getDocumentId().startsWith(CITY_TAX_STR + ".+"))
+                    docTypeId = lawDoc.getDocumentId().replace(CITY_TAX_STR + "-", "");
+                lawDoc.setDocTypeId(docTypeId);
                 if (isNewDoc) {
                     lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
                 }
                 addChildNode(new LawTreeNode(lawDoc, ++sequenceNo));
             }
+
             else {
                 String specificLocId = determineHierarchy(block);
                 Matcher locMatcher = locationPattern.matcher(specificLocId);
                 if (locMatcher.matches()) {
+                        if (locMatcher.group(2).isEmpty())
+                            logger.warn("OH NOOOOOOOOO " + block.getDocumentId());
                     lawDoc.setDocType(lawLevelCodes.get(locMatcher.group(1)));
-                    lawDoc.setDocTypeId(lawDoc.getDocType() == PREAMBLE ? "" : locMatcher.group(2));
+                    lawDoc.setDocTypeId(locMatcher.group(2));
                 }
+                else if (specificLocId.equals("AA1"))
+                    lawDoc.setDocType(PREAMBLE);
                 else {
-                    logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
+                    if (lawDoc.getDocumentId().startsWith(CITY_TAX_STR))
+                        lawDoc.setLocationId(CITY_TAX_STR.substring(3));
+                    else
+                        logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
                     lawDoc.setDocType(LawDocumentType.MISC);
                     lawDoc.setDocTypeId(block.getLocationId());
                 }
@@ -351,8 +384,13 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @return boolean
      */
     private boolean isLikelyChapterDoc(LawDocument doc) {
-        return (doc.getLocationId().startsWith("-CH") ||
-                (!doc.getLocationId().equals("1") && !locationPattern.matcher(doc.getLocationId()).matches()));
+        String locId = doc.getLocationId();
+Matcher locMatcher = locationPattern.matcher(locId);
+        if (locMatcher.matches() && locMatcher.group(2).isEmpty())
+            logger.warn("OH NOOOOOOOOO " + doc.getDocumentId());
+        return (locId.startsWith("-CH") ||
+                (!locId.equals("1") && !locId.equals("AA1") &&
+                        !locationPattern.matcher(locId).matches()));
     }
 
     /**
@@ -363,6 +401,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @return boolean - true if this block is most likely a section
      */
     protected boolean isLikelySectionDoc(LawDocument lawDoc) {
+        if (lawDoc.getDocumentId().matches(CITY_TAX_STR + ".+"))
+            return !lawDoc.getDocumentId().contains("P");
         return Character.isDigit(lawDoc.getLocationId().charAt(0));
     }
 

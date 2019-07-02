@@ -16,7 +16,7 @@ public class LawTitleParser
 {
     private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
 
-    private final static String sectionTitlePattern = "(?i)((?:Section|§)\\s*%s).?\\s(.+?)\\.(.*)";
+    private final static String sectionTitlePattern = "(?i)((?:Section|Rule|§)\\s*%s).?\\s(.+?)\\.(.*)";
     private final static Pattern nonSectionPrefixPattern = Pattern.compile("((\\*\\s*)?(SUB)?(ARTICLE|TITLE|PART|RULE)(.+?)(\\\\n|--))");
     private final static Pattern uppercasePattern = Pattern.compile("([A-Z]{2,})");
     private final static Pattern endOfUppercasePattern = Pattern.compile("((\\\\n\\s*(\\d+)?(.)?\\s*[A-Z]{1}[a-z]+)|(\\\\nTITLE))");
@@ -96,13 +96,16 @@ public class LawTitleParser
     private static String extractTitleFromSection(LawDocInfo docInfo, String text) {
         String title = "";
         if (text != null && !text.isEmpty()) {
-            int asteriskLoc = docInfo.getLocationId().indexOf("*");
-            String locationId = (asteriskLoc != -1)
-                                ? docInfo.getLocationId().substring(0, asteriskLoc) : docInfo.getLocationId();
-            String toFormat = locationId.replaceFirst("[^S]*S", "").toLowerCase();
-            Pattern titlePattern = Pattern.compile(String.format(sectionTitlePattern, toFormat));
+            int asteriskLoc = docInfo.getDocTypeId().indexOf("*");
+            String id = ((asteriskLoc == -1) ?  docInfo.getDocTypeId() :
+                    docInfo.getDocTypeId().substring(0, asteriskLoc))
+                    .toLowerCase();
+            // UCC docs have 2 dashes in the text while the section name only has one.
+            if (docInfo.getLawId().equals("UCC"))
+                text = text.replaceFirst("--", "-");
+            Pattern titlePattern = Pattern.compile(String.format(sectionTitlePattern, id));
             int sectionIdx = text.indexOf("§");
-            String trimText = (sectionIdx != -1) ? text.substring(sectionIdx).trim() : text.trim();
+            String trimText = (sectionIdx == -1) ? text.trim() : text.substring(sectionIdx).trim();
             Matcher titleMatcher = titlePattern.matcher(trimText);
             if (titleMatcher.matches()) {
                 title = titleMatcher.group(2).replaceAll("-\\\\n\\s*", "").replaceAll("\\\\n?\\s*", " ");

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
+import java.util.regex.Matcher;
 
 /**
  * Constructs document hierarchies using document id prefixes.
@@ -45,6 +46,9 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
             if (StringUtils.startsWith(block.getLocationId(), currParent().getLocationId())) {
                 String trimLocId = StringUtils.removeStart(block.getLocationId(), currParent().getLocationId());
                 if (locationPattern.matcher(trimLocId).matches()) {
+                    Matcher locMatcher = locationPattern.matcher(trimLocId);
+                    if (locMatcher.matches() && locMatcher.group(2).isEmpty())
+                        logger.warn("OH NOOOOOOOOO " + block.getDocumentId());
                     docTypeId = trimLocId;
                     break;
                 }

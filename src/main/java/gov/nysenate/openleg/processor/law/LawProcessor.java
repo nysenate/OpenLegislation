@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -191,7 +192,22 @@ public class LawProcessor extends AbstractDataProcessor
         if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId(), block.getPublishedDate())) {
             rawDocList.add(block);
         }
-        rawDocList.sort(Comparator.comparing(LawBlock::getPublishedDate));
-        return rawDocList;
+        return sortBlocks(rawDocList);
+    }
+
+    private List<LawBlock> sortBlocks (List<LawBlock> blocks) {
+//        TreeMap<LocalDate, List<LawBlock>> blockMap = new TreeMap<>();
+//        for (LawBlock block : blocks) {
+//            LocalDate date = block.getPublishedDate();
+//            if (!blockMap.containsKey(date))
+//                blockMap.put(date, new ArrayList<>());
+//            blockMap.get(date).add(block);
+//        }
+//
+//        List<LawBlock> sorted = new ArrayList<>();
+//        for (LocalDate key : blockMap.keySet())
+//            sorted.addAll(blockMap.get(key));
+//        return sorted;
+        return blocks;
     }
 }
