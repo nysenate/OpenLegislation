@@ -11,7 +11,7 @@
         <section class="hero-container-subscriptions">
             <h1 ng-bind="title"></h1>
         </section>
-        <div class="pop-out-container">
+        <div class="pop-out-container" ng-hide="! pageLoaded">
             <div class="project-desc" ng-hide="submitted || invalidKey || ! pageLoaded">
                 <p class="unsubscribeInstructions">{{instructions}}</p>
                 <form method="post">

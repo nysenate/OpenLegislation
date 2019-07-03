@@ -28,11 +28,15 @@
         $scope.pageLoaded = false;
 
         $scope.key = $location.search().key;
+        $scope.unsub = $location.search().unsub;
         $scope.link = document.getElementById("back-link");
         $scope.link.href = window.location.href;
         $scope.errmsg = '';
         $scope.currentSubs = [];
         $scope.invalidKey = false;
+
+        //removing unsubscribe parameter to prevent loops
+        $location.search("unsub", null);
 
         $scope.subscriptionsAvailable = [
             {
@@ -49,6 +53,10 @@
         currentSubApi.query({key: $scope.key}).$promise.then(
             //success
             function(data) {
+                if($scope.unsub) {
+                    $scope.submitMessage = "You are now unsubscribed from all subscriptions.";
+                    $scope.uncheckAll();
+                }
                 $scope.currentSubs = data;
                 $scope.subscriptionsAvailable.forEach(function (sub) {
                     if ($scope.currentSubs.indexOf(sub.enumVal) > -1) {
@@ -61,9 +69,6 @@
                 $scope.errmsg = "Invalid Api User Key";
                 $scope.invalidKey = true;
             });
-
-
-
 
         $scope.uncheckAll = function () {
             $scope.subscriptionsAvailable.forEach(function (sub) {

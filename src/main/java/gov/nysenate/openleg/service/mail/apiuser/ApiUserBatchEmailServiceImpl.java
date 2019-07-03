@@ -94,17 +94,21 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         String apiKey = user.getApiKey();
         String link = env.getUrl();
         link += "/subscriptions?key=" + apiKey;
-        String clickHere = "<a href=\"" + link + "\">Click Here.</a>";
+        String unsubLink = link + "&unsub=yes";
+        String clickHere = "<a href=\"" + link + "\">Click Here</a>"+",";
         clickHere = "To update your subscription preferences, " + clickHere;
-        return clickHere;
+        String unsubAll = "or <a href=\"" + unsubLink + "\">unsubscribe from <strong>ALL</strong> subscriptions.</a>";
+        return clickHere + "<br>" + unsubAll;
     }
 
     protected String getLinkText(ApiUser user) {
         String apiKey = user.getApiKey();
         String link = env.getUrl();
         link += "/subscriptions?key=" + apiKey;
+        String unsubLink = link + "&unsub=yes";
         String clickHere = "To update your subscription preferences, use this URL: " + link;
-        return clickHere;
+        String unsubAll = "To unsubscribe from all subscriptions, use this URL: " + unsubLink;
+        return clickHere + "\n" + unsubAll;
     }
 
     /**

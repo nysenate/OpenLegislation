@@ -4,7 +4,6 @@ import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.auth.SqlApiUserDao;
 import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -38,6 +37,5 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
         }
         return subStrings;
     }
-
 
 }
