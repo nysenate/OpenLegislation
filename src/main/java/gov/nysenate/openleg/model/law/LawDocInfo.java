@@ -16,19 +16,28 @@ public class LawDocInfo extends LawDocId
      *  docType will be 'SUBTITLE' and this docTypeId will be '2-B'. */
     protected String docTypeId;
 
+    /** True if this doc was created as a dummy.  i.e it was created by the parser but not specified in the sources.*/
+    protected boolean dummy = false;
+
     /** --- Constructors --- */
 
     public LawDocInfo() {}
 
     public LawDocInfo(String documentId, String lawId, String locationId, String title, LawDocumentType docType,
-                      String docTypeId, LocalDate publishedDate) {
-        this.documentId = documentId;
-        this.lawId = lawId;
-        this.locationId = locationId;
+                      String docTypeId, LocalDate publishedDate, boolean dummy) {
+        super(documentId, publishedDate, locationId, lawId);
         this.title = title;
         this.docType = docType;
         this.docTypeId = docTypeId;
-        this.publishedDate = publishedDate;
+        this.dummy = dummy;
+    }
+
+    public LawDocInfo(LawDocInfo other) {
+        super(other);
+        this.title = other.title;
+        this.docType = other.docType;
+        this.docTypeId = other.docTypeId;
+        this.dummy = other.dummy;
     }
 
     public LawDocInfo(LawBlock lawBlock) {
@@ -69,5 +78,13 @@ public class LawDocInfo extends LawDocId
 
     public void setDocTypeId(String docTypeId) {
         this.docTypeId = docTypeId;
+    }
+
+    public boolean isDummy() {
+        return dummy;
+    }
+
+    public void setDummy(boolean dummy) {
+        this.dummy = dummy;
     }
 }

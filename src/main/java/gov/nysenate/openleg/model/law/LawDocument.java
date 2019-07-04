@@ -11,7 +11,7 @@ public class LawDocument extends LawDocInfo
     public LawDocument() {}
 
     public LawDocument(LawDocInfo info, String text) {
-        super(info.documentId, info.lawId, info.locationId, info.title, info.docType, info.docTypeId, info.publishedDate);
+        super(info);
         this.text = text;
     }
 

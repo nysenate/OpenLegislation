@@ -2,6 +2,7 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.LawDocument;
 import gov.nysenate.openleg.model.law.LawTree;
+import gov.nysenate.openleg.model.law.LawTreeNode;
 
 import java.util.List;
 
@@ -12,8 +13,9 @@ public interface LawBuilder
      *
      * @param block LawBlock - The LawBlock to convert into a document and store within the tree
      * @param isNewDoc boolean - Set to true if this is a new document and should be persisted.
+     * @param priorRoot {@link LawTreeNode} - the previous root node for the law tree (null if none exists)
      */
-    void addInitialBlock(LawBlock block, boolean isNewDoc);
+    void addInitialBlock(LawBlock block, boolean isNewDoc, LawTreeNode priorRoot);
 
     /**
      * Updates a LawDocument within an existing tree or creates a new one if a master doc is received.

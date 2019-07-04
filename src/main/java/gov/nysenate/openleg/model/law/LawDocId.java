@@ -23,12 +23,27 @@ public class LawDocId
 
     public LawDocId() {}
 
+    public LawDocId(LawDocId other) {
+        this.documentId = other.documentId;
+        this.publishedDate = other.publishedDate;
+        this.locationId = other.locationId;
+        this.lawId = other.lawId;
+    }
+
+    public LawDocId(String documentId, LocalDate publishedDate, String locationId, String lawId) {
+        this.documentId = documentId;
+        this.publishedDate = publishedDate;
+        this.locationId = locationId;
+        this.lawId = lawId;
+    }
+
     public LawDocId(String documentId, LocalDate publishedDate) {
         this.documentId = documentId;
         this.locationId = (documentId != null) ? documentId.substring(3) : null;
         this.lawId = (documentId != null) ? documentId.substring(0, 3) : null;
         this.publishedDate = publishedDate;
     }
+
 
     /* --- Overrides --- */
 
