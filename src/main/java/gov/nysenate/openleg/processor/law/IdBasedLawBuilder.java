@@ -41,21 +41,15 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
      */
     @Override
     protected String determineHierarchy(LawBlock block) {
-        String docTypeId = block.getLocationId();
         while (!currParent().isRootNode()) {
             if (StringUtils.startsWith(block.getLocationId(), currParent().getLocationId())) {
                 String trimLocId = StringUtils.removeStart(block.getLocationId(), currParent().getLocationId());
-                if (locationPattern.matcher(trimLocId).matches()) {
-                    Matcher locMatcher = locationPattern.matcher(trimLocId);
-                    if (locMatcher.matches() && locMatcher.group(2).isEmpty())
-                        logger.warn("OH NOOOOOOOOO " + block.getDocumentId());
-                    docTypeId = trimLocId;
-                    break;
-                }
+                if (locationPattern.matcher(trimLocId).matches())
+                    return trimLocId;
             }
             parentNodes.pop();
         }
-        return docTypeId;
+        return block.getLocationId();
     }
 
     @Override

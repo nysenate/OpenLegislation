@@ -47,9 +47,6 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
             // Determine doc type
             Matcher locMatcher = locationPattern.matcher(locationId);
             if (locMatcher.matches()) {
-                if (locMatcher.group(2).isEmpty())
-                    logger.warn("OH NOOOOOOOOO " + block.getDocumentId());
-
                 LawDocumentType docType = lawLevelCodes.get(locMatcher.group(1));
                 if (!docType.equals(expectedOrder.getFirst())) {
                     // Possible mismatch

@@ -32,6 +32,7 @@ public class LawTitleParser
                 case PART:
                 case SUB_PART:
                 case ARTICLE:
+                case SUBARTICLE:
                 case RULE:
                 case TITLE:
                     return extractTitleFromNonSection(bodyText);
@@ -112,7 +113,7 @@ public class LawTitleParser
             }
             else {
                 logger.warn("Section title pattern mismatch for document id {}", docInfo.getDocumentId());
-                title = trimText;
+                title = "";
             }
         }
         return StringUtils.abbreviate(title, 140);

@@ -195,19 +195,24 @@ public class LawProcessor extends AbstractDataProcessor
         return sortBlocks(rawDocList);
     }
 
+    /**
+     * Sorts blocks by their publish dates, while order of laws with the same
+     * dates is preserved. Used for when
+     * @param blocks
+     * @return
+     */
     private List<LawBlock> sortBlocks (List<LawBlock> blocks) {
-//        TreeMap<LocalDate, List<LawBlock>> blockMap = new TreeMap<>();
-//        for (LawBlock block : blocks) {
-//            LocalDate date = block.getPublishedDate();
-//            if (!blockMap.containsKey(date))
-//                blockMap.put(date, new ArrayList<>());
-//            blockMap.get(date).add(block);
-//        }
-//
-//        List<LawBlock> sorted = new ArrayList<>();
-//        for (LocalDate key : blockMap.keySet())
-//            sorted.addAll(blockMap.get(key));
-//        return sorted;
-        return blocks;
+        TreeMap<LocalDate, List<LawBlock>> blockMap = new TreeMap<>();
+        for (LawBlock block : blocks) {
+            LocalDate date = block.getPublishedDate();
+            if (!blockMap.containsKey(date))
+                blockMap.put(date, new ArrayList<>());
+            blockMap.get(date).add(block);
+        }
+
+        List<LawBlock> sorted = new ArrayList<>();
+        for (LocalDate key : blockMap.keySet())
+            sorted.addAll(blockMap.get(key));
+        return sorted;
     }
 }
