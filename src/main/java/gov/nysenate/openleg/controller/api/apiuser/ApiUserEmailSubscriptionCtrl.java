@@ -6,11 +6,7 @@ import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping(BaseCtrl.BASE_API_PATH + "/email/subscription")
@@ -36,6 +32,11 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
             subStrings.add(s.toString());
         }
         return subStrings;
+    }
+
+    @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
+    public void updateEmail(@RequestParam String key, @RequestBody String body) {
+        sqlApiUserDao.updateEmail(key, body);
     }
 
 }

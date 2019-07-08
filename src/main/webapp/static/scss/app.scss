@@ -856,6 +856,14 @@ ul.pagination {
   position: relative;
 }
 
+#subscription-page-pop-out {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  padding-bottom: 10px;
+}
+
 .subscription-checkbox-list-updater {
   width: 100%;
   padding-left: 20%;
@@ -2159,7 +2167,7 @@ md-dialog.issuedialog {
   background: ghostwhite;
   width: available;
   text-align: center;
-  padding: 0px;
+  padding: 0;
   margin: 30px auto auto auto;
   max-width: 1100px;
   box-shadow: 0 1px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px -1px rgba(0,0,0,.12);
@@ -2167,9 +2175,9 @@ md-dialog.issuedialog {
 
 .batch-email-header {
   background: rgb(241, 241, 241);
-  padding: 0px 16px;
+  padding: 0 16px;
   h1 {
-    margin: 0px;
+    margin: 0;
     line-height: 80px;
     font-style: normal;
     font-family: Open Sans, sans-serif;
@@ -2182,8 +2190,8 @@ md-dialog.issuedialog {
 .batch-email-main-box {
   height: available;
   background: white;
-  margin: 0px;
-  padding: 0px 16px 0px 0px;
+  margin: 0;
+  padding: 0 16px 0 0;
 
 }
 
@@ -2218,7 +2226,7 @@ md-dialog.issuedialog {
 .batch-email-subject-line {
   width: 100%;
   h4 {
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: fill;
     text-align: right;
     width: 10%;
@@ -2229,9 +2237,9 @@ md-dialog.issuedialog {
   }
   md-input-container {
     width: available;
-    padding-top: 0px;
+    padding-top: 0;
     padding-left: 20px;
-    margin: 0px;
+    margin: 0;
     line-height: normal;
 
   }
@@ -2243,7 +2251,7 @@ md-dialog.issuedialog {
 .batch-email-message-body {
   width: 100%;
   h4 {
-    margin-top: 0px;
+    margin-top: 0;
     text-align: right;
     width: 10%;
     font-style: normal;
@@ -2304,7 +2312,7 @@ md-dialog.issuedialog {
   width: 600px;
   align-self: center;
   height: 415px;
-  padding: 0px;
+  padding: 0;
   margin: 20px;
   box-shadow: 0 0 2px 1px rgba(0,0,0,0.25);
   h2 {
@@ -2312,7 +2320,7 @@ md-dialog.issuedialog {
     font-family: Open Sans, sans-serif;
     font-size: 20px;
     font-weight: lighter;
-    margin: 8px 0px;
+    margin: 8px 0;
   }
   .md-button.md-default-theme.md-raised, .md-button.md-raised {
     margin: 20px;
@@ -2332,8 +2340,8 @@ md-dialog.issuedialog {
   background: #fcfcfc;
   width: 500px;
   height: 300px;
-  padding: 0px;
-  margin: 0px 50px;
+  padding: 0;
+  margin: 0 50px;
   align-self: center;
   scroll-behavior: smooth;
   overflow: auto;
@@ -2353,7 +2361,7 @@ md-dialog.issuedialog {
   }
   h3,p {
     padding: 10px 20px;
-    margin: 0px;
+    margin: 0;
     text-align: center;
   }
   #no-button {
@@ -2368,3 +2376,39 @@ md-dialog.issuedialog {
   font-weight: bold !important;
   color: red !important;
 }
+
+.email-input-container {
+  flex: 1;
+  height: 100%;
+  width: 80%;
+  align-self: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin-top: 0px;
+  md-input-container {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  .md-button.md-default-theme.md-raised, .md-button.md-raised {
+    height:40px;
+
+  }
+}
+
+.update-subscription-form, .update-email-form {
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+
+.valid-email-error-message {
+  color: red;
+  margin: 10px;
+}
+

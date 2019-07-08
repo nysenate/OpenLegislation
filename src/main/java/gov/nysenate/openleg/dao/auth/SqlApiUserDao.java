@@ -41,6 +41,12 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
 
     /** {@inheritDoc} */
     @Override
+    public void updateEmail(String apikey, String email) {
+        jdbcNamed.update(ApiUserQuery.UPDATE_API_USER_EMAIL.getSql(schema()), getUpdateEmailParams(apikey, email));
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public List<ApiUser> getAllUsers() throws DataAccessException {
         return jdbcNamed.query(ApiUserQuery.SELECT_API_USERS.getSql(schema()), new MapSqlParameterSource(),
                 new ApiUserRowMapper());
@@ -138,6 +144,12 @@ public class SqlApiUserDao extends SqlBaseDao implements ApiUserDao
         return new MapSqlParameterSource()
                 .addValue("apiKey", apiKey)
                 .addValue("subscription_type", subscription.name());
+    }
+
+    protected MapSqlParameterSource getUpdateEmailParams(String apikey, String email) {
+        return new MapSqlParameterSource()
+                .addValue("apikey", apikey)
+                .addValue("email", email);
     }
 
     private static final RowMapper<ApiUser> apiUserMapper = new ApiUserRowMapper();

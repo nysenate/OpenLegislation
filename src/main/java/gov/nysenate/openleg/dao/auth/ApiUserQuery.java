@@ -70,6 +70,11 @@ public enum ApiUserQuery implements BasicSqlQuery {
                     "WHERE u.apikey = s.apikey ) as a" + "\n" +
                     "WHERE a.subscription_type = :subscription_type::public.apiuser_subscription_type"
     ),
+    UPDATE_API_USER_EMAIL(
+            "UPDATE public."  + SqlTable.API_USER + "\n" +
+                    "SET email_addr = :email" + "\n" +
+                    "WHERE apikey = :apikey"
+    )
     ;
 
     private String sql;

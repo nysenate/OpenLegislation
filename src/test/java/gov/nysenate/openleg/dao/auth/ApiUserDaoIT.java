@@ -270,4 +270,34 @@ public class ApiUserDaoIT extends BaseTests {
         }
     }
 
+    @Test
+    public void updateUserEmailTest() {
+        String email = "bogusBunny@nysenate.gov";
+        String newEmail = "helloworld@nysenate.gov";
+        ApiUser apiUser = new ApiUser(email);
+        apiUser.setName("Bugs");
+        apiUser.setRegistrationToken("ABC123");
+        String key = apiUser.getApiKey();
+
+        apiUserDao.insertUser(apiUser);
+        apiUserDao.updateEmail(key, newEmail);
+
+        assertEquals("User email was not updated to the new email address.",
+                     newEmail, apiUserDao.getApiUserFromKey(key).getEmail());
+    }
+
+    @Test
+    public void updateUserEmailSameAsCurrentEmail() {
+        String email = "bogusBunny@nysenate.gov";
+        ApiUser apiUser = new ApiUser(email);
+        apiUser.setName("Bugs");
+        apiUser.setRegistrationToken("ABC123");
+        String key = apiUser.getApiKey();
+
+        apiUserDao.insertUser(apiUser);
+        apiUserDao.updateEmail(key, email);
+
+        assertEquals("User email was not updated to the new email address.",
+                email, apiUserDao.getApiUserFromKey(key).getEmail());
+    }
 }

@@ -44,6 +44,14 @@ public interface ApiUserDao
     public void updateUser(ApiUser user) throws DataAccessException;
 
     /**
+     * Update a preexisting user's email
+     * @param apikey String, The apiKey of the user whose email is being
+     *               updated
+     * @param email String, The new email
+     */
+    public void updateEmail(String apikey, String email);
+
+    /**
      * @return List<ApiUser> a list of all api users
      * @throws DataAccessException
      */
