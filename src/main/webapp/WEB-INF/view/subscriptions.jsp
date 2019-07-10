@@ -41,7 +41,10 @@
           </div>
         </form>
         <hr>
-        <form name="updateEmailForm" method="post" class="update-email-form">
+        <div class="signup-err" ng-if="emailErr">
+          <h4><i  class="icon-warning prefix-icon"></i>{{emailErr}}</h4>
+        </div>
+        <form name="updateEmailForm" method="post" ng-class="{'update-email-already-used-error':emailErr, 'update-email-form':true }">
           <div class="email-input-container" layout="column">
             <p>Update the email you want to use for subscriptions:</p>
             <md-input-container>

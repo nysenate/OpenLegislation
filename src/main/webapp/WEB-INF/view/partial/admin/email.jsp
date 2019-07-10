@@ -28,6 +28,9 @@
           </md-list-item>
         </md-list>
       </div>
+      <div class="batch-email-validation-message" ng-show="displayInvalidMessage">
+        <p><pre>{{invalidMessage}}</pre></p>
+      </div>
     </div>
     <div class="batch-email-subject-line" layout="row" ng-show="!sending && !sent">
       <h4 ng-class="{'batch-email-error-header':invalidSubject}">Subject:</h4>
@@ -35,15 +38,24 @@
     </div>
     <div class="batch-email-message-body" layout="row" ng-show="!sending && !sent">
       <h4 ng-class="{'batch-email-error-header':invalidBody}">Body:</h4>
-      <textarea id="batch-email-body-text" ng-model="body"></textarea>
-      <div class="batch-email-validation-message" ng-show="displayInvalidMessage">
-        <p><pre>{{invalidMessage}}</pre></p>
+      <div class="batch-email-tabs-div" >
+        <md-tabs class="md-primary" md-align-tabs="top">
+          <md-tab id="text-tab" class="batch-email-tabs">
+            <md-tab-label>Email Text</md-tab-label>
+            <md-tab-body>
+              <textarea id="batch-email-body-text" ng-model="body"></textarea>
+            </md-tab-body>
+          </md-tab>
+          <md-tab id="html-tab" class="batch-email-tabs" ng-click="enterPreview()">
+            <md-tab-label ng-show="">HTML Preview</md-tab-label>
+            <md-tab-body>
+                <text ng-bind-html="bodyHtml"></text>
+            </md-tab-body>
+          </md-tab>
+        </md-tabs>
       </div>
     </div>
     <div class="batch-email-submit-box" layout="row" layout-align="center" ng-show="!sending && !sent">
-      <md-button class="bold md-raised" ng-click="enterPreview()">
-        PREVIEW
-      </md-button>
       <md-button class="primary bold md-raised" ng-click="submit()">
         SEND
       </md-button>
@@ -54,15 +66,6 @@
     <div ng-show="sent">
       <h2>Message sent successfully!</h2>
       <h3>To send another message, <a href="" onclick="location.reload()">click here.</a></h3>
-    </div>
-    <div id="batch-email-preview-div" ng-show="previewOn">
-      <h2>Preview of message:</h2>
-      <div id="batch-email-preview">
-        <text ng-bind-html="bodyHtml"></text>
-      </div>
-      <md-button class="bold md-raised" ng-click="exitPreview()">
-        Exit Preview
-      </md-button>
     </div>
   </div>
 </div>

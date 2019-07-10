@@ -2190,7 +2190,7 @@ md-dialog.issuedialog {
 .batch-email-main-box {
   height: available;
   background: white;
-  margin: 0;
+  margin: 0 0 40px 0;
   padding: 0 16px 0 0;
 
 }
@@ -2250,9 +2250,12 @@ md-dialog.issuedialog {
 
 .batch-email-message-body {
   width: 100%;
+  height: 500px;
+  margin-right: 8%;
   h4 {
     margin-top: 0;
     text-align: right;
+    margin-right: 20px;
     width: 10%;
     font-style: normal;
     font-family: Open Sans, sans-serif;
@@ -2271,10 +2274,8 @@ md-dialog.issuedialog {
 }
 
 #batch-email-body-text {
-  margin-left: 20px;
-  margin-bottom: 10px;
-  min-height: 200px;
-  min-width: 400px;
+  margin: 0;
+  height: 100%;
 }
 
 .batch-email-submit-box {
@@ -2286,7 +2287,7 @@ md-dialog.issuedialog {
     font-weight: bold;
     width: 150px;
     height: 40px;
-    margin-bottom: 20px;
+    margin: 20px 0;
   }
   .md-button.md-raised:hover {
     background-color: rgba(0,140,186,0.4);
@@ -2295,9 +2296,12 @@ md-dialog.issuedialog {
 
 .batch-email-validation-message {
   color: red;
-  padding-left: 40px;
   font-weight: bold;
   text-align: center;
+  line-height: 27px;
+  p, pre {
+    margin: 0;
+  }
 }
 
 
@@ -2377,8 +2381,30 @@ md-dialog.issuedialog {
   color: red !important;
 }
 
+.batch-email-tabs-div {
+  width: 80%;
+  height: 100%;
+  margin-right: 10%;
+  md-tabs > md-tabs-content-wrapper > md-tab-content > div {
+    height: 100%;
+  }
+  md-tabs {
+    height: 100%;
+  }
+  textarea {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+md-tabs.md-default-theme.md-primary > md-tabs-wrapper > md-tabs-canvas >
+md-pagination-wrapper > md-tab-item:not([disabled]), md-tabs.md-primary >
+md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
+  color: rgba(0,0,0,.87);
+}
+
 .email-input-container {
-  flex: 1;
+  flex: -1 1 120px;
   height: 100%;
   width: 80%;
   align-self: center;
@@ -2387,15 +2413,27 @@ md-dialog.issuedialog {
   flex-direction: column;
   justify-content: space-evenly;
   margin-top: 0px;
+  text-wrap: normal;
   md-input-container {
+    height: 50px;
+    width: 300px;
     padding-bottom: 0;
     margin-bottom: 0;
     margin-top: 0;
+    flex: 0 -1 50px;
   }
 
   .md-button.md-default-theme.md-raised, .md-button.md-raised {
-    height:40px;
+    height:35px;
+    margin-top: 10px;
+    flex: 1 0 50px;
+    width: 25%;
+    min-width: 150px;
+  }
 
+  p {
+    width: 100%;
+    flex: -1 1 50px;
   }
 }
 
@@ -2404,6 +2442,7 @@ md-dialog.issuedialog {
   flex-direction: column;
   justify-content: center;
   margin: 40px 0;
+  overflow: visible;
 }
 
 
@@ -2412,3 +2451,6 @@ md-dialog.issuedialog {
   margin: 10px;
 }
 
+.update-email-already-used-error {
+  margin-top: 0 !important;
+}

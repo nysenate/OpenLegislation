@@ -23,6 +23,7 @@ public class ApiUserDaoIT extends BaseTests {
 
     @Autowired private ApiUserDao apiUserDao;
 
+
     @Test public void insertTest() {
         String email = "bogusBunny@nysenate.gov";
         ApiUser apiUser = new ApiUser(email);

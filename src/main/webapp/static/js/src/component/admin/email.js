@@ -60,15 +60,15 @@
             $scope.invalidMessage = "*Please fill in the following fields: ";
             if (!$scope.check) {
                 $scope.invalidSubs = true;
-                $scope.invalidMessage += "\n\n\tGroups";
+                $scope.invalidMessage += "\nGroups";
             }
             if (!$scope.subject) {
                 $scope.invalidSubject = true;
-                $scope.invalidMessage += "\n\n\tSubject";
+                $scope.invalidMessage += "\nSubject";
             }
             if (!$scope.body) {
                 $scope.invalidBody = true;
-                $scope.invalidMessage += "\n\n\tBody";
+                $scope.invalidMessage += "\nBody";
             }
             if ($scope.invalidSubject || $scope.invalidBody || $scope.invalidSubs) {
                 $scope.displayInvalidMessage = true;
@@ -157,6 +157,7 @@
         $scope.enterPreview = function () {
             $scope.previewOn = true;
             $scope.bodyHtml = $sce.trustAsHtml($scope.body);
+            console.log($scope.body, $scope.bodyHtml);
         };
 
         $scope.exitPreview = function () {

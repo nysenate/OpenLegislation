@@ -17,11 +17,15 @@
         return $resource(ctxPath + "/api/3/email/subscription/updateEmail?key=:key");
     }]);
 
+    openPublicApp.factory('EmailSearch', ['$resource', function ($resource) {
+        return $resource(ctxPath + "/api/3/email/subscription/emailSearch?email=:email");
+    }]);
+
     openPublicApp.controller('SubscriptionCtrl', ['$scope', '$location', 'UserSubscriptions',
-        'CurrentSubscriptions', 'UpdateEmail', subscriptionCtrl]);
+        'CurrentSubscriptions', 'UpdateEmail', 'EmailSearch',subscriptionCtrl]);
 
 
-    function subscriptionCtrl($scope, $location, userSubApi, currentSubApi, updateEmailApi) {
+    function subscriptionCtrl($scope, $location, userSubApi, currentSubApi, updateEmailApi, emailSearchApi) {
         $scope.title = "Email Subscriptions";
         $scope.instructions = "Please check all subscriptions you would like to be enrolled in:";
         $scope.instructionsTwo = "To unsubscribe from all subscriptions, leave the boxes un-checked.";
@@ -36,12 +40,14 @@
         $scope.link = document.getElementById("back-link");
         $scope.link.href = window.location.href;
         $scope.errmsg = '';
+        $scope.emailErr = '';
         $scope.currentSubs = [];
         $scope.invalidKey = false;
         $scope.emailInput = '';
         $scope.validEmailMessageOn = false;
         $scope.processingEmail = false;
         $scope.emailSubmitted = false;
+        $scope.emailAlreadyExists = false;
 
         //removing unsubscribe parameter to prevent loops
         $location.search("unsub", null);
@@ -120,24 +126,35 @@
         };
 
         $scope.updateEmail = function () {
+            $scope.emailErr = "";
             if ($scope.emailInput === "" || $scope.emailInput === undefined) {
                 $scope.validEmailMessageOn = true;
             } else {
                 $scope.validEmailMessageOn = false;
                 $scope.processingEmail = true;
 
-                //update their email
-                updateEmailApi.save({key: $scope.key}, $scope.emailInput).$promise.then(
-                    function (data) {
-                        $scope.processingEmail = false;
-                        $scope.emailSubmitted = true;
-                        $scope.emailInput = '';
-
-                    },
-                    function () {
-                        $scope.processingEmail = false;
-                        $scope.errmsg = 'Sorry, there was an error while updating your email.';
+                //check that the email isn't already being used
+                emailSearchApi.query({email: $scope.emailInput}).$promise.then(
+                    //if the query is successful, the email already exists.
+                    function(data) {
+                        console.log(data);
+                        if(data.indexOf(true) > -1) {
+                            $scope.emailErr = 'That email is already in use. Please use a different email.';
+                        } else {
+                            //update their email - the email does not exist yet
+                            updateEmailApi.save({key: $scope.key}, $scope.emailInput).$promise.then(
+                                function (data) {
+                                    $scope.processingEmail = false;
+                                    $scope.emailSubmitted = true;
+                                    $scope.emailInput = '';
+                                },
+                                function (data) {
+                                    $scope.processingEmail = false;
+                                    $scope.emailErr = 'Sorry, there was an error while updating your email.';
+                                });
+                        }
                     });
+                //end of outer query
             }
         };
 

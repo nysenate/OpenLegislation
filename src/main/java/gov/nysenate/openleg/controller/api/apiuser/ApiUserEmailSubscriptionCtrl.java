@@ -2,8 +2,10 @@ package gov.nysenate.openleg.controller.api.apiuser;
 
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.auth.SqlApiUserDao;
+import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -38,5 +40,18 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
     public void updateEmail(@RequestParam String key, @RequestBody String body) {
         sqlApiUserDao.updateEmail(key, body);
     }
+
+    @RequestMapping(value = "/emailSearch", method = RequestMethod.GET)
+    public List<Boolean> emailSearch(@RequestParam String email) {
+        List<Boolean> bool = new ArrayList<>();
+        bool.add(true);
+        try {
+            sqlApiUserDao.getApiUserFromEmail(email);
+        } catch (EmptyResultDataAccessException ex) {
+            bool.set(0, false);
+        }
+        return bool;
+    }
+
 
 }
