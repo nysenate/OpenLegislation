@@ -29,7 +29,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
         int numAdmins = adminUserDao.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to breaking changes.";
-        ApiUserSubscriptionType sub = ApiUserSubscriptionType.valueOf("BREAKING_CHANGES");
+        ApiUserSubscriptionType sub = ApiUserSubscriptionType.BREAKING_CHANGES;
 
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
@@ -43,7 +43,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
         int numAdmins = adminUserDao.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to breaking changes.";
-        ApiUserSubscriptionType sub = ApiUserSubscriptionType.valueOf("BREAKING_CHANGES");
+        ApiUserSubscriptionType sub = ApiUserSubscriptionType.BREAKING_CHANGES;
 
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
@@ -57,7 +57,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
         int numAdmins = adminUserDao.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to new features.";
-        ApiUserSubscriptionType sub = ApiUserSubscriptionType.valueOf("NEW_FEATURES");
+        ApiUserSubscriptionType sub = ApiUserSubscriptionType.NEW_FEATURES;
 
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
@@ -71,7 +71,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
         int numAdmins = adminUserDao.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to new features.";
-        ApiUserSubscriptionType sub = ApiUserSubscriptionType.valueOf("NEW_FEATURES");
+        ApiUserSubscriptionType sub = ApiUserSubscriptionType.NEW_FEATURES;
 
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
@@ -85,8 +85,8 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
         int numAdmins = adminUserDao.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to breaking changes and new features.";
-        ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.valueOf("BREAKING_CHANGES");
-        ApiUserSubscriptionType sub2 = ApiUserSubscriptionType.valueOf("NEW_FEATURES");
+        ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.BREAKING_CHANGES;
+        ApiUserSubscriptionType sub2 = ApiUserSubscriptionType.NEW_FEATURES;
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
         subscriptions.add(sub1);
         subscriptions.add(sub2);
@@ -104,8 +104,8 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
         int numAdmins = adminUserDao.getAdminUsers().size();
         String subject = "Test Email";
         String body = "This is a test email for Api Users subscribed to breaking changes and new features.";
-        ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.valueOf("BREAKING_CHANGES");
-        ApiUserSubscriptionType sub2 = ApiUserSubscriptionType.valueOf("NEW_FEATURES");
+        ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.BREAKING_CHANGES;
+        ApiUserSubscriptionType sub2 = ApiUserSubscriptionType.NEW_FEATURES;
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
         subscriptions.add(sub1);
         subscriptions.add(sub2);
@@ -121,7 +121,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
     public void adminsReceiveBatchEmailTest() {
         String subject = "Test Email";
         String body = "This is a test email to verify that all admins will receive any batch email that is send out.";
-        ApiUserSubscriptionType sub = ApiUserSubscriptionType.valueOf("BREAKING_CHANGES");
+        ApiUserSubscriptionType sub = ApiUserSubscriptionType.BREAKING_CHANGES;
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
         int numAdmins = adminUserDao.getAdminUsers().size();
@@ -137,7 +137,7 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
     public void sendTestMessageTest() throws MailException {
         String subject = "Test email";
         String body = "This is a test email. The purpose of this email is to make sure it is sent to the correct admin.";
-        ApiUserSubscriptionType sub = ApiUserSubscriptionType.valueOf("NEW_FEATURES");
+        ApiUserSubscriptionType sub = ApiUserSubscriptionType.NEW_FEATURES;
         ApiUserMessage message = new ApiUserMessage(sub, subject, body);
 
         apiUserBatchEmailService.sendTestMessage("angelinamartineau@gmail.com", message);

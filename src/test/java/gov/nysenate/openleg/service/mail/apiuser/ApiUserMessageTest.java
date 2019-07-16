@@ -22,8 +22,8 @@ public class ApiUserMessageTest extends BaseTests {
     @Test
     public void constructorWithSetOfSubscriptionsTest() {
         Set<ApiUserSubscriptionType> subs = new HashSet<>();
-        subs.add(ApiUserSubscriptionType.valueOf("BREAKING_CHANGES"));
-        subs.add(ApiUserSubscriptionType.valueOf("NEW_FEATURES"));
+        subs.add(ApiUserSubscriptionType.BREAKING_CHANGES);
+        subs.add(ApiUserSubscriptionType.NEW_FEATURES);
         String body = "This is the body of the message.";
         String subject = "This is the subject of the message.";
         ApiUserMessage message = new ApiUserMessage(subs, body, subject);
@@ -32,7 +32,7 @@ public class ApiUserMessageTest extends BaseTests {
 
     @Test
     public void constructorWithSingleSubscriptionTest() {
-        ApiUserSubscriptionType sub = ApiUserSubscriptionType.valueOf("BREAKING_CHANGES");
+        ApiUserSubscriptionType sub = ApiUserSubscriptionType.BREAKING_CHANGES;
         String body = "This is the body of the message.";
         String subject = "This is the subject of the message.";
         ApiUserMessage message = new ApiUserMessage(sub, body, subject);

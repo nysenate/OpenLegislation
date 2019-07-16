@@ -26,8 +26,8 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
         String email = "bogusBunny@nysenate.gov";
         String orgName = "Org";
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
-        subscriptions.add(ApiUserSubscriptionType.valueOf("BREAKING_CHANGES"));
-        subscriptions.add(ApiUserSubscriptionType.valueOf("NEW_FEATURES"));
+        subscriptions.add(ApiUserSubscriptionType.BREAKING_CHANGES);
+        subscriptions.add(ApiUserSubscriptionType.NEW_FEATURES);
 
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
@@ -48,8 +48,8 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
         String email = "bogusBunny@nysenate.gov";
         String orgName = "Org";
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
-        subscriptions.add(ApiUserSubscriptionType.valueOf("BREAKING_CHANGES"));
-        subscriptions.add(ApiUserSubscriptionType.valueOf("NEW_FEATURES"));
+        subscriptions.add(ApiUserSubscriptionType.BREAKING_CHANGES);
+        subscriptions.add(ApiUserSubscriptionType.NEW_FEATURES);
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
         ApiUser savedUser = apiUserService.getUser(email);
@@ -65,8 +65,8 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
         String email = "bogusBunny@nysenate.gov";
         String orgName = "Org";
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
-        subscriptions.add(ApiUserSubscriptionType.valueOf("BREAKING_CHANGES"));
-        subscriptions.add(ApiUserSubscriptionType.valueOf("NEW_FEATURES"));
+        subscriptions.add(ApiUserSubscriptionType.BREAKING_CHANGES);
+        subscriptions.add(ApiUserSubscriptionType.NEW_FEATURES);
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
         String apiKey = user.getApiKey();
@@ -86,8 +86,8 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
         String apiKey = user.getApiKey();
-        ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.valueOf("BREAKING_CHANGES");
-        ApiUserSubscriptionType sub2 = ApiUserSubscriptionType.valueOf("NEW_FEATURES");
+        ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.BREAKING_CHANGES;
+        ApiUserSubscriptionType sub2 = ApiUserSubscriptionType.NEW_FEATURES;
 
         assertEquals("getSubscriptions() should return an empty list",
                 0, apiUserService.getSubscriptions(apiKey).size());
@@ -119,8 +119,8 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
         String apiKey = user.getApiKey();
-        ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.valueOf("BREAKING_CHANGES");
-        ApiUserSubscriptionType sub2 = ApiUserSubscriptionType.valueOf("NEW_FEATURES");
+        ApiUserSubscriptionType sub1 = ApiUserSubscriptionType.BREAKING_CHANGES;
+        ApiUserSubscriptionType sub2 = ApiUserSubscriptionType.NEW_FEATURES;
 
         //add the subscriptions
         apiUserService.addSubscription(apiKey,sub1);
