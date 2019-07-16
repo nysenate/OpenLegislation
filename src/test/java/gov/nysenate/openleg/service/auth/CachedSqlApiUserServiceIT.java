@@ -25,9 +25,10 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
         String name = "Bugs";
         String email = "bogusBunny@nysenate.gov";
         String orgName = "Org";
-        Set<String> subscriptions = new HashSet<>();
-        subscriptions.add("BREAKING_CHANGES");
-        subscriptions.add("NEW_FEATURES");
+        Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
+        subscriptions.add(ApiUserSubscriptionType.valueOf("BREAKING_CHANGES"));
+        subscriptions.add(ApiUserSubscriptionType.valueOf("NEW_FEATURES"));
+
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
         String apiKey = user.getApiKey();
@@ -46,9 +47,9 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
         String name = "Bugs";
         String email = "bogusBunny@nysenate.gov";
         String orgName = "Org";
-        Set<String> subscriptions = new HashSet<>();
-        subscriptions.add("BREAKING_CHANGES");
-        subscriptions.add("NEW_FEATURES");
+        Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
+        subscriptions.add(ApiUserSubscriptionType.valueOf("BREAKING_CHANGES"));
+        subscriptions.add(ApiUserSubscriptionType.valueOf("NEW_FEATURES"));
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
         ApiUser savedUser = apiUserService.getUser(email);
@@ -63,9 +64,9 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
         String name = "Bugs";
         String email = "bogusBunny@nysenate.gov";
         String orgName = "Org";
-        Set<String> subscriptions = new HashSet<>();
-        subscriptions.add("BREAKING_CHANGES");
-        subscriptions.add("NEW_FEATURES");
+        Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
+        subscriptions.add(ApiUserSubscriptionType.valueOf("BREAKING_CHANGES"));
+        subscriptions.add(ApiUserSubscriptionType.valueOf("NEW_FEATURES"));
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
         String apiKey = user.getApiKey();
@@ -81,7 +82,7 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
         String name = "Bugs";
         String email = "bogusBunny@nysenate.gov";
         String orgName = "Org";
-        Set<String> subscriptions = new HashSet<>();
+        Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
         String apiKey = user.getApiKey();
@@ -114,7 +115,7 @@ public class CachedSqlApiUserServiceIT extends BaseTests {
         String name = "Bugs";
         String email = "bogusBunny@nysenate.gov";
         String orgName = "Org";
-        Set<String> subscriptions = new HashSet<>();
+        Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
 
         ApiUser user = apiUserService.registerNewUser(email, name, orgName, subscriptions);
         String apiKey = user.getApiKey();

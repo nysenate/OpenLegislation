@@ -19,7 +19,7 @@ public interface ApiUserService
      * @param subscriptions The email subscriptions the user has signed up for
      * @return A new ApiUser object if the registration is successful
      */
-    public ApiUser registerNewUser(String email, String name, String orgName, Set<String> subscriptions);
+    public ApiUser registerNewUser(String email, String name, String orgName, Set<ApiUserSubscriptionType> subscriptions);
 
     /**
      * Get an API User from a given email address

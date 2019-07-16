@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.config.Environment;
+import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.dao.auth.ApiUserDao;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.model.auth.ApiUserAuthEvictEvent;
@@ -133,7 +134,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
 
     /** {@inheritDoc} */
     @Override
-    public ApiUser registerNewUser(String email, String name, String orgName, Set<String> subscriptions) {
+    public ApiUser registerNewUser(String email, String name, String orgName, Set<ApiUserSubscriptionType> subscriptions) {
         Pattern emailRegex = Pattern.compile("^[a-zA-Z\\d-._]+@[a-zA-Z\\d-._]+.[a-zA-Z]{2,4}$");
         Matcher patternMatcher = emailRegex.matcher(email);
 
@@ -156,8 +157,8 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
 
         apiUserDao.insertUser(newUser);
 
-        for(String sub : subscriptions) {
-            apiUserDao.addSubscription(newUser.getApiKey(), ApiUserSubscriptionType.valueOf(sub));
+        for(ApiUserSubscriptionType sub : subscriptions) {
+            apiUserDao.addSubscription(newUser.getApiKey(), sub);
         }
 
         sendRegistrationEmail(newUser);

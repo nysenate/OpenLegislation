@@ -5,6 +5,7 @@ import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.view.entity.NewUserView;
 import gov.nysenate.openleg.controller.api.base.BaseCtrl;
 import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import gov.nysenate.openleg.service.auth.ApiUserService;
 import gov.nysenate.openleg.service.auth.UsernameExistsException;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +52,10 @@ public class RegistrationPageCtrl extends BaseCtrl
         String email = body.getEmail();
         String name =  body.getName();
         Set<String> subscriptions = body.getSubscriptions();
+        Set<ApiUserSubscriptionType> subs = new HashSet<>();
+        for(String sub:subscriptions) {
+            subs.add(getEnumParameter(sub, ApiUserSubscriptionType.class, null));
+        }
         logger.info("{} with email {} is registering for an API key.", name, email);
         if (StringUtils.isBlank(email)) {
             return new SimpleResponse(false, "Email must be valid.", "api-signup");
@@ -59,7 +64,7 @@ public class RegistrationPageCtrl extends BaseCtrl
             return new SimpleResponse(false, "Name must not be empty.", "api-signup");
         }
         try {
-            ApiUser apiUser = apiUserService.registerNewUser(email, name, "", subscriptions);
+            ApiUser apiUser = apiUserService.registerNewUser(email, name, "", subs);
             return new SimpleResponse(true, apiUser.getName() + " has been registered.", "api-signup");
         }
         catch (UsernameExistsException ex) {

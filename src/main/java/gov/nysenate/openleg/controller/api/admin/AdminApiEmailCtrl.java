@@ -24,6 +24,18 @@ public class AdminApiEmailCtrl extends BaseCtrl {
     ApiUserBatchEmailServiceImpl apiUserBatchEmailService;
 
 
+    /**
+     *  Send A Batch Email
+     *  -----------------------------------
+     *
+     *  Sends a batch email to selected subscription types. Must be called by an admin.
+     *
+     *  (POST) /api/3/admin/email/batchEmail
+     *
+     *  Request params: request (ApiUserEmailRequest) An object containing the subject and
+     *                  body of the email, as well as a list of subscription types that the
+     *                  email will be sent out to.
+     */
     @RequiresPermissions("admin:email:post")
     @RequestMapping(value = "/batchEmail", method = RequestMethod.POST)
     public void sendEmail(@RequestBody ApiUserEmailRequest request) {
@@ -31,6 +43,18 @@ public class AdminApiEmailCtrl extends BaseCtrl {
         apiUserBatchEmailService.sendMessage(message);
     }
 
+    /**
+     *  Send A Test Batch Email
+     *  -----------------------
+     *
+     *  Sends a test batch email to the admin who makes the call. Must be called by an admin.
+     *
+     *  (POST) /api/3/admin/email/testModeEmail
+     *
+     *  Request params: request (ApiUserEmailRequest) An object containing the subject and
+     *                  body of the email, as well as a list of subscription types that the
+     *                  email would be sent out to if it were not a test email.
+     */
     @RequiresPermissions("admin:email:post")
     @RequestMapping(value = "/testModeEmail", method = RequestMethod.POST)
     public void sendTestEmail(@RequestBody ApiUserEmailRequest request) {
@@ -39,13 +63,18 @@ public class AdminApiEmailCtrl extends BaseCtrl {
         apiUserBatchEmailService.sendTestMessage(email, message);
     }
 
+    /**
+     * Helper function to translate an ApiUserEmailRequest into an ApiUserMessage
+     * @param request ApiUserEmailRequest
+     * @return ApiUserMessage
+     */
     protected ApiUserMessage getMessage(ApiUserEmailRequest request) {
         List<String> subs = request.getSubscriptions();
         String body = request.getBody();
         String subject = request.getSubject();
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
         for(String sub: subs) {
-            subscriptions.add(ApiUserSubscriptionType.valueOf(sub));
+            subscriptions.add(getEnumParameter(sub, ApiUserSubscriptionType.class, null));
         }
         return new ApiUserMessage(subscriptions, subject, body);
     }
