@@ -3,10 +3,8 @@ package gov.nysenate.openleg.processor.law;
 import gov.nysenate.openleg.model.law.*;
 
 public class RulesBuilder extends IdBasedLawBuilder {
-    // TODO: this lmao
+    // TODO: process joint rules
     public static final String TODO = "JOINT RULE ";
-    protected static final String SENATE_RULES_STR = LawChapterCode.CMS.toString();
-    protected static final String ASSEMBLY_RULES_STR = LawChapterCode.CMA.toString();
 
     public RulesBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);

@@ -24,6 +24,11 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
     protected static final String CITY_TAX_STR = "GCT25-A";
 
+    /** Special law IDs. */
+    protected static final String CONS_STR = LawChapterCode.CNS.name();
+    protected static final String SENATE_RULES_STR = LawChapterCode.CMS.toString();
+    protected static final String ASSEMBLY_RULES_STR = LawChapterCode.CMA.toString();
+
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
     private static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
     static {

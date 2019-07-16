@@ -15,11 +15,12 @@ import java.util.stream.Stream;
 public class LawTitleParser
 {
     private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
-    private final static String sectionTitlePattern = "(?i)((?:Section|Rule|§)\\s*%s).?\\s(.+?)\\.(.*)";
     private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE|SECTION)";
+    private final static String SECTION_SIGNIFIER = "\\d+(-|\\w)*\\..*";
     private final static Pattern nonSectionPrefixPattern = Pattern.compile("((\\*\\s*)?" + TYPES + "(.+?)(\\\\n|--|\\.))");
+    private final static String sectionTitlePattern = "(?i)((?:Section|Rule|§)\\s*%s).?\\s(.+?)(\\.|\\\\n  ).*";
     private final static int MAX_WIDTH = 140;
-    private final static String WIDTH_WARN = "Document ID {} may have had title \"{}\" parsed incorrectly.";
+    private final static String PARSE_WARN = "Document ID {} may have had title \"{}\" parsed incorrectly.";
 
     /** --- Methods --- */
 
@@ -65,11 +66,12 @@ public class LawTitleParser
         if (prefixMatcher.find())
             title = title.substring(prefixMatcher.end());
         // Removes division names that might come after.
-        title = Pattern.compile(TYPES + "\\s+\\w+").split(title)[0];
-        title = title.split("\\d+(-|\\w)*\\.")[0];
-        title = title.replaceAll("(\\\\n|\\s{2,})", " ");
+        title = title.replaceAll(TYPES + "\\s+\\w+.*", "");
+        title = title.replaceAll(SECTION_SIGNIFIER, "");
+        title = title.replaceAll("\\\\n", " ").replaceAll("\\s{2,}", " ");
+        title = removeNonCapitalized(title.trim());
         if (title.length() > MAX_WIDTH)
-            logger.warn(WIDTH_WARN, docInfo.getDocumentId(), title);
+            logger.warn(PARSE_WARN, docInfo.getDocumentId(), title);
         return capitalizeTitle(title.trim());
     }
 
@@ -97,8 +99,31 @@ public class LawTitleParser
                 logger.warn("Section title pattern mismatch for document id {}", docInfo.getDocumentId());
                 title = "";
             }
+            // If the title is the vast majority of the text, there's probably an issue.
+            if ((double)title.length()/text.length() > 0.8)
+                logger.warn(PARSE_WARN, docInfo.getDocumentId(), title);
         }
         return StringUtils.abbreviate(title, MAX_WIDTH);
+    }
+
+    /**
+     * Takes in a String and if the first word is in all caps, the title should
+     * only be words in all caps.
+     * @param title to process.
+     * @return Only the words relevant to the title.
+     */
+    private static String removeNonCapitalized(String title) {
+        String[] words = title.split(" ");
+        // Title is not just capital letters.
+        if (words.length == 0 || !words[0].equals(words[0].toUpperCase()))
+            return title;
+        StringBuilder ret = new StringBuilder();
+        for (String word : words) {
+            if (!word.equals(word.toUpperCase()))
+                break;
+            ret.append(word).append(" ");
+        }
+        return ret.toString();
     }
 
     private static String capitalizeTitle(String title) {

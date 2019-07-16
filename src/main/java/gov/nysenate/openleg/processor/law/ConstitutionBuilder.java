@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
  * A class for the special cases of the Constitution, Senate Rules, and Assembly Rules.
  */
 public class ConstitutionBuilder extends AbstractLawBuilder {
-    protected static final String CONS_STR = LawChapterCode.CNS.name();
     private static final String CONS_CHAPTER = CONS_STR + "AS";
     private static final Pattern TITLE_MATCHER = Pattern.compile("(" + CONS_STR + "A\\d+)S.*");
     private static final Pattern FOR_ARTICLE = Pattern.compile("([IVX]+)\\\\n\\s+([A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(.*)");
