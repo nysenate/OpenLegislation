@@ -19,7 +19,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
     private static final Logger logger = LoggerFactory.getLogger(AbstractLawBuilder.class);
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static Pattern locationPattern = Pattern.compile("^(ST|SP|SA|A|T|P|S|INDEX)(.*)");
+    protected static Pattern locationPattern = Pattern.compile("^(ST|SP|SA|A|T|P|S|INDEX)(.+)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     protected static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
