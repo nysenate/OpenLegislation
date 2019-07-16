@@ -22,12 +22,12 @@ public abstract class AbstractLawBuilder implements LawBuilder
     private static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
-    private static final String CITY_TAX_STR = "GCT25-A";
+    protected static final String CITY_TAX_STR = "GCT25-A";
 
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
     private static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
     static {
-        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUB_PART));
+        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUBPART));
         expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
     }
 
@@ -39,7 +39,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         lawLevelCodes.put("T", LawDocumentType.TITLE);
         lawLevelCodes.put("ST", LawDocumentType.SUBTITLE);
         lawLevelCodes.put("P", LawDocumentType.PART);
-        lawLevelCodes.put("SP", LawDocumentType.SUB_PART);
+        lawLevelCodes.put("SP", LawDocumentType.SUBPART);
         lawLevelCodes.put("S", LawDocumentType.SECTION);
         lawLevelCodes.put("INDEX", LawDocumentType.INDEX);
         lawLevelCodes.put("R", LawDocumentType.RULE);
@@ -167,9 +167,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 if (lawDoc.getDocumentId().startsWith(CITY_TAX_STR + "-"))
                     docTypeId = lawDoc.getDocumentId().replace(CITY_TAX_STR + "-", "");
                 lawDoc.setDocTypeId(docTypeId);
-                if (isNewDoc) {
+                if (isNewDoc)
                     lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
-                }
                 addChildNode(new LawTreeNode(lawDoc, ++sequenceNo));
             }
 
@@ -183,10 +182,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 else if (specificLocId.equals("AA1"))
                     lawDoc.setDocType(PREAMBLE);
                 else {
-                    if (lawDoc.getDocumentId().startsWith(CITY_TAX_STR))
-                        lawDoc.setLocationId(CITY_TAX_STR.substring(3));
-                    else
-                        logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
+                    logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
                     lawDoc.setDocType(LawDocumentType.MISC);
                     lawDoc.setDocTypeId(block.getLocationId());
                 }

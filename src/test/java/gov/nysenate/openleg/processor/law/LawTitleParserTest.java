@@ -17,7 +17,6 @@ public class LawTitleParserTest {
     // TODO: Currently only tests parsing of Article titles.
 
     private LawDocInfo lawInfo = new LawDocInfo();
-    private LawTitleParser parser = new LawTitleParser();
 
     @Before
     public void before() {
@@ -25,7 +24,7 @@ public class LawTitleParserTest {
     }
 
     private void assertTitle(String expectedTitle, String title) {
-        assertEquals(expectedTitle, parser.extractTitle(lawInfo, title));
+        assertEquals(expectedTitle, LawTitleParser.extractTitle(lawInfo, title));
     }
 
     @Test
@@ -37,7 +36,7 @@ public class LawTitleParserTest {
                 "        701. Construction.\\n" +
                 "        702. When to take effect.";
 
-        String expectedTitle = "Laws Repealed; Construction; When To Take Effect.";
+        String expectedTitle = "Laws Repealed; Construction; When to Take Effect.";
         assertTitle(expectedTitle, text);
     }
 
@@ -77,8 +76,7 @@ public class LawTitleParserTest {
                 "                    Limited Liability Trust Companies\\n" +
                 "Title  1.   Definitions; Application; Certificates; Miscellaneous.\\n" +
                 "       2.   Corporate powers.";
-        // TODO Our capitalization is too aggressive, 'To' below should not be capitalized according to LBDC website.
-        String expectedTitle = "General Provisions Applicable To Banking Stock Corporations, " +
+        String expectedTitle = "General Provisions Applicable to Banking Stock Corporations, " +
                 "Limited Liability Investment Companies, and Limited Liability Trust Companies";
         assertTitle(expectedTitle, text);
     }
@@ -145,7 +143,6 @@ public class LawTitleParserTest {
         assertTitle(expectedTitle, text);
     }
 
-    @Ignore
     @Test
     public void onlyCapTitle() {
         // TWNA3-AT2
@@ -155,7 +152,6 @@ public class LawTitleParserTest {
         assertTitle(expectedTitle, text);
     }
 
-    @Ignore
     @Test
     public void partAndTitleSameLineNoSeparator() {
         // EPTA7P8

@@ -15,11 +15,11 @@ import java.util.stream.Stream;
 public class LawTitleParser
 {
     private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
-
     private final static String sectionTitlePattern = "(?i)((?:Section|Rule|§)\\s*%s).?\\s(.+?)\\.(.*)";
-    private final static Pattern nonSectionPrefixPattern = Pattern.compile("((\\*\\s*)?(SUB)?(ARTICLE|TITLE|PART|RULE)(.+?)(\\\\n|--))");
-    private final static Pattern uppercasePattern = Pattern.compile("([A-Z]{2,})");
-    private final static Pattern endOfUppercasePattern = Pattern.compile("((\\\\n\\s*(\\d+)?(.)?\\s*[A-Z]{1}[a-z]+)|(\\\\nTITLE))");
+    private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE|SECTION)";
+    private final static Pattern nonSectionPrefixPattern = Pattern.compile("((\\*\\s*)?" + TYPES + "(.+?)(\\\\n|--|\\.))");
+    private final static int MAX_WIDTH = 140;
+    private final static String WIDTH_WARN = "Document ID {} may have had title \"{}\" parsed incorrectly.";
 
     /** --- Methods --- */
 
@@ -30,12 +30,12 @@ public class LawTitleParser
                     return extractTitleFromChapter(lawDocInfo);
                 case SUBTITLE:
                 case PART:
-                case SUB_PART:
+                case SUBPART:
                 case ARTICLE:
                 case SUBARTICLE:
                 case RULE:
                 case TITLE:
-                    return extractTitleFromNonSection(bodyText);
+                    return extractTitleFromNonSection(lawDocInfo, bodyText);
                 case SECTION:
                     return extractTitleFromSection(lawDocInfo, bodyText);
             }
@@ -48,8 +48,7 @@ public class LawTitleParser
      */
     private static String extractTitleFromChapter(LawDocInfo docInfo) {
         try {
-            LawChapterCode chapterType = LawChapterCode.valueOf(docInfo.getLawId());
-            return chapterType.getName();
+            return LawChapterCode.valueOf(docInfo.getLawId()).getName();
         }
         catch (IllegalArgumentException ex) {
             return docInfo.getLawId() + " Law";
@@ -59,34 +58,18 @@ public class LawTitleParser
     /**
      * Parses the title for an article by assuming that most article titles are presented in all caps.
      */
-    private static String extractTitleFromNonSection(String bodyText) {
+    private static String extractTitleFromNonSection(LawDocInfo docInfo, String bodyText) {
         String title = bodyText;
         // Remove the location designator
         Matcher prefixMatcher = nonSectionPrefixPattern.matcher(bodyText);
-        if (prefixMatcher.find()) {
+        if (prefixMatcher.find())
             title = title.substring(prefixMatcher.end());
-        }
-
-        // If uppercase words, title is all the uppercase words
-        Matcher uppercaseMatcher = uppercasePattern.matcher(title);
-        if (uppercaseMatcher.find()) {
-            // Match the first line that starts with a non uppercase word.
-            Matcher endOfUppercaseMatcher = endOfUppercasePattern.matcher(title);
-            if (endOfUppercaseMatcher.find()) {
-                title = title.substring(0, endOfUppercaseMatcher.start());
-            }
-        }
-        // Otherwise, remove the 'body' and the title is what remains.
-        else {
-            Pattern bodyPattern = Pattern.compile("((\\\\n|^)( {2})?)(\\w.*)");
-            Matcher bodyMatcher = bodyPattern.matcher(title);
-            if (bodyMatcher.find()) {
-                title = title.substring(0, bodyMatcher.start());
-            }
-        }
-
-        title = title.replaceAll("\\\\n", " ");
-        title = title.replaceAll("\\s{2,}", " ");
+        // Removes division names that might come after.
+        title = Pattern.compile(TYPES + "\\s+\\w+").split(title)[0];
+        title = title.split("\\d+(-|\\w)*\\.")[0];
+        title = title.replaceAll("(\\\\n|\\s{2,})", " ");
+        if (title.length() > MAX_WIDTH)
+            logger.warn(WIDTH_WARN, docInfo.getDocumentId(), title);
         return capitalizeTitle(title.trim());
     }
 
@@ -108,22 +91,21 @@ public class LawTitleParser
             int sectionIdx = text.indexOf("§");
             String trimText = (sectionIdx == -1) ? text.trim() : text.substring(sectionIdx).trim();
             Matcher titleMatcher = titlePattern.matcher(trimText);
-            if (titleMatcher.matches()) {
+            if (titleMatcher.matches())
                 title = titleMatcher.group(2).replaceAll("-\\\\n\\s*", "").replaceAll("\\\\n?\\s*", " ");
-            }
             else {
                 logger.warn("Section title pattern mismatch for document id {}", docInfo.getDocumentId());
                 title = "";
             }
         }
-        return StringUtils.abbreviate(title, 140);
+        return StringUtils.abbreviate(title, MAX_WIDTH);
     }
 
     private static String capitalizeTitle(String title) {
         if (title != null && !title.isEmpty()) {
             String capStr = WordUtils.capitalizeFully(title);
             return capStr.substring(0, 1) + Stream.of(capStr.substring(1).split(" "))
-                    .map(s -> (s.matches("(Of|Or|The|For|A|And|An)")) ? s.toLowerCase() : s)
+                    .map(s -> (s.matches("(Of|Or|The|A|And|An|To)")) ? s.toLowerCase() : s)
                     .collect(Collectors.joining(" "));
         }
         return title;

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
-import java.util.regex.Matcher;
 
 /**
  * Constructs document hierarchies using document id prefixes.
@@ -58,7 +57,7 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
             currParent().addChild(node);
         }
         // Section nodes should never become parents because they are the most granular (at the moment).
-        if (!node.getDocType().equals(LawDocumentType.SECTION)) {
+        if (node.getDocumentId().equals(CITY_TAX_STR) || !node.getDocType().equals(LawDocumentType.SECTION)) {
             parentNodes.push(node);
         }
     }
