@@ -14,6 +14,19 @@
     <div>
       <h2 id="batch-email-send-error">{{error}}</h2>
     </div>
+    <div class="batch-email-switch" ng-show="!sending && !sent">
+      <div class="batch-email-test-mode">
+        <h2><strong>Test Mode: </strong></h2>
+      </div>
+      <md-switch aria-label="Test Mode Switch" ng-model="testMode"
+      ng-change="testModeButton(testMode)">
+        <h2><strong>{{testModeMessage}}</strong></h2>
+      </md-switch>
+      <br>
+    </div>
+    <div class="batch-email-switch" ng-show="!sending && !sent">
+      <p><em>{{testModeMessageTwo}}</em></p>
+    </div>
     <div class="batch-email-subscriptions layout-align-left" layout="row" ng-show="!sending && !sent">
       <h4 ng-class="{'batch-email-error-header':invalidSubs}">Groups:</h4>
       <div class="checkbox-container layout-align-center">
@@ -35,6 +48,13 @@
     <div class="batch-email-subject-line" layout="row" ng-show="!sending && !sent">
       <h4 ng-class="{'batch-email-error-header':invalidSubject}">Subject:</h4>
       <textarea id="batch-email-subject-input" ng-model="subject"></textarea>
+    </div>
+    <div class="batch-email-signature-div" ng-show="!sending && !sent">
+      <div class="batch-email-formatting-div">
+      </div>
+      <md-checkbox class="blue" ng-model="signatureOn" ng-change="signatureButton(signatureOn)" aria-label="Signature">
+        Include a signature in the email
+      </md-checkbox>
     </div>
     <div class="batch-email-message-body" layout="row" ng-show="!sending && !sent">
       <h4 ng-class="{'batch-email-error-header':invalidBody}">Body:</h4>

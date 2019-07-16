@@ -19,10 +19,7 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
@@ -42,6 +39,13 @@ public class ApiUserBatchEmailServiceImpl implements ApiUserBatchEmailService {
         this.apiUserDao = apiUserDao;
         this.env = env;
         this.adminUserDao = adminUserDao;
+    }
+
+    public void sendTestMessage(String email, ApiUserMessage message) throws MailException {
+        MimeMessage mimeMessage =  getMimeMessage(message, email, null);
+        List<MimeMessage> mimeMessageList = new ArrayList<>();
+        mimeMessageList.add(mimeMessage);
+        mimeSender.sendMessages(mimeMessageList);
     }
 
     //rethrow a runtime exception in catch

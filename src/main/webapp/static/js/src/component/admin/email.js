@@ -9,9 +9,14 @@
         return $resource(ctxPath + "/api/3/admin/email/batchEmail");
     }]);
 
-    openApp.controller('EmailCtrl', ['$scope', '$location', '$mdDialog', '$sce', 'SendEmail', emailCtrl]);
+    openApp.factory('SendTestEmail', ['$resource', function ($resource) {
+        return $resource(ctxPath + "/api/3/admin/email/testModeEmail");
+    }]);
 
-    function emailCtrl($scope, $location, $mdDialog, $sce, SendEmail) {
+    openApp.controller('EmailCtrl', ['$scope', '$location', '$mdDialog', '$sce', '$window',
+        'SendEmail', 'SendTestEmail', emailCtrl]);
+
+    function emailCtrl($scope, $location, $mdDialog, $sce, $window, SendEmail, SendTestEmail) {
         $scope.header.text = "Batch Email";
         $scope.header.visible = true;
         $scope.title = "Send a New Batch Email";
@@ -29,7 +34,26 @@
         $scope.sent = false;
         $scope.error = "";
         $scope.previewOn = false;
+        $scope.signatureOn = true;
+        $scope.testMode = true;
+        $scope.testModeMessage = "ON";
+        $scope.testModeMessageTwo = "In test mode, the e-mail will be sent only to you.";
 
+        /* Create an optional signature for the emails */
+        $scope.logoUrl = "https://legislation.nysenate.gov/static/img/nys_logo224x224.png";
+        $scope.signature =  '\n<!--Signature-->\n' +
+                            '<div style="background:lightgrey;text-align:left; ' +
+                                'display:flex;flex-direction:row">\n' +
+                            '  <img src="'+$scope.logoUrl+'" alt="NYS Logo" style="padding:5px;width:70px;height:70px;"/>\n' +
+                            '  <div style="font-size:12px;padding-top:5px;">\n' +
+                            '    <span style="font-size:16px;">Open Legislation</span><br>\n' +
+                            '    <span>From the <a href="https://www.nysenate.gov/">New York State Senate</a></span><br>\n' +
+                            '    <a href="https://legislation.nysenate.gov/">https://legislation.nysenate.gov/</a><br>\n' +
+                            '    <a href="https://github.com/nysenate/OpenLegislation">https://github.com/nysenate/OpenLegislation</a>\n' +
+                            '  </div>\n' +
+                            '</div>\n' +
+                            '<!--SignatureEnd-->';
+        $scope.body = $scope.signature;
         $scope.subscriptionsAvailable = [
             {
                 title: 'Breaking Changes', enumVal: "BREAKING_CHANGES", checked: false,
@@ -40,6 +64,30 @@
                 desc: "New features added to the API."
             }
         ];
+
+        /* Function to turn testMode on and off */
+        $scope.testModeButton = function(testMode) {
+            if(testMode) {
+                $scope.testModeMessage = "ON";
+                $scope.testModeMessageTwo = "In test mode, the e-mail will be sent only to you.";
+            } else {
+                $scope.testModeMessage = "OFF";
+                $scope.testModeMessageTwo = "CAREFUL: The batch email will be sent out.";
+            }
+        }
+
+        /* Function to update the body to add/remove signature */
+        $scope.signatureButton = function(signatureOn){
+            if(signatureOn) {
+                $scope.body += $scope.signature;
+            } else {
+                var start = $scope.body.indexOf("<!--Signature-->");
+                var end = $scope.body.indexOf("SignatureEnd") + 14;
+                //remove the newline characters before and after the script as well
+                $scope.body = $scope.body.substring(0,start-1) + $scope.body.substring(end+1, $scope.body.length);
+            }
+            $scope.bodyHtml = $sce.trustAsHtml($scope.body);
+        };
 
         /* Function to check that no fields are blank */
         $scope.validation = function () {
@@ -77,16 +125,24 @@
             }
         };
 
+
+
         $scope.showDialog = function () {
             var parentElement = angular.element(document.body);
+            if($scope.testMode) {
+                $scope.dialogMessage ='<strong>You are in test mode.</strong> <br> The email  will only be sent to you. <br>' +
+                    'Are you sure you want to send it?';
+            } else {
+                $scope.dialogMessage = '<strong>Batch email WILL be sent out!</strong> <br> Carefully read over your email. ' +
+                    'Are you <br> sure you are ready to send it?';
+            }
             $mdDialog.show({
                 parent: parentElement,
                 template:
                     '<md-dialog id="batch-email-dialog">' +
                     '     <md-dialog-content>' +
                     '         <h3>Ready to send?</h3>' +
-                    '         <p>Carefully read over your email. Are you <br>' +
-                    '        sure you are ready to send it?</p>' +
+                    '         <p>' + $scope.dialogMessage + '</p>' +
                     '     </md-dialog-content>' +
                     '     <md-dialog-actions>' +
                     '         <md-button ng-click="closeDialog()" class="md-primary" id="no-button">' +
@@ -142,22 +198,36 @@
                 "body": $scope.body
             };
 
-            SendEmail.save(emailObj).$promise.then(
-                function (data) {
-                    $scope.sending = false;
-                    $scope.sent = true;
-                },
-                function () {
-                    $scope.sending = false;
-                    $scope.error = "There was an error sending the message.";
-                }
-            );
+            if($scope.testMode) {
+                //send the message to the admin only
+                SendTestEmail.save(emailObj).$promise.then(
+                  function(data) {
+                      $scope.sending = false;
+                      $scope.sent = true;
+                  },
+                  function() {
+                      $scope.sending = false;
+                      $scope.error = "There was an error sending the message.";
+                  }
+                );
+            } else {
+                //send the email to all the subscribers
+                SendEmail.save(emailObj).$promise.then(
+                    function (data) {
+                        $scope.sending = false;
+                        $scope.sent = true;
+                    },
+                    function () {
+                        $scope.sending = false;
+                        $scope.error = "There was an error sending the message.";
+                    }
+                );
+            }
         };
 
         $scope.enterPreview = function () {
             $scope.previewOn = true;
             $scope.bodyHtml = $sce.trustAsHtml($scope.body);
-            console.log($scope.body, $scope.bodyHtml);
         };
 
         $scope.exitPreview = function () {

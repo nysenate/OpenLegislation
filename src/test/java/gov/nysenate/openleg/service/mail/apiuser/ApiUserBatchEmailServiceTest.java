@@ -4,6 +4,7 @@ import gov.nysenate.openleg.BaseTests;
 import gov.nysenate.openleg.annotation.SillyTest;
 import gov.nysenate.openleg.dao.auth.AdminUserDao;
 import gov.nysenate.openleg.dao.auth.ApiUserDao;
+import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import gov.nysenate.openleg.service.mail.MailException;
 import org.junit.Test;
@@ -129,5 +130,16 @@ public class ApiUserBatchEmailServiceTest extends BaseTests {
 
         assertEquals("The number of emails sent out was incorrect.",
                 numAdmins+numSubscribers, numEmailsSent);
+    }
+
+
+    @Test
+    public void sendTestMessageTest() throws MailException {
+        String subject = "Test email";
+        String body = "This is a test email. The purpose of this email is to make sure it is sent to the correct admin.";
+        ApiUserSubscriptionType sub = ApiUserSubscriptionType.valueOf("NEW_FEATURES");
+        ApiUserMessage message = new ApiUserMessage(sub, subject, body);
+
+        apiUserBatchEmailService.sendTestMessage("angelinamartineau@gmail.com", message);
     }
 }

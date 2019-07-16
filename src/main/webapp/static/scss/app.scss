@@ -2382,6 +2382,7 @@ md-dialog.issuedialog {
 }
 
 .batch-email-tabs-div {
+  border: 1px solid lightgrey;
   width: 80%;
   height: 100%;
   margin-right: 10%;
@@ -2453,4 +2454,38 @@ md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disa
 
 .update-email-already-used-error {
   margin-top: 0 !important;
+}
+
+.batch-email-formatting-div {
+  width: 10%;
+}
+
+.batch-email-signature-div {
+  display: flex;
+  justify-content: left;
+  flex-direction: row;
+  md-checkbox {
+    margin-left: 20px;
+  }
+}
+
+.batch-email-switch {
+  width:available;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  text-align: left;
+  p {
+    margin: 0 0 0 5px;
+  }
+  md-switch {
+    margin: 0 0 0 20px;
+  }
+}
+
+.batch-email-test-mode {
+  margin: 0 5px;
+  h2 {
+    margin: 0;
+  }
 }
