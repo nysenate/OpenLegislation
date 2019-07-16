@@ -74,7 +74,7 @@ public class AdminApiEmailCtrl extends BaseCtrl {
         String subject = request.getSubject();
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
         for(String sub: subs) {
-            subscriptions.add(getEnumParameter(sub, ApiUserSubscriptionType.class, null));
+            subscriptions.add(getEnumParameter("subscriptions", sub, ApiUserSubscriptionType.class));
         }
         return new ApiUserMessage(subscriptions, subject, body);
     }

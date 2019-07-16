@@ -54,7 +54,7 @@ public class RegistrationPageCtrl extends BaseCtrl
         Set<String> subscriptions = body.getSubscriptions();
         Set<ApiUserSubscriptionType> subs = new HashSet<>();
         for(String sub:subscriptions) {
-            subs.add(getEnumParameter(sub, ApiUserSubscriptionType.class, null));
+            subs.add(getEnumParameter("Subscriptions", sub, ApiUserSubscriptionType.class));
         }
         logger.info("{} with email {} is registering for an API key.", name, email);
         if (StringUtils.isBlank(email)) {

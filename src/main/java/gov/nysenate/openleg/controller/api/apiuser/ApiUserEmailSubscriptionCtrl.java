@@ -36,7 +36,7 @@ public class ApiUserEmailSubscriptionCtrl extends BaseCtrl {
     public void updateSubscriptions(@RequestParam String key, @RequestBody List<String> body) {
         Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
         for (String sub : body) {
-            subscriptions.add(getEnumParameter(sub, ApiUserSubscriptionType.class, null));
+            subscriptions.add(getEnumParameter("subscriptions", sub, ApiUserSubscriptionType.class));
         }
         sqlApiUserDao.setSubscriptions(key, subscriptions);
     }
