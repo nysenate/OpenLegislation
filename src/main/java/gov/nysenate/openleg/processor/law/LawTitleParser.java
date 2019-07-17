@@ -7,6 +7,8 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -15,12 +17,21 @@ import java.util.stream.Stream;
 public class LawTitleParser
 {
     private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
+    public final static String SEPERATOR = "(\\\\n|-+|\\.|\\s+)";
     private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE|SECTION)";
+    private final static String nonSectionPrefixPattern = TYPES + "\\s+%s" + SEPERATOR;
     private final static String SECTION_SIGNIFIER = "\\d+(-|\\w)*\\..*";
-    private final static Pattern nonSectionPrefixPattern = Pattern.compile("((\\*\\s*)?" + TYPES + "(.+?)(\\\\n|--|\\.))");
     private final static String sectionTitlePattern = "(?i)((?:Section|Rule|§)\\s*%s).?\\s(.+?)(\\.|\\\\n  ).*";
+    private final static String DELIM = "\\\\~\\\\";
     private final static int MAX_WIDTH = 140;
     private final static String PARSE_WARN = "Document ID {} may have had title \"{}\" parsed incorrectly.";
+    // Some laws do not have names for any of their sections.
+    private final static List<String> LAWS_NO_TITLES = Arrays.asList(
+            LawChapterCode.CMA.name(), LawChapterCode.CMS.name(),
+            LawChapterCode.LSA.name(), LawChapterCode.POA.name(),
+            LawChapterCode.PNY.name(), LawChapterCode.PCM.name(),
+            LawChapterCode.BAT.name(), LawChapterCode.CCT.name());
+    private final static String NO_TITLE = "No title";
 
     /** --- Methods --- */
 
@@ -39,6 +50,10 @@ public class LawTitleParser
                     return extractTitleFromNonSection(lawDocInfo, bodyText);
                 case SECTION:
                     return extractTitleFromSection(lawDocInfo, bodyText);
+                case INDEX:
+                    return "Index range: " + lawDocInfo.getDocTypeId();
+                case PREAMBLE:
+                    return "Preamble";
             }
         }
         return "";
@@ -60,17 +75,18 @@ public class LawTitleParser
      * Parses the title for an article by assuming that most article titles are presented in all caps.
      */
     private static String extractTitleFromNonSection(LawDocInfo docInfo, String bodyText) {
-        String title = bodyText;
         // Remove the location designator
-        Matcher prefixMatcher = nonSectionPrefixPattern.matcher(bodyText);
-        if (prefixMatcher.find())
-            title = title.substring(prefixMatcher.end());
+        String fixedID = docInfo.getDocTypeId().replace("*", "\\*");
+        String label = String.format(nonSectionPrefixPattern, fixedID);
+        String title = bodyText.replaceFirst(label, DELIM);
+        title = title.replaceFirst(".*" + DELIM, "");
         // Removes division names that might come after.
         title = title.replaceAll(TYPES + "\\s+\\w+.*", "");
         title = title.replaceAll(SECTION_SIGNIFIER, "");
         title = title.replaceAll("\\\\n", " ").replaceAll("\\s{2,}", " ");
         title = removeNonCapitalized(title.trim());
-        if (title.length() > MAX_WIDTH)
+        // If the title is the vast majority of the text, there's probably an issue.
+        if ((double)title.length()/bodyText.length() > 0.8)
             logger.warn(PARSE_WARN, docInfo.getDocumentId(), title);
         return capitalizeTitle(title.trim());
     }
@@ -80,6 +96,8 @@ public class LawTitleParser
      * first line or so.
      */
     private static String extractTitleFromSection(LawDocInfo docInfo, String text) {
+        if (LAWS_NO_TITLES.contains(docInfo.getLawId()))
+            return NO_TITLE;
         String title = "";
         if (text != null && !text.isEmpty()) {
             int asteriskLoc = docInfo.getDocTypeId().indexOf("*");
@@ -87,7 +105,7 @@ public class LawTitleParser
                     docInfo.getDocTypeId().substring(0, asteriskLoc))
                     .toLowerCase();
             // UCC docs have 2 dashes in the text while the section name only has one.
-            if (docInfo.getLawId().equals("UCC"))
+            if (docInfo.getLawId().equals(LawChapterCode.UCC.name()))
                 text = text.replaceFirst("--", "-");
             Pattern titlePattern = Pattern.compile(String.format(sectionTitlePattern, id));
             int sectionIdx = text.indexOf("§");
@@ -99,8 +117,11 @@ public class LawTitleParser
                 logger.warn("Section title pattern mismatch for document id {}", docInfo.getDocumentId());
                 title = "";
             }
-            // If the title is the vast majority of the text, there's probably an issue.
-            if ((double)title.length()/text.length() > 0.8)
+            // If the section starts with labelling a subsection, there's no title.
+            if (title.startsWith("\\s*\\(a\\)"))
+                return NO_TITLE;
+            // If the title is a large section of the text and is long, there's probably an issue.
+            if (title.length() > MAX_WIDTH && (double)title.length()/text.length() > 0.4)
                 logger.warn(PARSE_WARN, docInfo.getDocumentId(), title);
         }
         return StringUtils.abbreviate(title, MAX_WIDTH);

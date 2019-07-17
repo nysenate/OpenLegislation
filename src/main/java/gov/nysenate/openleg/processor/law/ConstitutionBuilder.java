@@ -63,8 +63,6 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
     protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
         switch (lawDoc.getDocType()) {
             case ARTICLE:
-                String articleNum = lawDoc.getLocationId().replace("A", "");
-                lawDoc.setDocTypeId(toNumeral(Integer.parseInt(articleNum)));
             case SECTION:
                 lawDoc.setTitle(titles.get(lawDoc.getLocationId()));
                 break;

@@ -23,7 +23,8 @@ public class LawTitleParserTest {
         lawInfo.setDocType(LawDocumentType.ARTICLE);
     }
 
-    private void assertTitle(String expectedTitle, String title) {
+    private void assertTitle(String expectedTitle, String title, String docTypeID) {
+        lawInfo.setDocTypeId(docTypeID);
         assertEquals(expectedTitle, LawTitleParser.extractTitle(lawInfo, title));
     }
 
@@ -37,7 +38,7 @@ public class LawTitleParserTest {
                 "        702. When to take effect.";
 
         String expectedTitle = "Laws Repealed; Construction; When to Take Effect.";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "XIV");
     }
 
     @Test
@@ -52,7 +53,7 @@ public class LawTitleParserTest {
                 "          296. Compact administrator.\\n" +
                 "          297. Withdrawal.";
         String expectedTitle = "";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "6");
     }
 
     @Test
@@ -64,7 +65,7 @@ public class LawTitleParserTest {
                 "        159. Sale of apples; presumption; rules and regulations.\\n" +
                 "        160. Standard evaporated apples; definition; sale of regulated.\\n";
         String expectedTitle = "";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "XIII");
     }
     
     @Test
@@ -78,7 +79,7 @@ public class LawTitleParserTest {
                 "       2.   Corporate powers.";
         String expectedTitle = "General Provisions Applicable to Banking Stock Corporations, " +
                 "Limited Liability Investment Companies, and Limited Liability Trust Companies";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "XV");
     }
 
     @Test
@@ -88,7 +89,7 @@ public class LawTitleParserTest {
                 "                               ARTICLE IX\\n" +
                 "                          INCOME TAX SURCHARGE";
         String expectedTitle = "Income Tax Surcharge";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "IX");
     }
 
     @Test
@@ -98,7 +99,7 @@ public class LawTitleParserTest {
                 "                               SHORT TITLE\\n" +
                 "  Section  1.01.  Short title.\\n";
         String expectedTitle = "Short Title";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "1");
     }
 
     @Test
@@ -111,7 +112,7 @@ public class LawTitleParserTest {
                 "        100.07 Commencement of action; effect of family court\\n" +
                 "                 proceeding.\\n";
         String expectedTitle = "Commencement of Action In Local Criminal Court--local Criminal Court Accusatory Instruments";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "100");
     }
 
     @Test
@@ -128,7 +129,7 @@ public class LawTitleParserTest {
                 "                (c) Separate relief; separate trials.\\n" +
                 "        1003. Nonjoinder and misjoinder of parties.";
         String expectedTitle = "Parties Generally";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "10");
     }
 
 
@@ -140,7 +141,7 @@ public class LawTitleParserTest {
                 "TITLE  I.  Mary Lasker Heart and Hypertension Institute (õõ 2720-2722).\\n" +
                 "       II. Centers for the treatment of hypertension (õõ 2723-2724).\\n";
         String expectedTitle = "Treatment of Hypertension";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "27-B");
     }
 
     @Test
@@ -149,7 +150,7 @@ public class LawTitleParserTest {
         String text = "                                 Title 2\\n" +
                 "                               TOWN BOARD\\n";
         String expectedTitle = "Town Board";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "2");
     }
 
     @Test
@@ -158,7 +159,7 @@ public class LawTitleParserTest {
         String text = "                     PART 8. HONORARY TRUSTS FOR PETS\\n" +
                 "  7-8.1 Trusts for pets";
         String expectedTitle = "Honorary Trusts For Pets";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "8");
     }
 
     @Ignore
@@ -176,7 +177,7 @@ public class LawTitleParserTest {
                 "subdivision 10 to Section 672 to the Executive Law, it is the";
         // TODO Cant find this on the LRS website to confirm the title.
         String expectedTitle = "";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "");
     }
 
     @Ignore
@@ -190,6 +191,6 @@ public class LawTitleParserTest {
                 "        676. Unauthorized withdrawals from savings or time deposit\\n" +
                 "               accounts.";
         String expectedTitle = "JOINT DEPOSITS AND SHARES; Unauthorized Withdrawals; Withdrawals From Decedents' Accounts";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "XIII-E");
     }
 }

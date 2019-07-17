@@ -24,10 +24,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
     protected static final String CITY_TAX_STR = "GCT25-A";
 
-    /** Special law IDs. */
+    /** Constitution law ID. */
     protected static final String CONS_STR = LawChapterCode.CNS.name();
-    protected static final String SENATE_RULES_STR = LawChapterCode.CMS.toString();
-    protected static final String ASSEMBLY_RULES_STR = LawChapterCode.CMA.toString();
 
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
     private static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
@@ -39,15 +37,15 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** The location ids portions are prefixed with a code to indicate the different document types. */
     protected static Map<String, LawDocumentType> lawLevelCodes = new HashMap<>();
     static {
-        lawLevelCodes.put("A", LawDocumentType.ARTICLE);
-        lawLevelCodes.put("SA", LawDocumentType.SUBARTICLE);
-        lawLevelCodes.put("T", LawDocumentType.TITLE);
-        lawLevelCodes.put("ST", LawDocumentType.SUBTITLE);
-        lawLevelCodes.put("P", LawDocumentType.PART);
-        lawLevelCodes.put("SP", LawDocumentType.SUBPART);
-        lawLevelCodes.put("S", LawDocumentType.SECTION);
-        lawLevelCodes.put("INDEX", LawDocumentType.INDEX);
-        lawLevelCodes.put("R", LawDocumentType.RULE);
+        lawLevelCodes.put("A", ARTICLE);
+        lawLevelCodes.put("SA", SUBARTICLE);
+        lawLevelCodes.put("T", TITLE);
+        lawLevelCodes.put("ST", SUBTITLE);
+        lawLevelCodes.put("P", PART);
+        lawLevelCodes.put("SP", SUBPART);
+        lawLevelCodes.put("S", SECTION);
+        lawLevelCodes.put("INDEX", INDEX);
+        lawLevelCodes.put("R", RULE);
     }
 
     /** For use in Roman numeral conversion. */
@@ -101,7 +99,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         String lawID = lawVersionId.getLawId();
         if (lawID.equals(ConstitutionBuilder.CONS_STR))
             return new ConstitutionBuilder(lawVersionId, previousTree);
-        if (lawID.equals(RulesBuilder.ASSEMBLY_RULES_STR) || lawID.equals(RulesBuilder.SENATE_RULES_STR))
+        if (lawID.equals(LawChapterCode.CMA.toString()) || lawID.equals(LawChapterCode.CMS.toString()))
             return new RulesBuilder(lawVersionId, previousTree);
         if (expectedLawOrdering.containsKey(lawID))
             return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawID));
@@ -180,12 +178,25 @@ public abstract class AbstractLawBuilder implements LawBuilder
             else {
                 String specificLocId = determineHierarchy(block);
                 Matcher locMatcher = locationPattern.matcher(specificLocId);
-                if (locMatcher.matches()) {
-                    lawDoc.setDocType(lawLevelCodes.get(locMatcher.group(1)));
-                    lawDoc.setDocTypeId(locMatcher.group(2));
-                }
-                else if (specificLocId.equals("AA1"))
+                if (specificLocId.equals("AA1")) {
                     lawDoc.setDocType(PREAMBLE);
+                    lawDoc.setDocTypeId("1");
+                }
+                else if (locMatcher.matches()) {
+                    lawDoc.setDocType(lawLevelCodes.get(locMatcher.group(1)));
+                    String docTypeId = locMatcher.group(2);
+                    // Attempts both the a numberal and number version of the doctypeID.
+                    if (lawDoc.getDocType() != INDEX) {
+                        String[] parts = docTypeId.split("-");
+                        try {
+                            String numeralID = toNumeral(Integer.parseInt(parts[0])) + (parts.length == 1 ? "" : "-" + parts[1]);
+                            if (lawDoc.getText().contains(lawDoc.getDocType().name() + " " + numeralID))
+                                docTypeId = numeralID;
+                        }
+                        catch (Exception e){}
+                    }
+                    lawDoc.setDocTypeId(docTypeId);
+                }
                 else {
                     logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
                     lawDoc.setDocType(LawDocumentType.MISC);
