@@ -18,6 +18,11 @@ public class RulesBuilder extends IdBasedLawBuilder {
             super.addInitialBlock(block, isNewDoc);
     }
 
+    @Override
+    protected boolean isLikelySectionDoc(LawDocument lawDoc) {
+        return lawDoc.getLocationId().replaceAll("R\\d+", "").matches("S.+");
+    }
+
     /**
      * Basically creates divisions in the Rules document to process properly.
      * @param block of rules.

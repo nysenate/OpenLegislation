@@ -27,7 +27,6 @@ public class LawTitleParserTest {
         lawInfo.setDocTypeId(docTypeID);
         assertEquals(expectedTitle, LawTitleParser.extractTitle(lawInfo, title));
     }
-
     @Test
     public void parsesArticleTitleEndingWithSection() {
         // BNKA14
@@ -40,7 +39,6 @@ public class LawTitleParserTest {
         String expectedTitle = "Laws Repealed; Construction; When to Take Effect.";
         assertTitle(expectedTitle, text, "XIV");
     }
-
     @Test
     public void parsesEmptyTitle() {
         // EDNA6
@@ -52,10 +50,9 @@ public class LawTitleParserTest {
                 "          295. Support of interstate library district.\\n" +
                 "          296. Compact administrator.\\n" +
                 "          297. Withdrawal.";
-        String expectedTitle = "";
+        String expectedTitle = "No title";
         assertTitle(expectedTitle, text, "6");
     }
-
     @Test
     public void emptyTitleWithoutEmptyLine() {
         // AGMA13
@@ -64,10 +61,9 @@ public class LawTitleParserTest {
                 "        158. Apples; adoption of grades; branding.\\n" +
                 "        159. Sale of apples; presumption; rules and regulations.\\n" +
                 "        160. Standard evaporated apples; definition; sale of regulated.\\n";
-        String expectedTitle = "";
+        String expectedTitle = "No title";
         assertTitle(expectedTitle, text, "XIII");
     }
-    
     @Test
     public void parsesTitleWithoutCapsOrSection() {
         // BNKA15
@@ -81,7 +77,6 @@ public class LawTitleParserTest {
                 "Limited Liability Investment Companies, and Limited Liability Trust Companies";
         assertTitle(expectedTitle, text, "XV");
     }
-
     @Test
     public void parsesTitleWithNoBody() {
         // YTSA9
@@ -91,7 +86,6 @@ public class LawTitleParserTest {
         String expectedTitle = "Income Tax Surcharge";
         assertTitle(expectedTitle, text, "IX");
     }
-
     @Test
     public void spacesBeforeSection() {
         // ACATAA1
@@ -101,7 +95,6 @@ public class LawTitleParserTest {
         String expectedTitle = "Short Title";
         assertTitle(expectedTitle, text, "1");
     }
-
     @Test
     public void dashesInTitle() {
         // CPLA100
@@ -114,7 +107,6 @@ public class LawTitleParserTest {
         String expectedTitle = "Commencement of Action In Local Criminal Court--local Criminal Court Accusatory Instruments";
         assertTitle(expectedTitle, text, "100");
     }
-
     @Test
     public void centeredNonTitleInfo() {
         // CVPA10
@@ -131,7 +123,6 @@ public class LawTitleParserTest {
         String expectedTitle = "Parties Generally";
         assertTitle(expectedTitle, text, "10");
     }
-
 
     @Test
     public void capsTitleEndingWithTITLE() {
@@ -150,6 +141,7 @@ public class LawTitleParserTest {
         String text = "                                 Title 2\\n" +
                 "                               TOWN BOARD\\n";
         String expectedTitle = "Town Board";
+        lawInfo.setDocType(LawDocumentType.TITLE);
         assertTitle(expectedTitle, text, "2");
     }
 
@@ -159,6 +151,7 @@ public class LawTitleParserTest {
         String text = "                     PART 8. HONORARY TRUSTS FOR PETS\\n" +
                 "  7-8.1 Trusts for pets";
         String expectedTitle = "Honorary Trusts For Pets";
+        lawInfo.setDocType(LawDocumentType.PART);
         assertTitle(expectedTitle, text, "8");
     }
 

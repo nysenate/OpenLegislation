@@ -24,8 +24,10 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
     protected static final String CITY_TAX_STR = "GCT25-A";
 
-    /** Constitution law ID. */
+    /** Special law IDs. */
     protected static final String CONS_STR = LawChapterCode.CNS.name();
+    private static final String A_RULES = LawChapterCode.CMA.toString();
+    private static final String S_RULES = LawChapterCode.CMS.toString();
 
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
     private static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
@@ -58,6 +60,23 @@ public abstract class AbstractLawBuilder implements LawBuilder
         NUMERALS.put(5, "V");
         NUMERALS.put(4, "IV");
         NUMERALS.put(1, "I");
+    }
+
+    /** For use in number to word conversion. */
+    private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
+    static {
+        NUMBER_WORDS.put(1, "ONE");
+        NUMBER_WORDS.put(2, "TWO");
+        NUMBER_WORDS.put(3, "THREE");
+        NUMBER_WORDS.put(4, "FOUR");
+        NUMBER_WORDS.put(5, "FIVE");
+        NUMBER_WORDS.put(6, "SIX");
+        NUMBER_WORDS.put(7, "SEVEN");
+        NUMBER_WORDS.put(8, "EIGHT");
+        NUMBER_WORDS.put(9, "NINE");
+        NUMBER_WORDS.put(10, "TEN");
+        NUMBER_WORDS.put(11, "ELEVEN");
+        NUMBER_WORDS.put(12, "TWELVE");
     }
 
     /** A law version id that is obtained from the law blocks. */
@@ -99,7 +118,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         String lawID = lawVersionId.getLawId();
         if (lawID.equals(ConstitutionBuilder.CONS_STR))
             return new ConstitutionBuilder(lawVersionId, previousTree);
-        if (lawID.equals(LawChapterCode.CMA.toString()) || lawID.equals(LawChapterCode.CMS.toString()))
+        if (lawID.equals(A_RULES) || lawID.equals(S_RULES))
             return new RulesBuilder(lawVersionId, previousTree);
         if (expectedLawOrdering.containsKey(lawID))
             return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawID));
@@ -185,17 +204,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 else if (locMatcher.matches()) {
                     lawDoc.setDocType(lawLevelCodes.get(locMatcher.group(1)));
                     String docTypeId = locMatcher.group(2);
-                    // Attempts both the a numberal and number version of the doctypeID.
-                    if (lawDoc.getDocType() != INDEX) {
-                        String[] parts = docTypeId.split("-");
-                        try {
-                            String numeralID = toNumeral(Integer.parseInt(parts[0])) + (parts.length == 1 ? "" : "-" + parts[1]);
-                            if (lawDoc.getText().contains(lawDoc.getDocType().name() + " " + numeralID))
-                                docTypeId = numeralID;
-                        }
-                        catch (Exception e){}
-                    }
-                    lawDoc.setDocTypeId(docTypeId);
+                    lawDoc.setDocTypeId(fixedDocTypeId(docTypeId, lawDoc));
                 }
                 else {
                     logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
@@ -390,8 +399,12 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @return boolean - true if this block is most likely a section
      */
     protected boolean isLikelySectionDoc(LawDocument lawDoc) {
-        if (lawDoc.getDocumentId().matches(CITY_TAX_STR + ".+"))
-            return !lawDoc.getDocumentId().contains("P");
+        String docID = lawDoc.getDocumentId();
+        String lawID = lawDoc.getLawId();
+        if (docID.matches(CITY_TAX_STR + ".+"))
+            return !docID.contains("P");
+        if (lawID.equals(CONS_STR) || lawID.equals(A_RULES) || lawID.equals(S_RULES))
+            return docID.contains("S");
         return Character.isDigit(lawDoc.getLocationId().charAt(0));
     }
 
@@ -429,5 +442,31 @@ public abstract class AbstractLawBuilder implements LawBuilder
             return "";
         int next = NUMERALS.floorKey(number);
         return NUMERALS.get(next) + toNumeral(number-next);
+    }
+
+    /**
+     * Numbers may be displayed as a number (like 6), a Roman numeral
+     * (like VI), or as a word (like SIX). This method finds and returns
+     * whichever one is applicable.
+     * @param docTypeId to be fixed.
+     * @param lawDoc to pull text and type from.
+     * @return the proper docTypeId.
+     */
+    private static String fixedDocTypeId(String docTypeId, LawDocument lawDoc) {
+        String[] parts = docTypeId.split("-");
+        try {
+            int num = Integer.parseInt(parts[0]);
+            String nonNumPartId = parts.length == 1 ? "" : "-" + parts[1];
+            String[] options = {toNumeral(num), NUMBER_WORDS.getOrDefault(num, "no word"), parts[0]};
+            for (String option : options) {
+                if (lawDoc.getText().contains(lawDoc.getDocType().name() + " " + option + nonNumPartId))
+                    return option + nonNumPartId;
+            }
+            logger.warn("Could not find matching signifier for doc {}.", lawDoc.getDocumentId());
+        }
+        catch (NumberFormatException e) {
+            logger.debug("The first part of the docID was not a number.");
+        }
+        return docTypeId;
     }
 }

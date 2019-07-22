@@ -16,6 +16,8 @@ public class LawDocInfo extends LawDocId
      *  docType will be 'SUBTITLE' and this docTypeId will be '2-B'. */
     protected String docTypeId;
 
+    protected String labelId;
+
     /** --- Constructors --- */
 
     public LawDocInfo() {}
@@ -69,5 +71,13 @@ public class LawDocInfo extends LawDocId
 
     public void setDocTypeId(String docTypeId) {
         this.docTypeId = docTypeId;
+    }
+
+    public String getLabelId() {
+        return labelId;
+    }
+
+    public void setLabelId(String labelId) {
+        this.labelId = labelId;
     }
 }

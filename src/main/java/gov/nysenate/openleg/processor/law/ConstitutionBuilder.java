@@ -121,7 +121,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
                 super.addDocument(currDoc, isNewDoc);
 
             // Section info.
-            String[] sectionTitlesArray = articleMatch.group(3).split("\\.\\\\n");
+            String[] sectionTitlesArray = articleMatch.group(3).split("\\.\\)?\\\\n");
             for (String sectionTitle : sectionTitlesArray) {
                 String[] parts = sectionTitle.split("\\. ", 2);
                 String locId = currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase();
