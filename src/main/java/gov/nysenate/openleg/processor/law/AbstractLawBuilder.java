@@ -202,7 +202,11 @@ public abstract class AbstractLawBuilder implements LawBuilder
                     lawDoc.setDocTypeId("1");
                 }
                 else if (locMatcher.matches()) {
-                    lawDoc.setDocType(lawLevelCodes.get(locMatcher.group(1)));
+                    LawDocumentType type = lawLevelCodes.get(locMatcher.group(1));
+                    // GCM has some Subparts labeled with an S.
+                    if (lawDoc.getLawId().equals(LawChapterCode.GCM.name()) && locMatcher.group(1).equals("S"))
+                        type = SUBPART;
+                    lawDoc.setDocType(type);
                     String docTypeId = locMatcher.group(2);
                     lawDoc.setDocTypeId(fixedDocTypeId(docTypeId, lawDoc));
                 }
@@ -453,13 +457,15 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @return the proper docTypeId.
      */
     private static String fixedDocTypeId(String docTypeId, LawDocument lawDoc) {
-        String[] parts = docTypeId.split("-");
+        String[] parts = docTypeId.split("-", 2);
         try {
             int num = Integer.parseInt(parts[0]);
             String nonNumPartId = parts.length == 1 ? "" : "-" + parts[1];
             String[] options = {toNumeral(num), NUMBER_WORDS.getOrDefault(num, "no word"), parts[0]};
+            String textToMatch = lawDoc.getText().split("\\\\n", 2)[0].toUpperCase()
+                    .replaceFirst(".*" + lawDoc.getDocType().name() + " *", "");
             for (String option : options) {
-                if (lawDoc.getText().contains(lawDoc.getDocType().name() + " " + option + nonNumPartId))
+                if (textToMatch.startsWith(option))
                     return option + nonNumPartId;
             }
             logger.warn("Could not find matching signifier for doc {}.", lawDoc.getDocumentId());
