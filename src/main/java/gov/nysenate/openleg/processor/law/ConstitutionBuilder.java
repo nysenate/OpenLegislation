@@ -14,6 +14,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
     private static final String CONS_CHAPTER = CONS_STR + "AS";
     private static final Pattern TITLE_MATCHER = Pattern.compile("(" + CONS_STR + "A\\d+)S.*");
     private static final Pattern FOR_ARTICLE = Pattern.compile("([IVX]+)\\\\n\\s+([A-Za-z ]+)\\\\n\\s+Sec\\.\\\\n(.*)");
+    private static final String BAD_TITLE_IDENTIFIER = "accounts; obligations";
 
     // Maps locationIDs to titles.
     private Map<String, String> titles = new HashMap<>();
@@ -98,7 +99,11 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
         // Creating empty space in sequence for Preamble later if initial.
         if (rootNode.getChildNodeList().isEmpty())
             sequenceNo++;
-        String[] articles = rootDoc.getText().split("\\s*ARTICLE ");
+
+        // One title does not have a period at the end.
+        String[] articles = rootDoc.getText()
+                .replaceFirst(BAD_TITLE_IDENTIFIER, BAD_TITLE_IDENTIFIER + ".")
+                .split("\\s*ARTICLE ");
         for (int i = 1; i < articles.length; i++) {
             // Article info. Split to remove notes.
             Matcher articleMatch = FOR_ARTICLE.matcher(articles[i].split("\\*")[0]);
@@ -125,7 +130,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
             for (String sectionTitle : sectionTitlesArray) {
                 String[] parts = sectionTitle.split("\\. ", 2);
                 String locId = currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase();
-                String title = parts[1] + ".";
+                String title = parts[1];
                 titles.put(locId, title);
                 // If the document was already processed, update its title.
                 Optional<LawTreeNode> existingNode = rootNode.findNode(CONS_STR + locId, false);

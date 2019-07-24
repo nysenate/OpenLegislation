@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
+import java.util.regex.Matcher;
 
 /**
  * Constructs document hierarchies using document id prefixes.
@@ -40,15 +41,19 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
      */
     @Override
     protected String determineHierarchy(LawBlock block) {
+        String blockLocID = block.getLocationId();
         while (!currParent().isRootNode()) {
-            if (StringUtils.startsWith(block.getLocationId(), currParent().getLocationId())) {
-                String trimLocId = StringUtils.removeStart(block.getLocationId(), currParent().getLocationId());
-                if (locationPattern.matcher(trimLocId).matches())
+            String parentLocID = currParent().getLocationId();
+            if (StringUtils.startsWith(blockLocID, parentLocID)) {
+                String trimLocId = StringUtils.removeStart(blockLocID, parentLocID);
+                LawDocumentType parentType = currParent().getDocType();
+                Matcher blockMatch = locationPattern.matcher(trimLocId);
+                if (blockMatch.matches() && lawLevelCodes.get(blockMatch.group(1)) != parentType)
                     return trimLocId;
             }
             parentNodes.pop();
         }
-        return block.getLocationId();
+        return blockLocID;
     }
 
     @Override
@@ -57,9 +62,8 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
             currParent().addChild(node);
         }
         // Section nodes should never become parents because they are the most granular (at the moment).
-        if (node.getDocumentId().equals(CITY_TAX_STR) || !node.getDocType().equals(LawDocumentType.SECTION)) {
+        if (node.getDocumentId().equals(CITY_TAX_STR) || !node.getDocType().equals(LawDocumentType.SECTION))
             parentNodes.push(node);
-        }
     }
 
     @Override

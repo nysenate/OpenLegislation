@@ -2,13 +2,13 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
-import gov.nysenate.openleg.model.law.LawDocumentType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public class LawTitleParser
 {
     private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
-    private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE|SECTION)";
+    private final static String TYPES = "(SUB)?(ARTICLE|TITLE|PART|RULE|SECTION)";
     private final static String SEPERATORS = "(\\\\n|-|\\.|\\s)+";
     private final static String nonSectionPrefixPattern = "(?i)(\\s|\\*)*%s\\s+%s" + SEPERATORS;
     private final static String SECTION_SIGNIFIER = "\\d+(-|\\w)*\\..*";
@@ -30,39 +30,63 @@ public class LawTitleParser
     private final static int MAX_WIDTH = 140;
 
     // Some laws do not have names for any of their sections.
-    private final static List<String> LAWS_NO_TITLES = Arrays.asList(
+    private final static List<String> NO_TITLES = Arrays.asList(
             LawChapterCode.CMA.name(), LawChapterCode.CMS.name(),
             LawChapterCode.LSA.name(), LawChapterCode.POA.name(),
             LawChapterCode.PNY.name(), LawChapterCode.PCM.name(),
             LawChapterCode.BAT.name(), LawChapterCode.CCT.name());
     private final static String NO_TITLE = "No title";
 
+    // Quite a few documents have incorrect data. Their titles are manually
+    // listed here. If the title can be parsed fine, null is listen instead,
+    // and this is merely used to suppress errors.
+    protected final static HashMap<String, String> BAD_DATA = new HashMap<>();
+    static {
+        BAD_DATA.put(LawChapterCode.EXC.name() + "A17-B", null);
+        BAD_DATA.put(LawChapterCode.TAX.name() + "171-L", "Certain overpayments credited against outstanding tax debt owed to the city of New York");
+        BAD_DATA.put(LawChapterCode.TRA.name() + "14-L", "Airport improvement and revitalization");
+        BAD_DATA.put(LawChapterCode.ENV.name() + "A21T5", null);
+        BAD_DATA.put(LawChapterCode.PBA.name() + "A10-BT4", null);
+        BAD_DATA.put(LawChapterCode.PBA.name() + "A10-CT1", null);
+        BAD_DATA.put(LawChapterCode.PBA.name() + "A10-CT2", null);
+        BAD_DATA.put(LawChapterCode.PBA.name() + "A10-DT1", null);
+        BAD_DATA.put(LawChapterCode.PBA.name() + "A10-DT2", null);
+        BAD_DATA.put(LawChapterCode.PBG.name() + "A13T111", "Village of East Rochester Housing Authority");
+        BAD_DATA.put(LawChapterCode.PAR.name() + "27.09", "Convictions; bail forfeitures; failure to appear");
+        BAD_DATA.put(LawChapterCode.GMU.name() + "119-OOO", "Inclusion of Cornell University as a member of the governing body of an entity created by intermunicipal agreement to construct and operate water treatment plants and water distribution systems in or adjoining the county of Tompkins");
+        BAD_DATA.put(LawChapterCode.PAB.name() + "T1", "Private Activity Bond Allocation Act of 1990");
+        BAD_DATA.put(LawChapterCode.YTS.name() + "A9", "Income Tax Surcharge");
+        BAD_DATA.put(LawChapterCode.CPL.name() + "340.40", "Modes of trial");
+        BAD_DATA.put(LawChapterCode.CPL.name() + "A530", "Orders of Recognizance or Bail With Respect to Defendants In Criminal Actions and Proceedings--When and By What Courts Authorized");
+        BAD_DATA.put(LawChapterCode.ENV.name() + "71-1721", "Commissioner's enforcement power and duty");
+        BAD_DATA.put(LawChapterCode.PBG.name() + "445", "Plattsburgh Housing Authority");
+        BAD_DATA.put(LawChapterCode.PBH.name() + "265-F", "Severability");
+        BAD_DATA.put(LawChapterCode.DEA.name() + "A1-A", NO_TITLE);
+    }
+
     /** --- Methods --- */
     public static String extractTitle(LawDocInfo lawDocInfo, String bodyText) {
-        if (lawDocInfo != null) {
-            switch (lawDocInfo.getDocType()) {
-                case CHAPTER:
-                    return extractTitleFromChapter(lawDocInfo);
-                case TITLE:
-                case SUBTITLE:
-                case PART:
-                case SUBPART:
-                case ARTICLE:
-                case SUBARTICLE:
-                case RULE:
-                    return extractTitleFromNonSection(lawDocInfo, bodyText);
-                case SECTION:
-                    return extractTitleFromSection(lawDocInfo, bodyText);
-                case INDEX:
-                    return "Index range: " + lawDocInfo.getDocTypeId();
-                case PREAMBLE:
-                    return "Preamble";
-                case MISC:
-                    // Special city tax code.
-                    if (lawDocInfo.getDocTypeId().equals("CUBIT"))
-                        return "CITY UNINCORPORATED BUSINESS INCOME TAX";
+        if (lawDocInfo == null)
+            return "";
+        String checkData = BAD_DATA.getOrDefault(lawDocInfo.getDocumentId(), null);
+        if (checkData != null)
+            return checkData;
+        switch (lawDocInfo.getDocType()) {
+            case CHAPTER:
+                return extractTitleFromChapter(lawDocInfo);
+            case TITLE: case SUBTITLE: case PART: case SUBPART: case RULE: case ARTICLE: case SUBARTICLE:
+                return extractTitleFromNonSection(lawDocInfo, bodyText);
+            case SECTION:
+                return extractTitleFromSection(lawDocInfo, bodyText);
+            case INDEX:
+                return "Index range: " + lawDocInfo.getDocTypeId();
+            case PREAMBLE:
+                return "Preamble";
+            case MISC:
+                // Special city tax code.
+                if (lawDocInfo.getDocTypeId().equals("CUBIT"))
+                    return "CITY UNINCORPORATED BUSINESS INCOME TAX";
             }
-        }
         return "";
     }
 
@@ -82,18 +106,20 @@ public class LawTitleParser
      * Parses the title for an article by assuming that most article titles are presented in all caps.
      */
     private static String extractTitleFromNonSection(LawDocInfo docInfo, String bodyText) {
-        // Remove the location designator
-        String fixedID = docInfo.getDocTypeId().replaceAll("\\*.+", "");
+        if (docInfo.getDocumentId().equals(LawChapterCode.PBA.name() + "A10-B"))
+            return NO_TITLE;
+        String realID = docInfo.getDocTypeId().replaceAll("\\*.+", "");
         // A couple documents separate the number and letter of a Part like 2A.
-        if (docInfo.getLawId().equals(LawChapterCode.FCT.name()) && docInfo.getDocType() == LawDocumentType.PART && fixedID.length() > 1)
-            fixedID = fixedID.substring(0, fixedID.length()-1) + "(\\.|\\\\n| )*" + fixedID.codePointAt(fixedID.length()-1);
-        String label = String.format(nonSectionPrefixPattern, docInfo.getDocType().name(), fixedID);
+        if (docInfo.getDocumentId().startsWith(LawChapterCode.FCT.name() + "A5-BP") && realID.length() > 1)
+            realID = realID.charAt(0) + "(\\.|\\\\n| )*" + realID.charAt(1);
+        String label = String.format(nonSectionPrefixPattern, docInfo.getDocType().name(), realID);
         String title = bodyText.replaceFirst(label, DELIM);
         title = title.replaceFirst(".*" + DELIM, "");
-        if (title.startsWith("Section "))
+        if (title.matches("^(Section |" + SECTION_SIGNIFIER + ")"))
             return NO_TITLE;
+
         // Removes division names that might come after.
-        title = title.replaceAll(TYPES + "\\s+\\w+.*", "");
+        title = title.replaceAll("(?i) " + TYPES + "\\s+\\w+.*", "");
         title = title.replaceAll(SECTION_SIGNIFIER, "");
         title = title.replaceAll("\\\\n", " ").replaceAll("\\s{2,}", " ");
         title = removeNonCapitalized(title.trim());
@@ -105,7 +131,7 @@ public class LawTitleParser
      * first line or so.
      */
     private static String extractTitleFromSection(LawDocInfo docInfo, String text) {
-        if (LAWS_NO_TITLES.contains(docInfo.getLawId()))
+        if (NO_TITLES.contains(docInfo.getLawId()))
             return NO_TITLE;
         if (text == null || text.isEmpty())
             return "";

@@ -211,7 +211,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
                     lawDoc.setDocTypeId(fixedDocTypeId(docTypeId, lawDoc));
                 }
                 else {
-                    logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
+                    if (!block.getLocationId().equals("CUBIT"))
+                        logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
                     lawDoc.setDocType(LawDocumentType.MISC);
                     lawDoc.setDocTypeId(block.getLocationId());
                 }
@@ -449,6 +450,15 @@ public abstract class AbstractLawBuilder implements LawBuilder
     }
 
     /**
+     * Quickly converts a number 1-12 or 101-112 to a word.
+     * @param number to convert.
+     * @return a word/phrase.
+     */
+    private static String toWord(int number) {
+        return (number > 100 ? "ONE HUNDRED " : "") + NUMBER_WORDS.getOrDefault(number%100, "no word");
+    }
+
+    /**
      * Numbers may be displayed as a number (like 6), a Roman numeral
      * (like VI), or as a word (like SIX). This method finds and returns
      * whichever one is applicable.
@@ -461,14 +471,15 @@ public abstract class AbstractLawBuilder implements LawBuilder
         try {
             int num = Integer.parseInt(parts[0]);
             String nonNumPartId = parts.length == 1 ? "" : "-" + parts[1];
-            String[] options = {toNumeral(num), NUMBER_WORDS.getOrDefault(num, "no word"), parts[0]};
+            String[] options = {toNumeral(num), toWord(num), parts[0]};
             String textToMatch = lawDoc.getText().split("\\\\n", 2)[0].toUpperCase()
                     .replaceFirst(".*" + lawDoc.getDocType().name() + " *", "");
             for (String option : options) {
                 if (textToMatch.startsWith(option))
                     return option + nonNumPartId;
             }
-            logger.warn("Could not find matching signifier for doc {}.", lawDoc.getDocumentId());
+            if (!LawTitleParser.BAD_DATA.containsKey(lawDoc.getDocumentId()))
+                logger.warn("Could not find matching signifier for doc {}.", lawDoc.getDocumentId());
         }
         catch (NumberFormatException e) {
             logger.debug("The first part of the docID was not a number.");
