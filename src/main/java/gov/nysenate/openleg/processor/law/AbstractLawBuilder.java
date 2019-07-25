@@ -21,8 +21,16 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     private static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
+    private static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
+
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
-    protected static final String CITY_TAX_STR = "GCT25-A";
+    protected static final String CITY_TAX_STR = "25-A";
+
+    /** Document ID for special document that's just a list of notwithstanding clauses. */
+    protected static final String ATTN = LawChapterCode.ACA.name() + "ATTN";
+
+    /** Document ID for special tax law. */
+    protected static final String CUBIT = LawChapterCode.GCM.name() + "CUBIT";
 
     /** Special law IDs. */
     protected static final String CONS_STR = LawChapterCode.CNS.name();
@@ -183,11 +191,9 @@ public abstract class AbstractLawBuilder implements LawBuilder
             if (isLikelySectionDoc(lawDoc)) {
                 logger.debug("Processing section {}", lawDoc.getDocumentId());
                 lawDoc.setDocType(LawDocumentType.SECTION);
-                String docTypeId = lawDoc.getLocationId();
+                String docTypeId = lawDoc.getLocationId().replace(CITY_TAX_STR + "-", "");
                 if (lawDoc.getLawId().equals(ConstitutionBuilder.CONS_STR))
                     docTypeId = docTypeId.replaceAll("A\\d+S", "");
-                if (lawDoc.getDocumentId().startsWith(CITY_TAX_STR + "-"))
-                    docTypeId = lawDoc.getDocumentId().replace(CITY_TAX_STR + "-", "");
                 lawDoc.setDocTypeId(docTypeId);
                 if (isNewDoc)
                     lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
@@ -201,7 +207,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                     lawDoc.setDocType(PREAMBLE);
                     lawDoc.setDocTypeId("1");
                 }
-                else if (locMatcher.matches()) {
+                else if (locMatcher.matches() && !block.getDocumentId().equals(ATTN)) {
                     LawDocumentType type = lawLevelCodes.get(locMatcher.group(1));
                     // GCM has some Subparts labeled with an S.
                     if (lawDoc.getLawId().equals(LawChapterCode.GCM.name()) && locMatcher.group(1).equals("S"))
@@ -211,7 +217,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                     lawDoc.setDocTypeId(fixedDocTypeId(docTypeId, lawDoc));
                 }
                 else {
-                    if (!block.getLocationId().equals("CUBIT"))
+                    if (!block.getDocumentId().equals(CUBIT) && !block.getDocumentId().equals(ATTN))
                         logger.warn("Failed to parse the following location {}. Setting as MISC type.", lawDoc.getDocumentId());
                     lawDoc.setDocType(LawDocumentType.MISC);
                     lawDoc.setDocTypeId(block.getLocationId());
@@ -406,7 +412,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
     protected boolean isLikelySectionDoc(LawDocument lawDoc) {
         String docID = lawDoc.getDocumentId();
         String lawID = lawDoc.getLawId();
-        if (docID.matches(CITY_TAX_STR + ".+"))
+        if (docID.matches(LawChapterCode.GCT.name() + CITY_TAX_STR + ".+"))
             return !docID.contains("P");
         if (lawID.equals(CONS_STR) || lawID.equals(A_RULES) || lawID.equals(S_RULES))
             return docID.contains("S");
@@ -467,22 +473,18 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @return the proper docTypeId.
      */
     private static String fixedDocTypeId(String docTypeId, LawDocument lawDoc) {
-        String[] parts = docTypeId.split("-", 2);
-        try {
-            int num = Integer.parseInt(parts[0]);
-            String nonNumPartId = parts.length == 1 ? "" : "-" + parts[1];
-            String[] options = {toNumeral(num), toWord(num), parts[0]};
+        Matcher idMatch = idNumPattern.matcher(docTypeId);
+        if (idMatch.matches()) {
+            int num = Integer.parseInt(idMatch.group(1));
+            String[] options = {toNumeral(num), toWord(num), idMatch.group(1)};
             String textToMatch = lawDoc.getText().split("\\\\n", 2)[0].toUpperCase()
-                    .replaceFirst(".*" + lawDoc.getDocType().name() + " *", "");
+                    .replaceFirst(".*?" + lawDoc.getDocType().name() + " *", "");
             for (String option : options) {
                 if (textToMatch.startsWith(option))
-                    return option + nonNumPartId;
+                    return option + idMatch.group(2);
             }
             if (!LawTitleParser.BAD_DATA.containsKey(lawDoc.getDocumentId()))
                 logger.warn("Could not find matching signifier for doc {}.", lawDoc.getDocumentId());
-        }
-        catch (NumberFormatException e) {
-            logger.debug("The first part of the docID was not a number.");
         }
         return docTypeId;
     }

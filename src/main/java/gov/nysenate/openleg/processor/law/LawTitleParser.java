@@ -18,12 +18,12 @@ import java.util.stream.Stream;
 public class LawTitleParser
 {
     private final static Logger logger = LoggerFactory.getLogger(LawTitleParser.class);
-    private final static String TYPES = "(SUB)?(ARTICLE|TITLE|PART|RULE|SECTION)";
+    private final static String TYPES = "(?i)(SUB)?(ARTICLE|TITLE|PART|RULE)";
     private final static String SEPERATORS = "(\\\\n|-|\\.|\\s)+";
     private final static String nonSectionPrefixPattern = "(?i)(\\s|\\*)*%s\\s+%s" + SEPERATORS;
-    private final static String SECTION_SIGNIFIER = "\\d+(-|\\w)*\\..*";
+    private final static String SECTION_SIGNIFIER = "(Section |\\d+(-|\\w)*\\.).*";
     //private final static String sectionTitlePattern = "(?i)(Section|Sec\\.|Rule|§)\\s*%s\\.?(\\s|\\\\n)*([^.]+)\\..*";
-    private final static String beforeTitlePattern = "(?i).*?%s\\.?(\\s|\\\\n)*";
+    private final static String beforeTitlePattern = "(?i).*?%s(\\*|\\.|\\s|\\\\n)*";
     // The title is just everything before the period.
     private final static String titlePattern = "([^.]+)";
     private final static String DELIM = "\\\\~\\\\";
@@ -62,6 +62,7 @@ public class LawTitleParser
         BAD_DATA.put(LawChapterCode.PBG.name() + "445", "Plattsburgh Housing Authority");
         BAD_DATA.put(LawChapterCode.PBH.name() + "265-F", "Severability");
         BAD_DATA.put(LawChapterCode.DEA.name() + "A1-A", NO_TITLE);
+        BAD_DATA.put(LawChapterCode.ENV.name() + "A27T29", "Mercury Thermostat Collection Act");
     }
 
     /** --- Methods --- */
@@ -71,6 +72,8 @@ public class LawTitleParser
         String checkData = BAD_DATA.getOrDefault(lawDocInfo.getDocumentId(), null);
         if (checkData != null)
             return checkData;
+        if (lawDocInfo.getDocumentId().equals(LawChapterCode.GCT.name() + AbstractLawBuilder.CITY_TAX_STR + "P1-6"))
+            return "City Personal Income Tax on Residents";
         switch (lawDocInfo.getDocType()) {
             case CHAPTER:
                 return extractTitleFromChapter(lawDocInfo);
@@ -84,8 +87,11 @@ public class LawTitleParser
                 return "Preamble";
             case MISC:
                 // Special city tax code.
-                if (lawDocInfo.getDocTypeId().equals("CUBIT"))
+                if (lawDocInfo.getDocumentId().equals(AbstractLawBuilder.CUBIT))
                     return "CITY UNINCORPORATED BUSINESS INCOME TAX";
+                // Special list of notwithstanding clauses.
+                if (lawDocInfo.getDocumentId().equals(AbstractLawBuilder.ATTN))
+                    return "ATTENTION";
             }
         return "";
     }
@@ -108,22 +114,22 @@ public class LawTitleParser
     private static String extractTitleFromNonSection(LawDocInfo docInfo, String bodyText) {
         if (docInfo.getDocumentId().equals(LawChapterCode.PBA.name() + "A10-B"))
             return NO_TITLE;
-        String realID = docInfo.getDocTypeId().replaceAll("\\*.+", "");
+        String realID = docInfo.getDocTypeId().replaceAll("\\*.+", "").replaceAll("\\*", "\\\\*?");
         // A couple documents separate the number and letter of a Part like 2A.
         if (docInfo.getDocumentId().startsWith(LawChapterCode.FCT.name() + "A5-BP") && realID.length() > 1)
             realID = realID.charAt(0) + "(\\.|\\\\n| )*" + realID.charAt(1);
         String label = String.format(nonSectionPrefixPattern, docInfo.getDocType().name(), realID);
         String title = bodyText.replaceFirst(label, DELIM);
         title = title.replaceFirst(".*" + DELIM, "");
-        if (title.matches("^(Section |" + SECTION_SIGNIFIER + ")"))
+        if (title.matches("^" + SECTION_SIGNIFIER))
             return NO_TITLE;
 
         // Removes division names that might come after.
-        title = title.replaceAll("(?i) " + TYPES + "\\s+\\w+.*", "");
+        title = title.replaceAll(TYPES + "\\s+\\w+.*?", "");
         title = title.replaceAll(SECTION_SIGNIFIER, "");
-        title = title.replaceAll("\\\\n", " ").replaceAll("\\s{2,}", " ");
-        title = removeNonCapitalized(title.trim());
-        return capitalizeTitle(title.trim());
+        title = title.replaceAll("\\\\n", " ").replaceAll("\\s{2,}", " ").replaceAll(" \\.", "");
+        title = removeNonCapitalized(title).trim();
+        return capitalizeTitle(title);
     }
 
     /**
@@ -142,10 +148,10 @@ public class LawTitleParser
         // PEP sections like 302-A sometimes don't have the - in the text.
         if (docInfo.getLawId().equals(LawChapterCode.PEP.name()))
             id = id.replace("-", "-?");
-
         // UCC docs have 2 dashes in the text while the section name only has one.
         if (docInfo.getLawId().equals(LawChapterCode.UCC.name()))
             text = text.replaceFirst("--", "-").replaceFirst("\\\\n {2}", " ");
+
         // Removes everything before the title.
         String fullPattern = String.format(beforeTitlePattern, id) + titlePattern + ".*";
         Matcher sectionMatcher = Pattern.compile(fullPattern).matcher(text);
@@ -158,7 +164,7 @@ public class LawTitleParser
         // If the section starts with labelling a subsection, there's no title.
         if (title.trim().startsWith("(a)"))
             return NO_TITLE;
-        return StringUtils.abbreviate(title, MAX_WIDTH);
+        return StringUtils.abbreviate(title.trim(), MAX_WIDTH);
     }
 
     /**
