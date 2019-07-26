@@ -71,7 +71,7 @@ public enum LawChapterCode
     PTR("Partnership", Sets.newHashSet(""), CONSOLIDATED),
     PEN("Penal", Sets.newHashSet("Pen L"), CONSOLIDATED),
     PEP("Personal Property", Sets.newHashSet("Pers Prop L"), CONSOLIDATED),
-    PVH("Private Housing Finance", Sets.newHashSet("Priv Hous Fin L"), CONSOLIDATED),
+    PVH("Private Housing Finance", Sets.newHashSet("Priv Hous Fin L", "Pr Hous Fin L"), CONSOLIDATED),
     PBA("Public Authorities", Sets.newHashSet("Pub Auth L"), CONSOLIDATED),
     PBB("Public Buildings", Sets.newHashSet("Pub Bldg L"), CONSOLIDATED),
     PBH("Public Health", Sets.newHashSet("Pub Health L"), CONSOLIDATED),
@@ -87,7 +87,7 @@ public enum LawChapterCode
     RPT("Real Property Tax", Sets.newHashSet("RPT L"), CONSOLIDATED),
     RCO("Religious Corporations", Sets.newHashSet("Rel Corp L"), CONSOLIDATED),
     RSS("Retirement & Social Security", Sets.newHashSet("R & SS L"), CONSOLIDATED),
-    REL("Rural Electric Cooperative", Sets.newHashSet(""), CONSOLIDATED),
+    REL("Rural Electric Cooperative", Sets.newHashSet("Rur Elec Coop L"), CONSOLIDATED),
     SCC("Second Class Cities", Sets.newHashSet(""), CONSOLIDATED),
     SOS("Social Services", Sets.newHashSet("Soc Serv L"), CONSOLIDATED),
     SWC("Soil & Water Conservation Districts", Sets.newHashSet("Cons Dists L"), CONSOLIDATED),
@@ -113,7 +113,7 @@ public enum LawChapterCode
     BAT("Bridges and Tunnels New York/New Jersey 47/31", Sets.newHashSet("Chap 47 of 1931"), UNCONSOLIDATED),
     CCT("Cigarettes, Cigars, Tobacco 235/52", Sets.newHashSet("Chap 235 of 1952"), UNCONSOLIDATED),
     TRY("City of Troy Issuance of Serial Bonds", Sets.newHashSet(""), UNCONSOLIDATED),
-    DEA("Defense Emergency Act 1951 784/51", Sets.newHashSet("Chap 784 of 51"), UNCONSOLIDATED),
+    DEA("Defense Emergency Act 1951 784/51", Sets.newHashSet("Chap 784 of 1951"), UNCONSOLIDATED),
     DPN("Development of Port of New York 43/22", Sets.newHashSet("Chap 43 of 1922"), UNCONSOLIDATED),
     ETP("Emergency Tenant Protection Act 576/74", Sets.newHashSet("Emerg Ten Prot Act of 1974"), UNCONSOLIDATED),
     EHC("Expanded Health Care Coverage Act 703/88", Sets.newHashSet(""), UNCONSOLIDATED),
@@ -125,9 +125,9 @@ public enum LawChapterCode
     GCM("General City Model 772/66", Sets.newHashSet(""), UNCONSOLIDATED),
     LEH("Local Emergency Housing Rent Control Act 21/62", Sets.newHashSet("Chap 21 of 1962"), UNCONSOLIDATED),
     ERL("Emergency Housing Rent Control Law 274/46 337/61", Sets.newHashSet("Emerg Hous Rent Cont L"), UNCONSOLIDATED),
-    LSA("Lost and Strayed Animals 115/1894", Sets.newHashSet("Chap 11 of 1894"), UNCONSOLIDATED),
+    LSA("Lost and Strayed Animals 115/1894", Sets.newHashSet("Chap 115 of 1894"), UNCONSOLIDATED),
     MCF("Medical Care Facilities Finance Agency 392/73", Sets.newHashSet(""), UNCONSOLIDATED),
-    NYW("N. Y. wine/grape 80/85", Sets.newHashSet("Chap 80 of 1985"), UNCONSOLIDATED),
+    NYW("N. Y. wine/grape 80/85", Sets.newHashSet(""), UNCONSOLIDATED),
     HHC("New York City health and hospitals corporation act 1016/69", Sets.newHashSet("NYC Health & Hosp Corp Act"), UNCONSOLIDATED),
     PCM("Police Certain Municipalities 360/11", Sets.newHashSet(""), UNCONSOLIDATED),
     PNY("Port of New York Authority 154/21", Sets.newHashSet("Chap 154 of 1921"), UNCONSOLIDATED),
@@ -138,7 +138,7 @@ public enum LawChapterCode
     SCT("Suffolk County Tax Act", Sets.newHashSet(""), UNCONSOLIDATED),
     TSF("Tobacco Settlement Financing Corporation Act", Sets.newHashSet(""), UNCONSOLIDATED),
     UDG("Urban development guarantee fund of New York 175/68", Sets.newHashSet(""), UNCONSOLIDATED),
-    UDA("Urban Development Corporation Act 174/68", Sets.newHashSet("UDC Act"), UNCONSOLIDATED),
+    UDA("Urban Development Corporation Act 174/68", Sets.newHashSet("UDC Act", "UDCA"), UNCONSOLIDATED),
     UDR("Urban development research corporation act 173/68", Sets.newHashSet(""), UNCONSOLIDATED),
     NNY("New, New York Bond Act 649/92", Sets.newHashSet(""), UNCONSOLIDATED),
 
@@ -216,5 +216,11 @@ public enum LawChapterCode
 
     public LawType getType() {
         return type;
+    }
+
+    public boolean hasNumericalTitles() {
+        final Set<LawChapterCode> nonNumericalVolumes = Sets.newHashSet(LawChapterCode.ACA,
+                LawChapterCode.CPL, LawChapterCode.CVS, LawChapterCode.PAR, LawChapterCode.MHY, LawChapterCode.PEN);
+        return !nonNumericalVolumes.contains(this);
     }
 }

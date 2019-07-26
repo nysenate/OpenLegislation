@@ -116,9 +116,9 @@
               <md-content style="max-height: 200px;" class="padding-10">
                 <md-list>
                   <md-list-item class="padding-left-0" ng-repeat="coSponsor in bill.amendments.items[curr.amdVersion].coSponsors.items">
-                      <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{coSponsor.imgName}}"
-                           style="height:60px;width:45px;"/>
-                      <span class="text-medium">{{coSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
+                    <img class="margin-right-10" ng-src="${ctxPath}/static/img/business_assets/members/mini/{{coSponsor.imgName}}"
+                         style="height:60px;width:45px;"/>
+                    <span class="text-medium">{{coSponsor.fullName}} - District {{coSponsor.districtCode}}</span>
                   </md-list-item>
                 </md-list>
               </md-content>
@@ -161,6 +161,29 @@
             <md-content>
               <span class="text-medium">Primary Law Section - {{bill.amendments.items[curr.amdVersion].lawSection}}</span>
               <p class="text-medium">Law Code - {{bill.amendments.items[curr.amdVersion].lawCode | default:'N/A'}}</p>
+              <%-- Related Laws --%>
+              <p class="text-medium">Related Laws -  {{(bill.amendments.items[curr.amdVersion].relatedLawUrls.size > 0) &&
+                !bill.amendments.items[curr.amdVersion].lawCode.toLowerCase().contains('various')? '' : 'N/A'}} </p>
+              <div ng-show="!bill.amendments.items[curr.amdVersion].lawCode.toLowerCase().contains('various')">
+                <md-list ng-repeat="(action, names) in bill.amendments.items[curr.amdVersion].relatedLaws.items">
+                  <md-list-item ng-click="expanded = !expanded">
+                    <p class="text-medium"> {{action.charAt(0) + action.slice(1).toLowerCase().replace('_', 's and ') + 's'}} </p>
+                    <span ng-class="expanded? 'icon-chevron-up' : 'icon-chevron-down'"></span>
+                  </md-list-item>
+                  <md-list-item ng-repeat="name in names.items" ng-show="expanded">
+                  <span flex-offset="5">
+                  <%-- law URL:  <chapter>?date=<date>&location=<location> (eg EDN?date=2017-01-01&location=3303)
+                  1. If the law volume is amended generally or the new law section has not been added yet,
+                     then we can just link to the entire volume
+                  2. If the bill added a new law section, we have to change the date to when the bill was passed,
+                     not when it was introduced. Otherwise, we'll always link to the law when the bill was introduced--%>
+                  <a class="gray-2-blue" ng-href="${ctxPath}{{bill.amendments.items[curr.amdVersion].relatedLawUrls.items[action].items[$index]}}">
+                    {{name}}
+                  </a>
+                  </span>
+                  </md-list-item>
+                </md-list>
+              </div>
             </md-content>
           </md-card>
           <%-- Identical Previous Legislation --%>
@@ -263,7 +286,7 @@
           <md-tab-label>
             <%-- Gives a count of the number of memos (sponsor, veto, approv) --%>
             Memos ({{((bill.amendments.items[curr.amdVersion].memo) ? 1 : 0) +
-                      bill.vetoMessages.size + ((bill.approvalMessage) ? 1 : 0)}})
+            bill.vetoMessages.size + ((bill.approvalMessage) ? 1 : 0)}})
           </md-tab-label>
           <md-tab-body>
             <md-card class="content-card">
@@ -342,30 +365,30 @@
         </md-tab>
         <%-- Bill Text --%>
         <md-tab label="Full Text">
-            <md-divider></md-divider>
-            <md-card class="content-card" ng-if="bill.amendments.size > 1">
-              <md-content layout="row">
-                <i class="prefix-icon icon-flow-branch margin-top-5"></i>Compare with revision:
-                <select ng-model="curr.compareVersion" ng-change="diffBills()" class="margin-left-20 white-bg">
-                  <option value="None">Self</option>
-                  <option ng-repeat="(version, amd) in bill.amendments.items" ng-if="version !== curr.amdVersion">
-                    {{version | prettyAmendVersion}}
-                  </option>
-                </select>
-              </md-content>
-            </md-card>
-            <md-card class="content-card">
-              <md-subheader>Full Text</md-subheader>
-              <md-content class="margin-10 padding-20">
+          <md-divider></md-divider>
+          <md-card class="content-card" ng-if="bill.amendments.size > 1">
+            <md-content layout="row">
+              <i class="prefix-icon icon-flow-branch margin-top-5"></i>Compare with revision:
+              <select ng-model="curr.compareVersion" ng-change="diffBills()" class="margin-left-20 white-bg">
+                <option value="None">Self</option>
+                <option ng-repeat="(version, amd) in bill.amendments.items" ng-if="version !== curr.amdVersion">
+                  {{version | prettyAmendVersion}}
+                </option>
+              </select>
+            </md-content>
+          </md-card>
+          <md-card class="content-card">
+            <md-subheader>Full Text</md-subheader>
+            <md-content class="margin-10 padding-20">
               <span ng-if="!loading && !bill.amendments.items[curr.amdVersion].fullText">
                 Not available.</span>
-                <span ng-if="loading">Loading full text, please wait.</span>
-                <div ng-if="bill.amendments.items[curr.amdVersion].fullText">
-                  <pre ng-if="!diffHtml" class="margin-left-20 bill-full-text">{{bill.amendments.items[curr.amdVersion].fullText}}</pre>
-                  <pre ng-if="diffHtml" class="margin-left-20 bill-full-text" ng-bind-html="diffHtml"></pre>
-                </div>
-              </md-content>
-            </md-card>
+              <span ng-if="loading">Loading full text, please wait.</span>
+              <div ng-if="bill.amendments.items[curr.amdVersion].fullText">
+                <pre ng-if="!diffHtml" class="margin-left-20 bill-full-text">{{bill.amendments.items[curr.amdVersion].fullText}}</pre>
+                <pre ng-if="diffHtml" class="margin-left-20 bill-full-text" ng-bind-html="diffHtml"></pre>
+              </div>
+            </md-content>
+          </md-card>
         </md-tab>
         <%-- Updates --%>
         <md-tab label="Updates" md-on-select="initialGetUpdates()">
@@ -428,7 +451,7 @@
         <md-content class="content-card padding-20">
           <h3 class="red1">This bill could not be retrieved. It's likely that the bill does not exist or has not been published yet.</h3>
           <h5>Please note that Open Legislation only has bill data starting from the 2009 session year. Bills prior to 2009
-          should be obtained via LBDC directly.</h5>
+            should be obtained via LBDC directly.</h5>
         </md-content>
       </md-card>
     </section>

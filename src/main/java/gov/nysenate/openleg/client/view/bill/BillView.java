@@ -41,7 +41,7 @@ public class BillView extends BillInfoView implements ViewObject
             TreeMap<String, BillAmendmentView> amendmentMap = new TreeMap<>();
             bill.getAmendPublishStatusMap().forEach((k,v) -> {
                 if (v.isPublished() && bill.hasAmendment(k)) {
-                    amendmentMap.put(k.toString(), new BillAmendmentView(bill.getAmendment(k), v));
+                    amendmentMap.put(k.toString(), new BillAmendmentView(bill, bill.getAmendment(k), v));
                 }
             });
 

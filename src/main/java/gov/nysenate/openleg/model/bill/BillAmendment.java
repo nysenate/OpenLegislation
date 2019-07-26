@@ -1,6 +1,8 @@
 package gov.nysenate.openleg.model.bill;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -274,4 +276,14 @@ public class BillAmendment implements Serializable, Cloneable
     }
 
     public void setRelatedLawsJson(String json) { relatedLawsJson = json; }
+
+    public Map<String, List<String>>  getRelatedLawsMap() {
+        Map<String, List<String>> mapping = new HashMap<>();
+        if (relatedLawsJson == null || relatedLawsJson.equals("")){
+            return mapping;
+        }
+        Gson gson = new Gson();
+        mapping = gson.fromJson(relatedLawsJson, mapping.getClass());
+        return mapping;
+    }
 }

@@ -1,25 +1,38 @@
 package gov.nysenate.openleg.model.law;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import com.google.common.collect.Sets;
+
+import java.util.*;
 
 public enum LawActionType
 {
-    ADD("ADD"), AMEND("AMD"), REPEAL("RPLD"), RENAME("RENUM"), DESIGNATE("DESIG");
+    ADD(Sets.newHashSet("ADD")),
+    AMEND(Sets.newHashSet("AMD")),
+    REPEAL(Sets.newHashSet("RPLD")),
+    RENAME(Sets.newHashSet("REN")),
+    DESIGNATE(Sets.newHashSet("DESIG")),
+    REDESIGNATE(Sets.newHashSet("REDESIG", "REDES")),
+    RENUMERATE(Sets.newHashSet("RENUM")),
+    REPEAL_ADD(Sets.newHashSet("RPLDADD")),
+    REN_TO(Sets.newHashSet("RENTO"));
 
-    static Map<String, LawActionType > lookupMap = Arrays.asList(LawActionType .values())
-            .stream().collect(Collectors.toMap(LawActionType::getToken, Function.identity()));
-
-    private String token;
-    LawActionType(String token) {
-        this.token = token;
+    public static Map<String, LawActionType> lookupMap = new HashMap<>();
+    static {
+        Arrays.stream(values())
+                .forEach(action -> action.getTokens()
+                        .forEach(token -> {
+                            if (token != null && !token.trim().isEmpty()) {
+                                lookupMap.put(token.toUpperCase().trim(), action);
+                            }
+                        }));
+    }
+    private Set<String> tokens;
+    LawActionType(Set<String> tokens) {
+        this.tokens = tokens;
     }
 
-    public String getToken() {
-        return token;
+    public Set<String> getTokens() {
+        return tokens;
     }
 
     public static Optional<LawActionType> lookupAction(String action) {

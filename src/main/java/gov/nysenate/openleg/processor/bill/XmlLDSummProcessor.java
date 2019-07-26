@@ -68,16 +68,11 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
             baseBill.setSummary(summary);
             BillAmendment amendment = baseBill.getAmendment(version);
             amendment.setLaw(law);
+            billLawCodeParser.parse(law);
+            amendment.setRelatedLawsJson(billLawCodeParser.getJson());
+            billLawCodeParser.clearMapping();
 
             if (action.equals("replace")) { //replace bill
-
-                int startYear = 2017;
-                if (startYear <= sessionYear && sessionYear <= startYear+2) {
-                    billLawCodeParser.parse(law);
-                    baseBill.getAmendment(version).setRelatedLawsJson(billLawCodeParser.getJson());
-                    billLawCodeParser.clearMapping();
-                }
-
                 /**
                  * add previous bills
                  */

@@ -2,15 +2,14 @@ package gov.nysenate.openleg.client.view.bill;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gov.nysenate.openleg.client.view.base.ListView;
+import gov.nysenate.openleg.client.view.base.MapView;
 import gov.nysenate.openleg.client.view.entity.MemberView;
 import gov.nysenate.openleg.model.base.PublishStatus;
-import gov.nysenate.openleg.model.bill.BillAmendment;
-import gov.nysenate.openleg.model.bill.BillTextFormat;
+import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.util.BillTextUtils;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.model.bill.BillTextFormat.*;
@@ -31,11 +30,11 @@ public class BillAmendmentView extends BillIdView
     protected ListView<MemberView> multiSponsors;
     protected boolean uniBill;
     protected boolean isStricken;
-    protected String relatedLaws;
-
+    protected MapView<String, ListView<String>> relatedLaws;
+    protected MapView<String, ListView<String>> relatedLawUrls;
     protected BillAmendmentView(){}
 
-    public BillAmendmentView(BillAmendment billAmendment, PublishStatus publishStatus) {
+    public BillAmendmentView(Bill bill, BillAmendment billAmendment, PublishStatus publishStatus) {
         super(billAmendment != null ? billAmendment.getBillId() : null);
         if (billAmendment != null) {
             this.publishDate = publishStatus.getEffectDateTime().toLocalDate();
@@ -57,7 +56,12 @@ public class BillAmendmentView extends BillIdView
                 .collect(Collectors.toList()));
             this.uniBill = billAmendment.isUniBill();
             this.isStricken = billAmendment.isStricken();
-            this.relatedLaws = billAmendment.getRelatedLawsJson();
+
+            Map<String, ListView<String>> relatedLawNames = new HashMap<>();
+            billAmendment.getRelatedLawsMap().forEach((k,v) ->
+                    relatedLawNames.put(k, ListView.ofStringList(v)));
+            this.relatedLaws = MapView.of(relatedLawNames);
+            this.relatedLawUrls = getRelatedLawUrls(bill, billAmendment, publishStatus);
         }
     }
 
@@ -122,7 +126,47 @@ public class BillAmendmentView extends BillIdView
         return fullTextHtml;
     }
 
-    public String getRelatedLaws() {
+    public MapView<String, ListView<String>> getRelatedLawUrls() {
+        return relatedLawUrls;
+    }
+
+    public MapView<String, ListView<String>> getRelatedLaws() {
         return relatedLaws;
+    }
+
+
+    private static MapView<String, ListView<String>> getRelatedLawUrls(Bill bill, BillAmendment amd, PublishStatus publishStatus) {
+        // Converts the map of LawActionType->{LawDocId} to a view of LawActionType->{Valid law url}
+        Map<String, List<String>> relatedLaws = amd.getRelatedLawsMap();
+        Map<String, ListView<String>> view = new HashMap<>();
+        BillStatusType status = bill.getStatus().getStatusType();
+        boolean passed = (status.equals(BillStatusType.SIGNED_BY_GOV) || status.equals(BillStatusType.ADOPTED));
+
+        for (String lawAction : relatedLaws.keySet()) {
+            List<String> urls = new LinkedList<>();
+            // The date for most law links will be when the bill was proposed
+            String date = publishStatus.getEffectDateTime().toString().substring(0,10);
+            // If the bill introduced a new law, then we have to link to the law when the bill was passed
+            if (passed && lawAction.equals("ADD")) {
+                date = bill.getStatus().getActionDate().toString();
+            }
+            boolean amdExists = !(lawAction.equals("ADD") && !passed);
+            for (String lawDoc : relatedLaws.get(lawAction)) {
+                urls.add(getLawUrl(date, lawDoc, amdExists));
+            }
+            view.put(lawAction, ListView.ofStringList(urls));
+        }
+        return MapView.of(view);
+    }
+
+    private static String getLawUrl(String date, String lawDoc, boolean exists) {
+        // Form a URL from the yyyy-dd-mm date, the lawDocId, and an indicator whether the specific law can be linked
+        String url =  "/laws/" + lawDoc.substring(0, 3) + "?date=" + date;
+        if (lawDoc.toLowerCase().contains("generally") || !exists) {
+            return url;
+        }
+        else {
+            return url + "&location=" + lawDoc.substring(3);
+        }
     }
 }
