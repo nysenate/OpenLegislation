@@ -19,7 +19,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
     private static final Logger logger = LoggerFactory.getLogger(AbstractLawBuilder.class);
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static Pattern locationPattern = Pattern.compile("^(ST|SP|SA|A|T|P|S|INDEX)(.*)");
+    protected static Pattern locationPattern = Pattern.compile("^(ST|SP|SA|A|T|P|S|INDEX)(.+)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     protected static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
@@ -92,7 +92,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /**
      * {@inheritDoc}
      */
-    public void addInitialBlock(LawBlock block, boolean isNewDoc) {
+    @Override
+    public void addInitialBlock(LawBlock block, boolean isNewDoc, LawTreeNode priorRoot) {
         final LawDocument lawDoc = new LawDocument(block);
         boolean isRootDoc = false;
 
@@ -109,7 +110,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             }
             // Otherwise we have to create our own root node and process the current document as a child of it.
             else {
-                chapterDoc = createRootDocument(block);
+                chapterDoc = createRootDocument(block, priorRoot);
             }
             lawInfo = deriveLawInfo(chapterDoc.getLawId(), (isRootDoc) ? chapterDoc.getDocTypeId() : "");
             addRootDocument(chapterDoc, isNewDoc);
@@ -218,7 +219,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             if (lawDocMap.containsKey(resolvedDocId)) {
                 block.setPublishedDate(lawDocMap.get(resolvedDocId).getPublishedDate());
                 logger.debug("Processed law doc id found for {} with published date {}", resolvedDocId, block.getPublishedDate());
-                addInitialBlock(block, false);
+                addInitialBlock(block, false, priorRootNode);
                 continue;
             }
             // Or from the previous tree node if set
@@ -226,7 +227,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 Optional<LawDocInfo> existingDocInfo = priorRootNode.find(resolvedDocId);
                 if (existingDocInfo.isPresent()) {
                     block.setPublishedDate(existingDocInfo.get().getPublishedDate());
-                    addInitialBlock(block, false);
+                    addInitialBlock(block, false, priorRootNode);
                     logger.debug("Found existing law with doc id {} with published date {}",
                         block.getDocumentId(), block.getPublishedDate());
                     continue;
@@ -234,7 +235,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             }
             logger.info("New document id found in master document: {}", resolvedDocId);
             block.setPublishedDate(this.lawVersionId.getPublishedDate());
-            addInitialBlock(block, true);
+            addInitialBlock(block, true, priorRootNode);
         }
     }
 
@@ -338,10 +339,17 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * Create our own root law doc to serve as the root document in the event that we don't receive a top level doc
      * from the dumps. This is common for unconsolidated laws where they just start with the first section or article.
      *
+     * If the previous root exists and was a dummy parent, reuse it.
      * @param block LawBlock
      */
-    protected LawDocument createRootDocument(LawBlock block) {
+    protected LawDocument createRootDocument(LawBlock block, LawTreeNode priorRoot) {
+        // Reuse the old root doc if it was a dummy
+        if (priorRoot != null && priorRoot.getLawDocInfo().isDummy()) {
+            return new LawDocument(priorRoot.getLawDocInfo(), "");
+        }
+
         LawDocument dummyParent = new LawDocument();
+        dummyParent.setDummy(true);
         dummyParent.setLawId(block.getLawId());
         dummyParent.setDocumentId(block.getLawId() + "-ROOT");
         dummyParent.setLocationId("-ROOT");
