@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -128,7 +129,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
                     case MULTI_SPONSOR:  applyMultisponsors(data, baseBill); break;
                     case PROGRAM_INFO:  applyProgramInfo(data, baseBill, date); break;
                     case ACT_CLAUSE:  applyActClause(data, specifiedAmendment); break;
-                    case LAW: applyLaw(data, baseBill, specifiedAmendment, date); break;
+                    case LAW: applyLaw(data, baseBill, specifiedAmendment, specifiedVersion, date); break;
                     case SUMMARY:  applySummary(data, baseBill, date); break;
                     case SPONSOR_MEMO:
                     case RESOLUTION_TEXT:
@@ -469,7 +470,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
      * Delete  | BDELETE
      * -------------------------------------
      */
-    private void applyLaw(String data, Bill baseBill, BillAmendment specifiedAmendment, LocalDateTime date) {
+    private void applyLaw(String data, Bill baseBill, BillAmendment specifiedAmendment, Version version, LocalDateTime date) {
         // This is theoretically not safe because a law line *could* start with DELETE
         // We can't do an exact match because B can be multi-line
         if (data.trim().startsWith("DELETE")) {
@@ -480,7 +481,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
         else {
             specifiedAmendment.setLaw(data.replace("\n", " ").trim());
             billLawCodeParser.parse(specifiedAmendment.getLaw());
-            specifiedAmendment.setRelatedLawsJson(billLawCodeParser.getJson());
+            specifiedAmendment.setRelatedLaws(billLawCodeParser.getJson(), baseBill);
             billLawCodeParser.clearMapping();
         }
         baseBill.setModifiedDateTime(date);
