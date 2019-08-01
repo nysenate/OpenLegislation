@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -171,7 +170,7 @@ public class LawProcessor extends AbstractDataProcessor
             String line = fileItr.next();
             headerMatcher = lawHeader.matcher(line);
             if (headerMatcher.matches()) {
-                if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId(), block.getPublishedDate())) {
+                if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId())) {
                     rawDocList.add(block);
                 }
                 block = new LawBlock();
@@ -179,7 +178,7 @@ public class LawProcessor extends AbstractDataProcessor
                 block.setLawId(headerMatcher.group(2).trim());
                 block.setPublishedDate(lawFile.getPublishedDate());
                 block.setDocumentId(
-                    LawDocIdFixer.applyReplacement(headerMatcher.group(1).trim(), lawFile.getPublishedDate()));
+                    LawDocIdFixer.applyReplacement(headerMatcher.group(1).trim()));
                 block.setLocationId(block.getDocumentId().substring(3));
                 block.setMethod(headerMatcher.group(4).trim());
                 block.setConsolidated(headerMatcher.group(6).equals("CONSOLIDATED"));
@@ -189,30 +188,9 @@ public class LawProcessor extends AbstractDataProcessor
                 block.getText().append(line).append("\\n");
             }
         }
-        if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId(), block.getPublishedDate())) {
+        if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId())) {
             rawDocList.add(block);
         }
-        return sortBlocks(rawDocList);
-    }
-
-    /**
-     * Sorts blocks by their publish dates, while order of laws with the same
-     * dates is preserved. Used for when
-     * @param blocks
-     * @return
-     */
-    private List<LawBlock> sortBlocks (List<LawBlock> blocks) {
-        TreeMap<LocalDate, List<LawBlock>> blockMap = new TreeMap<>();
-        for (LawBlock block : blocks) {
-            LocalDate date = block.getPublishedDate();
-            if (!blockMap.containsKey(date))
-                blockMap.put(date, new ArrayList<>());
-            blockMap.get(date).add(block);
-        }
-
-        List<LawBlock> sorted = new ArrayList<>();
-        for (LocalDate key : blockMap.keySet())
-            sorted.addAll(blockMap.get(key));
-        return sorted;
+        return rawDocList;
     }
 }

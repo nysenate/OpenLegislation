@@ -2,9 +2,12 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.*;
 
+import java.util.regex.Pattern;
+
 public class RulesBuilder extends IdBasedLawBuilder {
     // TODO: process joint rules
     public static final String TODO = "JOINT RULE ";
+    private static Pattern rulesPattern = Pattern.compile("((JOINT )?RULE)([IVX]+)\\\\n(.*?)");
 
     public RulesBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);

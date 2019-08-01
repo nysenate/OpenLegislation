@@ -132,6 +132,9 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
                 String locId = currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase();
                 String title = parts[1];
                 titles.put(locId, title);
+                LawDocument existingDoc = lawDocMap.get(CONS_STR + locId);
+                if (existingDoc != null)
+                    setLawDocTitle(existingDoc, isNewDoc);
                 // If the document was already processed, update its title.
                 Optional<LawTreeNode> existingNode = rootNode.findNode(CONS_STR + locId, false);
                 existingNode.ifPresent(node -> node.getLawDocInfo().setTitle(title));
