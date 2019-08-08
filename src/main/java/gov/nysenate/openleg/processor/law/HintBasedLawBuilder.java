@@ -1,9 +1,6 @@
 package gov.nysenate.openleg.processor.law;
 
-import gov.nysenate.openleg.model.law.LawDocumentType;
-import gov.nysenate.openleg.model.law.LawTree;
-import gov.nysenate.openleg.model.law.LawTreeNode;
-import gov.nysenate.openleg.model.law.LawVersionId;
+import gov.nysenate.openleg.model.law.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +68,15 @@ public class HintBasedLawBuilder extends IdBasedLawBuilder implements LawBuilder
 
     @Override
     protected void addChildNode(LawTreeNode node) {
+        // CPL sections should be of the form precedingArticleNumber.anotherNumber, but some aren't and should be removed.
+        if (lawInfo.getLawId().equals(LawChapterCode.CPL.name()) &&
+                node.getDocType() == LawDocumentType.SECTION &&
+                !(currParent().getLocationId().replace("A", "")
+                        .equals(node.getLocationId().split("\\.")[0]))) {
+            logger.debug("Removing CPL section {}.", node.getLocationId());
+            lawDocMap.remove(node.getDocumentId());
+            return;
+        }
         super.addChildNode(node);
         if (!node.isRootNode() && !node.getDocType().equals(LawDocumentType.SECTION)) {
             lastParentNodeOfType.put(node.getDocType(), node);

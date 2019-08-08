@@ -2,12 +2,8 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.*;
 
-import java.util.regex.Pattern;
-
 public class RulesBuilder extends IdBasedLawBuilder {
-    // TODO: process joint rules
-    public static final String TODO = "JOINT RULE ";
-    private static Pattern rulesPattern = Pattern.compile("((JOINT )?RULE)([IVX]+)\\\\n(.*?)");
+    private static final String JOINT_SPLIT = "PERMANENT JOINT RULES OF THE SENATE AND ASSEMBLY";
 
     public RulesBuilder(LawVersionId lawVersionId, LawTree previousTree) {
         super(lawVersionId, previousTree);
@@ -32,29 +28,32 @@ public class RulesBuilder extends IdBasedLawBuilder {
      * @param isNewDoc used in calls to superclass.
      */
     private void processRules(LawBlock block, boolean isNewDoc) {
-        String[] rules = block.getText().toString().split(TODO)[0].split("RULE [IVX]+\\\\n");
+        String[] ruleSplit = block.getText().toString().split(JOINT_SPLIT);
         String lawID = block.getLawId();
         // Process the chapter alone.
-        block.getText().setLength(0);
-        block.getText().append(rules[0]);
         super.addInitialBlock(block, isNewDoc);
-        // Create dummy Rule documents to parse properly.
-        for (int i = 1; i < rules.length; i++) {
-            String currRuleText = "RULE " + toNumeral(i) + "\\n" + rules[i];
-            String[] sections = currRuleText.split("├Á|§|õ|Section *1");
-            // Process a Rule.
-            LawBlock currRule = new LawBlock(block, true);
-            currRule.setDocumentId(lawID + "R" + i);
-            currRule.setLocationId("R" + i);
-            currRule.getText().append(sections[0]);
-            super.addInitialBlock(currRule, isNewDoc);
-            // Create dummy section documents for everything under this Rule.
-            for (int j = 1; j < sections.length; j++) {
-                LawBlock currSection = new LawBlock(currRule, true);
-                currSection.getText().append(j == 1 ? "Section 1" : "§").append(sections[j]);
-                currSection.setLocationId(currRule.getLocationId() + "S" + j);
-                currSection.setDocumentId(lawID + currSection.getLocationId());
-                super.addInitialBlock(currSection, isNewDoc);
+        for (int r = 0; r < 2; r++) {
+            String ruleType = (r == 1 ? "JOINT " : "");
+            String ruleTypeAbbr = (r == 1 ? "JR" : "R");
+            String[] rules = ruleSplit[r].split(ruleType + "RULE [IVX]+\\\\n");
+            // Create dummy Rule documents to parse properly.
+            for (int i = 1; i < rules.length; i++) {
+                String currRuleText = ruleType + "RULE " + toNumeral(i) + "\\n" + rules[i];
+                String[] sections = currRuleText.split("├Á|§|õ|Section *1");
+                // Process a Rule.
+                LawBlock currRule = new LawBlock(block, true);
+                currRule.setDocumentId(lawID + ruleTypeAbbr + i);
+                currRule.setLocationId(ruleTypeAbbr + i);
+                currRule.getText().append(sections[0]);
+                super.addInitialBlock(currRule, isNewDoc);
+                // Create dummy section documents for everything under this Rule.
+                for (int j = 1; j < sections.length; j++) {
+                    LawBlock currSection = new LawBlock(currRule, true);
+                    currSection.getText().append(j == 1 ? "Section 1" : "§").append(sections[j]);
+                    currSection.setLocationId(currRule.getLocationId() + "S" + j);
+                    currSection.setDocumentId(lawID + currSection.getLocationId());
+                    super.addInitialBlock(currSection, isNewDoc);
+                }
             }
         }
     }

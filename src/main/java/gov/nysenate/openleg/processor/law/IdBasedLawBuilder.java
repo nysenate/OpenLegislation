@@ -41,9 +41,9 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
      */
     @Override
     protected String determineHierarchy(LawBlock block) {
+        if (block.getDocumentId().startsWith(CITY_TAX_STR + "P"))
+            return block.getDocumentId().replace(CITY_TAX_STR, "");
         String blockLocID = block.getLocationId();
-        if (block.getDocumentId().startsWith(LawChapterCode.GCT.name() + CITY_TAX_STR + "P"))
-            return blockLocID.replace(AbstractLawBuilder.CITY_TAX_STR, "");
         while (!currParent().isRootNode()) {
             String parentLocID = currParent().getLocationId();
             if (StringUtils.startsWith(blockLocID, parentLocID)) {
@@ -60,7 +60,8 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
 
     @Override
     protected void addChildNode(LawTreeNode node) {
-        if (node.getDocumentId().matches(LawChapterCode.GCT.name() + "(25-B|25-AP[^1].*)")) {
+        // Handles special GCT sections.
+        if (node.getDocumentId().matches(CITY_TAX_STR.substring(0, 6) + "(B|AP[^1].*)")) {
             parentNodes.pop();
             if (node.getLocationId().length() == 4)
                 parentNodes.pop();

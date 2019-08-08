@@ -12,11 +12,13 @@ public class LawDocInfo extends LawDocId
     /** The document type which is parsed from the location id. */
     protected LawDocumentType docType;
 
-    /** The last portion of the location id. For example, if locationId = 'A2T1ST2-B' then the
-     *  docType will be 'SUBTITLE' and this docTypeId will be '2-B'. */
+    /** The last portion of the location id as it appears in the text.
+     * For example, if locationId = 'A2T1ST2-B' then the docType will be
+     * 'SUBTITLE' and this docTypeId may be '2-B', 'II-B, or TWO-B. */
     protected String docTypeId;
 
-    protected String labelId;
+    /** The docTypeId, always as a number if possible. */
+    private String labelId = null;
 
     /** --- Constructors --- */
 
@@ -74,7 +76,7 @@ public class LawDocInfo extends LawDocId
     }
 
     public String getLabelId() {
-        return labelId;
+        return labelId == null ? docTypeId : labelId;
     }
 
     public void setLabelId(String labelId) {

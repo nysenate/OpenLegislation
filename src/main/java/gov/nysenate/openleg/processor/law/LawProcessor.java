@@ -26,6 +26,9 @@ import java.util.regex.Pattern;
 @Service
 public class LawProcessor extends AbstractDataProcessor
 {
+    /** Used to denote when the text of a LawDocument in lawDocMap should not be changed. */
+    public static final String ONLY_TITLE_UPDATE = "****no text update****";
+
     private static final Logger logger = LoggerFactory.getLogger(LawProcessor.class);
 
     /** The law files are most likely sent in CP850 encoding. */

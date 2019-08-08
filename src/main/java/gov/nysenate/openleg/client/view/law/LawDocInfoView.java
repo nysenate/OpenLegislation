@@ -24,7 +24,7 @@ public class LawDocInfoView implements ViewObject
             this.locationId = docInfo.getLocationId();
             this.title = (docInfo.getTitle() != null) ? docInfo.getTitle().replaceAll("\\\\n", " ") : null;
             this.docType = docInfo.getDocType().name();
-            this.docLevelId = docInfo.getDocTypeId();
+            this.docLevelId = docInfo.getLabelId();
             this.activeDate = docInfo.getPublishedDate();
         }
     }

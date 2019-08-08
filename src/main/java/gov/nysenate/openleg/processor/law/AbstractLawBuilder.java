@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,15 +17,19 @@ public abstract class AbstractLawBuilder implements LawBuilder
     private static final Logger logger = LoggerFactory.getLogger(AbstractLawBuilder.class);
 
     /** Pattern used for parsing the location ids to extract the document type and doc type id. */
-    protected static Pattern locationPattern = Pattern.compile("^(R|ST|SP|SA|A|T|P|S|INDEX)(.+)");
+    protected static Pattern locationPattern = Pattern.compile("^(JR|ST|SP|SA|A|T|P|S|R|INDEX)(.+)");
 
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     private static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
+    /** Pattern to match a full docTypeId, and and parse out the starting number. */
     private static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
 
+    /** String to match a docType and its id, saving the latter.*/
+    private static final String docTypeString = ".*%s *(%s).*";
+
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
-    protected static final String CITY_TAX_STR = "25-A";
+    protected static final String CITY_TAX_STR = LawChapterCode.GCT.name() + "25-A";
 
     /** Document ID for special document that's just a list of notwithstanding clauses. */
     protected static final String ATTN = LawChapterCode.ACA.name() + "ATTN";
@@ -56,6 +61,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         lawLevelCodes.put("S", SECTION);
         lawLevelCodes.put("INDEX", INDEX);
         lawLevelCodes.put("R", RULE);
+        lawLevelCodes.put("JR", JOINT_RULE);
     }
 
     /** For use in Roman numeral conversion. */
@@ -88,7 +94,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
     }
 
     /** A law version id that is obtained from the law blocks. */
-    protected LawVersionId lawVersionId;
+    private LawVersionId lawVersionId;
 
     /** The root node in the law tree. */
     protected LawTreeNode rootNode = null;
@@ -191,7 +197,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             if (isLikelySectionDoc(lawDoc)) {
                 logger.debug("Processing section {}", lawDoc.getDocumentId());
                 lawDoc.setDocType(LawDocumentType.SECTION);
-                String docTypeId = lawDoc.getLocationId().replace(CITY_TAX_STR + "-", "");
+                String docTypeId = lawDoc.getLocationId().replace(CITY_TAX_STR.substring(3) + "-", "");
                 if (lawDoc.getLawId().equals(ConstitutionBuilder.CONS_STR))
                     docTypeId = docTypeId.replaceAll("A\\d+S", "");
                 lawDoc.setDocTypeId(docTypeId);
@@ -214,6 +220,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                         type = SUBPART;
                     lawDoc.setDocType(type);
                     String docTypeId = locMatcher.group(2);
+                    lawDoc.setLabelId(docTypeId);
                     lawDoc.setDocTypeId(fixedDocTypeId(docTypeId, lawDoc));
                 }
                 else {
@@ -225,8 +232,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
                 addDocument(lawDoc, isNewDoc);
             }
         }
-        // Set the title for the document
-        setLawDocTitle(lawDoc, isNewDoc);
+        if (!lawDoc.getText().isEmpty() || lawDoc.getDocType() == JOINT_RULE)
+            setLawDocTitle(lawDoc, isNewDoc);
     }
 
     /**
@@ -264,7 +271,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                             " without a prior law tree structure including it.");
 
                 existingDocInfo.get().setPublishedDate(block.getPublishedDate());
-                LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString());
+                LawDocument lawDoc = new LawDocument(existingDocInfo.get(), block.getText().toString().replace("├Á", "§"));
                 // Re-parse the titles
                 setLawDocTitle(lawDoc, true);
                 lawDocMap.put(lawDoc.getDocumentId(), lawDoc);
@@ -281,37 +288,46 @@ public abstract class AbstractLawBuilder implements LawBuilder
     public void rebuildTree(String masterDoc) {
         LawTreeNode priorRootNode = this.rootNode;
         this.rootNode = null;
+        Set<String> processed = new HashSet<>();
         logger.info("Rebuilding tree for {} with master document.", this.lawVersionId.getLawId());
+
         // Clear out any existing parents when rebuilding trees.
         clearParents();
         for (String docId : StringUtils.split(masterDoc, "\\n")) {
             // Apply doc id replacements if necessary
-            final String resolvedDocId = LawDocIdFixer.applyReplacement(docId, this.lawVersionId.getPublishedDate());
+            final String resolvedDocId = LawDocIdFixer.applyReplacement(docId);
+            // Repeats DocIDs should also be ignored.
+            if (processed.contains(resolvedDocId) || LawDocIdFixer.ignoreDocument(docId))
+                continue;
             LawBlock block = new LawBlock();
             block.setDocumentId(resolvedDocId);
             block.setLawId(resolvedDocId.substring(0, 3));
             block.setLocationId(resolvedDocId.substring(3));
+
+            LocalDate publishedDate = this.lawVersionId.getPublishedDate();
+            boolean isNewDoc = true;
             // Use published date from existing law doc if present
             if (lawDocMap.containsKey(resolvedDocId)) {
-                block.setPublishedDate(lawDocMap.get(resolvedDocId).getPublishedDate());
-                logger.debug("Processed law doc id found for {} with published date {}", resolvedDocId, block.getPublishedDate());
-                addInitialBlock(block, false);
-                continue;
+                publishedDate = lawDocMap.get(resolvedDocId).getPublishedDate();
+                isNewDoc = false;
+                logger.debug("Processed law doc id found for {} with published date {}",
+                        resolvedDocId, block.getPublishedDate());
             }
             // Or from the previous tree node if set
             else if (priorRootNode != null) {
                 Optional<LawDocInfo> existingDocInfo = priorRootNode.find(resolvedDocId);
                 if (existingDocInfo.isPresent()) {
-                    block.setPublishedDate(existingDocInfo.get().getPublishedDate());
-                    addInitialBlock(block, false);
+                    publishedDate = existingDocInfo.get().getPublishedDate();
+                    isNewDoc = false;
                     logger.debug("Found existing law with doc id {} with published date {}",
-                        block.getDocumentId(), block.getPublishedDate());
-                    continue;
+                        resolvedDocId, block.getPublishedDate());
                 }
             }
-            logger.info("New document id found in master document: {}", resolvedDocId);
-            block.setPublishedDate(this.lawVersionId.getPublishedDate());
-            addInitialBlock(block, true);
+            if (isNewDoc)
+                logger.info("New document id found in master document: {}", resolvedDocId);
+            block.setPublishedDate(publishedDate);
+            addInitialBlock(block, isNewDoc);
+            processed.add(resolvedDocId);
         }
     }
 
@@ -340,9 +356,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
         if (rootDoc == null) throw new IllegalArgumentException("Root document cannot be null!");
         sequenceNo = 0;
         rootNode = new LawTreeNode(rootDoc, ++sequenceNo);
-        if (isNewDoc) {
+        if (isNewDoc)
             lawDocMap.put(rootDoc.getDocumentId(), rootDoc);
-        }
         addChildNode(this.rootNode);
     }
 
@@ -412,7 +427,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
     protected boolean isLikelySectionDoc(LawDocument lawDoc) {
         String docID = lawDoc.getDocumentId();
         String lawID = lawDoc.getLawId();
-        if (docID.matches(LawChapterCode.GCT.name() + CITY_TAX_STR + ".+"))
+        if (docID.matches(CITY_TAX_STR + ".+"))
             return !docID.contains("P");
         if (lawID.equals(CONS_STR) || lawID.equals(A_RULES) || lawID.equals(S_RULES))
             return docID.contains("S");
@@ -473,16 +488,21 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * @return the proper docTypeId.
      */
     private static String fixedDocTypeId(String docTypeId, LawDocument lawDoc) {
+        // Manual handling of strange GCT parts.
+        if (docTypeId.equals("1-6"))
+            return docTypeId;
+        if (lawDoc.getDocumentId().equals(CITY_TAX_STR + "P1"))
+            return "I";
+
         Matcher idMatch = idNumPattern.matcher(docTypeId);
-        if (idMatch.matches()) {
+        if (!lawDoc.getText().isEmpty() && idMatch.matches()) {
+            String textToMatch = lawDoc.getText().split("\\\\n", 2)[0].toUpperCase();
             int num = Integer.parseInt(idMatch.group(1));
-            String[] options = {toNumeral(num), toWord(num), idMatch.group(1)};
-            String textToMatch = lawDoc.getText().split("\\\\n", 2)[0].toUpperCase()
-                    .replaceFirst(".*?" + lawDoc.getDocType().name() + " *", "");
-            for (String option : options) {
-                if (textToMatch.startsWith(option))
-                    return option + idMatch.group(2);
-            }
+            String options = idMatch.group(1) + "|" + toNumeral(num) + "|" + toWord(num);
+            Pattern docTypePattern = Pattern.compile(String.format(docTypeString, lawDoc.getDocType().name(), options));
+            Matcher docTypeMatcher = docTypePattern.matcher(textToMatch);
+            if (docTypeMatcher.matches())
+                return docTypeMatcher.group(1) + idMatch.group(2);
             if (!LawTitleParser.BAD_DATA.containsKey(lawDoc.getDocumentId()))
                 logger.warn("Could not find matching signifier for doc {}.", lawDoc.getDocumentId());
         }

@@ -103,7 +103,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
         // One title does not have a period at the end.
         String[] articles = rootDoc.getText()
                 .replaceFirst(BAD_TITLE_IDENTIFIER, BAD_TITLE_IDENTIFIER + ".")
-                .split("\\s*ARTICLE ");
+                .split("\\s*" + LawDocumentType.ARTICLE.name() + " ");
         for (int i = 1; i < articles.length; i++) {
             // Article info. Split to remove notes.
             Matcher articleMatch = FOR_ARTICLE.matcher(articles[i].split("\\*")[0]);
@@ -114,12 +114,14 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
             LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i,
                     CONS_STR, "A" + i, articleTitle, LawDocumentType.ARTICLE,
                     articleMatch.group(1), rootDoc.getPublishedDate());
-            LawDocument currDoc = new LawDocument(articleInfo, "ARTICLE " + articles[i]);
+            LawDocument currDoc = new LawDocument(articleInfo,
+                    LawDocumentType.ARTICLE.name() + " " + articles[i]);
+            currDoc.setLabelId(Integer.toString(i));
             Optional<LawDocInfo> oldArticle = rootNode.find(currDoc.getDocumentId());
             // Checks if we're updating an existing article, or adding a new one.
             if (oldArticle.isPresent()) {
                 oldArticle.get().setPublishedDate(rootDoc.getPublishedDate());
-                setLawDocTitle(currDoc, isNewDoc);
+                currDoc.setTitle(articleTitle);
                 lawDocMap.put(currDoc.getDocumentId(), currDoc);
             }
             else
@@ -132,12 +134,12 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
                 String locId = currDoc.getLocationId() + "S" + parts[0].trim().toUpperCase();
                 String title = parts[1];
                 titles.put(locId, title);
-                LawDocument existingDoc = lawDocMap.get(CONS_STR + locId);
-                if (existingDoc != null)
-                    setLawDocTitle(existingDoc, isNewDoc);
                 // If the document was already processed, update its title.
                 Optional<LawTreeNode> existingNode = rootNode.findNode(CONS_STR + locId, false);
-                existingNode.ifPresent(node -> node.getLawDocInfo().setTitle(title));
+                if (existingNode.isPresent() && !title.equals(existingNode.get().getLawDocInfo().getTitle())) {
+                    existingNode.get().getLawDocInfo().setTitle(title);
+                    lawDocMap.put(CONS_STR + locId, new LawDocument(existingNode.get().getLawDocInfo(), LawProcessor.ONLY_TITLE_UPDATE));
+                };
             }
         }
     }
