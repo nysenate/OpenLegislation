@@ -46,8 +46,8 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
         this.sequenceNo = treeNode.getSequenceNo();
         this.repealedDate = treeNode.getRepealedDate();
         this.isRepealed = this.repealedDate != null;
-        treeNode.getFromSection().ifPresent(f -> this.fromSection = f.getLawDocInfo().getLabelId());
-        treeNode.getToSection().ifPresent(t -> this.toSection = t.getLawDocInfo().getLabelId());
+        treeNode.getFromSection().ifPresent(f -> this.fromSection = f.getLawDocInfo().getDocTypeId());
+        treeNode.getToSection().ifPresent(t -> this.toSection = t.getLawDocInfo().getDocTypeId());
     }
 
     @Override

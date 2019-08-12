@@ -116,7 +116,6 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
                     articleMatch.group(1), rootDoc.getPublishedDate());
             LawDocument currDoc = new LawDocument(articleInfo,
                     LawDocumentType.ARTICLE.name() + " " + articles[i]);
-            currDoc.setLabelId(Integer.toString(i));
             Optional<LawDocInfo> oldArticle = rootNode.find(currDoc.getDocumentId());
             // Checks if we're updating an existing article, or adding a new one.
             if (oldArticle.isPresent()) {

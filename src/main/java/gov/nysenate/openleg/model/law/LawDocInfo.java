@@ -14,11 +14,8 @@ public class LawDocInfo extends LawDocId
 
     /** The last portion of the location id as it appears in the text.
      * For example, if locationId = 'A2T1ST2-B' then the docType will be
-     * 'SUBTITLE' and this docTypeId may be '2-B', 'II-B, or TWO-B. */
+     * 'SUBTITLE' and this docTypeId will be '2-B'. */
     protected String docTypeId;
-
-    /** The docTypeId, always as a number if possible. */
-    private String labelId = null;
 
     /** --- Constructors --- */
 
@@ -73,13 +70,5 @@ public class LawDocInfo extends LawDocId
 
     public void setDocTypeId(String docTypeId) {
         this.docTypeId = docTypeId;
-    }
-
-    public String getLabelId() {
-        return labelId == null ? docTypeId : labelId;
-    }
-
-    public void setLabelId(String labelId) {
-        this.labelId = labelId;
     }
 }

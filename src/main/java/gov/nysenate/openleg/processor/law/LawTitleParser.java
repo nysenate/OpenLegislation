@@ -2,7 +2,6 @@ package gov.nysenate.openleg.processor.law;
 
 import gov.nysenate.openleg.model.law.LawChapterCode;
 import gov.nysenate.openleg.model.law.LawDocInfo;
-import gov.nysenate.openleg.model.law.LawDocumentType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
@@ -11,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,6 +26,10 @@ public class LawTitleParser
     private final static String beforeTitlePattern = "(?i).*?%s(\\*|\\.|\\s|\\\\n)*";
     // The title is just everything before the period.
     private final static String titlePattern = "([^.]+)";
+    /** Pattern to match a full docTypeId, and and parse out the starting number. */
+    private static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
+    /** String to match a docType and its id, saving the latter.*/
+    private static final String docTypeString = ".*%s *(%s).*";
     private final static int MAX_WIDTH = 140;
 
     // Some laws do not have names for any of their sections.
@@ -35,10 +39,39 @@ public class LawTitleParser
             LawChapterCode.BAT.name(), LawChapterCode.CCT.name());
     private final static String NO_TITLE = "No title";
 
+    /** For use in Roman numeral conversion. */
+    private static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
+    static {
+        NUMERALS.put(50, "L");
+        NUMERALS.put(40, "XL");
+        NUMERALS.put(10, "X");
+        NUMERALS.put(9, "IX");
+        NUMERALS.put(5, "V");
+        NUMERALS.put(4, "IV");
+        NUMERALS.put(1, "I");
+    }
+
+    /** For use in number to word conversion. */
+    private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
+    static {
+        NUMBER_WORDS.put(1, "ONE");
+        NUMBER_WORDS.put(2, "TWO");
+        NUMBER_WORDS.put(3, "THREE");
+        NUMBER_WORDS.put(4, "FOUR");
+        NUMBER_WORDS.put(5, "FIVE");
+        NUMBER_WORDS.put(6, "SIX");
+        NUMBER_WORDS.put(7, "SEVEN");
+        NUMBER_WORDS.put(8, "EIGHT");
+        NUMBER_WORDS.put(9, "NINE");
+        NUMBER_WORDS.put(10, "TEN");
+        NUMBER_WORDS.put(11, "ELEVEN");
+        NUMBER_WORDS.put(12, "TWELVE");
+    }
+
     // Quite a few documents have incorrect data. Their titles are manually
-    // listed here. If the title can be parsed fine, null is listen instead,
+    // listed here. If the title can be parsed fine, null is listed instead,
     // and this is merely used to suppress errors.
-    protected final static HashMap<String, String> BAD_DATA = new HashMap<>();
+    private final static HashMap<String, String> BAD_DATA = new HashMap<>();
     static {
         BAD_DATA.put(LawChapterCode.EXC.name() + "A17-B", null);
         BAD_DATA.put(LawChapterCode.ENV.name() + "A21T5", null);
@@ -116,12 +149,13 @@ public class LawTitleParser
     /**
      * Parses the title for an article by assuming that most article titles are presented in all caps.
      */
-    private static String extractTitleFromNonSection(LawDocInfo docInfo, String bodyText) {
-        String realID = docInfo.getDocTypeId().replaceAll("\\*.+", "").replaceAll("\\*", "\\\\*?");
+    private static String extractTitleFromNonSection(LawDocInfo lawDocInfo, String bodyText) {
+        String docTypeInText = getTextLabel(lawDocInfo, bodyText);
+        String realID = docTypeInText.replaceAll("\\*.+", "").replaceAll("\\*", "\\\\*?");
         // A couple documents separate the number and letter of a Part like 2A.
-        if (docInfo.getDocumentId().startsWith(LawChapterCode.FCT.name() + "A5-BP") && realID.length() > 1)
+        if (lawDocInfo.getDocumentId().startsWith(LawChapterCode.FCT.name() + "A5-BP") && realID.length() > 1)
             realID = realID.charAt(0) + "(\\.|\\\\n| )*" + realID.charAt(1);
-        String typeLabel = docInfo.getDocType().name();
+        String typeLabel = lawDocInfo.getDocType().name();
         String label = String.format(nonSectionPrefixPattern, typeLabel, realID);
         String title = bodyText.replaceFirst(".*" + label, "");
 
@@ -129,7 +163,7 @@ public class LawTitleParser
         title = title.replaceFirst(TYPES + "\\s+(1|I|A|ONE)?\\W.*", "");
         title = title.replaceFirst(SECTION_SIGNIFIER + ".*", "");
         title = title.replaceAll("\\\\n", " ").replaceAll("\\s{2,}", " ").replaceAll(" \\.", "");
-        if (!docInfo.getDocTypeId().contains("*"))
+        if (!lawDocInfo.getDocTypeId().contains("*"))
             title = title.replaceAll("^\\s*\\*+", "").replaceAll("\\*.*", "");
         if (title.trim().isEmpty())
             return NO_TITLE;
@@ -202,5 +236,57 @@ public class LawTitleParser
                     .collect(Collectors.joining(" "));
         }
         return title;
+    }
+
+    /**
+     * Quickly converts a number to a Roman numeral. Used to display Articles
+     * as Roman numerals, as they are in the Constitution text.
+     * @param number to convert.
+     * @return a Roman numeral.
+     */
+    private static String toNumeral(int number) {
+        if (number == 0)
+            return "";
+        int next = NUMERALS.floorKey(number);
+        return NUMERALS.get(next) + toNumeral(number-next);
+    }
+
+    /**
+     * Quickly converts a number 1-12 or 101-112 to a word.
+     * @param number to convert.
+     * @return a word/phrase.
+     */
+    private static String toWord(int number) {
+        return (number > 100 ? "ONE HUNDRED " : "") + NUMBER_WORDS.getOrDefault(number%100, "no word");
+    }
+
+    /**
+     * Numbers may be displayed as a number (like 6), a Roman numeral
+     * (like VI), or as a word (like SIX). This method finds and returns
+     * whichever one is applicable.
+     * @param lawDocInfo to be processed.
+     * @param bodyText to check against.
+     * @return the label ID.
+     */
+    private static String getTextLabel(LawDocInfo lawDocInfo, String bodyText) {
+        // Manual handling of strange GCT parts.
+        if (lawDocInfo.getDocTypeId().equals("1-6"))
+            return lawDocInfo.getDocTypeId();
+        if (lawDocInfo.getDocumentId().equals(AbstractLawBuilder.CITY_TAX_STR + "P1"))
+            return "I";
+
+        Matcher idMatch = idNumPattern.matcher(lawDocInfo.getDocTypeId());
+        if (!bodyText.isEmpty() && idMatch.matches()) {
+            String textToMatch = bodyText.split("\\\\n", 2)[0].toUpperCase();
+            int num = Integer.parseInt(idMatch.group(1));
+            String options = idMatch.group(1) + "|" + toNumeral(num) + "|" + toWord(num);
+            Pattern docTypePattern = Pattern.compile(String.format(docTypeString, lawDocInfo.getDocType().name(), options));
+            Matcher docTypeMatcher = docTypePattern.matcher(textToMatch);
+            if (docTypeMatcher.matches())
+                return docTypeMatcher.group(1) + idMatch.group(2);
+            if (!LawTitleParser.BAD_DATA.containsKey(lawDocInfo.getDocumentId()))
+                logger.warn("Could not find matching signifier for doc {}.", lawDocInfo.getDocumentId());
+        }
+        return lawDocInfo.getDocTypeId();
     }
 }

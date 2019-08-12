@@ -22,12 +22,6 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** Pattern for certain chapter nodes that don't have the usual -CH pattern. */
     private static Pattern specialChapterPattern = Pattern.compile("^(AS|ASSEMBLYRULES|SENATERULES)$");
 
-    /** Pattern to match a full docTypeId, and and parse out the starting number. */
-    private static Pattern idNumPattern = Pattern.compile("(\\d+)([-*]?.*)");
-
-    /** String to match a docType and its id, saving the latter.*/
-    private static final String docTypeString = ".*%s *(%s).*";
-
     /** String for city personal income tax on residents, an odd clause in the GCT law. */
     protected static final String CITY_TAX_STR = LawChapterCode.GCT.name() + "25-A";
 
@@ -62,35 +56,6 @@ public abstract class AbstractLawBuilder implements LawBuilder
         lawLevelCodes.put("INDEX", INDEX);
         lawLevelCodes.put("R", RULE);
         lawLevelCodes.put("JR", JOINT_RULE);
-    }
-
-    /** For use in Roman numeral conversion. */
-    private static final TreeMap<Integer, String> NUMERALS = new TreeMap<>();
-    static {
-        NUMERALS.put(50, "L");
-        NUMERALS.put(40, "XL");
-        NUMERALS.put(10, "X");
-        NUMERALS.put(9, "IX");
-        NUMERALS.put(5, "V");
-        NUMERALS.put(4, "IV");
-        NUMERALS.put(1, "I");
-    }
-
-    /** For use in number to word conversion. */
-    private static final HashMap<Integer, String> NUMBER_WORDS = new HashMap<>();
-    static {
-        NUMBER_WORDS.put(1, "ONE");
-        NUMBER_WORDS.put(2, "TWO");
-        NUMBER_WORDS.put(3, "THREE");
-        NUMBER_WORDS.put(4, "FOUR");
-        NUMBER_WORDS.put(5, "FIVE");
-        NUMBER_WORDS.put(6, "SIX");
-        NUMBER_WORDS.put(7, "SEVEN");
-        NUMBER_WORDS.put(8, "EIGHT");
-        NUMBER_WORDS.put(9, "NINE");
-        NUMBER_WORDS.put(10, "TEN");
-        NUMBER_WORDS.put(11, "ELEVEN");
-        NUMBER_WORDS.put(12, "TWELVE");
     }
 
     /** A law version id that is obtained from the law blocks. */
@@ -220,8 +185,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                         type = SUBPART;
                     lawDoc.setDocType(type);
                     String docTypeId = locMatcher.group(2);
-                    lawDoc.setLabelId(docTypeId);
-                    lawDoc.setDocTypeId(fixedDocTypeId(docTypeId, lawDoc));
+                    lawDoc.setDocTypeId(docTypeId);
                 }
                 else {
                     if (!block.getDocumentId().equals(CUBIT) && !block.getDocumentId().equals(ATTN))
@@ -455,57 +419,5 @@ public abstract class AbstractLawBuilder implements LawBuilder
 
     protected void setLawDocTitle(LawDocument lawDoc, boolean isNewDoc) {
         lawDoc.setTitle(LawTitleParser.extractTitle(lawDoc, lawDoc.getText()));
-    }
-
-    /**
-     * Quickly converts a number to a Roman numeral. Used to display Articles
-     * as Roman numerals, as they are in the Constitution text.
-     * @param number to convert.
-     * @return a Roman numeral.
-     */
-    protected static String toNumeral(int number) {
-        if (number == 0)
-            return "";
-        int next = NUMERALS.floorKey(number);
-        return NUMERALS.get(next) + toNumeral(number-next);
-    }
-
-    /**
-     * Quickly converts a number 1-12 or 101-112 to a word.
-     * @param number to convert.
-     * @return a word/phrase.
-     */
-    private static String toWord(int number) {
-        return (number > 100 ? "ONE HUNDRED " : "") + NUMBER_WORDS.getOrDefault(number%100, "no word");
-    }
-
-    /**
-     * Numbers may be displayed as a number (like 6), a Roman numeral
-     * (like VI), or as a word (like SIX). This method finds and returns
-     * whichever one is applicable.
-     * @param docTypeId to be fixed.
-     * @param lawDoc to pull text and type from.
-     * @return the proper docTypeId.
-     */
-    private static String fixedDocTypeId(String docTypeId, LawDocument lawDoc) {
-        // Manual handling of strange GCT parts.
-        if (docTypeId.equals("1-6"))
-            return docTypeId;
-        if (lawDoc.getDocumentId().equals(CITY_TAX_STR + "P1"))
-            return "I";
-
-        Matcher idMatch = idNumPattern.matcher(docTypeId);
-        if (!lawDoc.getText().isEmpty() && idMatch.matches()) {
-            String textToMatch = lawDoc.getText().split("\\\\n", 2)[0].toUpperCase();
-            int num = Integer.parseInt(idMatch.group(1));
-            String options = idMatch.group(1) + "|" + toNumeral(num) + "|" + toWord(num);
-            Pattern docTypePattern = Pattern.compile(String.format(docTypeString, lawDoc.getDocType().name(), options));
-            Matcher docTypeMatcher = docTypePattern.matcher(textToMatch);
-            if (docTypeMatcher.matches())
-                return docTypeMatcher.group(1) + idMatch.group(2);
-            if (!LawTitleParser.BAD_DATA.containsKey(lawDoc.getDocumentId()))
-                logger.warn("Could not find matching signifier for doc {}.", lawDoc.getDocumentId());
-        }
-        return docTypeId;
     }
 }
