@@ -15,14 +15,15 @@ import gov.nysenate.openleg.service.entity.member.event.UnverifiedMemberEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.interceptor.SimpleKey;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -56,75 +57,36 @@ public class CachedMemberService implements MemberService
         eventBus.register(this);
     }
 
-    /** --- MemberService implementation --- */
+    /* --- MemberService implementation --- */
 
     /** {@inheritDoc} */
     @Override
     public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
-        SessionMember sessionMember = fullMemberIdCache.getMemberById(memberId, sessionYear);
-
-        if( sessionMember != null) {
-            return sessionMember;
-        }
-
         try {
-            SessionMember sessionMember1 = memberDao.getMemberById(memberId, sessionYear);
-            eventBus.post(new CacheWarmEvent(Collections.singleton(ContentCache.FULL_MEMBER)));
-            return sessionMember1;
-        }
-        catch (EmptyResultDataAccessException ex) {
-            throw new MemberNotFoundEx(memberId, sessionYear);
-        }
+            FullMember member = fullMemberIdCache.getMemberById(memberId);
+            Optional<SessionMember> sessionMembOpt = member.getSessionMemberForYear(sessionYear);
+            if (sessionMembOpt.isPresent()) {
+                return sessionMembOpt.get();
+            }
+        } catch (MemberNotFoundEx ignored) {}
+        throw new MemberNotFoundEx(memberId, sessionYear);
     }
 
     @Override
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
-        FullMember fullMember = fullMemberIdCache.getMemberById(memberId);
-        if (fullMember != null) {
-            return fullMember;
-        }
-        FullMember fullMember1 = memberDao.getMemberById(memberId);
-        fullMemberIdCache.putMemberInCache(fullMember1);
-        return fullMember1;
+        return fullMemberIdCache.getMemberById(memberId);
     }
 
     /** {@inheritDoc} */
     @Override
     public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
-        SessionMember sessionMember = sessionMemberIdCache.getMemberBySessionId(sessionMemberId);
-        if (sessionMember != null) {
-            return sessionMember;
-        }
-        try {
-            SessionMember member = memberDao.getMemberBySessionId(sessionMemberId);
-            sessionMemberIdCache.putMemberInCache(member);
-            return member;
-        }
-        catch (EmptyResultDataAccessException ex) {
-            throw new MemberNotFoundEx(sessionMemberId);
-        }
+        return sessionMemberIdCache.getMemberBySessionId(sessionMemberId);
     }
 
     /** {@inheritDoc} */
     @Override
     public SessionMember getMemberByShortName(String lbdcShortName, SessionYear sessionYear, Chamber chamber) throws MemberNotFoundEx {
-        if (lbdcShortName == null || chamber == null) {
-            throw new IllegalArgumentException("Shortname and/or chamber cannot be null.");
-        }
-        SessionMember sessionMember = sessionChamberShortNameCache.getMemberByShortName(lbdcShortName,sessionYear,chamber);
-        if (sessionMember != null) {
-            return sessionMember;
-        }
-        try {
-            SessionMember sessionMember1 = memberDao.getMemberByShortName(lbdcShortName, sessionYear, chamber);
-            sessionChamberShortNameCache.putMemberInCache(
-                    sessionChamberShortNameCache.genCacheKey(lbdcShortName, sessionYear, chamber),
-                    sessionMember1);
-            return sessionMember1;
-        }
-        catch (EmptyResultDataAccessException ex) {
-            throw new MemberNotFoundEx(lbdcShortName, sessionYear, chamber);
-        }
+        return sessionChamberShortNameCache.getMemberByShortName(lbdcShortName, sessionYear, chamber);
     }
 
     /** {@inheritDoc} */
@@ -139,9 +101,6 @@ public class CachedMemberService implements MemberService
             memberDao.updateMember(member);
             memberDao.updateSessionMember(member);
             eventBus.post(new UnverifiedMemberEvent(member, LocalDateTime.now()));
-            sessionChamberShortNameCache.putMemberInCache(
-                    sessionChamberShortNameCache.genCacheKey(lbdcShortName, sessionYear, chamber),
-                    member);
             return member;
         }
     }

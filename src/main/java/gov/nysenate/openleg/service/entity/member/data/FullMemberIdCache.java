@@ -5,7 +5,6 @@ import com.google.common.eventbus.Subscribe;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.entity.member.data.MemberDao;
-import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
@@ -23,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.SimpleKey;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -31,7 +29,6 @@ import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -67,15 +64,18 @@ public class FullMemberIdCache implements CachingService<Integer> {
         cacheManager.removeCache(ContentCache.FULL_MEMBER.name());
     }
 
+    @Override
     public void setupCaches() {
         this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.FULL_MEMBER.name()).eternal(true));
         cacheManager.addCache(this.memberCache);
     }
 
+    @Override
     public List<Ehcache> getCaches() {
         return Arrays.asList(memberCache);
     }
 
+    @Override
     public void evictContent(Integer sessionMemberId) {
         memberCache.remove(sessionMemberId);
     }
@@ -113,24 +113,16 @@ public class FullMemberIdCache implements CachingService<Integer> {
         }
     }
 
-    public boolean isKeyInCache(SimpleKey key) {
-        return memberCache.isKeyInCache(key);
-    }
-
-    public void putMemberInCache(FullMember member) {
-        memberCache.put(new Element(new SimpleKey(member.getMemberId()), member, true));
-    }
-
-    public Cache getCache() {
-        return memberCache;
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List<SessionMember> getAllMembers(SortOrder sortOrder, LimitOffset limOff) {
         return memberDao.getAllMembers(sortOrder, limOff);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List<FullMember> getAllFullMembers() {
         return getAllMembers(SortOrder.ASC, LimitOffset.ALL).stream()
                 .collect(Collectors.groupingBy(SessionMember::getMemberId, LinkedHashMap::new, Collectors.toList()))
@@ -140,27 +132,20 @@ public class FullMemberIdCache implements CachingService<Integer> {
     }
 
 
-
     //CachedMemberService Methods
-
-    public SessionMember getMemberById(int memberId, SessionYear sessionYear) throws MemberNotFoundEx {
-        if (memberCache.isKeyInCache(memberId)) {
-
-            return Optional.ofNullable((FullMember)
-                    memberCache.get(memberId).getObjectValue())
-                    .flatMap(fullMember -> fullMember.getSessionMemberForYear(sessionYear))
-                    .orElse(null);
-        }
-        return null;
-    }
 
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
         if (memberCache.isKeyInCache(memberId)) {
-
-            return Optional.ofNullable((FullMember)
-                            memberCache.get(memberId).getObjectValue())
-                            .orElse(null);
+            return (FullMember) memberCache.get(memberId).getObjectValue();
         }
-        return null;
+        FullMember member = memberDao.getMemberById(memberId);
+        putMemberInCache(member);
+        return member;
+    }
+
+    /* --- Internal Methods --- */
+
+    private void putMemberInCache(FullMember member) {
+        memberCache.put(new Element(new SimpleKey(member.getMemberId()), member, true));
     }
 }

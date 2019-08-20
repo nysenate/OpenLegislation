@@ -28,7 +28,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class SessionMemberIdCache implements CachingService<Integer> {
@@ -63,15 +62,18 @@ public class SessionMemberIdCache implements CachingService<Integer> {
         cacheManager.removeCache(ContentCache.SESSION_MEMBER.name());
     }
 
+    @Override
     public void setupCaches() {
         this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.SESSION_MEMBER.name()).eternal(true));
         cacheManager.addCache(this.memberCache);
     }
 
+    @Override
     public List<Ehcache> getCaches() {
-            return Arrays.asList(memberCache);
+        return Arrays.asList(memberCache);
     }
 
+    @Override
     public void evictContent(Integer sessionMemberId) {
         memberCache.remove(sessionMemberId);
     }
@@ -108,28 +110,25 @@ public class SessionMemberIdCache implements CachingService<Integer> {
         }
     }
 
-    public boolean isKeyInCache(SimpleKey key) {
-        return memberCache.isKeyInCache(key);
-    }
-
-    public void putMemberInCache(SessionMember member) {
-        memberCache.put(new Element(new SimpleKey(member.getSessionMemberId()), member, true));
-    }
-
-    public Cache getCache() {
-        return memberCache;
-    }
-
-
-
     //CachedMemberService Methods
 
     public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
         if (memberCache.isKeyInCache(sessionMemberId)) {
-            return Optional.ofNullable((SessionMember)
-                    memberCache.get(sessionMemberId).getObjectValue()).orElse(null);
+            return (SessionMember) memberCache.get(sessionMemberId).getObjectValue();
         }
-        return null;
+        try {
+            SessionMember sm = memberDao.getMemberBySessionId(sessionMemberId);
+            putMemberInCache(sm);
+            return sm;
+        } catch (EmptyResultDataAccessException ex) {
+            throw new MemberNotFoundEx(sessionMemberId);
+        }
+    }
+
+    /* --- Internal Methods --- */
+
+    private void putMemberInCache(SessionMember member) {
+        memberCache.put(new Element(new SimpleKey(member.getSessionMemberId()), member, true));
     }
 
 }
