@@ -1,12 +1,10 @@
 package gov.nysenate.openleg.service.spotcheck.base;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.base.PaginatedList;
-import gov.nysenate.openleg.model.spotcheck.*;
+import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 /**
  * The SpotCheckReportService specifies the various methods that are available for use when
@@ -37,74 +35,13 @@ public interface SpotCheckReportService<ContentKey>
             throws Exception;
 
     /**
-     * Saves the report into the backing store. The report will be saved such that mismatches from
-     * prior reports are taken into account when setting the statuses. Any exception encountered when
-     * saving this will propagate through.
+     * Get the running mode of the report service.
      *
-     * @param report SpotCheckReport<ContentKey> - The report to save in the backing store.
+     * Default to {@link SpotCheckReportRunMode#EVENT_DRIVEN}
+     * @return {@link SpotCheckReportRunMode}
      */
-    void saveReport(SpotCheckReport<ContentKey> report);
-
-    /**
-     * Get mismatches matching the given MismatchQuery.
-     * Defaults to Not ignored open mismatches for the current session.
-     * @param query Defines parameters to query by.
-     * @return Paginated list of DeNormSpotCheckMismatch's
-     */
-    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery<ContentKey> query, LimitOffset limitOffset);
-
-    /**
-     * Gets mismatch status summary information for the given datasource, as of the given summary date time.
-     * @return
-     */
-    MismatchStatusSummary getMismatchStatusSummary(LocalDate reportDate, SpotCheckDataSource dataSource, SpotCheckContentType contentType, Set<SpotCheckMismatchIgnore> ignoreStatuses);
-
-    /**
-     * Gets mismatch type summary information for the given datasource and mismatch status for the report on reportDate.
-     */
-    MismatchTypeSummary getMismatchTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
-                                               SpotCheckContentType contentType, MismatchStatus mismatchStatus, Set<SpotCheckMismatchIgnore> ignoreStatuses);
-
-    /**
-     * Gets mismatch content type summary information for the given datasource, reportDate, mismatch status, and mismatch types.
-     */
-    MismatchContentTypeSummary getMismatchContentTypeSummary(LocalDate reportDate, SpotCheckDataSource dataSource,
-                                                             Set<SpotCheckMismatchIgnore> ignoreStatuses);
-
-    /**
-     * Sets the ignore status for a spotcheck mismatch
-     * @param mismatchId int
-     * @param ignoreStatus SpotCheckMismatchIgnore
-     */
-    void setMismatchIgnoreStatus(int mismatchId, SpotCheckMismatchIgnore ignoreStatus);
-
-    /**
-     * Adds the given issue id to the tracked issue ids of mismatch specified by the given mismatch id
-     * @param mismatchId int
-     * @param issueId String
-     */
-    void addIssueId(int mismatchId, String issueId);
-
-    /**
-     * Spotcheck Mismatch update Issue Id API
-     * @param mismatchId  mismatch id
-     * @param issueIds mismatch issues id separate by comma ,e.g 12,3,61
-     *
-     */
-    void updateIssueId(int mismatchId, String issueIds);
-
-    /**
-     * Removes the given issue id from the tracked issue ids of the mismatch specified by the given mismatch id
-     * @param mismatchId int
-     * @param issueId String
-     */
-    void deleteIssueId(int mismatchId, String issueId);
-
-    /**
- * Removes all issues corresponding to given mismatch id
- *
- * @param mismatchId int mismatch id
- */
-    void deleteAllIssueId(int mismatchId);
+    default SpotCheckReportRunMode getRunMode() {
+        return SpotCheckReportRunMode.EVENT_DRIVEN;
+    }
 
 }

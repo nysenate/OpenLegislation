@@ -3,8 +3,6 @@ package gov.nysenate.openleg.service.spotcheck.scrape;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.dao.bill.scrape.SqlFsBillScrapeReferenceDao;
-import gov.nysenate.openleg.dao.spotcheck.BaseBillIdSpotCheckReportDao;
-import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.model.bill.BillTextFormat;
@@ -15,7 +13,7 @@ import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.bill.data.BillNotFoundEx;
 import gov.nysenate.openleg.service.scraping.bill.BillScrapeFile;
 import gov.nysenate.openleg.service.scraping.bill.BillScrapeReferenceFactory;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +26,14 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.OBSERVE_DATA_MISSING;
+import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.REFERENCE_DATA_MISSING;
 
 /**
  * Created by kyle on 3/12/15.
  */
 @Service
-public class BillScrapeReportService extends BaseSpotCheckReportService {
+public class BillScrapeReportService implements SpotCheckReportService<BaseBillId> {
 
     private static final Logger logger = LoggerFactory.getLogger(BillScrapeReportService.class);
 
@@ -42,14 +41,8 @@ public class BillScrapeReportService extends BaseSpotCheckReportService {
 
     @Autowired private SqlFsBillScrapeReferenceDao dao;
     @Autowired private BillDataService billDataService;
-    @Autowired private BaseBillIdSpotCheckReportDao reportDao;
     @Autowired private BillScrapeCheckService billScrapeCheckService;
     @Autowired private BillScrapeReferenceFactory billScrapeReferenceFactory;
-
-    @Override
-    protected SpotCheckReportDao getReportDao() {
-        return reportDao;
-    }
 
     /**
      * {@inheritDoc}

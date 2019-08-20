@@ -1,24 +1,26 @@
-package gov.nysenate.openleg.dao.spotcheck;
+package gov.nysenate.openleg.dao.spotcheck.keymapper;
 
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaMeetingWeekId;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * This converts a {@link AgendaMeetingWeekId} to a Map<String,String> and vice versa.
- * The Map<String, String> is used to store hstore values for the database.
- */
-@Repository
-public class AgendaMeetingWeekReportDao extends AbstractSpotCheckReportDao<AgendaMeetingWeekId> {
+@Service
+public class AgendaMeetingWeekKeyMapper implements SpotCheckDaoKeyMapper<AgendaMeetingWeekId> {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
+
+
+    @Override
+    public Class<AgendaMeetingWeekId> getKeyClass() {
+        return AgendaMeetingWeekId.class;
+    }
 
     @Override
     public AgendaMeetingWeekId getKeyFromMap(Map<String, String> keyMap) {

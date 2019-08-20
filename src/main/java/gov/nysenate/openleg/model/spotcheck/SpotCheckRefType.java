@@ -26,9 +26,9 @@ public enum SpotCheckRefType
 
     LBDC_CALENDAR_ALERT("floor-alert", "LBDC Calendar Alert", LBDC, CALENDAR, CALENDAR_SPOTCHECK),
 
-    LBDC_AGENDA_ALERT("agenda-alert", "Agenda Alert", LBDC, AGENDA, AGENDA_SPOTCHECK),
+    LBDC_AGENDA_ALERT("agenda-alert", "Agenda Alert", LBDC, AGENDA_WEEK, AGENDA_SPOTCHECK),
 
-    SENATE_SITE_BILLS("senate-site-bills", "Nysenate.gov Bill", NYSENATE, BILL, SENSITE_BILL_SPOTCHECK),
+    SENATE_SITE_BILLS("senate-site-bills", "Nysenate.gov Bill", NYSENATE, BILL_AMENDMENT, SENSITE_BILL_SPOTCHECK),
 
     SENATE_SITE_CALENDAR("senate-site-calendar", "Nysenate.gov Calendar", NYSENATE, CALENDAR, SENSITE_CALENDAR_SPOTCHECK),
 
@@ -50,8 +50,8 @@ public enum SpotCheckRefType
     /** A notification type that is used to send notifications for this type of report */
     private NotificationType notificationType;
 
-    private SpotCheckRefType(String refName, String displayName,
-                             SpotCheckDataSource dataSource, SpotCheckContentType contentType, NotificationType type) {
+    SpotCheckRefType(String refName, String displayName,
+                     SpotCheckDataSource dataSource, SpotCheckContentType contentType, NotificationType type) {
         this.refName = refName;
         this.displayName = displayName;
         this.dataSource = dataSource;

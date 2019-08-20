@@ -3,7 +3,7 @@ package gov.nysenate.openleg.dao.spotcheck;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.BaseTests;
-import gov.nysenate.openleg.annotation.SillyTest;
+import gov.nysenate.openleg.annotation.IntegrationTest;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.spotcheck.*;
@@ -23,21 +23,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+@Category(IntegrationTest.class)
+public class SpotcheckReportDaoIT extends BaseTests {
 
-/*
-FIXME
-Setting this as a SillyTest for now because...
-I am getting BadSqlGrammarExceptions for all of these tests
-I have run the sql script qa-redesign/mismatch-refactor.sql
- -Sam
- */
-@Category(SillyTest.class)
-public class SpotcheckReportDaoTest extends BaseTests {
-
-    private static final Logger logger = LoggerFactory.getLogger(SpotcheckReportDaoTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(SpotcheckReportDaoIT.class);
 
     @Autowired
-    private BaseBillIdSpotCheckReportDao reportDao;
+    private SpotCheckReportDao reportDao;
     private BaseBillId billId = new BaseBillId("S999999", 2017); // A bill that only exists this test world.
     private LocalDateTime start;
 
@@ -222,13 +214,13 @@ public class SpotcheckReportDaoTest extends BaseTests {
     /* --- Internal Methods --- */
 
     private DeNormSpotCheckMismatch queryMostRecentOpenMismatch() {
-        MismatchQuery<BaseBillId> query = new MismatchQuery<>(start.toLocalDate(), SpotCheckDataSource.LBDC,
+        MismatchQuery query = new MismatchQuery(start.toLocalDate(), SpotCheckDataSource.LBDC,
                                                 MismatchStatus.OPEN, Collections.singleton(SpotCheckContentType.BILL));
         return reportDao.getMismatches(query, LimitOffset.ALL).getResults().get(0);
     }
 
     private DeNormSpotCheckMismatch queryMostRecentClosedMismatch() {
-        MismatchQuery<BaseBillId> query = new MismatchQuery<>(start.toLocalDate(), SpotCheckDataSource.LBDC,
+        MismatchQuery query = new MismatchQuery(start.toLocalDate(), SpotCheckDataSource.LBDC,
                 MismatchStatus.RESOLVED, Collections.singleton(SpotCheckContentType.BILL));
         return reportDao.getMismatches(query, LimitOffset.ALL).getResults().get(0);
     }

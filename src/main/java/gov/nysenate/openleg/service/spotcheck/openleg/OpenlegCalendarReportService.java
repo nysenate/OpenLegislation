@@ -8,7 +8,6 @@ import gov.nysenate.openleg.client.view.calendar.CalendarView;
 import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.calendar.reference.openleg.OpenlegCalendarDao;
-import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
@@ -16,7 +15,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import gov.nysenate.openleg.service.calendar.data.CalendarDataService;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,31 +32,23 @@ import java.util.Set;
  * This service is used to perform a calendar spotcheck against calendars from another openleg instance.
  */
 @Service("openlegCalendarReport")
-public class OpenlegCalendarReportService extends BaseSpotCheckReportService<CalendarEntryListId> {
+public class OpenlegCalendarReportService implements SpotCheckReportService<CalendarEntryListId> {
     private static final Logger logger = LoggerFactory.getLogger(OpenlegCalendarReportService.class);
 
-    private final SpotCheckReportDao<CalendarEntryListId> reportDao;
     private final OpenlegCalendarDao openlegCalendarDao;
     private final CalendarDataService calendarDataService;
     private final BillDataService billDataService;
     private final OpenlegCalendarCheckService checkService;
 
     @Autowired
-    public OpenlegCalendarReportService(SpotCheckReportDao<CalendarEntryListId> reportDao,
-                                        OpenlegCalendarDao openlegCalendarDao,
+    public OpenlegCalendarReportService(OpenlegCalendarDao openlegCalendarDao,
                                         CalendarDataService calendarDataService,
                                         BillDataService billDataService,
                                         OpenlegCalendarCheckService checkService) {
-        this.reportDao = reportDao;
         this.openlegCalendarDao = openlegCalendarDao;
         this.calendarDataService = calendarDataService;
         this.billDataService = billDataService;
         this.checkService = checkService;
-    }
-
-    @Override
-    protected SpotCheckReportDao<CalendarEntryListId> getReportDao() {
-        return reportDao;
     }
 
     @Override

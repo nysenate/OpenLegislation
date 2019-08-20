@@ -1,11 +1,14 @@
 package gov.nysenate.openleg.model.spotcheck;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import gov.nysenate.openleg.dao.base.OrderBy;
 import gov.nysenate.openleg.dao.base.SortOrder;
 import gov.nysenate.openleg.dao.spotcheck.MismatchOrderBy;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -13,7 +16,7 @@ import java.util.Set;
  * Contains query parameters used to query for spotcheck mismatches.
  * Provides reasonable defaults for non required parameters.
  */
-public class MismatchQuery<ContentKey> {
+public class MismatchQuery {
 
     private LocalDate reportDate;
     private SpotCheckDataSource dataSource;
@@ -21,7 +24,7 @@ public class MismatchQuery<ContentKey> {
     private MismatchStatus status;
     private Set<SpotCheckMismatchType> mismatchTypes;
     private Set<SpotCheckMismatchIgnore> ignoredStatuses;
-    private Set<ContentKey> keys;
+    private Multimap<SpotCheckContentType, Object> keys = null;
 
     private OrderBy orderBy;
 
@@ -65,23 +68,26 @@ public class MismatchQuery<ContentKey> {
 
     /* --- Builder Methods --- */
 
-    public MismatchQuery<ContentKey> withIgnoredStatuses(Set<SpotCheckMismatchIgnore> ignoredStatuses) {
+    public MismatchQuery withIgnoredStatuses(Set<SpotCheckMismatchIgnore> ignoredStatuses) {
         this.ignoredStatuses = ignoredStatuses;
         return this;
     }
 
-    public MismatchQuery<ContentKey> withOrderBy(OrderBy orderBy) {
+    public MismatchQuery withOrderBy(OrderBy orderBy) {
         this.orderBy = orderBy;
         return this;
     }
 
-    public MismatchQuery<ContentKey> withMismatchTypes(EnumSet<SpotCheckMismatchType> mismatchTypes){
+    public MismatchQuery withMismatchTypes(EnumSet<SpotCheckMismatchType> mismatchTypes){
         this.mismatchTypes = mismatchTypes;
         return this;
     }
 
-    public MismatchQuery<ContentKey> withKeys(Set<ContentKey> keys) {
-        this.keys = keys;
+    public MismatchQuery withKeys(SpotCheckContentType contentType, Collection keys) {
+        if (this.keys == null) {
+            this.keys = HashMultimap.create();
+        }
+        this.keys.putAll(contentType, keys);
         return this;
     }
 
@@ -115,7 +121,7 @@ public class MismatchQuery<ContentKey> {
         return orderBy;
     }
 
-    public Set<ContentKey> getKeys() {
+    public Multimap<SpotCheckContentType, Object> getKeys() {
         return keys;
     }
 }

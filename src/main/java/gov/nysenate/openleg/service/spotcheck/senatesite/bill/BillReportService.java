@@ -3,8 +3,6 @@ package gov.nysenate.openleg.service.spotcheck.senatesite.bill;
 import com.google.common.collect.ImmutableList;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.base.LimitOffset;
-import gov.nysenate.openleg.dao.spotcheck.BillIdSpotCheckReportDao;
-import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.base.PublishStatus;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.Bill;
@@ -38,27 +36,19 @@ public class BillReportService extends BaseSenateSiteReportService<BillId> {
 
     private final Environment env;
     private final PipelineFactory pipelineFactory;
-    private final BillIdSpotCheckReportDao billReportDao;
     private final SenateSiteBillJsonParser billJsonParser;
     private final BillDataService billDataService;
     private final SenateSiteBillCheckService billCheckService;
 
     @Autowired
     public BillReportService(Environment env, PipelineFactory pipelineFactory,
-                             BillIdSpotCheckReportDao billReportDao,
                              SenateSiteBillJsonParser billJsonParser, BillDataService billDataService,
                              SenateSiteBillCheckService billCheckService) {
         this.env = env;
         this.pipelineFactory = pipelineFactory;
-        this.billReportDao = billReportDao;
         this.billJsonParser = billJsonParser;
         this.billDataService = billDataService;
         this.billCheckService = billCheckService;
-    }
-
-    @Override
-    protected SpotCheckReportDao<BillId> getReportDao() {
-        return billReportDao;
     }
 
     @Override

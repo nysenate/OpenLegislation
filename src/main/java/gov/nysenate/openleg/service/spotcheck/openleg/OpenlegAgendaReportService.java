@@ -5,7 +5,6 @@ import gov.nysenate.openleg.client.view.agenda.AgendaCommAddendumView;
 import gov.nysenate.openleg.client.view.agenda.AgendaView;
 import gov.nysenate.openleg.dao.agenda.reference.openleg.OpenlegAgendaDao;
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
@@ -13,7 +12,7 @@ import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,32 +29,24 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckRefType.OPENLEG_AGENDA;
 
 @Service("openlegAgendaReport")
-public class OpenlegAgendaReportService extends BaseSpotCheckReportService<CommitteeAgendaAddendumId> {
+public class OpenlegAgendaReportService implements SpotCheckReportService<CommitteeAgendaAddendumId> {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenlegAgendaReportService.class);
 
-    private final SpotCheckReportDao<CommitteeAgendaAddendumId> reportDao;
     private final OpenlegAgendaDao openlegAgendaDao;
     private final AgendaDataService agendaDataService;
     private final BillDataService billDataService;
     private final OpenlegAgendaCheckService checkService;
 
     @Autowired
-    public OpenlegAgendaReportService(SpotCheckReportDao<CommitteeAgendaAddendumId> reportDao,
-                                      OpenlegAgendaDao openlegAgendaDao,
+    public OpenlegAgendaReportService(OpenlegAgendaDao openlegAgendaDao,
                                       AgendaDataService agendaDataService,
                                       BillDataService billDataService,
                                       OpenlegAgendaCheckService checkService) {
-        this.reportDao = reportDao;
         this.openlegAgendaDao = openlegAgendaDao;
         this.agendaDataService = agendaDataService;
         this.billDataService = billDataService;
         this.checkService = checkService;
-    }
-
-    @Override
-    protected SpotCheckReportDao<CommitteeAgendaAddendumId> getReportDao() {
-        return reportDao;
     }
 
     @Override

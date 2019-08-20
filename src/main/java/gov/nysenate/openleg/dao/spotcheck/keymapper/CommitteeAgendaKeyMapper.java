@@ -1,4 +1,4 @@
-package gov.nysenate.openleg.dao.spotcheck;
+package gov.nysenate.openleg.dao.spotcheck.keymapper;
 
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.model.agenda.AgendaId;
@@ -6,13 +6,17 @@ import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.model.entity.CommitteeId;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
 
-@Repository
-public class CommitteeAgendaReportDao extends AbstractSpotCheckReportDao<CommitteeAgendaAddendumId> {
+@Service
+public class CommitteeAgendaKeyMapper implements SpotCheckDaoKeyMapper<CommitteeAgendaAddendumId> {
+    @Override
+    public Class<CommitteeAgendaAddendumId> getKeyClass() {
+        return CommitteeAgendaAddendumId.class;
+    }
 
     @Override
     public CommitteeAgendaAddendumId getKeyFromMap(Map<String, String> keyMap) {

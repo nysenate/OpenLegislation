@@ -1,8 +1,6 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.agenda;
 
 import gov.nysenate.openleg.dao.base.SortOrder;
-import gov.nysenate.openleg.dao.spotcheck.CommitteeAgendaReportDao;
-import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaVoteCommittee;
@@ -32,21 +30,13 @@ public class SenSiteAgendaReportService extends BaseSenateSiteReportService<Comm
     private final SenateSiteAgendaCheckService senateSiteAgendaCheckService;
     private final AgendaJsonParser agendaJsonParser;
     private final AgendaDataService agendaDataService;
-    private final CommitteeAgendaReportDao committeeAgendaReportDao;
 
     public SenSiteAgendaReportService(SenateSiteAgendaCheckService senateSiteAgendaCheckService,
                                       AgendaJsonParser agendaJsonParser,
-                                      AgendaDataService agendaDataService,
-                                      CommitteeAgendaReportDao committeeAgendaReportDao) {
+                                      AgendaDataService agendaDataService) {
         this.senateSiteAgendaCheckService = senateSiteAgendaCheckService;
         this.agendaJsonParser = agendaJsonParser;
         this.agendaDataService = agendaDataService;
-        this.committeeAgendaReportDao = committeeAgendaReportDao;
-    }
-
-    @Override
-    protected SpotCheckReportDao<CommitteeAgendaAddendumId> getReportDao() {
-        return committeeAgendaReportDao;
     }
 
     @Override

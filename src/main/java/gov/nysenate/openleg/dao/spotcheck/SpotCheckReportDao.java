@@ -11,10 +11,8 @@ import java.util.Set;
 /**
  * Dao interface for retrieving, saving, and deleting spot check reports. The interface is templated
  * to allow for a single implementation to handle various types of data types.
- *
- * @param <ContentKey> - The class that can uniquely identify the instances being checked in the reports
  */
-public interface SpotCheckReportDao<ContentKey>
+public interface SpotCheckReportDao
 {
 
     DeNormSpotCheckMismatch getMismatch(int mismatchId);
@@ -22,7 +20,7 @@ public interface SpotCheckReportDao<ContentKey>
     /**
      * Get mismatches matching the given query params.
      */
-    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery<ContentKey> query, LimitOffset limitOffset);
+    PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery query, LimitOffset limitOffset);
 
     /**
      * Get mismatch status summary counts for given datasource and report date.
@@ -59,9 +57,9 @@ public interface SpotCheckReportDao<ContentKey>
      * report to account for mismatches from previously saved reports. The mismatch statuses are
      * also modified here using the context of prior reports.
      *
-     * @param report SpotCheckReport<ContentKey> - The report to save into the backing store
+     * @param report SpotCheckReport - The report to save into the backing store
      */
-    void saveReport(SpotCheckReport<ContentKey> report) throws DataAccessException;
+    void saveReport(SpotCheckReport report) throws DataAccessException;
 
     /**
      * Sets the ignore status for a spotcheck mismatch

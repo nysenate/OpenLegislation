@@ -5,7 +5,7 @@ import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReport;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReportId;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDump;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckReportService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +19,9 @@ import java.time.LocalDateTime;
  * Handles retrieval of NYSenate.gov node dumps and creating report objects.
  * @param <ContentKey>
  */
-public abstract class BaseSenateSiteReportService<ContentKey> extends BaseSpotCheckReportService<ContentKey> {
+public abstract class BaseSenateSiteReportService<ContentKey> implements SpotCheckReportService<ContentKey> {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseSpotCheckReportService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseSenateSiteReportService.class);
 
     @Autowired
     private SenateSiteDao senateSiteDao;

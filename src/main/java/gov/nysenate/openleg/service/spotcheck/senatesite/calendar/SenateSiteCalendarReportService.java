@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.service.spotcheck.senatesite.calendar;
 
-import gov.nysenate.openleg.dao.spotcheck.CalendarEntryListIdSpotCheckReportDao;
 import gov.nysenate.openleg.dao.spotcheck.SpotCheckReportDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
@@ -31,7 +30,6 @@ public class SenateSiteCalendarReportService extends BaseSenateSiteReportService
     @Autowired private SenateSiteCalendarCheckService senateSiteCalendarCheckService;
     @Autowired private CalendarJsonParser calendarJsonParser;
     @Autowired private CalendarDataService calendarDataService;
-    @Autowired private CalendarEntryListIdSpotCheckReportDao calendarEntryListIdSpotCheckReportDao;
 
     @Override
     public SpotCheckRefType getSpotcheckRefType() {
@@ -47,11 +45,6 @@ public class SenateSiteCalendarReportService extends BaseSenateSiteReportService
         List<SenateSiteCalendar> senSiteCalendars = calendarJsonParser.parseCalendars(dump);
 
         checkCalendars(report, openlegCalendars, senSiteCalendars);
-    }
-
-    @Override
-    protected SpotCheckReportDao<CalendarEntryListId> getReportDao() {
-        return calendarEntryListIdSpotCheckReportDao;
     }
 
     /* --- Internal Methods --- */

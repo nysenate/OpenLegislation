@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckContentType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckDataSource;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpId;
@@ -83,13 +84,26 @@ public class SenateSiteDumpFragParser {
         return new SenateSiteDumpId(refType, totalParts, year, refDateTime);
     }
 
+    /**
+     * A map of {@link SpotCheckContentType}s to their corresponding
+     * {@link SpotCheckDataSource#NYSENATE} {@link SpotCheckRefType}
+     *
+     * TODO
+     *  - The current NYSenate.gov dump script uses the {@link SpotCheckContentType#BILL} content type
+     *  - when it should use {@link SpotCheckContentType#BILL_AMENDMENT}.
+     *  - I cannot make more changes to that script at the moment, so for now I am explicitly mapping
+     *  - {@link SpotCheckContentType#BILL} to {@link SpotCheckRefType#SENATE_SITE_BILLS}
+     */
     private static final ImmutableMap<SpotCheckContentType, SpotCheckRefType> refTypeMap =
-            Maps.uniqueIndex(
-                    EnumSet.allOf(SpotCheckRefType.class).stream()
-                            .filter(refType -> NYSENATE.equals(refType.getDataSource()))
-                            .collect(Collectors.toList()),
-                    SpotCheckRefType::getContentType
-            );
+            ImmutableMap.<SpotCheckContentType, SpotCheckRefType>builder()
+                    .putAll(Maps.uniqueIndex(
+                            EnumSet.allOf(SpotCheckRefType.class).stream()
+                                    .filter(refType -> NYSENATE.equals(refType.getDataSource()))
+                                    .collect(Collectors.toList()),
+                            SpotCheckRefType::getContentType
+                    ))
+                    .put(SpotCheckContentType.BILL, SpotCheckRefType.SENATE_SITE_BILLS)
+                    .build();
 
     /**
      * Return the relevant ref type for the passed in content type
