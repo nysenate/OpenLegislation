@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.process;
 
 import com.google.common.collect.Range;
+import gov.nysenate.openleg.controller.api.admin.DataProcessCtrl;
 import gov.nysenate.openleg.dao.base.*;
 import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessRun;
@@ -42,7 +43,10 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
         SqlDataProcessLogQuery sqlQuery = (withActivityOnly) ? SELECT_DATA_PROCESS_RUNS_WITH_ACTIVITY
                                                              : SELECT_DATA_PROCESS_RUNS_DURING;
         PaginatedRowHandler<DataProcessRun> handler = new PaginatedRowHandler<>(limOff, "total_count", processRunRowMapper);
-        jdbcNamed.query(sqlQuery.getSql(schema(), orderBy, limOff), params, handler);
+        String sql = sqlQuery.getSql(schema(), orderBy, limOff);
+        DataProcessCtrl.getRunsTimer -= System.currentTimeMillis();
+        jdbcNamed.query(sql, params, handler);
+        DataProcessCtrl.getRunsTimer += System.currentTimeMillis();
         return handler.getList();
     }
 

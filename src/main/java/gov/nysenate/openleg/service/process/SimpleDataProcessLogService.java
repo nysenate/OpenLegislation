@@ -45,6 +45,11 @@ public class SimpleDataProcessLogService implements DataProcessLogService
         return Optional.empty();
     }
 
+    @Override
+    public PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, LimitOffset limOff, boolean showActivityOnly) {
+        return processLogDao.getRuns(dateTimeRange, showActivityOnly, SortOrder.DESC, limOff);
+    }
+
     /** {@inheritDoc} */
     @Override
     public PaginatedList<DataProcessRunInfo> getRunInfos(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
@@ -87,7 +92,8 @@ public class SimpleDataProcessLogService implements DataProcessLogService
         }
     }
 
-    private DataProcessRunInfo getRunInfoFromRun(DataProcessRun run) {
+    @Override
+    public DataProcessRunInfo getRunInfoFromRun(DataProcessRun run) {
         DataProcessRunInfo runInfo = new DataProcessRunInfo(run);
         List<DataProcessUnit> firstAndLastUnits = processLogDao.getFirstAndLastUnits(run.getProcessId());
         if (!firstAndLastUnits.isEmpty()) {

@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.process.DataProcessRunInfo;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,7 +23,16 @@ public interface DataProcessLogService
      * @param processId int
      * @return Optional<DataProcessRun>
      */
-    public Optional<DataProcessRun> getRun(int processId);
+    Optional<DataProcessRun> getRun(int processId);
+
+    /**
+     * Fetch all DataProcessRuns in the given range.
+     * @param dateTimeRange to look through.
+     * @param limOff to offset.
+     * @param showActivityOnly Set to true to only return runs that have units associated with them.
+     * @return a PaginatedList of the results.
+     */
+    PaginatedList<DataProcessRun> getRuns(Range<LocalDateTime> dateTimeRange, LimitOffset limOff, boolean showActivityOnly);
 
     /**
      * Fetch the DataProcessRunInfo with the given processId. Returns an empty optional if it doesn't exist.
@@ -30,7 +40,7 @@ public interface DataProcessLogService
      * @param processId int
      * @return Optional<DataProcessRunInfo>
      */
-    public Optional<DataProcessRunInfo> getRunInfo(int processId);
+    Optional<DataProcessRunInfo> getRunInfo(int processId);
 
     /**
      * Returns a paginated list of DataProcessRunInfo.
@@ -40,7 +50,7 @@ public interface DataProcessLogService
      * @param showActivityOnly boolean - Set to true to only return runs that have units associated with them.
      * @return List<DataProcessRunInfo>
      */
-    public PaginatedList<DataProcessRunInfo> getRunInfos(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
+    PaginatedList<DataProcessRunInfo> getRunInfos(Range<LocalDateTime> dateTimeRange, LimitOffset limOff,
                                                          boolean showActivityOnly);
 
     /**
@@ -50,7 +60,7 @@ public interface DataProcessLogService
      * @param limOff LimitOffset
      * @return PaginatedList<DataProcessUnit>
      */
-    public PaginatedList<DataProcessUnit> getUnits(int processId, LimitOffset limOff);
+    PaginatedList<DataProcessUnit> getUnits(int processId, LimitOffset limOff);
 
     /**
      * Registers and returns a new data processing run.
@@ -59,7 +69,7 @@ public interface DataProcessLogService
      * @param invoker String - How this process run was invoked.
      * @return DataProcessRun
      */
-    public DataProcessRun startNewRun(LocalDateTime startDateTime, String invoker);
+    DataProcessRun startNewRun(LocalDateTime startDateTime, String invoker);
 
     /**
      * Saves the process unit and associates it with the given processId.
@@ -67,7 +77,7 @@ public interface DataProcessLogService
      * @param processId int
      * @param unit DataProcessUnit
      */
-    public void addUnit(int processId, DataProcessUnit unit);
+    void addUnit(int processId, DataProcessUnit unit);
 
     /**
      * Marks the given run as completed by setting the end date/time and
@@ -75,5 +85,12 @@ public interface DataProcessLogService
      *
      * @param run DataProcessRun
      */
-    public void finishRun(DataProcessRun run);
+    void finishRun(DataProcessRun run);
+
+    /**
+     * Makes a runInfo from a run.
+     * @param run to process.
+     * @return the info.
+     */
+    DataProcessRunInfo getRunInfoFromRun(DataProcessRun run);
 }

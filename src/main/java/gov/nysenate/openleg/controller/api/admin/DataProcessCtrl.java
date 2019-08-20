@@ -17,6 +17,7 @@ import gov.nysenate.openleg.dao.base.PaginatedList;
 import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.model.process.DataProcessRun;
 import gov.nysenate.openleg.model.process.DataProcessRunInfo;
+import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.processor.DataProcessor;
 import gov.nysenate.openleg.service.process.DataProcessLogService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_ADMIN_API_PATH;
@@ -41,6 +43,10 @@ import static java.util.stream.Collectors.toList;
 public class DataProcessCtrl extends BaseCtrl
 {
     private static final Logger logger = LoggerFactory.getLogger(DataProcessCtrl.class);
+    private static final int COUNT = 100;
+    public static long getRunsTimer = 0;
+    private static long getInfoTimer = 0;
+    private static long getUnitsTimer = 0;
 
     @Autowired private Environment env;
     @Autowired private DataProcessLogService processLogs;
@@ -120,17 +126,55 @@ public class DataProcessCtrl extends BaseCtrl
     }
 
     private BaseResponse getRunsDuring(LocalDateTime fromDateTime, LocalDateTime toDateTime, WebRequest request) {
+        long timer = 0;
+        timer -= System.currentTimeMillis();
+        for (int i = 0; i < COUNT; i++)
+            getRunsDuringa(fromDateTime, toDateTime, request);
+        timer += System.currentTimeMillis();
+        logger.info("Average of {} runs is: {}", COUNT, timer/COUNT);
+        logger.info("Average for getRunsTimer is {}%", (100.0*getRunsTimer)/timer);
+        //logger.info("Average of getInfoTimer is {}%", (100.0*getInfoTimer)/timer);
+        //logger.info("Average of getUnitsTimer is {}%", (100.0*getUnitsTimer)/timer);
+        getRunsTimer = 0; getInfoTimer = 0; getUnitsTimer = 0;
+        return getRunsDuringa(fromDateTime, toDateTime, request);
+    }
+
+    private BaseResponse getRunsDuringa(LocalDateTime fromDateTime, LocalDateTime toDateTime, WebRequest request) {
         LimitOffset limOff = getLimitOffset(request, 100);
         boolean full = getBooleanParam(request, "full", false);
         boolean detail = getBooleanParam(request, "detail", false);
 
-        PaginatedList<DataProcessRunInfo> runs = processLogs.getRunInfos(Range.closedOpen(fromDateTime, toDateTime), limOff, !full);
+        //getRunsTimer -= System.currentTimeMillis();
+        PaginatedList<DataProcessRun> runs = processLogs.getRuns(Range.closedOpen(fromDateTime, toDateTime), limOff, !full);
+        //getRunsTimer += System.currentTimeMillis();
         return ListViewResponse.of(runs.getResults().stream()
-            .map(runInfo -> (detail)
-                    ? new DataProcessRunDetailView(runInfo, processLogs.getUnits(runInfo.getRun().getProcessId(), LimitOffset.FIFTY))
-                    : new DataProcessRunInfoView(runInfo))
-            .collect(toList()),
+            .map(run -> getInfoView(run, detail)).collect(toList()),
             runs.getTotal(), runs.getLimOff());
+    }
+
+    /**
+     * Gets the proper DataProcessRunInfo view.
+     * @param r to get data from.
+     * @param detail whether to include full details of the run.
+     * @return the proper view.
+     */
+    private DataProcessRunInfoView getInfoView(DataProcessRun r, boolean detail) {
+        if (!detail) {
+            //getInfoTimer -= System.currentTimeMillis();
+            DataProcessRunInfo p = processLogs.getRunInfoFromRun(r);
+            //getInfoTimer += System.currentTimeMillis();
+            return new DataProcessRunInfoView(p);
+        }
+        //getUnitsTimer -= System.currentTimeMillis();
+        PaginatedList<DataProcessUnit> units = processLogs.getUnits(r.getProcessId(), LimitOffset.FIFTY);
+        //getUnitsTimer += System.currentTimeMillis();
+        List<DataProcessUnit> unitResults = units.getResults();
+        DataProcessRunInfo runInfo = new DataProcessRunInfo(r);
+        if (!unitResults.isEmpty()) {
+            runInfo.setFirstProcessed(Optional.of(unitResults.get(0)));
+            runInfo.setLastProcessed(Optional.of(unitResults.get(unitResults.size() - 1)));
+        }
+        return new DataProcessRunDetailView(runInfo, units);
     }
 
     /**
