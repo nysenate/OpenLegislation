@@ -23,8 +23,6 @@ import static gov.nysenate.openleg.util.DateUtils.*;
 @Repository
 public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDao
 {
-    private static final Logger logger = LoggerFactory.getLogger(SqlDataProcessLogDao.class);
-
     /** {@inheritDoc} */
     @Override
     public DataProcessRun getRun(int processId) throws DataAccessException {
@@ -42,9 +40,7 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
         OrderBy orderBy = new OrderBy("process_start_date_time", dateOrder);
         SqlDataProcessLogQuery sqlQuery = (withActivityOnly) ? SELECT_DATA_PROCESS_RUNS_WITH_ACTIVITY
                                                              : SELECT_DATA_PROCESS_RUNS_DURING;
-        DataProcessCtrl.getRunsTimer -= System.currentTimeMillis();
         List<DataProcessRun> results = jdbcNamed.query(sqlQuery.getSql(schema(), orderBy, limOff), params, processRunRowMapper);
-        DataProcessCtrl.getRunsTimer += System.currentTimeMillis();
         return new PaginatedList<>(results.size(), limOff, results);
     }
 
