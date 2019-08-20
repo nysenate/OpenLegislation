@@ -42,12 +42,10 @@ public class SqlDataProcessLogDao extends SqlBaseDao implements DataProcessLogDa
         OrderBy orderBy = new OrderBy("process_start_date_time", dateOrder);
         SqlDataProcessLogQuery sqlQuery = (withActivityOnly) ? SELECT_DATA_PROCESS_RUNS_WITH_ACTIVITY
                                                              : SELECT_DATA_PROCESS_RUNS_DURING;
-        PaginatedRowHandler<DataProcessRun> handler = new PaginatedRowHandler<>(limOff, "total_count", processRunRowMapper);
-        String sql = sqlQuery.getSql(schema(), orderBy, limOff);
         DataProcessCtrl.getRunsTimer -= System.currentTimeMillis();
-        jdbcNamed.query(sql, params, handler);
+        List<DataProcessRun> results = jdbcNamed.query(sqlQuery.getSql(schema(), orderBy, limOff), params, processRunRowMapper);
         DataProcessCtrl.getRunsTimer += System.currentTimeMillis();
-        return handler.getList();
+        return new PaginatedList<>(results.size(), limOff, results);
     }
 
     /** {@inheritDoc} */
