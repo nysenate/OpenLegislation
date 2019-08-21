@@ -41,7 +41,7 @@ public class BillLawCodeParser {
      *
      * @param lawCode the law code citation of a Bill Amendment, eg (Amd §3635, Ed L)
      */
-    public void parse(String lawCode) {
+    public String parse(String lawCode) {
         // Eliminate extraneous remarks like "(as proposed in S. 6513-B and A. 8508-A)". This will also remove some (sub)
         //  qualifiers, but these are more detail than we need anyway
         lawCode = lawCode.replaceAll("\\s*\\([^\\)]*\\)\\s*", "");
@@ -98,6 +98,7 @@ public class BillLawCodeParser {
         }
         Gson gson = new Gson();
         json = gson.toJson(mapping);
+        return json;
     }
 
     private void parseChapterAffects(String chapter, LawChapterCode currChapter, LawActionType currAction) {

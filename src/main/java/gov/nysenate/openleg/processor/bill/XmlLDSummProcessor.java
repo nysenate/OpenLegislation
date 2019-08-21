@@ -23,6 +23,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.Year;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -68,11 +70,7 @@ public class XmlLDSummProcessor extends AbstractDataProcessor implements LegData
             baseBill.setSummary(summary);
             BillAmendment amendment = baseBill.getAmendment(version);
             amendment.setLaw(law);
-
-            // Set the related laws json
-            billLawCodeParser.parse(law);
-            amendment.setRelatedLaws(billLawCodeParser.getJson(), baseBill);
-            billLawCodeParser.clearMapping();
+            setRelatedLaws(billLawCodeParser, baseBill, version, law, amendment);
 
             if (action.equals("replace")) { //replace bill
                 /**

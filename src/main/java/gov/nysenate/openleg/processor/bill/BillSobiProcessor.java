@@ -480,9 +480,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
         }
         else {
             specifiedAmendment.setLaw(data.replace("\n", " ").trim());
-            billLawCodeParser.parse(specifiedAmendment.getLaw());
-            specifiedAmendment.setRelatedLaws(billLawCodeParser.getJson(), baseBill);
-            billLawCodeParser.clearMapping();
+            setRelatedLaws(billLawCodeParser, baseBill, version, specifiedAmendment.getLaw(), specifiedAmendment);
         }
         baseBill.setModifiedDateTime(date);
     }

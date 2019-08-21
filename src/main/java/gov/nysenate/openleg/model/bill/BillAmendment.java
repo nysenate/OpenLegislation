@@ -10,8 +10,6 @@ import gov.nysenate.openleg.model.entity.CommitteeVersionId;
 import gov.nysenate.openleg.model.entity.SessionMember;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.Year;
 import java.util.*;
 
 /**
@@ -277,23 +275,9 @@ public class BillAmendment implements Serializable, Cloneable
         this.law = law;
     }
 
-    public void setRelatedLaws(String json, Bill baseBill) {
-        // Set the related laws map if the bill was published after 2014 (we can't link to laws before that)
-        LocalDateTime publishDate = baseBill.getAmendPublishStatusMap().get(version).getEffectDateTime();
-        LocalDateTime lawStartDate = Year.of(2014).atDay(1).atStartOfDay();
-        if (publishDate.isAfter(lawStartDate)) {
-            setRelatedLawsJson(json);
-        }
-        else {
-            setRelatedLawsJson(null);
-        }
-    }
+    public void setRelatedLawsJson(String json) { relatedLawsJson = json; }
 
-    public void setRelatedLawsJson(String json) {
-        relatedLawsJson = json;
-    }
-
-    public Map<String, List<String>> getRelatedLawsMap() {
+    public Map<String, List<String>>  getRelatedLawsMap() {
         Map<String, List<String>> mapping = new HashMap<>();
         if (relatedLawsJson == null || relatedLawsJson.equals("")){
             return mapping;

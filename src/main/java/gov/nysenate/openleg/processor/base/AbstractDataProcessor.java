@@ -8,6 +8,7 @@ import gov.nysenate.openleg.model.agenda.Agenda;
 import gov.nysenate.openleg.model.agenda.AgendaId;
 import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.base.SessionYear;
+import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.bill.*;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
@@ -18,6 +19,7 @@ import gov.nysenate.openleg.model.process.DataProcessAction;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.model.process.DataProcessUnitEvent;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
+import gov.nysenate.openleg.processor.bill.BillLawCodeParser;
 import gov.nysenate.openleg.service.agenda.data.AgendaDataService;
 import gov.nysenate.openleg.service.agenda.event.BulkAgendaUpdateEvent;
 import gov.nysenate.openleg.service.bill.data.ApprovalDataService;
@@ -345,5 +347,16 @@ public abstract class AbstractDataProcessor
         flushBillUpdates();
         flushAgendaUpdates();
         flushCalendarUpdates();
+    }
+
+    protected void setRelatedLaws(BillLawCodeParser parser, Bill bill, Version version, String law, BillAmendment amd) {
+        // Set the related laws json
+        if (bill.hasValidLaws(version)){
+            amd.setRelatedLawsJson(parser.parse(law));
+        }
+        else {
+            amd.setRelatedLawsJson(null);
+        }
+        parser.clearMapping();
     }
 }
