@@ -108,8 +108,12 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
     @Override
     public void updateLawDocument(LawFile lawFile, LawDocument lawDocument) {
         // Notifies this class that the lawDoc text should stay the same.
-        if (lawDocument.getText().equals(LawProcessor.ONLY_TITLE_UPDATE))
-            lawDocument.setText(getLawDocument(lawDocument.getDocumentId(), null).getText());
+        if (lawDocument.getText().equals(LawProcessor.ONLY_TITLE_UPDATE)) {
+            try {
+                lawDocument.setText(getLawDocument(lawDocument.getDocumentId(), null).getText());
+            }
+            catch (DataAccessException e){}
+        }
         ImmutableParams lawDocParams = ImmutableParams.from(getLawDocumentParams(lawFile, lawDocument));
         if (jdbcNamed.update(SqlLawDataQuery.UPDATE_LAW_DOCUMENT.getSql(schema()), lawDocParams) == 0) {
             jdbcNamed.update(SqlLawDataQuery.INSERT_LAW_DOCUMENT.getSql(schema()), lawDocParams);
