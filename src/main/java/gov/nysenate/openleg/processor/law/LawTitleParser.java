@@ -94,6 +94,8 @@ public class LawTitleParser
         BAD_DATA.put(LawChapterCode.PBH.name() + "265-F", "Severability");
         BAD_DATA.put(LawChapterCode.DEA.name() + "A1-A", NO_TITLE);
         BAD_DATA.put(LawChapterCode.ENV.name() + "A27T29", "Mercury Thermostat Collection Act");
+        BAD_DATA.put(LawChapterCode.GCM.name() + "4-D", "Credit relating to the annual increase in certain payments to a landlord by a taxpayer relocating industrial and commercial employment opportunities");
+        BAD_DATA.put(LawChapterCode.PBA.name() + "1621-B", "Definitions");
         // Problems in updates that are fixed later.
         BAD_DATA.put(LawChapterCode.GBS.name() + "380-V", "Severability");
         BAD_DATA.put(LawChapterCode.VAT.name() + "385", "Dimensions and weights of vehicles");
