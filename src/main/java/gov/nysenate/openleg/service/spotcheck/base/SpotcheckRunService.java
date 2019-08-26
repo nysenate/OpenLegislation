@@ -168,7 +168,7 @@ public class SpotcheckRunService {
      * @param report {@link SpotCheckReport}
      */
     private void sendMismatchEvents(SpotCheckReport<?> report) {
-        for (SpotCheckObservation<?> observation : report.getObservations().values()) {
+        for (SpotCheckObservation<?> observation : report.getObservationMap().values()) {
             for (SpotCheckMismatch mismatch : observation.getMismatches().values()) {
                 eventBus.post(new SpotcheckMismatchEvent<>(
                         LocalDateTime.now(),

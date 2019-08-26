@@ -116,7 +116,7 @@ public class OpenlegBillReportService implements SpotCheckReportService<BaseBill
 
         // Set any remaining unchecked local bill ids as ref. missing mismatches
         for (BaseBillId id : localBillIds) {
-            if (report.getObservations().containsKey(id)) {
+            if (report.getObservationMap().containsKey(id)) {
                 throw new IllegalStateException(id + " is supposedly not checked, but an observation for it exists");
             }
             BillInfo billInfo = billDataService.getBillInfo(id);

@@ -23,8 +23,8 @@ public class SpotCheckReport<ContentKey>
     /** Identifier for this report. */
     protected SpotCheckReportId reportId;
 
-    /** All observations associated with this report. */
-    protected Map<ContentKey, SpotCheckObservation<ContentKey>> observations = new HashMap<>();
+    /** Map of all observations associated with this report. */
+    protected Map<ContentKey, SpotCheckObservation<ContentKey>> observationMap = new HashMap<>();
 
     /** miscellaneous notes pertaining to this report */
     protected String notes;
@@ -46,7 +46,7 @@ public class SpotCheckReport<ContentKey>
 
     public SpotCheckReportSummary getSummary() {
         SpotCheckReportSummary summary = new SpotCheckReportSummary(reportId, notes);
-        summary.addCountsFromObservations(observations.values());
+        summary.addCountsFromObservations(observationMap.values());
         return summary;
     }
 
@@ -56,7 +56,7 @@ public class SpotCheckReport<ContentKey>
      * @return long
      */
     public long getOpenMismatchCount(boolean ignored) {
-        return observations.values().stream()
+        return observationMap.values().stream()
                 .map(obs -> obs.getMismatches().values().stream()
                         .filter(mismatch -> !mismatch.isIgnored() ^ ignored)
                         .filter(mismatch -> mismatch.getState() == MismatchState.OPEN)
@@ -71,12 +71,12 @@ public class SpotCheckReport<ContentKey>
      * @return Map<SpotCheckMismatchStatus, Long>
      */
     public Map<MismatchState, Long> getMismatchStatusCounts(boolean ignored) {
-        if (observations != null) {
+        if (observationMap != null) {
             Map<MismatchState, Long> counts = new HashMap<>();
             for (MismatchState status : MismatchState.values()) {
                 counts.put(status, 0L);
             }
-            observations.values().stream()
+            observationMap.values().stream()
                 .flatMap(e -> e.getMismatchStatusCounts(ignored).entrySet().stream())
                 .forEach(e -> counts.merge(e.getKey(), e.getValue(), Long::sum));
             return counts;
@@ -90,9 +90,9 @@ public class SpotCheckReport<ContentKey>
      * @return Map<SpotCheckMismatchType, Map<SpotCheckMismatchStatus, Long>>
      */
     public Map<SpotCheckMismatchType, Map<MismatchState, Long>> getMismatchTypeStatusCounts(boolean ignored) {
-        if (observations != null) {
+        if (observationMap != null) {
             Map<SpotCheckMismatchType, Map<MismatchState, Long>> counts = new HashMap<>();
-            observations.values().stream()
+            observationMap.values().stream()
                 .flatMap(e -> e.getMismatchStatusTypes(ignored).entrySet().stream())
                 .forEach(e -> {
                     if (!counts.containsKey(e.getKey())) {
@@ -111,9 +111,9 @@ public class SpotCheckReport<ContentKey>
      * @return Map<SpotCheckMismatchStatus, Map<SpotCheckMismatchType, Long>>
      */
     public Map<MismatchState, Map<SpotCheckMismatchType, Long>> getMismatchStatusTypeCounts(boolean ignored) {
-        if (observations != null) {
+        if (observationMap != null) {
             Table<MismatchState, SpotCheckMismatchType, Long> countTable = HashBasedTable.create();
-            observations.values().stream()
+            observationMap.values().stream()
                     .flatMap(obs -> obs.getMismatchStatusTypes(ignored).entrySet().stream())
                     .forEach(entry -> {
                         long currentValue = Optional.ofNullable(countTable.get(entry.getValue(), entry.getKey()))
@@ -131,9 +131,9 @@ public class SpotCheckReport<ContentKey>
      * @return Map<SpotCheckMismatchType, Long>
      */
     public Map<SpotCheckMismatchType, Long> getMismatchTypeCounts(boolean ignored) {
-        if (observations != null) {
+        if (observationMap != null) {
             Map<SpotCheckMismatchType, Long> counts = new HashMap<>();
-            observations.values().stream()
+            observationMap.values().stream()
                 .flatMap(e -> e.getMismatchTypes(ignored).stream())
                 .forEach(e -> counts.merge(e, 1L, (a,b) -> a + 1L));
             return counts;
@@ -150,7 +150,13 @@ public class SpotCheckReport<ContentKey>
         }
         observation.setReferenceId(reportId.getReferenceId());
         observation.setObservedDateTime(LocalDateTime.now());
-        this.observations.put(observation.getKey(), observation);
+        // If there is already an observation for this key, attempt to merge the new one in.
+        if (observationMap.containsKey(observation.getKey())) {
+            SpotCheckObservation<ContentKey> priorObs = observationMap.get(observation.getKey());
+            priorObs.merge(observation);
+        } else {
+            this.observationMap.put(observation.getKey(), observation);
+        }
     }
 
     /**
@@ -167,7 +173,7 @@ public class SpotCheckReport<ContentKey>
      * Get the number of content items observed
      */
     public int getObservedCount() {
-        return Optional.ofNullable(this.observations).map(Map::size).orElse(0);
+        return Optional.ofNullable(this.observationMap).map(Map::size).orElse(0);
     }
 
     /**
@@ -175,7 +181,7 @@ public class SpotCheckReport<ContentKey>
      * @return
      */
     public Set<ContentKey> getCheckedKeys() {
-        return this.getObservations().values().stream().map(SpotCheckObservation::getKey).collect(Collectors.toSet());
+        return this.getObservationMap().values().stream().map(SpotCheckObservation::getKey).collect(Collectors.toSet());
     }
 
     /**
@@ -200,6 +206,17 @@ public class SpotCheckReport<ContentKey>
      */
     public void addEmptyObservation(ContentKey contentKey) {
         this.addObservation(new SpotCheckObservation<>(reportId.getReferenceId(), contentKey));
+    }
+
+    public Collection<SpotCheckObservation<ContentKey>> getObservations() {
+        return observationMap.values();
+    }
+
+    public Set<SpotCheckMismatchKey<ContentKey>> getMismatchKeys() {
+        return observationMap.values().stream()
+                .map(SpotCheckObservation::getMismatchKeys)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 
     /** --- Delegates --- */
@@ -234,12 +251,12 @@ public class SpotCheckReport<ContentKey>
         this.reportId = reportId;
     }
 
-    public Map<ContentKey, SpotCheckObservation<ContentKey>> getObservations() {
-        return observations;
+    public Map<ContentKey, SpotCheckObservation<ContentKey>> getObservationMap() {
+        return observationMap;
     }
 
-    public void setObservations(Map<ContentKey, SpotCheckObservation<ContentKey>> observations) {
-        this.observations = observations;
+    public void setObservationMap(Map<ContentKey, SpotCheckObservation<ContentKey>> observationMap) {
+        this.observationMap = observationMap;
     }
 
     public String getNotes() {

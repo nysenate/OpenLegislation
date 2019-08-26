@@ -59,7 +59,7 @@ public interface SpotCheckReportDao
      *
      * @param report SpotCheckReport - The report to save into the backing store
      */
-    void saveReport(SpotCheckReport report) throws DataAccessException;
+    void saveReport(SpotCheckReport<?> report) throws DataAccessException;
 
     /**
      * Sets the ignore status for a spotcheck mismatch

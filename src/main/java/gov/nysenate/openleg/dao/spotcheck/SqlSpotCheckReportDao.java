@@ -1,6 +1,7 @@
 package gov.nysenate.openleg.dao.spotcheck;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import gov.nysenate.openleg.dao.base.*;
@@ -17,12 +18,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static gov.nysenate.openleg.dao.spotcheck.SqlSpotCheckReportQuery.*;
@@ -36,6 +39,7 @@ import static gov.nysenate.openleg.util.DateUtils.toDate;
 @Repository
 public class SqlSpotCheckReportDao extends SqlBaseDao
         implements SpotCheckReportDao {
+
     private static final Logger logger = LoggerFactory.getLogger(SqlSpotCheckReportDao.class);
 
     private final ImmutableMap<Class, SpotCheckDaoKeyMapper> keyMappers;
@@ -66,6 +70,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
     /**
      * {@inheritDoc}
      */
+    @Transactional
     @Override
     public PaginatedList<DeNormSpotCheckMismatch> getMismatches(MismatchQuery mmQuery,
                                                                 LimitOffset limitOffset) {
@@ -82,14 +87,17 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
                         .map(Enum::name).collect(Collectors.toSet()))
                 .addValue("mismatchTypes", extractEnumSetParams(mmQuery.getMismatchTypes()))
                 ;
+        final SqlSpotCheckReportQuery query;
         if (mmQuery.isFilteringKeys()) {
+            query = GET_MISMATCHES_FOR_KEYS;
             params.addValue("keys",
                     mmQuery.getKeys().entries().stream()
                             .map(e -> getMapFromKey(e.getKey(), e.getValue()))
                             .map(SqlBaseDao::toHstoreString)
                             .collect(Collectors.toList()));
+        } else {
+            query = GET_MISMATCHES;
         }
-        SqlSpotCheckReportQuery query = mmQuery.isFilteringKeys() ? GET_MISMATCHES_FOR_KEYS : GET_MISMATCHES;
         String sql = query.getSql(schema(), mmQuery.getOrderBy(), limitOffset);
         PaginatedRowHandler<DeNormSpotCheckMismatch> handler =
                 new PaginatedRowHandler<>(limitOffset, "total_rows", mismatchRowMapper);
@@ -152,39 +160,79 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
     }
 
     /**
+     * Corresponds to the max number of parameters passable to postgres via jdbc.
+     * (a little bit less than {@link Short#MAX_VALUE} to allow for additional query params
+     * besides content keys)
+     */
+    private static final int mismatchSaveBatchSize = Short.MAX_VALUE - 500;
+
+    /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public void saveReport(SpotCheckReport report) {
+    public void saveReport(SpotCheckReport<?> report) {
         int reportId = insertReport(report);
         report.setId(reportId);
-        // Return early if the observations have not been set
-        if (report.getObservations() == null) {
-            logger.warn("The observations have not been set on this report.");
-            return;
+
+        // Partition observations into saveable sizes and save each partition.
+
+        List<List<SpotCheckObservation>> obsPartitions =
+                Lists.partition(new ArrayList<>(report.getObservations()), mismatchSaveBatchSize);
+
+        obsPartitions.forEach(obsBatch -> saveObservations(report, obsBatch));
+    }
+
+    /**
+     * Save the given subset of observations for the given report.
+     * @param report {@link SpotCheckReport}
+     * @param observations {@link List<SpotCheckObservation>}
+     */
+    private void saveObservations(SpotCheckReport report, Collection<SpotCheckObservation> observations) {
+
+        Map<SpotCheckMismatchKey, DeNormSpotCheckMismatch> reportMismatches = observations.stream()
+                .flatMap(obs -> toDeNormMismatches(obs, report).stream())
+                .collect(Collectors.toMap(DeNormSpotCheckMismatch::getMismatchKey, Function.identity()));
+
+        Map<SpotCheckMismatchKey, DeNormSpotCheckMismatch> savedMismatchMap = Maps.uniqueIndex(
+                getRelevantSavedMismatches(report, observations),
+                DeNormSpotCheckMismatch::getMismatchKey
+        );
+
+        // Determine which saved mismatches are closed out with this report and add them to the report mismatches
+        List<DeNormSpotCheckMismatch> closedMismatches = MismatchUtils.determineClosedMismatches(
+                savedMismatchMap.values(), report);
+        reportMismatches.putAll(Maps.uniqueIndex(closedMismatches, DeNormSpotCheckMismatch::getMismatchKey));
+
+        // Perform any necessary tweaks to each report mismatch
+        for (DeNormSpotCheckMismatch reportMismatch : reportMismatches.values()) {
+            Optional<DeNormSpotCheckMismatch> savedMismatchOpt = Optional.ofNullable(
+                    savedMismatchMap.get(reportMismatch.getMismatchKey())
+            );
+
+            savedMismatchOpt.ifPresent(reportMismatch::copyIgnoreStatus);
+
+            MismatchUtils.updateIgnoreStatus(reportMismatch);
+            MismatchUtils.updateFirstSeenDateTime(reportMismatch, savedMismatchOpt);
         }
 
-        List<DeNormSpotCheckMismatch> reportMismatches = reportToDeNormMismatches(report);
-        List<DeNormSpotCheckMismatch> savedMismatches = getRelevantSavedMismatches(report);
-
-        reportMismatches.addAll(MismatchUtils.deriveClosedMismatches(reportMismatches, savedMismatches, report));
-        reportMismatches = MismatchUtils.copyIgnoreStatuses(savedMismatches, reportMismatches);
-        reportMismatches = MismatchUtils.updateIgnoreStatus(reportMismatches);
-        reportMismatches = MismatchUtils.updateFirstSeenDateTime(reportMismatches, savedMismatches);
-
-        insertMismatches(reportMismatches);
+        insertMismatches(reportMismatches.values());
     }
 
     /**
      * Gets any open mismatches for the content observed in the report
      */
-    private List<DeNormSpotCheckMismatch> getRelevantSavedMismatches(SpotCheckReport report) {
+    private List<DeNormSpotCheckMismatch> getRelevantSavedMismatches(SpotCheckReport report,
+                                                                     Collection<SpotCheckObservation> observations) {
+        Set<Object> keys = observations.stream()
+                .map(SpotCheckObservation::getKey)
+                .collect(Collectors.toSet());
         MismatchQuery query = new MismatchQuery(report.getReportDateTime().toLocalDate(),
                                                 report.getReferenceType().getDataSource(),
                                                 MismatchStatus.OPEN,
                                                 Sets.newHashSet(report.getReferenceType().getContentType()))
                 .withIgnoredStatuses(EnumSet.allOf(SpotCheckMismatchIgnore.class))
-                .withKeys(report.getReferenceType().getContentType(), report.getCheckedKeys());
+                .withKeys(report.getReferenceType().getContentType(), keys);
         return getMismatches(query, LimitOffset.ALL).getResults();
     }
 
@@ -195,7 +243,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
         return reportIdHolder.getKey().intValue();
     }
 
-    private void insertMismatches(List<DeNormSpotCheckMismatch> mismatches) {
+    private void insertMismatches(Collection<DeNormSpotCheckMismatch> mismatches) {
         List<MapSqlParameterSource> params = mismatches.stream()
                 .map(this::mismatchParams)
                 .collect(Collectors.toList());
@@ -234,34 +282,33 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
     }
 
     /**
-     * Converts SpotCheckMismatches in a SpotCheckReport into DeNormSpotCheckMismaches.
+     * Converts SpotCheckMismatches in a SpotCheckReport into a map of key -> DeNormSpotCheckMismatch
      * Initializes firstSeenDateTime to the observedDateTime.
      */
-    private List<DeNormSpotCheckMismatch> reportToDeNormMismatches(SpotCheckReport<?> report) {
-        List<DeNormSpotCheckMismatch> mismatches = new ArrayList<>();
-        for (SpotCheckObservation<?> ob : report.getObservations().values()) {
-            // Skip if no mismatches in the observation
-            if (ob.getMismatches().size() == 0) {
-                continue;
-            }
-            for (SpotCheckMismatch m : ob.getMismatches().values()) {
-                DeNormSpotCheckMismatch mismatch = new DeNormSpotCheckMismatch<>(ob.getKey(), m.getMismatchType(),
-                        report.getReferenceType().getDataSource());
-                mismatch.setReportId(report.getId());
-                mismatch.setContentType(report.getReferenceType().getContentType());
-                mismatch.setReferenceId(ob.getReferenceId());
-                mismatch.setReferenceData(m.getReferenceData());
-                mismatch.setObservedData(m.getObservedData());
-                mismatch.setNotes(m.getNotes());
-                mismatch.setObservedDateTime(ob.getObservedDateTime());
-                mismatch.setReportDateTime(report.getReportDateTime());
-                if (m.getIgnoreStatus() != null)
-                    mismatch.setIgnoreStatus(m.getIgnoreStatus());
-                mismatch.setIssueIds(new HashSet<>(m.getIssueIds()));
-                mismatches.add(mismatch);
-            }
-        }
-        return mismatches;
+    private List<DeNormSpotCheckMismatch> toDeNormMismatches(SpotCheckObservation<?> obs,
+                                                             SpotCheckReport report) {
+        return obs.getMismatches().values().stream()
+                .map(mm -> toDeNormMismatch(mm, obs, report))
+                .collect(Collectors.toList());
+    }
+
+    private DeNormSpotCheckMismatch toDeNormMismatch(SpotCheckMismatch mismatch,
+                                                     SpotCheckObservation obs,
+                                                     SpotCheckReport report) {
+        DeNormSpotCheckMismatch dnm = new DeNormSpotCheckMismatch<>(obs.getKey(), mismatch.getMismatchType(),
+                report.getReferenceType().getDataSource());
+        dnm.setReportId(report.getId());
+        dnm.setContentType(report.getReferenceType().getContentType());
+        dnm.setReferenceId(obs.getReferenceId());
+        dnm.setReferenceData(mismatch.getReferenceData());
+        dnm.setObservedData(mismatch.getObservedData());
+        dnm.setNotes(mismatch.getNotes());
+        dnm.setObservedDateTime(obs.getObservedDateTime());
+        dnm.setReportDateTime(report.getReportDateTime());
+        if (mismatch.getIgnoreStatus() != null)
+            dnm.setIgnoreStatus(mismatch.getIgnoreStatus());
+        dnm.setIssueIds(new HashSet<>(mismatch.getIssueIds()));
+        return dnm;
     }
 
     /**
@@ -334,7 +381,6 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
 
     /* --- Helper Classes --- */
 
-    @SuppressWarnings("unchecked")
     private SpotCheckDaoKeyMapper getMapperForKeyClass(Class keyClass) {
         SpotCheckDaoKeyMapper keyMapper = keyMappers.get(keyClass);
         if (keyMapper == null) {
@@ -404,7 +450,7 @@ public class SqlSpotCheckReportDao extends SqlBaseDao
 
         private MismatchTypeSummary summary;
 
-        public MismatchTypeSummaryHandler(SpotCheckContentType contentType) {
+        MismatchTypeSummaryHandler(SpotCheckContentType contentType) {
             summary = new MismatchTypeSummary(contentType);
         }
 

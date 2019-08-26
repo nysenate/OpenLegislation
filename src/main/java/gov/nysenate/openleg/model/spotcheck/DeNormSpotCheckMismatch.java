@@ -136,6 +136,14 @@ public class DeNormSpotCheckMismatch<ContentKey> {
         this.issueIds.remove(issueId);
     }
 
+    public void copyIgnoreStatus(DeNormSpotCheckMismatch other) {
+        setIgnoreStatus(other.getIgnoreStatus());
+    }
+
+    public SpotCheckMismatchKey<ContentKey> getMismatchKey() {
+        return new SpotCheckMismatchKey<>(key, type);
+    }
+
     /* --- Getters / Setters --- */
 
     public void setMismatchId(int mismatchId) {
