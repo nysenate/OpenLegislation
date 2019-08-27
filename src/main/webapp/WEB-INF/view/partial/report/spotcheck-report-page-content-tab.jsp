@@ -1,6 +1,8 @@
 
 <%-- Intended for use within SpotcheckReportCtrl --%>
-<md-tab ng-cloak label="{{title}} ({{mismatchContentTypeSummary.summary.items[type]}})"
+<md-tab ng-cloak
+        ng-show="hasContentType(datasource.selected.value, type)"
+        label="{{title}} ({{mismatchContentTypeSummary.summary.items[type]}})"
         md-on-deselect="onTabChange()">
 
   <div class="spotcheck-report-control-bar spotcheck-report-inner-controls">

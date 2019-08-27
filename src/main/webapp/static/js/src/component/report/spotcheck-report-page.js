@@ -12,9 +12,6 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
                     spotcheckMismatchTrackingAPI, spotcheckMismatchDeleteAllAPI) {
 
     const dateFormat = 'YYYY-MM-DD';
-    const isoFormat = 'YYYY-MM-DDTHH:mm:ss';
-    /** Used to look up content types corresponding to the selected tab. */
-    const contentTypes = ['BILL', 'CALENDAR', 'AGENDA'];
 
     const searchParams = {
         date: 'date',
@@ -122,29 +119,24 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
      */
     const defaultTypeCols = {
         BILL: printNoCols,
+        BILL_AMENDMENT: printNoCols,
         CALENDAR: calCols,
-        AGENDA: agendaNumCols
-    };
-
-    /**
-     * Type/Datasources that use non-default columns
-     */
-    const overrideTypeCols = {
-        AGENDA: {
-            LBDC: agendaWeekCols
-        }
+        AGENDA: agendaNumCols,
+        AGENDA_WEEK: agendaWeekCols
     };
 
     /**
      * Get unique id columns that are used for each content type / data source
      */
     $scope.getIdColumns = function (type, datasource) {
-        if (overrideTypeCols.hasOwnProperty(type) && overrideTypeCols[type].hasOwnProperty(datasource)) {
-            return overrideTypeCols[type][datasource];
-        }
         return defaultTypeCols[type]
     };
 
+    $scope.dataSourceContentTypeMap = {
+        LBDC: ['BILL', 'CALENDAR', 'AGENDA_WEEK'],
+        NYSENATE: ['BILL_AMENDMENT', 'CALENDAR', 'AGENDA'],
+        OPENLEG: ['BILL', 'CALENDAR', 'AGENDA'],
+    };
 
     $scope.selectedTab = 0; // Select Bills tab by default.
     $scope.date = {};
@@ -201,7 +193,7 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
         $scope.updateMismatchStatusSummary();
         $scope.updateMismatchTypeSummary();
         $scope.updateMismatches();
-        $location.search(searchParams.contentType, contentTypes[$scope.selectedTab]);
+        $location.search(searchParams.contentType, selectedContentType());
     };
 
     $scope.onStatusChange = function () {
@@ -460,7 +452,7 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
     };
 
     function selectedContentType() {
-        return contentTypes[$scope.selectedTab];
+        return $scope.dataSourceContentTypeMap[$scope.datasource.selected.value][$scope.selectedTab];
     }
 
     /* --- Parameter initialization --- */
@@ -478,7 +470,11 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     function initContentType() {
         if ($routeParams.hasOwnProperty(searchParams.contentType)) {
-            $scope.selectedTab = contentTypes.indexOf($routeParams[searchParams.contentType]);
+            var index = $scope.dataSourceContentTypeMap[$scope.datasource.selected.value]
+                .indexOf($routeParams[searchParams.contentType]);
+            if (index >= 0) {
+                 $scope.selectedTab = index;
+             }
         }
     }
 

@@ -6,7 +6,7 @@
         .factory('SpotcheckMismatchIgnoreAPI', ['$resource', mismatchIgnoreApi])
         .factory('SpotcheckMismatchTrackingAPI', ['$resource', mismatchTrackingApi])
         .factory('SpotcheckMismatchDeleteAllAPI', ['$resource', mismatchDeleteAllApi])
-        .filter('contentType', contentTypefilter)
+        .filter('contentType', contentTypeLabelFilter)
         .filter('mismatchType', mismatchTypeFilter)
         .filter('dataSourceRef', dataSourceRefFilter)
         .filter('dataSourceData', dataSourceDataFilter)
@@ -67,17 +67,13 @@
 
     /* --- Filters --- */
 
-    function contentTypefilter() {
-        var contentTypeMap = {
-            LBDC_AGENDA_ALERT: "Agenda",
-            LBDC_DAYBREAK: "Bill",
-            LBDC_CALENDAR_ALERT: "Floor Cal",
-            LBDC_SCRAPED_BILL: "Bill",
-            SENATE_SITE_BILLS: "Bill",
-            SENATE_SITE_CALENDAR: "Calendar",
-            OPENLEG_BILL: "Bill",
-            OPENLEG_CAL: "Calendar",
-            OPENLEG_AGENDA: "Agenda"
+    function contentTypeLabelFilter() {
+        const contentTypeMap = {
+            AGENDA: "Agenda",
+            AGENDA_WEEK: "Agenda",
+            BILL: "Bill",
+            BILL_AMENDMENT: "Bill Amendment",
+            CALENDAR: "Calendar",
         };
         return function(reportType) {
             if (contentTypeMap.hasOwnProperty(reportType)) {
@@ -222,7 +218,9 @@
 
     var openlegLocalUrlFns = {
         'AGENDA': getLocalAgendaUrl,
+        'AGENDA_WEEK': getLocalAgendaUrl,
         'BILL': getLocalBillUrl,
+        'BILL_AMENDMENT': getLocalBillUrl,
         'CALENDAR': getLocalCalendarUrl
     };
 
@@ -232,7 +230,7 @@
 
     var senateSiteUrlFns = {
         AGENDA: getSenSiteAgendaUrl,
-        BILL: getSenSiteBillUrl,
+        BILL_AMENDMENT: getSenSiteBillUrl,
         CALENDAR: getSenSiteCalendarUrl
     };
 
@@ -343,4 +341,5 @@
         }
         return "";
     }
+
 })();
