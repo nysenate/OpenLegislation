@@ -30,3 +30,4 @@
   </md-card>
 </section>
 <jsp:include page="spotcheck-detail-window.jsp"/>
+

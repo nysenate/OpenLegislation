@@ -48,6 +48,8 @@ public class SpotCheckObservation<ContentKey>
         this.observedDateTime = LocalDateTime.now();
     }
 
+    /* --- Methods --- */
+
     /**
      * Generates an observation with a reference data missing observation
      * @param referenceId {@link SpotCheckReferenceId}

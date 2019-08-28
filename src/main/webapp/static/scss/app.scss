@@ -1692,27 +1692,22 @@ md-dialog.issuedialog {
 }
 
 .spotcheck-col-state {
-  @extend .spotcheck-table-column;
   flex-basis: 10%;
 }
 
 .spotcheck-col-bill-id {
-  @extend .spotcheck-table-column;
   flex-basis: 15%;
 }
 
 .spotcheck-col-type {
-  @extend .spotcheck-table-column;
   flex-basis: 15%;
 }
 
 .spotcheck-col-date {
-  @extend .spotcheck-table-column;
   flex-basis: 15%;
 }
 
 .spotcheck-col-issue {
-  @extend .spotcheck-table-column;
   flex-basis: 10%;
 
   md-input-container {
@@ -1722,38 +1717,39 @@ md-dialog.issuedialog {
 }
 
 .spotcheck-col-source {
-  @extend .spotcheck-table-column;
   flex-basis: 10%;
 }
 
 .spotcheck-col-cal-state {
-  @extend .spotcheck-table-column;
   flex-basis: 5%;
 }
 
 .spotcheck-col-cal-no {
-  @extend .spotcheck-table-column;
   flex-basis: 5%;
 }
 
 .spotcheck-col-cal-type {
-  @extend .spotcheck-table-column;
   flex-basis: 10%;
 }
 
 .spotcheck-col-agenda-obs-date {
-  @extend .spotcheck-table-column;
   flex-basis: 10%;
 }
 
 .spotcheck-col-agenda-week-of {
-  @extend .spotcheck-table-column;
   flex-basis: 10%;
 }
 
 .spotcheck-col-agenda-comm {
-  @extend .spotcheck-table-column;
   flex-basis: 15%;
+}
+
+.spotcheck-col-law-chapter {
+  flex-basis: 8%;
+}
+
+.spotcheck-col-law-loc-id {
+  flex-basis: 10%;
 }
 
 .spotcheck-table-buttons {

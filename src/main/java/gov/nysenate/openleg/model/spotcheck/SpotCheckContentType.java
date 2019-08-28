@@ -4,6 +4,7 @@ import gov.nysenate.openleg.model.agenda.CommitteeAgendaAddendumId;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
+import gov.nysenate.openleg.model.law.LawSpotCheckId;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaMeetingWeekId;
 
 public enum SpotCheckContentType {
@@ -12,7 +13,8 @@ public enum SpotCheckContentType {
     AGENDA_WEEK(AgendaMeetingWeekId.class),
     BILL(BaseBillId.class),
     BILL_AMENDMENT(BillId.class),
-    CALENDAR(CalendarEntryListId.class)
+    CALENDAR(CalendarEntryListId.class),
+    LAW(LawSpotCheckId.class),
     ;
 
     private Class contentKeyClass;

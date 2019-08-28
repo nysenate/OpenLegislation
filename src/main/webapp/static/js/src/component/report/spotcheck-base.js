@@ -74,6 +74,7 @@
             BILL: "Bill",
             BILL_AMENDMENT: "Bill Amendment",
             CALENDAR: "Calendar",
+            LAW: "Law",
         };
         return function(reportType) {
             if (contentTypeMap.hasOwnProperty(reportType)) {
@@ -221,7 +222,8 @@
         'AGENDA_WEEK': getLocalAgendaUrl,
         'BILL': getLocalBillUrl,
         'BILL_AMENDMENT': getLocalBillUrl,
-        'CALENDAR': getLocalCalendarUrl
+        'CALENDAR': getLocalCalendarUrl,
+        'LAW': getOpenlegLawUrl
     };
 
     var lbdcUrlFns = {
@@ -231,7 +233,8 @@
     var senateSiteUrlFns = {
         AGENDA: getSenSiteAgendaUrl,
         BILL_AMENDMENT: getSenSiteBillUrl,
-        CALENDAR: getSenSiteCalendarUrl
+        CALENDAR: getSenSiteCalendarUrl,
+        LAW: getSenSiteLawUrl
     };
 
     var openlegRefUrlFns = {
@@ -239,6 +242,18 @@
         BILL: getOpenlegRefBillUrl,
         CALENDAR: getOpenlegRefCalendarUrl
     };
+
+    function getOpenlegLawUrl(key) {
+        var url = ctxPath + "/laws";
+        var obsType = key.obsType;
+        if (obsType === 'TREE' || obsType === 'DOCUMENT') {
+            url += "/" + key.lawChapter;
+            if (obsType === 'DOCUMENT') {
+                url += "?location=" + key.locationId;
+            }
+        }
+        return url;
+    }
 
     function getLocalAgendaUrl(key) {
         var url = ctxPath + "/agendas/";
@@ -308,6 +323,20 @@
         // TODO Need session date time to create link.
         // Example: https://www.nysenate.gov/calendar/sessions/june-05-2017/session-6-5-17
         return null;
+    }
+
+    function getSenSiteLawUrl(key) {
+        var url = senSitePath + "/legislation/laws";;
+        var obsType = key.obsType;
+        if (obsType === 'TREE' || obsType === 'DOCUMENT') {
+            url += "/" + key.lawChapter;
+            if (obsType === 'DOCUMENT') {
+                url += "/" + key.locationId;
+            }
+        } else {
+            url += "/all";
+        }
+        return url;
     }
 
     function getOpenlegRefBillUrl(key) {

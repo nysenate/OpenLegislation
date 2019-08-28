@@ -34,11 +34,13 @@ public enum SpotCheckRefType
 
     SENATE_SITE_AGENDA("senate-site-agenda", "Nysenate.gov Agenda", NYSENATE, AGENDA, SENSITE_AGENDA_SPOTCHECK),
 
+    SENATE_SITE_LAW("senate-site-law", "NYSenate.gov Law", NYSENATE, LAW, SENSITE_LAW_SPOTCHECK),
+
     OPENLEG_BILL ("openleg-bill", "Openleg Bill", OPENLEG, BILL,OPENLEG_SPOTCHECK),
 
     OPENLEG_CAL ("openleg-cal", "Openleg Cal", OPENLEG, CALENDAR ,OPENLEG_SPOTCHECK),
 
-    OPENLEG_AGENDA ("openleg-agenda", "Openleg Agenda", OPENLEG, AGENDA ,OPENLEG_SPOTCHECK)
+    OPENLEG_AGENDA ("openleg-agenda", "Openleg Agenda", OPENLEG, AGENDA ,OPENLEG_SPOTCHECK),
     ;
 
     private String refName;

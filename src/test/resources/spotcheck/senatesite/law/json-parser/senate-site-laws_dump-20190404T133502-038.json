@@ -1,0 +1,2531 @@
+{
+    "contentType": "law",
+    "refDateTime": "2019-04-04T13:39:53",
+    "year": 2019,
+    "part": 38,
+    "totalParts": 134,
+    "nodes": {
+        "6611444": {
+            "vid": "6615649",
+            "uid": "0",
+            "title": "Statute of Local Governments",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "de56245a-ef6c-42ce-9789-1fc6c36c907c",
+            "ds_switch": "",
+            "nid": "6611444",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "5a0a7b06-a921-43d1-b856-7696117ccd32",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "CHAPTER",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "-CH58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/TAX",
+                        "title": "Tax",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_parentlocationids": [],
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/STT",
+                        "title": "State Technology",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "                  CHAPTER 58-A OF THE CONSOLIDATED LAWS\\n                      STATUTE OF LOCAL GOVERNMENTS\\n  Article 1. Short title; legislative intent; definitions.\\n          2. Grants of powers to local governments.\\n          3. Construction; effective date.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "21",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611445": {
+            "vid": "6615650",
+            "uid": "0",
+            "title": "Short Title; Legislative Intent; Definitions",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "27097133-fbb8-4865-b278-e87d926f3f54",
+            "ds_switch": "",
+            "nid": "6611445",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "fcede729-98d2-483e-aa3f-cc13335b62d8",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "ARTICLE",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "A1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/A2",
+                        "title": "<span class=\"nav-label\">ARTICLE 2<\/span><span class=\"nav-body\">Grants of Powers To Local Governments<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_parentlocationids": [],
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": [],
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "                                ARTICLE 1\\n              SHORT TITLE; LEGISLATIVE INTENT; DEFINITIONS\\nSection 1. Short title.\\n        2. Legislative intent.\\n        3. Definitions.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611446": {
+            "vid": "6615651",
+            "uid": "0",
+            "title": "Short title",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "d3c7a786-fdda-4e83-8b86-4220c9a3597d",
+            "ds_switch": "",
+            "nid": "6611446",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "1d88dcb3-fdd0-4a73-ac6b-be6d3c21fb71",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "SECTION",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/2",
+                        "title": "<span class=\"nav-label\">SECTION 2<\/span><span class=\"nav-body\">Legislative intent<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_parentlocationids": {
+                "und": [
+                    {
+                        "value": "",
+                        "format": null,
+                        "safe_value": null
+                    },
+                    {
+                        "value": "",
+                        "format": "",
+                        "safe_value": ""
+                    },
+                    {
+                        "value": "-CH58-A",
+                        "format": "",
+                        "safe_value": "-CH58-A"
+                    },
+                    {
+                        "value": "A1",
+                        "format": "",
+                        "safe_value": "A1"
+                    }
+                ]
+            },
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": [],
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "  § 1. Short title. This chapter shall be known, cited and referred to\\nas the \"statute of local governments.\"\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611447": {
+            "vid": "6615652",
+            "uid": "0",
+            "title": "Legislative intent",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "81abfeca-50e6-4055-a113-c36d7770e9b2",
+            "ds_switch": "",
+            "nid": "6611447",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "2352feda-223e-4bea-bdb0-59cb1a0d0db5",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "SECTION",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/3",
+                        "title": "<span class=\"nav-label\">SECTION 3<\/span><span class=\"nav-body\">Definitions<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_parentlocationids": {
+                "und": [
+                    {
+                        "value": "",
+                        "format": null,
+                        "safe_value": null
+                    },
+                    {
+                        "value": "",
+                        "format": "",
+                        "safe_value": ""
+                    },
+                    {
+                        "value": "-CH58-A",
+                        "format": "",
+                        "safe_value": "-CH58-A"
+                    },
+                    {
+                        "value": "A1",
+                        "format": "",
+                        "safe_value": "A1"
+                    }
+                ]
+            },
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/1",
+                        "title": "<span class=\"nav-label\">SECTION 1<\/span><span class=\"nav-body\">Short title<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "4",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "  § 2. Legislative intent. In providing for effective local\\nself-government and intergovernmental cooperation which the bill of\\nrights for local governments in article nine of the constitution\\ndeclares to be purposes of the people of the state of New York, it is\\nthe intention of the legislature by the enactment of this chapter to\\nprovide a statute of local governments and to grant powers therein to\\nlocal governments pursuant to paragraph one of subdivision (b) of\\nsection two of article nine of the constitution. Powers granted to local\\ngovernments in this statute of local governments may be repealed,\\ndiminished, impaired or suspended only by the enactment of a statute by\\nthe legislature with the approval of the governor at its regular session\\nin one calendar year and the re-enactment and approval of such statute\\nin the following calendar year.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611448": {
+            "vid": "6615653",
+            "uid": "0",
+            "title": "Definitions",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "0e359d16-219e-4763-a6b2-38aacc72ffa9",
+            "ds_switch": "",
+            "nid": "6611448",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "1cff9d91-58fb-4b98-bdbb-00cabe392899",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "SECTION",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": [],
+            "field_parentlocationids": {
+                "und": [
+                    {
+                        "value": "",
+                        "format": null,
+                        "safe_value": null
+                    },
+                    {
+                        "value": "",
+                        "format": "",
+                        "safe_value": ""
+                    },
+                    {
+                        "value": "-CH58-A",
+                        "format": "",
+                        "safe_value": "-CH58-A"
+                    },
+                    {
+                        "value": "A1",
+                        "format": "",
+                        "safe_value": "A1"
+                    }
+                ]
+            },
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A1",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/2",
+                        "title": "<span class=\"nav-label\">SECTION 2<\/span><span class=\"nav-body\">Legislative intent<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "5",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "  § 3. Definitions. As used in this chapter the following terms shall\\nmean or include:\\n  1. \"Chief executive officer.\" The elective or appointive chief\\nexecutive officer, if there be one, or otherwise the chairman of the\\nboard of supervisors, in the case of a county, the mayor in the case of\\na city or village or the supervisor in the case of a town.\\n  2. \"Local government.\" A county, city, town or village.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611449": {
+            "vid": "6615654",
+            "uid": "0",
+            "title": "Grants of Powers To Local Governments",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "52c49b71-e3ca-4c94-9f50-46077738d3f3",
+            "ds_switch": "",
+            "nid": "6611449",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "5c15583f-710a-4b19-9c66-e96c7b8a6a0e",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "ARTICLE",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "10",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "A2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/A3",
+                        "title": "<span class=\"nav-label\">ARTICLE 3<\/span><span class=\"nav-body\">Construction; Effective Date<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_parentlocationids": [],
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/A1",
+                        "title": "<span class=\"nav-label\">ARTICLE 1<\/span><span class=\"nav-body\">Short Title; Legislative Intent; Definitions<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "6",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "                                ARTICLE 2\\n                  GRANTS OF POWERS TO LOCAL GOVERNMENTS\\nSection 10. Grants of powers to local governments.\\n        11. Reservation of power by legislature.\\n        12. Effective date provisions of bills requiring re-enactment\\n              and approval.\\n        13. Publication of statutes requiring re-enactment and approval.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "13",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611450": {
+            "vid": "6615655",
+            "uid": "0",
+            "title": "Grants of powers to local governments",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "1e00e6af-5d9a-400f-9b8b-366b6752149b",
+            "ds_switch": "",
+            "nid": "6611450",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "a05f3a27-e550-4860-bf0d-0d8d5d9a5ed1",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "10",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "SECTION",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "10",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "10",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/11",
+                        "title": "<span class=\"nav-label\">SECTION 11<\/span><span class=\"nav-body\">Reservation of power by legislature<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_parentlocationids": {
+                "und": [
+                    {
+                        "value": "",
+                        "format": null,
+                        "safe_value": null
+                    },
+                    {
+                        "value": "",
+                        "format": "",
+                        "safe_value": ""
+                    },
+                    {
+                        "value": "-CH58-A",
+                        "format": "",
+                        "safe_value": "-CH58-A"
+                    },
+                    {
+                        "value": "A2",
+                        "format": "",
+                        "safe_value": "A2"
+                    }
+                ]
+            },
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": [],
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "7",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/10",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "  § 10. Grants of powers to local governments. Except as otherwise\\nspecifically provided in this section, each of the following powers,\\nwhich shall include but not be limited to those of local legislation and\\nadministration, is hereby granted to each local government which shall\\nat all times be subject to such purposes, standards and procedures as\\nthe legislature may have heretofore prescribed or may hereafter\\nprescribe:\\n  1. The power to adopt, amend and repeal ordinances, resolutions and\\nrules and regulations in the exercise of its functions, powers and\\nduties.\\n  2. The power to acquire real and personal property or any interest\\ntherein for its purposes, and to construct, reconstruct, equip,\\nmaintain, repair and operate the same for such purposes.\\n  3. The power to acquire, establish, construct, reconstruct, equip,\\nmaintain, repair and operate recreational facilities on park or other\\nlands, including but not limited to self-supporting, self-sustaining or\\nrevenue-producing recreational facilities.\\n  4. The power to dispose of its real or personal property or any\\ninterest therein when no longer required for its purposes, except that\\nthis power shall not be applicable to inalienable real or personal\\nproperty or any inalienable interest therein.\\n  5. The power to fix, levy, impose, collect and administer rents,\\ncharges, rates and fees, penalties and rates of interest thereon, liens\\non local property in connection therewith and charges thereon.\\n  6. In the case of a city, village, or town with respect to the area\\nthereof outside the village or villages therein, the power to adopt,\\namend and repeal zoning regulations.\\n  7. The power to perform comprehensive or other planning work relating\\nto its jurisdiction.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "10",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611451": {
+            "vid": "6615656",
+            "uid": "0",
+            "title": "Reservation of power by legislature",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "d992808e-2946-4c88-9312-fc3e1009b050",
+            "ds_switch": "",
+            "nid": "6611451",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "b16d7d8d-c5e3-4def-a04b-475f50d23fcf",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "11",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "SECTION",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "11",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "11",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/12",
+                        "title": "<span class=\"nav-label\">SECTION 12<\/span><span class=\"nav-body\">Effective date provisions of bills requiring re-enactment and approval<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_parentlocationids": {
+                "und": [
+                    {
+                        "value": "",
+                        "format": null,
+                        "safe_value": null
+                    },
+                    {
+                        "value": "",
+                        "format": "",
+                        "safe_value": ""
+                    },
+                    {
+                        "value": "-CH58-A",
+                        "format": "",
+                        "safe_value": "-CH58-A"
+                    },
+                    {
+                        "value": "A2",
+                        "format": "",
+                        "safe_value": "A2"
+                    }
+                ]
+            },
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/10",
+                        "title": "<span class=\"nav-label\">SECTION 10<\/span><span class=\"nav-body\">Grants of powers to local governments<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "8",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/11",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "  § 11. Reservation of power by legislature. The legislature hereby\\nexcludes from the scope of the grants of powers to local governments in\\nthis statute and reserves to itself the right and power to enact any law\\ndescribed in this section notwithstanding the fact that it repeals,\\ndiminishes, impairs or suspends a power granted to one or more local\\ngovernments in this statute:\\n  1. Any law relating to the defense or protection of the state or to\\nthe continuity of state or local governmental operations during periods\\nof emergency caused by enemy attack, actual or imminent, or by disaster.\\n  2. Any law enacted as provided by paragraph two of subdivision (b) of\\nsection two of article nine of the constitution on request of the\\nlegislative body of each affected local government, on request of the\\nchief executive officer of each affected local government concurred in\\nby its legislative body or, except in the case of the city of New York,\\non certificate of necessity from the governor.\\n  3. Any law amending an alternative form of county government which is\\nsubject to referendum pursuant to paragraph one or paragraph two of\\nsubdivision (h) of section one of article nine of the constitution.\\n  4. Any law relating to a matter other than the property, affairs or\\ngovernment of a local government.\\n  5. Any law authorizing the voluntary transfer of a power by a local\\ngovernment to another local government or other governmental agency.\\n  6. Any law authorizing the voluntary exercise of a power by a local\\ngovernment in cooperation with another local government or other\\ngovernmental agency.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "11",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611452": {
+            "vid": "6615657",
+            "uid": "0",
+            "title": "Effective date provisions of bills requiring re-enactment and approval",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "80494190-d03a-4ede-baf1-bcb06868f056",
+            "ds_switch": "",
+            "nid": "6611452",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "4a54adb3-abc9-4f2d-89b5-f25d98fcb55a",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "12",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "SECTION",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "12",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "12",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/13",
+                        "title": "<span class=\"nav-label\">SECTION 13<\/span><span class=\"nav-body\">Publication of statutes requiring re-enactment and approval<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_parentlocationids": {
+                "und": [
+                    {
+                        "value": "",
+                        "format": null,
+                        "safe_value": null
+                    },
+                    {
+                        "value": "",
+                        "format": "",
+                        "safe_value": ""
+                    },
+                    {
+                        "value": "-CH58-A",
+                        "format": "",
+                        "safe_value": "-CH58-A"
+                    },
+                    {
+                        "value": "A2",
+                        "format": "",
+                        "safe_value": "A2"
+                    }
+                ]
+            },
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/11",
+                        "title": "<span class=\"nav-label\">SECTION 11<\/span><span class=\"nav-body\">Reservation of power by legislature<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "9",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/12",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "  § 12. Effective date provisions of bills requiring re-enactment and\\napproval. 1. Where a bill introduced in the legislature would have the\\neffect of repealing, diminishing, impairing or suspending a power\\ngranted by this statute of local governments and thus would be\\nineffective unless re-enacted and approved in the following calendar\\nyear as provided by paragraph one of subdivision (b) of section two of\\narticle nine of the constitution, the effective date provision thereof\\nshall read substantially as follows: \"This act shall take effect\\n(specify effective date in event of re-enactment by legislature and\\napproval by governor in next calendar year), provided that it is\\napproved by the governor in accordance with paragraph one of subdivision\\n(b) of section two of article nine of the constitution and provided that\\nit is re-enacted by the legislature and approved by the governor in the\\nnext calendar year in accordance with such paragraph.\"\\n  2. Where a statute enacted in one year is introduced in the\\nlegislature in the next calendar year for re-enactment by the\\nlegislature and approval thereafter by the governor in accordance with\\nparagraph one of subdivision (b) of section two of article nine of the\\nconstitution, the effective date provision thereof shall refer to the\\nenactment in the previous year and shall, in addition, provide\\nsubstantially as follows:  \"This act shall take effect (set forth the\\neffective date), provided that it is approved by the governor in\\naccordance with paragraph one of subdivision (b) of section two of\\narticle nine of the constitution.\"\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "12",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611453": {
+            "vid": "6615658",
+            "uid": "0",
+            "title": "Publication of statutes requiring re-enactment and approval",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "e9908b00-360b-4518-8b26-8d47a229b979",
+            "ds_switch": "",
+            "nid": "6611453",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "de9fa0d9-5c81-45ab-a85d-01258a066da6",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "13",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "SECTION",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "13",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "13",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": [],
+            "field_parentlocationids": {
+                "und": [
+                    {
+                        "value": "",
+                        "format": null,
+                        "safe_value": null
+                    },
+                    {
+                        "value": "",
+                        "format": "",
+                        "safe_value": ""
+                    },
+                    {
+                        "value": "-CH58-A",
+                        "format": "",
+                        "safe_value": "-CH58-A"
+                    },
+                    {
+                        "value": "A2",
+                        "format": "",
+                        "safe_value": "A2"
+                    }
+                ]
+            },
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A2",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/12",
+                        "title": "<span class=\"nav-label\">SECTION 12<\/span><span class=\"nav-body\">Effective date provisions of bills requiring re-enactment and approval<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "10",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/13",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "  § 13. Publication of statutes requiring re-enactment and approval.\\nWhenever the governor shall approve a statute enacted in accordance with\\nsubdivision one of section twelve of this chapter it shall be deposited\\nwith the secretary of state in accordance with section forty-two of the\\nlegislative law and shall be published and indexed in a separate part of\\nthe printed volume of the session laws for such year in the same manner\\nas a concurrent resolution of the legislature proposing an amendment to\\nthe constitution.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "13",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611454": {
+            "vid": "6615659",
+            "uid": "0",
+            "title": "Construction; Effective Date",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "a7d1053f-3e3c-48cf-8b69-ade6a5d1aaf5",
+            "ds_switch": "",
+            "nid": "6611454",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "7b2e5df7-6b59-4704-a5ac-e1b759249143",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "ARTICLE",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "20",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "A3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": [],
+            "field_parentlocationids": [],
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/A2",
+                        "title": "<span class=\"nav-label\">ARTICLE 2<\/span><span class=\"nav-body\">Grants of Powers To Local Governments<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "11",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "                                ARTICLE 3\\n                      CONSTRUCTION; EFFECTIVE DATE\\nSection 20. Construction.\\n        21. Time of taking effect; reservation of power to amend.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "21",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611455": {
+            "vid": "6615660",
+            "uid": "0",
+            "title": "Construction",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "dbbdf843-a886-4d8e-946b-6a691f34f446",
+            "ds_switch": "",
+            "nid": "6611455",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "445b0beb-6c3d-48b0-8468-e10bcb3e2a70",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "20",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "SECTION",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "20",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "20",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/21",
+                        "title": "<span class=\"nav-label\">SECTION 21<\/span><span class=\"nav-body\">Time of taking effect; reservation of power to amend<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_parentlocationids": {
+                "und": [
+                    {
+                        "value": "",
+                        "format": null,
+                        "safe_value": null
+                    },
+                    {
+                        "value": "",
+                        "format": "",
+                        "safe_value": ""
+                    },
+                    {
+                        "value": "-CH58-A",
+                        "format": "",
+                        "safe_value": "-CH58-A"
+                    },
+                    {
+                        "value": "A3",
+                        "format": "",
+                        "safe_value": "A3"
+                    }
+                ]
+            },
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": [],
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "12",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/20",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "  § 20. Construction. 1. Where a power granted by this statute relates\\nto the property, affairs or government of a local government, its\\ninclusion herein shall not be deemed to imply that the legislature has\\nconstrued such power as not relating to the property, affairs or\\ngovernment of such local government or as restricting the powers of such\\nlocal government in relation to its property, affairs or government to\\nthose powers included herein.\\n  2. Nothing in this statute shall operate to restrict the meaning of or\\ndiminish or impair any power granted to a local government by the\\nconstitution or by any other law; nor shall the failure to include a\\npower of a local government in this statute operate to restrict the\\nmeaning of or diminish or impair such power.\\n  3. No power granted in this statute shall be deemed repealed,\\ndiminished, impaired or suspended by the enactment of any subsequent act\\nof the legislature, unless such act shall be enacted and re-enacted as\\nprescribed in paragraph one of subdivision (b) of section two of article\\nnine of the constitution and section twelve of this statute and unless\\nsuch act shall contain a specific reference to this statute.\\n  4. If any clause, sentence, paragraph, section or part of this statute\\nshall be adjudged by any court of competent jurisdiction to be invalid,\\nsuch judgment shall not affect, impair or invalidate the remainder\\nthereof, but shall be confined in its operation to the clause, sentence,\\nparagraph, section or part thereof directly involved in the controversy\\nin which such judgment shall have been rendered.\\n  5. Powers granted to local governments by this statute shall be\\nliberally construed.\\n  6. This chapter shall not affect or impair section sixteen hundred\\nseven of chapter eight hundred seventy-nine of the laws of nineteen\\nhundred thirty-six.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "20",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        },
+        "6611456": {
+            "vid": "6615661",
+            "uid": "0",
+            "title": "Time of taking effect; reservation of power to amend",
+            "log": "",
+            "status": "1",
+            "comment": "0",
+            "promote": "0",
+            "sticky": "0",
+            "vuuid": "5ea8a9a9-d755-4e41-b19c-82aca16e8052",
+            "ds_switch": "",
+            "nid": "6611456",
+            "type": "statute",
+            "language": "und",
+            "created": "1524345617",
+            "changed": "1524345617",
+            "tnid": "0",
+            "translate": "0",
+            "uuid": "1c5ba36c-96df-4c0e-bbc3-757a91a2858a",
+            "revision_timestamp": "1524345617",
+            "revision_uid": "0",
+            "field_activedate": {
+                "und": [
+                    {
+                        "value": "1411358400",
+                        "timezone": "America\/New_York",
+                        "timezone_db": "UTC",
+                        "date_type": "datestamp"
+                    }
+                ]
+            },
+            "field_chapter": {
+                "und": [
+                    {
+                        "value": "58-A",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doclevelid": {
+                "und": [
+                    {
+                        "value": "21",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_doctype": {
+                "und": [
+                    {
+                        "value": "SECTION",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_fromsection": {
+                "und": [
+                    {
+                        "value": "21",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawid": {
+                "und": [
+                    {
+                        "value": "SLG",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawname": {
+                "und": [
+                    {
+                        "value": "Statute of Local Governments",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_lawtype": {
+                "und": [
+                    {
+                        "value": "CONSOLIDATED",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_locationid": {
+                "und": [
+                    {
+                        "value": "21",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_nextsibling": [],
+            "field_parentlocationids": {
+                "und": [
+                    {
+                        "value": "",
+                        "format": null,
+                        "safe_value": null
+                    },
+                    {
+                        "value": "",
+                        "format": "",
+                        "safe_value": ""
+                    },
+                    {
+                        "value": "-CH58-A",
+                        "format": "",
+                        "safe_value": "-CH58-A"
+                    },
+                    {
+                        "value": "A3",
+                        "format": "",
+                        "safe_value": "A3"
+                    }
+                ]
+            },
+            "field_parentstatuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/A3",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_prevsibling": {
+                "und": [
+                    {
+                        "url": "\/legislation\/laws\/SLG\/20",
+                        "title": "<span class=\"nav-label\">SECTION 20<\/span><span class=\"nav-body\">Construction<\/span>",
+                        "attributes": []
+                    }
+                ]
+            },
+            "field_repealed": {
+                "und": [
+                    {
+                        "value": "0"
+                    }
+                ]
+            },
+            "field_repealeddate": [],
+            "field_sequenceno": {
+                "und": [
+                    {
+                        "value": "13",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_statuteid": {
+                "und": [
+                    {
+                        "value": "SLG\/21",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_text": {
+                "und": [
+                    {
+                        "value": "  § 21. Time of taking effect; reservation of power to amend. 1.  This\\nstatute shall take effect July first, nineteen hundred sixty-five.\\n  2. This statute is hereby enacted subject to the reservation that it\\nor any part thereof shall be subject to amendment or revision prior to\\nits effective date notwithstanding the fact that such amendment or\\nrevision repeals, diminishes, impairs or suspends a power granted herein\\nto one or more local governments.\\n",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "field_tosection": {
+                "und": [
+                    {
+                        "value": "21",
+                        "format": null,
+                        "safe_value": null
+                    }
+                ]
+            },
+            "disqus": {
+                "status": false,
+                "identifier": "-"
+            },
+            "name": "",
+            "picture": "0",
+            "data": null
+        }
+    }
+}

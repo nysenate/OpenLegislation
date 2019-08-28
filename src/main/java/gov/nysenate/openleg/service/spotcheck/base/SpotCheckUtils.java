@@ -66,9 +66,24 @@ public class SpotCheckUtils {
     }
 
     /**
-     * Check two objects by converting them into strings.
+     * Check two objects by converting them into strings with the given function.
      *
      * @see #checkString(String, String, SpotCheckObservation, SpotCheckMismatchType)
+     * @param content T
+     * @param reference T
+     * @param toStringFn Function<T, String> function to convert given objects to string for checking
+     * @param observation {@link SpotCheckObservation}
+     * @param mismatchType {@link SpotCheckMismatchType}
+     */
+    public <T> void checkObject(T content, T reference, Function<T, String> toStringFn,
+                                SpotCheckObservation observation, SpotCheckMismatchType mismatchType) {
+        checkString(toStringFn.apply(content), toStringFn.apply(reference), observation, mismatchType);
+    }
+
+    /**
+     * Check two objects by converting them into strings using their toString implementations.
+     *
+     * @see #checkObject(Object, Object, Function, SpotCheckObservation, SpotCheckMismatchType)
      * @param content Object
      * @param reference Object
      * @param observation {@link SpotCheckObservation}
@@ -76,7 +91,7 @@ public class SpotCheckUtils {
      */
     public void checkObject(Object content, Object reference,
                                SpotCheckObservation observation, SpotCheckMismatchType mismatchType) {
-        checkString(Objects.toString(content), Objects.toString(reference), observation, mismatchType);
+        checkObject(content, reference, Objects::toString, observation, mismatchType);
     }
 
     /**

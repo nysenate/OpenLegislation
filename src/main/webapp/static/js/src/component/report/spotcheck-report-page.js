@@ -114,6 +114,21 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
         }
     ];
 
+    const lawCols = [
+        {
+            name: "Chapter",
+            orderId: "LAW_CHAPTER",
+            field: "lawChapter",
+            class: "spotcheck-col-law-chapter"
+        },
+        {
+            name: "Loc. Id",
+            orderId: "LAW_LOC_ID",
+            field: "locationId",
+            class: "spotcheck-col-law-loc-id"
+        }
+    ];
+
     /**
      * The type-specific columns used for all types by default for all data sources
      */
@@ -122,7 +137,8 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
         BILL_AMENDMENT: printNoCols,
         CALENDAR: calCols,
         AGENDA: agendaNumCols,
-        AGENDA_WEEK: agendaWeekCols
+        AGENDA_WEEK: agendaWeekCols,
+        LAW: lawCols,
     };
 
     /**
@@ -134,7 +150,7 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     $scope.dataSourceContentTypeMap = {
         LBDC: ['BILL', 'CALENDAR', 'AGENDA_WEEK'],
-        NYSENATE: ['BILL_AMENDMENT', 'CALENDAR', 'AGENDA'],
+        NYSENATE: ['BILL_AMENDMENT', 'CALENDAR', 'AGENDA', 'LAW'],
         OPENLEG: ['BILL', 'CALENDAR', 'AGENDA'],
     };
 
@@ -181,6 +197,7 @@ function ReportCtrl($scope, $route, $location, $routeParams, $mdDialog, $mdDateL
 
     $scope.onDatasourceChange = function () {
         resetPagination();
+        $scope.selectedTab = 0;
         $scope.updateMismatchContentTypeSummary();
         $scope.updateMismatchStatusSummary();
         $scope.updateMismatchTypeSummary();
