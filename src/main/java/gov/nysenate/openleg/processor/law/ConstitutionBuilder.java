@@ -113,7 +113,7 @@ public class ConstitutionBuilder extends AbstractLawBuilder {
             titles.put("A" + i, articleTitle);
             LawDocInfo articleInfo = new LawDocInfo(CONS_STR + "A" + i,
                     CONS_STR, "A" + i, articleTitle, LawDocumentType.ARTICLE,
-                    articleMatch.group(1), rootDoc.getPublishedDate());
+                    articleMatch.group(1), rootDoc.getPublishedDate(), false);
             LawDocument currDoc = new LawDocument(articleInfo,
                     LawDocumentType.ARTICLE.name() + " " + articles[i]);
             Optional<LawDocInfo> oldArticle = rootNode.find(currDoc.getDocumentId());

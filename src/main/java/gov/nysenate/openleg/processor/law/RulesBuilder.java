@@ -15,11 +15,11 @@ public class RulesBuilder extends IdBasedLawBuilder {
     }
 
     @Override
-    public void addInitialBlock(LawBlock block, boolean isNewDoc) {
+    public void addInitialBlock(LawBlock block, boolean isNewDoc, LawTreeNode priorRoot) {
         if (rootNode == null)
-            processRules(block, isNewDoc);
+            processRules(block, isNewDoc, priorRoot);
         else
-            super.addInitialBlock(block, isNewDoc);
+            super.addInitialBlock(block, isNewDoc, priorRoot);
     }
 
     @Override
@@ -31,10 +31,11 @@ public class RulesBuilder extends IdBasedLawBuilder {
      * Basically creates divisions in the Rules document to process properly.
      * @param block of rules.
      * @param isNewDoc used in calls to superclass.
+     * @param priorRoot
      */
-    private void processRules(LawBlock block, boolean isNewDoc) {
+    private void processRules(LawBlock block, boolean isNewDoc, LawTreeNode priorRoot) {
         // Process the Chapter alone.
-        super.addInitialBlock(block, isNewDoc);
+        super.addInitialBlock(block, isNewDoc, null);
         // Keep the first line of each Rule for later use.
         ArrayList<String> ruleStart = new ArrayList<>();
         ruleStart.add("No zeroth rule.");
@@ -58,14 +59,14 @@ public class RulesBuilder extends IdBasedLawBuilder {
             currRule.setDocumentId(block.getLawId() + ruleTypeAbbr + (i - lastRule));
             currRule.setLocationId(currRule.getDocumentId().substring(3));
             currRule.getText().append(sections[0]);
-            super.addInitialBlock(currRule, isNewDoc);
+            super.addInitialBlock(currRule, isNewDoc, priorRoot);
             // Create dummy Section documents for everything under this Rule.
             for (int j = 1; j < sections.length; j++) {
                 LawBlock currSection = new LawBlock(currRule, true);
                 currSection.getText().append(j == 1 ? "Section 1" : "§").append(sections[j]);
                 currSection.setLocationId(currRule.getLocationId() + "S" + j);
                 currSection.setDocumentId(currRule.getDocumentId() + "S" + j);
-                super.addInitialBlock(currSection, isNewDoc);
+                super.addInitialBlock(currSection, isNewDoc, priorRoot);
             }
         }
     }

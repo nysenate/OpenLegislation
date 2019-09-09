@@ -200,9 +200,16 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
      * Constructs LawDocInfo from result set.
      */
     protected static RowMapper<LawDocInfo> lawDocInfoRowMapper = (rs, rowNum) ->
-        new LawDocInfo(rs.getString("document_id"), rs.getString("law_id"), rs.getString("location_id"), rs.getString("title"),
-            LawDocumentType.valueOf(rs.getString("document_type")), rs.getString("document_type_id"),
-            getLocalDateFromRs(rs, "published_date"));
+        new LawDocInfo(
+                rs.getString("document_id"),
+                rs.getString("law_id"),
+                rs.getString("location_id"),
+                rs.getString("title"),
+                LawDocumentType.valueOf(rs.getString("document_type")),
+                rs.getString("document_type_id"),
+                getLocalDateFromRs(rs, "published_date"),
+                rs.getBoolean("dummy")
+        );
 
     /**
      * Constructs a LawInfo from the result set.
@@ -227,15 +234,16 @@ public class SqlLawDataDao extends SqlBaseDao implements LawDataDao
 
     protected MapSqlParameterSource getLawDocumentParams(LawFile lawFile, LawDocument lawDocument) {
         return new MapSqlParameterSource()
-            .addValue("documentId", lawDocument.getDocumentId())
-            .addValue("publishedDate", toDate(lawDocument.getPublishedDate()))
-            .addValue("documentType", lawDocument.getDocType().name())
-            .addValue("lawId", lawDocument.getLawId())
-            .addValue("locationId", lawDocument.getLocationId())
-            .addValue("documentTypeId", lawDocument.getDocTypeId())
-            .addValue("title", lawDocument.getTitle())
-            .addValue("text", lawDocument.getText())
-            .addValue("lawFileName", (lawFile != null) ? lawFile.getFileName() : null);
+                .addValue("documentId", lawDocument.getDocumentId())
+                .addValue("publishedDate", toDate(lawDocument.getPublishedDate()))
+                .addValue("documentType", lawDocument.getDocType().name())
+                .addValue("lawId", lawDocument.getLawId())
+                .addValue("locationId", lawDocument.getLocationId())
+                .addValue("documentTypeId", lawDocument.getDocTypeId())
+                .addValue("title", lawDocument.getTitle())
+                .addValue("text", lawDocument.getText())
+                .addValue("dummy", lawDocument.isDummy())
+                .addValue("lawFileName", (lawFile != null) ? lawFile.getFileName() : null);
     }
 
     protected MapSqlParameterSource getLawInfoParams(LawInfo lawInfo) {

@@ -27,13 +27,13 @@ public enum SqlLawDataQuery implements BasicSqlQuery
     ),
     INSERT_LAW_DOCUMENT(
         "INSERT INTO ${schema}." + SqlTable.LAW_DOCUMENT +
-        "(document_id, published_date, document_type, law_id, location_id, document_type_id, title, text, law_file_name)\n" +
-        "VALUES (:documentId, :publishedDate, :documentType, :lawId, :locationId, :documentTypeId, :title, :text, :lawFileName)"
+        "(document_id, published_date, document_type, law_id, location_id, document_type_id, title, text, dummy, law_file_name)\n" +
+        "VALUES (:documentId, :publishedDate, :documentType, :lawId, :locationId, :documentTypeId, :title, :text, :dummy, :lawFileName)"
     ),
     UPDATE_LAW_DOCUMENT(
         "UPDATE ${schema}." + SqlTable.LAW_DOCUMENT + "\n" +
         "SET document_type = :documentType, law_id = :lawId, location_id = :locationId, document_type_id = :documentTypeId,\n" +
-        "    title = :title, text = :text, law_file_name = :lawFileName\n" +
+        "    title = :title, text = :text, dummy = :dummy, law_file_name = :lawFileName\n" +
         "WHERE document_id = :documentId AND published_date = :publishedDate"
     ),
 
@@ -56,7 +56,7 @@ public enum SqlLawDataQuery implements BasicSqlQuery
         "    WHERE law_id = :lawId AND published_date <= :endPublishedDate" +
         ")\n" +
         "SELECT t.law_id, t.published_date AS tree_published_date, t.is_root, t.sequence_no, t.repealed_date, " +
-        "       d1.document_id, d1.published_date, d1.document_type, d1.location_id, d1.title, d1.document_type_id, " +
+        "       d1.document_id, d1.published_date, d1.document_type, d1.location_id, d1.title, d1.document_type_id, d1.dummy," +
         "       t.parent_doc_id\n" +
         "FROM max_date, ${schema}." + SqlTable.LAW_TREE + " t\n" +
         "LEFT JOIN ${schema}." + SqlTable.LAW_DOCUMENT + " d1 \n" +

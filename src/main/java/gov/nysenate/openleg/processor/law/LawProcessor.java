@@ -93,7 +93,7 @@ public class LawProcessor extends AbstractDataProcessor
                 unit.addMessage("Processing initial docs for " + block.getLawId());
             }
             // Process the initial block
-            lawBuilders.get(block.getLawId()).addInitialBlock(block, true);
+            lawBuilders.get(block.getLawId()).addInitialBlock(block, true, null);
         }
         // Persist the results
         persist(lawFile, lawBuilders);

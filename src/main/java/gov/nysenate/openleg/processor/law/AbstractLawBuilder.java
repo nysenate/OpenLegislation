@@ -130,7 +130,8 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /**
      * {@inheritDoc}
      */
-    public void addInitialBlock(LawBlock block, boolean isNewDoc) {
+    @Override
+    public void addInitialBlock(LawBlock block, boolean isNewDoc, LawTreeNode priorRoot) {
         final LawDocument lawDoc = new LawDocument(block);
         boolean isRootDoc = false;
 
@@ -148,7 +149,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
             }
             // Otherwise we have to create our own root node and process the current document as a child of it.
             else {
-                chapterDoc = createRootDocument(block);
+                chapterDoc = createRootDocument(block, priorRoot);
             }
             lawInfo = deriveLawInfo(chapterDoc.getLawId(), isRootDoc ? chapterDoc.getDocTypeId() : "");
             addRootDocument(chapterDoc, isNewDoc);
@@ -290,11 +291,10 @@ public abstract class AbstractLawBuilder implements LawBuilder
             if (isNewDoc)
                 logger.info("New document id found in master document: {}", resolvedDocId);
             block.setPublishedDate(publishedDate);
-            addInitialBlock(block, isNewDoc);
+            addInitialBlock(block, isNewDoc, priorRootNode);
             processed.add(resolvedDocId);
         }
     }
-
 
     /**
      * {@inheritDoc}
@@ -402,10 +402,17 @@ public abstract class AbstractLawBuilder implements LawBuilder
      * Create our own root law doc to serve as the root document in the event that we don't receive a top level doc
      * from the dumps. This is common for unconsolidated laws where they just start with the first section or article.
      *
+     * If the previous root exists and was a dummy parent, reuse it.
      * @param block LawBlock
      */
-    private LawDocument createRootDocument(LawBlock block) {
+    protected LawDocument createRootDocument(LawBlock block, LawTreeNode priorRoot) {
+        // Reuse the old root doc if it was a dummy
+        if (priorRoot != null && priorRoot.getLawDocInfo().isDummy()) {
+            return new LawDocument(priorRoot.getLawDocInfo(), "");
+        }
+
         LawDocument dummyParent = new LawDocument();
+        dummyParent.setDummy(true);
         dummyParent.setLawId(block.getLawId());
         dummyParent.setDocumentId(block.getLawId() + "-ROOT");
         dummyParent.setLocationId("-ROOT");
