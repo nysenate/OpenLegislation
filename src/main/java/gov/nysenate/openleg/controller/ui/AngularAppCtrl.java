@@ -88,6 +88,11 @@ public class AngularAppCtrl
         return "publichome";
     }
 
+    @RequestMapping("/subscriptions")
+    public String subscriptions() {
+        return "subscriptions";
+    }
+
     /* --- Internal Methods --- */
 
     private void setRequestAttributes(ServletRequest request) {

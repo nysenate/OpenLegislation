@@ -2,8 +2,10 @@ package gov.nysenate.openleg.service.auth;
 
 import com.google.common.collect.ImmutableSet;
 import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface ApiUserService
 {
@@ -14,9 +16,10 @@ public interface ApiUserService
      * @param email The user's submitted email address
      * @param name The entered name
      * @param orgName The entered name of the user's organization
+     * @param subscriptions The email subscriptions the user has signed up for
      * @return A new ApiUser object if the registration is successful
      */
-    public ApiUser registerNewUser(String email, String name, String orgName);
+    public ApiUser registerNewUser(String email, String name, String orgName, Set<ApiUserSubscriptionType> subscriptions);
 
     /**
      * Get an API User from a given email address
@@ -71,4 +74,25 @@ public interface ApiUserService
      * @param role String
      */
     public void revokeRole(String apiKey, OpenLegRole role);
+
+    /**
+     * Gets any e-mail subscriptions this api key is signed up for
+     * @param key String
+     * @return Set<ApiUserSubscriptionType> set of subscriptions
+     */
+    public ImmutableSet<ApiUserSubscriptionType> getSubscriptions(String key);
+
+    /**
+     * Adds an e-mail subscription to a user with the given api key
+     * @param apiKey String
+     * @param subscription ApiUserSubscriptionType
+     */
+    public void addSubscription(String apiKey, ApiUserSubscriptionType subscription);
+
+    /**
+     * Removes an e-mail subscription from the user with the given api key
+     * @param apiKey String
+     * @param subscription ApiUserSubscriptionType
+     */
+    public void removeSubscription(String apiKey, ApiUserSubscriptionType subscription);
 }
