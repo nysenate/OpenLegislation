@@ -23,11 +23,12 @@ public class LawTitleParserTest {
         lawInfo.setDocType(LawDocumentType.ARTICLE);
     }
 
-    private void assertTitle(String expectedTitle, String title, String docTypeID, String docID) {
+    private void assertTitle(String expectedTitle, String text, String docTypeID, String docID) {
         lawInfo.setDocTypeId(docTypeID);
         lawInfo.setDocumentId(docID);
-        assertEquals(expectedTitle, LawTitleParser.extractTitle(lawInfo, title));
+        assertEquals(expectedTitle, LawTitleParser.extractTitle(lawInfo, text));
     }
+
     @Test
     public void parsesArticleTitleEndingWithSection() {
         // BNKA14

@@ -82,25 +82,27 @@ public class LawTitleParser
         BAD_DATA.put(LawChapterCode.PBA.name() + "A10-DT2", null);
         BAD_DATA.put(LawChapterCode.TAX.name() + "171-L", "Certain overpayments credited against outstanding tax debt owed to the city of New York");
         BAD_DATA.put(LawChapterCode.TRA.name() + "14-L", "Airport improvement and revitalization");
-        BAD_DATA.put(LawChapterCode.PBG.name() + "A13T111", "Village of East Rochester Housing Authority");
         BAD_DATA.put(LawChapterCode.PAR.name() + "27.09", "Convictions; bail forfeitures; failure to appear");
         BAD_DATA.put(LawChapterCode.GMU.name() + "119-OOO", "Inclusion of Cornell University as a member of the governing body of an entity created by intermunicipal agreement to construct and operate water treatment plants and water distribution systems in or adjoining the county of Tompkins");
-        BAD_DATA.put(LawChapterCode.PAB.name() + "T1", "Private Activity Bond Allocation Act of 1990");
-        BAD_DATA.put(LawChapterCode.YTS.name() + "A9", "Income Tax Surcharge");
         BAD_DATA.put(LawChapterCode.CPL.name() + "340.40", "Modes of trial");
-        BAD_DATA.put(LawChapterCode.CPL.name() + "A530", "Orders of Recognizance or Bail With Respect to Defendants In Criminal Actions and Proceedings--When and By What Courts Authorized");
         BAD_DATA.put(LawChapterCode.ENV.name() + "71-1721", "Commissioner's enforcement power and duty");
-        BAD_DATA.put(LawChapterCode.PBG.name() + "445", "Plattsburgh Housing Authority");
         BAD_DATA.put(LawChapterCode.PBH.name() + "265-F", "Severability");
         BAD_DATA.put(LawChapterCode.DEA.name() + "A1-A", NO_TITLE);
-        BAD_DATA.put(LawChapterCode.ENV.name() + "A27T29", "Mercury Thermostat Collection Act");
-        BAD_DATA.put(LawChapterCode.GCM.name() + "4-D", "Credit relating to the annual increase in certain payments to a landlord by a taxpayer relocating industrial and commercial employment opportunities");
         BAD_DATA.put(LawChapterCode.PBA.name() + "1621-B", "Definitions");
+        BAD_DATA.put(LawChapterCode.GCT.name() + "25-AP1-6", "City Personal Income Tax on Residents");
         // Problems in updates that are fixed later.
         BAD_DATA.put(LawChapterCode.GBS.name() + "380-V", "Severability");
         BAD_DATA.put(LawChapterCode.VAT.name() + "385", "Dimensions and weights of vehicles");
         BAD_DATA.put(LawChapterCode.GBS.name() + "1600", "Laws repealed");
         BAD_DATA.put(LawChapterCode.GBS.name() + "1601", "When to take effect");
+        // These titles are correct in their most recent versions
+        BAD_DATA.put(LawChapterCode.PBG.name() + "A13T111", "Village of East Rochester Housing Authority");
+        BAD_DATA.put(LawChapterCode.PAB.name() + "T1", "Private Activity Bond Allocation Act of 1990");
+        BAD_DATA.put(LawChapterCode.YTS.name() + "A9", "Income Tax Surcharge");
+        BAD_DATA.put(LawChapterCode.CPL.name() + "A530", "Orders of Recognizance or Bail With Respect to Defendants In Criminal Actions and Proceedings--When and By What Courts Authorized");
+        BAD_DATA.put(LawChapterCode.PBG.name() + "445", "Plattsburgh Housing Authority");
+        BAD_DATA.put(LawChapterCode.ENV.name() + "A27T29", "Mercury Thermostat Collection Act");
+        BAD_DATA.put(LawChapterCode.GCM.name() + "4-D", "Credit relating to the annual increase in certain payments to a landlord by a taxpayer relocating industrial and commercial employment opportunities");
     }
 
     /** --- Methods --- */
@@ -110,8 +112,6 @@ public class LawTitleParser
         String checkData = BAD_DATA.getOrDefault(lawDocInfo.getDocumentId(), null);
         if (checkData != null)
             return checkData;
-        if (lawDocInfo.getDocumentId().equals(AbstractLawBuilder.CITY_TAX_STR + "P1-6"))
-            return "City Personal Income Tax on Residents";
         switch (lawDocInfo.getDocType()) {
             case CHAPTER:
                 return extractTitleFromChapter(lawDocInfo);
@@ -132,7 +132,7 @@ public class LawTitleParser
                 // Special list of notwithstanding clauses.
                 if (lawDocInfo.getDocumentId().equals(AbstractLawBuilder.ATTN))
                     return "ATTENTION";
-            }
+        }
         return "";
     }
 
@@ -183,7 +183,7 @@ public class LawTitleParser
         if (text == null || text.isEmpty())
             return "";
         int asteriskLoc = docInfo.getDocTypeId().indexOf("*");
-        String id = ((asteriskLoc == -1) ?  docInfo.getDocTypeId() :
+        String id = ((asteriskLoc == -1) ? docInfo.getDocTypeId() :
                 docInfo.getDocTypeId().substring(0, asteriskLoc))
                 .toLowerCase();
         // PEP sections like 302-A sometimes don't have the - in the text.
@@ -213,6 +213,7 @@ public class LawTitleParser
     /**
      * Takes in a String and if the first word is in all caps, the title should
      * only be words in all caps.
+     *
      * @param title to process.
      * @return Only the words relevant to the title.
      */
@@ -243,6 +244,7 @@ public class LawTitleParser
     /**
      * Quickly converts a number to a Roman numeral. Used to display Articles
      * as Roman numerals, as they are in the Constitution text.
+     *
      * @param number to convert.
      * @return a Roman numeral.
      */
