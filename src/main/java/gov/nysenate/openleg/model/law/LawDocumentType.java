@@ -14,8 +14,10 @@ public enum LawDocumentType
     SUBARTICLE,
     TITLE,
     SUBTITLE,
+    RULE,
+    JOINT_RULE,
     PART,
-    SUB_PART,
+    SUBPART,
     INDEX,
     CONTENTS,
 
@@ -34,5 +36,6 @@ public enum LawDocumentType
     PARAGRAPH,
     SUB_PARAGRAPH,
     CLAUSE,
-    ITEM
+    ITEM,
+    PREAMBLE
 }

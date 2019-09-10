@@ -16,6 +16,7 @@ import gov.nysenate.openleg.model.search.*;
 import gov.nysenate.openleg.service.base.search.ElasticSearchServiceUtils;
 import gov.nysenate.openleg.service.base.search.IndexedSearchService;
 import gov.nysenate.openleg.service.law.data.LawDataService;
+import gov.nysenate.openleg.service.law.data.LawTreeNotFoundEx;
 import gov.nysenate.openleg.service.law.event.BulkLawUpdateEvent;
 import gov.nysenate.openleg.service.law.event.LawTreeUpdateEvent;
 import gov.nysenate.openleg.service.law.event.LawUpdateEvent;
@@ -196,7 +197,12 @@ public class ElasticLawSearchService implements LawSearchService, IndexedSearchS
      * The document must be present in the current law tree.
      */
     private boolean isLawDocIndexable(LawDocument doc) {
-        LawTree lawTree = lawDataService.getLawTree(doc.getLawId());
-        return lawTree.find(doc.getDocumentId()).isPresent();
+        try {
+            return lawDataService.getLawTree(doc.getLawId())
+                    .find(doc.getDocumentId()).isPresent();
+        }
+        catch (LawTreeNotFoundEx e) {
+            return false;
+        }
     }
 }

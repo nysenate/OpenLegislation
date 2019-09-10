@@ -17,15 +17,16 @@ public class LawTitleParserTest {
     // TODO: Currently only tests parsing of Article titles.
 
     private LawDocInfo lawInfo = new LawDocInfo();
-    private LawTitleParser parser = new LawTitleParser();
 
     @Before
     public void before() {
         lawInfo.setDocType(LawDocumentType.ARTICLE);
     }
 
-    private void assertTitle(String expectedTitle, String title) {
-        assertEquals(expectedTitle, parser.extractTitle(lawInfo, title));
+    private void assertTitle(String expectedTitle, String text, String docTypeID, String docID) {
+        lawInfo.setDocTypeId(docTypeID);
+        lawInfo.setDocumentId(docID);
+        assertEquals(expectedTitle, LawTitleParser.extractTitle(lawInfo, text));
     }
 
     @Test
@@ -37,10 +38,9 @@ public class LawTitleParserTest {
                 "        701. Construction.\\n" +
                 "        702. When to take effect.";
 
-        String expectedTitle = "Laws Repealed; Construction; When To Take Effect.";
-        assertTitle(expectedTitle, text);
+        String expectedTitle = "Laws Repealed; Construction; When to Take Effect.";
+        assertTitle(expectedTitle, text, "XIV", "BNKA14");
     }
-
     @Test
     public void parsesEmptyTitle() {
         // EDNA6
@@ -52,10 +52,9 @@ public class LawTitleParserTest {
                 "          295. Support of interstate library district.\\n" +
                 "          296. Compact administrator.\\n" +
                 "          297. Withdrawal.";
-        String expectedTitle = "";
-        assertTitle(expectedTitle, text);
+        String expectedTitle = "No title";
+        assertTitle(expectedTitle, text, "6", "EDNA6");
     }
-
     @Test
     public void emptyTitleWithoutEmptyLine() {
         // AGMA13
@@ -64,10 +63,9 @@ public class LawTitleParserTest {
                 "        158. Apples; adoption of grades; branding.\\n" +
                 "        159. Sale of apples; presumption; rules and regulations.\\n" +
                 "        160. Standard evaporated apples; definition; sale of regulated.\\n";
-        String expectedTitle = "";
-        assertTitle(expectedTitle, text);
+        String expectedTitle = "No title";
+        assertTitle(expectedTitle, text, "XIII", "AGMA13");
     }
-    
     @Test
     public void parsesTitleWithoutCapsOrSection() {
         // BNKA15
@@ -77,12 +75,10 @@ public class LawTitleParserTest {
                 "                    Limited Liability Trust Companies\\n" +
                 "Title  1.   Definitions; Application; Certificates; Miscellaneous.\\n" +
                 "       2.   Corporate powers.";
-        // TODO Our capitalization is too aggressive, 'To' below should not be capitalized according to LBDC website.
-        String expectedTitle = "General Provisions Applicable To Banking Stock Corporations, " +
+        String expectedTitle = "General Provisions Applicable to Banking Stock Corporations, " +
                 "Limited Liability Investment Companies, and Limited Liability Trust Companies";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "XV", "BNKA15");
     }
-
     @Test
     public void parsesTitleWithNoBody() {
         // YTSA9
@@ -90,9 +86,8 @@ public class LawTitleParserTest {
                 "                               ARTICLE IX\\n" +
                 "                          INCOME TAX SURCHARGE";
         String expectedTitle = "Income Tax Surcharge";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "IX", "YTSA9");
     }
-
     @Test
     public void spacesBeforeSection() {
         // ACATAA1
@@ -100,9 +95,8 @@ public class LawTitleParserTest {
                 "                               SHORT TITLE\\n" +
                 "  Section  1.01.  Short title.\\n";
         String expectedTitle = "Short Title";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "1", "ACATAA1");
     }
-
     @Test
     public void dashesInTitle() {
         // CPLA100
@@ -113,9 +107,8 @@ public class LawTitleParserTest {
                 "        100.07 Commencement of action; effect of family court\\n" +
                 "                 proceeding.\\n";
         String expectedTitle = "Commencement of Action In Local Criminal Court--local Criminal Court Accusatory Instruments";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "100", "CPLA100");
     }
-
     @Test
     public void centeredNonTitleInfo() {
         // CVPA10
@@ -130,9 +123,8 @@ public class LawTitleParserTest {
                 "                (c) Separate relief; separate trials.\\n" +
                 "        1003. Nonjoinder and misjoinder of parties.";
         String expectedTitle = "Parties Generally";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "10", "CVPA10");
     }
-
 
     @Test
     public void capsTitleEndingWithTITLE() {
@@ -142,27 +134,27 @@ public class LawTitleParserTest {
                 "TITLE  I.  Mary Lasker Heart and Hypertension Institute (õõ 2720-2722).\\n" +
                 "       II. Centers for the treatment of hypertension (õõ 2723-2724).\\n";
         String expectedTitle = "Treatment of Hypertension";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "27-B", "PBHA27-B");
     }
 
-    @Ignore
     @Test
     public void onlyCapTitle() {
         // TWNA3-AT2
         String text = "                                 Title 2\\n" +
                 "                               TOWN BOARD\\n";
         String expectedTitle = "Town Board";
-        assertTitle(expectedTitle, text);
+        lawInfo.setDocType(LawDocumentType.TITLE);
+        assertTitle(expectedTitle, text, "2", "TWNA3-AT2");
     }
 
-    @Ignore
     @Test
     public void partAndTitleSameLineNoSeparator() {
         // EPTA7P8
         String text = "                     PART 8. HONORARY TRUSTS FOR PETS\\n" +
                 "  7-8.1 Trusts for pets";
         String expectedTitle = "Honorary Trusts For Pets";
-        assertTitle(expectedTitle, text);
+        lawInfo.setDocType(LawDocumentType.PART);
+        assertTitle(expectedTitle, text, "8", "EPTA7P8");
     }
 
     @Ignore
@@ -180,7 +172,7 @@ public class LawTitleParserTest {
                 "subdivision 10 to Section 672 to the Executive Law, it is the";
         // TODO Cant find this on the LRS website to confirm the title.
         String expectedTitle = "";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "", "ACAATTN");
     }
 
     @Ignore
@@ -194,6 +186,6 @@ public class LawTitleParserTest {
                 "        676. Unauthorized withdrawals from savings or time deposit\\n" +
                 "               accounts.";
         String expectedTitle = "JOINT DEPOSITS AND SHARES; Unauthorized Withdrawals; Withdrawals From Decedents' Accounts";
-        assertTitle(expectedTitle, text);
+        assertTitle(expectedTitle, text, "XIII-E", "BNKA13-E");
     }
 }
