@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.base;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Ints;
+import gov.nysenate.openleg.model.search.InvalidSearchParamException;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
@@ -502,7 +503,7 @@ public abstract class ElasticBaseDao
         }
 
         if (limitOffset.getOffsetEnd() > maxResultWindow) {
-            throw new IllegalArgumentException("LimitOffset with offset end of " + limitOffset.getOffsetEnd() +
+            throw new InvalidSearchParamException("LimitOffset with offset end of " + limitOffset.getOffsetEnd() +
                     " extends past allowed result window of " + maxResultWindow);
         }
 
