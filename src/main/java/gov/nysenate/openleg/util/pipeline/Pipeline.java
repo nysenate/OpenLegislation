@@ -37,6 +37,7 @@ public class Pipeline<T> {
      *
      * @return CompletableFuture<ImmutableList<R>>
      */
+    @SuppressWarnings("unchecked")
     public CompletableFuture<ImmutableList<T>> run() {
         if (tasks.isEmpty()) {
             return CompletableFuture.completedFuture(ImmutableList.of());

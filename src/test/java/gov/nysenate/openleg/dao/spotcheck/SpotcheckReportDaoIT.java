@@ -76,7 +76,7 @@ public class SpotcheckReportDaoIT extends BaseTests {
     }
 
     @Test
-    public void regressionMismatchResetsFirstSeenDateTime() throws InterruptedException {
+    public void regressionMismatchResetsFirstSeenDateTime() {
         // Save new mismatch
         reportDao.saveReport(createMismatchReport(start));
         // Resolve the mismatch
@@ -126,10 +126,10 @@ public class SpotcheckReportDaoIT extends BaseTests {
         String otherIssueId = "10899";
         reportDao.saveReport(createMismatchReport(start));
         DeNormSpotCheckMismatch mismatch = queryMostRecentOpenMismatch();
-        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
-        reportDao.addIssueId(mismatch.getMismatchId(), "10899");
+        reportDao.addIssueId(mismatch.getMismatchId(), issueId);
+        reportDao.addIssueId(mismatch.getMismatchId(), otherIssueId);
         Set<String> actual = queryMostRecentOpenMismatch().getIssueIds();
-        assertThat(actual, containsInAnyOrder("10800", "10899"));
+        assertThat(actual, containsInAnyOrder(issueId, otherIssueId));
     }
 
     @Test
@@ -137,10 +137,10 @@ public class SpotcheckReportDaoIT extends BaseTests {
         String issueId = "10800";
         reportDao.saveReport(createMismatchReport(start));
         DeNormSpotCheckMismatch mismatch = queryMostRecentOpenMismatch();
-        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
-        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
+        reportDao.addIssueId(mismatch.getMismatchId(), issueId);
+        reportDao.addIssueId(mismatch.getMismatchId(), issueId);
         Set<String> actual = queryMostRecentOpenMismatch().getIssueIds();
-        assertThat(actual, is(Sets.newHashSet("10800")));
+        assertThat(actual, is(Sets.newHashSet(issueId)));
     }
 
     @Test
@@ -148,8 +148,8 @@ public class SpotcheckReportDaoIT extends BaseTests {
         String issueId = "10800";
         reportDao.saveReport(createMismatchReport(start));
         DeNormSpotCheckMismatch mismatch = queryMostRecentOpenMismatch();
-        reportDao.addIssueId(mismatch.getMismatchId(), "10800");
-        reportDao.deleteIssueId(mismatch.getMismatchId(), "10800");
+        reportDao.addIssueId(mismatch.getMismatchId(), issueId);
+        reportDao.deleteIssueId(mismatch.getMismatchId(), issueId);
         Set<String> actual = queryMostRecentOpenMismatch().getIssueIds();
         assertThat(actual, is(empty()));
     }
@@ -213,7 +213,7 @@ public class SpotcheckReportDaoIT extends BaseTests {
 
     /* --- Internal Methods --- */
 
-    private DeNormSpotCheckMismatch queryMostRecentOpenMismatch() {
+    private DeNormSpotCheckMismatch<?> queryMostRecentOpenMismatch() {
         MismatchQuery query = new MismatchQuery(start.toLocalDate(), SpotCheckDataSource.LBDC,
                                                 MismatchStatus.OPEN, Collections.singleton(SpotCheckContentType.BILL));
         return reportDao.getMismatches(query, LimitOffset.ALL).getResults().get(0);
@@ -231,9 +231,10 @@ public class SpotcheckReportDaoIT extends BaseTests {
 
     private SpotCheckReport createMismatchReport(LocalDateTime refDateTime, SpotCheckMismatchIgnore ignoreStatus) {
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, refDateTime, LocalDateTime.now());
-        SpotCheckReport report = new SpotCheckReport();
+        SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
         report.setReportId(reportId);
-        SpotCheckObservation ob = new SpotCheckObservation(new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, refDateTime), billId);
+        SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(
+                new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, refDateTime), billId);
         SpotCheckMismatch mm = new SpotCheckMismatch(SpotCheckMismatchType.BILL_COSPONSOR, "ObservedSponsor", "ReferenceSponsor");
         mm.setIgnoreStatus(ignoreStatus);
         ob.addMismatch(mm);
@@ -243,9 +244,10 @@ public class SpotcheckReportDaoIT extends BaseTests {
 
     private SpotCheckReport createEmptyReport(LocalDateTime refDateTime)  {
         SpotCheckReportId reportId = new SpotCheckReportId(SpotCheckRefType.LBDC_DAYBREAK, refDateTime, LocalDateTime.now());
-        SpotCheckReport report = new SpotCheckReport();
+        SpotCheckReport<BaseBillId> report = new SpotCheckReport<>();
         report.setReportId(reportId);
-        SpotCheckObservation ob = new SpotCheckObservation(new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, refDateTime), billId);
+        SpotCheckObservation<BaseBillId> ob = new SpotCheckObservation<>(
+                new SpotCheckReferenceId(SpotCheckRefType.LBDC_DAYBREAK, refDateTime), billId);
         report.addObservation(ob);
         return report;
     }
