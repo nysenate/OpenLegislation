@@ -3,6 +3,7 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.processor.base.ParseError;
 import gov.nysenate.openleg.service.bill.data.BillDataService;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -73,79 +74,16 @@ public class BillActionParserTest
         }
     }
 
-    @Test
-    public void billActionInequality() {
-        List<BillAction> actions = BillActionParser.parseActionsList(new BillId("S3664B", 2013), actionsList1);
 
-        // 2 different items
-        assertNotEquals(actions.get(0), actions.get(1));
-
-        // null
-        assertNotEquals(actions.get(0), null);
-
-        // bill ID
-        List<BillAction> actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        List<BillAction> actionB = BillActionParser.parseActionsList(new BillId("S3665B", 2013), "06/02/09 recalled from senate");
-        assertNotEquals(actionA.get(0), actionB.get(0));
-
-        // date
-        actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        actionB = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/10 recalled from senate");
-        assertNotEquals(actionA.get(0), actionB.get(0));
-
-        // session
-        actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        actionB = BillActionParser.parseActionsList(new BillId("S3664B", 2011), "06/02/09 recalled from senate");
-        assertNotEquals(actionA.get(0), actionB.get(0));
-
-        // chamber
-        actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 RECALLED FROM SENATE");
-        actionB = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        assertNotEquals(actionA.get(0), actionB.get(0));
-    }
-
-    @Test
-    public void billActionEquality() {
-        List<BillAction> actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        List<BillAction> actionB = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-
-        // separately constructed
-        assertEquals(actionA.get(0), actionB.get(0));
-
-        // same object
-        assertEquals(actionA.get(0), actionA.get(0));
-        assertEquals(actionB.get(0), actionB.get(0));
-    }
-
-    @Test
+    @Test (expected = ParseError.class)
     public void invalidDate() {
-        try {
-            List<BillAction> actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/A2/09 recalled from senate");
-            fail();
-        }
-        catch (Exception e) {
-            assertNotEquals(null, e);
-        }
+        List<BillAction> actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/A2/09 recalled from senate");
     }
 
+
     @Test
-    public void actionListSort() {
+    public void printAction() {
         List<BillAction> actions = BillActionParser.parseActionsList(new BillId("S3664B", 2013), actionsList1);
-
-        //sort descending
-        actions.sort(new BillAction.ByEventSequenceDesc());
-
-        // ensures correct sequencing, sequence numbers
-        for (int i = 0; i < actions.size(); ++i) {
-            assertEquals(actions.size() - i, actions.get(i).getSequenceNo());
-        }
-
-        //sort ascending
-        actions.sort(new BillAction.ByEventSequenceAsc());
-
-        // ensures correct sequencing, sequence numbers
-        for (int i = 0; i < actions.size(); ++i) {
-            assertEquals(i + 1, actions.get(i).getSequenceNo());
-        }
+        assertEquals("2010-01-26 (ASSEMBLY) PRINT NUMBER 3664B", actions.get(actions.size() - 1).toString());
     }
 }
