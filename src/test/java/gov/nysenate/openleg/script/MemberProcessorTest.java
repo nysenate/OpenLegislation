@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,7 +81,7 @@ public class MemberProcessorTest extends BaseTests
     public void testInsertMember() throws Exception {
         File f = new File("/data/2013_lbdc_sn.txt");
         HashSet<String> shortNames = new HashSet<>();
-        List<String> lines = FileUtils.readLines(f);
+        List<String> lines = FileUtils.readLines(f, Charset.defaultCharset());
         for (String l : lines) {
             Matcher m = Pattern.compile(".*\\:(.{11})6([^0-9]+)").matcher(l);
             if (m.find() && !l.contains("DELETE")) {
@@ -129,7 +130,7 @@ public class MemberProcessorTest extends BaseTests
     public void testMissingSenators() throws Exception {
         File f = new File("/data/2013.cosponsors.sn.txt");
         HashSet<String> shortNames = new HashSet<>();
-        List<String> lines = FileUtils.readLines(f);
+        List<String> lines = FileUtils.readLines(f, Charset.defaultCharset());
         for (String l : lines) {
             Matcher m = Pattern.compile(".*\\:(.{11})7([^0-9]+)").matcher(l);
             if (m.find() && !l.contains("DELETE")) {
@@ -154,7 +155,7 @@ public class MemberProcessorTest extends BaseTests
     @Test
     public void testAssemblyCSV() throws Exception {
         Resource f = new FileSystemResource("/data/2013_assembly_members.csv");
-        List<String> lines = FileUtils.readLines(f.getFile());
+        List<String> lines = FileUtils.readLines(f.getFile(), Charset.defaultCharset());
         for (String s : lines) {
             String[] parts = s.split(",");
             int district = Integer.parseInt(parts[0]);
@@ -185,7 +186,7 @@ public class MemberProcessorTest extends BaseTests
         File cf = new File("/data/2013_assembly_cosponsors_sn.txt");
         File csvF = new File("/data/openleg_member_data/2013_assembly_members.csv");
         HashSet<String> shortNames = new HashSet<>();
-        List<String> lines = FileUtils.readLines(f);
+        List<String> lines = FileUtils.readLines(f, Charset.defaultCharset());
         for (String l : lines) {
             Matcher m = Pattern.compile(".*\\:(.{11})6([^0-9]+)").matcher(l);
             if (m.find() && !l.contains("DELETE")) {
@@ -197,7 +198,7 @@ public class MemberProcessorTest extends BaseTests
         }
 
         // Add co sponsors to set
-        List<String> csLines = FileUtils.readLines(cf);
+        List<String> csLines = FileUtils.readLines(cf, Charset.defaultCharset());
         for (String l : csLines) {
             Matcher m = Pattern.compile(".*\\:(.{11})7([^0-9]+)").matcher(l);
             if (m.find() && !l.contains("DELETE") && !l.contains("RULES")) {
@@ -210,7 +211,7 @@ public class MemberProcessorTest extends BaseTests
         }
 
         HashMap<String, Integer> distAss = new HashMap<>();
-        List<String> csvLines = FileUtils.readLines(csvF);
+        List<String> csvLines = FileUtils.readLines(csvF, Charset.defaultCharset());
         for (String s : csvLines) {
             String[] parts = s.split(",");
             int district = Integer.parseInt(parts[0]);
@@ -249,7 +250,7 @@ public class MemberProcessorTest extends BaseTests
     @Test
     public void testInsert2013AssemblyExtra() throws Exception {
         File f = new File("/data/openleg_member_data/2013_assembly_extra.csv");
-        List<String> lines = FileUtils.readLines(f);
+        List<String> lines = FileUtils.readLines(f, Charset.defaultCharset());
         for (String line : lines) {
             String[] parts = line.split(",");
             String fullName = (parts[0] + ((!parts[1].isEmpty()) ? (" " + parts[1]) : "") + " " + parts[2] + " " + parts[3]).trim();

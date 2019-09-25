@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 @Service
 public class BillScrapeReferenceFactory {
@@ -48,6 +49,6 @@ public class BillScrapeReferenceFactory {
 
     private BillScrapeReference errorBillScrapeReference(BillScrapeFile btrFile) throws IOException {
         return BillScrapeReference.getErrorBtr(btrFile.getBaseBillId(), btrFile.getReferenceDateTime(),
-                FileUtils.readFileToString(btrFile.getFile()));
+                FileUtils.readFileToString(btrFile.getFile(), Charset.defaultCharset()));
     }
 }

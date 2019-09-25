@@ -1,6 +1,5 @@
 package gov.nysenate.openleg.processor.spotcheck.calendar;
 
-import gov.nysenate.openleg.dao.base.LimitOffset;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.calendar.CalendarSectionType;
@@ -8,12 +7,7 @@ import gov.nysenate.openleg.model.calendar.CalendarSupplemental;
 import gov.nysenate.openleg.model.calendar.CalendarSupplementalEntry;
 import gov.nysenate.openleg.model.calendar.alert.CalendarAlertFile;
 import gov.nysenate.openleg.model.entity.Chamber;
-import gov.nysenate.openleg.model.entity.Member;
-import gov.nysenate.openleg.model.entity.SessionMember;
-import gov.nysenate.openleg.model.search.SearchException;
-import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.service.entity.member.data.MemberService;
-import gov.nysenate.openleg.service.entity.member.search.MemberSearchService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -27,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -51,7 +46,7 @@ public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
     }
 
     private void parseSupplementalEntries(File file, CalendarSupplemental supplemental) throws IOException {
-        String html = FileUtils.readFileToString(file);
+        String html = FileUtils.readFileToString(file, Charset.defaultCharset());
         Document doc = Jsoup.parse(html);
         Elements sectionTypes = doc.select("a[name]");
         Elements entryTables = doc.select("table");
@@ -112,7 +107,7 @@ public class CalendarAlertSupplementalParser extends BaseCalendarAlertParser {
 
     private LocalDate parseCalendarDate(File file) {
         try {
-            String html = FileUtils.readFileToString(file);
+            String html = FileUtils.readFileToString(file, Charset.defaultCharset());
             Document doc = Jsoup.parse(html);
             Element title = doc.select("div.center").get(0);
             String calTitle = title.text();

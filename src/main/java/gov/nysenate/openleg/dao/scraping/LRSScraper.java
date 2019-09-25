@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -115,7 +116,7 @@ public abstract class LRSScraper {
 
     protected String getUrlContents(URL url) {
         try {
-            return IOUtils.toString(url);
+            return IOUtils.toString(url, Charset.defaultCharset());
         } catch (IOException ex) {
             throw new ScrapingException(url, ex);
         }

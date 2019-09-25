@@ -2,7 +2,6 @@ package gov.nysenate.openleg.controller.api.admin;
 
 import com.google.common.collect.ImmutableMap;
 import gov.nysenate.openleg.client.response.base.BaseResponse;
-import gov.nysenate.openleg.client.response.base.ListViewResponse;
 import gov.nysenate.openleg.client.response.base.SimpleResponse;
 import gov.nysenate.openleg.client.response.base.ViewObjectResponse;
 import gov.nysenate.openleg.client.response.error.ErrorCode;
@@ -16,17 +15,12 @@ import gov.nysenate.openleg.controller.api.base.InvalidRequestParamEx;
 import gov.nysenate.openleg.model.auth.AdminUser;
 import gov.nysenate.openleg.service.auth.AdminUserService;
 import gov.nysenate.openleg.service.auth.InvalidUsernameException;
-import gov.nysenate.openleg.service.auth.OpenLegRole;
 import gov.nysenate.openleg.service.mail.SendMailService;
 import gov.nysenate.openleg.util.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authz.UnauthenticatedException;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
@@ -216,8 +210,8 @@ public class AdminAccountCtrl extends BaseCtrl
      * @param password the password of the new user
      */
     @Async
-    private void sendNewUserEmail(String username, String password) {
-        String message = StrSubstitutor.replace(registrationEmailTemplate,
+    protected void sendNewUserEmail(String username, String password) {
+        String message = StringSubstitutor.replace(registrationEmailTemplate,
                 ImmutableMap.of("username", username, "password", password, "base_url", environment.getUrl()));
         sendMailService.sendMessage(username, registrationEmailSubject, message);
     }

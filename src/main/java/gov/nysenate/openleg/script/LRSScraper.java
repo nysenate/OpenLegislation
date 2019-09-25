@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -40,14 +41,15 @@ public class LRSScraper extends BaseScript
     public void scrapeCalendars(URL landingURL, File directory, Date currentTime) throws IOException
     {
         logger.info("Fetching landing page.");
-        String landingPage = IOUtils.toString(landingURL.openStream());
+        String landingPage = IOUtils.toString(landingURL.openStream(), Charset.defaultCharset());
         Matcher tokenMatcher = bottomPattern.matcher(landingPage);
         logger.info("Searching for link to bottom half");
         if (tokenMatcher.find()) {
             String link = tokenMatcher.group(1);
             URL contentURL = resolveLink(landingURL, link);
             logger.info("Fetching bottom half");
-            String contentPage = IOUtils.toString(contentURL.openStream()).replace("\r\n", " ");
+            String contentPage = IOUtils.toString(contentURL.openStream(), Charset.defaultCharset())
+                    .replace("\r\n", " ");
             Matcher linkMatcher = linkPattern.matcher(contentPage);
             while(linkMatcher.find()) {
                 URL linkURL = resolveLink(contentURL, linkMatcher.group(1));
@@ -55,7 +57,7 @@ public class LRSScraper extends BaseScript
                         .replace(" ", "_").toLowerCase()+".html"; // add 0 for last active list and increment
                 File outfile = new File(directory, filename);
                 logger.info("Fetching "+linkMatcher.group(2).trim());
-                String contents = IOUtils.toString(linkURL);
+                String contents = IOUtils.toString(linkURL, Charset.defaultCharset());
                 logger.info("Writing content to "+filename);
                 FileIOUtils.write(outfile, contents);
             }
@@ -65,7 +67,7 @@ public class LRSScraper extends BaseScript
     public void scrapeAgendas(URL landingURL, File directory, Date currentTime) throws IOException
     {
         logger.info("Fetching landing page.");
-        String landingPage = IOUtils.toString(landingURL.openStream());
+        String landingPage = IOUtils.toString(landingURL.openStream(), Charset.defaultCharset());
         Matcher tokenMatcher = bottomPattern.matcher(landingPage);
         logger.info("Searching for link to bottom half");
         if (tokenMatcher.find()) {
@@ -73,7 +75,8 @@ public class LRSScraper extends BaseScript
             URL contentURL = resolveLink(landingURL, link);
         //calen
             logger.info("Fetching bottom half");
-            String contentPage = IOUtils.toString(contentURL.openStream()).replace("\r\n", " ");
+            String contentPage = IOUtils.toString(contentURL.openStream(), Charset.defaultCharset())
+                    .replace("\r\n", " ");
             Matcher linkMatcher = linkPattern.matcher(contentPage);
             logger.info("Searching for all committee agendas link");
             while (linkMatcher.find()) {
@@ -82,7 +85,7 @@ public class LRSScraper extends BaseScript
                     String filename = dateFormat.format(currentTime)+".all_agendas.html";
                     File outfile = new File(directory, filename);
                     logger.info("Fetching all committee agendas");
-                    String contents = IOUtils.toString(linkURL);
+                    String contents = IOUtils.toString(linkURL, Charset.defaultCharset());
                     logger.info("Writing content to "+filename);
                     FileIOUtils.write(outfile, contents);
                 }

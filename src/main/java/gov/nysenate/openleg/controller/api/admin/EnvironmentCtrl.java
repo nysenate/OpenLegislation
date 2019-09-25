@@ -119,7 +119,7 @@ public class EnvironmentCtrl extends BaseCtrl
                 variables.stream()
                         .filter(var -> !mutableOnly || var.isMutable())
                         .sorted((a, b) -> ComparisonChain.start()
-                                .compare(a.isMutable(), b.isMutable())
+                                .compareFalseFirst(a.isMutable(), b.isMutable())
                                 .compare(a.getName(), b.getName())
                                 .result())
                         .collect(Collectors.toList())));

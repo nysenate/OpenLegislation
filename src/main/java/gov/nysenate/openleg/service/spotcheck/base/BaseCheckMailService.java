@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.mail.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 public abstract class BaseCheckMailService {
 
@@ -52,7 +53,7 @@ public abstract class BaseCheckMailService {
                 Part part = content.getBodyPart(i);
                 if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
                     logger.info("\tSaving " + part.getFileName() + " to " + file.getAbsolutePath());
-                    String attachment = IOUtils.toString(part.getInputStream());
+                    String attachment = IOUtils.toString(part.getInputStream(), Charset.defaultCharset());
                     FileIOUtils.write(file, attachment);
                 }
             }

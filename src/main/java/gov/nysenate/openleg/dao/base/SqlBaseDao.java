@@ -8,7 +8,7 @@ import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.sourcefiles.LegDataFragment;
 import gov.nysenate.openleg.model.updates.UpdateType;
 import gov.nysenate.openleg.util.DateUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +114,7 @@ public abstract class SqlBaseDao
     protected static String queryReplace(String originalQuery, String key, String replacement) {
         Map<String, String> replaceMap = new HashMap<>();
         replaceMap.put(key, replacement);
-        return new StrSubstitutor(replaceMap).replace(originalQuery);
+        return new StringSubstitutor(replaceMap).replace(originalQuery);
     }
 
     /** --- PostgreSQL Hstore handling methods --- */
