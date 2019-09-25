@@ -3,15 +3,20 @@ package gov.nysenate.openleg.processor.bill;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.bill.BillAction;
 import gov.nysenate.openleg.model.bill.BillId;
+import gov.nysenate.openleg.model.entity.Chamber;
 import gov.nysenate.openleg.processor.base.ParseError;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 
 @Category(UnitTest.class)
@@ -20,6 +25,9 @@ public class BillActionTest
     // @Autowired BillDataService billDataService;
 
     private static final Logger logger = LoggerFactory.getLogger(BillActionTest.class);
+
+    /** Date format found in SobiBlock[4] bill event blocks. e.g. 02/04/13 */
+    protected static final DateTimeFormatter eventDateFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
 
     private static String actionsList1 =
         "01/28/09 referred to correction\n" +
@@ -115,4 +123,98 @@ public class BillActionTest
         }
     }
 
+    @Test
+    public void xmlGetSet() {
+        BillAction a = new BillAction();
+        a.setDate(LocalDate.from(eventDateFormat.parse("01/02/19")));
+        a.setText("abcdefg");
+        a.setBillId(new BillId("S3664B", 2013));
+        a.setChamber(Chamber.ASSEMBLY);
+        a.setSequenceNo(1);
+        assertEquals("2019-01-02 (ASSEMBLY) abcdefg", a.toString());
+
+        a.setBillAmd("A");
+        assertEquals("A", a.getBillAmd());
+        a.setCode(23);
+        assertEquals(23, a.getCode());
+        a.setData(87);
+        assertEquals(87, a.getData());
+        a.setDataAmd("V");
+        assertEquals("V", a.getDataAmd());
+        a.setPostDate(LocalDate.from(eventDateFormat.parse("01/30/19")));
+        assertEquals(LocalDate.from(eventDateFormat.parse("01/30/19")), a.getPostDate());
+        a.setActSessionYear(2018);
+        assertEquals(2018, a.getActSessionYear());
+        assertFalse(a.fromXML());
+    }
+
+    @Test
+    public void xmlConstructorAndEquals() {
+        BillAction a = new BillAction(LocalDate.from(eventDateFormat.parse("01/02/19")),
+                "abcdefg",
+                Chamber.ASSEMBLY,
+                1,
+                "A",
+                23,
+                87,
+                "V",
+                LocalDate.from(eventDateFormat.parse("01/30/19")),
+                2018,
+                new BillId("S3664B", 2013));
+        BillAction b = new BillAction(LocalDate.from(eventDateFormat.parse("01/02/19")),
+                "ABCDEFG",//capitalization is different
+                Chamber.ASSEMBLY,
+                1,
+                "A",
+                23,
+                87,
+                "V",
+                LocalDate.from(eventDateFormat.parse("01/30/19")),
+                2018,
+                new BillId("S3664B", 2013));
+        BillAction c = new BillAction(LocalDate.from(eventDateFormat.parse("01/02/19")),
+                "ABCDEFG",//capitalization is different
+                Chamber.SENATE,
+                1,
+                "A",
+                23,
+                87,
+                "V",
+                LocalDate.from(eventDateFormat.parse("01/30/19")),
+                2018,
+                new BillId("S3664B", 2013));
+
+        assertEquals("2019-01-02 (ASSEMBLY) abcdefg", a.toString());
+
+        assertEquals("A", a.getBillAmd());
+        assertEquals(23, a.getCode());
+        assertEquals(87, a.getData());
+        assertEquals("V", a.getDataAmd());
+        assertEquals(LocalDate.from(eventDateFormat.parse("01/30/19")), a.getPostDate());
+        assertEquals(2018, a.getActSessionYear());
+        assertTrue(a.fromXML());
+
+        // equality tests
+        assertEquals(a, b);
+        assertEquals(a.hashCode(), b.hashCode());
+        assertEquals(a, a);
+        assertNotEquals(a, c);
+        assertNotEquals(a.hashCode(), c.hashCode());
+        assertNotEquals(b, c);
+        assertNotEquals(b.hashCode(), c.hashCode());
+        assertEquals(c, c);
+    }
+
+    @Test
+    public void compareTo() {
+        BillAction a = new BillAction();
+        BillAction b = new BillAction();
+        BillAction c = new BillAction();
+        a.setSequenceNo(1);
+        b.setSequenceNo(2);
+        c.setSequenceNo(1);
+        assertEquals(-1, a.compareTo(b));
+        assertEquals(1, b.compareTo(a));
+        assertEquals(0, c.compareTo(c));
+    }
 }
