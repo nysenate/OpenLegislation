@@ -31,6 +31,8 @@ public class BillScrapeReferenceHtmlParser {
     private static final String lrsOutageText = "404 - Processing Error";
     private static final Pattern billIdPattern = Pattern.compile("^([A-z]\\d+)(?:-([A-z]))?$");
 
+    private static final String voteLinkSelector = "a[href^=#VOTE]";
+
     /**
      * Parse the print number from an LRS bill scrape html file.
      * @param doc
@@ -117,11 +119,11 @@ public class BillScrapeReferenceHtmlParser {
     }
 
     private boolean isVoteSummaryTable(Element table) {
-        return !table.select("a[href^=#VOTE").isEmpty();
+        return !table.select(voteLinkSelector).isEmpty();
     }
 
     private boolean hasSingleVote(Element table) {
-        return table.select("a[href^=#VOTE").size() == 1;
+        return table.select(voteLinkSelector).size() == 1;
     }
 
     /**
@@ -135,7 +137,7 @@ public class BillScrapeReferenceHtmlParser {
         List<BillScrapeVote> votes = new ArrayList<>();
         Chamber chamber = parseChamber(summaryTable.select("tr").get(0));
         if (chamber.equals(Chamber.SENATE)) {
-            String date = summaryTable.select("a[href^=#VOTE").text().trim();
+            String date = summaryTable.select(voteLinkSelector).text().trim();
             LocalDate voteDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("M/d/yy"));
             SortedSetMultimap<BillVoteCode, String> voteMap = parseVote(nextTable);
             votes.add(new BillScrapeVote(voteDate, voteMap));
@@ -154,8 +156,8 @@ public class BillScrapeReferenceHtmlParser {
         for (Element voteSummary : summaryTable.select("tr")) {
             Chamber chamber = parseChamber(voteSummary);
             if (chamber.equals(Chamber.SENATE)) {
-                String voteId = voteSummary.select("a[href^=#VOTE").attr("href").replace("#", "");
-                String date = voteSummary.select("a[href^=#VOTE").text().trim();
+                String voteId = voteSummary.select(voteLinkSelector).attr("href").replace("#", "");
+                String date = voteSummary.select(voteLinkSelector).text().trim();
                 LocalDate voteDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("M/d/yy"));
 
                 Element voteTable = summaryTable.parent().select("a[name=" + voteId + "] ~ table").first();
