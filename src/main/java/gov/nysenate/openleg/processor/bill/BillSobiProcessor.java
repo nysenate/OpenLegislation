@@ -119,7 +119,7 @@ public class BillSobiProcessor extends AbstractBillProcessor implements LegDataP
                     case BILL_INFO: applyBillInfo(data, baseBill, specifiedAmendment, date, unit); break;
                     case LAW_SECTION: applyLawSection(data, baseBill, specifiedAmendment, date); break;
                     case TITLE: applyTitle(data, baseBill, date); break;
-                    case BILL_EVENT:  parseActions(data, baseBill, specifiedAmendment, legDataFragment); break;
+                    case BILL_EVENT:  parseActions(data, baseBill, specifiedAmendment, legDataFragment, null); break;
                     case SAME_AS:  applySameAs(data, specifiedAmendment, legDataFragment, unit); break;
                     case SPONSOR:  applySponsor(data, baseBill, specifiedAmendment, date); break;
                     case CO_SPONSOR:  applyCosponsors(data, baseBill); break;
