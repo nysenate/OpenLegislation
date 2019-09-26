@@ -162,6 +162,7 @@ public class BillActionTest
         assertEquals("2019-01-02 (ASSEMBLY) abcdefg", a.toString());
     }
 
+    /*
     @Test
     public void xmlGetSet() {
         BillAction a = new BillAction();
@@ -246,7 +247,7 @@ public class BillActionTest
         assertNotEquals(b, c);
         assertNotEquals(b.hashCode(), c.hashCode());
         assertEquals(c, c);
-    }
+    }*/
 
     @Test
     public void compareTo() {
