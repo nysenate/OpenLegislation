@@ -86,11 +86,12 @@ public class BillAction implements Serializable, Comparable<BillAction>
      * @param chamber Chamber - The chamber this bill action occurred in
      * @param sequenceNo int - Indicates the ordering of this action
      * @param billAmd String -
-     * @param code int -
-     * @param data int -
+     * @param code int - Action code from XML Data
+     * @param data int - Data code from XML Data;
+     *             represents different types of data based on the action code (e.g. committee codes, bill numbers)
      * @param dataAmd String -
      * @param postDate LocalDate -
-     * @param actSessionYear int -
+     * @param actSessionYear int - Unknown year value that does not conform to the session year odd-only rule
      * @param billId BillId - The id of the bill the action was performed on
      */
     public BillAction(LocalDate date, String text, Chamber chamber, int sequenceNo,
@@ -239,6 +240,6 @@ public class BillAction implements Serializable, Comparable<BillAction>
 
     public void setActSessionYear(int actSessionYear) { this.actSessionYear = actSessionYear; }
 
-    /** fromXML cannot be modified after construction */
+    /** fromXML cannot be modified after the object is constructed */
     public boolean fromXML() { return fromXML; }
 }
