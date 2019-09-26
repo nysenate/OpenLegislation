@@ -58,48 +58,76 @@ public class BillActionTest
         "01/26/10 amend and recommit to correction\n" +
         "01/26/10 print number 3664b";
 
+    private final BillAction actionA = new BillAction(LocalDate.from(eventDateFormat.parse("06/02/09")),
+                                              "recalled from senate",
+                                              Chamber.ASSEMBLY,
+                                              1,
+                                              new BillId("S3664B", 2013));
+    private final BillAction actionB = new BillAction(LocalDate.from(eventDateFormat.parse("06/02/09")),
+                                              "recalled from senate",
+                                              Chamber.ASSEMBLY,
+                                              1,
+                                              new BillId("S3665B", 2013));// different
+    private final BillAction actionC = new BillAction(LocalDate.from(eventDateFormat.parse("06/02/10")),// different
+                                              "recalled from senate",
+                                              Chamber.ASSEMBLY,
+                                              1,
+                                              new BillId("S3664B", 2013));
+    private final BillAction actionD = new BillAction(LocalDate.from(eventDateFormat.parse("06/02/09")),
+                                              "recalled from senate",
+                                              Chamber.ASSEMBLY,
+                                              1,
+                                              new BillId("S3664B", 2011));// different
+    private final BillAction actionE = new BillAction(LocalDate.from(eventDateFormat.parse("06/02/09")),
+                                              "RECALLED FROM SENATE",// different
+                                              Chamber.SENATE,// different
+                                              1,
+                                              new BillId("S3664B", 2013));
+    private final BillAction actionF = new BillAction(LocalDate.from(eventDateFormat.parse("06/02/09")),
+                                              "recalled from senate",
+                                              Chamber.ASSEMBLY,
+                                              2,// different
+                                              new BillId("S3664B", 2013));
     @Test
     public void billActionInequality() {
-        List<BillAction> actions = BillActionParser.parseActionsList(new BillId("S3664B", 2013), actionsList1);
-
-        // 2 different items
-        assertNotEquals(actions.get(0), actions.get(1));
-
         // null
-        assertNotEquals(actions.get(0), null);
+        assertNotEquals(actionA, null);
 
         // bill ID
-        List<BillAction> actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        List<BillAction> actionB = BillActionParser.parseActionsList(new BillId("S3665B", 2013), "06/02/09 recalled from senate");
-        assertNotEquals(actionA.get(0), actionB.get(0));
+        assertNotEquals(actionA, actionB);
 
         // date
-        actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        actionB = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/10 recalled from senate");
-        assertNotEquals(actionA.get(0), actionB.get(0));
+        assertNotEquals(actionA, actionC);
 
         // session
-        actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        actionB = BillActionParser.parseActionsList(new BillId("S3664B", 2011), "06/02/09 recalled from senate");
-        assertNotEquals(actionA.get(0), actionB.get(0));
+        assertNotEquals(actionA, actionD);
 
         // chamber
-        actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 RECALLED FROM SENATE");
-        actionB = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        assertNotEquals(actionA.get(0), actionB.get(0));
+        assertNotEquals(actionA, actionE);
+
+        // sequence number
+        assertNotEquals(actionA, actionF);
     }
 
     @Test
     public void billActionEquality() {
-        List<BillAction> actionA = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
-        List<BillAction> actionB = BillActionParser.parseActionsList(new BillId("S3664B", 2013), "06/02/09 recalled from senate");
+        final BillAction action1 = new BillAction(LocalDate.from(eventDateFormat.parse("06/02/09")),
+                "recalled from senate",
+                Chamber.ASSEMBLY,
+                1,
+                new BillId("S3664B", 2013));
+        final BillAction action2 = new BillAction(LocalDate.from(eventDateFormat.parse("06/02/09")),
+                "recalled from senate",
+                Chamber.ASSEMBLY,
+                1,
+                new BillId("S3664B", 2013));
 
         // separately constructed
-        assertEquals(actionA.get(0), actionB.get(0));
+        assertEquals(action1, action2);
 
         // same object
-        assertEquals(actionA.get(0), actionA.get(0));
-        assertEquals(actionB.get(0), actionB.get(0));
+        assertEquals(action1, action1);
+        assertEquals(action2, action2);
     }
 
     @Test
@@ -124,6 +152,17 @@ public class BillActionTest
     }
 
     @Test
+    public void getSet() {
+        BillAction a = new BillAction();
+        a.setDate(LocalDate.from(eventDateFormat.parse("01/02/19")));
+        a.setText("abcdefg");
+        a.setBillId(new BillId("S3664B", 2013));
+        a.setChamber(Chamber.ASSEMBLY);
+        a.setSequenceNo(1);
+        assertEquals("2019-01-02 (ASSEMBLY) abcdefg", a.toString());
+    }
+
+    @Test
     public void xmlGetSet() {
         BillAction a = new BillAction();
         a.setDate(LocalDate.from(eventDateFormat.parse("01/02/19")));
@@ -145,7 +184,8 @@ public class BillActionTest
         assertEquals(LocalDate.from(eventDateFormat.parse("01/30/19")), a.getPostDate());
         a.setActSessionYear(2018);
         assertEquals(2018, a.getActSessionYear());
-        assertFalse(a.fromXML());
+        a.setFromXML(true);
+        assertTrue(a.getFromXML());
     }
 
     @Test
@@ -160,6 +200,7 @@ public class BillActionTest
                 "V",
                 LocalDate.from(eventDateFormat.parse("01/30/19")),
                 2018,
+                true,
                 new BillId("S3664B", 2013));
         BillAction b = new BillAction(LocalDate.from(eventDateFormat.parse("01/02/19")),
                 "ABCDEFG",//capitalization is different
@@ -171,6 +212,7 @@ public class BillActionTest
                 "V",
                 LocalDate.from(eventDateFormat.parse("01/30/19")),
                 2018,
+                true,
                 new BillId("S3664B", 2013));
         BillAction c = new BillAction(LocalDate.from(eventDateFormat.parse("01/02/19")),
                 "ABCDEFG",//capitalization is different
@@ -182,6 +224,7 @@ public class BillActionTest
                 "V",
                 LocalDate.from(eventDateFormat.parse("01/30/19")),
                 2018,
+                true,
                 new BillId("S3664B", 2013));
 
         assertEquals("2019-01-02 (ASSEMBLY) abcdefg", a.toString());
@@ -192,7 +235,7 @@ public class BillActionTest
         assertEquals("V", a.getDataAmd());
         assertEquals(LocalDate.from(eventDateFormat.parse("01/30/19")), a.getPostDate());
         assertEquals(2018, a.getActSessionYear());
-        assertTrue(a.fromXML());
+        assertTrue(a.getFromXML());
 
         // equality tests
         assertEquals(a, b);

@@ -62,6 +62,9 @@ public class BillActionParserTest
 
         // counts items
         assertEquals(actions.size(), actionsList1.split("\n").length);
+
+        // first two items are different
+        assertNotEquals(actions.get(0), actions.get(1));
     }
 
     @Test
