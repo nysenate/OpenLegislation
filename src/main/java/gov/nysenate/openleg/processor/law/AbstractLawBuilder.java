@@ -39,7 +39,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
     /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
     private static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
     static {
-        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUBPART));
+        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUB_PART));
         expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
     }
 
@@ -51,7 +51,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
         lawLevelCodes.put("T", TITLE);
         lawLevelCodes.put("ST", SUBTITLE);
         lawLevelCodes.put("P", PART);
-        lawLevelCodes.put("SP", SUBPART);
+        lawLevelCodes.put("SP", SUB_PART);
         lawLevelCodes.put("S", SECTION);
         lawLevelCodes.put("INDEX", INDEX);
         lawLevelCodes.put("R", RULE);
@@ -183,7 +183,7 @@ public abstract class AbstractLawBuilder implements LawBuilder
                     LawDocumentType type = lawLevelCodes.get(locMatcher.group(1));
                     // GCM has some Subparts labeled with an S.
                     if (lawDoc.getLawId().equals(LawChapterCode.GCM.name()) && locMatcher.group(1).equals("S"))
-                        type = SUBPART;
+                        type = SUB_PART;
                     lawDoc.setDocType(type);
                     String docTypeId = locMatcher.group(2);
                     lawDoc.setDocTypeId(docTypeId);

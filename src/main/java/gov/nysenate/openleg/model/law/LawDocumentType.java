@@ -17,7 +17,7 @@ public enum LawDocumentType
     RULE,
     JOINT_RULE,
     PART,
-    SUBPART,
+    SUB_PART,
     INDEX,
     CONTENTS,
 

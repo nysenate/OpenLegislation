@@ -75,7 +75,7 @@ public class LawTitleParser
         switch (lawDocInfo.getDocType()) {
             case CHAPTER:
                 return extractTitleFromChapter(lawDocInfo);
-            case TITLE: case SUBTITLE: case PART: case SUBPART: case RULE: case ARTICLE: case SUBARTICLE:
+            case TITLE: case SUBTITLE: case PART: case SUB_PART: case RULE: case ARTICLE: case SUBARTICLE:
                 return extractTitleFromNonSection(lawDocInfo, bodyText);
             case SECTION:
                 return extractTitleFromSection(lawDocInfo, bodyText);
