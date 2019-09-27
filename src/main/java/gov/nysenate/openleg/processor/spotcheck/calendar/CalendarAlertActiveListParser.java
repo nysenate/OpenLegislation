@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
@@ -47,7 +48,7 @@ public class CalendarAlertActiveListParser extends BaseCalendarAlertParser{
      * @throws IOException
      */
     private void parseActiveListEntries(File file, CalendarActiveList activeList) throws IOException {
-        String html = FileUtils.readFileToString(file);
+        String html = FileUtils.readFileToString(file, Charset.defaultCharset());
         Document doc = Jsoup.parse(html);
         Elements entries = doc.select("body table tr");
 
@@ -71,7 +72,7 @@ public class CalendarAlertActiveListParser extends BaseCalendarAlertParser{
 
     private LocalDate parseCalendarDate(File file) {
         try {
-            String html = FileUtils.readFileToString(file);
+            String html = FileUtils.readFileToString(file, Charset.defaultCharset());
             Document doc = Jsoup.parse(html);
             Element title = doc.select("h3[align]").get(0);
             String calTitle = title.text();

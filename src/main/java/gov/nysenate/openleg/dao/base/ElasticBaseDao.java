@@ -2,6 +2,7 @@ package gov.nysenate.openleg.dao.base;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Ints;
+import gov.nysenate.openleg.model.search.InvalidSearchParamException;
 import gov.nysenate.openleg.model.search.SearchResult;
 import gov.nysenate.openleg.model.search.SearchResults;
 import gov.nysenate.openleg.util.OutputUtils;
@@ -9,13 +10,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteRequest;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
@@ -25,6 +23,9 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Requests;
@@ -152,14 +153,13 @@ public abstract class ElasticBaseDao
      * Performs a get request on the given index for the document designated by the given type and id
      * returns an optional that is empty if a document does not exist for the given request parameters
      * @param index String - a search index
-     * @param type String - a search type
      * @param id String - the id of the desired document
      * @param responseMapper Function<GetResponse, T> - a function that maps the response to the desired class
      * @param <T> The type to be returned
      * @return Optional<T></T>
      */
-    protected <T> Optional<T> getRequest(String index, String type, String id, Function<GetResponse, T> responseMapper) {
-        GetRequest getRequest = new GetRequest(index, type, id);
+    protected <T> Optional<T> getRequest(String index, String id, Function<GetResponse, T> responseMapper) {
+        GetRequest getRequest = new GetRequest(index, id);
         try {
             GetResponse getResponse = searchClient.get(getRequest, RequestOptions.DEFAULT);
             if (getResponse.isExists()){
@@ -181,7 +181,8 @@ public abstract class ElasticBaseDao
      * @return IndexRequest
      */
     protected IndexRequest getJsonIndexRequest(String indexName, String id, Object object) {
-        return new IndexRequest(indexName, defaultType, id)
+        return new IndexRequest(indexName)
+                .id(id)
                 .source(OutputUtils.toElasticsearchJson(object), XContentType.JSON);
     }
 
@@ -239,7 +240,6 @@ public abstract class ElasticBaseDao
 
     protected DeleteRequest getDeleteRequest(String indexName, String id) {
         return new DeleteRequest(indexName)
-                .type(defaultType)
                 .id(id);
     }
 
@@ -282,7 +282,7 @@ public abstract class ElasticBaseDao
         Throwable ex = null;
         for (int attempts = 0; attempts < 5; attempts++) {
             try {
-                UpdateSettingsResponse response = searchClient.indices().putSettings(request, RequestOptions.DEFAULT);
+                AcknowledgedResponse response = searchClient.indices().putSettings(request, RequestOptions.DEFAULT);
                 if (response.isAcknowledged()) {
                     return;
                 }
@@ -364,8 +364,7 @@ public abstract class ElasticBaseDao
     /* --- Internal Methods --- */
 
     private boolean indicesExist(String... indices) {
-        GetIndexRequest getIndexRequest = new GetIndexRequest()
-                .indices(indices);
+        GetIndexRequest getIndexRequest = new GetIndexRequest(indices);
         try {
             return searchClient.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
         }
@@ -376,12 +375,12 @@ public abstract class ElasticBaseDao
 
     private void createIndex(String indexName) {
         try {
-            CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName, getIndexSettings().build());
+            CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName)
+                    .settings(getIndexSettings());
 
             Map customMappingProps = getCustomMappingProperties();
             if (customMappingProps != null && !customMappingProps.isEmpty()) {
-                Map mapping = packageCustomMappingProperties(customMappingProps);
-                createIndexRequest.mapping(defaultType, mapping);
+                createIndexRequest.mapping(ImmutableMap.of("properties", customMappingProps));
             }
 
             searchClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
@@ -431,6 +430,7 @@ public abstract class ElasticBaseDao
                 .from(limitOffset.getOffsetStart() - 1)
                 .size((limitOffset.hasLimit()) ? limitOffset.getLimit() : Integer.MAX_VALUE)
                 .minScore(0.05f)
+                .trackTotalHits(true)
                 .fetchSource(new FetchSourceContext(fetchSource));
 
         if (highlightedFields != null) {
@@ -489,7 +489,7 @@ public abstract class ElasticBaseDao
                     hit.getHighlightFields()); // Highlights
             resultList.add(result);
         }
-        return new SearchResults<>(Ints.checkedCast(response.getHits().getTotalHits()), resultList, limitOffset);
+        return new SearchResults<>(Ints.checkedCast(response.getHits().getTotalHits().value), resultList, limitOffset);
     }
 
     /**
@@ -503,7 +503,7 @@ public abstract class ElasticBaseDao
         }
 
         if (limitOffset.getOffsetEnd() > maxResultWindow) {
-            throw new IllegalArgumentException("LimitOffset with offset end of " + limitOffset.getOffsetEnd() +
+            throw new InvalidSearchParamException("LimitOffset with offset end of " + limitOffset.getOffsetEnd() +
                     " extends past allowed result window of " + maxResultWindow);
         }
 
@@ -587,19 +587,5 @@ public abstract class ElasticBaseDao
         logger.debug("Large elasticsearch bulk request ({}) will be broken into {} smaller bulk requests",
                 FileUtils.byteCountToDisplaySize(totalSize), bulkRequests.size());
         return bulkRequests;
-    }
-
-    /**
-     * Packages a map of custom properties to get the complete mapping request body.
-     *
-     * @param properties Map
-     * @return Map<String, Object>
-     */
-    private ImmutableMap<String, Object> packageCustomMappingProperties(Map properties) {
-        return ImmutableMap.of(
-                defaultType, ImmutableMap.of(
-                        "properties", properties
-                )
-        );
     }
 }

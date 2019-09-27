@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -42,6 +43,9 @@ public class ApiUser implements Serializable
     /** A list of additional roles granted to this api user */
     private final Set<OpenLegRole> grantedRoles = new HashSet<>();
 
+    /** A list of subscription types this api user is enrolled in */
+    private Set<ApiUserSubscriptionType> subscriptions = new HashSet<>();
+
     /** --- Constructors --- */
 
     public ApiUser(String email) {
@@ -77,10 +81,7 @@ public class ApiUser implements Serializable
     /**
      * Adds a role to the api user's granted roles
      */
-    public void addRole(OpenLegRole role) {
-        this.grantedRoles.add(role);
-    }
-
+    public void addRole(OpenLegRole role) { this.grantedRoles.add(role); }
 
     /**
      * removes a role to the api user's granted roles
@@ -92,6 +93,22 @@ public class ApiUser implements Serializable
     public ImmutableSet<OpenLegRole> getGrantedRoles() {
         return ImmutableSet.copyOf(grantedRoles);
     }
+
+    /**
+     * Adds a subscription type to the api user's subscription types
+     */
+    public void addSubscription(ApiUserSubscriptionType subscription) { this.subscriptions.add(subscription); }
+
+    /**
+     * Removes a subscription type from the api user's subscription types
+     */
+    public void removeSubscription(ApiUserSubscriptionType subscription) { this.subscriptions.remove(subscription); }
+
+    /**
+     * Returns an immutable set containing this api users subscriptions
+     */
+    public ImmutableSet<ApiUserSubscriptionType> getSubscriptions() { return ImmutableSet.copyOf(subscriptions); }
+
 
     /** --- Basic Getters/Setters --- */
 
@@ -157,5 +174,19 @@ public class ApiUser implements Serializable
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ApiUser apiUser = (ApiUser) o;
+        return apiKey.equals(apiUser.apiKey) &&
+                email.equals(apiUser.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(apiKey, email);
     }
 }

@@ -16,6 +16,7 @@ import gov.nysenate.openleg.model.bill.BaseBillId;
 import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.bill.BillTextFormat;
 import gov.nysenate.openleg.model.notification.Notification;
+import gov.nysenate.openleg.model.search.InvalidSearchParamException;
 import gov.nysenate.openleg.model.search.SearchException;
 import gov.nysenate.openleg.model.search.UnexpectedSearchException;
 import gov.nysenate.openleg.model.updates.UpdateType;
@@ -512,6 +513,13 @@ public abstract class BaseCtrl
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ViewObjectErrorResponse searchExceptionHandler(SearchException ex) {
         logger.debug("Search Exception!", ex);
+        return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidSearchParamException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ViewObjectErrorResponse invalidSearchParamExceptionHandler(InvalidSearchParamException ex) {
+        logger.debug("Invalid Search Param Exception: ", ex);
         return new ViewObjectErrorResponse(ErrorCode.SEARCH_ERROR, ex.getMessage());
     }
 

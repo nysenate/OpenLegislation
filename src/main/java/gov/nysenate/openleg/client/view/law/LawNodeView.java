@@ -15,8 +15,8 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
     protected int sequenceNo;
     protected boolean isRepealed;
     protected LocalDate repealedDate;
-    protected String fromSection;
-    protected String toSection;
+    protected String fromSection = null;
+    protected String toSection = null;
     protected String text;  // Can be null when just displaying structure.
 
     protected ListView<LawNodeView> documents;
@@ -46,10 +46,8 @@ public class LawNodeView extends LawDocInfoView implements ViewObject
         this.sequenceNo = treeNode.getSequenceNo();
         this.repealedDate = treeNode.getRepealedDate();
         this.isRepealed = this.repealedDate != null;
-        Optional<LawTreeNode> fromSection = treeNode.getFromSection();
-        Optional<LawTreeNode> toSection = treeNode.getToSection();
-        this.fromSection = (fromSection.isPresent()) ? fromSection.get().getLocationId() : null;
-        this.toSection = (toSection.isPresent()) ? toSection.get().getLocationId() : null;
+        treeNode.getFromSection().ifPresent(f -> this.fromSection = f.getLawDocInfo().getDocTypeId());
+        treeNode.getToSection().ifPresent(t -> this.toSection = t.getLawDocInfo().getDocTypeId());
     }
 
     @Override

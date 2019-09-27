@@ -11,7 +11,7 @@ import gov.nysenate.openleg.model.spotcheck.senatesite.SenateSiteDumpFragment;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgenda;
 import gov.nysenate.openleg.model.spotcheck.senatesite.agenda.SenateSiteAgendaBill;
 import gov.nysenate.openleg.processor.base.ParseError;
-import gov.nysenate.openleg.service.spotcheck.senatesite.base.JsonParser;
+import gov.nysenate.openleg.service.spotcheck.senatesite.base.SenateSiteJsonParser;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * Created by PKS on 4/28/16.
  */
 @Service
-public class AgendaJsonParser extends JsonParser {
+public class AgendaJsonParser extends SenateSiteJsonParser {
 
     public List<SenateSiteAgenda> parseAgendas(SenateSiteDump agendaDump) throws ParseError {
         return agendaDump.getDumpFragments().stream()

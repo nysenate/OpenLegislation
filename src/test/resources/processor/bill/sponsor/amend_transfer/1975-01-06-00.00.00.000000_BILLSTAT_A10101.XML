@@ -1,0 +1,71 @@
+<billstatus  sessyr="1975" billhse="A" billno="10101" action="replace">
+<deadtag></deadtag>
+<currentamd></currentamd>
+<sponsor><![CDATA[MAINSPON]]></sponsor>
+<reprint>
+<rprtbillhse></rprtbillhse>
+<rprtbillno></rprtbillno>
+<rprtbillamd></rprtbillamd>
+</reprint>
+<lbdno>10879036</lbdno>
+<introcomm>11</introcomm>
+<curcomm></curcomm>
+<curcommhse></curcommhse>
+<law><![CDATA[Anarchic Law]]></law>
+<title><![CDATA[Relates to absolutely nothing]]></title>
+<billactions><![CDATA[
+01/01/75 referred to education
+01/04/75 amended 10101A
+01/06/75 amend by restoring to original print 10101
+]]></billactions>
+<actions>
+<action no="1">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>1</actioncode>
+<actiontype>S</actiontype>
+<actiondata>11</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>1975-01-01</actiondate>
+<actiondesc><![CDATA[referred to education]]></actiondesc>
+<actionpostdate>1975-01-01</actionpostdate>
+<actionactsessyr>1975</actionactsessyr>
+</action>
+<action no="2">
+<actionbillamd></actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>75</actioncode>
+<actiontype>B</actiontype>
+<actiondata>10101</actiondata>
+<actiondataamd>A</actiondataamd>
+<actiondate>1975-01-04</actiondate>
+<actiondesc><![CDATA[amended 10101A]]></actiondesc>
+<actionpostdate>1975-01-01</actionpostdate>
+<actionactsessyr>1975</actionactsessyr>
+</action>
+<action no="3">
+<actionbillamd>A</actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>65</actioncode>
+<actiontype>B</actiontype>
+<actiondata>10101</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>1975-01-01</actiondate>
+<actiondesc><![CDATA[amend by restoring to original print 10101 ]]></actiondesc>
+<actionpostdate>1975-01-01</actionpostdate>
+<actionactsessyr>1975</actionactsessyr>
+</action>
+<action no="1975">
+<actionbillamd>A</actionbillamd>
+<actionhouse>A</actionhouse>
+<actioncode>65</actioncode>
+<actiontype>B</actiontype>
+<actiondata>10101</actiondata>
+<actiondataamd></actiondataamd>
+<actiondate>1975-01-01</actiondate>
+<actiondesc><![CDATA[amend by restoring to original print 10101 ]]></actiondesc>
+<actionpostdate>1975-01-01</actionpostdate>
+<actionactsessyr>1975</actionactsessyr>
+</action>
+</actions>
+</billstatus>

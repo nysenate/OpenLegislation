@@ -7,10 +7,10 @@ import gov.nysenate.openleg.model.calendar.spotcheck.CalendarEntryListId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,8 +23,9 @@ import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 @Service
 public class OpenlegCalendarCheckService
-        extends BaseSpotCheckService<CalendarEntryListId, CalendarEntryList, CalendarEntryList> {
-    private static final Logger logger = LoggerFactory.getLogger(OpenlegBillCheckService.class);
+        implements SpotCheckService<CalendarEntryListId, CalendarEntryList, CalendarEntryList> {
+
+    @Autowired private SpotCheckUtils spotCheckUtils;
 
     @Override
     public SpotCheckObservation<CalendarEntryListId> check(CalendarEntryList content, CalendarEntryList reference) {
@@ -76,24 +77,24 @@ public class OpenlegCalendarCheckService
 
     protected void checkFloorCalDate(CalendarSupView content, CalendarSupView reference,
                                      SpotCheckObservation<CalendarEntryListId> observation) {
-        checkObject(content.getCalDate(), reference.getCalDate(), observation, FLOOR_CAL_DATE);
+        spotCheckUtils.checkObject(content.getCalDate(), reference.getCalDate(), observation, FLOOR_CAL_DATE);
     }
 
     protected void checkFloorCalYear(CalendarSupView content, CalendarSupView reference,
                                      SpotCheckObservation<CalendarEntryListId> observation) {
-        checkObject(content.getYear(), reference.getYear(), observation, FLOOR_CAL_YEAR);
+        spotCheckUtils.checkObject(content.getYear(), reference.getYear(), observation, FLOOR_CAL_YEAR);
     }
 
     protected void checkFloorReleaseDateTime(CalendarSupView content, CalendarSupView reference,
                                              SpotCheckObservation<CalendarEntryListId> observation) {
-        checkObject(content.getReleaseDateTime(), reference.getReleaseDateTime(), observation, FLOOR_RELEASE_DATE_TIME);
+        spotCheckUtils.checkObject(content.getReleaseDateTime(), reference.getReleaseDateTime(), observation, FLOOR_RELEASE_DATE_TIME);
     }
 
     protected void checkFloorCalendarSupEntryViews(CalendarSupView content, CalendarSupView reference,
                                                    SpotCheckObservation<CalendarEntryListId> observation) {
         List<CalendarSupEntryView> contentEntries = getCalendarSupEntryViews(content);
         List<CalendarSupEntryView> supEntries = getCalendarSupEntryViews(reference);
-        checkCollection(contentEntries, supEntries, observation, FLOOR_ENTRY, this::getSupEntryString, "\n");
+        spotCheckUtils.checkCollection(contentEntries, supEntries, observation, FLOOR_ENTRY, this::getSupEntryString, "\n");
     }
 
     private List<CalendarSupEntryView> getCalendarSupEntryViews(CalendarSupView calendarSupView) {
@@ -120,18 +121,18 @@ public class OpenlegCalendarCheckService
 
     protected void checkActiveListCalDate(ActiveListView content, ActiveListView reference,
                                           SpotCheckObservation<CalendarEntryListId> observation) {
-        checkObject(content.getCalDate(), reference.getCalDate(), observation, ACTIVE_LIST_CAL_DATE);
+        spotCheckUtils.checkObject(content.getCalDate(), reference.getCalDate(), observation, ACTIVE_LIST_CAL_DATE);
     }
 
     protected void checkActiveListReleaseDateTime(ActiveListView content, ActiveListView reference,
                                                   SpotCheckObservation<CalendarEntryListId> observation) {
-        checkObject(content.getReleaseDateTime(), reference.getReleaseDateTime(),
+        spotCheckUtils.checkObject(content.getReleaseDateTime(), reference.getReleaseDateTime(),
                 observation, ACTIVE_LIST_RELEASE_DATE_TIME);
     }
 
     protected void checkActiveListNotes(ActiveListView content, ActiveListView reference,
                                         SpotCheckObservation<CalendarEntryListId> observation) {
-        checkObject(
+        spotCheckUtils.checkObject(
                 StringUtils.normalizeSpace(content.getNotes()),
                 StringUtils.normalizeSpace(reference.getNotes()),
                 observation, ACTIVE_LIST_NOTES);
@@ -139,7 +140,7 @@ public class OpenlegCalendarCheckService
 
     protected void checkActiveListCalendarEntryViews(ActiveListView content, ActiveListView reference,
                                                      SpotCheckObservation<CalendarEntryListId> observation) {
-        checkCollection(getActiveListEntries(content), getActiveListEntries(reference),
+        spotCheckUtils.checkCollection(getActiveListEntries(content), getActiveListEntries(reference),
                 observation, ACTIVE_LIST_ENTRY, this::getEntryString, "\n");
     }
 

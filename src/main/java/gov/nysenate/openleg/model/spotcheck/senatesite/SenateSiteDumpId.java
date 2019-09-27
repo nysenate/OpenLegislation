@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
+import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,10 @@ public class SenateSiteDumpId implements Comparable<SenateSiteDumpId> {
     }
 
     /* --- Functional Getters --- */
+
+    public SpotCheckReferenceId getReferenceId() {
+        return new SpotCheckReferenceId(refType, dumpTime);
+    }
 
     public SessionYear getSession() {
         return SessionYear.of(year);

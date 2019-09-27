@@ -64,6 +64,7 @@ public class PipelineBuilder<T> {
      * @param <E>
      * @return {@link PipelineBuilder}
      */
+    @SuppressWarnings("unchecked")
     public <E> PipelineBuilder<E> addTask(Function<T, Collection<E>> task,
                                              int outputCapacity, int instances) {
         if (instances < 1) {

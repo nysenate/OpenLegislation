@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
+import java.util.regex.Matcher;
 
 /**
  * Constructs document hierarchies using document id prefixes.
@@ -32,7 +33,7 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
      * that prefixes the current document's location id. The specific location id (the matched prefix from the parent
      * document removed) is returned.
      *
-     * For example given the locationId 'A2P1SP3', we will pop the parent stack until we find it's parent 'A2P1'
+     * For example given the locationId 'A2P1SP3', we will pop the parent stack until we find its parent 'A2P1'
      * or reach the root node. The new portion 'SP3' would be the returned value which serves as the docTypeId.
      *
      * @param block LawBlock
@@ -40,29 +41,36 @@ public class IdBasedLawBuilder extends AbstractLawBuilder implements LawBuilder
      */
     @Override
     protected String determineHierarchy(LawBlock block) {
-        String docTypeId = block.getLocationId();
+        if (block.getDocumentId().startsWith(CITY_TAX_STR + "P"))
+            return block.getDocumentId().replace(CITY_TAX_STR, "");
+        String blockLocID = block.getLocationId();
         while (!currParent().isRootNode()) {
-            if (StringUtils.startsWith(block.getLocationId(), currParent().getLocationId())) {
-                String trimLocId = StringUtils.removeStart(block.getLocationId(), currParent().getLocationId());
-                if (locationPattern.matcher(trimLocId).matches()) {
-                    docTypeId = trimLocId;
-                    break;
-                }
+            String parentLocID = currParent().getLocationId();
+            if (StringUtils.startsWith(blockLocID, parentLocID)) {
+                String trimLocId = StringUtils.removeStart(blockLocID, parentLocID);
+                LawDocumentType parentType = currParent().getDocType();
+                Matcher blockMatch = locationPattern.matcher(trimLocId);
+                if (blockMatch.matches() && lawLevelCodes.get(blockMatch.group(1)) != parentType)
+                    return trimLocId;
             }
             parentNodes.pop();
         }
-        return docTypeId;
+        return blockLocID;
     }
 
     @Override
     protected void addChildNode(LawTreeNode node) {
-        if (currParent() != null) {
+        // Handles special GCT sections.
+        if (node.getDocumentId().matches(CITY_TAX_STR.substring(0, 6) + "(B|AP[^1].*)")) {
+            parentNodes.pop();
+            if (node.getLocationId().length() == 4)
+                parentNodes.pop();
+        }
+        if (currParent() != null)
             currParent().addChild(node);
-        }
         // Section nodes should never become parents because they are the most granular (at the moment).
-        if (!node.getDocType().equals(LawDocumentType.SECTION)) {
+        if (!node.getDocType().equals(LawDocumentType.SECTION))
             parentNodes.push(node);
-        }
     }
 
     @Override

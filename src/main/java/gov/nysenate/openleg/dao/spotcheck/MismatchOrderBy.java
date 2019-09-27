@@ -11,7 +11,7 @@ package gov.nysenate.openleg.dao.spotcheck;
  * the key like: <code>key->'print_no'</code>.
  */
 public enum MismatchOrderBy {
-    /** Common fields */
+    /* Common fields */
     STATUS("status"),
     MISMATCH_TYPE("type"),
     DATASOURCE("datasource"),
@@ -20,20 +20,24 @@ public enum MismatchOrderBy {
     OBSERVED_DATE("observed_date_time"),
     ISSUE("issue_ids"),
 
-    /** Bill fields */
+    /* Bill fields */
     PRINT_NO("key->'print_no'"),
     SESSION_YEAR("(key->'session_year')::smallint"),
 
-    /** Calendar Fields */
+    /* Calendar Fields */
     CAL_YEAR("(key->'year')::smallint"),
     CAL_NO("(key->'calNo')::smallint"),
     CAL_TYPE("key->'type'"),
 
-    /** Agenda Fields */
+    /* Agenda Fields */
     AGENDA_YEAR("(key->'year')::smallint"),
     AGENDA_NO("(key->'agendaNo')::smallint"),
     AGENDA_WEEK_OF("(key->'weekOf')::smallint"),
-    AGENDA_COMMITTEE("key->'committee_name'")
+    AGENDA_COMMITTEE("key->'committee_name'"),
+
+    /* Law Fields */
+    LAW_CHAPTER("key->'law_chapter'"),
+    LAW_LOC_ID("key->'location_id'"),
     ;
 
     private String columnName;

@@ -8,6 +8,7 @@ import gov.nysenate.openleg.config.Environment;
 import gov.nysenate.openleg.dao.auth.ApiUserDao;
 import gov.nysenate.openleg.model.auth.ApiUser;
 import gov.nysenate.openleg.model.auth.ApiUserAuthEvictEvent;
+import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
@@ -15,49 +16,56 @@ import gov.nysenate.openleg.model.cache.ContentCache;
 import gov.nysenate.openleg.model.notification.Notification;
 import gov.nysenate.openleg.model.notification.NotificationType;
 import gov.nysenate.openleg.service.base.data.CachingService;
-import gov.nysenate.openleg.service.mail.MimeSendMailService;
+import gov.nysenate.openleg.service.mail.SendMailService;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class CachedSqlApiUserService implements ApiUserService, CachingService<String>
 {
-    @Autowired protected ApiUserDao apiUserDao;
-    @Autowired protected MimeSendMailService sendMailService;
+    protected final ApiUserDao apiUserDao;
+    protected final SendMailService sendMailService;
 
-    @Value("${domain.url}") private String domainUrl;
+    private final String domainUrl;
 
-    @Autowired private CacheManager cacheManager;
-    @Autowired private EventBus eventBus;
-    @Autowired private Environment environment;
+    private final EventBus eventBus;
+    private final CacheManager cacheManager;
+    private final Environment environment;
 
 //    private static final String apiUserCacheName = ;
     private EhCacheCache apiUserCache;
 
     private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
 
-    @PostConstruct
-    private void init() {
+    public CachedSqlApiUserService(ApiUserDao apiUserDao, SendMailService sendMailService, CacheManager cacheManager,
+                                   EventBus eventBus, Environment environment, @Value("${domain.url}")  String domainUrl) {
+        this.apiUserDao = apiUserDao;
+        this.sendMailService = sendMailService;
+        this.cacheManager = cacheManager;
+        this.environment = environment;
+        this.eventBus = eventBus;
         eventBus.register(this);
         setupCaches();
+        this.domainUrl = domainUrl;
     }
 
     @PreDestroy
@@ -125,7 +133,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
 
     /** {@inheritDoc} */
     @Override
-    public ApiUser registerNewUser(String email, String name, String orgName) {
+    public ApiUser registerNewUser(String email, String name, String orgName, Set<ApiUserSubscriptionType> subscriptions) {
         Pattern emailRegex = Pattern.compile("^[a-zA-Z\\d-._]+@[a-zA-Z\\d-._]+.[a-zA-Z]{2,4}$");
         Matcher patternMatcher = emailRegex.matcher(email);
 
@@ -147,6 +155,11 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         newUser.setActive(true);
 
         apiUserDao.insertUser(newUser);
+
+        for(ApiUserSubscriptionType sub : subscriptions) {
+            apiUserDao.addSubscription(newUser.getApiKey(), sub);
+        }
+
         sendRegistrationEmail(newUser);
         return newUser;
     }
@@ -206,6 +219,31 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         getCachedApiUser(apiKey).ifPresent(apiUser -> apiUser.removeRole(role));
         eventBus.post(new ApiUserAuthEvictEvent(apiKey));
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public ImmutableSet<ApiUserSubscriptionType> getSubscriptions(String key) {
+        return getUserByKey(key)
+                .map(ApiUser::getSubscriptions)
+                .orElse(ImmutableSet.of());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addSubscription(String apiKey, ApiUserSubscriptionType subscription) {
+        apiUserDao.addSubscription(apiKey, subscription);
+        getCachedApiUser(apiKey).ifPresent(apiUser -> apiUser.addSubscription(subscription));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void removeSubscription(String apiKey, ApiUserSubscriptionType subscription) {
+        apiUserDao.removeSubscription(apiKey, subscription);
+        getCachedApiUser(apiKey).ifPresent(apiUser -> apiUser.removeSubscription(subscription));
+    }
+
+
+
 
     /**
      * Attempt to get an api user as an optional value
@@ -270,7 +308,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
                 userPlaceholder, user.getName(),
                 domainPlaceholder, environment.getUrl(),
                 tokenPlaceholder, user.getRegistrationToken());
-        final String message = StrSubstitutor.replace(regEmailTemplate, subMap);
+        final String message = StringSubstitutor.replace(regEmailTemplate, subMap);
 
         sendMailService.sendMessage(user.getEmail(), "Open Legislation API Account Registration", message);
     }
@@ -297,7 +335,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
                 keyPlaceholder, user.getApiKey(),
                 domainPlaceholder, environment.getUrl(),
                 fromPlaceholder, environment.getEmailFromAddress());
-        final String message = StrSubstitutor.replace(keyEmailTemplate, subMap);
+        final String message = StringSubstitutor.replace(keyEmailTemplate, subMap);
 
         sendMailService.sendMessage(user.getEmail(), "Your Open Legislation API Key", message);
     }

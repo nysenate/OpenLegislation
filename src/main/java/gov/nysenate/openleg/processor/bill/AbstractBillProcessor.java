@@ -52,7 +52,7 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
 
     /** RULES Sponsors are formatted as RULES COM followed by the name of the sponsor that requested passage. */
     protected static final Pattern rulesSponsorPattern =
-        Pattern.compile("RULES (?:COM )?\\(?([a-zA-Z-']+)( [A-Z])?\\)?(.*)");
+        Pattern.compile("^RULES (?:COM)? *\\(?([A-Z-_']+(?: [A-Z]+)?)\\)?", Pattern.CASE_INSENSITIVE);
 
     /** The expected format for SameAs [5] block data. Same as Uni A 372, S 210 */
     protected static final Pattern sameAsPattern =
@@ -103,12 +103,11 @@ public abstract class AbstractBillProcessor extends AbstractDataProcessor implem
         // Check for RULES sponsors
         if (sponsorLine.startsWith("RULES")) {
             billSponsor.setRules(true);
-            Matcher rules = rulesSponsorPattern.matcher(sponsorLine);
-            if (sponsorLine.contains("RULES") && rules.matches() && ( !sponsorLine.trim().equals("RULES COM") || !sponsorLine.trim().equals("RULES")) ) {
-                sponsorLine = rules.group(1) + ((rules.group(2) != null) ? rules.group(2) : "");
+            Matcher sposorMatch = rulesSponsorPattern.matcher(sponsorLine);
+            if (sposorMatch.matches() && !"RULES COM".equals(sponsorLine)) {
+                sponsorLine = sposorMatch.group(1);
                 billSponsor.setMember(getMemberFromShortName(sponsorLine, sessionYear, chamber));
-            }
-            else {
+            } else {
                 billSponsor.setMember(null);
             }
         }

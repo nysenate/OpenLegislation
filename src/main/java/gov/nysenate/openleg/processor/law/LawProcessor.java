@@ -1,10 +1,6 @@
 package gov.nysenate.openleg.processor.law;
 
-import com.google.common.collect.Sets;
-import gov.nysenate.openleg.model.law.LawDocumentType;
-import gov.nysenate.openleg.model.law.LawFile;
-import gov.nysenate.openleg.model.law.LawTree;
-import gov.nysenate.openleg.model.law.LawVersionId;
+import gov.nysenate.openleg.model.law.*;
 import gov.nysenate.openleg.model.process.DataProcessUnit;
 import gov.nysenate.openleg.processor.base.AbstractDataProcessor;
 import gov.nysenate.openleg.service.law.data.LawDataService;
@@ -24,35 +20,23 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gov.nysenate.openleg.model.law.LawDocumentType.*;
-
 /**
  * Processes the initial/update law dumps and persists the data.
  */
 @Service
 public class LawProcessor extends AbstractDataProcessor
 {
+    /** Used to denote when the text of a LawDocument in lawDocMap should not be changed. */
+    public static final String ONLY_TITLE_UPDATE = "****no text update****";
+
     private static final Logger logger = LoggerFactory.getLogger(LawProcessor.class);
 
     /** The law files are most likely sent in CP850 encoding. */
-    protected static Charset LAWFILE_CHARSET = Charset.forName("CP850");
+    private static Charset LAWFILE_CHARSET = Charset.forName("CP850");
 
     /** Pattern for law doc headers.  */
-    protected static Pattern lawHeader =
+    private static Pattern lawHeader =
         Pattern.compile("\\.\\.SO DOC ((\\w{3})(.{13}))(.{8}) (.{15}) (?:LAWS\\(((?:UN)?CONSOLIDATED)\\))");
-
-    /** Hints about the law hierarchy for certain laws that have inconsistent doc id naming. */
-    protected static Map<String, List<LawDocumentType>> expectedLawOrdering = new HashMap<>();
-    static {
-        expectedLawOrdering.put("EDN", Arrays.asList(TITLE, ARTICLE, SUBARTICLE, PART, SUB_PART));
-        expectedLawOrdering.put("CPL", Arrays.asList(PART, TITLE, ARTICLE));
-    }
-
-    /** Set of law ids to ignore during processing. */
-    protected Set<String> ignoreLaws = Sets.newHashSet("CNS");
-
-    /** Set of law ids to only allow processing of. Overrides 'ignoreLaws'. */
-    protected Set<String> onlyLaws = Sets.newHashSet();
 
     @Autowired private LawDataService lawDataService;
 
@@ -89,24 +73,6 @@ public class LawProcessor extends AbstractDataProcessor
         postDataUnitEvent(unit);
     }
 
-    /** --- Basic Getters/Setters --- */
-
-    public Set<String> getIgnoreLaws() {
-        return ignoreLaws;
-    }
-
-    public void setIgnoreLaws(String... ignoreLaws) {
-        this.ignoreLaws = Sets.newHashSet(ignoreLaws);
-    }
-
-    public Set<String> getOnlyLaws() {
-        return onlyLaws;
-    }
-
-    public void setOnlyLaws(String... lawIds) {
-        this.onlyLaws = Sets.newHashSet(lawIds);
-    }
-
     /** --- Internal Methods --- */
 
     /**
@@ -116,13 +82,13 @@ public class LawProcessor extends AbstractDataProcessor
      * @param lawFile LawFile
      * @param lawBlocks List<LawBlock>
      */
-    protected void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
+    private void processInitialLaws(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         for (LawBlock block : lawBlocks) {
-            if (!shouldProcessLaw(block)) continue;
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                LawBuilder lawBuilder = createLawBuilder(new LawVersionId(block.getLawId(), block.getPublishedDate()), null);
+                LawBuilder lawBuilder = AbstractLawBuilder.makeLawBuilder(new LawVersionId
+                        (block.getLawId(), block.getPublishedDate()), null);
                 lawBuilders.put(block.getLawId(), lawBuilder);
                 unit.addMessage("Processing initial docs for " + block.getLawId());
             }
@@ -141,11 +107,10 @@ public class LawProcessor extends AbstractDataProcessor
      * @param lawFile LawFile
      * @param lawBlocks List<LawBlock>
      */
-    protected void processLawUpdates(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
+    private void processLawUpdates(LawFile lawFile, List<LawBlock> lawBlocks, DataProcessUnit unit) {
         Map<String, LawBuilder> lawBuilders = new HashMap<>();
         Map<String, LawTree> lawTrees = new HashMap<>();
         for (LawBlock block : lawBlocks) {
-            if (!shouldProcessLaw(block)) continue;
             LawVersionId lawVersionId = new LawVersionId(block.getLawId(), block.getPublishedDate());
             logger.debug("Processing law version id: {}", lawVersionId);
             // Retrieve the existing law tree if it exists.
@@ -161,7 +126,7 @@ public class LawProcessor extends AbstractDataProcessor
             }
             // Create the law builder for the law id if it doesn't already exist.
             if (!lawBuilders.containsKey(block.getLawId())) {
-                LawBuilder lawBuilder = createLawBuilder(lawVersionId, lawTrees.get(block.getLawId()));
+                LawBuilder lawBuilder = AbstractLawBuilder.makeLawBuilder(lawVersionId, lawTrees.get(block.getLawId()));
                 lawBuilders.put(block.getLawId(), lawBuilder);
             }
             // Process the update block
@@ -197,7 +162,7 @@ public class LawProcessor extends AbstractDataProcessor
      * @return List<ListBlock>
      * @throws IOException
      */
-    protected List<LawBlock> getLawBlocks(LawFile lawFile) throws IOException {
+    private List<LawBlock> getLawBlocks(LawFile lawFile) throws IOException {
         List<LawBlock> rawDocList = new ArrayList<>();
         logger.debug("Extracting law blocks...");
         File file = lawFile.getFile();
@@ -208,7 +173,7 @@ public class LawProcessor extends AbstractDataProcessor
             String line = fileItr.next();
             headerMatcher = lawHeader.matcher(line);
             if (headerMatcher.matches()) {
-                if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId(), block.getPublishedDate())) {
+                if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId())) {
                     rawDocList.add(block);
                 }
                 block = new LawBlock();
@@ -216,7 +181,7 @@ public class LawProcessor extends AbstractDataProcessor
                 block.setLawId(headerMatcher.group(2).trim());
                 block.setPublishedDate(lawFile.getPublishedDate());
                 block.setDocumentId(
-                    LawDocIdFixer.applyReplacement(headerMatcher.group(1).trim(), lawFile.getPublishedDate()));
+                    LawDocIdFixer.applyReplacement(headerMatcher.group(1).trim()));
                 block.setLocationId(block.getDocumentId().substring(3));
                 block.setMethod(headerMatcher.group(4).trim());
                 block.setConsolidated(headerMatcher.group(6).equals("CONSOLIDATED"));
@@ -226,23 +191,9 @@ public class LawProcessor extends AbstractDataProcessor
                 block.getText().append(line).append("\\n");
             }
         }
-        if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId(), block.getPublishedDate())) {
+        if (block != null && !LawDocIdFixer.ignoreDocument(block.getDocumentId())) {
             rawDocList.add(block);
         }
         return rawDocList;
-    }
-
-    protected boolean shouldProcessLaw(LawBlock block) {
-        return (onlyLaws.contains(block.getLawId())) ||
-               (onlyLaws.isEmpty() && !ignoreLaws.contains(block.getLawId()));
-    }
-
-    protected LawBuilder createLawBuilder(LawVersionId lawVersionId, LawTree previousTree) {
-        if (expectedLawOrdering.containsKey(lawVersionId.getLawId())) {
-            return new HintBasedLawBuilder(lawVersionId, previousTree, expectedLawOrdering.get(lawVersionId.getLawId()));
-        }
-        else {
-            return new IdBasedLawBuilder(lawVersionId, previousTree);
-        }
     }
 }

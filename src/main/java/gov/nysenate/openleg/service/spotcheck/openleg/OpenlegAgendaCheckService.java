@@ -13,8 +13,10 @@ import gov.nysenate.openleg.model.bill.BillId;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckObservation;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckRefType;
 import gov.nysenate.openleg.model.spotcheck.SpotCheckReferenceId;
-import gov.nysenate.openleg.service.spotcheck.base.BaseSpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +26,9 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.model.spotcheck.SpotCheckMismatchType.*;
 
 @Service
-public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAgendaAddendumId, AgendaCommAddendumView, AgendaCommAddendumView> {
+public class OpenlegAgendaCheckService implements SpotCheckService<CommitteeAgendaAddendumId, AgendaCommAddendumView, AgendaCommAddendumView> {
+
+    @Autowired private SpotCheckUtils spotCheckUtils;
 
     @Override
     public SpotCheckObservation<CommitteeAgendaAddendumId> check(
@@ -45,7 +49,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
 
     private void checkHasVotes(AgendaCommAddendumView content, AgendaCommAddendumView reference,
                                SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
-        checkObject(content.isHasVotes(), reference.isHasVotes(), observation, AGENDA_HAS_VOTES);
+        spotCheckUtils.checkObject(content.isHasVotes(), reference.isHasVotes(), observation, AGENDA_HAS_VOTES);
     }
 
     private String extractChair(AgendaCommAddendumView acav) {
@@ -59,7 +63,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
                             SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
         String contentChair = extractChair(content);
         String refChair = extractChair(reference);
-        checkString(contentChair, refChair, observation, AGENDA_CHAIR);
+        spotCheckUtils.checkString(contentChair, refChair, observation, AGENDA_CHAIR);
     }
 
     private String extractLocation(AgendaCommAddendumView acav) {
@@ -73,7 +77,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
                                SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
         String contentLocation = extractLocation(content);
         String refLocation = extractLocation(reference);
-        checkString(contentLocation, refLocation, observation, AGENDA_LOCATION);
+        spotCheckUtils.checkString(contentLocation, refLocation, observation, AGENDA_LOCATION);
     }
 
     private LocalDateTime extractMeetingDateTime(AgendaCommAddendumView acav) {
@@ -86,7 +90,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
                                       SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
         LocalDateTime contentMDT = extractMeetingDateTime(content);
         LocalDateTime refMDT = extractMeetingDateTime(reference);
-        checkObject(contentMDT, refMDT, observation, AGENDA_MEETING_TIME);
+        spotCheckUtils.checkObject(contentMDT, refMDT, observation, AGENDA_MEETING_TIME);
     }
 
     private String extractNotes(AgendaCommAddendumView acav) {
@@ -100,7 +104,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
                             SpotCheckObservation<CommitteeAgendaAddendumId> observation) {
         String contentNotes = extractNotes(content);
         String refNotes = extractNotes(reference);
-        checkString(contentNotes, refNotes, observation, AGENDA_NOTES);
+        spotCheckUtils.checkString(contentNotes, refNotes, observation, AGENDA_NOTES);
     }
 
     private String agendaItemViewStr(AgendaItemView aiv) {
@@ -123,7 +127,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
                                   SpotCheckObservation<CommitteeAgendaAddendumId> obs) {
         List<AgendaItemView> contentBills = extractBillList(content);
         List<AgendaItemView> refBills = extractBillList(reference);
-        checkCollection(contentBills, refBills, obs, AGENDA_BILLS, this::agendaItemViewStr, "\n");
+        spotCheckUtils.checkCollection(contentBills, refBills, obs, AGENDA_BILLS, this::agendaItemViewStr, "\n");
     }
 
     private List<AgendaAttendanceView> extractAttendList(AgendaCommAddendumView acav) {
@@ -142,7 +146,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
                                      SpotCheckObservation<CommitteeAgendaAddendumId> obs) {
         List<AgendaAttendanceView> contentAttendList = extractAttendList(content);
         List<AgendaAttendanceView> refAttendList = extractAttendList(reference);
-        checkCollection(contentAttendList, refAttendList, obs, AGENDA_ATTENDANCE_LIST,
+        spotCheckUtils.checkCollection(contentAttendList, refAttendList, obs, AGENDA_ATTENDANCE_LIST,
                 this::agendaAttendanceViewStr, "\n");
     }
 
@@ -179,7 +183,7 @@ public class OpenlegAgendaCheckService extends BaseSpotCheckService<CommitteeAge
 
     private void checkVotesList(AgendaCommAddendumView content, AgendaCommAddendumView reference,
                                 SpotCheckObservation<CommitteeAgendaAddendumId> obs) {
-        checkCollection(extractVotes(content), extractVotes(reference), obs, AGENDA_VOTES_LIST,
+        spotCheckUtils.checkCollection(extractVotes(content), extractVotes(reference), obs, AGENDA_VOTES_LIST,
                 this::getVoteStr, "\n\n");
     }
 

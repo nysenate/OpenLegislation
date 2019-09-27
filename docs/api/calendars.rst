@@ -431,3 +431,5 @@ Get updates for calendar 54 of 2014 that occurred between 9 AM and 5 PM on June 
         "size" : 3
       }
     }
+
+.. warning:: By default the type is set to 'processed'. As we reprocess our data periodically, it's possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example

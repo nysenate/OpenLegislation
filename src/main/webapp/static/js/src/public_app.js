@@ -26,6 +26,13 @@ openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$window', '$loca
             icon: 'icon-users', bgclass: 'green1-bg', docsPage: 'members.html'}
     ];
 
+    $scope.subscriptionsAvailable = [
+        { title: 'Breaking Changes', enumVal:'BREAKING_CHANGES', checked: true,
+            desc:"Sign up for emails regarding breaking changes to the API."},
+        { title: 'New Features', enumVal:'NEW_FEATURES', checked: false,
+            desc:"Sign up to hear about new features added to the API."}
+    ];
+
     $scope.goToDocsPage = function(page) {
         $scope.currDocsPath = $scope.getDocsPath(page);
         location.hash = 'docs';
@@ -34,6 +41,7 @@ openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$window', '$loca
     /** Api Key Registration */
     $scope.signedup = false;
     $scope.email = '';
+    $scope.subscriptions = [];
     $scope.signup = function() {
         $scope.errmsg = '';
         if (!$scope.email || $scope.email.indexOf('@') === -1) {
@@ -44,7 +52,17 @@ openPublicApp.controller('PublicHomeCtrl', ['$scope', '$http', '$window', '$loca
         }
         else {
             $scope.processing = true;
-            $http.post(ctxPath + "/register/signup", {name:$scope.name, email:$scope.email})
+            /* Check for the subscriptions that are checked and send them in request */
+            var subs = [];
+            $scope.subscriptionsAvailable.forEach(function(sub){
+               if(sub.checked) {
+                   subs.push(sub.enumVal);
+               }
+            });
+            $scope.subscriptions = subs;
+
+            $http.post(ctxPath + "/register/signup", {name:$scope.name, email:$scope.email,
+                                                                    subscriptions:$scope.subscriptions})
             .success(function(data, status, headers, config) {
                 if (data.success === false) {
                     $scope.errmsg = data.message;

@@ -6,6 +6,7 @@ import gov.nysenate.openleg.model.agenda.AgendaNotFoundEx;
 import gov.nysenate.openleg.model.spotcheck.agenda.AgendaAlertInfoCommittee;
 import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
 import gov.nysenate.openleg.service.agenda.data.CachedAgendaDataService;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportRunMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,5 +46,10 @@ public class IntervalAgendaReportService extends BaseAgendaCheckReportService{
     @Override
     protected String getNotes() {
         return "digest";
+    }
+
+    @Override
+    public SpotCheckReportRunMode getRunMode() {
+        return SpotCheckReportRunMode.PERIODIC;
     }
 }

@@ -3,7 +3,7 @@ package gov.nysenate.openleg.service.spotcheck.calendar;
 import gov.nysenate.openleg.dao.calendar.alert.SqlCalendarAlertDao;
 import gov.nysenate.openleg.model.calendar.Calendar;
 import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.spotcheck.ReferenceDataNotFoundEx;
+import gov.nysenate.openleg.service.spotcheck.base.SpotCheckReportRunMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +28,10 @@ public class IntervalCalendarReportService extends CalendarReportService {
     @Override
     protected String getNotes() {
         return "digest";
+    }
+
+    @Override
+    public SpotCheckReportRunMode getRunMode() {
+        return SpotCheckReportRunMode.PERIODIC;
     }
 }

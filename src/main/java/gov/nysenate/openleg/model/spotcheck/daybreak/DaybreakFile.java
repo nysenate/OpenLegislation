@@ -8,6 +8,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -85,7 +86,7 @@ public class DaybreakFile implements DaybreakDocument{
     @JsonIgnore
     public String getText() {
         try {
-            return FileUtils.readFileToString(file);
+            return FileUtils.readFileToString(file, Charset.defaultCharset());
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to read text from Daybreak file:" + this.toString());

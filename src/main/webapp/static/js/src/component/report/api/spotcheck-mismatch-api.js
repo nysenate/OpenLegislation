@@ -66,7 +66,10 @@ function spotcheckMismatchApi($resource) {
             agendaNo: parseAgendaNo(mismatch),
             weekOf: mismatch.key.weekOf || "",
             weekOfDisp: parseWeekOfDisp(mismatch),
-            committee: parseCommitteeAddendum(mismatch)
+            committee: parseCommitteeAddendum(mismatch),
+            lawChapter: parseLawChapter(mismatch),
+            locationId: mismatch.key.locationId || "",
+            lawObsType: mismatch.key.obsType,
         }
     }
 
@@ -199,5 +202,13 @@ function spotcheckMismatchApi($resource) {
     function patternWords(input) {
         var lower =  input.toLowerCase();
         return lower.charAt(0).toUpperCase() + lower.slice(1);
+    }
+
+    function parseLawChapter(mismatch) {
+        var obsType = mismatch.key.obsType || '';
+        if (obsType === 'ALL_CHAPTERS') {
+            return 'ALL'
+        }
+        return mismatch.key.lawChapter;
     }
 }

@@ -1,13 +1,16 @@
 package gov.nysenate.openleg.service.slack;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-
 import com.google.gson.JsonObject;
 import gov.nysenate.openleg.model.slack.SlackMessage;
 import org.apache.commons.io.IOUtils;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 
 /**
  * Copied from https://github.com/gpedro/slack-webhook with some customizations
@@ -62,9 +65,10 @@ public class SlackApi {
             //Get Response
             int responseCode = connection.getResponseCode();
             if (responseCode != 200) {
-                InputStream es = connection.getErrorStream();
-                String errorMessage = IOUtils.toString(es);
-                IOUtils.closeQuietly(es);
+                String errorMessage;
+                try (InputStream es = connection.getErrorStream()) {
+                    errorMessage = IOUtils.toString(es, Charset.defaultCharset());
+                }
 
                 if (responseCode == 404 && channelNotFoundMessage.equals(errorMessage)) {
                     throw new SlackChannelNotFoundException(message.get("channel").getAsString(), errorMessage);
@@ -72,9 +76,10 @@ public class SlackApi {
 
                 throw new SlackApiException(errorMessage, responseCode);
             }
-            InputStream is = connection.getInputStream();
-            String responseMessage = IOUtils.toString(is);
-            IOUtils.closeQuietly(is);
+            String responseMessage;
+            try (InputStream is = connection.getInputStream()) {
+                responseMessage = IOUtils.toString(is, Charset.defaultCharset());
+            }
 
             return responseMessage;
 

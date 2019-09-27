@@ -12,6 +12,7 @@ import org.junit.Test;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class XmlJsonIT {
 
     private String readInFileToString(File file) {
         try {
-            return FileUtils.readFileToString(file);
+            return FileUtils.readFileToString(file, Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
             fail("Could not convert the file to a string");

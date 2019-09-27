@@ -96,3 +96,5 @@ See the following pages for info on the unique updates responses for each conten
       "fromDateTime" : "2014-01-10T00:00",
       "toDateTime" : "2015-03-18T13:16:17.383999999"
     }
+
+.. warning:: This example uses processed date time. As we reprocess our data periodically, it's possible this specific api call may not produce the result shown. However, the response you receive will follow the format in the example

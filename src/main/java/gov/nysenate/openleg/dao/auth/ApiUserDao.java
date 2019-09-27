@@ -1,10 +1,12 @@
 package gov.nysenate.openleg.dao.auth;
 
 import gov.nysenate.openleg.model.auth.ApiUser;
+import gov.nysenate.openleg.model.auth.ApiUserSubscriptionType;
 import gov.nysenate.openleg.service.auth.OpenLegRole;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * DAO Interface for retrieving and persisting ApiUser data
@@ -42,16 +44,19 @@ public interface ApiUserDao
     public void updateUser(ApiUser user) throws DataAccessException;
 
     /**
+     * Update a preexisting user's email
+     * @param apikey String, The apiKey of the user whose email is being
+     *               updated
+     * @param email String, The new email
+     */
+    public void updateEmail(String apikey, String email);
+
+    /**
      * @return List<ApiUser> a list of all api users
      * @throws DataAccessException
      */
     public List<ApiUser> getAllUsers() throws DataAccessException;
 
-    /**
-     * Remove an ApiUser from the database
-     * @param apiuser The apiuser to be deleted
-     */
-    public void deleteApiUser(ApiUser apiuser) throws DataAccessException;
 
     /**
      * Finds the user with the specified registration token
@@ -73,4 +78,31 @@ public interface ApiUserDao
      * @param role String
      */
     public void revokeRole(String apiKey, OpenLegRole role);
+
+    /**
+     * Adds an e-mail subscription for an api user
+     * @param subscription ApiUserSubscriptionType
+     */
+    public void addSubscription(String apiKey, ApiUserSubscriptionType subscription);
+
+    /**
+     * Removes an e-mail subscription for an api user
+     * @param subscription ApiUserSubscriptionType
+     */
+    public void removeSubscription(String apiKey, ApiUserSubscriptionType subscription);
+
+    /**
+     * Removes all current subscriptions for a user and
+     * adds the subscriptions in the set parameter
+     * @param apiKey String
+     * @param subscriptions Set<ApiUserSubscriptionType>
+     */
+    public void setSubscriptions(String apiKey, Set<ApiUserSubscriptionType> subscriptions);
+
+    /**
+     * Gets all users with the given subscription
+     * @param subscription_type ApiUserSubscriptionType
+     * @return A list of ApiUsers
+     */
+    public List<ApiUser> getUsersWithSubscription(ApiUserSubscriptionType subscription_type);
 }

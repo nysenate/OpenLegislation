@@ -6,7 +6,7 @@ import gov.nysenate.openleg.dao.scraping.LRSScraper;
 import gov.nysenate.openleg.dao.scraping.ScrapingException;
 import gov.nysenate.openleg.model.bill.BaseBillId;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -18,6 +18,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * Created by kyle on 1/29/15.
@@ -45,7 +46,7 @@ public class BillScraper extends LRSScraper {
             BaseBillId baseBillId = scrapeDao.getScrapeQueueHead();
             HttpResponse response = makeRequest(constructUrl(baseBillId));
             // Verify bill data is in the file before saving.
-            String content = IOUtils.toString(response.getEntity().getContent());
+            String content = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
             if (!htmlParser.isLrsOutage(content)) {
                 scrapeDao.saveScrapedBillContent(content, baseBillId);
                 scrapeDao.deleteBillFromScrapeQueue(baseBillId);
@@ -79,7 +80,7 @@ public class BillScraper extends LRSScraper {
     }
 
     public String constructUrl(BaseBillId billId) {
-        return StrSubstitutor.replace(URL_TEMPLATE,
+        return StringSubstitutor.replace(URL_TEMPLATE,
                 ImmutableMap.of("printNo", billId.getPrintNo(),
                         "sessionYear", Integer.toString(billId.getSession().getYear())));
     }

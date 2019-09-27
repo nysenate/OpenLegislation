@@ -12,8 +12,9 @@ public class LawDocInfo extends LawDocId
     /** The document type which is parsed from the location id. */
     protected LawDocumentType docType;
 
-    /** The last portion of the location id. For example, if locationId = 'A2T1ST2-B' then the
-     *  docType will be 'SUBTITLE' and this docTypeId will be '2-B'. */
+    /** The last portion of the location id as it appears in the text.
+     * For example, if locationId = 'A2T1ST2-B' then the docType will be
+     * 'SUBTITLE' and this docTypeId will be '2-B'. */
     protected String docTypeId;
 
     /** True if this doc was created as a dummy.  i.e it was created by the parser but not specified in the sources.*/

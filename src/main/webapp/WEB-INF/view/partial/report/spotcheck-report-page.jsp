@@ -22,10 +22,12 @@
 
   <md-card class="content-card spotcheck-report-content-tabs">
     <md-tabs md-selected="selectedTab" class="md-hue-2" md-dynamic-height=md-border-bottom>
-      <spotcheck-report-content-tab title="Bills" type="BILL"></spotcheck-report-content-tab>
-      <spotcheck-report-content-tab title="Calendars" type="CALENDAR"></spotcheck-report-content-tab>
-      <spotcheck-report-content-tab title="Agendas" type="AGENDA"></spotcheck-report-content-tab>
+      <spotcheck-report-content-tab ng-repeat="contentType in dataSourceContentTypeMap[datasource.selected.value]"
+                                    type="{{contentType}}"
+                                    title="{{contentType | contentType}}">
+      </spotcheck-report-content-tab>
     </md-tabs>
   </md-card>
 </section>
 <jsp:include page="spotcheck-detail-window.jsp"/>
+

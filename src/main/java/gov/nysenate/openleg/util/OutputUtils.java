@@ -11,6 +11,8 @@ import gov.nysenate.openleg.client.view.base.MapView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
+
 /**
  * OutputUtils serves as a simple utility class to convert Objects to string representations.
  * This is primarily useful during development and debugging.
@@ -31,6 +33,9 @@ public abstract class OutputUtils
     static {
         SimpleModule module = new SimpleModule();
         module.addSerializer(MapView.class, new MapViewSerializer());
+        // fixme: ES7 current 7.0.0 build should accept variable digit millis (.3 vs .300) but doesn't in arch pkg...
+        // todo: Check if this fix comes through in a later build and remove the strict serializer if so.
+        module.addSerializer(LocalDateTime.class, new StrictLocalDateTimeSerializer());
         elasticsearchJsonMapper.registerModule(module);
     }
 

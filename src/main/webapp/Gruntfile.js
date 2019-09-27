@@ -8,7 +8,7 @@ var pomDoc = libxmljs.parseXml(pomXml);
 var artifactId = pomDoc.find("/*/*[name()='artifactId']")[0].text();
 var version = pomDoc.find("/*/*[name()='version']")[0].text();
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         properties: grunt.file.readJSON('grunt.properties.json'),
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
                 files: {
                     '<%= cssSource %>/lib.css':
                         ['<%= bowerRoot %>/fullcalendar/fullcalendar.css',
-                         '<%= bowerRoot %>/angular-material/angular-material.min.css']
+                            '<%= bowerRoot %>/angular-material/angular-material.min.css']
                 }
             }
         },
@@ -110,75 +110,76 @@ module.exports = function(grunt) {
                 files: {
                     '<%= jsDest %>/app.min.js':
                         [
-                        // Core
-                        '<%= jsSource %>/app.js',
-                        '<%= jsSource %>/core.js',
-                        '<%= jsSource %>/routes.js',
-                        '<%= jsSource %>/api.js',
+                            // Core
+                            '<%= jsSource %>/app.js',
+                            '<%= jsSource %>/core.js',
+                            '<%= jsSource %>/routes.js',
+                            '<%= jsSource %>/api.js',
 
-                        // Dashboard
-                        '<%= jsSource %>/component/content/dashboard.js',
+                            // Dashboard
+                            '<%= jsSource %>/component/content/dashboard.js',
 
-                        // Bills
-                        '<%= jsSource %>/component/content/bill/bill.js',
-                        '<%= jsSource %>/component/content/bill/bill-utils.js',
-                        '<%= jsSource %>/component/content/bill/bill-filters.js',
-                        '<%= jsSource %>/component/content/bill/bill-directives.js',
-                        '<%= jsSource %>/component/content/bill/bill-search-ctrl.js',
-                        '<%= jsSource %>/component/content/bill/bill-updates-ctrl.js',
-                        '<%= jsSource %>/component/content/bill/bill-view-ctrl.js',
+                            // Bills
+                            '<%= jsSource %>/component/content/bill/bill.js',
+                            '<%= jsSource %>/component/content/bill/bill-utils.js',
+                            '<%= jsSource %>/component/content/bill/bill-filters.js',
+                            '<%= jsSource %>/component/content/bill/bill-directives.js',
+                            '<%= jsSource %>/component/content/bill/bill-search-ctrl.js',
+                            '<%= jsSource %>/component/content/bill/bill-updates-ctrl.js',
+                            '<%= jsSource %>/component/content/bill/bill-view-ctrl.js',
 
-                        // Calendars
-                        '<%= jsSource %>/component/content/calendar/calendar.js',
-                        '<%= jsSource %>/component/content/calendar/calendar-filters.js',
-                        '<%= jsSource %>/component/content/calendar/calendar-directives.js',
-                        '<%= jsSource %>/component/content/calendar/calendar-view-ctrl.js',
-                        '<%= jsSource %>/component/content/calendar/calendar-browse-ctrl.js',
-                        '<%= jsSource %>/component/content/calendar/calendar-search-ctrl.js',
-                        '<%= jsSource %>/component/content/calendar/calendar-updates-ctrl.js',
+                            // Calendars
+                            '<%= jsSource %>/component/content/calendar/calendar.js',
+                            '<%= jsSource %>/component/content/calendar/calendar-filters.js',
+                            '<%= jsSource %>/component/content/calendar/calendar-directives.js',
+                            '<%= jsSource %>/component/content/calendar/calendar-view-ctrl.js',
+                            '<%= jsSource %>/component/content/calendar/calendar-browse-ctrl.js',
+                            '<%= jsSource %>/component/content/calendar/calendar-search-ctrl.js',
+                            '<%= jsSource %>/component/content/calendar/calendar-updates-ctrl.js',
 
-                        // Agendas
-                        '<%= jsSource %>/component/content/agenda/agenda.js',
-                        '<%= jsSource %>/component/content/agenda/agenda-browse-ctrl.js',
-                        '<%= jsSource %>/component/content/agenda/agenda-search-ctrl.js',
-                        '<%= jsSource %>/component/content/agenda/agenda-updates-ctrl.js',
-                        '<%= jsSource %>/component/content/agenda/agenda-view-ctrl.js',
-                        '<%= jsSource %>/component/content/agenda/agenda-filters.js',
-                        '<%= jsSource %>/component/content/agenda/agenda-directives.js',
+                            // Agendas
+                            '<%= jsSource %>/component/content/agenda/agenda.js',
+                            '<%= jsSource %>/component/content/agenda/agenda-browse-ctrl.js',
+                            '<%= jsSource %>/component/content/agenda/agenda-search-ctrl.js',
+                            '<%= jsSource %>/component/content/agenda/agenda-updates-ctrl.js',
+                            '<%= jsSource %>/component/content/agenda/agenda-view-ctrl.js',
+                            '<%= jsSource %>/component/content/agenda/agenda-filters.js',
+                            '<%= jsSource %>/component/content/agenda/agenda-directives.js',
 
-                        // Laws
-                        '<%= jsSource %>/component/content/law/law.js',
-                        '<%= jsSource %>/component/content/law/law-search-ctrl.js',
-                        '<%= jsSource %>/component/content/law/law-updates-ctrl.js',
-                        '<%= jsSource %>/component/content/law/law-view-ctrl.js',
+                            // Laws
+                            '<%= jsSource %>/component/content/law/law.js',
+                            '<%= jsSource %>/component/content/law/law-search-ctrl.js',
+                            '<%= jsSource %>/component/content/law/law-updates-ctrl.js',
+                            '<%= jsSource %>/component/content/law/law-view-ctrl.js',
 
-                        // Transcripts
-                        '<%= jsSource %>/component/content/transcript/transcript.js',
-                        '<%= jsSource %>/component/content/transcript/transcript-search-ctrl.js',
-                        '<%= jsSource %>/component/content/transcript/transcript-hearing-view-ctrl.js',
-                        '<%= jsSource %>/component/content/transcript/transcript-session-view-ctrl.js',
+                            // Transcripts
+                            '<%= jsSource %>/component/content/transcript/transcript.js',
+                            '<%= jsSource %>/component/content/transcript/transcript-search-ctrl.js',
+                            '<%= jsSource %>/component/content/transcript/transcript-hearing-view-ctrl.js',
+                            '<%= jsSource %>/component/content/transcript/transcript-session-view-ctrl.js',
 
-                        // SpotChecks
-                        '<%= jsSource %>/component/report/spotcheck-base.js',
-                        '<%= jsSource %>/component/report/spotcheck-detail-window.js',
-                        '<%= jsSource %>/component/report/spotcheck-report-page.js',
-                        '<%= jsSource %>/component/report/spotcheck-report-page-content-tab.js',
-                        '<%= jsSource %>/component/report/api/spotcheck-mismatch-api.js',
-                        '<%= jsSource %>/component/report/api/spotcheck-mismatch-summary-api.js',
+                            // SpotChecks
+                            '<%= jsSource %>/component/report/spotcheck-base.js',
+                            '<%= jsSource %>/component/report/spotcheck-detail-window.js',
+                            '<%= jsSource %>/component/report/spotcheck-report-page.js',
+                            '<%= jsSource %>/component/report/spotcheck-report-page-content-tab.js',
+                            '<%= jsSource %>/component/report/api/spotcheck-mismatch-api.js',
+                            '<%= jsSource %>/component/report/api/spotcheck-mismatch-summary-api.js',
 
-                        // Admin
-                        '<%= jsSource %>/component/admin/admin.js',
-                        '<%= jsSource %>/component/admin/dashboard.js',
-                        '<%= jsSource %>/component/admin/logs.js',
-                        '<%= jsSource %>/component/admin/cache.js',
-                        '<%= jsSource %>/component/admin/account.js',
-                        '<%= jsSource %>/component/admin/notification_sub.js',
-                        '<%= jsSource %>/component/admin/environment.js',
-                        '<%= jsSource %>/component/admin/reports.js',
-                        '<%= jsSource %>/component/admin/indices.js',
-                        '<%= jsSource %>/component/admin/members.js',
-                        '<%= jsSource %>/component/admin/member.js',
-                        '<%= jsSource %>/component/admin/verify.js']
+                            // Admin
+                            '<%= jsSource %>/component/admin/admin.js',
+                            '<%= jsSource %>/component/admin/dashboard.js',
+                            '<%= jsSource %>/component/admin/logs.js',
+                            '<%= jsSource %>/component/admin/cache.js',
+                            '<%= jsSource %>/component/admin/account.js',
+                            '<%= jsSource %>/component/admin/notification_sub.js',
+                            '<%= jsSource %>/component/admin/email.js',
+                            '<%= jsSource %>/component/admin/environment.js',
+                            '<%= jsSource %>/component/admin/reports.js',
+                            '<%= jsSource %>/component/admin/indices.js',
+                            '<%= jsSource %>/component/admin/members.js',
+                            '<%= jsSource %>/component/admin/member.js',
+                            '<%= jsSource %>/component/admin/verify.js']
 
                 }
             }
@@ -187,31 +188,32 @@ module.exports = function(grunt) {
         copy: {
             css: {
                 files: [{
-                    expand:true, cwd: '<%= cssDest %>/', src: ['**'], filter: 'isFile',
+                    expand: true, cwd: '<%= cssDest %>/', src: ['**'], filter: 'isFile',
                     dest: '<%= tomcatWeb %>/<%= cssDest %>/'
                 }]
             },
             js: {
                 files: [{
-                    expand:true, src: ['<%= jsSource %>/**', '<%= jsDest %>/**'], filter: 'isFile',
-                    dest: '<%= tomcatWeb %>'}]
-            },
-            jsp : {
-                files: [{
-                    expand:true, src: ['<%= jspSource %>/**', '<%= tagSource %>/**'], filter: 'isFile',
+                    expand: true, src: ['<%= jsSource %>/**', '<%= jsDest %>/**'], filter: 'isFile',
                     dest: '<%= tomcatWeb %>'
                 }]
             },
-            docs : {
+            jsp: {
                 files: [{
-                    expand:true, cwd: '<%= docsDestRoot %>/', src: ['**'], filter: 'isFile',
+                    expand: true, src: ['<%= jspSource %>/**', '<%= tagSource %>/**'], filter: 'isFile',
+                    dest: '<%= tomcatWeb %>'
+                }]
+            },
+            docs: {
+                files: [{
+                    expand: true, cwd: '<%= docsDestRoot %>/', src: ['**'], filter: 'isFile',
                     dest: '<%= tomcatWeb %>/<%= docsDestRoot %>/'
                 }]
             }
         },
 
         shell: {
-            docs:  {
+            docs: {
                 command: 'make html',
                 options: {
                     stderr: false,
@@ -259,17 +261,17 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-file-exists');
 
     // Tasks that process and copy only one type of source file
-    grunt.registerTask('css:openleg',   ['sass', 'postcss:openleg', 'fileExists', 'copy:css']);
-    grunt.registerTask('css:lib',       ['concat', 'postcss:lib', 'fileExists', 'copy:css']);
-    grunt.registerTask('js:app',        ['uglify:app', 'fileExists', 'copy:js']);
-    grunt.registerTask('js:vendor',     ['uglify:vendor', 'fileExists', 'copy:js']);
-    grunt.registerTask('jsp',           ['fileExists', 'copy:jsp']);
-    grunt.registerTask('docs',          ['shell:docs', 'fileExists', 'copy:docs']);
+    grunt.registerTask('css:openleg', ['sass', 'postcss:openleg', 'fileExists', 'copy:css']);
+    grunt.registerTask('css:lib', ['concat', 'postcss:lib', 'fileExists', 'copy:css']);
+    grunt.registerTask('js:app', ['uglify:app', 'fileExists', 'copy:js']);
+    grunt.registerTask('js:vendor', ['uglify:vendor', 'fileExists', 'copy:js']);
+    grunt.registerTask('jsp', ['fileExists', 'copy:jsp']);
+    grunt.registerTask('docs', ['shell:docs', 'fileExists', 'copy:docs']);
 
     // Generate necessary css + js files
-    grunt.registerTask('process',   ['sass', 'concat', 'postcss', 'uglify']);
+    grunt.registerTask('process', ['sass', 'concat', 'postcss', 'uglify']);
     // *DEFAULT* Process and copy only css + js
-    grunt.registerTask('default',   ['process', 'fileExists', 'copy', 'beep']);
+    grunt.registerTask('default', ['process', 'fileExists', 'copy', 'beep']);
     // Process and copy css + js + docs
-    grunt.registerTask('build',     ['process', 'docs', 'fileExists', 'copy', 'beep'])
+    grunt.registerTask('build', ['process', 'docs', 'fileExists', 'copy', 'beep'])
 };

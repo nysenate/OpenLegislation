@@ -9,6 +9,7 @@ import gov.nysenate.openleg.model.cache.CacheEvictEvent;
 import gov.nysenate.openleg.model.cache.CacheEvictIdEvent;
 import gov.nysenate.openleg.model.cache.CacheWarmEvent;
 import gov.nysenate.openleg.model.cache.ContentCache;
+import gov.nysenate.openleg.model.entity.MemberNotFoundEx;
 import gov.nysenate.openleg.model.entity.SessionMember;
 import gov.nysenate.openleg.service.base.data.CachingService;
 import net.sf.ehcache.Cache;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.SimpleKey;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -60,15 +62,18 @@ public class SessionMemberIdCache implements CachingService<Integer> {
         cacheManager.removeCache(ContentCache.SESSION_MEMBER.name());
     }
 
+    @Override
     public void setupCaches() {
         this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.SESSION_MEMBER.name()).eternal(true));
         cacheManager.addCache(this.memberCache);
     }
 
+    @Override
     public List<Ehcache> getCaches() {
-            return Arrays.asList(memberCache);
+        return Arrays.asList(memberCache);
     }
 
+    @Override
     public void evictContent(Integer sessionMemberId) {
         memberCache.remove(sessionMemberId);
     }
@@ -105,16 +110,25 @@ public class SessionMemberIdCache implements CachingService<Integer> {
         }
     }
 
-    public boolean isKeyInCache(SimpleKey key) {
-        return memberCache.isKeyInCache(key);
+    //CachedMemberService Methods
+
+    public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
+        if (memberCache.isKeyInCache(sessionMemberId)) {
+            return (SessionMember) memberCache.get(sessionMemberId).getObjectValue();
+        }
+        try {
+            SessionMember sm = memberDao.getMemberBySessionId(sessionMemberId);
+            putMemberInCache(sm);
+            return sm;
+        } catch (EmptyResultDataAccessException ex) {
+            throw new MemberNotFoundEx(sessionMemberId);
+        }
     }
 
-    public void putMemberInCache(SessionMember member) {
+    /* --- Internal Methods --- */
+
+    private void putMemberInCache(SessionMember member) {
         memberCache.put(new Element(new SimpleKey(member.getSessionMemberId()), member, true));
-    }
-
-    public Cache getCache() {
-        return memberCache;
     }
 
 }
