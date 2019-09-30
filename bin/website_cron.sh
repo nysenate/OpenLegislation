@@ -21,6 +21,7 @@
 # Revised: 2018-02-22 - Add new process-queues drush command
 # Revised: 2018-05-01 - Add --import-all and --import-leg options
 # Revised: 2018-12-14 - Add --styles to update styles
+# Revised: 2019-09-30 - Modify --qa option to add law spotcheck
 #
 
 PATH=$PATH:/usr/local/bin
@@ -77,6 +78,9 @@ if [ "$mode" = "qa" ]; then
 
   echo "About to generate QA report for all agendas during the current year"
   pdrush @$penv spotcheck-dump agenda
+
+  echo "About to generate QA report for all current laws"
+  pdrush @$penv spotcheck-dump law
 
 elif [ "$mode" = "disqus" ]; then
 
