@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -92,7 +93,12 @@ public class BillActionParser
         int sequenceNo = 1;
 
         // Get NodeList of actions.
-        NodeList actionsList = data.getChildNodes();
+        NodeList actionsList;
+        try {
+            actionsList = xmlHelper.getNodeList("action", data);
+        } catch (XPathExpressionException e) {
+            throw new ParseError("XML parse failure");
+        }
         for (int i = 0; i < actionsList.getLength(); ++i, ++sequenceNo) {
             final Node action_i = actionsList.item(i);
             try {
@@ -114,7 +120,6 @@ public class BillActionParser
             }
             // Fail fast otherwise
             catch (Exception e) {
-                e.printStackTrace();
                 throw new ParseError("XML parse failure");
             }
         }
