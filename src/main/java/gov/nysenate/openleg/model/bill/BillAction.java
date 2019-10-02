@@ -31,27 +31,6 @@ public class BillAction implements Serializable, Comparable<BillAction>
     /** The text of this action. */
     private String text = "";
 
-    /** Bill amendment version, typically single character A, B, C ... . */
-    private String billAmd = "";// there is a Version class
-
-    /** Action code. */
-    private int code = 0;
-
-    /** Data code. Can be code or bill number, depending on action code. */
-    private int data = 0;
-
-    /** Data amd. Unknown purpose. Single character. */
-    private String dataAmd = "";
-
-    /** Post date. Unknown purpose. */
-    private LocalDate postDate;
-
-    /** Act session year. Unknown purpose; does not conform to session year odd-only numbering. */
-    private int actSessionYear;
-
-    /** Indicates whether or not the BillAction was parsed by XML (true) or bill action text (false) */
-    private boolean fromXML;
-
     /** --- Constructors --- */
 
     public BillAction() {
@@ -76,64 +55,6 @@ public class BillAction implements Serializable, Comparable<BillAction>
         this.setSequenceNo(sequenceNo);
     }
 
-    /**
-     * Fully constructs a new action.
-     *
-     * @param date LocalDate - The date of the action
-     * @param text String - The text of the action
-     * @param chamber Chamber - The chamber this bill action occurred in
-     * @param sequenceNo int - Indicates the ordering of this action
-     * @param billId BillId - The id of the bill the action was performed on
-     * @param fromXML boolean - Set whether or not the BillAction was parsed from XML
-     */
-    /*
-    public BillAction(LocalDate date, String text, Chamber chamber, int sequenceNo, BillId billId, boolean fromXML) {
-        super();
-        this.setDate(date);
-        this.setText(text);
-        this.setBillId(billId);
-        this.setChamber(chamber);
-        this.setSequenceNo(sequenceNo);
-        this.setFromXML(fromXML);
-    }*/
-
-    /**
-     * Fully constructs a new action from XML source.
-     *
-     * @param date LocalDate - The date of the action
-     * @param text String - The text of the action
-     * @param chamber Chamber - The chamber this bill action occurred in
-     * @param sequenceNo int - Indicates the ordering of this action
-     * @param billAmd String -
-     * @param code int - Action code from XML Data
-     * @param data int - Data code from XML Data;
-     *             represents different types of data based on the action code (e.g. committee codes, bill numbers)
-     * @param dataAmd String -
-     * @param postDate LocalDate -
-     * @param actSessionYear int - Unknown year value that does not conform to the session year odd-only rule
-     * @param fromXML boolean - Set whether or not the BillAction was parsed from XML
-     * @param billId BillId - The id of the bill the action was performed on
-     */
-    /*
-    public BillAction(LocalDate date, String text, Chamber chamber, int sequenceNo,
-                      String billAmd, int code, int data, String dataAmd, LocalDate postDate, int actSessionYear, boolean fromXML,
-                      BillId billId) {
-        super();
-        this.setDate(date);
-        this.setText(text);
-        this.setBillId(billId);
-        this.setChamber(chamber);
-        this.setSequenceNo(sequenceNo);
-
-        this.setBillAmd(billAmd);
-        this.setCode(code);
-        this.setData(data);
-        this.setDataAmd(dataAmd);
-        this.setPostDate(postDate);
-        this.setActSessionYear(actSessionYear);
-        this.setFromXML(fromXML);
-    }*/
-
     /** --- Overrides --- */
 
     @Override
@@ -155,19 +76,12 @@ public class BillAction implements Serializable, Comparable<BillAction>
                Objects.equals(this.date, other.date) &&
                Objects.equals(this.sequenceNo, other.sequenceNo) &&
                Objects.equals(this.chamber, other.chamber) &&
-               StringUtils.equalsIgnoreCase(this.text, other.text) &&
-               Objects.equals(this.code, other.code) &&
-               Objects.equals(this.data, other.data) &&
-               Objects.equals(this.dataAmd, other.dataAmd) &&
-               Objects.equals(this.postDate, other.postDate) &&
-               Objects.equals(this.actSessionYear, other.actSessionYear) &&
-               Objects.equals(this.fromXML, other.fromXML);
+               StringUtils.equalsIgnoreCase(this.text, other.text);
     }
 
     @Override
     public int hashCode() {
-        return 31 * billId.hashCodeBase() + Objects.hash(date, sequenceNo, chamber, text.toLowerCase())
-                + Objects.hash(code, data, dataAmd, postDate, actSessionYear, fromXML);
+        return 31 * billId.hashCodeBase() + Objects.hash(date, sequenceNo, chamber, text.toLowerCase());
     }
 
     @Override
@@ -233,37 +147,4 @@ public class BillAction implements Serializable, Comparable<BillAction>
     public void setText(String text) {
         this.text = text;
     }
-
-
-
-    /** --- XML Getters/Setters --- */
-    /*
-    public String getBillAmd() { return billAmd; }
-
-    public void setBillAmd(String billAmd) { this.billAmd = billAmd; }
-
-    public int getCode() { return code; }
-
-    public void setCode(int code) { this.code = code; }
-
-    public int getData() { return data; }
-
-    public void setData(int data) { this.data = data; }
-
-    public String getDataAmd() { return dataAmd; }
-
-    public void setDataAmd(String dataAmd) { this.dataAmd = dataAmd; }
-
-    public LocalDate getPostDate() { return postDate; }
-
-    public void setPostDate(LocalDate postDate) { this.postDate = postDate; }
-
-    public int getActSessionYear() { return actSessionYear; }
-
-    public void setActSessionYear(int actSessionYear) { this.actSessionYear = actSessionYear; }
-
-    public boolean getFromXML() { return fromXML; }
-
-    public void setFromXML(boolean fromXML) { this.fromXML = fromXML; }
-     */
 }
