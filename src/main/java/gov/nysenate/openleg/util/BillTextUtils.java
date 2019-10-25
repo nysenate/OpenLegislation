@@ -292,22 +292,25 @@ public class BillTextUtils
      */
     public static String toHTML5WithTags(String rawHTML) {
         final ArrayList<TextDiff> changes = toChanges(rawHTML);
-        String ans = "";
+        StringBuilder ans = new StringBuilder();
         for (int i = 0; i < changes.size(); ++i) {
             switch (changes.get(i).type) {
                 case 0:
-                    ans = ans + changes.get(i).html;
+                    ans.append(changes.get(i).html);
                     break;
                 case 1:
-                    ans = ans + "<span class=\"ol-text-change ol-text-added\">" + changes.get(i).html + "</span>";
+                    ans.append("<span class=\"ol-text-change ol-text-added\">");
+                    ans.append(changes.get(i).html);
+                    ans.append("</span>");
                     break;
                 case -1:
-                    ans = ans + "<span class=\"ol-text-change ol-text-removed\">" + changes.get(i).html + "</span>";
+                    ans.append("<span class=\"ol-text-change ol-text-removed\">");
+                    ans.append(changes.get(i).html);
+                    ans.append("</span>");
                     break;
             }
         }
-        ans = convertToHTML5(ans, false);
-        return ans;
+        return convertToHTML5(ans.toString(), false);
     }
 
     /**
@@ -321,8 +324,8 @@ public class BillTextUtils
         public String html;
         public TextDiff(final int type, final String text, final String html) {
             this.type = type;
-            this.text = new String(text);
-            this.html = new String(html);
+            this.text = text;
+            this.html = html;
         }
 
         @Override
@@ -334,15 +337,15 @@ public class BillTextUtils
     /**
      * Converts ArrayList&lt;TextDiff&gt; to the final version, plain text.
      *
-     * @param changes
+     * @param changes ArrayList&lt;TextDiff&gt;
      * @return String
      */
     public static String changesToFinalText(final ArrayList<TextDiff> changes) {
-        String ans = "";
+        StringBuilder ans = new StringBuilder();
         for (int i = 0; i < changes.size(); ++i) {
-            if (changes.get(i).type >= 0) ans = ans + changes.get(i).text;
+            if (changes.get(i).type >= 0) ans.append(changes.get(i).text);
         }
-        return ans;
+        return ans.toString();
     }
 
     /**
@@ -353,7 +356,7 @@ public class BillTextUtils
      */
     public static ArrayList<TextDiff> toChanges(final String rawHTML) {
         ArrayList<TextDiff> ans = new ArrayList<TextDiff>();
-        String unformatted = new String(rawHTML);
+        String unformatted = rawHTML;
         if (unformatted.contains("</STYLE>")) unformatted = unformatted.substring(unformatted.indexOf("</STYLE>") + 8);
         //unformatted = unformatted.trim();
         int lastLength;
@@ -408,7 +411,7 @@ public class BillTextUtils
      * @return String
      */
     private static String convertToHTML5(final String html, final boolean style) {
-        String html5 = new String(html);
+        String html5 = html;
         html5 = html5.replace("<!--", "");
         html5 = html5.replace("-->", "");
         if (style) {
@@ -503,8 +506,6 @@ public class BillTextUtils
      * @return String
      */
     private static String jsoupParsePreserveNewline(String html) {
-        if (html==null)
-            return html;
         final String leadingNewlines = leadingWhitespace(html);
         html = html.substring(leadingNewlines.length());
         Document document = Jsoup.parse(html);
