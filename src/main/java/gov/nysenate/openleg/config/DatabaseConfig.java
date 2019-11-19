@@ -44,8 +44,8 @@ public class DatabaseConfig
      * Configures the sql data source using a connection pool.
      * @return DataSource
      */
-    @Bean
-    public DataSource postgresDataSource() {
+    @Bean(destroyMethod = "close")
+    public ComboPooledDataSource postgresDataSource() {
         final String jdbcUrlTemplate = "jdbc:%s//%s/%s";
         ComboPooledDataSource pool = new ComboPooledDataSource();
         try {
