@@ -44,8 +44,8 @@ public class DatabaseConfig
      * Configures the sql data source using a connection pool.
      * @return DataSource
      */
-    @Bean
-    public DataSource postgresDataSource() {
+    @Bean(destroyMethod = "close")
+    public ComboPooledDataSource postgresDataSource() {
         final String jdbcUrlTemplate = "jdbc:%s//%s/%s";
         ComboPooledDataSource pool = new ComboPooledDataSource();
         try {
@@ -58,13 +58,13 @@ public class DatabaseConfig
         logger.info("Connecting to Postgres: " + pool.getJdbcUrl());
         pool.setUser(dbUser);
         pool.setPassword(dbPass);
-        pool.setMinPoolSize(3);
-        pool.setMaxPoolSize(10);
+        pool.setMinPoolSize(8);
+        pool.setMaxPoolSize(20);
 
-        // Test each connection every 30 sec after first check-in
+        // Test each connection every 60 sec after first check-in
         pool.setTestConnectionOnCheckout(false);
         pool.setTestConnectionOnCheckin(true);
-        pool.setIdleConnectionTestPeriod(30);
+        pool.setIdleConnectionTestPeriod(60);
         return pool;
     }
 

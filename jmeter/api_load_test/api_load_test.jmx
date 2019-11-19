@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="4.0" jmeter="4.0 r1823414">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1 r1853635">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Openleg API Load Test" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -16,7 +16,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="CONTEXT_PATH" elementType="Argument">
             <stringProp name="Argument.name">CONTEXT_PATH</stringProp>
-            <stringProp name="Argument.value">openleg-xml.nysenate.gov/</stringProp>
+            <stringProp name="Argument.value">openleg-dev.nysenate.gov</stringProp>
             <stringProp name="Argument.desc">openleg url</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
@@ -309,7 +309,7 @@
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">/home/calabres/SenateProjects/OpenLegislation/jmeter/api_load_test/scheduler_agg_report.csv</stringProp>
+        <stringProp name="filename">./scheduler_agg_report.csv</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
@@ -345,7 +345,7 @@
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">/home/calabres/SenateProjects/OpenLegislation/jmeter/api_load_test/scheduler_report.csv</stringProp>
+        <stringProp name="filename">./scheduler_report.csv</stringProp>
       </ResultCollector>
       <hashTree/>
     </hashTree>
