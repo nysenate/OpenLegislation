@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="4.0" jmeter="4.0 r1823414">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1 r1853635">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Openleg API Load Test" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -16,7 +16,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="CONTEXT_PATH" elementType="Argument">
             <stringProp name="Argument.name">CONTEXT_PATH</stringProp>
-            <stringProp name="Argument.value">openleg-xml.nysenate.gov/</stringProp>
+            <stringProp name="Argument.value">openleg-dev.nysenate.gov</stringProp>
             <stringProp name="Argument.desc">openleg url</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
@@ -57,7 +57,7 @@
       </ThreadGroup>
       <hashTree>
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
-          <stringProp name="filename">./single_bill_paths.csv</stringProp>
+          <stringProp name="filename">/home/calabres/SenateProjects/OpenLegislation/jmeter/api_load_test/single_bill_paths.csv</stringProp>
           <stringProp name="fileEncoding">UTF-8</stringProp>
           <stringProp name="variableNames">path</stringProp>
           <boolProp name="ignoreFirstLine">true</boolProp>
@@ -104,7 +104,7 @@
       </ThreadGroup>
       <hashTree>
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
-          <stringProp name="filename">./single_pdf_paths.csv</stringProp>
+          <stringProp name="filename">/home/calabres/SenateProjects/OpenLegislation/jmeter/api_load_test/single_pdf_paths.csv</stringProp>
           <stringProp name="fileEncoding">UTF-8</stringProp>
           <stringProp name="variableNames">path</stringProp>
           <boolProp name="ignoreFirstLine">true</boolProp>
@@ -151,7 +151,7 @@
       </ThreadGroup>
       <hashTree>
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
-          <stringProp name="filename">./full_session_paths.csv</stringProp>
+          <stringProp name="filename">/home/calabres/SenateProjects/OpenLegislation/jmeter/api_load_test/full_session_paths.csv</stringProp>
           <stringProp name="fileEncoding">UTF-8</stringProp>
           <stringProp name="variableNames">path</stringProp>
           <boolProp name="ignoreFirstLine">true</boolProp>
@@ -198,7 +198,7 @@
       </ThreadGroup>
       <hashTree>
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
-          <stringProp name="filename">./single_law_doc_paths.csv</stringProp>
+          <stringProp name="filename">/home/calabres/SenateProjects/OpenLegislation/jmeter/api_load_test/single_law_doc_paths.csv</stringProp>
           <stringProp name="fileEncoding">UTF-8</stringProp>
           <stringProp name="variableNames">path</stringProp>
           <boolProp name="ignoreFirstLine">true</boolProp>
@@ -245,7 +245,7 @@
       </ThreadGroup>
       <hashTree>
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
-          <stringProp name="filename">./full_law_paths.csv</stringProp>
+          <stringProp name="filename">/home/calabres/SenateProjects/OpenLegislation/jmeter/api_load_test/full_law_paths.csv</stringProp>
           <stringProp name="fileEncoding">UTF-8</stringProp>
           <stringProp name="variableNames">path</stringProp>
           <boolProp name="ignoreFirstLine">true</boolProp>
