@@ -12,8 +12,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.PreDestroy;
-import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 
 @EnableTransactionManagement
@@ -29,6 +27,9 @@ public class DatabaseConfig
     @Value("${postgresdb.name}")  private String dbName;
     @Value("${postgresdb.user}")  private String dbUser;
     @Value("${postgresdb.pass}")  private String dbPass;
+    @Value("${c3p0.pool.size.initial:10") private int poolInitialSize;
+    @Value("${c3p0.pool.size.min:10") private int poolMinSize;
+    @Value("${c3p0.pool.size.max:20") private int poolMaxSize;
 
     @Bean
     public JdbcTemplate jdbcTemplate() {
@@ -58,9 +59,9 @@ public class DatabaseConfig
         logger.info("Connecting to Postgres: " + pool.getJdbcUrl());
         pool.setUser(dbUser);
         pool.setPassword(dbPass);
-        pool.setInitialPoolSize(10);
-        pool.setMinPoolSize(10);
-        pool.setMaxPoolSize(20);
+        pool.setInitialPoolSize(poolInitialSize);
+        pool.setMinPoolSize(poolMinSize);
+        pool.setMaxPoolSize(poolMaxSize);
 
         // Test each connection every 60 sec after first check-in
         pool.setTestConnectionOnCheckout(false);

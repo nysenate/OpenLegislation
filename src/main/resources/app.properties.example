@@ -156,6 +156,11 @@ postgresdb.user =
 # And the password..
 postgresdb.pass =
 
+# c3p0 connection pool size configuration
+c3p0.pool.size.initial = 10
+c3p0.pool.size.min = 10
+c3p0.pool.size.max = 20
+
 # --- Scheduling Configuration ------------------------------------------------
 
 # Enable scheduled processing of data.
