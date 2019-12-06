@@ -27,9 +27,9 @@ public class DatabaseConfig
     @Value("${postgresdb.name}")  private String dbName;
     @Value("${postgresdb.user}")  private String dbUser;
     @Value("${postgresdb.pass}")  private String dbPass;
-    @Value("${c3p0.pool.size.initial:10") private int poolInitialSize;
-    @Value("${c3p0.pool.size.min:10") private int poolMinSize;
-    @Value("${c3p0.pool.size.max:20") private int poolMaxSize;
+    @Value("${c3p0.pool.size.initial:10}") private int poolInitialSize;
+    @Value("${c3p0.pool.size.min:10}") private int poolMinSize;
+    @Value("${c3p0.pool.size.max:20}") private int poolMaxSize;
 
     @Bean
     public JdbcTemplate jdbcTemplate() {
