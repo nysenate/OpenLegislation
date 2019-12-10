@@ -104,6 +104,7 @@ elif [ "$mode" = "maint" ]; then
   run_module_cron $penv htmlpurifier
   run_module_cron $penv job_scheduler
   run_module_cron $penv node
+  run_module_cron $penv nys_petitions
   run_module_cron $penv oauth_common
   run_module_cron $penv pantheon_api
   run_module_cron $penv password_policy
