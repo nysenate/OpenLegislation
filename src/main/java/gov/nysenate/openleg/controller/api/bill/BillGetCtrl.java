@@ -40,6 +40,8 @@ import java.util.stream.Collectors;
 import static gov.nysenate.openleg.controller.api.base.BaseCtrl.BASE_API_PATH;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML5;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.DIFF;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -190,7 +192,7 @@ public class BillGetCtrl extends BaseCtrl
     public ResponseEntity<byte[]> getBillPdf(@PathVariable int sessionYear, @PathVariable String printNo)
                            throws Exception {
         BillId billId = getBillId(printNo, sessionYear, "printNo");
-        Bill bill = billData.getBill(BaseBillId.of(billId), EnumSet.of(PLAIN, HTML));
+        Bill bill = billData.getBill(BaseBillId.of(billId), EnumSet.of(PLAIN, HTML, HTML5, DIFF));
         ByteArrayOutputStream pdfBytes = new ByteArrayOutputStream();
         BillPdfView.writeBillPdf(bill, billId.getVersion(), pdfBytes);
         HttpHeaders headers = new HttpHeaders();

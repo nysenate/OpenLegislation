@@ -1,5 +1,7 @@
 package gov.nysenate.openleg.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import gov.nysenate.openleg.model.entity.Chamber;
@@ -322,6 +324,8 @@ public class BillTextUtils
         public int type;//0 = same, 1 = add, -1 = remove
         public String text;
         public String html;
+
+        public TextDiff() { }
         public TextDiff(final int type, final String text, final String html) {
             this.type = type;
             this.text = text;
@@ -346,6 +350,23 @@ public class BillTextUtils
             if (changes.get(i).type >= 0) ans.append(changes.get(i).text);
         }
         return ans.toString();
+    }
+
+    /**
+     *
+     * @param changes
+     * @return
+     */
+    public static String changesToJSONString(final ArrayList<TextDiff> changes) {
+        ObjectMapper o = new ObjectMapper();
+        try {
+            String directJsonOutput = o.writeValueAsString(changes);
+            return directJsonOutput;
+            //return o.writeValueAsString(directJsonOutput);
+        }
+        catch (JsonProcessingException e) {
+            return "";
+        }
     }
 
     /**

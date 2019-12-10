@@ -43,6 +43,8 @@ import static gov.nysenate.openleg.dao.base.SortOrder.ASC;
 import static gov.nysenate.openleg.dao.bill.data.SqlBillQuery.*;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML5;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.DIFF;
 import static gov.nysenate.openleg.util.CollectionUtils.difference;
 import static gov.nysenate.openleg.util.DateUtils.toDate;
 
@@ -54,6 +56,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
             ImmutableMap.<BillTextFormat, String>builder()
                     .put(PLAIN, "full_text")
                     .put(HTML, "full_text_html")
+                    .put(HTML5, "full_text_html5")
+                    .put(DIFF, "full_text_diff")
                     .build();
 
     @Autowired private MemberService memberService;
@@ -897,6 +901,8 @@ public class SqlBillDao extends SqlBaseDao implements BillDao {
                 .addValue("actClause", amendment.getActClause())
                 .addValue("fullText", amendment.getFullText(PLAIN))
                 .addValue("fullTextHtml", amendment.getFullText(HTML))
+                .addValue("fullTextHtml5", amendment.getFullText(HTML5))
+                .addValue("fullTextDiff", amendment.getFullText(DIFF))
                 .addValue("stricken", amendment.isStricken())
                 .addValue("lawSection", amendment.getLawSection())
                 .addValue("lawCode", amendment.getLaw())

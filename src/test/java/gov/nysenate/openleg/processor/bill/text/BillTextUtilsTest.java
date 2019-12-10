@@ -212,6 +212,14 @@ public class BillTextUtilsTest {
     }
 
     @Test
+    public void billParseChangeJSON() {
+        ArrayList<BillTextUtils.TextDiff> changes = BillTextUtils.toChanges(bill);
+        String output = BillTextUtils.changesToJSONString(changes);
+        System.out.println(output);
+    }
+
+
+    @Test
     public void textDiff() {
         BillTextUtils.TextDiff a = new BillTextUtils.TextDiff(0, "plain", "<B><U>plain</U></B>");
         assertEquals(0, a.type);

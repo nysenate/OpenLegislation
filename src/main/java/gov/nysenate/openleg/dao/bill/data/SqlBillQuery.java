@@ -102,15 +102,16 @@ public enum SqlBillQuery implements BasicSqlQuery
         "UPDATE ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
         "SET sponsor_memo = :sponsorMemo, act_clause = :actClause,\n" +
         "    full_text = :fullText, full_text_html = :fullTextHtml,\n" +
+        "    full_text_html5 = :fullTextHtml5, full_text_diff = :fullTextDiff,\n" +
         "    stricken = :stricken, uni_bill = :uniBill, last_fragment_id = :lastFragmentId,\n" +
         "    law_section = :lawSection, law_code = :lawCode\n" +
         "WHERE bill_print_no = :printNo AND bill_session_year = :sessionYear AND bill_amend_version = :version"
     ),
     INSERT_BILL_AMENDMENT(
         "INSERT INTO ${schema}." + SqlTable.BILL_AMENDMENT + "\n" +
-        "(bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, act_clause, full_text, full_text_html,\n" +
+        "(bill_print_no, bill_session_year, bill_amend_version, sponsor_memo, act_clause, full_text, full_text_html, full_text_html5, full_text_diff,\n" +
         "    stricken, uni_bill, last_fragment_id, law_section, law_code)\n" +
-        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :fullTextHtml,\n" +
+        "VALUES(:printNo, :sessionYear, :version, :sponsorMemo, :actClause, :fullText, :fullTextHtml, :fullTextHtml5, :fullTextDiff,\n" +
         "    :stricken, :uniBill, :lastFragmentId, :lawSection, :lawCode)"
     ),
     SELECT_EMPTY_TEXT_BUDGET_BILL_PRINT_NOS (
