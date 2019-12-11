@@ -130,6 +130,7 @@ Default Bill Response
           "": {                                   // Map of Amendment versions
             "basePrintNo": "S2180",               // Bill print no/session details duplicated here
             "session": 2013,
+            "basePrintNoStr": "S2180-2013",
             "printNo": "S2180",
             "version": "",                        // Amendment version
             "publishDate": "2013-01-14",          // Date this amendment was published
@@ -146,7 +147,11 @@ Default Bill Response
             "lawSection": "Penal Law",            // The primary section of law this bill impacts.
             "lawCode": "Add Â§265.18, Pen L",     // A code that states the actions being taken on specific portions of law.
             "actClause": "AN ACT to amend the..", // An Act to Clause
+            "fullTextFormats": [ "PLAIN" ],
             "fullText": "...",                    // Full text of the bill amendment
+            "fullTextHtml": null,
+            "fullTextHtml5": null,
+            "fullTextDiff": null,
             "coSponsors": {                       // List of co sponsors
               "items": [
                {
