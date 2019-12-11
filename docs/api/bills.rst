@@ -23,7 +23,8 @@ Retrieve bill by session year and print no
 +----------------+----------------------------------------------------------------------------------------------+
 | version        | If view=only_fulltext, use the version to specify the amendment letter, e.g. version=A       |
 +----------------+----------------------------------------------------------------------------------------------+
-| fullTextFormat | (PLAIN or HTML) Which bill text formats will be included. Multiple formats can be requested. |
+| fullTextFormat | (PLAIN, HTML, HTML5, DIFF) Which bill text formats will be included.                         |
+|                | Multiple formats can be requested.                                                           |
 +----------------+----------------------------------------------------------------------------------------------+
 
 View options
@@ -504,8 +505,8 @@ List of bills updated since the given date/time
 +----------------+----------------------+--------------------------------------------------------+
 | fullBill       | boolean              | Include a bill info response per item                  |
 +----------------+----------------------+--------------------------------------------------------+
-| fullTextFormat | (PLAIN or HTML)      | Which bill text formats will be included               |
-|                |                      | if full bills are requested.                           |
+| fullTextFormat | (PLAIN, HTML, HTML5, | Which bill text formats will be included               |
+|                |  DIFF)               | if full bills are requested.                           |
 |                |                      | Multiple formats can be requested.                     |
 +----------------+----------------------+--------------------------------------------------------+
 
