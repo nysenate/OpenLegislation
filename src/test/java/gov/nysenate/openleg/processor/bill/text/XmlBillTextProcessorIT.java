@@ -14,6 +14,8 @@ import java.io.IOException;
 
 import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML;
 import static gov.nysenate.openleg.model.bill.BillTextFormat.PLAIN;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.HTML5;
+import static gov.nysenate.openleg.model.bill.BillTextFormat.DIFF;
 import static org.junit.Assert.*;
 
 /**
@@ -104,13 +106,19 @@ public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
         final String path = resourceDir + "/2017-01-01-00.00.00.000000_BILLTEXT_S09999.XML";
         final BillId billId = new BillId("S9999", 2017);
         final String expectedHtml = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.html");
+        final String expectedHtml5 = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.html5");
         final String expectedPlain = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.txt");
+        final String expectedDiff = FileIOUtils.getResourceFileContents(resourceDir + "/S9999_expected.json");
 
         assertNotEquals("Preprocessed html is not set", expectedHtml, getHtmlTextSafe(billId));
         assertNotEquals("Preprocessed plaintext is not set", expectedPlain, getPlainTextSafe(billId));
+        assertNotEquals("Preprocessed html5 is not set", expectedHtml5, getHtml5TextSafe(billId));
+        assertNotEquals("Preprocessed diff is not set", expectedDiff, getDiffSafe(billId));
         processXmlFile(path);
         assertEquals("post processed html is set", expectedHtml, getHtmlText(billId));
         assertEquals("post processed plaintext is set", expectedPlain, getPlainText(billId));
+        assertEquals("post processed html5 is set", expectedHtml5, getHtml5Text(billId));
+        assertEquals("post processed diff is set", expectedDiff, getDiff(billId));
     }
 
     /* --- Internal Methods --- */
@@ -145,7 +153,42 @@ public class XmlBillTextProcessorIT extends BaseXmlProcessorTest {
      */
     private String getHtmlTextSafe(BillId billId) {
         try {
-            return getPlainText(billId);
+            return getHtmlText(billId);
+        } catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Get the html5 text for a bill id.
+     */
+    private String getHtml5Text(BillId billId) { return getAmendment(billId, HTML5).getFullText(HTML5); }
+
+    /**
+     * Get the full html5 text for a bill id that you cannot be sure exists.  Returns null if not exists.
+     */
+
+    private String getHtml5TextSafe(BillId billId) {
+        try {
+            return getHtml5Text(billId);
+        } catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Get the html text for a bill id.
+     */
+    private String getDiff(BillId billId) { return getAmendment(billId, DIFF).getFullText(DIFF); }
+
+    /**
+     * Get the full html text for a bill id that you cannot be sure exists.  Returns null if not exists.
+     */
+
+    private String getDiffSafe(BillId billId) {
+        try {
+            return getDiff(billId);
         } catch (BillNotFoundEx | BillAmendNotFoundEx ex) {
             return null;
         }
