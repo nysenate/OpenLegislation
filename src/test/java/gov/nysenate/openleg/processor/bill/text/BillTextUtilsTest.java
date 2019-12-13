@@ -1,5 +1,8 @@
 package gov.nysenate.openleg.processor.bill.text;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nysenate.openleg.annotation.UnitTest;
 import gov.nysenate.openleg.model.bill.Bill;
 import gov.nysenate.openleg.util.BillTextUtils;
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 @Category(UnitTest.class)
 public class BillTextUtilsTest {
@@ -255,6 +259,7 @@ public class BillTextUtilsTest {
             //System.out.println(html5);
             String html5Tags = BillTextUtils.toHTML5WithTags(raw);
             String finalText = BillTextUtils.changesToFinalText(changes);
+            String diffJSON = BillTextUtils.changesToJSONString(changes);
             assertNotEquals(-1, raw.indexOf("FONT"));
             assertEquals(-1, html5.indexOf("FONT"));
             assertEquals(-1, html5Tags.indexOf("FONT"));
@@ -262,11 +267,16 @@ public class BillTextUtilsTest {
             assertNotEquals(-1, raw.indexOf("STATE OF NEW YORK"));
             assertNotEquals(-1, html5.indexOf("STATE OF NEW YORK"));
             assertNotEquals(-1, html5Tags.indexOf("STATE OF NEW YORK"));
+            assertTrue(isValidJSON(diffJSON));
+            /*
+            if (i == 0) {
+                Files.write(Paths.get("/home/aa/btp/j_output/html5.html"), html5.getBytes());
+                Files.write(Paths.get("/home/aa/btp/j_output/html5_tags.html"), html5Tags.getBytes());
+                Files.write(Paths.get("/home/aa/btp/j_output/final.txt"), finalText.getBytes());
+                Files.write(Paths.get("/home/aa/btp/j_output/diff.json"), diffJSON.getBytes());
+            }*/
         }
-        /*
-        Files.write(Paths.get("/home/aa/btp/j_output/html5.html"), html5.getBytes());
-        Files.write(Paths.get("/home/aa/btp/j_output/html5_tags.html"), html5Tags.getBytes());
-        Files.write(Paths.get("/home/aa/btp/j_output/final.txt"), finalText.getBytes());*/
+
     }
 
     /**
@@ -305,4 +315,20 @@ public class BillTextUtilsTest {
         assertEquals("", BillTextUtils.leadingWhitespace("abcd"));
         assertEquals("", BillTextUtils.leadingWhitespace("&#167;"));
     }*/
+    public boolean isValidJSON(final String json) {
+        boolean valid = false;
+        try {
+            final JsonParser parser = new ObjectMapper().getJsonFactory()
+                    .createJsonParser(json);
+            while (parser.nextToken() != null) {
+            }
+            valid = true;
+        } catch (JsonParseException jpe) {
+            jpe.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+        return valid;
+    }
 }
