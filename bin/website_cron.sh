@@ -22,6 +22,8 @@
 # Revised: 2018-05-01 - Add --import-all and --import-leg options
 # Revised: 2018-12-14 - Add --styles to update styles
 # Revised: 2019-09-30 - Modify --qa option to add law spotcheck
+# Revised: 2019-12-06 - Add nys_petitions to Drupal maintenance tasks
+# Revised: 2019-12-16 - Remove feeds from Drupal maintenance tasks
 #
 
 PATH=$PATH:/usr/local/bin
@@ -97,7 +99,6 @@ elif [ "$mode" = "maint" ]; then
   echo "About to run Drupal maintenance tasks (module crons)"
   run_module_cron $penv captcha
   run_module_cron $penv ctools
-  run_module_cron $penv feeds
   run_module_cron $penv field
   run_module_cron $penv googleanalytics
   run_module_cron $penv honeypot
