@@ -28,6 +28,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class SessionMemberIdCache implements CachingService<Integer> {
@@ -109,18 +110,26 @@ public class SessionMemberIdCache implements CachingService<Integer> {
         }
     }
 
-    //CachedMemberService Methods
-
+    /**
+     * Get a SessionMember by sessionMemberId
+     *
+     * First checks the cache for the session member, if not there they are retrieved from the database and added to the cache.
+     * @param sessionMemberId
+     * @return
+     * @throws MemberNotFoundEx
+     */
     public SessionMember getMemberBySessionId(int sessionMemberId) throws MemberNotFoundEx {
-        if (memberCache.isKeyInCache(sessionMemberId)) {
-            return (SessionMember) memberCache.get(sessionMemberId).getObjectValue();
-        }
-        try {
-            SessionMember sm = memberDao.getMemberBySessionId(sessionMemberId);
-            putMemberInCache(sm);
-            return sm;
-        } catch (EmptyResultDataAccessException ex) {
-            throw new MemberNotFoundEx(sessionMemberId);
+        Optional<Element> smElement = Optional.ofNullable(memberCache.get(new SimpleKey(sessionMemberId)));
+        if (smElement.isPresent()) {
+            return (SessionMember) smElement.get().getObjectValue();
+        } else {
+            try {
+                SessionMember sm = memberDao.getMemberBySessionId(sessionMemberId);
+                putMemberInCache(sm);
+                return sm;
+            } catch (EmptyResultDataAccessException ex) {
+                throw new MemberNotFoundEx(sessionMemberId);
+            }
         }
     }
 
@@ -129,5 +138,4 @@ public class SessionMemberIdCache implements CachingService<Integer> {
     private void putMemberInCache(SessionMember member) {
         memberCache.put(new Element(new SimpleKey(member.getSessionMemberId()), member, true));
     }
-
 }

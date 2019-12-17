@@ -29,6 +29,7 @@ import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -131,15 +132,23 @@ public class FullMemberIdCache implements CachingService<Integer> {
     }
 
 
-    //CachedMemberService Methods
-
+    /**
+     * Get a FullMember.
+     *
+     * Checks the cache first, if not there the member is loaded from the database and saved to the cache.
+     * @param memberId
+     * @return
+     * @throws MemberNotFoundEx
+     */
     public FullMember getMemberById(int memberId) throws MemberNotFoundEx {
-        if (memberCache.isKeyInCache(memberId)) {
-            return (FullMember) memberCache.get(memberId).getObjectValue();
+        Optional<Element> fmElement = Optional.ofNullable(memberCache.get(new SimpleKey(memberId)));
+        if (fmElement.isPresent()) {
+            return (FullMember) fmElement.get().getObjectValue();
+        } else {
+            FullMember member = memberDao.getMemberById(memberId);
+            putMemberInCache(member);
+            return member;
         }
-        FullMember member = memberDao.getMemberById(memberId);
-        putMemberInCache(member);
-        return member;
     }
 
     /* --- Internal Methods --- */
