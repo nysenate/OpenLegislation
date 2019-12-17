@@ -55,7 +55,6 @@ public class FullMemberIdCache implements CachingService<Integer> {
     private void init() {
         eventBus.register(this);
         setupCaches();
-        warmCaches();
     }
 
     @PreDestroy

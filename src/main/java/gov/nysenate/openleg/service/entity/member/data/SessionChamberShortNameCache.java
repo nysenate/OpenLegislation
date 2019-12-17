@@ -55,7 +55,6 @@ public class SessionChamberShortNameCache implements CachingService<String> {
     private void init() {
         eventBus.register(this);
         setupCaches();
-        warmCaches();
     }
 
     @PreDestroy

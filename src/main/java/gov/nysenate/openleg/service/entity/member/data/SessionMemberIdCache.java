@@ -53,7 +53,6 @@ public class SessionMemberIdCache implements CachingService<Integer> {
     private void init() {
         eventBus.register(this);
         setupCaches();
-        warmCaches();
     }
 
     @PreDestroy
