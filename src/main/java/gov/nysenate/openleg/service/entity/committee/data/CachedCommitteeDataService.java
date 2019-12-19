@@ -112,10 +112,12 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         logger.info("Warming up committee cache.");
         getCommitteeList(Chamber.SENATE, LimitOffset.ALL);
         getCommitteeList(Chamber.ASSEMBLY, LimitOffset.ALL);
+        logger.info("Done warming up committee cache.");
     }
 
     /** {@inheritDoc} */
     @Override
+    @Subscribe
     public void handleCacheWarmEvent(CacheWarmEvent warmEvent) {
         if (warmEvent.affects(ContentCache.COMMITTEE)) {
             warmCaches();
