@@ -123,14 +123,14 @@ bill.cache.size = 300
 # Bill Info Cache Size (in MB) (Recommended: 100)
 bill-info.cache.size = 100
 
-# Calendar Cache Size (in MB) (Recommended: 40)
-calendar.cache.size = 40
+# Calendar Cache Size (in MB) (Recommended: 10)
+calendar.cache.size = 10
 
-# Law Cache Size (in MB) (Recommended: 10)
-law.cache.size = 10
+# Law Cache Size (in MB) (Recommended: 30)
+law.cache.size = 30
 
-# Committee Cache Size (in MB) (Recommended: 10)
-committee.cache.size = 10
+# Committee Cache Size (in MB) (Recommended: 2)
+committee.cache.size = 2
 
 # --- Postgres Database Configuration -----------------------------------------
 
