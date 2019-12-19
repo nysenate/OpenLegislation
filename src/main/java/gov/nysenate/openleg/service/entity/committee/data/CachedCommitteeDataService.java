@@ -252,8 +252,13 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         if(committee==null) {
             throw new IllegalArgumentException("Committee cannot be null.");
         }
+        // Update the database.
         committeeDao.updateCommittee(committee, legDataFragment);
-        committeeCache.remove(committee.getSessionId());
+
+        // Update the cache.
+        List<Committee> committeeHistory = committeeDao.getCommitteeHistory(committee.getSessionId());
+        committeeCache.put(new Element(committee.getSessionId(), committeeHistory));
+
         eventBus.post(new CommitteeUpdateEvent(committee, LocalDateTime.now()));
     }
 
