@@ -47,6 +47,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     protected final SendMailService sendMailService;
 
     private final String domainUrl;
+    private long apiUserCacheSizeMb;
 
     private final EventBus eventBus;
     private final CacheManager cacheManager;
@@ -58,12 +59,14 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     private static final Logger logger = LoggerFactory.getLogger(CachedSqlApiUserService.class);
 
     public CachedSqlApiUserService(ApiUserDao apiUserDao, SendMailService sendMailService, CacheManager cacheManager,
-                                   EventBus eventBus, Environment environment, @Value("${domain.url}")  String domainUrl) {
+                                   EventBus eventBus, Environment environment, @Value("${domain.url}")  String domainUrl,
+                                   @Value("${api_user.cache.heap.size}") long apiUserCacheSizeMb) {
         this.apiUserDao = apiUserDao;
         this.sendMailService = sendMailService;
         this.cacheManager = cacheManager;
         this.environment = environment;
         this.eventBus = eventBus;
+        this.apiUserCacheSizeMb = apiUserCacheSizeMb;
         eventBus.register(this);
         setupCaches();
         this.domainUrl = domainUrl;
@@ -81,7 +84,7 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     public void setupCaches() {
         Cache cache = new Cache(new CacheConfiguration().name(ContentCache.APIUSER.name())
                 .eternal(true)
-                .maxBytesLocalHeap(5, MemoryUnit.MEGABYTES)
+                .maxBytesLocalHeap(apiUserCacheSizeMb, MemoryUnit.MEGABYTES)
                 .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(cache);
         this.apiUserCache = new EhCacheCache(cache);

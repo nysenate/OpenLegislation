@@ -21,6 +21,7 @@ import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
@@ -37,18 +38,18 @@ public class SessionMemberIdCache implements CachingService<Integer> {
     private static final Logger logger = LoggerFactory.getLogger(SessionMemberIdCache.class);
 
     private EventBus eventBus;
-
     private Cache memberCache;
-
     private CacheManager cacheManager;
-
     private MemberDao memberDao;
+    private long memberCacheSizeMb;
 
     @Autowired
-    public SessionMemberIdCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager) {
+    public SessionMemberIdCache(EventBus eventBus, MemberDao memberDao, CacheManager cacheManager,
+                                @Value("${member.cache.heap.size}") long memberCacheSizeMb) {
         this.eventBus = eventBus;
         this.memberDao = memberDao;
         this.cacheManager = cacheManager;
+        this.memberCacheSizeMb = memberCacheSizeMb;
     }
 
     @PostConstruct
@@ -68,7 +69,7 @@ public class SessionMemberIdCache implements CachingService<Integer> {
         this.memberCache = new Cache(new CacheConfiguration()
                 .name(ContentCache.SESSION_MEMBER.name())
                 .eternal(true)
-                .maxBytesLocalHeap(10, MemoryUnit.MEGABYTES)
+                .maxBytesLocalHeap(memberCacheSizeMb, MemoryUnit.MEGABYTES)
                 .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(this.memberCache);
     }

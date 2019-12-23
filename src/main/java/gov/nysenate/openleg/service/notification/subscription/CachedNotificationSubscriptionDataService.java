@@ -20,6 +20,7 @@ import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.MemoryUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +35,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
 
     @Autowired private CacheManager cacheManager;
     @Autowired private EventBus eventBus;
+    @Value("${notification.cache.heap.size}") private long notificationCacheSizeMb;
 
     @Autowired
     private NotificationSubscriptionDao subscriptionDao;
@@ -137,7 +139,7 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     public void setupCaches() {
         subCache = new Cache(new CacheConfiguration().name(ContentCache.NOTIFICATION_SUBSCRIPTION.name())
                 .eternal(true)
-                .maxBytesLocalHeap(5, MemoryUnit.MEGABYTES)
+                .maxBytesLocalHeap(notificationCacheSizeMb, MemoryUnit.MEGABYTES)
                 .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(subCache);
     }

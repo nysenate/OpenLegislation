@@ -131,6 +131,21 @@ calendar.cache.heap.size = 10
 # Committee Cache Size (in MB) (Recommended: 2)
 committee.cache.heap.size = 2
 
+# Notification Cache Size (in MB) (Recommended: 2)
+notification.cache.heap.size = 2
+
+# API User Cache Size (in MB) (Recommended: 2)
+api_user.cache.heap.size = 2
+
+# Full Member Cache Size (in MB) (Recommended: 5)
+full_member.cache.heap.size = 5
+
+# Shortname Cache Size (in MB) (Recommended: 5)
+shortname.cache.heap.size = 5
+
+# Member Cache Size (in MB) (Recommended: 5)
+member.cache.heap.size = 5
+
 # --- Postgres Database Configuration -----------------------------------------
 
 # Database identifier for JDBC.
