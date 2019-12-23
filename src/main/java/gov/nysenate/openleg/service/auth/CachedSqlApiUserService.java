@@ -21,6 +21,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
@@ -79,8 +80,9 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
     @Override
     public void setupCaches() {
         Cache cache = new Cache(new CacheConfiguration().name(ContentCache.APIUSER.name())
-            .eternal(true)
-            .sizeOfPolicy(defaultSizeOfPolicy()));
+                .eternal(true)
+                .maxBytesLocalHeap(5, MemoryUnit.MEGABYTES)
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(cache);
         this.apiUserCache = new EhCacheCache(cache);
     }
@@ -241,8 +243,6 @@ public class CachedSqlApiUserService implements ApiUserService, CachingService<S
         apiUserDao.removeSubscription(apiKey, subscription);
         getCachedApiUser(apiKey).ifPresent(apiUser -> apiUser.removeSubscription(subscription));
     }
-
-
 
 
     /**

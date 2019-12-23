@@ -109,28 +109,27 @@ elastic.search.connection_retries = 30
 
 # --- Eh Cache Configuration --------------------------------------------------
 
-# The amount of memory to allocate to Eh Cache for all heap based caches (in MB).
-# This value cannot exceed the maximum jvm heap size or the application will fail
-# to startup. (Recommended: 600)
-cache.max.size = 600
+# -- Element based cache config --
 
-# Agenda Cache Size (in MB) (Recommended: 25)
-agenda.cache.size = 25
+# Bill Cache Element Size (Recommended: 21000. Uses about 300MB heap space)
+bill.cache.element.size = 21000
 
-# Bill Cache Size (in MB) (Recommended: 300)
-bill.cache.size = 300
+# Bill Info Cache Element Size (Recommended: 40000. Uses about 100MB heap space)
+bill-info.cache.element.size = 40000
 
-# Bill Info Cache Size (in MB) (Recommended: 100)
-bill-info.cache.size = 100
+# Law Cache Element Size (Recommended: 150. Uses about 30MB heap space)
+law.cache.element.size = 150
+
+# Agenda Cache Element Size (Recommended: 100. Uses about 25MB heap space)
+agenda.cache.element.size = 100
+
+# -- Heap based cache config --
 
 # Calendar Cache Size (in MB) (Recommended: 10)
-calendar.cache.size = 10
-
-# Law Cache Size (in MB) (Recommended: 30)
-law.cache.size = 30
+calendar.cache.heap.size = 10
 
 # Committee Cache Size (in MB) (Recommended: 2)
-committee.cache.size = 2
+committee.cache.heap.size = 2
 
 # --- Postgres Database Configuration -----------------------------------------
 

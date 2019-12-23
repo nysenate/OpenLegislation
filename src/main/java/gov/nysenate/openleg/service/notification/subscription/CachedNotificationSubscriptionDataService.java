@@ -17,6 +17,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -136,7 +137,8 @@ public class CachedNotificationSubscriptionDataService implements NotificationSu
     public void setupCaches() {
         subCache = new Cache(new CacheConfiguration().name(ContentCache.NOTIFICATION_SUBSCRIPTION.name())
                 .eternal(true)
-                .sizeOfPolicy(defaultSizeOfPolicy()));
+                .maxBytesLocalHeap(5, MemoryUnit.MEGABYTES)
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(subCache);
     }
 

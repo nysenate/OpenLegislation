@@ -44,7 +44,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
     @Autowired private CommitteeDao committeeDao;
     @Autowired private EventBus eventBus;
 
-    @Value("${committee.cache.size}") private long committeeCacheSizeMb;
+    @Value("${committee.cache.heap.size}") private long committeeCacheSizeMb;
 
     private Cache committeeCache;
 
@@ -76,7 +76,7 @@ public class CachedCommitteeDataService implements CommitteeDataService, Caching
         committeeCache = new Cache(new CacheConfiguration().name(ContentCache.COMMITTEE.name())
                 .eternal(true)
                 .maxBytesLocalHeap(committeeCacheSizeMb, MemoryUnit.MEGABYTES)
-                .sizeOfPolicy(defaultSizeOfPolicy()));
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(committeeCache);
         committeeCache.setMemoryStoreEvictionPolicy(new CommitteeCacheEvictionPolicy());
     }

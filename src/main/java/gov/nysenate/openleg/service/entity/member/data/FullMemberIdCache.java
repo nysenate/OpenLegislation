@@ -18,6 +18,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.MemoryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,10 @@ public class FullMemberIdCache implements CachingService<Integer> {
 
     @Override
     public void setupCaches() {
-        this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.FULL_MEMBER.name()).eternal(true));
+        this.memberCache = new Cache(new CacheConfiguration().name(ContentCache.FULL_MEMBER.name())
+                .eternal(true)
+                .maxBytesLocalHeap(5, MemoryUnit.MEGABYTES)
+                .sizeOfPolicy(byteSizeOfPolicy()));
         cacheManager.addCache(this.memberCache);
     }
 
