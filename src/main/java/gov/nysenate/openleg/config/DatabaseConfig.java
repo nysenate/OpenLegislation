@@ -27,9 +27,9 @@ public class DatabaseConfig
     @Value("${postgresdb.name}")  private String dbName;
     @Value("${postgresdb.user}")  private String dbUser;
     @Value("${postgresdb.pass}")  private String dbPass;
-    @Value("${c3p0.pool.size.initial:10}") private int poolInitialSize;
-    @Value("${c3p0.pool.size.min:10}") private int poolMinSize;
-    @Value("${c3p0.pool.size.max:20}") private int poolMaxSize;
+    @Value("${c3p0.pool.size.initial:15}") private int poolInitialSize;
+    @Value("${c3p0.pool.size.min:8}") private int poolMinSize;
+    @Value("${c3p0.pool.size.max:15}") private int poolMaxSize;
 
     @Bean
     public JdbcTemplate jdbcTemplate() {
@@ -62,6 +62,9 @@ public class DatabaseConfig
         pool.setInitialPoolSize(poolInitialSize);
         pool.setMinPoolSize(poolMinSize);
         pool.setMaxPoolSize(poolMaxSize);
+        // Release connections above minimum if idle for 3 min (180 seconds).
+        pool.setMaxIdleTimeExcessConnections(180);
+        pool.setAcquireIncrement(4);
 
         // Test each connection every 60 sec after first check-in
         pool.setTestConnectionOnCheckout(false);

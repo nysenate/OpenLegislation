@@ -171,9 +171,9 @@ postgresdb.user =
 postgresdb.pass =
 
 # c3p0 connection pool size configuration
-c3p0.pool.size.initial = 10
-c3p0.pool.size.min = 10
-c3p0.pool.size.max = 20
+c3p0.pool.size.initial = 15
+c3p0.pool.size.min = 8
+c3p0.pool.size.max = 15
 
 # --- Scheduling Configuration ------------------------------------------------
 
